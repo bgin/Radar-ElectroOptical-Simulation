@@ -288,6 +288,10 @@ constexpr unsigned int L3_MAX_DOUBLES{786432};
     #define USE_MSR_TOOLS 0
 #endif
 
+#if !defined (USE_DIRECTLY_RDPMC)
+    #define USE_DIRECTLY_RDPMC 1
+#endif
+
 #if !defined (GMS_MANUAL_UNROLL)
 #define GMS_MANUAL_UNROLL  1
 #endif
@@ -321,6 +325,12 @@ constexpr unsigned long long align64B{ 64 };
 #if (USE_PERF_PROFILER) == 1
        #if !defined (PERF_PROFILE_FUNCTIONS)
            #define PERF_PROFILE_FUNCTIONS 1
+       #endif
+#endif
+// Rely on John D. McCalpin low overhead counters.
+#if (USE_DIRECTLY_RDPMC) == 1
+       #if !defined (RDPMC_MEASURE_SUITABLE_BLOCK)
+           #define RDPMC_MEASURE_SUITABLE_BLOCK 1
        #endif
 #endif
 
