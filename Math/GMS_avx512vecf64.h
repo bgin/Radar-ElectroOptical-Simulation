@@ -1,0 +1,415 @@
+
+#ifndef __GMS_AVX512VECF64_H__
+#define __GMS_AVX512VECF64_H__
+
+
+
+
+
+
+ /*
+    Bernard Gingold copyright notice:
+    This file is a part of Guided-Missile-Modeling-Simulation program.
+    Copyright(C) 2017 Bernard Gingold
+    License : GNU General Public Locense version 3 or later,
+    for additional information check file LICENSE.txt in
+    project directory.
+*/
+
+namespace file_info {
+#if defined _WIN64
+    #include "../GMS_version.h"
+#elif defined __linux
+    #include "GMS_version.h"
+#endif
+
+  	const unsigned int gGMS_AVX512VECF64_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
+
+	const unsigned int gGMS_AVX512VECF64_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+
+	const unsigned int gGMS_AVX512VECF64_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+
+	const unsigned int gGMS_AVX512VECF64_FULLVER = 
+	    1000U*gGMS_AVX512VECF64_MAJOR + 100U*gGMS_AVX512VECF64_MINOR + 10U*gGMS_AVX512VECF64_MICRO;
+
+	const  char * const  pgGMS_AVX512VEC64_CREATE_DATE = "13-10-2019 11:46 +00200 (SUN 13 OCT 2019 GMT+2)";
+
+	const  char * const  pgGMS_AVX512VECG64_BUILD_DATE = "00-00-0000 00:00";
+
+	const  char * const  pgGMS_AVX512VECF64_AUTHOR     = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+
+	const  char * const  pgGMS_AVX512VECF64_DESCRIPT   =  "Wrapper class around __m512d data type";
+}
+
+
+
+#include <iostream>
+#include <cstdint>
+#include <zmmintrin.h>
+
+namespace gms {
+	namespace math {
+
+#if defined _WIN64	  
+		__declspec(align(64)) struct AVX512VecF64 {
+#elif defined __linux
+		__attribute__((align(64))) struct AVX512VecF64 {
+#endif
+		
+
+		   //
+		   // Class Constructors and Destructor
+		   //
+		   AVX512VecF64();
+
+		   AVX4512VecF64(const double[8]); // Unaligned load
+
+		   AVX512VecF64(const double);
+
+		   AVX512VecF64(const double,
+				const double,
+				const double,
+				const double,
+				const double,
+				const double,
+				const double,
+				const double);
+
+		   AVX512VecF64(const __m512d);
+
+		   AVX512VecF64(const __m512i);
+
+		   AVX512VecF64(const AVX512VecF64 &);
+
+		   AVX512VecF64(const __m256d,
+			        const __m256d);
+
+		   ~AVX512VecF64() = default;
+
+		   //
+		   // getters
+		   //
+		   const __m512d get_vf64() const;
+
+		   __m512d get_vf64();
+
+		   __m256d lo_part() const;
+
+		   __m256d hi_part() const;
+
+		   //
+		   //	Load/store functions
+		   //
+
+		   // Address argument should be aligned on 64-byte boundary
+		   AVX512VecF64 & load_a(const double* __restrict);
+
+		   AVX512VecF64 & load_u(const double* __restrict);
+
+		   // Address argument should be aligned on 64-byte boundary
+		   void store_a(double* __restrict) const;
+
+		   void store_u(double* __restrict) const;
+
+		   void stream_store(double* __restrict) const;
+
+		   double extract_scalar(const uint32_t) const;
+
+		   //
+		   // Few member and friend operators
+		   //
+
+		   AVX512VecF64 & operator=(const AVX3VecF64 &);
+
+		   // Type-cast operator
+		   operator __m512d () const;
+
+		   double operator[](const uint32_t) const;
+
+		   friend std::ostream & operator<<(std::ostream &,
+						    const AVX512VecF64 &);
+
+
+		  
+
+	                 __m512d m_vf64;
+
+		};
+
+		// Global (namespace) static functions
+
+		// Extract __m256d part only
+		static inline __m256d extract(const AVX512VecF64 &,
+					      const int32_t);
+
+		// Branchless conditional selection
+		static inline AVX512VecF64 select(const AVX512VecF64 &,
+						  const AVX512VecF64 &,
+						  const __mmask8);
+		//
+		//	Arithmetic and mathematical operations
+		//
+
+		// SIMD max
+		static inline AVX512VecF64 simd_max(const AVX512VecF64 &,
+						    const AVX512VecF64 &);
+
+		// SIMD min
+		static inline AVX512VecF64 simd_min(const AVX512VecF64 &,
+						    const AVX512VecF64 &);
+
+	    // SIMD abs
+		static inline AVX512VecF64 abs(const AVX512VecF64 &);
+
+	    // SIMD sqrt
+		static inline AVX512VecF64 sqrt(const AVX512VecF64 &); 
+
+	    // SIMD rsqrt
+		static inline AVX512VecF64 rsqrt(const AVX512VecF64 &);
+
+	    // SIMD cbrt
+		static inline AVX512VecF64 cbrt(const AVX512VecF64 &); 
+
+	    // SIMD squared
+		static inline AVX512VecF64 sqr(const AVX512VecF64 &);
+
+		// Horizontal reduction by addition
+		static inline double reduce_add(const AVX512VecF64 &);
+		
+		// Horizontal reduction by multiplication
+		static inline double reduce_mul(const AVX512VecF64 &);
+
+		// Horizontal reduction by maximum
+		static inline double reduce_max(const AVX512VecF64 &);
+
+		// Horizontal reduction by minimmum
+		static inline double reduce_min(const AVX512VecF64 &);
+
+	    // SIMD ceil
+		static inline AVX512VecF64 ceil(const AVX512VecF64 &);
+
+	    // SIMD floor
+		static inline AVX512VecF64 floor(const AVX512VecF64 &);
+
+	    // SIMD round
+		static inline AVX512VecF64 round(const AVX512VecF64 &,
+						 const int32_t);
+
+	    // SVML sin
+		static inline AVX512VecF64 sin(const AVX512VecF64 &);
+
+		// SVML sind (degree)
+		static inline AVX512VecF64 sind(const AVX512VecF64 &);
+
+	    // SVML cos
+		static inline AVX512VecF64 cos(const AVX512VecF64 &);
+
+		// SVML cosd (degree)
+		static inline AVX512VecF64 cosd(const AVX512VecF64 &);
+
+	    // SVML sinh
+		static inline AVX512VecF64 sinh(const AVX512VecF64 &);
+
+	    //  SVML cosh
+		static inline AVX512VecF64 cosh(const AVX512VecF64 &);
+
+        // SVML tan
+		static inline AVX512VecF64 tan(const AVX512VecF64 &);
+
+	    // SVML tanh
+		static inline AVX512VecF64 tanh(const AVX512VecF64 &);
+
+		// SVML asin
+		static inline AVX512VecF64 asin(const AVX512VecF64 &);
+
+		// SVML asinh
+		static inline AVX512VecF64 asinh(const AVX512VecF64 &);
+
+		// SVML acos
+		static inline AVX512VecF64 acos(const AVX512VecF64 &);
+
+		// SVML acosh
+		static inline AVX512VecF64 acosh(const AVX512VecF64 &);
+
+		// SVML atan
+		static inline AVX512VecF64 atan(const AVX512VecF64 &);
+
+		// SVML atanh
+		static inline AVX512VecF64 atanh(const AVX512VecF64 &);
+
+		// SVML log
+		static inline AVX512VecF64 log(const AVX512VecF64 &);
+
+		// SVML exp
+		static inline AVX512VecF64 exp(const AVX512VecF64 &);
+
+		// SVML atan2
+		static inline AVX512VecF64 atan2(const AVX512VecF64 &,
+						 const AVX512VecF64 &);
+
+		// SVML hypot
+		static inline AVX512VecF64 hypot(const AVX512VecF64 &,
+						 const AVX512VecF64 & );
+
+		// FMA functions
+
+		// fmadd
+		static inline AVX512VecF64 fmadd(const AVX512VecF64 &,
+						 const AVX512VecF64 &,
+						 const AVX512VecF64 &);
+
+		// fmadsubb
+		static inline AVX512VecF64 fmadsubb(const AVX512VecF64 &,
+						    const AVX512VecF64 &,
+						    const AVX512VecF64 &);
+
+		// fmsub
+		static inline AVX512VecF64 fmsub(const AVX512VecF64 &,
+						 const AVX512VecF64 &,
+						 const AVX512VecF64 &);
+
+		// fmsubadd
+		static inline AVX512VecF64 fmsubadd(const AVX512VecF64 &,
+						    const AVX512VecF64 &,
+						    const AVX512VecF64 &);
+
+		// fnmadd
+		static inline AVX512VecF64 fnmadd(const AVX512VecF64 &,
+						  const AVX512VecF64 &,
+						  const AVX512VecF64 &);
+
+		// fnmsub
+		static inline AVX512VecF64 fnmsub(const AVX512VecF64 &,
+						  const AVX512VecF64 &,
+						  const AVX512VecF64 &);
+
+		//
+		// Global (namespace) operators
+		//
+
+		// C = A+B, vector + vector
+		static inline AVX512VecF64 operator+(const AVX512VecF64 &,
+						     const AVX512VecF64 &);
+
+		// C = A+B, vector + scalar
+		static inline AVX512VecF64 operator+(const AVX512VecF64 &,
+						     const double);
+
+		// C = A+B, scalar + vector
+		static inline AVX512VecF64 operator+(const double,
+						     const AVX512VecF64 &);
+
+		// A = A+B (in-place)
+		static inline AVX512VecF64 operator+=(AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// C = A-B, vector-vector
+		static inline AVX512VecF64 operator-(const AVX512VecF64 &,
+						     const AVX512VecF64 &);
+
+		// C = A-B, vector - scalar
+		static inline AVX512VecF64 operator-(const AVX512VecF64 &,
+						     const double);
+
+		// C = A-B, scalar - vector
+		static inline AVX512VecF64 operator-(const double,
+						     const AVX512VecF64 &);
+
+		// A = A-B (in-place)
+		static inline AVX512VecF64 operator-=(AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// C = A*B, vector * vector
+		static inline AVX512VecF64 operator*(const AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// C = A*B, vector * scalar
+		static inline AVX512VecF64 operator*(const AVX512VecF64 &,
+						     const double);
+
+		// C = A*B, scalar * vector
+		static inline AVX512VecF64 operator*(const double,
+						     const AVX512VecF64 &);
+
+		// A = A*B (in-place)
+		static inline AVX512VecF64 operator*=(AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// C = A/B, vector / vector
+		static inline AVX512VecF64 operator/(const AVX512VecF64 &,
+						     const AVX512VecF64 &);
+
+		// C = A/B, vector / scalar
+		static inline AVX512VecF64 operator/(const AVX512VecF64 &,
+						     const double);
+
+		// C = A/B, scalar / vector
+		static inline AVX512VecF64 operator/(const double,
+						     const AVX512VecF64 &);
+
+		// A = A/B (in-place)
+		static inline AVX512VecF64 operator/=(AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// C = A==B, C is of type __mmask8
+		static inline __mmask8 operator==(const AVX512VecF64 &,
+						  const AVX512VecF64 &);
+
+		// C = A!=B, C is of type __mmask8
+		static inline __mmask8 operator!=(const AVX512VecF64 &,
+						  const AVX512VecF64 &);
+
+		// C = A>B, C is of type __mmask8
+		static inline __mmask8 operator>(const AVX512VecF64 &,
+						 const AVX512VecF64 &);
+
+		// C = A<B, C is of type __mmask8
+		static inline __mmask8 operator<(const AVX512VecF64 &,
+						 const AVX512VecF64 &);
+
+		// C = A>=B, C is of type __mmask8
+		static inline __mmask8 operator>=(const AVX512VecF64 &,
+						 const AVX512VecF64 &);
+
+		// C = A<=B, C is of type __mmask8
+		static inline __mmask8 operator<=(const AVX512VecF64 &,
+						  const AVX512VecF64 &);
+
+		// C = A&B
+		static inline AVX512VecF64 operator&(const AVX512VecF64 &,
+						     const AVX512VecF64 &);
+
+		// A = A&B
+		static inline AVX512VecF64 operator&=(AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// C = A|B
+		static inline AVX512VecF64 operator|(const AVX512VecF64 &,
+						     const AVX512VecF64 &);
+
+		// A = A|B
+		static inline AVX512VecF64 operator|=(AVX512VecF64 &,
+						       const AVX512VecF64 &);
+
+		// C = A^B
+		static inline AVX512VecF64 operator^(const AVX512VecF64 &,
+						    const AVX512VecF64 &);
+
+		// A = A^B
+		static inline AVX512VecF64 operator^=(AVX512VecF64 &,
+						      const AVX512VecF64 &);
+
+		// A = A + 1.0
+		static inline AVX512VecF64 operator++(AVX512VecF64 &);
+
+		// A = A - 1.0
+		static inline AVX512VecF64 operator--(AVX512VecF64 &);
+
+
+#include "GMS_avx512vecf64.inl"
+	}
+}
+
+
+
+#endif /*__GMS_AVX512VECF64_H__*/
