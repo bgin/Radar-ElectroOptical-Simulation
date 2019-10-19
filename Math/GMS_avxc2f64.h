@@ -36,9 +36,11 @@ namespace gms {
 	namespace math {
 
 		
-
+#if defined _WIN64
 	__declspec(align(64)) struct AVXC2f64 {
-
+#elif defined __linux
+	  __attribute__((align(64))) struct AVXC2f64 {
+#endif
 
 			//
 			// Constructors and Destructor (default)
