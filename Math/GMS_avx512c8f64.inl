@@ -560,6 +560,20 @@ gms::math::operator+(const AVX512c8f64 x,
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+(const AVX512c8f64 x,
+                     const __m512d v) {
+        return (AVX512c8f64{_mm512_add_pd(x.m_re,v),
+	                    x.m_im)});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator+(const __m512d v,
+                     const AVX512c8f64 x) {
+        return (AVX512c8f64{_mm512_add_pd(v,x.m_re),
+	                   x.m_im});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator+(const AVX512c8f64 x,
 		    const double s) {
 	return (x + AVX512c8f64{ s });
 }
@@ -574,6 +588,20 @@ static inline gms::math::AVX512c8f64
 gms::math::operator+=(AVX512c8f64 x,
 		     const AVX512c8f64 y) {
 	x = x + y;
+	return (x);
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator+=(AVX512c8f64 x,
+                      const __m512d v) {
+        x = x + v;
+	return (x);
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator+=(const __m512d v,
+                      AVX512c8f64 x) {
+        x = v + x;
 	return (x);
 }
 
@@ -596,6 +624,34 @@ gms::math::operator-(const AVX512c8f64 x,
 		     const AVX512c8f64 y) {
 	return (AVX512c8f64{ _mm512_sub_pd(x.m_re, y.m_re),
 		_mm512_sub_pd(x.m_im, y.m_im) });
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator-(const AVX512c8f64 x,
+                     const __m512d v ) {
+        return (AVX512c8f64{_mm512_sub_pd(x.m_re,v),
+	                   x.m_im});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator-(const __m512d v,
+                     const AVX512c8f64 x) {
+        return (AVX512c8f64{_mm512_sub_pd(v,x.m_re),
+	                   x.m_im});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator-=(AVX512c8f64 x,
+                      const __m512d v) {
+        x = x - v;
+	return (x);
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator-=(const __m512d v,
+                      AVX512c8f64 x) {
+        x = v - x;
+	return (x);
 }
 
 static inline gms::math::AVX512c8f64
@@ -650,6 +706,20 @@ gms::math::operator*(const AVX512c8f64 x,
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*(const AVX512c8f64 x,
+                     const __m512d v) {
+        return (AVX512c8f64{_mm512_mul_pd(x.m_re,v),
+	                    _mm512_mul_pd(x.m_im,v)});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator*(const __m512d v,
+                     const AVX512c8f64 x) {
+        return (AVX512c8f64{_mm512_mul_pd(v,x.m_re),
+	                    _mm512_mul_pd(v,x.m_im)});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator*(const AVX512c8f64 x,
 		    const double s) {
 	const __m512d zmm0(_mm512_set1_pd(s));
 	return (AVX512c8f64{_mm512_mul_pd(x.m_re,zmm0),
@@ -673,8 +743,22 @@ gms::math::operator*=(AVX512c8f64 x,
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*=(AVX512c8f64 x,
+                      const __m512d v) {
+        x = x * v;
+	return (x);
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator*=(const __m512d v,
+                      AVX512c8f64 x) {
+       x = v * x;
+       return (x);
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator*=(AVX512c8f64 x,
 			const double s) {
-	const __m512d zmm0(_mm512_set1_pd(s));
+         
 	x = x * s;
 	return (x);
 }
@@ -703,6 +787,20 @@ gms::math::operator/(const AVX512c8f64 &,
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/(const AVX512c8f64 x,
+                     const __m512d v) {
+        return (AVX512c8f64{_mm512_div_pd(x.m_re,v),
+	                    _mm512_div_pd(x.m_im,v)});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator/(const __m512d v,
+                     const AVX512c8f64 x) {
+        return (AVX512c8f64{_mm512_div_pd(v,x.m_re),
+	                    _mm512_div_pd(v,x.m_im)});
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator/(const AVX512c8f64 x,
 			 const double s) {
 	const __m512d zmm0(_mm512_set1_pd(s));
 	return (AVX512c8f64{_mm512_div_pd(x.m_re,zmm0),
@@ -715,6 +813,20 @@ gms::math::operator/(const double s,
 	const __m512d zmm0(_mm512_set1_pd(s));
 	return (AVX512c8f64{ _mm512_div_pd(zmm0,x.m_re),
 		_mm512_div_pd(zmm0,x.m_im) });
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator/=(AVX512c8f64 x,
+                      const __m512d v) {
+        x = x / v;
+	return (x);
+}
+
+static inline gms::math::AVX512c8f64
+gms::math::operator/=(const __m512d v,
+                      AVX512c8f64 x) {
+        x = v / x;
+	return (x);
 }
 
 static inline gms::math::AVX512c8f64
