@@ -30,6 +30,7 @@ namespace file_info {
 #include <cstdint>
 #include <iostream>
 #include <immintrin.h>
+#include <complex> // for comparison operators
 #if defined _WIN64
     #include "../GMS_config.h"
 #elif defined __linux
@@ -99,6 +100,8 @@ namespace gms {
 
 				AVX512c8f64(const __m512d,
 					    const __m512d);
+
+		               
 				
 
 				AVX512c8f64(const AVX512c8f64 &);
@@ -306,8 +309,20 @@ namespace gms {
 		       const AVX512c8f64,
 		       const __mmask8);
 
+		static inline AVX512c8f64
+		cdiv_smith(const AVX512c8f64 x,
+			   const AVX512c8f64 y);
+
 		static inline AVX512c8f64 
 		operator+(const AVX512c8f64,
+			  const AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator+(const AVX512c8f64,
+			  const __m512d);
+
+		static inline AVX512c8f64
+		operator+(const __m512d,
 			  const AVX512c8f64);
 
 		static inline AVX512c8f64
@@ -319,8 +334,16 @@ namespace gms {
 		          const AVX512c8f64); 
 
 		static inline AVX512c8f64
-		operator+=(AVX3C8f64,
-		           const AVX512c8f64); 
+		operator+=(AVX512c8f64,
+		           const AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator+=(AVX512c8f64,
+			   const __m512d);
+
+		static inline AVX512c8f64
+		operator+=(const __m512d,
+			   AVX512c8f64);
 
 		static inline AVX512c8f64
 		operator+=(AVX512c8f64 &,
@@ -332,7 +355,15 @@ namespace gms {
 
 		static inline AVX512c8f64
 		operator-(const AVX512c8f64,
-			  const AVX512c8f64); 
+			  const AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator-(const AVX512c8f64,
+			  const __m512d);
+
+		static inline AVX512c8f64
+		operator-(const __m512d,
+			  const AVX512c8f64);
 
 		static inline AVX512c8f64
 		operator-(const AVX512c8f64,
@@ -351,6 +382,14 @@ namespace gms {
 
 		static inline AVX512c8f64
 		operator-=(AVX512c8f64,
+			   const __m512d);
+		  
+		static inline AVX512c8f64
+		operator-=(const __m512d,
+			   AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator-=(AVX512c8f64,
 			   const double );
 
 		static inline AVX512c8f64
@@ -359,6 +398,14 @@ namespace gms {
 
 		static inline AVX512c8f64
 		operator*(const AVX512C8f64,
+			  const AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator*(const AVX512c8f64,
+			  const __m512d);
+
+		static inline AVX512c8f64
+		operator*(const __m512d,
 			  const AVX512c8f64);
 
 		static inline AVX512c8f64
@@ -372,6 +419,14 @@ namespace gms {
 		static inline AVX512c8f64
 		operator*=(AVX512c8f64,
 			   const AV512c8f64);
+
+		static inline AVX512c8f64
+		operator*=(AVX512c8f64,
+			   const __m512d);
+
+		static inline AVX512c8f64
+		operator*=(const __m512d,
+			   AVX512c8f64);
 
 	        static inline AVX512c8f64
 		operator*=(AVX512c8f64,
@@ -387,6 +442,14 @@ namespace gms {
 
 		static inline AVX512c8f64
 		operator/(const AVX512c8f64,
+			  const __m512d);
+
+		static inline AVX512c8f64
+		operator/(const __m512d,
+			  const AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator/(const AVX512c8f64,
 			  const double);
 
 		static inline AVX512c8f64
@@ -396,6 +459,13 @@ namespace gms {
 		static inline AVX512c8f64
 		operator/=(AVX512c8f64,
 			   const AVX512c8f64);
+
+		static inline AVX512c8f64
+		operator/=(AVX512c8f64,
+			   const __m512d);
+
+		static inline AVX512c8f64
+		operator/=(const __m512d);
 
 	        static inline AVX512c8f64
 		operator/=(AVX512c8f64,
@@ -414,9 +484,32 @@ namespace gms {
 		operator==(const AVX512c8f64,
 			   const AVX512c8f64);
 
+		
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator==(const AVX512c8f64,
+		           std::complex<double>);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator==(const std::complex<double>,
+		           const AVX512c8f64)
+		           
+
 		static inline 
 			std::pair<__mmask8, __mmask8>
 		operator!=(const AVX512c8f64,
+		           const AVX512c8f64);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator!=(const AVX512c8f64,
+		           const std::complex<double>);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator!=(const std::complex<double>,
 		           const AVX512c8f64);
 
 		static inline 
@@ -424,20 +517,60 @@ namespace gms {
 		operator>(const AVX512c8f64,
 			  const AVX512c8f64);
 
+		static inline
+                        std::pair<__mmask8,__mmask8>
+		operator>(const AVX512c8f64,
+		          const std::complex<double>);
+
+		static inline	  
+			std::pair<__mmask8,__mmask8>
+		operator>(const std::complex<double>,
+		          const AVX512c8f64);
+			  
 		static inline 
 			std::pair<__mmask8, __mmask8>
 		operator<(const AVX512c8f64,
 			  const AVX512c8f64);
 
+		static inline	  
+                        std::pair<__mmask8,__mmask8>
+		operator<(const AVX512c8f64,
+		          std::complex<double>);
+
+                static inline
+		        std::pair<__mmask8,__mmask8>
+		operator<(const std::complex<double>,
+		          const AVX512c8f64);
+			  
 		static inline 
 			std::pair<__mmask8, __mmask8>
 		operator>=(const AVX512c8f64,
+		           const AVX512c8f64);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator>=(const AVX512c8f64,
+		           const std::complex<double>);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator>=(const std::complex<double>,
 		           const AVX512c8f64);
 
 		static inline 
 			std::pair<__mmask8, __mmask8>
 	        operator<=(const AVX512c8f64,
 			   const AVX512c8f64);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator<=(const AVX512c8f64,
+		           const std::complex<double>);
+
+		static inline
+		        std::pair<__mmask8,__mmask8>
+		operator<=(const std::complex<double>,
+		           const AVX512c8f64);
 
 #include "GMS_avx512c8f64.inl"	
 
