@@ -35,9 +35,13 @@ const char * const pgGMS_MKL_GAUSSIANRNG_DESCRIPT = "C++ wrappers around Intel M
     #include "../GMS_config.h"
 #elif defined __linux
     #include "GMS_config.h"
+#else
+    #error Unsupported Operating System (Linux and Win64 -- only supported currently)
 #endif
 #if (USE_MKL) == 1
 #include <mkl_vsl.h>
+#else
+#error Intel MKL library required for this compilation
 #endif
 
 namespace gms {
