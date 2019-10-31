@@ -343,7 +343,678 @@ namespace file_info {
 #if !defined (IDQ_MS_DSB_UOPS)
     #define IDQ_MS_DSB_UOPS                            0x1079
 #endif
-
+#if !defined (IDQ_MS_DSB_CYCLES)
+    #define  IDQ_MS_DSB_CYCLES                         0x1079
+#endif
+#if !defined (IDQ_MS_DBS_OCCUR)
+    #define IDQ_MS_DBS_OCCUR                           0x1079
+#endif
+#if !defined (IDQ_ALL_DBS_CYCLES_4_UOPS)
+    #define  IDQ_ALL_DBS_CYCLES_4_UOPS                 0x1879
+#endif
+#if !defined (IDQ_ALL_DBS_CYCLES_ANY_UOPS)
+    #define IDQ_ALL_DBS_CYCLES_ANY_UOPS                0x1879
+#endif
+#if !defined (IDQ_MS_MITE_UOPS)
+    #define IDQ_MS_MITE_UOPS                           0x2079
+#endif
+#if !defined (IDQ_ALL_MITE_CYCLES_4_UOPS)
+    #define IDQ_ALL_MITE_CYCLES_4_UOPS                 0x2479
+#endif
+#if !defined (IDQ_ALL_MITE_CYCLES_ANY_UOPS)
+    #define IDQ_ALL_MITE_CYCLES_ANY_UOPS               0x2479
+#endif
+#if !defined (IDQ_MS_UOPS)
+    #define IDQ_MS_UOPS                                0x3079
+#endif
+#if !defined (IDQ_MS_CYCLES)
+    #define IDQ_MS_CYCLES                              0x3079
+#endif
+#if !defined (IDQ_MS_SWITCHES)
+    #define IDQ_MS_SWITCHES                            0x3079
+#endif
+#if !defined (IDQ_MITE_ALL_UOPS)
+    #define  IDQ_MITE_ALL_UOPS                         0x3c79
+#endif
+#if !defined (ICACHE_HIT)
+    #define ICACHE_HIT                                 0x0180
+#endif
+#if !defined (ICACHE_MISSES)
+    #define ICACHE_MISSES                              0x0280
+#endif
+#if !defined (ICACHE_IFETCH_STALL)
+    #define ICACHE_IFETCH_STALL                        0x0480
+#endif
+#if !defined (ICACHE_IFDATA_STALL)
+    #define  ICACHE_IFDATA_STALL                       0x0480
+#endif
+#if !defined ( ITLB_MISSES_MISS_CAUSES_A_WALK)
+    #define  ITLB_MISSES_MISS_CAUSES_A_WALK            0x0185
+#endif
+#if !defined (ITLB_MISSES_WALK_COMPLETED_4K)
+    #define ITLB_MISSES_WALK_COMPLETED_4K              0x0285
+#endif
+#if !defined (ITLB_MISSES_WALK_COMPLETED_2M_4M)
+    #define ITLB_MISSES_WALK_COMPLETED_2M_4M           0x0485
+#endif
+#if !defined (ITLB_MISSES_WALK_COMPLETED_1G)
+    #define ITLB_MISSES_WALK_COMPLETED_1G              0x0885
+#endif
+#if !defined (ITLB_MISSES_WALK_COMPLETED)
+    #define ITLB_MISSES_WALK_COMPLETED                 0x0e85
+#endif
+#if !defined (ITLB_MISSES_WALK_DURATION)
+    #define ITLB_MISSES_WALK_DURATION                  0x1085
+#endif
+#if !defined ( ITLB_MISSES_STLB_HIT_4K)
+    #define  ITLB_MISSES_STLB_HIT_4K                   0x2085
+#endif
+#if !defined (ITLB_MISSES_STLB_HIT_2M)
+    #define  ITLB_MISSES_STLB_HIT_2M                   0x4085
+#endif
+#if !defined ( ITLB_MISSES_STLB_HIT)
+    #define  ITLB_MISSES_STLB_HIT                      0x6085
+#endif
+#if !defined ( ILD_STALL_LCP)
+    #define   ILD_STALL_LCP                            0x0187
+#endif
+#if !defined (ILD_STALL_IQ_FULL)
+    #define ILD_STALL_IQ_FULL                          0x0487
+#endif
+#if !defined (BR_INST_EXEC_NONTAKEN_CONDITIONAL)
+    #define BR_INST_EXEC_NONTAKEN_CONDITIONAL          0x4188
+#endif
+#if !defined (BR_INST_EXEC_TAKEN_CONDITIONAL)
+    #define BR_INST_EXEC_TAKEN_CONDITIONAL             0x8188
+#endif
+#if !defined (BR_INST_EXEC_TAKEN_DIRECT_JUMP)
+    #define BR_INST_EXEC_TAKEN_DIRECT_JUMP             0x8288
+#endif
+#if !defined (BR_INST_EXEC_TAKEN_INDIRECT_JUMP_NON_CALL_RET)
+    #define BR_INST_EXEC_TAKEN_INDIRECT_JUMP_NON_CALL_RET 0x8488
+#endif
+#if !defined ( BR_INST_EXEC_TAKEN_INDIRECT_NEAR_RETURN)
+    #define  BR_INST_EXEC_TAKEN_INDIRECT_NEAR_RETURN   0x8888
+#endif
+#if !defined ( BR_INST_EXEC_TAKEN_DIRECT_NEAR_CALL)
+    #define  BR_INST_EXEC_TAKEN_DIRECT_NEAR_CALL       0x9088
+#endif
+#if !defined (BR_INST_EXEC_TAKEN_INDIRECT_NEAR_CALL)
+    #define BR_INST_EXEC_TAKEN_INDIRECT_NEAR_CALL      0xA088
+#endif
+#if !defined (BR_INST_EXEC_ALL_CONDITIONAL)
+    #define BR_INST_EXEC_ALL_CONDITIONAL               0xC188
+#endif
+#if !defined (BR_INST_EXEC_ALL_DIRECT_JMP)
+    #define BR_INST_EXEC_ALL_DIRECT_JMP                0xC288
+#endif
+#if !defined (BR_INST_EXEC_ALL_INDIRECT_JUMP_NON_CALL_RET)
+    #define BR_INST_EXEC_ALL_INDIRECT_JUMP_NON_CALL_RET  0xC488
+#endif
+#if !defined (BR_INST_EXEC_ALL_INDIRECT_NEAR_RETURN)
+    #define BR_INST_EXEC_ALL_INDIRECT_NEAR_RETURN      0xC888
+#endif
+#if !defined ( BR_INST_EXEC_ALL_DIRECT_NEAR_CALL)
+    #define  BR_INST_EXEC_ALL_DIRECT_NEAR_CALL         0xD088
+#endif
+#if !defined ( BR_INST_EXEC_ALL_BRANCHES)
+    #define BR_INST_EXEC_ALL_BRANCHES                  0xFF88
+#endif
+#if !defined (BR_MISP_EXEC_NONTAKEN_CONDITIONAL)
+    #define BR_MISP_EXEC_NONTAKEN_CONDITIONAL          0x4189
+#endif
+#if !defined (BR_MISP_EXEC_TAKEN_INDIRECT_JUMP_NON_CALL_RET)
+    #define BR_MISP_EXEC_TAKEN_INDIRECT_JUMP_NON_CALL_RET 0x8489
+#endif
+#if !defined (BR_MISP_EXEC_TAKEN_RETURN_NEAR)
+    #define BR_MISP_EXEC_TAKEN_RETURN_NEAR             0x8889
+#endif
+#if !defined (BR_MISP_EXEC_TAKEN_INDIRECT_NEAR_CALL)
+    #define BR_MISP_EXEC_TAKEN_INDIRECT_NEAR_CALL      0xA089
+#endif
+#if !defined (BR_MISP_EXEC_ALL_CONDITIONAL)
+    #define BR_MISP_EXEC_ALL_CONDITIONAL               0xC189
+#endif
+#if !defined (BR_MISP_EXEC_ALL_INDIRECT_JUMP_NON_CALL_RET)
+    #define BR_MISP_EXEC_ALL_INDIRECT_JUMP_NON_CALL_RET 0xC489
+#endif
+#if !defined (BR_MISP_EXEC_ALL_BRANCHES)
+    #define BR_MISP_EXEC_ALL_BRANCHES                  0xFF89
+#endif
+#if !defined (IDQ_UOPS_NOT_DELIVERED_CORE)
+    #define IDQ_UOPS_NOT_DELIVERED_CORE                0x019C
+#endif
+#if !defined (IDQ_UOPS_NOT_DELIVERED_CYCLES_0_UOPS_DELIV_CORE)
+    #define IDQ_UOPS_NOT_DELIVERED_CYCLES_0_UOPS_DELIV_CORE 0x019C
+#endif
+#if !defined (IDQ_UOPS_NOT_DELIVERED_CYCLES_LE_1_UOP_DELIV_CORE)
+    #define IDQ_UOPS_NOT_DELIVERED_CYCLES_LE_1_UOP_DELIV_CORE 0x019C
+#endif
+#if !defined (IDQ_UOPS_NOT_DELIVERED_CYCLES_LE_2_UOP_DELIV_CORE)
+    #define IDQ_UOPS_NOT_DELIVERED_CYCLES_LE_2_UOP_DELIV_CORE 0x019C
+#endif
+#if !defined (IDQ_UOPS_NOT_DELIVERED_CYCLES_LE_3_UOP_DELIV_CORE)
+    #define IDQ_UOPS_NOT_DELIVERED_CYCLES_LE_3_UOP_DELIV_CORE 0x019C
+#endif
+#if !defined (IDQ_UOPS_NOT_DELIVERED_CYCLES_FE_WAS_OK)
+    #define IDQ_UOPS_NOT_DELIVERED_CYCLES_FE_WAS_OK     0x019C
+#endif
+#if !defined ( UOPS_EXECUTED_PORT_PORT_0)
+    #define  UOPS_EXECUTED_PORT_PORT_0                  0x01A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_0_CORE)
+    #define UOPS_EXECUTED_PORT_PORT_0_CORE              0x01A1
+#endif
+#if !defined (UOPS_DISPATCHED_PORT_PORT_0)
+    #define UOPS_DISPATCHED_PORT_PORT_0                 0x01A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_1)
+    #define UOPS_EXECUTED_PORT_PORT_1                   0x02A1
+#endif
+#if !defined (UOPS_DISPATCHED_PORT_PORT_1)
+    #define UOPS_DISPATCHED_PORT_PORT_1                 0x02A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_2)
+    #define UOPS_EXECUTED_PORT_PORT_2                   0x04A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_2_CORE)
+    #define UOPS_EXECUTED_PORT_PORT_2_CORE              0x04A1
+#endif
+#if !defined (UOPS_DISPATCHED_PORT_PORT_2)
+    #define UOPS_DISPATCHED_PORT_PORT_2                 0x04A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_2_CORE)
+    #define UOPS_EXECUTED_PORT_PORT_2_CORE              0x04A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_3)
+    #define UOPS_EXECUTED_PORT_PORT_3                   0x08A1
+#endif
+#if !defined ( UOPS_EXECUTED_PORT_PORT_3_CORE)
+    #define  UOPS_EXECUTED_PORT_PORT_3_CORE             0x08A1
+#endif
+#if !defined ( UOPS_DISPATCHED_PORT_PORT_3)
+    #define  UOPS_DISPATCHED_PORT_PORT_3                0x08A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_4)
+    #define UOPS_EXECUTED_PORT_PORT_4                   0x10A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_4_CORE)
+    #define UOPS_EXECUTED_PORT_PORT_4_CORE              0x10A1
+#endif
+#if !defined ( UOPS_DISPATCHED_PORT_PORT_4)
+    #define  UOPS_DISPATCHED_PORT_PORT_4                0x10A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_5)
+    #define  UOPS_EXECUTED_PORT_PORT_5                  0x20A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_5_CORE)
+    #define UOPS_EXECUTED_PORT_PORT_5_CORE              0x20A1
+#endif
+#if !defined ( UOPS_DISPATCHED_PORT_PORT_5)
+    #define  UOPS_DISPATCHED_PORT_PORT_5                0x20A1
+#endif
+#if !defined (UOPS_EXECUTED_PORT_PORT_6)
+    #define  UOPS_EXECUTED_PORT_PORT_6                  0x40A1
+#endif
+#if !defined ( UOPS_EXECUTED_PORT_PORT_6_CORE)
+    #define  UOPS_EXECUTED_PORT_PORT_6_CORE             0x40A1
+#endif
+#if !defined (  UOPS_DISPATCHED_PORT_PORT_6)
+    #define  UOPS_DISPATCHED_PORT_PORT_6                0x40A1
+#endif
+#if !defined ( UOPS_EXECUTED_PORT_PORT_7)
+    #define UOPS_EXECUTED_PORT_PORT_7                   0x80A1
+#endif
+#if !defined ( UOPS_EXECUTED_PORT_PORT_7_CORE)
+    #define UOPS_EXECUTED_PORT_PORT_7_CORE              0x80A1
+#endif
+#if !defined ( UOPS_DISPATCHED_PORT_PORT_7)
+    #define UOPS_DISPATCHED_PORT_PORT_7                 0x80A1
+#endif
+#if !defined (  RESOURCES_STALLS_ANY)
+    #define  RESOURCES_STALLS_ANY                       0x01A2
+#endif
+#if !defined (  RESOURCE_STALLS_RS)
+    #define  RESOURCE_STALLS_RS                         0x04A2
+#endif
+#if !defined (RESOURCE_STALLS_SB)
+    #define RESOURCE_STALLS_SB                          0x08A2
+#endif
+#if !defined (RESOURCE_STALLS_ROB)
+    #define  RESOURCE_STALLS_ROB                        0x10A2
+#endif
+#if !defined (CYCLE_ACTIVITIES_CYCLES_L2_PENDING)
+    #define CYCLE_ACTIVITIES_CYCLES_L2_PENDING          0x01A3
+#endif
+#if !defined (CYCLES_ACTIVITIES_CYCLES_LDM_PENDING)
+    #define CYCLES_ACTIVITIES_CYCLES_LDM_PENDING        0x02A3
+#endif
+#if !defined (CYCLE_ACTIVITY_CYCLES_NO_EXECUTE)
+    #define CYCLE_ACTIVITY_CYCLES_NO_EXECUTE            0x04A3
+#endif
+#if !defined ( CYCLE_ACTIVITY_STALLS_L2_PENDING)
+    #define  CYCLE_ACTIVITY_STALLS_L2_PENDING           0x05A3
+#endif
+#if !defined ( CYCLE_ACTIVITY_STALLS_LDM_PENDING)
+    #define CYCLE_ACTIVITY_STALLS_LDM_PENDING           0x06A3
+#endif
+#if !defined (  CYCLE_ACTIVITY_CYCLES_L1D_PENDING)
+    #define  CYCLE_ACTIVITY_CYCLES_L1D_PENDING          0x08A3
+#endif
+#if !defined ( CYCLE_ACTIVITY_STALLS_L1D_PENDING)
+    #define CYCLE_ACTIVITY_STALLS_L1D_PENDING           0x0CA3
+#endif
+#if !defined (LSD_UOPS)
+    #define LSD_UOPS                                    0x01A8
+#endif
+#if !defined (LSD_CYCLES_ACTIVE)
+    #define LSD_CYCLES_ACTIVE                           0x01A8
+#endif
+#if !defined (LSD_CYCLES_4_UOPS)
+    #define LSD_CYCLES_4_UOPS                           0x01A8
+#endif
+#if !defined ( DSB2MITE_SWITCHES_PENALTY_CYCLES)
+    #define  DSB2MITE_SWITCHES_PENALTY_CYCLES           0x02AB
+#endif
+#if !defined (ITLB_ITLB_FLUSH)
+    #define ITLB_ITLB_FLUSH                             0x01AE
+#endif
+#if !defined ( OFFCORE_REQUESTS_DEMAND_DATA_RD)
+    #define  OFFCORE_REQUESTS_DEMAND_DATA_RD            0x01B0
+#endif
+#if !defined (OFFCORE_REQUESTS_DEMAND_CODE_RD)
+    #define OFFCORE_REQUESTS_DEMAND_CODE_RD             0x02B0
+#endif
+#if !defined (OFFCORE_REQUESTS_DEMAND_RFO)
+    #define OFFCORE_REQUESTS_DEMAND_RFO                 0x04B0
+#endif
+#if !defined (OFFCORE_REQUESTS_ALL_DATA_RD)
+    #define OFFCORE_REQUESTS_ALL_DATA_RD                0x08B0
+#endif
+#if !defined (UOPS_EXECUTED_STALL_CYCLES)
+    #define UOPS_EXECUTED_STALL_CYCLES                  0x01B1
+#endif
+#if !defined (UOPS_EXECUTED_CYCLES_GE_1_UOP_EXEC)
+    #define UOPS_EXECUTED_CYCLES_GE_1_UOP_EXEC          0x01B1
+#endif
+#if !defined (UOPS_EXECUTED_CYCLES_GE_2_UOP_EXEC)
+    #define UOPS_EXECUTED_CYCLES_GE_2_UOP_EXEC          0x01B1
+#endif
+#if !defined (UOPS_EXECUTED_CYCLES_GE_3_UOPS_EXEC)
+    #define UOPS_EXECUTED_CYCLES_GE_3_UOPS_EXEC         0x01B1
+#endif
+#if !defined (UOPS_EXECUTED_CYCLES_GE_4_UOPS_EXEC)
+    #define UOPS_EXECUTED_CYCLES_GE_4_UOPS_EXEC         0x01B1
+#endif
+#if !defined (UOPS_EXECUTED_CORE)
+    #define UOPS_EXECUTED_CORE                          0x02B1
+#endif
+#if !defined ( UOPS_EXECUTED_CORE_CYCLES_GE_1)
+    #define  UOPS_EXECUTED_CORE_CYCLES_GE_1             0x02B1
+#endif
+#if !defined ( UOPS_EXECUTED_CORE_CYCLES_GE_2)
+    #define  UOPS_EXECUTED_CORE_CYCLES_GE_2             0x02B1
+#endif
+#if !defined ( UOPS_EXECUTED_CORE_CYCLES_GE_3)
+    #define  UOPS_EXECUTED_CORE_CYCLES_GE_3             0x02B1
+#endif
+#if !defined ( UOPS_EXECUTED_CORE_CYCLES_GE_4)
+    #define  UOPS_EXECUTED_CORE_CYCLES_GE_4             0x02B1
+#endif
+#if !defined ( UOPS_EXECUTED_CORE_CYCLES_NONE)
+    #define  UOPS_EXECUTED_CORE_CYCLES_NONE             0x02B1
+#endif
+#if !defined (OFFCORE_REQUESTS_BUFFER_SQ_FULL)
+    #define OFFCORE_REQUESTS_BUFFER_SQ_FULL             0x01B2
+#endif
+#if !defined (OFFCORE_RESPONSE)
+    #define OFFCORE_RESPONSE                            0x0B7
+#endif
+#if !defined ( PAGE_WALKER_LOADS_DTLB_L1)
+    #define  PAGE_WALKER_LOADS_DTLB_L1                  0x11BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_DTLB_L2)
+    #define  PAGE_WALKER_LOADS_DTLB_L2                  0x12BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_DTLB_L3)
+    #define  PAGE_WALKER_LOADS_DTLB_L3                  0x14BC
+#endif
+#if !defined (PAGE_WALKER_LOADS_DTLB_MEMORY)
+    #define PAGE_WALKER_LOADS_DTLB_MEMORY               0x18BC
+#endif
+#if !defined (PAGE_WALKER_LOADS_ITLB_L1)
+    #define PAGE_WALKER_LOADS_ITLB_L1                   0x21BC
+#endif
+#if !defined (PAGE_WALKER_LOADS_ITLB_L2)
+    #define PAGE_WALKER_LOADS_ITLB_L2                   0x22BC
+#endif
+#if !defined (PAGE_WALKER_LOADS_ITLB_L3)
+    #define PAGE_WALKER_LOADS_ITLB_L3                   0x24BC
+#endif
+#if !defined (PAGE_WALKER_LOADS_ITLB_MEMORY)
+    #define PAGE_WALKER_LOADS_ITLB_MEMORY               0x28BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_DTLB_L1)
+    #define  PAGE_WALKER_LOADS_EPT_DTLB_L1              0x41BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_DTLB_L2)
+    #define  PAGE_WALKER_LOADS_EPT_DTLB_L2              0x42BC
+#endif
+#if !defined (  PAGE_WALKER_LOADS_EPT_DTLB_L3)
+    #define  PAGE_WALKER_LOADS_EPT_DTLB_L3              0x44BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_ITLB_MEMORY)
+    #define PAGE_WALKER_LOADS_EPT_ITLB_MEMORY           0x48BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_ITLB_L1)
+    #define PAGE_WALKER_LOADS_EPT_ITLB_L1               0x81BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_ITLB_L2)
+    #define PAGE_WALKER_LOADS_EPT_ITLB_L2               0x82BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_ITLB_L3)
+    #define PAGE_WALKER_LOADS_EPT_ITLB_L3               0x84BC
+#endif
+#if !defined ( PAGE_WALKER_LOADS_EPT_ITLB_MEMORY)
+    #define  PAGE_WALKER_LOADS_EPT_ITLB_MEMORY          0x88BC
+#endif
+#if !defined ( TLB_FLUSH_DTLB_THREAD)
+    #define TLB_FLUSH_DTLB_THREAD                       0x01BD
+#endif
+#if !defined ( TLB_FLUSH_STLB_ANY)
+    #define TLB_FLUSH_STLB_ANY                          0x20BD
+#endif
+#if !defined (INST_RETIRED_ANY_P)
+    #define INST_RETIRED_ANY_P                          0x00C0
+#endif
+#if !defined (INT_RETIRED_PREC_DIST)
+    #define INT_RETIRED_PREC_DIST                       0x01C0
+#endif
+#if !defined (INST_RETIRED_X87)
+    #define INST_RETIRED_X87                            0x02C0
+#endif
+#if !defined (OTHER_ASSISTS_AVX_TO_SSE)
+    #define OTHER_ASSISTS_AVX_TO_SSE                    0x08C1
+#endif
+#if !defined (OTHER_ASSISTS_SSE_TO_AVX)
+    #define OTHER_ASSISTS_SSE_TO_AVX                    0x10C1
+#endif
+#if !defined (OTHER_ASSISTS_ANY_WB_ASSIST)
+    #define OTHER_ASSISTS_ANY_WB_ASSIST                 0x40C1
+#endif
+#if !defined (UOPS_RETIRED_ALL)
+    #define UOPS_RETIRED_ALL                            0x01C2
+#endif
+#if !defined ( UOPS_RETIRED_STALL_CYCLES)
+    #define  UOPS_RETIRED_STALL_CYCLES                  0x01C2
+#endif
+#if !defined ( UOPS_RETIRED_TOTAL_CYCLES)
+    #define  UOPS_RETIRED_TOTAL_CYCLES                  0x01C2
+#endif
+#if !defined ( UOPS_RETIRED_CORE_STALL_CYLES)
+    #define UOPS_RETIRED_CORE_STALL_CYLES               0x01C2
+#endif
+#if !defined ( UOPS_RETIRED_RETIRE_SLOTS)
+    #define UOPS_RETIRED_RETIRE_SLOTS                   0x02C2
+#endif
+#if !defined ( MACHINE_CLEARS_CYCLES)
+    #define MACHINE_CLEARS_CYCLES                       0x01C3
+#endif
+#if !defined ( MACHINE_CLEARS_COUNT)
+    #define MACHINE_CLEARS_COUNT                        0x01C3
+#endif
+#if !defined ( MACHINE_CLEARS_MEMORY_ORDERING)
+    #define MACHINE_CLEARS_MEMORY_ORDERING              0x02C3
+#endif
+#if !defined (MACHINE_CLEARS_SMC)
+    #define MACHINE_CLEARS_SMC                          0x04C3
+#endif
+#if !defined (MACHINE_CLEARS_MASKMOV)
+    #define MACHINE_CLEARS_MASKMOV                      0x20C3
+#endif
+#if !defined (BR_INST_RETIRED_ALL_BRANCHES)
+    #define BR_INST_RETIRED_ALL_BRANCHES                0x00C4
+#endif
+#if !defined (BR_INST_RETIRED_CONDITIONAL)
+    #define BR_INST_RETIRED_CONDITIONAL                 0x01C4
+#endif
+#if !defined ( BR_INST_RETIRED_NEAR_CALL)
+    #define  BR_INST_RETIRED_NEAR_CALL                  0x02C4
+#endif
+#if !defined ( BR_INST_RETIRED_NEAR_CALL_R3)
+    #define BR_INST_RETIRED_NEAR_CALL_R3                0x02C4
+#endif
+#if !defined ( BR_INST_RETIRED_ALL_BRANCHES_PEBS)
+    #define BR_INST_RETIRED_ALL_BRANCHES_PEBS           0x04C4
+#endif
+#if !defined ( BR_INST_RETIRED_NEAR_RETURN)
+    #define BR_INST_RETIRED_NEAR_RETURN                 0x08C4
+#endif
+#if !defined (  BR_INST_RETIRED_NOT_TAKEN)
+    #define  BR_INST_RETIRED_NOT_TAKEN                  0x10C4
+#endif
+#if !defined (  BR_INST_RETIRED_NEAR_TAKEN)
+    #define  BR_INST_RETIRED_NEAR_TAKEN                 0x20C4
+#endif
+#if !defined ( BR_INST_RETIRED_FAR_BRANCH)
+    #define BR_INST_RETIRED_FAR_BRANCH                  0x40C4
+#endif
+#if !defined ( BR_MISP_RETIRED_ALL_BRANCHES)
+    #define BR_MISP_RETIRED_ALL_BRANCHES                0x00C5
+#endif
+#if !defined (  BR_MISP_RETIRED_CONDITIONAL)
+    #define  BR_MISP_RETIRED_CONDITIONAL                0x01C5
+#endif
+#if !defined ( BR_MISP_RETIRED_ALL_BRANCHES_PEBS)
+    #define BR_MISP_RETIRED_ALL_BRANCHES_PEBS           0x04C5
+#endif
+#if !defined ( BR_MISP_RETIRED_NEAR_TAKEN)
+    #define BR_MISP_RETIRED_NEAR_TAKEN                  0x20C5
+#endif
+#if !defined ( HLE_RETIRED_START)
+    #define HLE_RETIRED_START                           0x01C8
+#endif
+#if !defined ( HLE_RETIRED_COMMIT)
+    #define  HLE_RETIRED_COMMIT                         0x02C8
+#endif
+#if !defined (  HLE_RETIRED_ABORTED)
+    #define  HLE_RETIRED_ABORTED                        0x04C8
+#endif
+#if !defined ( HLE_RETIRED_ABORTED_MISC1)
+    #define HLE_RETIRED_ABORTED_MISC1                   0x08C8
+#endif
+#if !defined ( HLE_RETIRED_ABORTED_MISC2)
+    #define HLE_RETIRED_ABORTED_MISC2                   0x10C8
+#endif
+#if !defined ( HLE_RETIRED_ABORTED_MISC3)
+    #define HLE_RETIRED_ABORTED_MISC3                   0x20C8
+#endif
+#if !defined ( HLE_RETIRED_ABORTED_MISC4)
+    #define HLE_RETIRED_ABORTED_MISC4                   0x40C8
+#endif
+#if !defined ( FP_ASSIST_X87_OUTPUT)
+    #define FP_ASSIST_X87_OUTPUT                        0x02CA
+#endif
+#if !defined ( FP_ASSIST_X87_INPUT)
+    #define FP_ASSIST_X87_INPUT                         0x04CA
+#endif
+#if !defined ( FP_ASSIST_SIMD_OUTPUT)
+    #define FP_ASSIST_SIMD_OUTPUT                       0x08CA
+#endif
+#if !defined (  FP_ASSIST_SIMD_INPUT)
+    #define  FP_ASSIST_SIMD_INPUT                       0x10CA
+#endif
+#if !defined ( FP_ASSIST_ANY)
+    #define FP_ASSIST_ANY                               0x1ECA
+#endif
+#if !defined ( ROB_MISC_EVENTS_LBR_INSERTS)
+    #define ROB_MISC_EVENTS_LBR_INSERTS                 0x20CC
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_4)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_4         0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_8)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_8         0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_16)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_16        0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_32)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_32        0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_64)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_64        0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_128)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_128       0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_256)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_256       0x01CD
+#endif
+#if !defined ( MEM_TRANS_RETIRED_LOAD_LATENCY_GT_512)
+    #define MEM_TRANS_RETIRED_LOAD_LATENCY_GT_512       0x01CD
+#endif
+#if !defined ( MEM_UOPS_RETIRED_STLB_MISS_LOADS)
+    #define MEM_UOPS_RETIRED_STLB_MISS_LOADS            0x11D0
+#endif
+#if !defined (  MEM_UOPS_RETIRED_STLB_MISS_STORES)
+    #define  MEM_UOPS_RETIRED_STLB_MISS_STORES          0x12D0
+#endif
+#if !defined (  MEM_UOPS_RETIRED_LOCK_LOADS)
+    #define  MEM_UOPS_RETIRED_LOCK_LOADS                0x21D0
+#endif
+#if !defined (  MEM_UOPS_RETIRED_SPLIT_LOADS)
+    #define  MEM_UOPS_RETIRED_SPLIT_LOADS               0x41D0
+#endif
+#if !defined ( MEM_UOPS_RETIRED_SPLIT_STORES)
+    #define MEM_UOPS_RETIRED_SPLIT_STORES               0x42D0
+#endif
+#if !defined ( MEM_UOPS_RETIRED_ALL_LOADS)
+    #define MEM_UOPS_RETIRED_ALL_LOADS                  0x81D0
+#endif
+#if !defined ( MEM_UOPS_RETIRED_ALL_STORES)
+    #define MEM_UOPS_RETIRED_ALL_STORES                 0x82D0
+#endif
+#if !defined ( MEM_LOAD_UOPS_RETIRED_L1_HIT)
+    #define MEM_LOAD_UOPS_RETIRED_L1_HIT                0x01D1
+#endif
+#if !defined ( MEM_LOAD_UOPS_RETIRED_L2_HIT)
+    #define MEM_LOAD_UOPS_RETIRED_L2_HIT                0x02D1
+#endif
+#if !defined ( MEM_LOAD_UOPS_RETIRED_L3_HIT)
+    #define MEM_LOAD_UOPS_RETIRED_L3_HIT                0x04D1
+#endif
+#if !defined ( MEM_LOAD_UOPS_RETIRED_L1_MISS)
+    #define MEM_LOAD_UOPS_RETIRED_L1_MISS               0x08D1
+#endif
+#if !defined ( MEM_LOAD_UOPS_RETIRED_L2_MISS)
+    #define MEM_LOAD_UOPS_RETIRED_L2_MISS               0x10D1
+#endif
+#if !defined ( MEM_LOAD_UOPS_RETIRED_L3_MISS)
+    #define MEM_LOAD_UOPS_RETIRED_L3_MISS               0x20D1
+#endif
+#if !defined (  MEM_LOAD_UOPS_RETIRED_HIT_LFB)
+    #define  MEM_LOAD_UOPS_RETIRED_HIT_LFB              0x40D1
+#endif
+#if !defined (  MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_MISS)
+    #define  MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_MISS     0x01D2
+#endif
+#if !defined ( MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_MISS)
+    #define MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_MISS      0x02D2
+#endif
+#if !defined (  MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_HITM)
+    #define  MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_HITM     0x04D2
+#endif
+#if !defined (  MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_NONE)
+    #define MEM_LOAD_UOPS_L3_HIT_RETIRED_XSNP_NONE      0x08D2
+#endif
+#if !defined (  MEM_LOAD_UOPS_L3_MISS_RETIRED_LOCAL_DRAM)
+    #define MEM_LOAD_UOPS_L3_MISS_RETIRED_LOCAL_DRAM    0x01D3
+#endif
+#if !defined (  BACLEARS_ANY)
+    #define BACLEARS_ANY                                0x1FE6
+#endif
+#if !defined (  L2_TRANS_DEMAND_DATA_RD)
+    #define L2_TRANS_DEMAND_DATA_RD                     0x01F0
+#endif
+#if !defined (   L2_TRANS_RFO)
+    #define  L2_TRANS_RFO                               0x02F0
+#endif
+#if !defined (   L2_TRANS_CODE_RD)
+    #define  L2_TRANS_CODE_RD                           0x04F0
+#endif
+#if !defined (   L2_TRANS_ALL_PF)
+    #define L2_TRANS_ALL_PF                             0x08F0
+#endif
+#if !defined (    L2_TRANS_L1D_WB)
+    #define  L2_TRANS_L1D_WB                            0x10F0
+#endif
+#if !defined (    L2_TRANS_L2_FILL)
+    #define  L2_TRANS_L2_FILL                           0x20F0
+#endif
+#if !defined (    L2_TRANS_L2_WB)
+    #define  L2_TRANS_L2_WB                             0x40F0
+#endif
+#if !defined (    L2_TRANS_ALL_REQUESTS)
+    #define   L2_TRANS_ALL_REQUESTS                     0x80F0
+#endif
+#if !defined (    L2_LINES_IN_I)
+    #define   L2_LINES_IN_I                             0x01F1
+#endif
+#if !defined (    L2_LINES_IN_S)
+    #define   L2_LINES_IN_S                             0x02F1
+#endif
+#if !defined (    L2_LINES_IN_E)
+    #define   L2_LINES_IN_E                             0x04F1
+#endif
+#if !defined (    L2_LINES_IN_ALL)
+    #define  L2_LINES_IN_ALL                            0x07F1
+#endif
+#if !defined (    L2_LINES_OUT_DEMAND_CLEAN)
+    #define  L2_LINES_OUT_DEMAND_CLEAN                  0x05F2
+#endif
+#if !defined (    L2_LINES_OUT_DEMAND_DIRTY)
+    #define  L2_LINES_OUT_DEMAND_DIRTY                  0x06F2
+#endif
+#if !defined (    SQ_MISC_SPLIT_LOCK)
+    #define  SQ_MISC_SPLIT_LOCK                         0x10F4
+#endif
+#if !defined (    OFFCORE_RESPONSE_ALL_REQUESTS_L3_MISS_ANY_RESPONSE)
+    #define  OFFCORE_RESPONSE_ALL_REQUESTS_L3_MISS_ANY_RESPONSE 0x01B7
+#endif
+#if !defined (    OFFCORE_RESPONSE_ALL_REQUESTS_L3_HIT_ANY_RESPONSE)
+    #define   OFFCORE_RESPONSE_ALL_REQUESTS_L3_HIT_ANY_RESPONSE 0x01B7
+#endif
+#if !defined (    OFFCORE_RESPONSE_ALL_READS_L3_MISS_LOCAL_DRAM)
+    #define   OFFCORE_RESPONSE_ALL_READS_L3_MISS_LOCAL_DRAM     0x01B7
+#endif
+#if !defined (    OFFCORE_RESPONSE_ALL_READS_L3_MISS_ANY_RESPONSE)
+    #define   OFFCORE_RESPONSE_ALL_READS_L3_MISS_ANY_RESPONSE   0x01B7
+#endif
+#if !defined (    OFFCORE_RESPONSE_ALL_READS_L3_HIT_HITM_OTHER_CORE)
+    #define   OFFCORE_RESPONSE_ALL_READS_L3_HIT_HITM_OTHER_CORE 0x01B7
+#endif
+#if !defined (    OFFCORE_RESPONSE_ALL_READS_L3_HIT_HIT_OTHER_CORE_NO_FWD)
+    #define   OFFCORE_RESPONSE_ALL_READS_L3_HIT_HIT_OTHER_CORE_NO_FWD 0x01B7
+#endif
+#if !defined (     OFFCORE_RESPONSE_ALL_CODE_RD_L3_MISS_LOCAL_DRAM)
+    #define    OFFCORE_RESPONSE_ALL_CODE_RD_L3_MISS_LOCAL_DRAM  0x01B7
+#endif
+#if !defined (     OFFCORE_RESPONSE_ALL_RFO_L3_MISS_ANY_RESPONSE)
+    #define    OFFCORE_RESPONSE_ALL_RFO_L3_MISS_ANY_RESPONSE    0x01B7
+#endif
+#if !defined (     OFFCORE_RESPONSE_PF_L3_CODE_RD_L3_HIT_ANY_RESPONSE)
+    #define    OFFCORE_RESPONSE_PF_L3_CODE_RD_L3_HIT_ANY_RESPONSE 0x01B7
+#endif
+#if !defined (     OFFCORE_RESPONSE_PF_L3_RFO_L3_MISS_ANY_RESPONSE)
+    #define    OFFCORE_RESPONSE_PF_L3_RFO_L3_MISS_ANY_RESPONSE    0x01B7
+#endif
+#if !defined (     OFFCORE_RESPONSE_PF_L3_RFO_L3_HIT_ANY_RESPONS)
+    #define    OFFCORE_RESPONSE_PF_L3_RFO_L3_HIT_ANY_RESPONS      0x01B7
+#endif
+#if !defined (     OFFCORE_RESPONSE_PF_L2_CODE_RD_L3_MISS_ANY_RESPONSE)
+    #define    OFFCORE_RESPONSE_PF_L2_CODE_RD_L3_MISS_ANY_RESPONSE 0x01B7
+#endif
 namespace gms {
 
        namespace hardware {
