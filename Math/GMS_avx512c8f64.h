@@ -20,7 +20,7 @@ namespace file_info {
 
 	const char * const pgGMS_AVX512C8F64_CREATE_DATE = "29-09-2018 11:13 +00200 (SAT 29 SEP 2018 GMT+2)";
 
-	const char * const pgGMS_AVX512C8F64_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_AVX512C8F64_BUILD_DATE = __DATE__ " " __TIME__;
 
 	const char * const pgGMS_AVX512C8F64_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
