@@ -19,7 +19,7 @@ namespace file_info {
 
 	const char * const  pgGMS_VECSPECFUNCS_CREATE_DATE = "01-10-2018 10:41 +00200 (MON 01 OCT 2018 GMT+2)";
 
-	const char * const  pgGMS_VECSPECFUNCS_BUILD_DATE  = "00-00-0000 00:00";
+	const char * const  pgGMS_VECSPECFUNCS_BUILD_DATE  = __DATE__ " " __TIME__;
 
 	const char * const  pgGMS_VECSPECFUNCS_AUTHOR = "Adapted by Bernard Gingold e-mail: beniekg@gmail.com";
 
@@ -59,7 +59,7 @@ namespace file_info {
 
 /*
 	Bernard Gingold copyright notice:
-	This file is a part of LibAtmosModelCPP library
+	This file is a part of Guided-Missile-Simulation-Modeling (GMS) project.
 	Copyright(C) 2017 Bernard Gingold
 	License : GNU General Public Locense version 3 or later,
 	for additional information check file LICENSE.txt in
@@ -164,6 +164,7 @@ typedef __m512d Vec8;
 			const Vec8 v8_n1idx(Vec8_CVTI4(Vec8_SETI4(1)));
 			const Vec8 v8_1over180(Vec8_SET1(0.00555555555555555555555555555556));
 			constexpr double s_pi = 3.141592653589793;
+			constexpr __mmask8 all_ones8 = 0xFF;
 		}
 
 		// helpers
@@ -179,6 +180,71 @@ typedef __m512d Vec8;
 		inline Vec4 abs(const Vec4 x) {
 			return (Vec4_AND(x,v4_absmask));
 		}
+
+	      static double envj(const int32_t n,
+	                         const double x) {
+                   double term1,term2;
+		   term1 = 0.5*std::log10(6.28*(double)n);
+		   term2 = n * std::log10(1.36*x/(double)n);
+		   return (term1*term2);
+	       }
+
+	      static int32_t msta1(const double x,
+			      const int32_t mp) {
+		  double a0,f,f0,f1;
+		  int32_t it,n0,n1,nn;
+		  a0 = std::abs(x);
+		  n0 = (int32_t)(1.1*a0)+1;
+		  f0 = envj(n0,a0) - mp;
+		  n1 = n0 + 5;
+		  f1 = envj(n1,a0) - mp;
+		  for (it = 1; it != 20; ++it) {
+		    nn = n1 - (n1-n0) / (1.0 - f0/f1);
+		    f = envj(nn,a0) - mp;
+		    if (std::abs(nn-n1) < 1) {
+		      return;
+		    }
+		    n0 = n1;
+		    f0 = f1;
+		    n1 = nn;
+		    f1 = f;
+		  }
+		  return (nn);
+		}
+
+	     static  int32_t msta2(const double x,
+			      const int32_t n,
+			      const int32_t mp) {
+		  double f,f0,f1,hmp,ejn,obj;
+		  int32_t it,n0,n1,nn;
+		  a0 = std::abs(x);
+		  hmp = 0.5*(double)mp;
+		  ejn = envj(n,a0);
+		  if(ejn <= hmp) {
+		    obj = (double)mp;
+		    n0 = (int32_t)(1.1+a0);
+		  }
+		  else {
+                    obj = hmp+ejn;
+		    n0 = n;
+		  }
+		  f0 = envj(n0,a0)-obj;
+		  n1 = n0+5;
+		  f1 = envj(n1,a0)-obj;
+		  for(it = 1; it != 20; ++it) {
+                      nn = n1-(n1-n0)/(1.0-f0/f1);
+		      f = envj(nn,a0)-obj;
+		      if(std::abs(nn-n1) < 1) {
+                         return;
+		      }
+		      n0 = n1;
+		      f0 = f1;
+		      n1 = nn;
+		      f1 = f;
+		  }
+		  return (nn+10);
+		}
+		   
 		/*
 			 AIRYA computes Airy functions and their derivatives.
 !
@@ -338,13 +404,13 @@ typedef __m512d Vec8;
 			// Call ajyik
 			v8_ajyik_pd(x,vj1,vj2,vy1,vy2,vi1,vi2,vk1,vk2);
 			const Vec8 pirvk2 = Vec8_MUL(v8PIR,vk2);
-			if (Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) {
+			if ((Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) == all_ones8) {
 				ai = v8AIRC1;
 				bi = Vec8_MUL(v8SR3,v8AIRC1);
 				ad = flip_sign(v8AIRC2);
 				bd = Vec8_MUL(v8SR3,v8AIRC2);
 			}
-			else if (Vec8_CMP(x, v8_n0, _CMP_GT_OQ)) {
+			else if ((Vec8_CMP(x, v8_n0, _CMP_GT_OQ)) == all_ones8) {
 				ai = Vec8_MUL(Vec8_MUL(v8PIR, xq), Vec8_MUL(invsr3, vk1));
 				const Vec8 t1 = Vec8_MUL(v8_n2, Vec8_MUL(invsr3, vi1));
 				const Vec8 t2 = Vec8_MUL(v8PIR, vk1);
@@ -865,7 +931,7 @@ typedef __m512d Vec8;
 			         Vec8 &vi2,
 			         Vec8 &vk1,
 			         Vec8 &vk2) {
-			if (Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) {
+		        if ((Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) == all_ones8) {
 				vj1 = v8_n0;
 				vj2 = v8_n0;
 				vy1 = v8HUGEN;
@@ -924,17 +990,17 @@ typedef __m512d Vec8;
 			ca.vjl     = v8_n0;
 			ca.vil     = v8_n0;
 			ca.gn      = v8_n0;
-			if (Vec8_CMP(x, v8_n35, _CMP_LT_OQ)) {
+			if ((Vec8_CMP(x, v8_n35, _CMP_LT_OQ)) == all_ones8) {
 			   k0 = 12;
 			}
-			else if (Vec8_CMP(x, v8_n50, _CMP_LT_OQ)) {
+			else if ((Vec8_CMP(x, v8_n50, _CMP_LT_OQ)) == all_ones8) {
 				k0 = 10;
 			}
 			else {
 				k0 = 8;
 			}
 
-			if (Vec8_CMP(x, v8_n12, _CMP_LE_OQ)) {
+			if ((Vec8_CMP(x, v8_n12, _CMP_LE_OQ)) == all_ones8) {
 				for (l = 1; l != 3; ++l) {
 					const Vec8 tl = Vec8_CVTI4(Vec8_SETI4(l));
 					ca.vl = Vec8_MUL(tl,v8_1over3);
@@ -1010,7 +1076,7 @@ typedef __m512d Vec8;
 				}
 			}
 
-			if (Vec8_CMP(x, v8_n12, _CMP_LE_OQ)) {
+			if ((Vec8_CMP(x, v8_n12, _CMP_LE_OQ)) == all_ones8) {
 				for (l = 1; l != 3; ++l) {
 					const Vec8 tl = Vec8_CVTI4(Vec8_SETI4(l));
 					ca.vl = Vec8_MUL(tl,v8_1over3);
@@ -1040,7 +1106,7 @@ typedef __m512d Vec8;
 				vy2 = Vec8_MUL(ca.uu0, Vec8_SUB(Vec8_MUL(vj2, Vec8_COS(ca.pv2)),ca.uj2));
 			}
 
-			if (Vec8_CMP(x, v8_n18, _CMP_LE_OQ)) {
+			if ((Vec8_CMP(x, v8_n18, _CMP_LE_OQ)) == all_ones8) {
 				for (l = 1; l != 3; ++l) {
 					const Vec8 tl = Vec8_CVTI4(Vec8_SETI4(l));
 					ca.vl = Vec8_MUL(tl, v8_1over3);
@@ -1088,7 +1154,7 @@ typedef __m512d Vec8;
 				}
 			}
 
-			if (Vec8_CMP(x, v8_n9, _CMP_LE_OQ)) {
+			if ((Vec8_CMP(x, v8_n9, _CMP_LE_OQ)) == all_ones8) {
 				for (l = 1; l != 3; ++l) {
 					const Vec8 tl = Vec8_CVTI4(Vec8_SETI4(l));
 					ca.vl = Vec8_MUL(tl, v8_1over3);
@@ -1264,7 +1330,7 @@ typedef __m512d Vec8;
 #endif
 			nm = nx;
 			ca.invx = Vec8_DIV(v8_n1,x);
-			if (Vec8_CMP(x, v8EPS3, _CMP_LT_OQ)) {
+			if ((Vec8_CMP(x, v8EPS3, _CMP_LT_OQ)) == all_ones8) {
 				for (ca.k = 0; ca.k != nx; ++ca.k) {
 					sy[ca.k] = v8HUGEP;
 					dy[ca.k] = v8HUGEN;
@@ -1423,7 +1489,7 @@ typedef __m512d Vec8;
 #endif
 			ca.invx = Vec8_DIV_(v8_n1,x);
 			nm = nx;
-			if (Vec8_CMP(x, v8EPS4, _CMP_LT_OQ)) {
+			if ((Vec8_CMP(x, v8EPS4, _CMP_LT_OQ)) == all_ones8) {
 				for (ca.k = 0; ca.k != nx; ++ca.k) {
 					sk[k] = v8HUGEP;
 					dk[k] = v8HUGEN;
@@ -1580,7 +1646,7 @@ typedef __m512d Vec8;
 			ca.invx = Vec8_DIV(v8_n1, x);
 			nm = N;
 			
-			if (Vec8_CMP(x,v8EPS4,_CMP_LT_OQ)) {
+			if ((Vec8_CMP(x,v8EPS4,_CMP_LT_OQ)) == all_ones8) {
 				for (ca.k = 0; ca.k != N; ++ca.k) {
 					ry[ca.k] = v8HUGEP;
 					dy[ca.k] = v4HUGEN;
@@ -1849,7 +1915,7 @@ typedef __m512d Vec8;
 #endif 
 			}ca;
 #endif
-			if (Vec8_CMP(x, v4_n1, _CMP_EQ_OQ)) {
+			if ((Vec8_CMP(x, v4_n1, _CMP_EQ_OQ)) == all_ones8) {
 				for (ca.k = 0; ca.k != N; ++ca.k) {
 					qn[ca.k] = v8HUGEP;
 					qd[ca.k] = v8HUGEP;
@@ -1869,7 +1935,7 @@ typedef __m512d Vec8;
 			const Vec8 eps = Vec8_SET1(1.0E-14);
 			const Vec8 v8_c1021 = Vec8_SET1(1.021E+00);
 			
-			if (Vec8_CMP(x, v8_c1021, _CMP_LE_OQ)) {
+			if ((Vec8_CMP(x, v8_c1021, _CMP_LE_OQ)) == all_ones) {
 				ca.x2 = Vec8_ABS(Vec8_DIV(Vec8_ADD(v8_n1, x), Vec8_SUB(v8_n1, x)));
 				ca.q0 = Vec8_MUL(v8_1over2, Vec8_LOG(x2));
 				ca.q1 = Vec8_SUB(Vec8_MUL(x, ca.q0), v8_n1);
@@ -2043,11 +2109,11 @@ typedef __m512d Vec8;
                                 Vec8 es1,es2;
 			}ca;
 #endif
-			if (Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) {
+			if ((Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) == all_ones8) {
 				e1 = v8HUGEP;
 				return;
 			}
-			else if (Vec8_CMP(x, v8_n1, _CMP_LE_OQ)) {
+			else if ((Vec8_CMP(x, v8_n1, _CMP_LE_OQ)) == all_ones8) {
 				const Vec8 coef1 = Vec8_SET1(1.07857E-03);
 				const Vec8 coef2 = Vec8_SET1(9.76004E-03);
 				const Vec8 coef3 = Vec8_SET1(5.519968E-02);
@@ -2159,11 +2225,11 @@ typedef __m512d Vec8;
 				      Vec8 &ei) {
 			Vec8 r,invx;
 			int32_t k;
-			if (Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) {
+			if ((Vec8_CMP(x, v8_n0, _CMP_EQ_OQ)) == all_ones8) {
 				ei = v8HUGEN;
 				return;
 			}
-			else if (Vec8_CMP(x, Vec8_SET1(40.0), _CMP_LE_OQ)) {
+			else if ((Vec8_CMP(x, Vec8_SET1(40.0), _CMP_LE_OQ)) == all_ones8) {
 				const Vec8 eps = Vec8_SET1(1.0E-15);
 				ei = v8_n1;
 				r = v8_n1;
@@ -2356,13 +2422,13 @@ typedef __m512d Vec8;
 			ca.b0 = Vec8_SQRT(Vec8_SUB(v8_n1,ca.t0));
 			ca.d0 = Vec8_MUL(Vec8_MUL(v8PI,v8_1over180),phi);
 			ca.r = ca.t0;
-			if (Vec8_CMP(hk, v8_n1, _CMP_EQ_OQ) &&
-				Vec8_CMP(phi, Vec8_SET1(90.0), _CMP_EQ_OQ)) {
+			if ((Vec8_CMP(hk, v8_n1, _CMP_EQ_OQ)) == all_ones8 &&
+				(Vec8_CMP(phi, Vec8_SET1(90.0), _CMP_EQ_OQ)) == all_ones8) {
 				fe = v8HUGEP;
 				ee = v8_n1;
 				return;
 			}
-			else if (Vec8_CMP(hk, v8_n1, _CMP_EQ_OQ)) {
+			else if ((Vec8_CMP(hk, v8_n1, _CMP_EQ_OQ)) == all_ones8) {
 				const Vec8 sind0 = Vec8_SIN(ca.d0);
 				fe = Vec8_LOG(Vec8_DIV(Vec8_ADD(v8_n1, sind0), Vec8_COS(ca.d0)));
 				ee = sind0;
@@ -2387,12 +2453,12 @@ typedef __m512d Vec8;
 					ca.b0 = ca.b;
 				}
 				
-				if (Vec8_CMP(ca.c, eps, _CMP_LT_OQ)) {
+				if ((Vec8_CMP(ca.c, eps, _CMP_LT_OQ)) == all_ones8) {
 					break;
 				}
 				ca.ck = Vec8_DIV(v8PI, Vec8_MUL(v8_n2, ca.a));
 				ca.ce = Vec8_MUL(v8PI, Vec8_DIV(Vec8_SUB(v8_n2, ca.r), Vec8_MUL(v8_n4, ca.a)));
-				if (Vec8_CMP(phi, Vec4_SET1(90.0), _CMP_NEQ_OQ)) {
+				if ((Vec8_CMP(phi, Vec4_SET1(90.0), _CMP_NEQ_OQ)) == all_ones8) {
 					fe = ca.ck;
 					ee = ca.ce;
 				}
@@ -2589,7 +2655,8 @@ typedef __m512d Vec8;
 				ca.t1 = v8_n0;
 				ca.t2 = v8_n0;
 				const Vec8 eps = Vec8_SET1(1.0E-8);
-				if ((Vec8_CMP(hk, v4_n1, _CMP_EQ_OQ) &&
+			
+				if ((Vec8_CMP(hk, v8_n1, _CMP_EQ_OQ) &&
 					 Vec8_CMP(Vec8_ABS(Vec8_SUB(phi, Vec8_SET1(90.0))), eps, _CMP_LE_OQ)) ||
 					(Vec8_CMP(c, v8_n1, _CMP_EQ_OQ) &&
 					 Vec8_CMP(Vec8_ABS(Vec8_SUB(phi, Vec8_SET1(90.0))), eps, _CMP_LE_OQ))) {
@@ -2871,7 +2938,8 @@ typedef __m512d Vec8;
 		  dh.y = z.m_im;
 		  dh.x2 = Vec8_MUL(dh.x,dh.x);
 		  dh.expx2 = Vec8_EXP(flip_sign(dh.x2));
-		  if (Vec8_CMP(dh.x,Vec8_SET1(3.5),_CMP_LE_OQ)) {
+		  
+		  if ((Vec8_CMP(dh.x,Vec8_SET1(3.5),_CMP_LE_OQ)) == all_ones8) {
 		      dh.er = v8_n1;
 		      dh.r  = v8_n1;
 		      dh.k = 0;
@@ -2903,7 +2971,7 @@ typedef __m512d Vec8;
 		      dh.er0     = Vec8_SUB(v8_n1,Vec8_MUL(dc.c0.m_re,dh.er));
 		 }
 
-		 if (Vec8_CMP(dh.y,v8_n0,CMP_EQ_OQ)) {
+		 if ((Vec8_CMP(dh.y,v8_n0,CMP_EQ_OQ)) == all_ones8) {
                       dh.err = dh.er0;
 		      dh.eri = v8_n0;
 		 }
@@ -2930,7 +2998,7 @@ typedef __m512d Vec8;
 			 const Vec8 t6     = Vec8_ADD(t5,t3);
 			 dh.er2 = Vec8_ADD(dh.er2,Vec8_MUL(t4,t6));
 			 const Vec8 vcmp1 = Vec8_DIV(Vec8_SUB(dh.er2,dh.w1),dh.er2);
-			 if(Vec8_CMP(Vec8_ABS(vcmp1),v8EPS1ton12,_CMP_LT_OQ)) {
+			 if((Vec8_CMP(Vec8_ABS(vcmp1),v8EPS1ton12,_CMP_LT_OQ)) == all_ones8) {
                              return;
 			 }
 			 dh.w1 = dh.er2;
@@ -2998,10 +3066,10 @@ typedef __m512d Vec8;
               dh.a0 = Vec8_ABS(z.m_re);
 	      dh.c0 = cexp(~z*z);
 	      dh.z1 = z;
-	      if (Vec8_CMP(z.m_re,v8_n0,_CMP_LT_OQ)) {
+	      if ((Vec8_CMP(z.m_re,v8_n0,_CMP_LT_OQ)) == all_ones8) {
                    dh.z1 = ~z;
 	      }
-	      if (Vec8_CMP(dh.a0,Vec8_SET1(5.8),_CMP_LE_OQ)) {
+	      if ((Vec8_CMP(dh.a0,Vec8_SET1(5.8),_CMP_LE_OQ)) == all_ones8) {
                    dh.cs = dh.z1;
 		   dh.cr = dh.z1;
 		   dh.k = 0;
@@ -3010,7 +3078,7 @@ typedef __m512d Vec8;
 			dh.cr = dh.cr * dh.z1 * dh.z1 / Vec8_ADD(vk,v8_1over2);
 			dh.cs = dh.cs + dh.cr;
 			const AVX512c8f64 tmp = cabs(dh.cr/dh.cs);
-			if (Vec8_CMP(tmp.m_re,Vec8_SET1(0.000000000000001),_CMP_LT_OQ)) {
+			if ((Vec8_CMP(tmp.m_re,Vec8_SET1(0.000000000000001),_CMP_LT_OQ)) == all_ones8) {
                              return;
 			}
 		   }
@@ -3032,7 +3100,7 @@ typedef __m512d Vec8;
 		   cer = v8_n1 - dh.c0 * dh.cl / Vec8_SET1(0.564189583547756286948);
 	       }
 
-	       if (Vec8_CMP(z.m_re,v8_n0,_CMP_LT_OQ)) {
+	       if ((Vec8_CMP(z.m_re,v8_n0,_CMP_LT_OQ)) == all_ones8) {
                    cer = ~cer;
 	       }
       }
@@ -3141,7 +3209,7 @@ typedef __m512d Vec8;
 			dc.w = Vec8_ABS(dh.z.m_re);
 			const Vec8 vcmp1 = Vec8_ABS(Vec8_DIV(Vec8_SUB(dc.w,dc.w0),dc.w));
 			
-		  }while(50 < dh.it || Vec8_CMP(vcmp1,Vec8_SET1(0.00000000001),_CMP_LE_OQ) );
+		  }while(50 < dh.it || (Vec8_CMP(vcmp1,Vec8_SET1(0.00000000001),_CMP_LE_OQ)) == all_ones8 );
 
 		   zo[dh.nr] = dh.z;
 	    }  
@@ -3214,10 +3282,10 @@ typedef __m512d Vec8;
 		  dh.zp  = Vec8_MUL(v8_1over2,v8PI) * dh.z * dh.z;
 		  dh.zp2 = dh.z * dh.z;
 		  const std::pair<__mmask8> cmp = z == dh.z0;
-		  if(cmp.first && cmp.second) {
+		  if((cmp.first == all_ones8)  && (cmp.second == all_ones8)) {
                      dh.c = dh.z0;
 		}
-		  else if (Vec8_CMP(dc.w0,Vec8_SET1(2.5),_CMP_LE_OQ)) {
+		  else if ((Vec8_CMP(dc.w0,Vec8_SET1(2.5),_CMP_LE_OQ)) == all_ones8) {
                      dh.k = 0;
 		     dh.cr = z;
 		     dh.c  = dh.cr;
@@ -3231,14 +3299,14 @@ typedef __m512d Vec8;
 			   dh.c += dh.cr;
 			   dc.wa = cabs(dh.c);
 			   const Vec8 vcmp = Vec8_ABS((Vec8_DIV(Vec8_SUB(dc.wa,dc.wa0),dc.wa)));
-			   if (Vec8_CMP(vcmp,Vec8_SET1(0.00000000000001),_CMP_LT_OQ)) {
+			   if ((Vec8_CMP(vcmp,Vec8_SET1(0.00000000000001),_CMP_LT_OQ)) == all_ones8) {
                                   return;
 			   }
 			   dc.wa0 = dc.wa;
 		     }
 		}
-		 else if (Vec8_CMP(Vec8_SET1(2.5),dc.w0,_CMP_LT_OQ) &&
-		          Vec8_CMP(dc.w0,Vec8_SET1(4.5),_CMP_LT_OQ))  {
+		 else if ((Vec8_CMP(Vec8_SET1(2.5),dc.w0,_CMP_LT_OQ)) == all_ones8 &&
+		          (Vec8_CMP(dc.w0,Vec8_SET1(4.5),_CMP_LT_OQ))  == all_ones8)  {
 
                           dh.m = 85;
 			  dh.c = dh.z0;
@@ -3281,14 +3349,638 @@ typedef __m512d Vec8;
 			  dh.c = v8_1over2 + tmp3 / (v8PI * z);
 		}
 		zf = dh.c;
-		zd = ccos(v8_1over2*v8PI*z*z);
+		zd = ccos(Vec8_SET(1.570796326794896619231)*z*z);
        }
 
 
+              void v8_cfs_pd(const AVX512c8f64 z,
+		             AVX512c8f64 &zf,
+		             AVX512c8f64 &zd )    {
+#if defined _WIN64
+		__declspec(align(64)) struct {
+		    AVX512c8f64 s;
+		    AVX512c8f64 cr;
+		    AVX512c8f64 zp2;
+		    AVX512c8f64 cf;
+		    AVX512C8F64 cf0;
+		    AVX512c8f64 cf1;
+		    AVX512c8f64 zp;
+		    AVX512c8f64 cg;
+		    Vec8 wb;
+		    Vec8 wb0;
+		    int32_t k,m;
+#if (USE_STRUCT_PADDING) == 1
+                    PAD_TO(0,58)
+#endif
+		}dh;
+#elif defined __linux
+               __attribute__((align(64))) struct {
+                    AVX512c8f64 s;
+		    AVX512c8f64 cr;
+		    AVX512c8f64 zp2;
+		    AVX512c8f64 cf;
+		    AVX512C8F64 cf0;
+		    AVX512c8f64 cf1;
+		    AVX512c8f64 zp;
+		    AVX512c8f64 cg;
+		    Vec8 wb;
+		    Vec8 wb0;
+		    int32_t k,m;
+#if (USE_STRUCT_PADDING) == 1
+                    PAD_TO(0,58)
+#endif
+	        }dh;
+#endif
+#if defined _WIN64
+             __declspec(align(64)) struct {
+                   AVX512c8f64 z0;
+		   Vec8 w0;
+	        }dc;
+#elif defined __linux
+             __attribute__((align(64))) struct {
+                   AVX512c8f64 z0;
+		   Vec8 w0;
+	     }dc;
+#endif
 
-	
+                   dh.s   = AVX512c8f64{};
+		   dh.cr  = AVX512c8f64{};
+		   dh.zp2 = AVX512c8f64{};
+		   dh.cf  = AVX512c8f64{};
+		   dh.cf0 = AVX512c8f64{};
+		   dh.cf1 = AVX512c8f64{};
+		   dh.zp  = AVX512c8f64{};
+		   dh.cg  = AVX512c8f64{};
+		   dh.wb  = v8_n0;
+		   dh.wb0 = v8_n0;
+		   dc.w0  = v8_n0;
+
+		   dc.w0  = cabs(z);
+		   dh.zp  = Vec8_MUL(v8_1over2,v8PI) * z * z;
+		   dh.zp2 = dh.zp * dh.zp;
+		   const std::pair<__mmask8,__mmask8> vcmp = z == dc.z0;
+		   if((vcmp.first == all_ones8) && (vcmp.second == all_ones8)) {
+                       dh.s = dc.z0;
+		   }
+		   else if ((Vec8_CMP(dc.w0,Vec8_SET1(2.5),_CMP_LE_OQ)) == all_ones8) {
+                       dh.s = z * dh.zp / Vec8_SET1(3.0);
+		       dh.cr = dh.s;
+		       dh.k = 0;
+		       for (dh.k = 1; dh.k != 80; ++dh.k) {
+                            const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+			    const Vec8 t0 = Vec8_DIV(Vec8_FMSUB(v8_n4,vk.v8_n1),vk);
+			    const Vec8 t1 = Vec8_FMAD(v8_n2,vk,v8_n1);
+			    const Vec8 t2 = Vec8_FMAD(v8_n4,vk,v8_n3);
+			    dh.cr  = flip_sign(v8_1over2) * dh.cr * t0 / t1 / t2 * dh.zp2;
+			    dh.s += dh.cr;
+			    dh.wb = cabs(dh.s);
+			    const Vec8 vcmp1 = Vec8_ABS(Vec8_SUB(dh.wb,dh.wb0));
+			    if((Vec8_CMP(vcmp1,Vec8_SET1(0.00000000000001),_CMP_LT_OQ)) == all_ones8) {
+                               return;
+			    }
+			    dh.wb0 = dh.wb;
+		       }
+		   }
+		    else if ((Vec8_CMP(Vec8_SET1(2.5),dc.w0,_CMP_LT_OQ)) == all_ones8 &&
+		             (Vec8_CMP(dc.w0,Vec8_SET1(4.5),_CMP_LT_OQ))  == all_ones8) {
+                             dh.m = 0;
+			     dh.m = 85;
+			     dh.s = dc.z0;
+			     dh.cf0 = AVX512c8f64{Vec8_SET1(1.0E-30),v8_n0};
+			     for (dh.k = dh.m; dh.k != 0; --dh.k) {
+                                   const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				   const Vec8 t0 = Vec8_FMAD(v8_n2,vk,v8_n3);
+				   dh.cf = t0 * dh.cf0 / dh.zp - dh.cf1;
+				   if (dh.k != (dh.k/2)*2) {
+                                       dh.s += dh.cf;
+				   }
+				   dh.cf1 = dh.cf0;
+				   dh.cf0 = dh.cf;
+			     }
+			    const AVX512c8f64 tmp1 = csqrt(v8_n2/(v8PI*dh.zp));
+			    const AVX512c8f64 tmp2 = csin(dh.zp) / dh.cf * dh.s;
+		    }
+		     else {
+                            dh.cr = AVX512c8f64{v8_n1,v8_n0};
+			    dh.cf = AVX512c8f64{v8_n1,v8_n0};
+			    for (dh.k = 1; dh.k != 20; ++dh.k) {
+                                   const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				   const Vec8 t0 = Vec8_FMSUB(v8_n4,vk,v8_n1);
+				   const Vec8 t1 = Vec8_FSUB(v8_n4,vk,v8_n3);
+				   dh.cr = flip_sign(v8_1over4) * dh.cr * t0 * t1 / dh.zp2;
+				   dh.cf += dh.cr;
+			    }
+			    dh.cr = v8_n1 / (v8_PI*z*z);
+			    dh.cg = dh.cr;
+			    for (dh.k = 1; dh.k != 12; ++dh.k) {
+                                   const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				   const Vec8 t0 = Vec8_FMAD(v8_n4,vk,v8_n1);
+				   const Vec8 t1 = Vec8_FMSUB(v8_v4,vk,v8_n1);
+				   dh.cr = flip_sign(v8_1over4) * dh.cr * t0 * t1 / dh.zp2;
+				   dh.cg += dh.cr;
+			    }
+			    const AVX512c8f64 tmp3 = (dh.cf*ccos(dh.zp) + dh.cg*csin(dh.zp));
+			    dh.s = v8_1over2 - tmp3 / (v8PI*z);
+		     }
+		     zf = dh.s;
+		     zd = csin(Vec8_SET1(1.570796326794896619231)*z*z);
+          }
+
+	      void v8_cik01(const AVX512c8f64 z,
+	                    AVX512c8f64 &cbi0,
+			    AVX512c8f64 &cdi0,
+			    AVX512c8f64 &cbi1,
+			    AVX512c8f64 &cdi1,
+			    AVX512c8f64 &cbk0,
+			    AVX512c8f64 &cdk0,
+			    AVX512c8f64 &cbk1,
+			    AVX512c8f64 &cdk1   ) {
+#if defined _WIN64
+                 __declspec(align(64)) struct {
+                     AVX512c8f64 cr;
+		     AVX512c8f64 z2;
+		     AVX512c8f64 zr;
+		     AVX512c8f64 cs;
+		     Vec8 w0;
+		     int32_t k,k0;
+#if (USE_STRUCT_PADDING) == 1
+                     PAD_TO(0,58)
+#endif
+		 }dh;
+#elif defined __linux
+                __attribute__((align(64))) struct {
+                     AVX512c8f64 cr;
+		     AVX512c8f64 z2;
+		     AVX512c8f64 zr;
+		     AVX512c8f64 cs;
+		     Vec8 w0;
+		     int32_t k,k0;
+#if (USE_STRUCT_PADDING) == 1
+                     PAD_TO(0,58)
+#endif
+		}dh;
+#endif
+#if defined _WIN64
+               __declspec(align(64)) struct {
+                    AVX512c8f64 ca;
+		    AVX512c8f64 cb;
+		    AVX512c8f64 ci;
+		    AVX512c8f64 ct;
+		    AVX512c8f64 cw;
+		    AVX512c8f64 z1;
+		    AVX512c8f64 zr2;
+		    Vec8 a0;
+	       }dc;
+#elif defined __linux
+              __attribute__((align(64))) struct {
+                    AVX512c8f64 ca;
+		    AVX512c8f64 cb;
+		    AVX512c8f64 ci;
+		    AVX512c8f64 ct;
+		    AVX512c8f64 cw;
+		    AVX512c8f64 z1;
+		    AVX512c8f64 zr2;
+		    Vec8 a0;
+	      }dc;
+#endif
+#if defined _WIN64
+              __declspec(align(64)) const double a[12] = {
+	                  0.125E+00,           7.03125E-02,
+                          7.32421875E-02,      1.1215209960938E-01,
+                          2.2710800170898E-01, 5.7250142097473E-01,
+                          1.7277275025845E+00, 6.0740420012735E+00,
+                          2.4380529699556E+01, 1.1001714026925E+02,
+                          5.5133589612202E+02, 3.0380905109224E+03};
+              __declspec(align(64)) const double a1[10] = {
+	                  0.125E+00,            0.2109375E+00, 
+                          1.0986328125E+00,     1.1775970458984E+01, 
+                          2.1461706161499E+002, 5.9511522710323E+03, 
+                          2.3347645606175E+05,  1.2312234987631E+07, 
+                          8.401390346421E+08,   7.2031420482627E+10};
+	      __declspec(align(64)) const double b[12] = {
+	                 -0.375E+00,           -1.171875E-01, 
+                         -1.025390625E-01,     -1.4419555664063E-01, 
+                         -2.7757644653320E-01, -6.7659258842468E-01, 
+                         -1.9935317337513E+00, -6.8839142681099E+00, 
+                         -2.7248827311269E+01, -1.2159789187654E+02, 
+                         -6.0384407670507E+02, -3.3022722944809E+03};
+#elif defined __linux
+                __attribute__((align(64))) const double a[12] = {
+	                  0.125E+00,           7.03125E-02,
+                          7.32421875E-02,      1.1215209960938E-01,
+                          2.2710800170898E-01, 5.7250142097473E-01,
+                          1.7277275025845E+00, 6.0740420012735E+00,
+                          2.4380529699556E+01, 1.1001714026925E+02,
+                          5.5133589612202E+02, 3.0380905109224E+03};
+                __attribute__((align(64))) const double a1[10] = {
+	                  0.125E+00,            0.2109375E+00, 
+                          1.0986328125E+00,     1.1775970458984E+01, 
+                          2.1461706161499E+002, 5.9511522710323E+03, 
+                          2.3347645606175E+05,  1.2312234987631E+07, 
+                          8.401390346421E+08,   7.2031420482627E+10};
+	       __attribute__((align(64))) const double b[12] = {
+	                 -0.375E+00,           -1.171875E-01, 
+                         -1.025390625E-01,     -1.4419555664063E-01, 
+                         -2.7757644653320E-01, -6.7659258842468E-01, 
+                         -1.9935317337513E+00, -6.8839142681099E+00, 
+                         -2.7248827311269E+01, -1.2159789187654E+02, 
+                         -6.0384407670507E+02, -3.3022722944809E+03};
+#endif
+
+                          dh.cr  = AVX512c8f64{};
+			  dh.z2  = AVX512c8f64{};
+			  dh.zr  = AVX512c8f64{};
+			  dh.cs  = AVX512c8f64{};
+			  dh.w0  = v8_n0;
+			  dc.ca  = AVX512c8f64{};
+			  dc.cb  = AVX512c8f64{};
+			  dc.ci  = AVX512c8f64{};
+			  dc.ct  = AVX512c8f64{};
+			  dc.cw  = AVX512c8f64{};
+			  dc.z1  = AVX512c8f64{};
+			  dc.zr2 = AVX512c8f64{};
+	                  dc.a0  = v8_n0;
+			  dc.ci = AVX512c8f64{v8_n0,v8_n1};
+			  dc.a0 = cabs(z);
+			  dh.z2 = z*z;
+			  dc.z1 = z;
+			  if ((Vec8_CMP(dc.a0,v8_n0,_CMP_EQ_OQ)) == all_ones8) {
+                              cbi0 = AVX512c8f64{v8_n1,v8_n0};
+			      cbi1 = AVX512c8f64{v8_n0,v8_n0};
+			      cdi0 = AVX512c8f64{v8_n0,v8_n0};
+			      cdi1 = AVX512c8f64{v8_1over2,v8_n0};
+			      cbk0 = AVX512c8f64{Vec8_SET1(1.0E+30),v8_n0};
+			      cbk1 = AVX512c8f64{Vec8_SET1(1.0E+30),v8_n0};
+			      cdk0 = ~cbk0;
+			      cdk1 = ~cbk1;
+			      return;
+			  }
+			  if ((Vec8_CMP(z.m_re,v8_n0,_CMP_LT_OQ)) == all_ones8) {
+                             dc.z1 = ~z;
+			  }
+			  if ((Vec8_CMP(dc.a0,Vec8_SET1(18.0),_CMP_LE_OQ)) == all_ones8) {
+                              cbi0  = AVX512c8f64{v8_n1,v8_n0};
+			      dh.cr = AVX512c8f64{v8_n1,v8_n0};
+			      dh.k = 0;
+			      for (dh.k = 1; dh.k != 50; ++dh.k) {
+                                   const Vec8 tk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				   const Vec8 tk2 = Vec8_MUL(tk,tk);
+				   dh.cr = v8_1over4 * dh.cr * dh.z2 / tk2;
+				   cbi0 += dh.cr2;
+				   const Vec8 tmp = cabs(dh.cr/cbi0);
+				   if ((Vec8_CMP(tmp,Vec8_SET1(1.0E-15),_CMP_LT_OQ)) == all_ones8) {
+                                       return;
+				   }
+			      }
+			      cbi1  = AVX512c8f64{v8_n1,v8_n0};
+			      dh.cr = AVX512c8f64{v8_n1,v8_n0};
+			      for (dh.k = 1; dh.k != 50; ++dh.k) {
+                                    const Vec8 tk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				    const Vec8 tk2 = Vec8_MUL(tk,Vec8_ADD(tk,v8_n1));
+				    dh.cr = v8_1over4 * dh.cr *dh.z2 / tk2;
+				    cbi1 += dh.cr;
+				    const Vec8 tmp  = cabs(dh.cr/cbi1);
+				    if ((Vec8_CMP(tmp,Vec8_SET1(1.0E-15),_CMP_LT_OQ)) == all_ones8) {
+                                         return;
+				    }
+			      }
+			      cbi1 = v8_1over2 * dc.z1 * cbi1;
+			  }
+			   else {
+			   
+                               if ((Vec8_CMP(dc.a0,Vec_SET1(35.0),_CMP_LT_OQ)) == all_ones8) {
+                                   dh.k0 = 12;
+			       }
+			       else if ((Vec8_CMP(dc.a0,Vec8_SET1(50.0),_CMP_LT_OQ)) == all_ones8) {
+                                   dh.k0 = 9;
+			       }
+			       else {
+                                   dh.k = 7;
+			       }
+
+			       dc.ca = cexp(dc.z1) / csqrt(Vec8_SET1(6.283185307179586476925)*dc.z1;
+			       cbi0  = AVX512c8f64{v8_n1,v8_n0};
+			       dh.zr = v8_n1 / dc.z1;
+			       for (dh.k = 1; dh.k != dh.k0; ++dh.k) {
+                                    cbi0 = cpowi(cbi0+a[k]*dh.zr,k); 
+			       }
+			       cbi0 = dc.ca * cbi0;
+			       cbi1 = AVX512c8f64{v8_n1,v8_n0};
+			       for (dh.k = 1; dh.k != dh.k0; ++dh.k) {
+                                    cbi1 = cpowi(cbi1+b[k]*dh.zr,k);
+			       }
+			       cbi1 = dc.ca * cbi1;
+			   }
+			      
+			 if ((Vec8_CMP(dc.a0,Vec8_SET1(9.0),_CMP_LE_OQ)) == all_ones8) {
+                               dh.cs = AVX512c8f64{};
+			       dc.ct = clog(v8_1over2*dc.z1)-Vec8_SET1(0.5772156649015329);
+			       dc.ct = ~dc.ct;
+			       dh.w0 = v8_n0;
+			       dh.cr = AVX512c8f64{v8_n1,v8_n0};
+			       for (dh.k = 41; dh.k != 50; ++dh.k) {
+                                     const Vec8 tk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				     dh.w0 = Vec8_ADD(dh.w0,Vec8_DIV(v8_n1,tk));
+				     const Vec8 tk2 = Vec8_MUL(tk,tk);
+				     dh.cr = v8_1over4 * dh.cr / tk2 * dh.z2;
+				     dh.cs = dh.cs + dh.cr * (dh.w0 + dc.ct);
+				     const Vec8 tmp = cabs((dh.cs-dc.cw)/dh.cs);
+				     if ((Vec8_CMP(tmp,Vec8_SET1(1.0E-15),_CMP_LT_OQ)) == all_ones8) {
+                                          return;
+				     }
+				     dc.cw = dh.cs;
+			       }
+			       cbk0 = dc.ct + dh.cs;
+			 }
+			 else {
+                             dc.cb = v8_1over2 / dc.z1;
+			     dc.zr2 = v8_n1 / dh.z2;
+			     cbk0 = AVX512c8f64{v8_n1,v8_n0};
+			     for (dh.k = 1; dh.k != 10; ++dh.k) {
+                                  cbk0 = cpowi(cbk0+a1[k]*dc.zr2,k);
+			     }
+			     cbk0 = dc.cb * cbk0 / cbi0;
+			 }
+			 cbk1 = (v8_n1 / dc.z1 - cbi1 * cbk0) / cbi0;
+			 if ((Vec8_CMP(z.m_re,v8_n0,_CMP_LT_OQ)) == all_ones8) {
+                               if((Vec8_CMP(z.m_im,v8_n0,_CMP_LT_OQ)) == all_ones8) {
+                                  cbk0 = cbk0 + dc.ci * v8PI * cbi0;
+				  cbk1 = ~cbk1 + dc.ci * v8PI * cbi1;
+			     }
+			     else {
+                                  cbk0 = cbk0 - dc.ci * v8PI * cbi0;
+				  cbk1 = ~cbk1 - dc.ci * v8PI * cbi1;
+			     }
+			     cbi1 = ~cbi1;
+			 }
+			 cdi0 = cbi1;
+			 cdi1 = cbi0 - v8_n1 / z * cbi1;
+			 cdk0 = ~cbk1;
+			 cdk1 = ~cbk0 - v8_n1 / z * cbk1;
+	 }
+
+
+
+              void v8_ciklv_pd(const Vec8 v,
+	                       const AVX512c8f64 z,
+			       Vec8 &cbiv,
+			       Vec8 &cdiv,
+			       Vec8 &cbkv,
+			       Vec8 &cdkv      ) {
+#if defined _WIN64
+                __declspec(align(64)) struct {
+                    AVX512c8f64 cf[12];
+		    AVX512c8f64 ct2;
+		    AVX512c8f64 ct;
+		    AVX512c8f64 csi;
+		    AVX512c8f64 csk;
+		    Vec8 vr;
+		    int32_t k,lf,l0,km,i;
+#if (USE_STRUCT_PADING) == 1
+                    PAD_TO(0,44)
+#endif
+		}dh;
+#elif defined __linux
+               __attribute__((align(64))) struct {
+                    AVX512c8f64 cf[12];
+		    AVX512c8f64 ct2;
+		    AVX512c8f64 ct;
+		    AVX512c8f64 csi;
+		    AVX512c8f64 csk;
+		    Vec8 vr;
+		    int32_t k,lf,l0,km,i;
+#if (USE_STRUCT_PADING) == 1
+                    PAD_TO(0,44)
+#endif
+	       }dh;
+#endif
+#if defined  _WIN64
+              __declspec(align(64)) double a[96] = {}; // padding to align on 64-bytes.
+#elif defined __linux
+              __attribute__((align((64))) double a[96] = {};
+#endif
+#if defined  _WIN64
+             __declspec(align(64)) struct {
+                    AVX512c8f64 ceta;
+		    AVX512c8f64 cfi;
+		    AVX512c8f64 cfk;
+		    AVX512c8f64 cws;
+		    
+		    Vec8 v0;
+		    int32_t l;
+#if (USE_STRUCT_PADDING) == 1
+                    PAD_TO(0,60)
+#endif
+	     }dc;
+#elif defined __linux
+              __attribute__((align(64))) struct {
+                    AVX512c8f64 ceta;
+		    AVX512c8f64 cfi;
+		    AVX512c8f64 cfk;
+		    AVX512c8f64 cws;
+		    
+		    Vec8 v0;
+		    int32_t l;
+#if (USE_STRUCT_PADDING) == 1
+                    PAD_TO(0,60)
+#endif
+	      }dc;
+#endif
+                    dh.cf  = AVX512c8f64{};
+		    dh.ct2 = AVX512c8f64{};
+		    dh.ct  = AVX512c8f64{};
+		    dh.csi = AVX512c8f64{};
+		    dh.csk = AVX512c8f64{};
+		    dh.vr  = v8_n0;
+		    dc.ceta = AVX512c8f64{};
+		    dc.cfi  = AVX512c8f64{};
+		    dc.cfk  = AVX512c8f64{};
+		    dc.cws  = AVX512c8f64{};
+		    //
+		    dc.v0   = v8_n0;
+		    dh.km = 85;
+		    // cjk(dh.km,a);
+
+		    for (dc.l = 1; dc.l != 0; --dc.l) {
+                         const Vec8 vl = Vec8_CVTI4(Vec8_SETI4(dc.l));
+			 dc.v0 = Vec8_SUB(v,vl);
+			 const AVX512c8f64 tc0 = z / dc.v0;
+			 dc.cws = csqrt(v8_n1+tc0*tc0);
+			 dc.ceta = dc.cws + clog(tc0/(v8_n1+dc.cws));
+			 dh.ct = v8_n1 / dc.cws;
+			 dh.ct2 = dh.ct * dh.ct;
+			 for (dh.k = 1; dh.k != dh.km; ++dh.k) {
+                              dh.l0 = dh.k * (dh.k+1) / 2 + 1;
+			      dh.lf = dh.l0 + dh.k;
+			      dh.cf[dh.k] = a[lf]; // Might not compile if operator=(const double) will be chosen
+			      for (dh.i = dh.lf - 1; dh.i != dh.l0; --dh.i) {
+                                  dh.cf[dh.k] = dh.cf[dh.k] * dh.ct2 + a[dh.i];
+			        }
+			     }
+			      dh.cf[dh.k] = dh.cf[dh.k] * cpowi(dh.ct,dh.k);
+			      dh.vr = Vec8_DIV(v8_n1,dc.v0);
+			      dh.csi = AVX512c8f64{v8_n1,v8_n0};
+			      for (dh.k = 1; dh.k != dh.km; ++dh.k) {
+			           const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+                                   dh.csi = dh.csi + dh.cf[dh.k] * Vec8_POW(dh.vr,vk);
+			      }
+			      const Vec8 t0 = Vec8_MUL(Vec8_SET1(6.283185307179586476925),dc.v0);
+			      cbiv = csqrt(dh.ct/t0) * cexp(dc.v0*dc.ceta) * dh.csi;
+			      if (dc.l == 1) {
+                                  dc.cfi = cbiv;
+			      }
+			      dh.csk = AVX512c8f64{v8_n1,v8_n0};
+			      for (dh.k = 1; dh.k != dh.km; ++dh.k) {
+                                    const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+				    dh.csk = dh.csk + Vec8_POW(flip_sign(v8_n1),vk) *
+				             dh.cf[dh.k] * Vec8_POW(dh.vr,vk);
+			      }
+			      const Vec8 t1 = Vec8_MUL(v8_n2,dc.v0);
+			      cbkv = csqrt(v8PI*dh.ct/t1) * cexp(flip_sign(dc.v0)*dc.ceta) * dh.csk;
+			      if(dh.l == 1) {
+                                 dc.cfk = cbvk;
+			      }
+			 }
+			 cdiv = dc.cfi - v / z * cbiv;
+			 cdkv = ~dc.cfk - v / z * cbvk;
+		    
+	  }
+	    
+	    template<int32_t n>
+	          void v8_cikna_pd(const AVX512c8f64 z,
+		                   AVX512c8f64 __restrict cbi[n],
+				   AVX512c8f64 __restrict cdi[n],
+				   AVX512c8f64 __restrict cbk[n],
+				   AVX512c8f64 __restrict cdk[n] ) {
+#if defined _WIN64
+                  __declspec(align(64)) struct {
+                       AVX512c8f64 cf;
+		       AVX512c8f64 cf1;
+		       AVX512c8f64 cf2;
+		       AVX512c8f64 cs;
+		       AVX512c8f64 ckk;
+		       int32_t k,m,nm;
+#if (USE_STRUCT_PADDING) == 1
+                       PAD_TO(0,52)
+#endif
+		  }dh;
+#elif defined __linux
+                 __attribute__((align(64))) struct {
+                       AVX512c8f64 cf;
+		       AVX512c8f64 cf1;
+		       AVX512c8f64 cf2;
+		       AVX512c8f64 cs;
+		       AVX512c8f64 ckk;
+		       int32_t k,m,nm;
+#if (USE_STRUCT_PADDING) == 1
+                       PAD_TO(0,52)
+#endif
+		 }dh;
+#endif
+#if defined _WIN64
+                __declspec(align(64)) struct {
+		      AVX512c8f64 cbi0;
+		      AVX512c8f64 cbi1;
+		      AVX512c8f64 cbk0;
+		      AVX512c8f64 cbk1;
+		      AVX512c8f64 cdi0;
+		      AVX512c8f64 cdi1;
+		      AVX512c8f64 cdk0;
+		      AVX512c8f64 cdk1;
+		      Vec8 a0;
+	      }dc;
+#elif defined __linux
+               __attribute__((align(64))) struct {
+                      AVX512c8f64 cbi0;
+		      AVX512c8f64 cbi1;
+		      AVX512c8f64 cbk0;
+		      AVX512c8f64 cbk1;
+		      AVX512c8f64 cdi0;
+		      AVX512c8f64 cdi1;
+		      AVX512c8f64 cdk0;
+		      AVX512c8f64 cdk1;
+		      Vec8 a0;
+	       }dc;
+#endif
+
+                      dc.cbi0 = AVX512c8f64{};
+		      dc.cbi1 = AVX512c8f64{};
+		      dc.cbk0 = AVX512c8f64{};
+		      dc.cbk1 = AVX512c8f64{};
+		      dc.cdi0 = AVX512c8f64{};
+		      dc.cdi1 = AVX512c8f64{};
+		      dc.cdk0 = AVX512c8f64{};
+		      dc.cdk1 = AVX512c8f64{};
+		      dc.a0 = v8_n0;
+		      dc.a0 = cabs(z);
+		      dh.nm = n;
+		      dh.k = 0;
+		      if ((Vec8_CMP(dc.a0,Vec8_SET1(1.0E-100),_CMP_LT_OQ)) == all_ones8) {
+                          for (; dh.k != n; ++dh.k) {
+                                cbi[dh.k] = AVX512c8f64{v8_n0,v8_n0};
+				cdi[dh.k] = AVX512c8f64{v8_n0,v8_n0};
+				cbk[dh.k] = AVX512c8f64{Vec8_SET1(1.0E+30),v8_n0};
+				cdk[dh.k] = AVX512c8f64{Vec8_SET1(1.0E+30),v8_n0};
+			  }
+			  cbi[0] = AVX512c8f64{v8_n1,v8_n0};
+			  cdi[1] = AVX512c8f64{v8_1over2,v8_n0};
+			  return;
+		      }
+
+		      v8_cik01(z,dc.cbi0,dc.cdi0,dc.cbi1,dc.cdi1,dc.cbk0,dc.cdk0,dc.cbk1,dc.cdk1);
+		      cbi[0] = dc.cbi0;
+		      cbi[1] = dc.cbi1;
+		      cbk[0] = dc.cbk0;
+		      cbk[1] = dc.cbk1;
+		      cdi[0] = dc.cdi0;
+		      cdi[1] = dc.cdi1;
+		      cdk[0] = dc.cdk0;
+		      cdk[1] = dc.cdk1;
+		      // dh.m = msta(a0,200)
+		      if (dh.m < n) {
+                          dh.nm = m;
+		      }
+		       else {
+                         // dh.m = msta2(a0,n,15)
+		       }
+		      dh.cf2 = AVX512c8f64{};
+		      dh.cf1 = AVX512c8f64{Vec8_SET1(1.0E-30),v8_n0};
+		      for (dh.k = dh.m; dh.k != 0; --dh.k) {
+                            const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+			    const Vec8 vk1 = Vec8_ADD(vk,v8_n1);
+			    dh.cf = Vec8_MUL(v8_n2,vk1) / z * dh.cf1 + dh.cf2;
+			    if (dh.k <= dh.nm) {
+                                cbi[dh.k] = dh.cf;
+			    }
+			    dh.cf2 = dh.cf1;
+			    dh.cf1 = dh.cf;
+		      }
+		      dh.cs = dc.cbi0 / dh.cf;
+		      for (dh.k = 0; dh.k != dh.nm; ++dh.k) {
+                           cbi[dh.k] = dc.cs * cbi[dh.k];
+		      }
+		      for (dh.k = 2; dh.k != dh.nm; ++dh.k) {
+                          Vec8 vcmp1 = cabs(cbi[dh.k-2]);
+			  Vec8 vcmp2 = cabs(cbi[dh.k-1]);
+			  if ((Vec8_CMP(vcmp1,vcmp2,_CMP_LT_OQ)) == all_ones8) {
+                               dh.ckk = (v8_n1 / z - cbi[dh.k] * cbk[dh.k-1]) / cbi[dh.k];
+			  }
+			  else {
+                               const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+			       const Vec8 vk1 = Vec8_MUL(v8_n2,Vec8_SUB(vk,v8_n1));
+			       dh.ckk = (cbi[dh.k] * cbi[dh.k-2] + vk1 / (z * z)) / cbi[dh.k-2];
+			  }
+			  cbk[dh.k] = dh.ckk;
+		      }
+
+		      for (dh.k = 2; dh.k != dh.nm; ++dh.k) {
+		             const Vec8 vk = Vec8_CVTI4(Vec8_SETI4(dh.k));
+                             cdi[dh.k] = cbi[dh.k-1] - vk / z * cbi[dh.k];
+			     cdk[dh.k] = ~cbk[dh.k-1] - vk / z * cbk[dh.k];
+		      }
+	   }
 		
-	 }  // math
+     }  // math
 } // gms
 
 
