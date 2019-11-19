@@ -42,6 +42,8 @@ MKLGumbelRNG(const MKL_INT nvalues,
 	m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
 #elif defined __linux
 	m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
+#endif	
+	
 	m_a       = a;
 	m_beta    = beta;
 	m_nvalues = nvalues;
