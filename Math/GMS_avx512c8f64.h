@@ -44,18 +44,21 @@ namespace gms {
 #if defined _WIN64
 		__declspec(align(64)) struct AVX512c8Payload {
 #elif defined __linux
-		__attribute__((align(64))) struct AVX512c8Payload {
+	        struct AVX512c8Payload {
 #endif
 			double re0,re1,re2,re3,re4,re5,re6,re7;
 			double im0,im1,im2,im3,im4,im5,im6,im7;
 		};
+#if defined __linux
+		  __attribute__((aligned(64)))
+#endif
 
 		//static AVX3C8f64 CZERO{ _mm512_setzero_pd(),
 		//						_mm512_setzero_pd() };
 #if defined _WIN64
 		__declspec(align(64)) struct AVX512c8f64 {
 #elif defined __linux
-		__attribute__((align(64))) struct AVX512c8f64 {
+	        struct AVX512c8f64 {
 #endif
 				__m512d m_re;
 				
@@ -68,7 +71,7 @@ namespace gms {
 					
 				
 
-				AVX512c8f64(const AVX512c8Payload x);
+				AVX512c8f64(const AVX512c8Payload);
 					
 				
 				// Arrays: Re and Im must be aligned on 64-bytes boundary, otherwise GP will be signalled.
@@ -211,10 +214,13 @@ namespace gms {
 
 				
 
-				AVX512c8f64 & operator=(_In_ const AVX3C8f64);
+				AVX512c8f64 & operator=(const AVX3C8f64);
 
 				
 		};
+#if defined __linux
+		  __attribute__((aligned(64)))
+#endif
 
 		static inline AVX512c8f64
 		        conj(const AVX512c8f64);
@@ -223,10 +229,10 @@ namespace gms {
 		        polar(const __m512d,
 			      const __m512d);
 
-		static inline AVX512c8f64
+		static inline __m512d
 		        carg(const AVX512c8f64);
 
-		static inline AVX512c8f64
+		static inline __m512d 
 		        carg(const double,
 			     const double);
 
@@ -265,10 +271,10 @@ namespace gms {
 		        cexp(const double,
 			     const double);
 
-		static inline AVX512c8f64
+		static inline __m512d
 			cabs(const AVX512c8f64);
 
-		static inline AVX512c8f64
+		static inline __m512d
 		        cabs(const double,
 			     const double);
 
@@ -310,8 +316,8 @@ namespace gms {
 		       const __mmask8);
 
 		static inline AVX512c8f64
-		cdiv_smith(const AVX512c8f64 x,
-			   const AVX512c8f64 y);
+		cdiv_smith(const AVX512c8f64 ,
+			   const AVX512c8f64 );
 
 		static inline AVX512c8f64 
 		operator+(const AVX512c8f64,
@@ -346,7 +352,7 @@ namespace gms {
 			   AVX512c8f64);
 
 		static inline AVX512c8f64
-		operator+=(AVX512c8f64 &,
+		operator+=(AVX512c8f64 ,
 		          const double);
 
 		static inline AVX512c8f64
@@ -465,7 +471,8 @@ namespace gms {
 			   const __m512d);
 
 		static inline AVX512c8f64
-		operator/=(const __m512d);
+		operator/=(const __m512d,
+			   AVX512c8f64);
 
 	        static inline AVX512c8f64
 		operator/=(AVX512c8f64,
