@@ -302,7 +302,7 @@ gms::math::carg(const double re,
        const __m512d real = _mm512_set_pd(1.0,1.0,1.0,1.0,1.0,1.0,1.0,re);
        const __m512d imag = _mm512_set_pd(1.0,1.0,1.0,1.0,1.0,1.0,1.0,im);
        const __m512d re_part =
-               _mm512_atan2_pd(x.m_im,x.m_re);
+               _mm512_atan2_pd(imag,real);
        return (AVX512c8f64{re_part,_mm512_setzero_pd()});
 }
 
@@ -419,20 +419,20 @@ gms::math::cexp(const AVX512c8f64 x) {
 		_mm512_mul_pd(_mm512_exp_pd(x.m_re),
 		_mm512_sin_pd(x.m_im));
 
-	return (AVX3C8f64{ re_part, im_part });
+	return (AVX512c8f64{ re_part, im_part });
 }
 
-static inline gms::math::AVX512c8f64
+static inline __m512d
 gms::math::cabs(const AVX512c8f64 x) {
 	const __m512d re_part =
 		_mm512_mul_pd(x.m_re, x.m_re);
 	const __m512d im_part =
 		_mm512_mul_pd(x.m_im, x.m_im);
-	return (AVX512c8f64{ _mm512_sqrt_pd(_mm512_add_pd(re_part, im_part)),
-		_mm512_setzero_pd() });
+	return ( _mm512_sqrt_pd(_mm512_add_pd(re_part, im_part)));
+	
 }
 
-static inline gms::math::AVX512c8f64
+static inline __m512d
 gms::math::cabs(const double re,
                 const double im) {
        const __m512d real = _mm512_set_pd(1.0,1.0,1.0,1.0,1.0,1.0,1.0,re);
@@ -441,8 +441,8 @@ gms::math::cabs(const double re,
 		_mm512_mul_pd(real,real);
        const __m512d im_part =
 		_mm512_mul_pd(imag,imag);
-       return (AVX512c8f64{ _mm512_sqrt_pd(_mm512_add_pd(re_part, im_part)),
-		_mm512_setzero_pd() });		
+       return ( _mm512_sqrt_pd(_mm512_add_pd(re_part, im_part)));
+		
 }
 
 static inline gms::math::AVX512c8f64
@@ -470,7 +470,7 @@ gms::math::clog(const AVX512c8f64 x) {
         const __m512d re_part =
              _mm512_log_pd(tmp1.m_re);
 
-        return (AVX512c8f64{re_part,tmp2.m_re});    
+        return (AVX512c8f64{re_part,tmp2});    
 }
 
 static inline gms::math::AVX512c8f64
@@ -522,8 +522,9 @@ gms::math::select(const AVX512c8f64 x,
 static inline gms::math::AVX512c8f64
 gms::math::cdiv_smith(const AVX512c8f64 x,
                       const AVX512c8f64 y) {
-#if defined 
+
     __m512d ratio,denom,re_part,im_part;
+    constexpr __mmask8 all_ones = 0xFF;
     re_part = _mm512_setzero_pd();
     im_part = _mm512_setzero_pd();
     ratio = _mm512_setzero_pd();
@@ -531,7 +532,7 @@ gms::math::cdiv_smith(const AVX512c8f64 x,
     __mask8 is_gte = _mm512_cmp_pd_mask(
                            _mm512_abs_pd(y.m_re),
 			     _mm512_abs_pd(y.m_im),_CMP_GE_OQ);
-   if(is_gte) {
+   if(is_gte == all_ones) {
       ratio = _mm512_div_pd(y.m_im,y.m_re);
       denom = _mm512_add_pd(y.m_re,_mm512_mul_pd(ratio,y.m_im));
       re_part = _mm512_div_pd(_mm512_add_pd(x.m_re,
