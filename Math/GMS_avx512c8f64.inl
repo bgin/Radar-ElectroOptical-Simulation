@@ -7,12 +7,18 @@ gms::math::AVX512c8f64
 	m_re = _mm512_setzero_pd();
 	m_im = _mm512_setzero_pd();
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const AVX512c8Payload x) {
 	m_re = _mm512_set_pd(x.re0, x.re1, x.re2, x.re3, x.re4, x.re5, x.re6, x.re7);
 	m_im = _mm512_set_pd(x.im0, x.im1, x.im2, x.im3, x.im4, x.im5, x.im6, x.im7);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const double * __restrict Re,
@@ -20,6 +26,9 @@ gms::math::AVX512c8f64
 	m_re = _mm512_load_pd(&Re[0]);
 	m_im = _mm512_load_pd(&Im[0]);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const double re,
@@ -27,12 +36,18 @@ gms::math::AVX512c8f64
 	m_re = _mm512_set1_pd(re);
 	m_im = _mm512_set1_pd(im);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const double c) {
 	m_re = _mm512_set1_pd(c);
 	m_im = _mm512_setzero_pd();
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const double re0,
@@ -46,6 +61,9 @@ gms::math::AVX512c8f64
 	m_re = _mm512_set_pd(re0, re1, re2, re3, re4, re5, re6, re7);
 	m_im = _mm512_setzero_pd();
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const __m512d re,
@@ -53,12 +71,18 @@ gms::math::AVX512c8f64
 	m_re = re;
 	m_im = im;
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64
 ::AVX512c8f64(const AVX512c8f64 &x) {
 	m_re = x.m_re;
 	m_im = x.m_im;
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64 &
 gms::math::AVX512c8f64::load_a(const double * __restrict Re,
@@ -67,6 +91,9 @@ gms::math::AVX512c8f64::load_a(const double * __restrict Re,
 	m_im = _mm512_load_pd(&Im[0]);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64 &
 gms::math::AVX512c8f64::load_u(const double * __restrict Re,
@@ -75,6 +102,9 @@ gms::math::AVX512c8f64::load_u(const double * __restrict Re,
 	m_im = _mm512_loadu_pd(&Im[0]);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 void 
 gms::math::AVX512c8f64::store_a(double * __restrict Re,
@@ -82,6 +112,9 @@ gms::math::AVX512c8f64::store_a(double * __restrict Re,
 	_mm512_store_pd(&Re[0], m_re);
 	_mm512_store_pd(&Im[0], m_im);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 void 
 gms::math::AVX512c8f64::store_u(double * __restrict Re,
@@ -89,6 +122,9 @@ gms::math::AVX512c8f64::store_u(double * __restrict Re,
 	_mm512_storeu_pd(&Re[0], m_re);
 	_mm512_storeu_pd(&Im[0], m_im);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 void 
 gms::math::AVX512c8f64::stream(double * __restrict Re,
@@ -97,6 +133,9 @@ gms::math::AVX512c8f64::stream(double * __restrict Re,
 	_mm512_stream_pd(&Im[0], m_im);
 	_mm_sfence();
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 double 
 gms::math::AVX512c8f64::extract_f64(const int32_t idx) const {
@@ -108,6 +147,9 @@ gms::math::AVX512c8f64::extract_f64(const int32_t idx) const {
 	store_a(&mem[0], &mem[8]);
 	return (mem[idx & 0xF]);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 std::pair<double, double>
 gms::math::AVX512c8f64::extract_2f64(const int32_t re_idx,
@@ -122,6 +164,9 @@ gms::math::AVX512c8f64::extract_2f64(const int32_t re_idx,
 	store_a(&re_mem[0], &im_mem[0]);
 	return (std::make_pair(re_mem[re_idx & 0x7], im_mem[im_idx & 0x7]));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64 & 
 gms::math::AVX512c8f64::insert_1f64(const int32_t idx,
@@ -136,6 +181,9 @@ gms::math::AVX512c8f64::insert_1f64(const int32_t idx,
 	load_a(&mem[0], &mem[8]);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64 & 
 gms::math::AVX512c8f64::insert_2f64(const int32_t re_idx,
@@ -155,6 +203,9 @@ gms::math::AVX512c8f64::insert_2f64(const int32_t re_idx,
 	load_a(&mem_re[0], &mem_im[0]);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 // Length of 16 doubles
 void 
@@ -162,6 +213,9 @@ gms::math::AVX512c8f64
 ::concatenate_a(double * __restrict out) const {
 	store_a(&out[0], &out[8]);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 // Length of 16 doubles
 void 
@@ -169,6 +223,9 @@ gms::math::AVX512C8f64
 ::concatenate_u(double * __restrict out) const {
 	store_u(&out[0], &out[8]);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 gms::math::AVX512c8f64 &
 gms::math::AVX512c8f64
@@ -180,6 +237,9 @@ gms::math::AVX512c8f64
 	m_im = _mm512_maskz_loadu_pd(__mmask8((1 << n_im)-1),Im);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64 &
 gms::math::AVX512C8f64
@@ -191,6 +251,9 @@ gms::math::AVX512C8f64
 	m_im = _mm512_maskz_load_pd(__mmask8((1 << n_im) - 1), Im);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 void
 gms::math::AVX512c8f64
@@ -201,6 +264,9 @@ gms::math::AVX512c8f64
 	_mm512_mask_storeu_pd(&Re[0],__mmask8((1<<n_re)-1),m_re);
 	_mm512_mask_storeu_pd(&Im[0],__mmask8((1<<n_im)-1),m_im);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 void
 gms::math::AVX512c8f64
@@ -211,6 +277,9 @@ gms::math::AVX512c8f64
 	_mm512_mask_store_pd(&Re[0], __mmask8((1 << n_re) - 1), m_re);
 	_mm512_mask_store_pd(&Im[0], __mmask8((1 << n_im) - 1), m_im);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 gms::math::AVX512c8f64 & 
 gms::math::AVX512c8f64
@@ -220,6 +289,9 @@ gms::math::AVX512c8f64
 	m_im = _mm512_maskz_expand_pd(mask, x.m_im);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 gms::math::AVX512c8f64 & 
 gms::math::AVX512c8f64
@@ -231,6 +303,9 @@ gms::math::AVX512c8f64
 	m_im = _mm512_mask_expandloadu_pd(x.m_im, mask, &im[0]);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 gms::math::AVX512c8f64 & 
 gms::math::AVX512c8f64
@@ -240,28 +315,42 @@ gms::math::AVX512c8f64
 	m_im = _mm512_mask_permute_pd(m_im, mask, m_re, imm);
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 __m256d 
 gms::math::AVX512c8f64::re_low2() const {
 	return (_mm512_extractf64x4_pd(m_re, 0));
 }
-
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 
 __m256d 
 gms::math::AVX512c8f64::re_hi2() const {
 	return (_mm512_extractf64x4_pd(m_re, 1));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 __m256d 
 gms::math::AVX512c8f64::im_low2() const {
 	return (_mm512_extractf64x4_pd(m_im, 0));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 __m256d 
 gms::math::AVX512c8f64::im_hi2() const {
 	return (_mm512_extractf64x4_pd(m_im, 1));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 gms::math::AVX512c8f64 & 
 gms::math::AVX512c8f64
@@ -271,6 +360,9 @@ gms::math::AVX512c8f64
 	m_im = x.m_im;
 	return (*this);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(16)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::conj(const AVX512c8f64 x) {
@@ -278,6 +370,9 @@ gms::math::conj(const AVX512c8f64 x) {
      const __m512d im_part = tmp.m_im;
      return (AVX512c8f64{x.m_re,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::polar(const __m512d rho,
@@ -288,6 +383,9 @@ gms::math::polar(const __m512d rho,
            _mm512_mul_pd(rho,_mm512_sin_pd(theta));
        return (AVX512c8f64{re_part,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::carg(const AVX512c8f64 x) {
@@ -295,6 +393,9 @@ gms::math::carg(const AVX512c8f64 x) {
              _mm512_atan2_pd(x.m_im,x.m_re);
        return (AVX512c8f64{re_part,_mm512_setzero_pd()});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::carg(const double re,
@@ -305,6 +406,9 @@ gms::math::carg(const double re,
                _mm512_atan2_pd(imag,real);
        return (AVX512c8f64{re_part,_mm512_setzero_pd()});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::csin(const AVX512c8f64 x) {
@@ -316,6 +420,9 @@ gms::math::csin(const AVX512c8f64 x) {
 		_mm512_sinh_pd(x.m_im));
 	return (AVX512c8f64{ re_part, im_part });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::csin(const double re,
@@ -330,6 +437,9 @@ gms::math::csin(const double re,
 	                     _mm512_sinh_pd(imag));
        return (AVX512c8f64{re_part,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::csinh(const AVX512c8f64 x) {
@@ -341,6 +451,9 @@ gms::math::csinh(const AVX512c8f64 x) {
 	       _mm512_sin_pd(x.m_im));
 	return (AVX512c8f64{re_part,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::csinh(const double re,
@@ -355,6 +468,9 @@ gms::math::csinh(const double re,
 	       _mm512_sin_pd(imag));
 	return (AVX512c8f64{re_part,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ccos(const AVX512c8f64 x) {
@@ -367,6 +483,9 @@ gms::math::ccos(const AVX512c8f64 x) {
 	
 	return (AVX512c8f64{ re_part, im_part });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ccos(const double re,
@@ -382,6 +501,9 @@ gms::math::ccos(const double re,
 	
        return (AVX512c8f64{ re_part, im_part });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ccosh(const AVX512c8f64 x) {
@@ -394,6 +516,9 @@ gms::math::ccosh(const AVX512c8f64 x) {
 
         return (AVX512c8f64{re_part,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ccosh(const double re,
@@ -409,6 +534,9 @@ gms::math::ccosh(const double re,
 
        return (AVX512c8f64{re_part,im_part});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::cexp(const AVX512c8f64 x) {
@@ -421,6 +549,9 @@ gms::math::cexp(const AVX512c8f64 x) {
 
 	return (AVX512c8f64{ re_part, im_part });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline __m512d
 gms::math::cabs(const AVX512c8f64 x) {
@@ -431,6 +562,9 @@ gms::math::cabs(const AVX512c8f64 x) {
 	return ( _mm512_sqrt_pd(_mm512_add_pd(re_part, im_part)));
 	
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline __m512d
 gms::math::cabs(const double re,
@@ -444,6 +578,9 @@ gms::math::cabs(const double re,
        return ( _mm512_sqrt_pd(_mm512_add_pd(re_part, im_part)));
 		
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::cpowi(const AVX512c8f64 x,
@@ -462,6 +599,9 @@ gms::math::cpowi(const AVX512c8f64 x,
 	return (AVX512c8f64{ _mm512_mul_pd(pow_term, _mm512_cos_pd(trig_arg)),
 		_mm512_mul_pd(pow_term, _mm512_sin_pd(trig_arg)) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::clog(const AVX512c8f64 x) {
@@ -472,6 +612,9 @@ gms::math::clog(const AVX512c8f64 x) {
 
         return (AVX512c8f64{re_part,tmp2});    
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::csqrt(const AVX512c8f64 x) {
@@ -485,29 +628,43 @@ gms::math::csqrt(const AVX512c8f64 x) {
        return (AVX512c8f64{_mm512_sqrt_pd(re_part),
                            _mm512_sqrt_pd(im_part)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ctan(const AVX512c8f64 x) {
     return (csin(x)/ccos(x));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ctan(const double re,
                 const double im) {
     return (csin(re,im)/ccos(re,im));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ctanh(const AVX512c8f64 x) {
     return (csinh(x)/ccosh(x));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::ctanh(const double re,
                  const double im) {
     return (csinh(re,im)/ccosh(re,im));
 }
-
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 
 static inline gms::math::AVX512c8f64
@@ -518,6 +675,9 @@ gms::math::select(const AVX512c8f64 x,
 	return (AVX512c8f64{ _mm512_mask_blend_pd(mask, x.m_re, y.m_re),
 		_mm512_mask_blend_pd(mask, x.m_im, y.m_im) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::cdiv_smith(const AVX512c8f64 x,
@@ -551,6 +711,9 @@ gms::math::cdiv_smith(const AVX512c8f64 x,
       return (AVX512c8f64{re_part,im_part});
    }
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+(const AVX512c8f64 x,
@@ -558,6 +721,9 @@ gms::math::operator+(const AVX512c8f64 x,
 	return (AVX512c8f64{ _mm512_add_pd(x.m_re, y.m_re),
 		_mm512_add_pd(x.m_im, y.m_im) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+(const AVX512c8f64 x,
@@ -565,6 +731,9 @@ gms::math::operator+(const AVX512c8f64 x,
         return (AVX512c8f64{_mm512_add_pd(x.m_re,v),
 	                    x.m_im)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+(const __m512d v,
@@ -572,18 +741,27 @@ gms::math::operator+(const __m512d v,
         return (AVX512c8f64{_mm512_add_pd(v,x.m_re),
 	                   x.m_im});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+(const AVX512c8f64 x,
 		    const double s) {
 	return (x + AVX512c8f64{ s });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512C8f64
 gms::math::operator+(const double s,
 		    const AVX512c8f64 x) {
 	return (AVX512c8f64{ s } +x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+=(AVX512c8f64 x,
@@ -591,6 +769,9 @@ gms::math::operator+=(AVX512c8f64 x,
 	x = x + y;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+=(AVX512c8f64 x,
@@ -598,6 +779,9 @@ gms::math::operator+=(AVX512c8f64 x,
         x = x + v;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+=(const __m512d v,
@@ -605,6 +789,9 @@ gms::math::operator+=(const __m512d v,
         x = v + x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+=(AVX512c8f64 x,
@@ -612,6 +799,9 @@ gms::math::operator+=(AVX512c8f64 x,
 	x = x + AVX512c8f64{s};
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator+=(const double s,
@@ -619,6 +809,9 @@ gms::math::operator+=(const double s,
 	x = AVX512c8f64{s} + x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-(const AVX512c8f64 x,
@@ -626,6 +819,9 @@ gms::math::operator-(const AVX512c8f64 x,
 	return (AVX512c8f64{ _mm512_sub_pd(x.m_re, y.m_re),
 		_mm512_sub_pd(x.m_im, y.m_im) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-(const AVX512c8f64 x,
@@ -633,6 +829,9 @@ gms::math::operator-(const AVX512c8f64 x,
         return (AVX512c8f64{_mm512_sub_pd(x.m_re,v),
 	                   x.m_im});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-(const __m512d v,
@@ -640,6 +839,9 @@ gms::math::operator-(const __m512d v,
         return (AVX512c8f64{_mm512_sub_pd(v,x.m_re),
 	                   x.m_im});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-=(AVX512c8f64 x,
@@ -647,6 +849,9 @@ gms::math::operator-=(AVX512c8f64 x,
         x = x - v;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-=(const __m512d v,
@@ -654,24 +859,36 @@ gms::math::operator-=(const __m512d v,
         x = v - x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-(const AVX512c8f64 x,
 		    const double s) {
 	return (x - AVX512c8f64{ s });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-(const double s,
 		     const AVX512c8f64 x) {
 	return(AVX512c8f64{ s } - x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-(AVX512c8f64 x) {
 	x =  gms::math::AVX512c8f64::CZERO - x; 
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-=(AVX512c8f64 x,
@@ -679,6 +896,9 @@ gms::math::operator-=(AVX512c8f64 x,
 	x = x - y;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-=(AVX512c8f64 x,
@@ -686,6 +906,9 @@ gms::math::operator-=(AVX512c8f64 x,
 	x = x - AVX512c8f64{s};
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator-=(const double s,
@@ -693,6 +916,9 @@ gms::math::operator-=(const double s,
 	x = AVX512c8f64{s} - x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*(const AVX512c8f64 x,
@@ -704,6 +930,9 @@ gms::math::operator*(const AVX512c8f64 x,
 	return (AVX512c8f64{ _mm512_sub_pd(ymm0,ymm1),
 			_mm512_add_pd(ymm2,ymm3) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*(const AVX512c8f64 x,
@@ -711,6 +940,9 @@ gms::math::operator*(const AVX512c8f64 x,
         return (AVX512c8f64{_mm512_mul_pd(x.m_re,v),
 	                    _mm512_mul_pd(x.m_im,v)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*(const __m512d v,
@@ -718,6 +950,9 @@ gms::math::operator*(const __m512d v,
         return (AVX512c8f64{_mm512_mul_pd(v,x.m_re),
 	                    _mm512_mul_pd(v,x.m_im)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*(const AVX512c8f64 x,
@@ -726,6 +961,9 @@ gms::math::operator*(const AVX512c8f64 x,
 	return (AVX512c8f64{_mm512_mul_pd(x.m_re,zmm0),
 				      _mm512_mul_pd(x.m_im,zmm0)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*(const double s,
@@ -734,6 +972,9 @@ gms::math::operator*(const double s,
 	return (AVX512c8f64{ _mm512_mul_pd(zmm0,x.m_re),
 					   _mm512_mul_pd(zmm0,x.m_im) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*=(AVX512c8f64 x,
@@ -741,6 +982,9 @@ gms::math::operator*=(AVX512c8f64 x,
 	x = x * y;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*=(AVX512c8f64 x,
@@ -748,6 +992,9 @@ gms::math::operator*=(AVX512c8f64 x,
         x = x * v;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*=(const __m512d v,
@@ -755,6 +1002,9 @@ gms::math::operator*=(const __m512d v,
        x = v * x;
        return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*=(AVX512c8f64 x,
@@ -763,6 +1013,9 @@ gms::math::operator*=(AVX512c8f64 x,
 	x = x * s;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator*=(const double s,
@@ -770,6 +1023,9 @@ gms::math::operator*=(const double s,
 	x = s * x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/(const AVX512c8f64 &,
@@ -785,6 +1041,9 @@ gms::math::operator/(const AVX512c8f64 &,
 	return (AVX512c8f64{ _mm512_div_pd(re_part,den),
 		_mm512_div_pd(im_part,den) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/(const AVX512c8f64 x,
@@ -792,6 +1051,9 @@ gms::math::operator/(const AVX512c8f64 x,
         return (AVX512c8f64{_mm512_div_pd(x.m_re,v),
 	                    _mm512_div_pd(x.m_im,v)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/(const __m512d v,
@@ -799,6 +1061,9 @@ gms::math::operator/(const __m512d v,
         return (AVX512c8f64{_mm512_div_pd(v,x.m_re),
 	                    _mm512_div_pd(v,x.m_im)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/(const AVX512c8f64 x,
@@ -807,6 +1072,9 @@ gms::math::operator/(const AVX512c8f64 x,
 	return (AVX512c8f64{_mm512_div_pd(x.m_re,zmm0),
 			_mm512_div_pd(x.m_im,zmm0)});
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/(const double s,
@@ -815,6 +1083,9 @@ gms::math::operator/(const double s,
 	return (AVX512c8f64{ _mm512_div_pd(zmm0,x.m_re),
 		_mm512_div_pd(zmm0,x.m_im) });
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/=(AVX512c8f64 x,
@@ -822,6 +1093,9 @@ gms::math::operator/=(AVX512c8f64 x,
         x = x / v;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/=(const __m512d v,
@@ -829,6 +1103,9 @@ gms::math::operator/=(const __m512d v,
         x = v / x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/=(AVX512c8f64 x,
@@ -836,6 +1113,9 @@ gms::math::operator/=(AVX512c8f64 x,
 	x = x / y;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/=(AVX512c8f64 x,
@@ -843,6 +1123,9 @@ gms::math::operator/=(AVX512c8f64 x,
 	x = x / s;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator/=(const double s,
@@ -850,12 +1133,18 @@ gms::math::operator/=(const double s,
 	x = s / x;
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline gms::math::AVX512c8f64
 gms::math::operator~(AVX512c8f64 x) {
 	x.m_re = _mm512_sub_pd(_mm512_setzero_pd(),x.m_re);
 	return (x);
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator==(const AVX512c8f64 x,
@@ -864,6 +1153,9 @@ gms::math::operator==(const AVX512c8f64 x,
 	__mmask8 m2(_mm512_cmp_pd_mask(x.m_im,y.m_im,_CMP_EQ_OQ));
 	return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator==(const AVX512c8f64 x,
@@ -872,6 +1164,9 @@ gms::math::operator==(const AVX512c8f64 x,
        __mmask8 m2(_mm512_cmp_pd_mask(x.m_im,_mm512_set1_pd(c.imag()),_CMP_EQ_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator==(const std::complex<double> c,
@@ -880,6 +1175,9 @@ gms::math::operator==(const std::complex<double> c,
        __mmask8 m2(_mm512_cmp_pd_mask(_mm512_set1_pd(c.imag(),x.m_im),_CMP_EQ_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator!=(const AVX512c8f64 x,
@@ -888,6 +1186,9 @@ gms::math::operator!=(const AVX512c8f64 x,
 	__mmask8 m2(_mm512_cmp_pd_mask(x.m_im, y.m_im, _CMP_NEQ_OQ));
 	return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator!=(const AVX512c8f64 x,
@@ -896,6 +1197,9 @@ gms::math::operator!=(const AVX512c8f64 x,
        __mmask8 m2(_mm512_cmp_pd_mask(x.m_im,_mm512_set1_pd(c.imag()),_CMP_NEQ_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator!=(const std::complex<double> c,
@@ -904,7 +1208,9 @@ gms::math::operator!=(const std::complex<double> c,
        __mmask8 m2(_mm512_cmp_pd_mask(_mm512_set1_pd(c.imag(),x.m_im),_CMP_NEQ_OQ));
        return (std::make_pair(m1,m2));
 }
-
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 
 static inline std::pair<__mmask8,__mmask8>
@@ -914,6 +1220,9 @@ gms::math::operator>(const AVX512c8f64 x,
 	__mmask8 m2(_mm512_cmp_pd_mask(x.m_im, y.m_im, _CMP_GT_OQ));
 	return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator>(const AVX512c8f64 x,
@@ -922,6 +1231,9 @@ gms::math::operator>(const AVX512c8f64 x,
        __mmask8 m2(_mm512_cmp_pd_mask(x.m_im,_mm512_set1_pd(c.imag()),_CMP_GT_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator>(const std::complex<double> c,
@@ -930,6 +1242,9 @@ gms::math::operator>(const std::complex<double> c,
        __mmask8 m2(_mm512_cmp_pd_mask(_mm512_set1_pd(c.imag(),x.m_im),_CMP_GT_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator<(const AVX512c8f64 x,
@@ -938,6 +1253,9 @@ gms::math::operator<(const AVX512c8f64 x,
 	__mmask8 m2(_mm512_cmp_pd_mask(x.m_im, y.m_im, _CMP_LT_OQ));
 	return (std::make_pair(m1, m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator<(const AVX512c8f64 x,
@@ -946,6 +1264,9 @@ gms::math::operator<(const AVX512c8f64 x,
        __mmask8 m2(_mm512_cmp_pd_mask(x.m_im,_mm512_set1_pd(c.imag()),_CMP_LT_OQ));
        return (std::make_pair(m1,m2)); 
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator<(const std::complex<double> c,
@@ -954,6 +1275,9 @@ gms::math::operator<(const std::complex<double> c,
        __mmask8 m2(_mm512_cmp_pd_mask(_mm512_set1_pd(c.imag(),x.m_im),_CMP_LT_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8, __mmask8>
 gms::math::operator>=(const AVX512c8f64 x,
@@ -962,6 +1286,9 @@ gms::math::operator>=(const AVX512c8f64 x,
 	__mmask8 m2(_mm512_cmp_pd_mask(x.m_im, y.m_im, _CMP_GE_OQ));
 	return (std::make_pair(m1, m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator>=(const AVX512c8f64 x,
@@ -970,6 +1297,9 @@ gms::math::operator>=(const AVX512c8f64 x,
        __mmask8 m2(_mm512_cmp_pd_mask(x.m_im,_mm512_set1_pd(c.imag()),_CMP_GE_OQ));
        return (std::make_pair(m1,m2)); 
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator>=(const std::complex<double> c,
@@ -978,6 +1308,9 @@ gms::math::operator>=(const std::complex<double> c,
        __mmask8 m2(_mm512_cmp_pd_mask(_mm512_set1_pd(c.imag(),x.m_im),_CMP_GE_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8, __mmask8>
 gms::math::operator<=(const AVX512c8f64 x,
@@ -986,6 +1319,9 @@ gms::math::operator<=(const AVX512c8f64 x,
 	__mmask8 m2(_mm512_cmp_pd_mask(x.m_im, y.m_im, _CMP_LE_OQ));
 	return (std::make_pair(m1, m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator<=(const AVX512c8f64 x,
@@ -994,6 +1330,9 @@ gms::math::operator<=(const AVX512c8f64 x,
        __mmask8 m2(_mm512_cmp_pd_mask(x.m_im,_mm512_set1_pd(c.imag()),_CMP_LE_OQ));
        return (std::make_pair(m1,m2)); 
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 static inline std::pair<__mmask8,__mmask8>
 gms::math::operator<=(const std::complex<double> c,
@@ -1002,6 +1341,9 @@ gms::math::operator<=(const std::complex<double> c,
        __mmask8 m2(_mm512_cmp_pd_mask(_mm512_set1_pd(c.imag(),x.m_im),_CMP_LE_OQ));
        return (std::make_pair(m1,m2));
 }
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+__attribute__((code_align(32)))
+#endif
 
 
 
