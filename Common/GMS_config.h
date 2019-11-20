@@ -136,6 +136,11 @@ Using OpenMP.
 #error "COMPILE_TIME_ERROR: Unsupported Compiler version!"
 #endif
 
+// Turns on the use of _alloca function (default value is 0)
+#if !defined (USE_DYNAMIC_STACK_ALLOCATION)
+#define USE_DYNAMIC_STACK_ALLOCATION 0
+#endif
+
 /*
 Intel MKL support.
 Include all headers - master header file.
@@ -206,6 +211,10 @@ Include all headers - master header file.
 #define USE_STRUCT_PADDING 1
 #endif
 
+#if !defined (USE_PADDING_FOR_AUTOMATICS)
+#define USE_PADDING_FOR_AUTOMATICS 1
+#endif
+
 // Verbose debug
 // Print every errorneous situation
 #if GMS_DEBUG_ON == 1
@@ -230,6 +239,20 @@ Include all headers - master header file.
 #ifndef GMS_VERBOSE_ON
 #define GMS_VERBOSE_ON 1
 #endif
+// Use compiler alignment directive
+// Default value is 0
+// It must be tested in  order to see if 32-bytes alignment will be optimal
+#if !defined (USE_CODE_ALIGNMENT)
+    #define USE_CODE_ALIGNMENT 0
+#endif
+#if defined USE_CODE_ALIGNMENT
+    #if !defined (CODE_ALIGN_WIN)
+        #define CODE_ALIGN_WIN(n)   __declspec(code_align((n)))
+    #endif
+    #if !defined (CODE_ALIGN_LINUX)
+        #define CODE_ALIGN_LINUX(n) __attribute__((code_align((n))))
+    #endif
+#endif
 
 /*
 Compiler software prefetching.
@@ -239,6 +262,13 @@ Compiler software prefetching.
 #define ICC_PREFETCH_L2 2
 #define ICC_PREFETCH_L3 3
 #define ICC_PREFETCH_NTA 4
+#endif
+
+// Verify if ICC replaced memset and memmove with its optimized versions.
+#if (GMS_COMPILED_BY_ICC) == 1
+     #if !defined (USE_ICC_OPTIMIZED_MEMOPS)
+         #define USE_ICC_OPTIMIZED_MEMOPS 0
+     #endif
 #endif
 
 #if defined (ICC_PREFETCH_L1)
