@@ -35,6 +35,13 @@ namespace file_info {
 namespace gms {
      namespace math {
 
+#if !defined AVX512C4F32_SETPS
+    #define AVX512C4F32_SET_PS(x)  _mm512_set_ps(1.0f,1.0f,1.0f,1.0f,1.0f,  \
+                                                 1.0f,1.0f,1.0f,1.0f,1.0f,   \
+						 1.0f,1.0f,1.0f,1.0f,1.0f,    \
+						 (x));
+#endif
+
 #if defined _WIN64
         __declspec(align(64)) struct AVX512c4Payload {
 #elif defined __linux
@@ -152,7 +159,7 @@ namespace gms {
 	      AVX512c4f32 & expand(const AVX512c4f32,
 	                           const __mmask16);
 
-	      AVX512c4f32 & expand_load(const AVX512c4f32,
+	      AVX512c4f32 & expand_loadu(const AVX512c4f32,
 	                                const __mmask16,
 					const double * __restrict,
 					const double * __restrict);
