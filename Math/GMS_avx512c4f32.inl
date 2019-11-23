@@ -1479,3 +1479,615 @@ gms::math::operator*(const AVX512c4f32 x,
         CODE_ALIGN_LINUX(32)
     #endif
 #endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*(const AVX512c4f32 x,
+                     const __m512 v) {
+     return (AVX512c4f32{_mm512_mul_ps(x.m_re,v),
+                         _mm512_mul_ps(x.m_im,v)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*(const __m512 v,
+                     const AVX512c4f32 x) {
+     return (AVX512c4f32{_mm512_mul_ps(v,x.m_re),
+                         _mm512_mul_ps(v,x.m_im)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*(const AVX512c4f32 x,
+                     const float s) {
+     const __m512 zmm0 = AVX512C4F32_SETPS(s)
+     return (AVX512c4f32{_mm512_mul_ps(x.m_re,zmm0),
+                         _mm512_mul_ps(x.m_im,zmm0)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*(const float s,
+                     const AVX512c4f32 x) {
+     const __m512 zmm0 = AVX512C4F32_SETPS(s)
+     return (AVX512c4f32{_mm512_mul_ps(zmm0,x.m_re),
+                         _mm512_mul_ps(zmm0,x.m_im)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*=(AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     x = x * y;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*=(AVX512c4f32 x,
+                      const __m512 v) {
+     x = x * v;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*=(const __m512 v,
+                      AVX512c4f32 x) {
+     x = v * x;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*=(AVX512c4f32 x,
+                      const float s) {
+     x = x * s;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator*=(const float s,
+                      AVX512c4f32 x) {
+     x = s * x;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/(const AVX512c4f32 x,
+                     const AVX512c4f32 y) {
+#if defined USE_SAFE_COMPLEX_DIVISION && (USE_SAFE_COMPLEX_DIVISION) == 1
+    return (cdiv_smith(x,y));
+#else
+    const __m512 zmm0 = _mm512_mul_ps(x.m_re,y.m_re);
+    const __m512 zmm1 = _mm512_mul_ps(x.m_im,y.m_im);
+    const __m512 zmm2 = _mm512_mul_ps(x.m_im,y.m_re);
+    const __m512 zmm3 = _mm512_mul_ps(x.m_re,y.m_im);
+    const __m512 den  = _mm512_add_ps(_mm512_mul_ps(y.m_re,y.m_re),
+                                      _mm512_mul_ps(y.m_im,y.m_im));
+    const __m512 re_part = _mm512_add_ps(zmm0,zmm1);
+    const __m512 im_part = _mm512_sub_ps(zmm2,zmm3);
+    return (AVX512c4f32{_mm512_div_ps(re_part,den),
+                        _mm512_div_ps(im_part,den)});
+#endif
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/(const AVX512c4f32 x,
+                     const __m512 v) {
+     return (AVX512c4f32{_mm512_div_ps(x.m_re,v),
+                         _mm512_div_ps(x.m_im,v)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/(const __m512 v,
+                     const AVX512c4f32 x) {
+     return (AVX512c4f32{_mm512_div_ps(v,x.m_re),
+                         _mm512_div_ps(v,x.m_im)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/(const AVX512c4f32 x,
+                     const float s) {
+     const __m512 zmm0 = AVX512C4F32_SETPS(s)
+     return (AVX512c4f32{_mm512_div_ps(x.m_re,zmm0),
+                         _mm512_div_ps(x.m_im,zmm0)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/(const float s,
+                     const AVX512c4f32 x) {
+     const __m512 zmm0 = AVX512C4F32_SETPS(s)
+     return (AVX512c4f32{_mm512_div_ps(zmm0,x.m_re),
+                         _mm512_div_ps(zmm0,x.m_im)});
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/=(AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     x = x / y;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/=(AVX512c4f32 x,
+                      const __m512 v) {
+     x = x / v;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/=(const __m512 v,
+                      AVX512c4f32 x) {
+     x = v / x;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/=(AVX512c4f32 x,
+                      const float s) {
+     x = x / s;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator/=(const float s,
+                      AVX512c4f32 x) {
+     x = s / x;
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(32)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(32)
+    #endif
+#endif
+
+static inline gms::math::AVX512c4f32
+gms::math::operator~(AVX512c4f32 x) {
+     x.m_re = _mm512_sub_ps(_mm512_setzero_ps(),x.m_re);
+     return (x);
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator==(const AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,y.m_re,_CMP_EQ_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,y.m_im,_CMP_EQ_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator==(const AVX512c4f32 x,
+                      const std::complex<float> c) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,_mm512_set1_ps(c.real()),_CMP_EQ_OQ);
+     const __mmask16 m2 =
+           _mm512-cmp_ps_mask(x.m_im,_mm512_set1_ps(c.imag()),_CMP_EQ_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator==(const std::complex<float> c,
+                      const AVX512c4f32 x) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.real()),x.m_re,_CMP_EQ_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.imag()),x.m_im,_CMP_EQ_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator!=(const AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,y.m_re,_CMP_NEQ_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,y.m_im,_CMP_NEQ_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator!=(const AVX512c4f32 x,
+                      const std::complex<float> c) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,_mm512_set1_ps(c.real()),_CMP_NEQ_OQ);
+     const __mmask16 m2 =
+           _mm512-cmp_ps_mask(x.m_im,_mm512_set1_ps(c.imag()),_CMP_NEQ_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator!=(const std::complex<float> c,
+                      const AVX512c4f32 x) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.real()),x.m_re,_CMP_NEQ_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.imag()),x.m_im,_CMP_NEQ_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator>(const AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,y.m_re,_CMP_GT_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,y.m_im,_CMP_GT_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator>(const AVX512c4f32 x,
+                      const std::complex<float> c) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,_mm512_set1_ps(c.real()),_CMP_GT_OQ);
+     const __mmask16 m2 =
+           _mm512-cmp_ps_mask(x.m_im,_mm512_set1_ps(c.imag()),_CMP_GT_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator>(const std::complex<float> c,
+                      const AVX512c4f32 x) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.real()),x.m_re,_CMP_GT_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.imag()),x.m_im,_CMP_GT_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator<(const AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,y.m_re,_CMP_LT_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,y.m_im,_CMP_LT_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator<(const AVX512c4f32 x,
+                      const std::complex<float> c) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,_mm512_set1_ps(c.real()),_CMP_LT_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,_mm512_set1_ps(c.imag()),_CMP_LT_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator<(const std::complex<float> c,
+                      const AVX512c4f32 x) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.real()),x.m_re,_CMP_LT_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.imag()),x.m_im,_CMP_LT_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator>=(const AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,y.m_re,_CMP_GE_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,y.m_im,_CMP_GE_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator>=(const AVX512c4f32 x,
+                      const std::complex<float> c) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,_mm512_set1_ps(c.real()),_CMP_GE_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,_mm512_set1_ps(c.imag()),_CMP_GE_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator>=(const std::complex<float> c,
+                      const AVX512c4f32 x) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.real()),x.m_re,_CMP_GE_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.imag()),x.m_im,_CMP_GE_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator<=(const AVX512c4f32 x,
+                      const AVX512c4f32 y) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,y.m_re,_CMP_LE_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(x.m_im,y.m_im,_CMP_LE_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator<=(const AVX512c4f32 x,
+                      const std::complex<float> c) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(x.m_re,_mm512_set1_ps(c.real()),_CMP_LE_OQ);
+     const __mmask16 m2 =
+           _mm512-cmp_ps_mask(x.m_im,_mm512_set1_ps(c.imag()),_CMP_LE_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+static inline MMASK16_RETTYPE
+gms::math::operator<=(const std::complex<float> c,
+                      const AVX512c4f32 x) {
+     const __mmask16 m1 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.real()),x.m_re,_CMP_LE_OQ);
+     const __mmask16 m2 =
+           _mm512_cmp_ps_mask(_mm512_set1_ps(c.imag()),x.m_im,_CMP_LE_OQ);
+     return (std::make_pair(m1,m2));
+}
+#if defined USE_CODE_ALIGNMENT && (USE_CODE_ALIGNMENT) == 1
+    #if defined _WIN64
+        CODE_ALIGN_WIN(16)
+    #elif defined __linux
+        CODE_ALIGN_LINUX(16)
+    #endif
+#endif
+
+
+
+
+
+
+
+
+
+
+
