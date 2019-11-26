@@ -214,7 +214,8 @@ module mod_timsac
 !cxx      DIMENSION A1(2),A2(3)
           INTEGER(kind=int4) :: N, LAGH1
           REAL(kind=dp), dimension(LAGH1) :: CXX1, P1, P2, Q
-          REAL(kind=dp), dimension(LAGH1) :: CXX, FC 
+          REAL(kind=dp), dimension(LAGH1) :: CXX, FC
+!DIR$     ASSUME_ALIGNED CXX1:64, P1:64, P2:64, Q:64
 !DIR$     ATTRIBUTES ALIGN : 64 :: CXX,FC
           REAL(kind=dp), dimension(2)  :: A1 
           REAL(kind=dp), dimension(3)  :: A2
@@ -367,7 +368,11 @@ module mod_timsac
           REAL(kind=dp), dimension(MMAX,NMAX) :: A2,B2,STD,G
           REAL(kind=dp), dimension(NMAX) :: CXX2,SAIC
           REAL(kind=dp) :: AICM 
-
+!DIR$  ASSUME_ALIGNED  IQI1:64, IPI1:64
+!DIR$  ASSUME_ALIGNED  IQ:64, IP:64
+!DIR$  ASSUME_ALIGNED  CYY1:64, A1:64, B1:64
+!DIR$  ASSUME_ALIGNED  A2:64, B2:64, STD:64, G:64
+!DIR$  ASSUME_ALIGNED  CXX2:64, SAIC:64          
           INTEGER(I32P), dimension(NMAX) :: IQI, IPI, IPO, IQO
 !DIR$  ATTRIBUTES ALIGN : 64 :: IQI,IPI,IPO,IQO
           REAL(kind=dp), dimension(LMAX*2+1) :: CYY
@@ -840,7 +845,7 @@ module mod_timsac
 
 
     SUBROUTINE SC0GRH(X,CYY,G,CN,CXX0,IP,IQ,AL,MM,LL,ICST)
-          implicit none
+       
 !C     THIS SUBROUTINE COMPUTES CXX0,GRADIENT AND HESSIAN.
 !cxx      IMPLICIT REAL*8(A-H,O-Z)
 !cc      COMMON /COM50/AL
@@ -858,6 +863,14 @@ module mod_timsac
       REAL(kind=dp), dimension(IQ)   :: B 
       REAL(kind=dp), dimension(IP*2) :: A2 
       REAL(kind=dp), dimension(ICST) :: AI,A2B, AIB
+      !DIR$ ASSUME_ALIGNED X:64,G:64
+      !DIR$ ASSUME_ALIGNED CYY:64
+      !DIR$ ASSUME_ALIGNED CN:64
+      !DIR$ ASSUME_ALIGNED AL:64
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED A2:64
+      !DIR$ ASSUME_ALIGNED AI:64,A2B:64,AIB:64
 !DIR$ ATTRIBUTES ALIGN : 64 :: A,B,A2,AI,A2B,AIB
       REAL(kind=dp), dimension(LL*2+1) :: Y,CXX,CXY,CYX,CUZ,CYU,CZY
 !DIR$ ATTRIBUTES ALIGN : 64 :: Y,CXX,CXY,CYX,CUZ,CYU,CZY    
@@ -1131,16 +1144,18 @@ module mod_timsac
     SUBROUTINE SC0GR1(X,CYY,G,CXX0,IP,IQ,IG,LL,ICST)
 !C     THIS SUBROUTINE COMPUTES CXX0 AND GRADIENT.
           !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: SC0GR1
-          implicit none
+          
           INTEGER(kind=int4) :: IP, IQ, IG, LL, ICST
           REAL(kind=dp), dimension(IP+IQ) :: X,G  
           REAL(kind=dp), dimension(LL*2+1) :: CYY
           REAL(kind=dp) :: CXX0
+          !DIR$ ASSUME_ALIGNED X:64,G:64
+          !DIR$ ASSUME_ALIGNED CYY:64
           ! Locals
           REAL(kind=dp), dimension(IP)   :: A
           REAL(kind=dp), dimension(IQ)   :: B 
           REAL(kind=dp), dimension(ICST) :: AI, A2B, AIB 
-!DIR$ ATTRIBUTES ALIGN : 64 :: AI,A2B
+!DIR$ ATTRIBUTES ALIGN : 64 :: A,B,AI,A2B,AIB
           REAL(kind=dp), dimension(IP*2) :: A2 
 !DIR$ ATTRIBUTES ALIGN : 64 :: A2
           REAL(kind=dp), dimension(LL*2+1) ::  Y, CXX, CYX, &
@@ -1310,6 +1325,9 @@ module mod_timsac
           REAL(kind=dp), dimension(LL*2+1) :: CYY
           REAL(kind=dp), dimension(NN,NN) :: VD
           REAL(kind=dp) :: CXX0
+          !DIR$ ASSUME_ALIGNED X:64,G:64,C:64
+          !DIR$ ASSUME_ALIGNED CYY:64
+          !DIR$ ASSUME_ALIGNED VD:64
           REAL(kind=dp), dimension(IP+IQ)  :: SX, SG, SR
 !DIR$     ATTRIBUTES ALIGN : 64 :: SX,SG,SR
           REAL(kind=dp) :: CST0, CST1, CST2,                                     &   
@@ -1487,6 +1505,8 @@ module mod_timsac
           INTEGER(kind=int4) :: K, L, M, LL
           REAL(kind=dp), dimension(LL*2+1) :: Y,Z 
           REAL(kind=dp), dimension(K) :: A
+          !DIR$ ASSUME_ALIGNED Y:64,Z:64
+          !DIR$ ASSUME_ALIGNED A:64
           REAL(kind=dp) :: SUM
           ! Locals
           INTEGER(kind=int4) :: IORIG,I,J,IST,IEN,IJ
@@ -1512,6 +1532,7 @@ module mod_timsac
           INTEGER(kind=int4) :: L, M, LL
           REAL(kind=dp), dimension(LL+M+1) :: Y
           REAL(kind=dp), dimension(LL-L+1) :: Z
+          !DIR$ ASSUME_ALIGNED Y:64,Z:64
           ! Locals
           INTEGER(kind=int4) :: IORIG,IST,IEN,I,IJ
           IORIG=LL+1
@@ -1538,6 +1559,7 @@ module mod_timsac
           REAL(kind=dp), dimension(IP)   :: A
           REAL(kind=dp), dimension(IQ)   :: B
           REAL(kind=dp), dimension(ICST) :: X
+          !DIR$ ASSUME_ALIGNED A:64,B:64,X:64
           REAL(kind=dp) :: CST0, GCONST, GAMMAX, SUM, GAM2
           INTEGER(kind=int4) :: IPQ,I,K,LH,IH,IM1,JM,IMJ,J
           CST0=0.0_dp
@@ -1626,6 +1648,8 @@ module mod_timsac
           INTEGER(kind=int4) :: N, LAGH1
           REAL(kind=dp), dimension(N) :: X 
           REAL(kind=dp), dimension(LAGHI) :: CXX,CN
+          !DIR$ ASSUME_ALIGNED X:64
+          !DIR$ ASSUME_ALIGNED CXX:64,CN:64
           REAL(kind=dp) :: XMEAN
           REAL(kind=dp), dimension(N) :: X1
 !DIR$     ATTRIBUTES ALIGN : 64 :: X1
@@ -2010,6 +2034,10 @@ module mod_timsac
           REAL(kind=dp), dimension(NDATA+FOCAST) :: TREND,SEASON,TDCMP,EST,PSDS,PSDT
           REAL(kind=dp), dimension(8) :: PARA
           REAL(kind=dp), dimension(3) :: ARFT,ARFS,ARFN
+          !DIR$ ASSUME_ALIGNED IPARA:64
+          !DIR$ ASSUME_ALIGNED Y:64, CDATA:64, DMOI:64, IRREG:64, ADJUST:64
+          !DIR$ ASSUME_ALIGNED TREND:64, SEASON:64, TDCMP:64, EST:64, PSDS:64, PSDT:64
+          !DIR$ ASSUME_ALIGNED PARA:64
           REAL(kind=dp) :: AVABIC
     
 
@@ -2313,6 +2341,7 @@ module mod_timsac
           REAL(kind=dp), dimension(MX) :: X
           REAL(kind=dp), dimension(MY) :: Y
           REAL(kind=dp), dimension(MZ) :: Z
+          !DIR$ ASSUME_ALIGNED X:64, Y:64, Z:64
       ! Locals
           INTEGER(kind=int4) :: I
       ! Exec code ....
@@ -2339,6 +2368,7 @@ module mod_timsac
                                               
           INTEGER(kind=int4) :: N, MJ, I0, J0, M
           REAL(kind=dp), dimension(MJ,I0+N-1) :: X
+          !DIR$ ASSUME_ALIGNED X:64
           ! Locals
           INTEGER(kind=dp) :: I0M1,J0M1,J,I
           I0M1 = I0 - 1                                                     
@@ -2371,7 +2401,8 @@ module mod_timsac
           INTEGER(kind=int4) :: MX, NX, IX, JX, MY, NY, IY, JY
           REAL(kind=dp) :: TEM
           REAL(kind=dp), dimension(MX+IX-1,JX+NX-1) :: X 
-          REAL(kind=dp), dimension(MY+IY-1,NY+JY-1) :: Y 
+          REAL(kind=dp), dimension(MY+IY-1,NY+JY-1) :: Y
+          !DIR$ ASSUME_ALIGNED X:64, Y:64
           ! Locals
           INTEGER(kind=int4) :: IXM1,IYM1,JYM1,JXM1,J,I
           IXM1 = IX-1                                                       
@@ -2409,7 +2440,20 @@ module mod_timsac
           REAL(kind=dp), dimension(2*(NN+NF)+NDAY+6) :: A
           REAL(kind=dp), dimension(NN) :: Y
           REAL(kind=dp), dimension(7,NN+NF) :: WEEK
-          REAL(kind=dp), dimension(2*(NN+NF)) :: ERR 
+          REAL(kind=dp), dimension(2*(NN+NF)) :: ERR
+          !DIR$ ASSUME_ALIGNED SEAS0:64
+          !DIR$ ASSUME_ALIGNED TREND0:64
+          !DIR$ ASSUME_ALIGNED EST0:64
+          !DIR$ ASSUME_ALIGNED ADJ0:64
+          !DIR$ ASSUME_ALIGNED IRREG0:64
+          !DIR$ ASSUME_ALIGNED TDC0:64
+          !DIR$ ASSUME_ALIGNED PSDS:64
+          !DIR$ ASSUME_ALIGNED PSDT:64
+          !DIR$ ASSUME_ALIGNED W:64
+          !DIR$ ASSUME_ALIGNED A:64
+          !DIR$ ASSUME_ALIGNED Y:64
+          !DIR$ ASSUME_ALIGNED WEEK:64
+          !DIR$ ASSUME_ALIGNED ERR
           ! Locals
           INTEGER(kind=int4) :: N,NR,I,I1,I2,NTEM,N7
                                                                        
@@ -2471,6 +2515,7 @@ module mod_timsac
 
           INTEGER(kind=int4) :: N, K, MJ1, ICNT
           REAL(kind=dp), dimension(MJ1,K) :: X
+          !DIR$ ASSUME_ALIGNED X:64
           ! Locals
           INTEGER(kind=int4) :: MNK,I,II,IIOTEM,IITEM,II1,KTEM,II10,JTEM
           REAL(kind=dp) :: TOL, DIIO, H, ABSLD, F, G, S
@@ -2563,7 +2608,10 @@ module mod_timsac
           INTEGER(kind=int4) :: MX, NX, MMX, MY, NY, MMY, MZ, NZ, MMZ
           REAL(kind=dp), dimension(MMX,NX) :: X 
           REAL(kind=dp), dimension(MMY,NY) :: Y  
-          REAL(kind=dp), dimension(MMZ,NZ) :: Z 
+          REAL(kind=dp), dimension(MMZ,NZ) :: Z
+          !DIR$ ASSUME_ALIGNED X:64
+          !DIR$ ASSUME_ALIGNED Y:64
+          !DIR$ ASSUME_ALIGNED Z:64
           ! Locals
         
           INTEGER(kind=int4) :: KK,I,J,K
@@ -2601,11 +2649,15 @@ module mod_timsac
           INTEGER(kind=int4) :: MX, MY, MZ
           REAL(kind=dp), dimension(MX) :: X  
           REAL(kind=dp), dimension(MY) :: Y 
-          REAL(kind=dp), dimension(MZ) :: Z 
+          REAL(kind=dp), dimension(MZ) :: Z
+          !DIR$ ASSUME_ALIGNED X:64
+          !DIR$ ASSUME_ALIGNED Y:64
+          !DIR$ ASSUME-ALIGNED Z:64
           ! Locals
           INTEGER(kind=int4) :: I
           REAL(kind=dp) :: TEM
           ! Exec code .....
+          !DIR$ VECTOR ALWAYS
           DO 100 I=1,MX                                                     
                  TEM = 0._dp                                                      
                  IF( I .LE. MY )  TEM = Y(I)                                       
@@ -2636,6 +2688,19 @@ module mod_timsac
           REAL(kind=dp), dimension(7,1) :: WEEK
           REAL(kind=dp), dimension(NPF+1) :: F
           REAL(kind=dp), dimension(3) :: ARFS,ARFT,ARFN
+          !DIR$ ASSUME_ALIGNED SEASON:64
+          !DIR$ ASSUME_ALIGNED TREND:64
+          !DIR$ ASSUME_ALIGNED EST:64
+          !DIR$ ASSUME_ALIGNED ADJ:64
+          !DIR$ ASSUME_ALIGNED IRREG:64
+          !DIR$ ASSUME_ALIGNED TDC:64
+          !DIR$ ASSUME_ALIGNED PSDT:64
+          !DIR$ ASSUME_ALIGNED PSDS:64
+          !DIR$ ASSUME_ALIGNED FSEA:64
+          !DIR$ ASSUME_ALIGNED FTRN:64
+          !DIR$ ASSUME_ALIGNED YS:64
+          !DIR$ ASSUME_ALIGNED WEEK:64
+          !DIR$ ASSUME_ALIGNED F:64
           REAL(kind=dp) :: RLIM ,ALPHA, BETA, GAMMA, &
                         ZER, SMTH, SMTH2, DD, WTRD, DELTA
           ! LOcals
@@ -2686,7 +2751,8 @@ module mod_timsac
                   CALL SETDC(H,NH,F,M1,FSEA,N+NF,SMTH2,ZER,IARS,ARFS,IARN,ARFN,     &
                              BETA,GAMMA,PERIOD,ISOD,NPF)
            
-                 ALNDT0=0._dp                                                      
+                 ALNDT0=0._dp
+                 !DIR$ VECTOR ALWAYS
                  DO 2233 I=1,M1                                                    
                          TEM=DABS(H(1,I))                                                  
 !cxx 2233 ALNDT0=ALNDT0+DLOG(TEM)                                           
@@ -2725,14 +2791,16 @@ module mod_timsac
 !C                                                                       
                  AN = ICOUNT                                                      
                  ANN = ICOUNT + ND                                                 
-                 ALNDN=0._dp                                                       
+                 ALNDN=0._dp
+                 !DIR$ VECTOR ALWAYS
                  DO 3344 I=1,M1                                                    
                          TEM=DABS(DC(1,I))                                                
 !cxx 3344 ALNDN=ALNDN + DLOG(TEM)                                           
                          ALNDN=ALNDN + DLOG(TEM)
            3344 CONTINUE
                 IF(N2 .EQ. 1) GO TO 3346                                          
-                N2M1=N2-1                                                         
+                N2M1=N2-1
+                !DIR$ VECTOR ALWAYS
                 DO 3345 I=1,N2M1                                                  
                         TEM=DABS(H2(I,M1+I))                                              
 !cxx 3345 ALNDN=ALNDN+DLOG(TEM)                                             
@@ -2789,7 +2857,8 @@ module mod_timsac
                       A,YS,N,NF,WEEK,ERR,PSDS,PSDT,SQE,PERIOD,YEAR,NDAY)
                  
           IF(LOGT .EQ. 0) GO TO 6200                                        
-          AJACOB=0._dp                                                      
+          AJACOB=0._dp
+          
           DO 6100 I=1,N                                                     
    
                  IF(YS(I) .LT. RLIM .OR. RLIM .LE. 0.0_dp) AJACOB=AJACOB+YS(I)
@@ -2801,7 +2870,8 @@ module mod_timsac
                   WEEK1(I) = WEEK0(I)                                               
                   IF(LOGT .NE. 0 .AND. YEAR .NE. 0) WEEK1(I) = DEXP(WEEK1(I))       
   6300    CONTINUE                                                          
-        
+                  !DIR$ SIMD
+                  !DIR$ VECTOR ALIGNED
           DO 3320 I=1,N                                                     
                   DTRN(I)=TREND(I)                                                  
 !cxx 3320 DSEAS(I)=SEASON(I)
@@ -2830,7 +2900,8 @@ module mod_timsac
           SSIR=0._dp                                                         
           SSAS=0._dp                                                         
           SAS=0._dp                                                         
-          IPM1=PERIOD-1                                                     
+          IPM1=PERIOD-1
+          
           DO 3326 I=1,IPM1                                                  
 
                    SAS=SAS+SEASON(I)
@@ -3092,18 +3163,18 @@ module mod_timsac
 !C        W:                                                             
 !C                                                                       
       
-          INTEGER(I32P)               :: N, JSW
-          INTEGER(I32P), dimension(N) :: IND(N)
-          REAL(R64P), dimension(N)    :: X
-          REAL(R64P)                  :: F, W
+          INTEGER(kind=int4)               :: N, JSW
+          INTEGER(kind=int4), dimension(N) :: IND(N)
+          REAL(kind=dp), dimension(N)    :: X
+          REAL(kind=dp)                  :: F, W
           ! Locals
-          INTEGER(I32P) :: L,I,K,IFG
-          REAL(R64P)    ::  SUM, XMEAN, SIG2, SD
-          INTEGER, dimension(N) :: JND
-          REAL(R64P), dimension(N) :: Y, Z, ZE 
+          INTEGER(kind=int4) :: L,I,K,IFG
+          REAL(kind=dp)    ::  SUM, XMEAN, SIG2, SD
+          INTEGER(kind=int4), dimension(N) :: JND
+          REAL(kind=dp), dimension(N) :: Y, Z, ZE 
 !DIR$     ATTRIBUTES ALIGN : 64 :: JND,Y,Z,ZE                                                                       
           L = 0                                                             
-          SUM = 0._R64P                                                       
+          SUM = 0._dp                                                      
           DO 10  I=1,N                                                      
                  IF( IND(I) .EQ. 1 )   GO TO 10                                    
                  L = L + 1                                                         
@@ -3112,14 +3183,14 @@ module mod_timsac
           XMEAN = SUM/DFLOAT(L)                                             
           K = N-L                                                           
                                                                        
-          SUM = 0._R64P                                                      
+          SUM = 0._dp                                                     
           DO 20  I=1,N                                                      
 !cxx   20 IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2                   
                  IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2
       20  CONTINUE
           SIG2 = SUM/N                                                      
-          W = 1._R64P                                                         
-          F = -0.5_R64P*N*DLOG(SIG2)                                           
+          W = 1._dp                                                         
+          F = -0.5_dp*N*DLOG(SIG2)                                           
                                                                        
           IF( JSW .EQ.1 )   RETURN                                          
           IF( K .LE. 1 )   RETURN                                           
@@ -3131,7 +3202,7 @@ module mod_timsac
                 Y(J) = X(I)                                                       
    30     CONTINUE                                                          
                                                                        
-          W = 0._R64P                                                         
+          W = 0._dp                                                      
           DO 40  I=1,K                                                      
 !cxx   40 JND(I) = I                                                        
                JND(I) = I
@@ -3144,7 +3215,7 @@ module mod_timsac
    60     CONTINUE
           CALL  POOLAV( Z,K,ZE,SD )                                         
                                                                        
-          W = W + 1.D0/DSQRT(1.D0+SD/SUM)**N                                
+          W = W + 1.0_dp/DSQRT(1.0_dp+SD/SUM)**N                                
                                                                        
           CALL  PERMUT( JND,K,IFG )                                         
           IF( IFG .EQ. 0 )   GO TO 50                                       
@@ -3154,7 +3225,7 @@ module mod_timsac
                                                                  
 !cc      SUBROUTINE  PRPOST( POST,X,IND,JND,KND,IC,N,L)                    
     SUBROUTINE  PRPOST( POST,X,IND,JND,KND,IC,N,L)
-          implicit none
+         
 !C                                                                       
 !C     THIS SUBROUTINE ARRANGES POST(I), JND(I) AND KND(I) (I=1,IC) IN   
 !C     DECREASING ORDER OF POST(I), AND DRAWS POSTERIOR PROBABILITY AND  
@@ -3176,15 +3247,15 @@ module mod_timsac
 !C                            PRINTED                                    
 !C                                                                       
 
-          INTEGER(I32P), dimension(N)  :: IND
-          INTEGER(I32P), dimension(IC) :: JND, KND 
-          INTEGER(I32P)                :: IC, N, L
-          REAL(R64P), dimension(IC) :: POST 
-          REAL(R64P), dimension(N)  :: X
+          INTEGER(kind=int4), dimension(N)  :: IND
+          INTEGER(kind=int4), dimension(IC) :: JND, KND 
+          INTEGER(kind=int4)                :: IC, N, L
+          REAL(kind=dp), dimension(IC) :: POST 
+          REAL(kind=dp), dimension(N)  :: X
           ! Locals
-          INTEGER(I32P) :: I,J,IMAX,JJ,KK,IC1,NML1,ID
-          REAL(R64P) :: PMAX
-          REAL(R64P), dimension(N) :: Y
+          INTEGER(kind=int4) :: I,J,IMAX,JJ,KK,IC1,NML1,ID
+          REAL(kind=dp) :: PMAX
+          REAL(kind=dp), dimension(N) :: Y
 !DIR$     ATTRIBUTES ALIGN : 64 :: Y
           ! Exec code ...                                                             
           DO 20  I=1,IC                                                     
@@ -3231,7 +3302,7 @@ module mod_timsac
     
     
     SUBROUTINE PERMUT( IND,K,IFG ) 
-          implicit none
+         
 !C                                                                       
 !C     THIS SUBROUTINE SEQUENTIALLY SPECIFIES K] CONFIGURATIONS (IND(1), 
 !C     ...,IND(K)) OBTAINED BY PERMUTING (1,...,K)                       
@@ -3246,10 +3317,10 @@ module mod_timsac
 !C                        = 1 ; SEARCH FOR THE CONFIGURATION COMPLETED.  
 !C                                                                       
 
-          INTEGER(I32P), dimension(K)  ::  IND 
-          INTEGER(I32P)                :: K, IFG
+          INTEGER(kind=int4), dimension(K)  ::  IND 
+          INTEGER(kind=int4)                :: K, IFG
           ! Locals
-          INTEGER(I32P) :: I1,I2,I0,IMAX,IFG,I2M1
+          INTEGER(kind=int4) :: I1,I2,I0,IMAX,IFG,I2M1
 !C                                                                       
           I1 = 1                                                            
           I2 = 2                                                            
