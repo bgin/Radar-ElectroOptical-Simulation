@@ -223,8 +223,26 @@ module mod_blas
       if(incx==1 .and. incy==1) then
          
          !  code for both increments equal to 1
-         !DIR$ VECTOR ALIGNED
-         !DIR$ VECTOR ALWAYS
+#if defined __INTEL_COMPILER
+                    !DIR$ VECTOR ALIGNED
+                    !DIR$ VECTOR ALWAYS
+                    
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(4)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(3)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(4)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(3)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif
          do i = 1,n
             zy(i) = zx(i)
          end do
@@ -236,8 +254,26 @@ module mod_blas
          iy=1
          if(incx<0) ix=(-n+1)*incx+1
          if(incy<0) iy=(-n+1)*incy+1
-         !DIR$ VECTOR ALIGNED
-         !DIR$ VECTOR ALWAYS
+#if defined __INTEL_COMPILER
+                    !DIR$ VECTOR ALIGNED
+                    !DIR$ VECTOR ALWAYS
+                    
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(4)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(3)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(4)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(3)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif        
          do i = 1,n
             zy(iy) = zx(ix)
             ix = ix+incx
@@ -459,16 +495,21 @@ module mod_blas
       use mod_vectypes, only : ZMM8r8_t
       integer(kind=int4),                intent(in),value    :: n
       type(AVX512c8f64_t), dimension(*), intent(inout)       :: cx
+#if defined __INTEL_COMPILER
       !DIR$ ASSUME_ALIGNED cx:64
+#endif
       integer(kind=int4),                intent(in),value    :: incx
       type(AVX512c8f64_t), dimension(*), intent(inout)       :: cy
+#if defined __INTEL_COMPILER      
       !DIR$ ASSUME_ALIGNED cy:64
+#endif
       integer(kind=int4),                intent(in),value    :: incy
       type(ZMM8r8_t),                    intent(in)          :: c ! scalar extended to vector
-      !DIR$ ASSUME_ALIGNED c:64
+     
       type(ZMM8r8_t),                    intent(in)          :: s ! scalar extended to vector
-      !DIR$ ASSUME_ALIGNED s:64
+#if defined __INTEL_COMPILER     
       !DIR$ ATTRIBUTES ALIGN : 64 :: ztemp
+#endif
       type(AVX512c8f64_t), automatic :: ztemp
       integer(kind=int4),  automatic :: i,ix,iy
       ! EXec code ...
@@ -547,12 +588,16 @@ module mod_blas
 !*> \endverbatim
 
     subroutine gms_zdscal(n,da,zx,incx)
+#if defined __INTEL_COMPILER
        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zdscal
-       !DIR$ ATTRIBUTES VECTOR :: gms_zdscal
+      !DIR$ ATTRIBUTES VECTOR :: gms_zdscal
+#endif
        integer(kind=int4),                intent(in),value    :: n
        type(AVX512c8f64_t),               intent(in)          :: da
        type(AVX512c8f64_t), dimension(*), intent(inout)       :: zx
+#if defined __INTEL_COMPILER
        !DIR$ ASSUME_ALIGNED zx:64
+#endif
        integer(kind=int4),                intent(in),value    :: incx
        ! LOcals
        integer(kind=int4), automatic :: i,nincx
@@ -563,13 +608,21 @@ module mod_blas
 #if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
-                    !DIR$ FMA
+                  
 #if (CURRENT_PROCESSOR_ARCH_NAME) == 1
                     !DIR$ UNROLL(10)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
-                    !DIR$ UNROLL(5)
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
           do i = 1,n
@@ -581,13 +634,21 @@ module mod_blas
 #if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
-                    !DIR$ FMA
+                  
 #if (CURRENT_PROCESSOR_ARCH_NAME) == 1
                     !DIR$ UNROLL(10)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
-                    !DIR$ UNROLL(5)
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
           do i = 1,nincx,incx
@@ -617,8 +678,9 @@ module mod_blas
 !*> \endverbatim
 
     subroutine gms_zgbmv(trans,m,n,kl,ku,alpha,a,lda,x,incx,beta,y,incy)
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgbmv
-        !
+#endif
         character(len=1),                      intent(in),value :: trans
         integer(kind=int4),                    intent(in),value :: m
         integer(kind=int4),                    intent(in),value :: n
@@ -626,27 +688,41 @@ module mod_blas
         integer(kind=int4),                    intent(in),value :: ku
         type(AVX512c8f64_t),                   intent(in)       :: alpha
         type(AVX512c8f64_t), dimension(lda,*), intent(in)       :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value :: lda
         type(AVX512c8f64_t), dimension(*),     intent(in)       :: x
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED x:64
+#endif
         integer(kind=int4),                    intent(in),value :: incx
         type(AVX512c8f64_t),                   intent(in)       :: beta
         type(AVX512c8f64_t), dimension(*),     intent(inout)    :: y
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED y:64
+#endif
         integer(kind=int4),                    intent(in),value :: incy
         ! LOcals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
         type(AVX512c8f64_t), automatic :: temp
         !
         integer(kind=dp),    automatic :: i,info,ix,iy,j,jk,k,kup1,kx,ky,lenx,leny
         logical(kind=int4),  automatic :: noconj
         logical(kind=int1),  automatic :: beq0,aeq0,bneq0,aneq0,beq1,aeq1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
         type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
-                                                                0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+ 
+#if defined __INTEL_COMPILER                                                               
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -712,14 +788,18 @@ module mod_blas
         if(bneq1) then
            if(incy==1) then
               if(beq0) then
+#if defined __INTEL_COMPILER
                  !DIR$ VECTOR ALIGNED
                  !DIR$ VECTOR ALWAYS
+#endif
                  do i=1,leny
                     y(i) = ZERO
                  end do
               else
+#if defined __INTEL_COMPILER
                  !DIR$ VECTOR ALIGNED
                  !DIR$ VECTOR ALWAYS
+#endif
                  do i=1,leny
                     y(i) = beta*y(i)
                  end do
@@ -727,15 +807,35 @@ module mod_blas
            else
               iy=ky
               if(beq0) then
+#if defined __INTEL_COMPILER
                  !DIR$ VECTOR ALIGNED
                  !DIR$ VECTOR ALWAYS
+#endif
                  do i=1,leny
                     y(iy) = ZERO
                     iy = iy+incy
                  end do
               else
-                 !DIR$ VECTOR ALIGNED
-                 !DIR$ VECTOR ALWAYS
+#if defined __INTEL_COMPILER
+                    !DIR$ VECTOR ALIGNED
+                    !DIR$ VECTOR ALWAYS
+                  
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif
                  do i=1,leny
                     y(iy) = beta*y(iy)
                     iy = iy+incy
@@ -763,7 +863,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                 
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
+#endif
                  do i=max(1,j-ku),min(m,j+kl)
                     y(i) = y(i)+temp*a(k+1,j)
                  end do
@@ -784,6 +892,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
 #endif
 #endif
                  do i=max(1,j-ku),min(m,j+kl)
@@ -813,6 +929,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
 #endif
                     do i=max(1,j-ku),min(m,j+kl)
                        temp = temp+a(k+i,j)*x(i)
@@ -828,6 +952,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
 #endif
 #endif
                     do i=,max(1,j-ku),min(m,j+kl)
@@ -854,6 +986,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
 #endif
                     do i=max(1,j-ku),min(m,j+kl)
                        temp = temp+a(k+i,j)*x(ix)
@@ -870,6 +1010,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
 #endif
 #endif
                     do i=max(1,j-ku),min(m,j+kl)
@@ -915,7 +1063,9 @@ module mod_blas
     !*>
 
     subroutine gms_zgemm(transa,transb,m,n,k,alpha,a,lda,b,ldb,beta,c,ldc)
-       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgemm
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgemm
+#endif
        character(len=1),                      intent(in),value    :: transa
        character(len=1),                      intent(in),value    :: transb
        integer(kind=int4),                    intent(in),value    :: m
@@ -923,27 +1073,39 @@ module mod_blas
        integer(kind=int4),                    intent(in),value    :: k
        type(AVX512c8f64_t),                   intent(in)          :: alpha
        type(AVX512c8f64_t), dimension(lda,*), intent(in)          :: a
+#if defined __INTEL_COMPILER
        !DIR$ ASSUME_ALIGNED a:64
+#endif
        integer(kind=int4),                    intent(in),value    :: lda
        type(AVX512c8f64_t), dimension(ldb,*), intent(in)          :: b
+#if defined __INTEL_COMPILER
        !DIR$ ASSUME_ALIGNED b:64
+#endif
        integer(kind=int4),                    intent(in),value    :: ldb
        type(AVX512c8f64_t),                   intent(in)          :: beta
        type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
+#if defined __INTEL_COMPILER
        !DIR$ ASSUME_ALIGNED c:64
+#endif
        integer(kind=int4),                    intent(in),value    :: ldc
        ! Locals
+#if defined __INTEL_COMPILER
        !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
        type(AVX512c8f64_t), automatic :: temp
        integer(kind=int4),  automatic :: i,info,j,l,ncola,nrowa,nrowb
        logical(kind=int4),  automatic :: conja,conjb,nota,notb
        logical(kind=int1),  automatic :: aeq0,beq0,beq1,bneq1
+#if defined __INTEL_COMPILER
        !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
        type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER       
        !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
        type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -1004,16 +1166,32 @@ module mod_blas
         if(aeq0) then
            if(beq0) then
               do j=1,n
+#if defined __INTEL_COMPILER
                  !DIR$ VECTOR ALIGNED
                  !DIR$ VECTOR ALWAYS
+#endif
                  do i=1,m
                     c(i,j) = ZERO
                  end do
               end do
            else
               do j=1,n
-                 !DIR$ VECTOR ALIGNED
-                 !DIR$ VECTOR ALWAYS
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif
                  do i=1,m
                     c(i,j) = beta*c(i,j)
                  end do
@@ -1028,14 +1206,30 @@ module mod_blas
               !  Form  C := alpha*A*B + beta*C.
               do j=1,n
                  if(beq0) then
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,m
                        c(i,j) = ZERO
                     end do
                  else if(bneq0) then
-                    !DIR$ VECTOR ALIGNED
-                    !DIR$ VECTOR ALWAYS
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !DIR$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !DIR$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !DIR$ UNROLL(4)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif
                     do i=1,m
                        c(i,j) = beta*c(i,j)
                     end do
@@ -1052,6 +1246,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=1,m
@@ -1074,6 +1276,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do l=1,k
@@ -1102,6 +1312,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                     do l=1,k
                        temp = temp+a(l,i)*b(l,j)
@@ -1119,14 +1337,18 @@ module mod_blas
                  !  Form  C := alpha*A*B**H + beta*C.
                   do j=1,n
                      if(beq0) then
+#if defined __INTEL_COMPILER
                         !DIR$ VECTOR ALIGNED
                         !DIR$ VECTOR ALWAYS
+#endif
                         do i=1,m
                            c(i,j) = ZERO
                         end do
                      else if(bneq1) then
+#if defined __INTEL_COMPILER
                         !DIR$ VECTOR ALIGNED
                         !DIR$ VECTOR ALWAYS
+#endif
                         do i=1,m
                            c(i,j) = beta*c(i,j)
                         end do
@@ -1144,6 +1366,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                         do i=1,m
                            c(i,j) = c(i,j)+temp*a(i,l)
@@ -1154,8 +1384,10 @@ module mod_blas
                   !  Form  C := alpha*A*B**T + beta*C
                   do j=1,n
                      if(beq0) then
+#if defined __INTEL_COMPILER
                         !DIR$ VECTOR ALIGNED
                         !DIR$ VECTOR ALWAYS
+#endif
                         do i=1,m
                            c(i,j) = ZERO
                         end do
@@ -1176,6 +1408,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                         do i=1,m
@@ -1200,6 +1440,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                            do l=1,k
@@ -1227,6 +1475,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                            do l=1,k
@@ -1257,6 +1513,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                            do l=1,k
                               temp = temp+a(l,i)*conjugate(b(j,l))
@@ -1283,6 +1547,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                            do l=1,k
@@ -1329,33 +1601,47 @@ module mod_blas
       !*> \endverbatim
 
       subroutine gms_zgemv(trans,m,n,alpha,a,lda,x,incx,beta,y,incy)
-          !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgmev
+#if defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgmev
+#endif
           character(len=1),                      intent(in),value :: trans
           integer(kind=int4),                    intent(in),value :: m
           integer(kind=int4),                    intent(in),value :: n
           type(AVX512c8f64_t),                   intent(in)       :: alpha
           type(AVX512c8f64_t), dimension(lda,*), intent(in)       :: a
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED a:64
+#endif
           integer(kind=int4),                    intent(in),value :: lda
           type(AVX512c8f64_t), dimension(*),     intent(in)       :: x
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED x:64
+#endif
           integer(kind=int4),                    intent(in),value    :: incx
           type(AVX512c8f64_t),                   intent(in)          :: beta
           type(AVX512c8f64_t), dimension(*),     intent(inout)       :: y
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED y:64
+#endif
           integer(kind=int4),                    intent(in),value    :: incy
           ! LOcals
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
           type(AVX512c8f64_t), automatic :: temp
           integer(kind=int4),  automatic :: i,info,ix,iy,j,jx.jy,kx,ky,lenx,leny
           logical(kind=int4),  automatic :: noconj
           logical(kind=int1),  automatic :: aeq0,beq1,bneq1,beq0
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
           type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
           type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -1417,15 +1703,19 @@ module mod_blas
           beq0  = all(beta==ZERO)
           if(bneq1) then
              if(incy==1) then
-                 if(beq0)  then
+                if(beq0)  then
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
-                    !DIR$ VECTOR ALWAYS
+                   !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,leny
                        y(i) = ZERO
                     end do
                  else
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,leny
                        y(i) = beta*leny(i)
                     end do
@@ -1433,15 +1723,19 @@ module mod_blas
               else
                  iy = ky
                  if(beq0) then
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,leny
                        y(iy) = ZERO
                        iy = iy+incy
                     end do
                  else
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,leny
                        y(iy) = beta*y(iy)
                        iy = iy+incy
@@ -1467,6 +1761,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                     do i=1,m
                        y(i) = y(i)+temp*a(i,j)
@@ -1487,6 +1789,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=1,m
@@ -1514,6 +1824,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=1,m
                           temp = temp+a(i,j)*x(i)
@@ -1529,6 +1847,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                        do i=1,m
@@ -1554,6 +1880,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=1,m
                           temp = temp+a(i,j)*x(ix)
@@ -1570,6 +1904,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                        do i=1,m
@@ -1614,25 +1956,37 @@ module mod_blas
      !*>
 
      subroutine gms_zgerc(m,n,alpha,x,incx,y,incy,a,lda)
-        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgerc
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgerc
+#endif
         integer(kind=int4),                    intent(in),value    :: m
         integer(kind=int4),                    intent(in),value    :: n
         type(AVX512c8f64_t),                   intent(in)          :: alpha
         type(AVX512c8f64_t), dimension(*),     intent(in)          :: x
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED x:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incx
         type(AVX512c8f64_t), dimension(*),     intent(in)          :: y
+#if defined __INTEL_COMPILER
         !DIR$ ASUME_ALIGNED y:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incy
         type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value    :: lda
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
         type(AVX512c8f64_t), automatic :: temp
         integer(kind=int4),  automatic :: i,info,ix,j,jy,kx
         logical(kind=int1),  automatic :: aeq0
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -1680,6 +2034,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                  do i=1,m
                     a(i,j) = a(i,j)+x(i)*temp
@@ -1707,6 +2069,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                  do i=1,m
@@ -1748,24 +2118,34 @@ module mod_blas
      !*> \endverbatim
 
      subroutine gms_zgeru(m,n,alpha,x,incx,y,incy,a,lda)
-        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgeru
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zgeru
+#endif
         integer(kind=int4),                    intent(in),value    :: m
         integer(kind=int4),                    intent(in),value    :: n
         type(AVX512c8f64_t),                   intent(in)          :: alpha
         type(AVX512c8f64_t), dimension(*),     intent(in)          :: x
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED x:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incx
         type(AVX512c8f64_t), dimension(*),     intent(in)          :: y
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED y:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incy
         type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
         integer(kind=int4),                    intent(in),value    :: lda
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
         type(AVX512c8f64_t), automatic :: temp
         integer(kind=int4),  automatic :: i,info,ix,j,jy,kx
         logical(kind=int1),  automatic :: aeq0
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -1813,6 +2193,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                  do i=1,m
                     a(i,j) = a(i,j)+x(i)*temp
@@ -1841,6 +2229,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                  do i=1,m
                     a(i,j) = a(i,j)+x(ix)*temp
@@ -1854,34 +2250,50 @@ module mod_blas
      end subroutine gms_zgeru
 
      subroutine gms_zhbmv(uplo,n,k,alpha,a,lda,x,incx,beta,y,incy)
-        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhbmv
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhbmv
+#endif
         character(len=1),                      intent(in),value    :: uplo
         integer(kind=int4),                    intent(in),value    :: n
         integer(kind=int4),                    intent(in),value    :: k
         type(AVX512c8f64_t),                   intent(in)          :: alpha
         type(AVX512c8f64_t), dimension(lda,*), intent(in)          :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value    :: lda
         type(AVX512c8f64_t), dimension(*),     intent(in)          :: x
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED x:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incx
         type(AVX512c8f64_t),                   intent(in)          :: beta
         type(AVX512c8f64_t), dimension(*),     intent(inout)       :: y
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED y:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incy
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
         type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
         type(AVX512c8f64_t), automatic :: temp2
         integer(kind=int4),  automatic :: i,info,ix,iy,j,jx,jy,kplus1,kx,ky,l
         logical(kind=int1),  automatic :: aeq0,beq1,beq0,bneq1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
         type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -1934,15 +2346,19 @@ module mod_blas
         beq0  = all(beta==ZERO)
         if(bneq1) then
            if(incy==1) then
-                if(beq0) then
+              if(beq0) then
+#if defined __INTEL_COMPILER
                    !DIR$ VECTOR ALIGNED
-                   !DIR$ VECTOR ALWAYS
+                 !DIR$ VECTOR ALWAYS
+#endif
                    do i=1,n
                       y(i) = ZERO
                    end do
                 else
+#if defined __INTEL_COMPILER
                    !DIR$ VECTOR ALIGNED
                    !DIR$ VECTOR ALWAYS
+#endif
                    do i=1,m
                       y(i) = beta*y(i)
                    end do
@@ -1950,15 +2366,19 @@ module mod_blas
              else
                 iy = ky
                 if(beq0) then
+#if defined __INTEL_COMPILER
                    !DIR$ VECTOR ALIGNED
                    !DIR$ VECTOR ALWAYS
+#endif
                    do i=1,n
                       y(iy) = ZERO
                       iy = iy+incy
                    end do
                 else
+#if defined __INTEL_COMPILER
                    !DIR$ VECTOR ALIGNED
                    !DIR$ VECTOR ALWAYS
+#endif
                    do i=1,n
                       y(iy) = beta*y(iy)
                       iy = iy+incy
@@ -1986,6 +2406,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do u=max(1,j-k),j-1
                       y(i) = y(i)+temp1*a(l+i,j)
@@ -2012,6 +2440,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do i=max(1,j-k),j-1
@@ -2048,6 +2484,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do i=j+1,min(n,j+k)
                       y(i) = y(i)+temp1*a(l+i,j)
@@ -2075,6 +2519,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do i=j+1,min(n,j+k)
@@ -2122,34 +2574,48 @@ module mod_blas
      !*  =====================================================================
 
       subroutine gms_zhemm(side,uplo,m,n,alpha,a,lda,b,ldb,beta,c,ldc)
-          !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhemm
+#if defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhemm
+#endif
           character(len=1),                      intent(in),value    :: side
           character(len=1),                      intent(in),value    :: uplo
           integer(kind=int4),                    intent(in),value    :: m
           integer(kind=int4),                    intent(in),value    :: n
           type(AVX512c8f64_t),                   intent(in)          :: alpha
           type(AVX512c8f64_t), dimension(lda,*), intent(in)          :: a
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED a:64
+#endif
           integer(kind=int4),                    intent(in),value    :: lda
           type(AVX512c8f64_t), dimension(ldb,*), intent(in)          :: b
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED b:64
+#endif
           integer(kind=int4),                    intent(in),value    :: ldb
           type(AVX512c8f64_t),                   intent(in)          :: beta
           type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED c:64
+#endif
           integer(kind=int4),                    intent(in),value    :: ldc
           ! LOcals
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: temp1,temp2
+#endif
           type(AVX512c8f64_t), automatic :: temp1,temp2
           integer(kind=int4),  automatic :: i,info,j,k,nrowa
           logical(kind=int4),  automatic :: upper
           logical(kind=int1),  automatic :: aeq0,beq1,beq0
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
           type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
           type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -2196,16 +2662,20 @@ module mod_blas
           if(aeq0) then
              if(beq0) then
                 do j=1,n
+#if defined __INTEL_COMPILER
                    !DIR$ VECTOR ALIGNED
                    !DIR$ VECTOR ALWAYS
+#endif
                    do i=1,m
                       c(i,j) = ZERO
                    end do
                 end do
              else
                 do j=1,n
+#if defined __INTEL_COMPILER
                    !DIR$ VECTOR ALIGNED
                    !DIR$ VECTOR ALWAYS
+#endif
                    do i=1,m
                       c(i,j) = beta*c(i,j)
                    end do
@@ -2231,6 +2701,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                       do k=1,i-1
@@ -2260,6 +2738,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                       do k=i+1,m
@@ -2297,6 +2783,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do i=1,m
                       c(i,j) = beta*c(i,j)+temp1*b(i,j)
@@ -2319,6 +2813,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do i=1,m
                       c(i,j) = c(i,j)+temp1*b(i,k)
@@ -2340,6 +2842,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do i=1,m
@@ -2381,32 +2891,46 @@ module mod_blas
      !*>
 
      subroutine gms_zhemv(uplo,n,alpha,a,lda,x,incx,beta,y,incy)
-         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhemv
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhemv
+#endif
         character(len=1),                       intent(in),value    :: uplo
         integer(kind=int4),                     intent(in),value    :: n
         type(AVX512c8f64_t),                    intent(in)          :: alpha
         type(AVX512c8f64_t), dimension(lda,*),  intent(in)          :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                     intent(in),value    :: lda
         type(AVX512c8f64_t), dimension(*),      intent(in)          :: x
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED x:64
+#endif
         integer(kind=int4),                     intent(in),value    :: incx
         type(AVX512c8f64_t),                    intent(in)          :: beta
         type(AVX512c8f64_t), dimension(*),      intent(inout)       :: y
         integer(kind=int4),                     intent(in),value    :: incy
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
         type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
         type(AVX512c8f64_t), automatic :: temp2
         integer(kind=int4),  automatic :: i,info,ix,iy,j,jx,jy,kx,ky
         logical(kind=int1),  automatic :: aeq0,beq1,bneq1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
         type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -2454,15 +2978,19 @@ module mod_blas
         !*     First form  y := beta*y.
         if(bneq1) then
            if(incy==1) then
-                 if(beq0) then
+              if(beq0) then
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
-                    !DIR$ VECTOR ALWAYS
+                 !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,n
                        y(i) = ZERO
                     end do
                  else
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,n
                        y(i) = beta*y(i)
                     end do
@@ -2470,15 +2998,19 @@ module mod_blas
               else
                  iy = ky
                  if(beq0) then
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,n
                        y(iy) = ZERO
                        iy = iy+incy
                     end do
                  else
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
+#endif
                     do i=1,n
                        y(iy) = beta*y(iy)
                        iy = iy+incy
@@ -2503,6 +3035,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=1,j-1
@@ -2529,6 +3069,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=1,j-1
@@ -2560,6 +3108,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                     do i=j+1,n
                        y(i) = y(i)+temp1*a(i,j)
@@ -2586,6 +3142,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=j+1,n
@@ -2631,23 +3195,33 @@ module mod_blas
 !*> \endverbatim
 !*>
      subroutine gms_zher(uplo,n,alpha,x,incx,a,lda)
-        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zher
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zher
+#endif
         character(len=1),                      intent(in),value    :: uplo
         integer(kind=int4),                    intent(in),value    :: n
         type(ZMM8r4_t),                        intent(in)          :: alpha
         type(AVX512c8f64_t), dimension(*),     intent(in)          :: x
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED x:64
+#endif
         integer(kind=int4),                    intent(in),value    :: incx
         type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value    :: lda
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
         type(AVX512c8f64_t), automatic :: temp
         integer(kind=int4),  automatic :: i,info,ix,j,jx,kx
         logical(kind=int1),  automatic :: aeq0
         !
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -2696,6 +3270,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                     do i=1,j-1
                        a(i,j) = a(i,j)+x(i)*temp
@@ -2721,6 +3303,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=1,j-1
@@ -2748,6 +3338,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                     do i=1,j-1
@@ -2779,6 +3377,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                     do i=j+1,n
                        a(i,j) = a(i,j)+x(i)*temp
@@ -2805,7 +3411,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                    
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                  
                     do i=j+1,n
                        ix = ix+incx
                        a(i,j) = a(i,j)+x(ix)*temp
@@ -2843,13 +3457,17 @@ module mod_blas
     !  !!Modified by Bernard Gingold on 29-11-2019 (removing build-in complex*16 data type,using modern Fortran features) 
     !*> \endverbatim
 
-     subroutine gms_zscal(n,za,zx,incx)
+    subroutine gms_zscal(n,za,zx,incx)
+#if defined __INTEL_COMPILER
        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zscal
-       !DIR$ ATTIRBUTES VECTOR  :: gms_zscal
+      !DIR$ ATTIRBUTES VECTOR  :: gms_zscal
+#endif
        integer(kind=int4),                     intent(in),value    :: n
        type(AVX512c8f64_t),                    intent(in)          :: za
        type(AVX512c8f64_t), dimension(*),      intent(inout)       :: zx
+#if defined __INTEL_COMPILER
        !DIR$ ASSUME_ALIGNED zx:64
+#endif
        integer(kind=int4),                     intent(in),value    :: incx
        ! Locals
        integer(kind=int4), automatic :: i,nincx
@@ -2857,14 +3475,19 @@ module mod_blas
        if(n<=0 .or. incx<0) return
        if(incx==1) then
           !   code for increment equal to 1
+#if defined __INTEL_COMPILER
           !DIR$ VECTOR ALIGNED
           !DIR$ VECTOR ALWAYS
+#endif
+         
+          !GCC$ UNROLL(4)
           do i=1,n
              zx(i) = za*zx(i)
           end do
        else
           !  code for increment not equal to 1
           nincx = n*incx
+#if defined __INTEL_COMPILER
           !DIR$ VECTOR ALIGNED
           !DIR$ VECTOR ALWAYS
           do i=1,nincx,incx
@@ -2901,27 +3524,41 @@ module mod_blas
      !*> \endverbatim
 
      subroutine gms_zher2(uplo,n,alpha,x,incx,y,incy,a,lda)
-         !DIR$ ATTRIBUTES CODE_ALIGN : 64 :: gms_zher2
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 64 :: gms_zher2
+#endif
          character(len=1),                      intent(in),value    :: uplo
          integer(kind=int4),                    intent(in),value    :: n
          type(AVX512c8f64_t),                   intent(in)          :: alpha
          type(AVX512c8f64_t), dimension(*),     intent(in)          :: x
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED x:64
+#endif
          integer(kind=int4),                    intent(in),value    :: incx
          type(AVX512c8f64_t), dimension(*),     intent(in)          :: y
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED y:64
+#endif
          integer(kind=int4),                    intent(in),value    :: incy
          type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED a:64
+#endif
          integer(kind=int4),                    intent(in),value    :: lda
          ! LOcals ....
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
          type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
          type(AVX512c8f64_t), automatic :: temp2
          integer(kind=int4),  automatic :: i,info,ix,iy,j,jx,jy,kx,ky
          logical(kind=int1),  automatic :: aeq0
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
          type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -2984,6 +3621,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                      do i=1,j-1
                         a(i,j) = a(i,j)+x(i)*temp1+y(i)*temp2
@@ -3011,7 +3656,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                     
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                    
                      do i=1,j-1
                         a(i,j) = a(i,j)+x(ix)*temp1+y(iy)*temp2
                         ix = ix+incx
@@ -3045,7 +3698,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                   
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                 
                      do i=j+1,n
                         a(i,j) = a(i,j)+x(i)*temp1+y(i)*temp2
                      end do
@@ -3073,7 +3734,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                  
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                 
                      do i=j+1,n
                         ix = ix+incx
                         iy = iy+incy
@@ -3122,7 +3791,9 @@ module mod_blas
        !*>
 
        subroutine gms_zher2k(uplo,trans,n,k,alpha,a,lda,b,ldb,beta,c,ldc)
-          !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zher2k
+#if defined __INTEL_COMPILER
+         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zher2k
+#endif
           use mod_vecconst, only : v8_n1
           character(len=1),                      intent(in),value    :: uplo
           character(len=1),                      intent(in),value    :: trans
@@ -3130,26 +3801,40 @@ module mod_blas
           integer(kind=int4),                    intent(in),value    :: k
           type(AVX512c8f64_t),                   intent(in)          :: alpha
           type(AVX512c8f64_t), dimension(lda,*), intent(in)          :: a
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED a:64
+#endif
           integer(kind=int4),                    intent(in),value    :: lda
           type(AVX512c8f64_t), dimension(ldb,*), intent(in)          :: b
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED b:64
+#endif
           integer(kind=int4),                    intent(in),value    :: ldb
           type(ZMM8r8_t),                        intent(in)          :: beta
           type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
+#if defined __INTEL_COMPILER
           !DIR$ ASSUME_ALIGNED c:64
+#endif
           integer(kind=int4),                    intent(in),value    :: ldc
           ! Locals
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
           type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
           type(AVX512c8f64_t), automatic :: temp2
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: temp3
+#endif
           type(AVX512c8f64_t), automatic :: temp3
           integer(kind=int4),  automatic :: i,info,j,l,nrowa
           logical(kind=int4),  automatic :: upper
           logical(kind=int1),  automatic :: aeq0,beq1,beq0,bneq1
+#if defined __INTEL_COMPILER
           !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
           type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -3275,7 +3960,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                         
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                       
                          do i=1,j-1
                             c(i,j) = c(i,j)+a(i,l)*temp1+ &
                                  b(i,l)*temp2
@@ -3318,6 +4011,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif                      
                          do i=j+1,n
                             c(i,j) = c(i,j)+a(i,l)*temp1+&
@@ -3348,7 +4049,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                    
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                   
                       do l=1,k
                          temp1 = temp1+conjugate(a(l,i))*b(l,j)
                          temp2 = temp2+conjugate(b(l,i))*a(l,j)
@@ -3388,6 +4097,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif                   
                       do l=1,k
@@ -3450,28 +4167,40 @@ module mod_blas
      !*> \endverbatim
 
      subroutine gms_zherk(uplo,trans,n,alpha,a,lda,beta,c,ldc)
+#if defined __INTEL_COMPILER
        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zherk
+#endif
         use mod_vecconst, only : v8_n1,v8_n0
         character(len=1),                      intent(in),value    :: uplo
         character(len=1),                      intent(in),value    :: trans
         integer(kind=int4),                    intent(in),value    :: n
         type(ZMM8r8_t),                        intent(in)          :: alpha
         type(AVX512c8f64_t), dimension(lda,*), intent(in)          :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value    :: lda
         type(ZMM8r8_t),                        intent(in)          :: beta
         type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
+#if defined __INTEL_COMPILER
         !DIR$ ASUME_ALIGNED c:64
+#endif
         integer(kind=int4),                    intent(in),value    :: ldc
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
         type(AVX512c8f64_t), automatic :: temp
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: rtemp
+#endif
         type(ZMM8r8_t),      automatic :: rtemp
         integer(kind=int4),  automatic :: i,info,j,l,nrowa
         logical(kind=int4),  automatic :: upper
         logical(kind=int1),  automatic :: aeq0,beq1,beq0,bneq1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -3590,6 +4319,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=1,j-1
                           c(i,j) = c(i,j)+temp*a(i,l)
@@ -3631,6 +4368,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=j+1,n
                           c(i,j) = c(i,j)+temp*a(i,l)
@@ -3655,6 +4400,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                      do l=1,k
@@ -3699,6 +4452,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                      do l=1,k
@@ -3746,31 +4507,45 @@ module mod_blas
      !*>
 
      subroutine gms_zhpmv(uplo,n,alpha,ap,x,incx,beta,y,incy)
-         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhpmv
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhpmv
+#endif
          character(len=1),                     intent(in),value :: uplo
          integer(kind=int4),                   intent(in),value :: n
          type(AVX512c8f64_t),                  intent(in)       :: alpha
          type(AVX512c8f64_t), dimension(*),    intent(in)       :: ap
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED ap:64
+#endif
          type(AVX512c8f64_t), dimension(*),    intent(in)       :: x
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED x:64
+#endif
          integer(kind=int4),                   intent(in),value :: incx
          type(AVX512c8f64_t),                  intent(in)       :: beta
          type(AVX512c8f64_t), dimension(*),    intent(inout)    :: y
          integer(kind=int4),                   intent(in),value :: incy
          ! Locals
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
          type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
          type(AVX512c8f64_t), automatic :: temp2
          integer(kind=int4),  automatic :: i,info,ix,iy,j,jx,jy,k,kk,kx,ky
          logical(kind=int1),  automatic :: aeq0,beq1,bneq1,beq0
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
          type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
          type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -3875,6 +4650,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do i=1,j-1
                       y(i) = y(i)+temp1*ap(k)
@@ -3902,6 +4685,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do k=kk,kk+j-2
@@ -3936,6 +4727,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do i=j+1,n
                       y(i) = y(i)+temp1*ap(k)
@@ -3964,6 +4763,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do k=kk+1,kk+n-j
@@ -4010,24 +4817,36 @@ module mod_blas
      !*> \endverbatim
 
      subroutine gms_zhpr(uplo,n,alpha,x,incx,ap)
-         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhpr
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zhpr
+#endif
          use mod_vecconsts, only : v8_n0
          character(len=1),                  intent(in),value :: uplo
          integer(kind=int4),                intent(in),value :: n
          type(ZMM8r8_t),                    intent(in)       :: alpha
          type(AVX512c8f64_t), dimension(*), intent(in)       :: x
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED x:64
+#endif
          integer(kind=int4),                intent(in),value :: incx
          type(AVX512c8f64_t), dimension(*), intent(inout)    :: ap
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED ap:64
+#endif
          ! Locals
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
          type(AVX512c8f64_t), automatic :: temp
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: vtemp
+#endif
          type(ZMM8r8_t),      automatic :: vtemp
          integer(kind=int4),  automatic :: i,info,ix,j,jx,k,kk,kx
          integer(kind=int1),  automatic :: aeq0
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
          type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -4078,6 +4897,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                      do i=1,j-1
                         ap(k) = ap(k)+x(i)*temp
@@ -4105,6 +4932,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                      do k=kk,kk+j-2
@@ -4139,6 +4974,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                      do i=j+1,n
                         ap(k) = ap(k)+x(i)*temp
@@ -4167,6 +5010,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                      do k=kk+1,kk+n-j
@@ -4212,36 +5063,52 @@ module mod_blas
      !*> \endverbatim
 
      subroutine gms_zsymm(side,uplo,m,n,alpha,a,lda,b,ldb,beta,c,ldc)
-         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zsymm
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zsymm
+#endif
          character(len=1),                       intent(in),value :: side
          character(len=1),                       intent(in),value :: uplo
          integer(kind=int4),                     intent(in),value :: m
          integer(kind=int4),                     intent(in),value :: n
          type(AVX512c8f64_t),                    intent(in)       :: alpha
          type(AVX512c8f64_t), dimension(lda,*),  intent(in)       :: a
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED a:64
+#endif
          integer(kind=int4),                     intent(in),value :: lda
          type(AVX512c8f64_t), dimension(ldb,*),  intent(in)       :: b
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED b:64
+#endif
          integer(kind=int4),                     intent(in),value :: ldb
          type(AVX512c8f64_t),                    intent(in)       :: beta
          type(AVX512c8f64_t), dimension(ldc,*),  intent(inout)    :: c
+#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED c:64
+#endif
          integer(kind=int4),                     intent(in)       :: ldc
          ! Locals
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
          type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
          type(AVX512c8f64_t), automatic :: temp2
          integer(kind=int4),  automatic :: i,info,j,k,nrowa
          logical(kind=int4),  automatic :: upper
          logical(kind=int1),  automatic :: aeq0,beq1,beq0
-          !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#if defined __INTEL_COMPILER
+         !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
          type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
          !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
          type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -4353,6 +5220,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                      do k=i+1,m
                         c(k,j) = c(k,j)+temp1*a(k,i)
@@ -4390,6 +5265,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                   do i=1,m
                      c(i,j) = beta*c(i,j)+temp1*b(i,j)
@@ -4412,6 +5295,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                    do i=1,m
                       c(i,j) = c(i,j)+temp1*b(i,k)
@@ -4433,6 +5324,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do i=1,m
@@ -4468,39 +5367,55 @@ module mod_blas
 !*>     Iain Duff, AERE Harwell.
 !*>     Jeremy Du Croz, Numerical Algorithms Group Ltd.
      !*>     Sven Hammarling, Numerical Algorithms Group Ltd.
-      !Modified by Bernard Gingold on 29-11-2019 (removing build-in complex*16 data type,using modern Fortran features)
+      !Modified by Bernard Gingold on 29-11-2019 (removing built-in complex*16 data type,using modern Fortran features)
 !*> \endverbatim     
      subroutine gms_zsyr2k(uplo,trans,n,k,alpha,a,lda,b,ldb,beta,c,ldc)
-        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zsyr2k
+#if defined __INTEL_COMPILER
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gms_zsyr2k
+#endif
         character(len=1),                      intent(in),value :: uplo
         character(len=1),                      intent(in),value :: trans
         integer(kind=int4),                    intent(in),value :: n
         integer(kind=int4),                    intent(in),value :: k
         type(AVX512c8f64_t),                   intent(in)       :: alpha
         type(AVX512c8f64_t), dimension(lda,*), intent(in)       :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUMED_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value :: lda
         type(AVX512c8f64_t), dimension(ldb,*), intent(in)       :: b
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED b:64
+#endif
         integer(kind=int4),                    intent(in),value :: ldb
         type(AVX512c8f64_t),                   intent(in)       :: beta
         type(AVX512c8f64_t), dimension(ldc,*), intent(inout)    :: c
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED c:64
+#endif
         integer(kind=int4),                    intent(in)       :: ldc
         ! Locals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp1
+#endif
         type(AVX512c8f64_t), automatic :: temp1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp2
+#endif
         type(AVX512c8f64_t), automatic :: temp2
         integer(kind=int4),  automatic :: i,info,j,l,nrowa
         logical(kind=int4),  automatic :: upper
         logical(kind=int1),  automatic :: aeq0,beq1,beq0,bneq1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
         type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -4554,6 +5469,7 @@ module mod_blas
                  end do
               else
                  do j=1,n
+#if defined __INTEL_COMPILER
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
 #if (CURRENT_PROCESSOR_ARCH_NAME) == 1
@@ -4580,7 +5496,7 @@ module mod_blas
                  end do
               else
                  do j=1,n
-                    
+#if defined __INTEL_COMPILER                    
                     !DIR$ VECTOR ALIGNED
                     !DIR$ VECTOR ALWAYS
 #if (CURRENT_PROCESSOR_ARCH_NAME) == 1
@@ -4589,6 +5505,7 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(4)
+#endif
 #endif
                     do i=j,n
                        c(i,j) = beta*c(i,j)
@@ -4617,7 +5534,7 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(4)
-#endif   
+#endif 
                  do i=1,j
                     c(i,j) = beta*c(i,j)
                  end do
@@ -4637,7 +5554,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                  
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                 
                     do i=1,j
                       
                        c(i,j) = c(i,j)+a(i,l)*temp1 +
@@ -4664,7 +5589,15 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(4)
-#endif   
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif  
                  do i=j,n
                     c(i,j) = beta*c(i,j)
                  end do
@@ -4684,7 +5617,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                    
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                   
                     do i=j,n
                        c(i,j) = c(i,j)+a(i,l)*temp1 + &
                             b(i,l)*temp2
@@ -4709,6 +5650,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                  do l=1,k
                     temp1 = temp1+a(l,i)*b(l,j)
@@ -4737,6 +5686,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                  do l=1,k
@@ -4793,23 +5750,34 @@ module mod_blas
         integer(kind=int4),                    intent(in),value  :: k
         type(AVX512c8f64_t),                   intent(in)        :: alpha
         type(AVX512c8f64_t), dimension(lda,*), intent(in)        :: a
+#if defined __INTEL_COMPILER
         !DIR$ ASSUME_ALIGNED a:64
+#endif
         integer(kind=int4),                    intent(in),value  :: lda
         type(AVX512c8f64_t),                   intent(in)        :: beta
         type(AVX512c8f64_t), dimension(ldc,*), intent(inout)     :: c
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED c:64
+#endif
         integer(kind=int4),                    intent(in),value  :: ldc
         ! LOcals
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: temp
+#endif
         type(AVX512c8f64_t), automatic :: temp
         integer(kind=int4),  automatic :: i,info,j,l,nrowa
         logical(kind=int4),  automatic :: upper
         logical(kind=int1),  automatic :: aeq0,beq1,beq0,bneq1
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ONE
+#endif
         type(AVX512c8f64_t), parameter :: ONE  = AVX512c8f64_t([1.0_dp,1.0_dp,1.0_dp,1.0_dp, &
                                                                 1.0_dp,1.0_dp,1.0_dp,1.0_dp],&
                                                                 [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp])
+#if defined __INTEL_COMPILER
         !DIR$ ATTRIBUTES ALIGN : 64 :: ZERO
+#endif
         type(AVX512c8f64_t), parameter :: ZERO = AVX512c8f64_t([0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
                                                                 0.0_dp,0.0_dp,0.0_dp,0.0_dp],&
                                                                [0.0_dp,0.0_dp,0.0_dp,0.0_dp, &
@@ -4954,6 +5922,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=1,j
                           c(i,j) = c(i,j)+temp*a(i,l)
@@ -5000,6 +5976,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                       do i=j,n
                          c(i,j) = c(i,j)+temp*a(i,l)
@@ -5024,6 +6008,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do l=1,k
@@ -5050,6 +6042,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                    do l=1,k
@@ -5184,6 +6184,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=j-1,max(1,j-k),-1
                           x(i) = x(i)-temp*a(l+i,j)
@@ -5211,6 +6219,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=j-1,max(1,j-k),-1
                           x(ix) = x(ix)-temp*a(l+i,j)
@@ -5237,6 +6253,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=j+1,min(n,j+k)
                           x(i) = x(i)-temp*a(l+i,j)
@@ -5262,6 +6286,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif                  
                        do i=j+1,min(n,j+k)
@@ -5293,7 +6325,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                   
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                  
                        do i=max(1,j-k),j-1
                           temp = temp-a(l+i,j)*x(i)
                        end do
@@ -5310,7 +6350,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                  
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                 
                        do i=max(1,j-k),j-1
                           temp = temp-conjugate(a(l+i,j))*x(i)
                        end do
@@ -5335,6 +6383,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif                 
                        do i=max(1,j-k),j-1
                           temp = temp-a(l+i,j)*x(ix)
@@ -5353,7 +6409,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                  
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                 
                        do i=max(1,j-k),j-1
                           temp = temp-conjugate(a(l+i,j))*x(ix)
                           ix = ix+incx
@@ -5382,6 +6446,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif                   
                        do i=min(n,j+k),j+1,-1
                           temp = temp-a(l+i,j)*x(i)
@@ -5398,6 +6470,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif
                        do i=min(n,j+k),j+1,-1
@@ -5426,6 +6506,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif
                        do i=min(n,j+k),j+1,-1
                           temp = temp-a(l+i,j)*x(i)
@@ -5444,7 +6532,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                       
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                      
                        do i=min(n,j+k),j+1,-1
                           temp = temp-conjugate(a(l+i,j))*x(ix)
                           ix = ix+incx
@@ -5571,7 +6667,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                         
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                        
                        do i=1,j-1
                           x(i) = x(i)+temp*ap(k)
                           k = k+1
@@ -5597,7 +6701,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                         
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                        
                        do k=kk,kk+j-2
                           x(ix) = x(ix)+temp*ap(k)
                           ix = ix+incx
@@ -5626,7 +6738,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif   
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif  
                        do i=n,j+1,-1
                           x(i) = x(i)+temp*ap(k)
                           k = k-1
@@ -5652,6 +6772,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif   
                        do k=kk,kk-(n-(j+1)),-1
@@ -5686,7 +6814,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                         
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                        
                         do i=j-1,1,-1
                            temp = temp+ap(k)*x(i)
                            k = k-1
@@ -5704,7 +6840,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                         
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                        
                         do i=j-1,1,-1
                            temp = temp+conjugate(ap(k))*x(i)
                            k = k-1
@@ -5731,6 +6875,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif                         
                         do k=kk-1,kk-j+1,-1
                            ix = ix-incx
@@ -5749,7 +6901,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                         
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                        
                         do k=kk-1,kk-j+1,-1
                            ix = ix-incx
                            temp = temp+conjugate(ap(k))*x(ix)
@@ -5778,6 +6938,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif                         
                         do i=j+1,n
@@ -5812,6 +6980,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif                         
                         do k=kk+1,kk+n-j
                            ix = ix+incx
@@ -5829,6 +7005,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif                         
                        do k=kk+1,kk+n-j
@@ -5958,7 +7142,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do i=j-1,1,-1
                              x(i) = x(i)-temp*ap(k)
                              k = k-1
@@ -5984,7 +7176,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do k=kk-1,kk-j+1,-1
                              ix = ix-incx
                              x(ix) = x(ix)-temp*ap(k)
@@ -6013,7 +7213,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do i=j+1,n
                              x(i) = x(i)-temp*ap(k)
                              k = k+1
@@ -6038,6 +7246,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif                           
                           do k=kk+1,kk+n-j
@@ -6070,7 +7286,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do i=1,j-1
                              temp = temp-ap(k)*x(i)
                              k = k+1
@@ -6103,7 +7327,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do k=kk,kk+j-2
                              temp = temp-ap(k)*x(ix)
                              ix = ix+incx
@@ -6121,7 +7353,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do k=kk,kk+j-2
                              temp = temp-conjugate(ap(k))*x(ix)
                              ix = ix+incx
@@ -6151,6 +7391,14 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
 #endif                           
                           do i=n,j+1,-1
                              temp = temp-ap(k)*x(i0
@@ -6169,7 +7417,15 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif                          
                           do i=n,j+1,-1
                              temp = temp/conjugate(ap(kk-n+j))
                              k = k-1
@@ -6197,7 +7453,16 @@ module mod_blas
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
 #endif
-#endif                           
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
+#endif
+#endif
+                          
                           do k=kk,kk-(n-(j+1)),-1
                              temp = temp-ap(k)*x(ix)
                              ix = ix-incx
@@ -6214,6 +7479,14 @@ module mod_blas
                     !DIR$ UNROLL(8)
 #elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
                     !DIR$ UNROLL(5)
+#endif
+#elif defined __GFORTRAN__
+#if (CURRENT_PROCESSOR_ARCH_NAME) == 1
+                    !GCC$ UNROLL(10)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 2
+                    !GCC$ UNROLL(8)
+#elif (CURRENT_PROCESSOR_ARCH_NAME) == 3
+                    !GCC$ UNROLL(4)
 #endif
 #endif                           
                           do k=kk,kk-(n-(j+1)),-1
