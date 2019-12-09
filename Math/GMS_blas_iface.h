@@ -53,13 +53,21 @@ extern "C" {
       type(AVX512c8f64_t), dimension(*), intent(inout) :: zy
       !DIR$ ASSUME_ALIGNED zy:64
       integer(kind=int4),                intent(in)    :: incy*/
-
+#if defined __INTEL_COMPILER
      void  mod_blas_mp_gms_zaxpy_(const int,
 		    const  VC8f64_t * __restrict,
 		    const  VC8F64_t * __restrict,
 		    const int,
 		    VC8F64_t * __restrict,
 		    const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zaxpy(const int,
+		    const  VC8f64_t * __restrict,
+		    const  VC8F64_t * __restrict,
+		    const int,
+		    VC8F64_t * __restrict,
+		    const int);
+#endif
 //=====================================================================//
     /*  integer(kind=int4),                intent(in)  :: n
       type(AVX512c8f64_t), dimension(*), intent(in)  :: zx
@@ -67,12 +75,20 @@ extern "C" {
       integer(kind=int4),                intent(in)  :: incx
       type(AVX512c8f64_t), dimension(*), intent(out) :: zy
       integer(kind=dint4),               intent(in)  :: incy*/
-     
+#if defined __INTEL_COMPILER     
      void mod_blas_mp_gms_zcopy_(const int,
-		    const VC8F64_t * __restrict,
-		    const int,
-		    VC8F64_t * __restrict,
-		    const int);
+		                 const VC8F64_t * __restrict,
+		                 const int,
+		                 VC8F64_t * __restrict,
+		                 const int);
+#elif defined __GFORTRAN__  || defined __GNUC__
+     void __mod_blas_MOD_gms_zcopy(const int,
+		                   const  VC8f64_t * __restrict,
+		                   const  VC8F64_t * __restrict,
+		                   const int,
+		                   VC8F64_t * __restrict,
+		                   const int);
+#endif
 //====================================================================//
      /*  integer(kind=int4),                intent(in) :: n
       type(AVX512c8f64_t), dimension(*), intent(in) :: zx
@@ -80,12 +96,20 @@ extern "C" {
       integer(kind=int4),                intent(in) :: incx
       type(AVX512c8f64_t), dimension(*), intent(in) :: zy
       !DIR$ ASSUME_ALIGNED zy:64
-      integer(kind=int4),                intent(in) :: incy*/		    
+      integer(kind=int4),                intent(in) :: incy*/
+#if defined __INTEL_COMPILER
      VC8F64_t mod_blas_mp_gms_zdotc_(const int,
-                        const VC8F64_t * __restrict,
-			const int,
-			const VC8F64_t * __restrict,
-			const int);
+                                     const VC8F64_t * __restrict,
+			             const int,
+			             const VC8F64_t * __restrict,
+			             const int);
+#elif defined __GFORTRAN__  || defined __GNUC__
+     VC8F64_t __mod_blas_MOD_gms_zdotc(const int,
+                                       const VC8F64_t * __restrict,
+			               const int,
+			               const VC8F64_t * __restrict,
+			               const int);
+#endif
 //===================================================================//
       /*   integer(kind=int4),                intent(in) :: n
       type(AVX512c8f64_t), dimension(*), intent(in) :: zx
@@ -93,12 +117,20 @@ extern "C" {
       integer(kind=int4),                intent(in) :: incx
       type(AVX512c8f64_t), dimension(*), intent(in) :: zy
       !DIR$ ASSUME_ALIGNED zy:64
-      integer(kind=int4),                intent(in) :: incy*/			
+      integer(kind=int4),                intent(in) :: incy*/
+#if defined __INTEL_COMPILER
      VC8F64_t mod_blas_mp_gms_zdotu_(const int,
-                        const VC8F64_t * __restrict,
-			const int,
-			const VC8F64_t * __restrict,
-			const int);
+                                     const VC8F64_t * __restrict,
+			             const int,
+			             const VC8F64_t * __restrict,
+			             const int);
+#elif defined __GFORTRAN__  || defined __GNUC__
+     VC8F64_t __mod_blas_MOD_gms_zdot(const int,
+                                     const VC8F64_t * __restrict,
+			             const int,
+			             const VC8F64_t * __restrict,
+			             const int);
+#endif
  //=================================================================//
      /*  integer(kind=int4),                intent(in)    :: n
       type(AVX512c8f64_t), dimension(*), intent(inout) :: cx
@@ -109,7 +141,8 @@ extern "C" {
       integer(kind=int4),                intent(in)    :: incy
       type(ZMM8r8_t),                    intent(in)    :: c ! scalar extended to vector
       !DIR$ ASSUME_ALIGNED c:64
-      type(ZMM8r8_t),                    intent(in)    :: s ! scalar extended to vector	*/		
+      type(ZMM8r8_t),                    intent(in)    :: s ! scalar extended to vector	*/
+#if defined __INTEL_COMPILER
      void mod_blas_mp_gms_zdrot_(const int,
                                  VC8F64_t * __restrict,
 		                 const int,
@@ -117,16 +150,32 @@ extern "C" {
 		                 const int,
 		                 const V8F64_t * __restrict,
 		                 const V8F64_t * __restrict);
+#elif defined __GFORTRAN__  || defined __GNUC__
+     void __mod_blas_MOD_gms_zdrot(const int,
+                                 VC8F64_t * __restrict,
+		                 const int,
+		                 VC8F64_t * __restrict,
+		                 const int,
+		                 const V8F64_t * __restrict,
+		                 const V8F64_t * __restrict);
+#endif
 //==================================================================//
      /*  integer(kind=int4),                intent(in)    :: n
        type(AVX512c8f64_t),               intent(in)    :: da
        type(AVX512c8f64_t), dimension(*), intent(inout) :: zx
        !DIR$ ASSUME_ALIGNED zx:64
-       integer(kind=int4),                intent(in)    :: incx	*/	    
+       integer(kind=int4),                intent(in)    :: incx	*/
+#if defined __INTEL_COMPILER
      void mod_blas_mp_gms_zdscal_(const int,
                                   const VC8F64_t * __restrict,
 		                  VC8F64_t * __restrict,
 		                  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+     void __mod_blas_MOD_gms_zdscal(const int,
+                                  const VC8F64_t * __restrict,
+		                  VC8F64_t * __restrict,
+		                  const int);
+#endif
 //=================================================================//
 
       /*  character(len=1),                      intent(in),value :: trans
@@ -144,6 +193,7 @@ extern "C" {
         type(AVX512c8f64_t),                   intent(in)       :: beta
         type(AVX512c8f64_t), dimension(*),     intent(inout)    :: y
         integer(kind=int4),                    intent(in),value :: incy */
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zgbmv_(const char,
                                   const int,
 		                  const int,
@@ -157,6 +207,21 @@ extern "C" {
 				  const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zgbmv(const char,
+                                  const int,
+		                  const int,
+                                  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
  //==========================================================================//
 
       
@@ -176,6 +241,7 @@ extern "C" {
        type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
        !DIR$ ASSUME_ALIGNED c:64
        integer(kind=int4),                    intent(in),value    :: ldc*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zgemm_(const char,
                                   const char,
 				  const int,
@@ -189,6 +255,21 @@ extern "C" {
 				  const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zgemm(const char,
+                                  const char,
+				  const int,
+				  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //==================================================================================//
 
         /*  character(len=1),                      intent(in),value :: trans
@@ -205,6 +286,7 @@ extern "C" {
           type(AVX512c8f64_t), dimension(*),     intent(inout)       :: y
           !DIR$ ASSUME_ALIGNED y:64
           integer(kind=int4),                    intent(in),value    :: incy*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zgemv_(const char,
                                   const int,
 				  const int,
@@ -216,6 +298,19 @@ extern "C" {
 				  const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zgemv(const char,
+                                  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+                                  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //===============================================================================//
 
        /* integer(kind=int4),                    intent(in),value    :: m
@@ -230,6 +325,7 @@ extern "C" {
         type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
         !DIR$ ASSUME_ALIGNED a:64
         integer(kind=int4),                    intent(in),value    :: lda*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zgerc_(const int,
                                   const int,
 				  const VC8F64_t * __restrict,
@@ -239,6 +335,17 @@ extern "C" {
 				  const int,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zgerc(const int,
+                                  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+                                  const int,
+                                  VC8F64_t * __restrict,
+				  const int,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //===============================================================================//
 
        /*  integer(kind=int4),                    intent(in),value    :: m
@@ -252,6 +359,7 @@ extern "C" {
         integer(kind=int4),                    intent(in),value    :: incy
         type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
         integer(kind=int4),                    intent(in),value    :: lda*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zgeru_(const int,
                                   const int,
 				  const VC8F64_t * __restrict,
@@ -261,6 +369,17 @@ extern "C" {
 				  const int,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zgeru(const int,
+                                  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //================================================================================//
 
        /*  character(len=1),                      intent(in),value    :: uplo
@@ -277,6 +396,7 @@ extern "C" {
         type(AVX512c8f64_t), dimension(*),     intent(inout)       :: y
         !DIR$ ASSUME_ALIGNED y:64
         integer(kind=int4),                    intent(in),value    :: incy*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zhbmv_(const char,
                                   const int,
 				  const int,
@@ -288,6 +408,19 @@ extern "C" {
 				  const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zhbmv(const char,
+                                  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //=============================================================================//				  
 
         /* character(len=1),                      intent(in),value    :: side
@@ -305,6 +438,7 @@ extern "C" {
           type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
           !DIR$ ASSUME_ALIGNED c:64
           integer(kind=int4),                    intent(in),value    :: ldc*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zhemm_(const char,
                                   const char,
 				  const int,
@@ -317,6 +451,20 @@ extern "C" {
 				  const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zhemm(const char,
+                                  const char,
+				  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //=============================================================================//
 
        /*   character(len=1),                       intent(in),value    :: uplo
@@ -331,6 +479,7 @@ extern "C" {
         type(AVX512c8f64_t),                    intent(in)          :: beta
         type(AVX512c8f64_t), dimension(*),      intent(inout)       :: y
         integer(kind=int4),                     intent(in),value    :: incy*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zhemv_(const char,
                                   const int,
 				  const VC8F64_t * __restrict,
@@ -341,6 +490,18 @@ extern "C" {
 				  const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zhev(const char,
+                                  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+                                  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //==============================================================================//
 
       /*   character(len=1),                      intent(in),value    :: uplo
@@ -352,6 +513,7 @@ extern "C" {
         type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
         !DIR$ ASSUME_ALIGNED a:64
         integer(kind=int4),                    intent(in),value    :: lda*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zher_(const char,
                                  const int,
 				 const V8F64_t * __restrict,
@@ -359,6 +521,15 @@ extern "C" {
 				 const int,
 				 VC8F64_t * __restrict,
 				 const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zher(const char,
+                                 const int,
+				 const V8F64_t * __restrict,
+				 const VC8F64_t * __restrict,
+				 const int,
+				 VC8F64_t * __restrict,
+				 const int);
+#endif
  //==============================================================================//
 
       /*   integer(kind=int4),                     intent(in),value    :: n
@@ -366,10 +537,17 @@ extern "C" {
        type(AVX512c8f64_t), dimension(*),      intent(inout)       :: zx
        !DIR$ ASSUME_ALIGNED zx:64
        integer(kind=int4),                     intent(in),value    :: incx*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zscal_(const int,
                                   const VC8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zscal(const int,
+                                  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //==============================================================================//
 
        /*  character(len=1),                      intent(in),value    :: uplo
@@ -384,6 +562,7 @@ extern "C" {
          type(AVX512c8f64_t), dimension(lda,*), intent(inout)       :: a
          !DIR$ ASSUME_ALIGNED a:64
          integer(kind=int4),                    intent(in),value    :: lda*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zher2_(const char,
                                   const int,
 				  const VC8F64_t * __restrict,
@@ -393,6 +572,17 @@ extern "C" {
 				  const int,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zher2(const char,
+                                  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //===============================================================================//
 
        /* character(len=1),                      intent(in),value    :: uplo
@@ -410,6 +600,7 @@ extern "C" {
           type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
           !DIR$ ASSUME_ALIGNED c:64
           integer(kind=int4),                    intent(in),value    :: ldc*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zher2k_(const char,
                                    const char,
 				   const int,
@@ -422,6 +613,20 @@ extern "C" {
 				   const V8F64_t * __restrict,
 				   VC8F64_t * __restrict,
 				   const int);
+#elif defined __GFORTRAN__  || defined __GNUC__
+      void __mod_blas_MOD_gms_zherk2(const char,
+                                   const char,
+				   const int,
+				   const int,
+				   const VC8F64_t * __restrict,
+				   const VC8F64_t * __restrict,
+				   const int,
+				   const VC8F64_t * __restrict,
+				   const int,
+				   const V8F64_t * __restrict,
+				   VC8F64_t * __restrict,
+				   const int);
+#endif
 //================================================================================//
 
        /*  character(len=1),                      intent(in),value    :: uplo
@@ -435,6 +640,7 @@ extern "C" {
         type(AVX512c8f64_t), dimension(ldc,*), intent(inout)       :: c
         !DIR$ ASUME_ALIGNED c:64
         integer(kind=int4),                    intent(in),value    :: ldc*/
+#if defined __INTEL_COMPILER
       void mod_blas_mp_gms_zherk_(const char,
                                   const char,
 				  const int,
@@ -444,6 +650,17 @@ extern "C" {
 			          const V8F64_t * __restrict,
 				  VC8F64_t * __restrict,
 				  const int);
+#elif defined __GFORTRAN__  || defined __GNUC__
+      void __mod_blas_MOD_gms_zherk(const char,
+                                  const char,
+				  const int,
+				  const V8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+			          const V8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 //=================================================================================//			    
 				  
 } // extern "C"
