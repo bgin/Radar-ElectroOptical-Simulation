@@ -661,7 +661,322 @@ extern "C" {
 				  VC8F64_t * __restrict,
 				  const int);
 #endif
-//=================================================================================//			    
+//=================================================================================//
+
+  /*  character(len=1),                     intent(in),value :: uplo
+         integer(kind=int4),                   intent(in),value :: n
+         type(AVX512c8f64_t),                  intent(in)       :: alpha
+         type(AVX512c8f64_t), dimension(*),    intent(in)       :: ap
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED ap:64
+#endif
+         type(AVX512c8f64_t), dimension(*),    intent(in)       :: x
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED x:64
+#endif
+         integer(kind=int4),                   intent(in),value :: incx
+         type(AVX512c8f64_t),                  intent(in)       :: beta
+         type(AVX512c8f64_t), dimension(*),    intent(inout)    :: y
+         integer(kind=int4),                   intent(in),value :: incy*/
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_zhpmv_(const char,
+			          const int,
+			          const VC8F64_t * __restrict,
+			          const VC8F64_t * __restrict,
+			          const VC8F64_t * __restrict,
+			          const int,
+			          const VC8F64_t * __restrict,
+			          VC8F64_t * __restrict,
+			          const int);
+#elif defined __GFORTRAN__  || defined __GNUC__
+      void __mod_blas_MOD_gms_zhpmv(const char,
+			            const int,
+			            const VC8F64_t * __restrict,
+			            const VC8F64_t * __restrict,
+			            const VC8F64_t * __restrict,
+			            const int,
+			            const VC8F64_t * __restrict,
+			            VC8F64_t * __restrict,
+			            const int);
+#endif
+//====================================================================================//
+
+       /*  character(len=1),                  intent(in),value :: uplo
+         integer(kind=int4),                intent(in),value :: n
+         type(ZMM8r8_t),                    intent(in)       :: alpha
+         type(AVX512c8f64_t), dimension(*), intent(in)       :: x
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED x:64
+#endif
+         integer(kind=int4),                intent(in),value :: incx
+         type(AVX512c8f64_t), dimension(*), intent(inout)    :: ap
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED ap:64*/
+
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_zhpr_(const char,
+                                 const int,
+				 const V8F64_t * __restrict,
+				 const VC8F64_t * __restrict,
+				 const int,
+				 VC8F64_t * __restrict);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zhpr(const char,
+                                   const int,
+				   const V8F64_t * __restrict,
+				   const VC8F64_t * __restrict,
+				   const int,
+				   VC8F64_t * __restrict);
+#endif
+//==================================================================================//
+
+        /* character(len=1),                       intent(in),value :: side
+         character(len=1),                       intent(in),value :: uplo
+         integer(kind=int4),                     intent(in),value :: m
+         integer(kind=int4),                     intent(in),value :: n
+         type(AVX512c8f64_t),                    intent(in)       :: alpha
+         type(AVX512c8f64_t), dimension(lda,*),  intent(in)       :: a
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED a:64
+#endif
+         integer(kind=int4),                     intent(in),value :: lda
+         type(AVX512c8f64_t), dimension(ldb,*),  intent(in)       :: b
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED b:64
+#endif
+         integer(kind=int4),                     intent(in),value :: ldb
+         type(AVX512c8f64_t),                    intent(in)       :: beta
+         type(AVX512c8f64_t), dimension(ldc,*),  intent(inout)    :: c
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED c:64
+#endif
+         integer(kind=int4),                     intent(in)       :: ldc*/
+
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_zsymm_(const char,
+                                  const char,
+				  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const int,
+                                  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict
+				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zsymm(const char,
+                                    const char,
+				    const int,
+				    const int,
+				    const VC8F64_t * __restrict,
+				    const VC8F64_t * __restrict
+				    const int,
+				    const VC8F64_t * __restrict,
+				    const int,
+                                    const VC8F64_t * __restrict,
+				    VC8F64_t * __restrict
+				    const int);
+#endif
+//======================================================================================//
+
+     /* character(len=1),                      intent(in),value :: uplo
+        character(len=1),                      intent(in),value :: trans
+        integer(kind=int4),                    intent(in),value :: n
+        integer(kind=int4),                    intent(in),value :: k
+        type(AVX512c8f64_t),                   intent(in)       :: alpha
+        type(AVX512c8f64_t), dimension(lda,*), intent(in)       :: a
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUMED_ALIGNED a:64
+#endif
+        integer(kind=int4),                    intent(in),value :: lda
+        type(AVX512c8f64_t), dimension(ldb,*), intent(in)       :: b
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED b:64
+#endif
+        integer(kind=int4),                    intent(in),value :: ldb
+        type(AVX512c8f64_t),                   intent(in)       :: beta
+        type(AVX512c8f64_t), dimension(ldc,*), intent(inout)    :: c
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED c:64
+#endif
+        integer(kind=int4),                    intent(in)       :: ldc*/
+
+#if defined __INTEL_COMPILER
+      void  mod_blas_mp_gms_zsyr2k_(const char,
+                                    const char,
+				    const int,
+				    const int,
+				    const VC8F64_t * __restrict,
+				    const VC8F64_t * __restrict,
+				    const int,
+				    const VC8F64_t * __restrict,
+				    const int,
+				    const VC8F64_t * __restrict,
+				    VC8F64_t * __restrict,
+				    const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zsyr2k(const char,
+                                     const char,
+				     const int,
+				     const int,
+				     const VC8F64_t * __restrict,
+				     const VC8F64_t * __restrict,
+				     const int,
+				     const VC8F64_t * __restrict,
+				     const int,
+				     const VC8F64_t * __restrict,
+				     VC8F64_t * __restrict,
+				     const int);
+#endif
+//===========================================================================//
+
+       /* character(len=1),                      intent(in),value  :: uplo
+        character(len=1),                      intent(in),value  :: trans
+        integer(kind=int4),                    intent(in),value  :: n
+        integer(kind=int4),                    intent(in),value  :: k
+        type(AVX512c8f64_t),                   intent(in)        :: alpha
+        type(AVX512c8f64_t), dimension(lda,*), intent(in)        :: a
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED a:64
+#endif
+        integer(kind=int4),                    intent(in),value  :: lda
+        type(AVX512c8f64_t),                   intent(in)        :: beta
+        type(AVX512c8f64_t), dimension(ldc,*), intent(inout)     :: c
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED c:64
+#endif
+        integer(kind=int4),                    intent(in),value  :: ldc*/
+
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_zsyrk_(const char,
+                                  const char,
+				  const int,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  const VC8F64_t * __restrict,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_zsyrk(const char,
+                                    const char,
+				    const int,
+				    const int,
+				    const VC8F64_t * __restrict,
+				    const VC8F64_t * __restrict,
+				    const int,
+				    const VC8F64_t * __restrict,
+				    VC8F64_t * __restrict,
+				    const int);
+#endif
+//====================================================================================//
+
+       /*character(len=1),                         intent(in),value  :: uplo
+        character(len=1),                         intent(in),value  :: trans
+        character(len=1),                         intent(in),value  :: diag
+        integer(kind=int4),                       intent(in),value  :: n
+        integer(kind=int4),                       intent(in),value  :: k
+        type(AVX512c8f64_t), dimension(lda,*),    intent(in)        :: a
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED a:64
+#endif
+        integer(kind=int4),                       intent(in),value  :: lda
+        type(AVX512c8f64_t), dimension(*),        intent(inout)     :: x
+#if defined __INTEL_COMPILER
+        !DIR$ ASSUME_ALIGNED x:64
+#endif
+        integer(kind=int4),                       intent(in),value  :: incx */
+
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_ztbsv_(const char,
+                                    const char,
+				    const char,
+				    const int,
+				    const int,
+				    const VC8F64_t * __restrict
+				    const int,
+				    VC8F64_t * __restrict,
+				    const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_ztbsv(const char,
+                                    const char,
+				    const char,
+				    const int,
+				    const int,
+				    const VC8F64_t * __restrict
+				    const int,
+				    VC8F64_t * __restrict,
+				    const int);
+#endif
+//===========================================================================================//
+
+        /*   character(len=1),                         intent(in),value :: uplo
+         character(len=1),                         intent(in),value :: trans
+         character(len=1),                         intent(in),value :: diag
+         integer(kind=int4),                       intent(in),value :: n
+         type(AVX512c8f64_t), dimension(*),        intent(in)       :: ap
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED ap:64
+#endif
+         type(AVX512c8f64_t), dimension(*),        intent(inout)    :: x
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED x:64
+#endif
+         integer(kind=int4),                       intent(in),value :: incx*/
+
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_ztpmv_(const char,
+                                  const char,
+				  const char,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_ztpmv(const char,
+                                  const char,
+				  const char,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
+//========================================================================================//
+
+        /*character(len=1),                    intent(in),value :: uplo
+           character(len=1),                    intent(in),value :: trans
+           character(len=1),                    intent(in),value :: diag
+           integer(kind=int4),                  intent(in),value :: n
+           type(AVX512c8f64_t), dimension(*),   intent(in)       :: ap
+#if defined __INTEL_COMPILER
+           !DIR$ ASSUME_ALIGNED ap:64
+#endif
+           type(AVX512c8f64_t), dimension(*),   intent(inout)    :: x
+#if defined __INTEL_COMPILER
+           !DIR$ ASSUME_ALIGNED x:64
+#endif
+           integer(kind=int4),                  intent(in),value :: incx*/
+
+#if defined __INTEL_COMPILER
+      void mod_blas_mp_gms_ztpsv_(const char,
+                                  const char,
+				  const char,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#elif defined __GFORTRAN__ || defined __GNUC__
+      void __mod_blas_MOD_gms_ztpsv(const char,
+                                  const char,
+				  const char,
+				  const int,
+				  const VC8F64_t * __restrict,
+				  VC8F64_t * __restrict,
+				  const int);
+#endif
 				  
 } // extern "C"
 
