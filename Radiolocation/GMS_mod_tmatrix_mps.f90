@@ -190,7 +190,12 @@ module  mod_tmatrix_mps
           integer(kind=int4), parameter :: ng0   =   np*(2*np**3+10*np**2+19*np+5)/6
           integer(kind=int4), parameter :: nrc   =   4*np*(np+1)*(np+2)/3+np
           integer(kind=int4), parameter :: nij   =   nLp*(nLp-1)/2
+#if defined __INTEL_COMPILER
           real(kind=dp), automatic :: start,end,duration
+#elif defined __GFORTRAN__
+          integer(kind=8), automatic :: count_s,count_e,delta
+          real(kind=dp),   automatic :: count_rate
+#endif
           integer(kind=int4) :: u,v,u0
           logical(kind=int4), automatic :: result
           integer(kind=int4), automatic :: ret
@@ -876,11 +881,18 @@ module  mod_tmatrix_mps
       ! ADD gfortran version
 #endif
 #endif
-      line     = __LINE__       
+      line     = __LINE__
+#if defined __INTEL_COMPILER
       start    = 0.0_dp
       end      = 0.0_dp
       duration = 0.0_dp
       start = DCLOCK()
+#elif defined __GFORTRAN__
+      count_s = 0_8
+      count_rate = 0.0_dp
+      delta = 0_8
+      count_e = 0_8
+      call system_clock(count_s,clock_rate)
 #if defined __INTEL_COMPILER
       !DIR$ LOOP COUNT (10,100,300)
 #endif
@@ -1090,9 +1102,20 @@ module  mod_tmatrix_mps
 	    imax=i
 	 endif
       enddo
+#if defined __INTEL_COMPILER
       end = DCLOCK()
       duration = end - start
       print*, "Loop at line: ", line+7, " executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ",line+7, "executed in: ",delta, "nanoseconds."
+      else
+         print*, "Loop at line: ",line+7, "executed in: ",delta, "microseconds."
+      end if
+#endif
+     
       write(6,*) 'maximum scattering order: ',imax,'   ',nmax0
       write(6,'(/)')
       write(6,*) 'input particle-positions: '
@@ -1130,11 +1153,19 @@ module  mod_tmatrix_mps
 
 #endif
 #endif
-        line  = __LINE__     
+        line  = __LINE__
+#if defined __INTEL_COMPILER
         start = 0.0_dp
         end   = 0.0_dp
         duration = 0.0_dp
         start = DCLOCK()
+#elif defined __GFORTRAN__
+        count_s = 0_8
+        count_rate = 0.0_dp
+        delta = 0_8
+        count_e = 0_8
+        call system_clock(count_s,count_rate)
+#endif
 #if defined __INTEL_COMPILER
         !DIR$   LOOP COUNT (10,100,300)
 #endif
@@ -1229,10 +1260,20 @@ module  mod_tmatrix_mps
  173           continue
             enddo
          enddo
-17     continue
+17       continue
+#if defined __INTEL_COMPILER
        end = DCLOCK()
        duration = end - start
        print*, "Loop at line: ", line+4, "executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+       call system_clock(count_e)
+       delta = count_e-count_s
+       if(count_rate==10.0E+9_dp) then
+          print*, "Loop at line: ", line+4, "executed in: ", delta, "nanoseconds."
+       else
+          print*, "Loop at line: ", line+4, "executed in: ", delta, "microseconds."
+       end if
+#endif
 !        C
 !C  calculating Gaunt coefficients
 !C  the formulation used here for the calculation of Gaunt coefficients 
@@ -1250,18 +1291,35 @@ module  mod_tmatrix_mps
       ek = CZERO
       drot = ZERO
 
-     
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
       include 'tmatrix_mps_perf_loop1097.inc' 
-    
+#endif    
+#elif defined __GFORTRAN__
+#if (USE_PERF_PROFILER) == 1
 
-      line  = __LINE__       
+#endif
+#endif
+      line  = __LINE__
+#if defined __INTEL_COMPILER
       start = 0.0_dp
       end   = 0.0_dp
       duration = 0.0_dp
       start = DCLOCK()
-!DIR$ LOOP COUNT (9,99,299)
+#elif defined __GFORTRAN__
+      count_s = 0_8
+      count_e = 0_8
+      delta   = 0_8
+      count_rate = 0.0_dp
+      call system_clock(count_s,count_rate)
+#endif
+#if defined __INTEL_COMPILER
+      !DIR$ LOOP COUNT (9,99,299)
+#endif
       do i=1,nL-1
-!DIR$ LOOP COUNT (10,100,300)
+#if defined __INTEL_COMPILER     
+         !DIR$ LOOP COUNT (10,100,300)
+#endif
          do j=i+1,nL
             ij=(j-1)*(j-2)/2+j-i
             x0=r0(1,i)-r0(1,j)
@@ -1319,9 +1377,20 @@ module  mod_tmatrix_mps
             enddo
          enddo
       enddo
+#if defined __INTEL_COMPILER
       end = DCLOCK()
       duration = end  - start
       print*, "Loop at line: ", line+4, " executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+          print*, "Loop at line: ", line+4, "executed in: ", delta, "nanoseconds."
+       else
+          print*, "Loop at line: ", line+4, "executed in: ", delta, "microseconds."
+      end if
+#endif
+      delta = cou
       if(idMie.eq.1) then
          do j=1,nL
             do iuv=1,uvmax(j)
@@ -1377,15 +1446,28 @@ module  mod_tmatrix_mps
       asv  = CZERO
       bsv  = CZERO
 
-  
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
       include 'tmatrix_mps_perf_loop1179.inc'    
-      
+#endif      
+#elif defined __GFORTRAN__
+#if (USE_PERF_PROFILER) == 1
 
-      line  = __LINE__      
+#endif
+#endif
+      line  = __LINE__
+#if defined __INTEL_COMPILER
       start = 0.0_dp
       end = 0.0_dp
       duration = 0.0_dp
       start = DCLOCK()
+#elif defined __GFORTRAN__
+      count_s = 0_8
+      count_e = 0_8
+      delta   = 0_8
+      count_rate = 0.0_dp
+      call system_clock(count_s,count_rate)
+#endif
       do 1001 iuv=1,n0
          v=dsqrt(dble(iuv))
          iuvc=v*v
@@ -1919,11 +2001,19 @@ module  mod_tmatrix_mps
             goto 62
  1002    continue
 1001  continue
-
+#if defined __INTEL_COMPILER
       end = DCLOCK()
       duration = end - start
       print*, "Loop at line: ", line+4, " executed in: ", duration, " microseconds."
-            
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ", line+4, " executed in: ", delta, "nanoseconds."
+      else
+         print*, "Loop at line: ", line+4, " executed in: ", delta, "microseconds."
+      end if
+#endif
 !      C-----------------------------------------------------------------------
 !C  calculating random-orientation averaged total and 
 !C  individual-particle extinction cross-sections
@@ -1941,15 +2031,28 @@ module  mod_tmatrix_mps
       n0=nmax0*(nmax0+2)
       as2 = CZERO
       bs2 = CZERO
-      
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
       include 'tmatrix_mps_perf_loop1778.inc'
+#endif
+#elif defined __GFORTRAN__
+#if (USE_PERF_PROFILER) == 1
 
-      
+#endif
+#endif
       line = __LINE__
+#if defined __INTEL_COMPILER
       start = 0.0_dp
       end   = 0.0_dp
       duration = 0.0_dp
       start = DCLOCK()
+#elif defined __GFORTRAN__
+      count_s = 0_8
+      count_e = 0_8
+      delta   = 0_8
+      count_rate = 0.0_dp
+      call system_clock(count_s,count_rate)
+#endif
       do iuv=1,n0
          do iq=1,2
             do 1801 j=1,nL
@@ -1976,24 +2079,47 @@ module  mod_tmatrix_mps
  1801	    continue
          enddo
       enddo
+#if defined __INTEL_COMPILER
       end = DCLOCK()
       duration = end - start
-      print*, "Loop at line: ", line+4, " executedin: ", duration, " microseconds."
+      print*, "Loop at line: ", line+4, " executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ", line+4, " executed in: ", delta, "nanoseconds."
+      else
+         print*, "Loop at line: ", line+4, " executed in: ", delta, "microseconds."
+      end if
+#endif
 !      C-----------------------------------------------------------------------
 !C  calculating random-orientation averaged asymmetry parameter and  
 !C  total and individual-particle scattering cross-sections 
       !C-----------------------------------------------------------------------
       
 
-      
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
         include 'tmatrix_mps_perf_loop1828.inc' 
-      
+#endif
+#elif defined __GFORTRAN__
+#if (USE_PERF_PROFILER) == 1
 
+#endif
+#endif
         line  = __LINE__
+#if defined __INTEL_COMPILER
         start = 0.0_dp
         end   = 0.0_dp
         duration = 0.0_dp
         start = DCLOCK()
+#elif defined __GFORTRAN__
+        count_s = 0_8
+        count_e = 0_8
+        delta   = 0_8
+        count_rate = 0.0_dp
+        call system_clock(count_s,count_rate)
+#endif        
         do j=1,nL
           do iuv=1,uvmax(j)
             v=dsqrt(dble(iuv))
@@ -2166,9 +2292,18 @@ module  mod_tmatrix_mps
             enddo
          enddo
       enddo
+#if defined __INTEL_COMPILER
       end = DCLOCK()
       duration = end - start
       print*, "Loop at line: ", line+5, " executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_e
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ", line+5, " executed in: ", delta, " nanoseconds."
+      else
+         print*, "Loop at line: ", line+5, " executed in: ", delta, " microseconds."
+      end if
       if(idscmt.lt.0) goto 2000
 !C-----------------------------------------------------------------------
 !C  calculating random-orientation averaged Mueller matrix elements
@@ -2181,15 +2316,28 @@ module  mod_tmatrix_mps
          wmf1 = ZERO
          wm1  = ZERO
 
-     
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
          include 'tmatrix_mps_perf_loop2039.inc'
-    
+#endif    
+#elif defined __GFORTRAN__
+#if (USE_PERF_PROFILER) ==1
 
+#endif
+#endif
          line = __LINE__
+#if defined __INTEL_COMPILER
          start = 0.0_dp
          end   = 0.0_dp
          duration = 0.0_dp
          start = dclock()
+#elif defined __GFORTRAN__
+         count_s = 0_8
+         count_e = 0_8
+         delta   = 0_8
+         count_rate = 0.0_dp
+         call system_clock(count_s,count_rate)
+#endif     
          do n=1,nmax0
             do v=1,nmax0
                do m=0,n
@@ -2208,9 +2356,19 @@ module  mod_tmatrix_mps
             enddo
          enddo
       enddo
+#if defined __INTEL_COMPILER
       end = dclock()
       duration = end - start
       print*, "Loop at line: ", line+4, " executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ", line+4, " executed in: ", delta, " nanoseconds."
+      else
+         print*, "Loop at line: ", line+4, " executed in: ", delta, " microseconds."
+      end if
+#endif
       do n=1,nmax0
          do jn=1,nmax0
             do ip=1,2
@@ -2231,15 +2389,28 @@ module  mod_tmatrix_mps
       enddo
       wsdt = ZERO
 
-    
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
       include 'tmatrix_mps_perf_loop2092.inc'
-      
+#endif
+#elif defined __GFORTRAN__
+#if (USE_PERF_PROFILER) == 1
 
+#endif
+#endif
       line = __LINE__
+#if defined __INTEL_COMPILER
       start = 0.0_dp
       end   = 0.0_dp
       duration = 0.0_dp
       start = dclock()
+#elif defined __GFORTRAN__
+      count_s = 0_8
+      count_e = 0_8
+      delta   = 0_8
+      count_rate = 0.0_dp
+      call system_clock(count_s,count_rate)
+#endif
       do 1900 ids=-nmax2,nmax2         
          do n=1,nmax0          
             do 19001 v=1,nmax0
@@ -2448,18 +2619,42 @@ module  mod_tmatrix_mps
  1904          continue
             enddo
          enddo
-1900  continue
+1900     continue
+         
+#if defined __INTEL_COMPILER
       end =  dclock()
       duration = end - start
       print*, "Loop at line: ", line+4, " executed in: ", duration, " microseconds."
-
+#elif defined __GFORTRAN__
+      call system_clock(count_s)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ", line+4, " executed in: ", delta, " nanoseconds."
+      else
+         print*, "Loop at line: ", line+4, " executed in: ", delta, " microseconds."
+#endif
+#if defined __INTEL_COMPILER
+#if (USE_PERF_PROFILER) == 1
       include 'tmatrix_mps_perf_loop2323.inc'
+#endif
+#elif defined __GFORTRAN__
+
+#endif
+#endif
       
       line = __LINE__
+#if defined __INTEL_COMPILER
       start = 0.0_dp
       end   = 0.0_dp
       duration = 0.0_dp
       start = dclock()
+#elif defined __GFORTRAN__
+      count_s = 0_8
+      count_e = 0_8
+      delta   = 0_8
+      count_rate = 0.0_dp
+      call system_clock(count_s,count_rate)
+#endif
       do 1910 ia=1,nang
          iang=2*nang-ia
          dang(ia)=sang*dble(ia-1)
@@ -2733,10 +2928,19 @@ module  mod_tmatrix_mps
          i21(iang)=0.5_dp*temp
          temp=mue(1,1,iang)-mue(1,2,iang)+mue(2,1,iang)-mue(2,2,iang)
          i12(iang)=0.5_dp*temp
-1910 continue
+1910     continue
+#if defined __INTEL_COMPILER
       end = dclock()
       duration = end - start
       print*, "Loop at line: ", line+4, " executed in: ", duration, " microseconds."
+#elif defined __GFORTRAN__
+      call system_clock(count_e)
+      delta = count_e-count_s
+      if(count_rate==10.0E+9_dp) then
+         print*, "Loop at line: ", line+4, " executed in: ", delta, " nanoseconds."
+      else
+         print*, "Loop at line: ", line+4, " executed in: ", delta, " microseconds."
+      end if
       cbak=i11(2*nang-1)
       do i=1,nang2
          inat(i)=i11(i)+i22(i)+i12(i)+i21(i)
@@ -2887,7 +3091,9 @@ module  mod_tmatrix_mps
 !C  COMPLEX REFRACTIVE INDEX OF MANTLE = (XM2,YM2)
 !C
     subroutine scoatabd(XB,Q,XM1,YM1,XM2,YM2,np,an,bn,NADD,NSTOP)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: scoatabd
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: scoatabd
+#endif
           real(kind=dp) :: XB,Q,XM1,YM1,XM2,YM2
           integer(kind=int4) :: np
           complex(16), dimension(np) :: an,bn
@@ -2896,17 +3102,21 @@ module  mod_tmatrix_mps
           integer(kind=int4),parameter :: nab = 500
           integer(kind=int4), parameter :: ndx = 5000
           real(kind=dp), dimension(nab) :: AR,AI,BR,BI
-!DIR$     ATTRIBUTES ALIGN : 64 :: AR,AI,BR,BI
+#if defined __INTEL_COMPILER
+          !DIR$     ATTRIBUTES ALIGN : 64 :: AR,AI,BR,BI
+#endif
           real(kind=dp), dimension(ndx) ::  AM1AR,AM1AI,AM2AR,AM2AI,   &
                                          AM2BR,AM2BI,AB,SM2AR,      &
                                          SM2AI,SM2BR,SM2BI,SB,      &
                                          BM2AR,BM2AI,BM2BR,BM2BI,   &
                                          BDBR,BDBI,BB,CM2AR,        &
                                          CM2AI,CM2BR,CM2BI,CB
+#if defined __INTEL_COMPILER
 !DIR$     ATTRIBUTES ALIGN : 64 :: AM2BR,AM2BI,AB,SM2AR,SM2AI
 !DIR$     ATTRIBUTES ALIGN : 64 :: SM2BR,SM2BI,SB,BM2AR,BM2AI
 !DIR$     ATTRIBUTES ALIGN : 64 :: BM2BR,BM2BI,BDBR,BDBI,BB
 !DIR$     ATTRIBUTES ALIGN : 64 :: CM2AR,CM2AI,CM2BR,CM2BI,CB
+#endif
           real(kind=dp), dimension(4) ::     U,V,D1,EV,SHV,CHV,SU,     &
                                           CU,SN1R,SN1I,CN1R,CN1I
           real(kind=dp) :: YM1P,YM2P,oneth,CTST,CNX,FCT0,SM1A0R,SM1A0I,     &
@@ -2928,16 +3138,26 @@ module  mod_tmatrix_mps
                         CM2A0I,SZB1R,SZB1I,VM2R1,BND
           integer(kind=int4) :: K,NX,I,J,N,ii
           ! Exec code....
+#if defined __INTEL_COMPILER
 !DIR$     VECTOR ALIGNED
 !DIR$     SIMD VECTORLENGTHFOR(REAL(KIND=8))
+!DIR$     UNROLL(4)          
+#elif defined __GFORTRAN__
+          !GCC$     UNROLL 4
+#endif
           do ii = 1, nab
               AR(ii) = ZERO
               AI(ii) = ZERO
               BR(ii) = ZERO
               BI(ii) = ZERO
-          end do
+           end do
+#if defined __INTEL_COMPILER
 !DIR$     VECTOR ALIGNED
-!DIR$     SIMD VECTORLENGTHFOR(REAL(KIND=8))          
+           !DIR$     SIMD VECTORLENGTHFOR(REAL(KIND=8))
+           !DIR$     UNROLL(4)
+#elif defined __GFORTRAN__
+           !GCC$ UNROLL 4
+#endif
           do ii = 1, ndx
              AM1AR(ii) = ZERO
              AM1AI(ii) = ZERO
@@ -2978,7 +3198,11 @@ module  mod_tmatrix_mps
          write(6,*) 'parameter (ndx) in sub. scoatabd too small'
          write(6,*) 'please change ndx to ',NX
          write(6,*) 'recompile, and then try again'
+#if defined __INTEL_COMPILER
          call TRACEBACKQQ(STRING="parameter (ndx) in sub. scoatabd too small",USER_EXIT_CODE = -1)
+#elif defined __GFORTRAN__
+         call backtrace()
+#endif
          stop
       endif
       oneth=0.3333333333333333333333333333_dp
@@ -2986,7 +3210,11 @@ module  mod_tmatrix_mps
       NSTOP=NSTOP+2+NADD   
       if(NSTOP.gt.ndx) then 
          write(6,*) 'particle size too large'
+#if defined __INTEL_COMPILER
          call TRACEBACKQQ(STRING="particle size too large",USER_EXIT_CODE = -1)
+#elif defined __GFORTRAN__
+         call backtrace()
+#endif
          stop   
       endif   	       
       XA=XB*Q
@@ -3026,7 +3254,7 @@ module  mod_tmatrix_mps
          N=NX-I+1
          CNN=N
          FCT=2.0_dp*CNN+1.0_dp
-         IF(Q.EQ.0.0D0) GO TO 18
+         IF(Q.EQ.0.0_dp) GO TO 18
          SM1A1R=+U(1)*FCT/D1(1)-SM1A0R
          SM1A1I=-V(1)*FCT/D1(1)-SM1A0I
          SM2A1R=+U(2)*FCT/D1(2)-SM2A0R
@@ -3251,7 +3479,9 @@ module  mod_tmatrix_mps
     end subroutine
     
     subroutine cofsrd(nmax)
+#if defined __INTEL_COMPILER
       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofsrd
+#endif
           include 'tmatrix_mps_np.inc'
           integer(kind=int4) :: nmax
           ! Locals
@@ -3275,7 +3505,9 @@ module  mod_tmatrix_mps
     end subroutine
     
     subroutine cofd0(nmax)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofd0
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofd0
+#endif
           include 'tmatrix_mps_np.inc'
           integer(kind=int4) :: nmax
           ! Locals
@@ -3314,7 +3546,9 @@ module  mod_tmatrix_mps
     end subroutine
     
     subroutine cofnv0(nmax)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofnv0
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofnv0
+#endif
           include 'tmatrix_mps_np.inc'
           integer(kind=int4) :: nmax
           ! Locals
@@ -3336,8 +3570,10 @@ module  mod_tmatrix_mps
     
 !    C  subroutine gau0.f generates tabulated values for  
 !C  Gaunt coefficients up to n=v=n_max
-      subroutine gau0(nmax)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gau0
+    subroutine gau0(nmax)
+#if defined _INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gau0
+#endif
           include 'tmatrix_mps_np.inc'
           integer(kind=int4) :: nmax
           integer(kind=int4), parameter :: ni0 =   np*(np+1)*(2*np+1)/3+np*np
@@ -3368,7 +3604,9 @@ module  mod_tmatrix_mps
 !      c  transforms the rectangular coordinates (x,y,z)
 !c  to spherical coordinates (r,theta,phi)
       subroutine carsphd(x,y,z,r,xt,sphi,cphi)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: carsphd
+#if defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: carsphd
+#endif
           real(kind=dp) :: x,y,z,r,xt,sphi,cphi
           r=dsqrt(x*x+y*y+z*z)
           if(r.eq.0._dp) then
@@ -3395,8 +3633,10 @@ module  mod_tmatrix_mps
 !c  uses Ru Wang's ratio method for the downward recursive 
 !c  calculation of the Riccati-Bessel function Psi_n(z)=z j_n(z) 
 !c  [see Xu et al., Physical Review E, v.60, 2347-2365 (1999)]
-    SUBROUTINE besseljd(NC,X,BESJ)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: besseljd
+      SUBROUTINE besseljd(NC,X,BESJ)
+#if defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: besseljd
+#endif
           INTEGER(kind=int4) ::  NC,NX,K,N
           real(KIND=DP) :: X,PN,CN,X2
           real(KIND=DP), dimension(0:NC) ::  BESJ
@@ -3447,7 +3687,9 @@ module  mod_tmatrix_mps
 !c  the second kind with a real argument: y_0,y_1,...,y_n
 
     subroutine besselyd(n,x,besy)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: besselyd
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: besselyd
+#endif
           integer(kind=int4) ::  i,n
           real(kind=dp) :: x,besyn,x2
           real(kind=dp), dimension(0:n) :: besy
@@ -3488,7 +3730,9 @@ module  mod_tmatrix_mps
 !c  (1991)]
 !c  Yu-lin Xu   12/2000   
     subroutine rotcoef(cbe,nmax)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: rotcoef
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: rotcoef
+#endif
           include 'tmatrix_mps_np.inc'
           real(kind=dp) :: cbe
           integer(kind=int4) :: nmax
@@ -3498,7 +3742,9 @@ module  mod_tmatrix_mps
                         dkn1,sbe2
           integer(kind=int4) :: inn,n,nn1,k,im1,m,m1,kn,IM
           real(kind=dp), dimension(-2*np:2*np) :: dk0,dk01
-!DIR$     ATTRIBUTES ALIGN : 64 :: dk0,dk01    
+#if defined __INTEL_COMPILER
+          !DIR$     ATTRIBUTES ALIGN : 64 :: dk0,dk01
+#endif
           real(kind=dp), dimension(0:np+2) :: bcof
           real(kind=dp), dimension(-np:np,0:nmp) :: dc
           real(kind=dp), dimension(0:4*(np+1)) :: fnr
@@ -3563,7 +3809,9 @@ module  mod_tmatrix_mps
 !c  (m,n,m,v) and a given dimensionless translation distance kd 
 !cu uses subroutine gid0.f 
     subroutine cofxuds0(nmax,m,n,v,sja,sya,A,B,Aj,Bj)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofxuds0
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: cofxuds0
+#endif
       implicit double precision (a-h,o-z)
       include 'tmatrix_mps_np.inc'
       integer(kind=int4) :: nmax,m,n
@@ -3648,8 +3896,9 @@ module  mod_tmatrix_mps
 
     subroutine tipitaud(nmax,x)
       ! include 'gmm01f.par'
+#if defined __INTEL_COMPILER
 !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: tipitaud
-     
+#endif     
       implicit double precision (a-h,o-z)
       include 'tmatrix_mps_np.inc'
       integer(kind=int4), parameter :: nmp0 = (np+1)*(np+4)/2
@@ -3761,8 +4010,10 @@ module  mod_tmatrix_mps
       
 !      c  gxurcd0.f to compute Gaunt coefficients a(-m,n,m,v,p)
 !cu uses lnfacd.f to compute ln(z!)
-      subroutine gxurcd0(m,n,v,qmax,na)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gxurcd0
+    subroutine gxurcd0(m,n,v,qmax,na)
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: gxurcd0
+#endif
         implicit double precision (a-h,o-z)
         include 'tmatrix_mps_np.inc'
         integer(kind=int4), parameter ::  ng0 = np*(2*np**3+10*np**2+19*np+5)/6
@@ -4238,8 +4489,10 @@ module  mod_tmatrix_mps
 !c  using the algorithm described in [Xu, Journal of Computational
 !c  Physics 139, 137-165 (1998)]
 !c 
-      subroutine xuwigd(j1,j2,m1,m2,c,cf,n,kmax)
-        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: xuwigd
+    subroutine xuwigd(j1,j2,m1,m2,c,cf,n,kmax)
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: xuwigd
+#endif
           include 'tmatrix_mps_np.inc'
           integer(kind=int4) :: j1,j2,m1,m2,n,kmax
           real(kind=dp), dimension(n) :: c,cf
@@ -4337,8 +4590,10 @@ module  mod_tmatrix_mps
 !C  For detailed information on the formulation and algorithms,  
 !C  please see the original code by Mishchenko.
 
-    subroutine tm0d(LAM,NP,EPS,AXI,RAT,MRR,MRI,DDELT,NDGS,NMAX)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: tm0d
+      subroutine tm0d(LAM,NP,EPS,AXI,RAT,MRR,MRI,DDELT,NDGS,NMAX)
+#if defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: tm0d
+#endif
           real(kind=dp) :: LAM
           integer(kind=int4) :: NP
           real(kind=dp)    :: EPS,AXI,RAT,MRR,MRI,DDELT
@@ -4347,8 +4602,10 @@ module  mod_tmatrix_mps
           real(kind=dp), dimension(NPNG2) :: X,W,S,SS,R,DR,DDR,DRR,DRI
           real(kind=dp), dimension(NPN1)  :: AN
           real(kind=dp), dimension(NPN1,NPN1) :: ANN
+#if defined __INTEL_COMPILER
 !DIR$     ATTRIBUTES ALIGN : 64 :: X,W,S,SS,R,DR,DDR,DRR,DRI
-!DIR$     ATTRIBUTES ALIGN : 64 :: AN,ANN
+          !DIR$     ATTRIBUTES ALIGN : 64 :: AN,ANN
+#endif
           real(kind=dp), dimension(NPN2,NPN2) :: TR1,TI1
           real(kind=dp), dimension(NPN6,NPN4,NPN4) :: RT11,RT12,RT21,RT22, &
                                                    IT11,IT12,IT21,IT22
@@ -4575,7 +4832,9 @@ module  mod_tmatrix_mps
 !C     0.LE.X.LE.1
 
     SUBROUTINE VIGAMPL (X, NMAX, M, DV1, DV2)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: VIGAMPL
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: VIGAMPL
+#endif
           real(kind=dp) :: X
           integer(kind=int4) :: NMAX,M
           real(kind=dp), dimension(NPN6) ::  DV1, DV2
@@ -4642,16 +4901,22 @@ module  mod_tmatrix_mps
     end subroutine
     
     SUBROUTINE CONST (NGAUSS,NMAX,MMAX,P,X,W,AN,ANN,S,SS,NP,EPS)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: CONST
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: CONST
+#endif
           integer(kind=int4) :: NGAUSS,NMAX,MMAX,NP
           real(kind=dp) :: P,EPS
           real(kind=dp), dimension(NPNG2) ::  X,W,S,SS
           real(kind=dp), dimension(NPNG1) ::  X1,W1,X2,W2
-!DIR$     ATTRIBUTES ALIGN : 64 :: X1,W1,X2,W2
+#if defined __INTEL_COMPILER
+          !DIR$     ATTRIBUTES ALIGN : 64 :: X1,W1,X2,W2
+#endif
           real(kind=dp), dimension(NPN1) :: AN
           real(kind=dp), dimension(NPN1,NPN1) :: ANN
           real(kind=dp), dimension(NPN1) :: DD
-!DIR$     ATTRIBUTES ALIGN : 64 :: DD          
+#if defined __INTEL_COMPILER
+          !DIR$     ATTRIBUTES ALIGN : 64 :: DD
+#endif
           integer(kind=int4) :: N,NN,N1,NG,NG1,NG2,I
           real(kind=dp)    :: D,DDD,XX,Y
           ! Exec code ...
@@ -4700,8 +4965,10 @@ module  mod_tmatrix_mps
     end subroutine
     
     SUBROUTINE VARY (LAM,MRR,MRI,A,EPS,NP,NGAUSS,X,P,PPI,PIR,PII,    &
-                      R,DR,DDR,DRR,DRI,NMAX)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: VARY
+         R,DR,DDR,DRR,DRI,NMAX)
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: VARY
+#endif
           real(kind=dp) :: LAM,MRR,MRI,A,EPS
           integer(kind=int4) :: NP,NGAUSS
           real(kind=dp), dimension(NPNG2) :: X
@@ -5657,7 +5924,9 @@ module  mod_tmatrix_mps
 !C**********************************************************************
  
     SUBROUTINE TT(NMAX,NCHECK)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TT
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TT
+#endif
           integer(kind=int4) :: NMAX,NCHECK
           real(kind=dp), dimension(NPN2,NPN2) :: F
 !DIR$     ATTRIBUTES ALIGN : 64 :: F
@@ -5795,7 +6064,9 @@ module  mod_tmatrix_mps
     END SUBROUTINE
     
     SUBROUTINE PROD(A,B,C,NDIM,N)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: PROD
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: PROD
+#endif
           real(kind=dp), dimension(NDIM,N) :: A,B,C
           integer(kind=int4) :: NDIM,N
           ! Locals
@@ -5813,16 +6084,22 @@ module  mod_tmatrix_mps
     END   SUBROUTINE
     
     SUBROUTINE INV1 (NMAX,F,A)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: INV1
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: INV1
+#endif
           integer(kind=int4) :: NMAX
           real(kind=dp), dimension(NPN2,NPN2) :: F,A
           ! Locals
           real(kind=dp) :: COND
           real(kind=dp), dimension(NPN1) :: WORK
           real(kind=dp), dimension(NPN1) :: B
-!DIR$     ATTRIBUTES ALIGN : 64 :: WORK,B
+#if defined __INTEL_COMPILER          
+          !DIR$     ATTRIBUTES ALIGN : 64 :: WORK,B
+#endif
           real(kind=dp), dimension(NPN1,NPN1) :: Q1,Q2,P1,P2
-!DIR$     ATTRIBUTES ALIGN : 64 :: Q1,Q2,P1,P2
+#if defined __INTEL_COMPILER
+          !DIR$     ATTRIBUTES ALIGN : 64 :: Q1,Q2,P1,P2
+#endif
           integer(kind=int4), dimension(NPN1) ::  IPVT,IND1,IND2
           integer(kind=int4) :: NDIM,NN1,NN2,I,NNMAX,J,I1,I2,J1,J2
           ! Exec code ....
@@ -5864,7 +6141,9 @@ module  mod_tmatrix_mps
     END  SUBROUTINE
     
     SUBROUTINE INVERT (NDIM,N,A,X,COND,IPVT,WORK,B)
-!DIR4 ATTRIBUTES CODE_ALIGN : 32 :: INVERT
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: INVERT
+#endif
           integer(kind=int4) :: NDIM,N
           real(kind=dp), dimension(NDIM,N) :: A,X
           real(kind=dp) :: COND
@@ -5891,7 +6170,9 @@ module  mod_tmatrix_mps
     END SUBROUTINE
     
     SUBROUTINE DECOMP (NDIM,N,A,COND,IPVT,WORK)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DECOMP
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DECOMP
+#endif
           integer(kind=int4) :: NDIM,N
           real(kind=dp), dimension(NDIM,N) :: A
           real(kind=dp) :: COND
@@ -5983,7 +6264,9 @@ module  mod_tmatrix_mps
     END  SUBROUTINE
     
     SUBROUTINE SOLVE (NDIM,N,A,B,IPVT)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SOLVE
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SOLVE
+#endif
           integer(kind=int4) :: NDIM,N
           real(kind=dp), dimension(NDIM,N) :: A
           real(kind=dp), dimension(N)      :: B
@@ -6016,10 +6299,14 @@ module  mod_tmatrix_mps
    40 CONTINUE
    50 B(1)=B(1)/A(1,1)
      
-    END  SUBROUTINE
-!DIR$ ATTRIBUTES INLINE :: SAREA    
+   END  SUBROUTINE
+#if defined __INTEL_COMPILER            
+            !DIR$ ATTRIBUTES INLINE :: SAREA
+#endif
     SUBROUTINE SAREA (D,RAT)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SAREA
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SAREA
+#endif
           real(kind=dp) :: D,RAT
           ! Locals
           real(kind=dp) :: E,R
@@ -6038,7 +6325,9 @@ module  mod_tmatrix_mps
     END  SUBROUTINE
     
     SUBROUTINE SURFCH (N,E,RAT)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SURFCH
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SURFCH
+#endif
           integer(kind=int4) :: N
           real(kind=dp) :: E,RAT
           ! Locals
@@ -6070,10 +6359,14 @@ module  mod_tmatrix_mps
         RV=(V*3._dp/4._dp)**(0.3333333333333333333333_dp)
         RAT=RV/RS
     
-    END  SUBROUTINE
-!DIR$ ATTRIBUTES INLINE :: SAREAC    
+      END  SUBROUTINE
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES INLINE :: SAREAC
+#endif
     SUBROUTINE SAREAC (EPS,RAT)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SAREAC
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SAREAC
+#endif
         real(kind=dp) :: EPS,RAT
         RAT=(1.5_dp/EPS)**(0.33333333333333333333333_dp)
         RAT=RAT/DSQRT( (EPS+2._dp)/(2._dp*EPS) )
@@ -6081,7 +6374,9 @@ module  mod_tmatrix_mps
     END SUBROUTINE
     
     SUBROUTINE DROP (RAT)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DROP
+#if defined __INTEL_COMPILER      
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DROP
+#endif
           real(kind=dp) :: RAT
           ! Locls
           integer(kind=int4), parameter :: NC = 10, NG = 60
@@ -6144,7 +6439,9 @@ module  mod_tmatrix_mps
 !C**********************************************************************
  
     SUBROUTINE GAUSS (N,IND1,IND2,Z,W)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: GAUSS
+#if defined __INTEL_COMPILER
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: GAUSS
+#endif
           integer(kind=int4) :: N,IND1,IND2
           real(kind=dp), dimension(N) :: Z,W
           real(kind=dp), parameter :: A = 1._dp, B = 2._dp, C = 3._dp
