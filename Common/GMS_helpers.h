@@ -21,7 +21,7 @@ namespace file_info{
 }
 
 #include <type_traits>
-#include "Config.h"
+#include "GMS_config.h"
 
 
 
