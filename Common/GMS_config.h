@@ -2,41 +2,65 @@
 #ifndef __GMS_CONFIG_H__
 #define __GMS_CONFIG_H__
 
-#if !defined(GMS_CONFIG_MAJOR)
-#define GMS_CONFIG_MAJOR 1
-#endif
-
-#if !defined(GMS_CONFIG_MINOR)
-#define GMS_CONFIG_MINOR 0
-#endif
-
-#if !defined(GMS_CONFIG_MICRO)
-#define GMS_CONFIG_MICRO 0
-#endif
-
-#if !defined(GMS_CONFIG_FULLVER)
-#define GMS_CONFIG_FULLVER 1000
-#endif
-
-#if !defined(GMS_CONFIG_CREATE_DATE)
-#define GMS_CONFIG_CREATE_DATE "26-09-2018 21:06 +00200 (THR 26 SEP 2019 GMT+2)"
-#endif
-/*
-Set this value to latest build date/time
-*/
-#if !defined(GMS_CONFIG_BUILD_DATE)
-#define GMS_CONFIG_BUILD_DATE " "
-#endif
-
-#if !defined(GMS_CONFIG_AUTHOR)
-#define GMS_CONFIG_AUTHOR  "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com"
-#endif
-
-#if !defined(GMS_CONFIG_DESCRIPT)
-#define GMS_CONFIG_DESCRIPT "GMS configuration global settings."
-#endif
 
 
+namespace file_info {
+
+     const unsigned int  gGMS_CONFIG_MAJOR = 1;
+     const unsigned int  gGMS_CONFIG_MINOR = 1;
+     const unsigned int  gGMS_CONFIG_MICRO = 0;
+     const unsigned int  gGMS_CONFIG_FULLVER = 1000U*gGMS_CONFIG_MAJOR+
+                                        100U*gGMS_CONFIG_MINOR+10U*gGMS_CONFIG_MINOR;
+     const * char const  pgGMS_CONFIG_CREATION_DATE = "26-09-2018 21:06 +00200 (THR 26 SEP 2019 GMT+2)";
+     const * char const  pgGMS_CONFIG_BUILD_DATE    = __DATE__ " " __TIME__;
+     const * char const  pgGMS_CONFIG_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+     const * char const  pgGMS_CONFIG_SYNOPSIS      = "GMS configuration global settings.";
+
+}
+
+#if !defined(__ATTR_HOT__)
+    #define  __ATTR_HOT__  __attribute__ ((hot))
+#endif
+
+#if !defined(__ATTR_COLD__)
+    #define __ATTR_COLD__ __attribute__ ((cold))
+#endif
+
+#if !defined(__ATTR_ALIGN__)
+    #define __ATTR_ALIGN__(n) __attribute__ ((aligned((n))))
+#endif
+
+#if !defined(__ATTR_TARGET_DEFAULT__)
+    #define __ATTR_TARGET_DEFAULT __attribute__ ((target ("default")))
+#endif
+
+#if !defined(__ATTR_TARGET_SSE4__)
+    #define  __ATTR_TARGET_SSE4__ __attribute__ ((target ("sse4")))
+#endif
+
+#if !defined(__ATTR_TARGET_AVX__)
+    #define  __ATTR_TARGET_AVX__ __attribute__ ((target ("avx")))
+#endif
+
+#if !defined(__ATTR_TARGET_AVX2__)
+    #define  __ATTR_TARGET_AVX2__ __attribute__ ((target ("avx2")))
+#endif
+
+#if !defined(__ATTR_TARGET_AVX512F__)
+    #define  __ATTR_TARGET_AVX512F__ __attribute__ ((target ("avx512f")))
+#endif
+
+#if !defined(__ATTR_TARGET_CLDEMOTE__)
+    #define __ATTR_TARGET_CLDEMOTE__ __attribute__ ((target ("cldemote")))
+#endif
+
+#if !defined(__ATTR_TARGET_FMA4__)
+    #define __ATTR_TARGET_FMA4__   __attribute__ ((target ("fma4")))
+#endif
+
+#if !defined(__ATTR_TARGET_NO_FANCY_MATH_387__)
+    #define __ATTR_TARGET_NO_FANCY_MATH_387__ __attribute__ ((target ("no-fancy-math-387")))
+#endif
 
 /* Start of Compiler specific declarations.* /
 
