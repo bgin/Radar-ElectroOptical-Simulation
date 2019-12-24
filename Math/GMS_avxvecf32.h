@@ -624,95 +624,332 @@ namespace gms {
 		}
 
 		// C = A*B, vector * vector
-		static inline AVXVec8 operator*(const AVXVec8, 
-						  const AVXVec8)       
+		  __ATTR_HOT__  __ATTR_ALIGN__(16)  
+		static inline AVXVec8 operator*(const AVXVec8 x, 
+						const AVXVec8 y)   {
+                     return (_mm256_mul_ps(x,y));
+		}
 
 	    // C = A*B, vector * scalar
-		static inline AVXVec8 operator*(const AVXVec8,
-						  const float)         
+	           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator*(const AVXVec8 x,
+						  const float s)  {
+                     return (_mm256_mul_ps(x,_mm256_set1_ps(s)));
+		}
 
 		// C = A*B, scalar * vector
-		static inline AVXVec8 operator*(const float,
-						const AVXVec8)        
+		    __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator*(const float s,
+						const AVXVec8 x) {
+                     return (_mm256_mul_ps(_mm256_set1_ps(s),x));
+		 }
 
+		     __ATTR_HOT__  __ATTR_ALIGN__(16)
+                static inline AVXVec8 operator*(const AVXVec8 x,
+		                                const __m256 y) {
+                      return (_mm256_mul_ps(x,y));
+		 }
+
+		      __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator*(const __m256 x,
+		                                const AVXVec8 y) {
+                      return (_mm256_mul_ps(x,y));
+		 }
+		 
 		// A = A*B, vector * vector (in-place)
-		static inline AVXVec8 operator*=(AVXVec8, 
-						 const AVXVec8)
-						 
+		       __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator*=(AVXVec8 x, 
+						 const AVXVec8 y) {
+                       x = x*y;
+		       return (x);
+		 }
+
+		        __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator*=(AVXVec8 x,
+		                                  const float s) {
+                       x = x*AVXVec8{s};
+		       return (x);
+		 }
+
+		        __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator*=(const float s,
+		                                  AVXVec8 x) {
+                       x = AVXVec8{s}*x;
+		       return (x);
+		 }
+
+		        __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator*=(AVXVec8 x,
+		                                  const __m256 y) {
+                       x = x*AVXVec8{y};
+		       return (x);
+		 }
+
+		        __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator*(const __m256 x,
+		                                 AVXVec8 y) {
+                       y = y*AVXVec8{x};
+		       return (y);
+		 }
+		 
 		// C = A/B, vector / vector
-		static inline AVXVec8 operator/(const AVXVec8, 
-						  const AVXVec8)       
+		       __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator/(const AVXVec8 x, 
+						  const AVXVec8 y)  {
+                       return (_mm256_div_ps(x,y));
+		 }
 
 		// C = A/B, vector / scalar
-		static inline AVXVec8 operator/(const AVXVec8
-						  const float)          
+		        __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator/(const AVXVec8 x
+						  const float s)  {
+                       return (_mm256_div_ps(x,_mm256_set1_ps(s)));
+		 }
 
 		// C = A/B, scalar / vector
-		static inline AVXVec8 operator/(const float, 
-						  const AVXVec8)        
+		         __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator/(const float s, 
+						  const AVXVec8 x) {
+                       return (_mm256_div_ps(_mm256_set1_ps(s),x));
+		 }
+
+		          __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator/(const AVXVec8 x,
+		                                const __m256 y) {
+                       return (_mm256_div_ps(x,y));
+		 }
+
+		          __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator/(const __m256 x,
+		                                 const AVXVec8 y) {
+                       return (_mm256_div_ps(x,y));
+		 }
 
 		// A = A/B, vector / vector (in-place)
-		static inline AVXVec8 operator/=(AVXVec8, 
-						 const AVXVec8)         
+		          __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator/=(AVXVec8 x, 
+						 const AVXVec8 y)  {
+                       x = x/y;
+		       return (x);
+		 }
+		          __ATTR_HOT__  __ATTR_ALIGN__(16)
+                 static inline AVXVec8 operator/=(AVXVec8 x,
+		                                  const float s) {
+                       x = x/AVXVec8{s};
+		       return (x);
+		 }
 
-	        //
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator/=(const float s,
+		                                  AVXVec8 x) {
+                       x = AVXVec8{s}/x;
+		       return (x);
+		 }
 
-		// C = A==B, vector == vector, C is of type __m256d
-		static inline __m256 operator==(const AVXVec8, 
-						 const AVXVec8)
-						 
-		static inline __m256 operator==(const AVXVec8
-						 const float )          
+		          __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator/=(AVXVec8 x,
+		                                  const __m256 y) {
+                       x = x/AVXVec8{y};
+		       return (x);
+		 }
 
-		static inline __m256 operator==(const float,
-						 const AVXVec8)         
+		          __ATTR_HOT__  __ATTR_ALIGN__(16)
+		 static inline AVXVec8 operator/=(const __m256 x,
+		                                  AVXVec8 y) {
+                       y = AVXVec8{x}/y;
+		       return (y);
+		 }
 
-		// C = A != b, vector != vector, C is of type __m256d
-		static inline __m256 operator!=(const AVXVec8, 
-						 const AVXVec8)          
+	                  __ATTR_HOT__  __ATTR_ALIGN__(16)     
+		static inline AVXVec8  operator==(const AVXVec8 x, 
+						  const AVXVec8 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_EQ_OQ));
+		 }
 
-		// C = A>B, vector > vector, C is of type __m256d
-		static inline __m256 operator>(const AVXVec8, 
-						const AVXVec8)
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator==(const AVXVec8 x
+						 const float s ) {
+                       return (_mm256_cmp_ps(x,_mm256_set1_ps(s),
+		                               _CMP_EQ_OQ));
+		 }
+                           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator==(const float s,
+						 const AVXVec8 x) {
+                       return (_mm256_cmp_ps(_mm256_set1_ps(s),
+		                            x,_CMP_EQ_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator==(const AVXVec8 x,
+		                                  const __m256 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_EQ_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator==(const __m256 x,
+		                                  const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_EQ_OQ));
+                 }
+		 
+		            __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline __m256 operator!=(const AVXVec8 x
+						 const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_NEQ_OQ));
+		 }
+
+		 	     __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator!=(const AVXVec8 x
+						  const float s ) {
+                       return (_mm256_cmp_ps(x,_mm256_set1_ps(s),
+		                               _CMP_NEQ_OQ));
+		 }
+                           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator!=(const float s,
+						 const AVXVec8 x) {
+                       return (_mm256_cmp_ps(_mm256_set1_ps(s),
+		                            x,_CMP_NEQ_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator!=(const AVXVec8 x,
+		                                  const __m256 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_NEQ_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator!=(const __m256 x,
+		                                  const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_NEQ_OQ));
+                 }
+		 
+
+	                     __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>(const AVXVec8 x, 
+						const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_GT_OQ));
+		}
+
+		              __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>(const AVXVec8 x
+						  const float s ) {
+                       return (_mm256_cmp_ps(x,_mm256_set1_ps(s),
+		                               _CMP_GT_OQ));
+		 }
+                           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>(const float s,
+						 const AVXVec8 x) {
+                       return (_mm256_cmp_ps(_mm256_set1_ps(s),
+		                            x,_CMP_GT_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>(const AVXVec8 x,
+		                                  const __m256 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_GT_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>(const __m256 x,
+		                                  const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_GT_OQ));
+                 }
 						
-		// C = A<B, vector < vector, C is of type __m256d
-		static inline __m256 operator<(const AVXVec8, 
-						const AVXVec8)           
+	                   __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8 operator<(const AVXVec8 x, 
+						const AVXVec8 y) {
+                         return (_mm256_cmp_ps(x,y,_CMP_LT_OQ));
+		 }
 
-		// C = A>=B, vector >= B, C is of type __m256d
-		static inline __m256 operator>=(const AVXVec8, 
-						 const AVXVec8)           
+		 	   __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<(const AVXVec8 x
+						  const float s ) {
+                       return (_mm256_cmp_ps(x,_mm256_set1_ps(s),
+		                               _CMP_LT_OQ));
+		 }
+                           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<(const float s,
+						 const AVXVec8 x) {
+                       return (_mm256_cmp_ps(_mm256_set1_ps(s),
+		                            x,_CMP_LT_OQ));
+		 }
 
-		// C = A<=B, vector <= vector, C is of type __m256d
-		static inline __m256 operator<=(const AVXVec8, 
-						 const AVXVec8)          
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<(const AVXVec8 x,
+		                                  const __m256 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_LT_OQ));
+		 }
 
-			// C = A&B, vector & vector
-		static inline AVXVec8 operator&(const AVXVec8,
-						  const AVXVec8)           
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<(const __m256 x,
+		                                  const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_LT_OQ));
+                 }
 
-		
-		// A = A&B, vector & vector (in-place)
-		static inline AVXVec8 operator&=(AVXVec8,
-						   const AVXVec8)         
+	                   __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline __m256 operator>=(const AVXVec8 x, 
+						 const AVXVec8 y)  {
+                        return (_mm256_cmp_ps(x,y,_CMP_GE_OQ));
+		 }
 
+		 	 	   __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>=(const AVXVec8 x
+						  const float s ) {
+                       return (_mm256_cmp_ps(x,_mm256_set1_ps(s),
+		                               _CMP_GE_OQ));
+		 }
+                           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>=(const float s,
+						 const AVXVec8 x) {
+                       return (_mm256_cmp_ps(_mm256_set1_ps(s),
+		                            x,_CMP_GE_OQ));
+		 }
 
-		// C = A | B, vector | vector
-		static inline AVXVec8 operator|(const AVXVec8,
-						  const AVXVec8)          
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>=(const AVXVec8 x,
+		                                  const __m256 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_GE_OQ));
+		 }
 
-		
-		// A = A | B, vector | vector
-		static inline AVXVec8 operator|=(AVXVec8,
-						   const AVXVec8)        
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator>=(const __m256 x,
+		                                  const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_GE_OQ));
+                 }
 
-		// C = A ^ B, vector ^ vector
-		static inline AVXVec8 operator^(const AVXVec8,
-						  const AVXVec8)        
+	                  __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<=(const AVXVec8 x, 
+						  const AVXVec8 y)  {
+                        return (_mm256_cmp_ps(x,y,_CMP_LE_OQ));
+		 }
 
-		// A = A ^ B, vector ^ vector
-		static inline AVXVec8 operator^=(AVXVec8,
-						   const AVXVec8)        			 
+		 	 __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<=(const AVXVec8 x
+						  const float s ) {
+                       return (_mm256_cmp_ps(x,_mm256_set1_ps(s),
+		                               _CMP_LE_OQ));
+		 }
+                           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<=(const float s,
+						 const AVXVec8 x) {
+                       return (_mm256_cmp_ps(_mm256_set1_ps(s),
+		                            x,_CMP_LE_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<=(const AVXVec8 x,
+		                                  const __m256 y) {
+                       return (_mm256_cmp_ps(x,y,_CMP_LE_OQ));
+		 }
+
+		           __ATTR_HOT__  __ATTR_ALIGN__(16)
+		static inline AVXVec8  operator<=(const __m256 x,
+		                                  const AVXVec8 y) {
+                        return (_mm256_cmp_ps(x,y,_CMP_LE_OQ));
+                 }
+
+	       
+
+	              			 
 
 
 
