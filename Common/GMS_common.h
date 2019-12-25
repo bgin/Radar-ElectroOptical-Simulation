@@ -3,13 +3,13 @@
 #define __GMS_COMMON_H__
 
 namespace file_info {
-#include "GMS_version.h"
+
 	
-	const unsigned int gGMS_COMMON_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
+        const unsigned int gGMS_COMMON_MAJOR = 1;
 
-	const unsigned int gGMS_COMMON_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_COMMON_MINOR = 1;
 
-	const unsigned int gGMS_COMMON_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_COMMON_MICRO = 0;
 
 	const unsigned int gGMS_COMMON_FULLVER = 
 	 1000U*gGMS_COMMON_MAJOR+100U*gGMS_COMMON_MINOR+10U*gGMS_COMMON_MICRO;
@@ -64,6 +64,9 @@ namespace file_info {
 #endif
 
 #include <cstdint>
+#include "GMS_config.h"
+
+class AVXVec8;
 
 namespace gms{
 	namespace common {
@@ -130,11 +133,11 @@ namespace gms{
 
 		template<typename PTR, uint32_t Alignment,
 			     typename = std::enable_if<(std::is_pointer<PTR>::value &&
-										   std::is_floating_point<PTR>::value) ||
-										   (std::is_pointer<PTR>::value &&
-										    std::is_integral<PTR>::value),bool>::type>
-										    Is_ptr_aligned(PTR * ptr) {
-						 if ((reinterpret_cast<uintptr_t>(ptr) & Alignment) == 0ULL){
+							std::is_floating_point<PTR>::value) ||
+							(std::is_pointer<PTR>::value &&
+							std::is_integral<PTR>::value),bool>::type>
+							Is_ptr_aligned(PTR * ptr) {
+			       if ((reinterpret_cast<uintptr_t>(ptr) & Alignment) == 0ULL){
 							  return (true);
 					}
 						 else {
@@ -184,6 +187,19 @@ namespace gms{
 		void init_varray(float* __restrict,
 				 const int64_t,
 				 const float);
+
+		void avxvec8_init_unroll2x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                           const int64_t,
+					   const AVXVec8 ) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avxvec8_init_unroll4x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                           const int64_t,
+					   const AVXVec8) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avxvec8_init_unroll8x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                           const int64_t,
+					   const AVXVec8) __ATTR_COLD__ __ATTR_ALIGN__(32);
+					   
 
 		//
 		//	Array of type float/double vectorised initialization
@@ -388,7 +404,7 @@ namespace gms{
 				     const double * __restrict,
 				     const int64_t);
 
-		void avx256_memcpy2x_pd(float * __restrict,
+		void avx256_memcpy2x_ps(float * __restrict,
 					const float * __restrict,
 					const int64_t);
 

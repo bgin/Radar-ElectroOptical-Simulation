@@ -3,6 +3,7 @@
 #include "GMS_common.h"
 #include "GMS_simd_defs.h"
 #include "GMS_config.h"
+#include "GMS_avxvecf32.h"
 //
 //	Implementation
 //
@@ -188,6 +189,65 @@ gms::common
       _mm256_store_ps(&ar[i+8LL], _mm256_set1_ps(val));
     }
   }
+}
+
+void
+gms::common::
+avxvec8_init_unroll2x(AVXVec8 * __restrict vec8,
+		      const int64_t len,
+		      const AVXVec8 v) {
+#if defined __GNUC__
+       vec8 = (AVXVec8*)__builtin_assume_aligned(vec8,64);
+#elif defined __INTEL_COMPILER
+       assume_aligned(vec8,64)
+#pragma vector always
+#endif
+       for(int64_t i = 0; i != len-1LL; i += 2LL) {
+           vec8[i+0LL] = v;
+	   vec8[i+1LL] = v;
+       }
+}
+
+void
+gms::common::
+avxvec8_init_unroll4x(AVXVec8 * __restrict vec8,
+                      const int64_t len,
+		      const AVXVec8 v) {
+#if defined __GNUC__
+       vec8 = (AVXVec8*)__builtin_assume_aligned(vec8,64);
+#elif defined __INTEL_COMPILER
+       assume_aligned(vec8,64)
+#pragma vector always
+#endif
+       for(int64_t i = 0; i != len-4LL; i += 4LL) {
+           vec8[i+0LL] = v;
+	   vec8[i+1LL] = v;
+	   vec8[i+2LL] = v;
+	   vec8[i+3LL] = v;
+       }
+}
+
+void
+gms::common::
+avxvec8_init_unroll8x(AVXVec8 * __restrict vec8,
+                      const int64_t len,
+		      const AVXVec8 v) {
+#if defined __GNUC__
+       vec8 = (AVXVec8*)__builtin_assume_aligned(vec8,64);
+#elif defined __INTEL_COMPILER
+       assume_aligned(vec8,64)
+#pragma vector always
+#endif
+        for(int64_t i = 0LL; i != len-8LL; i += 8LL) {
+             vec8[i+0LL] = v;
+	     vec8[i+1LL] = v;
+	     vec8[i+2LL] = v;
+	     vec8[i+3LL] = v;
+	     vec8[i+4LL] = v;
+	     vec8[i+5LL] = v;
+	     vec8[i+6LL] = v;
+	     vec8[i+7LL] = v;
+	} 
 }
 
 void
