@@ -75,6 +75,63 @@ gms_imalloca(_In_ const std::size_t len,
 #endif
 }
 
+// ----------------- IMPORTANT ------------------------------
+// ALLOCA can not be used that way!! It must be used to allocate
+// dynamically on stack only inside computational functions.!!
+// ---------------------------------------------------------------
+/*double *
+gms::common::
+gms_dalloca_u(_In_ const std::size_t len) {
+#if (GMS_DEBUG_ON) == 1
+      _ASSERTE(len > 0ULL);
+#endif
+      return (reinterpret_cast<double*>(_alloca(len*sizeof(double)));// aligned on 16-bytes
+}
+
+float *
+gms::common::
+gms_falloca_u(_In_ const std::size_t len) {
+#if (GMS_DEBUG_ON) == 1
+       _ASSERTE(len > 0ULL);
+#endif
+      return (reinterpret_cast<float*>(_alloca(len*sizeof(float))));
+}
+
+int32_t *
+gms::common::
+gms_ialloca_u(_In_ const std::size_t len) {
+#if (GMS_DEBUG_ON) == 1
+      _ASSERTE(len > 0ULL)
+#endif
+      return (reinterpret_cast<int32_t*>(_alloca(len*sizeof(int32_t))));
+}
+
+double *
+gms::common::
+gms_dalloca_a(_In_ const std::size_t len,
+              _In_ const std::size_t align) { // align must have a value of  32 or 64
+#if (GMS_DEBUG_ON) == 1
+      _ASSERTE(len > 0ULL);
+#endif
+    const std::size_t nbytes = len * sizeof(double);
+    void * p = _alloca(nbytes+align-1);
+    double * dptr = (double*)(((UINT_PTR)p+(align-1)) & ~(align-1));
+    return (dptr);
+}
+
+float *
+gms::common::
+gms_falloca_a(_In_ const std::size_t len,
+              _In_ const std::size_t align) {
+#if (GMS_DEBUG_ON) == 1
+      _ASSERTE(len > 0ULL);
+#endif
+    const std::size_t nbytes = len * sizeof(float);
+    void * p = _alloca(nbytes+align-1);
+    float * fptr = (float*)(((UINT_PTR)p + (align-1)) & ~(align-1));
+    return (fptr);
+}*/
+
 double * 
 gms::common::
 gms_edmalloca(_In_ const std::size_t len, 
@@ -247,7 +304,7 @@ failed:  {
 
 #elif defined __linux
 #include <assert>
-
+#include <GMS_avxvecf32.h>
 double *
 gms::common::
 gms_dmallocu(const std::size_t len) {
@@ -317,6 +374,16 @@ gms_imalloca(const std::size_t len,
 #endif
 }
 
+AVXVec8 * 
+gms::common::
+gms_avxvec8_malloca(const std::size_t len,
+		    const int32_t alignment) {
+#if (GMS_DEBUG_ON) == 1
+      assert(len > 0ULL);
+#endif
+     return (reinterpret_cast<AVXVec8*>(_mm_malloc(len*sizeof(AVXVec8),alignment)));
+}
+
 double * 
 gms::common::
 gms_edmalloca(const std::size_t len, 
@@ -371,7 +438,7 @@ gms_eimalloca4(const std::size_t len,
 #endif
 	if (NULL == i4_ptr && len != 0ULL) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	  std::cerr << " Not implemented yet!!"
+	  std::cerr << " Not implemented yet!!";
 #endif
 			ABORT_ON_ERROR("gms_eimalloca4 -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
 	}
@@ -391,11 +458,29 @@ gms_eimalloca(const std::size_t len,
 #endif
 	if (NULL == i8_ptr && len != 0ULL) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	  std::cerr << " Not implemented yet!!"
+	  std::cerr << " Not implemented yet!!";
 #endif
 		ABORT_ON_ERROR("gms_eimalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
 	}
 	return (i8_ptr);
+}
+
+AVXVec8 *
+gms::common::
+gms_avxvec8_emalloca(const std::size_t len,
+                     const int32_t alignment) {
+#if (GMS_DEBUG_ON) == 1
+     assert(len > 0ULL);
+#endif
+     AVXVec8 * ptr = NULL;
+     ptr = reinterpret_cast<AVXVec8*>(_mm_malloc(len*sizeof(AVXVec8),alignment));
+     if(NULL == ptr && len != 0ULL) {
+#if (PRINT_CALLSTACK_ON_ERROR) == 1
+         std::cerr << "Not implemented yet!!" << std::endl;
+#endif
+         ABORT_ON_ERROR("gms_avxvec8_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
+     }
+      return (ptr);
 }
 
 float *

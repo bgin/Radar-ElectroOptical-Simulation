@@ -36,6 +36,8 @@
 
 #include <cstdint>
 
+class AVXVec8;
+
 namespace gms {
 	namespace common {
 
@@ -64,14 +66,14 @@ namespace gms {
 		//
 
 		_Check_return_ _Ret_maybenull_      int32_t * gms_imallocu(_In_ const std::size_t);
-
 		
 
+		
 		//
 		//	Aligned malloc wrapper
 		//  Returns: double * 
 		//  No error handling implemented
-		//
+		//							    _In_ const std::size_t);
 
 		_Check_return_ _Ret_maybenull_      double * gms_dmalloca(_In_ const std::size_t, _In_ const int32_t);
 
@@ -88,6 +90,9 @@ namespace gms {
 		// Returns: int32_t * 
 		// No error handling implemented
 		//
+
+	
+		
 
 		_Check_return_ _Ret_maybenull_      int32_t * gms_imalloca(_In_ const std::size_t, _In_ const int32_t);
 
@@ -195,11 +200,20 @@ namespace gms {
 
 		//
 		// Aligned malloc wrapper
-		// Returns: int64_t * 
+		// Returns: int32_t * 
 		// No error handling implemented
 		//
 
 	        int32_t * gms_imalloca( const std::size_t, const int32_t);
+
+		//
+		// Aligned malloc wrapper
+		// Returns: AVXVec8 * 
+		// No error handling implemented
+		//
+	        
+		AVXVec8 * gms_avxvec8_malloca(const std::size_t,const int32_t);
+	
 
 		//
 		// Error handling wrappers
@@ -237,6 +251,13 @@ namespace gms {
 
 	        int64_t * gms_eimalloca(const std::size_t, const int32_t);
 
+		//
+		// Aligned malloc wrapper
+		// Returns: AVXVec8 * 
+		// Error checking and handling (calls std::exit)
+		//
+
+		AVXVec8 * gms_avxvec8_emalloca(const std::size_t,const int32_t);
 
 		//
 		// Few special functions for padding of possibly unaligned rows of flat (multidimensional) arrays.
@@ -268,4 +289,4 @@ namespace gms {
 }
 
 
-#endif /*__LAM_MALLOC_H__*/
+#endif /*__GMS_MALLOC_H__*/
