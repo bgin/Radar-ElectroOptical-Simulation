@@ -199,7 +199,18 @@ namespace gms{
 		void avxvec8_init_unroll8x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
 		                           const int64_t,
 					   const AVXVec8) __ATTR_COLD__ __ATTR_ALIGN__(32);
-					   
+
+		void avxvec8_copy_unroll2x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					   const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					   const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avxvec8_copy_unroll4x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					   const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					   const int64_t)  __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avxvec8_copy_unroll8x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					   const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					   const int64_t)  __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 		//
 		//	Array of type float/double vectorised initialization
