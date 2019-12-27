@@ -196,7 +196,7 @@ gms::common::
 avxvec8_init_unroll2x(AVXVec8 * __restrict vec8,
 		      const int64_t len,
 		      const AVXVec8 v) {
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __INTEL_COMPILER
        vec8 = (AVXVec8*)__builtin_assume_aligned(vec8,64);
 #elif defined __INTEL_COMPILER
        assume_aligned(vec8,64)
@@ -219,7 +219,7 @@ avxvec8_init_unroll4x(AVXVec8 * __restrict vec8,
        assume_aligned(vec8,64)
 #pragma vector always
 #endif
-       for(int64_t i = 0; i != len-4LL; i += 4LL) {
+       for(int64_t i = 0; i != len-3LL; i += 4LL) {
            vec8[i+0LL] = v;
 	   vec8[i+1LL] = v;
 	   vec8[i+2LL] = v;
@@ -232,13 +232,13 @@ gms::common::
 avxvec8_init_unroll8x(AVXVec8 * __restrict vec8,
                       const int64_t len,
 		      const AVXVec8 v) {
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __INTEL_COMPILER
        vec8 = (AVXVec8*)__builtin_assume_aligned(vec8,64);
 #elif defined __INTEL_COMPILER
-       assume_aligned(vec8,64)
+       __assume_aligned(vec8,64)
 #pragma vector always
 #endif
-        for(int64_t i = 0LL; i != len-8LL; i += 8LL) {
+        for(int64_t i = 0LL; i != len-7LL; i += 8LL) {
              vec8[i+0LL] = v;
 	     vec8[i+1LL] = v;
 	     vec8[i+2LL] = v;
@@ -248,6 +248,83 @@ avxvec8_init_unroll8x(AVXVec8 * __restrict vec8,
 	     vec8[i+6LL] = v;
 	     vec8[i+7LL] = v;
 	} 
+}
+
+void
+gms::common::
+avxvec8_copy_unroll2x(AVXVec8 * __restrict dst,
+		      const AVXVec8 * __restrict src,
+		      const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
+     src = (AVXVec8*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+   for(int64_t i = 0LL; i != len-1LL; i += 2LL) {
+       dst[i+0LL] = src[i+0LL];
+       dst[i+1LL] = src[i+1LL];
+   }
+}
+
+void
+gms::common::
+avxvec8_copy_unroll4x(AVXVec8 * __restrict dst,
+		      const AVXVec8 * __restrict src,
+		      const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
+     src = (AVXVec8*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+   for(int64_t i = 0LL; i != len-3LL; i += 4LL) {
+       dst[i+0LL] = src[i+0LL];
+       dst[i+1LL] = src[i+1LL];
+       dst[i+2LL] = src[i+2LL];
+       dst[i+3LL] = src[i+3LL];
+   }
+}
+
+void
+gms::common::
+avxvec8_copy_unroll8x(AVXVec8 * __restrict dst,
+		      const AVXVec8 * __restrict src,
+		      const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
+     src = (AVXVec8*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+   for(int64_t i = 0LL; i != len-7LL; i += 8LL) {
+        dst[i+0LL] = src[i+0LL];
+        dst[i+1LL] = src[i+1LL];
+        dst[i+2LL] = src[i+2LL];
+        dst[i+3LL] = src[i+3LL];
+	dst[i+4LL] = src[i+4LL];
+	dst[i+5LL] = src[i+5LL];
+	dst[i+6LL] = src[i+6LL];
+	dst[i+7LL] = src[i+7LL];
+   }
 }
 
 void
