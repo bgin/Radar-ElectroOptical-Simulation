@@ -2,6 +2,13 @@
 #if defined __GNUC__ && !defined __INTEL_COMPILER
 #include <omp.h>
 #endif
+#if defined __ICC || defined __INTEL_COMPILER
+#include <svrng.h>
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#include <random>
+#include <ctime>
+#include <cstdlib>
+#endif
 //
 #include "GMS_tree_scatterer.h"
 //
@@ -368,7 +375,7 @@ ComputeTrunkParamEq_ymm8r4(const int32_t zpoints) {
      gms::common::avxvec8_init_unroll8x(&m_tsc.trunk_zparam[0],
                                         static_cast<int64_t>(m_tsc.trunk_param_npts),
 					vzero);
-#if defined __GNUC__
+#if defined __GNUC__ && !defined __INTEL_COMPILER
      
 #pragma omp simd aligned(m_tsc.trunk_xparam,m_tsc.trunk_yparam,m_tsc.trunk_zparam:64)
 #elif defined __ICC || defined __INTEL_COMPILER
@@ -403,22 +410,20 @@ ComputeTrunkParamEq_ymm8r4(const int32_t zpoints) {
        }
 }
 
-#if defined __ICC || defined __INTEL_COMPILER
-#include <svrng.h>
-#endif
+
 void
 gms::math::TreeScatterer::
 SetThicknessDensAng_ymm8r4(const AVXVec8 * __restrict bradii) {
     
    
-    AVXVec8 t1,t2;
-    svrng_float8_t vrand1,vrand2,vrand3,vrand4;
+#if defined __ICC || defined __INTEL_COMPILER   
+    svrng_float8_t vrand1,vrand2,vrand3,vrand4,vrand5,vrand6;
     svrng_engine_t engine;
-    svrng_distribution_t uniform1,uniform2,uniform3,uniform4;
+    svrng_distribution_t uniform1,uniform2,uniform3,uniform4,
+                         uniform5;
     uint32_t seed;
     int32_t result;
-    t1 = AVXVec8{};
-    t2 = AVXVec8{};
+    
     // Memory first-touch
     gms::common::avxvec8_init_unroll8x(&m_tsc.leaves_thick[0],
                                        static_cast<int64_t>(m_tsc.nleaves),
@@ -427,7 +432,7 @@ SetThicknessDensAng_ymm8r4(const AVXVec8 * __restrict bradii) {
                                        static_cast<int64_t>(m_tsc.nleaves),
 				       AVXVec8{});
     result = _rdrand_32_step(&seed)
-    if(!result) seed = 1458963254;
+    if(!result) seed = 1458963254U;
     engine = svrng_new_mt19937_engine(seed);
     uniform1 = svrng_new_uniform_distribution_float(0.1f,0.7f);
     uniform2 = svrng_new_uniform_distribution_float(0.1f,0.6f);
@@ -470,5 +475,189 @@ SetThicknessDensAng_ymm8r4(const AVXVec8 * __restrict bradii) {
 	    m_tsc.leaves_incang[Ix2D(i,m_tsc.nleaves,j)] = *(AVXVec8*)&vrand4;
 	}
      }
+     gms::common::avxvec8_init_unroll8x(&m_tsc.branches_incang[0],
+                                        static_cast<int64_t>(2*m_tsc.nbranches),
+					AVXVec8{});
+     for(int32_t i = 0; i != 1; ++i) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(m_tsc.branches_incang,64);
+#pragma vector always
+#pragma vectorlength(8)
+#endif
+        for(int32_t j = 0; j != m_tsc.nbranches; ++j) {
+            vrand5 = svrng_generate8_float(engine,uniform4);
+	    m_tsc.branches_incang[Ix2D(i,m_tsc.nbranches,j)] = *(AVXVec8*)&vrand5;
+	}
+     }
+     uniform5 = svrng_new_uniform_distribution_float(0.75f,1.0f);
+     for(int32_t i = 1; i != 2; ++i) {
+#if defined __ICC || defined __INTEL_COMPILER
+       __assume_aligned(m_tsc.branches_incang,64);
+#pragma vector always
+#pragma vectorlength(8)
+#endif
+        for(int32_t j = 0; j != m_tsc.nbranches; ++j) {
+            vrand6 = svrng_generate8_float(engine,uniform5);
+	    m_tsc.branches_incang[Ix2D(i,m_tsc.nbranches,j)] = *(AVXVec8*)&vrand6;
+	}
+     }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+      float * __restrict __ATTR_ALIGN__(64) plthick  = NULL;
+      float * __restrict __ATTR_ALIGN__(64) pldense  = NULL;
+      float * __restrict __ATTR_ALIGN__(64) plincang = NULL;
+      float * __restrict __ATTR_ALIGN__(64) pbincang = NULL;
+      const int32_t leaves_len = 8*m_tsc.nleaves;
+      const int32_t branch_len = 8*m_tsc.nbranches;
+      plthick  = _mm_malloc(static_cast<size_t>(leaves_len)*sizeof(float),64);
+      if(plthick == NULL && leaves_len != 0) {
+         std::exit(EXIT_FAILURE);
+      }
+      pldense = _mm_malloc(static_cast<size_t>(leaves_len)*sizeof(float),64);
+      if(pldense == NULL && leaves_len != 0) {
+         std::exit(EXIT_FAILURE);
+      }
+      plincang = _mm_malloc(static_cast<size_t>(2*8*m_tsc.nleaves)*sizeof(float),64);
+      if(plincang == NULL) {
+         std::exit(EXIT_FAILURE);
+      }
+      pbincang = _mm_malloc(static_cast<size_t>(2*8*m_tsc.nbranches)*sizeof(float),64);
+      if(pbincang == NULL) {
+         std::exit(EXIT_FAILURE);
+      }
+      //
+      //
+      std::clock_t seed;
+      seed = std::clock();
+      auto srand1 = std::bind(std::uniform_real_distribution<float>(0.1f,0.7f),
+                              std::mt19937(seed));
+      auto srand2 = std::bind(std::uniform_real_distribution<float>(0.1f,0.6f),
+                              std::mt19937(seed));
+      // Will GCC vectorize a srand1(2) functor calls -- hmmm... probably not.
+      avx256_init_unroll4x_ps(&plthick[0],
+                              static_cast<int64_t>(leaves_len),
+			      0.0f);
+      avx256_init_unroll4x_ps(&pldense[0],
+                              static_cast<int64_t>(leaves_len),
+			      0.0f);
+      for(int32_t i = 0; i != leaves_len; ++i) {
+          float rf1 = srand1();
+	  plthick[i] = rf1;
+	  float rf2 = srand2();
+	  pldense[i] = rf2;
+      }
+      avx256_init_unroll4x_ps(&plincang[0],
+                              static_cast<int64_t>(2*8*m_tsc.nleaves),
+			      0.0f);
      
+      auto srand3 = std::bind(std::uniform_real_distribution<float>(0.3f,0.7f),
+                              std::mt19937(seed));
+      for(int32_t i = 0; i != 1; ++i) {
+          for(int32_t j = 0; j != leaves_len; ++j) {
+              float rf = srand3();
+	      plincang[Ix2D(i,leaves_len,j)] = rf;
+	  }
+      }
+      auto srand4 = std::bind(std::uniform_real_distribution<float>(0.75f,1.5f),
+                              std::mt19937(seed));
+      for(int32_t i = 1; i != 2; ++i) {
+          for(int32_t j = 0; j != leaves_len; ++j) {
+              float rf = srand4();
+	      plincang[Ix2D(i,leaves_len,j)] = rf;
+	  }
+      }
+      avx256_init_unroll4x_ps(&pbincang[0],
+                              static_cast<int64_t>(2*8*m_tsc.nbranches),
+			      0.0f);
+      for(int32_t i = 0; i != 1; ++i) {
+          for(int32_t j = 0; j != branch_len; ++j) {
+              float rf = srand4();
+	      pbincang[Ix2D(i,branch_len,j)] = rf;
+	  }
+      }
+      auto srand5 = std::bind(std::uniform_real_distribution<float>(0.75f,1.0f),
+                             std::mt19937(seed));
+      for(int32_t i = 1; i != 2; ++i) {
+          for(int32_t j = 0; j != branch_len; ++j) {
+              float rf = srand5();
+	      pbincang[Ix2D(i,branch_len,j)] = rf;
+	  }
+      }
+   
+      for(int32_t i = 0; i != m_tsc.nleaves; ++i) {
+#pragma omp simd aligned(m_tsc.leaves_thick,plthick,m_tsc.leaves_dens,pldense,64)
+          for(int32_t j = 0; j != 8; ++j) {
+              m_tsc.leaves_thick[i].m256_f32[j] = plthick[i*8+j];
+	      m_tsc.leaves_dens[i].m256_f32[j]  = pldense[i*8+j];
+	  }
+      }
+      for(int32_t i = 0; i != 2*m_tsc.nleaves; ++i) {
+#pragma omp simd aligned(m_tsc.leaves_incang,plincang,64)
+          for(int32_t j = 0; j != 8; ++j) {
+              m_tsc.leaves_incang[i].m256_f32[j] = plincang[i*8+j];
+	  }
+      }
+      for(int32_t i = 0; i != 2*m_tsc.nbranches; ++j) {
+#pragma omp simd aligned(m_tsc.branches_incang,pbincang,64)
+          for(int32_t j = 0; j != 8; ++j) {
+              m_tsc.branches_incang[i].m256_f32[j] = pbincang[i*8+j];
+	  }
+      }
+      _mm_free(plthick);
+      plthick = NULL;
+      _mm_free(pldense);
+      pldense = NULL;
+      _mm_free(plincang);
+      plincang = NULL;
+      _mm_free(pbincang);
+      pbincang = NULL;
+#endif // End __GNUC__ part
+       // ! Density set to 0.0 (must find the exact data)
+       //    ! Setting only the radii
+       //    ! First touch
+       avxvec8_init_unroll8x(&m_tsc.branches_thick[0],
+                             static_cast<int64_t>(m_tsc.nbranches),
+			     AVXVec8{});
+       avxvec8_init_unroll8x(&m_tsc.branches_dens[0],
+                             static_cast<int64_t>(m_tsc.nbranches),
+			     AVXVec8{});
+       avxvec8_copy_unroll8x(&m_tsc.branches_thick[0],
+                             &bradii[0],
+			     static_cast<int64_t>(m_tsc.nbranches));
+
+}
+
+void
+gms::math::TreeScatterer::
+ComputeLeavesParamEq_ymm8r4(const AVXVec8 va,
+                            const AVXVec8 vb) {
+
+     struct _T0_ {
+       AVXVec8 vthinc0;
+       AVXVec8 vthinc1;
+       AVXVec8 vthinc2;
+       AVXVec8 vthinc3;
+     } __ATTR_ALIGN__(64) t0;
+
+     struct _T1_ {
+       AVXVec8 vtheta0;
+       AVXVec8 vtheta1;
+       AVXVec8 vtheta2;
+       AVXVec8 vtheta3;
+     } __ATTR_ALIGN__(64) t1
+
+     struct _T2_ {
+       AVXVec8 vsqrt;
+       AVXVec8 vsqrtarg;
+       AVXVec8 vC;
+       AVXVec8 tmp;
+     } __ATTR_ALIGN__(64) t2;
+#if defined __ICC || defined __INTEL_COMPILER
+     svrng_float8_t vrand1, vrand2;
+     svrng_engine_t engine;
+     svrng_distribution_t uniform1, uniform2;
+     uint32_t seed;
+     int32_t result;
+     // Locals first memory-touch
+     t0.vthinc0 = ZERO;
+     t0.vthinc1 = ZERO;
 }
