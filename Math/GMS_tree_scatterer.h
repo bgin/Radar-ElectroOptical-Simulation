@@ -20,9 +20,9 @@ namespace file_info {
 
 #include <cstdint>
 #include "GMS_config.h"
+#include "GMS_avxvecf32.h"
 
 
-class AVXVec8;
 
 namespace  gms {
 
@@ -30,15 +30,19 @@ namespace  gms {
 
              namespace {
 
-	           const float vinc0[8] __ATTR_ALIGN__(32) = {1.0f,2.0f,3.0f,4.0f,
-		                                              5.0f,6.0f,7.0f,8.0f};
-		   const float vinc1[8] __ATTR_ALIGN__(32) = {9.0f,10.0f,11.0f,12.0f,
-		                                              13.0f,14.0f,15.0f,16.0f};
-		   const float vinc2[8] __ATTR_ALIGN__(32) = {17.0f,18.0f,19.0f,20.0f,
-		                                              21.0f,22.0f,23.0f,24.0f};
-		   const float vinc3[8] __ATTR_ALIGN__(32) = {25.0f,26.0f,27.0f,28.0f,
-		                                              29.0f,30.0f,31.0f,32.0f};
+	           const AVXVec8 VINC0  =   AVXVec8{1.0f,2.0f,3.0f,4.0f,
+		                                  5.0f,6.0f,7.0f,8.0f};
+		   const AVXVec8 VINC1  =   AVXVec8{9.0f,10.0f,11.0f,12.0f,
+		                                  13.0f,14.0f,15.0f,16.0f};
+		   const AVXVec8 VINC2  =   AVXVec8{17.0f,18.0f,19.0f,20.0f,
+		                                   21.0f,22.0f,23.0f,24.0f};
+		   const AVXVec8 VINC3  =   AVXVec8{25.0f,26.0f,27.0f,28.0f,
+		                                   29.0f,30.0f,31.0f,32.0f};
+                   const AVXVec8 ZERO   =   AVXVec8{};
 
+		   const AVXVec8 TWO    =   AVXVec8{2.0f};
+
+		   const AVXVec8 PI     =   AVXVec8{3.141592653589793f};
 	     }
 
 	     // Low temporal access and spatial locality (cold)  data structure (POD) type
@@ -249,7 +253,13 @@ namespace  gms {
 
 			void SetThickDensAng_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeLeavesParamEq_ymm8r4(const AVXVec8, const AVXVec8) __ATTR_COLD__ __ATTR_ALIGN__(32);
+			void ComputeLeavesParamEq_ymm8r4(
+#if defined __ICC || defined __INTEL_COMPILER
+							 const AVXVec8, const AVXVec8
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+							 const float, const float
+#endif
+							 ) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			void ComputeBranchesParamEq_ymm8r4(const AVXVec8, const AVXVec8, const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
