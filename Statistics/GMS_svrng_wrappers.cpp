@@ -80,7 +80,7 @@
 
 #if !defined(GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CASE_UNIFORM)
     GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CASE_UNIFORM             \
-                  svrng_engine_t engine;                          \
+                 svrng_engine_t engine;                          \
                  svrng_distribution_t uniform;                    \
 		 int32_t err = -9999;                             \
 		 uint32_t seed = 0U;                              \
@@ -95,6 +95,28 @@
 		    return;                                       \
 		 }
 #endif
+
+#if !defined(GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_UNIFORM)
+    GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_UNIFORM             \
+                 svrng_engine_t re_eng,im_eng;                          \
+		 svrng_distribution_t re_uni,im_uni;                    \ 
+		 int32_t err = -9999;                                   \
+		 uint32_t seedre = 0U;                                  \ 
+		 uint32_t seedim = 0U;                                  \
+		 int32_t result = -9999;                                \
+		 result = _rdrand32_step(&seedre);                      \
+                 if(!result) seedre = 235698756U;                       \
+		 re_eng = svrng_new_mt19937_engine(seedre);             \
+		 re_uni = svrng_new_uniform_distribution(relo,rehi);    \
+		 result = _rdrand32_step(&seedim);                      \
+		 if(!result) seedim = 112565498U;                       \
+		 im_eng = svrng_new_mt19937_engine(seedim);             \
+		 im_uni = svrng_new_uniform_distribution(imlo,imhi);    \
+		 err = svrng_get_status();                              \
+		 if(err != SVRNG_STATUS_OK) {                           \
+                    status = err;                                       \
+		    return;                                             \
+		 }
 
 
 void
@@ -319,5 +341,86 @@ svnrg_wrapper_mt19937_init_avx512c4f32(AVX512c4f32 * __restrict data,
 				       const int32_t type,
 				       int32_t & status) {
 
+     switch(type) {
+
+         case 0: {
+              GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_NO_DISTR
+	      svrng_float16_t re_rand;
+	      svrng_float16_t im_rand;
+	      for(int64_t i = 0LL; i != length; ++i) {
+                  re_rand = svrng_generate16_float(re_eng,NULL);
+		  data[i].m_re = *(__m512*)&re_rand;
+		  im_rand = svrng_generate16_float(im_eng,NULL);
+		  data[i].m_im = *(__m512*)&im_rand;
+	      }
+	      err = -9999;
+	      err = svrng_get_status();
+	      if(err != SVRNG_STATUS_OK) {
+                 svrng_delete_engine(re_eng);
+		 svrng_delete_engine(im_eng);
+		 status = err;
+		 return;
+	      }
+	      svrng_delete_engine(re_eng);
+	      svrng_delete_engine(im_eng);
+	      break;
+	  }
+        case 1: {
+             GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_NORMAL
+	     svrng_float16_t re_rand;
+	     svrng_float16_t im_rand;
+	     for(int64_t i = 0LL; i != length; ++i) {
+                 re_rand = svrng_generate16_float(re_eng,re_norm);
+		 data[i].m_re = *(__512*)&re_rand;
+		 im_rand = svrng_generate16_float(im_eng,im_norm);
+		 data[i].m_im = *(__m512*)&im_rand;
+	     }
+	     err = -9999;
+	     err = svrng_get_status();
+	     if(err != SVRNG_STATUS_OK) {
+                svrng_delete_engine(re_eng);
+		svrng_delete_distribution(re_norm);
+		svrng_delete_engine(im_eng);
+		svrng_delete_distribution(im_norm);
+		status = err;
+		return;
+	     }
+	     svrng_delete_engine(re_eng);
+	     svrng_delete_distribution(re_norm);
+	     svrng_delete_engine(im_eng);
+	     svrn_delete_distribution(im_norm);
+	     break;
+	  }
+	case 2: {
+             GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_UNIFORM
+	     svrng_float16_t re_rand;
+	     svrng_float16_t im_rand;
+	     for(int64_t i = 0LL; i != length; ++i) {
+                 re_rand = svrng_generate16_float(re_eng,re_uni);
+		 data[i].m_re = *(__m512*)&re_rand;
+		 im_rand = svrng_generate16_float(im_eng,im_uni);
+		 data[i].m_im = *(__m512*)&im_rand;
+	     }
+	     err = -9999;
+	     err = svrng_get_status();
+	     if(err != SVRNG_STATUS_OK) {
+                svrng_delete_engine(re_eng);
+		svrng_delete_distribution(re_uni);
+		svrng_delete_engine(im_eng);
+		svrng_delete_distribution(im_uni);
+		status = err;
+		return;
+	     }
+	     svrng_delete_engine(re_eng);
+	     svrng_delete_distribution(re_uni);
+	     svrng_delete_engine(im_eng);
+	     svrng_delete_distribution(im_uni);
+	     break;
+	}
+      default : {
+                   status = -99;
+		   return;
+        }
+    }
 }
 
