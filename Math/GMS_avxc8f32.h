@@ -275,16 +275,405 @@ __ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
 					       return (*this);
 					}
 __ATTR_COLD__ __ATTR_ALIGN__(16)
-                                        __m128 re_lo() {
+                                        __m128 re_lo() const {
 					
                                                return (_mm256_extractf128_ps(m_re,0));
 					}
 __ATTR_COLD__ __ATTR_ALIGN__(16)        __m128 re_hi() {
                                                return (_mm256_extractf128_ps(m_re,1));
                                         }
+__ATTR_COLD__ __ATTR_ALIGN__(16)        __m128 im_lo() const {
+                                               return (_mm256_extractf128_ps(m_im,0));
+                                        }
+__ATTR_COLD__ __ATTR_ALIGN__(16)        __m128 im_hi() const {
+                                               return (_mm256_extractf128_ps(m_im,1));
+                                        }
+__ATTR_COLD__ __ATTR_ALIGN__(16) 
+                                        AVXc8f32 & permute(const int32_t imm8x,
+					                   const int32_t imm8y) {
+
+					       m_re = _mm256_permute_ps(m_re,imm8x);
+					       m_im = _mm256_permute_ps(m_im,imm8y);
+					       return (*this);
+					}
+__ATTR_COLD__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                        AVXc8f32 & permute(const AVXc8f32 x,
+					                   const AVXc8f32 y,
+							   const int32_t imm8x,
+							   const int32_t imm8y) {
+
+				               m_re = _mm256_permute_ps(x.m_re,imm8x);
+					       m_im = _mm256_permute_ps(x.m_im,imm8y);
+					       return (*this);
+					}
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                        AVXc8f32 & operator(const AVXc8f32 x) {
+                                                   if(__builtin_expect(x == &this,0)) return (*this);
+						   m_re = x.m_re;
+						   m_im = x.m_im;
+						   return (*this);
+					}	    
+					
 
 	       } __ATTR_ALIGN__(64);
-      
+
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+					 static inline
+					 AVXc8f32 conj(const AVXc8f32 x) {
+
+					         auto tmp = ~x;
+						 return (AVXc8f32{x.m_re,tmp.im});
+					  }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+                                         AVXc8f32 polar(const __m256 ro,
+					                const __m256 theta) {
+
+					          const __m256 re_part =
+						        _mm256_mul_ps(rho,_mm256_cos_ps(theta));
+						  const __m256 im_part =
+						        _mm256_mul_ps(rho,_mm256_sin_ps(theta));
+						  return (AVXc8f32{re_part,im_part});
+					  }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 __m256 carg(const AVXc8f32 x) {
+
+					         return (_mm256_atan2_ps(x.m_re,x.m_im));
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16)
+                                         static inline
+					 _mm256 carg(const float re,
+					             const float im) {
+
+						 const __m256 real = AVXC8F32_SETPS(re);
+						 const __m256 imag = AVXC8F32_SETPS(im);
+						 return (_mm256_atan2_ps(real,imag));
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 csin(const AVXc8f32 x) {
+
+					         const __m256 re_part =
+						       _mm256_mul_ps(_mm256_sin_ps(x.m_re),
+						                     _mm256_cosh_ps(x.m_im));
+						 const __m256 im_part =
+						       _mm256_mul_ps(_mm256_cos_ps(x.m_re),
+						                     _mm256_sinh_ps(x.m_im));
+						 return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 csin(const std::complex<float> x) {
+
+					         const __m256 real = AVXC8F32_SETPS(x.real());
+						 const __m256 imag = AVXC8F32_SETPS(x.imag());
+						 const __m256 re_part =
+						       _mm256_mul_ps(_mm256_sin_ps(real),
+						                     _mm256_cosh_ps(imag));
+						 const __m256 im_part =
+						       _mm256_mul_ps(_mm256_cos_ps(real),
+						                     _mm256_sinh_ps(imag));
+						 return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 csin(const float re,
+					               const float im) {
+
+						 const __m256 real = AVXC8F32_SETPS(re);
+						 const __m256 imag = AVXC8F32_SETPS(im);
+						 const __m256 re_part =
+						       _mm256_mul_ps(_mm256_sin_ps(real),
+						                     _mm256_cosh_ps(imag));
+						 const __m256 im_part =
+						       _mm256_mul_ps(_mm256_cos_ps(real),
+						                     _mm256_sinh_ps(imag));
+						 return (AVXc8f32{re_part,im_part});     
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 csinh(const AVXc8f32 x) {
+
+					         const __m256 re_part =
+						      _mm256_mul_ps(_mm256_sinh_ps(x.m_re),
+						                    _mm256_cos_ps(x.m_im));
+						 const __m256 im_part =
+						      _mm256_mul_ps(_mm256_cosh_ps(x.m_re),
+						                    _mm256_sin_ps(x.m_im));
+						 return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 csinh(const std::complex<float> x) {
+                                                 
+                                                 const __m256 real = AVXC8F32_SETPS(x.real());
+						 const __m256 imag = AVXC8F32_SETPS(x.imag());
+						 const __m256 re_part =
+						       _mm256_mul_ps(_mm256_sinh_ps(real),
+						                     _mm256_cos_ps(imag));
+						 const __m256 im_part =
+						       _mm256_mul_ps(_mm256_cosh_ps(real),
+						                     _mm256_sin_ps(imag));
+						 return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16)
+                                         static inline
+					 AVXc8f32 csinh(const float re,
+					                const float im) {
+
+						 const __m256 real = AVXC8F32_SETPS(x.real());
+						 const __m256 imag = AVXC8F32_SETPS(x.imag());
+						 const __m256 re_part =
+						       _mm256_mul_ps(_mm256_sinh_ps(real),
+						                     _mm256_cos_ps(imag));
+						 const __m256 im_part =
+						       _mm256_mul_ps(_mm256_cosh_ps(real),
+						                     _mm256_sin_ps(imag));
+						 return (AVXc8f32{re_part,im_part});	
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 ccos(const AVXc8f32 x) {
+
+					           const __m256 re_part =
+                                                         _mm256_mul_ps(_mm256_cos_ps(x.m_re),
+	                                                               _mm256_cosh_ps(x.m_im));
+                                                   const __m256 im_part =
+                                                         _mm256_mul_part(_mm256_sin_ps(x.m_re),
+	                                                                 _mm256_sinh_ps(x.m_im));
+                                                   return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 ccos(const std::complex<float> x) {
+
+					           const __m256 real = AVXC8F32_SETPS(x.real());
+						   const __m256 imag = AVXC8F32_SETPS(x.imag());
+						   const __m256 re_part =
+						         _mm256_mul_ps(_mm256_cos_ps(real),
+							               _mm256_cosh_ps(imag));
+						   const __m256 im_part =
+						         _mm256_mul_ps(_mm256_sin_ps(real),
+							               _mm256_sinh_ps(imag));
+						   return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 ccos(const float re,
+					               const float im) {
+
+
+						   const __m256 real = AVXC8F32_SETPS(re);
+						   const __m256 imag = AVXC8F32_SETPS(im);
+						   const __m256 re_part =
+						         _mm256_mul_ps(_mm256_cos_ps(real),
+							               _mm256_cosh_ps(imag));
+						   const __m256 im_part =
+						         _mm256_mul_ps(_mm256_sin_ps(real),
+							               _mm256_sinh_ps(imag));
+						   return (AVXc8f32{re_part,im_part});    
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 ccosh(const AVXc8f32 x) {
+					       
+                                                   const __m256 re_part =
+						         _mm256_mul_ps(_mm256_cosh_ps(x.m_re),
+							               _mm256_cos_ps(x.m_im));
+                                                   const __m256 im_part =
+						         _mm256_mul_ps(_mm256_sinh_ps(x.m_re),
+							               _mm256_sin_ps(x.m_im));
+						   return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 ccosh(const std::complex<float> x) {
+
+					            const __m256 real = AVXC8F32_SETPS(x.real());
+						    const __m256 imag = AVXC8F32_SETPS(x.imag());
+						    const __m256 re_part =
+						          _mm256_mul_ps(_mm256_cosh_ps(real),
+							                _mm256_cos_ps(imag));
+						    const __m256 im_part =
+						          _mm256_mul_ps(_mm256_sinh_ps(real),
+							                _mm256_sin_ps(imag));
+						    return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 ccosh(const float re,
+					                const float im) {
+
+					            const __m256 real = AVXC8F32_SETPS(re);
+						    const __m256 imag = AVXC8F32_SETPS(im);
+						    const __m256 re_part =
+						          _mm256_mul_ps(_mm256_cosh_ps(real),
+							                _mm256_cos_ps(imag));
+						    const __m256 im_part =
+						          _mm256_mul_ps(_mm256_sinh_ps(real),
+							                _mm256_sin_ps(imag));
+						    return (AVXc8f32{re_part,im_part});		
+
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 cexp(const AVXc8f32 x) {
+
+					            const __m256 re_part =
+						          _mm256_mul_ps(_mm256_exp_ps(x.m_re),
+							                _mm256_cos_ps(x.m_im));
+						    const __m256 im_part =
+						          _mm256_mul_ps(_mm256_exp_ps(x.m_re),
+							                _mm256_sin_ps(x.m_im));
+						    return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 cexp(const std::complex<float> x) {
+
+                                                    const __m256 real = AVXC8F32_SETPS(x.real());
+						    const __m256 imag = AVXC8F32_SETPS(x.imag());
+						    const __m256 re_part =
+						          _mm256_mul_ps(_mm256_exp_ps(real),
+							                _mm256_cos_ps(imag));
+						    const __m256 im_part =
+						          _mm256_mul_ps(_mm256_exp_ps(real),
+							                _mm256_sin_ps(imag));
+						    return (AVXc8f32{re_part,im_part});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 cexp(const float re,
+					               const float im) {
+
+                                                    const __m256 real = AVXC8F32_SETPS(re);
+						    const __m256 imag = AVXC8F32_SETPS(im);
+						    const __m256 re_part =
+						          _mm256_mul_ps(_mm256_exp_ps(real),
+							                _mm256_cos_ps(imag));
+						    const __m256 im_part =
+						          _mm256_mul_ps(_mm256_exp_ps(real),
+							                _mm256_sin_ps(imag));
+						    return (AVXc8f32{re_part,im_part}); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 __m256 cabs(const AVXc8f32 x) {
+
+					            const __m256 re_part =
+						          _mm256_mul_ps(x.m_re,x.m_re);
+						    const __m256 im_part =
+						          _mm256_mul_ps(x.m_im,x.m_im);
+						    return (_mm256_sqrt_ps(_mm256_add_ps(re_part,im_part)));
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 __m256 cabs(const std::complex<float> x) {
+
+					            const __m256 real = AVXC8F32_SETPS(x.real());
+						    const __m256 imag = AVXC8F32_SETPS(x.imag());
+						    const __m256 re_part =
+						          _mm256_mul_ps(real,real);
+						    const __m256 im_part =
+						          _mm256_mul_ps(imag,imag);
+						    return (_mm256_sqrt_ps(_mm256_add_ps(re_part,im_part)));
+
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 __m256 cabs(const float re,
+					             const float im) {
+
+                                                    const __m256 real = AVXC8F32_SETPS(re);
+						    const __m256 imag = AVXC8F32_SETPS(im);
+						    const __m256 re_part =
+						          _mm256_mul_ps(real,real);
+						    const __m256 im_part =
+						          _mm256_mul_ps(imag,imag);
+						    return (_mm256_sqrt_ps(_mm256_add_ps(re_part,im_part)));
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 cpow(const AVXc8f32 x,
+					               const float n) {
+
+                                                    const __m256 re_part =
+                                                            _mm256_mul_ps(x.m_re,x.m_re);
+                                                    const __m256 im_part =
+                                                            _mm256_mul_ps(x.m_im,x.m_im);
+                                                    const __m256 r =
+                                                            _mm256_sqrt_ps(_mm256_add_ps(re_part,im_part));
+                                                    const __m256 theta =
+                                                            _mm256_atan_ps(_mm256_div_ps(x.m_im,x.m_re));
+                                                    const __m256 vn = _mm256_set1_ps(n);
+                                                    const __m256 pow_term = _mm256_pow_ps(r,vn);
+                                                    const __m256 trig_arg = _mm256_mul_ps(vn,theta);
+                                                    return (AVXc8f32{_mm256_mul_ps(pow_term,_mm256_cos_ps(trig_arg),
+                                                                         _mm256_mul_ps(pow_term,_mm256_sin_ps(trig_arg))}));
+			 		 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 clog(const AVXc8f32 x) {
+
+					           const __m256 t1 = cabs(x);
+						   const __m256 t2 = carg(x);
+						   const __m256 re_part =
+						         _mm256_log_ps(t1);
+						   return (AVXc8f32{re_part,t2});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 clog(const std::complex<float> x) {
+
+                                                   const __m256 t1 = cabs(c);
+						   const __m256 t2 = carg(x.real(),x.imag());
+						   const __m256 re_part =
+						         _mm256_log_ps(t1);
+						   return (AVXc8f32{re_part,t2});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                          static inline
+					  AVXc8f32 clog(const float re,
+					                const float im) {
+
+                                                   const __m256 t1 = cabs(c);
+						   const __m256 t2 = carg(re,im);
+						   const __m256 re_part =
+						         _mm256_log_ps(t1);
+						   return (AVXc8f32{re_part,t2});
+					  }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                          static inline
+					  AVXc8f32 csqrt(const AVXc8f32 x) {
+                                                  
+                                                    const __m256 t = cabs(x);
+                                                    const __m256 re_part =
+                                                          _mm256_mul_ps(_mm256_set1_ps(0.5f),
+	                                                                _mm256_add_ps(t,x.m_re));
+                                                    const __m256 im_part =
+                                                          _mm256_mul_ps(_mm256_set1_ps(0.5f),
+	                                                                _mm256_sub_ps(t,x.m_re));
+                                                    return (AVXc8f32{_mm256_sqrt_ps(re_part),
+                                                                        _mm256_sqrt_ps(im_part)});
+			             	   }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                          static inline
+					  AVXc8f32 csqrt(const std::complex<float> x) {
+
+                                                    const __m256 t = cabs(c);
+                                                    const __m256 real = AVXC8F32_SETPS(c.real())
+                                                    const __m256 imag = AVXC8F32_SETPS(c.imag())
+                                                    const __m256 re_part =
+                                                            _mm256_mul_ps(_mm256_set1_ps(0.5f),
+	                                                                  _mm256_add_ps(t,real));
+                                                    const __m256 im_part =
+                                                            _mm256_mul_ps(_mm256_set1_ps(0.5f),
+	                                                                  _mm256_sub_ps(t,real));
+                                                    return (AVXc8f32{_mm256_sqrt_ps(re_part),
+                                                                          _mm256_sqrt_ps(im_part)});
+					  }
+
     } // math   
 
 }  // gms
