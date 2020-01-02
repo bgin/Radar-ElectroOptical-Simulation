@@ -938,6 +938,496 @@ __ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
                                                 x = AVXc8f32{s}-x;
 						return (x);
 					  }
+ __ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                          static inline
+                                          AVXc8f32 operator*(const AVXc8f32 x,
+					                     const AVXc8f32 y) {
+
+                                                 const __m256 ymm0 = _mm256_mul_ps(x.m_re,y.m_re);
+                                                 const __m256 ymm1 = _mm256_mul_ps(x.m_im,y.m_im);
+                                                 const __m256 ymm2 = _mm256_mul_ps(x.m_im,y.m_re);
+                                                 const __m256 ymm3 = _mm256_mul_ps(x.m_re,y.m_im);
+                                                 return (AVXc8f32{_mm256_sub_ps(ymm0,ymm1),
+                                                                  _mm256_sub_ps(ymm2,ymm3)});
+					  }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*(const AVXc8f32 x,
+					                    const __m256 y) {
+                
+                                                 return (AVXc8f32{_mm256_mul_ps(x.m_re,y),
+						                  _mm256_mul_ps(x.m_im,y)});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*(const __m256 x,
+					                    const AVXc8f32 y) {
+
+                                                 return (AVXc8f32{_mm256_mul_ps(x,y.m_re),
+						                  _mm256_mul_ps(x,y.m_im)});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*(const AVXc8f32 x,
+					                    const float s) {
+
+						 return (x-AVXc8f32{s});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*(const float s,
+					                    AVXv8f32 x) {
+
+                                                 return (AVXc8f32{s}-x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*=(AVXc8f32 x,
+					                     const AVXc8f32 y) {
+
+						 x = x*y;
+						 return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*=(AVXc8f32 x,
+					                     const __m256 y) {
+
+						 x = x*y;
+						 return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*=(const __m256 x,
+					                     AVXc8f32 y) {
+
+                                                 y = y*x;
+						 return (y);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*=(AVXc8f32 x,
+					                     const float s) {
+
+                                                 x = x*AVXc8f32{s};
+						 return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator*=(const float s,
+					                     AVXc8f32 x) {
+
+                                                 x = AVXc8f32{s}*x;
+						 return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/(const AVXc8f32 x,
+					                    const AVXc8f32 y) {
+#if defined USE_SAFE_COMPLEX_DIVISION && (USE_SAFE_COMPLEX_DIVISION) == 1
+                                                 return (cdiv_smith(x,y));
+#else
+                                                 const __m256 ymm0 = _mm256_mul_ps(x.m_re,y.m_re);
+                                                 const __m256 ymm1 = _mm256_mul_ps(x.m_im,y.m_im);
+                                                 const __m256 ymm2 = _mm256_mul_ps(x.m_im,y.m_re);
+                                                 const __m256 ymm3 = _mm256_mul_ps(x.m_re,y.m_im);
+                                                 const __m256 den  = _mm256_add_ps(_mm256_mul_ps(y.m_re,y.m_re),
+                                                                                   _mm256_mul_ps(y.m_im,y.m_im));
+                                                 const __m256 re_part = _mm256_add_ps(ymm0,ymm1);
+                                                 const __m256 im_part = _mm256_sub_ps(ymm2,ymm3);
+                                                 return (AVXc8f32{_mm256_div_ps(re_part,den),
+                                                                     _mm256_div_ps(im_part,den)});
+#endif
+
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/(const AVXc8f32 x,
+					                    const __m256 y) {
+
+                                                  return (AVXc8f32{_mm256_div_ps(x.m_re,y),
+						                   _mm256_div_ps(x.m_im,y)});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/(const __m256 x,
+					                    const AVXc8f32 y) {
+
+                                                  return (AVXc8f32{_mm256_div_ps(x,y.m_re),
+						                   _mm256_div_ps(x,y.m_im)});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/(const AVXc8f32 x,
+					                    const float s) {
+
+                                                  return (x/AVXc8f32{s});
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/(const float s,
+					                    const AVXc8f32 x) {
+
+                                                  return (AVXc8f32{s}/x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/=(AVXc8f32 x,
+					                     const AVXc8f32 y) {
+
+                                                  x = x/y;
+						  return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/=(AVXc8f32 x,
+					                     const __m256 y) {
+
+                                                  x = x/y;
+						  return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/=(const __m256 x,
+					                     AVXc8f32 y) {
+
+                                                  y = y/x;
+						  return (y);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/=(const float s,
+					                     AVXc8f32 x) {
+
+                                                  x = AVXc8f32{s}/s;
+						  return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator/=(AVXc8f32 x,
+					                     const float s) {
+
+                                                  x = x/AVXc8f32{s};
+						  return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 AVXc8f32 operator~(AVXc8f32 x) {
+                                                  x.m_re = _mm256_sub_ps(_mm256_setzero_ps(),x.m_re);
+						  return (x);
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator==(const AVXc8f32 x,
+					            const AVXc8f32 y) {
+
+						   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,y.m_re,
+						                        _CMP_EQ_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,y.m_im,
+						                        _CMP_EQ_OQ);
+                                                   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim)));
+ 					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator==(const AVXc8f32 x,
+					            const std::complex<float> y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,
+						                        _mm256_set1_ps(y.real()),
+									_CMP_EQ_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,
+						                        _mm256_set1_ps(y.imag()),
+									_CMP_EQ_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator==(const std::complex<float> x,
+					            const AVXc8f32 y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                        y.m_re,
+									_CMP_EQ_OQ);
+						   eqim = _mm256_cmp_ps(_mm256_set1_ps(x.imag()),
+						                        y.m_im,
+									_CMP_EQ_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator!=(const AVXc8f32 x,
+					            const AVXc8f32 y) {
+
+						   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,y.m_re,
+						                        _CMP_NEQ_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,y.m_im,
+						                        _CMP_NEQ_OQ);
+                                                   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim)));
+ 					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator!=(const AVXc8f32 x,
+					            const std::complex<float> y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,
+						                        _mm256_set1_ps(y.real()),
+									_CMP_NEQ_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,
+						                        _mm256_set1_ps(y.imag()),
+									_CMP_NEQ_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator!=(const std::complex<float> x,
+					            const AVXc8f32 y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                        y.m_re,
+									_CMP_NEQ_OQ);
+						   eqim = _mm256_cmp_ps(_mm256_set1_ps(x.imag()),
+						                        y.m_im,
+									_CMP_NEQ_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator>(const AVXc8f32 x,
+					            const AVXc8f32 y) {
+
+						   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,y.m_re,
+						                        _CMP_GT_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,y.m_im,
+						                        _CMP_GT_OQ);
+                                                   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim)));
+ 					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator>(const AVXc8f32 x,
+					            const std::complex<float> y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,
+						                        _mm256_set1_ps(y.real()),
+									_CMP_GT_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,
+						                        _mm256_set1_ps(y.imag()),
+									_CMP_GT_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator>(const std::complex<float> x,
+					            const AVXc8f32 y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                        y.m_re,
+									_CMP_GT_OQ);
+						   eqim = _mm256_cmp_ps(_mm256_set1_ps(x.imag()),
+						                        y.m_im,
+									_CMP_GT_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator<(const AVXc8f32 x,
+					            const AVXc8f32 y) {
+
+						   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,y.m_re,
+						                        _CMP_LT_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,y.m_im,
+						                        _CMP_LT_OQ);
+                                                   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim)));
+ 					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator<(const AVXc8f32 x,
+					            const std::complex<float> y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,
+						                        _mm256_set1_ps(y.real()),
+									_CMP_LT_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,
+						                        _mm256_set1_ps(y.imag()),
+									_CMP_LT_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator<(const std::complex<float> x,
+					            const AVXc8f32 y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                        y.m_re,
+									_CMP_LT_OQ);
+						   eqim = _mm256_cmp_ps(_mm256_set1_ps(x.imag()),
+						                        y.m_im,
+									_CMP_LT_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator>=(const AVXc8f32 x,
+					            const AVXc8f32 y) {
+
+						   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,y.m_re,
+						                        _CMP_GE_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,y.m_im,
+						                        _CMP_GE_OQ);
+                                                   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim)));
+ 					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator>=(const AVXc8f32 x,
+					            const std::complex<float> y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,
+						                        _mm256_set1_ps(y.real()),
+									_CMP_GE_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,
+						                        _mm256_set1_ps(y.imag()),
+									_CMP_GE_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator>=(const std::complex<float> x,
+					            const AVXc8f32 y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                        y.m_re,
+									_CMP_GE_OQ);
+						   eqim = _mm256_cmp_ps(_mm256_set1_ps(x.imag()),
+						                        y.m_im,
+									_CMP_GE_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator<=(const AVXc8f32 x,
+					            const AVXc8f32 y) {
+
+						   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,y.m_re,
+						                        _CMP_LE_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,y.m_im,
+						                        _CMP_LE_OQ);
+                                                   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim)));
+ 					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator<=(const AVXc8f32 x,
+					            const std::complex<float> y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(x.m_re,
+						                        _mm256_set1_ps(y.real()),
+									_CMP_LE_OQ);
+						   eqim = _mm256_cmp_ps(x.m_im,
+						                        _mm256_set1_ps(y.imag()),
+									_CMP_LE_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
+__ATTR_HOT__ __ATTR_ALIGN__(16) __ATTR_VECTORCALL__
+                                         static inline
+					 std::pair<int32_t,int32_t>
+					 operator<=(const std::complex<float> x,
+					            const AVXc8f32 y) {
+
+                                                   const __m256 eqre,eqim;
+						   eqre = _mm256_setzero_ps();
+						   eqim = _mm256_setzero_ps();
+						   eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                        y.m_re,
+									_CMP_LE_OQ);
+						   eqim = _mm256_cmp_ps(_mm256_set1_ps(x.imag()),
+						                        y.m_im,
+									_CMP_LE_OQ);
+						   return (std::make_pair(_mm256_testz_ps(eqre,eqre),
+						                          _mm256_testz_ps(eqim,eqim))); 
+					 }
     } // math   
 
 }  // gms
