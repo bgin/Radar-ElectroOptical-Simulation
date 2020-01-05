@@ -424,3 +424,196 @@ svnrg_wrapper_mt19937_init_avx512c4f32(AVX512c4f32 * __restrict data,
     }
 }
 
+void
+gms::math::stat::
+svrng_wrapper_mt19937_init_avxc8f32(AVXc8f32 * __restrict data,
+				    const int64_t length,
+				    const float   relo,
+				    const float   rehi,
+				    const float   imlo,
+				    const float   imhi,
+				    const int32_t type,
+				    int32_t &     status)  {
+
+      switch(type) {
+
+         case 0: {
+              GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_NO_DISTR
+              svrng_float8_t re_rand;
+	      svrng_float8_t im_rand;
+	      for(int64_t i = 0LL; i != length; ++i) {
+                  re_rand = svrng_generate8_float(re_eng,NULL);
+		  data[i].m_re = *(__m256*)&re_rand;
+		  im_rand = svrng_generate8_float(im_eng,NULL);
+		  data[i].m_im = *(__m256*)&im_rand;
+	      }
+	      err = -9999;
+	      err = svrng_get_status();
+	      if(err != SVRNG_STATUS_OK) {
+                 svrng_delete_engine(re_eng);
+		 svrng_delete_engine(im_eng);
+		 status = err;
+		 return;
+	      }
+	      svrng_delete_engine(re_eng);
+	      svrng_delete_engine(im_eng);
+	      break;
+	  }
+        case 1: {
+             GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_NORMAL
+	     svrng_float8 re_rand;
+	     svrng_float8 im_rand;
+             for(int64_t i = 0LL; i != length; ++i) {
+                 re_rand = svrng_generate8_float(re_eng,re_norm);
+                 data[i].m_re = *(__m256*)&re_rand;
+		 im_rand = svrng_generate8_float(im_eng,im_norm);
+		 data[i].m_im = *(__m256*)&im_rand;
+	     }
+             err = -9999;
+	     err = svrng_get_status();
+	     if(err != SVRNG_STATUS_OK) {
+                svrng_delete_engine(re_eng);
+		svrng_delete_distribution(re_norm);
+		svrng_delete_engine(im_eng);
+		svrng_delete_distribution(im_norm);
+		status = err;
+		return;
+	     }
+	     svrng_delete_engine(re_eng);
+	     svrng_delete_distribution(re_norm);
+	     svrng_delete_engine(im_eng);
+	     svrn_delete_distribution(im_norm);
+	     break;
+	  }
+       case 2: {
+            GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_UNIFORM
+	    svrng_float8 re_rand;
+	    svrng_float8 im_rand;
+            for(int64_t i = 0LL; i != length; ++i) {
+                re_rand = svrng_generate8_float(re_eng,re_uni);
+                data[i].m_re = *(__m256*)&re_rand;
+		im_rand = svrng_generate8_float(im_eng,im_uni);
+		data[i].m_im = *(__m256*)&im_rand;
+	    }
+	     err = -9999;
+	     err = svrng_get_status();
+	     if(err != SVRNG_STATUS_OK) {
+                svrng_delete_engine(re_eng);
+		svrng_delete_distribution(re_uni);
+		svrng_delete_engine(im_eng);
+		svrng_delete_distribution(im_uni);
+		status = err;
+		return;
+	     }
+	     svrng_delete_engine(re_eng);
+	     svrng_delete_distribution(re_uni);
+	     svrng_delete_engine(im_eng);
+	     svrng_delete_distribution(im_uni);
+	     break;
+         }
+       default : {
+                     status = -99;
+		     return;
+           } 
+    }
+
+}
+
+void
+gms::math::stat::
+svrng_wrapper_mt19937_init_avxc4f64(AVXc4f64 * __restrict data,
+                                    const int64_t length,
+                                    const double relo,
+				    const double rehi,
+				    const double imlo,
+				    const double imhi,
+				    const int32_t type,
+				    int32_t & status) {
+
+        switch(type) {
+
+             case 0: {
+                  GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_NO_DISTR
+                  svrng_double4_t re_rand;
+                  svrng_double4_t im_rand;
+                  __assume_aligned(data,64);
+		  for(int64_t i = 0LL; i != length; ++i) {
+                      re_rand = svrng_generate4_double(re_eng,NULL);
+                      data[i].m_re = *(__m256d*)&re_rand;
+		      im_rand = svrng_generate4_double(im_eng,NULL);
+		      data[i].m_im = *(__m256*)&im_rand;
+		  }
+		  err = -9999;
+	          err = svrng_get_status();
+	          if(err != SVRNG_STATUS_OK) {
+                       svrng_delete_engine(re_eng);
+		       svrng_delete_engine(im_eng);
+		       status = err;
+		       return;
+	          }
+	          svrng_delete_engine(re_eng);
+	          svrng_delete_engine(im_eng);
+	          break;
+	     }
+          case 1: {
+               GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_NORMAL
+               svrng_double4_t re_rand;
+	       svrng_double4_t im_rand;
+	       __assume_aligned(data,64);
+	       for(int64_t i = 0LL; i != length; ++i) {
+                   re_rand = svrng_generate4_double(re_eng,re_norm);
+		   data[i].m_re = *(__m256d*)&re_rand;
+		   im_rand = svrng_generate4_double(im_eng,im_norm);
+		   data[i].m_im = *(__m256d*)&im_rand;
+                }
+	        err = -9999;
+	        err = svrng_get_status();
+	        if(err != SVRNG_STATUS_OK) {
+                    svrng_delete_engine(re_eng);
+		    svrng_delete_distribution(re_norm);
+		    svrng_delete_engine(im_eng);
+		    svrng_delete_distribution(im_norm);
+		    status = err;
+		    return;
+	         }
+	         svrng_delete_engine(re_eng);
+	         svrng_delete_distribution(re_norm);
+	         svrng_delete_engine(im_eng);
+	         svrn_delete_distribution(im_norm);
+	         break;
+	  }
+	case 2: {
+             GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CMPLX_CASE_UNIFORM
+             svrng_double_t re_rand;
+	     svrng_double_t im_rand;
+	     __assume_aligned(data,64);
+	     for(int64_t i = 0LL; i != length; ++i) {
+                 re_rand = svrng_generate4_double(re_eng,re_uni);
+                 data[i].m_re = *(__m256d*)&re_rand;
+		 im_rand = svrng_generate4_double(im_eng,im_uni);
+		 data[i].m_im = *(__m256d*)&im_rand;
+	     }
+	     err = -9999;
+	     err = svrng_get_status();
+	     if(err != SVRNG_STATUS_OK) {
+                svrng_delete_engine(re_eng);
+		svrng_delete_distribution(re_uni);
+		svrng_delete_engine(im_eng);
+		svrng_delete_distribution(im_uni);
+		status = err;
+		return;
+	     }
+	     svrng_delete_engine(re_eng);
+	     svrng_delete_distribution(re_uni);
+	     svrng_delete_engine(im_eng);
+	     svrng_delete_distribution(im_uni);
+	     break;
+         }
+       default : {
+                     status = -99;
+		     return;
+           } 
+     }
+
+}
+
