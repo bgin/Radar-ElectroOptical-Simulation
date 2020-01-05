@@ -24,7 +24,9 @@ namespace file_info {
 #include <cstdint>
 #include "GMS_config.h"
 #include "GMS_avxvecf32.h"
-
+#include "GMS_avx512c4f32.h"
+#include "GMS_avxc8f32.h"
+#include "GMS_avxc4f64.h"
 
 namespace gms{
 
@@ -64,6 +66,25 @@ namespace gms{
 								  const float,
 								  const int32_t,
 								  int32_t & ) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		      // mt19937 engine AVXc8f32
+		      void svrng_wrapper_mt19937_init_avxc8f32(AVXc8f32 * __restrict __ATTR_ALIGN__(64),
+							       const int64_t,
+							       const float,
+							       const float,
+							       const float,
+							       const float,
+							       const int32_t,
+							       int32_t & ) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		      // mt19937 engine AVXc4f64
+		      void svrng_wrapper_mt19937_init_avxc4f64(AVXc4f64 * __restrict __ATTR_ALIGN__(64),
+							       const int64_t,
+							       const double,
+							       const double,
+							       const double,
+							       const double,
+							       const int32_t,
+							       int32_t & ) __ATTR_COLD__ __ATTR_ALIGN__(32);
  
 	 }  // stat
     }  // math
