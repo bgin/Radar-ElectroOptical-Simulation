@@ -29,10 +29,11 @@ namespace gms {
 
 
 	   // Low spatial and temporal frequency data type
-	   struct HydrometeorScatterersCold_t {
+	  struct HydroMeteorScatterersCold_t {
 
                 //     ! Number of particles  in aggregated emsemble
 		int32_t m_np;
+		int32_t m_nshpts;
 		//     ! Particles aggregate ID number
 		int32_t m_ID;
 		//      ! Time evolution steps
@@ -51,12 +52,12 @@ namespace gms {
                 //   ! [r,np], where r = parametric shape (cross-section), np =  n-th particle
 		AVXVec8 * __restrict __ATTR_ALIGN__(64) m_pcs;
 		//    ! Chebyshev particles radii in aggregate ensemble
-		AVXVec8 * __restrict __ATTR_ALIGN__(64) m_pradii;
+		float   * __restrict __ATTR_ALIGN__(64) m_radii;
 		//       ! Chebyshev particles aggregate shape approximated by 3D parametric equations.
                 //       ! Components form location of the particle in the ensemble.
                 //       ! [3,np], where first dimension represents coordinate components
                 //       ! second dimension represent number of particles.
-		AVXVec8 * __restrict __ATTR_ALIGN__(64) m_pes;
+	        float   * __restrict __ATTR_ALIGN__(64) m_pes;
 		//        ! Chebyshev particles ensemble( per each particle) parametric equation in x - dimension (non-dimensional)
                 //        ! [paramx,np]
 		AVXVec8 * __restrict __ATTR_ALIGN__(64) m_ppx;
@@ -73,10 +74,19 @@ namespace gms {
 
 	   // ! High temporal and spatial frequency data type.
 
-	   struct  HydrometeorScatterersHot_t {
+	   struct  HydroMeteorScatterersHot_t {
 
                //  ! Yu-lin Xu part of the variables
-               double m_cext;
+              
+	       double m_dang[1856]    __ATTR_ALIGN__(64);
+	       double m_imat[1856]    __ATTR_ALIGN__(64);
+	       double m_pol[1856]     __ATTR_ALIGN__(64);
+	       double m_i11[1856]     __ATTR_ALIGN__(64);
+	       double m_i21[1856]     __ATTR_ALIGN__(64);
+	       double m_i12[1856]     __ATTR_ALIGN__(64);
+	       double m_i22[1856]     __ATTR_ALIGN__(64);
+	       double m_mue[4*4*1856] __ATTR_ALIGN__(64);
+	       double m_cext;
                double m_cabs;
                double m_csca;
 	       double m_assym;
@@ -90,14 +100,6 @@ namespace gms {
 	       double m_cscas;
 	       double m_cbaks;
 	       double m_cprs;
-	       double m_dang[1856]    __ATTR_ALIGN__(64);
-	       double m_imat[1856]    __ATTR_ALIGN__(64);
-	       double m_pol[1856]     __ATTR_ALIGN__(64);
-	       double m_i11[1856]     __ATTR_ALIGN__(64);
-	       double m_i21[1856]     __ATTR_ALIGN__(64);
-	       double m_i12[1856]     __ATTR_ALIGN__(64);
-	       double m_i22[1856]     __ATTR_ALIGN__(64);
-	       double m_mue[4*4*1856] __ATTR_ALIGN__(64);
 	       double * __restrict __ATTR_ALIGN__(64) m_cexti;
 	       double * __restrict __ATTR_ALIGN__(64) m_cabsi;
 	       double * __restrict __ATTR_ALIGN__(64) m_cscai;
@@ -116,6 +118,96 @@ namespace gms {
                //   ![nt]
 	       float * __restrict __ATTR_ALIGN__(64) m_vfall;
 	  } __ATTR_ALIGN__(64);
+
+
+	   struct  HydroMeteorScatterers {
+
+	           HydroMeteorScatterersCold_t m_hsc; //cold
+
+		   HydroMeteorScatterersHot_t  m_hsh; // hot
+
+		   HydroMeteorScatterers() __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		   HydroMeteorScatterers( const int32_t,
+		                          const int32_t,
+		                          const int32_t,
+					  const int32_t,
+					  const int32_t,
+					  const int32_t,
+					  const int32_t,
+					  const char *,
+					  const char *) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		   HydroMeteorScatterers(const HydroMeteorScatterers &) = delete;
+
+		   HydroMeteorScatterers(HydroMeteorScatterers &&) = delete;
+
+		   ~HydroMeteorScatterers() noexcept(true);
+
+		   HydroMeteorScatterers & operator=(const HydroMeteorScatterers &) = delete;
+
+		   HydroMeteorScatterers & operator=(HydroMeteorScatterers &&) = delete;
+
+		   void ComputeShape_ymm8r4(float * __restrict __ATTR_ALIGN__(64),
+		                            float * __restrict __ATTR_ALIGN__(64))
+				           __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		   void ComputeEnsembleShape(const float,
+		                             const float,
+					     const char *,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float) __ATTR_COLD__ __ATTR_ALIGN__(64) __ATTR_TCLONES_AVX_AVX512__;
+
+		   void ComputeXparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
+		                             const float * __restrict __ATTR_ALIGN__(64),
+					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		   void ComputeYparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
+		                             const float * __restrict __ATTR_ALIGN__(64),
+					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		   void ComputeZparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
+		                             const float * __restrict __ATTR_ALIGN__(64),
+					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		   void ComputeEnsembleVolume(const float * __restrict __ATTR_ALIGN__(64),
+		                              const float * __restrict __ATTR_ALIGN__(64),
+					      const float * __restrict __ATTR_ALIGN__(64)
+					      ) __ATTR_COLD__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+
+		   void ComputeEnsembleSurface(const float * __restrict __ATTR_ALIGN__(64),
+		                               const float * __restrict __ATTR_ALIGN__(64),
+					       const float * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+
+		   
+		   void ComputeVfall(  const float * __restrict __ATTR_ALIGN__(64),
+			               const float * __restrict __ATTR_ALIGN__(64),
+				       const float,
+				       const float * __restrict __ATTR_ALIGN__(64),
+				       const int32_t,
+				       const int32_t,
+				       const int32_t,
+				       const float,
+				       const float,
+				       const float * __restrict __ATTR_ALIGN__(64),
+				       const float,
+				       const float,
+				       const float * __restrict __ATTR_ALIGN__(64),
+				       const float * __restrict __ATTR_ALIGN__(64)) __ATTR_HOT__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+			                     
+
+		   
+
+
+	   } __ATTR_ALIGN__(64);
+
+	  
 
     }  // math
 
