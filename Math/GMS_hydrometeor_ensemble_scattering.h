@@ -28,6 +28,30 @@ namespace gms {
         namespace  math {
 
 
+	  namespace {
+
+                   const AVXVec8 VINC0  =   AVXVec8{1.0f,2.0f,3.0f,4.0f,
+		                                  5.0f,6.0f,7.0f,8.0f};
+		   const AVXVec8 VINC1  =   AVXVec8{9.0f,10.0f,11.0f,12.0f,
+		                                  13.0f,14.0f,15.0f,16.0f};
+		   const AVXVec8 VINC2  =   AVXVec8{17.0f,18.0f,19.0f,20.0f,
+		                                   21.0f,22.0f,23.0f,24.0f};
+		   const AVXVec8 VINC3  =   AVXVec8{25.0f,26.0f,27.0f,28.0f,
+		                                   29.0f,30.0f,31.0f,32.0f};
+                   const AVXVec8 ZERO   =   AVXVec8{};
+
+                   const AVXVec8 ONE    =   AVXVec8{1.0f};
+
+		   const AVXVec8 TWO    =   AVXVec8{2.0f};
+
+		   const AVXVec8 PI     =   AVXVec8{3.141592653589793f};
+                    
+                   const AVXVec8 TWO_PI =   AVXVec8{6.283185307179586f};
+
+
+	  }
+
+
 	   // Low spatial and temporal frequency data type
 	  struct HydroMeteorScatterersCold_t {
 
@@ -52,7 +76,7 @@ namespace gms {
                 //   ! [r,np], where r = parametric shape (cross-section), np =  n-th particle
 		AVXVec8 * __restrict __ATTR_ALIGN__(64) m_pcs;
 		//    ! Chebyshev particles radii in aggregate ensemble
-		float   * __restrict __ATTR_ALIGN__(64) m_radii;
+		AVXVec8 * __restrict __ATTR_ALIGN__(64) m_radii;
 		//       ! Chebyshev particles aggregate shape approximated by 3D parametric equations.
                 //       ! Components form location of the particle in the ensemble.
                 //       ! [3,np], where first dimension represents coordinate components
@@ -148,11 +172,19 @@ namespace gms {
 
 		   HydroMeteorScatterers & operator=(HydroMeteorScatterers &&) = delete;
 
-		   void ComputeShape_ymm8r4(float * __restrict __ATTR_ALIGN__(64),
-		                            float * __restrict __ATTR_ALIGN__(64))
-				           __ATTR_COLD__ __ATTR_ALIGN__(32);
+		   bool ComputeShape_ymm8r4(
+#if defined __ICC || defined __INTEL_COMPILER
+                                            AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                            AVXVec8 * __restrict __ATTR_ALIGN__(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                             float * __restrict __ATTR_ALIGN__(64),
+                                             float * __restrict __ATTR_ALIGN__(64)
+#endif
+)  __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-		   void ComputeEnsembleShape(const float,
+				         
+
+		   bool ComputeEnsembleShape(const float,
 		                             const float,
 					     const char *,
 					     const float,
@@ -164,15 +196,15 @@ namespace gms {
 					     const float,
 					     const float) __ATTR_COLD__ __ATTR_ALIGN__(64) __ATTR_TCLONES_AVX_AVX512__;
 
-		   void ComputeXparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
+		   bool ComputeXparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
 		                             const float * __restrict __ATTR_ALIGN__(64),
 					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-		   void ComputeYparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
+		   bool ComputeYparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
 		                             const float * __restrict __ATTR_ALIGN__(64),
 					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-		   void ComputeZparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
+		   bool ComputeZparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
 		                             const float * __restrict __ATTR_ALIGN__(64),
 					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
