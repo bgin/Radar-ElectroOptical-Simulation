@@ -51,6 +51,13 @@ namespace gms {
 
 	  }
 
+	  enum class EnsembleShapes : uint32_t {
+
+	             Cylindrical,
+                     Spheroidal,
+		     Chebyshev
+	  };
+
 
 	   // Low spatial and temporal frequency data type
 	  struct HydroMeteorScatterersCold_t {
@@ -183,10 +190,16 @@ namespace gms {
 )  __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 				         
-
+#if defined __ICC || defined __INTEL_COMPILER
+    #if defined __AVX__
+	     #pragma intel optimization_parameter target_arch=AVX
+    #elif defined __AVX512F__
+	     #pragma intel optimization_parameter target_arch=AVX512
+    #endif
+#endif
 		   bool ComputeEnsembleShape(const float,
 		                             const float,
-					     const char *,
+					     const EnsembleShapes,
 					     const float,
 					     const float,
 					     const float,
@@ -196,17 +209,17 @@ namespace gms {
 					     const float,
 					     const float) __ATTR_COLD__ __ATTR_ALIGN__(64) __ATTR_TCLONES_AVX_AVX512__;
 
-		   bool ComputeXparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
-		                             const float * __restrict __ATTR_ALIGN__(64),
-					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		   bool ComputeXparam_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+					     
 
-		   bool ComputeYparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
-		                             const float * __restrict __ATTR_ALIGN__(64),
-					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		   bool ComputeYparam_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+					    
 
-		   bool ComputeZparam_ymm8r4(const float * __restrict __ATTR_ALIGN__(64),
-		                             const float * __restrict __ATTR_ALIGN__(64),
-					     const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		   bool ComputeZparam_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+					     
 
 		   void ComputeEnsembleVolume(const float * __restrict __ATTR_ALIGN__(64),
 		                              const float * __restrict __ATTR_ALIGN__(64),
