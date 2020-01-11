@@ -9,7 +9,7 @@
 #include <ctime>
 #include <cstdlib>
 #endif
-
+#include <math.h>
 #include "GMS_hydrometeor_ensemble_scattering.h"
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
@@ -450,5 +450,279 @@ float * __restrict cdef
 	return (true);
 #endif
 }
+
+bool
+gms::math::HydroMeteorScatterers::
+ComputeEnsembleShape( const float inz,
+                      const float incz,
+		      const EnsembleShapes type,
+		      const float r,
+		      const float inphi,
+		      const float inth,
+		      const float incphi,
+		      const float incth,
+		      const float sphrad,
+		      const float chebn,
+		      const float cdeform) {
+
+     float term1,phi,theta,x,y,z,u;
+     term1 = 0.0f;
+     phi   = 0.0f;
+     theta = 0.0f;
+     x     = 0.0f;
+     y     = 0.0f;
+     z     = 0.0f;
+     u     = 0.0f;
+     switch(type) {
+
+          case EnsembleShapes::Cylindrical : {
+               z = inz;
+               theta = inth;
+#if defined __ICC || defined __INTEL_COMPILER
+               __assume_aligned(m_hsc.m_pes,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+              m_hsc.m_pes = (float*)__builtin_assume_aligned(m_hsc.m_pes,64);
+#endif
+	       for(int32_t i = 0; i != 3; ++i) {
+                   for(int32_t j = 0; j != m_hsc.m_np; ++j) {
+                       theta += incth;
+		       z += incz;
+		       if(i == 0) {
+                          m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = r*cos(theta);
+		       }
+		       else if(i == 1) {
+                          m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = r*sin(theta);
+		       }
+		       else if(i == 2) {
+                          m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = z;
+		       }
+		   }
+	       }
+	       break;
+	   }
+	  case EnsembleShapes::Spheroidal : {
+               theta = inth;
+	       phi   = inphi;
+#if defined __ICC || defined __INTEL_COMPILER
+               __assume_aligned(m_hsc.m_pes,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+              m_hsc.m_pes = (float*)__builtin_assume_aligned(m_hsc.m_pes,64);
+#endif	       
+	       for(int32_t i = 0; i != 3; ++i) {
+                   for(int32_t j = 0; j != m_hsc.m_np; ++j) {
+                       theta += incth;
+		       phi += incphi;
+		       u = r*cos(phi);
+		       if(i == 0) {
+                          m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = std::sqrt(r*r-u*u)*cos(theta);
+		       }
+		       else if(i == 1) {
+                          m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = std::sqrt(r*r-u*u)*sin(theta);
+		       }
+		       else if(i == 2) {
+                          m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = u;
+		       } 
+		   }
+	       }
+	       break;
+	  }
+        case EnsembleShapes::Chebyshev : {
+             theta = inth;
+	     phi = inphi;
+#if defined __ICC || defined __INTEL_COMPILER
+               __assume_aligned(m_hsc.m_pes,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+              m_hsc.m_pes = (float*)__builtin_assume_aligned(m_hsc.m_pes,64);
+#endif
+              for(int32_t i = 0; i != 3; ++i) {
+                  for(int32_t j = 0; j != m_hsc.m_np; ++j) {
+                      theta += incth;
+		      phi += incphi;
+		      term1 = sphrad*(1.0f+cdeform+cos(chebn*theta));
+		      if(i == 0) {
+                         x = term1*sin(theta)*cos(phi);
+			 m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = x;
+		      }
+		      else if(i == 1) {
+                         y = term1*sin(theta)*sin(phi);
+			 m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = y;
+		      }
+		      else if(i == 2) {
+                         z = term1*cos(theta);
+			  m_hsc.m_pes[Ix2D(i,m_hsc.m_np,j)] = z;
+		      }
+		  }
+	      }
+	      break;
+	  }
+	default : {
+                    return (false);
+	   }
+      }
+     return (true);
+}
+
+bool
+gms::math::HydroMeteorScatterers::
+ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
+                     const AVXVec8 * __restrict cdef) {
+
+     struct _T0_ {
+        AVXVec8 vtheta0;
+	AVXVec8 vtheta1;
+	AVXVec8 vtheta2;
+	AVXVec8 vtheta3;
+     } __ATTR_ALIGN__(64) t0;
+
+     struct _T1_ {
+        AVXVec8 vphi0;
+	AVXVec8 vphi1;
+	AVXVec8 vphi2;
+	AVXVec8 vphi3;
+     } __ATTR_ALIGN__(64) t1;
+
+     struct _T2_ {
+        AVXVec8 vthinc0;
+	AVXVec8 vthinc1;
+	AVXVec8 vthinc2;
+	AVXVec8 vthinc3;
+     } __ATTR_ALIGN__(64) t2;
+
+     struct _T3_ {
+        AVXVec8 vphinc0;
+	AVXVec8 vphinc1;
+	AVXVec8 vphinc2;
+	AVXVec8 vphinc3;
+     } __ATTR_ALIGN__(64) t3;
+
+     struct _T4_ {
+        AVXVec8 term0;
+	AVXVec8 term1;
+	AVXVec8 term2;
+	AVXVec8 term3;
+     } __ATTR_ALIGN__(64) t4;
+
+     AVXVec8 __ATTR_ALIGN__(32) cn_rand;
+     AVXVec8 __ATTR_ALIGN__(32) sphr_rand;
+     AVXVec8 __ATTR_ALIGN__(32) cdef_rand;
+     AVXVec8 __ATTR_ALIGN__(32) vNPTS;
+     AVXVec8 __ATTR_ALIGN__(32) vC;
+     AVXVec8 __ATTR_ALIGN__(32) tmp1;
+     AVXVec8 __ATTR_ALIGN__(32) tmp2;
+     // Locals first-touch
+     t0.vtheta0 = ZERO;
+     t0.vtheta1 = ZERO;
+     t0.vtheta2 = ZERO;
+     t0.vtheta3 = ZERO;
+     t1.vphi0   = ZERO;
+     t1.vphi1   = ZERO;
+     t1.vphi2   = ZERO;
+     t1.vphi3   = ZERO;
+     t2.vthinc0 = ZERO;
+     t2.vthinc1 = ZERO;
+     t2.vthinc2 = ZERO;
+     t2.vthinc3 = ZERO;
+     t3.vphinc0 = ZERO;
+     t3.vphinc1 = ZERO;
+     t3.vphinc2 = ZERO;
+     t3.vphinc3 = ZERO;
+     t4.term0   = ZERO;
+     t4.term1   = ZERO;
+     t4.term2   = ZERO;
+     t4.term3   = ZERO
+     cn_rand    = ZERO;
+     sphr_rand  = ZERO;
+     cdef_rand  = ZERO;
+     vNPTS      = ZERO;
+     vC         = ZERO;
+     tmp1       = ZERO;
+     tmp2       = ZERO;
+     vNPTS = AVXVec8{static_cast<float>(m_hsc.m_nxpts)};
+     // Array first touch
+     gms::common::avxvec8_init_unroll8x(&m_hsc.m_ppx[0],
+                                        static_cast<int64_t>(m_hsc.m_np*m_hsc.m_nxpts),
+					ZERO);
+#if defined __ICC || defined __INTEL_COMPILER
+     __assume_aligned(m_hsc.m_ppx,64);
+     __assume_aligned(m_hsc.m_radii,64);
+     __assume_aligned(cn,64);
+     __assume_aligned(cdef,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     m_hsc.m_ppx   = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_ppx,64);
+     m_hsc.m_radii = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_radii,64);
+     cn            = (AVXVec8*)__builtin_assume_aligned(cn,64);
+     cdef          = (AVXVec8*)__builtin_assume_aligned(cdef,64);
+#endif
+     for(int32_t i = 0; i != m_hsc.m_np; ++i) {
+         cn_rand = cn[i];
+         sphr_rand = m_hsc.m_radii[i];
+	 cdef_rand = cdef[i];
+	 vC = TWO_PI*sphr_rand;
+	 tmp1 = vC/vNPTS;
+	 tmp2 = tmp1;
+	 t2.vthinc0 = tmp1;
+	 t2.vthinc0 += VINC0;
+	 t3.vphinc0 = tmp2;
+	 t3.vphinc0 += VINC0;
+	 t2.vthinc1 = tmp1;
+	 t2.vthinc1 += VINC1;
+	 t3.vphinc1 = tmp2;
+	 t3.vphinc1 += VINC1;
+	 t2.vthinc2 = tmp1;
+	 t2.vthinc2 += VINC2;
+	 t3.vphinc2 = tmp2;
+	 t3.vphinc2 += VINC2;
+	 t2.vthinc3 = tmp1;
+	 t2.vthinc3 += VINC3;
+	 t3.vphinc3 = tmp2;
+	 t3.vphinc3 += VINC3;
+	 t0.vtheta0 = ZERO;
+	 t1.vphi0   = ZERO;
+	 t4.term0   = ZERO;
+	 t0.vtheta1 = ZERO;
+	 t1.vphi1   = ZERO;
+	 t4.term1   = ZERO;
+	 t0.vtheta2 = ZERO;
+	 t1.vphi2   = ZERO;
+	 t4.term2   = ZERO;
+	 t0.vtheta3 = ZERO;
+	 t1.vphi3   = ZERO;
+	 t4.term3   = ZERO;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma vector always
+#pragma vector vectorlength(8)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned( m_hsc.m_ppx,m_hsc.m_radii,cn,cdef:64)
+#endif
+        for(int32_t j = 0; j != m_hsc.m_nxpts-3; j += 4) {
+            t0.vtheta0 += t2.vthinc0;
+	    t1.vphi0   += t3.vphinc0;
+	    t4.term0   = sphr_rad*(ONE+cdef_rand*cos(cn_rand*t0.vtheta0));
+	    t4.term0   = t4.term0*sin(t0.vtheta0)*cos(t1.vphi0);
+	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+0)] = t4.term0;
+	    t0.vtheta1 += t2.vthinc1;
+	    t1.vphi1   += t3.vphinc1;
+	    t4.term1   = sphr_rad*(ONE+cdef_rand*cos(cn_rand*t0.vtheta1));
+	    t4.term1   = t4.term1*sin(t0.vtheta1)*cos(t1.vphi1);
+	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+1)] = t4.term1;
+	    t0.vtheta2 += t2.vthinc2;
+	    t1.vphi2   += t3.vphinc2;
+	    t4.term2   = sphr_rad*(ONE+cdef_rand*cos(cn_rand*t0.vtheta2));
+	    t4.term2   = t4.term2*sin(t0.vtheta2)*cos(t1.vphi2);
+	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+2)] = t4.term2;
+	    t0.vtheta3 += t2.vthinc3;
+	    t1.vphi3   += t3.vphinc3;
+	    t4.term3   = sphr_rand*(ONE+cdef_rand*cos(cn_rand*t0.vtheta3));
+	    t4.term3   = t4.term3*sin(t0.vtheta3)*cos(t1.vphi3);
+	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+3)] = t4.term3;
+	}
+     }
+     
+}
+
+
+				    
+
+				    
 
 
