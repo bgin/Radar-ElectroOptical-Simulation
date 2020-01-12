@@ -566,7 +566,10 @@ bool
 gms::math::HydroMeteorScatterers::
 ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
                      const AVXVec8 * __restrict cdef) {
-
+     if(__builtin_expect(NULL == cn,0) ||
+        __builtin_expect(NULL == cdef,0)) {]
+           return (false);
+	}
      struct _T0_ {
         AVXVec8 vtheta0;
 	AVXVec8 vtheta1;
@@ -717,12 +720,347 @@ ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
 	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+3)] = t4.term3;
 	}
      }
-     
+     return (true);
 }
 
+bool
+gms::math::HydroMeteorScatterers::				    
+ComputeYparam_ymm8r4(const AVXVec8 * __restrict cn,
+                     const AVXVec8 * __restrict cdef) {
 
-				    
+     if(__builtin_expect(NULL == cn,0) ||
+        __builtin_expect(NULL == cdef,0)) {
+          return (false);
+     }
+     struct _T0_ {
+        AVXVec8 vtheta0;
+	AVXVec8 vtheta1;
+	AVXVec8 vtheta2;
+	AVXVec8 vtheta3;
+     } __ATTR_ALIGN__(64) t0;
 
-				    
+     struct _T1_ {
+        AVXVec8 vphi0;
+	AVXVec8 vphi1;
+	AVXVec8 vphi2;
+	AVXVec8 vphi3;
+     } __ATTR_ALIGN__(64) t1;
 
+     struct _T2_ {
+        AVXVec8 vthinc0;
+	AVXVec8 vthinc1;
+	AVXVec8 vthinc2;
+	AVXVec8 vthinc3;
+     } __ATTR_ALIGN__(64) t2;
 
+     struct _T3_ {
+        AVXVec8 vphinc0;
+	AVXVec8 vphinc1;
+	AVXVec8 vphinc2;
+	AVXVec8 vphinc3;
+     } __ATTR_ALIGN__(64) t3;
+
+     struct _T4_ {
+        AVXVec8 term0;
+	AVXVec8 term1;
+	AVXVec8 term2;
+	AVXVec8 term3;
+     } __ATTR_ALIGN__(64) t4;
+
+     struct _T5_ {
+        AVXVec8 cn_rand;
+	AVXVec8 sphr_rand;
+	AVXVec8 cdef_rand;
+     } __ATTR_ALIGN__(64) t5;
+
+     AVXVec8 __ATTR_ALIGN__(32) vNPTS;
+     AVXVec8 __ATTR_ALIGN__(32) vC;
+     AVXVec8 __ATTR_ALIGN__(32) tmp1;
+     AVXVec8 __ATTR_ALIGN__(32) tmp2;
+     // Automatics first-touch
+     t0.vtheta0    = ZERO;
+     t0.vtheta1    = ZERO;
+     t0.vtheta2    = ZERO;
+     t0.vtheta3    = ZERO;
+     t1.vphi0      = ZERO;
+     t1.vphi1      = ZERO;
+     t1.vphi2      = ZERO;
+     t1.vphi3      = ZERO;
+     t2.vthinc0    = ZERO;
+     t2.vthinc1    = ZERO;
+     t2.vthinc2    = ZERO;
+     t2.vthinc3    = ZERO;
+     t3.vphinc0    = ZERO;
+     t3.vphinc1    = ZERO;
+     t3.vphinc2    = ZERO;
+     t3.vphinc3    = ZERO;
+     t4.term0      = ZERO;
+     t4.term1      = ZERO;
+     t4.term2      = ZERO;
+     t4.term3      = ZERO
+     t5.cn_rand    = ZERO;
+     t5.sphr_rand  = ZERO;
+     t5.cdef_rand  = ZERO;
+     vNPTS         = ZERO;
+     vC            = ZERO;
+     tmp1          = ZERO;
+     tmp2          = ZERO;
+     //----------------------//
+     vNPTS = AVXVec8{static_cast<float>(m_hsc.m_nypts)};
+     // Array first-touch
+     gms::common::avxvec8_init_unroll8x(&m_hsc.m_ppy[0],
+                                        static_cast<int64_t>(m_hsc.m_np*m_hsc.m_nypts),
+					ZERO);
+#if defined __ICC || __INTEL_COMPILER
+    __assume_aligned(m_hsc.m_ppy,64);
+    __assume_aligned(m_hsc.m_radii,64);
+    __assume_aligned(cn,64);
+    __assume_aligned(cdef,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+    m_hsc.m_ppy   = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_ppy,64);
+    m_hsc.m_radii = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_radii,64);
+    cn            = (AVXVec8*)__builtin_assume_aligned(cn,64);
+    cdef          = (AVXVec8*)__builtin_assume_aligned(cdef,64);
+#endif
+     for(int32_t i = 0; i != m_hsc.m_np; ++i) {
+
+         t5.cn_rand   = cn[i];
+         t5.sphr_rand = m_hsc.m_radii[i];
+	 vC           = TWO_PI*t5.sphr_rand;
+	 t5.cdef_rand = cdef[i];
+	 tmp1         = vC/vNPTS;
+	 tmp2         = tmp1;
+	 t2.vthinc0   = tmp1;
+	 t2.vthinc0   += VINC0;
+	 t3.vphinc0   = tmp2;
+	 t3.vphinc0   += VINC0;
+	 t2.vthinc1   = tmp1;
+	 t2.vthinc1   += VINC1;
+	 t3.vphinc1   = tmp2;
+	 t3.vphinc1   += VINC1;
+	 t2.vthinc2   = tmp1;
+	 t2.vthinc2   += VINC2;
+	 t3.vphinc2   = tmp2;
+	 t3.vphinc2   += VINC2;
+	 t2.vthinc3   = tmp1;
+	 t2.vthinc3   += VINC3;
+	 t3.vphinc3   = tmp2;
+	 t3.vphinc3   += VINC3;
+	 t0.vtheta0 = ZERO;
+	 t1.vphi0   = ZERO;
+	 t4.term0   = ZERO;
+	 t0.vtheta1 = ZERO;
+	 t1.vphi1   = ZERO;
+	 t4.term1   = ZERO;
+	 t0.vtheta2 = ZERO;
+	 t1.vphi2   = ZERO;
+	 t4.term2   = ZERO;
+	 t0.vtheta3 = ZERO;
+	 t1.vphi3   = ZERO;
+	 t4.term3   = ZERO;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma vector always
+#pragma vector vectorlength(8)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(m_hsc.m_ppy,m_hsc.m_radii,cn,cdef:64)
+#endif
+        for(int32_t j = 0; j != m_hsc.m_nypts-3; j += 4) {
+
+	    t0.vtheta0  += t2.vthinc0;
+	    t1.vphi0    += t3.vphinc0;
+	    t4.term0    =  t5.sphr_rand*(ONE+t5.cdef_rand*cos(t5.cn_rand*t0.vtheta0));
+	    t4.term0    =  t4.term0*sin(t0.vtheta0)*sin(t1.vphi0);
+	    m_hsc.m_ppy[Ix2D(i,m_hsc.m_nypts,j+0)] = t4.term0;
+	    t0.vtheta1  += t2.vthinc1;
+	    t1.vphi1    += t3.vphinc1;
+	    t4.term1    =  t5.sphr_rand*(ONE+t5.cdef_rand*cos(t5.cn_rand*t0.vtheta1));
+	    t4.term1    =  t4.term1*sin(t0.vtheta1)*sin(t1.vphi1);
+	    m_hsc.m_ppy[Ix2D(i,m_hsc.m_nypts,j+1)] = t4.term1;
+	    t0.vtheta2  += t2.vthinc2;
+	    t1.vphi2    += t3.vphinc2;
+	    t4.term2    =  t5.sphr_rand*(ONE+t5.cdef_rand*cos(t5.cn_rand*t0.vtheta2));
+	    t4.term2    =  t4.term2*sin(t0.vtheta2)*sin(t1.vphi2);
+	    m_hsc.m_ppy[Ix2D(i,m_hsc.m_nypts,j+2)] = t4.term2;
+	    t0.vtheta3  += t2.vthinc3;
+	    t1.vphi3    += t3.vphinc3;
+	    t4.term3    =  t5.sphr_rand*(ONE+t5.cdef_rand*cos(t5.cn_rand*t0.vtheta3));
+	    t4.term3    =  t4.term3*sin(t0.vtheta3)*sin(t1.vphi3);
+	    m_hsc.m_ppy[Ix2D(i,m_hsc.m_nypts,j+3)] = t4.term3;
+	}
+     }
+     return (true);
+}
+
+bool
+gms::math::HydroMeteorScatterers::
+ComputeZparam_ymm8r4(const AVXVec8 * __restrict cn,
+                     const AVXVec8 * __restrict cdef) {
+
+     if(__builtin_expect(NULL == cn,0) ||
+        __builtin_expect(NULL == cdef,0)) {
+          return (false);
+     }
+     struct _T0_ {
+        AVXVec8 vtheta0;
+	AVXVec8 vtheta1;
+	AVXVec8 vtheta2;
+	AVXVec8 vtheta3;
+     } __ATTR_ALIGN__(64) t0;
+
+     struct _T1_ {
+        AVXVec8 vthinc0;
+	AVXVec8 vthinc1;
+	AVXVec8 vthinc2;
+	AVXVec8 vthinc3;
+     } __ATTR_ALIGN__(64) t1;
+
+     struct _T2_ {
+        AVXVec8 term0;
+	AVXVec8 term1;
+	AVXVec8 term2;
+	AVXVec8 term3;
+     } __ATTR_ALIGN__(64) t2;
+
+     struct _T3_ {
+        AVXVec8 cn_rand;
+	AVXVec8 sphr_rand;
+	AVXVec8 cdef_rand;
+     } __ATTR_ALIGN__(64) t3;
+
+     AVXVec8 __ATTR_ALIGN__(32) vC;
+     AVXVec8 __ATTR_ALIGN__(32) vNPTS;
+     AVXVec8 __ATTR_ALIGN__(32) tmp;
+     //============================//
+     // Autoimatics first-touch
+     t0.vtheta0   = ZERO;
+     t0.vtheta1   = ZERO;
+     t0.vtheta2   = ZERO;
+     t0.vtheta3   = ZERO;
+     t1.vthinc0   = ZERO;
+     t1.vthinc1   = ZERO;
+     t1.vthinc2   = ZERO;
+     t1.vthinc3   = ZERO;
+     t2.term0     = ZERO;
+     t2.term1     = ZERO;
+     t2.term2     = ZERO;
+     t2.term3     = ZERO;
+     t3.cn_rand   = ZERO;
+     t3.sphr_rand = ZERO;
+     t3.cdef_rand = ZERO;
+     vC           = ZERO;
+     vNPTS        = ZERO;
+     tmp          = ZERO;
+     vNPTS        = AVXVec8{static_cast<float>(m_hsc.nzpts)};
+     // Array first-touch
+     gms::common::avxvec8_init_unroll8x(&m_hsc.m_ppz[0],
+                                        static_cast<int64_t>(m_hsc.m_np*m_hsc.m_nzpts),
+					ZERO);
+#if defined __ICC || defined __INTEL_COMPILER
+    __assume_aligned(m_hsc.m_ppz,64);
+    __assume_aligned(m_hsc.m_radii,64);
+    __assume_aligned(cn,64);
+    __assume_aligned(cdef,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+    m_hsc.m_ppz   = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_ppz,64);
+    m_hsc.m_radii = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_radii,64);
+    cn            = (AVXVec8*)__builtin_assume_aligned(cn,64);
+    cdef          = (AVXVec8*)__builtin_assume_aligned(cdef,64);
+#endif
+    for(int32_t i = 0; i != m_hsc.m_np; ++i) {
+
+        t3.cn_rand   = cn[i];
+	t3.sphr_rand = m_hsc.m_radii[i];
+	vC           = TWO_PI*t3.sphr_rand;
+	t3.cdef_rand = cdef[i];
+	tmp          = vC/vNPTS;
+	t1.vthinc0   = tmp;
+	t1.vthinc0   += VINC0;
+	t1.vthinc1   = tmp;
+	t1.vthinc1   += VINC1;
+	t1.vthinc2   = tmp;
+	t1.vthinc2   += VINC2;
+	t1.vthinc3   = tmp;
+	t1.vthinc3   += VINC3;
+	t0.vtheta0   = ZERO;
+	t2.term0     = ZERO;
+	t0.vtheta1   = ZERO;
+	t2.term1     = ZERO;
+	t0.vtheta2   = ZERO;
+	t2.term2     = ZERO;
+	t0.vtheta3   = ZERO;
+	t2.term3     = ZERO;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma vector always
+#pragma vector vectorlength(8)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(m_hsc.m_ppz,m_hsc.m_radii,cn,cdef:64)
+#endif
+        for(int32_t j = 0; j != m_hsc.m_nzpts-3; j += 4) {
+
+            t0.vtheta0  += t1.vthinc0;
+	    t2.term0    =  t3.sphr_rand*(ONE+t3.cdef_rand*cos(t3.cn_rand*t0.vtheta0));
+	    t2.term0    =  t2.term0*cos(t0.vtheta0);
+	    m_hsc.m_ppz[Ix2D(i,m_hsc.m_nzpts,j+0)] = t2.term0;
+	    t0.vtheta1  += t1.vthinc1;
+	    t2.term1    =  t3.sphr_rand*(ONE+t3.cdef_rand*cos(t3.cn_rand*t0.vtheta1));
+	    t2.term1    =  t2.term1*cos(t0.vtheta1);
+	    m_hsc.m_ppz[Ix2D(i,m_hsc.m_nzpts,j+1)] = t2.term1;
+	    t0.vtheta2  += t1.vthinc2;
+	    t2.term2    =  t3.sphr_rand*(ONE+t3.cdef_rand*cos(t3.cn_rand*t0.vtheta2));
+	    t2.term2    =  t2.term2*cos(t0.vtheta2);
+	    m_hsc.m_ppz[Ix2D(i,m_hsc.m_nzpts,j+2)] = t2.term2;
+	    t0.vtheta3  += t1.vthinc3;
+	    t2.term3    =  t3.sphr_rand*(ONE+t3.cdef_rand*cos(t3.cn_rand*vtheta3);
+	    t2.term3    =  t3.term3*cos(t0.vtheta3);
+	    m_hsc.m_ppz[Ix2D(i,m_hsc.m_nzpts,j+3)] = t2.term3;
+	}
+    }
+    return (true);
+}
+
+bool
+gms::math::HydroMeteorScatterers::
+ComputeEnsembleVolume(const float * __restrict sphrad,
+                      const float * __restrict chebn,
+		      const float * __restrict cdeform,
+		      const int32_t totlen) {
+
+     if(__builtin_expect(totlen != (m_hsc.m_np*8),0)) {
+        return (false);
+     }
+     float term1,term1a,term2,term3,term4;
+     term1  = 0.0f;
+     term1a = 0.0f;
+     term2  = 0.0f;
+     term3  = 0.0f;
+     term4  = 0.0f;
+#if defined __ICC || defined __INTEL_COMPILER
+     __assume_aligned(sphrad,64);
+     __assume_aligned(chebn,64);
+     __assume_aligned(cdeform,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     sphrad  = (const float*)__builtin_assume_aligned(sphrad,64);
+     chebn   = (const float*)__builtin_assume_aligned(chebn,64);
+     cdeform = (const float*)__builtin_assume_aligned(cdeform,64);
+#endif
+     for(int32_t i = 0; i != totlen; ++i) {
+         const float sphrad_p3 = sphrad[i]*sphrad[i]*sphrad[i];
+	 term1 = 8.377580409564404f*sphrad_p3;
+         const float chebn_p2   = chebn[i]*chebn[i];
+	 const float cdeform_p2 = cdeform[i]*cdeform[i];
+	 term1a = 1.0f+1.5f*cdeform_p2*(4.0f*chebn_p2-2.0f*0.25f*chebn_p2-1.0f);
+	 if((static_cast<int32_t>(chebn[i]) & 1)  == 0) {
+	     const float cdeform_p3 = cdeform[i]*cdeform[i]*cdeform[i];
+             term2 = 3.0f*cdeform[i]*(1.0f+cdeform_p2*0.25f)/
+	             (chebn_p2-1.0f);
+	     term3 = 0.25f*cdeform_p3/(9.0f*chebn_p2-1.0f);
+	     term4 = term1*(term1a-term2-term3);
+	     m_hsc.m_tpv += term4;
+	 }
+	 else {
+              term2 = term1*term1a;
+	      m_hsc.m_tpv += term2;
+	 }
+     }
+     return (true);
+}
