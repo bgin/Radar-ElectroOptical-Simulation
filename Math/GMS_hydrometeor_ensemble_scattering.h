@@ -226,9 +226,10 @@ namespace gms {
 					      const float * __restrict __ATTR_ALIGN__(64)
 					      const int32_t ) __ATTR_COLD__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
 
-		   void ComputeEnsembleSurface(const float * __restrict __ATTR_ALIGN__(64),
+		   bool ComputeEnsembleSurface(const float * __restrict __ATTR_ALIGN__(64),
 		                               const float * __restrict __ATTR_ALIGN__(64),
-					       const float * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+					       const float * __restrict __ATTR_ALIGN__(64),
+					       const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
 
 #if defined __ICC || defined __INTEL_COMPILER
     #if defined __AVX__
@@ -237,7 +238,7 @@ namespace gms {
 	     #pragma intel optimization_parameter target_arch=AVX512
     #endif
 #endif		   
-		   void ComputeVfall(  const float * __restrict __ATTR_ALIGN__(64),
+		   void ComputeEnsembleVfall(  const float * __restrict __ATTR_ALIGN__(64),
 			               const float * __restrict __ATTR_ALIGN__(64),
 				       const float,
 				       const float * __restrict __ATTR_ALIGN__(64),
