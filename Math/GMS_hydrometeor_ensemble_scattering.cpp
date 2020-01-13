@@ -1025,7 +1025,7 @@ ComputeEnsembleVolume(const float * __restrict sphrad,
 		      const float * __restrict cdeform,
 		      const int32_t totlen) {
 
-     if(__builtin_expect(totlen != (m_hsc.m_np*8),0)) {
+     if(__builtin_expect(totlen != (m_hsc.m_np*8),1)) {
         return (false);
      }
      float term1,term1a,term2,term3,term4;
@@ -1064,3 +1064,174 @@ ComputeEnsembleVolume(const float * __restrict sphrad,
      }
      return (true);
 }
+
+
+bool
+gms::math::HydroMeteorScatterers::
+ComputeEnsembleSurface(const float * __restrict sphrad,
+                       const float * __restrict chebn,
+		       const float * __restrict cdeform,
+		       const int32_t totlen) {
+
+     if(__builtin_expect(totlen != (m_hsc.m_np*8),1)) {
+          return (false);
+     }
+     float term1,term2,term3,term4,term5,term5a,tmp;
+     term1  = 0.0f;
+     term2  = 0.0f;
+     term3  = 0.0f;
+     term4  = 0.0f;
+     term5  = 0.0f;
+     term5a = 0.0f;
+     tmp    = 0.0f;
+#if defined __ICC || defined __INTEL_COMPILER
+     __assume_aligned(sphrad,64);
+     __assume_aligned(chebn,64);
+     __assume_aligned(cdeform,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     sphrad  = (const float*)__builtin_assume_aligned(sphrad,64);
+     chebn   = (const float*)__builtin_assume_aligned(chebn,64);
+     cdeform = (const float*)__builtin_assume_aligned(cdeform,64);
+#endif
+     for(int32_t i = 0; i != totlen; ++i) {
+         const float sphrad_p2 = sphrad[i]*sphrad[i];
+         term1 = 25.132741228718346f*sphrad_p2;
+	 if((static_cast<int32_t>(chebn[i]) & 1) == 0) {
+             const float chebn_p2   = chebn[i]*chebn[i];
+	     term2 = 1.0f-2.0f*cdeform[i]/(chebn_p2-1.0f);
+	     const float cdeform_p2 = cdeform[i]*cdeform[i];
+	     //
+	     const float chebn_p4   = chebn_p2*chebn_p2;
+	     term3 = cdeform_p2*(chebn_p4+2.0f*chebn_p2-1.0f)/
+	             (4.0f*chebn_p2-1.0f);
+	     const float cdeform_p4 = cdeform_p2*cdeform_p2;
+	     term4 = 3.0f*cdeform_p4*chebn_p4*chebn_p4/
+	             (64.0f*chebn_p4-12.0f*chebn_p2-1.0f);
+	     term5 = -6.0f*cdeform_p5*cdeform[i]*chebn_p4*chebn_p4;
+	     term5a = 1.0f/(chebn_p2-1.0f*9.0f*chebn_p2-1.0f*25.0f*
+	              chebn_p2-1.0f);
+	     tmp = term1*(term2+term3-term4-term5*term5a);
+	     m_hsc.m_tps += tmp;
+	 }
+	  else {
+	      const float chebn_p2   = chebn[i]*chebn[i];
+              const float cdeform_p2 = cdeform[i]*cdeform[i];
+	      const float chebn_p4   = chebn_p2*chebn_p2;
+	      term2 = 1.0f+cdeform_p2*chebn_p4+2.0f*chebn_p2-1.0f/
+	              (4.0f*chebn_p2-1.0f);
+	      term3 = 3.0f*cdeform_p2*cdeform_p2*chebn_p4*0.015625f;
+	      term4 = 1.0f+20.0f*chebn_p2-1.0f/
+	              (16.0f*chebn_p2-1.0f*4.0f*chebn_p2-1.0f);
+	      tmp = term1 * (term2-term3*term4);
+	      m_hsc.m_tps += tmp;
+	  }
+     }
+     return (true);
+}
+
+void
+gms::math::HydroMeteorScatterers::
+ComputeEnsembleVfall(const float * __restrict aRe,
+                     const float * __restrict bRe,
+		     const float vb,
+		     const float * __restrict kvisc,
+		     const int32_t nx,
+		     const int32_t ny,
+		     const int32_t nz,
+		     const float A,
+		     const float rho_b,
+		     const float * __restrict rho_f,
+		     const float mD,
+		     const float Re,
+		     const float * __restrict aRet,
+		     const float * __restrict bRet) {
+
+     float term1,term2,term2a,term3,inv,t1,t2;
+     term1 = 0.0f;
+     term2 = 0.0f;
+     term2a = 0.0f;
+     term3 = 0.0f;
+     t1    = 0.0f;
+     t2    = 0.0f;
+     term2 = (2.0f*vb*9.81f)/A;
+#if defined __ICC || defined __INTEL_COMPILER
+     __assume_aligned(aRe,64);
+     __assume_aligned(bRe,64);
+     __assume_aligned(kvisc,64);
+     __assume_aligned(rho_f,64);
+     __assume_aligned(aRet,64);
+     __assume_aligned(bRet,64);
+     __assume_aligned(m_hsc.m_pfv,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     aRe         = (const float*)__builtin_assume_aligned(aRe,64);
+     bRe         = (const float*)__builtin_assume_aligned(bRe,64);
+     kvisc       = (const float*)__builtin_assume_aligned(kvisc,64);
+     rho_f       = (const float*)__buitlin_assume_aligned(rho_f,64);
+     aRet        = (const float*)__builtin_assume_aligned(aRet,64);
+     bRet        = (const float*)__builtin_assume_aligned(bRet,64);
+     m_hsc.m_pfv = (float*)__builtin_assume_aligned(m_hsc.m_pfv,64)
+#endif
+     if((std::abs(Re) - 999.0f) <= std::numeric_limits<float>::epsilon()) {
+
+         for(int32_t i = 0; i != m_hsc.m_nt; ++i) {
+             t1 = aRet[i];
+	     t2 = bRet[i];
+	     tmp = 1.0f-2.0f*t2;
+	     for(int32_t ix = 0; ix != nx; ++ix) {
+                 for(int32_t iy = 0; iy != ny; ++iy) {
+#if defined __INTEL_COMPILER
+#pragma simd vectorlengthfor(float)
+#pragma unroll(2)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#endif
+                     for(int32_t iz = 0; iz != nz; ++iz) {
+		         
+                         term1 = t1*std::pow(kvisc[Ix3D(ix,ny,iy,nz,iz)],tmp);
+			 if(rho_b > rho_f[Ix3D(ix,ny,iy,nz,iz)]) {
+                             term2a = std::abs(rho_b/rho_f[Ix3D(ix,ny,iy,nz,iz)]);
+			 }
+			 else {
+                             term2a = std::abs(rho_b/rho_f[Ix3D(ix,ny,iy,nz,iz)]-1.0f);
+			 }
+			 
+		     }
+		 }
+	     }
+	     term3 = mD*mD*t2-1.0f;
+	     m_hsc.m_pfv[i] = term1*std::pow((term2*term2a),t2)-1.0f;
+	 }
+     }
+     else {
+           for(int32_t i = 0; i != m_hsc.m_nt; ++i) {
+             t1 = aRe[i];
+	     t2 = bRe[i];
+	     tmp = 1.0f-2.0f*t2;
+	     for(int32_t ix = 0; ix != nx; ++ix) {
+                 for(int32_t iy = 0; iy != ny; ++iy) {
+#if defined __INTEL_COMPILER
+#pragma simd vectorlengthfor(float)
+#pragma unroll(2)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#endif		 
+                     for(int32_t iz = 0; iz != nz; ++iz) {
+		         
+                         term1 = t1*std::pow(kvisc[Ix3D(ix,ny,iy,nz,iz)],tmp);
+			 if(rho_b > rho_f[Ix3D(ix,ny,iy,nz,iz)]) {
+                             term2a = std::abs(rho_b/rho_f[Ix3D(ix,ny,iy,nz,iz)]);
+			 }
+			 else {
+                             term2a = std::abs(rho_b/rho_f[Ix3D(ix,ny,iy,nz,iz)]-1.0f);
+			 }
+			 
+		     }
+		 }
+	     }
+	     term3 = mD*mD*t2-1.0f;
+	     m_hsc.m_pfv[i] = term1*std::pow((term2*term2a),t2)-1.0f;
+	 }
+     }
+}
+
+
