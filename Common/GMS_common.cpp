@@ -4,6 +4,7 @@
 #include "GMS_simd_defs.h"
 #include "GMS_config.h"
 #include "GMS_avxvecf32.h"
+#include "GMS_avxc8f32.h"
 //
 //	Implementation
 //
@@ -311,7 +312,7 @@ avxvec8_copy_unroll8x(AVXVec8 * __restrict dst,
      __assume_aligned(src,64);
 #endif
 #if defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd
+#pragma omp simd aligned(dst,src:64)
 #elif defined __INTEL_COMPILER
 #pragma vector always
 #endif
@@ -325,6 +326,112 @@ avxvec8_copy_unroll8x(AVXVec8 * __restrict dst,
 	dst[i+6LL] = src[i+6LL];
 	dst[i+7LL] = src[i+7LL];
    }
+}
+
+void
+gms::common::
+avxvec8_copy_from_r4(AVXVec8 * __restrict dst,
+		     const float * __restrict src,
+		     const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
+     src = (const float*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+     for(int64_t i = 0LL; i != len; ++i) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(dst,src:64)
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+        for(int64_t j = 0LL; j != 8LL; ++j) {
+            dst[i].m256_f32[j] = src[i*8LL+j];
+	}
+     }
+
+}
+
+void
+gms::common::
+r4_copy_from_avxvec8(float * __restrict dst,
+                     const AVXVec8 * __restrict src,
+		     const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
+     src = (const float*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+     for(int64_t i = 0LL; i != len; ++i) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(dst,src:64)
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+        for(int64_t j = 0LL; j != 8LL; ++j) {
+            dst[i*8LL+j] = src[i].m256_f32[j];
+	}
+     }
+
+}
+
+void
+gms::common::
+avxc8f32_copy_from_r4(AVXc8f32 * __restrict dst,
+                      const float * __restrict src_re,
+		      const float * __restrict src_im,
+		      const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst    = (AVXc8f32*)__builtin_assume_aligned(dst,64);
+     src_re = (const float*)__builtin_assume_aligned(src_re,64);
+     src_im = (const float*)__builtin_assume_aligned(src_im,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src_re,64);
+     __assume_aligned(src_im,64);
+#endif
+     for(int64_t i = 0LL; i != len; ++i) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(dst,src_re,src_im:64)
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+        for(int64_t j = 0; j != 8LL; ++j) {
+            dst.m_re[i].m256_f32[j] = src_re[i*8LL+j];
+	    dst.m_im[i].m256_f32[j] = src_im[i*8LL+j];
+	}
+     }
+}
+
+void
+gms::common::
+r4_copy_from_avxc8f32(float * __restrict dst_re,
+                      float * __restrict dst_im,
+		      const AVXc8f32 * __restrict src,
+		      const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+    dst_re = (float*)__builtin_assume_aligned(dst_re,64);
+    dst_im = (float*)__builtin_assume_aligned(dst_im,64);
+    src    = (const AVXc8f32*)__builtin_assume_aligned(src,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+    __assume_aligned(dst_re,64);
+    __assume_aligned(dst_im,64);
+    __assume_aligned(src,64);
+#endif
+     for(int64_t i = 0LL; i != len; ++i) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(dst_re,dst_im,src:64)
+#elif defined __INTEL_COMPILER
+#pragma vector always
+#endif
+        for(int64_t j = 0LL; j != 8LL; ++j) {
+            dst_re[i*8LL+j] = src.m_re[i].m256_f32[j];
+	    dst_im[i*8LL+j] = src.m_im[i].m256_f32[j];
+	}
+     }
 }
 
 void
