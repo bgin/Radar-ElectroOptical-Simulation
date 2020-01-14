@@ -253,7 +253,29 @@ namespace gms {
 				       const float * __restrict __ATTR_ALIGN__(64),
 				       const float * __restrict __ATTR_ALIGN__(64)) __ATTR_HOT__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
 			                     
-
+	           void ComputeHydroMeteorScattering(
+		                                     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     double,
+						     int32_t,
+						     int32_t,
+						     int32_t,
+						     double,
+						     double,
+						     int32_t,
+						     int32_t,
+						     int32_t * __restrict __ATTR_ALIGN__(64),
+						     double  * __restrict __ATTR_ALIGN__(64),
+						     double  * __restrict __ATTR_ALIGN__(64) __ATTR_HOT__ __ATTR_ALIGN__(32);
 		   
 
 
