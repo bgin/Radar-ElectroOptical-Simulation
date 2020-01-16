@@ -365,6 +365,173 @@ namespace gms {
                       return (_mm512_roundscale_ps(x,imm));
 	      }
 
+	   // Masked trigo vector functions.
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_acos(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_acos_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_acosh(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_acosh_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_asin(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_asin_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_asinh(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_asinh_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_atan(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_atan_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_atan2(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y,
+				 const AVX512Vec16 z) {
+                      return (_mm512_mask_atan2_ps(x,k,y,z));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_atanh(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_atanh_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_cosh(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_cosh_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_sin(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_sin_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_sind(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_sind_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_sincos( AVX512Vec16* cos_res,
+	                            const AVX512Vec16  sin_src,
+				    const AVX512Vec16  cos_src,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                      return (_mm512_mask_sincos_ps(&cos_res,sin_src,cos_src,k,a));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_sinh(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_sinh_ps(x,k,y));
+	      }
+
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_tan(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_tan_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_tanh(const AVX512Vec16 x,
+	                         const __mmask16 k,
+				 const AVX512Vec16 y) {
+                      return (_mm512_mask_tanh_ps(x,k,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_permutevar(const AVX512Vec16 src,
+	                               const __mmask16 k,
+				       const AVX512Vec16 a,
+				       const __m512i b) {
+                       return (_mm512_mask_permutevar_ps(src,k,a,b));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	    AVX512Vec16 nearbyint(const AVX512Vec16 x) {
+                       return (_mm512_nearnyint_ps(x));
+	     }
+
+	   
+
 	   __ATTR_HOT__
 	   __ATTR_ALIGN__(16)
 	   __ATTR_VECTORCALL__
@@ -530,6 +697,788 @@ namespace gms {
 			        const AVX512Vec16 z) {
                       return (_mm512_fmadsubb_ps(x,y,z));
 	       }
+
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 fmsub(const AVX512Vec16 x,
+	                        const AVX512Vec16 y,
+			        const AVX512Vec16 z) {
+                      return (_mm512_fmsub_ps(x,y,z));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 fmsub(const AVX512Vec16 x,
+	                        const AVX512Vec16 y,
+			        const AVX512Vec16 z) {
+                      return (_mm512_fmsub_ps(x,y,z));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 fmsubadd(const AVX512Vec16 x,
+	                        const AVX512Vec16 y,
+			        const AVX512Vec16 z) {
+                      return (_mm512_fmsubadd_ps(x,y,z));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 fnmadd(const AVX512Vec16 x,
+	                        const AVX512Vec16 y,
+			        const AVX512Vec16 z) {
+                      return (_mm512_fnmadd_ps(x,y,z));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 fnmsub(const AVX512Vec16 x,
+	                        const AVX512Vec16 y,
+			        const AVX512Vec16 z) {
+                      return (_mm512_fnmsub_ps(x,y,z));
+	       }
+
+	       // Statistical/Probability Functions
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 cdfnorm(const AVX512Vec16 x) {
+                       return (_mm512_cdfnorm_ps(x));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_cdfnorm(const AVX512Vec16 x,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                       return (_mm512_mask_cdfnorm_ps(x,k,a));
+	      }
+
+	   
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 cdfnorminv(const AVX512Vec16 x) {
+                       return (_mm512_cdfnorminv_ps(x));
+	      }
+
+	   
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_cdfnorminv(const AVX512Vec16 x,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                       return (_mm512_mask_cdfnorminv_ps(x,k,a));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 erf(const AVX512Vec16 x) {
+                       return (_mm512_erf_ps(x));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_erf(const AVX512Vec16 x,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                       return (_mm512_mask_erf_ps(x,k,a));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 erfc(const AVX512Vec16 x) {
+                       return (_mm512_erfc_ps(x));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_erfc(const AVX512Vec16 x,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                       return (_mm512_mask_erfc_ps(x,k,a));
+	      }
+
+	    __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 erfinv(const AVX512Vec16 x) {
+                       return (_mm512_erfinv_ps(x));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_erfinv(const AVX512Vec16 x,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                       return (_mm512_mask_erfinv_ps(x,k,a));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 erfcinv(const AVX512Vec16 x) {
+                       return (_mm512_erfcinv_ps(x));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 mask_erfcinv(const AVX512Vec16 x,
+	                            const __mmask16 k,
+				    const AVX512Vec16 a) {
+                       return (_mm512_mask_erfcinv_ps(x,k,a));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+(const AVX512Vec16 x,
+	                         const AVX512Vec16 y) {
+                       return (_mm512_add_ps(x,y));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+(const AVX512Vec16 x,
+	                         const __m512 y) {
+                       return (_mm512_add_ps(x,y));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+(const __m512 x,
+	                         const AVX512Vec16 y) {
+                       return (_mm512_add_ps(x,y));
+	       }
+
+	   
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16  operator+(const AVX512Vec16 x,
+	                          const float s) {
+                        return (_mm512_add_ps(x,
+			        _mm512_set1_ps(s)));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+(const float s,
+	                         const AVX512Vec16 x) {
+                      return (_mm512_add_ps(
+		                       _mm512_set1_ps(s),
+				       x));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+=(AVX512Vec16 x,
+	                          const AVX512Vec16 y) {
+                      x = x+y;
+		      return (x);
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+=(AVX512Vec16 x,
+	                          const __m512 y) {
+                      x = x+y;
+		      return (x);
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+=(const __m512 x,
+	                          AVX512Vec16 y) {
+                     y = x+y;
+		     return (y);
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+=(AVX512Vec16 x,
+	                          const float s) {
+                     x = x+s;
+		     return (x);
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator+=(const float s,
+	                          AVX512Vec16 x) {
+                     x = s+x;
+		     return (x);
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-(const AVX512Vec16 x,
+	                         const AVX512Vec16 y) {
+                       return (_mm512_sub_ps(x,y));
+	       }
+ 
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-(const AVX512Vec16 x,
+	                         const __m512 y) {
+                       return (_mm512_sub_ps(x,y));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-(const __m512 x,
+	                         const AVX512Vec16 y) {
+                       return (_mm512_sub_ps(x,y));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-(const AVX512Vec16 x,
+	                         const float s) {
+                       return (_mm512_sub_ps(x,
+		                     _mm512_set1_ps(s)));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-(const float s,
+	                         AVX512Vec16 x) {
+                       return (_mm512_sub_ps(
+		                     _mm512_set1_ps(s),
+				     x));
+	       }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-=(AVX512Vec16 x,
+	                          const AVX512Vec16 y) {
+                       x = x-y;
+		       return (x);
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-=(AVX512Vec16 x,
+	                          const __m512 y) {
+
+                       x = x-y;
+		       return (x);
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-=(const __m512 x,
+	                          AVX512Vec16 y) {
+                       y = x-y;
+		       return (y);
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-=(AVX512Vec16 x,
+	                          const float s) {
+                       x = x-s;
+		       return (x);
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator-=(const float s,
+	                          AVX512Vec16 x) {
+                       x = s-x;
+		       return (x);
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*(const AVX512Vec16 x,
+	                         const AVX512Vec16 y) {
+                       return (_mm512_mul_ps(x,y));
+	      }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*(const AVX512Vec16 x,
+	                         const __m512 y) {
+                       return (_mm512_mul_ps(x,y));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*(const __m512 y,
+	                         const AVX512Vec16 x) {
+                       return (_mm512_mul_ps(y,x));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*(const AVX512Vec16 x,
+	                         const float s) {
+                       return (_mm512_mul_ps(x,
+		                         _mm512_set1_ps(s)));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*(const float s,
+	                         const AVX512Vec16 x) {
+                       return (_mm512_mul_ps(
+		                           _mm512_set1_ps(s),
+					     x));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*=( AVX512Vec16 x,
+	                          const AVX512Vec16 y) {
+
+		        x = x*y;
+			return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*=(AVX512Vec16 x,
+	                          const __m512 y) {
+
+			x = x*y;
+			return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*=(const __m512 x,
+	                          AVX512Vec16 y) {
+
+			y = x*y;
+			return (y);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*=(AVX512Vec16 x,
+	                          const float s) {
+
+			x = x*s;
+			return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator*=(const float s,
+	                          AVX512Vec16 x) {
+
+			 x = s*x;
+			 return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/(const AVX512Vec16 x,
+	                         const AVX512Vec16 y) {
+
+		       return (_mm512_div_ps(x,y));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/(const AVX512Vec16 x,
+	                         const __m512 y) {
+
+			return (_mm512_div_ps(x,y));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/(const __m512 x,
+	                         const AVX512Vec16 y) {
+
+		         return (_mm512_div_ps(x,y));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/(const AVX512Vec16 x,
+	                         const float s) {
+
+			 return (_mm512_div_ps(x,
+			               _mm512_set1_ps(s)));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/(const float s,
+	                         const AVX512Vec16 x) {
+
+			 return (_mm512_div_ps(
+			                    _mm512_set1_ps(s),x));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/=(AVX512Vec16 x,
+	                          const AVX512Vec16 y) {
+
+			 x = x/y;
+			 return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/=(AVX512Vec16 x,
+	                          const __m512 y) {
+
+			  x = x/y;
+			  return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/=(const __m512 x,
+	                          AVX512Vec16 y) {
+
+			  y = x/y;
+			  return (y);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/=(AVX512Vec16 x,
+	                          const float s) {
+
+			  x = x/s;
+			  return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	   AVX512Vec16 operator/=(const float s,
+	                          AVX512Vec16 x) {
+
+			  x = s/x;
+			  return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator==(const AVX512Vec16 x,
+	                       const AVX512Vec16 y) {
+
+			  return (_mm512_cmp_ps_mask(x,y,_CMP_EQ_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator==(const AVX512Vec16 x,
+	                       const float s) {
+
+			   return (_mm512_cmp_ps_mask(x,
+			                        _mm512_set1_ps(s),
+						          _CMP_EQ_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator==(const float s,
+	                       const AVX512Vec16 x) {
+
+                           return (_mm512_cmp_ps_mask(
+			                      _mm512_set1_ps(s),x,
+					                  _CMP_EQ_OQ));
+					      
+	     }
+
+	  
+             __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator!=(const AVX512Vec16 x,
+	                       const AVX512Vec16 y) {
+
+			  return (_mm512_cmp_ps_mask(x,y,_CMP_NEQ_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator!=(const AVX512Vec16 x,
+	                       const float s) {
+
+			   return (_mm512_cmp_ps_mask(x,
+			                        _mm512_set1_ps(s),
+						          _CMP_NEQ_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator!=(const float s,
+	                       const AVX512Vec16 x) {
+
+                           return (_mm512_cmp_ps_mask(
+			                      _mm512_set1_ps(s),x,
+					                  _CMP_NEQ_OQ));
+					      
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator>=(const AVX512Vec16 x,
+	                       const AVX512Vec16 y) {
+
+			  return (_mm512_cmp_ps_mask(x,y,_CMP_GE_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator>=(const AVX512Vec16 x,
+	                       const float s) {
+
+			   return (_mm512_cmp_ps_mask(x,
+			                        _mm512_set1_ps(s),
+						          _CMP_GE_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator>=(const float s,
+	                       const AVX512Vec16 x) {
+
+                           return (_mm512_cmp_ps_mask(
+			                      _mm512_set1_ps(s),x,
+					                  _CMP_GE_OQ));
+					      
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator>(const AVX512Vec16 x,
+	                       const AVX512Vec16 y) {
+
+			  return (_mm512_cmp_ps_mask(x,y,_CMP_GT_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator>(const AVX512Vec16 x,
+	                       const float s) {
+
+			   return (_mm512_cmp_ps_mask(x,
+			                        _mm512_set1_ps(s),
+						          _CMP_GT_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator>(const float s,
+	                       const AVX512Vec16 x) {
+
+                           return (_mm512_cmp_ps_mask(
+			                      _mm512_set1_ps(s),x,
+					                  _CMP_GT_OQ));
+					      
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator<=(const AVX512Vec16 x,
+	                       const AVX512Vec16 y) {
+
+			  return (_mm512_cmp_ps_mask(x,y,_CMP_LE_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator<=(const AVX512Vec16 x,
+	                       const float s) {
+
+			   return (_mm512_cmp_ps_mask(x,
+			                        _mm512_set1_ps(s),
+						          _CMP_LE_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator<=(const float s,
+	                       const AVX512Vec16 x) {
+
+                           return (_mm512_cmp_ps_mask(
+			                      _mm512_set1_ps(s),x,
+					                  _CMP_LE_OQ));
+					      
+	     }
+
+	    __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator<(const AVX512Vec16 x,
+	                       const AVX512Vec16 y) {
+
+			  return (_mm512_cmp_ps_mask(x,y,_CMP_LT_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator<(const AVX512Vec16 x,
+	                       const float s) {
+
+			   return (_mm512_cmp_ps_mask(x,
+			                        _mm512_set1_ps(s),
+						          _CMP_LT_OQ));
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline
+	  __mmask16 operator<(const float s,
+	                       const AVX512Vec16 x) {
+
+                           return (_mm512_cmp_ps_mask(
+			                      _mm512_set1_ps(s),x,
+					                  _CMP_LT_OQ));
+					      
+	     }
+	     
 
 	  
     } // math
