@@ -68,7 +68,7 @@ namespace file_info {
 
 class AVXVec8;
 class AVXc8f32;
-
+class AVX512Vec16;
 
 namespace gms{
 	namespace common {
@@ -213,64 +213,66 @@ namespace gms{
 		void avxvec8_copy_unroll8x(AVXVec8 * __restrict __ATTR_ALIGN__(64),
 					   const AVXVec8 * __restrict __ATTR_ALIGN__(64),
 					   const int64_t)  __ATTR_COLD__ __ATTR_ALIGN__(32);
-#if defined __ICC || defined __INTEL_COMPILER
-    #if defined __AVX__
-	     #pragma intel optimization_parameter target_arch=AVX
-    #elif defined __AVX512F__
-	     #pragma intel optimization_parameter target_arch=AVX512
-    #endif
-#endif
+
 		void avxvec8_copy_from_r4(AVXVec8     * __restrict __ATTR_ALIGN__(64),
 				          const float * __restrict __ATTR_ALIGN__(64),
-					  const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32)
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-		                                         __ATTR_TCLONE_AVX_AVX512__;
-#endif
+					  const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+                void avx512vec16_init_unroll2x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const int64_t,
+					       const AVX512Vec16) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avx512vec16_init_unroll4x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const int64_t,
+					       const AVX512Vec16) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avx512vec16_init_unroll8x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const int64_t,
+					       const AVX512Vec16) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avx512vec16_copy_unroll2x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avx512vec16_copy_unroll4x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avx512vec16_copy_unroll8x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					       const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 
-#if defined __ICC || defined __INTEL_COMPILER
-    #if defined __AVX__
-	     #pragma intel optimization_parameter target_arch=AVX
-    #elif defined __AVX512F__
-	     #pragma intel optimization_parameter target_arch=AVX512
-    #endif
-#endif
+
+
                 void r4_copy_from_avxvec8(float * __restrict __ATTR_ALIGN__(64),
 		                          const AVXVec8 * __restrict __ATTR_ALIGN__(64),
-					  const int64_t ) __ATTR_COLD__ __ATTR_ALIGN__(32)
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-		                                         __ATTR_TCLONE_AVX_AVX512__;
+					  const int64_t ) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avxvec8_copy_from_r4(AVXVec8 * __restrict __ATTR_ALIGN__(64),
+		                          const float * __restrict __ATTR_ALIGN__(64),
+					  const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32);
+#if defined __AVX512F__
+
+	        void r4_copy_from_avx512vec16(float * __restrict __ATTR_ALIGN__(64),
+		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					      const int64_t)  __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+		void avx512vec16_copy_from_r4(AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+		                              const float * __restrict __ATTR_ALIGB__(64),
+					      const int64_t)  __ATTR_COLD__ __ATTR_ALIGN__(32);
 #endif
 
-#if defined __ICC || defined __INTEL_COMPILER
-    #if defined __AVX__
-	     #pragma intel optimization_parameter target_arch=AVX
-    #elif defined __AVX512F__
-	     #pragma intel optimization_parameter target_arch=AVX512
-    #endif
-#endif
                 void avxc8f32_copy_from_r4(AVXc8f32 * __restrict __ATTR_ALIGN__(64),
 		                           const float * __restrict __ATTR_ALIGN__(64),
 					   const float * __restrict __ATTR_ALIGN__(64),
 					   const int64_t)__ATTR_COLD__ __ATTR_ALIGN__(32)
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-		                                         __ATTR_TCLONE_AVX_AVX512__;
-#endif
 
-#if defined __ICC || defined __INTEL_COMPILER
-    #if defined __AVX__
-	     #pragma intel optimization_parameter target_arch=AVX
-    #elif defined __AVX512F__
-	     #pragma intel optimization_parameter target_arch=AVX512
-    #endif
-#endif
                 void r4_copy_from_avxc8f32(float * __restrict __ATTR_ALIGN__(64),
 		                           float * __restrict __ATTR_ALIGN__(64),
 					   const AVXc8f32 * __restrict __ATTR_ALIGN__(64),
 					   const int64_t) __ATTR_COLD__ __ATTR_ALIGN__(32)
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-		                                         __ATTR_TCLONE_AVX_AVX512__;
-#endif
+
 
 		//
 		//	Array of type float/double vectorised initialization
