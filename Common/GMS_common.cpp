@@ -256,6 +256,7 @@ gms::common::
 avxvec8_copy_unroll2x(AVXVec8 * __restrict dst,
 		      const AVXVec8 * __restrict src,
 		      const int64_t len) {
+   
 #if defined __GNUC__ && !defined __INTEL_COMPILER
      dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
      src = (AVXVec8*)__builtin_assume_aligned(src,64);
@@ -333,6 +334,7 @@ gms::common::
 avxvec8_copy_from_r4(AVXVec8 * __restrict dst,
 		     const float * __restrict src,
 		     const int64_t len) {
+     
 #if defined __GNUC__ && !defined __INTEL_COMPILER
      dst = (AVXVec8*)__builtin_assume_aligned(dst,64);
      src = (const float*)__builtin_assume_aligned(src,64);
@@ -340,16 +342,16 @@ avxvec8_copy_from_r4(AVXVec8 * __restrict dst,
      __assume_aligned(dst,64);
      __assume_aligned(src,64);
 #endif
-     for(int64_t i = 0LL; i != len; ++i) {
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd aligned(dst,src:64)
-#elif defined __INTEL_COMPILER
-#pragma vector always
+    int64_t j;
+    j = 0;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
 #endif
-        for(int64_t j = 0LL; j != 8LL; ++j) {
-            dst[i].m256_f32[j] = src[i*8LL+j];
-	}
-     }
+    for(int64_t i = 0LL; i != len; i += 8LL) {
+        const __m256 t = _mm256_load_ps(&src[i]);
+	dst[j].m_v8 = t;
+	++j;
+    }
 
 }
 
@@ -365,18 +367,69 @@ r4_copy_from_avxvec8(float * __restrict dst,
      __assume_aligned(dst,64);
      __assume_aligned(src,64);
 #endif
-     for(int64_t i = 0LL; i != len; ++i) {
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd aligned(dst,src:64)
-#elif defined __INTEL_COMPILER
-#pragma vector always
-#endif
-        for(int64_t j = 0LL; j != 8LL; ++j) {
-            dst[i*8LL+j] = src[i].m256_f32[j];
-	}
-     }
+    int64_t j;
+    j = 0;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+#endif    
+    for(int64_t i = 0LL; i != len; i += 8LL) {
+        const __m256 t = src[j].m_v8;
+	_mm256_store_ps(&dst[i],t);
+	++j;
+    }
 
 }
+
+#if defined __AVX512F__
+void
+gms::common::
+r4_copy_from_avx512vec16(float * __restrict dst,
+                         const AVX512Vec16 * __restrict src,
+			 const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVX512Vec16*)__builtin_assume_aligned(dst,64);
+     src = (const float*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+    int64_t j;
+    j = 0;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+#endif    
+    for(int64_t i = 0LL; i != len; i += 16LL) {
+         const __m512 t = src[j].m_v16;
+	 _mm512_store_ps(&dst[i],t);
+	 ++j;
+    }
+}
+
+void
+gms::common::
+avx512vec16_copy_from_r4(AVX512Vec16 * __restrict dst,
+                         const float * __restrict src,
+			 const int64_t len) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+     dst = (AVX512Vec16*)__builtin_assume_aligned(dst,64);
+     src = (const float*)__builtin_assume_aligned(src,64);
+#elif defined __INTEL_COMPILER
+     __assume_aligned(dst,64);
+     __assume_aligned(src,64);
+#endif
+    int64_t j;
+    j = 0;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+#endif    
+    for(int64_t i = 0LL; i != len; i += 16LL) {
+        const __m512 t = _mm512_load_ps(&src[i]);
+	dst[j].m_v16 = t;
+	++j;
+    }
+}
+
+#endif
 
 void
 gms::common::
@@ -393,16 +446,17 @@ avxc8f32_copy_from_r4(AVXc8f32 * __restrict dst,
      __assume_aligned(src_re,64);
      __assume_aligned(src_im,64);
 #endif
-     for(int64_t i = 0LL; i != len; ++i) {
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd aligned(dst,src_re,src_im:64)
-#elif defined __INTEL_COMPILER
-#pragma vector always
+     int64_t j;
+     j = 0;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
 #endif
-        for(int64_t j = 0; j != 8LL; ++j) {
-            dst.m_re[i].m256_f32[j] = src_re[i*8LL+j];
-	    dst.m_im[i].m256_f32[j] = src_im[i*8LL+j];
-	}
+     for(int64_t i = 0LL; i != len; i += 8LL) {
+         const __m256 tre = _mm256_load_ps(&src_re[i]);
+	 dst[j].m_re = tre;
+	 const __m256 tim = _mm256_load_ps(&src_im[i]);
+	 dst[j].m_im = tim;
+	 ++j;
      }
 }
 
@@ -421,17 +475,17 @@ r4_copy_from_avxc8f32(float * __restrict dst_re,
     __assume_aligned(dst_im,64);
     __assume_aligned(src,64);
 #endif
-     for(int64_t i = 0LL; i != len; ++i) {
-#if defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd aligned(dst_re,dst_im,src:64)
-#elif defined __INTEL_COMPILER
-#pragma vector always
+    int64_t j;
+    j = 0;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
 #endif
-        for(int64_t j = 0LL; j != 8LL; ++j) {
-            dst_re[i*8LL+j] = src.m_re[i].m256_f32[j];
-	    dst_im[i*8LL+j] = src.m_im[i].m256_f32[j];
-	}
-     }
+    for(int64_t i = 0LL; i != len; i += 8LL) {
+        const __m256 tre = src[j].m_re;
+	_mm256_store_ps(&dst_re[i],tre;
+	const __m256 tim = src[j].m_im;
+	_mm256_store_ps(&dst_im[i],tim);
+    }
 }
 
 void
