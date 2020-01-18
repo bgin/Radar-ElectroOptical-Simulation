@@ -37,6 +37,7 @@
 #include <cstdint>
 
 class AVXVec8;
+class AVX512Vec16;
 
 namespace gms {
 	namespace common {
@@ -213,7 +214,14 @@ namespace gms {
 		//
 	        
 		AVXVec8 * gms_avxvec8_malloca(const std::size_t,const int32_t);
-	
+
+		//
+		// Aligned malloc wrapper
+		// Returns: AVX512Vec16 * 
+		// No error handling implemented
+		//
+
+		AVX512Vec16 * gms_avx512vec16_malloca(const std::size_t,const int32_t);
 
 		//
 		// Error handling wrappers
@@ -257,7 +265,16 @@ namespace gms {
 		// Error checking and handling (calls std::exit)
 		//
 
-		AVXVec8 * gms_avxvec8_emalloca(const std::size_t,const int32_t);
+		AVXVec8 * gms_avxvec8_emalloca(const std::size_t,
+					       const int32_t);
+
+		//
+		// Aligned malloc wrapper
+		// Returns: AVXVec8 * 
+		// Error checking and handling (calls std::exit)
+		//
+		AVX512Vec16 * gms_avx512vec16_emalloca(const std::size_t,
+						       const int32_t);
 
 		//
 		// Few special functions for padding of possibly unaligned rows of flat (multidimensional) arrays.
