@@ -54,6 +54,8 @@ namespace  gms {
 		     const AVX512Vec16 TWO   = AVX512Vec16{2.0f};
 
 		     const AVX512Vec16 PI    = AVX512Vec16{3.141592653589793f};
+
+		     const AVX512Vec16 TWOPI = AVX512Vec16{6.283185307179586f};
 	     }
 
 
@@ -265,9 +267,9 @@ namespace  gms {
 
 			  void ComputeTrunkParamEq_zmm16r4(const int32_t)  __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			  void SetThickDensAng_zmm16r4(const AVX512Vec16 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+			  bool SetThickDensAng_zmm16r4(const AVX512Vec16 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			  void ComputeLeavesParamEq_zmm16r4(
+			  bool ComputeLeavesParamEq_zmm16r4(
 #if defined __ICC || defined __INTEL_COMPILER
                                                             const AVX512Vec16,
 							    const AVX512Vec16
@@ -277,7 +279,7 @@ namespace  gms {
 #endif
                                                             ) __ATTR_COLD__ __ATTR_ALIGN__(32);
 							    
-			   void ComputeBranchesParamEq_zmm16r4(
+			   bool ComputeBranchesParamEq_zmm16r4(
 #if defined __ICC || defined __INTEL_COMPILER
                                                                const AVX512Vec16,
 							       const AVX512Vec16,
