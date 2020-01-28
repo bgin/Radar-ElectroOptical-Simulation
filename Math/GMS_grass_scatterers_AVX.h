@@ -51,43 +51,125 @@ namespace gms {
 	            struct GSColdAVX_t {
 
                         // Number of grass plants per unit area (1 m^2)
-			int32_t m_nplants;
+			int32_t nplants;
 		        //  Number of simulation steps it is equal to Radar PRF (pulse repetetive frequency)
-                        int32_t m_nsteps;
+                        int32_t nsteps;
 			//  Grass plants ordinal number (for the grass field simulation)
-			int32_t m_ordinal;
+			int32_t ordinal;
 			//   Number of parametric equation evaluation 'points' for the grass plants cylindrical approximation
-			int32_t m_grass_param_npts;
+			int32_t param_npts;
 			//   Total grass plant area (sum of each plant surface area)
-			float   m_tot_area;
+			float   tot_area;
                         //   grass plants latitude
-			float   m_lat;
+			float   lat;
 			//   grass plants longtitude
-			float   m_lon;
+			float   lon;
 			//   Elevation above the sea level
-			float   m_elev;
+			float   elev;
 			//   Apparent surface temperature (horizontal polarization)
-			float   m_Tah;
+			float   Tah;
 			//   Apparent surface temperature (vertical polarization)
-			float   m_Tav;
+			float   Tav;
+#if (USE_STRUCT_PADDING) == 1
+		      PAD_TO_ALIGNED(4,0,24)
+#endif
 			//  Cross-sectional area of cylinders
-			float   * __restrict __ATTR_ALIGN__(8) m_A;
+			float   * __restrict __ATTR_ALIGN__(8) A;
 			 // Is water or rather moistness present or not on the branch surface (per n-leaves) (allowed values only 0,1)
-			int32_t * __restrict __ATTR_ALIGN__(8) m_moistness;
+			int32_t * __restrict __ATTR_ALIGN__(8) moistness;
 			//  Complex dielectric constant per each cylinder
-			std::complex<float> * __restrict __ATTR_ALIGN__(8) m_eps;
+		        std::complex<float>  * __restrict __ATTR_ALIGN__(8) eps;
 			//  ! Grass parametric equation (approximated as a cylindrical objects)
                          //  ! Parameter x, (r*cos(t))
                          //  ! PAOS type size of arrays is -- npoints/8 1st dim (evaluation of x) ,
                          //  ! nplants/8 2nd dim (number of leaves)
-			AVXVec8 * __restrict __ATTR_ALIGN__(8) grass_xparam;
+			AVXVec8 * __restrict __ATTR_ALIGN__(8) xparam;
 			 //  ! Parameter y, (r*sin(t))
                          //  !2nd dimension is a plant number, 1st dimension evaluation of parameter y
-			AVXVec8 * __restrict __ATTR_ALIGN__(8) grass_yparam;
+			AVXVec8 * __restrict __ATTR_ALIGN__(8) yparam;
 			 //  ! Parameter z, (height)
                          //  !2nd dimension is a plant  number, 1st dimension evaluation of parameter z
-			AVXVec8 * __restrict __ATTR_ALIGN__(8) grass_zparam;
+			AVXVec8 * __restrict __ATTR_ALIGN__(8) zparam;
+#if (USE_STRUCT_PADDING) == 1
+		      PAD_TO_ALIGNED(8,1,26)
+#endif
 		 } __ATTR_ALIGN__(64);
+
+
+		    	//  ! This is a high termporal and spatial locality data type
+                //  ! These data type members characteristics are varying between each sample of Radar PRF.
+		    struct GSHotAVX_t  {
+
+                         // Horizontal polarization (full angle sweep [2-90 deg]
+			 // The 6 last elements are a 64-byte cache line padding
+			 std::complex<float> Polv[96] __ATTR_ALIGN__(64);
+			 // Vertical polarization (full angle sweep [2-90 deg]
+			 // The 6 last elements are a 64-byte cache line padding
+			 std::complex<float> Polh[96] __ATTR_ALIGN__(64);
+			 
+			 //   ! Grass angle of vibration in x-axis per PRF/s
+                         //   ! 1st dimension angle values (rad),  2nd dimension PRF/s,
+			 AVXVec8 * __restrict __ATTR_ALIGN__(8) xang;
+			 //   ! Grass sine of vibration angle in x-axis per PRF/s
+                         //   ! 1st  dimension sine of vibrational angle (rad),  2nd dimension PRF/s,
+			 AVXVec8 * __restrict __ATTR_ALIGN__(8) sin_xang;
+			 //     ! Grass sine of vibration angle in x-axis per PRF/s
+                         //     ! 1st dimension PRF/s, 2nd dimension sine of vibrational angle (rad)
+			 AVXVec8 * __restrict __ATTR_ALIGN__(8) cos_xang;
+                         //      ! Grass angle of vibration in y-axis per PRF/s
+                         //      ! 1st dimension PRF/s, 2nd dimension angle values (rad)
+			 AVXVec8 * __restrict __ATTR_ALIGN__(8) yang;
+			 //      ! Grass sine of vibration angle in y-axis per PRF/s
+                         //      ! 1st dimension PRF/s, 2nd dimension angle of vibrational angle (rad)
+			 AVXVec8 * __restrict __ATTR_ALIGN__(8) sin_yang;
+			 //        ! Grass sine of vibration angle in y-axis per PRF/s
+                         //        ! 1st dimension PRF/s, 2nd dimension sine of vibrational angle (rad)
+			 AVXVec8 * __restrict __ATTR_ALIGN__(8) cos_yang;
+#if (USE_STRUCT_PADDING) == 1
+                         PAD_TO_ALIGNED(8,0,26)
+#endif
+		 } __ATTR_ALIGN__(64);
+
+
+	         struct GrassScattererAVX{
+
+                        GSColdAVX_t  m_gsc __ATTR_ALIGN__(64);
+
+			GSHotAVX_t   m_gsh __ATTR_ALIGN__(64);
+
+			GrassScattererAVX() __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+			GrassScattererAVX(const int32_t,
+			                  const int32_t,
+					  const int32_t,
+					  const float,
+					  const float,
+					  const float) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+			GrassScattererAVX(const GrassScattererAVX &) = delete;
+
+			GrassScattererAVX(GrassScattererAVX &&) = delete;
+
+			~GrassScattererAVX() __ATTR_COLD__ __ATTR_ALIGN__(32) noexcept(true);
+
+			GrassScatterer & operator=(const GrassScatterer &) = delete;
+
+			GrassScatterer & operator=(GrassScatterer &&) = delete;
+
+			void SetGrassMoistness() __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+			void ComputeGrassParamEq_ymm8r4(
+#if defined __ICC || defined __INTEL_COMPILER
+						      const AVXVec8, const AVXVec8, const int32_t
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+						      const float, const float, const int32_t
+#endif
+						      ) __ATTR_COLD__ __ATTR_ALIGN__(32);
+
+			 void ComputeGrassPolarization_ymm8r4() __ATTR_HOT__ __ATTR_ALIGN__(32);
+   
+
+	     } __ATTR_ALIGN__(64);
 
      } // math
 
