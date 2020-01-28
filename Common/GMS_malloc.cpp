@@ -4,6 +4,8 @@
 #include "GMS_malloc.h"
 #include "GMS_config.h"
 
+
+
 #if defined _WIN64
 
 double *
@@ -306,6 +308,7 @@ failed:  {
 #include <assert>
 #include "GMS_avxvecf32.h"
 #include "GMS_avx512vecf32.h"
+#include "GMS_avxc8f32.h"
 
 double *
 gms::common::
@@ -394,6 +397,16 @@ gms_avx512vec16_malloca(const std::size_t len,
       assert(len > 0ULL);
 #endif
      return (reinterpret_cast<AVX512Vec16*>(_mm_malloc(len*sizeof(AVX512Vec16),alignment)));
+}
+
+AVXc8f32 *
+gms::common::
+gms_avxc8f32_malloca(const std::size_t len,
+		    const int32_t alignment) {
+#if (GMS_DEBUG_ON) == 1
+      assert(len > 0ULL);
+#endif
+      return (reinterpret_cast<AVXc8f32*>(_mm_malloc(len*sizeof(AVXc8f32),alignment)));
 }
 
 double * 
@@ -509,6 +522,24 @@ gms_avx512vec16_emalloca(const std::size_t len,
          std::cerr << "Not implemented yet!!" << std::endl;
 #endif
          ABORT_ON_ERROR("gms_avx512vec16_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
+     }
+      return (ptr);
+}
+
+AVXc8f32 *
+gms::common::
+gms_avxc8f32_emalloca(const std::size_t len,
+                         const int32_t alignment) {
+#if (GMS_DEBUG_ON) == 1
+     assert(len > 0ULL);
+#endif
+     AVXc8f32 * ptr = NULL;
+     ptr = reinterpret_cast<AVXc8f32*>(_mm_malloc(len*sizeof(AVXc8f32),alignment));
+     if(NULL == ptr && len != 0ULL) {
+#if (PRINT_CALLSTACK_ON_ERROR) == 1
+         std::cerr << "Not implemented yet!!" << std::endl;
+#endif
+         ABORT_ON_ERROR("gms_avxc8f32_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
      }
       return (ptr);
 }
