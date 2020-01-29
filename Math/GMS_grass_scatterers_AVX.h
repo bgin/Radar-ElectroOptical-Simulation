@@ -70,15 +70,17 @@ namespace gms {
 			float   Tah;
 			//   Apparent surface temperature (vertical polarization)
 			float   Tav;
+		        //  Complex dielectric constant per each cylinder
+		        std::complex<float> epsilon;
 #if (USE_STRUCT_PADDING) == 1
-		      PAD_TO_ALIGNED(4,0,24)
+		      PAD_TO_ALIGNED(4,0,16)
 #endif
 			//  Cross-sectional area of cylinders
 			float   * __restrict __ATTR_ALIGN__(8) A;
 			 // Is water or rather moistness present or not on the branch surface (per n-leaves) (allowed values only 0,1)
 			int32_t * __restrict __ATTR_ALIGN__(8) moistness;
-			//  Complex dielectric constant per each cylinder
-		        std::complex<float>  * __restrict __ATTR_ALIGN__(8) eps;
+			
+		       
 			//  ! Grass parametric equation (approximated as a cylindrical objects)
                          //  ! Parameter x, (r*cos(t))
                          //  ! PAOS type size of arrays is -- npoints/8 1st dim (evaluation of x) ,
@@ -91,7 +93,7 @@ namespace gms {
                          //  !2nd dimension is a plant  number, 1st dimension evaluation of parameter z
 			AVXVec8 * __restrict __ATTR_ALIGN__(8) zparam;
 #if (USE_STRUCT_PADDING) == 1
-		      PAD_TO_ALIGNED(8,1,26)
+		      PAD_TO_ALIGNED(8,1,24)
 #endif
 		 } __ATTR_ALIGN__(64);
 
@@ -144,7 +146,8 @@ namespace gms {
 					  const int32_t,
 					  const float,
 					  const float,
-					  const float) __ATTR_COLD__ __ATTR_ALIGN__(32);
+					  const float,
+					  const std::complex<float>) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			GrassScattererAVX(const GrassScattererAVX &) = delete;
 
@@ -158,15 +161,16 @@ namespace gms {
 
 			void SetGrassMoistness() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeGrassParamEq_ymm8r4(
-#if defined __ICC || defined __INTEL_COMPILER
-						      const AVXVec8, const AVXVec8, const int32_t
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-						      const float, const float, const int32_t
-#endif
-						      ) __ATTR_COLD__ __ATTR_ALIGN__(32);
+			void ComputeGrassParamEq_ymm8r4(float * __restrict __ATTR_ALIGN__(64),
+			                                float * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			 void ComputeGrassPolarization_ymm8r4() __ATTR_HOT__ __ATTR_ALIGN__(32);
+			void ComputeGrassHVPolarization(const float * __restrict __ATTR_ALIGN__(64),
+			                                const float * __restrict __ATTR_ALIGN__(64),
+						        const float,
+							const float,
+							const float) __ATTR_HOT__ __ATTR_ALIGN__(32);			      
+
+			
    
 
 	     } __ATTR_ALIGN__(64);
