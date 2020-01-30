@@ -155,17 +155,15 @@ namespace gms {
 
 			~GrassScattererAVX() __ATTR_COLD__ __ATTR_ALIGN__(32) noexcept(true);
 
-			GrassScatterer & operator=(const GrassScatterer &) = delete;
+			GrassScattererAVX & operator=(const GrassScattererAVX &) = delete;
 
-			GrassScatterer & operator=(GrassScatterer &&) = delete;
+			GrassScattererAVX & operator=(GrassScattererAVX &&) = delete;
 
 			void SetGrassMoistnessMask() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeGrassParamEq_ymm8r4(float * __restrict __ATTR_ALIGN__(64),
-			                                float * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+			void ComputeGrassParamEq_ymm8r4() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeGrassHVPolarization(const float * __restrict __ATTR_ALIGN__(64),
-			                                const float * __restrict __ATTR_ALIGN__(64),
+			void ComputeGrassHVPolarization(
 						        const float,
 							const float,
 							const float) __ATTR_HOT__ __ATTR_ALIGN__(32);			      

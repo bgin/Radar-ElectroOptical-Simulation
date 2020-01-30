@@ -9,7 +9,7 @@
 #include <ctime>
 #include <cstdlib>
 #endif
-#include "GMS_grass_scatterer_AVX.h"
+#include "GMS_grass_scatterers_AVX.h"
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
@@ -139,9 +139,8 @@ SetGrassMoistnessMask() {
 
 void
 gms::math::GrassScattererAVX::
-ComputeGrassParamEq_ymm8r4(float * __restrict rads,
-                           float * __restrict heights) {
-                           // length must be nplants
+ComputeGrassParamEq_ymm8r4() {
+                           
      struct _T0_ {
        AVXVec8 vtheta0;
        AVXVec8 vtheta1;
@@ -184,6 +183,7 @@ ComputeGrassParamEq_ymm8r4(float * __restrict rads,
      AVXVec8 rScale = AVXVec8{10.0f}; // unit of mm
      AVXVec8 hScale = AVXVec8{100.0f}; // unit of cm
      const int64_t totpts = static_cast<int64_t>(m_gsc.nplants*m_gsc.param_npts);
+     const static float n2PI = 6.283185307179586f;
      std::clock_t seedr,seedz;
        //Locals first-touch
      t0.vtheta0 = ZERO;
@@ -231,23 +231,27 @@ ComputeGrassParamEq_ymm8r4(float * __restrict rads,
 					ZERO);
      // Loop over grass cylinders
 #if defined __ICC || defined __INTEL_COMPILER
-     __assume_aligned(rads,64);
-     __assume_aligned(heigths,64);
+    
+     __assume_aligned(m_gsc.A,64);
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-     rads    = (float*)__builtin_assume_aligned(rads,64);
-     heights = (float*)__builtin_assume_aligned(heights,64)
+    
+     m_gsc.A = (float*)__builtin_assume_aligned(m_gsc.A,64);
+#endif
      for(int32_t i = 0; i != m_gsc.nplants; ++i) {
          seedr = std::clock();
 	 auto rand_r = std::bind(std::uniform_real_distribution<float>(0.5f,0.9f),
 	                         std::mt19937(seedr));
 	 const float rtemp = rand_r();
-	 rads[i] = rtemp;
+	 //
 	 t5.tvrad = rScale * AVXVec8{rtemp};
 	 seedz = std::clock();
 	 auto rand_z = std::bind(std::uniform_real_distribution<float>(0.3f,0.5f),
 	                         std::mt19937(seedz));
 	 const float ztemp = rand_z();
-	 heights[i] = ztemp;
+	 const float c0 = n2PI*rtemp;
+	 //
+	 // Compute cylinders surface.
+	 m_gsc.A[i] = c0*ztemp+c0*rtemp;
 	 t5.tvz   = hScale * AVXVec8{ztemp};
 	 t4.tmp2  = t4.vNPTS;
 	 t2.vhinc0 = t4.tmp2;
@@ -308,8 +312,7 @@ ComputeGrassParamEq_ymm8r4(float * __restrict rads,
 #include <math.h>
 void
 gms::math::GrassScattererAVX::
-ComputeGrassHVPolarization(const float * __restrict rads,
-                           const float * __restrict heights,
+ComputeGrassHVPolarization(
 			   const float gamma,
 			   const float ah,   
 			   const float av) {
@@ -334,38 +337,24 @@ ComputeGrassHVPolarization(const float * __restrict rads,
      float c0    = 0.0f;
      float c1    = 0.0f;
 #if defined __ICC || defined __INTEL_COMPILER
-     __assume_aligned(rads,64);
-     __assume_aligned(heights,64);
+     __assume_aligned(m_gsc.A,64);
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-     rads = (float*)__builtin_assume_aligned(rads,64);
-     heights = (float*)__builtin_assume_aligned(heights,64);
+     m_gsc.A = (float*)__builtin_assume_aligned(m_gsc.A,64);
 #endif
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
 
 #endif
-     for(int32_t i = 0; i != m_gsc.nplants-7; i += 8) {
-         const float c0 = n2PI*rads[i+0];
-         float t0 += c0*heights[i+0]+c0*rads[i+0];
-	 const float c1 = n2PI*rads[i+1];
-	 float t1 += c1*heights[i+1]+c1*rads[i+1];
-	 const float c2 = n2PI*rads[i+2];
-	 float t2 += c2*heights[i+2]+c2*rads[i+2];
-	 const float c3 = n2PI*rads[i+3];
-	 float t3 += c3*heights[i+3]+c3*rads[i+3];
-	 const float c4 = n2PI*rads[i+4];
-	 float t4 += c4*heights[i+4]+c4*rads[i+4];
-	 const float c5 = n2PI*rads[i+5];
-	 float t5 += c5*heights[i+5]+c5*rads[i+5];
-	 const float c6 = n2PI*rads[i+6];
-	 float t6 += c6*heights[i+6]+c6*rads[i+6];
-	 const float c7 = n2PI*rads[i+7];
-	 float t7 += c7*heights[i+7]+c7*rads[i+7];
-	
+     for(int32_t i = 0; i != m_gsc.nplants-3; i += 4) {
+     
+         float t0 += m_gsc.A[i+0];
+	 float t1 += m_gsc.A[i+1];
+	 float t2 += m_gsc.A[i+2];
+	 float t3 += m_gsc.A[i+3]
 	// const float tot = t0+t1;
 	// m_gsc.tot_area += tot;
      }
-     m_gsc.tot_area = t0+t1+t2+t3+t4+t5+t6+t7;
+     m_gsc.tot_area = t0+t1+t2+t3;
      sarea = m_gsc.tot_area*m_gsc.tot_area;
      term1 = static_cast<float>(m_gsc.nplants)*asqrt*K*K;
      c0 = m_gsc.epsilon.real();
