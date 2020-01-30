@@ -159,7 +159,7 @@ namespace gms {
 
 			GrassScatterer & operator=(GrassScatterer &&) = delete;
 
-			void SetGrassMoistness() __ATTR_COLD__ __ATTR_ALIGN__(32);
+			void SetGrassMoistnessMask() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			void ComputeGrassParamEq_ymm8r4(float * __restrict __ATTR_ALIGN__(64),
 			                                float * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
