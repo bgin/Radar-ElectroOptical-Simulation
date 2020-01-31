@@ -241,51 +241,47 @@ TreeScattererAVX512::~TreeScattererAVX512() {
 void
 gms::math::
 TreeScattererAVX512::
-SetMistness_scalar() {
+SetMistnessMask() {
 
-        const uint32_t cutoff_hi = 1U<<16U;
-    int32_t result = 0;
-    // Memory first touch here!!
-    for(int32_t i = 0; i != m_tsc.nleaves; ++i){
-        m_tsc.leaves_moist[i] = 0;
+   
+    std::random_device rd;
+     // Memory first touch here!!
+    for(int32_t i = 0; i != m_tsc.nleaves-7; i += 8){
+        m_tsc.leaves_moist[i+0] = 0;
+	m_tsc.leaves_moist[i+1] = 0;
+	m_tsc.leaves_moist[i+2] = 0;
+	m_tsc.leaves_moist[i+3] = 0;
+	m_tsc.leaves_moist[i+4] = 0;
+	m_tsc.leaves_moist[i+5] = 0;
+	m_tsc.leaves_moist[i+6] = 0;
+	m_tsc.leaves_moist[i+7] = 0;
     }
-    for(int32_t i = 0; i != m_tsc.nbranches; ++i) {
-        m_tsc.branches_moist[i] = 0;
+    std::mt19937 rgen(rd());
+    std::uniform_int_distribution<> distr(0,1);
+    for(int32_t i = 0; i != m_tsc.nleaves-3; i += 4) {
+        m_tsc.leaves_moist[i+0] = distr(rgen);
+	m_tsc.leaves_moist[i+1] = distr(rgen);
+	m_tsc.leaves_moist[i+2] = distr(rgen);
+	m_tsc.leaves_moist[i+3] = distr(rgen);
     }
-
-    for(int32_t i = 0; i != m_tsc.nleaves; ++i) {
-        uint32_t random = 0U;
-        result = _rdrand32_step(&random);
-        if(!result) {
-	   continue;
-	}
-	else {
-	   if(random>cutoff_hi) {
-	     m_tsc.leaves_moist[i] = 1;
-	   }
-	   else{
-	     m_tsc.leaves_moist[i] = 0;
-	   }
-	}
-	   
+    for(int32_t i = 0; i != m_tsc.nbranches-7; i += 8) {
+        m_tsc.branches_moist[i+0] = 0;
+	m_tsc.branches_moist[i+1] = 0;
+	m_tsc.branches_moist[i+2] = 0;
+	m_tsc.branches_moist[i+3] = 0;
+	m_tsc.branches_moist[i+4] = 0;
+	m_tsc.branches_moist[i+5] = 0;
+	m_tsc.branches_moist[i+6] = 0;
+	m_tsc.branches_moist[i+7] = 0;
+        
     }
-    result = 0;
-    for(int32_t i = 0; i != m_tsc.nbranches; ++i) {
-        uint32_t random = 0U;
-	result = _rdrand32_step(&random);
-	if(!result) {
-	   continue;
-	}
-	 else {
-             if(random>cutoff_hi) {
-                m_tsc.branches_moist[i] = 1;
-	     }
-	     else {
-                m_tsc.branches_moist[i] = 0;
-	     }
-	 }
+    for(int32_t i = 0; i != m_tsc.nbranches-3; i += 4) {
+        m_tsc.branches_moist[i+0] = distr(rgen);
+	m_tsc.branches_moist[i+1] = distr(rgen);
+	m_tsc.branches_moist[i+2] = distr(rgen);
+	m_tsc.branches_moist[i+3] = distr(rgen);
     }
-
+   
 }
 
 void
@@ -410,7 +406,7 @@ ComputeTrunkParamEq_zmm16r4(const int32_t zpoints) {
        }
 }
 
-bool
+void
 gms::math::TreeScattererAVX512::
 SetThicknessDensAng_zmm16r4(const AVX512vEC16 * __restrict bradii) {
 
@@ -438,7 +434,7 @@ SetThicknessDensAng_zmm16r4(const AVX512vEC16 * __restrict bradii) {
     err = svrng_get_status();
     if(err != SVRNG_STATUS_OK) {
       svrng_delete_engine(engine);
-      return (false);
+      return;
     }
     __assume_aligned(m_tsc.leaves_thick,64);
     __assume_aligned(m_tsc.leaves_dens,64);
@@ -613,22 +609,19 @@ SetThicknessDensAng_zmm16r4(const AVX512vEC16 * __restrict bradii) {
 #if defined __ICC || defined __INTEL_COMPILER
      svrng_delete_engine(engine);
 #endif
-     return (true);			     
+   		     
 }
 
-bool
+void
 gms::math::TreeScattererAVX512::
-ComputeLeavesParamEq_zmm16r4(
-#if defined __ICC || defined __INTEL_COMPILER
-const AVX512Vec16 va,
-const AVX512Vec16 vb
-#elif defined __GNUC__ && defined __INTEL_COMPILER
-const float a,
-const float b
-#endif
-)    {
+ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
+                              const AVX512Vec16 vb){
 
-#if defined __ICC || defined __INTEL_COMPILER
+
+
+
+
+
      struct _T0_ {
        AVX512Vec16 vthinc0;
        AVX512Vec16 vthinc1;
@@ -656,12 +649,7 @@ const float b
      } __ATTR_ALIGN__(64) t3;
      AVX512Vec16 vNPTS;
      const int64_t xyparam_len = static_cast<int64_t>(m_tsc.nleaves*m_tsc.leaves_param_npts);
-     svrng_float16_t vrandx, vrandy;
-     svrng_engine_t enginex,enginey;
-     svrng_distribution_t uniformx, uniformy;
-     uint32_t seedx,seedy;
-     int32_t resultx,resulty;
-     int32_t errx,erry;
+     std::clock_t seedx,seedy;
      // Locals first memory-touch
      t0.vthinc0  = ZERO;
      t0.vthinc1  = ZERO;
@@ -688,33 +676,17 @@ const float b
      vNPTS = AVX512Vec16{static_cast<float>(m_tsc.leaves_param_npts)};
        for(int32_t i = 0; i != m_tsc.nleaves; ++i) {
            // loop over leaves
-           seedx = 0U;
-           resultx = -9999;
-           resultx = _rdrand32_step(&seedx);
-           if(!resultx) seedx = 195647856U;
-           enginex = svrng_new_mt19937_engine(seedx);
-	   unformx = svrng_new_uniform_distribution_float(0.1f,1.0f);
-	   errx = 0;
-	   errx = svrng_get_status();
-	   if(errx != SVRNG_STATUS_OK) {
-              svrng_delete_engine(enginex);
-	      return (false);
-	   }
-	   seedy = 0U;
-	   resulty = -9999;
-	   if(!resulty) seedy = 126588965U;
-	   enginey     = svrng_new_mt19937_engine(seedy);
-	   uniformy    = svrng_new_uniform_distribution_float(0.1f,1.0f);
-	   erry = 0;
-	   erry = svrng_get_status();
-	   if(erry != SVRNG_STATUS_OK) {
-              svrng_delete_engine(enginey);
-	      return (false);
-	   }
-	   vrandx      = svrng_generate16_float(enginex,uniformx);
-	   t3.tva      = t3.tva + *(AVX512Vec16*)&vrandx;
-	   vrandy      = svrng_generate16_float(enginey,uniformy);
-	   t3.tvb      = t3.tvb + *(AVX512Vec16*)&vrandy;
+           seedx = std::clock();
+	   auto rand_x = std::bind(std::uniform_real_distribution<float>(0.1f,1.0f),
+	                           std::mt19937(seedx));
+	   const float xtemp = rand_x();
+	   //
+	   t3.tva      = t3.tva + xtemp;
+	   seedy = std::clock();
+	   auto rand_y = std::bind(std::uniform_real_distribution<float>(0.1f,1.0f),
+	                           std::mt19937(seedy));
+	   const float ytemp = rand_y();
+	   t3.tvb      = t3.tvb + ytemp;
 	   t2.vsqrtarg = TWO*(t3.tva*t3.tva+t3.tvb*t3.tvb);
 	   t2.vsqrt    = sqrt(t2.vsqrt);
 	   t2.vC       = PI*t2.vsqrt;
@@ -753,118 +725,22 @@ const float b
 	   }	   
 
      }
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-       // Scalar version for GCC compiler
-      
-         float thinc0;
-         float theta0;
-         float sqr;
-	 float sqrarg;
-	 float C;
-	 float tmp;
-         // 
-         float ta;
-	 float tb;
-	 float inc;
-	
-      
+
+}      
     
-       const int64_t xyparamlen = static_cast<int64_t>(m_tsc.nleaves*16*m_tsc.leaves_param_npts);
-       const int32_t xynpts     = 16*m_tsc.leaves_param_npts;
-       const int32_t xyflatlen  = m_tsc.nleaves*m_tsc.leaves_param_npts;
-       float * __restrict __ATTR_ALIGN__(64) pxparam = NULL;
-       float * __restrict __ATTR_ALIGN__(64) pyparam = NULL;
-       std::clock_t seedx,seedy;
-       float nPTS;
-       // Locals first memory-touch
-       thinc0 = 0.0f;
-       theta0 = 0.0f;
-       sqr    = 0.0f;
-       sqrarg = 0.0f;
-       C      = 0.0f;
-       tmp    = 0.0f;
-       ta     = a;
-       tb     = b;
-       inc    = 1.0f;
-       //
-       nPTS      = 0.0f;
-       pxparam   = gms::common::gms_efmalloca(static_cast<size_t>(xyparamlen),64);
-       pyparam   = gms::common::gms_efmalloca(static_cast<size_t>(xyparamlen),64);
-       // Memory first touch
-       avx512_init_unroll8x_ps(&pxparam[0],
-                               xyparamlen,
-			       0.0f);
-       avx512_init_unroll8x_ps(&pyparam[0],
-                               xyparamlen,
-			       0.0f);
-       nPTS = static_cast<float>(xynpts);
-       for(int32_t i = 0; i != m_tsc.nleaves; ++i) {
 
-           seedx = std::clock();
-	   auto    srandx = std::bind(std::uniform_real_distribution<float>(0.1f,1.0f),
-	                              std::mt19937(seedx);
-	   seedy = std::clock();
-	   auto    srandy = std::bind(std::uniform_real_distribution<float>(0.1f.1.0f),
-	                              std::mt19937(seedy);
-	   ta     += srandx();
-	   tb     += srandy();
-	   sqrarg =  2.0f*(ta*ta+tb*tb);
-	   sqr    =  sqrt(sqrarg);
-	   C      =  3.141592653589793f*sqr;
-	   tmp    =  C/nPTS;
-	   thinc0 =  tmp;
-	   thinc0 += inc;
-	   theta0 = 0.0f;
-#pragma omp simd aligned(pxparam,pyparam:64)
-	   for(int32_t j = 0; j != xynpts; ++j) {
-               theta0 += thinc0;
-	       pxparam[Ix2D(i,xynpts,j)] = ta*cos(theta0);
-	       pyparam[Ix2D(i,xynpts,j)] = tb*sin(theta0);
-	   }
-       }
-       // Memory first touch
-       gms::common::avx512vec16_init_unroll8x(&m_tsc.leaves_xparam[0],
-                                        xyparam_len,
-					ZERO);
-       gms::common::avx512vec16_init_unroll8x(&m_tsc.leaves_yparam[0],
-                                        xyparam_len,
-     					ZERO);
-        // Copy results back to member arrays.
-       gms::common::avx512vec16_copy_from_r4(&m_tsc.m_leaves_xparam[0],
-                                         &pxparam[0],
-					 xyparamlen);
-       gms::common::avx512vec16_copy_from_r4(&m_tsc.m_leaves_yparam[0],
-                                         &pyparam[0],
-					 xyparamlen);
-      
+   
 
-       _mm_free(pxparam);
-       pxparam = NULL;
-       _mm_free(pyparam);
-       pyparam = NULL;
-#endif
-#if defined __ICC || defined __INTEL_COMPILER
-      svrng_delete_engine(enginex);
-      svrng_delete_engine(enginey);
-#endif
-      return (true);
-}
+
 
 bool
 gms::math::TreeScattererAVX512::
-ComputeBranchParamEq_zmm16r4(
-#if defined __ICC || defined __INTEL_COMPILER
-			      const AVXVec8 vrad,
-                              const AVXVec8 vz,
-			      const int32_t nzpts
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-			      const float rad,
-			      const float z,
-			      const int32_t nzpts
-#endif
-			      ) {
+ComputeBranchParamEq_zmm16r4( const int32_t nzpts) {
 
-#if defined __ICC || defined __INTEL_COMPILER
+			     
+
+
+
     
      struct _T0_ {
        AVX512Vec16 vtheta0;
@@ -905,13 +781,10 @@ ComputeBranchParamEq_zmm16r4(
        AVX512Vec16 tvrad;
        AVX512Vec16 tvz;
      } __ATTR_ALIGN__(64) t5;
+     const AVX512Vec16 rScale{100.0f}; // unit of mm.
+     const AVX512Vec16 hScale{300.0f}; // unit of cm.
      const int64_t xyznpts = static_cast<int64_t>(m_tsc.nbranches*m_tsc.branches_param_npts);
-     svrng_float16_t vzrand,vrrand;
-     svrng_engine_t enginer,enginez;
-     svrng_distribution_t uniformr, uniformz;
-     uint32_t seedr,seedz;
-     int32_t resultr,resultz;
-     int32_t errr,errz;
+     std::clock_t seedr,seedz;
      //Locals first-touch
      t0.vtheta0 = ZERO;
      t0.vtheta1 = ZERO;
@@ -960,34 +833,18 @@ ComputeBranchParamEq_zmm16r4(
      t5.tvz   = vz;
      for(int32_t i = 0; i != m_tsc.nbranches; ++i) {
          // Loop over branches -- do...
-         seedr    = 0U;
-	 resultr  = -9999;
-	 resultr  = _rdrand32_step(&seedr);
-	 if(!resultr) seedr = 105685421U;
-	 enginer  = svrng_new_mt19937_engine(seedr);
-	 uniformr = svrng_new_uniform_distribution_float(0.1f,1.0f);
-	 errr = 0;
-	 errr = svrng_get_status();
-	 if(errr != SVRNG_STATUS_OK) {
-            svrng_delete_engine(enginer);
-	    return (false);
-	 }
-	 seedz    = 0U;
-	 resultz  = -9999;
-	 resultz  = _rdrand32_step(&seedz);
-	 if(!resultz) seedz = 115654785U;
-	 enginez  = svrng_new_mt19937_engine(seedz);
-	 uniformz = svrng_new_uniform_distribution_float(0.1f,1.0f);
-	 errz = 0;
-	 errz = svrng_get_status();
-	 if(errz != SVRNG_STATUS_OK) {
-            svrng_delete_engine(enginez);
-	    return (false);
-	 }
-	 vrrand   = svrng_generate8_float(enginer,uniformr);
-	 t5.tvrad = t5.tvrad + *(AVX512Vec16*)&vrrand;
-	 vzrand   = svrng_generate8_float(enginez,uniformz);
-	 t5.tvz   = t5.tvz +   *(AVX512Vec16*)&vzrand;
+         seedr       = std::clock();
+	 auto rand_r = std::bind(std::uniform_real_distribution<float>(0.1f,1.0f),
+	                         std::mt19937(seedr));
+	 const float rtemp = rand_r();
+         t5.tvrad = rScale * rtemp;
+	 seedz       = std::clock();
+	 auto rand_z = std::bind(std::uniform_real_distribution<float>(0.1f,1.0f),
+	                         std::mt19937(seedz));
+	 const float ztemp = rand_z();
+	
+
+	 t5.tvz   = hScale * ztemp;
 	 t4.tmp2  = t5.tvz/t4.vNZPTS;
 	 t2.vhinc0 = t4.tmp2;
 	 t2.vhinc0 += VINC0;
@@ -1036,14 +893,7 @@ ComputeBranchParamEq_zmm16r4(
 	     }
 
        }
-       svrng_delete_engine(enginer);
-       svrng_delete_engine(enginez);
-       return (true);
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-      // Scalar version for GCC (no support for vectorised random number generators)
-    
-#error "Use Intel Compiler"      
-#endif
+     
 }
 
 
