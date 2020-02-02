@@ -1,7 +1,7 @@
 # Guided-Missile-Modeling-Simulation
 Guided air-to-air missile modeling and simulation project written in C++
 This is a C++ port of https://github.com/bgin/Guided_Missile_Simulation projects written in Fortran.
-T-Matrix models(by Mishchenko and by Xu) will be used to compute scattering coefficients returned by single particles and ensemble of particles. Large scatterers will be modelled as a STL, gmsh meshes and later converted to nec format files. Radar scattering will be calculated by Method of Moments with the help of modified NEC-2 program. Atmospheric quantities and wind will be based on WRF modules and WRF output files. Work in progress...
+T-Matrix models(by Mishchenko and by Xu) will be used to compute scattering coefficients returned by single particles and ensemble of particles. Large scatterers (targets) will be modelled as a OBJ,STL format files and later converted to format used by MGL-FastRCS program. Near, far fields and RCS will be computed by MGL-FastRCS program (FDTD method) Atmospheric quantities and wind will be based on WRF modules and WRF output files. Work in progress...
 
 List of references:
 
