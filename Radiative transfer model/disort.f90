@@ -2072,151 +2072,167 @@ c                           ** Balance the submatrix in rows L through K
 
      
       END SUBROUTINE 
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE FLUXES( CMU, CWT, FBEAM, GC, KK, LAYRU, LL, LYRCUT,  &
+                        MAXULV, MXCMU, MXULV, NCUT, NN, NSTR, NTAU,   &
+                        PI, PRNT, PRNTU0, SSALB, TAUCPR, UMU0, UTAU,  &
+                        UTAUPR, XR0, XR1, ZZ, ZPLK0, ZPLK1, DFDT,     &
+                        FLUP, FLDN, FLDIR, RFLDIR, RFLDN, UAVG, U0C )     !GCC$ ATTRIBUTES hot :: FLUXES !GCC$ ATTRIBUTES aligned(16) :: FLUXES
+#elif defined __ICC || defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES CODE_ALIGN : 16 :: FLUXES
+         SUBROUTINE FLUXES( CMU, CWT, FBEAM, GC, KK, LAYRU, LL, LYRCUT,  &
+                        MAXULV, MXCMU, MXULV, NCUT, NN, NSTR, NTAU,   &
+                        PI, PRNT, PRNTU0, SSALB, TAUCPR, UMU0, UTAU,  &
+                        UTAUPR, XR0, XR1, ZZ, ZPLK0, ZPLK1, DFDT,     &
+                        FLUP, FLDN, FLDIR, RFLDIR, RFLDN, UAVG, U0C )
+#endif
 
-      SUBROUTINE FLUXES( CMU, CWT, FBEAM, GC, KK, LAYRU, LL, LYRCUT,
-     &                   MAXULV, MXCMU, MXULV, NCUT, NN, NSTR, NTAU,
-     &                   PI, PRNT, PRNTU0, SSALB, TAUCPR, UMU0, UTAU,
-     &                   UTAUPR, XR0, XR1, ZZ, ZPLK0, ZPLK1, DFDT,
-     &                   FLUP, FLDN, FLDIR, RFLDIR, RFLDN, UAVG, U0C )
+!c       Calculates the radiative fluxes, mean intensity, and flux
+!c       derivative with respect to optical depth from the m=0 intensity
+!c       components (the azimuthally-averaged intensity)
+!c
+!c
+!c    I N P U T     V A R I A B L E S:
+!c
+!c       CMU      :  Abscissae for Gauss quadrature over angle cosine
+!c
+!c       CWT      :  Weights for Gauss quadrature over angle cosine
+!c
+!c       GC       :  Eigenvectors at polar quadrature angles, SC(1)
+!c
+!c       KK       :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
+!c
+!c       LAYRU    :  Layer number of user level UTAU
+!c
+!c       LL       :  Constants of integration in Eq. SC(1), obtained
+!c                   by solving scaled version of Eq. SC(5);
+!c                   exponential term of Eq. SC(12) not included
+!c
+!c       LYRCUT   :  Logical flag for truncation of comput. layer
+!c
+!c       NN       :  Order of double-Gauss quadrature (NSTR/2)
+!c
+!c       NCUT     :  Number of computational layer where absorption
+!c                   optical depth exceeds ABSCUT
+!c
+!c       PRNTU0   :  TRUE, print azimuthally-averaged intensity at
+!c                   quadrature angles
+!c
+!c       TAUCPR   :  Cumulative optical depth (delta-M-scaled)
+!c
+!c       UTAUPR   :  Optical depths of user output levels in delta-M
+!c                   coordinates;  equal to UTAU if no delta-M
+!c
+!c       XR0      :  Expansion of thermal source function in Eq. SS(14),
+!c                   STWL(24c)
+!!c
+!c       XR1      :  Expansion of thermal source function Eq. SS(16),
+!c                   STWL(24c)
+!c
+!c       ZZ       :  Beam source vectors in Eq. SS(19), STWL(24b)
+!c
+!c       ZPLK0    :  Thermal source vectors Z0, by solving Eq. SS(16),
+!c                   Y0 in STWL(26b)
+!c
+!c       ZPLK1    :  Thermal source vectors Z1, by solving Eq. SS(16),
+!c                   Y1 in STWL(26a)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T     V A R I A B L E S:
+!c
+!c       U0C      :  Azimuthally averaged intensities
+!c                   ( at polar quadrature angles )
+!c
+!c       (RFLDIR, RFLDN, FLUP, DFDT, UAVG are DISORT output variables)
+!c
+!c
+!c    I N T E R N A L       V A R I A B L E S:
+!c
+!c       DIRINT   :  Direct intensity attenuated
+!c       FDNTOT   :  Total downward flux (direct + diffuse)
+!c       FLDIR    :  Direct-beam flux (delta-M scaled)
+!c       FLDN     :  Diffuse down-flux (delta-M scaled)
+!c       FNET     :  Net flux (total-down - diffuse-up)
+!c       FACT     :  EXP( - UTAUPR / UMU0 )
+!c       PLSORC   :  Planck source function (thermal)
+!c       ZINT     :  Intensity of m = 0 case, in Eq. SC(1)
+!c
+!c   Called by- DISORT
+!c   Calls- ZEROIT
+!c +-------------------------------------------------------------------+
 
-c       Calculates the radiative fluxes, mean intensity, and flux
-c       derivative with respect to optical depth from the m=0 intensity
-c       components (the azimuthally-averaged intensity)
-c
-c
-c    I N P U T     V A R I A B L E S:
-c
-c       CMU      :  Abscissae for Gauss quadrature over angle cosine
-c
-c       CWT      :  Weights for Gauss quadrature over angle cosine
-c
-c       GC       :  Eigenvectors at polar quadrature angles, SC(1)
-c
-c       KK       :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
-c
-c       LAYRU    :  Layer number of user level UTAU
-c
-c       LL       :  Constants of integration in Eq. SC(1), obtained
-c                   by solving scaled version of Eq. SC(5);
-c                   exponential term of Eq. SC(12) not included
-c
-c       LYRCUT   :  Logical flag for truncation of comput. layer
-c
-c       NN       :  Order of double-Gauss quadrature (NSTR/2)
-c
-c       NCUT     :  Number of computational layer where absorption
-c                   optical depth exceeds ABSCUT
-c
-c       PRNTU0   :  TRUE, print azimuthally-averaged intensity at
-c                   quadrature angles
-c
-c       TAUCPR   :  Cumulative optical depth (delta-M-scaled)
-c
-c       UTAUPR   :  Optical depths of user output levels in delta-M
-c                   coordinates;  equal to UTAU if no delta-M
-c
-c       XR0      :  Expansion of thermal source function in Eq. SS(14),
-c                   STWL(24c)
-c
-c       XR1      :  Expansion of thermal source function Eq. SS(16),
-c                   STWL(24c)
-c
-c       ZZ       :  Beam source vectors in Eq. SS(19), STWL(24b)
-c
-c       ZPLK0    :  Thermal source vectors Z0, by solving Eq. SS(16),
-c                   Y0 in STWL(26b)
-c
-c       ZPLK1    :  Thermal source vectors Z1, by solving Eq. SS(16),
-c                   Y1 in STWL(26a)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c    O U T P U T     V A R I A B L E S:
-c
-c       U0C      :  Azimuthally averaged intensities
-c                   ( at polar quadrature angles )
-c
-c       (RFLDIR, RFLDN, FLUP, DFDT, UAVG are DISORT output variables)
-c
-c
-c    I N T E R N A L       V A R I A B L E S:
-c
-c       DIRINT   :  Direct intensity attenuated
-c       FDNTOT   :  Total downward flux (direct + diffuse)
-c       FLDIR    :  Direct-beam flux (delta-M scaled)
-c       FLDN     :  Diffuse down-flux (delta-M scaled)
-c       FNET     :  Net flux (total-down - diffuse-up)
-c       FACT     :  EXP( - UTAUPR / UMU0 )
-c       PLSORC   :  Planck source function (thermal)
-c       ZINT     :  Intensity of m = 0 case, in Eq. SC(1)
-c
-c   Called by- DISORT
-c   Calls- ZEROIT
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
-
-      LOGICAL   LYRCUT, PRNTU0
-      INTEGER   MAXULV, MXCMU, MXULV, NCUT, NN, NSTR, NTAU
-      REAL      FBEAM, PI, UMU0
-c     ..
-c     .. Array Arguments ..
+      LOGICAL(4) ::   LYRCUT, PRNTU0
+      INTEGER(4) ::   MAXULV, MXCMU, MXULV, NCUT, NN, NSTR, NTAU
+      REAL(4)    ::      FBEAM, PI, UMU0
+!c     ..
+!c     .. Array Arguments ..
 
       LOGICAL   PRNT( * )
       INTEGER   LAYRU( MXULV )
-      REAL      CMU( MXCMU ), CWT( MXCMU ), DFDT( MAXULV ),
-     &          FLDIR( MXULV ), FLDN( MXULV ), FLUP( MAXULV ),
-     &          GC( MXCMU, MXCMU, * ), KK( MXCMU, * ), LL( MXCMU, * ),
-     &          RFLDIR( MAXULV ), RFLDN( MAXULV ), SSALB( * ),
-     &          TAUCPR( 0:* ), U0C( MXCMU, MXULV ), UAVG( MAXULV ),
-     &          UTAU( MAXULV ), UTAUPR( MXULV ), XR0( * ), XR1( * ),
-     &          ZPLK0( MXCMU, * ), ZPLK1( MXCMU, * ), ZZ( MXCMU, * )
-c     ..
-c     .. Local Scalars ..
+      REAL(4), dimension(MXCMU)  ::  CMU, CWT
+      REAL(4), dimension(MAXULV) ::  DFDT
+      REAL(4), dimension(MXULV)  ::  FLDIR, FLDN
+      REAL(4), dimension(MAXULV) ::  FLUP
+      REAL(4), dimension(MXCMU,MXCMU,*) :: GC
+      REAL(4), dimension(MXCMU,*) :: KK, LL
+      REAL(4), dimension(MAXULV)  :: RFLDIR, RFLDN
+      REAL(4), dimension(*) :: SSALB
+      REAL(4), dimension(0:*) :: TAUCPR
+      REAL(4), dimension(MXCMU,MXULV) :: U0C
+      REAL(4), dimension(MAXULV)  :: UAVG
+      REAL(4), dimension(MAXULV)  :: UTAU
+      REAL(4), dimension(MXULV)   :: UTAUPR
+      REAL(4), dimension(*)       :: XR0, XR1
+      REAL(4), dimension(MXCMU,*) :: ZPLK0,ZPLK1,ZZ
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   IQ, JQ, LU, LYU
-      REAL      ANG1, ANG2, DIRINT, FACT, FDNTOT, FNET, PLSORC, ZINT
-c     ..
-c     .. External Subroutines ..
+      INTEGER(4) ::    IQ, JQ, LU, LYU
+      REAL(4)    ::      ANG1, ANG2, DIRINT, FACT, FDNTOT, FNET, PLSORC, ZINT
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ZEROIT
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC EXP
-c     ..
+!c     ..
 
 
       IF( PRNT( 2 ) ) WRITE ( *, '(//,21X,A,/,2A,/,2A,/)' )
-     &    '<----------------------- FLUXES ----------------------->',
-     &    '   Optical  Compu    Downward    Downward    Downward     ',
-     &    ' Upward                    Mean      Planck   d(Net Flux)',
-     &    '     Depth  Layer      Direct     Diffuse       Total     ',
-     &    'Diffuse         Net   Intensity      Source   / d(Op Dep)'
+         '<----------------------- FLUXES ----------------------->',    &
+         '   Optical  Compu    Downward    Downward    Downward     ',  &
+         ' Upward                    Mean      Planck   d(Net Flux)',   &
+         '     Depth  Layer      Direct     Diffuse       Total     ',  &
+         'Diffuse         Net   Intensity      Source   / d(Op Dep)'
 
-c                                        ** Zero DISORT output arrays
+!c                                        ** Zero DISORT output arrays
       CALL ZEROIT( U0C, MXULV*MXCMU )
       CALL ZEROIT( FLDIR, MXULV )
       CALL ZEROIT( FLDN, MXULV )
 
-c                                        ** Loop over user levels
+!c                                        ** Loop over user levels
       DO 80 LU = 1, NTAU
 
          LYU  = LAYRU( LU )
 
          IF( LYRCUT .AND. LYU.GT.NCUT ) THEN
-c                                                ** No radiation reaches
-c                                                ** this level
-            FDNTOT = 0.0
-            FNET   = 0.0
-            PLSORC = 0.0
+!c                                                ** No radiation reaches
+!c                                                ** this level
+            FDNTOT = 0.0_4
+            FNET   = 0.0_4
+            PLSORC = 0.0_4
             GO TO  70
 
          END IF
 
 
-         IF( FBEAM.GT.0.0 ) THEN
+         IF( FBEAM.GT.0.0_4 ) THEN
 
             FACT         = EXP( -UTAUPR( LU ) / UMU0 )
             DIRINT       = FBEAM*FACT
@@ -2225,66 +2241,110 @@ c                                                ** this level
 
          ELSE
 
-            DIRINT       = 0.0
-            FLDIR( LU )  = 0.0
-            RFLDIR( LU ) = 0.0
+            DIRINT       = 0.0_4
+            FLDIR( LU )  = 0.0_4
+            RFLDIR( LU ) = 0.0_4
 
          END IF
 
 
          DO 30 IQ = 1, NN
 
-            ZINT = 0.0
-
+            ZINT = 0.0_4
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GC:64, LL:64, KK:64,UTAUPR:64,TAUCPR:64
+            !DIR$ IVDEP
+            !DIR$ REDUCTION(+:ZINT)
+            !DIR$ CODE_ALIGN:64
+#elif defined __GFORTRAN__  && !defined __INTEL_COMPILER
+            !GCC$ IVDEP
+            !GCC$ VECTOR
+#endif
             DO 10 JQ = 1, NN
-               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )*
-     &                EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -
-     &                TAUCPR( LYU ) ) )
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ builtin (exp) attributes simd
+#endif
+               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )* &
+                     EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -     &
+                     TAUCPR( LYU ) ) )
    10       CONTINUE
-
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GC:64, LL:64, KK:64,UTAUPR:64,TAUCPR:64
+            !DIR$ IVDEP
+            !DIR$ REDUCTION(+:ZINT)
+            !DIR$ CODE_ALIGN:64
+#elif defined __GFORTRAN__  && !defined __INTEL_COMPILER
+            !GCC$ IVDEP
+            !GCC$ VECTOR
+#endif
             DO 20 JQ = NN + 1, NSTR
-               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )*
-     &                EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -
-     &                TAUCPR( LYU-1 ) ) )
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ builtin (exp) attributes simd
+#endif                  
+               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )* &
+                     EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -     &
+                     TAUCPR( LYU-1 ) ) )
    20       CONTINUE
 
             U0C( IQ, LU ) = ZINT
 
             IF( FBEAM.GT.0.0 ) U0C( IQ, LU ) = ZINT + ZZ( IQ, LYU )*FACT
 
-            U0C( IQ, LU ) = U0C( IQ, LU ) + ZPLK0( IQ,LYU ) +
-     &                      ZPLK1( IQ,LYU )*UTAUPR( LU )
+            U0C( IQ, LU ) = U0C( IQ, LU ) + ZPLK0( IQ,LYU ) + &
+                           ZPLK1( IQ,LYU )*UTAUPR( LU )
             UAVG( LU ) = UAVG( LU ) + CWT( NN + 1 - IQ )*U0C( IQ, LU )
-            FLDN( LU ) = FLDN( LU ) + CWT( NN + 1 - IQ )*
-     &                   CMU( NN + 1 - IQ )*U0C( IQ, LU )
+            FLDN( LU ) = FLDN( LU ) + CWT( NN + 1 - IQ )* &
+                        CMU( NN + 1 - IQ )*U0C( IQ, LU )
    30    CONTINUE
 
 
          DO 60 IQ = NN + 1, NSTR
 
-            ZINT = 0.0
-
+            ZINT = 0.0_4
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GC:64, LL:64, KK:64,UTAUPR:64,TAUCPR:64
+            !DIR$ IVDEP
+            !DIR$ REDUCTION(+:ZINT)
+            !DIR$ CODE_ALIGN:64
+#elif defined __GFORTRAN__  && !defined __INTEL_COMPILER
+            !GCC$ IVDEP
+            !GCC$ VECTOR
+#endif
             DO 40 JQ = 1, NN
-               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )*
-     &                EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -
-     &                TAUCPR( LYU ) ) )
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ builtin (exp) attributes simd
+#endif               
+               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )* &
+                     EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -      &
+                     TAUCPR( LYU ) ) )
    40       CONTINUE
-
-            DO 50 JQ = NN + 1, NSTR
-               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )*
-     &                EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -
-     &                TAUCPR( LYU-1 ) ) )
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GC:64, LL:64, KK:64,UTAUPR:64,TAUCPR:64
+            !DIR$ IVDEP
+            !DIR$ REDUCTION(+:ZINT)
+            !DIR$ CODE_ALIGN:64
+#elif defined __GFORTRAN__  && !defined __INTEL_COMPILER
+            !GCC$ IVDEP
+            !GCC$ VECTOR
+#endif
+               DO 50 JQ = NN + 1, NSTR
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ builtin (exp) attributes simd
+#endif                  
+               ZINT = ZINT + GC( IQ, JQ, LYU )*LL( JQ, LYU )* &
+                     EXP( -KK( JQ,LYU )*( UTAUPR( LU ) -      &
+                     TAUCPR( LYU-1 ) ) )
    50       CONTINUE
 
             U0C( IQ, LU ) = ZINT
 
             IF( FBEAM.GT.0.0 ) U0C( IQ, LU ) = ZINT + ZZ( IQ, LYU )*FACT
 
-            U0C( IQ, LU ) = U0C( IQ, LU ) + ZPLK0( IQ,LYU ) +
-     &                      ZPLK1( IQ,LYU )*UTAUPR( LU )
+            U0C( IQ, LU ) = U0C( IQ, LU ) + ZPLK0( IQ,LYU ) + &
+                           ZPLK1( IQ,LYU )*UTAUPR( LU ) 
             UAVG( LU ) = UAVG( LU ) + CWT( IQ - NN )*U0C( IQ, LU )
-            FLUP( LU ) = FLUP( LU ) + CWT( IQ - NN )*CMU( IQ - NN )*
-     &                   U0C( IQ, LU )
+            FLUP( LU ) = FLUP( LU ) + CWT( IQ - NN )*CMU( IQ - NN )* &
+                        U0C( IQ, LU )
    60    CONTINUE
 
 
@@ -2295,35 +2355,35 @@ c                                                ** this level
          RFLDN( LU ) = FDNTOT - RFLDIR( LU )
          UAVG( LU )  = ( 2.*PI*UAVG( LU ) + DIRINT ) / ( 4.*PI )
          PLSORC      = XR0( LYU ) + XR1( LYU )*UTAUPR( LU )
-         DFDT( LU )  = ( 1. - SSALB( LYU ) ) * 4.*PI *
-     &                 ( UAVG( LU ) - PLSORC )
+         DFDT( LU )  = ( 1. - SSALB( LYU ) ) * 4.*PI * &
+                      ( UAVG( LU ) - PLSORC )
 
    70    CONTINUE
-         IF( PRNT( 2 ) ) WRITE ( *, '(F10.4,I7,1P,7E12.3,E14.3)' )
-     &       UTAU( LU ), LYU, RFLDIR( LU ), RFLDN( LU ), FDNTOT,
-     &       FLUP( LU ), FNET, UAVG( LU ), PLSORC, DFDT( LU )
+         IF( PRNT( 2 ) ) WRITE ( *, '(F10.4,I7,1P,7E12.3,E14.3)' ) &
+            UTAU( LU ), LYU, RFLDIR( LU ), RFLDN( LU ), FDNTOT,   &
+            FLUP( LU ), FNET, UAVG( LU ), PLSORC, DFDT( LU )
 
    80 CONTINUE
 
 
       IF( PRNTU0 ) THEN
 
-         WRITE ( *, '(//,2A)' ) ' ******** AZIMUTHALLY AVERAGED ',
-     &     'INTENSITIES ( at polar quadrature angles ) *******'
+         WRITE ( *, '(//,2A)' ) ' ******** AZIMUTHALLY AVERAGED ', &
+          'INTENSITIES ( at polar quadrature angles ) *******'
 
          DO 100 LU = 1, NTAU
 
-            WRITE ( *, '(/,A,F10.4,//,2A)' )
-     &        ' Optical depth =', UTAU( LU ),
-     &        '     Angle (deg)   cos(Angle)     Intensity',
-     &        '     Angle (deg)   cos(Angle)     Intensity'
+            WRITE ( *, '(/,A,F10.4,//,2A)' )  &
+             ' Optical depth =', UTAU( LU ),
+             '     Angle (deg)   cos(Angle)     Intensity', &
+             '     Angle (deg)   cos(Angle)     Intensity'
 
             DO 90 IQ = 1, NN
                ANG1 = ( 180./PI )*ACOS( CMU( 2 *NN-IQ+1 ) )
                ANG2 = ( 180./PI )*ACOS( CMU( IQ ) )
-               WRITE ( *, '(2(0P,F16.4,F13.5,1P,E14.3))' )
-     &           ANG1, CMU(2*NN-IQ+1), U0C(IQ,LU),
-     &           ANG2, CMU(IQ),        U0C(IQ+NN,LU)
+               WRITE ( *, '(2(0P,F16.4,F13.5,1P,E14.3))' ) &
+                ANG1, CMU(2*NN-IQ+1), U0C(IQ,LU),         &
+                ANG2, CMU(IQ),        U0C(IQ+NN,LU)
    90       CONTINUE
 
   100    CONTINUE
@@ -2331,193 +2391,214 @@ c                                                ** this level
       END IF
 
 
-      RETURN
-      END
-
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
       SUBROUTINE INTCOR( DITHER, FBEAM, FLYR, LAYRU, LYRCUT, MAXMOM,
-     &                   MAXULV, MAXUMU, NMOM, NCUT, NPHI, NSTR, NTAU,
-     &                   NUMU, OPRIM, PHASA, PHAST, PHASM, PHIRAD, PI,
-     &                   RPD, PMOM, SSALB, DTAUC, TAUC, TAUCPR, UMU,
-     &                   UMU0, UTAU, UTAUPR, UU )
+                        MAXULV, MAXUMU, NMOM, NCUT, NPHI, NSTR, NTAU,
+                        NUMU, OPRIM, PHASA, PHAST, PHASM, PHIRAD, PI,
+                        RPD, PMOM, SSALB, DTAUC, TAUC, TAUCPR, UMU,
+                        UMU0, UTAU, UTAUPR, UU ) !GCC$ ATTRIBUTES hot :: INTCOR !GCC$ ATTRIBUTES aligned(16) :: INTCOR
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE INTCOR( DITHER, FBEAM, FLYR, LAYRU, LYRCUT, MAXMOM,
+                        MAXULV, MAXUMU, NMOM, NCUT, NPHI, NSTR, NTAU,
+                        NUMU, OPRIM, PHASA, PHAST, PHASM, PHIRAD, PI,
+                        RPD, PMOM, SSALB, DTAUC, TAUC, TAUCPR, UMU,
+                        UMU0, UTAU, UTAUPR, UU )
+                        !DIR$ ATTRIBUTES CODE_ALIGN:16 :: INTCOR
+#endif
 
-c       Corrects intensity field by using Nakajima-Tanaka algorithm
-c       (1988). For more details, see Section 3.6 of STWL NASA report.
+!c       Corrects intensity field by using Nakajima-Tanaka algorithm
+!c       (1988). For more details, see Section 3.6 of STWL NASA report.
+!
+!c                I N P U T   V A R I A B L E S
+!c
+!c       DITHER  10 times machine precision
+!c
+!c       DTAUC   computational-layer optical depths
+!c
+!c       FBEAM   incident beam radiation at top
+!c
+!c       FLYR    separated fraction in delta-M method
+!c
+!c       LAYRU   index of UTAU in multi-layered system
+!c
+!c       LYRCUT  logical flag for truncation of computational layer
+!c
+!c       NMOM    number of phase function Legendre coefficients supplied
+!c
+!c       NCUT    total number of computational layers considered
+!c
+!c       NPHI    number of user azimuthal angles
+!c
+!c       NSTR    number of polar quadrature angles
+!c
+!c       NTAU    number of user-defined optical depths
+!c
+!c       NUMU    number of user polar angles
+!c
+!c       OPRIM   delta-M-scaled single-scatter albedo
+!c
+!c       PHIRAD  azimuthal angles in radians
+!c
+!c       PMOM    phase function Legendre coefficients (K, LC)
+!c                   K = 0 to NMOM, LC = 1 to NLYR with PMOM(0,LC)=1
+!c
+!c       RPD     PI/180
+!c
+!c       SSALB   single scattering albedo at computational layers
+!c
+!c       TAUC    optical thickness at computational levels
+!c
+!c       TAUCPR  delta-M-scaled optical thickness
+!c
+!c       UMU     cosine of emergent angle
+!c
+!c       UMU0    cosine of incident zenith angle
+!c
+!c       UTAU    user defined optical depths
+!c
+!c       UTAUPR  delta-M-scaled version of UTAU
+!c
+!c                O U T P U T   V A R I A B L E S
+!c
+!c       UU      corrected intensity field; UU(IU,LU,J)
+!c                         IU=1,NUMU; LU=1,NTAU; J=1,NPHI
+!c
+!c                I N T E R N A L   V A R I A B L E S
+!c
+!c       CTHETA  cosine of scattering angle
+!c       DTHETA  angle (degrees) to define aureole region as
+!c                    direction of beam source +/- DTHETA
+!c       PHASA   actual (exact) phase function
+!c       PHASM   delta-M-scaled phase function
+!c       PHAST   phase function used in TMS correction; actual phase
+!c                    function divided by (1-FLYR*SSALB)
+!c       PL      ordinary Legendre polynomial of degree l, P-sub-l
+!c       PLM1    ordinary Legendre polynomial of degree l-1, P-sub-(l-1)
+!c       PLM2    ordinary Legendre polynomial of degree l-2, P-sub-(l-2)
+!c       THETA0  incident zenith angle (degrees)
+!c       THETAP  emergent angle (degrees)
+!c       USSNDM  single-scattered intensity computed by using exact
+!c                   phase function and scaled optical depth
+!c                   (first term in STWL(68a))
+!c       USSP    single-scattered intensity from delta-M method
+!c                   (second term in STWL(68a))
+!c       DUIMS   intensity correction term from IMS method
+!c                   (delta-I-sub-IMS in STWL(A.19))
+!c
+!c   Called by- DISORT
+!c   Calls- SINSCA, SECSCA
 
-c                I N P U T   V A R I A B L E S
-c
-c       DITHER  10 times machine precision
-c
-c       DTAUC   computational-layer optical depths
-c
-c       FBEAM   incident beam radiation at top
-c
-c       FLYR    separated fraction in delta-M method
-c
-c       LAYRU   index of UTAU in multi-layered system
-c
-c       LYRCUT  logical flag for truncation of computational layer
-c
-c       NMOM    number of phase function Legendre coefficients supplied
-c
-c       NCUT    total number of computational layers considered
-c
-c       NPHI    number of user azimuthal angles
-c
-c       NSTR    number of polar quadrature angles
-c
-c       NTAU    number of user-defined optical depths
-c
-c       NUMU    number of user polar angles
-c
-c       OPRIM   delta-M-scaled single-scatter albedo
-c
-c       PHIRAD  azimuthal angles in radians
-c
-c       PMOM    phase function Legendre coefficients (K, LC)
-c                   K = 0 to NMOM, LC = 1 to NLYR with PMOM(0,LC)=1
-c
-c       RPD     PI/180
-c
-c       SSALB   single scattering albedo at computational layers
-c
-c       TAUC    optical thickness at computational levels
-c
-c       TAUCPR  delta-M-scaled optical thickness
-c
-c       UMU     cosine of emergent angle
-c
-c       UMU0    cosine of incident zenith angle
-c
-c       UTAU    user defined optical depths
-c
-c       UTAUPR  delta-M-scaled version of UTAU
-c
-c                O U T P U T   V A R I A B L E S
-c
-c       UU      corrected intensity field; UU(IU,LU,J)
-c                         IU=1,NUMU; LU=1,NTAU; J=1,NPHI
-c
-c                I N T E R N A L   V A R I A B L E S
-c
-c       CTHETA  cosine of scattering angle
-c       DTHETA  angle (degrees) to define aureole region as
-c                    direction of beam source +/- DTHETA
-c       PHASA   actual (exact) phase function
-c       PHASM   delta-M-scaled phase function
-c       PHAST   phase function used in TMS correction; actual phase
-c                    function divided by (1-FLYR*SSALB)
-c       PL      ordinary Legendre polynomial of degree l, P-sub-l
-c       PLM1    ordinary Legendre polynomial of degree l-1, P-sub-(l-1)
-c       PLM2    ordinary Legendre polynomial of degree l-2, P-sub-(l-2)
-c       THETA0  incident zenith angle (degrees)
-c       THETAP  emergent angle (degrees)
-c       USSNDM  single-scattered intensity computed by using exact
-c                   phase function and scaled optical depth
-c                   (first term in STWL(68a))
-c       USSP    single-scattered intensity from delta-M method
-c                   (second term in STWL(68a))
-c       DUIMS   intensity correction term from IMS method
-c                   (delta-I-sub-IMS in STWL(A.19))
-c
-c   Called by- DISORT
-c   Calls- SINSCA, SECSCA
+!c +-------------------------------------------------------------------+
 
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      LOGICAL(4) ::    LYRCUT
+      INTEGER(4) ::    MAXMOM, MAXULV, MAXUMU, NCUT, NMOM, NPHI, NSTR, NTAU, &
+                       NUMU
+      REAL(4)    ::    DITHER, FBEAM, PI, RPD, UMU0
+!c     ..
+!c     .. Array Arguments ..
 
-      LOGICAL   LYRCUT
-      INTEGER   MAXMOM, MAXULV, MAXUMU, NCUT, NMOM, NPHI, NSTR, NTAU,
-     &          NUMU
-      REAL      DITHER, FBEAM, PI, RPD, UMU0
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4), dimension(*) ::      LAYRU
+      REAL(4),    dimension(*) ::      DTAUC,FLYR,OPRIM,PHASA
+      REAL(4),    dimension(*) ::      PHAST, PHASM,PHIRAD
+      REAL(4),    dimension(0:MAXMOM,*) :: PMOM
+      REAL(4),    dimension(*)   :: SSALB
+      REAL(4),    dimension(0:*) :: TAUC,TAUCPR
+      REAL(4),    dimension(*)   ::  UMU,UTAU, UTAUPR
+      REAL(4),    dimension(MAXUMU,MAXULV,*) :: UU
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   LAYRU( * )
-      REAL      DTAUC( * ), FLYR( * ), OPRIM( * ), PHASA( * ),
-     &          PHAST( * ), PHASM( * ), PHIRAD( * ),
-     &          PMOM( 0:MAXMOM, * ), SSALB( * ), TAUC( 0:* ),
-     &          TAUCPR( 0:* ), UMU( * ), UTAU( * ), UTAUPR( * ),
-     &          UU( MAXUMU, MAXULV, * )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IU, JP, K, LC, LTAU, LU
-      REAL      CTHETA, DTHETA, DUIMS, PL, PLM1, PLM2, THETA0, THETAP,
-     &          USSNDM, USSP
-c     ..
-c     .. External Functions ..
+      INTEGER(4) ::      IU, JP, K, LC, LTAU, LU
+      REAL(4)    ::      CTHETA, DTHETA, DUIMS, PL, PLM1, PLM2, THETA0, THETAP, &
+                         USSNDM, USSP
+!c     ..
+!c     .. External Functions ..
 
       REAL      SECSCA, SINSCA
       EXTERNAL  SECSCA, SINSCA
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, ACOS, COS, SQRT
-c     ..
+!c     ..
 
 
-      DTHETA = 10.
+      DTHETA = 10._4
 
-c                                ** Start loop over zenith angles
+!c                                ** Start loop over zenith angles
 
       DO 110 IU = 1, NUMU
 
          IF( UMU( IU ).LT.0. ) THEN
 
-c                                ** Calculate zenith angles of icident
-c                                ** and emerging directions
+!c                                ** Calculate zenith angles of icident
+!c                                ** and emerging directions
 
             THETA0 = ACOS( -UMU0 ) / RPD
             THETAP = ACOS( UMU( IU ) ) / RPD
 
          END IF
 
-c                                ** Start loop over azimuth angles
+!c                                ** Start loop over azimuth angles
 
          DO 100 JP = 1, NPHI
 
-c                                ** Calculate cosine of scattering
-c                                ** angle, Eq. STWL(4)
+!c                                ** Calculate cosine of scattering
+!c                                ** angle, Eq. STWL(4)
 
-            CTHETA = -UMU0*UMU( IU ) + SQRT( ( 1.-UMU0**2 )*
-     &               ( 1.-UMU( IU )**2 ) )*COS( PHIRAD( JP ) )
+            CTHETA = -UMU0*UMU( IU ) + SQRT( ( 1.-UMU0**2 )* &
+                    ( 1.-UMU( IU )**2 ) )*COS( PHIRAD( JP ) )
 
-c                                ** Initialize phase function
+!c                                ** Initialize phase function
             DO 10 LC = 1, NCUT
 
                PHASA( LC ) = 1.
                PHASM( LC ) = 1.
 
    10       CONTINUE
-c                                ** Initialize Legendre poly. recurrence
+!c                                ** Initialize Legendre poly. recurrence
             PLM1 = 1.
             PLM2 = 0.
 
             DO 40 K = 1, NMOM
-c                                ** Calculate Legendre polynomial of
-c                                ** P-sub-l by upward recurrence
+!c                                ** Calculate Legendre polynomial of
+!c                                ** P-sub-l by upward recurrence
 
                PL   = ( ( 2 *K-1 )*CTHETA*PLM1 - ( K-1 )*PLM2 ) / K
                PLM2 = PLM1
                PLM1 = PL
-c                                ** Calculate actual phase function
+               !c                                ** Calculate actual phase function
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED PHASA:64,PMOM:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ VECTOR
+#endif
                DO 20 LC = 1, NCUT
 
-                  PHASA( LC ) = PHASA( LC ) +
-     &                          ( 2*K + 1 )*PL*PMOM( K, LC )
+                  PHASA( LC ) = PHASA( LC ) + &
+                              ( 2*K + 1 )*PL*PMOM( K, LC )
 
    20          CONTINUE
 
-c                                ** Calculate delta-M transformed
-c                                ** phase function
+!c                                ** Calculate delta-M transformed
+!c                                ** phase function
                IF( K.LE.NSTR - 1 ) THEN
-
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED PHASAM:64,FLYR:64,PMOM:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ VECTOR
+#endif
                   DO 30 LC = 1, NCUT
 
-                     PHASM( LC ) = PHASM( LC ) + ( 2*K + 1 ) * PL *
-     &                             ( PMOM( K,LC ) - FLYR( LC ) ) /
-     &                             ( 1. - FLYR( LC ) )
+                     PHASM( LC ) = PHASM( LC ) + ( 2*K + 1 ) * PL * &
+                                 ( PMOM( K,LC ) - FLYR( LC ) ) /  &
+                                 ( 1. - FLYR( LC ) )
    30             CONTINUE
 
                END IF
@@ -2525,7 +2606,7 @@ c                                ** phase function
    40       CONTINUE
 
 
-c                                ** Apply TMS method, Eq. STWL(68)
+!c                                ** Apply TMS method, Eq. STWL(68)
             DO 70 LC = 1, NCUT
 
                PHAST( LC ) = PHASA(LC) / ( 1. - FLYR(LC) * SSALB(LC) )
@@ -2536,13 +2617,13 @@ c                                ** Apply TMS method, Eq. STWL(68)
 
                IF( .NOT.LYRCUT .OR. LAYRU( LU ).LT.NCUT ) THEN
 
-                   USSNDM  = SINSCA( DITHER, LAYRU( LU ), NCUT, PHAST,
-     &                               SSALB, TAUCPR, UMU( IU ), UMU0,
-     &                               UTAUPR( LU ), FBEAM, PI )
+                   USSNDM  = SINSCA( DITHER, LAYRU( LU ), NCUT, PHAST, &
+                                     SSALB, TAUCPR, UMU( IU ), UMU0,   &
+                                     UTAUPR( LU ), FBEAM, PI )
 
-                   USSP    = SINSCA( DITHER, LAYRU( LU ), NCUT, PHASM,
-     &                               OPRIM, TAUCPR, UMU( IU ), UMU0,
-     &                               UTAUPR( LU ), FBEAM, PI )
+                   USSP    = SINSCA( DITHER, LAYRU( LU ), NCUT, PHASM, &
+                                   OPRIM, TAUCPR, UMU( IU ), UMU0,   &
+                                   UTAUPR( LU ), FBEAM, PI )
 
                    UU( IU, LU, JP ) = UU( IU, LU, JP ) + USSNDM - USSP
 
@@ -2552,10 +2633,10 @@ c                                ** Apply TMS method, Eq. STWL(68)
 
             IF( UMU(IU).LT.0. .AND. ABS( THETA0-THETAP ).LE.DTHETA) THEN
 
-c                                ** Emerging direction is in the aureole
-c                                ** (theta0 +/- dtheta). Apply IMS
-c                                ** method for correction of secondary
-c                                ** scattering below top level.
+!c                                ** Emerging direction is in the aureole
+!c                                ** (theta0 +/- dtheta). Apply IMS
+!c                                ** method for correction of secondary
+!c                                ** scattering below top level.
 
                LTAU = 1
 
@@ -2565,10 +2646,10 @@ c                                ** scattering below top level.
 
                   IF( .NOT.LYRCUT .OR. LAYRU( LU ).LT.NCUT ) THEN
 
-                      DUIMS = SECSCA( CTHETA, FLYR, LAYRU( LU ), MAXMOM,
-     &                                NMOM, NSTR, PMOM, SSALB, DTAUC,
-     &                                TAUC, UMU( IU ), UMU0, UTAU( LU ),
-     &                                FBEAM, PI )
+                      DUIMS = SECSCA( CTHETA, FLYR, LAYRU( LU ), MAXMOM, &
+                                     NMOM, NSTR, PMOM, SSALB, DTAUC,    &
+                                     TAUC, UMU( IU ), UMU0, UTAU( LU ), &
+                                     FBEAM, PI )
 
                       UU( IU, LU, JP ) = UU( IU, LU, JP ) - DUIMS
 
@@ -2577,17 +2658,17 @@ c                                ** scattering below top level.
    90          CONTINUE
 
             END IF
-c                                ** End loop over azimuth angles
+!c                                ** End loop over azimuth angles
   100    CONTINUE
 
-c                                ** End loop over zenith angles
+!c                                ** End loop over zenith angles
   110 CONTINUE
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
 
-      REAL FUNCTION  SECSCA( CTHETA, FLYR, LAYRU, MAXMOM, NMOM, NSTR,
+       REAL FUNCTION  SECSCA( CTHETA, FLYR, LAYRU, MAXMOM, NMOM, NSTR,
      &                       PMOM, SSALB, DTAUC, TAUC, UMU, UMU0, UTAU,
      &                       FBEAM, PI )
 
@@ -2628,8 +2709,8 @@ c        PI       3.1415...
 c
 c   LOCAL VARIABLES
 c
-c        PSPIKE  2*P"-P"**2, where P" is the residual phase function
-c        WBAR    mean value of single scattering albedo
+!c        PSPIKE  2*P"-P"**2, where P" is the residual phase function
+!c        WBAR    mean value of single scattering albedo
 c        FBAR    mean value of separated fraction f
 c        DTAU    layer optical depth
 c        STAU    sum of layer optical depths between top of atmopshere
@@ -2737,8 +2818,8 @@ c                              ** Eq. STWL (A.13)
      &         PSPIKE * XIFUNC( -UMU, UMU0P, UMU0P, UTAU )
 
 
-      RETURN
-      END
+     
+      END FUNCTION
 
       SUBROUTINE SETDIS( CMU, CWT, DELTAM, DTAUC, DTAUCP, EXPBEA, FBEAM,
      &                   FLYR, GL, IBCND, LAYRU, LYRCUT, MAXMOM, MAXUMU,
