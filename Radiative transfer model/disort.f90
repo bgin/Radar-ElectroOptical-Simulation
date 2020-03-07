@@ -2667,88 +2667,106 @@ c                           ** Balance the submatrix in rows L through K
 
      
       END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+       REAL FUNCTION  SECSCA( CTHETA, FLYR, LAYRU, MAXMOM, NMOM, NSTR,  &
+                            PMOM, SSALB, DTAUC, TAUC, UMU, UMU0, UTAU, &
+                            FBEAM, PI ) !GCC$ ATTRIBUTES hot :: SECSCA !GCC$ ATTRIBUTES aligned(64) :: SECSCA !GCC$ ATTRIBUTES inline :: SECSCA !GCC$ ATTRIBUTES !GCC$ ATTRIBUTES target_clones("avx2","avx512") :: SECSCA
+#elif defined __ICC || defined __INTEL_COMPILER
+         !DIR$ ATTRIBUTES INLINE :: SECSCA
+        REAL FUNCTION  SECSCA( CTHETA, FLYR, LAYRU, MAXMOM, NMOM, NSTR,  &
+                            PMOM, SSALB, DTAUC, TAUC, UMU, UMU0, UTAU, &
+                            FBEAM, PI )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SECSCA
+          !DIR$ ATTRIBUTES VECTOR:PROCESSOR(skylake) :: SECSCA
+#endif
 
-       REAL FUNCTION  SECSCA( CTHETA, FLYR, LAYRU, MAXMOM, NMOM, NSTR,
-     &                       PMOM, SSALB, DTAUC, TAUC, UMU, UMU0, UTAU,
-     &                       FBEAM, PI )
+!c          Calculates secondary scattered intensity of EQ. STWL (A7)
 
-c          Calculates secondary scattered intensity of EQ. STWL (A7)
+!c                I N P U T   V A R I A B L E S
 
-c                I N P U T   V A R I A B L E S
-
-c        CTHETA  cosine of scattering angle
-c
-c        DTAUC   computational-layer optical depths
-c
-c        FLYR    separated fraction f in Delta-M method
-c
-c        LAYRU   index of UTAU in multi-layered system
-c
-c        MAXMOM  maximum number of phase function moment coefficients
-c
-c        NMOM    number of phase function Legendre coefficients supplied
-c
-c        NSTR    number of polar quadrature angles
-c
-c        PMOM    phase function Legendre coefficients (K, LC)
-c                K = 0 to NMOM, LC = 1 to NLYR, with PMOM(0,LC)=1
-c
-c        SSALB   single scattering albedo of computational layers
-c
-c        TAUC    cumulative optical depth at computational layers
-c
-c        UMU     cosine of emergent angle
-c
-c        UMU0    cosine of incident zenith angle
-c
-c        UTAU    user defined optical depth for output intensity
-c
-c        FBEAM   incident beam radiation at top
-c
-c        PI       3.1415...
-c
-c   LOCAL VARIABLES
-c
+!c        CTHETA  cosine of scattering angle
+!c
+!c        DTAUC   computational-layer optical depths
+!c
+!c        FLYR    separated fraction f in Delta-M method
+!c
+!c        LAYRU   index of UTAU in multi-layered system
+!c
+!c        MAXMOM  maximum number of phase function moment coefficients
+!c
+!c        NMOM    number of phase function Legendre coefficients supplied
+!c
+!c        NSTR    number of polar quadrature angles
+!c
+!c        PMOM    phase function Legendre coefficients (K, LC)
+!c                K = 0 to NMOM, LC = 1 to NLYR, with PMOM(0,LC)=1
+!c
+!c        SSALB   single scattering albedo of computational layers
+!c
+!c        TAUC    cumulative optical depth at computational layers
+!c
+!c        UMU     cosine of emergent angle
+!c
+!c        UMU0    cosine of incident zenith angle
+!c
+!c        UTAU    user defined optical depth for output intensity
+!c
+!c        FBEAM   incident beam radiation at top
+!c
+!c        PI       3.1415...
+!c
+!c   LOCAL VARIABLES
+!c
 !c        PSPIKE  2*P"-P"**2, where P" is the residual phase function
 !c        WBAR    mean value of single scattering albedo
-c        FBAR    mean value of separated fraction f
-c        DTAU    layer optical depth
-c        STAU    sum of layer optical depths between top of atmopshere
-c                and layer LAYRU
-c
-c   Called by- INTCOR
-c   Calls- XIFUNC
-c +-------------------------------------------------------------------+
+!c        FBAR    mean value of separated fraction f
+!c        DTAU    layer optical depth
+!c        STAU    sum of layer optical depths between top of atmopshere
+!c                and layer LAYRU
+!c
+!c   Called by- INTCOR
+!c   Calls- XIFUNC
+!c +-------------------------------------------------------------------+
 
-c     .. Scalar Arguments ..
-      INTEGER   LAYRU, MAXMOM, NMOM, NSTR
-      REAL      CTHETA, FBEAM, PI, UMU, UMU0, UTAU
-c     ..
-c     .. Array Arguments ..
-      REAL      DTAUC( * ), FLYR( * ), PMOM( 0:MAXMOM, * ), SSALB( * ),
-     &          TAUC( 0:* )
-c     ..
-c     .. Local Scalars ..
-      INTEGER   K, LYR
-      REAL      DTAU, FBAR, GBAR, PL, PLM1, PLM2, PSPIKE, STAU, UMU0P,
-     &          WBAR, ZERO
-c     ..
-c     .. External Functions ..
+!c     .. Scalar Arguments ..
+      INTEGER(4) ::      LAYRU, MAXMOM, NMOM, NSTR
+      REAL(4)    ::      CTHETA, FBEAM, PI, UMU, UMU0, UTAU
+!c     ..
+!c     .. Array Arguments ..
+      REAL(4), dimension(*)          :: DTAUC, FLYR
+      REAL(4), dimension(0:MAXMOM,*) :: PMOM
+      REAL(4), dimension(*)          :: SSALB
+      REAL(4), dimension(0:*)        :: TAUC
+!c     ..
+!c     .. Local Scalars ..
+      INTEGER(4) ::      K, LYR
+      REAL(4)    ::      DTAU, FBAR, GBAR, PL, PLM1, PLM2, PSPIKE, STAU, UMU0P, &
+                         WBAR, ZERO
+!c     ..
+!c     .. External Functions ..
       REAL      XIFUNC
       EXTERNAL  XIFUNC
-c     ..
+!c     ..
 
-      ZERO = 1E-4
+      ZERO = 1E-4_4
 
-c                          ** Calculate vertically averaged value of
-c                          ** single scattering albedo and separated
-c                          ** fraction f, Eq. STWL (A.15)
+!c                          ** Calculate vertically averaged value of
+!c                          ** single scattering albedo and separated
+!c                          ** fraction f, Eq. STWL (A.15)
 
       DTAU = UTAU - TAUC( LAYRU - 1 )
       WBAR = SSALB( LAYRU ) * DTAU
       FBAR = FLYR( LAYRU ) * WBAR
       STAU = DTAU
-
+#if defined __INTEL_COMPILER
+      !DIR$ ASSUME_ALIGNED SSALB:64,DTAUC:64,FLYR:64
+      !DIR$ REDUCTION(+:WBAR)
+      !DIR$ REDUCTION(+:FBAR)
+      !DIR$ REDUCTION(+:STAU)
+      !DIR$ FMA
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      !GCC$ VECTOR
+#endif
       DO 10 LYR = 1, LAYRU - 1
 
          WBAR = WBAR + SSALB( LYR ) * DTAUC( LYR )
@@ -2757,10 +2775,10 @@ c                          ** fraction f, Eq. STWL (A.15)
 
    10 CONTINUE
 
-      IF( WBAR.LE.ZERO .OR.
-     &    FBAR.LE.ZERO .OR. STAU.LE.ZERO .OR.FBEAM.LE.ZERO ) THEN
+      IF( WBAR.LE.ZERO .OR. &
+          FBAR.LE.ZERO .OR. STAU.LE.ZERO .OR.FBEAM.LE.ZERO ) THEN
 
-          SECSCA = 0.0
+          SECSCA = 0.0_4
           RETURN
 
       END IF
@@ -2769,12 +2787,12 @@ c                          ** fraction f, Eq. STWL (A.15)
       WBAR  = WBAR / STAU
 
 
-c                          ** Calculate PSPIKE=(2P"-P"**2)
-      PSPIKE = 1.
-      GBAR   = 1.
-      PLM1    = 1.
-      PLM2    = 0.
-c                                   ** PSPIKE for L<=2N-1
+!c                          ** Calculate PSPIKE=(2P"-P"**2)
+      PSPIKE = 1._4
+      GBAR   = 1._4
+      PLM1    = 1._4
+      PLM2    = 0._4
+!c                                   ** PSPIKE for L<=2N-1
       DO 20 K = 1, NSTR - 1
 
          PL   = ( ( 2 *K-1 )*CTHETA*PLM1 - ( K-1 )*PLM2 ) / K
@@ -2784,7 +2802,7 @@ c                                   ** PSPIKE for L<=2N-1
          PSPIKE = PSPIKE + ( 2.*GBAR - GBAR**2 )*( 2*K + 1 )*PL
 
    20 CONTINUE
-c                                   ** PSPIKE for L>2N-1
+!c                                   ** PSPIKE for L>2N-1
       DO 40 K = NSTR, NMOM
 
          PL   = ( ( 2 *K-1 )*CTHETA*PLM1 - ( K-1 )*PLM2 ) / K
@@ -2794,7 +2812,14 @@ c                                   ** PSPIKE for L>2N-1
          DTAU = UTAU - TAUC( LAYRU - 1 )
 
          GBAR = PMOM( K, LAYRU ) * SSALB( LAYRU ) * DTAU
-
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED PMOM:64,DTAUC:64
+         !DIR$ FMA
+         !DIR$ REDUCTION(+:GBAR)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !GCC$ VECTOR
+         !GCC$ UNROLL 10
+#endif
          DO 30 LYR = 1, LAYRU - 1
             GBAR = GBAR + PMOM( K, LYR ) * SSALB( LYR ) * DTAUC( LYR )
    30    CONTINUE
@@ -2811,110 +2836,132 @@ c                                   ** PSPIKE for L>2N-1
 
       UMU0P = UMU0 / ( 1. - FBAR*WBAR )
 
-c                              ** Calculate IMS correction term,
-c                              ** Eq. STWL (A.13)
+!c                              ** Calculate IMS correction term,
+!c                              ** Eq. STWL (A.13)
 
-      SECSCA = FBEAM / ( 4.*PI ) * ( FBAR*WBAR )**2 / ( 1.-FBAR*WBAR ) *
-     &         PSPIKE * XIFUNC( -UMU, UMU0P, UMU0P, UTAU )
+      SECSCA = FBEAM / ( 4.*PI ) * ( FBAR*WBAR )**2 / ( 1.-FBAR*WBAR ) * &
+                 PSPIKE * XIFUNC( -UMU, UMU0P, UMU0P, UTAU )
 
 
      
       END FUNCTION
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SETDIS( CMU, CWT, DELTAM, DTAUC, DTAUCP, EXPBEA, FBEAM, &
+                        FLYR, GL, IBCND, LAYRU, LYRCUT, MAXMOM, MAXUMU, &
+                        MXCMU, NCUT, NLYR, NTAU, NN, NSTR, PLANK, NUMU, &
+                        ONLYFL, CORINT, OPRIM, PMOM, SSALB, TAUC,       &
+                        TAUCPR, UTAU, UTAUPR, UMU, UMU0, USRTAU,        &
+                        USRANG ) !GCC$ ATTRIBUTES hot :: SETDIS !GCC$ ATTRIBUTES aligned(16) :: SETDIS
+#elif defined __INTEL_COMPILER
+        SUBROUTINE SETDIS( CMU, CWT, DELTAM, DTAUC, DTAUCP, EXPBEA, FBEAM, &
+                        FLYR, GL, IBCND, LAYRU, LYRCUT, MAXMOM, MAXUMU, &
+                        MXCMU, NCUT, NLYR, NTAU, NN, NSTR, PLANK, NUMU, &
+                        ONLYFL, CORINT, OPRIM, PMOM, SSALB, TAUC,       &
+                        TAUCPR, UTAU, UTAUPR, UMU, UMU0, USRTAU,        &
+                        USRANG )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SETDIS
+#endif
 
-      SUBROUTINE SETDIS( CMU, CWT, DELTAM, DTAUC, DTAUCP, EXPBEA, FBEAM,
-     &                   FLYR, GL, IBCND, LAYRU, LYRCUT, MAXMOM, MAXUMU,
-     &                   MXCMU, NCUT, NLYR, NTAU, NN, NSTR, PLANK, NUMU,
-     &                   ONLYFL, CORINT, OPRIM, PMOM, SSALB, TAUC,
-     &                   TAUCPR, UTAU, UTAUPR, UMU, UMU0, USRTAU,
-     &                   USRANG )
+!c          Perform miscellaneous setting-up operations
+!c
+!c    INPUT :  all are DISORT input variables (see DOC file)
+!c
+!c
+!c    O U T P U T     V A R I A B L E S:
+!c
+!c       NTAU,UTAU   if USRTAU = FALSE (defined in DISORT.doc)
+!c       NUMU,UMU    if USRANG = FALSE (defined in DISORT.doc)
+!c
+!c       CMU,CWT     computational polar angles and
+!c                   corresponding quadrature weights
+!c
+!c       EXPBEA      transmission of direct beam
+!c
+!c       FLYR        separated fraction in delta-M method
+!c
+!c       GL          phase function Legendre coefficients multiplied
+!c                   by (2L+1) and single-scatter albedo
+!c
+!c       LAYRU       Computational layer in which UTAU falls
+!c
+!c       LYRCUT      flag as to whether radiation will be zeroed
+!c                   below layer NCUT
+!c
+!c       NCUT        computational layer where absorption
+!c                   optical depth first exceeds  ABSCUT
+!c
+!c       NN          NSTR / 2
+!c
+!c       OPRIM       delta-M-scaled single-scatter albedo
+!c
+!c       TAUCPR      delta-M-scaled optical depth
+!c!
+!c       UTAUPR      delta-M-scaled version of  UTAU
+!c
+!c   Called by- DISORT
+!c   Calls- QGAUSN, ERRMSG
+!c ---------------------------------------------------------------------
 
-c          Perform miscellaneous setting-up operations
-c
-c    INPUT :  all are DISORT input variables (see DOC file)
-c
-c
-c    O U T P U T     V A R I A B L E S:
-c
-c       NTAU,UTAU   if USRTAU = FALSE (defined in DISORT.doc)
-c       NUMU,UMU    if USRANG = FALSE (defined in DISORT.doc)
-c
-c       CMU,CWT     computational polar angles and
-c                   corresponding quadrature weights
-c
-c       EXPBEA      transmission of direct beam
-c
-c       FLYR        separated fraction in delta-M method
-c
-c       GL          phase function Legendre coefficients multiplied
-c                   by (2L+1) and single-scatter albedo
-c
-c       LAYRU       Computational layer in which UTAU falls
-c
-c       LYRCUT      flag as to whether radiation will be zeroed
-c                   below layer NCUT
-c
-c       NCUT        computational layer where absorption
-c                   optical depth first exceeds  ABSCUT
-c
-c       NN          NSTR / 2
-c
-c       OPRIM       delta-M-scaled single-scatter albedo
-c
-c       TAUCPR      delta-M-scaled optical depth
-c
-c       UTAUPR      delta-M-scaled version of  UTAU
-c
-c   Called by- DISORT
-c   Calls- QGAUSN, ERRMSG
-c ---------------------------------------------------------------------
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      LOGICAL(4) ::      CORINT, DELTAM, LYRCUT, ONLYFL, PLANK, USRANG, USRTAU
+      INTEGER(4) ::      IBCND, MAXMOM, MAXUMU, MXCMU, NCUT, NLYR, NN, NSTR, &
+                         NTAU, NUMU
+      REAL(4)    ::      FBEAM, UMU0
+!c     ..
+!c     .. Array Arguments ..
 
-      LOGICAL   CORINT, DELTAM, LYRCUT, ONLYFL, PLANK, USRANG, USRTAU
-      INTEGER   IBCND, MAXMOM, MAXUMU, MXCMU, NCUT, NLYR, NN, NSTR,
-     &          NTAU, NUMU
-      REAL      FBEAM, UMU0
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4), dimension(*) ::    LAYRU
+      REAL(4),    dimension(MXCMU) ::  CMU,CWT
+      REAL(4),    dimension(*) :: DTAUC,DTAUCP
+      REAL(4),    dimension(0:*) :: EXPBEA
+      REAL(4),    dimension(*)   :: FLYR
+      REAL(4),    dimension(0:MXCMU,*) :: GL
+      REAL(4),    dimension(*)    :: OPRIM
+      REAL(4),    dimension(0:MAXMOM,*) :: PMOM
+      REAL(4),    dimension(*)    :: SSALB
+      REAL(4),    dimension(0:*)  :: TAUC
+      REAL(4),    dimension(0:*)  :: TAUCPR
+      REAL(4),    dimension(MAXUMU) :: UMU
+      REAL(4),    dimension(*)      :: UTAU, UTAUPR
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   LAYRU( * )
-      REAL      CMU( MXCMU ), CWT( MXCMU ), DTAUC( * ), DTAUCP( * ),
-     &          EXPBEA( 0:* ), FLYR( * ), GL( 0:MXCMU, * ), OPRIM( * ),
-     &          PMOM( 0:MAXMOM, * ), SSALB( * ), TAUC( 0:* ),
-     &          TAUCPR( 0:* ), UMU( MAXUMU ), UTAU( * ), UTAUPR( * )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IQ, IU, K, LC, LU
-      REAL      ABSCUT, ABSTAU, F, YESSCT
-c     ..
-c     .. External Subroutines ..
+      INTEGER(4) ::      IQ, IU, K, LC, LU
+      REAL(4)    ::      ABSCUT, ABSTAU, F, YESSCT
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ERRMSG, QGAUSN
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, EXP
-c     ..
+!c     ..
       DATA      ABSCUT / 10. /
 
 
       IF( .NOT.USRTAU ) THEN
-c                              ** Set output levels at computational
-c                              ** layer boundaries
+!c                              ** Set output levels at computational
+!c                              ** layer boundaries
          NTAU  = NLYR + 1
-
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED UTAUC:64, TAUC:64
+         !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !GCC$ VECTOR
+#endif
          DO 10 LC = 0, NTAU - 1
             UTAU( LC + 1 ) = TAUC( LC )
    10    CONTINUE
 
       END IF
-c                        ** Apply delta-M scaling and move description
-c                        ** of computational layers to local variables
-      EXPBEA( 0 ) = 1.0
-      TAUCPR( 0 ) = 0.0
-      ABSTAU      = 0.0
-      YESSCT      = 0.0
+!c                        ** Apply delta-M scaling and move description
+!c                        ** of computational layers to local variables
+      EXPBEA( 0 ) = 1.0_4
+      TAUCPR( 0 ) = 0.0_4
+      ABSTAU      = 0.0_4
+      YESSCT      = 0.0_4
 
       DO 40 LC = 1, NLYR
 
@@ -2931,7 +2978,14 @@ c                        ** of computational layers to local variables
             OPRIM( LC )  = SSALB( LC )
             DTAUCP( LC ) = DTAUC( LC )
             TAUCPR( LC ) = TAUC( LC )
-
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GL:64
+            !DIR$ ASSUME_ALIGNED OPRIM:64
+            !DIR$ ASSUME_ALIGNED PMOM:64
+            !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif
             DO 20 K = 0, NSTR - 1
                GL( K, LC ) = ( 2*K + 1 )*OPRIM( LC )*PMOM( K, LC )
    20       CONTINUE
@@ -2940,16 +2994,20 @@ c                        ** of computational layers to local variables
 
 
          ELSE
-c                                    ** Do delta-M transformation
+!c                                    ** Do delta-M transformation
 
             F  = PMOM( NSTR, LC )
             OPRIM( LC )  = SSALB( LC )*( 1. - F ) / ( 1. - F*SSALB(LC) )
             DTAUCP( LC ) = ( 1. - F*SSALB( LC ) )*DTAUC( LC )
             TAUCPR( LC ) = TAUCPR( LC - 1 ) + DTAUCP( LC )
-
+#if defined __INTEL_COMPILER
+            !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif
             DO 30 K = 0, NSTR - 1
-               GL( K, LC ) = ( 2*K + 1 )*OPRIM( LC )*
-     &                       ( PMOM( K,LC ) - F ) / ( 1. - F )
+               GL( K, LC ) = ( 2*K + 1 )*OPRIM( LC )* &
+                               ( PMOM( K,LC ) - F ) / ( 1. - F )
    30       CONTINUE
 
          END IF
@@ -2960,27 +3018,27 @@ c                                    ** Do delta-M transformation
          IF( FBEAM.GT.0.0 ) EXPBEA( LC ) = EXP( -TAUCPR( LC )/UMU0 )
 
    40 CONTINUE
-c                      ** If no thermal emission, cut off medium below
-c                      ** absorption optical depth = ABSCUT ( note that
-c                      ** delta-M transformation leaves absorption
-c                      ** optical depth invariant ).  Not worth the
-c                      ** trouble for one-layer problems, though.
+!c                      ** If no thermal emission, cut off medium below
+!c                      ** absorption optical depth = ABSCUT ( note that
+!c                      ** delta-M transformation leaves absorption
+!c                      ** optical depth invariant ).  Not worth the
+!c                      ** trouble for one-layer problems, though.
       LYRCUT = .FALSE.
 
-      IF( ABSTAU.GE.ABSCUT .AND. .NOT.PLANK .AND. IBCND.NE.1 .AND.
-     &    NLYR.GT.1 ) LYRCUT = .TRUE.
+      IF( ABSTAU.GE.ABSCUT .AND. .NOT.PLANK .AND. IBCND.NE.1 .AND. &
+          NLYR.GT.1 ) LYRCUT = .TRUE.
 
       IF( .NOT.LYRCUT ) NCUT = NLYR
 
-c                             ** Set arrays defining location of user
-c                             ** output levels within delta-M-scaled
-c                             ** computational mesh
+!c                             ** Set arrays defining location of user
+!c                             ** output levels within delta-M-scaled
+!c                             ** computational mesh
       DO 70 LU = 1, NTAU
 
          DO 50 LC = 1, NLYR
 
-            IF( UTAU( LU ).GE.TAUC( LC-1 ) .AND.
-     &          UTAU( LU ).LE.TAUC( LC ) ) GO TO  60
+            IF( UTAU( LU ).GE.TAUC( LC-1 ) .AND. &
+                UTAU( LU ).LE.TAUC( LC ) ) GO TO  60
 
    50    CONTINUE
          LC   = NLYR
@@ -2988,18 +3046,18 @@ c                             ** computational mesh
    60    CONTINUE
          UTAUPR( LU ) = UTAU( LU )
          IF( DELTAM ) UTAUPR( LU ) = TAUCPR( LC - 1 ) +
-     &                               ( 1. - SSALB( LC )*FLYR( LC ) )*
-     &                               ( UTAU( LU ) - TAUC( LC-1 ) )
+                                    ( 1. - SSALB( LC )*FLYR( LC ) )* &
+                                    ( UTAU( LU ) - TAUC( LC-1 ) )    &
          LAYRU( LU ) = LC
 
    70 CONTINUE
-c                      ** Calculate computational polar angle cosines
-c                      ** and associated quadrature weights for Gaussian
-c                      ** quadrature on the interval (0,1) (upward)
+!c                      ** Calculate computational polar angle cosines
+!c                      ** and associated quadrature weights for Gaussian
+!c                      ** quadrature on the interval (0,1) (upward)
       NN   = NSTR / 2
 
       CALL QGAUSN( NN, CMU, CWT )
-c                                  ** Downward (neg) angles and weights
+!c                                  ** Downward (neg) angles and weights
       DO 80 IQ = 1, NN
          CMU( IQ + NN ) = -CMU( IQ )
          CWT( IQ + NN ) = CWT( IQ )
@@ -3008,11 +3066,11 @@ c                                  ** Downward (neg) angles and weights
 
       IF( FBEAM.GT.0.0 ) THEN
 c                               ** Compare beam angle to comput. angles
-         DO 90 IQ = 1, NN
+!         DO 90 IQ = 1, NN
 
-            IF( ABS( UMU0-CMU( IQ ) )/UMU0.LT.1.E-4 ) CALL ERRMSG(
-     &          'SETDIS--beam angle=computational angle; change NSTR',
-     &          .True. )
+            IF( ABS( UMU0-CMU( IQ ) )/UMU0.LT.1.E-4 ) CALL ERRMSG(   &
+              'SETDIS--beam angle=computational angle; change NSTR', &
+               .True. )
 
    90    CONTINUE
 
@@ -3021,8 +3079,8 @@ c                               ** Compare beam angle to comput. angles
 
       IF( .NOT.USRANG .OR. ( ONLYFL.AND.MAXUMU.GE.NSTR ) ) THEN
 
-c                                   ** Set output polar angles to
-c                                   ** computational polar angles
+!c                                   ** Set output polar angles to
+!c                                   ** computational polar angles
          NUMU = NSTR
 
          DO 100 IU = 1, NN
@@ -3038,9 +3096,9 @@ c                                   ** computational polar angles
 
       IF( USRANG .AND. IBCND.EQ.1 ) THEN
 
-c                               ** Shift positive user angle cosines to
-c                               ** upper locations and put negatives
-c                               ** in lower locations
+!c                               ** Shift positive user angle cosines to
+!c                               ** upper locations and put negatives
+!c                               ** in lower locations
          DO 120 IU = 1, NUMU
             UMU( IU + NUMU ) = UMU( IU )
   120    CONTINUE
@@ -3053,148 +3111,154 @@ c                               ** in lower locations
 
       END IF
 
-c                               ** Turn off intensity correction when
-c                               ** only fluxes are calculated, there
-c                               ** is no beam source, no scattering,
-c                               ** or delta-M transformation is not
-c                               ** applied
-c
-      IF( ONLYFL .OR. FBEAM.EQ.0.0 .OR. YESSCT.EQ.0.0 .OR.
-     &   .NOT.DELTAM )  CORINT = .FALSE.
+!c                               ** Turn off intensity correction when
+!c                               ** only fluxes are calculated, there
+!c                               ** is no beam source, no scattering,
+!c                               ** or delta-M transformation is not
+!c                               ** applied
+!c
+      IF( ONLYFL .OR. FBEAM.EQ.0.0 .OR. YESSCT.EQ.0.0 .OR. &
+         .NOT.DELTAM )  CORINT = .FALSE.
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SETMTX( BDR, CBAND, CMU, CWT, DELM0, DTAUCP, GC, KK,   &
+                        LAMBER, LYRCUT, MI, MI9M2, MXCMU, NCOL, NCUT,  &
+                        NNLYRI, NN, NSTR, TAUCPR, WK ) !GCC$ ATTRIBUTES cold  :: SETMTX !GCC$ ATTRIBUTES aligned(16) :: SETMTX
+#elif defined __ICC || defined __INTEL_COMPILER
+        SUBROUTINE SETMTX( BDR, CBAND, CMU, CWT, DELM0, DTAUCP, GC, KK,   &
+                        LAMBER, LYRCUT, MI, MI9M2, MXCMU, NCOL, NCUT,  &
+                        NNLYRI, NN, NSTR, TAUCPR, WK )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SETMTX
+#endif
 
-      SUBROUTINE SETMTX( BDR, CBAND, CMU, CWT, DELM0, DTAUCP, GC, KK,
-     &                   LAMBER, LYRCUT, MI, MI9M2, MXCMU, NCOL, NCUT,
-     &                   NNLYRI, NN, NSTR, TAUCPR, WK )
+!c        Calculate coefficient matrix for the set of equations
+!c        obtained from the boundary conditions and the continuity-
+!c!        of-intensity-at-layer-interface equations;  store in the
+!c        special banded-matrix format required by LINPACK routines
+!c
+!c
+!c    I N P U T      V A R I A B L E S:
+!c
+!c       BDR      :  surface bidirectional reflectivity
+!c
+!c       CMU,CWT     abscissae, weights for Gauss quadrature
+!c                   over angle cosine
+!c
+!c       DELM0    :  Kronecker delta, delta-sub-m0
+!c
+!c       GC       :  Eigenvectors at polar quadrature angles, SC(1)
+!c
+!c       KK       :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
+!c
+!c       LYRCUT   :  Logical flag for truncation of computational layers
+!c
+!c       NN       :  Number of streams in a hemisphere (NSTR/2)
+!c
+!c       NCUT     :  Total number of computational layers considered
+!c
+!c       TAUCPR   :  Cumulative optical depth (delta-M-scaled)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c   O U T P U T     V A R I A B L E S:
+!c
+!c       CBAND    :  Left-hand side matrix of linear system Eq. SC(5),
+!c                   scaled by Eq. SC(12); in banded form required
+!c                   by LINPACK solution routines
+!c
+!c       NCOL     :  Number of columns in CBAND
+!c
+!c
+!c   I N T E R N A L    V A R I A B L E S:
+!c
+!c       IROW     :  Points to row in CBAND
+!c       JCOL     :  Points to position in layer block
+!c       LDA      :  Row dimension of CBAND
+!c       NCD      :  Number of diagonals below or above main diagonal
+!c       NSHIFT   :  For positioning number of rows in band storage
+!c       WK       :  Temporary storage for EXP evaluations
+!c
+!c
+!c   BAND STORAGE
+!c
+!c      LINPACK requires band matrices to be input in a special
+!c      form where the elements of each diagonal are moved up or
+!c      down (in their column) so that each diagonal becomes a row.
+!c      (The column locations of diagonal elements are unchanged.)
+!c
+!c      Example:  if the original matrix is
+!c
+!c          11 12 13  0  0  0
+!c          21 22 23 24  0  0
+!c           0 32 33 34 35  0
+!c           0  0 43 44 45 46
+!c           0  0  0 54 55 56
+!c           0  0  0  0 65 66
+!c
+!c      then its LINPACK input form would be:
+!c
+!c           *  *  *  +  +  +  , * = not used
+!c           *  * 13 24 35 46  , + = used for pivoting
+!c           * 12 23 34 45 56
+!c          11 22 33 44 55 66
+!c          21 32 43 54 65  *
+!c
+!c      If A is a band matrix, the following program segment
+!c      will convert it to the form (ABD) required by LINPACK
+!c      band-matrix routines:
+!c
+!c               N  = (column dimension of A, ABD)
+!c               ML = (band width below the diagonal)
+!c               MU = (band width above the diagonal)
+!c               M = ML + MU + 1
+!c               DO J = 1, N
+!c                  I1 = MAX(1, J-MU)
+!c                  I2 = MIN(N, J+ML)
+!c                  DO I = I1, I2
+!c                     K = I - J + M
+!c                     ABD(K,J) = A(I,J)
+!c                  END DO
+!c               END DO
+!c
+!c      This uses rows  ML+1  through  2*ML+MU+1  of ABD.
+!c      The total number of rows needed in ABD is  2*ML+MU+1 .
+!c      In the example above, N = 6, ML = 1, MU = 2, and the
+!c      row dimension of ABD must be >= 5.
+!c
+!c
+!c   Called by- DISORT, ALBTRN
+!c   Calls- ZEROIT
+!c +-------------------------------------------------------------------+
 
-c        Calculate coefficient matrix for the set of equations
-c        obtained from the boundary conditions and the continuity-
-c        of-intensity-at-layer-interface equations;  store in the
-c        special banded-matrix format required by LINPACK routines
-c
-c
-c    I N P U T      V A R I A B L E S:
-c
-c       BDR      :  surface bidirectional reflectivity
-c
-c       CMU,CWT     abscissae, weights for Gauss quadrature
-c                   over angle cosine
-c
-c       DELM0    :  Kronecker delta, delta-sub-m0
-c
-c       GC       :  Eigenvectors at polar quadrature angles, SC(1)
-c
-c       KK       :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
-c
-c       LYRCUT   :  Logical flag for truncation of computational layers
-c
-c       NN       :  Number of streams in a hemisphere (NSTR/2)
-c
-c       NCUT     :  Total number of computational layers considered
-c
-c       TAUCPR   :  Cumulative optical depth (delta-M-scaled)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c   O U T P U T     V A R I A B L E S:
-c
-c       CBAND    :  Left-hand side matrix of linear system Eq. SC(5),
-c                   scaled by Eq. SC(12); in banded form required
-c                   by LINPACK solution routines
-c
-c       NCOL     :  Number of columns in CBAND
-c
-c
-c   I N T E R N A L    V A R I A B L E S:
-c
-c       IROW     :  Points to row in CBAND
-c       JCOL     :  Points to position in layer block
-c       LDA      :  Row dimension of CBAND
-c       NCD      :  Number of diagonals below or above main diagonal
-c       NSHIFT   :  For positioning number of rows in band storage
-c       WK       :  Temporary storage for EXP evaluations
-c
-c
-c   BAND STORAGE
-c
-c      LINPACK requires band matrices to be input in a special
-c      form where the elements of each diagonal are moved up or
-c      down (in their column) so that each diagonal becomes a row.
-c      (The column locations of diagonal elements are unchanged.)
-c
-c      Example:  if the original matrix is
-c
-c          11 12 13  0  0  0
-c          21 22 23 24  0  0
-c           0 32 33 34 35  0
-c           0  0 43 44 45 46
-c           0  0  0 54 55 56
-c           0  0  0  0 65 66
-c
-c      then its LINPACK input form would be:
-c
-c           *  *  *  +  +  +  , * = not used
-c           *  * 13 24 35 46  , + = used for pivoting
-c           * 12 23 34 45 56
-c          11 22 33 44 55 66
-c          21 32 43 54 65  *
-c
-c      If A is a band matrix, the following program segment
-c      will convert it to the form (ABD) required by LINPACK
-c      band-matrix routines:
-c
-c               N  = (column dimension of A, ABD)
-c               ML = (band width below the diagonal)
-c               MU = (band width above the diagonal)
-c               M = ML + MU + 1
-c               DO J = 1, N
-c                  I1 = MAX(1, J-MU)
-c                  I2 = MIN(N, J+ML)
-c                  DO I = I1, I2
-c                     K = I - J + M
-c                     ABD(K,J) = A(I,J)
-c                  END DO
-c               END DO
-c
-c      This uses rows  ML+1  through  2*ML+MU+1  of ABD.
-c      The total number of rows needed in ABD is  2*ML+MU+1 .
-c      In the example above, N = 6, ML = 1, MU = 2, and the
-c      row dimension of ABD must be >= 5.
-c
-c
-c   Called by- DISORT, ALBTRN
-c   Calls- ZEROIT
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      LOGICAL(4) ::    LAMBER, LYRCUT
+      INTEGER(4) ::    MI, MI9M2, MXCMU, NCOL, NCUT, NN, NNLYRI, NSTR
+      REAL(4) ::       DELM0
+!c     ..
+!c     .. Array Arguments ..
 
-      LOGICAL   LAMBER, LYRCUT
-      INTEGER   MI, MI9M2, MXCMU, NCOL, NCUT, NN, NNLYRI, NSTR
-      REAL      DELM0
-c     ..
-c     .. Array Arguments ..
-
-      REAL      BDR( MI, 0:MI ), CBAND( MI9M2, NNLYRI ), CMU( MXCMU ),
-     &          CWT( MXCMU ), DTAUCP( * ), GC( MXCMU, MXCMU, * ),
-     &          KK( MXCMU, * ), TAUCPR( 0:* ), WK( MXCMU )
-c     ..
-c     .. Local Scalars ..
+      REAL(4) ::      BDR( MI, 0:MI ), CBAND( MI9M2, NNLYRI ), CMU( MXCMU ), &
+                      CWT( MXCMU ), DTAUCP( * ), GC( MXCMU, MXCMU, * ),      &
+                      KK( MXCMU, * ), TAUCPR( 0:* ), WK( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
       INTEGER   IQ, IROW, JCOL, JQ, K, LC, LDA, NCD, NNCOL, NSHIFT
       REAL      EXPA, SUM
-c     ..
-c     .. External Subroutines ..
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ZEROIT
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC EXP
-c     ..
+!c     ..
 
 
       CALL ZEROIT( CBAND, MI9M2*NNLYRI )
@@ -3203,9 +3267,9 @@ c     ..
       LDA    = 3*NCD + 1
       NSHIFT = LDA - 2*NSTR + 1
       NCOL   = 0
-c                         ** Use continuity conditions of Eq. STWJ(17)
-c                         ** to form coefficient matrix in STWJ(20);
-c                         ** employ scaling transformation STWJ(22)
+!!c                         ** Use continuity conditions of Eq. STWJ(17)
+!c                         ** to form coefficient matrix in STWJ(20);
+!c                         ** employ scaling transformation STWJ(22)
       DO 60 LC = 1, NCUT
 
          DO 10 IQ = 1, NN
@@ -3236,8 +3300,8 @@ c                         ** employ scaling transformation STWJ(22)
             IROW  = NSHIFT - JCOL
 
             DO 40 JQ = 1, NSTR
-               CBAND( IROW + NSTR, NCOL ) =   GC( JQ, IQ, LC )*
-     &                                          WK( NSTR + 1 - IQ )
+               CBAND( IROW + NSTR, NCOL ) =   GC( JQ, IQ, LC )*   &
+                                               WK( NSTR + 1 - IQ )
                CBAND( IROW, NCOL )        = - GC( JQ, IQ, LC )
                IROW  = IROW + 1
    40       CONTINUE
@@ -3247,8 +3311,8 @@ c                         ** employ scaling transformation STWJ(22)
    50    CONTINUE
 
    60 CONTINUE
-c                  ** Use top boundary condition of STWJ(20a) for
-c                  ** first layer
+!c                  ** Use top boundary condition of STWJ(20a) for
+!c                  ** first layer
       JCOL  = 0
 
       DO 80 IQ = 1, NN
@@ -3278,8 +3342,8 @@ c                  ** first layer
          JCOL  = JCOL + 1
 
   100 CONTINUE
-c                           ** Use bottom boundary condition of
-c                           ** STWJ(20c) for last layer
+!c                           ** Use bottom boundary condition of
+!c                           ** STWJ(20c) for last layer
 
       NNCOL = NCOL - NSTR
       JCOL  = 0
@@ -3293,9 +3357,9 @@ c                           ** STWJ(20c) for last layer
 
             IF( LYRCUT .OR. ( LAMBER .AND. DELM0.EQ.0 ) ) THEN
 
-c                          ** No azimuthal-dependent intensity if Lam-
-c                          ** bert surface; no intensity component if
-c                          ** truncated bottom layer
+!c                          ** No azimuthal-dependent intensity if Lam-
+!c                          ** bert surface; no intensity component if
+!c                          ** truncated bottom layer
 
                CBAND( IROW, NNCOL ) = GC( JQ, IQ, NCUT )
 
@@ -3304,12 +3368,12 @@ c                          ** truncated bottom layer
                SUM  = 0.0
 
                DO 110 K = 1, NN
-                  SUM  = SUM + CWT( K )*CMU( K )*BDR( JQ - NN, K )*
-     &                     GC( NN + 1 - K, IQ, NCUT )
+                  SUM  = SUM + CWT( K )*CMU( K )*BDR( JQ - NN, K )* &
+                         GC( NN + 1 - K, IQ, NCUT )
   110          CONTINUE
 
-               CBAND( IROW, NNCOL ) = GC( JQ, IQ, NCUT ) -
-     &                                ( 1.+ DELM0 )*SUM
+               CBAND( IROW, NNCOL ) = GC( JQ, IQ, NCUT ) -  &
+                                    ( 1.+ DELM0 )*SUM
             END IF
 
             IROW  = IROW + 1
@@ -3338,12 +3402,12 @@ c                          ** truncated bottom layer
                SUM  = 0.0
 
                DO 140 K = 1, NN
-                  SUM  = SUM + CWT( K )*CMU( K )*BDR( JQ - NN, K )*
-     &                         GC( NN + 1 - K, IQ, NCUT )
+                  SUM  = SUM + CWT( K )*CMU( K )*BDR( JQ - NN, K )* &
+                              GC( NN + 1 - K, IQ, NCUT )
   140          CONTINUE
 
-               CBAND( IROW, NNCOL ) = ( GC( JQ,IQ,NCUT ) -
-     &                                ( 1.+ DELM0 )*SUM )*EXPA
+               CBAND( IROW, NNCOL ) = ( GC( JQ,IQ,NCUT ) -  &
+                                     ( 1.+ DELM0 )*SUM )*EXPA
             END IF
 
             IROW  = IROW + 1
@@ -3355,76 +3419,91 @@ c                          ** truncated bottom layer
   160 CONTINUE
 
 
-      RETURN
-      END
+    
+      END SUBROUTINE 
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      REAL FUNCTION  SINSCA( DITHER, LAYRU, NLYR, PHASE, OMEGA, TAU,  &
+           UMU, UMU0, UTAU, FBEAM, PI ) !GCC$ ATTRIBUTES hot :: SINSCA !GCC$ ATTRIBUTES aligned(16) :: SINSCA !GCC$ ATTRIBUTES inline :: SINSCA !GCC$ ATTRIBUTES clone_targets("avx2","avx512") :: SINSCA
+#elif defined __ICC || defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES INLINE :: SINSCA
+       REAL FUNCTION  SINSCA( DITHER, LAYRU, NLYR, PHASE, OMEGA, TAU,  &
+            UMU, UMU0, UTAU, FBEAM, PI )
+         !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SINSCA
+         !DIR$ ATTRIBUTES VECTOR:PROCESSOR(skylake) :: SINSCA
+#endif
 
-      REAL FUNCTION  SINSCA( DITHER, LAYRU, NLYR, PHASE, OMEGA, TAU,
-     &                       UMU, UMU0, UTAU, FBEAM, PI )
+!c        Calculates single-scattered intensity from EQS. STWL (65b,d,e)
 
-c        Calculates single-scattered intensity from EQS. STWL (65b,d,e)
+!c                I N P U T   V A R I A B L E S
 
-c                I N P U T   V A R I A B L E S
+!c        DITHER   10 times machine precision
+!c
+!c        LAYRU    index of UTAU in multi-layered system
+!c
+!c        NLYR     number of sublayers
+!c
+!c        PHASE    phase functions of sublayers
+!c
+!c        OMEGA    single scattering albedos of sublayers
+!c
+!c        TAU      optical thicknesses of sublayers
+!c
+!c        UMU      cosine of emergent angle
+!c
+!c        UMU0     cosine of incident zenith angle
+!c
+!c        UTAU     user defined optical depth for output intensity
+!c
+!c        FBEAM   incident beam radiation at top
+!c
+!c        PI       3.1415...
+!c
+!c   Called by- INTCOR
+!c +-------------------------------------------------------------------+
 
-c        DITHER   10 times machine precision
-c
-c        LAYRU    index of UTAU in multi-layered system
-c
-c        NLYR     number of sublayers
-c
-c        PHASE    phase functions of sublayers
-c
-c        OMEGA    single scattering albedos of sublayers
-c
-c        TAU      optical thicknesses of sublayers
-c
-c        UMU      cosine of emergent angle
-c
-c        UMU0     cosine of incident zenith angle
-c
-c        UTAU     user defined optical depth for output intensity
-c
-c        FBEAM   incident beam radiation at top
-c
-c        PI       3.1415...
-c
-c   Called by- INTCOR
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::    LAYRU, NLYR
+      REAL(4)    ::      DITHER, FBEAM, PI, UMU, UMU0, UTAU
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   LAYRU, NLYR
-      REAL      DITHER, FBEAM, PI, UMU, UMU0, UTAU
-c     ..
-c     .. Array Arguments ..
+      REAL(4),  dimension(*)   :: OMEGA, PHASE
+      REAL(4),  dimension(0:*) :: TAU
+!c     ..
+!c     .. Local Scalars ..
 
-      REAL      OMEGA( * ), PHASE( * ), TAU( 0:* )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   LYR
-      REAL      EXP0, EXP1
-c     ..
-c     .. Intrinsic Functions ..
+      INTEGER(4) ::      LYR
+      REAL(4)    ::      EXP0, EXP1
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, EXP
-c     ..
+!c     ..
 
 
-      SINSCA = 0.
+      SINSCA = 0._4
       EXP0 = EXP( -UTAU/UMU0 )
 
       IF( ABS( UMU+UMU0 ).LE.DITHER ) THEN
 
-c                                 ** Calculate downward intensity when
-c                                 ** UMU=UMU0, Eq. STWL (65e)
-
+!c                                 ** Calculate downward intensity when
+!c                                 ** UMU=UMU0, Eq. STWL (65e)
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED OMEGA:64
+         !DIR$ ASSUME_ALIGNED PHASE:64
+         !DIR$ ASSUME_ALIGNED TAU:64
+         !DIR$ REDUCTION(+:SINSCA)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !DIR$ VECTOR
+#endif
          DO 10 LYR = 1, LAYRU - 1
-            SINSCA = SINSCA + OMEGA( LYR ) * PHASE( LYR ) *
-     &               ( TAU( LYR ) - TAU( LYR-1 ) )
+            SINSCA = SINSCA + OMEGA( LYR ) * PHASE( LYR ) *  &
+                    ( TAU( LYR ) - TAU( LYR-1 ) )
    10    CONTINUE
 
-         SINSCA = FBEAM / ( 4.*PI * UMU0 ) * EXP0 * ( SINSCA +
-     &            OMEGA( LAYRU )*PHASE( LAYRU )*( UTAU-TAU(LAYRU-1) ) )
+         SINSCA = FBEAM / ( 4.*PI * UMU0 ) * EXP0 * ( SINSCA + &
+                 OMEGA( LAYRU )*PHASE( LAYRU )*( UTAU-TAU(LAYRU-1) ) )
 
          RETURN
 
@@ -3432,9 +3511,16 @@ c                                 ** UMU=UMU0, Eq. STWL (65e)
 
 
       IF( UMU.GT.0. ) THEN
-c                                 ** Upward intensity, Eq. STWL (65b)
+         !c                                 ** Upward intensity, Eq. STWL (65b)
+#if defined __INTEL_COMPILER
+         !DIR$ REDUCTION(+:SINSCA)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !GCC$ VECTOR
+#endif
          DO 20 LYR = LAYRU, NLYR
-
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ builtin (exp) attributes simd
+#endif
             EXP1 = EXP( -( ( TAU( LYR )-UTAU )/UMU + TAU( LYR )/UMU0 ) )
             SINSCA = SINSCA + OMEGA( LYR )*PHASE( LYR )*( EXP0 - EXP1 )
             EXP0 = EXP1
@@ -3442,9 +3528,16 @@ c                                 ** Upward intensity, Eq. STWL (65b)
    20    CONTINUE
 
       ELSE
-c                                 ** Downward intensity, Eq. STWL (65d)
+         !c                                 ** Downward intensity, Eq. STWL (65d)
+#if defined __INTEL_COMPILER
+         !DIR$ REDUCTION(+:SINSCA)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !GCC$ VECTOR
+#endif
          DO 30 LYR = LAYRU, 1, -1
-
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ builtin (exp) attributes simd
+#endif
             EXP1 = EXP( -( ( TAU(LYR-1)-UTAU )/UMU + TAU(LYR-1)/UMU0 ) )
             SINSCA = SINSCA + OMEGA( LYR )*PHASE( LYR )*( EXP0 - EXP1 )
             EXP0 = EXP1
@@ -3456,110 +3549,123 @@ c                                 ** Downward intensity, Eq. STWL (65d)
       SINSCA = FBEAM / ( 4.*PI * ( 1. + UMU/UMU0 ) ) * SINSCA
 
 
-      RETURN
-      END
+    
+      END FUNCTION
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SOLEIG( AMB, APB, ARRAY, CMU, CWT, GL, MI, MAZIM,        &
+                        MXCMU, NN, NSTR, YLMC, CC, EVECC, EVAL, KK, GC,  &
+                        AAD, EVECCD, EVALD, WKD ) !GCC$ ATTRIBUTES hot :: SOLEIG !GCC$ ATTRIBUTES aligned(16) :: SOLEIG
+#elif defined __ICC || defined __INTEL_COMPILER
+        SUBROUTINE SOLEIG( AMB, APB, ARRAY, CMU, CWT, GL, MI, MAZIM,        &
+                        MXCMU, NN, NSTR, YLMC, CC, EVECC, EVAL, KK, GC,  &
+                        AAD, EVECCD, EVALD, WKD )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SOLEIG
+#endif
 
-      SUBROUTINE SOLEIG( AMB, APB, ARRAY, CMU, CWT, GL, MI, MAZIM,
-     &                   MXCMU, NN, NSTR, YLMC, CC, EVECC, EVAL, KK, GC,
-     &                   AAD, EVECCD, EVALD, WKD )
+!c         Solves eigenvalue/vector problem necessary to construct
+!c         homogeneous part of discrete ordinate solution; STWJ(8b),
+!c         STWL(23f)
+!c         ** NOTE ** Eigenvalue problem is degenerate when single
+!c                    scattering albedo = 1;  present way of doing it
+!c                    seems numerically more stable than alternative
+!c                    methods that we tried
+!c
+!c
+!c   I N P U T     V A R I A B L E S:
+!c
+!c       GL     :  Delta-M scaled Legendre coefficients of phase function
+!c                 (including factors 2l+1 and single-scatter albedo)
+!c
+!c       CMU    :  Computational polar angle cosines
+!c
+!c       CWT    :  Weights for quadrature over polar angle cosine
+!c
+!c       MAZIM  :  Order of azimuthal component
+!c
+!c       NN     :  Half the total number of streams
+!c
+!c       YLMC   :  Normalized associated Legendre polynomial
+!c                 at the quadrature angles CMU
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c   O U T P U T    V A R I A B L E S:
+!c
+!c       CC     :  C-sub-ij in Eq. SS(5); needed in SS(15&18)
+!c
+!c       EVAL   :  NN eigenvalues of Eq. SS(12), STWL(23f) on return
+!c                 from ASYMTX but then square roots taken
+!c
+!c       EVECC  :  NN eigenvectors  (G+) - (G-)  on return
+!c                 from ASYMTX ( column j corresponds to EVAL(j) )
+!c                 but then  (G+) + (G-)  is calculated from SS(10),
+!c                 G+  and  G-  are separated, and  G+  is stacked on
+!c                 top of  G-  to form NSTR eigenvectors of SS(7)
+!c
+!c       GC     :  Permanent storage for all NSTR eigenvectors, but
+!c                 in an order corresponding to KK
+!c
+!c       KK     :  Permanent storage for all NSTR eigenvalues of SS(7),
+!c                 but re-ordered with negative values first ( square
+!c                 roots of EVAL taken and negatives added )
+!c
+!c
+!c   I N T E R N A L   V A R I A B L E S:
+!c
+!c       AMB,APB :  Matrices (alpha-beta), (alpha+beta) in reduced
+!c                    eigenvalue problem
+!c       ARRAY   :  Complete coefficient matrix of reduced eigenvalue
+!c                    problem: (alfa+beta)*(alfa-beta)
+!c       GPPLGM  :  (G+) + (G-) (cf. Eqs. SS(10-11))
+!c       GPMIGM  :  (G+) - (G-) (cf. Eqs. SS(10-11))
+!c       WKD     :  Scratch array required by ASYMTX
+!!c
+!c   Called by- DISORT, ALBTRN
+!c   Calls- ASYMTX, ERRMSG
+!c +-------------------------------------------------------------------+
 
-c         Solves eigenvalue/vector problem necessary to construct
-c         homogeneous part of discrete ordinate solution; STWJ(8b),
-c         STWL(23f)
-c         ** NOTE ** Eigenvalue problem is degenerate when single
-c                    scattering albedo = 1;  present way of doing it
-c                    seems numerically more stable than alternative
-c                    methods that we tried
-c
-c
-c   I N P U T     V A R I A B L E S:
-c
-c       GL     :  Delta-M scaled Legendre coefficients of phase function
-c                 (including factors 2l+1 and single-scatter albedo)
-c
-c       CMU    :  Computational polar angle cosines
-c
-c       CWT    :  Weights for quadrature over polar angle cosine
-c
-c       MAZIM  :  Order of azimuthal component
-c
-c       NN     :  Half the total number of streams
-c
-c       YLMC   :  Normalized associated Legendre polynomial
-c                 at the quadrature angles CMU
-c
-c       (remainder are DISORT input variables)
-c
-c
-c   O U T P U T    V A R I A B L E S:
-c
-c       CC     :  C-sub-ij in Eq. SS(5); needed in SS(15&18)
-c
-c       EVAL   :  NN eigenvalues of Eq. SS(12), STWL(23f) on return
-c                 from ASYMTX but then square roots taken
-c
-c       EVECC  :  NN eigenvectors  (G+) - (G-)  on return
-c                 from ASYMTX ( column j corresponds to EVAL(j) )
-c                 but then  (G+) + (G-)  is calculated from SS(10),
-c                 G+  and  G-  are separated, and  G+  is stacked on
-c                 top of  G-  to form NSTR eigenvectors of SS(7)
-c
-c       GC     :  Permanent storage for all NSTR eigenvectors, but
-c                 in an order corresponding to KK
-c
-c       KK     :  Permanent storage for all NSTR eigenvalues of SS(7),
-c                 but re-ordered with negative values first ( square
-c                 roots of EVAL taken and negatives added )
-c
-c
-c   I N T E R N A L   V A R I A B L E S:
-c
-c       AMB,APB :  Matrices (alpha-beta), (alpha+beta) in reduced
-c                    eigenvalue problem
-c       ARRAY   :  Complete coefficient matrix of reduced eigenvalue
-c                    problem: (alfa+beta)*(alfa-beta)
-c       GPPLGM  :  (G+) + (G-) (cf. Eqs. SS(10-11))
-c       GPMIGM  :  (G+) - (G-) (cf. Eqs. SS(10-11))
-c       WKD     :  Scratch array required by ASYMTX
-c
-c   Called by- DISORT, ALBTRN
-c   Calls- ASYMTX, ERRMSG
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::   MAZIM, MI, MXCMU, NN, NSTR
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   MAZIM, MI, MXCMU, NN, NSTR
-c     ..
-c     .. Array Arguments ..
-
-      REAL      AMB( MI, MI ), APB( MI, MI ), ARRAY( MI, * ),
-     &          CC( MXCMU, MXCMU ), CMU( MXCMU ), CWT( MXCMU ),
-     &          EVAL( MI ), EVECC( MXCMU, MXCMU ), GC( MXCMU, MXCMU ),
-     &          GL( 0:MXCMU ), KK( MXCMU ), YLMC( 0:MXCMU, MXCMU )
-      DOUBLE PRECISION AAD( MI, MI ), EVALD( MI ), EVECCD( MI, MI ),
-     &                 WKD( MXCMU )
-c     ..
-c     .. Local Scalars ..
+      REAL(4) ::      AMB( MI, MI ), APB( MI, MI ), ARRAY( MI, * ),   &
+                      CC( MXCMU, MXCMU ), CMU( MXCMU ), CWT( MXCMU ), &
+                      EVAL( MI ), EVECC( MXCMU, MXCMU ), GC( MXCMU, MXCMU ), &
+                      GL( 0:MXCMU ), KK( MXCMU ), YLMC( 0:MXCMU, MXCMU )
+     REAL(8)  ::      AAD( MI, MI ), EVALD( MI ), EVECCD( MI, MI ),
+                      WKD( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
       INTEGER   IER, IQ, JQ, KQ, L
       REAL      ALPHA, BETA, GPMIGM, GPPLGM, SUM
-c     ..
-c     .. External Subroutines ..
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ASYMTX, ERRMSG
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, SQRT
-c     ..
+!c     ..
 
-c                             ** Calculate quantities in Eqs. SS(5-6),
-c                             ** STWL(8b,15,23f)
+!c                             ** Calculate quantities in Eqs. SS(5-6),
+!c                             ** STWL(8b,15,23f)
       DO 40 IQ = 1, NN
 
          DO 20 JQ = 1, NSTR
 
             SUM  = 0.0
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GL:64,YLMC:64
+            !DIR$ FMA
+            !DIR$ REDUCTION(+:SUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif
             DO 10 L = MAZIM, NSTR - 1
                SUM  = SUM + GL( L )*YLMC( L, IQ )*YLMC( L, JQ )
    10       CONTINUE
@@ -3569,9 +3675,9 @@ c                             ** STWL(8b,15,23f)
    20    CONTINUE
 
          DO 30 JQ = 1, NN
-c                             ** Fill remainder of array using symmetry
-c                             ** relations  C(-mui,muj) = C(mui,-muj)
-c                             ** and        C(-mui,-muj) = C(mui,muj)
+!c                             ** Fill remainder of array using symmetry
+!c                             ** relations  C(-mui,muj) = C(mui,-muj)
+!c                             ** and        C(-mui,-muj) = C(mui,muj)
 
             CC( IQ + NN, JQ ) = CC( IQ, JQ + NN )
             CC( IQ + NN, JQ + NN ) = CC( IQ, JQ )
@@ -3590,15 +3696,22 @@ c                                       ** of reduced eigenvalue problem
          APB( IQ, IQ ) = APB( IQ, IQ ) - 1.0 / CMU( IQ )
 
    40 CONTINUE
-c                      ** Finish calculation of coefficient matrix of
-c                      ** reduced eigenvalue problem:  get matrix
-c                      ** product (alfa+beta)*(alfa-beta); SS(12),
-c                      ** STWL(23f)
+!c                      ** Finish calculation of coefficient matrix of
+!c                      ** reduced eigenvalue problem:  get matrix
+!c                      ** product (alfa+beta)*(alfa-beta); SS(12),
+!c                      ** STWL(23f)
       DO 70 IQ = 1, NN
 
          DO 60 JQ = 1, NN
 
             SUM  = 0.
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED APB:64,AMB:64
+            !DIR$ FMA
+            !DIR$ REDUCTION(+:SUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif            
             DO 50 KQ = 1, NN
                SUM  = SUM + APB( IQ, KQ )*AMB( KQ, JQ )
    50       CONTINUE
@@ -3608,15 +3721,15 @@ c                      ** STWL(23f)
    60    CONTINUE
 
    70 CONTINUE
-c                      ** Find (real) eigenvalues and eigenvectors
+!c                      ** Find (real) eigenvalues and eigenvectors
 
-      CALL ASYMTX( ARRAY, EVECC, EVAL, NN, MI, MXCMU, IER, WKD, AAD,
-     &             EVECCD, EVALD )
+      CALL ASYMTX( ARRAY, EVECC, EVAL, NN, MI, MXCMU, IER, WKD, AAD, &
+                 EVECCD, EVALD )
 
       IF( IER.GT.0 ) THEN
 
-         WRITE( *, '(//,A,I4,A)' ) ' ASYMTX--eigenvalue no. ',
-     &      IER, '  didnt converge.  Lower-numbered eigenvalues wrong.'
+         WRITE( *, '(//,A,I4,A)' ) ' ASYMTX--eigenvalue no. ',  &
+           IER, '  didnt converge.  Lower-numbered eigenvalues wrong.'
 
          CALL ERRMSG( 'ASYMTX--convergence problems',.True.)
 
@@ -3626,17 +3739,24 @@ c                      ** Find (real) eigenvalues and eigenvectors
       DO 80 IQ = 1, NN
          EVAL( IQ )    = SQRT( ABS( EVAL( IQ ) ) )
          KK( IQ + NN ) = EVAL( IQ )
-c                                      ** Add negative eigenvalue
+!c                                      ** Add negative eigenvalue
          KK( NN + 1 - IQ ) = -EVAL( IQ )
    80 CONTINUE
 
-c                          ** Find eigenvectors (G+) + (G-) from SS(10)
-c                          ** and store temporarily in APB array
+!c                          ** Find eigenvectors (G+) + (G-) from SS(10)
+!c                          ** and store temporarily in APB array
       DO 110 JQ = 1, NN
 
          DO 100 IQ = 1, NN
 
             SUM  = 0.
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED AMB:64,EVECC:64
+            !DIR$ FMA
+            !DIR$ REDUCTION(+:SUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif            
             DO 90 KQ = 1, NN
                SUM  = SUM + AMB( IQ, KQ )*EVECC( KQ, JQ )
    90       CONTINUE
@@ -3654,17 +3774,17 @@ c                          ** and store temporarily in APB array
 
             GPPLGM = APB( IQ, JQ )
             GPMIGM = EVECC( IQ, JQ )
-c                                ** Recover eigenvectors G+,G- from
-c                                ** their sum and difference; stack them
-c                                ** to get eigenvectors of full system
-c                                ** SS(7) (JQ = eigenvector number)
+!c                                ** Recover eigenvectors G+,G- from
+!c                                ** their sum and difference; stack them
+!c                                ** to get eigenvectors of full system
+!c                                ** SS(7) (JQ = eigenvector number)
 
             EVECC( IQ,      JQ ) = 0.5*( GPPLGM + GPMIGM )
             EVECC( IQ + NN, JQ ) = 0.5*( GPPLGM - GPMIGM )
 
-c                                ** Eigenvectors corresponding to
-c                                ** negative eigenvalues (corresp. to
-c                                ** reversing sign of 'k' in SS(10) )
+!c                                ** Eigenvectors corresponding to
+!c                                ** negative eigenvalues (corresp. to
+!c                                ** reversing sign of 'k' in SS(10) )
             GPPLGM = - GPPLGM
             EVECC(IQ,   JQ+NN) = 0.5 * ( GPPLGM + GPMIGM )
             EVECC(IQ+NN,JQ+NN) = 0.5 * ( GPPLGM - GPMIGM )
@@ -3678,8 +3798,8 @@ c                                ** reversing sign of 'k' in SS(10) )
   130 CONTINUE
 
 
-      RETURN
-      END
+    
+      END SUBROUTINE
 
       SUBROUTINE SOLVE0( B, BDR, BEM, BPLANK, CBAND, CMU, CWT, EXPBEA,
      &                   FBEAM, FISOT, IPVT, LAMBER, LL, LYRCUT, MAZIM,
