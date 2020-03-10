@@ -3800,130 +3800,137 @@ c                                       ** of reduced eigenvalue problem
 
     
       END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SOLVE0( B, BDR, BEM, BPLANK, CBAND, CMU, CWT, EXPBEA,   &
+                        FBEAM, FISOT, IPVT, LAMBER, LL, LYRCUT, MAZIM,  &
+                        MI, MI9M2, MXCMU, NCOL, NCUT, NN, NSTR, NNLYRI, &
+                        PI, TPLANK, TAUCPR, UMU0, Z, ZZ, ZPLK0, ZPLK1 ) !GCC$ ATTRIBUTES hot :: SOLVE0 !GCC$ ATTRIBUTES aligned(16) :: SOLVE0
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE SOLVE0( B, BDR, BEM, BPLANK, CBAND, CMU, CWT, EXPBEA,   &
+                        FBEAM, FISOT, IPVT, LAMBER, LL, LYRCUT, MAZIM,  &
+                        MI, MI9M2, MXCMU, NCOL, NCUT, NN, NSTR, NNLYRI, &
+                        PI, TPLANK, TAUCPR, UMU0, Z, ZZ, ZPLK0, ZPLK1 )
+         !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SOLVE0
+#endif
 
-      SUBROUTINE SOLVE0( B, BDR, BEM, BPLANK, CBAND, CMU, CWT, EXPBEA,
-     &                   FBEAM, FISOT, IPVT, LAMBER, LL, LYRCUT, MAZIM,
-     &                   MI, MI9M2, MXCMU, NCOL, NCUT, NN, NSTR, NNLYRI,
-     &                   PI, TPLANK, TAUCPR, UMU0, Z, ZZ, ZPLK0, ZPLK1 )
+!c        Construct right-hand side vector B for general boundary
+!c        conditions STWJ(17) and solve system of equations obtained
+!c        from the boundary conditions and the continuity-of-
+!c        intensity-at-layer-interface equations.
+!c        Thermal emission contributes only in azimuthal independence.
+!c
+!c
+!c    I N P U T      V A R I A B L E S:
+!c
+!c       BDR      :  Surface bidirectional reflectivity
+!c
+!c       BEM      :  Surface bidirectional emissivity
+!c
+!c       BPLANK   :  Bottom boundary thermal emission
+!c
+!c       CBAND    :  Left-hand side matrix of linear system Eq. SC(5),
+!c                   scaled by Eq. SC(12); in banded form required
+!c                   by LINPACK solution routines
+!c
+!c       CMU,CWT  :  Abscissae, weights for Gauss quadrature
+!c                   over angle cosine
+!c
+!c       EXPBEA   :  Transmission of incident beam, EXP(-TAUCPR/UMU0)
+!c
+!c       LYRCUT   :  Logical flag for truncation of computational layers
+!c
+!c       MAZIM    :  Order of azimuthal component
+!c
+!c       NCOL     :  Number of columns in CBAND
+!c
+!c       NN       :  Order of double-Gauss quadrature (NSTR/2)
+!c
+!c       NCUT     :  Total number of computational layers considered
+!c
+!c       TPLANK   :  Top boundary thermal emission
+!c
+!c       TAUCPR   :  Cumulative optical depth (delta-M-scaled)
+!c
+!c       ZZ       :  Beam source vectors in Eq. SS(19), STWL(24b)
+!c
+!c       ZPLK0    :  Thermal source vectors Z0, by solving Eq. SS(16),
+!c                   Y0 in STWL(26b)
+!c
+!c       ZPLK1    :  Thermal source vectors Z1, by solving Eq. SS(16),
+!c                   Y1 in STWL(26a)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T     V A R I A B L E S:
+!c
+!c       B        :  Right-hand side vector of Eq. SC(5) going into
+!c                   SGBSL; returns as solution vector of Eq. SC(12),
+!c                   constants of integration without exponential term
+!c
+!c      LL        :  Permanent storage for B, but re-ordered
+!c
+!c
+!c   I N T E R N A L    V A R I A B L E S:
+!c
+!c       IPVT     :  Integer vector of pivot indices
+!c       IT       :  Pointer for position in  B
+!c       NCD      :  Number of diagonals below or above main diagonal
+!c       RCOND    :  Indicator of singularity for CBAND
+!c       Z        :  Scratch array required by SGBCO
+!c
+!c   Called by- DISORT
+!c   Calls- ZEROIT, SGBCO, ERRMSG, SGBSL
+!c +-------------------------------------------------------------------+
 
-c        Construct right-hand side vector B for general boundary
-c        conditions STWJ(17) and solve system of equations obtained
-c        from the boundary conditions and the continuity-of-
-c        intensity-at-layer-interface equations.
-c        Thermal emission contributes only in azimuthal independence.
-c
-c
-c    I N P U T      V A R I A B L E S:
-c
-c       BDR      :  Surface bidirectional reflectivity
-c
-c       BEM      :  Surface bidirectional emissivity
-c
-c       BPLANK   :  Bottom boundary thermal emission
-c
-c       CBAND    :  Left-hand side matrix of linear system Eq. SC(5),
-c                   scaled by Eq. SC(12); in banded form required
-c                   by LINPACK solution routines
-c
-c       CMU,CWT  :  Abscissae, weights for Gauss quadrature
-c                   over angle cosine
-c
-c       EXPBEA   :  Transmission of incident beam, EXP(-TAUCPR/UMU0)
-c
-c       LYRCUT   :  Logical flag for truncation of computational layers
-c
-c       MAZIM    :  Order of azimuthal component
-c
-c       NCOL     :  Number of columns in CBAND
-c
-c       NN       :  Order of double-Gauss quadrature (NSTR/2)
-c
-c       NCUT     :  Total number of computational layers considered
-c
-c       TPLANK   :  Top boundary thermal emission
-c
-c       TAUCPR   :  Cumulative optical depth (delta-M-scaled)
-c
-c       ZZ       :  Beam source vectors in Eq. SS(19), STWL(24b)
-c
-c       ZPLK0    :  Thermal source vectors Z0, by solving Eq. SS(16),
-c                   Y0 in STWL(26b)
-c
-c       ZPLK1    :  Thermal source vectors Z1, by solving Eq. SS(16),
-c                   Y1 in STWL(26a)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c    O U T P U T     V A R I A B L E S:
-c
-c       B        :  Right-hand side vector of Eq. SC(5) going into
-c                   SGBSL; returns as solution vector of Eq. SC(12),
-c                   constants of integration without exponential term
-c
-c      LL        :  Permanent storage for B, but re-ordered
-c
-c
-c   I N T E R N A L    V A R I A B L E S:
-c
-c       IPVT     :  Integer vector of pivot indices
-c       IT       :  Pointer for position in  B
-c       NCD      :  Number of diagonals below or above main diagonal
-c       RCOND    :  Indicator of singularity for CBAND
-c       Z        :  Scratch array required by SGBCO
-c
-c   Called by- DISORT
-c   Calls- ZEROIT, SGBCO, ERRMSG, SGBSL
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      LOGICAL(4) ::    LAMBER, LYRCUT
+      INTEGER(4) ::    MAZIM, MI, MI9M2, MXCMU, NCOL, NCUT, NN, NNLYRI, NSTR
+      REAL(4)    ::    BPLANK, FBEAM, FISOT, PI, TPLANK, UMU0
+!c     ..
+!c     .. Array Arguments ..
 
-      LOGICAL   LAMBER, LYRCUT
-      INTEGER   MAZIM, MI, MI9M2, MXCMU, NCOL, NCUT, NN, NNLYRI, NSTR
-      REAL      BPLANK, FBEAM, FISOT, PI, TPLANK, UMU0
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4) ::    IPVT( * )
+      REAL(4) ::      B( NNLYRI ), BDR( MI, 0:MI ), BEM( MI ),            &
+                      CBAND( MI9M2, NNLYRI ), CMU( MXCMU ), CWT( MXCMU ), &
+                      EXPBEA( 0:* ), LL( MXCMU, * ), TAUCPR( 0:* ),       &
+                      Z( NNLYRI ), ZPLK0( MXCMU, * ), ZPLK1( MXCMU, * ),  &
+                      ZZ( MXCMU, * )
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   IPVT( * )
-      REAL      B( NNLYRI ), BDR( MI, 0:MI ), BEM( MI ),
-     &          CBAND( MI9M2, NNLYRI ), CMU( MXCMU ), CWT( MXCMU ),
-     &          EXPBEA( 0:* ), LL( MXCMU, * ), TAUCPR( 0:* ),
-     &          Z( NNLYRI ), ZPLK0( MXCMU, * ), ZPLK1( MXCMU, * ),
-     &          ZZ( MXCMU, * )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IPNT, IQ, IT, JQ, LC, NCD
-      REAL      RCOND, SUM
-c     ..
-c     .. External Subroutines ..
+      INTEGER(4) ::      IPNT, IQ, IT, JQ, LC, NCD
+      REAL(4)    ::      RCOND, SUM
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ERRMSG, SGBCO, SGBSL, ZEROIT
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC EXP
-c     ..
+!c     ..
 
 
       CALL ZEROIT( B, NNLYRI )
-c                              ** Construct B,  STWJ(20a,c) for
-c                              ** parallel beam + bottom reflection +
-c                              ** thermal emission at top and/or bottom
+!c                              ** Construct B,  STWJ(20a,c) for
+!c                              ** parallel beam + bottom reflection +
+!c                              ** thermal emission at top and/or bottom
 
       IF( MAZIM.GT.0 .AND. FBEAM.GT.0.0 ) THEN
 
-c                                         ** Azimuth-dependent case
-c                                         ** (never called if FBEAM = 0)
+!c                                         ** Azimuth-dependent case
+!c                                         ** (never called if FBEAM = 0)
          IF( LYRCUT .OR. LAMBER ) THEN
 
-c               ** No azimuthal-dependent intensity for Lambert surface;
-c               ** no intensity component for truncated bottom layer
+!c               ** No azimuthal-dependent intensity for Lambert surface;
+!c               ** no intensity component for truncated bottom layer
 
             DO 10 IQ = 1, NN
-c                                                  ** Top boundary
+!c                                                  ** Top boundary
                B( IQ ) = -ZZ( NN + 1 - IQ, 1 )
-c                                                  ** Bottom boundary
+!c                                                  ** Bottom boundary
 
                B( NCOL - NN + IQ ) = -ZZ( IQ + NN, NCUT )*EXPBEA( NCUT )
 
@@ -3938,24 +3945,31 @@ c                                                  ** Bottom boundary
 
                SUM  = 0.
                DO 20 JQ = 1, NN
-                  SUM  = SUM + CWT( JQ )*CMU( JQ )*BDR( IQ, JQ )*
-     &                         ZZ( NN + 1 - JQ, NCUT )*EXPBEA( NCUT )
+                  SUM  = SUM + CWT( JQ )*CMU( JQ )*BDR( IQ, JQ )*  &
+                             ZZ( NN + 1 - JQ, NCUT )*EXPBEA( NCUT )
    20          CONTINUE
 
                B( NCOL - NN + IQ ) = SUM
-               IF( FBEAM.GT.0.0 ) B( NCOL - NN + IQ ) = SUM +
-     &             ( BDR( IQ,0 )*UMU0*FBEAM/PI - ZZ( IQ+NN,NCUT ) )*
-     &             EXPBEA( NCUT )
+               IF( FBEAM.GT.0.0 ) B( NCOL - NN + IQ ) = SUM +   &
+                  ( BDR( IQ,0 )*UMU0*FBEAM/PI - ZZ( IQ+NN,NCUT ) )*  &
+                  EXPBEA( NCUT )
 
    30       CONTINUE
 
          END IF
-c                             ** Continuity condition for layer
-c                             ** interfaces of Eq. STWJ(20b)
+!c                             ** Continuity condition for layer
+!c                             ** interfaces of Eq. STWJ(20b)
          IT  = NN
 
          DO 50 LC = 1, NCUT - 1
-
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED B:64
+            !DIR$ ASSUME_ALIGNED ZZ:64
+            !DIR$ ASSUME_ALIGNED EXPBEA:64
+            !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif
             DO 40 IQ = 1, NSTR
                IT  = IT + 1
                B( IT ) = ( ZZ( IQ,LC+1 ) - ZZ( IQ,LC ) )*EXPBEA( LC )
@@ -3965,12 +3979,12 @@ c                             ** interfaces of Eq. STWJ(20b)
 
 
       ELSE
-c                                   ** Azimuth-independent case
+!c                                   ** Azimuth-independent case
 
          IF( FBEAM.EQ.0.0 ) THEN
 
             DO 60 IQ = 1, NN
-c                                      ** Top boundary
+!c                                      ** Top boundary
 
                B( IQ ) = -ZPLK0( NN + 1 - IQ, 1 ) + FISOT + TPLANK
 
@@ -3978,10 +3992,10 @@ c                                      ** Top boundary
 
 
             IF( LYRCUT ) THEN
-c                               ** No intensity component for truncated
-c                               ** bottom layer
+!c                               ** No intensity component for truncated
+!c                               ** bottom layer
                DO 70 IQ = 1, NN
-c                                      ** Bottom boundary
+!c                                      ** Bottom boundary
 
                   B( NCOL - NN + IQ ) = - ZPLK0( IQ + NN, NCUT ) -
      &                                    ZPLK1( IQ + NN, NCUT ) *
@@ -3995,28 +4009,37 @@ c                                      ** Bottom boundary
 
                   SUM  = 0.
                   DO 80 JQ = 1, NN
-                     SUM  = SUM + CWT( JQ )*CMU( JQ )*BDR( IQ, JQ )*
-     &                        ( ZPLK0( NN+1-JQ, NCUT ) +
-     &                          ZPLK1( NN+1-JQ, NCUT ) *TAUCPR( NCUT ) )
+                     SUM  = SUM + CWT( JQ )*CMU( JQ )*BDR( IQ, JQ )*   &
+                             ( ZPLK0( NN+1-JQ, NCUT ) +   &
+                               ZPLK1( NN+1-JQ, NCUT ) *TAUCPR( NCUT ) )
    80             CONTINUE
 
-                  B( NCOL - NN + IQ ) = 2.*SUM + BEM( IQ )*BPLANK -
-     &                                  ZPLK0( IQ + NN, NCUT ) -
-     &                                  ZPLK1( IQ + NN, NCUT ) *
-     &                                  TAUCPR( NCUT )
+                  B( NCOL - NN + IQ ) = 2.*SUM + BEM( IQ )*BPLANK -  &
+                                       ZPLK0( IQ + NN, NCUT ) -     &
+                                       ZPLK1( IQ + NN, NCUT ) *     &
+                                       TAUCPR( NCUT )
    90          CONTINUE
 
             END IF
-c                             ** Continuity condition for layer
-c                             ** interfaces, STWJ(20b)
+!c                             ** Continuity condition for layer
+!c                             ** interfaces, STWJ(20b)
             IT  = NN
             DO 110 LC = 1, NCUT - 1
-
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED B:64
+               !DIR$ ASSUME_ALIGNED ZPLK0:64
+               !DIR$ ASSUME_ALIGNED ZPLK1:64
+               !DIR$ ASSUME_ALIGNED TAUCPR:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ IVDEP
+               !GCC$ VECTOR
+#endif
                DO 100 IQ = 1, NSTR
                   IT  = IT + 1
-                  B( IT ) =   ZPLK0( IQ, LC + 1 ) - ZPLK0( IQ, LC ) +
-     &                      ( ZPLK1( IQ, LC + 1 ) - ZPLK1( IQ, LC ) )*
-     &                      TAUCPR( LC )
+                  B( IT ) =   ZPLK0( IQ, LC + 1 ) - ZPLK0( IQ, LC ) +  &
+                           ( ZPLK1( IQ, LC + 1 ) - ZPLK1( IQ, LC ) )* &
+                           TAUCPR( LC )
   100          CONTINUE
 
   110       CONTINUE
@@ -4025,16 +4048,16 @@ c                             ** interfaces, STWJ(20b)
          ELSE
 
             DO 120 IQ = 1, NN
-               B( IQ ) = -ZZ( NN + 1 - IQ, 1 ) -
-     &                   ZPLK0( NN + 1 - IQ, 1 ) + FISOT + TPLANK
+               B( IQ ) = -ZZ( NN + 1 - IQ, 1 ) - &
+                        ZPLK0( NN + 1 - IQ, 1 ) + FISOT + TPLANK
   120       CONTINUE
 
             IF( LYRCUT ) THEN
 
                DO 130 IQ = 1, NN
-                  B( NCOL-NN+IQ ) = - ZZ(IQ+NN, NCUT) * EXPBEA(NCUT)
-     &                              - ZPLK0(IQ+NN, NCUT)
-     &                              - ZPLK1(IQ+NN, NCUT) * TAUCPR(NCUT)
+                  B( NCOL-NN+IQ ) = - ZZ(IQ+NN, NCUT) * EXPBEA(NCUT)  &
+                                   - ZPLK0(IQ+NN, NCUT)               &
+                                  - ZPLK1(IQ+NN, NCUT) * TAUCPR(NCUT)
   130          CONTINUE
 
 
@@ -4044,17 +4067,17 @@ c                             ** interfaces, STWJ(20b)
 
                   SUM  = 0.
                   DO 140 JQ = 1, NN
-                     SUM = SUM + CWT(JQ) * CMU(JQ) * BDR(IQ,JQ)
-     &                          * ( ZZ(NN+1-JQ, NCUT) * EXPBEA(NCUT)
-     &                            + ZPLK0(NN+1-JQ, NCUT)
-     &                            + ZPLK1(NN+1-JQ, NCUT) * TAUCPR(NCUT))
+                     SUM = SUM + CWT(JQ) * CMU(JQ) * BDR(IQ,JQ)      &
+                               * ( ZZ(NN+1-JQ, NCUT) * EXPBEA(NCUT)  &
+                                 + ZPLK0(NN+1-JQ, NCUT)              &
+                                 + ZPLK1(NN+1-JQ, NCUT) * TAUCPR(NCUT))
   140             CONTINUE
 
-                  B(NCOL-NN+IQ) = 2.*SUM + ( BDR(IQ,0) * UMU0*FBEAM/PI
-     &                                - ZZ(IQ+NN, NCUT) ) * EXPBEA(NCUT)
-     &                            + BEM(IQ) * BPLANK
-     &                            - ZPLK0(IQ+NN, NCUT)
-     &                            - ZPLK1(IQ+NN, NCUT) * TAUCPR(NCUT)
+                  B(NCOL-NN+IQ) = 2.*SUM + ( BDR(IQ,0) * UMU0*FBEAM/PI    &
+                                     - ZZ(IQ+NN, NCUT) ) * EXPBEA(NCUT)  &
+                                 + BEM(IQ) * BPLANK                      &
+                                 - ZPLK0(IQ+NN, NCUT)                    &
+                                 - ZPLK1(IQ+NN, NCUT) * TAUCPR(NCUT)
   150          CONTINUE
 
             END IF
@@ -4063,13 +4086,18 @@ c                             ** interfaces, STWJ(20b)
             IT  = NN
 
             DO 170 LC = 1, NCUT - 1
-
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED ZZ:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !GCC$ VECTOR
+#endif
                DO 160 IQ = 1, NSTR
 
                   IT  = IT + 1
-                  B(IT) = ( ZZ(IQ,LC+1) - ZZ(IQ,LC) ) * EXPBEA(LC)
-     &                    + ZPLK0(IQ,LC+1) - ZPLK0(IQ,LC) +
-     &                    ( ZPLK1(IQ,LC+1) - ZPLK1(IQ,LC) ) * TAUCPR(LC)
+                  B(IT) = ( ZZ(IQ,LC+1) - ZZ(IQ,LC) ) * EXPBEA(LC)      &
+                         + ZPLK0(IQ,LC+1) - ZPLK0(IQ,LC) +             &
+                         ( ZPLK1(IQ,LC+1) - ZPLK1(IQ,LC) ) * TAUCPR(LC)
   160          CONTINUE
 
   170       CONTINUE
@@ -4077,27 +4105,27 @@ c                             ** interfaces, STWJ(20b)
          END IF
 
       END IF
-c                     ** Find L-U (lower/upper triangular) decomposition
-c                     ** of band matrix CBAND and test if it is nearly
-c                     ** singular (note: CBAND is destroyed)
-c                     ** (CBAND is in LINPACK packed format)
+!c                     ** Find L-U (lower/upper triangular) decomposition
+!c                     ** of band matrix CBAND and test if it is nearly
+!c                     ** singular (note: CBAND is destroyed)
+!c                     ** (CBAND is in LINPACK packed format)
       RCOND  = 0.0
       NCD    = 3*NN - 1
 
       CALL SGBCO( CBAND, MI9M2, NCOL, NCD, NCD, IPVT, RCOND, Z )
 
-      IF( 1.0 + RCOND.EQ.1.0 )
-     &    CALL ERRMSG('SOLVE0--SGBCO says matrix near singular',.FALSE.)
+      IF( 1.0 + RCOND.EQ.1.0 ) &
+         CALL ERRMSG('SOLVE0--SGBCO says matrix near singular',.FALSE.)
 
-c                   ** Solve linear system with coeff matrix CBAND
-c                   ** and R.H. side(s) B after CBAND has been L-U
-c                   ** decomposed.  Solution is returned in B.
+!c                   ** Solve linear system with coeff matrix CBAND
+!c                   ** and R.H. side(s) B after CBAND has been L-U
+!c                   ** decomposed.  Solution is returned in B.
 
       CALL SGBSL( CBAND, MI9M2, NCOL, NCD, NCD, IPVT, B, 0 )
 
-c                   ** Zero CBAND (it may contain 'foreign'
-c                   ** elements upon returning from LINPACK);
-c                   ** necessary to prevent errors
+!c                   ** Zero CBAND (it may contain 'foreign'
+!c                   ** elements upon returning from LINPACK);
+!c                   ** necessary to prevent errors
 
       CALL ZEROIT( CBAND, MI9M2*NNLYRI )
 
@@ -4113,96 +4141,102 @@ c                   ** necessary to prevent errors
   190 CONTINUE
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SURFAC( ALBEDO, DELM0, CMU, FBEAM, LAMBER, MI, MAZIM,    &
+                        MXUMU, NN, NUMU, ONLYFL, PI, UMU, UMU0,          &
+                        USRANG, WVNMLO, WVNMHI, BDR, EMU, BEM, RMU )  !GCC$ ATTRIBUTES hot :: SURFAC !GCC$ ATTRIBUTES aligned(16) :: SURFACE
+#elif defined __ICC || defined __INTEL_COMPILER
+        SUBROUTINE SURFAC( ALBEDO, DELM0, CMU, FBEAM, LAMBER, MI, MAZIM,    &
+                        MXUMU, NN, NUMU, ONLYFL, PI, UMU, UMU0,          &
+                        USRANG, WVNMLO, WVNMHI, BDR, EMU, BEM, RMU )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SURFAC
+#endif
 
-      SUBROUTINE SURFAC( ALBEDO, DELM0, CMU, FBEAM, LAMBER, MI, MAZIM,
-     &                   MXUMU, NN, NUMU, ONLYFL, PI, UMU, UMU0,
-     &                   USRANG, WVNMLO, WVNMHI, BDR, EMU, BEM, RMU )
+!c       Computes user's surface bidirectional properties, STWL(41)
+!c
+!c   I N P U T     V A R I A B L E S:
+!c
+!c       CMU    :  Computational polar angle cosines (Gaussian)
+!c
+!c       DELM0  :  Kronecker delta, delta-sub-m0
+!c
+!c       MAZIM  :  Order of azimuthal component
+!c
+!c       NN     :  Order of Double-Gauss quadrature (NSTR/2)
+!c
+!c       (Remainder are 'DISORT' input variables)
+!c
+!c    O U T P U T     V A R I A B L E S:
+!c
+!c       BDR :  Fourier expansion coefficient of surface bidirectional
+!c                 reflectivity (computational angles)
+!c
+!c       RMU :  Surface bidirectional reflectivity (user angles)
+!c
+!c       BEM :  Surface directional emissivity (computational angles)
+!c
+!c       EMU :  Surface directional emissivity (user angles)
+!c
+!c    I N T E R N A L     V A R I A B L E S:
 
-c       Computes user's surface bidirectional properties, STWL(41)
-c
-c   I N P U T     V A R I A B L E S:
-c
-c       CMU    :  Computational polar angle cosines (Gaussian)
-c
-c       DELM0  :  Kronecker delta, delta-sub-m0
-c
-c       MAZIM  :  Order of azimuthal component
-c
-c       NN     :  Order of Double-Gauss quadrature (NSTR/2)
-c
-c       (Remainder are 'DISORT' input variables)
-c
-c    O U T P U T     V A R I A B L E S:
-c
-c       BDR :  Fourier expansion coefficient of surface bidirectional
-c                 reflectivity (computational angles)
-c
-c       RMU :  Surface bidirectional reflectivity (user angles)
-c
-c       BEM :  Surface directional emissivity (computational angles)
-c
-c       EMU :  Surface directional emissivity (user angles)
-c
-c    I N T E R N A L     V A R I A B L E S:
+!c       DREF   :  Directional reflectivity
+!c
+!c       NMUG   :  Number of angle cosine quadrature points on (-1,1)
+!c                 for integrating bidirectional reflectivity to get
+!c                 directional emissivity (it is necessary to use a
+!c                 quadrature set distinct from the computational angles,
+!c                 because the computational angles may not be dense
+!c                 enough -- i.e. 'NSTR' may be too small-- to give an
+!c                 accurate approximation for the integration).
+!c
+!c       GMU    :  The 'NMUG' angle cosine quadrature points on (0,1)
+!c
+!c       GWT    :  The 'NMUG' angle cosine quadrature weights on (0,1)
+!c
+!c   Called by- DISORT
+!c   Calls- QGAUSN, BDREF, ZEROIT
+!c+---------------------------------------------------------------------+
 
-c       DREF   :  Directional reflectivity
-c
-c       NMUG   :  Number of angle cosine quadrature points on (-1,1)
-c                 for integrating bidirectional reflectivity to get
-c                 directional emissivity (it is necessary to use a
-c                 quadrature set distinct from the computational angles,
-c                 because the computational angles may not be dense
-c                 enough -- i.e. 'NSTR' may be too small-- to give an
-c                 accurate approximation for the integration).
-c
-c       GMU    :  The 'NMUG' angle cosine quadrature points on (0,1)
-c
-c       GWT    :  The 'NMUG' angle cosine quadrature weights on (0,1)
-c
-c   Called by- DISORT
-c   Calls- QGAUSN, BDREF, ZEROIT
-c+---------------------------------------------------------------------+
-
-c     .. Parameters ..
+!c     .. Parameters ..
 
       INTEGER   NMUG
       PARAMETER ( NMUG = 50 )
-c     ..
-c     .. Scalar Arguments ..
+!c     ..
+!c     .. Scalar Arguments ..
 
-      LOGICAL   LAMBER, ONLYFL, USRANG
-      INTEGER   MAZIM, MI, MXUMU, NN, NUMU
-      REAL      ALBEDO, DELM0, FBEAM, PI, UMU0, WVNMHI, WVNMLO
-c     ..
-c     .. Array Arguments ..
-      REAL      BDR( MI, 0:MI ), BEM( MI ), CMU( * ), EMU( MXUMU ),
-     &          RMU( MXUMU, 0:MI ), UMU( * )
-c     ..
-c     .. Local Scalars ..
+      LOGICAL(4) ::      LAMBER, ONLYFL, USRANG
+      INTEGER(4) ::      MAZIM, MI, MXUMU, NN, NUMU
+      REAL(4)    ::      ALBEDO, DELM0, FBEAM, PI, UMU0, WVNMHI, WVNMLO
+!c     ..
+!c     .. Array Arguments ..
+      REAL(4) ::      BDR( MI, 0:MI ), BEM( MI ), CMU( * ), EMU( MXUMU ),  &
+                      RMU( MXUMU, 0:MI ), UMU( * )
+!c     ..
+!c     .. Local Scalars ..
 
-      LOGICAL   PASS1
-      INTEGER   IQ, IU, JG, JQ, K
-      REAL      DREF, SUM
-c     ..
-c     .. Local Arrays ..
+      LOGICAL(4) ::   PASS1
+      INTEGER(4) ::   IQ, IU, JG, JQ, K
+      REAL(4)    ::   DREF, SUM
+!c     ..
+!c     .. Local Arrays ..
 
       REAL      GMU( NMUG ), GWT( NMUG )
-c     ..
-c     .. External Functions ..
+!c     ..
+!c     .. External Functions ..
 
       REAL      BDREF
       EXTERNAL  BDREF
-c     ..
-c     .. External Subroutines ..
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  QGAUSN, ZEROIT
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC COS
-c     ..
+!c     ..
       SAVE      PASS1, GMU, GWT
       DATA      PASS1 / .True. /
 
@@ -4224,9 +4258,9 @@ c     ..
       CALL ZEROIT( BDR, MI*( MI+1 ) )
       CALL ZEROIT( BEM, MI )
 
-c                             ** Compute Fourier expansion coefficient
-c                             ** of surface bidirectional reflectance
-c                             ** at computational angles Eq. STWL (41)
+!c                             ** Compute Fourier expansion coefficient
+!c                             ** of surface bidirectional reflectance
+!c                             ** at computational angles Eq. STWL (41)
 
       IF( LAMBER .AND. MAZIM.EQ.0 ) THEN
 
@@ -4248,9 +4282,9 @@ c                             ** at computational angles Eq. STWL (41)
 
                SUM  = 0.0
                DO 40 K = 1, NMUG
-                  SUM  = SUM + GWT( K ) *
-     &                   BDREF( WVNMLO, WVNMHI, CMU(IQ), CMU(JQ),
-     &                          PI*GMU(K) ) * COS( MAZIM*PI*GMU( K ) )
+                  SUM  = SUM + GWT( K ) * &
+                        BDREF( WVNMLO, WVNMHI, CMU(IQ), CMU(JQ), &
+                               PI*GMU(K) ) * COS( MAZIM*PI*GMU( K ) )
    40          CONTINUE
 
                BDR( IQ, JQ ) = 0.5 * ( 2. - DELM0 ) * SUM
@@ -4262,9 +4296,9 @@ c                             ** at computational angles Eq. STWL (41)
 
                SUM  = 0.0
                DO 60 K = 1, NMUG
-                  SUM  = SUM + GWT( K ) *
-     &                   BDREF( WVNMLO, WVNMHI, CMU(IQ), UMU0,
-     &                          PI*GMU(K) ) * COS( MAZIM*PI*GMU( K ) )
+                  SUM  = SUM + GWT( K ) * &
+                        BDREF( WVNMLO, WVNMHI, CMU(IQ), UMU0, &
+                               PI*GMU(K) ) * COS( MAZIM*PI*GMU( K ) )
    60          CONTINUE
 
                BDR( IQ, 0 ) = 0.5 * ( 2. - DELM0 ) * SUM
@@ -4276,11 +4310,11 @@ c                             ** at computational angles Eq. STWL (41)
 
          IF( MAZIM.EQ.0 ) THEN
 
-c                             ** Integrate bidirectional reflectivity
-c                             ** at reflection polar angle cosines -CMU-
-c                             ** and incident angle cosines -GMU- to get
-c                             ** directional emissivity at computational
-c                             ** angle cosines -CMU-.
+!c                             ** Integrate bidirectional reflectivity
+!c                             ** at reflection polar angle cosines -CMU-
+!c                             ** and incident angle cosines -GMU- to get
+!c                             ** directional emissivity at computational
+!c                             ** angle cosines -CMU-.
             DO 100 IQ = 1, NN
 
                DREF  = 0.0
@@ -4289,9 +4323,9 @@ c                             ** angle cosines -CMU-.
 
                   SUM  = 0.0
                   DO 80 K = 1, NMUG / 2
-                     SUM  = SUM + GWT( K ) * GMU( K ) *
-     &                      BDREF( WVNMLO, WVNMHI, CMU(IQ), GMU(K),
-     &                             PI*GMU(JG) )
+                     SUM  = SUM + GWT( K ) * GMU( K ) * &
+                           BDREF( WVNMLO, WVNMHI, CMU(IQ), GMU(K), &
+                                  PI*GMU(JG) )
    80             CONTINUE
 
                   DREF  = DREF + GWT( JG )*SUM
@@ -4305,9 +4339,9 @@ c                             ** angle cosines -CMU-.
          END IF
 
       END IF
-c                             ** Compute Fourier expansion coefficient
-c                             ** of surface bidirectional reflectance
-c                             ** at user angles Eq. STWL (41)
+!c                             ** Compute Fourier expansion coefficient
+!c                             ** of surface bidirectional reflectance
+!c                             ** at user angles Eq. STWL (41)
 
       IF( .NOT.ONLYFL .AND. USRANG ) THEN
 
@@ -4332,10 +4366,10 @@ c                             ** at user angles Eq. STWL (41)
 
                      SUM  = 0.0
                      DO 120 K = 1, NMUG
-                        SUM  = SUM + GWT( K ) *
-     &                         BDREF( WVNMLO, WVNMHI, UMU(IU), CMU(IQ),
-     &                                PI*GMU(K) ) *
-     &                           COS( MAZIM*PI*GMU( K ) )
+                        SUM  = SUM + GWT( K ) * &
+                              BDREF( WVNMLO, WVNMHI, UMU(IU), CMU(IQ), &
+                                     PI*GMU(K) ) * &
+                                COS( MAZIM*PI*GMU( K ) )
   120                CONTINUE
 
                      RMU( IU, IQ ) = 0.5 * ( 2. - DELM0 ) * SUM
@@ -4346,10 +4380,10 @@ c                             ** at user angles Eq. STWL (41)
 
                      SUM  = 0.0
                      DO 140 K = 1, NMUG
-                        SUM  = SUM + GWT( K ) *
-     &                         BDREF( WVNMLO, WVNMHI, UMU(IU), UMU0,
-     &                                PI*GMU(K) ) *
-     &                           COS( MAZIM*PI*GMU( K ) )
+                        SUM  = SUM + GWT( K ) * &
+                              BDREF( WVNMLO, WVNMHI, UMU(IU), UMU0, &
+                                     PI*GMU(K) ) * &
+                                COS( MAZIM*PI*GMU( K ) )
   140                CONTINUE
 
                      RMU( IU, 0 ) = 0.5 * ( 2. - DELM0 ) * SUM
@@ -4359,20 +4393,20 @@ c                             ** at user angles Eq. STWL (41)
 
                   IF( MAZIM.EQ.0 ) THEN
 
-c                               ** Integrate bidirectional reflectivity
-c                               ** at reflection angle cosines -UMU- and
-c                               ** incident angle cosines -GMU- to get
-c                               ** directional emissivity at
-c                               ** user angle cosines -UMU-.
+!c                               ** Integrate bidirectional reflectivity
+!c                               ** at reflection angle cosines -UMU- and
+!c                               ** incident angle cosines -GMU- to get
+!c                               ** directional emissivity at
+!c                               ** user angle cosines -UMU-.
                      DREF  = 0.0
 
                      DO 160 JG = 1, NMUG
 
                         SUM  = 0.0
                         DO 150 K = 1, NMUG / 2
-                           SUM  = SUM + GWT( K )*GMU( K )*
-     &                            BDREF( WVNMLO, WVNMHI, UMU(IU),
-     &                                   GMU(K), PI*GMU(JG) )
+                           SUM  = SUM + GWT( K )*GMU( K )* &
+                                 BDREF( WVNMLO, WVNMHI, UMU(IU), &
+                                        GMU(K), PI*GMU(JG) )
   150                   CONTINUE
 
                         DREF  = DREF + GWT( JG ) * SUM
@@ -4392,40 +4426,55 @@ c                               ** user angle cosines -UMU-.
       END IF
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE TERPEV( CWT, EVECC, GL, GU, MAZIM, MXCMU, MXUMU, NN, &
+           NSTR, NUMU, WK, YLMC, YLMU ) !GCC$ ATTRIBUTES hot :: TERPEV !GCC$ ATTRIBUTES aligned(64) :: TERPEV !GCC$ ATTRIBUTES inline :: TERPVEV !GCC$ ATTRIBUTES clone_targets("avx2","avx512") :: TERPEV
+#elif defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES INLINE :: TERPEV
+       SUBROUTINE TERPEV( CWT, EVECC, GL, GU, MAZIM, MXCMU, MXUMU, NN, &
+            NSTR, NUMU, WK, YLMC, YLMU )
+         !DIR$ ATTRIBUTES CODE_ALIGN:64 :: TERPEV
+         !DIR$ ATTRIBUTES VECTOR:PROCESSOR(skylake) :: TERPEV
+#endif
 
-      SUBROUTINE TERPEV( CWT, EVECC, GL, GU, MAZIM, MXCMU, MXUMU, NN,
-     &                   NSTR, NUMU, WK, YLMC, YLMU )
+!c         Interpolate eigenvectors to user angles; Eq SD(8)
 
-c         Interpolate eigenvectors to user angles; Eq SD(8)
+!c   Called by- DISORT, ALBTRN
+!c --------------------------------------------------------------------+
 
-c   Called by- DISORT, ALBTRN
-c --------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::   MAZIM, MXCMU, MXUMU, NN, NSTR, NUMU
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   MAZIM, MXCMU, MXUMU, NN, NSTR, NUMU
-c     ..
-c     .. Array Arguments ..
-
-      REAL      CWT( MXCMU ), EVECC( MXCMU, MXCMU ), GL( 0:MXCMU ),
-     &          GU( MXUMU, MXCMU ), WK( MXCMU ), YLMC( 0:MXCMU, MXCMU ),
-     &          YLMU( 0:MXCMU, MXUMU )
+      REAL(4)   ::       CWT( MXCMU ), EVECC( MXCMU, MXCMU ), GL( 0:MXCMU ),    &
+                       GU( MXUMU, MXCMU ), WK( MXCMU ), YLMC( 0:MXCMU, MXCMU ), &
+                       YLMU( 0:MXCMU, MXUMU )
 c     ..
 c     .. Local Scalars ..
 
-      INTEGER   IQ, IU, JQ, L
-      REAL      SUM
+      INTEGER(4) ::       IQ, IU, JQ, L
+      REAL(4)    ::       SUM
 c     ..
 
 
       DO 50 IQ = 1, NSTR
 
          DO 20 L = MAZIM, NSTR - 1
-c                                   ** Inner sum in SD(8) times all
-c                                   ** factors in outer sum but PLM(mu)
+!c                                   ** Inner sum in SD(8) times all
+!c                                   ** factors in outer sum but PLM(mu)
             SUM  = 0.0
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED CWT:64
+            !DIR$ ASSUME_ALIGNED YLMC:64
+            !DIR$ ASSUME_ALIGNED EVECC:64
+            !DIR$ REDUCTION(+:SUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !GCC$ VECTOR
+#endif
             DO 10 JQ = 1, NSTR
                SUM  = SUM + CWT( JQ )*YLMC( L, JQ )*EVECC( JQ, IQ )
    10       CONTINUE
@@ -4433,11 +4482,16 @@ c                                   ** factors in outer sum but PLM(mu)
             WK( L + 1 ) = 0.5*GL( L )*SUM
 
    20    CONTINUE
-c                                    ** Finish outer sum in SD(8)
-c                                    ** and store eigenvectors
+!c                                    ** Finish outer sum in SD(8)
+!c                                    ** and store eigenvectors
          DO 40 IU = 1, NUMU
 
             SUM  = 0.
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED WK:64
+            !DIR$ ASSUME_ALIGNED YLMU:64
+            !DIR$ REDUCTION(+:SUM)
+#elif defined 
             DO 30 L = MAZIM, NSTR - 1
                SUM  = SUM + WK( L + 1 )*YLMU( L, IU )
    30       CONTINUE
@@ -4450,94 +4504,113 @@ c                                    ** and store eigenvectors
    50 CONTINUE
 
 
-      RETURN
-      END
+    
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE TERPSO( CWT, DELM0, FBEAM, GL, MAZIM, MXCMU, PLANK,     &
+                        NUMU, NSTR, OPRIM, PI, YLM0, YLMC, YLMU, PSI0,  & 
+   PSI1, XR0, XR1, Z0, Z1, ZJ, ZBEAM, Z0U, Z1U ) !GCC$ ATTRIBUTES hot :: TERPSO !GCC$ ATTRIBUTES aligned(64) :: TERPSO !GCC$ ATTRIBUTES inline :: TERPSO !GCC$ ATTRIBUTES clone_targets("avx2","avx512") :: TERPSO
+#elif defined __ICC || defined __INTEL_COMPILER
+        !DIR$ ATTRIBUTES INLINE :: TERPSO
+    SUBROUTINE TERPSO( CWT, DELM0, FBEAM, GL, MAZIM, MXCMU, PLANK,     &
+                        NUMU, NSTR, OPRIM, PI, YLM0, YLMC, YLMU, PSI0,  & 
+                        PSI1, XR0, XR1, Z0, Z1, ZJ, ZBEAM, Z0U, Z1U )
+      !DIR$ ATTRIBUTES CODE_ALIGN:64 :: TERPSO
+      !DIR$ ATTRIBUTES VECTOR:PROCESSOR(skylake) :: TERPSO
+#endif
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      use omp_lib
+#endif
+!c         Interpolates source functions to user angles, Eq. STWL(30)
+!c
+!c
+!c    I N P U T      V A R I A B L E S:
+!c
+!c       CWT    :  Weights for Gauss quadrature over angle cosine
+!c
+!c       DELM0  :  Kronecker delta, delta-sub-m0
+!c
+!c       GL     :  Delta-M scaled Legendre coefficients of phase function
+!c                 (including factors 2L+1 and single-scatter albedo)
+!c
+!c       MAZIM  :  Order of azimuthal component
+!c
+!c       OPRIM  :  Single scattering albedo
+!c
+!c       XR0    :  Expansion of thermal source function, Eq. STWL(24d)
+!c
+!c       XR1    :  Expansion of thermal source function Eq. STWL(24d)
+!c
+!c       YLM0   :  Normalized associated Legendre polynomial
+!c                 at the beam angle
+!c
+!c       YLMC   :  Normalized associated Legendre polynomial
+!c                 at the quadrature angles
+!c
+!c       YLMU   :  Normalized associated Legendre polynomial
+!c                 at the user angles
+!c
+!c       Z0     :  Solution vectors Z-sub-zero of Eq. SS(16), STWL(26a)
+!c
+!c       Z1     :  Solution vectors Z-sub-one  of Eq. SS(16), STWL(26b)
+!c
+!c       ZJ     :  Solution vector Z-sub-zero after solving Eq. SS(19),
+!c                 STWL(24b)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T     V A R I A B L E S:
+!c
+!c       ZBEAM  :  Incident-beam source function at user angles
+!c
+!c       Z0U,Z1U:  Components of a linear-in-optical-depth-dependent
+!c                 source (approximating the Planck emission source)
+!c
+!c
+!c   I N T E R N A L    V A R I A B L E S:
+!c
+!c       PSI0  :  Sum just after square bracket in  Eq. SD(9)
+!c       PSI1  :  Sum in Eq. STWL(31d)
+!c
+!c   Called by- DISORT
+!c +-------------------------------------------------------------------+
 
-      SUBROUTINE TERPSO( CWT, DELM0, FBEAM, GL, MAZIM, MXCMU, PLANK,
-     &                   NUMU, NSTR, OPRIM, PI, YLM0, YLMC, YLMU, PSI0,
-     &                   PSI1, XR0, XR1, Z0, Z1, ZJ, ZBEAM, Z0U, Z1U )
+!c     .. Scalar Arguments ..
 
-c         Interpolates source functions to user angles, Eq. STWL(30)
-c
-c
-c    I N P U T      V A R I A B L E S:
-c
-c       CWT    :  Weights for Gauss quadrature over angle cosine
-c
-c       DELM0  :  Kronecker delta, delta-sub-m0
-c
-c       GL     :  Delta-M scaled Legendre coefficients of phase function
-c                 (including factors 2L+1 and single-scatter albedo)
-c
-c       MAZIM  :  Order of azimuthal component
-c
-c       OPRIM  :  Single scattering albedo
-c
-c       XR0    :  Expansion of thermal source function, Eq. STWL(24d)
-c
-c       XR1    :  Expansion of thermal source function Eq. STWL(24d)
-c
-c       YLM0   :  Normalized associated Legendre polynomial
-c                 at the beam angle
-c
-c       YLMC   :  Normalized associated Legendre polynomial
-c                 at the quadrature angles
-c
-c       YLMU   :  Normalized associated Legendre polynomial
-c                 at the user angles
-c
-c       Z0     :  Solution vectors Z-sub-zero of Eq. SS(16), STWL(26a)
-c
-c       Z1     :  Solution vectors Z-sub-one  of Eq. SS(16), STWL(26b)
-c
-c       ZJ     :  Solution vector Z-sub-zero after solving Eq. SS(19),
-c                 STWL(24b)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c    O U T P U T     V A R I A B L E S:
-c
-c       ZBEAM  :  Incident-beam source function at user angles
-c
-c       Z0U,Z1U:  Components of a linear-in-optical-depth-dependent
-c                 source (approximating the Planck emission source)
-c
-c
-c   I N T E R N A L    V A R I A B L E S:
-c
-c       PSI0  :  Sum just after square bracket in  Eq. SD(9)
-c       PSI1  :  Sum in Eq. STWL(31d)
-c
-c   Called by- DISORT
-c +-------------------------------------------------------------------+
+      LOGICAL(4) ::       PLANK
+      INTEGER(4) ::      MAZIM, MXCMU, NSTR, NUMU
+      REAL(4)    ::      DELM0, FBEAM, OPRIM, PI, XR0, XR1
+!c     ..
+!c     .. Array Arguments ..
 
-c     .. Scalar Arguments ..
+      REAL(4) ::      CWT( MXCMU ), GL( 0:MXCMU ), PSI0( MXCMU ),      &
+              PSI1( MXCMU ), YLM0( 0:MXCMU ), YLMC( 0:MXCMU, MXCMU ),  &
+              YLMU( 0:MXCMU, * ), Z0( MXCMU ), Z0U( * ), Z1( MXCMU ),  & 
+              Z1U( * ), ZBEAM( * ), ZJ( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
-      LOGICAL   PLANK
-      INTEGER   MAZIM, MXCMU, NSTR, NUMU
-      REAL      DELM0, FBEAM, OPRIM, PI, XR0, XR1
-c     ..
-c     .. Array Arguments ..
-
-      REAL      CWT( MXCMU ), GL( 0:MXCMU ), PSI0( MXCMU ),
-     &          PSI1( MXCMU ), YLM0( 0:MXCMU ), YLMC( 0:MXCMU, MXCMU ),
-     &          YLMU( 0:MXCMU, * ), Z0( MXCMU ), Z0U( * ), Z1( MXCMU ),
-     &          Z1U( * ), ZBEAM( * ), ZJ( MXCMU )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IQ, IU, JQ
-      REAL      FACT, PSUM, PSUM0, PSUM1, SUM, SUM0, SUM1
-c     ..
+      INTEGER(4) ::      IQ, IU, JQ
+      REAL(4)    ::      FACT, PSUM, PSUM0, PSUM1, SUM, SUM0, SUM1
+!c     ..
 
 
       IF( FBEAM.GT.0.0 ) THEN
-c                                  ** Beam source terms; Eq. SD(9)
+!c                                  ** Beam source terms; Eq. SD(9)
 
          DO 20 IQ = MAZIM, NSTR - 1
 
             PSUM   = 0.
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED CWT:64
+            !DIR$ ASSUME_ALIGNED YLMC:64
+            !DIR$ ASSUME_ALIGNED ZJ:64
+            !DIR$ REDUCTION(+:PSUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !$omp  simd  aligned(CWT,YLMC,ZJ,64)
+            !$omp  simd reduction(+:PSUM)
+#endif
             DO 10 JQ = 1, NSTR
                PSUM  = PSUM + CWT( JQ )*YLMC( IQ, JQ )*ZJ( JQ )
    10       CONTINUE
@@ -4551,9 +4624,19 @@ c                                  ** Beam source terms; Eq. SD(9)
          DO 40 IU = 1, NUMU
 
             SUM    = 0.
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED YLMU:64
+            !DIR$ ASSUME_ALIGNED PSI0:64
+            !DIR$ ASSUME_ALIGNED YLMO:64
+            !DIR$ ASSUME_ALIGNED GL:64
+            !DIR$ REDUCTION(+:SUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !$omp simd aligned(YLMU,PSIO,YLMO,GL:64)
+            !$omp simd reduction(+:SUM)
+#endif
             DO 30 IQ = MAZIM, NSTR - 1
-               SUM  = SUM + YLMU( IQ, IU )*
-     &                    ( PSI0( IQ+1 ) + FACT*GL( IQ )*YLM0( IQ ) )
+               SUM  = SUM + YLMU( IQ, IU )* &
+                         ( PSI0( IQ+1 ) + FACT*GL( IQ )*YLM0( IQ ) )
    30       CONTINUE
 
             ZBEAM( IU ) = SUM
@@ -4565,12 +4648,22 @@ c                                  ** Beam source terms; Eq. SD(9)
 
       IF( PLANK .AND. MAZIM.EQ.0 ) THEN
 
-c                          ** Thermal source terms, STWJ(27c), STWL(31c)
-c
+!c                          ** Thermal source terms, STWJ(27c), STWL(31c)
+!c
          DO 60 IQ = MAZIM, NSTR - 1
 
             PSUM0  = 0.0
             PSUM1  = 0.0
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED Z0:64
+            !DIR$ ASSUME_ALIGNED Z1:64
+            !DIR$ REDUCTION(+:PSUM0)
+            !DIR$ REDUCTION(+:PSUM1)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !$omp simd aligned(Z0,Z1:64)
+            !$omp simd reduction(+:PSUM0)
+            !$omp simd reduction(+:PSUM1)
+#endif
             DO 50 JQ = 1, NSTR
                PSUM0  = PSUM0 + CWT( JQ )*YLMC( IQ, JQ )*Z0( JQ )
                PSUM1  = PSUM1 + CWT( JQ )*YLMC( IQ, JQ )*Z1( JQ )
@@ -4585,6 +4678,17 @@ c
 
             SUM0   = 0.0
             SUM1   = 0.0
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED YLMU:64
+            !DIR$ ASSUME_ALIGNED PSI0:64
+            !DIR$ ASSUME_ALIGNED PSI1:64
+            !DIR$ REDUCTION(+:SUM0)
+            !DIR$ REDUCTION(+:SUM1)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !$omp simd aligned(YLMU,PSI0,PSI1:64)
+            !$omp simd reduction(+:SUM0)
+            !$omp simd reduction(+:SUM1)
+#endif
             DO 70 IQ = MAZIM, NSTR - 1
                SUM0  = SUM0 + YLMU( IQ, IU ) * PSI0( IQ + 1 )
                SUM1  = SUM1 + YLMU( IQ, IU ) * PSI1( IQ + 1 )
@@ -4598,83 +4702,97 @@ c
       END IF
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE UPBEAM( ARRAY, CC, CMU, DELM0, FBEAM, GL, IPVT, MAZIM, &
+                        MXCMU, NN, NSTR, PI, UMU0, WK, YLM0, YLMC, ZJ, &
+                        ZZ ) !GCC$ ATTRIBUTES aligned(16) :: UPBEAM !GCC$ ATTRIBUTES hot :: UPBEAM
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE UPBEAM( ARRAY, CC, CMU, DELM0, FBEAM, GL, IPVT, MAZIM, &
+                        MXCMU, NN, NSTR, PI, UMU0, WK, YLM0, YLMC, ZJ, &
+                        ZZ )
+         !DIR$ ATTRIBUTES CODE_ALIGN:16 :: UPBEAM
+#endif
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      use omp_lib
+#endif         
 
-      SUBROUTINE UPBEAM( ARRAY, CC, CMU, DELM0, FBEAM, GL, IPVT, MAZIM,
-     &                   MXCMU, NN, NSTR, PI, UMU0, WK, YLM0, YLMC, ZJ,
-     &                   ZZ )
+!c         Finds the incident-beam particular solution of SS(18),
+!c         STWL(24a)
+!c
+!c   I N P U T    V A R I A B L E S:
+!c
+!c       CC     :  C-sub-ij in Eq. SS(5)
+!c
+!c       CMU    :  Abscissae for Gauss quadrature over angle cosine
+!c
+!c       DELM0  :  Kronecker delta, delta-sub-m0
+!c
+!c       GL     :  Delta-M scaled Legendre coefficients of phase function
+!c                 (including factors 2L+1 and single-scatter albedo)
+!c
+!c       MAZIM  :  Order of azimuthal component
+!c
+!c       YLM0   :  Normalized associated Legendre polynomial
+!c                 at the beam angle
+!c
+!c       YLMC   :  Normalized associated Legendre polynomial
+!c                 at the quadrature angles
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c   O U T P U T    V A R I A B L E S:
+!c
+!c       ZJ     :  Right-hand side vector X-sub-zero in SS(19),STWL(24b);
+!c                 also the solution vector Z-sub-zero after solving
+!c                 that system
+!c
+!c       ZZ     :  Permanent storage for ZJ, but re-ordered
+!c
+!c
+!c   I N T E R N A L    V A R I A B L E S:
+!c
+!c       ARRAY  :  Coefficient matrix in left-hand side of Eq. SS(19),
+!c                   STWL(24b)
+!c       IPVT   :  Integer vector of pivot indices required by LINPACK
+!c       WK     :  Scratch array required by LINPACK
+!c
+!c   Called by- DISORT
+!c   Calls- SGECO, ERRMSG, SGESL
+!c +-------------------------------------------------------------------+
 
-c         Finds the incident-beam particular solution of SS(18),
-c         STWL(24a)
-c
-c   I N P U T    V A R I A B L E S:
-c
-c       CC     :  C-sub-ij in Eq. SS(5)
-c
-c       CMU    :  Abscissae for Gauss quadrature over angle cosine
-c
-c       DELM0  :  Kronecker delta, delta-sub-m0
-c
-c       GL     :  Delta-M scaled Legendre coefficients of phase function
-c                 (including factors 2L+1 and single-scatter albedo)
-c
-c       MAZIM  :  Order of azimuthal component
-c
-c       YLM0   :  Normalized associated Legendre polynomial
-c                 at the beam angle
-c
-c       YLMC   :  Normalized associated Legendre polynomial
-c                 at the quadrature angles
-c
-c       (remainder are DISORT input variables)
-c
-c
-c   O U T P U T    V A R I A B L E S:
-c
-c       ZJ     :  Right-hand side vector X-sub-zero in SS(19),STWL(24b);
-c                 also the solution vector Z-sub-zero after solving
-c                 that system
-c
-c       ZZ     :  Permanent storage for ZJ, but re-ordered
-c
-c
-c   I N T E R N A L    V A R I A B L E S:
-c
-c       ARRAY  :  Coefficient matrix in left-hand side of Eq. SS(19),
-c                   STWL(24b)
-c       IPVT   :  Integer vector of pivot indices required by LINPACK
-c       WK     :  Scratch array required by LINPACK
-c
-c   Called by- DISORT
-c   Calls- SGECO, ERRMSG, SGESL
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::      MAZIM, MXCMU, NN, NSTR
+      REAL(4)    ::      DELM0, FBEAM, PI, UMU0
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   MAZIM, MXCMU, NN, NSTR
-      REAL      DELM0, FBEAM, PI, UMU0
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4) ::       IPVT( * )
+      REAL(4)    ::      ARRAY( MXCMU, MXCMU ), CC( MXCMU, MXCMU ), CMU( MXCMU ), &
+                         GL( 0:MXCMU ), WK( MXCMU ), YLM0( 0:MXCMU ),             &
+                         YLMC( 0:MXCMU, * ), ZJ( MXCMU ), ZZ( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   IPVT( * )
-      REAL      ARRAY( MXCMU, MXCMU ), CC( MXCMU, MXCMU ), CMU( MXCMU ),
-     &          GL( 0:MXCMU ), WK( MXCMU ), YLM0( 0:MXCMU ),
-     &          YLMC( 0:MXCMU, * ), ZJ( MXCMU ), ZZ( MXCMU )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IQ, JOB, JQ, K
-      REAL      RCOND, SUM
-c     ..
-c     .. External Subroutines ..
+      INTEGER(4) ::      IQ, JOB, JQ, K
+      REAL(4)    ::      RCOND, SUM
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ERRMSG, SGECO, SGESL
-c     ..
+!c     ..
 
 
       DO 30 IQ = 1, NSTR
-
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED ARRAY:64,CC:64
+         !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !$OMP SIMD ALIGNED(ARRAY,CC:64)
+#endif
          DO 10 JQ = 1, NSTR
             ARRAY( IQ, JQ ) = -CC( IQ, JQ )
    10    CONTINUE
@@ -4682,6 +4800,13 @@ c     ..
          ARRAY( IQ, IQ ) = 1.+ CMU( IQ ) / UMU0 + ARRAY( IQ, IQ )
 
          SUM  = 0.
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED GL:64,YLMC:64,YLM0:64
+         !DIR$ REDUCTION(+:SUM)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !$OMP SIMD ALIGNED(GL,YLMC,YLM0:64)
+         !$OMP SIMD REDUCTION(+:SUM)
+#endif
          DO 20 K = MAZIM, NSTR - 1
             SUM  = SUM + GL( K )*YLMC( K, IQ )*YLM0( K )
    20    CONTINUE
@@ -4689,19 +4814,19 @@ c     ..
          ZJ( IQ ) = ( 2.- DELM0 )*FBEAM*SUM / ( 4.*PI )
    30 CONTINUE
 
-c                  ** Find L-U (lower/upper triangular) decomposition
-c                  ** of ARRAY and see if it is nearly singular
-c                  ** (NOTE:  ARRAY is altered)
+!c                  ** Find L-U (lower/upper triangular) decomposition
+!c                  ** of ARRAY and see if it is nearly singular
+!c                  ** (NOTE:  ARRAY is altered)
       RCOND  = 0.0
 
       CALL SGECO( ARRAY, MXCMU, NSTR, IPVT, RCOND, WK )
 
-      IF( 1.0 + RCOND.EQ.1.0 )
-     &    CALL ERRMSG('UPBEAM--SGECO says matrix near singular',.FALSE.)
+      IF( 1.0 + RCOND.EQ.1.0 ) &
+         CALL ERRMSG('UPBEAM--SGECO says matrix near singular',.FALSE.)
 
-c                ** Solve linear system with coeff matrix ARRAY
-c                ** (assumed already L-U decomposed) and R.H. side(s)
-c                ** ZJ;  return solution(s) in ZJ
+!c                ** Solve linear system with coeff matrix ARRAY
+!c                ** (assumed already L-U decomposed) and R.H. side(s)
+!c                ** ZJ;  return solution(s) in ZJ
       JOB  = 0
 
       CALL SGESL( ARRAY, MXCMU, NSTR, IPVT, ZJ, JOB )
@@ -4713,78 +4838,88 @@ c                ** ZJ;  return solution(s) in ZJ
    40 CONTINUE
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE UPISOT( ARRAY, CC, CMU, IPVT, MXCMU, NN, NSTR, OPRIM, &
+           WK, XR0, XR1, Z0, Z1, ZPLK0, ZPLK1 ) !GCC$ ATTRIBUTES aligned(16) :: UPISOT !GCC$ ATTRIBUTES hot :: UPISOT
+#elif defined __ICC || defined __INTEL_COMPILER
+        SUBROUTINE UPISOT( ARRAY, CC, CMU, IPVT, MXCMU, NN, NSTR, OPRIM, &
+             WK, XR0, XR1, Z0, Z1, ZPLK0, ZPLK1 )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: UPISOT
+#endif
 
-      SUBROUTINE UPISOT( ARRAY, CC, CMU, IPVT, MXCMU, NN, NSTR, OPRIM,
-     &                   WK, XR0, XR1, Z0, Z1, ZPLK0, ZPLK1 )
+!c       Finds the particular solution of thermal radiation of STWL(25)
+!c
+!c
+!c
+!c    I N P U T     V A R I A B L E S:
+!c
+!c       CC     :  C-sub-ij in Eq. SS(5), STWL(8b)
+!c
+!c       CMU    :  Abscissae for Gauss quadrature over angle cosine
+!c
+!c       OPRIM  :  Delta-M scaled single scattering albedo
+!c
+!c       XR0    :  Expansion coefficient b-sub-zero of thermal source
+!c                   function, Eq. STWL(24c)
+!c
+!c       XR1    :  Expansion coefficient b-sub-one of thermal source
+!c                   function Eq. STWL(24c)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T    V A R I A B L E S:
+!c
+!c       Z0     :  Solution vectors Z-sub-zero of Eq. SS(16), STWL(26a)
+!c
+!c       Z1     :  Solution vectors Z-sub-one  of Eq. SS(16), STWL(26b)
+!c
+!c       ZPLK0, :  Permanent storage for Z0,Z1, but re-ordered
+!c        ZPLK1
+!c
+!c
+!c   I N T E R N A L    V A R I A B L E S:
+!c
+!c       ARRAY  :  Coefficient matrix in left-hand side of EQ. SS(16)
+!c       IPVT   :  Integer vector of pivot indices required by LINPACK
+!c       WK     :  Scratch array required by LINPACK
+!c
+!c   Called by- DISORT
+!c   Calls- SGECO, ERRMSG, SGESL
+!c +-------------------------------------------------------------------+
 
-c       Finds the particular solution of thermal radiation of STWL(25)
-c
-c
-c
-c    I N P U T     V A R I A B L E S:
-c
-c       CC     :  C-sub-ij in Eq. SS(5), STWL(8b)
-c
-c       CMU    :  Abscissae for Gauss quadrature over angle cosine
-c
-c       OPRIM  :  Delta-M scaled single scattering albedo
-c
-c       XR0    :  Expansion coefficient b-sub-zero of thermal source
-c                   function, Eq. STWL(24c)
-c
-c       XR1    :  Expansion coefficient b-sub-one of thermal source
-c                   function Eq. STWL(24c)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c    O U T P U T    V A R I A B L E S:
-c
-c       Z0     :  Solution vectors Z-sub-zero of Eq. SS(16), STWL(26a)
-c
-c       Z1     :  Solution vectors Z-sub-one  of Eq. SS(16), STWL(26b)
-c
-c       ZPLK0, :  Permanent storage for Z0,Z1, but re-ordered
-c        ZPLK1
-c
-c
-c   I N T E R N A L    V A R I A B L E S:
-c
-c       ARRAY  :  Coefficient matrix in left-hand side of EQ. SS(16)
-c       IPVT   :  Integer vector of pivot indices required by LINPACK
-c       WK     :  Scratch array required by LINPACK
-c
-c   Called by- DISORT
-c   Calls- SGECO, ERRMSG, SGESL
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::      MXCMU, NN, NSTR
+      REAL(4)    ::      OPRIM, XR0, XR1
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   MXCMU, NN, NSTR
-      REAL      OPRIM, XR0, XR1
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4) ::      IPVT( * )
+      REAL(4)    ::      ARRAY( MXCMU, MXCMU ), CC( MXCMU, MXCMU ), CMU( MXCMU ), &
+                         WK( MXCMU ), Z0( MXCMU ), Z1( MXCMU ), ZPLK0( MXCMU ),   &
+                         ZPLK1( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   IPVT( * )
-      REAL      ARRAY( MXCMU, MXCMU ), CC( MXCMU, MXCMU ), CMU( MXCMU ),
-     &          WK( MXCMU ), Z0( MXCMU ), Z1( MXCMU ), ZPLK0( MXCMU ),
-     &          ZPLK1( MXCMU )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IQ, JQ
-      REAL      RCOND
-c     ..
-c     .. External Subroutines ..
+      INTEGER(4) ::    IQ, JQ
+      REAL(4)    ::      RCOND
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ERRMSG, SGECO, SGESL
-c     ..
+!c     ..
 
 
       DO 20 IQ = 1, NSTR
-
+#if defined __INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED ARRAY:64,CC:64
+         !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !$OMP SIMD ALIGNED(ARRAY,CC:64)
+#endif
          DO 10 JQ = 1, NSTR
             ARRAY( IQ, JQ ) = -CC( IQ, JQ )
    10    CONTINUE
@@ -4794,17 +4929,24 @@ c     ..
          Z1( IQ ) = ( 1. - OPRIM ) * XR1
 
    20 CONTINUE
-c                       ** Solve linear equations: same as in UPBEAM,
-c                       ** except ZJ replaced by Z1 and Z0
+!c                       ** Solve linear equations: same as in UPBEAM,
+!c                       ** except ZJ replaced by Z1 and Z0
       RCOND  = 0.0
 
       CALL SGECO( ARRAY, MXCMU, NSTR, IPVT, RCOND, WK )
 
-      IF( 1.0 + RCOND.EQ.1.0 )
-     &    CALL ERRMSG('UPISOT--SGECO says matrix near singular',.False.)
+      IF( 1.0 + RCOND.EQ.1.0 ) &
+         CALL ERRMSG('UPISOT--SGECO says matrix near singular',.False.)
 
       CALL SGESL( ARRAY, MXCMU, NSTR, IPVT, Z1, 0 )
-
+#if defined __INTEL_COMPILER
+      !DIR$ ASSUME_ALIGNED Z0:64
+      !DIR$ ASSUME_ALIGNED CMU:64
+      !DIR$ ASSUME_ALIGNED Z1:64
+      !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      !$OMP SIMD ALIGNED(Z0,CMU,Z1:64)
+#endif
       DO 30 IQ = 1, NSTR
          Z0( IQ ) = ( 1. - OPRIM ) * XR0 + CMU( IQ ) * Z1( IQ )
    30 CONTINUE
@@ -4819,8 +4961,8 @@ c                       ** except ZJ replaced by Z1 and Z0
    40 CONTINUE
 
 
-      RETURN
-      END
+   
+      END SUBROUTINE
 
       SUBROUTINE USRINT( BPLANK, CMU, CWT, DELM0, DTAUCP, EMU, EXPBEA,
      &                   FBEAM, FISOT, GC, GU, KK, LAMBER, LAYRU, LL,
