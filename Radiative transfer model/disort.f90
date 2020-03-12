@@ -4848,7 +4848,9 @@ c     ..
              WK, XR0, XR1, Z0, Z1, ZPLK0, ZPLK1 )
           !DIR$ ATTRIBUTES CODE_ALIGN:16 :: UPISOT
 #endif
-
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      use omp_lib
+#endif  
 !c       Finds the particular solution of thermal radiation of STWL(25)
 !c
 !c
@@ -4963,148 +4965,166 @@ c     ..
 
    
       END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE USRINT( BPLANK, CMU, CWT, DELM0, DTAUCP, EMU, EXPBEA, &
+                        FBEAM, FISOT, GC, GU, KK, LAMBER, LAYRU, LL,   &
+                        LYRCUT, MAZIM, MXCMU, MXULV, MXUMU, NCUT, NLYR, &
+                        NN, NSTR, PLANK, NUMU, NTAU, PI, RMU, TAUCPR,   &
+                        TPLANK, UMU, UMU0, UTAUPR, WK, ZBEAM, Z0U, Z1U, &
+                        ZZ, ZPLK0, ZPLK1, UUM ) !GCC$ ATTRIBUTES hot :: USRINT !GCC$ ATTRIBUTES aligned(16) :: USRINT
+#elif defined __ICC || defined __INTEL_COMPILER
+         SUBROUTINE USRINT( BPLANK, CMU, CWT, DELM0, DTAUCP, EMU, EXPBEA, &
+                        FBEAM, FISOT, GC, GU, KK, LAMBER, LAYRU, LL,   &
+                        LYRCUT, MAZIM, MXCMU, MXULV, MXUMU, NCUT, NLYR, &
+                        NN, NSTR, PLANK, NUMU, NTAU, PI, RMU, TAUCPR,   &
+                        TPLANK, UMU, UMU0, UTAUPR, WK, ZBEAM, Z0U, Z1U, &
+                        ZZ, ZPLK0, ZPLK1, UUM )
+           !DIR$ ATTRIBUTES CODE_ALIGN:16 :: USRINT
+#endif
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      use omp_lib
+#endif             
 
-      SUBROUTINE USRINT( BPLANK, CMU, CWT, DELM0, DTAUCP, EMU, EXPBEA,
-     &                   FBEAM, FISOT, GC, GU, KK, LAMBER, LAYRU, LL,
-     &                   LYRCUT, MAZIM, MXCMU, MXULV, MXUMU, NCUT, NLYR,
-     &                   NN, NSTR, PLANK, NUMU, NTAU, PI, RMU, TAUCPR,
-     &                   TPLANK, UMU, UMU0, UTAUPR, WK, ZBEAM, Z0U, Z1U,
-     &                   ZZ, ZPLK0, ZPLK1, UUM )
+!c       Computes intensity components at user output angles
+!c       for azimuthal expansion terms in Eq. SD(2), STWL(6)
+!c
+!c
+!c   I N P U T    V A R I A B L E S:
+!c
+!c       BPLANK :  Integrated Planck function for emission from
+!c                 bottom boundary
+!c
+!c       CMU    :  Abscissae for Gauss quadrature over angle cosine
+!c
+!c       CWT    :  Weights for Gauss quadrature over angle cosine
+!c
+!c       DELM0  :  Kronecker delta, delta-sub-M0
+!c
+!c       EMU    :  Surface directional emissivity (user angles)
+!c
+!c       EXPBEA :  Transmission of incident beam, EXP(-TAUCPR/UMU0)
+!c
+!c       GC     :  Eigenvectors at polar quadrature angles, SC(1)
+!c
+!c       GU     :  Eigenvectors interpolated to user polar angles
+!c                    (i.e., G in Eq. SC(1) )
+!c
+!c       KK     :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
+!c
+!c       LAYRU  :  Layer number of user level UTAU
+!!c
+!c       LL     :  Constants of integration in Eq. SC(1), obtained
+!c                 by solving scaled version of Eq. SC(5);
+!c                 exponential term of Eq. SC(12) not included
+!c
+!c       LYRCUT :  Logical flag for truncation of computational layer
+!c
+!c       MAZIM  :  Order of azimuthal component
+!c
+!c       NCUT   :  Total number of computational layers considered
+!c
+!c       NN     :  Order of double-Gauss quadrature (NSTR/2)
+!c
+!c       RMU    :  Surface bidirectional reflectivity (user angles)
+!c
+!!c       TAUCPR :  Cumulative optical depth (delta-M-Scaled)
+!c
+!c       TPLANK :  Integrated Planck function for emission from
+!c                 top boundary
+!c
+!c       UTAUPR :  Optical depths of user output levels in delta-M
+!c                 coordinates;  equal to UTAU if no delta-M
+!!c
+!c       Z0U    :  Z-sub-zero in Eq. SS(16) interpolated to user
+!c                 angles from an equation derived from SS(16),
+!c                 Y-sub-zero on STWL(26b)
+!c
+!c       Z1U    :  Z-sub-one in Eq. SS(16) interpolated to user
+!c                 angles from an equation derived from SS(16),
+!c                 Y-sub-one in STWL(26a)
+!c
+!c       ZZ     :  Beam source vectors in Eq. SS(19), STWL(24b)
+!c
+!c       ZPLK0  :  Thermal source vectors Z0, by solving Eq. SS(16),
+!c                 Y-sub-zero in STWL(26)
+!c
+!c       ZPLK1  :  Thermal source vectors Z1, by solving Eq. SS(16),
+!c                 Y-sub-one in STWL(26)
+!c
+!c       ZBEAM  :  Incident-beam source vectors
+!c
+!c       (Remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T    V A R I A B L E S:
+!c
+!c       UUM    :  Azimuthal components of the intensity in EQ. STWJ(5),
+!c                 STWL(6)
+!c
+!c
+!c    I N T E R N A L    V A R I A B L E S:
+!c
+!c       BNDDIR :  Direct intensity down at the bottom boundary
+!c       BNDDFU :  Diffuse intensity down at the bottom boundary
+!c       BNDINT :  Intensity attenuated at both boundaries, STWJ(25-6)
+!c       DTAU   :  Optical depth of a computational layer
+!c       LYREND :  End layer of integration
+!c       LYRSTR :  Start layer of integration
+!c       PALINT :  Intensity component from parallel beam
+!c       PLKINT :  Intensity component from planck source
+!c       WK     :  Scratch vector for saving EXP evaluations
+!c
+!c       All the exponential factors ( EXP1, EXPN,... etc.)
+!c       come from the substitution of constants of integration in
+!c       Eq. SC(12) into Eqs. S1(8-9).  They all have negative
+!c       arguments so there should never be overflow problems.
+!c
+!c   Called by- DISORT
+!c +-------------------------------------------------------------------+
 
-c       Computes intensity components at user output angles
-c       for azimuthal expansion terms in Eq. SD(2), STWL(6)
-c
-c
-c   I N P U T    V A R I A B L E S:
-c
-c       BPLANK :  Integrated Planck function for emission from
-c                 bottom boundary
-c
-c       CMU    :  Abscissae for Gauss quadrature over angle cosine
-c
-c       CWT    :  Weights for Gauss quadrature over angle cosine
-c
-c       DELM0  :  Kronecker delta, delta-sub-M0
-c
-c       EMU    :  Surface directional emissivity (user angles)
-c
-c       EXPBEA :  Transmission of incident beam, EXP(-TAUCPR/UMU0)
-c
-c       GC     :  Eigenvectors at polar quadrature angles, SC(1)
-c
-c       GU     :  Eigenvectors interpolated to user polar angles
-c                    (i.e., G in Eq. SC(1) )
-c
-c       KK     :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
-c
-c       LAYRU  :  Layer number of user level UTAU
-c
-c       LL     :  Constants of integration in Eq. SC(1), obtained
-c                 by solving scaled version of Eq. SC(5);
-c                 exponential term of Eq. SC(12) not included
-c
-c       LYRCUT :  Logical flag for truncation of computational layer
-c
-c       MAZIM  :  Order of azimuthal component
-c
-c       NCUT   :  Total number of computational layers considered
-c
-c       NN     :  Order of double-Gauss quadrature (NSTR/2)
-c
-c       RMU    :  Surface bidirectional reflectivity (user angles)
-c
-c       TAUCPR :  Cumulative optical depth (delta-M-Scaled)
-c
-c       TPLANK :  Integrated Planck function for emission from
-c                 top boundary
-c
-c       UTAUPR :  Optical depths of user output levels in delta-M
-c                 coordinates;  equal to UTAU if no delta-M
-c
-c       Z0U    :  Z-sub-zero in Eq. SS(16) interpolated to user
-c                 angles from an equation derived from SS(16),
-c                 Y-sub-zero on STWL(26b)
-c
-c       Z1U    :  Z-sub-one in Eq. SS(16) interpolated to user
-c                 angles from an equation derived from SS(16),
-c                 Y-sub-one in STWL(26a)
-c
-c       ZZ     :  Beam source vectors in Eq. SS(19), STWL(24b)
-c
-c       ZPLK0  :  Thermal source vectors Z0, by solving Eq. SS(16),
-c                 Y-sub-zero in STWL(26)
-c
-c       ZPLK1  :  Thermal source vectors Z1, by solving Eq. SS(16),
-c                 Y-sub-one in STWL(26)
-c
-c       ZBEAM  :  Incident-beam source vectors
-c
-c       (Remainder are DISORT input variables)
-c
-c
-c    O U T P U T    V A R I A B L E S:
-c
-c       UUM    :  Azimuthal components of the intensity in EQ. STWJ(5),
-c                 STWL(6)
-c
-c
-c    I N T E R N A L    V A R I A B L E S:
-c
-c       BNDDIR :  Direct intensity down at the bottom boundary
-c       BNDDFU :  Diffuse intensity down at the bottom boundary
-c       BNDINT :  Intensity attenuated at both boundaries, STWJ(25-6)
-c       DTAU   :  Optical depth of a computational layer
-c       LYREND :  End layer of integration
-c       LYRSTR :  Start layer of integration
-c       PALINT :  Intensity component from parallel beam
-c       PLKINT :  Intensity component from planck source
-c       WK     :  Scratch vector for saving EXP evaluations
-c
-c       All the exponential factors ( EXP1, EXPN,... etc.)
-c       come from the substitution of constants of integration in
-c       Eq. SC(12) into Eqs. S1(8-9).  They all have negative
-c       arguments so there should never be overflow problems.
-c
-c   Called by- DISORT
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      LOGICAL(4) ::   LAMBER, LYRCUT, PLANK
+      INTEGER(4) ::   MAZIM, MXCMU, MXULV, MXUMU, NCUT, NLYR, NN, NSTR, NTAU, &
+               NUMU
+      REAL(4) ::      BPLANK, DELM0, FBEAM, FISOT, PI, TPLANK, UMU0
+!c     ..
+!c     .. Array Arguments ..
 
-      LOGICAL   LAMBER, LYRCUT, PLANK
-      INTEGER   MAZIM, MXCMU, MXULV, MXUMU, NCUT, NLYR, NN, NSTR, NTAU,
-     &          NUMU
-      REAL      BPLANK, DELM0, FBEAM, FISOT, PI, TPLANK, UMU0
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4) ::   LAYRU( * )
+      REAL(4) ::     CMU( MXCMU ), CWT( MXCMU ), DTAUCP( * ), EMU( MXUMU ),   &
+                     EXPBEA( 0:* ), GC( MXCMU, MXCMU, * ),                    &
+                     GU( MXUMU, MXCMU, * ), KK( MXCMU, * ), LL( MXCMU, * ),   &
+                     RMU( MXUMU, 0:* ), TAUCPR( 0:* ), UMU( * ),              &
+                     UTAUPR( MXULV ), UUM( MXUMU, MXULV ), WK( MXCMU ),       &
+                     Z0U( MXUMU, * ), Z1U( MXUMU, * ), ZBEAM( MXUMU, * ),     &
+                     ZPLK0( MXCMU, * ), ZPLK1( MXCMU, * ), ZZ( MXCMU, * )
+!c     ..
+!c     .. Local Scalars ..
 
-      INTEGER   LAYRU( * )
-      REAL      CMU( MXCMU ), CWT( MXCMU ), DTAUCP( * ), EMU( MXUMU ),
-     &          EXPBEA( 0:* ), GC( MXCMU, MXCMU, * ),
-     &          GU( MXUMU, MXCMU, * ), KK( MXCMU, * ), LL( MXCMU, * ),
-     &          RMU( MXUMU, 0:* ), TAUCPR( 0:* ), UMU( * ),
-     &          UTAUPR( MXULV ), UUM( MXUMU, MXULV ), WK( MXCMU ),
-     &          Z0U( MXUMU, * ), Z1U( MXUMU, * ), ZBEAM( MXUMU, * ),
-     &          ZPLK0( MXCMU, * ), ZPLK1( MXCMU, * ), ZZ( MXCMU, * )
-c     ..
-c     .. Local Scalars ..
-
-      LOGICAL   NEGUMU
-      INTEGER   IQ, IU, JQ, LC, LU, LYREND, LYRSTR, LYU
-      REAL      BNDDFU, BNDDIR, BNDINT, DENOM, DFUINT, DTAU, DTAU1,
-     &          DTAU2, EXP0, EXP1, EXP2, EXPN, F0N, F1N, FACT, PALINT,
-     &          PLKINT, SGN
-c     ..
-c     .. Intrinsic Functions ..
+      LOGICAL(4) ::    NEGUMU
+      INTEGER(4) ::    IQ, IU, JQ, LC, LU, LYREND, LYRSTR, LYU
+      REAL(4)    ::    BNDDFU, BNDDIR, BNDINT, DENOM, DFUINT, DTAU, DTAU1,    &
+                       DTAU2, EXP0, EXP1, EXP2, EXPN, F0N, F1N, FACT, PALINT, &
+                       PLKINT, SGN
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, EXP
-c     ..
+!c     ..
 
-c                          ** Incorporate constants of integration into
-c                          ** interpolated eigenvectors
+!c                          ** Incorporate constants of integration into
+!c                          ** interpolated eigenvectors
       DO 30 LC = 1, NCUT
 
          DO 20 IQ = 1, NSTR
-
+#if defined __INTEL_COMPILER
+            !DIR$ ASSUME_ALIGNED GU:64
+            !DIR$ ASSUME_ALIGNED LL:64
+            !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+            !$OMP SIMD ALIGNED(GU,LL:64)
+#endif
             DO 10 IU = 1, NUMU
                GU( IU, IQ, LC ) = GU( IU, IQ, LC ) * LL( IQ, LC )
    10       CONTINUE
@@ -5112,14 +5132,14 @@ c                          ** interpolated eigenvectors
    20    CONTINUE
 
    30 CONTINUE
-c                           ** Loop over levels at which intensities
-c                           ** are desired ('user output levels')
+!c                           ** Loop over levels at which intensities
+!c                           ** are desired ('user output levels')
       DO 160 LU = 1, NTAU
 
          IF( FBEAM.GT.0.0 ) EXP0  = EXP( -UTAUPR( LU ) / UMU0 )
          LYU  = LAYRU( LU )
-c                              ** Loop over polar angles at which
-c                              ** intensities are desired
+!c                              ** Loop over polar angles at which
+!c                              ** intensities are desired
          DO 150 IU = 1, NUMU
 
             IF( LYRCUT .AND. LYU.GT.NCUT ) GO TO  150
@@ -5139,9 +5159,9 @@ c                              ** intensities are desired
                SGN    = 1.0
 
             END IF
-c                          ** For downward intensity, integrate from top
-c                          ** to LYU-1 in Eq. S1(8); for upward,
-c                          ** integrate from bottom to LYU+1 in S1(9)
+!c                          ** For downward intensity, integrate from top
+!c                          ** to LYU-1 in Eq. S1(8); for upward,
+!c                          ** integrate from bottom to LYU+1 in S1(9)
             PALINT = 0.0
             PLKINT = 0.0
 
@@ -5153,12 +5173,12 @@ c                          ** integrate from bottom to LYU+1 in S1(9)
 
                IF( PLANK .AND. MAZIM.EQ.0 ) THEN
 
-c                          ** Eqs. STWL(36b,c, 37b,c)
-c
+!c                          ** Eqs. STWL(36b,c, 37b,c)
+!c
                   F0N = SGN * ( EXP1 - EXP2 )
 
-                  F1N = SGN * ( ( TAUCPR( LC-1 ) + UMU( IU ) ) * EXP1 -
-     &                          ( TAUCPR( LC )   + UMU( IU ) ) * EXP2 )
+                  F1N = SGN * ( ( TAUCPR( LC-1 ) + UMU( IU ) ) * EXP1 - &
+                               ( TAUCPR( LC )   + UMU( IU ) ) * EXP2 )
 
                   PLKINT = PLKINT + Z0U( IU,LC )*F0N + Z1U( IU,LC )*F1N
 
@@ -5170,7 +5190,7 @@ c
                   DENOM  = 1. + UMU( IU ) / UMU0
 
                   IF( ABS( DENOM ).LT.0.0001 ) THEN
-c                                                   ** L'Hospital limit
+!c                                                   ** L'Hospital limit
                      EXPN   = ( DTAU / UMU0 )*EXP0
 
                   ELSE
@@ -5184,14 +5204,20 @@ c                                                   ** L'Hospital limit
 
                END IF
 
-c                                                   ** KK is negative
+               !c!                                                   ** KK is negative
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED WK:64,UMU:64,KK:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ &&!defined __INTEL_COMPILER
+               !$OMP SIMD ALIGNED(WK,KK,UMU,64)
+#endif
                DO 40 IQ = 1, NN
 
                   WK( IQ ) = EXP( KK( IQ,LC )*DTAU )
                   DENOM  = 1.0 + UMU( IU )*KK( IQ, LC )
 
-                  IF( ABS( DENOM ).LT.0.0001 ) THEN
-c                                                   ** L'Hospital limit
+                  IF( ABS( DENOM ).LT.0.0001_4 ) THEN
+!c                                                   ** L'Hospital limit
                      EXPN   = DTAU / UMU( IU )*EXP2
 
                   ELSE
@@ -5204,13 +5230,19 @@ c                                                   ** L'Hospital limit
 
    40          CONTINUE
 
-c                                                   ** KK is positive
+                  !c                                                   ** KK is positive
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED UMU:64,KK:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ &&!defined __INTEL_COMPILER
+               !$OMP SIMD ALIGNED(KK,UMU,64)
+#endif
                DO 50 IQ = NN + 1, NSTR
 
                   DENOM  = 1.0 + UMU( IU )*KK( IQ, LC )
 
                   IF( ABS( DENOM ).LT.0.0001 ) THEN
-c                                                   ** L'Hospital limit
+!c                                                   ** L'Hospital limit
                      EXPN  = -DTAU / UMU( IU )*EXP1
 
                   ELSE
@@ -5225,8 +5257,8 @@ c                                                   ** L'Hospital limit
 
 
    60       CONTINUE
-c                           ** Calculate contribution from user
-c                           ** output level to next computational level
+!c                           ** Calculate contribution from user
+!c                           ** output level to next computational level
 
             DTAU1  = UTAUPR( LU ) - TAUCPR( LYU - 1 )
             DTAU2  = UTAUPR( LU ) - TAUCPR( LYU )
@@ -5259,21 +5291,26 @@ c                           ** output level to next computational level
 
             END IF
 
-c                                                   ** KK is negative
+!c                                                   ** KK is negative
             DTAU  = DTAUCP( LYU )
-
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED UMU:64,KK:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ &&!defined __INTEL_COMPILER
+               !$OMP SIMD ALIGNED(KK,UMU,64)
+#endif
             DO 70 IQ = 1, NN
 
                DENOM  = 1. + UMU( IU )*KK( IQ, LYU )
 
-               IF( ABS( DENOM ).LT.0.0001 ) THEN
+               IF( ABS( DENOM ).LT.0.0001_4 ) THEN
 
                   EXPN = -DTAU2 / UMU( IU )*EXP2
 
                ELSE IF( NEGUMU ) THEN
 
-                  EXPN = ( EXP( -KK( IQ,LYU ) * DTAU2 ) -
-     &                     EXP(  KK( IQ,LYU ) * DTAU  ) * EXP1 ) / DENOM
+                  EXPN = ( EXP( -KK( IQ,LYU ) * DTAU2 ) - &
+                         EXP(  KK( IQ,LYU ) * DTAU  ) * EXP1 ) / DENOM
 
                ELSE
 
@@ -5285,7 +5322,7 @@ c                                                   ** KK is negative
 
    70       CONTINUE
 
-c                                                   ** KK is positive
+!c                                                   ** KK is positive
             DO 80 IQ = NN + 1, NSTR
 
                DENOM  = 1. + UMU( IU )*KK( IQ, LYU )
@@ -5312,10 +5349,10 @@ c                                                   ** KK is positive
 
             IF( PLANK .AND. MAZIM.EQ.0 ) THEN
 
-c                            ** Eqs. STWL (35-37) with tau-sub-n-1
-c                            ** replaced by tau for upward, and
-c                            ** tau-sub-n replaced by tau for downward
-c                            ** directions
+!c                            ** Eqs. STWL (35-37) with tau-sub-n-1
+!c                            ** replaced by tau for upward, and
+!c                            ** tau-sub-n replaced by tau for downward
+!c                            ** directions
 
                IF( NEGUMU ) THEN
 
@@ -5336,10 +5373,10 @@ c                            ** directions
 
             END IF
 
-c                            ** Calculate intensity components
-c                            ** attenuated at both boundaries.
-c                            ** NOTE: no azimuthal intensity
-c                            ** component for isotropic surface
+!c                            ** Calculate intensity components
+!c                            ** attenuated at both boundaries.
+!c                            ** NOTE: no azimuthal intensity
+!c                            ** component for isotropic surface
    90       CONTINUE
             BNDINT = 0.0
 
@@ -5351,8 +5388,16 @@ c                            ** component for isotropic surface
             ELSE IF( .NOT.NEGUMU ) THEN
 
                IF( LYRCUT .OR. ( LAMBER.AND.MAZIM.GT.0 ) ) GO TO  140
-
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED KK:64,DTAUCP:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ &&!defined __INTEL_COMPILER
+               !$OMP SIMD ALIGNED(DTAUCP,KK,64)
+#endif
                DO 100 JQ = NN + 1, NSTR
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+                  !GCC$ builtin (exp) attributes simd
+#endif
                   WK( JQ ) = EXP( -KK( JQ,NLYR )*DTAUCP( NLYR ) )
   100          CONTINUE
 
@@ -5361,30 +5406,41 @@ c                            ** component for isotropic surface
                DO 130 IQ = NN, 1, -1
 
                   DFUINT = 0.0
+#if defined __INTEL_COMPILER
+                  !DIR$ ASSUME_ALIGNED GC:64,LL:64
+                  !DIR$ SIMD REDUCTION(+:DFUINT)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+                  !$OMP SIMD REDUCTION(+:DFUINT)
+#endif                  
                   DO 110 JQ = 1, NN
                      DFUINT = DFUINT + GC( IQ, JQ, NLYR )*LL( JQ, NLYR )
   110             CONTINUE
-
+#if defined __INTEL_COMPILER
+                  !DIR$ ASSUME_ALIGNED GC:64,LL:64,WK:64
+                  !DIR$ SIMD REDUCTION(+:DFUINT)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+                  !$OMP SIMD REDUCTION(+:DFUINT)
+#endif 
                   DO 120 JQ = NN + 1, NSTR
-                     DFUINT = DFUINT + GC( IQ, JQ, NLYR )*
-     &                                 LL( JQ, NLYR )*WK( JQ )
+                     DFUINT = DFUINT + GC( IQ, JQ, NLYR )* &
+                                      LL( JQ, NLYR )*WK( JQ )
   120             CONTINUE
 
                   IF( FBEAM.GT.0.0 ) DFUINT = DFUINT +
-     &                                     ZZ( IQ, NLYR )*EXPBEA( NLYR )
+                                         ZZ( IQ, NLYR )*EXPBEA( NLYR )
 
                   DFUINT = DFUINT + DELM0 * ( ZPLK0( IQ, NLYR ) +
-     &                              ZPLK1( IQ,NLYR ) *TAUCPR( NLYR ) )
+                                   ZPLK1( IQ,NLYR ) *TAUCPR( NLYR ) )
                   BNDDFU = BNDDFU + ( 1.+DELM0 ) * RMU(IU,NN+1-IQ)
-     &                            * CMU(NN+1-IQ) * CWT(NN+1-IQ)* DFUINT
+                                 * CMU(NN+1-IQ) * CWT(NN+1-IQ)* DFUINT
   130          CONTINUE
 
                BNDDIR = 0.0
                IF( FBEAM.GT.0.0 ) BNDDIR = UMU0*FBEAM / PI*RMU( IU, 0 )*
-     &                                     EXPBEA( NLYR )
+                                          EXPBEA( NLYR )
 
                BNDINT = ( BNDDFU + BNDDIR + DELM0 * EMU(IU) * BPLANK )
-     &                  * EXP( (UTAUPR(LU)-TAUCPR(NLYR)) / UMU(IU) )
+                       * EXP( (UTAUPR(LU)-TAUCPR(NLYR)) / UMU(IU) )
 
             END IF
 
@@ -5397,34 +5453,38 @@ c                            ** component for isotropic surface
   160 CONTINUE
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      REAL FUNCTION  XIFUNC( UMU1, UMU2, UMU3, TAU ) !GCC$ ATTRIBUTES hot :: XIFUNC !GCC$ ATTRIBUTES CODE_ALIGN:16 :: XIFUNC
+#elif defined __ICC || defined __INTEL_COMPILER
+        REAL FUNCTION  XIFUNC( UMU1, UMU2, UMU3, TAU )
+          !DIR$ ATTRIBUTES CODE_ALIGN:16 :: XIFUNC
+#endif
 
-      REAL FUNCTION  XIFUNC( UMU1, UMU2, UMU3, TAU )
+!c          Calculates Xi function of EQ. STWL (72)
 
-c          Calculates Xi function of EQ. STWL (72)
+!c                    I N P U T   V A R I A B L E S
 
-c                    I N P U T   V A R I A B L E S
+!c        TAU         optical thickness of the layer
+!c
+!!c        UMU1,2,3    cosine of zenith angle_1, _2, _3
+!c
+!c   Called by- SECSCA
+!c +-------------------------------------------------------------------+
 
-c        TAU         optical thickness of the layer
-c
-c        UMU1,2,3    cosine of zenith angle_1, _2, _3
-c
-c   Called by- SECSCA
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      REAL(4) ::      TAU, UMU1, UMU2, UMU3
+!c     ..
+!c     .. Local Scalars ..
 
-      REAL      TAU, UMU1, UMU2, UMU3
-c     ..
-c     .. Local Scalars ..
-
-      REAL      EXP1, X1, X2
-c     ..
-c     .. Intrinsic Functions ..
+      REAL(4) ::      EXP1, X1, X2
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC EXP
-c     ..
+!c     ..
 
 
       X1     = 1. / UMU1 - 1. / UMU2
@@ -5438,95 +5498,105 @@ c     ..
 
       ELSE IF( UMU2.EQ.UMU3 .AND. UMU1.NE.UMU2 ) THEN
 
-         XIFUNC = ( ( TAU - 1./X1 ) * EXP( -TAU/UMU2 ) + EXP1 / X1 )
-     &            / ( X1*UMU1*UMU2 )
+         XIFUNC = ( ( TAU - 1./X1 ) * EXP( -TAU/UMU2 ) + EXP1 / X1 ) &
+                 / ( X1*UMU1*UMU2 )
 
       ELSE IF( UMU2.NE.UMU3 .AND. UMU1.EQ.UMU2 ) THEN
 
-         XIFUNC = ( ( EXP( -TAU/UMU3 ) - EXP1 ) / X2 - TAU * EXP1 )
-     &            / ( X2*UMU1*UMU2 )
+         XIFUNC = ( ( EXP( -TAU/UMU3 ) - EXP1 ) / X2 - TAU * EXP1 ) &
+                 / ( X2*UMU1*UMU2 )
 
       ELSE IF( UMU2.NE.UMU3 .AND. UMU1.EQ.UMU3 ) THEN
 
-         XIFUNC = ( ( EXP( -TAU/UMU2 ) - EXP1 ) / X1 - TAU * EXP1 )
-     &            / ( X1*UMU1*UMU2 )
+         XIFUNC = ( ( EXP( -TAU/UMU2 ) - EXP1 ) / X1 - TAU * EXP1 ) &
+                 / ( X1*UMU1*UMU2 )
 
       ELSE
-
-         XIFUNC = ( ( EXP( -TAU/UMU3 ) - EXP1 ) / X2 -
-     &            (   EXP( -TAU/UMU2 ) - EXP1 ) / X1 ) /
-     &            ( X2*UMU1*UMU2 )
+ 
+         XIFUNC = ( ( EXP( -TAU/UMU3 ) - EXP1 ) / X2 -  &
+                 (   EXP( -TAU/UMU2 ) - EXP1 ) / X1 ) / &
+                ( X2*UMU1*UMU2 )
 
       END IF
 
 
-      RETURN
-      END
+    
+      END SUBROUTINE
 
-c ******************************************************************
-c ********** DISORT service routines ************************
-c ******************************************************************
+!c ******************************************************************
+!c ********** DISORT service routines ************************
+!c ******************************************************************
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE CHEKIN( NLYR, DTAUC, SSALB, NMOM, PMOM, TEMPER, WVNMLO,   &
+                        WVNMHI, USRTAU, NTAU, UTAU, NSTR, USRANG,         &
+                        NUMU, UMU, NPHI, PHI, IBCND, FBEAM, UMU0,         &
+                        PHI0, FISOT, LAMBER, ALBEDO, BTEMP, TTEMP,        &
+                        TEMIS, PLANK, ONLYFL, DELTAM, CORINT, ACCUR,      & 
+                        TAUC, MAXCLY, MAXULV, MAXUMU, MAXPHI, MAXMOM,     &
+                        MXCLY, MXULV, MXUMU, MXCMU, MXPHI, MXSQT ) !GCC$ ATTRIBUTES cold :: CHEKIN !GCC$ ATTRIBUTES aligned(16) :: CHEKIN
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE CHEKIN( NLYR, DTAUC, SSALB, NMOM, PMOM, TEMPER, WVNMLO,   &
+                        WVNMHI, USRTAU, NTAU, UTAU, NSTR, USRANG,         &
+                        NUMU, UMU, NPHI, PHI, IBCND, FBEAM, UMU0,         &
+                        PHI0, FISOT, LAMBER, ALBEDO, BTEMP, TTEMP,        &
+                        TEMIS, PLANK, ONLYFL, DELTAM, CORINT, ACCUR,      & 
+                        TAUC, MAXCLY, MAXULV, MAXUMU, MAXPHI, MAXMOM,     &
+                        MXCLY, MXULV, MXUMU, MXCMU, MXPHI, MXSQT )
+         !DIR$ ATTRIBUTES CODE_ALIGN:16 :: CHEKIN
+#endif
 
-      SUBROUTINE CHEKIN( NLYR, DTAUC, SSALB, NMOM, PMOM, TEMPER, WVNMLO,
-     &                   WVNMHI, USRTAU, NTAU, UTAU, NSTR, USRANG,
-     &                   NUMU, UMU, NPHI, PHI, IBCND, FBEAM, UMU0,
-     &                   PHI0, FISOT, LAMBER, ALBEDO, BTEMP, TTEMP,
-     &                   TEMIS, PLANK, ONLYFL, DELTAM, CORINT, ACCUR,
-     &                   TAUC, MAXCLY, MAXULV, MAXUMU, MAXPHI, MAXMOM,
-     &                   MXCLY, MXULV, MXUMU, MXCMU, MXPHI, MXSQT )
+!c           Checks the input dimensions and variables
 
-c           Checks the input dimensions and variables
+!c   Calls- WRTBAD, WRTDIM, DREF, ERRMSG
+!c   Called by- DISORT
+!c --------------------------------------------------------------------
 
-c   Calls- WRTBAD, WRTDIM, DREF, ERRMSG
-c   Called by- DISORT
-c --------------------------------------------------------------------
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      LOGICAL(4) ::   CORINT, DELTAM, LAMBER, ONLYFL, PLANK, USRANG, USRTAU
+      INTEGER(4) ::   IBCND, MAXCLY, MAXMOM, MAXPHI, MAXULV, MAXUMU, MXCLY,
+                      MXCMU, MXPHI, MXSQT, MXULV, MXUMU, NLYR, NMOM, NPHI,
+                      NSTR, NTAU, NUMU
+      REAL(4)    ::      ACCUR, ALBEDO, BTEMP, FBEAM, FISOT, PHI0, TEMIS, TTEMP,
+                         UMU0, WVNMHI, WVNMLO
+!c     ..
+!c     .. Array Arguments ..
 
-      LOGICAL   CORINT, DELTAM, LAMBER, ONLYFL, PLANK, USRANG, USRTAU
-      INTEGER   IBCND, MAXCLY, MAXMOM, MAXPHI, MAXULV, MAXUMU, MXCLY,
-     &          MXCMU, MXPHI, MXSQT, MXULV, MXUMU, NLYR, NMOM, NPHI,
-     &          NSTR, NTAU, NUMU
-      REAL      ACCUR, ALBEDO, BTEMP, FBEAM, FISOT, PHI0, TEMIS, TTEMP,
-     &          UMU0, WVNMHI, WVNMLO
-c     ..
-c     .. Array Arguments ..
+      REAL(4)  ::       DTAUC( MAXCLY ), PHI( MAXPHI ),    &
+               PMOM( 0:MAXMOM, MAXCLY ), SSALB( MAXCLY ),  &
+               TAUC( 0:MXCLY ), TEMPER( 0:MAXCLY ), UMU( MAXUMU ), &
+               UTAU( MAXULV )
+!c     ..
+!c     .. Local Scalars ..
 
-      REAL      DTAUC( MAXCLY ), PHI( MAXPHI ),
-     &          PMOM( 0:MAXMOM, MAXCLY ), SSALB( MAXCLY ),
-     &          TAUC( 0:MXCLY ), TEMPER( 0:MAXCLY ), UMU( MAXUMU ),
-     &          UTAU( MAXULV )
-c     ..
-c     .. Local Scalars ..
-
-      LOGICAL   INPERR
-      INTEGER   IRMU, IU, J, K, LC, LU, NUMSQT
-      REAL      FLXALB, RMU, YESSCT
-c     ..
-c     .. External Functions ..
+      LOGICAL(4) ::      INPERR
+      INTEGER(4) ::      IRMU, IU, J, K, LC, LU, NUMSQT
+      REAL(4)    ::      FLXALB, RMU, YESSCT
+!c     ..
+!c     .. External Functions ..
 
       LOGICAL   WRTBAD, WRTDIM
       REAL      DREF
       EXTERNAL  WRTBAD, WRTDIM, DREF
-c     ..
-c     .. External Subroutines ..
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  ERRMSG
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, MAX, MOD
-c     ..
+!c     ..
 
 
       INPERR = .FALSE.
 
       IF( NSTR.LT.2 .OR. MOD( NSTR,2 ).NE.0 ) INPERR = WRTBAD( 'NSTR' )
 
-      IF( NSTR.EQ.2 )
-     &    CALL ERRMSG( 'CHEKIN--2 streams not recommended; '//
-     &                 'use specialized 2-stream code TWOSTR instead',
-     &                 .True.)
+      IF( NSTR.EQ.2 )   &
+         CALL ERRMSG( 'CHEKIN--2 streams not recommended; '//   &
+                      'use specialized 2-stream code TWOSTR instead',  &
+                      .True.)
 
       IF( NLYR.LT.1 ) INPERR = WRTBAD( 'NLYR' )
 
@@ -5538,15 +5608,15 @@ c     ..
 
          IF( DTAUC( LC ).LT.0.0 ) INPERR = WRTBAD( 'DTAUC' )
 
-         IF( SSALB( LC ).LT.0.0 .OR. SSALB( LC ).GT.1.0 )
-     &       INPERR = WRTBAD( 'SSALB' )
+         IF( SSALB( LC ).LT.0.0 .OR. SSALB( LC ).GT.1.0 ) &
+             INPERR = WRTBAD( 'SSALB' )
 
          YESSCT = YESSCT + SSALB( LC )
 
          IF( PLANK .AND. IBCND.NE.1 ) THEN
 
-            IF( LC.EQ.1 .AND. TEMPER( 0 ).LT.0.0 )
-     &          INPERR = WRTBAD( 'TEMPER' )
+            IF( LC.EQ.1 .AND. TEMPER( 0 ).LT.0.0 )  &
+               INPERR = WRTBAD( 'TEMPER' )
 
             IF( TEMPER( LC ).LT.0.0 ) INPERR = WRTBAD( 'TEMPER' )
 
@@ -5554,8 +5624,8 @@ c     ..
 
    10 CONTINUE
 
-      IF( NMOM.LT.0 .OR. ( YESSCT.GT.0.0 .AND. NMOM.LT.NSTR ) )
-     &    INPERR = WRTBAD( 'NMOM' )
+      IF( NMOM.LT.0 .OR. ( YESSCT.GT.0.0 .AND. NMOM.LT.NSTR ) ) &
+              INPERR = WRTBAD( 'NMOM' )
 
       IF( MAXMOM.LT.NMOM ) INPERR = WRTBAD( 'MAXMOM' )
 
@@ -5563,8 +5633,8 @@ c     ..
 
          DO 20 K = 0, NMOM
 
-            IF( PMOM( K,LC ).LT.-1.0 .OR. PMOM( K,LC ).GT.1.0 )
-     &          INPERR = WRTBAD( 'PMOM' )
+            IF( PMOM( K,LC ).LT.-1.0 .OR. PMOM( K,LC ).GT.1.0 ) &
+               INPERR = WRTBAD( 'PMOM' )
 
    20    CONTINUE
 
@@ -5582,11 +5652,11 @@ c     ..
 
          DO 40 LU = 1, NTAU
 
-            IF( ABS( UTAU( LU )-TAUC( NLYR ) ).LE.1.E-4 )
-     &          UTAU( LU ) = TAUC( NLYR )
+            IF( ABS( UTAU( LU )-TAUC( NLYR ) ).LE.1.E-4 ) &
+              UTAU( LU ) = TAUC( NLYR )
 
-            IF( UTAU( LU ).LT.0.0 .OR. UTAU( LU ).GT.TAUC( NLYR ) )
-     &          INPERR = WRTBAD( 'UTAU' )
+            IF( UTAU( LU ).LT.0.0 .OR. UTAU( LU ).GT.TAUC( NLYR ) )  &
+              INPERR = WRTBAD( 'UTAU' )
 
    40    CONTINUE
 
@@ -5605,16 +5675,16 @@ c     ..
 
          IF( NUMU.GT.MAXUMU ) INPERR = WRTBAD( 'MAXUMU' )
 
-         IF( IBCND.EQ.1 .AND. 2*NUMU.GT.MAXUMU )
-     &       INPERR = WRTBAD( 'MAXUMU' )
+         IF( IBCND.EQ.1 .AND. 2*NUMU.GT.MAXUMU ) &
+            INPERR = WRTBAD( 'MAXUMU' )
 
          DO 50 IU = 1, NUMU
 
-            IF( UMU( IU ).LT.-1.0 .OR. UMU( IU ).GT.1.0 .OR.
-     &          UMU( IU ).EQ.0.0 ) INPERR = WRTBAD( 'UMU' )
+            IF( UMU( IU ).LT.-1.0 .OR. UMU( IU ).GT.1.0 .OR.  &
+               UMU( IU ).EQ.0.0 ) INPERR = WRTBAD( 'UMU' )
 
-            IF( IBCND.EQ.1 .AND. UMU( IU ).LT.0.0 )
-     &          INPERR = WRTBAD( 'UMU' )
+            IF( IBCND.EQ.1 .AND. UMU( IU ).LT.0.0 ) &
+               INPERR = WRTBAD( 'UMU' )
 
             IF( IU.GT.1 ) THEN
 
@@ -5637,10 +5707,10 @@ c     ..
 
          IF( NPHI.GT.MAXPHI ) INPERR = WRTBAD( 'MAXPHI' )
 
-         DO 60 J = 1, NPHI
+         DO 60 J = 1, NPHI  
 
-            IF( PHI( J ).LT.0.0 .OR. PHI( J ).GT.360.0 )
-     &          INPERR = WRTBAD( 'PHI' )
+            IF( PHI( J ).LT.0.0 .OR. PHI( J ).GT.360.0 )  &
+               INPERR = WRTBAD( 'PHI' )
 
    60    CONTINUE
 
@@ -5653,30 +5723,30 @@ c     ..
 
          IF( FBEAM.LT.0.0 ) INPERR = WRTBAD( 'FBEAM' )
 
-         IF( FBEAM.GT.0.0 .AND. ( UMU0.LE.0.0 .OR. UMU0.GT.1.0 ) )
-     &       INPERR = WRTBAD( 'UMU0' )
+         IF( FBEAM.GT.0.0 .AND. ( UMU0.LE.0.0 .OR. UMU0.GT.1.0 ) ) &
+            INPERR = WRTBAD( 'UMU0' )
 
-         IF( FBEAM.GT.0.0 .AND. ( PHI0.LT.0.0 .OR. PHI0.GT.360.0 ) )
-     &       INPERR = WRTBAD( 'PHI0' )
+         IF( FBEAM.GT.0.0 .AND. ( PHI0.LT.0.0 .OR. PHI0.GT.360.0 ) ) &
+            INPERR = WRTBAD( 'PHI0' )
 
          IF( FISOT.LT.0.0 ) INPERR = WRTBAD( 'FISOT' )
 
          IF( LAMBER ) THEN
 
-            IF( ALBEDO.LT.0.0 .OR. ALBEDO.GT.1.0 )
-     &          INPERR = WRTBAD( 'ALBEDO' )
+            IF( ALBEDO.LT.0.0 .OR. ALBEDO.GT.1.0 )  &
+               INPERR = WRTBAD( 'ALBEDO' )
 
          ELSE
-c                    ** Make sure flux albedo at dense mesh of incident
-c                    ** angles does not assume unphysical values
+!c                    ** Make sure flux albedo at dense mesh of incident
+!c                    ** angles does not assume unphysical values
 
             DO 70 IRMU = 0, 100
 
                RMU  = IRMU*0.01
                FLXALB = DREF( WVNMLO, WVNMHI, RMU )
 
-               IF( FLXALB.LT.0.0 .OR. FLXALB.GT.1.0 )
-     &             INPERR = WRTBAD( 'FUNCTION BDREF' )
+               IF( FLXALB.LT.0.0 .OR. FLXALB.GT.1.0 )    &
+                  INPERR = WRTBAD( 'FUNCTION BDREF' )
 
    70       CONTINUE
 
@@ -5685,16 +5755,16 @@ c                    ** angles does not assume unphysical values
 
       ELSE IF( IBCND.EQ.1 ) THEN
 
-         IF( ALBEDO.LT.0.0 .OR. ALBEDO.GT.1.0 )
-     &       INPERR = WRTBAD( 'ALBEDO' )
+         IF( ALBEDO.LT.0.0 .OR. ALBEDO.GT.1.0 )  &
+           INPERR = WRTBAD( 'ALBEDO' )
 
       END IF
 
 
       IF( PLANK .AND. IBCND.NE.1 ) THEN
 
-         IF( WVNMLO.LT.0.0 .OR. WVNMHI.LE.WVNMLO )
-     &       INPERR = WRTBAD( 'WVNMLO,HI' )
+         IF( WVNMLO.LT.0.0 .OR. WVNMHI.LE.WVNMLO )  &
+            INPERR = WRTBAD( 'WVNMLO,HI' )
 
          IF( TEMIS.LT.0.0 .OR. TEMIS.GT.1.0 ) INPERR = WRTBAD( 'TEMIS' )
 
@@ -5711,11 +5781,11 @@ c                    ** angles does not assume unphysical values
 
       IF( IBCND.NE.1 ) THEN
 
-         IF( USRTAU .AND. MXULV.LT.NTAU )
-     &       INPERR = WRTDIM( 'MXULV', NTAU )
+         IF( USRTAU .AND. MXULV.LT.NTAU )     &
+            INPERR = WRTDIM( 'MXULV', NTAU )
 
-         IF( .NOT.USRTAU .AND. MXULV.LT.NLYR + 1 )
-     &       INPERR = WRTDIM( 'MXULV', NLYR + 1 )
+         IF( .NOT.USRTAU .AND. MXULV.LT.NLYR + 1 )   &
+            INPERR = WRTDIM( 'MXULV', NLYR + 1 )
 
       ELSE
 
@@ -5727,41 +5797,41 @@ c                    ** angles does not assume unphysical values
 
       IF( USRANG .AND. MXUMU.LT.NUMU ) INPERR = WRTDIM( 'MXUMU', NUMU )
 
-      IF( USRANG .AND. IBCND.EQ.1 .AND. MXUMU.LT.2*NUMU )
-     &    INPERR = WRTDIM( 'MXUMU', 2*NUMU )
+      IF( USRANG .AND. IBCND.EQ.1 .AND. MXUMU.LT.2*NUMU )   &
+         INPERR = WRTDIM( 'MXUMU', 2*NUMU )
 
-      IF( .NOT.USRANG .AND. MXUMU.LT.NSTR )
-     &    INPERR = WRTDIM( 'MXUMU', NSTR )
+      IF( .NOT.USRANG .AND. MXUMU.LT.NSTR )  &
+         INPERR = WRTDIM( 'MXUMU', NSTR )
 
-      IF( .NOT.ONLYFL .AND. IBCND.NE.1 .AND. MXPHI.LT.NPHI )
-     &    INPERR = WRTDIM( 'MXPHI', NPHI )
+      IF( .NOT.ONLYFL .AND. IBCND.NE.1 .AND. MXPHI.LT.NPHI )  &
+         INPERR = WRTDIM( 'MXPHI', NPHI )
 
       NUMSQT = 2*MAX( 100, NSTR )
       IF( MXSQT.LT.NUMSQT ) INPERR = WRTDIM( 'MXSQT', NUMSQT )
 
-      IF( INPERR )
-     &    CALL ERRMSG( 'DISORT--input and/or dimension errors', .True. )
+      IF( INPERR )  &
+         CALL ERRMSG( 'DISORT--input and/or dimension errors', .True. )
 
       IF( PLANK ) THEN
 
          DO 80 LC = 1, NLYR
 
-            IF( ABS( TEMPER( LC )-TEMPER( LC-1 ) ).GT.10.0 )
-     &          CALL ERRMSG('CHEKIN--vertical temperature step may'
-     &                      //' be too large for good accuracy',
-     &                      .False. )
+            IF( ABS( TEMPER( LC )-TEMPER( LC-1 ) ).GT.10.0 )   & 
+               CALL ERRMSG('CHEKIN--vertical temperature step may'  &
+                           //' be too large for good accuracy',  &
+                           .False. )
    80    CONTINUE
 
       END IF
 
-      IF( .NOT.CORINT .AND. .NOT.ONLYFL .AND. FBEAM.GT.0.0 .AND.
-     &    YESSCT.GT.0.0 .AND. DELTAM )
-     &     CALL ERRMSG( 'CHEKIN--intensity correction is off; '//
-     &                  'intensities may be less accurate', .False. )
+      IF( .NOT.CORINT .AND. .NOT.ONLYFL .AND. FBEAM.GT.0.0 .AND.   &
+         YESSCT.GT.0.0 .AND. DELTAM )                             &
+          CALL ERRMSG( 'CHEKIN--intensity correction is off; '//  &
+                       'intensities may be less accurate', .False. )
 
 
-      RETURN
-      END
+     
+      END  SUBROUTINE
 
       REAL FUNCTION  DREF( WVNMLO, WVNMHI, MU )
 
