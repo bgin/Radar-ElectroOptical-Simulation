@@ -6729,7 +6729,7 @@ c     ..
       SAVE      PI, TOL
 
       DATA      PI / 0.0 / , MAXIT / 1000 / , ONE / 1.0_8 / , &
-     &          TWO / 2.0_8 /
+              TWO / 2.0_8 /
 
 
       IF( PI.EQ.0.0 ) THEN
@@ -7381,142 +7381,151 @@ c     ..
      
       END SUBROUTINE
 
-c ******************************************************************
-c ********** end of DISORT service routines ************************
-c ******************************************************************
+!c! ******************************************************************
+!c ********** end of DISORT service routines ************************
+!c ******************************************************************
 
-c ******************************************************************
-c ********** IBCND=1 special case routines *************************
-c ******************************************************************
+!c ******************************************************************
+!c! ********** IBCND=1 special case routines *************************
+!!c ******************************************************************
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE ALBTRN( ALBEDO, AMB, APB, ARRAY, B, BDR, CBAND, CC,  &
+                        CMU, CWT, DTAUCP, EVAL, EVECC, GL, GC, GU,   &
+                        IPVT, KK, LL, NLYR, NN, NSTR, NUMU, PRNT,    &
+                        TAUCPR, UMU, U0U, WK, YLMC, YLMU, Z, AAD,    &
+                        EVALD, EVECCD, WKD, MI, MI9M2, MAXUMU,       &
+                        MXCMU, MXUMU, NNLYRI, SQT, ALBMED, TRNMED ) !GCC$ ATTRIBUTES hot :: ALBTRN !GCC$ ATTRIBUTES aligned(16) :: ALBTRN
+#elif defined __ICC || defined __INTEL_COMPILER
+        SUBROUTINE ALBTRN( ALBEDO, AMB, APB, ARRAY, B, BDR, CBAND, CC,  &
+                        CMU, CWT, DTAUCP, EVAL, EVECC, GL, GC, GU,   &
+                        IPVT, KK, LL, NLYR, NN, NSTR, NUMU, PRNT,    &
+                        TAUCPR, UMU, U0U, WK, YLMC, YLMU, Z, AAD,    &
+                        EVALD, EVECCD, WKD, MI, MI9M2, MAXUMU,       &
+                        MXCMU, MXUMU, NNLYRI, SQT, ALBMED, TRNMED )
+          !DIR$ ATTRIBUTES CODE_ALIGN : 16 :: ALBTRN
+#endif
 
-      SUBROUTINE ALBTRN( ALBEDO, AMB, APB, ARRAY, B, BDR, CBAND, CC,
-     &                   CMU, CWT, DTAUCP, EVAL, EVECC, GL, GC, GU,
-     &                   IPVT, KK, LL, NLYR, NN, NSTR, NUMU, PRNT,
-     &                   TAUCPR, UMU, U0U, WK, YLMC, YLMU, Z, AAD,
-     &                   EVALD, EVECCD, WKD, MI, MI9M2, MAXUMU,
-     &                   MXCMU, MXUMU, NNLYRI, SQT, ALBMED, TRNMED )
+!c    DISORT special case to get only albedo and transmissivity
+!c    of entire medium as a function of incident beam angle
+!c    (many simplifications because boundary condition is just
+!c    isotropic illumination, there are no thermal sources, and
+!c    particular solutions do not need to be computed).  See
+!c    Ref. S2 and references therein for details.
 
-c    DISORT special case to get only albedo and transmissivity
-c    of entire medium as a function of incident beam angle
-c    (many simplifications because boundary condition is just
-c    isotropic illumination, there are no thermal sources, and
-c    particular solutions do not need to be computed).  See
-c    Ref. S2 and references therein for details.
-
-c    The basic idea is as follows.  The reciprocity principle leads to
-c    the following relationships for a plane-parallel, vertically
-c    inhomogeneous medium lacking thermal (or other internal) sources:
-c
-c       albedo(theta) = u_0(theta) for unit-intensity isotropic
-c                       illumination at *top* boundary
-c
-c       trans(theta) =  u_0(theta) for unit-intensity isotropic
-c                       illumination at *bottom* boundary
-c
-c    where
-c
-c       albedo(theta) = albedo for beam incidence at angle theta
-c       trans(theta) = transmissivity for beam incidence at angle theta
-c       u_0(theta) = upward azim-avg intensity at top boundary
-c                    at angle theta
+!c!    The basic idea is as follows.  The reciprocity principle leads to
+!c    the following relationships for a plane-parallel, vertically
+!c    inhomogeneous medium lacking thermal (or other internal) sources:
+!c
+!c       albedo(theta) = u_0(theta) for unit-intensity isotropic
+!c                       illumination at *top* boundary
+!c
+!c       trans(theta) =  u_0(theta) for unit-intensity isotropic
+!c                       illumination at *bottom* boundary
+!c
+!c    where
+!c
+!c       albedo(theta) = albedo for beam incidence at angle theta
+!c       trans(theta) = transmissivity for beam incidence at angle theta
+!c       u_0(theta) = upward azim-avg intensity at top boundary
+!c                    at angle theta
 
 
-c   O U T P U T    V A R I A B L E S:
-c
-c       ALBMED(IU)   Albedo of the medium as a function of incident
-c                    beam angle cosine UMU(IU)
-c
-c       TRNMED(IU)   Transmissivity of the medium as a function of
-c                    incident beam angle cosine UMU(IU)
+!c   O U T P U T    V A R I A B L E S:
+!c
+!c       ALBMED(IU)   Albedo of the medium as a function of incident
+!c                    beam angle cosine UMU(IU)
+!c!
+!c       TRNMED(IU)   Transmissivity of the medium as a function of
+!c                    incident beam angle cosine UMU(IU)
 
 
-c    I N T E R N A L   V A R I A B L E S:
+!c    I N T E R N A L   V A R I A B L E S:
 
-c       NCD         number of diagonals below/above main diagonal
+!c       NCD         number of diagonals below/above main diagonal
 
-c       RCOND       estimate of the reciprocal condition of matrix
-c                   CBAND; for system  CBAND*X = B, relative
-c                   perturbations in CBAND and B of size epsilon may
-c                   cause relative perturbations in X of size
-c                   epsilon/RCOND.  If RCOND is so small that
-c                          1.0 + RCOND .EQ. 1.0
-c                   is true, then CBAND may be singular to working
-c                   precision.
+!c       RCOND       estimate of the reciprocal condition of matrix
+!c                   CBAND; for system  CBAND*X = B, relative
+!c                   perturbations in CBAND and B of size epsilon may
+!c                   cause relative perturbations in X of size
+!c                   epsilon/RCOND.  If RCOND is so small that
+!c                          1.0 + RCOND .EQ. 1.0
+!c                   is true, then CBAND may be singular to working
+!c                   precision.
 
-c       CBAND       Left-hand side matrix of linear system Eq. SC(5),
-c                   scaled by Eq. SC(12); in banded form required
-c                   by LINPACK solution routines
+!c       CBAND       Left-hand side matrix of linear system Eq. SC(5),
+!c                   scaled by Eq. SC(12); in banded form required
+!c                   by LINPACK solution routines
 
-c       NCOL        number of columns in CBAND matrix
+!c       NCOL        number of columns in CBAND matrix
 
-c       IPVT        INTEGER vector of pivot indices
+!c       IPVT        INTEGER vector of pivot indices
 
-c       (most others documented in DISORT)
+!c       (most others documented in DISORT)
 
-c   Called by- DISORT
-c   Calls- LEPOLY, ZEROIT, SGBCO, SOLEIG, TERPEV, SETMTX, SOLVE1,
-c          ALTRIN, SPALTR, PRALTR
-c +-------------------------------------------------------------------+
+!c   Called by- DISORT
+!c   Calls- LEPOLY, ZEROIT, SGBCO, SOLEIG, TERPEV, SETMTX, SOLVE1,
+!c          ALTRIN, SPALTR, PRALTR
+!c +-------------------------------------------------------------------+
 
-c     .. Scalar Arguments ..
+!c     .. Scalar Arguments ..
 
-      INTEGER   MAXUMU, MI, MI9M2, MXCMU, MXUMU, NLYR, NN, NNLYRI,
-     &          NSTR, NUMU
-      REAL      ALBEDO
-c     ..
-c     .. Array Arguments ..
+      INTEGER(4) ::   MAXUMU, MI, MI9M2, MXCMU, MXUMU, NLYR, NN, NNLYRI,
+                NSTR, NUMU
+      REAL(4) ::      ALBEDO
+!c     ..
+!c     .. Array Arguments ..
 
       LOGICAL   PRNT( * )
       INTEGER   IPVT( * )
-      REAL      ALBMED( MAXUMU ), AMB( MI, MI ), APB( MI, MI ),
-     &          ARRAY( MXCMU, MXCMU ), B( NNLYRI ), BDR( MI, 0:MI ),
-     &          CBAND( MI9M2, NNLYRI ), CC( MXCMU, MXCMU ),
-     &          CMU( MXCMU ), CWT( MXCMU ), DTAUCP( * ), EVAL( MI ),
-     &          EVECC( MXCMU, MXCMU ), GC( MXCMU, MXCMU, * ),
-     &          GL( 0:MXCMU, * ), GU( MXUMU, MXCMU, * ), KK( MXCMU, * ),
-     &          LL( MXCMU, * ), SQT( * ), TAUCPR( 0:* ),
-     &          TRNMED( MAXUMU ), U0U( MXUMU, * ), UMU( MAXUMU ),
-     &          WK( MXCMU ), YLMC( 0:MXCMU, MXCMU ), YLMU( 0:MXCMU, * ),
-     &          Z( NNLYRI )
+      REAL(4) ::      ALBMED( MAXUMU ), AMB( MI, MI ), APB( MI, MI ), &
+               ARRAY( MXCMU, MXCMU ), B( NNLYRI ), BDR( MI, 0:MI ),   &
+               CBAND( MI9M2, NNLYRI ), CC( MXCMU, MXCMU ),            &
+               CMU( MXCMU ), CWT( MXCMU ), DTAUCP( * ), EVAL( MI ),   &
+               EVECC( MXCMU, MXCMU ), GC( MXCMU, MXCMU, * ),          &
+               GL( 0:MXCMU, * ), GU( MXUMU, MXCMU, * ), KK( MXCMU, * ), &
+               LL( MXCMU, * ), SQT( * ), TAUCPR( 0:* ),   &
+               TRNMED( MAXUMU ), U0U( MXUMU, * ), UMU( MAXUMU ),       &
+               WK( MXCMU ), YLMC( 0:MXCMU, MXCMU ), YLMU( 0:MXCMU, * ), &
+               Z( NNLYRI )
 
-      DOUBLE PRECISION AAD( MI, MI ), EVALD( MI ), EVECCD( MI, MI ),
-     &                 WKD( MXCMU )
-c     ..
-c     .. Local Scalars ..
+      REAL(8) ::  AAD( MI, MI ), EVALD( MI ), EVECCD( MI, MI ),   &
+                      WKD( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
       LOGICAL   LAMBER, LYRCUT
-      INTEGER   IQ, IU, L, LC, MAZIM, NCD, NCOL, NCUT
-      REAL      DELM0, FISOT, RCOND, SGN, SPHALB, SPHTRN
-c     ..
-c     .. External Subroutines ..
+      INTEGER(4) ::      IQ, IU, L, LC, MAZIM, NCD, NCOL, NCUT
+      REAL(4)    ::      DELM0, FISOT, RCOND, SGN, SPHALB, SPHTRN
+!c     ..
+!c     .. External Subroutines ..
 
-      EXTERNAL  ALTRIN, ERRMSG, LEPOLY, PRALTR, SETMTX, SGBCO, SOLEIG,
-     &          SOLVE1, SPALTR, TERPEV, ZEROIT
-c     ..
-c     .. Intrinsic Functions ..
+      EXTERNAL  ALTRIN, ERRMSG, LEPOLY, PRALTR, SETMTX, SGBCO, SOLEIG,   &
+               SOLVE1, SPALTR, TERPEV, ZEROIT
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC EXP
-c     ..
+!c     ..
 
       MAZIM  = 0
       DELM0  = 1.0
-c                    ** Set DISORT variables that are ignored in this
-c                    ** special case but are needed below in argument
-c                    ** lists of subroutines shared with general case
+!c                    ** Set DISORT variables that are ignored in this
+!c                    ** special case but are needed below in argument
+!c                    ** lists of subroutines shared with general case
       NCUT   = NLYR
       LYRCUT = .FALSE.
       FISOT  = 1.0
       LAMBER = .TRUE.
-c                          ** Get Legendre polynomials for computational
-c                          ** and user polar angle cosines
+!c                          ** Get Legendre polynomials for computational
+!c                          ** and user polar angle cosines
 
       CALL LEPOLY( NUMU, MAZIM, MXCMU, NSTR-1, UMU, SQT, YLMU )
 
       CALL LEPOLY( NN, MAZIM, MXCMU, NSTR-1, CMU, SQT, YLMC )
 
-c                       ** Evaluate Legendre polynomials with negative
-c                       ** arguments from those with positive arguments;
-c                       ** Dave/Armstrong Eq. (15), STWL(59)
+!c                       ** Evaluate Legendre polynomials with negative
+!c                       ** arguments from those with positive arguments;
+!c                       ** Dave/Armstrong Eq. (15), STWL(59)
       SGN  = -1.0
 
       DO 20 L = MAZIM, NSTR - 1
@@ -7528,72 +7537,72 @@ c                       ** Dave/Armstrong Eq. (15), STWL(59)
    10    CONTINUE
 
    20 CONTINUE
-c                                  ** Zero out bottom reflectivity
-c                                  ** (ALBEDO is used only in analytic
-c                                  ** formulae involving ALBEDO = 0
-c                                  ** solutions; Eqs 16-17 of Ref S2)
+!c                                  ** Zero out bottom reflectivity
+!c                                  ** (ALBEDO is used only in analytic
+!c                                  ** formulae involving ALBEDO = 0
+!c                                  ** solutions; Eqs 16-17 of Ref S2)
 
       CALL ZEROIT( BDR, MI*( MI+1 ) )
 
 
-c ===================  BEGIN LOOP ON COMPUTATIONAL LAYERS  =============
+!c ===================  BEGIN LOOP ON COMPUTATIONAL LAYERS  =============
 
       DO 30 LC = 1, NLYR
 
-c                                       ** Solve eigenfunction problem
-c                                       ** in Eq. STWJ(8b), STWL(23f)
+!c                                       ** Solve eigenfunction problem
+!c                                       ** in Eq. STWJ(8b), STWL(23f)
 
-         CALL SOLEIG( AMB, APB, ARRAY, CMU, CWT, GL( 0,LC ), MI, MAZIM,
-     &                MXCMU, NN, NSTR, YLMC, CC, EVECC, EVAL,
-     &                KK( 1,LC ), GC( 1,1,LC ), AAD, EVECCD, EVALD,
-     &                WKD )
+         CALL SOLEIG( AMB, APB, ARRAY, CMU, CWT, GL( 0,LC ), MI, MAZIM, &
+                     MXCMU, NN, NSTR, YLMC, CC, EVECC, EVAL,            &
+                     KK( 1,LC ), GC( 1,1,LC ), AAD, EVECCD, EVALD,      &
+                     WKD )
 
-c                          ** Interpolate eigenvectors to user angles
+!c                          ** Interpolate eigenvectors to user angles
 
-         CALL TERPEV( CWT, EVECC, GL( 0,LC ), GU( 1,1,LC ), MAZIM,
-     &                MXCMU, MXUMU, NN, NSTR, NUMU, WK, YLMC, YLMU )
+         CALL TERPEV( CWT, EVECC, GL( 0,LC ), GU( 1,1,LC ), MAZIM,   &
+                     MXCMU, MXUMU, NN, NSTR, NUMU, WK, YLMC, YLMU )
 
    30 CONTINUE
 
-c ===================  END LOOP ON COMPUTATIONAL LAYERS  ===============
+!c ===================  END LOOP ON COMPUTATIONAL LAYERS  ===============
 
 
-c                      ** Set coefficient matrix (CBAND) of equations
-c                      ** combining boundary and layer interface
-c                      ** conditions (in band-storage mode required by
-c                      ** LINPACK routines)
+!c                      ** Set coefficient matrix (CBAND) of equations
+!c                      ** combining boundary and layer interface
+!c                      ** conditions (in band-storage mode required by
+!c                      ** LINPACK routines)
 
-      CALL SETMTX( BDR, CBAND, CMU, CWT, DELM0, DTAUCP, GC, KK,
-     &             LAMBER, LYRCUT, MI, MI9M2, MXCMU, NCOL, NCUT,
-     &             NNLYRI, NN, NSTR, TAUCPR, WK )
+      CALL SETMTX( BDR, CBAND, CMU, CWT, DELM0, DTAUCP, GC, KK,  &
+                  LAMBER, LYRCUT, MI, MI9M2, MXCMU, NCOL, NCUT,  &
+                  NNLYRI, NN, NSTR, TAUCPR, WK )
 
-c                      ** LU-decompose the coeff. matrix (LINPACK)
+!c                      ** LU-decompose the coeff. matrix (LINPACK)
 
       NCD  = 3*NN - 1
       CALL SGBCO( CBAND, MI9M2, NCOL, NCD, NCD, IPVT, RCOND, Z )
-      IF( 1.0+RCOND .EQ. 1.0 )
-     &    CALL ERRMSG('ALBTRN--SGBCO says matrix near singular',.FALSE.)
+      IF( 1.0+RCOND .EQ. 1.0 ) &
+         CALL ERRMSG('ALBTRN--SGBCO says matrix near singular',.FALSE.)
 
-c                             ** First, illuminate from top; if only
-c                             ** one layer, this will give us everything
+!c                             ** First, illuminate from top; if only
+!c                             ** one layer, this will give us everything
 
-c                             ** Solve for constants of integration in
-c                             ** homogeneous solution
+!c                             ** Solve for constants of integration in
+!c                             ** homogeneous solution
 
-      CALL SOLVE1( B, CBAND, FISOT, 1, IPVT, LL, MI9M2, MXCMU,
-     &             NCOL, NLYR, NN, NNLYRI, NSTR )
+      CALL SOLVE1( B, CBAND, FISOT, 1, IPVT, LL, MI9M2, MXCMU,  &
+                 NCOL, NLYR, NN, NNLYRI, NSTR )
 
-c                             ** Compute azimuthally-averaged intensity
-c                             ** at user angles; gives albedo if multi-
-c                             ** layer (Eq. 9 of Ref S2); gives both
-c                             ** albedo and transmissivity if single
-c                             ** layer (Eqs. 3-4 of Ref S2)
+!c                             ** Compute azimuthally-averaged intensity
+!c                             ** at user angles; gives albedo if multi-
+!c                             ** layer (Eq. 9 of Ref S2); gives both
+!c                             ** albedo and transmissivity if single
+!c                             ** layer (Eqs. 3-4 of Ref S2)
 
-      CALL ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN, NSTR,
-     &             NUMU, TAUCPR, UMU, U0U, WK )
+      CALL ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN, NSTR,  &
+                  NUMU, TAUCPR, UMU, U0U, WK )
 
-c                               ** Get beam-incidence albedos from
-c                               ** reciprocity principle
+!c                               ** Get beam-incidence albedos from
+!c                               ** reciprocity principle
       DO 40 IU = 1, NUMU / 2
          ALBMED( IU ) = U0U( IU + NUMU/2, 1 )
    40 CONTINUE
@@ -7602,31 +7611,31 @@ c                               ** reciprocity principle
       IF( NLYR.EQ.1 ) THEN
 
          DO 50 IU = 1, NUMU / 2
-c                               ** Get beam-incidence transmissivities
-c                               ** from reciprocity principle (1 layer);
-c                               ** flip them end over end to correspond
-c                               ** to positive UMU instead of negative
+!c                               ** Get beam-incidence transmissivities
+!c                               ** from reciprocity principle (1 layer);
+!c                               ** flip them end over end to correspond
+!c                               ** to positive UMU instead of negative
 
-            TRNMED( IU ) = U0U( NUMU/2 + 1 - IU, 2 )
-     &                     + EXP( -TAUCPR( NLYR ) / UMU( IU + NUMU/2 ) )
+            TRNMED( IU ) = U0U( NUMU/2 + 1 - IU, 2 )   &
+                          + EXP( -TAUCPR( NLYR ) / UMU( IU + NUMU/2 ) )
 
    50    CONTINUE
 
       ELSE
-c                             ** Second, illuminate from bottom
-c                             ** (if multiple layers)
+!c                             ** Second, illuminate from bottom
+!c                             ** (if multiple layers)
 
-         CALL SOLVE1( B, CBAND, FISOT, 2, IPVT, LL, MI9M2, MXCMU,
-     &                NCOL, NLYR, NN, NNLYRI, NSTR )
+         CALL SOLVE1( B, CBAND, FISOT, 2, IPVT, LL, MI9M2, MXCMU,  &
+                     NCOL, NLYR, NN, NNLYRI, NSTR )
 
-         CALL ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN, NSTR,
-     &                NUMU, TAUCPR, UMU, U0U, WK )
+         CALL ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN, NSTR,  &
+                     NUMU, TAUCPR, UMU, U0U, WK )
 
-c                               ** Get beam-incidence transmissivities
-c                               ** from reciprocity principle
+!c                               ** Get beam-incidence transmissivities
+!c                               ** from reciprocity principle
          DO 60 IU = 1, NUMU / 2
-            TRNMED( IU ) = U0U( IU + NUMU/2, 1 )
-     &                     + EXP( -TAUCPR( NLYR ) / UMU( IU + NUMU/2 ) )
+            TRNMED( IU ) = U0U( IU + NUMU/2, 1 )   &
+                          + EXP( -TAUCPR( NLYR ) / UMU( IU + NUMU/2 ) )
    60    CONTINUE
 
       END IF
@@ -7634,32 +7643,32 @@ c                               ** from reciprocity principle
 
       IF( ALBEDO.GT.0.0 ) THEN
 
-c                             ** Get spherical albedo and transmissivity
+!c                             ** Get spherical albedo and transmissivity
          IF( NLYR.EQ.1 ) THEN
 
-            CALL SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR,
-     &                    NN, NSTR, TAUCPR, SPHALB, SPHTRN )
+            CALL SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR,   &
+                         NN, NSTR, TAUCPR, SPHALB, SPHTRN )
          ELSE
 
-            CALL SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR,
-     &                    NN, NSTR, TAUCPR, SPHTRN, SPHALB )
+            CALL SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR,   &
+                         NN, NSTR, TAUCPR, SPHTRN, SPHALB )
          END IF
 
-c                                ** Ref. S2, Eqs. 16-17 (these eqs. have
-c                                ** a simple physical interpretation
-c                                ** like that of adding-doubling eqs.)
+!c                                ** Ref. S2, Eqs. 16-17 (these eqs. have
+!c                                ** a simple physical interpretation
+!c                                ** like that of adding-doubling eqs.)
          DO 70 IU = 1, NUMU
 
-            ALBMED(IU) = ALBMED(IU) + ( ALBEDO / (1.-ALBEDO*SPHALB) )
-     &                                * SPHTRN * TRNMED(IU)
+            ALBMED(IU) = ALBMED(IU) + ( ALBEDO / (1.-ALBEDO*SPHALB) ) &
+                                     * SPHTRN * TRNMED(IU)
 
-            TRNMED(IU) = TRNMED(IU) + ( ALBEDO / (1.-ALBEDO*SPHALB) )
-     &                                * SPHALB * TRNMED(IU)
+            TRNMED(IU) = TRNMED(IU) + ( ALBEDO / (1.-ALBEDO*SPHALB) ) &
+                                     * SPHALB * TRNMED(IU)
    70    CONTINUE
 
       END IF
-c                          ** Return UMU to all positive values, to
-c                          ** agree with ordering in ALBMED, TRNMED
+!c                          ** Return UMU to all positive values, to
+!c                          ** agree with ordering in ALBMED, TRNMED
       NUMU  = NUMU / 2
       DO 80 IU = 1, NUMU
          UMU( IU ) = UMU( IU + NUMU )
@@ -7668,88 +7677,96 @@ c                          ** agree with ordering in ALBMED, TRNMED
       IF( PRNT(4) ) CALL PRALTR( UMU, NUMU, ALBMED, TRNMED )
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN,   &
+           NSTR, NUMU, TAUCPR, UMU, U0U, WK ) !GCC$ ATTRIBUTES hot :: ALTRIN !GCC$ ATTRIBUTES aligned(16) :: ALTRIN
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN,   &
+            NSTR, NUMU, TAUCPR, UMU, U0U, WK )
+         !DIR$ ATTRIBUTES CODE_ALIGN : 16 :: ALTRIN
+#endif
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         use omp_lib
+#endif
 
-      SUBROUTINE ALTRIN( GU, KK, LL, MXCMU, MXUMU, MAXUMU, NLYR, NN,
-     &                   NSTR, NUMU, TAUCPR, UMU, U0U, WK )
+!c       Computes azimuthally-averaged intensity at top and bottom
+!c       of medium (related to albedo and transmission of medium by
+!c       reciprocity principles; see Ref S2).  User polar angles are
+!c       used as incident beam angles. (This is a very specialized
+!c       version of USRINT)
+!c
+!c       ** NOTE **  User input values of UMU (assumed positive) are
+!c                   temporarily in upper locations of  UMU  and
+!c                   corresponding negatives are in lower locations
+!c                   (this makes GU come out right).  I.e. the contents
+!c                   of the temporary UMU array are:
+!c
+!c                     -UMU(NUMU),..., -UMU(1), UMU(1),..., UMU(NUMU)
+!c
+!c
+!c   I N P U T    V A R I A B L E S:
+!c
+!c       GU     :  Eigenvectors interpolated to user polar angles
+!c                   (i.e., g in Eq. SC(1), STWL(31ab))
+!c
+!c       KK     :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
+!c
+!c       LL     :  Constants of integration in Eq. SC(1), obtained
+!c                   by solving scaled version of Eq. SC(5);
+!c                   exponential term of Eq. SC(12) not included
+!c
+!c       NN     :  Order of double-Gauss quadrature (NSTR/2)
+!c
+!c       TAUCPR :  Cumulative optical depth (delta-M-scaled)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c   O U T P U T    V A R I A B L E:
+!c
+!c       U0U  :    Diffuse azimuthally-averaged intensity at top and
+!c                 bottom of medium (directly transmitted component,
+!c                 corresponding to BNDINT in USRINT, is omitted).
+!c
+!c
+!c   I N T E R N A L    V A R I A B L E S:
+!c
+!c       DTAU   :  Optical depth of a computational layer
+!c       PALINT :  Non-boundary-forced intensity component
+!c       UTAUPR :  Optical depths of user output levels (delta-M scaled)
+!c       WK     :  Scratch vector for saving 'EXP' evaluations
+!c       All the exponential factors (i.e., EXP1, EXPN,... etc.)
+!c       come from the substitution of constants of integration in
+!c       Eq. SC(12) into Eqs. S1(8-9).  All have negative arguments.
+!c
+!c   Called by- ALBTRN
+!c +-------------------------------------------------------------------+
 
-c       Computes azimuthally-averaged intensity at top and bottom
-c       of medium (related to albedo and transmission of medium by
-c       reciprocity principles; see Ref S2).  User polar angles are
-c       used as incident beam angles. (This is a very specialized
-c       version of USRINT)
-c
-c       ** NOTE **  User input values of UMU (assumed positive) are
-c                   temporarily in upper locations of  UMU  and
-c                   corresponding negatives are in lower locations
-c                   (this makes GU come out right).  I.e. the contents
-c                   of the temporary UMU array are:
-c
-c                     -UMU(NUMU),..., -UMU(1), UMU(1),..., UMU(NUMU)
-c
-c
-c   I N P U T    V A R I A B L E S:
-c
-c       GU     :  Eigenvectors interpolated to user polar angles
-c                   (i.e., g in Eq. SC(1), STWL(31ab))
-c
-c       KK     :  Eigenvalues of coeff. matrix in Eq. SS(7), STWL(23b)
-c
-c       LL     :  Constants of integration in Eq. SC(1), obtained
-c                   by solving scaled version of Eq. SC(5);
-c                   exponential term of Eq. SC(12) not included
-c
-c       NN     :  Order of double-Gauss quadrature (NSTR/2)
-c
-c       TAUCPR :  Cumulative optical depth (delta-M-scaled)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c   O U T P U T    V A R I A B L E:
-c
-c       U0U  :    Diffuse azimuthally-averaged intensity at top and
-c                 bottom of medium (directly transmitted component,
-c                 corresponding to BNDINT in USRINT, is omitted).
-c
-c
-c   I N T E R N A L    V A R I A B L E S:
-c
-c       DTAU   :  Optical depth of a computational layer
-c       PALINT :  Non-boundary-forced intensity component
-c       UTAUPR :  Optical depths of user output levels (delta-M scaled)
-c       WK     :  Scratch vector for saving 'EXP' evaluations
-c       All the exponential factors (i.e., EXP1, EXPN,... etc.)
-c       come from the substitution of constants of integration in
-c       Eq. SC(12) into Eqs. S1(8-9).  All have negative arguments.
-c
-c   Called by- ALBTRN
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::   MAXUMU, MXCMU, MXUMU, NLYR, NN, NSTR, NUMU
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   MAXUMU, MXCMU, MXUMU, NLYR, NN, NSTR, NUMU
-c     ..
-c     .. Array Arguments ..
+      REAL(4) ::      GU( MXUMU, MXCMU, * ), KK( MXCMU, * ), LL( MXCMU, * ),  &
+               TAUCPR( 0:* ), U0U( MXUMU, * ), UMU( MAXUMU ), &
+               WK( MXCMU )
+!c     ..
+!c     .. Local Scalars ..
 
-      REAL      GU( MXUMU, MXCMU, * ), KK( MXCMU, * ), LL( MXCMU, * ),
-     &          TAUCPR( 0:* ), U0U( MXUMU, * ), UMU( MAXUMU ),
-     &          WK( MXCMU )
-c     ..
-c     .. Local Scalars ..
-
-      INTEGER   IQ, IU, IUMAX, IUMIN, LC, LU
-      REAL      DENOM, DTAU, EXP1, EXP2, EXPN, MU, PALINT, SGN
-c     ..
-c     .. Local Arrays ..
+      INTEGER(4) ::      IQ, IU, IUMAX, IUMIN, LC, LU
+      REAL(4)    ::      DENOM, DTAU, EXP1, EXP2, EXPN, MU, PALINT, SGN
+!c     ..
+!c     .. Local Arrays ..
 
       REAL      UTAUPR( 2 )
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC ABS, EXP
-c     ..
+!c     ..
 
 
       UTAUPR( 1 ) = 0.0
@@ -7770,15 +7787,15 @@ c     ..
             SGN    = - 1.0
 
          END IF
-c                                   ** Loop over polar angles at which
-c                                   ** albedos/transmissivities desired
-c                                   ** ( upward angles at top boundary,
-c                                   ** downward angles at bottom )
+!c                                   ** Loop over polar angles at which
+!c                                   ** albedos/transmissivities desired
+!c                                   ** ( upward angles at top boundary,
+!c                                   ** downward angles at bottom )
          DO 40 IU = IUMIN, IUMAX
 
             MU   = UMU( IU )
-c                                     ** Integrate from top to bottom
-c                                     ** computational layer
+!c                                     ** Integrate from top to bottom
+!c                                     ** computational layer
             PALINT = 0.0
 
             DO 30 LC = 1, NLYR
@@ -7787,14 +7804,20 @@ c                                     ** computational layer
                EXP1   = EXP( ( UTAUPR( LU ) - TAUCPR( LC - 1 ) ) / MU )
                EXP2   = EXP( ( UTAUPR( LU ) - TAUCPR( LC ) ) / MU )
 
-c                                      ** KK is negative
+               !c                                      ** KK is negative
+#if defined __INTEL_COMPILER
+               !DIR$ ASSUME_ALIGNED WK:64,KK:64
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+               !$OMP SIMD ALIGNED(WK,KK:64)
+#endif
                DO 10 IQ = 1, NN
 
                   WK( IQ ) = EXP( KK( IQ,LC )*DTAU )
                   DENOM  = 1.0 + MU*KK( IQ, LC )
 
                   IF( ABS( DENOM ).LT.0.0001 ) THEN
-c                                                   ** L'Hospital limit
+!c                                                   ** L'Hospital limit
                      EXPN   = DTAU / MU*EXP2
 
                   ELSE
@@ -7807,7 +7830,7 @@ c                                                   ** L'Hospital limit
 
    10          CONTINUE
 
-c                                        ** KK is positive
+!c                                        ** KK is positive
                DO 20 IQ = NN + 1, NSTR
 
                   DENOM  = 1.0 + MU*KK( IQ, LC )
@@ -7835,31 +7858,32 @@ c                                        ** KK is positive
    50 CONTINUE
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE PRALTR( UMU, NUMU, ALBMED, TRNMED ) !GCC$ ATTRIBUTES cold :: PRALTR
+#endif
 
-      SUBROUTINE PRALTR( UMU, NUMU, ALBMED, TRNMED )
+!c        Print planar albedo and transmissivity of medium
+!c        as a function of incident beam angle
 
-c        Print planar albedo and transmissivity of medium
-c        as a function of incident beam angle
+!c   Called by- ALBTRN
+!c --------------------------------------------------------------------
 
-c   Called by- ALBTRN
-c --------------------------------------------------------------------
-
-c     .. Parameters ..
+!c     .. Parameters ..
 
       REAL      DPR
-      PARAMETER ( DPR = 180.0 / 3.14159265 )
-c     ..
-c     .. Scalar Arguments ..
+      PARAMETER ( DPR = 180.0_4 / 3.14159265_4 )
+!c     ..
+!c     .. Scalar Arguments ..
 
       INTEGER   NUMU
-c     ..
-c     .. Array Arguments ..
+!c     ..
+!c     .. Array Arguments ..
 
       REAL      ALBMED( NUMU ), TRNMED( NUMU ), UMU( NUMU )
-c     ..
-c     .. Local Scalars ..
+!c     ..
+!c     .. Local Scalars ..
 
       INTEGER   IU
 c     ..
@@ -7869,88 +7893,93 @@ c     .. Intrinsic Functions ..
 c     ..
 
 
-      WRITE( *, '(///,A,//,A)' )
-     &   ' *******  Flux Albedo and/or Transmissivity of ' //
-     &   'entire medium  ********',
-     &  ' Beam Zen Ang   cos(Beam Zen Ang)      Albedo   Transmissivity'
+      WRITE( *, '(///,A,//,A)' )  &
+        ' *******  Flux Albedo and/or Transmissivity of ' //  &
+        'entire medium  ********',  &
+      ' Beam Zen Ang   cos(Beam Zen Ang)      Albedo   Transmissivity'
 
       DO 10 IU = 1, NUMU
-         WRITE( *, '(0P,F13.4,F20.6,F12.5,1P,E17.4)' )
-     &      DPR*ACOS( UMU( IU ) ), UMU( IU ), ALBMED( IU ), TRNMED( IU )
+         WRITE( *, '(0P,F13.4,F20.6,F12.5,1P,E17.4)' )  &
+          DPR*ACOS( UMU( IU ) ), UMU( IU ), ALBMED( IU ), TRNMED( IU )
    10 CONTINUE
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SOLVE1( B, CBAND, FISOT, IHOM, IPVT, LL, MI9M2, MXCMU,   &
+           NCOL, NCUT, NN, NNLYRI, NSTR ) !GCC$ ATTRIBUTES hot :: SOLVE1 !GCC$ ATTRIBUTES aligned(16) :: SOLVE1
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE SOLVE1( B, CBAND, FISOT, IHOM, IPVT, LL, MI9M2, MXCMU,   &
+            NCOL, NCUT, NN, NNLYRI, NSTR )
+         !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SOLVE1
+#endif
 
-      SUBROUTINE SOLVE1( B, CBAND, FISOT, IHOM, IPVT, LL, MI9M2, MXCMU,
-     &                   NCOL, NCUT, NN, NNLYRI, NSTR )
+!c        Construct right-hand side vector B for isotropic incidence
+!c        (only) on either top or bottom boundary and solve system
+!c        of equations obtained from the boundary conditions and the
+!c        continuity-of-intensity-at-layer-interface equations
+!c
+!c
+!c     I N P U T      V A R I A B L E S:
+!c
+!c       CBAND    :  Left-hand side matrix of banded linear system
+!c                   Eq. SC(5), scaled by Eq. SC(12); assumed already
+!c                   in LU-decomposed form, ready for LINPACK solver
+!c
+!c       IHOM     :  Direction of illumination flag (1, top; 2, bottom)
+!c
+!c       NCOL     :  Number of columns in CBAND
+!c
+!c       NN       :  Order of double-Gauss quadrature (NSTR/2)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T     V A R I A B L E S:
+!c
+!c       B        :  Right-hand side vector of Eq. SC(5) going into
+!1c                   SGBSL; returns as solution vector of Eq.
+!c                   SC(12), constants of integration without
+!c                   exponential term
+!c
+!c       LL      :   permanent storage for B, but re-ordered
+!c
+!c
+!c    I N T E R N A L    V A R I A B L E S:
+!c
+!c       IPVT     :  INTEGER vector of pivot indices
+!c       NCD      :  Number of diagonals below or above main diagonal
+!c
+!c   Called by- ALBTRN
+!c   Calls- ZEROIT, SGBSL
+!c +-------------------------------------------------------------------+
 
-c        Construct right-hand side vector B for isotropic incidence
-c        (only) on either top or bottom boundary and solve system
-c        of equations obtained from the boundary conditions and the
-c        continuity-of-intensity-at-layer-interface equations
-c
-c
-c     I N P U T      V A R I A B L E S:
-c
-c       CBAND    :  Left-hand side matrix of banded linear system
-c                   Eq. SC(5), scaled by Eq. SC(12); assumed already
-c                   in LU-decomposed form, ready for LINPACK solver
-c
-c       IHOM     :  Direction of illumination flag (1, top; 2, bottom)
-c
-c       NCOL     :  Number of columns in CBAND
-c
-c       NN       :  Order of double-Gauss quadrature (NSTR/2)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c    O U T P U T     V A R I A B L E S:
-c
-c       B        :  Right-hand side vector of Eq. SC(5) going into
-c                   SGBSL; returns as solution vector of Eq.
-c                   SC(12), constants of integration without
-c                   exponential term
-c
-c       LL      :   permanent storage for B, but re-ordered
-c
-c
-c    I N T E R N A L    V A R I A B L E S:
-c
-c       IPVT     :  INTEGER vector of pivot indices
-c       NCD      :  Number of diagonals below or above main diagonal
-c
-c   Called by- ALBTRN
-c   Calls- ZEROIT, SGBSL
-c +-------------------------------------------------------------------+
+!c     .. Scalar Arguments ..
 
-c     .. Scalar Arguments ..
+      INTEGER(4) ::   IHOM, MI9M2, MXCMU, NCOL, NCUT, NN, NNLYRI, NSTR
+      REAL(4)    ::      FISOT
+!c     ..
+!c     .. Array Arguments ..
 
-      INTEGER   IHOM, MI9M2, MXCMU, NCOL, NCUT, NN, NNLYRI, NSTR
-      REAL      FISOT
-c     ..
-c     .. Array Arguments ..
-
-      INTEGER   IPVT( NNLYRI )
-      REAL      B( NNLYRI ), CBAND( MI9M2, NNLYRI ), LL( MXCMU, * )
-c     ..
-c     .. Local Scalars ..
+      INTEGER(4) ::      IPVT( NNLYRI )
+      REAL(4)    ::      B( NNLYRI ), CBAND( MI9M2, NNLYRI ), LL( MXCMU, * )
+!c     ..
+!c     .. Local Scalars ..
 
       INTEGER   I, IPNT, IQ, LC, NCD
-c     ..
-c     .. External Subroutines ..
+!c     ..
+!c     .. External Subroutines ..
 
       EXTERNAL  SGBSL, ZEROIT
-c     ..
+!c     ..
 
 
       CALL ZEROIT( B, NNLYRI )
 
       IF( IHOM.EQ.1 ) THEN
-c                             ** Because there are no beam or emission
-c                             ** sources, remainder of B array is zero
+!c                             ** Because there are no beam or emission
+!c                             ** sources, remainder of B array is zero
          DO 10 I = 1, NN
             B( I )             = FISOT
             B( NCOL - NN + I ) = 0.0
@@ -7981,71 +8010,78 @@ c                             ** sources, remainder of B array is zero
    40 CONTINUE
 
 
-      RETURN
-      END
+      
+      END SUBROUTINE
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+      SUBROUTINE SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR, NN, NSTR,  &
+           TAUCPR, SFLUP, SFLDN ) !GCC$ ATTRIBUTES hot :: SPALTR !GCC$ ATTRIBUTES aligned(16)
+#elif defined __ICC || defined __INTEL_COMPILER
+       SUBROUTINE SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR, NN, NSTR,  &
+            TAUCPR, SFLUP, SFLDN )
+         !DIR$ ATTRIBUTES CODE_ALIGN:16 :: SPALTR
+#endif
+#if defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         use omp_lib
+#endif
+!c       Calculates spherical albedo and transmissivity for the entire
+!c       medium from the m=0 intensity components
+!c       (this is a very specialized version of FLUXES)
+!c
+!c
+!c    I N P U T    V A R I A B L E S:
+!c
+!c       CMU,CWT    Abscissae, weights for Gauss quadrature
+!c                  over angle cosine
+!c
+!c       KK      :  Eigenvalues of coeff. matrix in eq. SS(7)
+!c
+!c       GC      :  Eigenvectors at polar quadrature angles, SC(1)
+!c
+!c       LL      :  Constants of integration in eq. SC(1), obtained
+!c                  by solving scaled version of Eq. SC(5);
+!c                  exponential term of Eq. SC(12) not included
+!c
+!c       NN      :  Order of double-Gauss quadrature (NSTR/2)
+!c
+!c       (remainder are DISORT input variables)
+!c
+!c
+!c    O U T P U T   V A R I A B L E S:
+!c
+!c       SFLUP   :  Up-flux at top (equivalent to spherical albedo due to
+!c                  reciprocity).  For illumination from below it gives
+!c                  spherical transmissivity
+!c
+!c       SFLDN   :  Down-flux at bottom (for single layer, equivalent to
+!c                  spherical transmissivity due to reciprocity)
+!c
+!c
+!c    I N T E R N A L   V A R I A B L E S:
+!c
+!c       ZINT    :  Intensity of m=0 case, in Eq. SC(1)
+!c
+!c   Called by- ALBTRN
+!c +--------------------------------------------------------------------
 
-      SUBROUTINE SPALTR( CMU, CWT, GC, KK, LL, MXCMU, NLYR, NN, NSTR,
-     &                   TAUCPR, SFLUP, SFLDN )
+!c     .. Scalar Arguments ..
 
-c       Calculates spherical albedo and transmissivity for the entire
-c       medium from the m=0 intensity components
-c       (this is a very specialized version of FLUXES)
-c
-c
-c    I N P U T    V A R I A B L E S:
-c
-c       CMU,CWT    Abscissae, weights for Gauss quadrature
-c                  over angle cosine
-c
-c       KK      :  Eigenvalues of coeff. matrix in eq. SS(7)
-c
-c       GC      :  Eigenvectors at polar quadrature angles, SC(1)
-c
-c       LL      :  Constants of integration in eq. SC(1), obtained
-c                  by solving scaled version of Eq. SC(5);
-c                  exponential term of Eq. SC(12) not included
-c
-c       NN      :  Order of double-Gauss quadrature (NSTR/2)
-c
-c       (remainder are DISORT input variables)
-c
-c
-c    O U T P U T   V A R I A B L E S:
-c
-c       SFLUP   :  Up-flux at top (equivalent to spherical albedo due to
-c                  reciprocity).  For illumination from below it gives
-c                  spherical transmissivity
-c
-c       SFLDN   :  Down-flux at bottom (for single layer, equivalent to
-c                  spherical transmissivity due to reciprocity)
-c
-c
-c    I N T E R N A L   V A R I A B L E S:
-c
-c       ZINT    :  Intensity of m=0 case, in Eq. SC(1)
-c
-c   Called by- ALBTRN
-c +--------------------------------------------------------------------
+      INTEGER(4) ::   MXCMU, NLYR, NN, NSTR
+      REAL(4)    ::      SFLDN, SFLUP
+!c     ..
+!c     .. Array Arguments ..
 
-c     .. Scalar Arguments ..
-
-      INTEGER   MXCMU, NLYR, NN, NSTR
-      REAL      SFLDN, SFLUP
-c     ..
-c     .. Array Arguments ..
-
-      REAL      CMU( MXCMU ), CWT( MXCMU ), GC( MXCMU, MXCMU, * ),
-     &          KK( MXCMU, * ), LL( MXCMU, * ), TAUCPR( 0:* )
-c     ..
-c     .. Local Scalars ..
+      REAL      CMU( MXCMU ), CWT( MXCMU ), GC( MXCMU, MXCMU, * ), &
+               KK( MXCMU, * ), LL( MXCMU, * ), TAUCPR( 0:* )
+!c     ..
+!c     .. Local Scalars ..
 
       INTEGER   IQ, JQ
       REAL      ZINT
-c     ..
-c     .. Intrinsic Functions ..
+!c     ..
+!c     .. Intrinsic Functions ..
 
       INTRINSIC EXP
-c     ..
+!c     ..
 
 
       SFLUP  = 0.0
@@ -8053,11 +8089,24 @@ c     ..
       DO 30 IQ = NN + 1, NSTR
 
          ZINT   = 0.0
+#if defined INTEL_COMPILER
+         !DIR$ ASSUME_ALIGNED GC:64,LL:64,KK:64,TAUCPR:64
+         !DIR$ REDUCTION(+:ZINT)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+         !$OMP SIMD ALIGNED(GC:64,LL:64,KK:64,TAUCPR:64)
+         !$OMP REDUCTION(+:ZINT)
+#endif
          DO 10 JQ = 1, NN
-            ZINT  = ZINT + GC( IQ, JQ, 1 )*LL( JQ, 1 )*
-     &                     EXP( KK( JQ,1 )*TAUCPR( 1 ) )
+            ZINT  = ZINT + GC( IQ, JQ, 1 )*LL( JQ, 1 )* &
+                          EXP( KK( JQ,1 )*TAUCPR( 1 ) )
    10    CONTINUE
-
+#if defined INTEL_COMPILER
+        
+         !DIR$ REDUCTION(+:ZINT)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+       
+         !$OMP REDUCTION(+:ZINT)
+#endif
          DO 20 JQ = NN + 1, NSTR
             ZINT  = ZINT + GC( IQ, JQ, 1 )*LL( JQ, 1 )
    20    CONTINUE
@@ -8072,14 +8121,27 @@ c     ..
       DO 60 IQ = 1, NN
 
          ZINT   = 0.0
+#if defined INTEL_COMPILER
+        
+         !DIR$ REDUCTION(+:ZINT)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+       
+         !$OMP REDUCTION(+:ZINT)
+#endif         
          DO 40 JQ = 1, NN
             ZINT  = ZINT + GC( IQ, JQ, NLYR )*LL( JQ, NLYR )
    40    CONTINUE
-
+#if defined INTEL_COMPILER
+        
+         !DIR$ REDUCTION(+:ZINT)
+#elif defined __GFORTRAN__ && !defined __INTEL_COMPILER
+       
+         !$OMP REDUCTION(+:ZINT)
+#endif
          DO 50 JQ = NN + 1, NSTR
-            ZINT  = ZINT + GC( IQ, JQ, NLYR )*LL( JQ, NLYR )*
-     &                     EXP( - KK( JQ,NLYR ) *
-     &                     ( TAUCPR( NLYR ) - TAUCPR( NLYR-1 ) ) )
+            ZINT  = ZINT + GC( IQ, JQ, NLYR )*LL( JQ, NLYR )* &
+                          EXP( - KK( JQ,NLYR ) * &
+                          ( TAUCPR( NLYR ) - TAUCPR( NLYR-1 ) ) )
    50    CONTINUE
 
          SFLDN  = SFLDN + CWT( NN + 1 - IQ )*CMU( NN + 1 - IQ )*ZINT
@@ -8090,9 +8152,9 @@ c     ..
       SFLDN  = 2.0*SFLDN
 
 
-      RETURN
-      END
+     
+      END SUBROUTINE
 
-c ******************************************************************
-c ********** End of IBCND=1 special case routines ******************
-c ******************************************************************
+!c ******************************************************************
+!c ********** End of IBCND=1 special case routines ******************
+!c ******************************************************************
