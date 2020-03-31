@@ -255,7 +255,7 @@ namespace gms {
                      __attribute__((aligned(64))) float re_mem[16] = {};
                      __attribute__((aligned(64))) float im_mem[16] = {};
                      store_a(&re_mem[0],&im_mem[0]);
-                     return (std::make_pair(re_mem[posx & 0x1F],im_mem[posy  & 0x1F]));
+                     return (std::make_pair(re_mem[posx & 0xF],im_mem[posy  & 0xF]));
                 }
                
 	    __ATTR_COLD__
@@ -282,8 +282,8 @@ namespace gms {
                  __attribute__((aligned(64))) float mem_im[16] = {};
 
                  store_a(&mem_re[0],&mem_im[0]);
-                 mem_re[re_idx & 0x1F] = re;
-                 mem_im[im_idx & 0x1F] = im;
+                 mem_re[re_idx & 0xF] = re;
+                 mem_im[im_idx & 0xF] = im;
                  load_a(&mem_re[0],&mem_im[0]);
                  return (*this);
 	       }
