@@ -367,7 +367,7 @@ namespace gms {
 	      __ATTR_ALIGN__(16)
 	      __ATTR_VECTORCALL__
 	      AVX512c16f32 &
-	             expand(const AVX512c4f32 x,
+	             expand(const AVX512c16f32 x,
                             const __mmask16 mask) {
                      m_re = _mm512_maskz_expand_ps(mask,x.m_re);
                      m_im = _mm512_maskz_expand_ps(mask.x.m_im);
@@ -378,7 +378,7 @@ namespace gms {
 	      __ATTR_ALIGN__(16)
 	      __ATTR_VECTORCALL__
 	      AVX512c16f32 &
-	            expand_loadu(const AVX512c4f32 x,
+	            expand_loadu(const AVX512c16f32 x,
                                  const __mmask16 mask,
 				 const float * __restrict re,
 				 const float * __restrict im) {
@@ -431,7 +431,7 @@ namespace gms {
 	     __ATTR_VECTORCALL__
 	     static inline
 	     AVX512c16f32 conj(AVX512c16f32 x) {
-                  auto tmp = ~x
+	       auto tmp = ~x;
 		  return (AVX512c16f32{x.m_re,tmp.m_im});
 	     }
 
@@ -530,7 +530,7 @@ namespace gms {
 	     __ATTR_ALIGN__(32)
 	     __ATTR_VECTORCALL__
 	     static inline
-	     __m512 cabs(const AVX512c4f32 x) {
+	     __m512 cabs(const AVX512c16f32 x) {
                     const __m512 re_part =
                              _mm512_mul_ps(x.m_re,x.m_re);
                     const __m512 im_part =
@@ -608,7 +608,7 @@ namespace gms {
 	     __ATTR_VECTORCALL__
              static inline
 	     AVX512c16f32
-             select(const AVX512164f32 x,
+             select(const AVX512c16f32 x,
                     const AVX512c16f32 y,
 		    __mmask16 mask) {
                  return (AVX512c16f32{_mm512_mask_blend_ps(mask,x.m_re,y.m_re),
