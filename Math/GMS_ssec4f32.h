@@ -830,6 +830,991 @@ namespace gms {
                  return (x - SSEc4f32{s});
              }
 
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(16)
+	    __ATTR_VECTORCALL__
+            static inline SSEc4f32
+            operator-(const float s,
+                     const SSEc4f32 x) {
+                  return (SSEc4f32{s} - x);
+              }
+
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(16)
+	    __ATTR_VECTORCALL__
+	    static inline SSEc4f32
+	    operator-=(SSEc4f32 x,
+	               const SSEc4f32 y) {
+                x = x - y;
+		return (x);
+	     }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline SSEc4f32
+	   operator-=(SSEc4f32 x,
+	              const std::complex<float> y) {
+                x = x - y;
+		return (x);
+	    }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline SSEc4f32
+	   operator-=(const std::complex<float> x,
+	              SSEc4f32 y) {
+               y = x - y;
+	       return (y);
+	    }
+
+	   __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline SSEc4f32
+	   operator-=(SSEc4f32 x,
+	              const __m128 y) {
+              x = x - y;
+	      return (x);
+	   }
+
+	  __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	  static inline SSEc4f32
+	  operator-=(const __m128 x,
+	             SSEc4f32 y) {
+              y = x - y;
+	      return (y);
+	  }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline SSEc4f32
+	 operator-=(SSEc4f32 x,
+	            const float s) {
+            x = x - SSEc4f32{s};
+	    return (x);
+	 }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline SSEc4f32
+	 operator-=(const float s,
+	            SSEc4f32 x) {
+            x = SSEc4f32{s}-x;
+	    return (x);
+	 }
+
+	__ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator*(const SSEc4f32 x,
+                  const SSEc4f32 y) {
+              const __m128 xmm0 = _mm_mul_ps(x.m_re,y.m_re);
+              const __m128 xmm1 = _mm_mul_ps(x.m_im,y.m_im);
+              const __m128 xmm2 = _mm_mul_ps(x.m_im,y.m_re);
+              const __m128 xmm3 = _mm_mul_ps(x.m_re,y.m_im);
+              return (SSEc4f32{_mm_add_ps(xmm0,xmm1),
+                                   _mm_sub_ps(xmm2,xmm3)});
+           }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline SSEc4f32
+	 operator*(const SSEc4f32 x,
+	           const std::complex<float> y) {
+            const __m128 y_re = _mm_set1_ps(y.real());
+	    const __m128 y_im = _mm_set1_ps(y.imag());
+	    const __m128 zmm0 = _mm_mul_ps(x.m_re,y_re);
+	    const __m128 zmm1 = _mm_mul_ps(x.m_im,y_im);
+	    const __m128 zmm2 = _mm_mul_ps(x.m_im,y_re);
+	    const __m128 zmm3 = _mm_mul_ps(x.m_re,y_im);
+	    return (SSEc4f32{_mm_add_ps(zmm0,zmm1),
+                                 _mm_sub_ps(zmm2,zmm3)});
+	 }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator*(const SSEc4f32 x,
+                     const __m128 v) {
+              return (SSEc4f32{_mm_mul_ps(x.m_re,v),
+                                  _mm_mul_ps(x.m_im,v)});
+          }
+
+       __ATTR_HOT__
+       __ATTR_ALIGN__(16)
+       __ATTR_VECTORCALL__
+       static inline SSEc4f32
+       operator*(const __m128 v,
+                 const SSEc4f32 x) {
+            return (SSEc4f32{_mm_mul_ps(v,x.m_re),
+                                _mm_mul_ps(v,x.m_im)});
+          }
+
+
+       __ATTR_HOT__
+       __ATTR_ALIGN__(16)
+       __ATTR_VECTORCALL__
+       static inline SSEc4f32
+       operator*(const SSEc4f32 x,
+                 const float s) {
+         const __m128 zmm0 = _mm_set1_ps(s);
+              return (SSEc4f32{_mm_mul_ps(x.m_re,zmm0),
+                                  _mm_mul_ps(x.m_im,zmm0)});
+          }
+
+       __ATTR_HOT__
+       __ATTR_ALIGN__(16)
+       __ATTR_VECTORCALL__
+       static inline SSEc4f32
+       operator*=(SSEc4f32 x,
+                  const SSEc4f32 y) {
+              x = x * y;
+              return (x);
+         }
+
+       __ATTR_HOT__
+       __ATTR_ALIGN__(16)
+       __ATTR_VECTORCALL__
+       static inline SSEc4f32
+       operator*=(SSEc4f32 x,
+                  const __m128 v) {
+            x = x * v;
+            return (x);
+          }
+
+       __ATTR_HOT__
+       __ATTR_ALIGN__(16)
+       __ATTR_VECTORCALL__
+       static inline SSEc4f32
+       operator*=(const __m128 v,
+                   SSEc4f32 x) {
+              x = v * x;
+              return (x);
+          }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator*=(SSEc4f32 x,
+                   const float s) {
+             x = x * s;
+             return (x);
+          }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+         static inline SSEc4f32
+         operator*=(const float s,
+                    SSEc4f32 x) {
+             x = s * x;
+             return (x);
+          }
+
+	__ATTR_HOT__
+	__ATTR_ALIGN__(32)
+	__ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator/(const SSEc4f32 x,
+                  const SSEc4f32 y) {
+#if defined USE_SAFE_COMPLEX_DIVISION && (USE_SAFE_COMPLEX_DIVISION) == 1
+              return (cdiv_smith(x,y));
+#else
+              const __m128 zmm0 = _mm_mul_ps(x.m_re,y.m_re);
+              const __m128 zmm1 = _mm_mul_ps(x.m_im,y.m_im);
+              const __m128 zmm2 = _mm_mul_ps(x.m_im,y.m_re);
+              const __m128 zmm3 = _mm_mul_ps(x.m_re,y.m_im);
+              const __m128 den  = _mm_add_ps(_mm_mul_ps(y.m_re,y.m_re),
+                                                _mm_mul_ps(y.m_im,y.m_im));
+              const __m128 re_part = _mm_add_ps(zmm0,zmm1);
+              const __m128 im_part = _mm_sub_ps(zmm2,zmm3);
+              return (SSEc4f32{_mm_div_ps(re_part,den),
+                                  _mm_div_ps(im_part,den)});
+#endif
+           }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 __ATTR_VECTORCALL__
+	 static inline SSEc4f32
+	 operator/(const SSEc4f32 x,
+	           const std::complex<float> y) {
+
+              const __m128 y_re = _mm_set1_ps(y.real());
+	      const __m128 y_im = _mm_set1_ps(y.imag());
+	      const __m128 zmm0 = _mm_mul_ps(x.m_re,y_re);
+              const __m128 zmm1 = _mm_mul_ps(x.m_im,y_im);
+              const __m128 zmm2 = _mm_mul_ps(x.m_im,y_re);
+              const __m128 zmm3 = _mm_mul_ps(x.m_re,y_im);
+              const __m128 den  = _mm_add_ps(_mm_mul_ps(y_re,y_re),
+                                                _mm_mul_ps(y_im,y_im));
+              const __m128 re_part = _mm_add_ps(zmm0,zmm1);
+              const __m128 im_part = _mm_sub_ps(zmm2,zmm3);
+              return (SSEc4f32{_mm_div_ps(re_part,den),
+                                  _mm_div_ps(im_part,den)});
+	  }
+
+
+	  	  __ATTR_HOT__
+	  __ATTR_ALIGN__(32)
+	  __ATTR_VECTORCALL__
+	  static inline SSEc4f32
+	  operator/(const std::complex<float> x,
+	            const SSEc4f32 y) {
+
+	      const __m128 x_re = _mm_set1_ps(x.real());
+	      const __m128 x_im = _mm_set1_ps(x.imag());
+	      const __m128 zmm0 = _mm_mul_ps(x_re,y.m_re);
+              const __m128 zmm1 = _mm_mul_ps(x_im,y.m_im);
+              const __m128 zmm2 = _mm_mul_ps(x_im,y.m_re);
+              const __m128 zmm3 = _mm_mul_ps(x_re,y.m_im);
+              const __m128 den  = _mm_add_ps(_mm_mul_ps(y.m_re,y.m_re),
+                                                _mm_mul_ps(y.m_im,y.m_im));
+              const __m128 re_part = _mm_add_ps(zmm0,zmm1);
+              const __m128 im_part = _mm_sub_ps(zmm2,zmm3);
+              return (SSEc4f32{_mm_div_ps(re_part,den),
+                                  _mm_div_ps(im_part,den)});
+	  }
+
+	  __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+          static inline SSEc4f32
+          operator/(const SSEc4f32 x,
+                     const __m128 v) {
+                return (SSEc4f32{_mm_div_ps(x.m_re,v),
+                                    _mm_div_ps(x.m_im,v)});
+           }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+         static inline SSEc4f32
+         operator/(const __m128 v,
+                   const SSEc4f32 x) {
+                return (SSEc4f32{_mm_div_ps(v,x.m_re),
+                                     _mm_div_ps(v,x.m_im)});
+           }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator/(const SSEc4f32 x,
+                     const float s) {
+               const __m128 zmm0 = _mm_set1_ps(s);
+               return (SSEc4f32{_mm_div_ps(x.m_re,zmm0),
+                                    _mm_div_ps(x.m_im,zmm0)});
+           }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator/(const float s,
+                  const SSEc4f32 x) {
+               const __m128 zmm0 = _mm_set1_ps(s);
+               return (SSEc4f32{_mm_div_ps(zmm0,x.m_re),
+                                    _mm_div_ps(zmm0,x.m_im)});
+           }
+
+	__ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator/=(SSEc4f32 x,
+                   const SSEc4f32 y) {
+              x = x / y;
+              return (x);
+          }
+
+	__ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+	static inline AVX512c16f32
+	operator/=(AVX512c16f32 x,
+	           const std::complex<float> y) {
+              x = x / y
+	      return (x);
+	 }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline SSEc4f32
+	 operator/=(const std::complex<float> x,
+	            SSEc4f32 y) {
+               y = x / y;
+               return (y);
+	 }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+        static inline SSEc4f32
+        operator/=(SSEc4f32 x,
+                      const __m128 v) {
+              x = x / v;
+              return (x);
+          }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+         static inline SSEc4f32
+         operator/=(const __m128 v,
+                    SSEc4f32 x) {
+             x = v / x;
+             return (x);
+          }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+         static inline SSEc4f32
+         operator/=(SSEc4f32 x,
+                    const float s) {
+              x = x / s;
+              return (x);
+          }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+         static inline SSEc4f32
+         operator/=(const float s,
+                    SSEc4f32 x) {
+              x = s / x;
+              return (x);
+          }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+          static inline SSEc4f32
+          operator~(SSEc4f32 x) {
+                x.m_re = _mm_sub_ps(_mm_setzero_ps(),x.m_re);
+                return (x);
+           }
+
+#if defined __AVX512F__
+
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline std::pair<__mmask8,__mmask8>
+         operator==(const SSEc4f32 x,
+                    const SSEc4f32 y) {
+               const __mmask8 m1 =
+                     _mm_cmp_ps_mask(x.m_re,y.m_re,_CMP_EQ_OQ);
+               const __mmask8 m2 =
+                     _mm_cmp_ps_mask(x.m_im,y.m_im,_CMP_EQ_OQ);
+               return (std::make_pair(m1,m2));
+           }
+
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline std::pair<__mmask8,__mmask8>
+         operator==(const SSEc4f32 x,
+                    const std::complex<float> c) {
+               const __mmask8 m1 =
+                  _mm_cmp_ps_mask(x.m_re,_mm_set1_ps(c.real()),_CMP_EQ_OQ);
+               const __mmask8 m2 =
+                   _mm_cmp_ps_mask(x.m_im,_mm_set1_ps(c.imag()),_CMP_EQ_OQ);
+               return (std::make_pair(m1,m2));
+           }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline std::pair<__mmask8,__mmask8>
+         operator==(const std::complex<float> c,
+                    const SSEc4f32 x) {
+              const __mmask8 m1 =
+                    _mm_cmp_ps_mask(_mm_set1_ps(c.real()),x.m_re,_CMP_EQ_OQ);
+              const __mmask8 m2 =
+                    _mm_cmp_ps_mask(_mm_set1_ps(c.imag()),x.m_im,_CMP_EQ_OQ);
+              return (std::make_pair(m1,m2));
+           }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	  static inline std::pair<__mmask8,__mmask8>
+          operator!=( const SSEc4f32 x,
+                      const SSEc4f32 y) {
+             const __mmask8 m1 =
+                   _mm_cmp_ps_mask(x.m_re,y.m_re,_CMP_NEQ_OQ);
+             const __mmask8 m2 =
+                   _mm_cmp_ps_mask(x.m_im,y.m_im,_CMP_NEQ_OQ);
+             return (std::make_pair(m1,m2));
+           }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	  static inline std::pair<__mmask8,__mmask8>
+          operator!=(const SSEc4f32 x,
+                      const std::complex<float> c) {
+             const __mmask8 m1 =
+                    _mm_cmp_ps_mask(x.m_re,_mm_set1_ps(c.real()),_CMP_NEQ_OQ);
+             const __mmask8 m2 =
+                    _mm_cmp_ps_mask(x.m_im,_mm_set1_ps(c.imag()),_CMP_NEQ_OQ);
+             return (std::make_pair(m1,m2));
+            }
+
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline std::pair<__mmask8,__mmask8>
+           operator!=(const std::complex<float> c,
+                      const SSEc4f32 x) {
+                const __mmask8 m1 =
+                   _mm_cmp_ps_mask(_mm_set1_ps(c.real()),x.m_re,_CMP_NEQ_OQ);
+                const __mmask8 m2 =
+                   _mm_cmp_ps_mask(_mm_set1_ps(c.imag()),x.m_im,_CMP_NEQ_OQ);
+                return (std::make_pair(m1,m2));
+             }
+
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline std::pair<__mmask8,__mmask8>
+           operator>(const SSEc4f32 x,
+                      const SSEc4f32 y) {
+              const __mmask8 m1 =
+                  _mm_cmp_ps_mask(x.m_re,y.m_re,_CMP_GT_OQ);
+              const __mmask8 m2 =
+                  _mm_cmp_ps_mask(x.m_im,y.m_im,_CMP_GT_OQ);
+               return (std::make_pair(m1,m2));
+             }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	  static inline std::pair<__mmask8,__mmask8>
+          operator>(const SSEc4f32 x,
+                      const std::complex<float> c) {
+              const __mmask8 m1 =
+                   _mm_cmp_ps_mask(x.m_re,_mm_set1_ps(c.real()),_CMP_GT_OQ);
+              const __mmask8 m2 =
+                   _mm_cmp_ps_mask(x.m_im,_mm_set1_ps(c.imag()),_CMP_GT_OQ);
+              return (std::make_pair(m1,m2));
+             }
+
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+	   static inline std::pair<__mmask8,__mmask8>
+           operator>(const std::complex<float> c,
+                      const SSEc4f32 x) {
+              const __mmask8 m1 =
+                 _mm_cmp_ps_mask(_mm_set1_ps(c.real()),x.m_re,_CMP_GT_OQ);
+              const __mmask8 m2 =
+                 _mm_cmp_ps_mask(_mm_set1_ps(c.imag()),x.m_im,_CMP_GT_OQ);
+              return (std::make_pair(m1,m2));
+             }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	  static inline std::pair<__mmask8,__mmask8>
+          operator<(const SSEc4f32 x,
+                      const SSEc4f32 y) {
+              const __mmask8 m1 =
+                  _mm_cmp_ps_mask(x.m_re,y.m_re,_CMP_LT_OQ);
+              const __mmask8 m2 =
+                  _mm_cmp_ps_mask(x.m_im,y.m_im,_CMP_LT_OQ);
+              return (std::make_pair(m1,m2));
+             }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	    static inline std::pair<__mmask8,__mmask8>
+          operator<(const AVX512c16f32 x,
+                      const std::complex<float> c) {
+               const __mmask8 m1 =
+                   _mm_cmp_ps_mask(x.m_re,_mm_set1_ps(c.real()),_CMP_LT_OQ);
+               const __mmask8 m2 =
+                   _mm_cmp_ps_mask(x.m_im,_mm_set1_ps(c.imag()),_CMP_LT_OQ);
+               return (std::make_pair(m1,m2));
+              }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	    static inline std::pair<__mmask8,__mmask8>
+          operator<(const std::complex<float> c,
+                    const SSEc4f32 x) {
+               const __mmask8 m1 =
+                    _mm_cmp_ps_mask(_mm_set1_ps(c.real()),x.m_re,_CMP_LT_OQ);
+               const __mmask8 m2 =
+                    _mm_cmp_ps_mask(_mm_set1_ps(c.imag()),x.m_im,_CMP_LT_OQ);
+               return (std::make_pair(m1,m2));
+               }
+
+          __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+	  static inline std::pair<__mmask8,__mmask8>
+          operator>=(const SSEc4f32 x,
+                      const SSEc4f32 y) {
+               const __mmask8 m1 =
+                    _mm_cmp_ps_mask(x.m_re,y.m_re,_CMP_GE_OQ);
+               const __mmask8 m2 =
+                    _mm_cmp_ps_mask(x.m_im,y.m_im,_CMP_GE_OQ);
+                return (std::make_pair(m1,m2));
+              }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+	static inline std::pair<__mmask8,__mmask8>
+        operator>=(const SSEc4f32 x,
+                   const std::complex<float> c) {
+            const __mmask8 m1 =
+                 _mm_cmp_ps_mask(x.m_re,_mm_set1_ps(c.real()),_CMP_GE_OQ);
+            const __mmask8 m2 =
+                 _mm_cmp_ps_mask(x.m_im,_mm_set1_ps(c.imag()),_CMP_GE_OQ);
+             return (std::make_pair(m1,m2));
+          }
+
+       __ATTR_HOT__
+       __ATTR_ALIGN__(16)
+       __ATTR_VECTORCALL__
+       static inline std::pair<__mmask8,__mmask8>
+       operator>=(const std::complex<float> c,
+                   const SSEc4f32 x) {
+            const __mmask8 m1 =
+                  _mm_cmp_ps_mask(_mm_set1_ps(c.real()),x.m_re,_CMP_GE_OQ);
+            const __mmask8 m2 =
+                  _mm_cmp_ps_mask(_mm_set1_ps(c.imag()),x.m_im,_CMP_GE_OQ);
+            return (std::make_pair(m1,m2));
+        }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+	static inline std::pair<__mmask8,__mmask8>
+        operator<=(const SSEc4f32 x,
+                   const SSEc4f32 y) {
+              const __mmask8 m1 =
+                 _mm_cmp_ps_mask(x.m_re,y.m_re,_CMP_LE_OQ);
+              const __mmask8 m2 =
+                 _mm_cmp_ps_mask(x.m_im,y.m_im,_CMP_LE_OQ);
+              return (std::make_pair(m1,m2));
+          }
+
+         __ATTR_HOT__
+	 __ATTR_ALIGN__(16)
+	 __ATTR_VECTORCALL__
+	 static inline std::pair<__mmask8,__mmask8>
+         operator<=(const SSEc4f32 x,
+                    const std::complex<float> c) {
+              const __mmask8 m1 =
+                   _mm_cmp_ps_mask(x.m_re,_mm_set1_ps(c.real()),_CMP_LE_OQ);
+              const __mmask16 m2 =
+                   _mm_cmp_ps_mask(x.m_im,_mm_set1_ps(c.imag()),_CMP_LE_OQ);
+              return (std::make_pair(m1,m2));
+         }
+
+        __ATTR_HOT__
+	__ATTR_ALIGN__(16)
+	__ATTR_VECTORCALL__
+	static inline std::pair<__mmask8,__mmask8>
+        operator<=(const std::complex<float> c,
+                      const SSEc4f32 x) {
+             const __mmask8 m1 =
+               _mm_cmp_ps_mask(_mm_set1_ps(c.real()),x.m_re,_CMP_LE_OQ);
+             const __mmask8 m2 =
+               _mm_cmp_ps_mask(_mm_set1_ps(c.imag()),x.m_im,_CMP_LE_OQ);
+             return (std::make_pair(m1,m2));
+         }
+
+
+#else
+
+	  __ATTR_HOT__
+	  __ATTR_ALIGN__(16)
+	  __ATTR_VECTORCALL__
+          static inline
+	  std::pair<int32_t,int32_t>
+	  operator==(const SSEc4f32 x,
+		     const SSEc4f32 y) {
+
+	      const __m128 eqre,eqim;
+	      eqre = _mm_setzero_ps();
+	      eqim = _mm_setzero_ps();
+	      eqre = _mm_cmp_ps(x.m_re,y.m_re,
+					 _CMP_EQ_OQ);
+	      eqim = _mm_cmp_ps(x.m_im,y.m_im,
+					 _CMP_EQ_OQ);
+              return (std::make_pair(_mm_testz_ps(eqre,eqre),
+				     _mm_testz_ps(eqim,eqim)));
+ 	     }
+	  
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+           static inline
+	   std::pair<int32_t,int32_t>
+	   operator==(const SSEc4f32 x,
+		      const std::complex<float> y) {
+
+                   const __m128 eqre,eqim;
+		   eqre = _mm_setzero_ps();
+		   eqim = _mm_setzero_ps();
+		   eqre = _mm_cmp_ps(x.m_re,
+				    _mm_set1_ps(y.real()),
+						_CMP_EQ_OQ);
+		   eqim = _mm_cmp_ps(x.m_im,
+				     _mm_set1_ps(y.imag()),
+						_CMP_EQ_OQ);
+		   return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					 _mm_testz_ps(eqim,eqim))); 
+	       }
+	   
+           __ATTR_HOT__
+	   __ATTR_ALIGN__(16)
+	   __ATTR_VECTORCALL__
+           static inline
+	   std::pair<int32_t,int32_t>
+	   operator==(const std::complex<float> x,
+		      const SSEc4f32 y) {
+
+                  const __m128 eqre,eqim;
+		  eqre = _mm_setzero_ps();
+		  eqim = _mm_setzero_ps();
+		  eqre = _mm_cmp_ps(_mm_set1_ps(x.real()),
+						y.m_re,
+						_CMP_EQ_OQ);
+		  eqim = _mm_cmp_ps(_mm_set1_ps(x.imag()),
+						 y.m_im,
+						 _CMP_EQ_OQ);
+		  return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					 _mm_testz_ps(eqim,eqim))); 
+		}
+	   
+            __ATTR_HOT__
+	    __ATTR_ALIGN__(16)
+	    __ATTR_VECTORCALL__
+            static inline
+	    std::pair<int32_t,int32_t>
+	    operator!=(const SSEc4f32 x,
+		       const SSEc4f32 y) {
+
+		   const __m128 eqre,eqim;
+		   eqre = _mm_setzero_ps();
+		   eqim = _mm_setzero_ps();
+		   eqre = _mm_cmp_ps(x.m_re,y.m_re,
+				        _CMP_NEQ_OQ);
+		   eqim = _mm_cmp_ps(x.m_im,y.m_im,
+				        _CMP_NEQ_OQ);
+                   return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					  _mm_testz_ps(eqim,eqim)));
+ 		}
+	    
+             __ATTR_HOT__
+	     __ATTR_ALIGN__(16)
+	     __ATTR_VECTORCALL__
+             static inline
+	     std::pair<int32_t,int32_t>
+	     operator!=(const SSEc4f32 x,
+			const std::complex<float> y) {
+
+                     const __m128 eqre,eqim;
+		     eqre = _mm_setzero_ps();
+		     eqim = _mm_setzero_ps();
+		     eqre = _mm_cmp_ps(x.m_re,
+				       _mm_set1_ps(y.real()),
+				       _CMP_NEQ_OQ);
+		     eqim = _mm_cmp_ps(x.m_im,
+				       _mm_set1_ps(y.imag()),
+				       _CMP_NEQ_OQ);
+		     return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					    _mm_testz_ps(eqim,eqim))); 
+		 }
+	     
+               __ATTR_HOT__
+	       __ATTR_ALIGN__(16)
+	       __ATTR_VECTORCALL__
+               static inline
+	       std::pair<int32_t,int32_t>
+	       operator!=(const std::complex<float> x,
+			  const SSEc4f32 y) {
+
+                     const __m128 eqre,eqim;
+		     eqre = _mm_setzero_ps();
+		     eqim = _mm_setzero_ps();
+		     eqre = _mm_cmp_ps(_mm_set1_ps(x.real()),
+						   y.m_re,
+						   _CMP_NEQ_OQ);
+		     eqim = _mm_cmp_ps(_mm_set1_ps(x.imag()),
+						   y.m_im,
+						   _CMP_NEQ_OQ);
+		     return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					    _mm_testz_ps(eqim,eqim))); 
+		  }
+	       
+               __ATTR_HOT__
+	       __ATTR_ALIGN__(16)
+	       __ATTR_VECTORCALL__
+               static inline
+	       std::pair<int32_t,int32_t>
+	       operator>(const SSEc4f32 x,
+			 const SSEc4f32 y) {
+
+		     const __m128 eqre,eqim;
+		     eqre = _mm_setzero_ps();
+		     eqim = _mm_setzero_ps();
+		     eqre = _mm_cmp_ps(x.m_re,y.m_re,
+					     _CMP_GT_OQ);
+		     eqim = _mm_cmp_ps(x.m_im,y.m_im,
+			                     _CMP_GT_OQ);
+                      return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					     _mm_testz_ps(eqim,eqim)));
+ 		   }
+	       
+                 __ATTR_HOT__
+		 __ATTR_ALIGN__(16)
+		 __ATTR_VECTORCALL__
+                 static inline
+		 std::pair<int32_t,int32_t>
+		 operator>(const SSEc4f32 x,
+		           const std::complex<float> y) {
+
+                        const __m128 eqre,eqim;
+			eqre = _mm_setzero_ps();
+			eqim = _mm_setzero_ps();
+			eqre = _mm_cmp_ps(x.m_re,
+				          _mm_set1_ps(y.real()),
+						     _CMP_GT_OQ);
+			eqim = _mm_cmp_ps(x.m_im,
+					  _mm_set1_ps(y.imag()),
+						      _CMP_GT_OQ);
+			return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					       _mm_testz_ps(eqim,eqim))); 
+		    }
+		 
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   __ATTR_VECTORCALL__
+                   static inline
+		   std::pair<int32_t,int32_t>
+		   operator>(const std::complex<float> x,
+			     const SSEc4f32 y) {
+
+                           const __m128 eqre,eqim;
+			   eqre = _mm_setzero_ps();
+			   eqim = _mm_setzero_ps();
+			   eqre = _mm_cmp_ps(_mm_set1_ps(x.real()),
+						         y.m_re,
+						       _CMP_GT_OQ);
+			   eqim = _mm_cmp_ps(_mm_set1_ps(x.imag()),
+						         y.m_im,
+							 _CMP_GT_OQ);
+			   return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						  _mm_testz_ps(eqim,eqim))); 
+		     }
+		   
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		  __ATTR_VECTORCALL__
+                  static inline
+		  std::pair<int32_t,int32_t>
+		  operator<(const SSEc4f32 x,
+			    const SSEc4f32 y) {
+
+			const __m128 eqre,eqim;
+			eqre = _mm_setzero_ps();
+			eqim = _mm_setzero_ps();
+			eqre = _mm_cmp_ps(x.m_re,y.m_re,
+						 _CMP_LT_OQ);
+			eqim = _mm_cmp_ps(x.m_im,y.m_im,
+						 _CMP_LT_OQ);
+                       return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					      _mm_testz_ps(eqim,eqim)));
+ 		      }
+		   
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   __ATTR_VECTORCALL__
+                   static inline
+		   std::pair<int32_t,int32_t>
+		   operator<(const SSEc4f32 x,
+			     const std::complex<float> y) {
+
+                         const __m128 eqre,eqim;
+			 eqre = _mm_setzero_ps();
+			 eqim = _mm_setzero_ps();
+			 eqre = _mm_cmp_ps(x.m_re,
+					   _mm_set1_ps(y.real()),
+						      _CMP_LT_OQ);
+			 eqim = _mm_cmp_ps(x.m_im,
+					  _mm_set1_ps(y.imag()),
+						      _CMP_LT_OQ);
+		     return (std::make_pair(_mm_testz_ps(eqre,eqre),
+					    _mm_testz_ps(eqim,eqim))); 
+		      }
+		   
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   __ATTR_VECTORCALL__
+                   static inline
+		   std::pair<int32_t,int32_t>
+		   operator<(const std::complex<float> x,
+			     const SSEc4f32 y) {
+
+                           const __m128 eqre,eqim;
+			   eqre = _mm_setzero_ps();
+			   eqim = _mm_setzero_ps();
+			   eqre = _mm_cmp_ps(_mm_set1_ps(x.real()),
+						            y.m_re,
+							 _CMP_LT_OQ);
+			   eqim = _mm_cmp_ps(_mm_set1_ps(x.imag()),
+						             y.m_im,
+							 _CMP_LT_OQ);
+			   return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						  _mm_testz_ps(eqim,eqim))); 
+			}
+		   
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   __ATTR_VECTORCALL__
+                   static inline
+		   std::pair<int32_t,int32_t>
+		  operator>=(const SSEc4f32 x,
+			     const SSEc4f32 y) {
+
+			 const __m128 eqre,eqim;
+			 eqre = _mm_setzero_ps();
+			 eqim = _mm_setzero_ps();
+			 eqre = _mm_cmp_ps(x.m_re,y.m_re,
+						_CMP_GE_OQ);
+			 eqim = _mm_cmp_ps(x.m_im,y.m_im,
+						_CMP_GE_OQ);
+                         return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						_mm_testz_ps(eqim,eqim)));
+ 			 }
+		   
+                     __ATTR_HOT__
+		     __ATTR_ALIGN__(16)
+		     __ATTR_VECTORCALL__
+                     static inline
+		     std::pair<int32_t,int32_t>
+		     operator>=(const SSEc4f32 x,
+				const std::complex<float> y) {
+
+                             const __m128 eqre,eqim;
+			     eqre = _mm_setzero_ps();
+			     eqim = _mm_setzero_ps();
+			     eqre = _mm_cmp_ps(x.m_re,
+						  _mm_set1_ps(y.real()),
+								_CMP_GE_OQ);
+			     eqim = _mm_cmp_ps(x.m_im,
+						  _mm_set1_ps(y.imag()),
+								_CMP_GE_OQ);
+			     return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						    _mm_testz_ps(eqim,eqim))); 
+
+		     }
+		     
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   __ATTR_VECTORCALL__
+                   static inline
+		   std::pair<int32_t,int32_t>
+		   operator>=(const std::complex<float> x,
+			     const SSEc4f32 y) {
+
+                          const __m128 eqre,eqim;
+			  eqre = _mm_setzero_ps();
+			  eqim = _mm_setzero_ps();
+			  eqre = _mm_cmp_ps(_mm_set1_ps(x.real()),
+						         y.m_re,
+							  _CMP_GE_OQ);
+			  eqim = _mm_cmp_ps(_mm_set1_ps(x.imag()),
+						         y.m_im,
+							 _CMP_GE_OQ);
+			  return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						 _mm_testz_ps(eqim,eqim))); 
+		      }
+		   
+                  __ATTR_HOT__
+		  __ATTR_ALIGN__(16)
+		  __ATTR_VECTORCALL__
+                  static inline
+		  std::pair<int32_t,int32_t>
+		  operator<=(const SSEc4f32 x,
+			     const SSEc4f32 y) {
+
+			  const __m128 eqre,eqim;
+			  eqre = _mm_setzero_ps();
+			  eqim = _mm_setzero_ps();
+			  eqre = _mm_cmp_ps(x.m_re,y.m_re,
+						    _CMP_LE_OQ);
+			  eqim = _mm_cmp_ps(x.m_im,y.m_im,
+						    _CMP_LE_OQ);
+                          return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						 _mm_testz_ps(eqim,eqim)));
+ 		       }
+		  
+                     __ATTR_HOT__
+		     __ATTR_ALIGN__(16)
+		     __ATTR_VECTORCALL__
+                     static inline
+		     std::pair<int32_t,int32_t>
+		     operator<=(const SSEc4f32 x,
+				const std::complex<float> y) {
+
+                            const __m128 eqre,eqim;
+			    eqre = _mm_setzero_ps();
+			    eqim = _mm_setzero_ps();
+			    eqre = _mm_cmp_ps(x.m_re,
+					      _mm_set1_ps(y.real()),
+							    _CMP_LE_OQ);
+			    eqim = _mm_cmp_ps(x.m_im,
+					      _mm_set1_ps(y.imag()),
+							    _CMP_LE_OQ);
+			    return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						   _mm_testz_ps(eqim,eqim))); 
+			  }
+ 
+                  __ATTR_HOT__
+		  __ATTR_ALIGN__(16)
+		  __ATTR_VECTORCALL__
+                  static inline
+		  std::pair<int32_t,int32_t>
+		  operator<=(const std::complex<float> x,
+			     const SSEc4f32 y) {
+
+                         const __m128 eqre,eqim;
+			 eqre = _mm_setzero_ps();
+			 eqim = _mm_setzero_ps();
+			 eqre = _mm256_cmp_ps(_mm256_set1_ps(x.real()),
+						                y.m_re,
+							   _CMP_LE_OQ);
+			 eqim = _mm_cmp_ps(_mm256_set1_ps(x.imag()),
+			       		                         y.m_im,
+							    _CMP_LE_OQ);
+			 return (std::make_pair(_mm_testz_ps(eqre,eqre),
+						_mm_testz_ps(eqim,eqim))); 
+		         }
+	 
+#endif
 	     
      }
 
