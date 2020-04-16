@@ -2,43 +2,27 @@
 #ifndef __GMS_MALLOC_H__
 #define __GMS_MALLOC_H__
 
-#if !defined (GMS_MALLOC_MAJOR)
-#define GMS_MALLOC_MAJOR 1
-#endif
 
-#if !defined (GMS_MALLOC_MINOR)
-#define GMS_MALLOC_MINOR 0
-#endif
 
-#if !defined (GMS_MALLOC_MICRO)
-#define GMS_MALLOC_MICRO 0
-#endif
+namespace  file_info {
 
-#if !defined (GMS_MALLOC_FULLVER)
-#define GMS_MALLOC_FULLVER 1000
-#endif
-
-#if !defined (GMS_MALLOC_CREATE_DATE)
-#define GMS_MALLOC_CREATE_DATE "01-10-2019 19:14 +00200 (TUE 01 OCT 2019 GMT+2)"
-#endif
-
-#if !defined (GMS_MALLOC_BUILD_DATE)
-#define GMS_MALLOC_BUILD_DATE " "
-#endif
-
-#if !defined (GMS_MALLOC_AUTHOR)
-#define GMS_MALLOC_AUTHOR "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com"
-#endif
-
-#if !defined (GMS_MALLOC_DESCRIPT)
-#define GMS_MALLOC_DESCRIPT "Malloc wrappers."
-#endif
+    const unsigned int gGMS_MALLOC_MAJOR = 1U;
+    const unsigned int gGMS_MALLOC_MINOR = 0U;
+    const unsigned int gGMS_MALLOC_MICRO = 0U;
+    const unsigned int gGMS_MALLOC_FULLVER =
+      1000U*gGMS_MALLOC_MAJOR+100U*gGMS_MALLOC_MINOR+10U*gGMS_MALLOC_MICRO;
+    const char * const pgGMS_MALLOC_CREATE_DATE = "01-10-2019 19:14 +00200 (TUE 01 OCT 2019 GMT+2)";
+    const char * const pgGMS_MALLOC_BUILD_DATE  = __DATE__ ":" __TIME__;
+    const char * const pgGMS_MALLOC_AUTHOR      =  "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
+    const char * const pgGMS_MALLOC_DESCRIPT    =  "Malloc wrappers.";
+}
 
 #include <cstdint>
-
+#include <complex>
 class AVXVec8;
 class AVX512Vec16;
 class AVXc8f32;
+
 
 namespace gms {
 	namespace common {
@@ -210,6 +194,13 @@ namespace gms {
 
 		//
 		// Aligned malloc wrapper
+		// Returns: std::complex<float> *
+		// No error handling implemented
+		//
+
+		std::complex<float> * gms_cmplxr4_malloca(const std::size_t, const int32_t);
+		//
+		// Aligned malloc wrapper
 		// Returns: AVXVec8 * 
 		// No error handling implemented
 		//
@@ -267,6 +258,14 @@ namespace gms {
 		//
 
 	        int64_t * gms_eimalloca(const std::size_t, const int32_t);
+
+		//
+		// Aligned malloc wrapper
+		// Returns: AVXVec8 * 
+		// Error checking and handling (calls std::exit)
+		//
+
+		std::complex<float> * gms_cmplxr4_emalloca(const std::size_t, const int32_t);
 
 		//
 		// Aligned malloc wrapper
