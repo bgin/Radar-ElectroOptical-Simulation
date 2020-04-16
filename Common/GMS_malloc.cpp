@@ -379,6 +379,16 @@ gms_imalloca(const std::size_t len,
 #endif
 }
 
+std::complex<float> *
+gms::common::
+gms_cmplxr4_malloca(const std::size_t len,
+		    const int32_t alignment) {
+#if (GMS_DEBUG_ON) == 1
+  assert(len > 0ULL);
+#endif
+     return (reinterpret_cast<std::complex<float>*>(_mm_malloc(len*sizeof(std::complex<float>),alignment)));     
+}
+
 AVXVec8 * 
 gms::common::
 gms_avxvec8_malloca(const std::size_t len,
@@ -488,6 +498,24 @@ gms_eimalloca(const std::size_t len,
 		ABORT_ON_ERROR("gms_eimalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
 	}
 	return (i8_ptr);
+}
+
+std::complex<float> *
+gms::common::
+gms_cmplxr4_emalloca(const std::size len,
+                     const int32_t alignment) {
+#if (GMS_DEBUG_ON) == 1
+     assert(len > 0ULL);
+#endif
+    std::complex<float> * ptr = NULL;
+    ptr = reinterpret_cast<std::complex<float>*>(_mm_malloc(len*sizeof(std::complex<float>),alignment));
+    if(NULL == ptr && len != 0ULL) {
+#if (PRINT_CALLSTACK_ON_ERROR) == 1
+       std::cerr << "Not implemented yet" << std::endl;
+#endif
+       ABORT_ON_ERROR("gms_cmplxr4_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED) 
+    }
+    return (ptr);
 }
 
 AVXVec8 *
