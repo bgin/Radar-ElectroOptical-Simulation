@@ -45,21 +45,15 @@ TreeScattererAVX::TreeScattererAVX() {
      m_tsc.trunk_zparam        = NULL;
      m_tsc.leaves_thick        = NULL;
      m_tsc.leaves_dens         = NULL;
-     m_tsc.leaves_incang       = NULL;
      m_tsc.leaves_xparam       = NULL;
      m_tsc.leaves_yparam       = NULL;
      m_tsc.branches_thick      = NULL;
      m_tsc.branches_dens       = NULL;
-     m_tsc.branches_incang     = NULL;
      m_tsc.branches_xparam     = NULL;
      m_tsc.branches_yparam     = NULL;
      m_tsc.branches_zparam     = NULL;
-     m_tsh.tree_xangle         = 0.0f;
-     m_tsh.tree_yangle         = 0.0f;
-     m_tsh.sin_xangle          = 0.0f;
-     m_tsh.cos_xangle          = 0.0f;
-     m_tsh.sin_yangle          = 0.0f;
-     m_tsh.cos_yangle          = 0.0f;
+     m_tsh.tree_dtheta         = 0.0f;
+     m_tsh.tree_dphi           = 0.0f;
      m_tsh.tree_rcs            = 0.0f;
      m_tsh.crown_rcs           = 0.0f;
      m_tsh.trunk_rcs           = 0.0f;
@@ -67,18 +61,26 @@ TreeScattererAVX::TreeScattererAVX() {
      m_tsh.leaves_reflect      = NULL;
      m_tsh.branches_rcs        = NULL;
      m_tsh.branches_reflect    = NULL;
-     m_tsh.leaves_xang         = NULL;
-     m_tsh.leaves_sin_xang     = NULL;
-     m_tsh.leaves_cos_xang     = NULL;
-     m_tsh.leaves_yang         = NULL;
-     m_tsh.leaves_sin_yang     = NULL;
-     m_tsh.leaves_cos_yang     = NULL;
-     m_tsh.branches_xang       = NULL;
-     m_tsh.branches_sin_xang   = NULL;
-     m_tsh.branches_cos_xang   = NULL;
-     m_tsh.branches_yang       = NULL;
-     m_tsh.branches_sin_yang   = NULL;
-     m_tsh.branches_cos_yang   = NULL;
+     m_lp.theta_inc            = NULL;
+     m_lp.phi_inc              = NULL;
+     m_lp.theta_scat           = NULL;
+     m_lp.phi_scat             = NULL;
+     m_lp.theta_dir            = NULL;
+     m_lp.phi_dir              = NULL;
+     m_lp.l4x4phm              = NULL;
+     m_lp.sm2x2avg             = NULL;
+     m_lp.l2x2mp               = NULL;
+     m_lp.l2x2mn               = NULL;
+     m_lp.eig1x4lp             = NULL;
+     m_lp.eig1x4ln             = NULL;
+     m_lp.eig4x4mp             = NULL;
+     m_lp.eig4x4mn             = NULL;
+     m_lp.eig4x4mpi            = NULL;
+     m_lp.eig4x4mni            = NULL;
+     m_lp.expa4x4mp            = NULL;
+     m_lp.expa4x4mn            = NULL;
+     m_lp.stokes4x4m           = NULL;
+     m_lp.scat2x2m             = NULL;
 }
 
 #if !defined(GMS_TREE_SCATTERER_AVX_COLD_ALLOC_CTOR)
@@ -90,12 +92,10 @@ TreeScattererAVX::TreeScattererAVX() {
       m_tsc.trunk_zparam        = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.trunk_param_npts),64);                 \
       m_tsc.leaves_thick        = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nleaves),64);                          \
       m_tsc.leaves_dens         = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nleaves),64);                          \
-      m_tsc.leaves_incang       = gms_avxvec8_emalloca(static_cast<size_t>(2*m_tsc.nleaves),64);                        \
       m_tsc.leaves_xparam       = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nleaves*m_tsc.leaves_param_npts),64);  \
       m_tsc.leaves_yparam       = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nleaves*m_tsc.leaves_param_npts),64);  \
       m_tsc.branches_thick      = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nbranches),64);                        \
       m_tsc.branches_dens       = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nbranches),64);                        \
-      m_tsc.branches_incang     = gms_avxvec8_emalloca(static_cast<size_t>(2*m_tsc.nbranches),64);                      \
       m_tsc.branches_xparam     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nbranches*m_tsc.branches_param_npts),64);   \
       m_tsc.branches_yparam     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nbranches*m_tsc.branches_param_npts),64);   \
       m_tsc.branches_zparam     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nbranches*m_tsc.branches_param_npts),64);         
@@ -106,19 +106,31 @@ TreeScattererAVX::TreeScattererAVX() {
       m_tsh.leaves_rcs          = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
       m_tsh.leaves_reflect      = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \ 
       m_tsh.branches_rcs        = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \
-      m_tsh.branches_reflect    = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \
-      m_tsh.leaves_xang         = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
-      m_tsh.leaves_sin_xang     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
-      m_tsh.leaves_cos_xang     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
-      m_tsh.leaves_yang         = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
-      m_tsh.leaves_sin_yang     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
-      m_tsh.leaves_cos_yang     = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nleaves),64);           \
-      m_tsh.branches_xang       = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \ 
-      m_tsh.branches_sin_xang   = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \
-      m_tsh.branches_cos_xang   = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \
-      m_tsh.branches_yang       = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \
-      m_tsh.branches_sin_yang   = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);         \
-      m_tsh.branches_cos_yang   = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);
+      m_tsh.branches_reflect    = gms_avxvec8_emalloca(static_cast<size_t>(m_tsc.nsteps*m_tsc.nbranches),64);          
+   #endif
+
+#if !defined(GMS_TREE_SCATTERER_LEAVES_PHASE_CTOR_BODY)
+    #define GMS_TREE_SCATTERER_LEAVES_PHASE_CTOR_BODY                                                 \
+     m_lp.theta_inc        = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                    \
+     m_lp.phi_inc          = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                      \
+     m_lp.theta_scat       = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                      \
+     m_lp.phi_scat         = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                        \
+     m_lp.theta_dir        = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                          \
+     m_lp.phi_dir          = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                          \
+     m_lp.l4x4phm          = gms_efmalloca(static_cast<size_t>(4*4*4*m_tsc.nleaves),64);                     \
+     m_lp.sm2x2avg         = gms_cmplxr4_emalloca(static_cast<size_t>(2*2*2*m_tsc.nleaves),64);              \
+     m_lp.l2x2mp           = gms_cmplxr4_emalloca(static_cast<size_t>(2*2*m_tsc.nleaves),64);                  \
+     m_lp.l2x2mn           = gms_cmplxr4_emalloca(static_cast<size_t>(2*2*m_tsc.nleaves),64);                  \
+     m_lp.eig1x4lp         = gms_cmplxr4_emalloca(static_cast<size_t>(4*m_tsc.nleaves),64);                     \
+     m_lp.eig1x4ln         = gms_cmplxr4_emalloca(static_cast<size_t>(4*m_tsc.nleaves),64);                       \
+     m_lp.eig4x4mp         = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                     \
+     m_lp.eig4x4mn         = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                     \                 
+     m_lp.eig4x4mpi        = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                      \
+     m_lp.eig4x4mni        = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                      \
+     m_lp.expa4x4mp        = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                               \
+     m_lp.expa4x4mn        = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                               \
+     m_lp.stokes4x4m       = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                                 \
+     m_lp.scat2x2m         = gms_cmplxr4_efmalloca(static_cast<size_t>(2*2*m_tsc.nleaves),64);
 #endif
 
 gms::math::
@@ -155,17 +167,13 @@ TreeScattererAVX::TreeScattererAVX(const int32_t nleaves,
       m_tsc.tree_lon            = tree_lon;
       m_tsc.tree_elevation      = tree_elev;
       GMS_TREE_SCATTERER_AVX_COLD_ALLOC_CTOR
-      m_tsh.tree_xangle         = 0.0f;
-      m_tsh.tree_yangle         = 0.0f;
-      m_tsh.sin_xangle          = 0.0f;
-      m_tsh.cos_xangle          = 0.0f;
-      m_tsh.sin_yangle          = 0.0f;
-      m_tsh.cos_yangle          = 0.0f;
+      m_tsh.tree_dtheta         = 0.0f;
+      m_tsh.tree_dphi           = 0.0f;
       m_tsh.tree_rcs            = 0.0f;
       m_tsh.crown_rcs           = 0.0f;
       m_tsh.trunk_rcs           = 0.0f;
       GMS_TREE_SCATTERER_AVX_HOT_ALLOC_CTOR
-      
+      GMS_TREE_SCATTERER_LEAVES_PHASE_CTOR_BODY
 }
 
 gms::math::
@@ -187,8 +195,6 @@ TreeScattererAVX::~TreeScattererAVX() {
      m_tsc.leaves_thick    = NULL;
      _mm_free(m_tsc.leaves_dens);
      m_tsc.leaves_dens     = NULL;
-     _mm_free(m_tsc.leaves_incang);
-     m_tsc.leaves_incang   = NULL;
      _mm_free(m_tsc.leaves_xparam);
      m_tsc.leaves_xparam   = NULL;
      _mm_free(m_tsc.leaves_yparam);
@@ -211,30 +217,46 @@ TreeScattererAVX::~TreeScattererAVX() {
      m_tsh.branches_rcs    = NULL;
      _mm_free(m_tsh.branches_reflect);
      m_tsh.branches_reflect = NULL;
-     _mm_free(m_tsh.leaves_xang);
-     m_tsh.leaves_xang      = NULL;
-     _mm_free(m_tsh.leaves_sin_xang);
-     m_tsh.leaves_sin_xang  = NULL;
-     _mm_free(m_tsh.leaves_cos_xang);
-     m_tsh.leaves_cos_xang  = NULL;
-     _mm_free(m_tsh.leaves_yang);
-     m_tsh.leaves_yang      = NULL;
-     _mm_free(m_tsh.leaves_sin_yang);
-     m_tsh.leaves_sin_yang  = NULL;
-     _mm_free(m_tsh.leaves_cos_yang);
-     m_tsh.leaves_cos_yang   = NULL;
-     _mm_free(m_tsh.branches_xang);
-     m_tsh.branches_xang     = NULL;
-     _mm_free(m_tsh.branches_sin_xang);
-     m_tsh.branches_sin_xang = NULL;
-     _mm_free(m_tsh.branches_cos_xang);
-     m_tsh.branches_cos_xang = NULL;
-     _mm_free(m_tsh.branches_yang);
-     m_tsh.branches_yang     = NULL;
-     _mm_free(m_tsh.branches_sin_yang);
-     m_tsh.branches_sin_yang = NULL;
-     _mm_free(m_tsh.branches_cos_yang);
-     m_tsh.branches_cos_yang = NULL;
+     _mm_free(m_lp.theta_inc);
+     m_lp.theta_inc         = NULL;
+     _mm_free(m_lp.phi_inc);
+     m_lp.phi_inc           = NULL;
+     _mm_free(m_lp.theta_scat);
+     m_lp.theta_scat        = NULL;
+     _mm_free(m_lp.phi_scat);
+     m_lp.phi_scat          = NULL;
+     _mm_free(m_lp.theta_dir);
+     m_lp.theta_dir         = NULL;
+     _mm_free(m_lp.phi_dir);
+     m_lp.phi_dir           = NULL;
+     _mm_free(m_lp.l4x4phm);
+     m_lp.l4x4phm           = NULL;
+     _mm_free(m_lp.sm2x2avg);
+     m_lp.sm2x2avg          = NULL;
+     _mm_free(m_lp.l2x2mp);
+     m_lp.l2x2mp            = NULL;
+     _mm_free(m_lp.l2x2mn);
+     m_lp.l2x2mn            = NULL;
+     _mm_free(m_lp.eig1x4lp);
+     m_lp.eig1x4lp          = NULL;
+     _mm_free(m_lp.eig1x4ln);
+     m_lp.eig1x4ln          = NULL;
+     _mm_free(m_lp.eig4x4mp);
+     m_lp.eig4x4mp          = NULL;
+     _mm_free(m_lp.eig4x4mn);
+     m_lp.eig4x4mn          = NULL;
+     _mm_free(m_lp.eig4x4mpi);
+     m_lp.eig4x4mpi         = NULL;
+     _mm_free(m_lp.eig4x4mni);
+     m_lp.eig4x4mni         = NULL;
+     _mm_free(m_lp.expa4x4mp);
+     m_lp.expa4x4mp         = NULL;
+     _mm_free(m_lp.expa4x4mn);
+     m_lp.expa4x4mn         = NULL;
+     _mm_free(m_lp.stokes4x4m);
+     m_lp.stokes4x4m        = NULL;
+     _mm_free(m_lp.scat2x2m);
+     m_lp.scat2x2m          = NULL;
 }
 
 void
