@@ -537,6 +537,51 @@ namespace gms {
 		      return (rcond);
 	         }
 
+//  Purpose:
+//
+//    CGEDI computes the determinant and inverse of a matrix.
+//
+//  Discussion:
+//
+//    The matrix must have been factored by CGECO or CGEFA.
+//
+//    A division by zero will occur if the input factor contains
+//    a zero on the diagonal and the inverse is requested.
+//    It will not occur if the subroutines are called correctly
+//    and if CGECO has set 0.0 < RCOND or CGEFA has set
+//    INFO == 0.
+//
+//  Licensing:
+//
+//    This code is distributed under the GNU LGPL license.
+//
+//  Modified:
+//
+//    07 May 2006
+//
+//  Author:
+//
+//    C++ version by John Burkardt
+//
+//  Reference:
+//
+//    Jack Dongarra, Cleve Moler, Jim Bunch and Pete Stewart,
+//    LINPACK User's Guide,
+//    SIAM, (Society for Industrial and Applied Mathematics),
+//    3600 University City Science		 
+
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   static inline
+		   void cgedi(std::complex<float> * __restrict __ATTR_ALIGN__(64) a,
+		              const int32_t lda,
+			      const int32_t n,
+			      int32_t * __restrict __ATTR_ALIGN__(64) ipvt,
+			      std::complex<float> det[2],
+			      const int32_t job) {
+
+		    }
+
 //  Modified:
 //
 //    07 May 2006
@@ -561,9 +606,70 @@ namespace gms {
 		                const int32_t lda,
 				const int32_t n,
 				int32_t * __restrict __ATTR_ALIGN__(64) ipvt) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+			    a = (std::complex<float>*)__builtin_assume_aligned(a,64);
+			    ipvt = (int32_t*)__builtin_assume_aligned(ipvt,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+			    __assume_aligned(a,64);
+			    __assume_aligned(ipvt,64);
+#endif
+			     int info;
+                             int j;
+                             int k;
+                             int l;
+			    std::complex<float>t;
+//
+//  Gaussian elimination with partial pivoting.
+//
+                            info = 0;
+                            for(k = 1; k <= n-1; k++) {
+                  
+//
+//  Find L = pivot index.
+//
+                                 l = icamax ( n-k+1, a+(k-1)+(k-1)*lda, 1 ) + k - 1;
+                                 ipvt[k-1] = l;
+//
+//  Zero pivot implies this column already triangularized.
+//
+                                 if(cabs1(a[l-1+(k-1)*lda]) == 0.0f){
+                                      info = k;
+                                      continue;
+                                 }
+//
+//  Interchange if necessary.
+//
+                                 if (l != k) {
+                                    t   = a[l-1+(k-1)*lda];
+                                    a[l-1+(k-1)*lda] = a[k-1+(k-1)*lda];
+                                    a[k-1+(k-1)*lda] = t;
+                                 }
+//
+//  Compute multipliers
+//
+                                 t = -std::complex<float>(1.0f, 0.0f)/a[k-1+(k-1)*lda];
+                                 cscal(n-k,t,a+k+(k-1)*lda, 1 );
+//
+//  Row elimination with column indexing
+//
+                                 for(j = k+1; j <= n; j++) {
+                                       t = a[l-1+(j-1)*lda];
+                                       if(l != k) {
+                                             a[l-1+(j-1)*lda] = a[k-1+(j-1)*lda];
+                                             a[k-1+(j-1)*lda] = t;
+                                       }
+                                       caxpy ( n-k, t, a+k+(k-1)*lda, 1, a+k+(j-1)*lda, 1 );
+                                 }
 
-		  }
- 
+                              }
+                              ipvt[n-1] = n;
+                              if cabs1(a[n-1+(n-1)*lda]) == 0.0f){
+                                   info = n;
+                              }
+                              return info;
+		     }
+
+		     
 		  
 		   __ATTR_HOT__
 		   __ATTR_ALIGN__(64)
@@ -675,6 +781,75 @@ namespace gms {
 			value = std::fabs(z.real())+std::fabs(z.imag());
 			return (value);
 		    }
+
+//
+//  Modified:
+//
+//    11 April 2006
+//
+//  Author:
+//
+//    C++ version by John Burkardt
+//
+//  Reference:
+//
+//    Jack Dongarra, Jim Bunch, Cleve Moler, Pete Stewart,
+//    LINPACK User's Guide,
+//    SIAM, 1979,
+//    ISBN13: 978-0-898711-72-1,
+//    LC: QA214.L56.		    
+
+                    __ATTR_HOT__
+		    __ATTR_ALIGN__(16)
+		    static inline
+		    int32_t icamax(const int32_t n,
+		                   std::complex<float> * __restrict __ATTR_ALIGN__(64) x,
+				   const int32_t incx) {
+			   if( n < 1 || incx  <=  0 ) {
+                                 return (0);
+                           }
+                           if ( n == 1 ) {
+                                 return (1);
+                           }
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+                          x = (std::complex<float>*)__builtin_assume_aligned(x,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+                          __assume_aligned(x,64);
+#endif
+                          int i;
+                          int ix;
+                          float smax;
+                          int value;
+
+                          value = 0;
+
+                          if ( incx != 1 ){
+  
+                              ix = 0;
+                              smax = cabs1 ( x[0] );
+                              ix = ix + incx;
+                              for(i = 1; i < n; i++ ){
+                                    const float t0 = cabs1(x[ix]);
+                                    if ( smax < t0 ){
+                                         value = i + 1;
+                                         smax = t0;
+                                    }
+                                    ix = ix + incx;
+                              }
+                         }
+                          else
+                              {
+                               smax = cabs1 ( x[0] );
+                               for ( i = 1; i < n; i++ ) {
+			            const float t0 = cabs1(x[i]);
+                                    if ( smax < t0 ){
+                                         value = i + 1;
+                                         smax = t0;
+                                     }
+                               }
+                           }
+                           return value;
+		      }
 
 
 //
