@@ -466,9 +466,105 @@ namespace gms {
 		      }
 		      s = 1.0f/scasum(n,z,1);
 		      csscal(n,s,z,1);
-		      
+		      for(k = n; 1 <= k; --k) {
+                          if(k < n) {
+                             const std::complex<float> t7 = z[k-1] + cdotc(n-k,a+k+(k-1)*lda,1,z+k,1);
+			     z[k-1] = t7;
+			  }
+			  float t8 = cabs1(z[k-1]);
+			  if(1.0f < t8) {
+                             s = 1.0f/t8;
+			     csscal(n,s,z,1);
+			  }
+			  l = ipvt[k-1];
+			  t = z[l-k];
+			  z[l-1] = z[k-1];
+			  z[k-1] = t;
+		      }
+
+		      s = 1.0f / scasum(n,z,1);
+		      csscal(n,s,z,1);
+		      ynorm = 1.0f;
+		      for(k = 1; k != n; ++k) {
+                          l = ipvt[k-1];
+			  t = z[l-1];
+			  z[l-1] = z[k-1];
+			  z[k-1] = t;
+			  if(k < n) {
+                             caxpy(n-k,t,a+k+(k-1)*lda,1,z+k,1);
+			  }
+			  float t9 = cabs1(z[k-1]);
+			  if(1.0f < t9) {
+                             s = .0f/t9;
+			     csscal(n,s,z,1);
+			     ynorm *= s;
+			  }
+		      }
+
+		      s = 1.0f/scasum(n,z,1);
+		      csscal(n,s,z,1);
+		      ynorm *= s;
+
+		      for(k = n; 1 <= k, k--) {
+                          const float t10 = cabs1(a[k-1+(k-1)*lda;
+			  const float t11 = z[k-1];
+			  if(t10 < t11) {
+                             s = t10/t11;
+			     csscal(n,s,z,1);
+			     ynorm *= s;
+			  }
+			  if(t10 != 0.0f) {
+                             const std::complex<float> c0 = z[k-1]/a[k-1+(k-1)*lda];
+			     z[k-1] = c0;
+			  }
+			  else {
+                             z[k-1] = {1.0f,0.0f};
+			  }
+			  t = -z[k-1];
+			  caxpy(k-1,t,a+0+(k-1)*lda,1,z,1);
+		      }
+
+		      s = 1.0f/scasum(n,z,1);
+		      csscal(n,s,z,1);
+		      ynorm *= s;
+		      if(anorm != 0.0f) {
+                         rcond = ynorm/anorm;
+		      }
+		      else {
+                          rcond = 0.0f;
+		      }
+		      _mm_free(z);
+		      return (rcond);
 	         }
 
+//  Modified:
+//
+//    07 May 2006
+//
+//  Author:
+//
+//    C++ version by John Burkardt
+//
+//  Reference:
+//
+//    Jack Dongarra, Cleve Moler, Jim Bunch and Pete Stewart,
+//    LINPACK User's Guide,
+//    SIAM, (Society for Industrial and Applied Mathematics),
+//    3600 University City Science Center,
+//    Philadelphia, PA, 19104-2688.
+//
+
+                  __ATTR_HOT__
+		  __ATTR_ALIGN__(64)
+		  static inline
+                  int32_t cgefa(std::complex<float> * __restrict __ATTR_ALIGN__(64) a,
+		                const int32_t lda,
+				const int32_t n,
+				int32_t * __restrict __ATTR_ALIGN__(64) ipvt) {
+
+		  }
+ 
+		  
 		   __ATTR_HOT__
 		   __ATTR_ALIGN__(64)
 		   static inline
@@ -695,10 +791,117 @@ namespace gms {
 					     const int32_t incx,
 					     const std::complex<float> * __restrict __ATTR_ALIGN__(64) cy,
 					     const int32_t incy) {
+			if(n <= 0) {
+                           return (std::complex<float>(0.0f,0.0f));
+			}
 #if defined __GNUC__ && !defined __INTEL_COMPILER
                         cx = (const std::complex<float>*)__builtin_assume_aligned(cx,64);
 			cy = (const std::complex<float>*)__builtin_assume_aligned(cy,64);
-#elif defined __
+#elif defined __ICC || defined __INTEL_COMPILER
+			__assume_aligned(cx,64);
+			__assume_aligned(cy,64);
+#endif
+			std::complex<float> value;
+			int32_t ix,iy;
+			value = {0.0f,0.0f};
+			if(incx == 1 && incy == 1) {
+#pragma code_align(64)
+#pragma vector always
+                           for(int32_t i = 0; i != n; ++i) {
+                               value = value + std::conj(cx[i]) * cy[i];
+			   }
+			}
+			else {
+                           if(0 <= incx) {
+                              ix = 0;
+			   }
+			   else {
+                              ix = (-n + 1) * incx;
+			   }
+			   if(0 <= incy) {
+                              iy = 0;
+			   }
+			   else {
+                              iy = (-n + 1) * incy;
+			   }
+			   for(int32_t  i = 0; i != n; ++i) {
+                               value = value + std::conj(cx[ix]) * cy[iy];
+			       ix += incx;
+			       iy += incy
+			   }
+			}
+			return (value);
+		   }
+
+//  Modified:
+//
+//    10 April 2006
+//
+//  Author:
+//
+//    C++ version by John Burkardt
+//
+//  Reference:
+//
+//    Jack Dongarra, Jim Bunch, Cleve Moler, Pete Stewart,
+//    LINPACK User's Guide,
+//    SIAM, 1979,
+//    ISBN13: 978-0-898711-72-1,
+//    LC: QA214.L56.
+
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   static inline
+		   void caxpy(const int32_t n,
+		              const std::complex<float> ca,
+			      const std::complex<float> * __restrict __ATTR_ALIGN__(64) cx,
+			      const int32_t incx,
+			      std::complex<float> * __restrict __ATTR_ALIGN__(64) cy,
+			      const int32_t incy) {
+			      if(n <= 0) {
+                                 return;
+			      }
+			      if(cabs1(ca) == 0.0f) {
+                                 return;
+			      }
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+		             cx = (const std::complex<float>*)__builtin_assume_aligned(cx,64);
+			     cy = (std::complex<float>*)__builtin_assume_aligned(cy,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+                             assume_aligned(cx,64);
+			     assume_aligned(cy,64);
+#endif
+                             int32_t i,ix,iy;
+			     if(incx != 1 || incy != 1) {
+                                if(incx <= 0) {
+                                   ix = 0;
+				}
+				else {
+                                   ix = (-n+1)*incx;
+				}
+				if(incy <= 0) {
+                                   iy = 0;
+				}
+				else {
+                                   iy = (-n+1)*incy;
+				}
+#pragma code_align(64)
+#pragma vector always
+				for(i = 0; i != n; ++i) {
+                                    std::complex<float> t0 = cy[iy] + ca * cx[ix];
+				    cy[iy] = t0;
+				    ix += incx;
+				    iy += incy;
+				}
+			     }
+			     else {
+#pragma code_align(64)
+#pragma vector always
+                                for(i = 0; i != n; +++i) {
+                                    std::complex<float> t0 = cy[i] + ca * cx[i];
+				    cy[i] = t0;
+				}
+			     }
 		   }
 
    } // math
