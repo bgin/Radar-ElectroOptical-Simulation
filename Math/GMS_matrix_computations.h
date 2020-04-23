@@ -579,8 +579,79 @@ namespace gms {
 			      int32_t * __restrict __ATTR_ALIGN__(64) ipvt,
 			      std::complex<float> det[2],
 			      const int32_t job) {
-
-		    }
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+			    a = (std::complex<float>*)__builtin_assume_aligned(a,64);
+			    ipvt = (int32_t*)__builtin_assume_aligned(ipvt,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+			    __assume_aligned(a,64);
+			    __assume_aligned(ipvt,64);
+#endif
+			    int i;
+                            int j;
+                            int k;
+                            int l;
+			    std::complex<float>t;
+			    std::complex<float> *work = NULL;
+//
+//  Compute the determinant.
+//
+                            if(job/10 != 0){
+                               det[0] = std::complex<float>(1.0f,0.0f );
+                               det[1] = std::complex<float>(0.0f,0.f0 );
+                               for(i = 1; i <= n; i++) {
+				   if(ipvt[i-1] != i){
+                                      det[0] = -det[0];
+                                  }
+                                  det[0] = a[i-1+(i-1)*lda] * det[0];
+                                  if(cabs1(det[0]) == 0.0f ){
+                                     break;
+                                  }
+                                  while(cabs1(det[0]) < 1.0f ){
+				        det[0] = det[0] * std::complex<float>(10.0f,0.0f);
+                                        det[1] = det[1] - std::complex<float>(1.0f,0.0f);
+                                   }
+                                  while(10.0f <= cabs1(det[0])){
+                                       det[0] = det[0] /std::complex<float>(10.0f,0.0f);
+                                       det[1] = det[1] + std::complex<float>(1.0f,0.0f);
+                                   }
+                               }
+                           }
+//
+//  Compute inverse(U).
+//
+                           if((job % 10) != 0) {
+                               work = gms::common::gms_cmplxr4_emalloca(static_cast<size_t>(n),64);
+                               for(k = 1; k <= n; k++) {
+			           std::complex<float> t0 = std::complex<float>(1.0,0.0)/a[k-1+(k-1)*lda];
+                                   a[k-1+(k-1)*lda] = t0;
+                                   t = -a[k-1+(k-1)*lda];
+                                   cscal ( k-1, t, a+0+(k-1)*lda, 1 );
+                                   for(j = k+1; j <= n; j++) {
+                                       t = a[k-1+(j-1)*lda];
+                                       a[k-1+(j-1)*lda] = std::complex<float>(0.0f,0.0f );
+                                       caxpy(k,t,a+0+(k-1)*lda,1,a+0+(j-1)*lda,1);
+                                   }
+                               }
+//
+//  Form inverse(U) * inverse(L).
+//
+                              for(k = n-1; 1 <= k; k--) {
+                                  for(i = k+1; i <= n; i++) {
+                                      work[i-1] = a[i-1+(k-1)*lda];
+                                      a[i-1+(k-1)*lda] =std::complex<float>(0.0f,0.0f);
+                                    }
+                                   for(j = k+1; j <= n; j++) {
+                                       t = work[j-1];
+                                       caxpy(n, t, a+0+(j-1)*lda, 1, a+0+(k-1)*lda, 1);
+                                   }
+                                   l = ipvt[k-1];
+                                   if(l != k) {
+                                      cswap(n,a+0+(k-1)*lda, 1,a+0+(l-1)*lda, 1);
+                                   }
+                                }
+                                _mm_free(work);
+                            }
+		    	}
 
 //  Modified:
 //
@@ -781,6 +852,74 @@ namespace gms {
 			value = std::fabs(z.real())+std::fabs(z.imag());
 			return (value);
 		    }
+
+// Modified:
+//
+//    11 April 2006
+//
+//  Author:
+//
+//    C++ version by John Burkardt
+//
+//  Reference:
+//
+//    Jack Dongarra, Jim Bunch, Cleve Moler, Pete Stewart,
+//    LINPACK User's Guide,
+//    SIAM, 1979,
+//    ISBN13: 978-0-898711-72-1,
+//    LC: QA214.L56.
+
+                   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   static inline
+		   void cswap(const int32_t n,
+		              std::complex<float> * __restrict __ATTR_ALIGN__(64) cx,
+			      const int32_t incx,
+			      std::complex<float> * __restrict __ATTR_ALIGN__(64) cy,
+			      const int32_t incy) {
+			      if(n <= 0) {
+                                  return;
+                              }
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+                              cx = (std::complex<float>*)__builtin_assume_aligned(cx,64);
+			      cy = (std::complex<float>*)__builtin_assume_aligned(cy,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+                              __assume_aligned(cx,64);
+			      __assume_aligned(cy,64);
+#endif
+                             std::complex<float>ctemp;
+                             int i;
+                             int ix;
+                             int iy;
+                             if(incx == 1 && incy == 1) {
+                                for(i = 0; i < n; i++) {
+                                    ctemp = cx[i];
+                                    cx[i] = cy[i];
+                                    cy[i] = ctemp;
+                                 }
+                             }
+                              else {
+                                   if(0 <= incx) {
+                                      ix = 0;
+                                   }
+                                   else {
+                                      ix = (-n + 1 )*incx;
+                                   }
+                                   if(0 <= incy) {
+                                      iy = 0;
+                                   }
+                                   else {
+                                   iy = ( -n + 1 ) * incy;
+                                  }
+                              for(i = 0; i < n; i++) {
+                                  ctemp = cx[ix];
+                                  cx[ix] = cy[iy];
+                                  cy[iy] = ctemp;
+                                  ix = ix + incx;
+                                  iy = iy + incy;
+                              }
+                         } 
+		   }
 
 //
 //  Modified:
