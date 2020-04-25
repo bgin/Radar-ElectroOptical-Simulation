@@ -297,6 +297,160 @@ namespace gms {
 		    }
 
 		   /*
+                         Eigenvalue of complex 4x4 matrix
+                    */
+		   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   static inline
+		   void eigen4x4_cmplxr4(const std::complex<float> * __restrict __ATTR_ALIGN__(64) m,
+		                         std::complex<float> * __restrict __ATTR_ALIGN__(64) l,
+					 std::complex<float> * __restrict __ATTR_ALIGN__(64) q,
+					 std::complex<float> * __restrict __ATTR_ALIGN__(64) invq,
+					 const float freq,
+					 const float wlength,
+					 const float k0) {
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+                        m = (const std::complex<float>*)__builtin_assume_aligned(m,64);
+			l = (std::complex<float>*)__builtin_assume_aligned(l,64);
+			q = (std::complex<float>*)__builtin_assume_aligned(q,64);
+			invq = (std::complex<float>*)__builtin_assume_aligned(invq,64);
+#elif defined __ICC || defined __INTEL_COMPILER
+                        __assume_aligned(m,64);
+			__assume_aligned(l,64);
+			__assume_aligned(q,64);
+			__assume_aligned(invq,64);
+#endif
+                       std::complex<float> evv[2];
+		       std::complex<float> evh[2];
+		       std::complex<float> ev;
+		       std::complex<float> eh;
+                       std::complex<float> j;
+		       std::complex<float> cw1;
+		       std::complex<float> cw2;
+		       std::complex<float> diff;
+		       std::complex<float> sum;
+		       std::complex<float> t0;
+		       std::complex<float> t1;
+		       std::complex<float> t2;
+		       float tol,w1,w2,c1,c2;
+		       bool b1,b2,b3,b4,b5,b6;
+		       j = {0.0f,1.0f};
+		       tol = 0.001f;
+		       b1 = false;
+		       b1 = std::cabs(m[2]) == 0.0f;
+		       b2 = false;
+		       b2 = std::cabs(m[0]) != 0.0f;
+		       if(b1) {
+                          c1 = 0.0f;
+		       }else if(b2) {
+                          c1 = std::cabs(m[2]/m[0]);
+		       }else {
+                          c1 = tol + 1.0f;
+		       }
+		       b3 = false;
+		       b3 = std::cabs(m[1]) == 0.0f;
+		       b4 = false;
+		       b4 = std::cabs(m[3]) != 0.0f;
+		       if(b3) {
+                          c2 = 0.0f;
+		       }else if(b4) {
+                          c2 = std::cabs(m[1]/m[3]);
+		       }else {
+                          c2 = tol + 1.0f;
+		       }
+		       b5 = c1 < tol;
+		       b6 = c2 < tol;
+		       if(b5 && b6) {
+                          ev = k0 - j*m[0];
+			  eh = k0 - j*m[3];
+			  evv[0] = {1.0f,0.0f};
+			  evv[1] = {0.0f,0.0f};
+			  evh[0] = {0.0f,0.0f};
+			  evh[1] = {1.0f,0.0f};
+			  cw1 = -(m[0]+m[3]).real();
+			  cw2 =  (m[0]+m[3]).imag();
+			  l[0] = -2.0f*m[0].real();
+			  l[1] = {cw1,-cw2};
+			  l[2] = {cw1,cw2};
+			  l[3]  = -2.0f*m[3].real();
+			  q[0]  = {1.0f,0.0f};
+			  q[1]  = {0.0f,0.0f};
+			  q[2]  = {0.0f,0.0f};
+			  q[3]  = {0.0f,0.0f};
+			  q[4]  = {0.0f,0.0f};
+			  q[5]  = {0.0f,0.0f};
+			  q[6]  = {1.0f,0.0f};
+			  q[7]  = {0.0f,-1.0f};
+			  q[8]  = {0.0f,0.0f};
+			  q[9]  = {0.0f,0.0f};
+			  q[10] = {1.0f,0.0f};
+			  q[11] = {0.0f,1.0f};
+			  q[12] = {0.0f,0.0f};
+			  q[13] = {1.0f,0.0f};
+			  q[14] = {0.0f,0.0f};
+			  q[15] = {0.0f,0.0f};
+
+			  invq[0]  = {1.0f,0.0f};
+			  invq[1]  = {0.0f,0.0f};
+			  invq[2]  = {0.0f,0.0f};
+			  invq[3]  = {0.0f,0.0f};
+			  invq[4]  = {0.0f,0.0f};
+			  invq[5]  = {0.0f,0.0f};
+			  invq[6]  = {0.0f,0.0f};
+			  invq[7]  = {1.0f,0.0f};
+			  invq[8]  = {0.0f,0.0f};
+			  invq[9]  = {0.5f,0.0f};
+			  invq[10] = {0.5f,0.0f};
+			  invq[11] = {0.0f,0.0f};
+			  invq[12] = {0.0f,0.0f};
+			  invq[13] = {0.0f,0.5f};
+			  invq[14] = {0.0f,-0.5f};
+			  invq[15] = {0.0f,0.0f};
+		       }
+		       else {
+                              diff = m[0]-m[3];
+			      sum  = m[0]+m[3];
+			      std::complex<float> arg0 = 4.0f*m[1]*m[2];
+			      t0 = std::sqrt(diff*diff+arg0);
+			      ev = k0-(j/2.0f)*(sum+t0);
+			      eh = k0-(j/2.0f)*(sum-t0);
+			      t1 = 2.0f*m[1]/(diff+t0);
+			      t2 = 2.0f*m[2]/(-diff-t0);
+			      ev = k0-j*(m[0]+m[3]+r)/2.0f;
+			      eh = k0-j*(m[0]+m[3]-r)/2.0f;
+			      evv[0] = {1.0f,0.0f};
+			      evv[1] = ev;
+			      evh[0] = eh;
+			      evh[1] = {1.0f,0.0f};
+			      l[0] = 2.0f*ev.real();
+			      l[1] = j*(std::conj(eh)-ev);
+			      l[2] = j*(std::conj(ev)-eh);
+			      l[3] = 2.0*eh.imag();
+			      w1 = std::abs(ev);
+			      w2 = std::abs(eh);
+			      cw1 = std::conj(ev);
+			      cw2 = std::conj(eh);
+			      q[0] = {1.0f,0.0f};
+			      q[1] = w1*w2;
+			      q[2] = 2.0f*t1.real();
+			      q[3] = -2.0f*t1.imag();
+			      q[4] = cw2;
+			      q[5] = t1;
+			      q[6] = 1.0f+t1*cw2;
+			      q[7] = -j*(1.0f-t1*cw2);
+			      q[8] = t2;
+			      q[9] = cw1;
+			      q[10] = 1.0f+t2*cw1;
+			      q[11] = j*(1.0f-t2*cw1);
+			      q[12] = cw2*cw2;
+			      q[13] = {1.0f,0.0f};
+			      q[14] = 2.0f*t2.real();
+			      q[15] = 2.0f*t2.imag();
+			      invm4x4_cmplxr4(&q[0],&invq[0]);
+		       }
+		   }
+
+		   /*
                          Complex matrix 4x4 inversion (using unpotimized Linpack routines
                          'cgeco' and 'cgedi'
                     */
@@ -334,7 +488,9 @@ namespace gms {
 			out[13] = in[13];
 			out[14] = in[14];
 			out[15] = in[15];
-			
+			cgeco(&out[0],4,4,&ipvt[0]);
+			job = 1;
+			cgedi(&out[0],4,4,&ipvt[0],&det[0],job);
 		   }
 		   
 
