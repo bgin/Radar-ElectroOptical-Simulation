@@ -242,7 +242,7 @@ namespace gms {
       uint64_t skl_kbl_executed_cycles(const uint64_t uops_executed_core_ge_1,
                                        const uint64_t uops_executed_core_cycles_ge_1,
 				       const bool is_smt_on) {
-                return ( is_smt_on ? uops_executed_core_ge_1/ 2 :
+                return ( is_smt_on ? uops_executed_core_ge_1/2 :
 		                     uops_executed_core_cycles_ge_1);
       }
 
@@ -270,6 +270,70 @@ namespace gms {
 			 mem_load_l3_hit_retired_xsnp_hitm_ps +
 			 mem_load_l3_hit_retired_xsnp_miss_ps);
       }
+
+      // Load L1 miss
+      // #LOAD_L1_MISS + MEM_LOAD_RETIRED.L3_MISS_PS
+      static inline
+      uint64_t skl_kbl_load_l1_miss(const uint64_t load_l1_miss,
+                                    const uint64_t mem_load_retired_l3_miss_ps) {
+                 return (load_l1_miss+mem_load_retired_l3_miss_ps);
+      }
+
+      // Load L2 hit
+      // MEM_LOAD_RETIRED.L2_HIT_PS * ( 1 + MEM_LOAD_RETIRED.FB_HIT_PS / #LOAD_L1_MISS_NET )
+      static inline
+      float skl_kbl_load_l2_hit(const uint64_t mem_load_retired_l2_hit_ps,
+                                const uint64_t mem_load_retired_fb_hit_ps,
+				const uint64_t load_l1_miss_net) {
+                 return ((float)mem_load_retired_l2_hit_ps*(1ULL+
+		                mem_load_retired_fb_hit_ps/load_l1_miss_net));
+      }
+
+      // Few uops executed threshold
+      // EXE_ACTIVITY.2_PORTS_UTIL if ( IPC > 1.8 ) else 0
+      static inline
+      uint64_t skl_kbl_few_uops_exec_threshold(const uint64_t exe_activity_2_port_util,
+                                               const float ipc) {
+                 return (ipc > 1.5f ? exe_activity_2_port_util : 0);
+      }
+
+      // Backend bound stalls
+      // ( EXE_ACTIVITY.EXE_BOUND_0_PORTS + EXE_ACTIVITY.1_PORTS_UTIL + #Few_Uops_Executed_Threshold ) + ( CYCLE_ACTIVITY.STALLS_MEM_ANY + EXE_ACTIVITY.BOUND_ON_STORES )
+      static inline
+      uint64_t skl_kbl_backend_bound_stalls(const uint64_t exe_activity_exe_bound_0_ports,
+                                            const uint64_t exe_activity_1_ports_util,
+					    const uint64_t few_uops_exec_thresh,
+					    const uint64_t cycles_activity_stalls_mem_any,
+					    const uint64_t exe_activity_bound_on_stores) {
+            const uint64_t t0 = exe_activity_exe_bound_0_ports+
+	                        exe_activity_1_ports_util+
+				few_uops_executed_thresh;
+	    const uint64_t t1 = cycles_activity_stalls_mem_any+
+	                        exe_activity_bound_on_stores;
+	    return (t0+t1);
+      }
+
+      // Memory bound fraction
+      // ( CYCLE_ACTIVITY.STALLS_MEM_ANY + EXE_ACTIVITY.BOUND_ON_STORES ) / #Backend_Bound_Cycles
+      static inline
+      float skl_kbl_memory_bound_fraction(const uint64_t cycles_activity_stalls_mem_any,
+                                          const uint64_t exec_activity_bound_on_stores,
+					  const uint64_t backend_bound_cycles) {
+            return ((float)(cycles_activity_stalls_mem_any
+	                    +exe_activity_bound_on_stores)/backend_bound_cycles);
+      }
+
+      // L2 bound ratio
+      // ( CYCLE_ACTIVITY.STALLS_L1D_MISS - CYCLE_ACTIVITY.STALLS_L2_MISS ) / CLKS
+      static inline
+      float skl_kbl_l2_bound_ratio(const uint64_t cycle_activity_stall_l1d_miss,
+                                   const uint64_t cycle_activity_stall_l2_miss,
+				   const uint64_t clks) {
+             return ((float)(cycle_activity_stall_l1d_miss -
+	                     cycle_sctivity_stall_l2_miss)/clks);
+      }
+
+      
 }
 
 
