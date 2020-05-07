@@ -38,7 +38,7 @@ namespace gms {
    // TMA Metrics.
 
    static inline
-   uint64_t fetched_uops(const uint64_t idq_dsb_uops,
+   uint64_t hsw_fetched_uops(const uint64_t idq_dsb_uops,
                          const uint64_t lsd_uops,
 			 const idq_mite_uops,
 			 const idq_ms_uops) {
@@ -49,7 +49,7 @@ namespace gms {
    }
 
    static inline
-   uint64_t recovery_cycles(const uint64_t int_misc_recovery_cycles_any,
+   uint64_t hsw_recovery_cycles(const uint64_t int_misc_recovery_cycles_any,
                             const uint64_t int_misc_recovery_cycles,
 			    const bool is_ht_enabled) {
          return (is_ht_enabled ? int_misc_recovery_cycles_any/2ULL :
@@ -57,18 +57,88 @@ namespace gms {
    }
 
    static inline
-   uint64_t execute_cycles(const uint64_t uops_executed_core_c1,
+   uint64_t hsw_execute_cycles(const uint64_t uops_executed_core_c1,
                            const bool is_ht_enabled) {
          return (is_ht_enabled ? uops_executed_core_c1 / 2ULL :
 	                         uops_executed_core_c1);
    }
 
    static inline
-   uint64_t sq_full_cycles(const uint64_t offcore_requests_buffer_sq_full,
+   uint64_t hsw_sq_full_cycles(const uint64_t offcore_requests_buffer_sq_full,
                            const bool is_ht_enabled) {
          return (is_ht_enabled ? offcore_requests_buffer_sq_full / 2ULL :
 	                         offcore_requests_buffer_sq_full);
    }
+
+   static inline
+   uint64_t hsw_itlb_miss_cycles(const uint64_t itlb_misses_stlb_hit,
+                                 const uint64_t itlb_misses_walk_duration) {
+         return (14ULL*itlb_misses_stlb_hit+itlb_misses_walk_duration);
+   }
+
+   static inline
+   uint64_t hsw_frontend_rs_empty_cycles(const uint64_t rs_event_empty_cycles,
+                                         const float frontend_latency) {
+         return (frontend_latency<0.1f ? rs_event_empty_cycles :
+	                                 0ULL);
+   }
+
+   static inline
+   uint64_t hsw_cycles_0_ports_utilized(const uint64_t uops_executed_core_i1_c1,
+                                        const uint64_t stalls_total,
+					const uint64_t rs_event_empty_cycles,
+					const float frontend_latency,
+					const bool is_ht_enabled) {
+         return (is_ht_enabled ? uops_executed_core_c1_i1/2ULL :
+	                         stalls_total-hsw_frontend_rs_empty_cycles(rs_event_empty_cycles,frontend_latency));
+   }
+
+   static inline
+   uint64_t hsw_cycles_1_ports_utilized(const uint64_t uops_executed_core_c1,
+                                       const uint64_t uops_executed_core_c2,
+				       const bool is_ht_enabled) {
+         return (is_ht_enabled ? (uops_executed_core_c1-uops_executed_core_c2)/2ULL :
+	                          uops_executed_core_c1-uops_executed_core_c2);
+   }
+
+   static inline
+   uint64_t hsw_cycles_2_ports_utilized(const uint64_t uops_executed_core_c2,
+                                            const uint64_t uops_executed_core_c3,
+					    const bool is_ht_enabled) {
+          return (is_ht_enabled ? (uops_executed_core_c2-uops_executed_core_c3)/2ULL :
+	                           uops_executed_core_c2-uops_executed_core_c3);
+   }
+
+   static inline
+   uint64_t hsw_cycles_3_ports_utilized(const uint64_t uops_executed_core_c3,
+                                        const bool is_ht_enabled) {
+          return (is_ht_enabled ? uops_executed_core_c3/2ULL :
+	                          uops_executed_core_c3);
+   }
+
+#include <algorithm>
+
+   static inline
+   uint64_t hsw_frontend_latency_cycles(const uint64_t cpu_clk_unhalted_thread,
+                                        const uint64_t idq_uops_not_delivered_cycles_0_uops_deliv_core) {
+           return (std::min(cpu_clk_unhalted_thread,
+	                    idq_uops_not_delivered_cycles_0_uops_deliv_core));
+   }
+
+   static inline
+   uint64_t hsw_stalls_mem_any(const uint64_t cpu_clk_unhalted_thread,
+                               const uint64_t cycles_activity_stalls_lm_pending) {
+           return (std::min(cpu_clk_unhalted_thread,
+	                    cycles_activity_stalls_lm_pending));
+   }
+
+   static inline
+   uint64_t hsw_stalls_total(const uint64_t cpu_clk_unhalted_thread,
+                             const uint64_t cycles_activity_cycles_no_execute) {
+           return (std::min(cpu_clk_unhalted_thread,
+	                    cycles_activity_cycles_no_execute));
+   }
+     
    
 }
 
