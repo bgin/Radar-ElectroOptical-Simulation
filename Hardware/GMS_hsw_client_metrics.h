@@ -138,9 +138,163 @@ namespace gms {
            return (std::min(cpu_clk_unhalted_thread,
 	                    cycles_activity_cycles_no_execute));
    }
-     
+
+   static inline
+   uint64_t hsw_oro_drd_any_cycles(const uint64_t cpu_clk_unhalted_thread,
+                                   const uint64_t offcore_requests_oustanding_cycles_with_data_rd) {
+           return (std::min(cpu_clk_unhalted_thread,
+	                    offcore_requests_oustanding_cycles_with_data_rd ));
+   }
+
+   static inline
+   uint64_t hsw_oro_drd_bw_cycles(const uint64_t cpu_clk_unhalted_thread,
+                                  const uint64_t offcore_requests_outstanding_all_data_rd_c6) {
+           return (std::min(cpu_clk_unhalted_thread,
+	                    offcore_requests_outstanding_all_data_rd_c6));
+   }
+
+   static inline
+   uint64_t hsw_oro_demand_rfo_c1(const uint64_t cpu_clk_unhalted_thread,
+                                  const uint64_t offcore_requests_outstanding_cycles_with_demand_rfo) {
+           return (std::min(cpu_clk_unhalted_thread,
+	                    offcore_requests_outstanding_cycles_with_demand_rfo));
+   }
+
+   static inline
+   float hsw_store_l2_hit_cycles(const uint64_t l2_rqsts_rfo_hit,
+                                    const uint64_t mem_uops_retired_lock_loads,
+				    const uint64_t mem_uops_retired_all_stores) {
+           return ((float)l2_rqsts_rfo_hit*Mem_L2_Store_Cost*
+	                (1.0f-hsw_mem_lock_st_fraction(mem_uops_retired_loack_loads,
+	                                               mem_uops_retired_all_stores)));
+   }
+
+   static inline
+   uint64_t hsw_load_l1_miss(const uint64_t mem_load_uops_retired_l2_hit,
+                             const uint64_t mem_load_uops_retired_l3_hit,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_hit,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_hitm,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_miss) {
+           return (mem_load_uops_retired_l2_hit   +
+	           mem_load_uops_retired_l3_hit   +
+		   mem_load_uops_l3_hit_retired_xsnp_hit +
+		   mem_load_uops_l3_hit_retired_xsnp_hitm +
+		   mem_load_uops_l3_hit_retired_xsnp_miss);
+   }
+
+   static inline
+   uint64_t hsw_load_l1_miss_net(const uint64_t mem_load_uops_retired_l3_miss,
+                                const uint64_t mem_load_uops_retired_l2_hit,
+                                const uint64_t mem_load_uops_retired_l3_hit,
+			        const uint64_t mem_load_uops_l3_hit_retired_xsnp_hit,
+			        const uint64_t mem_load_uops_l3_hit_retired_xsnp_hitm,
+			        const uint64_t mem_load_uops_l3_hit_retired_xsnp_miss ) {
+            return (hsw_load_l1_miss(mem_load_uops_retired_l2_hit,
+	                             mem_load_uops_retired_l3_hit,
+				     mem_load_uops_l3_hit_retired_xsnp_hit,
+				     mem_load_uops_l3_hit_retired_xsnp_hitm,
+				     mem_load_uops_l3_hit_retired_xsnp_miss) +
+				     mem_load_uops_retired_l3_miss);
+   }
+
+   static inline
+   float hsw_load_l3_hit(const uint64_t mem_load_uops_retired_l3_hit,
+                         const uint64_t mem_load_uops_retired_hit_lfb,
+			 const uint64_t mem_load_uops_retired_l2_hit,
+			 const uint64_t mem_load_uops_l3_hit_retired_xsnp_hit,
+			 const uint64_t mem_load_uops_l3_hit_retired_xsnp_hitm,
+			 const uint64_t mem_load_uops_l3_hit_retired_xsnp_miss) {
+             return ((float)mem_load_uops_retired_l3_hit*
+	                    (1+mem_load_uops_retired_hit_lfb) /
+			    hsw_load_l1_miss(mem_load_uops_retired_l2_hit,
+	                                     mem_load_uops_retired_l3_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hitm,
+				             mem_load_uops_l3_hit_retired_xsnp_miss) );
+    }
+
+    static inline
+    float hsw_load_xsnp_hit(const uint64_t mem_load_uops_l3_hit_retired_xsnp_hit,
+                            const uint64_t mem_load_uops_retired_hit_lfb,
+			    const uint64_t mem_load_uops_retired_l2_hit,
+			    const uint64_t mem_load_uops_retired_l3_hit,
+			    const uint64_t mem_load_uops_l3_hit_retired_xsnp_hitm,
+			    const uint64_t mem_load_uops_l3_hit_retired_xsnp_miss) {
+              return ((float)mem_load_uops_l3_hit_retired_xsnp_hit *
+	                     (1+mem_load_uops_retired_hit_lfb) /
+			      hsw_load_l1_miss(mem_load_uops_retired_l2_hit,
+	                                     mem_load_uops_retired_l3_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hitm,
+				             mem_load_uops_l3_hit_retired_xsnp_miss) );
+    }
+
+    static inline
+    float hsw_load_xsnp_hitm(
+                             const uint64_t mem_load_uops_retired_hit_lfb,
+			     const uint64_t mem_load_uops_retired_l2_hit,
+	                     const uint64_t mem_load_uops_retired_l3_hit,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_hit,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_hitm,
+			     const uint64_t mem_load_uops_l3_hit_hit_retired_xsnp_miss) {
+                return ((float)mem_load_uops_l3_hit_retired_xsnp_hitm *
+		               (1+mem_load_uops_retired_hit_lfb) /
+			        hsw_load_l1_miss(mem_load_uops_retired_l2_hit,
+	                                     mem_load_uops_retired_l3_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hitm,
+				             mem_load_uops_l3_hit_retired_xsnp_miss) );
+    }
+
+    static inline
+    float hsw_load_xsnp_miss( const uint64_t mem_load_uops_retired_hit_lfb,
+			     const uint64_t mem_load_uops_retired_l2_hit,
+	                     const uint64_t mem_load_uops_retired_l3_hit,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_hit,
+			     const uint64_t mem_load_uops_l3_hit_retired_xsnp_hitm,
+			     const uint64_t mem_load_uops_l3_hit_hit_retired_xsnp_miss) {
+                return ((float)mem_load_uops_l3_hit_retired_xsnp_miss*
+		               (1+mem_load_uops_retired_hit_lfb) /
+			        hsw_load_l1_miss(mem_load_uops_retired_l2_hit,
+	                                     mem_load_uops_retired_l3_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hit,
+				             mem_load_uops_l3_hit_retired_xsnp_hitm,
+				             mem_load_uops_l3_hit_retired_xsnp_miss) );
+    }
+
+    static inline
+    uint64_t hsw_few_uops_executed_threshold(const uint64_t uops_executed_core_c2,
+                                             const uint64_t uops_executed_core_c3,
+					     const float ipc) {
+                return (ipc > 1.5f ? uops_executed_core_c3 :
+		                     uops_executed_core_c2);
+     }
+
+     static inline
+     float hsw_backend_bound_cycles(const uint64_t stalls_total,
+                                    const uint64_t uops_executed_core_c1,
+				    const uint64_t few_uops_executed_threshold,
+				    const uint64_t frontend_rs_empty_cycles,
+				    const uint64_t resource_stall_sb,
+				    const bool is_ht_enabled) {
+                return (is_ht_enabled ? (float)(stalls_total+uops_executed_core_c1-few_uops_executed_threshold)/2 -
+		                               frontend_rs_empty_cycles+resource_stalls_sb :
+					(float)(stalls_total+uops_executed_core_c1-few_uops_executed_threshold-
+					        frontend_rs_empty_cycles+resource_stalls_sb));
+     }
+
+     static inline
+     float hsw_memory_bound_fraction(const uint64_t stalls_mem_any,
+                                     const uint64_t resource_stalls_sb,
+				     const float backend_bound_cycles) {
+                return ((float)(stalls_mem_any+resource_stalls_sb) /
+		                backend_bound_cycles);
+     }
+				    
+
+    
    
-}
+} //gsm
 
 
 
