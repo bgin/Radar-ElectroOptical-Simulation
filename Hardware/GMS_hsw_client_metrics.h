@@ -3,7 +3,8 @@
 #define __GMS_HSW_CLIENT_METRICS_H__ 1000050520201732
 
 
-namespace {
+namespace file_info {
+
   const unsigned int gGMS_HSW_CLIENT_METRICS_MAJOR = 1;
   const unsigned int gGMS_HSW_CLIENT_METRICS_MINOR = 0;
   const unsigned int gGMS_HSW_CLIENT_METRICS_MICRO = 0;
@@ -15,11 +16,13 @@ namespace {
   const char * const pgGMS_HSW_CLIENT_METRICS_BUILD_DATE    = __DATE__ ":" __TIME__;
   const char * const pgGMS_HSW_CLIENT_METRICS_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
   const char * const pgGMS_HSW_CLIENT_METRICS_SYNOPSIS      = "Haswell client performance metrics based on TMA-Metrics (4.0)";
+
 }
 
-#include <cstdint.h>
+#include <cstdint>
 
-namespace gms {
+
+
 
    const static uint32_t Issue_Width = 4;
    const static uint32_t Mem_L2_Store_Cost = 9;
@@ -294,7 +297,7 @@ namespace gms {
 
     
    
-} //gsm
+
 
 
 
