@@ -40,6 +40,8 @@ namespace file_info {
 
    // TMA Metrics.
 
+namespace gms {
+
    static inline
    uint64_t hsw_fetched_uops(const uint64_t idq_dsb_uops,
                          const uint64_t lsd_uops,
@@ -293,9 +295,224 @@ namespace file_info {
                 return ((float)(stalls_mem_any+resource_stalls_sb) /
 		                backend_bound_cycles);
      }
-				    
 
-    
+     static inline
+     float hsw_mem_l3_hit_fraction( const uint64_t mem_load_uops_retired_l3_hit,
+                                    const uint64_t mem_load_uops_retired_l3_miss) {
+                return ((float)mem_load_uops_retired_l3_hit / (mem_load_uops_retired_l3_hit+Mem_L3_Weight+
+		                                               mem_load_uops_retired_l3_miss));
+     }
+
+     static inline
+     float hsw_mem_lock_st_fraction( const uint64_t mem_uops_retired_lock_loads,
+                                     const uint64_t mem_uops_retired_all_stores) {
+                return ((float)mem_uops_retired_lock_loads/mem_uops_retired_all_stores);
+     }
+
+     static inline
+     float hsw_mispred_clears_fraction( const uint64_t br_mispred_all_branches,
+                                        const uint64_t machine_clears_count) {
+                return ((float)br_mispred_all_branches/(br_mispred_all_branches+
+		                                        machine_clear_count));
+     }
+
+     static inline
+     float hsw_retire_fraction( const uint64_t uops_retired_retire_slots,
+                                const uint64_t uops_issued_any) {
+                return ((float)uops_retired_retire_slots/uops_issued_any);
+     }
+
+    // clks is CLOCK_UNHALTED.THREAD
+    static inline
+    float hsw_ipc( const uint64_t inst_retired_any,
+                   const uint64_t clks) {
+                return ((float)inst_retired_any/clks);
+     }
+
+     static inline
+     float hsw_upi( const uint64_t uops_retired_retire_slots,
+                    const uint64_t uops_retired_any) {
+                return ((float)uops_retired_retire_slots/uops_retired_any);
+     }
+
+     // Instructions per taken branch
+     static inline
+     float hsw_iptb( const uint64_t instr_retired_any,
+                     const uint64_t br_instr_retired_near_taken) {
+                return ((float)instr_retired_any/br_instr_retired_near_taken);
+     }
+
+     static inline
+     float hsw_cpi( const uint64_t instr_retired_any,
+                    const uint64_t clks) {
+                return (1.0f/hsw_ipc(istr_retired_any,clks));
+     }
+
+     static inline
+     uint64_t hsw_issue_slots( const uint64_t core_clks) {
+                return (Pipeline_Width*core_clks);
+     }
+     // Instructions per load
+     static inline
+     float hsw_ipload( const uint64_t instr_retired_any,
+                       const uint64_t mem_uops_retired_all_loads) {
+                return ((float)instr_retired_any/mem_uops_retired_all_loads);
+     }
+     // Instructions per store
+     static inline
+     float hsw_ipstore( const uint64_t instr_retired_any,
+                        const uint64_t mem_uops_retired_all_stores) {
+                return ((float)instr_retired_any/mem_uops_retired_all_stores);
+     }
+
+     static inline
+     float hsw_ipbranch( const uint64_t instr_retired_any,
+                         const uint64_t br_instr_retired_all_branches) {
+                return ((float)instr_retired_any/br_instr_retired_all_branches);
+     }
+     
+     static inline
+     float hsw_ipcall( const uint64_t instr_retired_any,
+                       const uint64_t br_instr_retired_near_call) {
+                return ((float)instr_retired_any/br_instr_retired_near_call);
+     }
+     // Branch instuctions per taken branch
+     static inline
+     float hsw_biptb( const uint64_t br_inst_retired_all_branches,
+                      const uint64_t br_inst_retired_near_taken) {
+                return ((float)br_inst_retired_all_branches /
+	                       br_inst_retired_near_taken);
+     }
+
+     static inline
+     float hsw_dsb_coverage( const uint64_t idq_dsb_uops,
+                             const uint64_t fetched_uops) {
+                return ((float)idq_dsb_uops/fetched_uops);
+     }
+
+     static inline
+     float hsw_ipbaclear( const uint64_t inst_retired_any,
+                          const uint64_t baclears_any) {
+                return ((float)inst_retired_any/baclears_any);
+     }
+
+     static inline
+     float hsw_ipc_core( const uint64_t instr_retired_any,
+                         const uint64_t core_clks) {
+                return ((float)instr_retired_any/core_clks);
+     }
+
+     static inline
+     float hsw_ilp( const uint64_t uops_executed_core,
+                    const uint64_t execute_cycles,
+		    const bool is_ht_enabled) {
+                return (is_ht_enabled ? (float) uops_executed_core/2/execute_cycles :
+		                        (float) uops_executed_core/execute_cycles);
+     }
+
+     static inline
+     float hsw_ip_mispredict( const uint64_t inst_retired_any,
+                              const uint64_t br_misp_retired_all_branches) {
+                 return ((float)inst_retired_any/br_misp_retired_all_branches);
+     }
+
+     static inline
+     uint64_t hsw_core_clks( const uint64_t cpu_clk_unhalted_thread,
+                          const uint64_t cpu_clk_unhalted_one_thread_active,
+			  const uint64_t cpu_clk_unhalted_ref_xclk,
+			  const uint64_t cpu_clk_unhalted_thread_any,
+			  const bool ebs_mode) {
+                 const uint64_t t0 = cpu_clk_unhalted_thread/2ULL *
+		                     ((1ULL+cpu_clk_unhalted_one_thread_active)/cpu_clk_unhalted_ref_xclk);
+		 const uint64_t t1 = cpu_clk_unhalted_thread_any/2ULL;
+		 return (ebs_mode ? t0 : t1);
+     }
+
+     static inline
+     float hsw_load_miss_real_latency(const uint64_t l1d_pend_miss_pending,
+                                      const uint64_t mem_load_uops_retired_l1_miss,
+				      const uint64_t mem_load_uops_retired_hit_lfb) {
+                 return ((float)l1d_pend_miss_pending /
+		                (mem_load_uops_retired_l1_miss +
+				 mem_load_uops_retired_hit_lfb));
+     }
+
+     static inline
+     float hsw_mem_level_parallelism( const uint64_t l1d_pend_miss_pending,
+                                      const uint64_t l1d_pend_miss_pending_cycles) {
+                 return ((float)l1d_pend_miss_pending/
+		                l1d_pend_miss_pending_cycles);
+     }
+
+     static inline
+     float hsw_page_walk_util( const uint64_t itlb_misses_walk_duration,
+                               const uint64_t dtlb_load_misses_walk_duration,
+			       const uint64_t dtlb_store_misses_walk_duration,
+			       const uint64_t core_clks) {
+                  return ((float)(itlb_misses_walk_duration+dtlb_load_misses_walk_duration+
+		                  dtlb_store_misses_walk_duration)/core_clks);
+     }
+     // Average cache fill bandwith Gigabytes/sec
+     static inline
+     float hsw_l1d_cache_fill_bw( const uint64_t l1d_replacement,
+                                  const uint64_t time_iterval) {
+                  return ((float)64ULL*l1d_replacement/1000000000ULL/time_interval);
+     }
+
+     static inline
+     float hsw_l2_cache_fill_bw( const uint64_t l2_lines_in_all,
+                                 const uint64_t time_interval) {
+                  return ((float)64ULL*l2_lines_all/1000000000ULL/time_interval);
+     }
+
+     static inline
+     float hsw_l3_cache_fill_bw( const uint64_t longest_lat_cache_miss,
+                                 const uint64_t time_interval) {
+                  return ((float)64ULL*longest_lat_cache_miss/1000000000ULL/time_interval);
+     }
+
+     static inline
+     float hsw_l1mpki( const uint64_t mem_load_uops_retired_l1_miss,
+                       const uint64_t inst_retired_any) {
+                  return ((float)1000ULL*mem_load_uops_retired_l1_miss/
+		                         inst_retired_any);
+     }
+
+     static inline
+     float hsw_l2mpki( const uint64_t mem_load_uops_retired_l2_miss,
+                       const uint64_t  const uint64_t inst_retired_any) {
+                  return ((float)1000ULL*mem_load_uops_retired_l2_miss/
+		                         inst_retired_any);
+     }
+
+     static inline
+     float hsw_l2hpki(  const uint64_t mem_load_uops_retired_l2_miss,
+                       const uint64_t  const uint64_t inst_retired_any) {
+                  return ((float)1000ULL*mem_load_uops_retired_l2_miss/
+		                         inst_retired_any);
+     }
+
+     static inline
+     float hsw_l3mpki( const uint64_t mem_load_uops_retired_l3_miss,
+                       const uint64_t  const uint64_t inst_retired_any) {
+                 return ((float)1000ULL*mem_load_uops_retired_l3_miss/
+		                         inst_retired_any);
+     }
+
+     static inline
+     float hsw_ipfarbr( const uint64_t inst_retired_any,
+                        const uint64_t br_inst_retired_far_branch) {
+                 return ((float)inst_retired_any/
+		                (br_inst_retired_far_branch));
+     }
+
+     static inline
+     float hsw_assist( const uint64_t other_assists_any_wb_assists,
+                       const uint64_t slots) {
+                return ((float)Avg_Assist_Cost*other_assists_any_wb_assists / slots);
+     }
+
+} // gms    
    
 
 
