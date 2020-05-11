@@ -642,6 +642,60 @@ namespace gms {
 			    const uint64_t clks) {
                    return ((float)(load_miss_real_latency*ld_blocks_no_sr)/clks);
      }
+
+     static inline
+     float hsw_single_mul_clks( const uint64_t uops_issued_single_mul,
+                           const uint64_t clks) {
+                   return ((float)uops_issued_single_mul/clks);
+     }
+
+     static inline
+     float hsw_single_mul_core_clks( const uint64_t uops_issued_single_mul,
+                                     const uint64_t core_clks) {
+                   return ((float)uops_issued_single_mul/core_clks);
+     }
+
+     static inline
+     float hsw_single_mul_uops_any( const uint64_t uops_issued_single_mul,
+                                    const uint64_t inst_issued_any) {
+                   return ((float)uops_issued_single_mul/
+		                  inst_issued_any);
+     }
+
+     static inline
+     float hsw_single_mul_uops_retired_any( const uint64_t uops_issued_single_mul,
+                                            const uint64_t uops_retired_any) {
+                   return ((float)uops_issued_single_mul/
+		                  uops_retired_any);
+     }
+
+     static inline
+     float hsw_simd_move_elim_not_elim( const uint64_t move_elimination_simd_eliminated,
+                                        const uint64_t move_elimination_simd_not_eliminated) {
+                    return ((float)move_elimination_simd_eliminated/
+		                   move_elimination_simd_not_eliminated);
+     }
+
+     static inline
+     float hsw_int_move_elim_not_elim( const uint64_t move_elimination_int_eliminated,
+                                       const uint64_t move_elimination_int_not_eliminated) {
+                    return ((float)move_elimination_not_eliminated/
+		                   move_elimination_int_not_eliminated);
+     }
+
+     static inline hsw_uops_issued_any_mite_uops( const uint64_t idq_mite_uops,
+                                                  const uint64_t uops_issued_any) {
+                    return ((float)idq_mite_uops/
+		                   uops_issued_any);
+     }
+
+     static inline
+     float hsw_single_mul_avx_inst_all( const uint64_t uops_issued_single_mul,
+                                        const uint64_t avx_inst_all) {
+                    return ((float)uops_issued_single_mul/avx_inst_all);
+     }
+
+    
      
 
 } // gms    
