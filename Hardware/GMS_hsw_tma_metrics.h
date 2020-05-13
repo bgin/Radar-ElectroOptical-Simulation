@@ -695,7 +695,62 @@ namespace gms {
                     return ((float)uops_issued_single_mul/avx_inst_all);
      }
 
-    
+     static inline
+     float hsw_frontend_latency(   const uint64_t frontend_latency_cycles,
+				   const uint64_t slots) {
+                    return ((float)frontend_latency_cycles/
+		                   slots);
+     }
+
+     static inline
+     float hsw_branch_resteers( const uint64_t br_misp_retired_all_branches,
+                                const uint64_t machine_clears_count,
+				const uint64_t baclears_any,
+				const uint64_t clks) {
+                    return ((float)BAClear_cost*(br_misp_retired_all_branches+
+		                                 machine_clears_count+
+						 baclears_any)/clks);
+     }
+
+     static inline
+     float hsw_frontend_bw( const float frontend_bound,
+                            const float frontend_latency) {
+                    return (frontend_bound-frontend_latency);
+     }
+
+     static inline
+     float hsw_mite( const uint64_t idq_all_mite_cycles_any_uops,
+                     const uint64_t idq_all_mite_cycles_4_uops,
+		     const uint64_t clks) {
+             return ((float)(idq_all_mite_all_cycles_any_uops-
+		            idq_all_mite_cycles_4_uops)/clks);
+     }
+
+     static inline
+     float hsw_store_fwd_blocked( const uint64_t ld_blocks_store_forward,
+                                  const uint64_t clks) {
+             return ((float)13ULL*ld_blocks_store_forward/clks);
+     }
+
+     static inline
+     float hsw_lock_latency( const float mem_lock_st_fraction,
+                             const uint64_t oro_demand_rfo_c1,
+			     const uint64_t clks) {
+              return ((float)(mem_lock_st_fraction*oro_demand_rfo_c1)/clks);
+     }
+
+     static inline
+     float hsw_split_loads( const float load_miss_real_latency,
+                            const uint64_t load_blocks_no_sr,
+			    const uint64_t clks) {
+              return ((float)(load_miss_real_latency*load_blocks_no_sr)/clks);
+     }
+
+     static inline
+     float hsw_4k_aliasing( const uint64_t ld_block_partial_address_alias,
+                            const uint64_t clks) {
+               return ((float)ld_block_partial_address_alias/clks);
+     }
      
 
 } // gms    
