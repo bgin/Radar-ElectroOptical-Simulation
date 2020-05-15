@@ -751,6 +751,72 @@ namespace gms {
                             const uint64_t clks) {
                return ((float)ld_block_partial_address_alias/clks);
      }
+
+     static inline
+     float hsw_fb_full( const float load_miss_real_latency,
+                        const uint64_t l1d_pend_miss_request_fb_full_c1,
+			const uint64_t clks) {
+                return ((float)(load_miss_real_latency*
+		                l1d_pend_miss_request_fb_full_c1)/clks);
+     }
+
+     static inline
+     float hsw_l2_bound( const uint64_t cycle_activity_stalls_l1d_pending,
+                         const uint64_t cycle_activity_stalls_l2_pending,
+			 const uint64_t clks) {
+                return ((float)(cycle_activity_stalls_l1d_pending-
+		               cycle_activity_stalls_l2_pending)/clks);
+     }
+
+     static inline
+     float hsw_l3_bound( const float mem_l3_hit_fraction,
+                         const uint64_t cycle_activity_stalls_l2_pending,
+			 const uint64_t clks) {
+                return ((float)(mem_l3_hit_fraction*
+		                cycle_activity_stalls_l2_pending)/clks);
+     }
+
+     static inline
+     float hsw_contested_accesses( const float load_xsnp_hitm,
+                                   const float load_xsnp_miss,
+				   const uint64_t clks) {
+                return ((float)(Mem_XSNP_HitM_Cost*load_xsnp_hitm+
+		                Mem_XSNP_Hit_Cost*load_xsnp_miss)/clks);
+     }
+
+     static inline
+     float hsw_data_sharing( const float load_xsnp_hit,
+                             const uint64_t clks) {
+                return ((float)(Mem_XSNP_Hit_Cost*
+		               load_xsnp_hit)/clks);
+     }
+
+     static inline
+     float hsw_dram_bound( const float mem_l3_hit_fraction,
+                           const uint64_t cycle_activity_stalls_l2_pending,
+			   const uint64_t clks) {
+                 return ((float) ((1.0f-mem_l3_hit_fraction)*
+		                  cycle_activity_stalls_l2_pending)/clks);
+     }
+
+     static inline
+     float hsw_mem_bw( const uint64_t oro_drd_bw_cycles,
+                       const uint64_t clks) {
+                  return ((float)oro_drd_bw_cycles/clks);
+     }
+
+     static inline
+     float hsw_mem_latency( const uint64_t oro_drd_any_cycles,
+                            const uint64_t clks,
+			    const float mem_bw) {
+                   return ((float)oro_drd_any_cycles/clks-mem_bw);
+     }
+
+     static inline
+     float hsw_store_bound( const uint64_t resource_stalls_sb,
+                            const uint64_t clks) {
+                 return ((float)resource_stalls_sb/clks);
+     }
      
 
 } // gms    
