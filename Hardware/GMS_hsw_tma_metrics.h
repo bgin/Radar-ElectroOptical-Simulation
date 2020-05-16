@@ -817,6 +817,191 @@ namespace gms {
                             const uint64_t clks) {
                  return ((float)resource_stalls_sb/clks);
      }
+
+     static inline
+     float hsw_dtlb_bound( const uint64_t dtlb_load_misses_stlb_hit,
+                           const uint64_t dtlb_load_misses_walk_duration,
+			   const uint64_t clks) {
+                 return ((float)( Mem_STLB_Hit_Cost*
+		                 dtlb_load_misses_stlb_hit+
+				 dtlb_load_misses_walk_duration)/clks)
+     }
+
+     static inline
+     float hsw_l3_hit_latency( const float load_l3_hit,
+                               const uint64_t clks) {
+                 return ((float)( MEM_XSNP_None_Cost*load_l3_hit)/clks);
+     }
+
+     static inline
+     float hsw_false_sharing( const uint64_t offcore_response_demand_rfo_l3_hit_hitm_other_core,
+                              const uint64_t clks) {
+                 return ((float)(Mem_XSNP_HitM_Cost*
+		                 offcore_response_demand_rfo_l3_hit_hitm_other_core)/clks);
+     }
+
+     static inline
+     float hsw_split_stores( const uint64_t mem_uops_retired_split_stores,
+                             const uint64_t clks) {
+                 return ((float)mem_uops_retired_split_stores/clks);
+     }
+
+     static inline
+     float hsw_dtlb_store( const uint64_t dtlb_store_misses_stlb_hit,
+                           const uint64_t dtlb_store_misses_walk_duration,
+			   const uint64_t clks) {
+                  return ((float)(Mem_STLB_Hit_Cost*
+		                 dtlb_store_misses_stlb_hit+
+				 dtlb_store_misses_walk_duration)/clks);
+     }
+
+     static inline
+     float hsw_core_bound( const float backend_bound,
+                           const float mem_bound) {
+                  return (backend_bound-mem_bound);
+     }
+
+     static inline
+     float hsw_divider( const uint64_t arithm_divider_uops,
+                        const uint64_t core_clks) {
+                 return ((float)arith_divider_uops/core_clsk);
+     }
+
+     static inline
+     float hsw_ports_utilization( const float backend_bound_cycles,
+                                  const uint64_t stalls_mem_any,
+				  const uint64_t resource_stalls_sb,
+				  const uint64_t clks) {
+                 return ((float) (backend_bound_cycles-
+		                  resource_stalls_sb-
+				  stalls_mem_any)/clks);
+     }
+
+     static inline
+     float hsw_ports_utilized_0( const uint64_t cycles_0_ports_utilized,
+                                 const uint64_t core_clks) {
+                  return ((float) cycles_0_ports_utilized/core_clks);
+     }
+
+     static inline
+     float hsw_ports_utilized_1( const uint64_t cycles_1_ports_utilized,
+                                 const uint64_t core_clks) {
+                  return ((float) cycles_1_ports_utilized/core_clks);
+     }
+
+     static inline
+     float hsw_ports_utilized_2( const uint64_t cycles_2_ports_utilized,
+                                 const uint64_t core_clks) {
+                  return ((float) cycles_2_ports_utilized/core_clks);
+     }
+
+     static inline
+     float hsw_ports_utilized_0( const uint64_t cycles_3m_ports_utilized,
+                                 const uint64_t core_clks) {
+                  return ((float) cycles_3m_ports_utilized/core_clks);
+     }
+
+     static inline
+     float hsw_alu_utilization( const uint64_t uops_dispatched_port_port0,
+                                const uint64_t uops_dispatched_port_port1,
+				const uint64_t uops_dispatched_port_port5,
+				const uint64_t uops_dispatched_port_port6,
+				const uint64_t core_clks) {
+                   return ((float)(uops_dispatched_port_port0+
+		                   uops_dispatched_port_port1+
+				   uops_dispatched_port_port5+
+				   uops_dispatched_port_port6)/(4ULL*core_clks));
+     }
+
+     static inline
+     float hsw_port0_exec( const uint64_t uops_dispatched_port_port0,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port0/core_clks);
+     }
+
+     static inline
+     float hsw_port1_exec( const uint64_t uops_dispatched_port_port1,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port1/core_clks);
+     }
+
+     static inline
+     float hsw_port5_exec( const uint64_t uops_dispatched_port_port5,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port5/core_clks);
+     }
+
+     static inline
+     float hsw_port6_exec( const uint64_t uops_dispatched_port_port6,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port6/core_clks);
+     }
+
+     static inline
+     float hsw_load_ops_utilization( const uint64_t uops_dispatched_port_port2,
+                                     const uint64_t uops_dispatched_port_port3,
+				     const uint64_t uops_dispatched_port_port7,
+				     const uint64_t uops_dispatched_port_port4,
+				     const uint64_t core_clks) {
+                   return ((float)uops_dispatched_port_port2+
+		                  uops_dispatched_port_port2+
+				  uops_dispatched_port_port7+
+				  uops_dispatched_port_port4/
+				  (2ULL*core_clks));
+     }
+
+     static inline
+     float hsw_port3_exec( const uint64_t uops_dispatched_port_port3,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port3/core_clks);
+     }
+
+     static inline
+     float hsw_port4_exec( const uint64_t uops_dispatched_port_port4,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port4/core_clks);
+     }
+
+     static inline
+     float hsw_port7_exec( const uint64_t uops_dispatched_port_port7,
+                           const uint64_t core_clks) {
+                   return ((float) uops_dispatched_port_port7/core_clks);
+     }
+
+     static inline
+     float hsw_ms_assists( const uint64_t other_assists_any_wb_assist,
+                           const uint64_t slots) {
+                   return ((float)(Avg_Assist_cost*
+		                   other_assists_any_wb_assist)/slots);
+     }
+
+     static inline
+     float hsw_ms( const float retire_fraction,
+                   const uint64_t idq_ms_uops,
+		   const uint64_t slots) {
+                 return ((float)(retire_fraction*
+		                idq_ms_uops)/slots);
+     }
+
+     static inline
+     float hsw_x87_usage( const uint64_t inst_retired_x87,
+                          const float upi,
+			  const uint64_t retired_slots) {
+             return ((float)(inst_retired_x87*upi)/retired_slots);
+     }
+
+     static inline
+     float hsw_retired( const uint64_t uops_retired_retired_slots,
+                        const uint64_t slots) {
+             return ((float)uops_retired_retired_slots/slots);
+     }
+
+     static inline
+     float hsw_ret_reg_uops( const float retired,
+                             const float microcode_sequencer) {
+             return (retired-micocode_sequencer);
+     }
+
      
 
 } // gms    
