@@ -39,6 +39,8 @@ namespace file_info {
 
 namespace gms {
 
+    // Some parts based on Andee Kleen 'pmu-tools'
+
     static inline
     uint64_t skx_uops_fetched( const uint64_t idq_dsb_uops,
                                const uint64_t idq_mite_uops,
@@ -322,6 +324,120 @@ namespace gms {
     float skx_instr_per_cycle( const uint64_t inst_retired_any,
                                const uint64_t clks) {
                 return ((float) inst_retired_any/clks);
+    }
+
+    static inline
+    float skx_instr_branch_taken( const uint64_t inst_retired_any,
+                                  const uint64_t br_inst_retired_near_taken) {
+                return ((float)inst_retired_any/
+		               br_inst_retired_near_taken);
+    }
+
+    static inline
+    float skx_cycles_per_inst( const float ipc) {
+               return (1.0f/ipc);
+    }
+
+    static inline
+    float skx_instr_per_load( const uint64_t inst_retired_any,
+                              const uint64_t mem_inst_retired_all_loads) {
+                return ((float)inst_retired_any/
+		               mem_inst_retired_all_loads);
+    }
+
+    static inline
+    float skx_instr_per_store( const uint64_t inst_retired_any,
+                               const uint64_t mem_inst_retired_all_stores) {
+                return ((float)inst_retired_any/
+		               mem_inst_retired_all_stores);
+    }
+
+    static inline
+    float skx_instr_per_branch( const uint64_t inst_retired_any,
+                                const br_inst_retired_all_branches) {
+                 return ((float)inst_retired_any/
+		                br_inst_retired_all_branches);
+    }
+
+    static inline
+    float skx_instr_per_call( const uint64_t inst_retired_any,
+                              const uint64_t br_inst_retired_near_call) {
+                 return ((float)inst_retired_any/
+		                br_inst_retired_near_call);
+    }
+
+    static inline
+    float skx_br_inst_per_taken_br( const uint64_t br_inst_retired_all_branches,
+                                    const uint64_t br_inst_retired_near_taken) {
+                 return ((float)br_inst_retired_all_branches/
+		                br_inst_retired_near_taken);
+    }
+
+    static inline
+    uint64_t skx_flops( const uint64_t fp_arith_inst_retired_scalar_single,
+                     const uint64_t fp_arith_inst_retired_scalar_double,
+		     const uint64_t fp_arith_inst_retired_128B_packed_double,
+		     const uint64_t fp_arith_inst_retired_128B_packed_single,
+		     const uint64_t fp_arith_inst_retired_256B_packed_double,
+		     const uint64_t fp_arith_inst_retired_256B_packed_single,
+		     const uint64_t fp_arith_inst_retired_512B_packed_double,
+		     const uint64_t fp_arith_inst_retired_512B_packed_single) {
+              return ((1ULL*(fp_arith_inst_retired_scalar_single+
+	                            fp_arith_inst_retired_scalar_double)+2ULL*
+				    fp_arith_inst_retired_128B_packed_double+
+				    4ULL*(fp_arith_inst_retired_128B_packed_single+
+				          fp_arith_inst_retired_256B_packed_double)+
+				    8ULL*(fp_arith_inst_retired_256B_packed_single+
+				          fp_arith_inst_retired_512B_packed_double+
+				    16ULL*fp_arith_inst_retired_512B_packed_single)));
+				  
+    }
+
+    static inline
+    float skx_instr_per_flops( const uint64_t instr_retired_any,
+                               const uint64_t flops) {
+              return ((float)instr_retired_any/flops);
+    }
+
+    static inline
+    float skx_instr_per_scalar_fp_sp( const uint64_t instr_retired_any,
+                                      const uint64_t fp_arith_instr_retired_scalar_single) {
+              return ((float)instr_retired_any/
+	                       fp_arith_instr_retired_scalar_single);
+    }
+
+    static inline
+    float skx_instr_per_scalar_dp( const uint64_t instr_retired_any,
+                                   const uint64_t fp_arith_instr_retired_scalar_double) {
+              return ((float)instr_retired_any/
+	                        fp_arith_instr_retired_scalar_double);
+    }
+
+    static inline
+    float skx_instr_per_avx128( const uint64_t instr_retired_any,
+                                const uint64_t fp_arith_instr_retired_128B_packed_single,
+				const uint64_t fp_arith_instr_retired_128B_packed_double) {
+               return ((float)instr_retired_any/
+	                       (fp_arith_instr_retired_128B_packed_single+
+			           fp_arith_instr_retired_128B_packed_double));
+    }
+
+    static inline
+    float skx_instr_per_avx256( const uint64_t instr_retired_any,
+                                const uint64_t fp_arith_instr_retired_256B_packed_single,
+				const uint64_t fp_arith_instr_retired_256B_packed_double) {
+               return ((float)instr_retired_any/
+	                       (fp_arith_instr_retired_256B_packed_single+
+			           fp_arith_instr_retired_256B_packed_double));
+    }
+
+    static inline
+    float skx_instr_per_avx512( const uint64_t instr_retired_any,
+                                const uint64_t fp_arith_instr_retired_512B_packed_single,
+				const uint64_t fp_arith_instr_retired_512B_packed_double) {
+               return ((float)instr_retired_any/
+	                       (fp_arith_instr_retired_512B_packed_single+
+			           fp_arith_instr_retired_512B_packed_double));
     }
 
 }
