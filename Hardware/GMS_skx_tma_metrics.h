@@ -440,6 +440,88 @@ namespace gms {
 			           fp_arith_instr_retired_512B_packed_double));
     }
 
+    static inline
+    float skx_uops_by_dsb( const uint64_t idq_dsb_uops,
+                           const uint64_t uops_delivered_total) {
+               return ((float)idq_dsb_uops/
+	                        uops_deliverd_total);
+    }
+
+    static inline
+    float skx_instr_per_baclears( const uint64_t instr_retired_any,
+                                   const uint64_t baclears_any) {
+                return ((float)instr_retired_any/baclears_any);
+    }
+
+    static inline
+    float skx_instr_per_core( const uint64_t instr_retired_any,
+                              const uint64_t core_clks) {
+                return ((float)instr_retired_any/core_clks);
+    }
+
+    static inline
+    float skx_flops_per_cycle( const uint64_t flops,
+                               const uint64_t core_clks) {
+                return ((float)flops/core_clks);
+    }
+
+    static inline
+    float skx_fp_scalar_retired( const uint64_t fp_arith_inst_retired_scalar_single,
+                                 const uint64_t fp_arith_inst_retired_scalar_double,
+				 const uint64_t uops_retired_retired_slots) {
+                return ((float)(fp_arith_inst_retired_scalar_single+
+		                   fp_arith_inst_retired_scalar_double)/
+				                uops_retired_retired_slots);
+    }
+
+    static inline
+    float skx_fp_vector_retired( const uint64_t fp_arith_inst_retired_128B_packed_double,
+                                 const uint64_t fp_arith_inst_retired_128B_packed_single,
+				 const uint64_t fp_arith_inst_retired_256B_packed_double,
+				 const uint64_t fp_arith_inst_retired_256B_packed_single,
+				 const uint64_t fp_arith_inst_retired_512B_packed_double,
+				 const uint64_t fp_arith_inst_retired_512B_packed_single,
+				 const uint64_t uops_retired_retired_slots) {
+                 return ((float)(fp_arith_inst_retired_128B_packed_double+
+		                 fp_arith_inst_retired_128B_packed_single+
+				 fp_arith_inst_retired_256B_packed_double+
+				 fp_arith_inst_retired_256B_packed_single+
+				 fp_arith_inst_retired_512B_packed_double+
+				 fp_arith_inst_retired_512B_packed_single)/
+				  uops_retired_retired_slots);
+    }
+
+    static inline
+    float skx_fp_arith_util_core(         const uint64_t uops_retired_retired_slots,
+                                          const float scalar_ratio,
+					  const float vector_ratio,
+					  const uint64_t core_clks) {
+                  return ((float)uops_retired_retired_slots*
+		                 (scalar_ratio+vector_ratio)/
+				 (2ULL*core_clks));
+    }
+
+    static inline
+    float skx_ilp_ratio( const uint64_t uops_executed_thread,
+                         const float execute_cycles) {
+              return ((float)uops_executed_thread/
+	                     execute_cycles);
+    }
+
+    static inline
+    float skx_instr_per_mispredict( const uint64_t instr_retired_any,
+                                    const uint64_t br_misp_retired_all_branches) {
+              return ((float)instr_retired_any/
+	                        br_misp_retired_all_branches);
+    }
+
+    static inline
+    float skx_load_miss_real_latency( const uint64_t l1d_pend_miss_pending,
+                                      const uint64_t l1d_pend_miss_pending_cycles) {
+              return ((float)l1d_pend_miss_pending/
+	                     l1d_pend_miss_pending_cycles);
+    }
+
 }
 
 #endif /*__GMS_SKX_TMA_METRICS_H__*/
