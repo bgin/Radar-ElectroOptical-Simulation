@@ -522,6 +522,120 @@ namespace gms {
 	                     l1d_pend_miss_pending_cycles);
     }
 
+    static inline
+    float skx_mem_level_parallelism( const uint64_t l1d_pend_miss_pending,
+                                     const uint64_t l1d_pend_miss_pending_cycles) {
+              return ((float)l1d_pend_miss_pending/
+	                        l1d_pend_miss_pending_cycles);
+    }
+
+    static inline
+    float skx_page_walker_util( const uint64_t itlb_misses_walk_pending,
+                                const uint64_t dtlb_load_misses_walk_pending,
+				const uint64_t dtlb_store_misses_walk_pending,
+				const uint64_t ept_walk_pending,
+				const uint64_t core_clks) {
+               return ((float)(itlb_misses_walk_pending+
+	                          dtlb_load_misses_walk_pending+
+				        dtlb_store_misses_walk_pending+
+					                 ept_walk_pending)/
+							      (2ULL*core_clks));
+    }
+
+    static inline
+    float skx_l1d_bw_cache_fill( const uint64_t l1d_replacement,
+                                 const uint64_t time_interval) {
+               return ((float)l1d_replacement/1000000000ULL/time_interval);
+    }
+
+    static inline
+    float skx_l2_bw_cache_fill( const uint64_t l2_lines_in_all,
+                                const uint64_t time_interval) {
+                return ((float)l2_lines_in_all/1000000000ULL/time_interval);
+    }
+
+    static inline
+    float skx_l3_bw_cache_fill( const uint64_t longest_lat_cache_miss,
+                                const uint64_t time_interval) {
+                return ((float)longest_lat_cache_miss/1000000000ULL/time_interval);
+    }
+
+    static inline
+    float skx_l3_bw_cache_access( const uint64_t offcore_requests_all_requests,
+                                  const uint64_t time_interval) {
+                return ((float)offcore_requests_all_requests/1000000000ULL/time_interval);
+    }
+
+    static inline
+    float skx_l1_miss_1000instr( const uint64_t mem_load_retired_l1_miss,
+                                 const uint64_t instr_retired_any) {
+                return ((float)1000ULL*mem_load_retired_l1_miss/
+		                             instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_miss_1000instr( const uint64_t mem_load_retired_l2_miss,
+                                  const uint64_t instr_retired_any) {
+                return ((float)1000ULL*mem_load_retired_l2_miss/
+		                                   instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_all_miss_1000instr( const uint64_t l2_rqsts_miss,
+                                      const uint64_t instr_retired_any) {
+                return ((float)1000ULL*l2_rqsts_miss/
+		                           instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_miss_loads_1000instr( const uint64_t l2_rqsts_demand_data_rd_miss,
+                                        const uint64_t instr_retired_any) {
+                return ((float)1000ULL*l2_rqsts_demand_data_rd_miss/
+		                              instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_all_hits_1000instr( const uint64_t l2_rqsts_references,
+                                      const uint64_t l2_rqsts_miss,
+				      const uint64_t instr_retired_any) {
+                return ((float)1000ULL*(l2_rqsts_references-l2_rqsts_miss)/
+		                                        instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_hits_load_1000instr( const uint64_t l2_rqsts_demand_data_rd_hit,
+                                       const uint64_t instr_retired_any) {
+                 return ((float)1000ULL*l2_rqsts_demand_data_rd_hit/
+		                                instr_retired_any);
+     }
+
+     static inline
+     float skx_l3_miss_1000instr( const uint64_t mem_load_retired_l3_miss,
+                                  const uint64_t instr_retired_any) {
+                 return ((float)1000ULL*mem_load_retired_l3_miss/
+		                              instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_silent_evictions_rate( const uint64_t l2_lines_out_silent,
+                                         const uint64_t instr_retired_any) {
+                 return ((float)1000ULL*l2_lines_out_non_silent/
+		                            instr_retired_any);
+     }
+
+     static inline
+     float skx_l2_nonsilent_evictions_rate( const uint64_t l2_lines_out_non_silent,
+                                            const uint64_t instr_retired_any) {
+                 return ((float)1000ULL*l2_lines_out_non_silent/
+		                              instr_retired_any);
+     }
+
+     static inline
+     float skx_gflops_rate( const uint64_t flop_count,
+                            const uint64_t time_interval) {
+                 return ((float)flop_count/1000000000ULL/time_interval);
+     }
+
 }
 
 #endif /*__GMS_SKX_TMA_METRICS_H__*/
