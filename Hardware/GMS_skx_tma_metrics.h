@@ -636,6 +636,307 @@ namespace gms {
                  return ((float)flop_count/1000000000ULL/time_interval);
      }
 
+     static inline
+     float skx_clocks_to_ref_tsc(const uint64_t clks,
+                                 const uint64_t cpu_clk_unhalted_ref_tsc) {
+                 return ((float)clks/cpu_clk_unhalted_ref_tsc);
+     }
+
+     static inline
+     float skx_baseline_license0( const uint64_t core_power_lvl0_turbo_license,
+                                  const uint64_t core_clks,
+				  const bool is_ht_enabled) {
+                 return (is_ht_enabled ? (float)core_power_lvl0_turbo_license/2/core_clks :
+		                         (float)core_pwer_lvl0_turbo_license/core_clks);
+     }
+
+     static inline
+     float skx_baseline_license1( const uint64_t core_power_lvl1_turbo_license,
+                                  const uint64_t core_clks,
+				  const bool is_ht_enabled) {
+                 return (is_ht_enabled ? (float)core_power_lvl1_turbo_license/2/core_clks :
+		                         (float)core_pwer_lvl1_turbo_license/core_clks);
+     }
+
+     static inline
+     float skx_baseline_license2(  const uint64_t core_power_lvl2_turbo_license,
+                                   const uint64_t core_clks,
+				   const bool is_ht_enabled) {
+                 return (is_ht_enabled ? (float)core_power_lvl2_turbo_license/2/core_clks :
+		                         (float)core_pwer_lvl2_turbo_license/core_clks);
+     }
+
+     static inline
+     float skx_ht_utilization( const uint64_t cpu_clk_thread_unhalted_one_thread_active,
+                               const uint64_t cpu_clk_thread_unhalted_ref_xclk_any,
+			       const bool is_ht_enabled) {
+                 return (is_ht_enabled ? (float)1ULL-cpu_clk_thread_unhalted_one_thread_active/
+		                                (cpu_clk_thread_unhalted_ref_xclk_any/2ULL) :
+					        0.0f);
+     }
+
+     static inline
+     float skx_kernel_time_fraction( const uint64_t cpu_clk_unhalted_ref_tsc_sup,
+                                     const uint64_t cpu_clk_unhalted_ref_tsc) {
+                 return ((float)cpu_clk_unhalted_ref_tsc_sup/
+		                cpu_clk_unhalted_ref_tsc  );
+     }
+
+     static inline
+     float skx_dram_bw_used( const uint64_t unc_m_cas_count_rd,
+                             const uint64_t unc_m_cas_count_wr,
+			     const uint64_t time_interval) {
+                 return ((float)(64ULL*(unc_m_cas_count_rd+
+		                        unc_m_cas_count_wr))/1000000000ULL/time_interval);
+     }
+
+     static inline
+     float skx_mem_read_latency( const uint64_t unc_cha_tor_occupancy_ia_miss_rd,
+                                 const uint64_t unc_char_tor_inserts_ia_miss_drd,
+				 const uint64_t unc_cha_clockticks_one_unit,
+				 const uint64_t time_interval) {
+                 return ((float)1000000000ULL*(unc_cha_tor_occupancy_ia_miss_rd/
+		                               unc_char_tor_inserts_ia_miss_drd)/
+					       unc_cha_clockticks_one_unit/time_interval);   
+     }
+
+     static inline
+     float skx_mem_parallel_reads( const uint64_t unc_cha_tor_occupancy_ia_miss_drd,
+                                   const uint64_t unc_cha_tor_occupancy_ia_miss_drd_c1) {
+                 return ((float)unc_cha_tor_occupancy_ia_miss_drd/
+		                unc_cha_tor_occupancy_ia_miss_drd_c1);
+     }
+
+     static inline
+     float skx_mem_dram_read_latency( const uint64_t unc_m_rpq_occupancy,
+                                      const uint64_t unc_m_rpq_inserts,
+				      const uint64_t unc_m_clockticks_one_unit) {
+                 return ((float)1000000000ULL*(unc_m_rpq_occupancy/
+		                               unc_m_rpq~_inserts)/unc_m_clockticks_one_unit);
+     }
+
+     static inline
+     float skx_instr_per_farbr( const uint64_t instr_retired_any,
+                                const uint64_t br_instr_retired_far_branch) {
+                  return ((float)instr_retired_any/
+		                      br_instr_retired_far_branch);
+     }
+
+     static inline
+     float skx_frontend_bound( const uint64_t idq_uops_not_delivered_core,
+                               const uint64_t slots) {
+                  return ((float)idq_uops_not_delivered_core/slots);
+     }
+
+     static inline
+     float skx_frontend_latency( const uint64_t idq_uops_not_delivered_cycles_0_uops_deliv_core,
+                                 const uint64_t frontend_retired_latency_ge_1,
+				 const uint64_t frontend_retired_latency_ge_2,
+				 const float retire_fraction,
+				 const uint64_t slots) {
+                  return ((float)4ULL*(idq_uops_not_delivered_cycles_0_uops_deliv_core-
+		                       (frontend_retired_latency_ge_1-frontend_retired_latency_ge_2))
+				                                                retire_fraction/slots);
+     }
+
+     static inline
+     float skx_itlb_misses( const uint64_t ICACHE_64B_IFTAG_STALL,
+                            const uint64_t clks) {
+                  return ((float)ICACHE_64B_IFTAG_STALL/clks);
+     }
+
+     static inline
+     float skx_icache_misses( const uint64_t ICACHE_16B_IFDATA_STALL,
+                              const uint64_t ICACHE_16B_IFDATA_STALL_c1_e1,
+			      const uint64_t clks) {
+                  return ((float)(ICACHE_16B_IFDATA_STALL+2ULL*
+		                           ICACHE_16B_IFDATA_STALL_c1_e1 )clks);
+     }
+
+     static inline
+     float skx_branch_resteers( const uint64_t INT_MISC_CLEAR_RESTEER_CYCLES,
+                                const uint64_t BACLEARS_ANY,
+				const uint64_t clks) {
+                  return ((float)(INT_MISC_CLEAR_RESTEER_CYCLES+BACLEARS_ANY)/clks);
+     }
+
+     static inline
+     float skx_mispredict_resteers( const float mispred_clears,
+                                    const uint64_t INT_MISC_CLEAR_RESTEER_CYCLES,
+				    const uint64_t clks) {
+                  return ((float)(mispred_clears*INT_MISC_CLEAR_RESTEER_CYCLES)/clks);
+     }
+
+     static inline
+     float skx_clears_resteers( const mispred_fraction,
+                                const uint64_t INT_MISC_CLEAR_RESTEER_CYCLES,
+				const uint64_t clks) {
+                  return ((float)(1.0f-mispred_fraction)*
+		                   INT_MISC_CLEAR_RESTEER_CYCLES/clks);
+     }
+
+     static inline
+     float skx_unknown_branches( const float branch_resteers,
+                                 const uint64_t INT_MISC_CLEAR_RESTEER_CYCLES,
+				 const uint64_t clks) {
+                   return ((float)(branch_resteers-INT_MISC_CLEAR_RESTEER_CYCLES)/clks);
+     }
+
+     static inline
+     float skx_dsb_switches( const uint64_t DSB2MITE_SWITCHES_PENALTY_CYCLES,
+                             const uint64_t clks) {
+                   return ((float)DSB2MITE_SWITCHES_PENALTY_CYCLES/clks);
+     }
+
+     static inline
+     float skx_lcp( const uint64_t ILD_STALL_LCP,
+                    const uint64_t clks) {
+                return ((float)ILD_STALL_LCP/clks);
+     }
+
+
+     static inline
+     float skx_ms_switches( const uint64_t IDQ_MS_SWITCHES,
+                            const uint64_t clks) {
+           return ((float)(MS_Switches_Cost*IDQ_MS_SWITCHES)/clks);
+     }
+
+     static inline
+     float skx_frontend_bw( const float frontend_bound,
+                            const float frontend_latency) {
+           return (frontend_bound-frontend_latency);
+     }
+
+     static inline
+     float skx_mite( const uint64_t IDQ_ALL_MITE_CYCLES_ANY_UOPS,
+                     const uint64_t IDQ_ALL_MITE_CYCLES_4_UOPS,
+		     const uint64_t core_clks) {
+           return ((float)(IDQ_ALL_MITE_CYCLES_ANY_UOPS-
+	                   IDQ_ALL_MITE_CYCLES_4_UOPS)/core_clks);
+     }
+
+     static inline
+     float skx_dsb( const uint64_t IDQ_ALL_DSB_CYCLES_ANY_UOPS,
+                    const  UINT64_T IDQ_ALL_DSB_CYCLES_4_UOPS,
+		    const uint64_t core_clks) {
+           return ((float)(IDQ_ALL_DSB_CYCLES_ANY_UOPS-
+	                   IDQ_ALL_DSB_CYCLES_4_UOPS)/core_clks);
+     }
+
+     static inline
+     float skx_bad_speculation( const uint64_t UOPS_ISSUED_ANY,
+                                const uint64_t retired_slots,
+				const float recovery_cycles,
+				const uint64_t slots){
+            return ((float)(UOPS_ISSUED_ANY-retired_slots+4ULL*
+	                               recovery_cycles)/slots);
+      }
+
+      static inline
+      float skx_branch_mispredict( const float mispred_clears,
+                                   const float bad_speculation) {
+             return (mispred_clears*bad_speculation);
+      }
+
+      static inline
+      float skx_machine_clears( const float bad_speculation,
+                                const float branch_mispredict) {
+             return (bad_speculation-branch_mispredict);
+      }
+
+      static inline
+      float skx_backend_bound( const float frontend_bound,
+                               const float bad_speculation,
+			       const float retiring ) {
+             return (1.0f-(frontend_bound+bad_speculation+retiring));
+      }
+
+      static inline
+      float skx_memory_bound( const float memory_bound_frac,
+                              const float backend_bound) {
+             return (memory_bound_frac*backend_bound);
+      }
+
+      static inline
+      float skx_l1_bound( const uint64_t CYCLE_ACTIVITY_STALLS_MEM_ANY,
+                          const uint64_t CYCLE_ACTIVITY_STALLS_L1D_MISS,
+			  const uint64_t clks) {
+             return ((float)(CYCLE_ACTIVITY_STALLS_MEM_ANY-
+	                     CYCLE_ACTIVITY_STALLS_1D_MISS)/clks);
+      }
+
+      static inline
+      float skx_dtlb_load( const uint64_t DTLB_LOAD_MISSES_STLB_HIT,
+                           const uint64_t DTLB_LOAD_MISSES_WALK_ACTIVE,
+			   const uint64_t clks) {
+              return ((float)(Mem_STLB_Hit_Cost*
+	                       DTLB_LOAD_MISSES_STLB_HIT+
+			           DTLB_LOAD_MISSES_WALK_ACTIVE)/clks);
+      }
+
+      static inline
+      float skx_load_stlb_hit( const float dtlb_load,
+                               const float load_stlb_miss) {
+              return ((float)dtlb_load-load_stlb_miss);
+      }
+
+      static inline
+      float skx_load_stlb_miss( const uint64_t DTLB_LOAD_MISSES_WALK_ACTIVE,
+                                const uint64_t clks) {
+              return ((float)DTLB_LOAD_MISSES_WALK_ACTIVE/clks);
+      }
+
+      static inline
+      float skx_sores_fwd_blocked( const uint64_t LD_BLOCKS_STORE_FORWARD,
+                                   const uint64_t clks) {
+              return ((float)LD_BLOCKS_STORE_FORWARD/clks);
+      }
+
+      static inline
+      float skx_lock_latency( const float mem_lock_st_fraction,
+                              const float oro_demand_rfo_c1,
+			      const uint64_t clks) {
+              return ((float)(mem_lock_st_fraction*
+	                      oro_demand_rfo_c1)/clks);
+      }
+
+      static inline
+      float skx_split_loads( const float load_miss_real_lat,
+                             const float uint64_t LD_BLOCKS_NO_SR,
+			     const uint64_t clks) {
+              return ((float)(load_miss_real_lat+LD_BLOCKS_NO_SR)/clks);
+      }
+
+      static inline
+      float skx_4k_aliasing( const uint64_t LD_BLOCKS_PARTIAL_ADDRESS_ALIAS,
+                             const uint64_t clks) {
+              return ((float)LD_BLOCKS_PARTIAL_ADDRESS_ALIAS/clks);
+      }
+
+      static inline
+      float skx_fb_full( const float load_miss_real_lat,
+                         const uint64_t L1D_PEND_MISS_FB_FULL_c1,
+			 const uint64_t clks) {
+              return ((float)( load_miss_real_lat*
+	                       L1D_PEND_MISS_FB_FULL_c1)/clks);
+      }
+
+      static inline
+      float skx_l2_bound( const float load_l2_hit,
+                          const uint64_t  L1D_PEND_MISS_FB_FULL_c1,
+			  const float l2_bound_ratio) {
+              return ((float)load_l2_hit/(load_l2_hit+L1D_PEND_MISS_FB_FULL_c1)*
+	                                            l2_bound_ratio);
+      }
+      
+      static inline
+      float skx_l3_bound( const uint64_t CYCLE_ACTIVITY_STALLS_L2_MISS,
+                          const uint64_t CYCLE_ACTIVITY_STALLS_L3_MISS,
+			  const uint64_t clks) {
+              return ((float)(CYCLE_ACTIVITY_STALLS_L2_MISS-
+	                      CYCLE_ACTIVITY.STALLS_L3_MISS)/clks);
+      }
+
 }
 
 #endif /*__GMS_SKX_TMA_METRICS_H__*/
