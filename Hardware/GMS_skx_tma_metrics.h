@@ -934,9 +934,224 @@ namespace gms {
                           const uint64_t CYCLE_ACTIVITY_STALLS_L3_MISS,
 			  const uint64_t clks) {
               return ((float)(CYCLE_ACTIVITY_STALLS_L2_MISS-
-	                      CYCLE_ACTIVITY.STALLS_L3_MISS)/clks);
+	                      CYCLE_ACTIVITY_STALLS_L3_MISS)/clks);
       }
 
+      static inline
+      float skx_contested_accesses( const float load_xsnp_hitm,
+                                    const float load_xsnp_miss,
+				    const uint64_t clks) {
+              return ((float)(Mem_XSNP_HitM_Cost*load_xsnp_hitm+
+	                      Mem_XSNP_Hit_Cost*load_xsnp_miss)/clks);
+      }
+
+      static inline
+      float skx_data_sharing( const float load_xsnp_hit,
+                              const uint64_t clks) {
+              return ((float) (Mem_XSNP_Hit_Cost*load_xsnp_hit)/clks);
+      }
+
+      static inline
+      float skx_l3_hit_latency( const float load_l3_hit,
+                                const uint64_t clks) {
+              return ((float)(Mem_XSNP_None_Cost*load_xsnp_hit)/clks);
+      }
+
+      static inline
+      float skx_sq_full( const float sq_full_cycles,
+                         const uint64_t clks) {
+              return ((float)sq_full_cycles/clks);
+      }
+
+      static inline
+      float skx_mem_bw( const uint64_t oro_drd_bw_cycles,
+                        const uint64_t clks){
+              return ((float)oro_drd_bw_cycles/clks);
+      }
+
+      static inline
+      float skx_local_dram( const float load_lcl_mem,
+                            const uint64_t clks) {
+              return ((float)(Mem_Local_DRAM_Cost*load_lcl_mem)/clks);
+      }
+
+      static inline
+      float skx_remote_dram( const float load_rmt_mem,
+                             const uint64_t clks) {
+              return ((float)(Mem_Remote_DRAM_Cost*load_rmt_mem)/clks);
+      }
+
+      static inline
+      float skx_remote_cache( const float load_rmt_hitm,
+                              const float load_rmt_fwd,
+			      const uint64_t clks) {
+              return ((float)(Mem_Remote_Hitm_Cost*load_rmt_hitm+
+	                      Mem_Remote_Fwd_Cost*load_rmt_fwd)/clks);
+      }
+
+      static inline
+      float skx_store_bound( const uint64_t EXE_ACTIVITY_BOUND_ON_STORES,
+                             const uint64_t clks) {
+              return ((float)EXE_ACTIVITY_BOUND_ON_STORES/clks);
+      }
+
+      static inline
+      float skx_store_latency( const float store_l2_hit_cycles,
+                               const float mem_lock_st_fraction,
+			       const uint64_t oro_demand_rfo_c1,
+			       const uint64_t clks) {
+              return ((float)(store_l2_hit_cycles+(1.0f-mem_lock_st_fraction)*
+	                      oro_demand_rfo_c1)/clks);
+      }
+
+      static inline
+      float skx_split_stores_clks( const uint64_t MEM_INST_RETIRED_SPLIT_STORES,
+                              const uint64_t clks) {
+              return ((float)MEM_INST_RETIRED_SPLIT_STORES/clks);
+      }
+
+      static inline
+      float skx_dtlb_store_clks( const uint64_t DTLB_STORE_MISSES_STLB_HIT,
+                                 const uint64_t DTLB_STORE_MISSES_WALK_ACTIVE,
+				 const uint64_t core_clks) {
+              return ((float)(Mem_STLB_Hit_Cost*DTLB_STORE_MISSES_STLB_HIT+
+	                      DTLB_STORE_MISSES_WALK_ACTIVE)/core_clks);
+      }
+
+      static inline
+      float skx_stlb_hit_clks( const float dtlb_store_clks,
+                               const float store_stlb_miss) {
+              return (dtlb_store_clks-store_stlb_miss);
+      }
+
+      static inline
+      float skx_store_stlb_miss_clks( const uint64_t DTLB_STORE_MISSES_WALK_ACTIVE,
+                                      const uint64_t core_clks) {
+              return ((float)DTLB_STORE_MISSES_WALK_ACTIVE/core_clks);
+      }
+
+      static inline
+      float skx_core_bound_slots( const float backend_bound,
+                                  const float mem_bound) {
+              return (backend_bound-mem_bound);
+      }
+
+      static inline
+      float skx_divider_clks( const uint64_t ARITH_DIVIDER_ACTIVE,
+                              const uint64_t clks) {
+              return ((float)ARITH_DIVIDER_ACTIVE/clks);
+      }
+
+      static inline
+      float skx_ports_util_0_clks( const float cycles_ports_0_util,
+                                   const uint64_t core_clks) {
+              return (cycles_ports_0_util/(float)core_clks);
+      }
+
+      static inline
+      float skx_serializations_clks( const uint64_t PARTIAL_RAT_STALLS_SCOREBOARD,
+                                     const uint64_t clks) {
+              return ((float)PARTIAL_RAT_STALLS_SCOREBOARD/clks);
+      }
+
+      static inline
+      float skx_ports_util_1_clks( const float cycles_ports_1_util,
+                                   const uint64_t core_clks) {
+              return (cycles_ports_1_util/(float)core_clks);
+      }
+
+      static inline
+      float skx_ports_util_2_clks( const float cycles_ports_2_util,
+                                   const uint64_t core_clks) {
+              return (cycles_ports_2_util/(float)core_clks);
+      }
+
+      static inline
+      float skx_ports_util_3m_clks( const float cycles_ports_3m_util,
+                                   const uint64_t core_clks) {
+              return (cycles_ports_3m_util/(float)core_clks);
+      }
+
+      static inline
+      float skx_alu_util( const uint64_t UOPS_DISPATCHED_PORT_PORT_0,
+                          const uint64_t UOPS_DISPATCHED_PORT_PORT_1,
+			  const uint64_t UOPS_DISPATCHED_PORT_PORT_5,
+			  const uint64_t UOPS_DISPATCHED_PORT_PORT_6,
+			  const uint64_t core_clks) {
+              return ((float)(UOPS_DISPATCHED_PORT_PORT_0+
+	                      UOPS_DISPATCHED_PORT.PORT_1+
+			      UOPS_DISPATCHED_PORT.PORT_5+
+			      UOPS_DISPATCHED_PORT.PORT_6)/core_clks);
+      }
+
+      static inline
+      float skx_port_0_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_0,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_0/core_clks);
+      }
+
+      static inline
+      float skx_port_1_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_1,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_1/core_clks);
+      }
+
+      static inline
+      float skx_port_5_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_5,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_5/core_clks);
+      }
+
+      static inline
+      float skx_port_6_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_6,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_6/core_clks);
+      }
+
+      static inline
+      float skx_load_ops_util_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_2,
+                                    const uint64_t UOPS_DISPATCHED_PORT_PORT_3,
+				    const uint64_t UOPS_DISPATCHED_PORT_PORT_7,
+				    const uint64_t UOPS_DISPATCHED_PORT_PORT_4,
+				    const uint64_t core_clks) {
+              return ((float)(UOPS_DISPATCHED_PORT_PORT_2+
+	                      UOPS_DISPATCHED_PORT_PORT_3+
+			      UOPS_DISPATCHED_PORT_PORT_7+
+			      UOPS_DISPATCHED_PORT_PORT_4)/(2ULL*core_clks));
+      }
+
+      static inline
+      float skx_port_2_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_2,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_2/core_clks);
+      }
+
+      static inline
+      float skx_port_3_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_3,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_3/core_clks);
+      }
+
+      static inline
+      float skx_port_4_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_4,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_4/core_clks);
+      }
+
+      static inline
+      float skx_port_7_clks( const uint64_t UOPS_DISPATCHED_PORT_PORT_7,
+                             const uint64_t core_clks) {
+              return ((float)UOPS_DISPATCHED_PORT_PORT_7/core_clks);
+      }
+
+      static inline
+      float skx_x87_uops( const uint64_t UOPS_EXECUTED_X87,
+                          const uint64_t UOPS_EXECUTED_THREAD) {
+              return ((float)UOPS_EXECUTED_X87/UOPS_EXECUTED_THREAD);
+      }
+
+      
+      
 }
 
 #endif /*__GMS_SKX_TMA_METRICS_H__*/
