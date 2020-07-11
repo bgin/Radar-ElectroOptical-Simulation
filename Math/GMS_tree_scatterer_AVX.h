@@ -256,14 +256,203 @@ namespace  gms {
 
 			void ComputeLeavesParamEq_ymm8r4( const AVXVec8, const AVXVec8 ) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeBranchesParamEq_ymm8r4(const int32_t ) __ATTR_COLD__ __ATTR_ALIGN__(32);				
+			void ComputeBranchesParamEq_ymm8r4(const int32_t ) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-							
 
-		
+			__ATTR_COLD__
+			__ATTR_ALIGN__(16)
+			inline
+			void Set_leaf_quadrature_bounds(int32_t & nth1,
+			                                float   & tr_start1,
+							float   & tr_stop1,
+							float   & dt_rad1,
+							int32_t & nth2,
+			                                float   & tr_start2,
+							float   & tr_stop2,
+							float   & dt_rad2,
+							int32_t & nth3,
+			                                float   & tr_start3,
+							float   & tr_stop3,
+							float   & dt_rad3,
+							int32_t & nph1,
+							float   & pr_start1,
+							float   & pr_stop1,
+							float   & dp_rad1,
+							int32_t & nph2,
+							float   & pr_start2,
+							float   & pr_stop2,
+							float   & dp_rad2,
+							int32_t & nph3,
+							float   & pr_start3,
+							float   & pr_stop3,
+							float   & dp_rad3) {
+                                  float   td_start1,td_stop1,dt_deg1, 
+                                          td_start2,td_stop2,dt_deg2, 
+                                          td_start3,td_stop3,dt_deg3, 
+                                          pd_start1,pd_stop1,dp_deg1, 
+                                          pd_start2,pd_stop2,dp_deg2, 
+                                          pd_start3,pd_stop3,dp_deg3;
+				  const float t0 =  0.017453292519943f;
+				  td_start1 = 2.5f;
+                                  td_stop1 = 177.5f;
+                                  dt_deg1  = 5.0f;
+                                  nth1  = 35;
+                                  tr_start1 = t0*td_start1
+                                  tr_stop1  = t0*td_stop1
+                                  dt_rad1   = t0*dt_deg1
+                                  pd_start1 = 2.5f;
+                                  pd_stop1 = 177.5f;
+                                  dp_deg1 = 5.0f;
+                                  nph1 = 36;
+                                  pr_start1 = t0*pd_start1;
+                                  pr_stop1  = t0*pd_stop1;
+                                  dp_rad1   = t0*dp_deg1;
+                                  td_start2 = 0.0f;
+                                  td_stop2 = 0.0f;
+                                  dt_deg2 = 0.0f;
+                                  nth2 = 0;
+                                  tr_start2 = 0.0f;
+                                  tr_stop2  = 0.0f;
+                                  dt_rad2   = 0.0f;
+                                  pd_start2 = 0.0f;
+                                  pd_stop2 = 0.0f;
+                                  dp_deg2 = 0.0f;
+                                  nph2 = 0;
+                                  pr_start2 = 0.0f;
+                                  pr_stop2 = 0.0f;
+                                  dp_rad2 = 0.0f;
+                                  td_start3 = 0.0f
+                                  td_stop3 = 0.0f;
+                                  dt_deg3 = 0.0f;
+                                  nth3 = 0;
+                                  tr_start3 = 0.0f;
+                                  tr_stop3  = 0.0f;
+                                  dt_rad3 = 0.0f;
+                                  pd_start3 = 0.0f;
+                                  pd_stop3 = 0.0f;
+                                  pd_deg3 = 0.0f;
+                                  nph3 = 0;
+                                  pr_start3 = 0.0f;
+                                  pr_stop3 = 0.0f;
+                                  dp_rad3 = 0.0f;
 
-						
+		    }
 
+			__ATTR_HOT__
+			__ATTR_ALIGN__(64)
+			inline
+		        std::complex<float>
+			Leaf_dielectric(const float leaf_mg,
+			                const float leaf_rho,
+			                const float leaf_dens,
+					const float leaf_diam,
+					const float leaf_tau,
+					const bool dry_dens,
+				        const float water_tmp,
+		                        const float veg_tmp,
+					const float theta,
+					const float rad_freq)  {
+                           if(dry_dens) {
+                                return (Veg_dielectric_2(leaf_mg,
+				                         leaf_rho,
+							 veg_tmp,
+							 theta,
+							 rad_freq));
+			   }
+			   else {
+                                return (Veg_dielectric_1(leaf_mg,
+				                         veg_tmp,
+							 theta,
+							 rad_freq));
+			   }
+		     }
+
+                        __ATTR_HOT__
+			__ATTR_ALIGN__(64)
+			inline
+		        std::complex<float>
+			Veg_dielectric_2(const float mg,
+			                 const float veg_rho,
+					 const float tempC,
+					 const float theta,
+					 const float rad_freq) {
+                             std::complex<float> e,f,g,w;
+			     std::complex<float> result;
+			     float mv,a,b,c,d;
+			     float top,fn,en,ein;
+			     float t0;
+			     mv  = mg*veg_rho/(1.0f*(1.0f-veg_rho));
+			     t0  = mv*mv;
+			     a   = 1.7f+3.20f*mv+6.5f*t0;
+			     top =  1.1109e-10f+tempC*(-3.824e-12f+tempC* 
+                                    (6.938e-14f-tempC*5.096e-16f));
+			     b   = mv*(0.82f*mv+0.166f);
+			     fn  = 1.0f/(top*1.09f);
+			     e   = {1.0f,(rad_freq/fn)};
+			     d   = 22.74f;
+			     c   = 31.4f*t0/(59.5f*t0+1.0f);
+			     f   = {0.0f,(d_rad_freq)};
+			     en  =  88.045f+tempC*(-0.4147f+tempC*(6.295e-4f +
+                                    tempC*1.075e-5f));
+			     result = {};
+			     ein = 4.9f;
+			     w   = 0.707106781186548f*{1.0f,1.0f}*std::sqrt(rad_freq/0.18_sp);
+			     g   = 1.0f*w;
+			     result = a+b*(4.9f+(en-ein)/e-f)+c*(2.9f+55.0f/g);
+			     return (result);
+		     }
+		  
+                     __ATTR_HOT__
+		     __ATTR_ALIGN__(64)
+		     inline
+		     std::complex<float>
+		     Veg_dielectric_1(const float mg,
+		                      const float tempC,
+				      const float theta,
+				      const float rad_freq) {
+                         std::complex<float> e,f,g,w;
+			 std::complex<float> result;
+			 float top,fn,en,ein,t0;
+			 float a,b,c,d;
+			 t0  = mg*mg;
+			 a   = 1.7f-0.74f*mg+6.16f*t0;
+			 top = 1.1109e-10f+tempC*(-3.824e-12f+tempC * 
+                               (6.938e-14f-tempC*5.096e-16f));
+			 b   = mg*(0.55f*mg-0.076f);
+			 fn  = 1.0f/(top*1.09f);
+			 e   = {1.0f,(rad_freq/fn)};
+			 c   = 4.64f*t0/(7.36f*t0+1.0f);
+			 d   = 22.74f;
+			 f   = {0.0f,(d/rad_freq)};
+			 en  = 88.045f+tempC*(-0.4147f+tempC*(6.295e-4f +
+                               tempC*1.075e-5f));
+			 w   = 0.707106781186548f*{1.0f,1.0f}*std::sqrt(rad_freq/0.18_sp);
+			 ein = 4.9f;
+			 result = {};
+			 g   = 1.0f*w;
+			 result = a+b*(4.9f+(en-ein)/e-f)+c*(2.9f+55.0f/g);
+			 return (result);
+		    }
+
+		    
+
+		    __ATTR_HOT__				
+                    __ATTR_ALIGN__(32)
+		    inline
+		    float
+		    Leaf_ang_orientation(const float mu,
+		                         const float nu,
+					 const float th) {
+                         float t0,t1,t2;
+			 float result;
+			 const float two_over_pi =  0.636619772367581f;
+			 const float half_pi     =  1.570796326794897f;
+			 t0 = two_over_pi*exp(gamma(mu+nu)-gamma(mu)-gamma(nu));
+			 t1 = 1.0f-th/std::pow(half_pi,(nu-1.0f));
+			 result = 0.0f;
+			 t2 = th/std::pow(half_pi,(mu-1.0f));
+			 result = t0*t1*t2;
+		    }
 							  
 
 
