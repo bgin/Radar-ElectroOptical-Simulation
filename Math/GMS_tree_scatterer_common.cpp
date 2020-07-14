@@ -239,3 +239,34 @@ Leaf_PO_approximation(const float thinc,
            w2 = -cos_thi*s5+s1*cos_phsj;
            scat_mat[3] = const*(w1+gamhe_c1+w2*gamhe_c2);
 }
+
+void
+gms::math::
+Leaf_Rayleigh_scattering( const float thinc,
+		          const float phinc,
+		          const float thsc,
+		          const float phsc,
+		          const float thdr,
+		          const float phdr,
+		          const float rad_freq,
+		          const float rad_k0,
+		          const float rad_wv,
+		          const float leaf_mg,
+		          const float leaf_rho,
+		          const float leaf_dens,
+		          const float leaf_diam,
+		          const float leaf_tau,
+		          const std::complex<float> epsr,
+		          std::complex<float> * __restrict __ATTR_ALIGN__(32) scat_mat) {
+
+     __attribute__((aligned(16))) xhat[4];
+     __attribute__((aligned(16))) yhat[4];
+     __attribute__((aligned(16))) zhat[4];
+     __attribute__((aligned(16))) xhatl[4];
+     __attribute__((aligned(16))) yhatl[4];
+     __attribute__((aligned(16))) zhatl[4];
+     __attribute__((aligned(16))) khati[4];
+     __attribute__((aligned(16))) khats[4];
+     __attribute__((aligned(16))) hhati[4];
+     
+}
