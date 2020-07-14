@@ -245,8 +245,27 @@ namespace gms {
 					  const std::complex<float>,
 					  std::complex<float> * __restrict __ATTR_ALIGN__(32)) __ATTR_HOT__ __ATTR_ALIGN__(32);
 
+		    void
+		    Leaf_Rayleigh_scattering(const float,
+		                             const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const float,
+					     const std::complex<float>,
+					     std::complex<float> * __restrict __ATTR_ALIGN__(32)) __ATTR_HOT__ __ATTR_ALIGN__(32);
+
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(64)
+		    __ATTR_VECTORCALL__
 		    inline
 		    void
 		    vec1x3_smooth(float * __restrict __ATTR_ALIGN__(16) in,
@@ -263,13 +282,37 @@ namespace gms {
 #endif
 			 mag = sqrtf(in[0]*in[0]+in[1]*in[1]+in[2]*in[2]);
 			 if(mag!=0.0f) {
-			 tmp = _mm_setzero_ps();
-			 _mm_load_ps(&in[0]);
+			    tmp = _mm_setzero_ps();
+			    tmp = _mm_load_ps(&in[0]);
                             _mm_store_ps(&in[0],_mm_div_ps(tmp,_mm_set1_ps(mag));
+			    check_mag_tol(in,out);
+			    mag = sqrtf(in[0]*in[0]+in[1]*in[1]+in[2]*in[2]);
+			    _mm_store_ps(&out[0],_mm_div_ps(_mm_load_ps(&in[0]),
+			                                     _mm_set1_ps(mag)));
+			 }
+			 else {
+                            _mm_store_ps(&out[0],_mm_load_ps(&in[0]));
 			 }
 		  }
-			   
 
+		 __ATTR_HOT__
+                 __ATTR_ALIGN__(64)
+		 __ATTR_VECTORCALL__
+		 inline
+		 void
+		 check_mag_tol(const float * __restrict __ATTR_ALIGN__(16) in,
+		               float * __restrict __ATTR_ALIGN__(16) out) {
+		      __m128 tmp,tol;
+                      tol = _mm_set1_ps(0.00001f);
+		      tmp = _mm_setzero_ps();
+		      tmp = _mm_cmplt_ps(_mm_load_ps(&in[0]),tol);
+		      if(!_mm_test_all_ones(_mm_castps_si128(tmp))) {
+                          _mm_store_ps(&out[0],_mm_setzero_ps());
+		      }
+		      else {
+                          _mm_store_ps(&out[0],_mm_load_ps(&in[0]));
+		      }
+		 }
 
      } // math
 
