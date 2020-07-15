@@ -314,6 +314,50 @@ namespace gms {
 		      }
 		 }
 
+                 __ATTR_HOT__
+		 __ATTR_ALIGN__(64)
+		 __ATTR_VECTORCALL__
+		 inline
+		 void
+		 cross_prod(float * __restrict __ATTR_ALIGN__(16) a,
+		            float * __restrict __ATTR_ALIGN__(16) b,
+			    float * __restrict __ATTR_ALIGN__(16) c) {
+#if defined __INTEL_COMPILER
+                         __assume_aligned(a,16);
+			 __assume_aligned(b,16);
+			 __assume_aligned(c,16);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                        a = (float*)__builtin_assume_aligned(a,16);
+			b = (float*)__builtin_assume_aligned(b,16);
+			c = (float*)__builtin_assume_aligned(c,16);
+#endif
+                        c[0] = a[1]*b[2]-a[2]*b[1];
+			c[1] = a[2]*b[0]-a[0]*b[2];
+			c[2] = a[0]*b[1]-a[1]*b[0];
+		}
+
+		__ATTR_HOT__
+		__ATTR_ALIGN__(64)
+		__ATTR_VECTORCALL__
+		inline
+		float dot_prod(const float * __restrict __ATTR_ALIGN__(16) a,
+		               const float * __restrict __ATTR_ALIGN__(16) b) {
+#if defined __INTEL_COMPILER
+                         __assume_aligned(a,16);
+			 __assume_aligned(b,16);
+			
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                        a = (const float*)__builtin_assume_aligned(a,16);
+			b = (const float*)__builtin_assume_aligned(b,16);
+		
+#endif
+                        float res;
+			res = 0.0f;
+			res = a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+			return (res);
+		}
+        	
+
      } // math
 
 } // gms
