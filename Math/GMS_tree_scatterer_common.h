@@ -356,7 +356,54 @@ namespace gms {
 			res = a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 			return (res);
 		}
-        	
+
+		__ATTR_HOT__
+		__ATTR_ALIGN__(64)
+		__ATTR_VECTORCALL__
+		inline
+        	void
+		stokes_matrix(std::complex<float>* __restrict __ATTR_ALIGN__(32) scat_mat,
+		              float * __restrict __ATTR_ALIGN__(64) stokes_mat) {
+
+		      std::complex<float> CW1121C,CW1122C,CW1112C,CW2122C,
+                                          CW1221C,CW1222C,CW1,CW2;
+		      float  w1,w2,w3,w4;
+#if defined __INTEL_COMPILER
+                      __assume_aligned(scat_mat,32);
+		      __assume_aligned(stokes_mat,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                      scat_mat   = (std::complex<float>*)__builtin_assume_aligned(scat_mat,32);
+		      stokes_mat = (float*)__builtin_assume_aligned(stokes_mat,64);
+#endif
+		      w1 = std::abs(scat_mat[0]);
+		      stokes_mat[0] = w1*w1;
+		      CW1121C = scat_mat[0]*std::conj(scat_mat[2]);
+		      w2 = std::abs(scat_mat[1]);
+		      stokes_mat[1] = w2*w2;
+		      CW1222C = scat_mat[1]*std::conj(scat_mat[3]);
+		      w3 = std::abs(scat_mat[2]);
+		      stokes_mat[2] = w3*w3;
+		      CW1112C = scat_mat[0]*std::conj(scat_mat[1]);
+		      w4 = std::abs(scat_mat[3]);
+		      stokes_mat[3] = w4*w4;
+		      CW2122C = scat_mat[2]*std::conj(scat_mat[3]);
+		      CW1122C = scat_mat[0]*std::conj(scat_mat[3]);
+		      CW1221C = scat_mat[1]*std::conj(scat_mat[2]);
+		      CW1 =  CW1122C + CW1221C;
+		      CW2 =  CW1122C - CW1221C;
+		      stokes_mat[4] = 2.0f*CW1121C.real();
+		      stokes_mat[5] = 2.0f*CW1121C.imag();
+		      stokes_mat[6] = 2.0f*CW1222C.real();
+                      stokes_mat[7] = 2.0f*CW1222C.imag();
+		      stokes_mat[8] = CW1112C.real();
+		      stokes_mat[9] = CW2122C.imag();
+		      stokes_mat[10] = CW1.real();
+		      stokes_mat[11] = CW1.imag();
+		      stokes_mat[12] = -CW1112C.imag();
+		      stokes_mat[13] = -CW2122C.imag();
+		      stokes_mat[14] = -CW2.imag();
+		      stokes_mat[15] = CW2.real();
+		}
 
      } // math
 
