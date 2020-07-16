@@ -332,5 +332,51 @@ Leaf_Rayleigh_scattering( const float thinc,
      Ce  = (t_lf/200.0f)*dum;
      Ae  = (d_lf/200.0f)*dum;
      Be  = Ae;
-     
+     hhsdxhl = 0.0f;
+     hhsdxhl = dot_prod(hhats,xhatl);
+     dum = Ae*Ae-Ce*Ce;
+     hhsdyhl = 0.0f;
+     hhsdyhl = dot_prod(hhats,yhatl);
+     dum2 = (sqrtf(dum))/Ce;
+     Ac =  2.0f/(powf(dum,1.5f))*(dum2-atan(dum2));
+     hhsdzhl = 0.0f;
+     hhsdzhl = dot_prod(hhats,zhatl);
+     Ab =  (2.0f/(Ae*Be*Ce)-Ac)*0.5f;
+     Aa = Ab;
+     vhidxhl = 0.0f;
+     vhidxhl = dot_prod(vhati,xhatl);
+     Vo = 12.566370614359173f*Ae*Be*Ce*0.3333333333333f;
+     vhidyhl = 0.0f;
+     vhidyhl = dot_prod(vhati,yhatl);
+     Vd = (Ae*Be*Ce*0.5f)*(eps-1.0f);
+     vhidzhl = 0.0f;
+     vhidzhl = dot_prod(vhati,zhatl);
+     hhidxhl = 0.0f;
+     hhidxhl = dot_prod(hhati,xhatl);
+     cdum = (rad_k0*rad_k0/12.566370614359173f)*Vo*(eps-1.0f);
+     hhidyhl = 0.0f;
+     hhidyhl = dot_prod(hhati,yhatl);
+     cduma = 1.0f + Vd*Aa;
+     cdumb = cduma;
+     hhidzhl = 0.0f;
+     hhidzhl = dot_prod(hhati,zhatl);
+     cdumc = 1.0f + Vd*Ac;
+#if defined __INTEL_COMPILER
+     __assume_aligned(scat_mat,32);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     scat_mat = (std::complex<float>*)__builtin_assume_aligned(scat_mat,32);
+#endif
+     scat_mat[0] = cdum*(vhsdxhl*vhidxhl/cduma + 
+		   vhsdyhl*vhidyhl/cdumb + vhsdzhl*vhidzhl/cdumc);
+
+     scat_mat[1] = cdum*(hhsdxhl*vhidxhl/cduma + 
+                   hhsdyhl*vhidyhl/cdumb + hhsdzhl*vhidzhl/cdumc);
+
+     scat_mat[2] = cdum*(vhsdxhl*hhidxhl/cduma + 
+                   vhsdyhl*hhidyhl/cdumb + vhsdzhl*hhidzhl/cdumc);
+
+     scat_mat[3] = cdum*(hhsdxhl*hhidxhl/cduma + 
+                   hhsdyhl*hhidyhl/cdumb + hhsdzhl*hhidzhl/cdumc);
 }
+
+
