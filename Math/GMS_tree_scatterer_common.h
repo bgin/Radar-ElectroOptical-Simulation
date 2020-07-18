@@ -24,10 +24,40 @@ namespace file_info {
 #include <immintrin.h>
 #include "GMS_config.h"
 
+#if !defined LEAF_PHASE_MATRICES_AUTOVECTORIZE
+    #define LEAF_PHASE_MATRICES_AUTOVECTORIZE 1
+#endif
 namespace gms {
 
          namespace math {
 
+
+	                __ATTR_HOT__
+		        __ATTR_ALIGN__(32)
+			void
+                        Leaf_phase_matrices(float * __restrict __ATTR_ALIGN__(64),
+			                    std::complex<float> * __restrict __ATTR_ALIGN__(32),
+					    std::complex<float> * __restrict __ATTR_ALIGN__(32),
+					    float * __restrict __ATTR_ALIGN__(64),
+					    std::complex<float> * __restrict __ATTR_ALIGN__(32),
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const float,
+					    const std::complex<float>,
+					    const float,
+					    const float,
+					    const float,
+					    const int32_t);
+					    
+			
 	               	__ATTR_COLD__
 			__ATTR_ALIGN__(32)
 			inline
