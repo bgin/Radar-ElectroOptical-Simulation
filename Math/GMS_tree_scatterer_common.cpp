@@ -785,12 +785,12 @@ gms::math
 						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 			                      
 						 
-		    }
-		    else {
+		       }
+		       else {
                             Leaf_Rayleigh_scattering(thinc,phinc,thsc,phsc,thdr,phdr,
 			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
 						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
-		     }
+		       }
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 #if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
@@ -832,11 +832,173 @@ gms::math
 		       }
 #else
 #include "l4x4phm_t3_1_1_1.c"
-#endif				  
+#endif
+		       // Phase matrix: case 3
+		        thinc = theta;
+                        thsc  = theta;
+                        phinc = 3.141592653589793f;
+                        phsc  = 0.0f;
+			if(po) {
+                           Leaf_PO_approximation(thinc,phinc,thsc,phsc,thdr,phdr,
+			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
+						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+			                      
+						 
+		       }
+		       else {
+                            Leaf_Rayleigh_scattering(thinc,phinc,thsc,phsc,thdr,phdr,
+			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
+						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+		       }
+		     stokes_matrix(&scat2x2m[0],
+		                  &stokes4x4m[0]);
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+                       for(k=0; k != 4; ++k) {
+#if defined __INTEL_COMPILER
+        __assume_aligned(stokes4x4m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+        stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
+#pragma omp simd
+#endif
+                           for(l=0; l != 4; ++l) {
+                               t1 = l4x4phm_t3[k][l][2]+orient_distr*stokes4x4m[Ix2D(k,4,l)];
+			       l4x4phm_t3[k][l][2] = t1;
+			   }
+		       }
+#else
+#include "l4x4phm_t3_1_1_2.c"
+#endif
+                     scat2x2m[1] = -scat2x2m[1];
+		     scat2x2m[2] = -scat2x2m[2];
+		     stokes_matrix(&scat2x2m[0],
+		                   &stokes4x4m[0]);
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+                       for(k=0; k != 4; ++k) {
+#if defined __INTEL_COMPILER
+        __assume_aligned(stokes4x4m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+        stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
+#pragma omp simd
+#endif
+                           for(l=0; l != 4; ++l) {
+                               t1 = l4x4phm_t3[k][l][2]+orient_distr*stokes4x4m[Ix2D(k,4,l)];
+			       l4x4phm_t3[k][l][2] = t1;
+			   }
+		       }
+#else
+#include "l4x4phm_t3_1_1_2.c"
+#endif
+                     // Phase matrix: case 4
+		       thinc = 3.141592653589793f-theta;
+                       thsc  = theta;
+                       phinc = 0.0f;
+                       phsc  = 3.141592653589793f;
+		       if(po) {
+                           Leaf_PO_approximation(thinc,phinc,thsc,phsc,thdr,phdr,
+			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
+						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+			                      
+						 
+		       }
+		       else {
+                            Leaf_Rayleigh_scattering(thinc,phinc,thsc,phsc,thdr,phdr,
+			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
+						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+		       }
+		       stokes_matrix(&scat2x2m[0],
+		                  &stokes4x4m[0]);
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+                       for(k=0; k != 4; ++k) {
+#if defined __INTEL_COMPILER
+        __assume_aligned(stokes4x4m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+        stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
+#pragma omp simd
+#endif
+                           for(l=0; l != 4; ++l) {
+                               t1 = l4x4phm_t3[k][l][3]+orient_distr*stokes4x4m[Ix2D(k,4,l)];
+			       l4x4phm_t3[k][l][3] = t1;
+			   }
+		       }
+#else
+#include "l4x4phm_t3_1_1_3.c"
+#endif
+                     scat2x2m[1] = -scat2x2m[1];
+		     scat2x2m[2] = -scat2x2m[2];
+		     stokes_matrix(&scat2x2m[0],
+		                   &stokes4x4m[0]);
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+                       for(k=0; k != 4; ++k) {
+#if defined __INTEL_COMPILER
+        __assume_aligned(stokes4x4m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+        stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
+#pragma omp simd
+#endif
+                           for(l=0; l != 4; ++l) {
+                               t1 = l4x4phm_t3[k][l][3]+orient_distr*stokes4x4m[Ix2D(k,4,l)];
+			       l4x4phm_t3[k][l][3] = t1;
+			   }
+		       }
+#else
+#include "l4x4phm_t3_1_1_3.c"
+#endif
+                     // Extinction matrix: case 1
+		       thinc = theta;
+                       thsc  = thinc;
+                       phinc = 3.141592653589793f;
+                       phsc  = phinc;
+		       if(po) {
+                           Leaf_PO_approximation(thinc,phinc,thsc,phsc,thdr,phdr,
+			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
+						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+			                      
+						 
+		       }
+		       else {
+                            Leaf_Rayleigh_scattering(thinc,phinc,thsc,phsc,thdr,phdr,
+			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
+						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+		       }
+#include "sm2x2avg_t3_1_1_0.c"
+                           scat2x2m[1] = -scat2x2m[1];
+		           scat2x2m[2] = -scat2x2m[2];
+#include "sm2x2avg_t3_1_1_0.c"
+                      // Extinction matrix: case 2
+		        thinc =  3.141592653589793f-theta;
+                        thsc  =  3.141592653589793f-theta;
+                        phinc = 0.0f;
+                        phsc  = phinc;
+			if(po) {
+                           Leaf_PO_approximation(thinc,phinc,thsc,phsc,thdr,phdr,
+			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
+						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+			                      
+						 
+		       }
+		       else {
+                            Leaf_Rayleigh_scattering(thinc,phinc,thsc,phsc,thdr,phdr,
+			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
+						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
+		       }
+#include "sm2x2avg_t3_1_1_1.c"
+                           scat2x2m[1] = -scat2x2m[1];
+		           scat2x2m[2] = -scat2x2m[2];
+#include "sm2x2avg_t3_1_1_1.c"
 		  } // end of for(ii=0 loop
 	       } // if(orient_distr block
 	   } // end of for(jj=0 loop
        } // end nth3 != 0 block
+
+        //! Phase and M matrices
 }
 
 
