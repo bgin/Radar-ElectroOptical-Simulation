@@ -999,6 +999,46 @@ gms::math
        } // end nth3 != 0 block
 
         //! Phase and M matrices
+        work = 1.0f/norm;
+	for(i=0; i != 4; ++i) {
+#if defined __INTEL_COMPILER
+#pragma unroll_and_jam (4)
+#endif
+             for(k=0; k != 4; ++k) {
+#if defined __INTEL_COMPILER
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#endif
+                     for(l=0; l != 4; ++l) {
+		          const float t0 = dp1t1*l4x4phm_t1[i][k][l];
+			  const float t1 = dp2t2*l4x4phm_t2[i][k][l];
+			  const float t2 = dp3t3*l4x4phm_t3[i][k][l];
+                          l4x4phm[Ix3D(i,4,k,4,l)] = work*(t0+t1+t2);
+		     }
+	     }
+	}
+	// Loops fused, may inhibit LSD detection.
+	cwork = j*6.283185307179586f/(norm*rad_k0);
+	for(k=0; k != 2; ++k) {
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd
+#endif
+                for(l=0; l != 2; ++l) {
+                    const std::complex<float> t0 = dp1t1*sm2x2avg_t1[k][l][0];
+		    const std::complex<float> t1 = dp2t2*sm2x2avg_t2[k][l][0];
+		    const std::complex<float> t2 = dp3t3*sm2x2avg_t3[k][l][0];
+		    l2x2mp[Ix2D(k,2,l)] = cwork*(t0+t1+t2);
+		    const std::complex<float> t3 = dp1t1*sm2x2avg_t1[k][l][1];
+		    const std::complex<float> t4 = dp2t2*sm2x2avg_t2[k][l][1];
+		    const std::complex<float> t5 = dp3t3*sm2x2avg_t3[k][l][1];
+		    l2x2mn[Ix2D(k,2,l)] = cwork*(t3+t4+t5);
+		}
+	}
 }
 
 
