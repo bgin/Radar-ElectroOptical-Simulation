@@ -1298,18 +1298,18 @@ Leaf_Rayleigh_scattering( const float thinc,
 		          const std::complex<float> epsr,
 		          std::complex<float> * __restrict __ATTR_ALIGN__(32) scat_mat) {
 
-     __attribute__((aligned(16))) xhat[4];
-     __attribute__((aligned(16))) yhat[4];
-     __attribute__((aligned(16))) zhat[4];
-     __attribute__((aligned(16))) xhatl[4];
-     __attribute__((aligned(16))) yhatl[4];
-     __attribute__((aligned(16))) zhatl[4];
-     __attribute__((aligned(16))) khati[4];
-     __attribute__((aligned(16))) khats[4];
-     __attribute__((aligned(16))) hhati[4];
-     __attribute__((aligned(16))) vhati[4];
-     __attribute__((aligned(16))) hhats[4];
-     __attribute__((aligned(16))) vhats[4];
+     __attribute__((aligned(16))) float xhat[4];
+     __attribute__((aligned(16))) float yhat[4];
+     __attribute__((aligned(16))) float zhat[4];
+     __attribute__((aligned(16))) float xhatl[4];
+     __attribute__((aligned(16))) float yhatl[4];
+     __attribute__((aligned(16))) float zhatl[4];
+     __attribute__((aligned(16))) float khati[4];
+     __attribute__((aligned(16))) float khats[4];
+     __attribute__((aligned(16))) float hhati[4];
+     __attribute__((aligned(16))) float vhati[4];
+     __attribute__((aligned(16))) float hhats[4];
+     __attribute__((aligned(16))) float vhats[4];
      std::complex<float> eps,cdum;
      std::complex<float> Vd,cduma,cdumb,cdumc;
      float dum,dum2,sumcheck,t_lf, d_lf;
@@ -1416,6 +1416,47 @@ Leaf_Rayleigh_scattering( const float thinc,
 
      scat_mat[3] = cdum*(hhsdxhl*hhidxhl/cduma + 
                    hhsdyhl*hhidyhl/cdumb + hhsdzhl*hhidzhl/cdumc);
+}
+
+void
+gms::math
+::Cylinder_scattering(const float thetai,
+		      const float phii,
+		      const float thetas,
+		      const float phis,
+		      const float thetac,
+		      const float phic,
+		      const float diam,
+		      const float length,
+		      const float rad_k0,
+		      const std::complex<float> epsr,
+		      std::complex<float> * __restrict __ATTR_ALIGN__(32) scat2x2m) {
+     __attribute__((aligned(24))) std::complex<float> pdoth[3];
+     __attribute__((aligned(24))) std::complex<float> pdotv[3];
+     __attribute__((aligned(24))) std::complex<float> Sh[3];
+     __attribute__((aligned(24))) std::complex<float> Sv[3];
+     __attribute__((aligned(16))) float xhat[4];
+     __attribute__((aligned(16))) float yhat[4];
+     __attribute__((aligned(16))) float zhat[4];
+     __attribute__((aligned(16))) float xhatl[4];
+     __attribute__((aligned(16))) float yhatl[4];
+     __attribute__((aligned(16))) float zhatl[4];
+     __attribute__((aligned(16))) float khati[4];
+     __attribute__((aligned(16))) float khats[4];
+     __attribute__((aligned(16))) float hhati[4];
+     __attribute__((aligned(16))) float vhati[4];
+     __attribute__((aligned(16))) float hhats[4];
+     __attribute__((aligned(16))) float vhats[4];
+     __attribute__((aligned(16))) float khatip[4];
+     __attribute__((aligned(16))) float khatsp[4];
+     __attribute__((aligned(16))) float vhatip[4];
+     __attribute__((aligned(16))) float hhatip[4];
+     __attribute__((aligned(16))) float vhatsp[4];
+     __attribute__((aligned(16))) float hhatsp[4];
+     __attribute__((aligned(16))) float xhatp[4];
+     __attribute__((aligned(16))) float yhatp[4];
+     __attribute__((aligned(16))) float zhatp[4];
+     
 }
 
 

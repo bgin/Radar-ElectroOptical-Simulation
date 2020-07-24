@@ -435,6 +435,26 @@ namespace gms {
 		      stokes_mat[15] = CW2.real();
 		}
 
+		// An auxiliary or helper method
+		// Scattering from long and thin cylinder
+		// To be used for grass or branch modeling.
+                // Based on  KAMAL SARABANDI'S Ph.D. DISSERTATION, CHAPTER 6
+		__ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+		__ATTR_VECTORCALL__
+		void
+		Cylinder_scattering(const float,
+		                    const float,
+				    const float,
+				    const float,
+				    const float,
+				    const float,
+				    const float,
+				    const float,
+				    const float,
+				    const std::complex<float>,
+				    std::complex<float> * __restrict __ATTR_ALIGN__(32));
+		  
      } // math
 
 } // gms
