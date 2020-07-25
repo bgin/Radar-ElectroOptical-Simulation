@@ -1276,7 +1276,7 @@ Leaf_PO_approximation(const float thinc,
            scat_mat[2] = constant*(w1*gamhe_c1+w2*gamhe_c2);
            w1 = -cos_phij*s5+cos_phij*cos_phsj;
            w2 = -cos_thi*s5+s1*cos_phsj;
-           scat_mat[3] = const*(w1+gamhe_c1+w2*gamhe_c2);
+           scat_mat[3] = constant*(w1+gamhe_c1+w2*gamhe_c2);
 }
 
 void
@@ -1430,33 +1430,167 @@ gms::math
 		      const float length,
 		      const float rad_k0,
 		      const std::complex<float> epsr,
-		      std::complex<float> * __restrict __ATTR_ALIGN__(32) scat2x2m) {
-     __attribute__((aligned(24))) std::complex<float> pdoth[3];
-     __attribute__((aligned(24))) std::complex<float> pdotv[3];
-     __attribute__((aligned(24))) std::complex<float> Sh[3];
-     __attribute__((aligned(24))) std::complex<float> Sv[3];
-     __attribute__((aligned(16))) float xhat[4];
-     __attribute__((aligned(16))) float yhat[4];
-     __attribute__((aligned(16))) float zhat[4];
-     __attribute__((aligned(16))) float xhatl[4];
-     __attribute__((aligned(16))) float yhatl[4];
-     __attribute__((aligned(16))) float zhatl[4];
-     __attribute__((aligned(16))) float khati[4];
-     __attribute__((aligned(16))) float khats[4];
-     __attribute__((aligned(16))) float hhati[4];
-     __attribute__((aligned(16))) float vhati[4];
-     __attribute__((aligned(16))) float hhats[4];
-     __attribute__((aligned(16))) float vhats[4];
-     __attribute__((aligned(16))) float khatip[4];
-     __attribute__((aligned(16))) float khatsp[4];
-     __attribute__((aligned(16))) float vhatip[4];
-     __attribute__((aligned(16))) float hhatip[4];
-     __attribute__((aligned(16))) float vhatsp[4];
-     __attribute__((aligned(16))) float hhatsp[4];
-     __attribute__((aligned(16))) float xhatp[4];
-     __attribute__((aligned(16))) float yhatp[4];
-     __attribute__((aligned(16))) float zhatp[4];
-     
+		      std::complex<float> * __restrict __ATTR_ALIGN__(32) scat_mat) {
+     __attribute__((aligned(24))) std::complex<float> pdoth[3] = {};
+     __attribute__((aligned(24))) std::complex<float> pdotv[3] = {};
+     __attribute__((aligned(24))) std::complex<float> Sh[3] = {};
+     __attribute__((aligned(24))) std::complex<float> Sv[3] = {};
+     __attribute__((aligned(16))) float xhat[4]   = {};
+     __attribute__((aligned(16))) float yhat[4]   = {};
+     __attribute__((aligned(16))) float zhat[4]   = {};
+     __attribute__((aligned(16))) float xhatl[4]  = {};
+     __attribute__((aligned(16))) float yhatl[4]  = {};
+     __attribute__((aligned(16))) float zhatl[4]  = {};
+     __attribute__((aligned(16))) float khati[4]  = {};
+     __attribute__((aligned(16))) float khats[4]  = {};
+     __attribute__((aligned(16))) float hhati[4]  = {};
+     __attribute__((aligned(16))) float vhati[4]  = {};
+     __attribute__((aligned(16))) float hhats[4]  = {};
+     __attribute__((aligned(16))) float vhats[4]  = {};
+     __attribute__((aligned(16))) float khatip[4] = {};
+     __attribute__((aligned(16))) float khatsp[4] = {};
+     __attribute__((aligned(16))) float vhatip[4] = {};
+     __attribute__((aligned(16))) float hhatip[4] = {};
+     __attribute__((aligned(16))) float vhatsp[4] = {};
+     __attribute__((aligned(16))) float hhatsp[4] = {}; 
+     __attribute__((aligned(16))) float xhatp[4]  = {};
+     __attribute__((aligned(16))) float yhatp[4]  = {};
+     __attribute__((aligned(16))) float zhatp[4]  = {};
+     std::complex<float> Pxx,Pyy,Pzz,Svv,Svh,Shh;
+     float area,U,sfact,mfact,khsdzhl,cosbeta,radius;
+     float t0,t1,t2,t3,t4,t5,t6,t7;
+     float t8,t9,t10,t11,t12,t13,t14;
+     radius = diam*0.5f;
+     _mm_store_ps(&xhat[0],_mm_setr_ps(0.0f,0.0f,1.0f,1.0f)); // 4th element is unused
+     t0 = sinf(thetai);
+     t1 = cosf(phii);
+     khati[0] = t0*t1;
+     _mm_store_ps(&yhat[0],_mm_setr_ps(0.0f,1.0f,0.0f,1.0f));
+     t4 = sinf(phii);
+     khati[1] = t0*t4;
+     _mm_store_ps(&zhat[0],_mm_store_ps(0.0f,0.0f,1.0f,1.0f));
+     khati[2] = cosf(thetai);
+     khati[3] = 1.0f;
+     vec1x3_smooth(&khati[0],&khati[0]);
+     t2 = sinf(thetas);
+     t3 = cosf(phis);
+     khats[0] = t2*t3;
+     khats[1] = t2*sinf(phis);
+     khats[2] = cosf(thetas);
+     khats[3] = 1.0f;
+     vec1x3_smooth(&khats[0],&khats[0]);
+     hhati[0] = -t4;
+     hhati[1] = t1;
+     hhati[2] = 0.0f;
+     hhati[3] = 1.0f;
+     vec1x3_smooth(&hhati[0],&hhati[0]);
+     hhats[0] = -sinf(phiis);
+     hhats[1] = t3;
+     cross_prod(&hhati[0],&khati[0],&vhati[0]);
+     vec1x3_smooth(&vhati[0],&vhati[0]);
+     hhats[2] = 0.0f;
+     hhats[3] = 1.0f;
+     vec1x3_smooth(&hhats[0],&hhats[0]);
+     t5 = cosf(thetac);
+     t6 = cosf(phic);
+     cross_prod(&hhats[0],&khats[0],&vhats[0]);
+     t7 = sinf(thetac);
+     t8 = sinf(phic);
+     vec1x3_smooth(&vhats[0],&vhats[0]);
+     _mm_store_ps(&xhatl[0],_mm_setr_ps(1.0f,-t7,t5*t8,t5*t6));
+     vec1x3_smooth(&xhatl[0],&xhatl[0]);
+     _mm_store_ps(&yhatl[0],_mm_setr_ps(1.0f,0.0f,t6,-t8));
+     vec1x3_smooth(&yhatl[0],&yhatl[0]);
+     t9 = sinf(thetac);
+     _mm_store_ps(&zhatl[0],_mm_setr_ps(1.0f,t5,t9*t8,t9*t6));
+     vec1x3_smooth(&zhatl[0],&zhatl[0]);
+     xhatp[0] = xhatl[0];
+     vhatip[0] = dot_prod(vhati,xhatl);
+     vhatsp[0] = dot_prod(vhats,xhatl);
+     hhatip[0] = dot_prod(hhati,xhatl);
+     hhatsp[0] = dot_prod(hhats,xhatl);
+     yhatp[0] = xhatl[1];
+     zhatp[0] = xhatl[2];
+     vhatip[1] = dot_prod(vhati,yhatl);
+     vhatsp[1] = dot_prod(vhats,yhatl);
+     hhatip[1] = dot_prod(hhati,yhatl);
+     hhatsp[1] = dot_prod(hhats,yhatl);
+     xhatp[1] = yhatl[1];
+     yhatp[1] = yhatl[1];
+     zhatp[1] = xhatl[2];
+     vhatip[2] = dot_prod(vhati,zhatl);
+     vhatsp[2] = dot_prod(vhats,zhatl);
+     hhatip[2] = dot_prod(hhati,zhatl);
+     hhatsp[2] = dot_prod(hhats,zhatl);
+     vhatip[3] = 1.0f;
+     vhatsp[3] = 1.0f;
+     hhatip[3] = 1.0f;
+     hhatsp[3] = 1.0f;
+     xhatp[2] = zhatl[1];
+     yhatp[2] = zhatl[1];
+     zhatp[2] = zhatl[2];
+     xhatp[3] = 1.0f;
+     yhatp[3] = 1.0f;
+     zhatp[3] = 1.0f;
+     cross_prod(hhatip,vhatip,khatip);
+     khsdzhl = 0.0f;
+     khsdzhl = dot_prod(khats,zhatl);
+     cross_prod(hhatsp,vhatsp,khatsp);
+     cosbeta = 0.0f;
+     cosbeta = dot_prod(khati,zhatl);
+     area = 3.141592654f*radius*radius/(10000.0f);
+     Pzz = area*(epsr-1.0f);
+     Pxx = 2.0f*Pzz/(epsr+1.0f);
+     Pyy = Pxx;
+     U = 0.5f*rad_k0*(length/100.0f)*(khsdzhl-cosbeta);
+     if(absf(U)>0.01f) {
+        sfact = sinf(U)/u;
+     } else {
+        sfact = 1.0f;
+     }
+     pdotv[0] = Pxx*vhatip[0];
+     pdotv[1] = Pyy*vhatip[1];
+     pdotv[2] = Pzz*vhatip[2];
+     t10 = khatsp[1]*khatsp[1];
+     t11 = khatsp[2]*khatsp[2];
+     t12 = khatsp[0]*khatsp[1];
+     t13 = khatsp[0]*khatsp[2];
+     t14 = khatsp[0]*khatsp[0];
+     Sv[0] = pdotv[0]*(-(t10+t11))+
+             pdotv[1]*t12+
+	     pdotv[2]*t13;
+     pdoth[0] = Pxx*hhatip[0];
+     Sv[1] = pdotv[0]*t12+
+             pdotv[1]*(-(t11+t14))+
+	     pdotv[2]*(khatsp[2]*khatsp[1]);
+     pdoth[1] = Pyy*hhatip[1];
+     Sv[2] = pdotv[0]*t13+
+             pdotv[1]*(khatsp[1]*khatsp[2])+
+	     pdotv[2]*(-(t14+t10));
+     pdoth[2] = Pzz*hhatip[2];
+     Sh[0] = pdoth[0]*(-(t10+t11))+
+             pdoth[1]*t12+
+	     pdoth[2]*t13;
+     Sh[1] = pdoth[0]*t12+
+             pdoth[1]*(-(t11+t14))+
+	     pdoth[2]*(khatsp[2]*khatsp[1]);
+     Sh[2] = pdoth[0]*t13+
+             pdoth[1]*(khatsp[1]*khatsp[2])+
+	     pdoth[2]*(-t14+t11);
+     Svv = Sv[0]*vhatsp[0]+Sv[1]*vhatsp[1]+Sv[2]*vhatsp[2];
+     Shv = Sv[0]*hhatsp[0]+Sv[1]*hhatsp[1]+Sv[2]*hhatsp[2];
+     Svh = Sh[0]*vhatsp[0]+Sh[1]*vhatsp[1]+Sh[2]*vhatsp[2];
+     Shh = Sh[0]*hhatsp[0]+Sh[1]*hhatsp[1]+Sh[2]*hhatsp[2];
+     mfact = -sfact*0.25f*rad_k0*rad_k*length/(1256.637061435917295f);
+#if defined __INTEL_COMPILER
+     __assume_aligned(scat_mat,32);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     scat_mat = (std::complex<float>*)__builtin_assume_aligned(scat_mat,32);
+#endif
+     scat_mat[0] = Svv*mfact;
+     scat_mat[1] = Shv*mfact;
+     scat_mat[2] = Svh*mfact;
+     scat_mat[3] = Shh*mfact;
 }
 
 
