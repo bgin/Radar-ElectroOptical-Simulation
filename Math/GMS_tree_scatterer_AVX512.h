@@ -117,10 +117,7 @@ namespace  gms {
 			 //    ! Leaves density (g/cm^3) per leaf
                          //    ! PAOS type size of array nleaves/8
 			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_dens;
-			 //    ! Leaves surface angle to inpinging Radar waveform (rad)
-                         //    ! PAOS type size of array nleaves/8
-			 //     (theta,phi angles)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_incang;
+		
 			 //  ! Leaves parameteric equation (approximated as an ellipses)
                          //  ! Parameter x,(a*cos(t))
         
@@ -135,8 +132,7 @@ namespace  gms {
 			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_thick;
 			 //   Branches density
 			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_dens;
-			 //   Branches incident angle
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_incang;
+		
 			 	 //  ! Branches parametric equation (approximated as a cylindrical objects)
                          //  ! Parameter x, (r*cos(t))
                          //  ! PAOS type size of arrays is -- npoints/8 1st dim (evaluation of x) ,
@@ -156,19 +152,11 @@ namespace  gms {
 
 		      struct TSHotAVX512_t {
 
-                            // ! Whole tree vibration in x-axis (radians)
-                         float tree_xangle;
-			 //  Whole tree vibration in y-axis (radians)
-			 float tree_yangle;
-			 //  Sine of x-axis angle
-                         float sin_xangle;
-			 //  Cos of x-axis angle
-			 float cos_xangle;
-			 //  Sin of y-axis angle
-			 float sin_yangle;
-			 //  Cos of y-angle
-			 float cos_yangle;
-			 //  ! Tree total cross section (dimensionless)
+                         // Whole tree direction theta angle (rad)
+			 float tree_dtheta;
+			 // Whole tree direction phi angle (rad)
+			 float three_dphi;
+			 //
 			 float tree_rcs;
 			 //  Crown cross section approximated as sum of leaves cross section.
 			 float crown_rcs;
@@ -189,43 +177,25 @@ namespace  gms {
 			 //   ! Branches reflectivity (varying due to leaves vibration)
                          //     ! ( 1st dimension reflectivity(dbm) pers branch, 2nd dimension is PRF/s))
 			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_reflect;
-			 //   ! Leaves angle of vibration in x-axis per PRF/s
-                         //   ! 1st dimension angle values (rad),  2nd dimension PRF/s,
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_xang;
-		         //   ! Leaves sine of vibration angle in x-axis per PRF/s
-                         //   ! 1st  dimension sine of vibrational angle (rad),  2nd dimension PRF/s,
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_sin_xang;
-			 //     ! Leaves sine of vibration angle in x-axis per PRF/s
-                         //     ! 1st dimension PRF/s, 2nd dimension sine of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_cos_xang;
-                         	 //      ! Leaves angle of vibration in y-axis per PRF/s
-                         //      ! 1st dimension PRF/s, 2nd dimension angle values (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_yang;
-			 //      ! Leaves sine of vibration angle in y-axis per PRF/s
-                         //      ! 1st dimension PRF/s, 2nd dimension angle of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_sin_yang;
-			 //        ! Leaves sine of vibration angle in y-axis per PRF/s
-                         //        ! 1st dimension PRF/s, 2nd dimension sine of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) leaves_cos_yang;
-			 // ! Branches angle of vibration in x-axis per PRF/s
-                         // ! 1st dimension PRF/s, 2nd dimension angle values (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_xang;
-			 //  ! Branches sine of vibration angle in x-axis per PRF/s
-                         //  ! 1st dimension PRF/s, 2nd dimension angle  of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_sin_xang;
-			 //   ! Branches cosine of vibration angle in x-axis per PRF/s
-                         //   ! 1st dimension PRF/s, 2nd dimension cosine of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_cos_xang;
-			 //   
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_yang;
-			 //  ! Branches sine of vibration angle in y-axis per PRF/s
-                         //  ! 1st dimension PRF/s, 2nd dimension sine  of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_sin_yang;
-			 //  ! Branches cosine of vibration angle in x-axis per PRF/s
-                         //   ! 1st dimension PRF/s, 2nd dimension cosine  of vibrational angle (rad)
-			 AVX512Vec16 * __restrict __ATTR_ALIGN__(64) branches_cos_yang;
+		
                          
 		 } __ATTR_ALIGN__(64);
+
+
+		      // This is high spatial and temporal data structure.
+		struct LeavesPhase_t {
+		          // Results only
+			 // Allocate this array as a [4*4*4*nleaves]
+			 float * __restrict __ATTR_ALIGN__(8)  l4x4phm;
+		         // Allocate this array as a [2*2*nleaves]
+			 std::complex<float> * __restrict __ATTR_ALIGN__(8) l2x2mp;
+			 // Allocate this array as a [2*2*nleaves]
+			 std::complex<float> * __restrict __ATTR_ALIGN__(8) l2x2mn;
+		         // Allocate this array as a [4*4*nleaves]
+			 float * __restrict __ATTR_ALIGN__(8) stokes4x4m;
+			 // Allocate this array as a [2*2*nleaves]
+			 std::complex<float> * __restrict __ATTR_ALIGN__(8) scat2x2m;
+		}  _ATTR_ALIGN__(64);
 
 
 		      struct TreeScattererAVX512 {
