@@ -1,7 +1,6 @@
 
-#if defined __GNUC__ && !defined __INTEL_COMPILER
+
 #include <omp.h>
-#endif
 #if defined __ICC || defined __INTEL_COMPILER
 #include <svrng.h>
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
@@ -13,7 +12,7 @@
 #include "GMS_tree_scatterer_AVX.h"
 //
 #include "GMS_malloc.h"
-
+#include "GMS_tree_scatterer_common.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
 
@@ -61,24 +60,9 @@ TreeScattererAVX::TreeScattererAVX() {
      m_tsh.leaves_reflect      = NULL;
      m_tsh.branches_rcs        = NULL;
      m_tsh.branches_reflect    = NULL;
-     m_lp.theta_inc            = NULL;
-     m_lp.phi_inc              = NULL;
-     m_lp.theta_scat           = NULL;
-     m_lp.phi_scat             = NULL;
-     m_lp.theta_dir            = NULL;
-     m_lp.phi_dir              = NULL;
      m_lp.l4x4phm              = NULL;
-     m_lp.sm2x2avg             = NULL;
      m_lp.l2x2mp               = NULL;
      m_lp.l2x2mn               = NULL;
-     m_lp.eig1x4lp             = NULL;
-     m_lp.eig1x4ln             = NULL;
-     m_lp.eig4x4mp             = NULL;
-     m_lp.eig4x4mn             = NULL;
-     m_lp.eig4x4mpi            = NULL;
-     m_lp.eig4x4mni            = NULL;
-     m_lp.expa4x4mp            = NULL;
-     m_lp.expa4x4mn            = NULL;
      m_lp.stokes4x4m           = NULL;
      m_lp.scat2x2m             = NULL;
 }
@@ -111,25 +95,11 @@ TreeScattererAVX::TreeScattererAVX() {
 
 #if !defined(GMS_TREE_SCATTERER_LEAVES_PHASE_CTOR_BODY)
     #define GMS_TREE_SCATTERER_LEAVES_PHASE_CTOR_BODY                                                 \
-     m_lp.theta_inc        = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                    \
-     m_lp.phi_inc          = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                      \
-     m_lp.theta_scat       = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                      \
-     m_lp.phi_scat         = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                        \
-     m_lp.theta_dir        = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                          \
-     m_lp.phi_dir          = gms_efmalloca(static_cast<size_t>(m_tsc.nleaves),64);                          \
+   
      m_lp.l4x4phm          = gms_efmalloca(static_cast<size_t>(4*4*4*m_tsc.nleaves),64);                     \
-     m_lp.sm2x2avg         = gms_cmplxr4_emalloca(static_cast<size_t>(2*2*2*m_tsc.nleaves),64);              \
      m_lp.l2x2mp           = gms_cmplxr4_emalloca(static_cast<size_t>(2*2*m_tsc.nleaves),64);                  \
      m_lp.l2x2mn           = gms_cmplxr4_emalloca(static_cast<size_t>(2*2*m_tsc.nleaves),64);                  \
-     m_lp.eig1x4lp         = gms_cmplxr4_emalloca(static_cast<size_t>(4*m_tsc.nleaves),64);                     \
-     m_lp.eig1x4ln         = gms_cmplxr4_emalloca(static_cast<size_t>(4*m_tsc.nleaves),64);                       \
-     m_lp.eig4x4mp         = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                     \
-     m_lp.eig4x4mn         = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                     \                 
-     m_lp.eig4x4mpi        = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                      \
-     m_lp.eig4x4mni        = gms_cmplxr4_emalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                      \
-     m_lp.expa4x4mp        = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                               \
-     m_lp.expa4x4mn        = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                               \
-     m_lp.stokes4x4m       = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                                 \
+     m_lp.stokes4x4m       = gms_efmalloca(static_cast<size_t>(4*4*m_tsc.nleaves),64);                        \
      m_lp.scat2x2m         = gms_cmplxr4_efmalloca(static_cast<size_t>(2*2*m_tsc.nleaves),64);
 #endif
 
@@ -217,42 +187,12 @@ TreeScattererAVX::~TreeScattererAVX() {
      m_tsh.branches_rcs    = NULL;
      _mm_free(m_tsh.branches_reflect);
      m_tsh.branches_reflect = NULL;
-     _mm_free(m_lp.theta_inc);
-     m_lp.theta_inc         = NULL;
-     _mm_free(m_lp.phi_inc);
-     m_lp.phi_inc           = NULL;
-     _mm_free(m_lp.theta_scat);
-     m_lp.theta_scat        = NULL;
-     _mm_free(m_lp.phi_scat);
-     m_lp.phi_scat          = NULL;
-     _mm_free(m_lp.theta_dir);
-     m_lp.theta_dir         = NULL;
-     _mm_free(m_lp.phi_dir);
-     m_lp.phi_dir           = NULL;
      _mm_free(m_lp.l4x4phm);
      m_lp.l4x4phm           = NULL;
-     _mm_free(m_lp.sm2x2avg);
-     m_lp.sm2x2avg          = NULL;
      _mm_free(m_lp.l2x2mp);
      m_lp.l2x2mp            = NULL;
      _mm_free(m_lp.l2x2mn);
      m_lp.l2x2mn            = NULL;
-     _mm_free(m_lp.eig1x4lp);
-     m_lp.eig1x4lp          = NULL;
-     _mm_free(m_lp.eig1x4ln);
-     m_lp.eig1x4ln          = NULL;
-     _mm_free(m_lp.eig4x4mp);
-     m_lp.eig4x4mp          = NULL;
-     _mm_free(m_lp.eig4x4mn);
-     m_lp.eig4x4mn          = NULL;
-     _mm_free(m_lp.eig4x4mpi);
-     m_lp.eig4x4mpi         = NULL;
-     _mm_free(m_lp.eig4x4mni);
-     m_lp.eig4x4mni         = NULL;
-     _mm_free(m_lp.expa4x4mp);
-     m_lp.expa4x4mp         = NULL;
-     _mm_free(m_lp.expa4x4mn);
-     m_lp.expa4x4mn         = NULL;
      _mm_free(m_lp.stokes4x4m);
      m_lp.stokes4x4m        = NULL;
      _mm_free(m_lp.scat2x2m);
@@ -438,7 +378,7 @@ SetThicknessDensAng_ymm8r4(const AVXVec8 * __restrict bradii) {
     
    
 #if defined __ICC || defined __INTEL_COMPILER   
-    svrng_float8_t vrand1,vrand2,vrand3,vrand4,vrand5,vrand6;
+    svrng_float8_t vrand1,vrand2,vrand3;
     svrng_engine_t engine;
     svrng_distribution_t uniform1,uniform2,uniform3,uniform4,
                          uniform5;
@@ -469,71 +409,71 @@ SetThicknessDensAng_ymm8r4(const AVXVec8 * __restrict bradii) {
 	 vrand2 = svrng_generate8_float(engine,uniform2);
 	 m_tsc.leaves_dens[i]  = *(AVXVec8*)&vrand2;
      }
-     gms::common::avxvec8_init_unroll8x(&m_tsc.leaves_incang[0],
-                                        static_cast<int64_t>(2*m_tsc.nleaves),
-					AVXVec8{});
-     uniform3 = svrng_new_uniform_distribution_float(0.3f,0.7f);
-     for(int32_t i = 0; i != 1; ++i) {
-
-        __assume_aligned(m_tsc.leaves_incang,64);
-#pragma vector always
-#pragma vectorlength(8)
-#endif
-        for(int32_t j = 0; j != m_tsc.nleaves; ++j) {
-            vrand3 = svrng_generate8_float(engine,uniform3);
-	    m_tsc.leaves_incang[Ix2D(i,m_tsc.nleaves,j)] = *(AVXVec8*)&vrand3;
-	}
-     }
-     uniform4 = svrng_new_uniform_distribution_float(0.75f,1.5f);
-     for(int32_t i = 1; i != 2; ++i) {
-
-        __assume_aligned(m_tsc.leaves_incang,64);
-#pragma vector always
-#pragma vectorlength(8)
-#endif
-        for(int32_t j = 0; i != m_tsc.nleaves; ++j) {
-            vrand4 = svrng_generate8_float(engine,uniform4);
-	    m_tsc.leaves_incang[Ix2D(i,m_tsc.nleaves,j)] = *(AVXVec8*)&vrand4;
-	}
-     }
-     gms::common::avxvec8_init_unroll8x(&m_tsc.branches_incang[0],
-                                        static_cast<int64_t>(2*m_tsc.nbranches),
-					AVXVec8{});
-     for(int32_t i = 0; i != 1; ++i) {
-
-        __assume_aligned(m_tsc.branches_incang,64);
-#pragma vector always
-#pragma vectorlength(8)
-#endif
-        for(int32_t j = 0; j != m_tsc.nbranches; ++j) {
-            vrand5 = svrng_generate8_float(engine,uniform4);
-	    m_tsc.branches_incang[Ix2D(i,m_tsc.nbranches,j)] = *(AVXVec8*)&vrand5;
-	}
-     }
-     uniform5 = svrng_new_uniform_distribution_float(0.75f,1.0f);
-     for(int32_t i = 1; i != 2; ++i) {
-
-       __assume_aligned(m_tsc.branches_incang,64);
-#pragma vector always
-#pragma vectorlength(8)
-#endif
-        for(int32_t j = 0; j != m_tsc.nbranches; ++j) {
-            vrand6 = svrng_generate8_float(engine,uniform5);
-	    m_tsc.branches_incang[Ix2D(i,m_tsc.nbranches,j)] = *(AVXVec8*)&vrand6;
-	}
-     }
+     //gms::common::avxvec8_init_unroll8x(&m_tsc.leaves_incang[0],
+     //                                   static_cast<int64_t>(2*m_tsc.nleaves),
+	//				AVXVec8{});
+    // uniform3 = svrng_new_uniform_distribution_float(0.3f,0.7f);
+    // for(int32_t i = 0; i != 1; ++i) {
+    //
+    //    __assume_aligned(m_tsc.leaves_incang,64);
+//#pragma vector always
+//#pragma vectorlength(8)
+//#endif
+ //       for(int32_t j = 0; j != m_tsc.nleaves; ++j) {
+ //           vrand3 = svrng_generate8_float(engine,uniform3);
+  //	    m_tsc.leaves_incang[Ix2D(i,m_tsc.nleaves,j)] = *(AVXVec8*)&vrand3;
+  //	}
+  //   }
+  //   uniform4 = svrng_new_uniform_distribution_float(0.75f,1.5f);
+  //   for(int32_t i = 1; i != 2; ++i) {
+  //
+   //     __assume_aligned(m_tsc.leaves_incang,64);
+//#pragma vector always
+//#pragma vectorlength(8)
+//#endif
+ //       for(int32_t j = 0; i != m_tsc.nleaves; ++j) {
+ //           vrand4 = svrng_generate8_float(engine,uniform4);
+//	    m_tsc.leaves_incang[Ix2D(i,m_tsc.nleaves,j)] = *(AVXVec8*)&vrand4;
+//	}
+ //    }
+  //   gms::common::avxvec8_init_unroll8x(&m_tsc.branches_incang[0],
+  //                                      static_cast<int64_t>(2*m_tsc.nbranches),
+//					AVXVec8{});
+  //   for(int32_t i = 0; i != 1; ++i) {
+//
+   //     __assume_aligned(m_tsc.branches_incang,64);
+//#pragma vector always
+//#pragma vectorlength(8)
+//#endif
+ //       for(int32_t j = 0; j != m_tsc.nbranches; ++j) {
+//            vrand5 = svrng_generate8_float(engine,uniform4);
+//	    m_tsc.branches_incang[Ix2D(i,m_tsc.nbranches,j)] = *(AVXVec8*)&vrand5;
+//	}
+ //    }
+ //    uniform5 = svrng_new_uniform_distribution_float(0.75f,1.0f);
+ //    for(int32_t i = 1; i != 2; ++i) {
+  //
+   //    __assume_aligned(m_tsc.branches_incang,64);
+//#pragma vector always
+//#pragma vectorlength(8)
+//#endif
+ //       for(int32_t j = 0; j != m_tsc.nbranches; ++j) {
+ //           vrand6 = svrng_generate8_float(engine,uniform5);
+//	    m_tsc.branches_incang[Ix2D(i,m_tsc.nbranches,j)] = *(AVXVec8*)&vrand6;
+//	}
+  //   }
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
       float * __restrict __ATTR_ALIGN__(64) plthick  = NULL;
       float * __restrict __ATTR_ALIGN__(64) pldense  = NULL;
-      float * __restrict __ATTR_ALIGN__(64) plincang = NULL;
-      float * __restrict __ATTR_ALIGN__(64) pbincang = NULL;
+      //float * __restrict __ATTR_ALIGN__(64) plincang = NULL;
+      //float * __restrict __ATTR_ALIGN__(64) pbincang = NULL;
       const int32_t leaves_len = 8*m_tsc.nleaves;
       const int32_t branch_len = 8*m_tsc.nbranches;
      
       plthick  = gms::common::gms_efmalloca(static_cast<size_t>(leaves_len),64);
       pldense  = gms::common::gms_efmalloca(static_cast<size_t>(leaves_len),64);
-      plincang = gms::common::gms_efmalloca(static_cast<size_t>(2*leaves_len),64);
-      pbincang = gms::common::gms_efmalloca(static_cast<size_t>(2*branch_len),64);
+      //plincang = gms::common::gms_efmalloca(static_cast<size_t>(2*leaves_len),64);
+      //pbincang = gms::common::gms_efmalloca(static_cast<size_t>(2*branch_len),64);
       
       
       std::clock_t seed;
@@ -555,65 +495,65 @@ SetThicknessDensAng_ymm8r4(const AVXVec8 * __restrict bradii) {
 	  float rf2 = srand2();
 	  pldense[i] = rf2;
       }
-      avx256_init_unroll4x_ps(&plincang[0],
-                              static_cast<int64_t>(2*8*m_tsc.nleaves),
-			      0.0f);
+      //avx256_init_unroll4x_ps(&plincang[0],
+      //                        static_cast<int64_t>(2*8*m_tsc.nleaves),
+	//		      0.0f);
      
-      auto srand3 = std::bind(std::uniform_real_distribution<float>(0.3f,0.7f),
-                              std::mt19937(seed));
-      for(int32_t i = 0; i != 1; ++i) {
-          for(int32_t j = 0; j != leaves_len; ++j) {
-              float rf = srand3();
-	      plincang[Ix2D(i,leaves_len,j)] = rf;
-	  }
-      }
-      auto srand4 = std::bind(std::uniform_real_distribution<float>(0.75f,1.5f),
-                              std::mt19937(seed));
-      for(int32_t i = 1; i != 2; ++i) {
-          for(int32_t j = 0; j != leaves_len; ++j) {
-              float rf = srand4();
-	      plincang[Ix2D(i,leaves_len,j)] = rf;
-	  }
-      }
-      avx256_init_unroll4x_ps(&pbincang[0],
-                              static_cast<int64_t>(2*8*m_tsc.nbranches),
-			      0.0f);
-      for(int32_t i = 0; i != 1; ++i) {
-          for(int32_t j = 0; j != branch_len; ++j) {
-              float rf = srand4();
-	      pbincang[Ix2D(i,branch_len,j)] = rf;
-	  }
-      }
-      auto srand5 = std::bind(std::uniform_real_distribution<float>(0.75f,1.0f),
-                             std::mt19937(seed));
-      for(int32_t i = 1; i != 2; ++i) {
-          for(int32_t j = 0; j != branch_len; ++j) {
-              float rf = srand5();
-	      pbincang[Ix2D(i,branch_len,j)] = rf;
-	  }
-      }
+      //auto srand3 = std::bind(std::uniform_real_distribution<float>(0.3f,0.7f),
+      //                        std::mt19937(seed));
+     // for(int32_t i = 0; i != 1; ++i) {
+     //     for(int32_t j = 0; j != leaves_len; ++j) {
+     //         float rf = srand3();
+	//      plincang[Ix2D(i,leaves_len,j)] = rf;
+	//  }
+     // }
+     // auto srand4 = std::bind(std::uniform_real_distribution<float>(0.75f,1.5f),
+     //                         std::mt19937(seed));
+     // for(int32_t i = 1; i != 2; ++i) {
+       //   for(int32_t j = 0; j != leaves_len; ++j) {
+         //     float rf = srand4();
+	   //   plincang[Ix2D(i,leaves_len,j)] = rf;
+	//  }
+     // }
+     // avx256_init_unroll4x_ps(&pbincang[0],
+     //                         static_cast<int64_t>(2*8*m_tsc.nbranches),
+	//		      0.0f);
+     // for(int32_t i = 0; i != 1; ++i) {
+     //     for(int32_t j = 0; j != branch_len; ++j) {
+     //         float rf = srand4();
+	//      pbincang[Ix2D(i,branch_len,j)] = rf;
+	//  }
+    //  }
+    //  auto srand5 = std::bind(std::uniform_real_distribution<float>(0.75f,1.0f),
+    //                         std::mt19937(seed));
+    //  for(int32_t i = 1; i != 2; ++i) {
+    //      for(int32_t j = 0; j != branch_len; ++j) {
+    //          float rf = srand5();
+	//      pbincang[Ix2D(i,branch_len,j)] = rf;
+	//  }
+   //   }
       gms::common::avxvec8_copy_from_r4(&m_tsc.leaves_thick[0],
                                         &plthick[0],
 					leaves_len);
       gms::common::avxvec8_copy_from_r4(&m_tsc.leaves_dens[0],
                                         &pldense[0],
 					leaves_len);
-      gms::common::avxvec8_copy_from_r4(&m_tsc.mleaves_incang[0],
-                                        &plincang[0],
-					2*leaves_len);
-      gms::common::avxvec8_copy_from_r4(m_tsc.branches_incang[0],
-                                        &pbincang[0],
-					2*branch_len);
+     //gms::common::avxvec8_copy_from_r4(&m_tsc.mleaves_incang[0],
+     //                                   &plincang[0],   
+	//				2*leaves_len);
+     // gms::common::avxvec8_copy_from_r4(m_tsc.branches_incang[0],
+     //                                   &pbincang[0],
+	//				2*branch_len);
                                         
       
       _mm_free(plthick);
       plthick = NULL;
       _mm_free(pldense);
       pldense = NULL;
-      _mm_free(plincang);
-      plincang = NULL;
-      _mm_free(pbincang);
-      pbincang = NULL;
+      //_mm_free(plincang);
+      //plincang = NULL;
+      //_mm_free(pbincang);
+      //pbincang = NULL;
 #endif // End __GNUC__ part
        // ! Density set to 0.0 (must find the exact data)
        //    ! Setting only the radii
@@ -917,3 +857,77 @@ ComputeBranchesParamEq_ymm8r4(const int32_t nzpts) {
      }
 
 }
+
+
+void
+gms::math::TreeScattererAVX
+::ComputeLeafPhaseMatrices(const float * __restrict __ATTR_ALIGN__(64) ldiam,
+			   const float * __restrict __ATTR_ALIGN__(64) lthick,
+			   const float * __restrict __ATTR_ALIGN__(64) lmg,
+			   const float * __restrict __ATTR_ALIGN__(64) lrho,
+			   const float * __restrict __ATTR_ALIGN__(64) ldens,
+			   const std::complex<float> * __restrict __ATTR_ALIGN__(64) epsr,
+			   const int32_t * __restrict __ATTR_ALIGN__(64) lorient,
+		           const float theta,
+			   const float ctheta,
+			   const float stheta,
+			   const float rad_freq,
+			   const float rad_wv,
+			   const float rad_k0) {
+
+#if defined __ICC || defined __INTEL_COMPILER
+         __assume_aligned(ldiam,64);
+	 __assume_aligned(lthick,64);
+	 __assume_aligned(lmg,64);
+	 __assume_aligned(lrho,64);
+	 __assume_aligned(ldens,64);
+	 __assume_aligned(epsr,64);
+	 __assume_aligned(lorient,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+         ldiam   = (const float*)__builtin_assume_aligned(ldiam,64);
+	 lthick  = (const float*)__builtin_assume_aligned(lthick,64);
+	 lmg     = (const float*)__builtin_assume_aligned(lmg,64);
+	 lrho    = (const float*)__builtin_assume_aligned(lrho,64);
+	 ldens   = (const float*)__builtin_assume_aligned(ldens,64);
+	 epsr    = (const std::complex<float>*)__builtin_assume_aligned(epsr,64);
+	 lorient = (const int32_t*)__builtin_assume_aligned(lorient,64);
+#endif
+         int32_t i,off64,off16,off4;
+         off64 = 64;
+	 off16 = 16;
+	 off4  = 4;
+         // First touch for result arrays
+	 avx256_init_unroll4x_ps(&m_lp.l4x4phm[0],
+                                 static_cast<int64_t>(64*m_tsc.nleaves),
+			         0.0f);
+	 avx256_init_unroll4x_ps(&m_lp.stokes4x4m[0],
+                                 static_cast<int64_t>(16*m_tsc.nleaves),
+			         0.0f);
+ #pragma omp parallel for  schedule(static)   shared(m_lp.l4x4phm,m_lp.l2x2mp,m_lp.l2x2mn,m_lp.stokes4x4m,m_lp.scat2x2m)  private(i,off64,off16,off4)                                                                        
+	 for(i=0; i != m_tsc.nleaves; ++i) {
+             Leaf_phase_matrices(m_lp.l4x4phm,
+	                         m_lp.l2x2mp,
+				 m_lp.l2x2mn,
+				 m_lp.stokes4x4m,
+				 m_lp.scat2x2m,
+				 ldiam[i],
+				 lthick[i],
+				 lmg[i],
+				 lrho[i],
+				 ldens[i],
+				 theta,
+				 ctheta,
+				 stheta,
+				 epsr[i],
+				 rad_freq,
+				 rad_wv,
+				 rad_k0,
+				 lorient[i]);
+		     m_lp.l4x4phm    += off64;
+		     m_lp.l2x2mp     += off4;
+		     m_lp.l2x2mn     += off4;
+		     m_lp.stokes4x4m += off16;
+		     m_lp.scat2x2m   += off4
+	 }
+}
+

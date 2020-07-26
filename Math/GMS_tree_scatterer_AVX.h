@@ -168,43 +168,14 @@ namespace  gms {
 
                 // This is high spatial and temporal data structure.
 		struct LeavesPhase_t {
-                          // Theta angle of incoming EM-wave (rad) per each leaf
-		         float * __restrict __ATTR_ALIGN__(8)  theta_inc; 
-                          // Phi angle of incoming EM-wave (rad) per each leaf
-			 float * __restrict __ATTR_ALIGN__(8)  phi_inc;
-			  // THeta angle of scattered EM-wave (rad) per each leaf
-			 float * __restrict __ATTR_ALIGN__(8)  theta_scat
-			 // Phi angle of scattered EM-wave (rad) per each leaf
-			 float * __restrict __ATTR_ALIGN__(8)  phi_scat;
-			 // Theta angle of leaf orientation (rad) per each leaf
-			 float * __restrict __ATTR_ALIGN__(8)  theta_dir;
-			 // Phi angle of leaf oerientation (rad) per each leaf
-			 float * __restrict __ATTR_ALIGN__(8)  phi_dir;
+		        
 			 // Allocate this array as a [4*4*4*nleaves]
 			 float * __restrict __ATTR_ALIGN__(8)  l4x4phm;
-			 // Alocate this array as a [2*2*2*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) sm2x2avg;
-			 // Allocate this array as a [2*2*nleaves]
+		         // Allocate this array as a [2*2*nleaves]
 			 std::complex<float> * __restrict __ATTR_ALIGN__(8) l2x2mp;
 			 // Allocate this array as a [2*2*nleaves]
 			 std::complex<float> * __restrict __ATTR_ALIGN__(8) l2x2mn;
-			 // Allocate this array as a [4*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) eig1x4lp;
-			 // Allocate this array as a [4*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) eig1x4ln;
-			 // Allocate this array as a [4*4*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) eig4x4mp;
-			 // Allocate this array as a [4*4*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) eig4x4mn;
-			 // Allocate this array as a [4*4*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) eig4x4mpi;
-			 // Allocate this array as a [4*4*nleaves]
-			 std::complex<float> * __restrict __ATTR_ALIGN__(8) eig4x4mni;
-			 // Allocate this array as a [4*4*nleaves]
-			 float * __restrict __ATTR_ALIGN__(8) expa4x4mp;
-			 // Allocate this array as a [4*4*nleaves]
-			 float * __restrict __ATTR_ALIGN__(8) expa4x4mn;
-			 // Allocate this array as a [4*4*nleaves]
+		         // Allocate this array as a [4*4*nleaves]
 			 float * __restrict __ATTR_ALIGN__(8) stokes4x4m;
 			 // Allocate this array as a [2*2*nleaves]
 			 std::complex<float> * __restrict __ATTR_ALIGN__(8) scat2x2m;
@@ -257,9 +228,20 @@ namespace  gms {
 			void ComputeLeavesParamEq_ymm8r4( const AVXVec8, const AVXVec8 ) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			void ComputeBranchesParamEq_ymm8r4(const int32_t ) __ATTR_COLD__ __ATTR_ALIGN__(32);
-
-
-		
+							// Length of arrays is the number of leaves.
+                        void ComputeLeafPhaseMatrices(const float * __restrict __ATTR_ALIGN__(64),
+			                              const float * __restrict __ATTR_ALIGN__(64),
+						      const float * __restrict __ATTR_ALIGN__(64),
+						      const float * __restrict __ATTR_ALIGN__(64),
+						      const float * __restrict __ATTR_ALIGN__(64),
+						      const std::complex<float> * __restrict __ATTR_ALIGN__(64),
+						      const int32_t * __restrict __ATTR_ALIGN__(64),
+		                                      const float,
+						      const float,
+						      const float,
+						      const float,
+						      const float,
+						      const float) __ATTR_HOT__ __ATTR_ALIGN__(32);
 		
 
                       
