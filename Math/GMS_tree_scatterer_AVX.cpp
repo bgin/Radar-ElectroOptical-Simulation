@@ -897,12 +897,21 @@ gms::math::TreeScattererAVX
 	 off16 = 16;
 	 off4  = 4;
          // First touch for result arrays
-	 avx256_init_unroll4x_ps(&m_lp.l4x4phm[0],
+	 gms::common::avx256_init_unroll4x_ps(&m_lp.l4x4phm[0],
                                  static_cast<int64_t>(64*m_tsc.nleaves),
 			         0.0f);
-	 avx256_init_unroll4x_ps(&m_lp.stokes4x4m[0],
+	 gms::common::avx256_init_unroll4x_ps(&m_lp.stokes4x4m[0],
                                  static_cast<int64_t>(16*m_tsc.nleaves),
 			         0.0f);
+	 gms::common::init_unroll8x_cmplxr4(&m_lp.l2x2mp[0],
+					   static_cast<int64_t>(4*m_tsc.nleaves),
+					   {0.0f,0.0f});
+	 gms::common::init_unroll8x_cmplxr4(&m_lp.l2x2mn[0],
+					    static_cast<int64_t>(4*m_tsc.nleaves),
+					    {0.0f,0.0f});
+	 gms::common::init_unroll8x_cmplxr4(&m_lp.scat2x2m[0],
+					    static_cast<int64_t>(4*m_tsc.nleaves),
+					    {0.0f,0.0f});
  #pragma omp parallel for  schedule(static)   shared(m_lp.l4x4phm,m_lp.l2x2mp,m_lp.l2x2mn,m_lp.stokes4x4m,m_lp.scat2x2m)  private(i,off64,off16,off4)                                                                        
 	 for(i=0; i != m_tsc.nleaves; ++i) {
              Leaf_phase_matrices(m_lp.l4x4phm,
