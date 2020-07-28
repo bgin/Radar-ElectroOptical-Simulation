@@ -1,7 +1,6 @@
 
-#if defined __GNUC__ && !defined __INTEL_COMPILER
+
 #include <omp.h>
-#endif
 #if defined __ICC || defined __INTEL_COMPILER
 #include <svrng.h>
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
@@ -13,7 +12,7 @@
 #include "GMS_tree_scatterer_AVX512.h"
 //
 #include "GMS_malloc.h"
-
+#include "GMS_tree_scatterer_common.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
 
@@ -862,3 +861,83 @@ ComputeBranchParamEq_zmm16r4( const int32_t nzpts) {
 }
 
 
+void
+gms::math::TreeScattererAVX
+::ComputeLeafPhaseMatrices(const float * __restrict __ATTR_ALIGN__(64) ldiam,
+			   const float * __restrict __ATTR_ALIGN__(64) lthick,
+			   const float * __restrict __ATTR_ALIGN__(64) lmg,
+			   const float * __restrict __ATTR_ALIGN__(64) lrho,
+			   const float * __restrict __ATTR_ALIGN__(64) ldens,
+			   const std::complex<float> * __restrict __ATTR_ALIGN__(64) epsr,
+			   const int32_t * __restrict __ATTR_ALIGN__(64) lorient,
+		           const float theta,
+			   const float ctheta,
+			   const float stheta,
+			   const float rad_freq,
+			   const float rad_wv,
+			   const float rad_k0) {
+ 
+#if defined __ICC || defined __INTEL_COMPILER
+         __assume_aligned(ldiam,64);
+	 __assume_aligned(lthick,64);
+	 __assume_aligned(lmg,64);
+	 __assume_aligned(lrho,64);
+	 __assume_aligned(ldens,64);
+	 __assume_aligned(epsr,64);
+	 __assume_aligned(lorient,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+         ldiam   = (const float*)__builtin_assume_aligned(ldiam,64);
+	 lthick  = (const float*)__builtin_assume_aligned(lthick,64);
+	 lmg     = (const float*)__builtin_assume_aligned(lmg,64);
+	 lrho    = (const float*)__builtin_assume_aligned(lrho,64);
+	 ldens   = (const float*)__builtin_assume_aligned(ldens,64);
+	 epsr    = (const std::complex<float>*)__builtin_assume_aligned(epsr,64);
+	 lorient = (const int32_t*)__builtin_assume_aligned(lorient,64);
+#endif
+         int32_t i,off64,off16,off4;
+         off64 = 64;
+	 off16 = 16;
+	 off4  = 4;
+         // First touch for result arrays
+	 gms::common::avx256_init_unroll4x_ps(&m_lp.l4x4phm[0],
+                                 static_cast<int64_t>(64*m_tsc.nleaves),
+			         0.0f);
+	 gms::common::avx256_init_unroll4x_ps(&m_lp.stokes4x4m[0],
+                                 static_cast<int64_t>(16*m_tsc.nleaves),
+			         0.0f);
+	 gms::common::init_unroll8x_cmplxr4(&m_lp.l2x2mp[0],
+					   static_cast<int64_t>(4*m_tsc.nleaves),
+					   {0.0f,0.0f});
+	 gms::common::init_unroll8x_cmplxr4(&m_lp.l2x2mn[0],
+					    static_cast<int64_t>(4*m_tsc.nleaves),
+					    {0.0f,0.0f});
+	 gms::common::init_unroll8x_cmplxr4(&m_lp.scat2x2m[0],
+					    static_cast<int64_t>(4*m_tsc.nleaves),
+					    {0.0f,0.0f});
+ #pragma omp parallel for  schedule(static)   shared(m_lp.l4x4phm,m_lp.l2x2mp,m_lp.l2x2mn,m_lp.stokes4x4m,m_lp.scat2x2m)  private(i,off64,off16,off4)                                                                        
+	 for(i=0; i != m_tsc.nleaves; ++i) {
+             Leaf_phase_matrices(m_lp.l4x4phm,
+	                         m_lp.l2x2mp,
+				 m_lp.l2x2mn,
+				 m_lp.stokes4x4m,
+				 m_lp.scat2x2m,
+				 ldiam[i],
+				 lthick[i],
+				 lmg[i],
+				 lrho[i],
+				 ldens[i],
+				 theta,
+				 ctheta,
+				 stheta,
+				 epsr[i],
+				 rad_freq,
+				 rad_wv,
+				 rad_k0,
+				 lorient[i]);
+		     m_lp.l4x4phm    += off64;
+		     m_lp.l2x2mp     += off4;
+		     m_lp.l2x2mn     += off4;
+		     m_lp.stokes4x4m += off16;
+		     m_lp.scat2x2m   += off4
+	 }
+}
