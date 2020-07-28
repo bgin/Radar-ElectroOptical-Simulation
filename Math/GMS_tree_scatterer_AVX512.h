@@ -19,6 +19,7 @@ namespace file_info {
 }
 
 #include <cstdint>
+#include <complex>
 #include "GMS_config.h"
 #include "GMS_avx512vecf32.h"
 
@@ -244,7 +245,20 @@ namespace  gms {
 
                           void ComputeBranchesParamEq_zmm16r4(  const int32_t) __ATTR_COLD__ __ATTR_ALIGN__(32);                                 
 
-                                                          
+                          					// Length of arrays is the number of leaves.
+                          void ComputeLeafPhaseMatrices(const float * __restrict __ATTR_ALIGN__(64),
+			                                const float * __restrict __ATTR_ALIGN__(64),
+						        const float * __restrict __ATTR_ALIGN__(64),
+						        const float * __restrict __ATTR_ALIGN__(64),
+						        const float * __restrict __ATTR_ALIGN__(64),
+						        const std::complex<float> * __restrict __ATTR_ALIGN__(64),
+						        const int32_t * __restrict __ATTR_ALIGN__(64),
+		                                        const float,
+						        const float,
+						        const float,
+						        const float,
+						        const float,
+						        const float) __ATTR_HOT__ __ATTR_ALIGN__(32);                                 
 							    
 			  
 
