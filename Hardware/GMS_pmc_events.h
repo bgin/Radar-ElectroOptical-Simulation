@@ -456,5 +456,40 @@ static const char * const MEM_LOAD_UOPS_L3_HIT_RETIRED[4] = {
 	 "mem_load_uops_l3_hit_retired.xsnp_none"
 };
 
+static const char * const MEM_LOAD_UOPS_L3_MISS_RETIRED[1] = {
+         "mem_load_uops_l3_miss_retired.local_dram"
+};
+
+static const char * const BACLEARS[1] = {
+         "baclears.any"
+};
+
+static const char * const L2_TRANS_1[4] = {
+         "l2_trans.demand_data_rd",
+	 "l2_trans.rfo",
+	 "l2_trans.code_rd",
+	 "l2_trans.all_pf"
+};
+
+static const char * const L2_TRANS_2[4] = {
+         "l2_trans.l1d_wb",
+	 "l2_trans.l2_fill",
+	 "l2_trans.l2_wb",
+	 "l2_trans.all_request"
+};
+
+static const char * const L2_LINES_I[4] = {
+         "l2_lines_i.i",
+	 "l2_lines_i.s",
+	 "l2_lines_i.e",
+	 "l2_lines_i.all"
+};
+
+static const char * const L2_LINES_OUT[2] = {
+         "l2_lines_out.demand_clean",
+	 "l2_lines_out.demand_dirty"
+};
+
+
 
 #endif /*__GMS_PMC_EVENTS_H__*/
