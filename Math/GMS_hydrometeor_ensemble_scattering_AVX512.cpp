@@ -588,7 +588,11 @@ ComputeEnsembleShape( const float inz,
 bool
 gms::math::HMScatterersAVX512::
 ComputeXparam_zmm16r4(const AVX512Vec16 * __restrict cn,
-                      const AVX512Vec16 * __restrict cdef) {
+                      const AVX512Vec16 * __restrict cdef,
+		      const char * __restrict pmc_event1,
+		      const char * __restrict pmc_event2,
+		      const char * __restrict pmc_event3,
+		      const char * __restrict pmc_event4) {
      if(__builtin_expect(NULL == cn,0) ||
         __builtin_expect(NULL == cdef,0)) {
            return (false);
@@ -680,6 +684,28 @@ ComputeXparam_zmm16r4(const AVX512Vec16 * __restrict cn,
      cn            = (AVX512Vec16*)__builtin_assume_aligned(cn,64);
      cdef          = (AVX512Vec16*)__builtin_assume_aligned(cdef,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+           if(pmc_event1 != NULL &&
+	      pmc_event2 != NULL &&
+	      pmc_event3 != NULL &&
+	      pmc_event4 != NULL )       {
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        }
+#endif
       for(int32_t i = 0; i != m_hsc.m_np; ++i) {
          cn_rand = cn[i];
          sphr_rand = m_hsc.m_radii[i];
@@ -745,13 +771,30 @@ ComputeXparam_zmm16r4(const AVX512Vec16 * __restrict cn,
 	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+3)] = t4.term3;
 	}
     }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    // Print the results
+	    printf("%-10s:\n", __PRETTY_FUNCTION__);
+	    printf("Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    printf("Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    printf("Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    printf("%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    printf("%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    printf("%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    printf("%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+#endif
     return (true);
 }
 
 bool
 gms::math::HMScatterersAVX512::
 ComputeYparam_zmm16r4( const AVX512Vec16 * __restrict cn,
-                       const AVX512Vec16 * __restrict cdef) {
+		       const AVX512Vec16 * __restrict cdef,
+		       const char * __restrict pmc_event1,
+		       const char * __restrict pmc_event2,
+		       const char * __restrict pmc_event3,
+		       const char * __restrict pmc_event4) {
 
      if(__builtin_expect(NULL == cn,0) ||
         __builtin_expect(NULL == cdef,0)) {
@@ -846,6 +889,28 @@ ComputeYparam_zmm16r4( const AVX512Vec16 * __restrict cn,
     cn            = (AVX512Vec16*)__builtin_assume_aligned(cn,64);
     cdef          = (AVX512Vec16*)__builtin_assume_aligned(cdef,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+           if(pmc_event1 != NULL &&
+	      pmc_event2 != NULL &&
+	      pmc_event3 != NULL &&
+	      pmc_event4 != NULL )       {
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        }
+#endif
       for(int32_t i = 0; i != m_hsc.m_np; ++i) {
 
          t5.cn_rand   = cn[i];
@@ -914,6 +979,19 @@ ComputeYparam_zmm16r4( const AVX512Vec16 * __restrict cn,
 	}
 
     }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    // Print the results
+	    printf("%-10s:\n", __PRETTY_FUNCTION__);
+	    printf("Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    printf("Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    printf("Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    printf("%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    printf("%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    printf("%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    printf("%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+#endif    
     return (true);
 				    
 }
@@ -921,7 +999,11 @@ ComputeYparam_zmm16r4( const AVX512Vec16 * __restrict cn,
 bool
 gms::math::HMScatterersAVX512::
 ComputeZparam_zmm16r4(const AVX512Vec16 * __restrict cn,
-                      const AVX512Vec16 * __restrict cdef) {
+                      const AVX512Vec16 * __restrict cdef,
+		      const char * __restrict pmc_event1,
+		      const char * __restrict pmc_event2,
+		      const char * __restrict pmc_event3,
+		      const char * __restrict pmc_event4) {
 
     if(__builtin_expect(NULL == cn,0) ||
         __builtin_expect(NULL == cdef,0)) {
@@ -993,6 +1075,28 @@ ComputeZparam_zmm16r4(const AVX512Vec16 * __restrict cn,
     cn            = (AVX512Vec16*)__builtin_assume_aligned(cn,64);
     cdef          = (AVX512Vec16*)__builtin_assume_aligned(cdef,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+           if(pmc_event1 != NULL &&
+	      pmc_event2 != NULL &&
+	      pmc_event3 != NULL &&
+	      pmc_event4 != NULL )       {
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        }
+#endif
        for(int32_t i = 0; i != m_hsc.m_np; ++i) {
 
         t3.cn_rand   = cn[i];
@@ -1043,6 +1147,19 @@ ComputeZparam_zmm16r4(const AVX512Vec16 * __restrict cn,
 	    m_hsc.m_ppz[Ix2D(i,m_hsc.m_nzpts,j+3)] = t2.term3;
 	}
      }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    // Print the results
+	    printf("%-10s:\n", __PRETTY_FUNCTION__);
+	    printf("Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    printf("Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    printf("Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    printf("%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    printf("%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    printf("%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    printf("%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+#endif   
      return (true);
 }
 
@@ -1362,7 +1479,28 @@ ComputeHydroMeteorScattering(
 #endif
 
 #elif defined __GNUC__ || defined __GFORTRAN__ && (!defined __INTEL_COMPILER)
-
+#if (SAMPLE_HW_PMC) == 1
+           if(pmc_event1 != NULL &&
+	      pmc_event2 != NULL &&
+	      pmc_event3 != NULL &&
+	      pmc_event4 != NULL )       {
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        }
+#endif
             __mod_tmatrix_mps_MOD_tmatrix_mps_driver(
 						  &idMie,
 						  &small,
@@ -1403,6 +1541,19 @@ ComputeHydroMeteorScattering(
 						  &m_hsh.m_assymi[0],
 						  &m_hsh.m_cpri[0],
 						  &m_hsh.m_mue[0]);
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    // Print the results
+	    printf("%-10s:\n", __PRETTY_FUNCTION__);
+	    printf("Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    printf("Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    printf("Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    printf("%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    printf("%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    printf("%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    printf("%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+#endif 
 #endif
 
 }
