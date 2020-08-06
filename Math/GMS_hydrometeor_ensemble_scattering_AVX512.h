@@ -222,15 +222,27 @@ namespace gms {
 					     const float) __ATTR_COLD__ __ATTR_ALIGN__(64) __ATTR_TCLONES_AVX_AVX512__;
 
 	           bool ComputeXparam_zmm16r4(const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
-		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					      const char * __restrict,
+					      const char * __restrict,
+					      const char * __restrict,
+					      const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 					     
 
 		   bool ComputeYparam_zmm16r4(const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
-		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					      const char * __restrict,
+					      const char * __restrict,
+					      const char * __restrict,
+					      const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 					    
 
 		   bool ComputeZparam_zmm16r4(const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
-		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		                              const AVX512Vec16 * __restrict __ATTR_ALIGN__(64),
+					      const char * __restrict,
+					      const char * __restrict,
+					      const char * __restrict,
+					      const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 					     
 
 		   bool ComputeEnsembleVolume(const float * __restrict __ATTR_ALIGN__(64),
