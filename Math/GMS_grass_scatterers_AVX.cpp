@@ -10,6 +10,11 @@
 #include <cstdlib>
 #endif
 #include "GMS_grass_scatterers_AVX.h"
+#if (SAMPLE_HW_PMC) == 1
+    #include "libpfc.h"
+    #include <string.h>
+    #include <syslog.h>
+#endif
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
@@ -66,8 +71,8 @@ GrassScattererAVX(const int32_t nsteps,
   if(!result) {
      	ABORT_ON_ERROR("GrassScattererAVX::GrassScattererAVX -- !!! _rdrand32_step failure !!! ", result)
   }
-  if(rand < lo) rand = 50;
-  if(rand > hi) rand = 500;
+  if(rand < lo) rand = 50U;
+  if(rand > hi) rand = 500U;
   m_gsc.nplants = static_cast<int32_t>(rand);
   m_gsc.nsteps = nsteps;
   m_gsc.ordinal = ordinal;
@@ -139,7 +144,10 @@ SetGrassMoistnessMask() {
 
 void
 gms::math::GrassScattererAVX::
-ComputeGrassParamEq_ymm8r4() {
+ComputeGrassParamEq_ymm8r4(const char * __restrict pmc_event1,
+			   const char * __restrict pmc_event2,
+			   const char * __restrict pmc_event3,
+			   const char * __restrict pmc_event4) {
                            
      struct _T0_ {
        AVXVec8 vtheta0;
@@ -237,13 +245,32 @@ ComputeGrassParamEq_ymm8r4() {
     
      m_gsc.A = (float*)__builtin_assume_aligned(m_gsc.A,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+          
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
      for(int32_t i = 0; i != m_gsc.nplants; ++i) {
          seedr = std::clock();
 	 auto rand_r = std::bind(std::uniform_real_distribution<float>(0.5f,0.9f),
 	                         std::mt19937(seedr));
 	 const float rtemp = rand_r();
 	 //
-	 t5.tvrad = rScale * AVXVec8{rtemp};
+	 t5.tvrad = rScale * rtemp;
 	 seedz = std::clock();
 	 auto rand_z = std::bind(std::uniform_real_distribution<float>(0.3f,0.5f),
 	                         std::mt19937(seedz));
@@ -252,7 +279,7 @@ ComputeGrassParamEq_ymm8r4() {
 	 //
 	 // Compute cylinders surface.
 	 m_gsc.A[i] = c0*ztemp+c0*rtemp;
-	 t5.tvz   = hScale * AVXVec8{ztemp};
+	 t5.tvz   = hScale * ztemp;
 	 t4.tmp2  = t4.vNPTS;
 	 t2.vhinc0 = t4.tmp2;
 	 t2.vhinc0 += VINC0;
@@ -307,6 +334,21 @@ ComputeGrassParamEq_ymm8r4() {
 	    m_gsc.zparam[Ix2D(i,m_gsc.param_npts,j+3)] = t3.vhinit3;
 	}
      }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	  
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif	
 }
 
 #include <math.h>
