@@ -13,6 +13,11 @@
 //
 #include "GMS_malloc.h"
 #include "GMS_tree_scatterer_common.h"
+#if (SAMPLE_HW_PMC) == 1
+    #include "libpfc.h"
+    #include <string.h>
+    #include <syslog.h>
+#endif
 #include "GMS_indices.h"
 #include "GMS_common.h"
 
@@ -250,7 +255,8 @@ SetMistnessMask() {
 
 void
 gms::math::TreeScattererAVX512::
-ComputeTrunkParamEq_zmm16r4(const int32_t zpoints) {
+ComputeTrunkParamEq_zmm16r4(const int32_t zpoints ) {
+                          
 
        struct _T0_ {
         AVX512Vec16 vtheta0;
@@ -579,7 +585,11 @@ SetThicknessDensAng_zmm16r4(const AVX512vEC16 * __restrict bradii) {
 void
 gms::math::TreeScattererAVX512::
 ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
-                              const AVX512Vec16 vb){
+                              const AVX512Vec16 vb,
+			      const char * __restrict pmc_event1,
+			      const char * __restrict pmc_event2,
+			      const char * __restrict pmc_event3,
+			      const char * __restrict pmc_event4){
 
 
 
@@ -638,6 +648,25 @@ ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
                                         xyparam_len,
      					ZERO);
      vNPTS = AVX512Vec16{static_cast<float>(m_tsc.leaves_param_npts)};
+#if (SAMPLE_HW_PMC) == 1
+          
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
        for(int32_t i = 0; i != m_tsc.nleaves; ++i) {
            // loop over leaves
            seedx = std::clock();
@@ -689,7 +718,21 @@ ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
 	   }	   
 
      }
-
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	  
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif
 }      
     
 
@@ -699,7 +742,11 @@ ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
 
 bool
 gms::math::TreeScattererAVX512::
-ComputeBranchParamEq_zmm16r4( const int32_t nzpts) {
+ComputeBranchParamEq_zmm16r4( const int32_t nzpts,
+                              const char * __restrict pmc_event1,
+			      const char * __restrict pmc_event2,
+			      const char * __restrict pmc_event3,
+			      const char * __restrict pmc_event4) {
 
 			     
 
@@ -795,6 +842,25 @@ ComputeBranchParamEq_zmm16r4( const int32_t nzpts) {
 					ZERO);
      t5.tvrad = vrad;
      t5.tvz   = vz;
+#if (SAMPLE_HW_PMC) == 1
+          
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif     
      for(int32_t i = 0; i != m_tsc.nbranches; ++i) {
          // Loop over branches -- do...
          seedr       = std::clock();
@@ -857,7 +923,21 @@ ComputeBranchParamEq_zmm16r4( const int32_t nzpts) {
 	     }
 
        }
-     
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	  
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif     
 }
 
 
