@@ -22,10 +22,7 @@ namespace file_info {
 #include <cstdint>
 #include "GMS_config.h"
 #include "GMS_avx512vecf32.h"
-#if (SAMPLE_HW_PMC) == 1
-   #include "libpfc.h"
-   #include <string.h> // for memset only
-#endif
+
 
 namespace gms {
 
@@ -275,7 +272,12 @@ namespace gms {
 				       const float,
 				       const float,
 				       const float * __restrict __ATTR_ALIGN__(64),
-				       const float * __restrict __ATTR_ALIGN__(64)) __ATTR_HOT__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+				       const float * __restrict __ATTR_ALIGN__(64),
+                                       const char * __restrict,                          
+				       const char * __restrict,				    
+				       const char * __restrict,
+				       const char * __restrict ) __ATTR_HOT__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+				      
 
 		     void ComputeHydroMeteorScattering( // 4 strings denoting a 4 performance events
 						     const char * __restrict, 
