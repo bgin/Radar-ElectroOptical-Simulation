@@ -171,7 +171,10 @@ namespace gms {
 
 			void SetGrassMoistnessMask() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeGrassParamEq_ymm8r4() __ATTR_COLD__ __ATTR_ALIGN__(32);
+		        void ComputeGrassParamEq_zmm16r4(const char * __restrict,
+			                                 const char * __restrict,
+							 const char * __restrict,
+							 const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			void ComputeGrassHVPolarization(
 						        const float,

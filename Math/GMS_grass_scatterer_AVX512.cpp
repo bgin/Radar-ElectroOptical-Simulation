@@ -11,6 +11,11 @@
 #include <cstdlib>
 #endif
 #include "GMS_grass_scatterer_AVX512.h"
+#if (SAMPLE_HW_PMC) == 1
+    #include "libpfc.h"
+    #include <string.h>
+    #include <syslog.h>
+#endif
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
@@ -154,7 +159,10 @@ gms::math::GrassScattererAVX512
 
 void
 gms::math::GrassScattererAVX512::
-ComputeGrassParamEq_zmm16r4() {
+ComputeGrassParamEq_zmm16r4(const char * __restrict pmc_event1,
+			    const char * __restrict pmc_event2,
+			    const char * __restrict pmc_event3,
+			    const char * __restrict pmc_event4) {
 
 
      struct _T0_ {
@@ -253,6 +261,25 @@ ComputeGrassParamEq_zmm16r4() {
     
      m_gsc.A = (float*)__builtin_assume_aligned(m_gsc.A,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+          
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
       for(int32_t i = 0; i != m_gsc.nplants; ++i) {
          seedr = std::clock();
 	 auto rand_r = std::bind(std::uniform_real_distribution<float>(0.5f,0.9f),
@@ -323,7 +350,21 @@ ComputeGrassParamEq_zmm16r4() {
 	    m_gsc.zparam[Ix2D(i,m_gsc.param_npts,j+3)] = t3.vhinit3;
 	}
      }
-
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	  
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif
 }
 
 #include <math.h>
