@@ -210,15 +210,27 @@ namespace gms {
 					     const float) __ATTR_COLD__ __ATTR_ALIGN__(64) __ATTR_TCLONES_AVX_AVX512__;
 
 		   bool ComputeXparam_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64),
-		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					     const char * __restrict,
+					     const char * __restrict,
+					     const char * __restrict,
+					     const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 					     
 
 		   bool ComputeYparam_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64),
-		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					     const char * __restrict,
+					     const char * __restrict,
+					     const char * __restrict,
+					     const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 					    
 
 		   bool ComputeZparam_ymm8r4(const AVXVec8 * __restrict __ATTR_ALIGN__(64),
-		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		                             const AVXVec8 * __restrict __ATTR_ALIGN__(64),
+					     const char * __restrict,
+					     const char * __restrict,
+					     const char * __restrict,
+					     const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
 					     
 
 		   bool ComputeEnsembleVolume(const float * __restrict __ATTR_ALIGN__(64),
@@ -251,19 +263,17 @@ namespace gms {
 				       const float,
 				       const float,
 				       const float * __restrict __ATTR_ALIGN__(64),
-				       const float * __restrict __ATTR_ALIGN__(64)) __ATTR_HOT__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
+				       const float * __restrict __ATTR_ALIGN__(64),
+				       const char * __restrict,
+				       const char * __restrict,
+				       const char * __restrict,
+				       const char * __restrict) __ATTR_HOT__ __ATTR_ALIGN__(32) __ATTR_TCLONES_AVX_AVX512__;
 			                     
-	           void ComputeHydroMeteorScattering(
-		                                     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
-						     int32_t,
+	           void ComputeHydroMeteorScattering( // Batch of 4 performance events
+		                                     const char * __restrict,
+						     const char * __restrict,
+						     const char * __restrict,
+						     const char * __restrict,
 						     int32_t,
 						     double,
 						     int32_t,

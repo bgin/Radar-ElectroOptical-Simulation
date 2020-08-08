@@ -11,9 +11,18 @@
 #endif
 #include <math.h>
 #include "GMS_hydrometeor_ensemble_scattering_AVX.h"
+#if (SAMPLES_HW_PMC) == 1
+    #include "libpfc.h"
+    #include <string.h>
+    #include <syslog.h>
+#endif
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
+// Important Notice!!
+// libpfc is not thread safe and does not multiplex and virtualize hardware counters state
+// Pin this code to single core (affitnity)
+
 
 gms::math::HMScatterersAVX::
 HMScatterersAVX() {
@@ -581,7 +590,11 @@ ComputeEnsembleShape( const float inz,
 bool
 gms::math::HMScatterersAVX::
 ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
-                     const AVXVec8 * __restrict cdef) {
+                     const AVXVec8 * __restrict cdef,
+		     const char * __restrict pmc_event1, // Pass valid names of performance events
+		     const char * __restrict pmc_event2,
+		     const char * __restrict pmc_event3,
+		     const char * __restrict pmc_event4) {
      if(__builtin_expect(NULL == cn,0) ||
         __builtin_expect(NULL == cdef,0)) {
            return (false);
@@ -628,6 +641,7 @@ ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
      AVXVec8 __ATTR_ALIGN__(32) vC;
      AVXVec8 __ATTR_ALIGN__(32) tmp1;
      AVXVec8 __ATTR_ALIGN__(32) tmp2;
+     //
      // Locals first-touch
      t0.vtheta0 = ZERO;
      t0.vtheta1 = ZERO;
@@ -671,6 +685,24 @@ ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
      m_hsc.m_radii = (AVXVec8*)__builtin_assume_aligned(m_hsc.m_radii,64);
      cn            = (AVXVec8*)__builtin_assume_aligned(cn,64);
      cdef          = (AVXVec8*)__builtin_assume_aligned(cdef,64);
+#endif
+#if (SAMPLE_HW_PMC) == 1
+           
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
 #endif
      for(int32_t i = 0; i != m_hsc.m_np; ++i) {
          cn_rand = cn[i];
@@ -737,13 +769,31 @@ ComputeXparam_ymm8r4(const AVXVec8 * __restrict cn,
 	    m_hsc.m_ppx[Ix2D(i,m_hsc.m_nxpts,j+3)] = t4.term3;
 	}
      }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif     
      return (true);
 }
 
 bool
 gms::math::HMScatterersAVX::				    
 ComputeYparam_ymm8r4(const AVXVec8 * __restrict cn,
-                     const AVXVec8 * __restrict cdef) {
+                     const AVXVec8 * __restrict cdef,
+		     const char * __restrict pmc_event1,
+		     const char * __restrict pmc_event2,
+		     const char * __restrict pmc_event3,
+		     const char * __restrict pmc_event4) {
 
      if(__builtin_expect(NULL == cn,0) ||
         __builtin_expect(NULL == cdef,0)) {
@@ -839,6 +889,24 @@ ComputeYparam_ymm8r4(const AVXVec8 * __restrict cn,
     cn            = (AVXVec8*)__builtin_assume_aligned(cn,64);
     cdef          = (AVXVec8*)__builtin_assume_aligned(cdef,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+           
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
      for(int32_t i = 0; i != m_hsc.m_np; ++i) {
 
          t5.cn_rand   = cn[i];
@@ -906,6 +974,20 @@ ComputeYparam_ymm8r4(const AVXVec8 * __restrict cn,
 	    m_hsc.m_ppy[Ix2D(i,m_hsc.m_nypts,j+3)] = t4.term3;
 	}
      }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif 
      return (true);
 }
 
@@ -984,6 +1066,24 @@ ComputeZparam_ymm8r4(const AVXVec8 * __restrict cn,
     cn            = (AVXVec8*)__builtin_assume_aligned(cn,64);
     cdef          = (AVXVec8*)__builtin_assume_aligned(cdef,64);
 #endif
+#if (SAMPLE_HW_PMC) == 1
+           
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
     for(int32_t i = 0; i != m_hsc.m_np; ++i) {
 
         t3.cn_rand   = cn[i];
@@ -1034,6 +1134,20 @@ ComputeZparam_ymm8r4(const AVXVec8 * __restrict cn,
 	    m_hsc.m_ppz[Ix2D(i,m_hsc.m_nzpts,j+3)] = t2.term3;
 	}
     }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif 
     return (true);
 }
 
@@ -1163,7 +1277,12 @@ ComputeEnsembleVfall(const float * __restrict aRe,
 		     const float mD,
 		     const float Re,
 		     const float * __restrict aRet,
-		     const float * __restrict bRet) {
+		     const float * __restrict bRet,
+		     const char * __restrict pmc_event1,
+		     const char * __restrict pmc_event2,
+		     const char * __restrict pmc_event3,
+		     const char * __restrict pmc_event4
+		     ) {
 
      float term1,term2,term2a,term3,inv,t1,t2;
      term1 = 0.0f;
@@ -1191,7 +1310,23 @@ ComputeEnsembleVfall(const float * __restrict aRe,
      m_hsc.m_pfv = (float*)__builtin_assume_aligned(m_hsc.m_pfv,64)
 #endif
      if((std::abs(Re) - 999.0f) <= std::numeric_limits<float>::epsilon()) {
-
+#if (SAMPLE_HW_PMC) == 1
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
          for(int32_t i = 0; i != m_hsc.m_nt; ++i) {
              t1 = aRet[i];
 	     t2 = bRet[i];
@@ -1220,8 +1355,39 @@ ComputeEnsembleVfall(const float * __restrict aRe,
 	     term3 = mD*mD*t2-1.0f;
 	     m_hsc.m_pfv[i] = term1*std::pow((term2*term2a),t2)-1.0f;
 	 }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif
      }
      else {
+#if (SAMPLE_HW_PMC) == 1
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
            for(int32_t i = 0; i != m_hsc.m_nt; ++i) {
              t1 = aRe[i];
 	     t2 = bRe[i];
@@ -1250,6 +1416,20 @@ ComputeEnsembleVfall(const float * __restrict aRe,
 	     term3 = mD*mD*t2-1.0f;
 	     m_hsc.m_pfv[i] = term1*std::pow((term2*term2a),t2)-1.0f;
 	 }
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif	
      }
 }
 
@@ -1257,16 +1437,10 @@ ComputeEnsembleVfall(const float * __restrict aRe,
 
 void
 gms::math::HMScatterersAVX::
-ComputeHydroMeteorScattering(int32_t vtune_analysis,
-                             int32_t pmc_loop744,
-			     int32_t pmc_loop965,
-			     int32_t pmc_loop1097,
-			     int32_t pmc_loop1179,
-			     int32_t pmc_loop1778,
-			     int32_t pmc_loop1828,
-			     int32_t pmc_loop2039,
-			     int32_t pmc_loop2092,
-			     int32_t pmc_loop2323,
+ComputeHydroMeteorScattering(const char * __restrict pmc_event1,
+                             const char * __restrict pmc_event2,
+			     const char * __restrict pmc_event3,
+			     const char * __restrict pmc_event4,
 			     int32_t idMie,
 			     double  small,
 			     int32_t MXINT,
@@ -1281,17 +1455,24 @@ ComputeHydroMeteorScattering(int32_t vtune_analysis,
 			     double  * __restrict r0) {
 
 #if defined __ICC || defined __INTEL_COMPILER
-
-            mod_tmatrix_mps_mp_tmatrix_mps_driver_(&vtune_analysis,
-	                                          &pmc_loop744,
-						  &pmc_loop965,
-						  &pmc_loop1097,
-						  &pmc_loop1179,
-						  &pmc_loop1778,
-						  &pmc_loop1828,
-						  &pmc_loop2039,
-						  &pmc_loop2092,
-						  &pmc_loop2323,
+#if (SAMPLE_HW_PMC) == 1
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
+            mod_tmatrix_mps_mp_tmatrix_mps_driver_(
 						  &idMie,
 						  &small,
 						  &MXINT,
@@ -1331,19 +1512,42 @@ ComputeHydroMeteorScattering(int32_t vtune_analysis,
 						  &m_hsh.m_assymi[0],
 						  &m_hsh.m_cpri[0],
 						  &m_hsh.m_mue[0]);
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif
 
 #elif defined __GNUC__ || defined __GFORTRAN__ && (!defined __INTEL_COMPILER)
-
-            __mod_tmatrix_mps_MOD_tmatrix_mps_driver(&vtune_analysis,
-	                                          &pmc_loop744,
-						  &pmc_loop965,
-						  &pmc_loop1097,
-						  &pmc_loop1179,
-						  &pmc_loop1778,
-						  &pmc_loop1828,
-						  &pmc_loop2039,
-						  &pmc_loop2092,
-						  &pmc_loop2323,
+#if (SAMPLE_HW_PMC) == 1
+          
+            
+	      // For now -- only single batch of 4 events is supported
+	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
+	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
+	      CFG[3] = pfcParseCfg(pmc_event1);
+	      CFG[4] = pfcParseCfg(pmc_event2);
+	      CFG[5] = pfcParseCfg(pmc_event3);
+	      CFG[6] = pfcParseCfg(pmc_event4);
+	      // Reconfigure PMC and clear their count
+	      pfcWrCfgs(0,7,CFG);
+	      pfcWrCnts(0,7,ZERO_CNT);
+	      memset(CNT,0,sizeof(CNT));
+	      // Hot section
+	      PFCSTART(CNT);
+        
+#endif
+            __mod_tmatrix_mps_MOD_tmatrix_mps_driver(
 						  &idMie,
 						  &small,
 						  &MXINT,
@@ -1383,6 +1587,20 @@ ComputeHydroMeteorScattering(int32_t vtune_analysis,
 						  &m_hsh.m_assymi[0],
 						  &m_hsh.m_cpri[0],
 						  &m_hsh.m_mue[0]);
+#if (SAMPLE_HW_PMC) == 1
+            PFCEND(CNT);
+	    pfcRemoveBias(CNT,1);
+	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
+	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
+	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
+	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
+	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
+	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+#endif 
 #endif
 
 }
