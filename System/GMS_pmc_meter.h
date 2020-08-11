@@ -92,13 +92,15 @@ namespace gms {
 
 #if (USE_ACCURATE_IEEE754_2008_FP) == 1
 
-                            bool       compute_stats(double &,
+			    static bool       compute_stats(const std::vector<PFC_CNT> &,
+						     double &,
 			                             double &,
 						     double &,
 						     double &,
 						     double &);
 #else
-                            bool       compute_stats(double &,
+			      static bool       compute_stats(const std::vector<PFC_CNT> &,
+			                             double &,
 			                             double &,
 						     double &,
 						     double &,
