@@ -246,7 +246,7 @@ gms::system
 			kurt = dinf;
 		return (false);
 	}
-
+        return (true);
 }
 #else
 
