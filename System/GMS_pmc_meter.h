@@ -107,7 +107,7 @@ namespace gms {
 						     double &);
 #endif
 
-			    void       print() const;
+			    void       print_data(const bool) const;
 
 			    static     bool delta_values_eq(std::vector<bool> &,
 			                                    const PMCMeter &,

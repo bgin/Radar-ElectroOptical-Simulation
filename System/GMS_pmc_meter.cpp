@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <cstring>
+#include <syslog.h>
 #include "GMS_pmc_meter.h"
 
 gms::system
@@ -186,6 +187,96 @@ gms::system
 }
 #else
 
-
+bool
+gms::system
+::PMCMeter
+::compute_stats(const std::vector<PFC_CNT> &data,
+		double &mean,
+		double &adev,
+		double &sdev,
+		double &skew,
+		double &kurt) {
+      using namespace gms::math::constants;
+      PFC_CNT s{}, prev{};
+      std::size_t vlen{};
+      __declspec(align(64)) struct {
+		double len{}, sum{}, var{}, t{},
+		t2{}, t3{}, t4{}, t5{}, isdev{},
+		fracp{}, ct2{}, tmp{};
+	} r8_loc;
+	vlen = data.size();
+	r8_loc.len = static_cast<double>(vlen);
+	// Compute mean (guard against an overflow)
+	for (size_t i = 0Ui64; i != vlen; ++i) {
+		if (s < prev) return (false);
+		prev = s;
+		s += data.operator[](i);
+	}
+        r8_loc.sum = static_cast<double>(s);
+	mean = r8_loc.sum / r8_loc.len;
+	//  Compute average deviation and variance
+	for (size_t i = 0Ui64; i != vlen; ++i) {
+	     if (zero != data[i]) {
+			r8_loc.tmp = static_cast<double>(data[i]);
+			r8_loc.t = std::abs(r8_loc.tmp - mean);
+			adev += r8_loc.t; //Potential overflow?
+			r8_loc.t2 = (r8_loc.tmp - mean) * (r8_loc.tmp - mean);
+			r8_loc.ct2 = r8_loc.t2;
+			r8_loc.fracp = r8_loc.ct2 - static_cast<ULONGLONG>(r8_loc.ct2);
+			if (r8_loc.fracp <= DEPS) {
+				std::printf(" PMCMeter::compute_stats: Losing a significant digits: %.16f, result may not be an accurate\n", r8_loc.fracp);
+			}
+			r8_loc.var += r8_loc.t2; // potential overflow?
+		}
+	}
+	adev /= r8_loc.len;
+	if (r8_loc.var <= 0.0) {
+		std::printf(" PMCMeter::compute_stats: Invalid variance: %.15f\n", r8_loc.var);
+		return (false);
+	}
+	r8_loc.var /= r8_loc.len;
+	sdev = std::sqrt(r8_loc.var);
+	r8_loc.isdev = 1.0 / sdev;
+	r8_loc.fracp = -1.0;
+	r8_loc.tmp = 0Ui64;
+	for (size_t i = 0Ui64; i != vlen; ++i) {
+		if (zero != data.operator[](i)) {
+			r8_loc.tmp = static_cast<double>(data[i]);
+			r8_loc.t3 = (r8_loc.tmp - mean) * r8_loc.isdev;
+			r8_loc.ct2 = r8_loc.t3;
+			r8_loc.fracp = r8_loc.t3 - static_cast<ULONGLONG>(r8_loc.ct2);
+			if (r8_loc.fracp <= DEPS) {
+				std::printf(" PMCMeter::compute_stats: Losing a significant digits: %.16f, result may not be an accurrate\n", r8_loc.fracp);
+			}
+			// potential overflows?
+			r8_loc.t4 = r8_loc.t3*r8_loc.t3*r8_loc.t3;
+			skew += r8_loc.t4;
+			r8_loc.t5 = r8_loc.t4 * r8_loc.t3;
+			kurt += r8_loc.t5;
+		}
+	}
+	skew /= r8_loc.len;
+	kurt /= r8_loc.len - 3.0;
+	if (kurt < 1.0) {
+		std::printf(" PMCMeter::compute_stats: Invalid kurtosis: %.15f\n", kurt);
+		return (false);
+	}
+	return (true);
+}
 
 #endif
+
+void
+gms::system
+::PMCMeter
+::print_data(const bool dump_to_syslog) const {
+
+     if(dump_to_syslog) {
+        openlog("PMCMeter: PMC data dump", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+	syslog(LOG_INFO, 
+     } else {
+        std::cout << "  Dumping state of " << typeid(*this).raw_name() << "\n";
+         std::cout << "============================================================\n";
+     }
+
+}
