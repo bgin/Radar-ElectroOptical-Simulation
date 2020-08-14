@@ -33,7 +33,7 @@ namespace gms {
 
 		            using fptr = void(*)(void);
 			    
-			    std::size_t        m_nruns;
+			    std::size_t        m_data_size;
 			    
 			    fptr               m_ptfunc;
 
@@ -109,21 +109,7 @@ namespace gms {
 
 			    void       print_data(const bool) const;
 
-			    static     bool delta_values_eq(std::vector<bool> &,
-			                                    const PMCMeter &,
-							    const PMCMeter &);
-
-			    static     bool delta_values_ineq(std::vector<bool> &,
-			                                      const PMCMeter &,
-							      const PMCMeter &);
-
-			    static     bool delta_values_gt(std::vector<bool> &,
-			                                    const PMCMeter &,
-							    const PMCMeter &);
-
-			    static     bool delta_values_lt(std::vector<bool> &,
-			                                    const PMCMeter &,
-							    const PMCMeter &);
+			  
 	     };
 
        } // system

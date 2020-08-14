@@ -7,7 +7,7 @@
 #include "GMS_pmc_meter.h"
 
 gms::system
-::PMCMeter::PMCMeter(const std::size nruns,
+::PMCMeter::PMCMeter(const std::size data_size,
 		     const fptr ptfunc,
 		     const char * __restrict func_name,
 		     const char * __restrict file_name,
@@ -15,10 +15,9 @@ gms::system
 		     const char * __restrict event2_name,
 		     const char * __restrict event3_name,
 		     const char * __restrict event4_name,
-		     const bool  warmup,
-		     const int32_t thnum)
+		     const bool  warmup)
 :
-m_nruns{nruns},
+m_data_size{data_size},
 m_ptfunc{ptfunc},
 m_func_name{func_name},
 m_file_name{file_name},
@@ -87,7 +86,7 @@ run_benchmark() {
      if(m_warmup) {
          m_ptfunc();
      }
-     for(std::size_t i = 0; i != m_nruns; ++i) {
+     for(std::size_t i = 0; i != m_data_size; ++i) {
         //
         err = pfcWrCfgs(0,7,CFG);
         if(err != 0) {
@@ -272,11 +271,39 @@ gms::system
 ::print_data(const bool dump_to_syslog) const {
 
      if(dump_to_syslog) {
+        
         openlog("PMCMeter: PMC data dump", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
-	syslog(LOG_INFO, 
+	syslog(LOG_INFO, "Dumping state of %s",typeid(*this).raw_name());
+	syslog(LOG_INFO, "=======================================================");
+	syslog(LOG_INFO, " Datum size per run: %d", m_data_size);
+	syslog(LOG_INFO, " Tested (wrapper) function address: %p", m_ptfunc);
+	syslog(LOG_INFO, " Tested function name: %s", m_func_name.data());
+	syslog(LOG_INFO, " Tested function file name: %s", m_file_name.data());
+	syslog(LOG_INFO, " INSTR_ISSUED | UNHALTED_CORE_CYCLES | UNHALTED_REF_CYCLES | event:  %s | event: %s | event: %s | event: %s", m_event1_name,m_event2_name,m_event3_name,m_event4_name);
+	for(std::size_t i = 0Ui64; i != m_data_size; ++i) {
+            syslog(LOG_INFO, " %20lld, %20lld, %20lld, %20lld, %20lld, %20lld, %20lld",
+	           m_instr_issued[i],m_core_cycles[i],m_ref_cycles[i],m_hw_event1[i],m_hw_event2[i],m_hw_event3[i],m_hw_event4[i]);
+	   }
+	syslog(LOG_INF, "=================== End of Dump ===========================");
+	closelog();
      } else {
         std::cout << "  Dumping state of " << typeid(*this).raw_name() << "\n";
-         std::cout << "============================================================\n";
-     }
+        std::cout << "============================================================\n";
+	std::cout << " Datum size per run: " << m_data_size <<   "\n"
+	          << " Tested (wrapper) function address: " << std::hex << m_ptfunc <<  "\n"
+		  << " Tested function name: " << m_func_name.data() <<  "\n"
+		  << " Tested function file name: " << m_file_name.data() <<  "\n";
+        std::printf( "INSTR_ISSUED | UNHALTED_CORE_CYCLES | UNHALTED_REF_CYCLES | event:  %s | event: %s | event: %s | event: %s", m_event1_name,m_event2_name,m_event3_name,m_event4_name);
+	for(std::size_t i = 0Ui64; i != m_data_size; ++i) {
+            std::cout << m_instr_issued[i] << "\n"
+	              << std::setw(4)  << m_core_cycles[i] << "\n"
+		      << std::setw(8)  << m_ref_cycles[i]  << "\n"
+		      << std::setw(12) << m_hw_event1[i]   << "\n"
+		      << std::setw(16) << m_hw_event2[i]   << "\n"
+		      << std::setw(20) << m_hw_event3[i]   << "\n"
+		      << std::setw(24) << m_hw_event4[i]   << "\n";
+	}
+	std::cout << "========================== End of Dump ============================" << "\n";
+     } 
 
 }
