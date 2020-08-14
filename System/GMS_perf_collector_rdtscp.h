@@ -26,12 +26,9 @@ namespace file_info {
 #include <vector>
 #include <string>
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
+#include "GMS_config.h"
 #endif
-#if (USE_MKL) == 1 && defined (LAM_COMPILED_BY_ICC)
+#if (USE_MKL) == 1 && defined (GMS_COMPILED_BY_ICC)
 #include <mkl_dfti.h>
 #endif
 #if (USE_ACCURATE_IEEE754_2008_FP) == 1
@@ -40,7 +37,7 @@ namespace file_info {
 
 void rdft(int, int, double *, int *, double *);
 
-namespace  lam {
+namespace  gms {
 	namespace system {
 
 		struct  PerfCollectorRDTSCP {

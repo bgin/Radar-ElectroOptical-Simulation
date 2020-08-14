@@ -213,11 +213,11 @@ gms::system
 bool
 gms::system
 ::PerfCollectorRDTSCP
-::compute_stats(_Out_ double &mean ,
-			    _Out_ double &adev,
-				_Out_ double &sdev,
-			    _Out_ double &skew,
-			    _Out_ double &kurt) {
+::compute_stats(double &mean ,
+		double &adev,
+		double &sdev,
+		double &skew,
+		double &kurt) {
 	using namespace gms::math::constants;
 	if (m_Iscleared || m_delta_values.size() < lo_bound) {
 		mean = dinf, adev = dinf,
