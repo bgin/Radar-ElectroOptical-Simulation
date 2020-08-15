@@ -113,12 +113,19 @@ namespace lam {
 											_In_ double * __restrict,
 											_In_ const int32_t);
 
-				void print() const;
+			       void print() const;
 
-		        bool check_data_size() noexcept(true);
-
-		      void cvrt_to_double(_Out_ double * __restrict,
-								   _In_ const std::size_t) noexcept(true);
+		               bool check_data_size() noexcept(true);
+#if (USE_ACCURATE_IEEE754_2008_FP) == 1
+				// This version relies on Intel libbfp754 and that means
+				// probably slower execution speed (not confirmed yet).
+				bool cvrt_to_double(double * __restrict,
+						    const std::size_t) noexcept(true);
+#else
+				bool cvrt_to_double(double * __restrict,
+					            const std::size_t) noexcept(true);
+#endif
+		       
 
 		};
 	}

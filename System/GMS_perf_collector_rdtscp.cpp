@@ -407,7 +407,9 @@ gms::system
 	auto bOk2 = set2.cvrt_to_double(&dataset2[0],set_size);
 #endif
 	if (!bOk1 || !bOk2) { // If you got here somehow datasets length is corrupted
-		return (false);
+	        _mm_free(dataset1);
+		_mm_free(dataset2);
+	 	return (false);
 	}
 	snvals = n << 1;
 	invals = 1.0 / static_cast<double>(snvals);

@@ -109,16 +109,26 @@ namespace gms {
 					call Ouru FFT rdft function)
 					Usage of MKL DFTI is set as a default.
 				*/
-				static bool correlation_set(_In_ PerfCollectorQPC &,
-							    _In_ PerfCollectorQPC &,
-											_Out_ double * __restrict,
-											_In_ int32_t * __restrict,
-											_In_ double * __restrict,
-											_In_ const int32_t );
+				static bool correlation_set(PerfCollectorQPC &,
+							    PerfCollectorQPC &,
+							    double * __restrict,
+							    int32_t * __restrict,
+							    double * __restrict,
+							    const int32_t );
 
 				void print() const;
 
 				bool check_data_size()const noexcept(true);
+
+#if (USE_ACCURATE_IEEE754_2008_FP) == 1
+				// This version relies on Intel libbfp754 and that means
+				// probably slower execution speed (not confirmed yet).
+				bool cvrt_to_double(double * __restrict,
+						    const std::size_t) noexcept(true);
+#else
+				bool cvrt_to_double(double * __restrict,
+					            const std::size_t) noexcept(true);
+#endif		 
 
 
 

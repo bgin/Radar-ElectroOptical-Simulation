@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include "LAM_perf_collector_qpc.h"
+#include "GMS_perf_collector_qpc.h"
 #include "../GMS_malloc.h"
 #include "../Math/GMS_constants.h"
 
@@ -404,6 +404,19 @@ gms::system
 	typedef double * __restrict __declspec(align_value(64)) aligned_r8ptr;
 	aligned_r8ptr dataset1 = gms::common::gms_edmalloca(set_size,align64B);
 	aligned_r8ptr dataset2 = gms::common::gms_edmalloca(set_size,align64B);
+#if (USE_ACCURATE_IEEE754_2008_FP) == 1
+	auto bOk1 = set1.cvrt_to_double(&dataset1[0],set_size);
+	auto bOk2 = set2.cvrt_to_double(&dataset2[0],set_size);
+	
+#else
+	auto bOk1 = set1.cvrt_to_double(&dataset1[0],set_size);
+	auto bOk2 = set2.cvrt_to_double(&dataset2[0],set_size);
+#endif
+	if (!bOk1 || !bOk2) {
+	        _mm_free(dataset1); // more as a sanity check
+		_mm_free(dataset2);
+		return (false);
+	}	
 	snvals = n << 1;
 	invals = 1.0 / static_cast<double>(snvals);
 	// MKL_DFTI
@@ -495,3 +508,31 @@ gms::system
 	else return (false);
 }
 
+#if (USE_ACCURATE_IEEE754_2008_FP) == 1
+bool
+gms::system
+::PerfCollectorQPC(double * __restrict data,
+		   const std::size_t data_len) {
+   	if (m_delta_values.size() != data_len) {
+		return (false);
+	}
+	// Begin non vectorized conversion (numerically stable conversion)
+	for (std::size_t i = 0Ui64; i != data_len; ++i) {
+		data[i] = __binary64_from_uint64(m_delta_values[i]);
+	}
+	return (true);
+}
+#else
+bool
+gms::system
+::PerfCollectorQPC(double * __restrict data,
+		   const std::size_t data_len) {
+        if (m_delta_values.size() != data_len) {
+		return (false);
+	}
+	for(std::size_t i = 0Ui64; i != data_len; ++i) {
+		data[i] = static_cast<double>(m_delta_values[i]);
+	}
+	return (true);
+}
+#endif
