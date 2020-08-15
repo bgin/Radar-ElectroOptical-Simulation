@@ -134,21 +134,7 @@ namespace  gms {
 					            const std::size_t) noexcept(true);
 #endif
 
-				bool  delta_values_eq(std::vector<bool> &,
-						      const PerfCollectorRDTSCP &,
-						      const PerfCollectorRDTSCP &);
-
-				bool   delta_values_ineq(std::vector<bool> &,
-							 const PerfCollectorRDTSCP &,
-							 const PerfCollectorRDTSCP &);
-
-				bool   delta_values_gt(std::vector<bool> &,
-						       const PerfCollectorRDTSCP &,
-						       const PerfCollectorRDTSCP &);
-
-				bool   delta_values_lt(std::vector<bool> &,
-						       const PerfCollectorRDTSCP &,
-						       const PerfCollectorRDTSCP &);
+			
 
 		};
 	}
