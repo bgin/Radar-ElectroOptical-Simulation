@@ -493,6 +493,126 @@ namespace gms {
 				            float * __restrict,
 				            const int32_t);
 
+		void hsw_uops_issued_any_mite_uops_data(const int64_t * __restrict,
+				            const int64_t * __restrict,
+				            float * __restrict,
+				            const int32_t);
+
+		void hsw_single_mul_avx_inst_all_data(const int64_t * __restrict,
+				            const int64_t * __restrict,
+				            float * __restrict,
+				            const int32_t);
+
+		void hsw_frontend_latency_data(const int64_t * __restrict,
+				            const int64_t * __restrict,
+				            float * __restrict,
+				            const int32_t);
+
+	        void hsw_frontend_bw_data(const float * __restrict,
+				     const float * __restrict,
+				     float * __restrict,
+				     const int32_t);
+
+		
+                void hsw_mite_data(const int64_t * __restrict,
+			      const int64_t * __restrict,
+			      const int64_t * __restrict,
+			      float * __restrict,
+			      const int32_t);
+
+		void hsw_store_fwd_blocked_data(const int64_t * __restrict,
+				     const int64_t * __restrict,
+				     float * __restrict,
+				     const int32_t);
+
+		void hsw_lock_latency_data(const float * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_split_loads_data(const float * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_4k_aliasing_data(const int64_t * __restrict,
+				     const int64_t * __restrict,
+				     float * __restrict,
+				     const int32_t);
+
+	        void hsw_fb_full_data(const float * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_l2_bound_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_l3_bound_data(const float * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_contested_accesses_data(const float * __restrict,
+				       const float * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_data_sharing_data(const float * __restrict,
+				     const int64_t * __restrict,
+				     float * __restrict,
+				     const int32_t);
+
+		void hsw_hsw_dram_bound_data(const float * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_mem_bw_data(const int64_t * __restrict,
+				     const int64_t * __restrict,
+				     float * __restrict,
+				     const int32_t);
+
+		void hsw_mem_latency_data(const int64_t * __restrict,
+		                          const int64_t * __restrict,
+					  const float * __restrict,
+					   float * __restrict,
+				          const int32_t);
+
+		void hsw_store_bound_data(const int64_t * __restrict,
+				     const int64_t * __restrict,
+				     float * __restrict,
+				     const int32_t);
+
+		void hsw_dtlb_bound_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_l3_hit_latency_data(const float * __restrict,
+		                             const int64_t * __restrict,
+					      float * __restrict,
+				             const int32_t);
+
+		void hsw_false_sharing_data( const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_split_stores_data( const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
 
 		
 
