@@ -614,7 +614,131 @@ namespace gms {
 				       float * __restrict,
 				       const int32_t);
 
-		
+		void hsw_dtlb_store_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_core_bound_data(const float * __restrict,
+		                         const float * __restrict,
+					 float * __restrict,
+					 const int32_t);
+
+		void hsw_divider_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+	        void hsw_ports_utilization_data(const float * __restrict,
+		                                const int64_t * __restrict,
+				                const int64_t * __restrict,
+				                const int64_t * __restrict,
+				                float * __restrict,
+				                const int32_t);
+
+		void hsw_ports_utilized_0_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_ports_utilized_1_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_ports_utilized_2_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_ports_utilized_3m_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_alu_utilization_data(const int64_t * __restrict,
+		                              const int64_t * __restrict,
+					      const int64_t * __restrict,
+					      const int64_t * __restrict,
+					      const int64_t * __restrict,
+					      float * __restrict,
+					      const int32_t);
+
+		void hsw_port0_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_port1_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_port5_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_port6_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_load_ops_utilization_data(const int64_t * __restrict,
+		                              const int64_t * __restrict,
+					      const int64_t * __restrict,
+					      const int64_t * __restrict,
+					      const int64_t * __restrict,
+					      float * __restrict,
+					      const int32_t);
+
+		void hsw_port6_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_port3_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+	        void hsw_port4_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_port7_exec_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_ms_assists_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_ms_data(const float * __restrict,
+		                 const int64_t * __restrict,
+				 const int64_t * __restrict,
+				 float * __restrict,
+				 const int32_t);
+
+		void hsw_x87_usage_data(const int64_t * __restrict,
+		                        const float * __restrict,
+					const int64_t * __restrict,
+				        float * __restrict,
+				        const int32_t);
+
+		void hsw_retired_data(const int64_t * __restrict,
+				       const int64_t * __restrict,
+				       float * __restrict,
+				       const int32_t);
+
+		void hsw_ret_reg_uops_data(const float * __restrict,
+		                           const float * __restrict,
+					   float * __restrict,
+					   const int32_t);
 
 		
 						     
