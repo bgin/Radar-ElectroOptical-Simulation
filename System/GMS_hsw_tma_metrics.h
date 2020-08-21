@@ -898,7 +898,7 @@ namespace gms {
      }
 
      static inline
-     float hsw_ports_utilized_0( const int64_t cycles_3m_ports_utilized,
+     float hsw_ports_utilized_3m( const int64_t cycles_3m_ports_utilized,
                                  const int64_t core_clks) {
                   return ((float) cycles_3m_ports_utilized/core_clks);
      }
