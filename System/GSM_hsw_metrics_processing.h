@@ -180,8 +180,8 @@ namespace gms {
 
 		void hsw_few_uops_exec_thresh_data(const int64_t * __restrict,
 						   const int64_t * __restrict,
-						   const float * __restrict,
-						   double * __restrict,
+						   const double * __restrict,
+						   int64_t * __restrict,
 						   const int32_t);
 
 		void hsw_backend_bound_cycles_data(const int64_t * __restrict,
