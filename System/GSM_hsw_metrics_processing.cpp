@@ -1446,3 +1446,456 @@ gms::system
 	}
 #endif
 }
+
+
+void
+gms::system
+::hsw_core_clks_data( const int64_t * __restrict cpu_clk_unhalted_thread,
+                      const int64_t * __restrict cpu_clk_unhalted_one_thread_active,
+		      const int64_t * __restrict cpu_clk_unhalted_ref_xclk,
+		      const int64_t * __restrict cpu_clk_unhalted_thread_any,
+		      int64_t * __restrict samples,
+		      const int32_t len,
+		      const bool ebs_mode) {
+#if defined __ICC || defined __INTEL_COMPILER
+         __assume_aligned(cpu_clk_unhalted_thread,64);
+	 __assume_aligned(cpu_clk_unhalted_one_thread_active,64);
+	 __assume_aligned(cpu_clk_unhalted_ref_xclk,64);
+	 __assume_aligned(cpu_clk_unhalted_thread_any,64);
+	 __assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+         for(int32_t i = 0; i != len; ++i) {
+             samples[i] = hsw_core_clks(cpu_clk_unhalted_thread[i],
+	                                cpu_clk_unhalted_one_thread_active[i],
+					cpu_clk_unhalted_ref_xclk[i],
+					cpu_clk_unhalted_thread_any[i],
+					ebs_mode);
+	 }
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(cpu_clk_unhalted_thread,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(cpu_clk_unhalted_one_thread_active,64);
+	const int64_t * __restrict c = (const int64_t*)__builtin_assume_aligned(cpu_clk_unhalted_ref_xclk,64);
+	const int64_t * __restrict d = (const int64_t*)__builtin_assume_aligned(cpu_clk_unhalted_thread_any,64);
+	int64_t * __restrict       s = (int64_t*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_core_clks(a[i],
+	                         b[i],
+				 c[i],
+				 d[i],
+				 ebs_mode);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_load_miss_real_lat_data(const int64_t * __restrict l1d_pend_miss_pending,
+                              const int64_t * __restrict mem_load_uops_retired_l1_miss,
+			      const int64_t * __restrict mem_load_uops_retired_hit_lfb,
+			      double * __restrict samples,
+			      const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(l1d_pend_miss_pending,64);
+	__assume_aligned(mem_load_uops_retired_l1_miss,64);
+	__assume_aligned(mem_load_uops_retired_hit_lfb,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_load_miss_real_latency(l1d_pend_miss_pending[i],
+	                                            mem_load_uops_retired_l1_miss[i],
+						    mem_load_uops_retired_hit_lfb[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+       const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(l1d_pend_miss_pending,64);
+       const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(mem_load_uops_retired_l1_miss,64);
+       const int64_t * __restrict c = (const int64_t*)__builtin_assume_aligned(mem_load_uops_retired_hit_lfb,64);
+       double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+       for(int32_t i = 0; i != len; ++i) {
+           s[i] = hsw_load_miss_real_latency(a[i],
+	                                     b[i],
+					     c[i]);
+       }
+#endif
+}
+
+
+void
+gms::system
+::hsw_mem_level_parallel_data(const int64_t * __restrict l1d_pend_miss_pending,
+                              const int64_t * __restrict l1d_pend_miss_pending_cycles,
+			      double * __restrict samples,
+			      const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(l1d_pend_miss_pending,64);
+	__assume_aligned(l1_pend_miss_pending_cycles,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_mem_level_parallelism(l1d_pend_miss_pending[i],
+	                                           l1d_pend_miss_pending_cycles[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(l1d_pend_miss_pending,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(l1d_pend_miss_pending_cycles,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_mem_level_parallelism(a[i],
+	                                     b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_page_walk_util_data(const int64_t * __restrict itlb_misses_walk_duration,
+                          const int64_t * __restrict dtlb_load_misses_walk_duration,
+			  const int64_t * __restrict dtlb_store_misses_walk_duration,
+			  const int64_t * __restrict core_clks,
+			  double * __restrict samples,
+			  const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(itlb_misses_walk_duration,64);
+	__assume_aligned(dtlb_load_misses_walk_duration,64);
+	__assume_aligned(dtlb_store_misses_walk_duration,64);
+	__assume_aligned(core_clks,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_page_walk_util(itlb_misses_walk_duration[i],
+	                                    dtlb_load_misses_walk_duration[i],
+					    dtlb_store_misses_walk_duration[i],
+					    core_clks[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(itlb_misses_walk_duration,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(dtlb_load_misses_walk_duration,64);
+	const int64_t * __restrict c = (const int64_t*)__builtin_assume_aligned(dtlb_store_misses_walk_duration,64);
+	const int64_t * __restrict d = (const int64_t*)__builtin_assume_aligned(core_clks,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_page_walk_util(a[i],
+	                              b[i],
+				      c[i],
+				      d[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l1d_cache_fill_bw_data(const int64_t * __restrict l1d_replacement,
+                             const int64_t * __restrict time_interval,
+			     double * __restrict samples,
+			     const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(l1d_replacement,64);
+	__assume_aligned(time_interval,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l1d_cache_fill_bw(l1d_replacement[i],
+	                                       time_interval[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(l1d_replacement,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(time_interval,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l1d_cache_fill_bw(a[i],
+	                                 b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l2_cache_fill_bw_data( const int64_t * __restrict l2_lines_in_all,
+                             const int64_t * __restrict time_interval,
+			     double * __restrict samples,
+			     const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(l2_lines_in_all,64);
+	__assume_aligned(time_interval,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l2_cache_fill_bw(l2_lines_in_all[i],
+	                                       time_interval[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(l2_lines_in_all,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(time_interval,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l2_cache_fill_bw(a[i],
+	                                 b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l3_cache_fill_bw_data(const int64_t * __restrict longest_lat_cache_miss,
+                            const int64_t * __restrict time_interva,
+			    double * __restrict samples,
+			    const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(longest_lat_cache_miss,64);
+	__assume_aligned(time_interval,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l3_cache_fill_bw(longest_lat_cache_miss[i],
+	                                       time_interval[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(longest_lat_cache_miss,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(time_interval,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l3_cache_fill_bw(a[i],
+	                                 b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l1mpki_data(const int64_t * __restrict mem_load_uops_retired_l1_miss,
+                  const int64_t * __restrict inst_retired_any,
+		  double * __restrict samples,
+		  const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(mem_load_uops_retired_l1_miss,64);
+	__assume_aligned(inst_retired_any,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l1mpki(mem_load_uops_retired_l1_miss[i],
+	                            inst_retired_any[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(mem_load_uops_retired_l1_miss,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(inst_retired_any,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l1mpki(a[i],
+	                      b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l2mpki_data(const int64_t * __restrict mem_load_uops_retired_l2_miss,
+                  const int64_t * __restrict  inst_retired_any,
+		  double * __restrict samples,
+		  const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(mem_load_uops_retired_l2_miss,64);
+	__assume_aligned(inst_retired_any,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l2mpki(mem_load_uops_retired_l2_miss[i],
+	                            inst_retired_any[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(mem_load_uops_retired_l2_miss,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(inst_retired_any,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l2mpki(a[i],
+	                      b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l2hpki_data( const int64_t * __restrict mem_load_uops_retired_l2_miss,
+                   const int64_t * __restrict inst_retired_any,
+		   double * __restrict samples,
+		   const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(mem_load_uops_retired_l2_miss,64);
+	__assume_aligned(inst_retired_any,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l2hpki(mem_load_uops_retired_l2_miss[i],
+	                            inst_retired_any[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(mem_load_uops_retired_l2_miss,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(inst_retired_any,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l2hpki(a[i],
+	                      b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_l3mpki_data( const int64_t * __restrict mem_load_uops_retired_l3_miss,
+                   const int64_t * __restrict inst_retired_any,
+		   double * __restrict samples,
+		   const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(mem_load_uops_retired_l3_miss,64);
+	__assume_aligned(inst_retired_any,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_l3mpki(mem_load_uops_retired_l3_miss[i],
+	                            inst_retired_any[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(mem_load_uops_retired_l3_miss,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(inst_retired_any,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_l3mpki(a[i],
+	                      b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_ipfarbr_data(const int64_t * __restrict inst_retired_any,
+                   const int64_t * __restrict br_inst_retired_far_branch,
+		   double * __restrict samples,
+		   const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(inst_retired_any,64);
+	__assume_aligned(br_inst_retired_far_branch,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_ipfarbr(inst_retired_any[i],
+	                            br_inst_retired_far_branch[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(inst_retired_any,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(br_inst_retired_far_branch,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_ipfarbr(a[i],
+	                      b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_assist_data(const int64_t * __restrict other_assists_any_wb_assists,
+                  const int64_t * __restrict  slots,
+		  double * __restrict samples,
+		  const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(other_assists_any_wb_assists,64);
+	__assume_aligned(slots,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_assist(other_assists_any_wb_assists[i],
+	                            slots[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(other_assists_any_wb_assists,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(slots,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_assist(a[i],
+	                      b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_kernel_util_data(const int64_t * __restrict cpu_clk_unhalted_thread_sup,
+                       const int64_t * __restrict cpu_clk_unhalted_ref_tsc,
+		       double * __restrict samples,
+		       const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(cpu_clk_unhalted_thread_sup,64);
+	__assume_aligned(cpu_clk_unhalted_ref_tsc,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_kernel_utilization(cpu_clk_unhalted_thread_sup[i],
+	                            cpu_clk_unhalted_ref_tsc[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(cpu_clk_unhalted_thread_sup,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(cpu_clk_unhalted_ref_tsc,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_kernel_utilization(a[i],
+	                                  b[i]);
+	}
+#endif
+}
+
+
+void
+gms::system
+::hsw_dram_bw_use_data(const int64_t * __restrict unc_arb_trk_requests_all,
+                       const int64_t * __restrict unc_arb_coh_trk_requests_all,
+		       const int64_t * __restrict time_interval,
+		       double * __restrict,
+		       const int32_t len) {
+#if defined __ICC || defined __INTEL_COMPILER
+        __assume_aligned(unc_arb_trk_requests_all,64);
+	__assume_aligned(unc_arb_coh_trk_requests_all,64);
+	__assume_aligned(time_interval,64);
+	__assume_aligned(samples,64);
+#pragma simd vectorlengthfor(8)
+        for(int32_t i = 0; i != len; ++i) {
+            samples[i] = hsw_dram_bw_use(unc_arb_trk_requests_all[i],
+	                                  unc_arb_coh_trk_requests_all[i],
+					  time_interval[i]);
+	}
+#elif defined __GNUC__ && (!defined __ICC || !defined __INTEL_COMPILER)
+        const int64_t * __restrict a = (const int64_t*)__builtin_assume_aligned(unc_arb_trk_requests_all,64);
+	const int64_t * __restrict b = (const int64_t*)__builtin_assume_aligned(unc_arb_coh_trk_requests_all,64);
+	const int64_t * __restrict c = (const int64_t*)__builtin_assume_aligned(time_interval,64);
+	double * __restrict        s = (double*)__builtin_assume_aligned(samples,64);
+#pragma GCC ivdep
+        for(int32_t i = 0; i != len; ++i) {
+            s[i] = hsw_dram_bw_use(a[i],
+	                           b[i],
+				   c[i]);
+	}
+#endif
+}
