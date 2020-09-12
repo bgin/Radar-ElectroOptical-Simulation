@@ -355,7 +355,7 @@ namespace gms {
 				     double * __restrict,
 				     const int32_t);
 
-		void hsw_ipfabr_data(const int64_t * __restrict,
+		void hsw_ipfarbr_data(const int64_t * __restrict,
 				     const int64_t * __restrict,
 				     double * __restrict,
 				     const int32_t);
@@ -515,11 +515,7 @@ namespace gms {
 				     const int32_t);
 
 		
-                void hsw_mite_data(const int64_t * __restrict,
-			      const int64_t * __restrict,
-			      const int64_t * __restrict,
-			      double * __restrict,
-			      const int32_t);
+              
 
 		void hsw_store_fwd_blocked_data(const int64_t * __restrict,
 				     const int64_t * __restrict,
@@ -532,12 +528,7 @@ namespace gms {
 				       double * __restrict,
 				       const int32_t);
 
-		void hsw_split_loads_data(const double * __restrict,
-				       const int64_t * __restrict,
-				       const int64_t * __restrict,
-				       double * __restrict,
-				       const int32_t);
-
+	
 		void hsw_4k_aliasing_data(const int64_t * __restrict,
 				     const int64_t * __restrict,
 				     double * __restrict,
@@ -600,7 +591,7 @@ namespace gms {
 				       double * __restrict,
 				       const int32_t);
 
-		void hsw_l3_hit_latency_data(const float * __restrict,
+		void hsw_l3_hit_latency_data(const double * __restrict,
 		                             const int64_t * __restrict,
 					     double * __restrict,
 				             const int32_t);
