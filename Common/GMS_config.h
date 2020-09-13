@@ -18,6 +18,22 @@ namespace file_info {
 
 }
 
+#if !defined(__ATTR_ALWAYS_INLINE__)
+    #define __ATTR_ALWAYS_INLINE__ __attribute__((always_inline))
+#endif
+
+#if !defined(__ATTR_TCLONE_AVX_AVX512__)
+     #define __ATTR_TCLONE_AVX_AVX512__ __attribute__ ((target_clones("avx","avx512")))
+#endif
+
+#if !defined(__ATTR_REGCALL__)
+    #define __ATTR_REGCALL__ __attribute__((regcall))
+#endif
+
+#if !defined(__ATTR_VECTORCALL__)
+    #define __ATTR_VECTORCALL__ __attribute__((vectorcall))
+#endif
+
 #if !defined(__ATTR_HOT__)
     #define  __ATTR_HOT__  __attribute__ ((hot))
 #endif
@@ -118,6 +134,18 @@ of SIMD registers*/
 #else
 #error "COMPILE_TIME_ERROR: Cannot determine 32bit or 64bit mode!"
 #endif
+
+#if !defined (USE_LIBPFC)
+#define USE_LIBPFC 1
+#endif
+
+// Set by default
+#if (USE_LIBPFC) == 1
+    #if !defined (SAMPLE_HW_PMC)
+        #define SAMPLE_HW_PMC 1
+    #endif
+#endif
+
 
 /*
 Compiler optimization settings.
@@ -225,7 +253,7 @@ Include all headers - master header file.
 	__declspec(align((alignment))) char pad##ordinal[(size)];
 #elif !defined (PAD_TO_ALIGNED) && defined (__linux)
 #define PAD_TO_ALIGNED(alignment,ordinal,size) #
-        __attribute__(align((alignment))) char pad##ordinal[(size)];
+        __attribute__((align((alignment))) char pad##ordinal[(size)];
 #endif
 
 #if !defined (ALIGN_AT) && !defined (__linux)
@@ -459,7 +487,7 @@ constexpr int padding64B{64};
 
 
 
-#define PRINT_MESSAGE(msg) std::cout << (msg) << "\n";
+#define PRINT_MESSAGE(msg) std::cerr << (msg) << "\n";
 
 #if !defined (PRINT_CALLSTACK_ON_ERROR)
 #define PRINT_CALLSTACK_ON_ERROR 1
@@ -467,7 +495,7 @@ constexpr int padding64B{64};
 
 	
 
-#define PRINT_MESSAGE_VALUE(msg,val) std::cout << (msg) << (val) << "\n";
+#define PRINT_MESSAGE_VALUE(msg,val) std::cerr << (msg) << (val) << "\n";
 
 #define PRINT_MESSAGE_VALUE_2ARGS(msg,arg1,arg2) \
 	std::cout << (msg) << std::dec <<  \
