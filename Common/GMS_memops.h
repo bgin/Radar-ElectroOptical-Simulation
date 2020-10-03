@@ -27,6 +27,40 @@ namespace file_info {
 #include "GMS_avxc8f32.h"
 #include "GMS_avx512vec16.h"
 
+#if !defined (MEMMOVE_1ELEM)
+#define MEMMOVE_1ELEM 1
+#endif
+
+#if !defined (MEMMOVE_16ELEMS)
+#define MEMMOVE_16ELEMS 16
+#endif
+
+#if !defined (MEMMOVE_32ELEMS)
+#define MEMMOVE_32ELEMS 32
+#endif
+
+#if !defined (MEMMOVE_64ELEMS)
+#define MEMMOVE_64ELEMS 64
+#endif
+
+#if !defined (MEMMOVE_128ELEMS)
+#define MEMMOVE_128ELEMS 128
+#endif
+
+#if !defined (MEMMOVE_256ELEMS)
+#define MEMMOVE_256ELEMS 256
+#endif
+// float type (4-bytes)
+#define YMM_LEN (8)
+#define ZMM_LEN (16)
+
+#if !defined (PAGE4KiB)
+#define PAGE4KiB 4096
+#endif
+
+#if !defined (MAXFLOATSPERPAGE4KiB)
+#define MAXFLOATSPERPAGE4KiB 1024
+#endif
 
 namespace gms {
 
@@ -871,10 +905,818 @@ namespace gms {
 	                    }
 #endif
                       }
-	  
-    }
 
-}
+
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx256_init_unroll8x_ps(
+#if defined __ICC || defined __INTEL_COMPILER
+	                             float * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                     float * __restrict __ATTR_ALIGN__(32) v,
+#endif
+			             const int32_t vlen,
+			             const float val) {
+                      __m256 ymm0 = _mm256_set1_ps(val);
+                      int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+                      for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
+	                    _mm256_storeu_ps(&v[i+0],  ymm0);
+	                    _mm256_storeu_ps(&v[i+8],  ymm0);
+	                    _mm256_storeu_ps(&v[i+16], ymm0);
+	                    _mm256_storeu_ps(&v[i+24], ymm0);
+	                    _mm256_storeu_ps(&v[i+32], ymm0);
+	                    _mm256_storeu_ps(&v[i+40], ymm0);
+	                    _mm256_storeu_ps(&v[i+48], ymm0);
+	                    _mm256_storeu_ps(&v[i+56], ymm0);
+	              }
+#pragma loop_count min(1),avg(4),max(7)
+                        for(; i != vlen; ++i) {
+	                    v[i] = val;
+                           }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     
+                 if((reinterpret_cast<uintptr_t>(v) & 0x1F) != 0ULL) {
+	               for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
+	                    _mm256_storeu_ps(&v[i+0],  ymm0);
+	                    _mm256_storeu_ps(&v[i+8],  ymm0);
+	                    _mm256_storeu_ps(&v[i+16], ymm0);
+	                    _mm256_storeu_ps(&v[i+24], ymm0);
+	                    _mm256_storeu_ps(&v[i+32], ymm0);
+	                    _mm256_storeu_ps(&v[i+40], ymm0);
+	                    _mm256_storeu_ps(&v[i+48], ymm0);
+	                    _mm256_storeu_ps(&v[i+56], ymm0);
+	          }
+                }else {
+                        v = (float*)__builtin_assume_aligned(v,32)l
+	                for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
+                             _mm256_store_ps(&v[i+0],  ymm0);
+	                     _mm256_store_ps(&v[i+8],  ymm0);
+	                     _mm256_store_ps(&v[i+16], ymm0);
+	                     _mm256_store_ps(&v[i+24], ymm0);
+	                     _mm256_store_ps(&v[i+32], ymm0);
+	                     _mm256_store_ps(&v[i+40], ymm0);
+	                     _mm256_store_ps(&v[i+48], ymm0);
+	                     _mm256_store_ps(&v[i+56], ymm0);
+	                 }
+                 }
+                       for(; i != vlen; ++i) {
+	                   v[i] = val;
+                       }
+#endif
+           }
+
+#if defined __AVX512F__
+
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_unroll2x_pd(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              double * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      double * __restrict __ATTR_ALIGN__(64) v,
+#endif
+			             const int32_t vlen,
+			             const double val) {
+                     __m512d zmm0 = _mm512_set1_pd(val);
+                     int32_t i;
+#if defined ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+                    for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 16) {
+	                 _mm512_storeu_pd(&v[i+0], zmm0);
+	                 _mm512_storeu_pd(&v[i+8], zmm0);
+	            }
+#pragma loop_count min(1),avg(4),max(7)
+                    for(; i != vlen; ++i) {
+	                v[i] = val;
+                    }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+       
+               if((reinterpret_cast<uintptr_t>(v) & 0x3F) != 0ULL) {
+	           for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 16) {
+	                _mm512_storeu_pd(&v[i+0], zmm0);
+	                _mm512_storeu_pd(&v[i+8], zmm0);
+	            }
+                } else {
+                       v = (double*)__builtin_assume_aligned(v,64);
+	              for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 16) {
+                          _mm512_store_pd(&v[i+0], zmm0);
+	                  _mm512_store_pd(&v[i+8], zmm0);
+	               }
+                }
+                  for(; i != vlen; ++i) {
+	              v[i] = val;
+                  }
+#endif
+             }
+
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_unroll2x_ps(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              float * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      float * __restrict __ATTR_ALIGN__(64) v,
+#endif
+			              const int32_t vlen,
+			              const float val) {
+                  __m512 zmm0 = _mm512_set1_ps(val);
+                  int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+                  for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 32) {
+	                _mm512_storeu_ps(&v[i+0],  zmm0);
+	                _mm512_storeu_ps(&v[i+16], zmm0);
+	           }
+#pragma loop_count min(1),avg(8),max(1)
+                  for(; i != vlen; ++i) {
+	              v[i] = val;
+                  }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+      
+             if((reinterpret_cast<uintptr_t>(v) & 0x3F) != 0ULL) {
+	           for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 32) {
+	                 _mm512_storeu_ps(&v[i+0],  zmm0);
+	                 _mm512_storeu_ps(&v[i+16], zmm0);
+	           }
+              } else {
+                      v = (float*)__builtin_assume_aligned(v,64);
+	           for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 32) {
+                       _mm512_store_ps(&v[i+0],  zmm0);
+	               _mm512_store_ps(&v[i+16], zmm0);
+	           }
+               }
+                  for(; i != vlen; ++i) {
+	              v[i] = val;
+                  }
+#endif
+          }
+
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_unroll4x_pd(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              double * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      double * __restrict __ATTR_ALIGN__(64) v,
+#endif
+			              const int32_t vlen,
+			              const double val) {
+                  __m512d zmm0 = _mm512_set1_pd(val);
+                  int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+                  for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 32) {
+	              _mm512_storeu_pd(&v[i+0],  zmm0);
+	              _mm512_storeu_pd(&v[i+8],  zmm0);
+	              _mm512_storeu_pd(&v[i+16], zmm0);
+	              _mm512_storeu_pd(&v[i+24], zmm0);
+	          }
+#pragma loop_count min(1),avg(4),max(7)
+                  for(; i != vlen; ++i) {
+	              v[i] = val;
+                  }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+       
+                 if((reinterpret_cast<uintptr_t>(v) & 0x3F) != 0ULL) {
+	             for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 32) {
+	                _mm512_storeu_pd(&v[i+0],  zmm0);
+	                _mm512_storeu_pd(&v[i+8],  zmm0);
+	                _mm512_storeu_pd(&v[i+16], zmm0);
+	                _mm512_storeu_pd(&v[i+24], zmm0);
+	             }
+                  } else {
+                        v = (double*)__builtin_assume_aligned(v,64);
+                     for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 32) {
+	                 _mm512_store_pd(&v[i+0],  zmm0);
+	                 _mm512_store_pd(&v[i+8],  zmm0);
+	                 _mm512_store_pd(&v[i+16], zmm0);
+	                 _mm512_store_pd(&v[i+24], zmm0);
+	              }
+                  }
+                     for(; i != vlen; ++i) {
+	                 v[i] = val;
+                     }
+#endif
+              }
+
+       	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_unroll4x_ps(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              float * __restrict v,
+#elif defined __GNUC__ && defined __INTEL_COMPILER
+                                      float * __restrict __ATTR_ALIIGN__(64) v,
+#endif
+			              const int32_t vlen,
+			              const float val) {
+                    __m512 zmm0 = _mm512_set1_ps(val);
+                    int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+                    for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 64) {
+	                 _mm512_storeu_ps(&v[i+0], zmm0);
+	                 _mm512_storeu_ps(&v[i+16], zmm0);
+	                 _mm512_storeu_ps(&v[i+32], zmm0);
+	                 _mm512_storeu_ps(&v[i+48], zmm0);
+	            }
+#pragma loop_count min(1),avg(8),max(15)
+                    for(; i != vlen; ++i) {
+	                v[i] = val;
+                    }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                    if((reinterpret_cast<uintptr_t>(v) & 0x3F) ! = 0ULL) {
+	                 for(i = 0LL; i != ROUND_TO_SIXTEEN(vlen,16LL); i += 64LL) {
+	                      _mm512_storeu_ps(&v[i+0LL], zmm0);
+	                      _mm512_storeu_ps(&v[i+16LL], zmm0);
+	                      _mm512_storeu_ps(&v[i+32LL], zmm0);
+	                      _mm512_storeu_ps(&v[i+48LL], zmm0);
+	                 }
+                     } else {
+                          v = (float*)__builtin_assume_aligned(v,64);
+                          for(i = 0LL; i != ROUND_TO_SIXTEEN(vlen,16LL); i += 64LL) {
+	                        _mm512_store_ps(&v[i+0LL], zmm0);
+	                        _mm512_store_ps(&v[i+16LL], zmm0);
+	                        _mm512_store_ps(&v[i+32LL], zmm0);
+	                        _mm512_store_ps(&v[i+48LL], zmm0);
+	                   }
+                     }
+                          for(; i != vlen; ++i) {
+	                      v[i] = val;
+                          }
+#endif
+                 }
+
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_unroll8x_pd(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              double * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      double * __restrict __ATTR_ALIGN__(64) v,
+#endif
+		                      const int32_t vlen,
+		                      const double val) {
+	
+                  __m512d vec = _mm512_set1_pd(val);
+	          int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+
+                  for (i = 0; i != ROUND_TO_EIGHT(vlen, 8); i += 64) {
+			_mm512_storeu_pd(&v[i + 0], vec);
+			_mm512_storeu_pd(&v[i + 8], vec);
+			_mm512_storeu_pd(&v[i + 16], vec);
+			_mm512_storeu_pd(&v[i + 24], vec);
+			_mm512_storeu_pd(&v[i + 32], vec);
+			_mm512_storeu_pd(&v[i + 40], vec);
+			_mm512_storeu_pd(&v[i + 48], vec);
+			_mm512_storeu_pd(&v[i + 56], vec);
+		   }
+#pragma loop_count min(1),avg(4),max(7)
+	           for (; i != vlen; ++i){
+		        v[i] = val;
+		   }
+#elif defined __GNUC__ && !defined(__INTEL_COMPILER)
+
+	          if ((reinterpret_cast<uintptr_t>(v)& 0x3F) != 0ULL) {
+		       for (i = 0; i != ROUND_TO_EIGHT(vlen, 8); i += 64) {
+		   	     _mm512_storeu_pd(&v[i + 0], vec);
+			     _mm512_storeu_pd(&v[i + 8], vec);
+			     _mm512_storeu_pd(&v[i + 16], vec);
+			     _mm512_storeu_pd(&v[i + 24], vec);
+			     _mm512_storeu_pd(&v[i + 32], vec);
+			     _mm512_storeu_pd(&v[i + 40], vec);
+			     _mm512_storeu_pd(&v[i + 48], vec);
+			     _mm512_storeu_pd(&v[i + 56], vec);
+		       }
+	            }
+ 	             else {
+	                 for (i = 0; i != ROUND_TO_EIGHT(vlen, 8); i += 64) {
+		            _mm512_store_pd(&v[i+0],vec);
+		            _mm512_store_pd(&v[i+8],vec);
+		            _mm512_store_pd(&v[i+16],vec);
+		            _mm512_store_pd(&v[i+24],vec);
+		            _mm512_store_pd(&v[i+32],vec);
+		            _mm512_store_pd(&v[i+40],vec);
+		            _mm512_store_pd(&v[i+48],vec);
+		            _mm512_store_pd(&v[i+56],vec);
+	                  }
+	             }
+	                 for (; i != vlen; ++i){
+		              v[i] = val;
+		         }
+#endif
+                  }
+
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_unroll8x_ps(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              float * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      float  __restrict __ATTR_ALIGN__(64) v,
+#endif
+			              const int32_t vlen,
+			              const float val) {
+                    __m512 zmm0 = _mm512_set1_ps(val);
+                    int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma code_align(32)
+                    for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 128) {
+	                  _mm512_storeu_ps(&v[i+0],  zmm0);
+	                  _mm512_storeu_ps(&v[i+16], zmm0);
+	                  _mm512_storeu_ps(&v[i+32], zmm0);
+	                  _mm512_storeu_ps(&v[i+48], zmm0);
+	                  _mm512_storeu_ps(&v[i+64], zmm0);
+	                  _mm512_storeu_ps(&v[i+80], zmm0);
+	                  _mm512_storeu_ps(&v[i+96], zmm0);
+	                  _mm512_storeu_ps(&v[i+112], zmm0);
+	            }
+#pragma loop_count min(1),avg(8),max(15)
+                    for(; i != vlen; ++i) {
+	                v[i] = val;
+                    }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                     if((reinterpret_cast<uintptr_t>(v) & 0x3F) != 0ULL) {
+	                 for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 128) {
+	                       _mm512_storeu_ps(&v[i+0],  zmm0);
+	                       _mm512_storeu_ps(&v[i+16], zmm0);
+	                       _mm512_storeu_ps(&v[i+32], zmm0);
+	                       _mm512_storeu_ps(&v[i+48], zmm0);
+	                       _mm512_storeu_ps(&v[i+64], zmm0);
+	                       _mm512_storeu_ps(&v[i+80], zmm0);
+	                       _mm512_storeu_ps(&v[i+96], zmm0);
+	                       _mm512_storeu_ps(&v[i+112], zmm0);
+	                 }
+                     } else {
+                         v = (float*)__builtin_assume_aligned(v,64);
+                         for(i = 0LL; i != ROUND_TO_SIXTEEN(vlen,16LL); i += 128) {
+	                      _mm512_store_ps(&v[i+0LL],  zmm0);
+	                      _mm512_store_ps(&v[i+16LL], zmm0);
+	                      _mm512_store_ps(&v[i+32LL], zmm0);
+	                      _mm512_store_ps(&v[i+48LL], zmm0);
+	                      _mm512_store_ps(&v[i+64LL], zmm0);
+	                      _mm512_store_ps(&v[i+80LL], zmm0);
+	                      _mm512_store_ps(&v[i+96LL], zmm0);
+	                      _mm512_store_ps(&v[i+112LL], zmm0);
+	                 }
+                      }
+                         for(; i != vlen; ++i) {
+	                     v[i] = val;
+                            }
+#endif
+               }
+
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx512_init_ps(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              float * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      float  __restrict __ATTR_ALIGN__(64) v,
+#endif
+			              const int32_t vlen,
+			              const float val) {
+                    __m512 zmm = _mm512_set1_ps(val);
+#if defined __ICC || defined __INTEL_COMPILER
+                    if(vlen <= MEMMOVE_1ELEM) {
+                       return;
+		    }
+		    else if(vlen <= MEMMOVE_16ELEMS) {
+                        _mm512_storeu_ps(&v[0],zmm);
+			return;
+		    }
+		    else if(vlen <= MEMMOVE_32ELEMS) {
+                        _mm512_storeu_ps(&v[0],zmm);
+			_mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			return;
+		    }
+		    else if(vlen <= MEMMOVE_64ELEMS) {
+                        _mm512_storeu_ps(&v[0],zmm);
+			_mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[2*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[3*ZMM_LEN],zmm);
+			return;
+		    }
+		    else if(vlen <= MEMMOVE_128ELEMS) {
+                        _mm512_storeu_ps(&v[0],zmm);
+			_mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[2*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[3*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[4*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[5*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[6*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[7*ZMM_LEN],zmm);
+			return;
+		    }
+		    else if(vlen <= MEMMOVE_256ELEMS) {
+                        _mm512_storeu_ps(&v[0],zmm);
+			_mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[2*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[3*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[4*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[5*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[6*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[7*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[8*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[9*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[10*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[11*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[12*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[13*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[14*ZMM_LEN],zmm);
+			_mm512_storeu_ps(&v[15*ZMM_LEN],zmm);
+			return;
+		    }
+		    else if(vlen > MEMMOVE_256ELEMS) {
+                         int32_t i;
+#pragma code_align(32)
+                         for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 128) {
+	                      _mm512_storeu_ps(&v[i+0],  zmm);
+	                      _mm512_storeu_ps(&v[i+16], zmm);
+	                      _mm512_storeu_ps(&v[i+32], zmm);
+	                      _mm512_storeu_ps(&v[i+48], zmm);
+	                      _mm512_storeu_ps(&v[i+64], zmm);
+	                      _mm512_storeu_ps(&v[i+80], zmm);
+	                      _mm512_storeu_ps(&v[i+96], zmm);
+	                      _mm512_storeu_ps(&v[i+112], zmm);
+	                 }
+#pragma loop_count min(1),avg(8),max(15)
+                        for(; i != vlen; ++i) {
+	                    v[i] = val;
+                        }
+			return;
+		    }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                     if((reinterpret_cast<uintptr_t>(v) & 0x3F) != 0ULL) {
+
+		           if(vlen <= MEMMOVE_1ELEM) {
+                              return;
+		           }
+		           else if(vlen <= MEMMOVE_16ELEMS) {
+                                 _mm512_storeu_ps(&v[0],zmm);
+			         return;
+		           }
+		           else if(vlen <= MEMMOVE_32ELEMS) {
+                                _mm512_storeu_ps(&v[0],zmm);
+		 	        _mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			         return;
+		           }
+		           else if(vlen <= MEMMOVE_64ELEMS) {
+                                _mm512_storeu_ps(&v[0],zmm);
+		 	        _mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[2*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[3*ZMM_LEN],zmm);
+			        return;
+		           }
+		           else if(vlen <= MEMMOVE_128ELEMS) {
+                                _mm512_storeu_ps(&v[0],zmm);
+		 	        _mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[2*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[3*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[4*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[5*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[6*ZMM_LEN],zmm);
+			        _mm512_storeu_ps(&v[7*ZMM_LEN],zmm);
+			        return;
+		           }
+			   else if(vlen <= MEMMOVE_256ELEMS) {
+                                 _mm512_storeu_ps(&v[0],zmm);
+		         	 _mm512_storeu_ps(&v[1*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[2*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[3*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[4*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[5*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[6*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[7*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[8*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[9*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[10*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[11*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[12*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[13*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[14*ZMM_LEN],zmm);
+			         _mm512_storeu_ps(&v[15*ZMM_LEN],zmm);
+			         return;
+		            }
+			     else if(vlen > MEMMOVE_256ELEMS) {
+                                  for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 128) {
+	                              _mm512_storeu_ps(&v[i+0],  zmm);
+	                              _mm512_storeu_ps(&v[i+16], zmm);
+	                              _mm512_storeu_ps(&v[i+32], zmm);
+	                              _mm512_storeu_ps(&v[i+48], zmm);
+	                              _mm512_storeu_ps(&v[i+64], zmm);
+	                              _mm512_storeu_ps(&v[i+80], zmm);
+	                              _mm512_storeu_ps(&v[i+96], zmm);
+	                              _mm512_storeu_ps(&v[i+112], zmm);
+	                          }
+                                  for(; i != vlen; ++i) {
+	                              v[i] = val;
+                                  }
+			          return;  
+		    }
+		     else {
+
+		          if(vlen <= MEMMOVE_1ELEM) {
+                              return;
+		           }
+		           else if(vlen <= MEMMOVE_16ELEMS) {
+                                 _mm512_store_ps(&v[0],zmm);
+			         return;
+		           }
+		           else if(vlen <= MEMMOVE_32ELEMS) {
+                                _mm512_store_ps(&v[0],zmm);
+		 	        _mm512_store_ps(&v[1*ZMM_LEN],zmm);
+			         return;
+		           }
+		           else if(vlen <= MEMMOVE_64ELEMS) {
+                                _mm512_store_ps(&v[0],zmm);
+		 	        _mm512_store_ps(&v[1*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[2*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[3*ZMM_LEN],zmm);
+			        return;
+		           }
+		           else if(vlen <= MEMMOVE_128ELEMS) {
+                                _mm512_store_ps(&v[0],zmm);
+		 	        _mm512_store_ps(&v[1*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[2*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[3*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[4*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[5*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[6*ZMM_LEN],zmm);
+			        _mm512_store_ps(&v[7*ZMM_LEN],zmm);
+			        return;
+		           }
+			   else if(vlen <= MEMMOVE_256ELEMS) {
+                                 _mm512_store_ps(&v[0],zmm);
+		         	 _mm512_store_ps(&v[1*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[2*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[3*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[4*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[5*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[6*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[7*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[8*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[9*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[10*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[11*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[12*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[13*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[14*ZMM_LEN],zmm);
+			         _mm512_store_ps(&v[15*ZMM_LEN],zmm);
+			         return;
+		            }
+			     else if(vlen > MEMMOVE_256ELEMS) {
+			          v = (float*)__builtin_assume_aligned(v,64);
+                                  for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 128) {
+	                              _mm512_store_ps(&v[i+0],  zmm);
+	                              _mm512_store_ps(&v[i+16], zmm);
+	                              _mm512_store_ps(&v[i+32], zmm);
+	                              _mm512_store_ps(&v[i+48], zmm);
+	                              _mm512_store_ps(&v[i+64], zmm);
+	                              _mm512_store_ps(&v[i+80], zmm);
+	                              _mm512_store_ps(&v[i+96], zmm);
+	                              _mm512_store_ps(&v[i+112], zmm);
+	                          }
+                                  for(; i != vlen; ++i) {
+	                              v[i] = val;
+                                  }
+			          return;  
+		         }
+#endif
+                    }
+
+#endif // __AVX512F__
+
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_HOT__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void avx256_init_ps(
+#if defined __ICC || defined __INTEL_COMPILER
+	                              float * __restrict v,
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      float  __restrict __ATTR_ALIGN__(32) v,
+#endif
+			              const int32_t vlen,
+			              const float val) {
+                 __m256 ymm = _mm256_set1_ps(val);
+#if defined __ICC || defined __INTEL_COMPILER
+                 if(vlen <= MEMMOVE_1ELEM) {
+                    return;
+		 }
+		 else if(vlen <= MEMMOVE_16ELEMS) {
+                      _mm256_storeu_ps(&v[0],ymm);
+		      _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		      return;
+		 }
+		 else if(vlen <= MEMMOVE_32ELEMS) {
+                      _mm256_storeu_ps(&v[0],ymm);
+		      _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[2*YMM_LEN],ymm)
+		      _mm256_storeu_ps(&v[3*YMM_LEN],ymm);
+		      return;
+		 }
+		 else if(vlen <= MEMMOVE_64ELEMS) {
+                      _mm256_storeu_ps(&v[0],ymm);
+		      _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[2*YMM_LEN],ymm)
+		      _mm256_storeu_ps(&v[3*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[4*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[5*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[6*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[7*YMM_LEN],ymm);
+		      return;
+		 }
+		 else if(vlen <= MEMMOVE_128ELEMS) {
+                      _mm256_storeu_ps(&v[0],ymm);
+		      _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[2*YMM_LEN],ymm)
+		      _mm256_storeu_ps(&v[3*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[4*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[5*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[6*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[7*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[8*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[9*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[10*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[11*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[12*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[13*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[14*YMM_LEN],ymm);
+		      _mm256_storeu_ps(&v[15*YMM_LEN],ymm);
+		      return; 
+		 }
+		 else if(vlen > MEMMOVE_128ELEMS) {
+                      int32_t i;
+#pragma code_align(32)
+                      for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
+	                    _mm256_storeu_ps(&v[i+0],  ymm0);
+	                    _mm256_storeu_ps(&v[i+8],  ymm0);
+	                    _mm256_storeu_ps(&v[i+16], ymm0);
+	                    _mm256_storeu_ps(&v[i+24], ymm0);
+	                    _mm256_storeu_ps(&v[i+32], ymm0);
+	                    _mm256_storeu_ps(&v[i+40], ymm0);
+	                    _mm256_storeu_ps(&v[i+48], ymm0);
+	                    _mm256_storeu_ps(&v[i+56], ymm0);
+	              }
+#pragma loop_count min(1),avg(4),max(7)
+                        for(; i != vlen; ++i) {
+	                    v[i] = val;
+                           }
+		 }
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                  if((reinterpret_cast<uintptr_t>(v) & 0x1F) != 0ULL) {
+
+		      if(vlen <= MEMMOVE_1ELEM) {
+                         return;
+		      }
+		      else if(vlen <= MEMMOVE_16ELEMS) {
+                           _mm256_storeu_ps(&v[0],ymm);
+		           _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		         return;
+		      }
+		      else if(vlen <= MEMMOVE_32ELEMS) {
+                           _mm256_storeu_ps(&v[0],ymm);
+		           _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		           _mm256_storeu_ps(&v[2*YMM_LEN],ymm)
+		           _mm256_storeu_ps(&v[3*YMM_LEN],ymm);
+		           return;
+		      }
+		      else if(vlen <= MEMMOVE_64ELEMS) {
+                            _mm256_storeu_ps(&v[0],ymm);
+		            _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[2*YMM_LEN],ymm)
+		            _mm256_storeu_ps(&v[3*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[4*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[5*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[6*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[7*YMM_LEN],ymm);
+		            return;
+		      }
+		      else if(vlen <= MEMMOVE_128ELEMS) {
+                            _mm256_storeu_ps(&v[0],ymm);
+		            _mm256_storeu_ps(&v[1*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[2*YMM_LEN],ymm)
+		            _mm256_storeu_ps(&v[3*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[4*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[5*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[6*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[7*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[8*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[9*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[10*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[11*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[12*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[13*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[14*YMM_LEN],ymm);
+		            _mm256_storeu_ps(&v[15*YMM_LEN],ymm);
+		            return; 
+		 }
+		 else if(vlen > MEMMOVE_128ELEMS) {
+                      int32_t i;
+                        for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
+	                    _mm256_storeu_ps(&v[i+0],  ymm0);
+	                    _mm256_storeu_ps(&v[i+8],  ymm0);
+	                    _mm256_storeu_ps(&v[i+16], ymm0);
+	                    _mm256_storeu_ps(&v[i+24], ymm0);
+	                    _mm256_storeu_ps(&v[i+32], ymm0);
+	                    _mm256_storeu_ps(&v[i+40], ymm0);
+	                    _mm256_storeu_ps(&v[i+48], ymm0);
+	                    _mm256_storeu_ps(&v[i+56], ymm0);
+	                }
+                        for(; i != vlen; ++i) {
+	                    v[i] = val;
+                           }
+		  }else {
+
+		         if(vlen <= MEMMOVE_1ELEM) {
+                               return;
+		         }
+		         else if(vlen <= MEMMOVE_16ELEMS) {
+                                 _mm256_store_ps(&v[0],ymm);
+		                 _mm256_store_ps(&v[1*YMM_LEN],ymm);
+		                 return;
+		        }
+		        else if(vlen <= MEMMOVE_32ELEMS) {
+                                _mm256_store_ps(&v[0],ymm);
+		                _mm256_store_ps(&v[1*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[2*YMM_LEN],ymm)
+		                _mm256_store_ps(&v[3*YMM_LEN],ymm);
+		                return;
+		         }
+		         else if(vlen <= MEMMOVE_64ELEMS) {
+                                _mm256_store_ps(&v[0],ymm);
+		                _mm256_store_ps(&v[1*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[2*YMM_LEN],ymm)
+		                _mm256_store_ps(&v[3*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[4*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[5*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[6*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[7*YMM_LEN],ymm);
+		                return;
+		        }
+		        else if(vlen <= MEMMOVE_128ELEMS) {
+                                _mm256_store_ps(&v[0],ymm);
+		                _mm256_store_ps(&v[1*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[2*YMM_LEN],ymm)
+		                _mm256_store_ps(&v[3*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[4*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[5*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[6*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[7*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[8*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[9*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[10*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[11*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[12*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[13*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[14*YMM_LEN],ymm);
+		                _mm256_store_ps(&v[15*YMM_LEN],ymm);
+		                return; 
+		       }
+		       else if(vlen > MEMMOVE_128ELEMS) {
+		              v = (float*)__builtin_assume_aligned(v,64);
+                              int32_t i;
+                              for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
+	                          _mm256_store_ps(&v[i+0],  ymm0);
+	                          _mm256_store_ps(&v[i+8],  ymm0);
+	                          _mm256_store_ps(&v[i+16], ymm0);
+	                          _mm256_store_ps(&v[i+24], ymm0);
+	                          _mm256_store_ps(&v[i+32], ymm0);
+	                          _mm256_store_ps(&v[i+40], ymm0);
+	                          _mm256_store_ps(&v[i+48], ymm0);
+	                          _mm256_store_ps(&v[i+56], ymm0);
+	                      }
+                              for(; i != vlen; ++i) {
+	                          v[i] = val;
+                              }
+		       }
+#endif
+                  }
+                
+
+	  
+    } // common
+
+} // gms
 
 
 
