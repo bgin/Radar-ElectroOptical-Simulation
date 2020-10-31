@@ -204,7 +204,8 @@ gms_avxc8f32_malloca(const std::size_t len,
 double * 
 gms::common::
 gms_edmalloca(const std::size_t len, 
-	      const int32_t alignment) {
+	      const int32_t alignment,
+	      const bool lock_mem) {
   typedef double * __restrict __attribute__((align(64))) aligned64_r8ptr;
 	aligned64_r8ptr real_ptr = NULL;
 #if (ADD_PADDING_64B_LOOP_PEEL) == 1
@@ -219,13 +220,25 @@ gms_edmalloca(const std::size_t len,
 #endif
 	    ABORT_ON_ERROR("gms_edmalloca -- !!! Memory Allocation Failure !!!", MALLOC_FAILED)
 	}
+#if (ADD_PADDING_64B_LOOP_PEEL) == 1
+     if(lock_mem) {
+        int32_t res = mlock(real_ptr,len*sizeof(double)+padding64B);
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
+#else
+     if(lock_mem) {
+        int32_t res = mlock(real_ptr,len*sizeof(double));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
+#endif
 	return (real_ptr);
 }
 
 float * 
 gms::common::
 gms_efmalloca(const std::size_t len,
-	      const int32_t alignment) {
+	      const int32_t alignment,
+	      const bool lock_mem) {
   typedef float * __restrict __attribute__((align(64)))  aligned64_r4ptr;
 	aligned64_r4ptr real_ptr = NULL; 
 #if (ADD_PADDING_64B_LOOP_PEEL) == 1
@@ -239,13 +252,25 @@ gms_efmalloca(const std::size_t len,
 #endif
 		ABORT_ON_ERROR("gms_efmalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
 	}
+#if (ADD_PADDING_64B_LOOP_PEEL) == 1
+     if(lock_mem) {
+        int32_t res = mlock(real_ptr,len*sizeof(float)+padding64B);
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
+#else
+     if(lock_mem) {
+        int32_t res = mlock(real_ptr,len*sizeof(float));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
+#endif	
 	return (real_ptr);
 }
 
 int32_t * 
 gms::common::
 gms_eimalloca4(const std::size_t len,
-	       const int32_t alignment) {
+	       const int32_t alignment,
+	       const bool lock_mem) {
   typedef int32_t * __restrict __attribute__((align(64))) aligned64_i4ptr;
 	aligned64_i4ptr i4_ptr = NULL; 
 #if (ADD_PADDING_64B_LOOP_PEEL) == 1
@@ -259,33 +284,26 @@ gms_eimalloca4(const std::size_t len,
 #endif
 			ABORT_ON_ERROR("gms_eimalloca4 -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
 	}
+#if (ADD_PADDING_64B_LOOP_PEEL) == 1
+     if(lock_mem) {
+        int32_t res = mlock(i4_ptr,len*sizeof(int32_t)+padding64B);
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
+#else
+     if(lock_mem) {
+        int32_t res = mlock(i4_ptr,len*sizeof(int32_t));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
+#endif
 	return (i4_ptr);
 }
 
-int64_t * 
-gms::common::
-gms_eimalloca(const std::size_t len,
-	      const int32_t alignment) {
-  typedef int64_t * __restrict __attribute__((align(64))) aligned64_i8ptr;
-	aligned64_i8ptr i8_ptr = NULL;
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	 i8_ptr = reinterpret_cast<int64_t*>(_mm_malloc(len*sizeof(int64_t) + padding64B,alignment)); // padding for vectorization of loop peeling of remainder
-#else
-	 i8_ptr = reinterpret_cast<int64_t*>(_mm_malloc(len*sizeof(int64_t), alignment));
-#endif
-	if (NULL == i8_ptr && len != 0ULL) {
-#if (PRINT_CALLSTACK_ON_ERROR) == 1
-	  std::cerr << " Not implemented yet!!";
-#endif
-		ABORT_ON_ERROR("gms_eimalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
-	}
-	return (i8_ptr);
-}
 
 std::complex<float> *
 gms::common::
 gms_cmplxr4_emalloca(const std::size len,
-                     const int32_t alignment) {
+                     const int32_t alignment,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(len > 0ULL);
 #endif
@@ -297,6 +315,10 @@ gms_cmplxr4_emalloca(const std::size len,
 #endif
        ABORT_ON_ERROR("gms_cmplxr4_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED) 
     }
+    if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(std::complex<float>));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
     return (ptr);
 }
 
@@ -314,6 +336,10 @@ gms_avxvec8_emalloca(const std::size_t len,
          std::cerr << "Not implemented yet!!" << std::endl;
 #endif
          ABORT_ON_ERROR("gms_avxvec8_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
+     }
+     if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXVec8));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
      }
       return (ptr);
 }
@@ -333,6 +359,10 @@ gms_avx512vec16_emalloca(const std::size_t len,
 #endif
          ABORT_ON_ERROR("gms_avx512vec16_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
      }
+     if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVX512Vec16));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -350,6 +380,10 @@ gms_avxc8f32_emalloca(const std::size_t len,
          std::cerr << "Not implemented yet!!" << std::endl;
 #endif
          ABORT_ON_ERROR("gms_avxc8f32_emalloca -- !!! Memory Allocation Failure !!! ", MALLOC_FAILED)
+     }
+     if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXc8f32));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
      }
       return (ptr);
 }
@@ -503,7 +537,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -514,6 +549,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(double));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -524,7 +563,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -535,6 +575,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(float));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 
 }
@@ -547,7 +591,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -558,6 +603,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(int32_t));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -567,7 +616,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -578,6 +628,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(std::complex<float>));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -587,7 +641,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -598,6 +653,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXc8f32));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -608,7 +667,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(length > 0ULL);
 #endif
@@ -619,6 +679,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVX12Vec16));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 #endif
@@ -629,7 +693,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(length > 0ULL);
 #endif
@@ -640,6 +705,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXVec8));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);    
 }
 
@@ -649,7 +718,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -660,6 +730,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(double));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -669,7 +743,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -680,6 +755,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(float));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 
 }
@@ -690,7 +769,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -701,6 +781,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(int32_t));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -710,7 +794,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -721,6 +806,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(std::complex<float>));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -730,7 +819,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -741,6 +831,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXc8f32));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -751,7 +845,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(length > 0ULL);
 #endif
@@ -762,6 +857,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVX512Vec16));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 #endif
@@ -772,7 +871,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(length > 0ULL);
 #endif
@@ -783,6 +883,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXVec8));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);    
 }
 
@@ -792,7 +896,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -803,6 +908,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(double));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -812,7 +921,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -823,6 +933,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+     if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(float));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 
 }
@@ -833,7 +947,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -844,6 +959,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(int32_t));
+	if(res) { std::cerr << "mlock() -- failed to lock memory" << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -853,7 +972,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -864,6 +984,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(std::complex<float>));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -873,7 +997,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
       assert(length > 0ULL);
 #endif
@@ -884,6 +1009,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXc8f32));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 
@@ -894,7 +1023,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(length > 0ULL);
 #endif
@@ -905,6 +1035,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVX512Vec16));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);
 }
 #endif
@@ -915,7 +1049,8 @@ gms::common
 		     const int32_t prot,
 		     const int32_t flags,
 		     const int32_t fd,
-		     const off_t offset) {
+		     const off_t offset,
+		     const bool lock_mem) {
 #if (GMS_DEBUG_ON) == 1
      assert(length > 0ULL);
 #endif
@@ -926,6 +1061,10 @@ gms::common
 #endif
 		ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
       }
+      if(lock_mem) {
+        int32_t res = mlock(ptr,len*sizeof(AVXVec8));
+	if(res) { std::cerr << "mlock() -- failed to lock memory in: " << __PRETTY_FUNCTION__;}
+     }
       return (ptr);    
 }
 
