@@ -78,6 +78,18 @@ namespace file_info {
     #define __ATTR_TARGET_NO_FANCY_MATH_387__ __attribute__ ((target ("no-fancy-math-387")))
 #endif
 
+#if !defined(USE_MMAP_4KiB)
+   #define USE_MMAP_4KiB 0
+#endif
+
+#if !defined(USE_MMAP_2MiB)
+   #define USE_MMAP_2MiB 0
+#endif
+
+#if !defined(USE_MMAP_1GiB)
+   #define USE_MMAP_1GiB 0
+#endif
+
 /* Start of Compiler specific declarations.* /
 
 /* Compiler supported CPP version
@@ -135,13 +147,26 @@ of SIMD registers*/
 #error "COMPILE_TIME_ERROR: Cannot determine 32bit or 64bit mode!"
 #endif
 
-#if !defined (USE_LIBPFC)
+// Support of libpfc removed
+
+/*#if !defined (USE_LIBPFC)
 #define USE_LIBPFC 1
 #endif
 
 // Set by default
 #if (USE_LIBPFC) == 1
     #if !defined (SAMPLE_HW_PMC)
+        #define SAMPLE_HW_PMC 1
+    #endif
+#endif*/
+
+#if !defined(USE_PMC_INSTRUMENTATION)
+    #define USE_PMC_INSTRUMENTATION 1
+#endif
+
+// Set by default
+#if (USE_PMC_INSTRUMENTATION) == 1
+    #if !defined(SAMPLE_HW_PMC)
         #define SAMPLE_HW_PMC 1
     #endif
 #endif
