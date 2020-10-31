@@ -48,9 +48,10 @@ namespace gms {
 		//	Unaligned malloc wrapper
 		//  Returns: double * 
 		//  No error handling implemented
-		//
+		// 
 
-	        double * gms_dmallocu( const std::size_t) __ATTR_COLD__
+	       double * gms_dmallocu( const std::size_t)
+				                         __ATTR_COLD__
 		                                          __attribute__ ((alloc_size(1)))
 							  __attribute__ ((malloc))
 							  __attribute__ ((returns_nonnull));
@@ -61,7 +62,8 @@ namespace gms {
 		// No error handling implemented
 		//
 
-	        float * gms_fmallocu( const std::size_t)  __ATTR_COLD__
+	        float * gms_fmallocu( const std::size_t)
+		                                       __ATTR_COLD__
 		                                          __attribute__ ((alloc_size(1)))
 							  __attribute__ ((malloc))
 							  __attribute__ ((returns_nonnull));
@@ -72,7 +74,8 @@ namespace gms {
 		// No error handling implemented
 		//
 
-	        int32_t * gms_imallocu( const std::size_t)  __ATTR_COLD__
+	        int32_t * gms_imallocu( const std::size_t)
+		                                           __ATTR_COLD__
 		                                          __attribute__ ((alloc_size(1)))
 							  __attribute__ ((malloc))
 							  __attribute__ ((returns_nonnull));
@@ -85,11 +88,13 @@ namespace gms {
 		//  No error handling implemented
 		//
 
-		double * gms_dmalloca( const std::size_t, const int32_t) __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+		double * gms_dmalloca( const std::size_t,
+		                       const int32_t)
+				                    __ATTR_COLD__
+		                                    __attribute__ ((malloc))
+						    __attribute__ ((returns_nonnull))
+						    __attribute__ ((assume_aligned(64)))
+						    __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -97,11 +102,13 @@ namespace gms {
 		// No error handling implemented
 		//
 
-	        float * gms_fmalloca( const std::size_t, const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+	        float * gms_fmalloca( const std::size_t,
+		                      const int32_t)
+				                     __ATTR_COLD__
+		                                     __attribute__ ((malloc))
+						     __attribute__ ((returns_nonnull))
+						     __attribute__ ((assume_aligned(64)))
+						     __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -109,11 +116,13 @@ namespace gms {
 		// No error handling implemented
 		//
 
-	        int32_t * gms_imalloca( const std::size_t, const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+	        int32_t * gms_imalloca( const std::size_t,
+		                        const int32_t)
+				                     __ATTR_COLD__
+		                                     __attribute__ ((malloc))
+						     __attribute__ ((returns_nonnull))
+						     __attribute__ ((assume_aligned(64)))
+						     __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -121,22 +130,26 @@ namespace gms {
 		// No error handling implemented
 		//
 
-		std::complex<float> * gms_cmplxr4_malloca(const std::size_t, const int32_t)  __ATTR_COLD__
-		                                                                             __attribute__ ((malloc))
-									                     __attribute__ ((returns_nonnull))
-									                     __attribute__ ((assume_aligned(64)))
-									                     __attribute__ ((alloc_size(1)));
+		std::complex<float> * gms_cmplxr4_malloca(const std::size_t,
+		                                          const int32_t)
+							               __ATTR_COLD__
+		                                                       __attribute__ ((malloc))
+								       __attribute__ ((returns_nonnull))
+								       __attribute__ ((assume_aligned(64)))
+								       __attribute__ ((alloc_size(1)));
 		//
 		// Aligned malloc wrapper
 		// Returns: AVXVec8 * 
 		// No error handling implemented
 		//
 	        
-		AVXVec8 * gms_avxvec8_malloca(const std::size_t,const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(32)))
-									 __attribute__ ((alloc_size(1)));
+		AVXVec8 * gms_avxvec8_malloca(const std::size_t,
+		                              const int32_t)
+					                   __ATTR_COLD__
+		                                           __attribute__ ((malloc))
+							   __attribute__ ((returns_nonnull))
+							   __attribute__ ((assume_aligned(32)))
+							   __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -144,11 +157,13 @@ namespace gms {
 		// No error handling implemented
 		//
 
-		AVX512Vec16 * gms_avx512vec16_malloca(const std::size_t,const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+		AVX512Vec16 * gms_avx512vec16_malloca(const std::size_t,
+		                                      const int32_t)
+						                   __ATTR_COLD__
+		                                                   __attribute__ ((malloc))
+								   __attribute__ ((returns_nonnull))
+								   __attribute__ ((assume_aligned(64)))
+								   __attribute__ ((alloc_size(1)));
 
                 //
 		// Aligned malloc wrapper
@@ -156,11 +171,13 @@ namespace gms {
 		// No error handling implemented
 		//
                 
-                AVXc8f32 * gms_avxc8f32_malloca(const std::size_t, const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(32)))
-									 __attribute__ ((alloc_size(1)));
+                AVXc8f32 * gms_avxc8f32_malloca(const std::size_t,
+		                                const int32_t)
+						             __ATTR_COLD__
+		                                             __attribute__ ((malloc))
+							     __attribute__ ((returns_nonnull))
+							     __attribute__ ((assume_aligned(32)))
+							     __attribute__ ((alloc_size(1)));
 
 		//
 		// Error handling wrappers
@@ -172,11 +189,13 @@ namespace gms {
 		//  Error checking and handling (calls std::exit)
 		//
 
-	        double * gms_edmalloca(const std::size_t, int32_t)       __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+	        double * gms_edmalloca(const std::size_t,
+		                       int32_t,
+				       const bool)       __ATTR_COLD__
+		                                         __attribute__ ((malloc))
+							 __attribute__ ((returns_nonnull))
+							 __attribute__ ((assume_aligned(64)))
+							 __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -184,11 +203,13 @@ namespace gms {
 		// Error checking and handling (calls std::exit)
 		//
 
-	        float * gms_efmalloca(const std::size_t, const int32_t)   __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+	        float * gms_efmalloca(const std::size_t,
+		                      const int32_t,
+				      const bool)   __ATTR_COLD__
+		                                    __attribute__ ((malloc))
+						    __attribute__ ((returns_nonnull))
+						    __attribute__ ((assume_aligned(64)))
+						    __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -196,11 +217,13 @@ namespace gms {
 		// Error checking and handling (calls std::exit)
 		//
 
-	        int32_t * gms_eimalloca4(const std::size_t, const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+	        int32_t * gms_eimalloca4(const std::size_t,
+		                         const int32_t,
+					 const bool)  __ATTR_COLD__
+		                                      __attribute__ ((malloc))
+						      __attribute__ ((returns_nonnull))
+						      __attribute__ ((assume_aligned(64)))
+						      __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -208,11 +231,13 @@ namespace gms {
 		// Error checking and handling (calls std::exit)
 		//
 
-	        int64_t * gms_eimalloca(const std::size_t, const int32_t)  __ATTR_COLD__
-		                                                         __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(64)))
-									 __attribute__ ((alloc_size(1)));
+	        int64_t * gms_eimalloca(const std::size_t,
+		                        const int32_t,
+					const bool)  __ATTR_COLD__
+		                                     __attribute__ ((malloc))
+						     __attribute__ ((returns_nonnull))
+						     __attribute__ ((assume_aligned(64)))
+						     __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -220,7 +245,8 @@ namespace gms {
 		// Error checking and handling (calls std::exit)
 		//
 
-		std::complex<float> * gms_cmplxr4_emalloca(const std::size_t, const int32_t)  __ATTR_COLD__
+		std::complex<float> * gms_cmplxr4_emalloca(const std::size_t, const int32_t,
+		                                           const bool)  __ATTR_COLD__
 		                                                         __attribute__ ((malloc))
 									 __attribute__ ((returns_nonnull))
 									 __attribute__ ((assume_aligned(64)))
@@ -233,11 +259,12 @@ namespace gms {
 		//
 
 		AVXVec8 * gms_avxvec8_emalloca(const std::size_t,
-					       const int32_t)             __ATTR_COLD__
-		                                                          __attribute__ ((malloc))
-									 __attribute__ ((returns_nonnull))
-									 __attribute__ ((assume_aligned(32)))
-									 __attribute__ ((alloc_size(1)));
+					       const int32_t,
+					       const bool)             __ATTR_COLD__
+		                                                       __attribute__ ((malloc))
+								       __attribute__ ((returns_nonnull))
+								       __attribute__ ((assume_aligned(32)))
+								       __attribute__ ((alloc_size(1)));
 
 		//
 		// Aligned malloc wrapper
@@ -245,7 +272,8 @@ namespace gms {
 		// Error checking and handling (calls std::exit)
 		//
 		AVX512Vec16 * gms_avx512vec16_emalloca(const std::size_t,
-						       const int32_t)    __ATTR_COLD__
+						       const int32_t,
+						       const bool)      __ATTR_COLD__
 		                                                         __attribute__ ((malloc))
 									 __attribute__ ((returns_nonnull))
 									 __attribute__ ((assume_aligned(32)))
@@ -258,7 +286,8 @@ namespace gms {
 		// 
 
                 AVXc8f32 * gms_avxc8f32_emalloca(const std::size_t,
-                                                 const int32_t)          __ATTR_COLD__
+                                                 const int32_t,
+						 const bool)            __ATTR_COLD__
 		                                                         __attribute__ ((malloc))
 									 __attribute__ ((returns_nonnull))
 									 __attribute__ ((assume_aligned(32)))
@@ -310,7 +339,8 @@ namespace gms {
 		                            const int32_t,
 					    const int32_t,
 					    const int32_t,
-					    const off_t) __ATTR_COLD__
+					    const off_t,
+					    const bool) __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -320,7 +350,8 @@ namespace gms {
 		                           const int32_t,
 					   const int32_t,
 					   const int32_t,
-					   const off_t)  __ATTR_COLD__
+					   const off_t,
+					   const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -330,7 +361,8 @@ namespace gms {
 		                            const int32_t,
 					    const int32_t,
 					    const int32_t,
-					    const off_t)  __ATTR_COLD__
+					    const off_t,
+					    const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -341,7 +373,8 @@ namespace gms {
 		                               const int32_t,
 					       const int32_t,
 					       const int32_t,
-					       const off_t)  __ATTR_COLD__
+					       const off_t,
+					       const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -352,7 +385,8 @@ namespace gms {
 		                                     const int32_t,
 					             const int32_t,
 					             const int32_t,
-					             const off_t)  __ATTR_COLD__
+					             const off_t,
+						     const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -362,7 +396,8 @@ namespace gms {
 		                                           const int32_t,
 					                   const int32_t,
 					                   const int32_t,
-					                   const off_t)  __ATTR_COLD__
+					                   const off_t,
+							   const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -372,7 +407,8 @@ namespace gms {
 		                                    const int32_t,
 					            const int32_t,
 					            const int32_t,
-					            const off_t)  __ATTR_COLD__
+					            const off_t,
+						    const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -384,7 +420,8 @@ namespace gms {
 		                            const int32_t,
 					    const int32_t,
 					    const int32_t,
-					    const off_t) __ATTR_COLD__
+					    const off_t,
+					    const bool) __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -394,7 +431,8 @@ namespace gms {
 		                           const int32_t,
 					   const int32_t,
 					   const int32_t,
-					   const off_t)  __ATTR_COLD__
+					   const off_t,
+					   const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -404,7 +442,8 @@ namespace gms {
 		                            const int32_t,
 					    const int32_t,
 					    const int32_t,
-					    const off_t)  __ATTR_COLD__
+					    const off_t,
+					    const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -415,7 +454,8 @@ namespace gms {
 		                               const int32_t,
 					       const int32_t,
 					       const int32_t,
-					       const off_t)  __ATTR_COLD__
+					       const off_t,
+					       const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -426,7 +466,8 @@ namespace gms {
 		                                     const int32_t,
 					             const int32_t,
 					             const int32_t,
-					             const off_t)  __ATTR_COLD__
+					             const off_t,
+						     const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -436,7 +477,8 @@ namespace gms {
 		                                           const int32_t,
 					                   const int32_t,
 					                   const int32_t,
-					                   const off_t)  __ATTR_COLD__
+					                   const off_t,
+							   const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -446,7 +488,8 @@ namespace gms {
 		                                    const int32_t,
 					            const int32_t,
 					            const int32_t,
-					            const off_t)  __ATTR_COLD__
+					            const off_t,
+						    const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -459,7 +502,8 @@ namespace gms {
 		                            const int32_t,
 					    const int32_t,
 					    const int32_t,
-					    const off_t) __ATTR_COLD__
+					    const off_t,
+					    const bool) __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -469,7 +513,8 @@ namespace gms {
 		                           const int32_t,
 					   const int32_t,
 					   const int32_t,
-					   const off_t)  __ATTR_COLD__
+					   const off_t,
+					   const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -479,7 +524,8 @@ namespace gms {
 		                            const int32_t,
 					    const int32_t,
 					    const int32_t,
-					    const off_t)  __ATTR_COLD__
+					    const off_t,
+					    const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -490,7 +536,8 @@ namespace gms {
 		                               const int32_t,
 					       const int32_t,
 					       const int32_t,
-					       const off_t)  __ATTR_COLD__
+					       const off_t,
+					       const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -501,7 +548,8 @@ namespace gms {
 		                                     const int32_t,
 					             const int32_t,
 					             const int32_t,
-					             const off_t)  __ATTR_COLD__
+					             const off_t,
+						     const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -511,7 +559,8 @@ namespace gms {
 		                                           const int32_t,
 					                   const int32_t,
 					                   const int32_t,
-					                   const off_t)  __ATTR_COLD__
+					                   const off_t,
+							   const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
@@ -521,7 +570,8 @@ namespace gms {
 		                                    const int32_t,
 					            const int32_t,
 					            const int32_t,
-					            const off_t)  __ATTR_COLD__
+					            const off_t,
+						    const bool)  __ATTR_COLD__
 					                 __attribute__ ((malloc))
 							 __attribute__ ((alloc_size(1)))
 							 __attribute__ ((returns_nonnull))
