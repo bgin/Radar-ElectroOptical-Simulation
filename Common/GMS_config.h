@@ -171,7 +171,9 @@ of SIMD registers*/
     #endif
 #endif
 
-
+#if !defined(CHECK_L2_LICENSE)
+   #define CHECK_L2_LICENSE 0
+#endif
 /*
 Compiler optimization settings.
 */
