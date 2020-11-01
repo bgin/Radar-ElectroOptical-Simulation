@@ -7,7 +7,7 @@
 namespace file_info {
 
   const unsigned int gGMS_GRASS_SCATTERERS_AVX512_MAJOR = 1U;
-  const unsigned int gGMS_GRASS_SCATTERERS_AVX512_MINOR = 0U;
+  const unsigned int gGMS_GRASS_SCATTERERS_AVX512_MINOR = 1U;
   const unsigned int gGMS_GRASS_SCATTERERS_AVX512_MICRO = 0U;
   const unsigned int gGMS_GRASS_SCATTERERS_AVX512_FULLVER = 1000U*gGMS_GRASS_SCATTERERS_AVX512_MAJOR +
                                                          100U*gGMS_GRASS_SCATTERERS_AVX512_MINOR  +
@@ -85,6 +85,8 @@ namespace gms {
 			float   Tav;
 		        //  Complex dielectric constant per each cylinder
 		        std::complex<float> epsilon;
+		        // bool: use mlock() function
+			bool    mem_lock;
 #if (USE_STRUCT_PADDING) == 1
 		      PAD_TO_ALIGNED(4,0,16)
 #endif
@@ -157,7 +159,8 @@ namespace gms {
 					     const float,
 					     const float,
 					     const float,
-					     const std::complex<float>) __ATTR_COLD__ __ATTR_ALIGN__(32);
+					     const std::complex<float>,
+					     const bool )__ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			GrassScattererAVX512(const GrassScattererAVX512 &) = delete;
 
@@ -171,10 +174,7 @@ namespace gms {
 
 			void SetGrassMoistnessMask() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-		        void ComputeGrassParamEq_zmm16r4(const char * __restrict,
-			                                 const char * __restrict,
-							 const char * __restrict,
-							 const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
+		        void ComputeGrassParamEq_zmm16r4() __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			void ComputeGrassHVPolarization(
 						        const float,
