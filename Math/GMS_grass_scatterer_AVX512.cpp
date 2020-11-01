@@ -11,11 +11,6 @@
 #include <cstdlib>
 #endif
 #include "GMS_grass_scatterer_AVX512.h"
-#if (SAMPLE_HW_PMC) == 1
-    #include "libpfc.h"
-    #include <string.h>
-    #include <syslog.h>
-#endif
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
@@ -36,6 +31,7 @@ GrassScattererAVX512::GrassScattererAVX512() {
      m_gsc.Tah        = 0.0f;
      m_gsc.Tav        = 0.0f;
      m_gsc.epsilon    = {0.0f,0.0f};
+     m_gsc.mem_lock   = false;
      m_gsc.A          = NULL;
      m_gsc.moistness  = NULL;
      //
@@ -61,7 +57,8 @@ GrassScattererAVX512(const int32_t nsteps,
 		     const float lat,
 		     const float lon,
 		     const float elev,
-		     const std::complex<float> cepsilon) {
+		     const std::complex<float> cepsilon,
+		     const bool lockm) {
      using namespace gms::common;
      //generate random number of grass cylinders
      // per unit area.
@@ -87,25 +84,180 @@ GrassScattererAVX512(const int32_t nsteps,
      m_gsc.Tah       = 0.0f;
      m_gsc.Tav       = 0.0f;
      m_gsc.epsilon   = cepsilon;
-     m_gsc.A         = gms_efmalloca(static_cast<size_t>(m_gsc.nplants),64);
-     m_gsc.moistness = gms_eimalloca4(static_cast<size_t>(m_gsc.nplants),64);
+     m_gsc.mem_lock  = lockm;
+#if (USE_MMAP_4KiB) == 1
+     m_gsc.A         = gms_efmmap_4KiB(static_cast<size_t>(m_gsc.nplants),PROT_READ | PROT_WRITE,
+				       MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsc.moistness = gms_immap_4KiB(static_cast<size_t>(m_gsc.nplants),PROT_READ | PROT_WRITE,
+				      MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+#elif (USE_MMAP_2MiB) == 1
+     m_gsc.A         = gms_efmmap_2MiB(static_cast<size_t>(m_gsc.nplants),PROT_READ | PROT_WRITE,
+				       MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsc.moistness = gms_immap_2MiB(static_cast<size_t>(m_gsc.nplants),PROT_READ | PROT_WRITE,
+				      MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB,-1,0,m_gsc.mem_lock);
+#elif (USE_MMAP_1GiB) == 1
+     m_gsc.A         = gms_efmmap_1GiB(static_cast<size_t>(m_gsc.nplants),PROT_READ | PROT_WRITE,
+				       MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB ,-1,0,m_gsc.mem_lock);
+     m_gsc.moistness = gms_immap_1GiB(static_cast<size_t>(m_gsc.nplants),PROT_READ | PROT_WRITE,
+				      MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+#else
+     m_gsc.A         = gms_efmalloca(static_cast<size_t>(m_gsc.nplants),64,m_gsc.mem_lock);
+     m_gsc.moistness = gms_eimalloca4(static_cast<size_t>(m_gsc.nplants),64,m_gsc.mem_lock);
+#endif
      m_gsc.epsilon   = cepsilon;
-     m_gsc.xparam    = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.param_npts),64);
-     m_gsc.yparam    = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.param_npts),64);
-     m_gsc.zparam    = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.param_npts),64);
+#if   (USE_MMAP_4KiB) == 1
+     m_gsc.xparam    = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsc.yparam    = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsc.zparam    = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+#elif (USE_MMAP_2MiB) == 1
+     m_gsc.xparam    = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsc.yparam    = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsc.zparam    = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+#elif (USE_MMAP_1GiB) == 1
+     m_gsc.xparam    = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsc.yparam    = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsc.zparam    = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.param_npts),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+#else
+     m_gsc.xparam    = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.param_npts),64,m_gsc.mem_lock);
+     m_gsc.yparam    = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.param_npts),64,m_gsc.mem_lock);
+     m_gsc.zparam    = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.param_npts),64,m_gsc.mem_lock);
+#endif
      m_gsh.Polv[96]  = {0.0f,0.0f};
      m_gsh.Polh[96]  = {0.0f,0.0f};
-     m_gsh.xang      = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),64);
-     m_gsh.sin_xang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),64);
-     m_gsh.cos_xang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),64);
-     m_gsh.yang      = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),64);
-     m_gsh.sin_yang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),64);
-     m_gsh.cos_yang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),64);
+#if (USE_MMAP_4KiB) == 1
+     m_gsh.xang      = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsh.sin_xang  = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsh.cos_xang  = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsh.yang      = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsh.sin_yang  = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+     m_gsh.cos_yang  = gms_avx512vec16_mmap_4KiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE,-1,0,m_gsc.mem_lock);
+#elif (USE_MMAP_2MiB) == 1
+     m_gsh.xang      = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsh.sin_xang  = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsh.cos_xang  = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsh.yang      = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsh.sin_yang  = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+     m_gsh.cos_yang  = gms_avx512vec16_mmap_2MiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB ,-1,0,m_gsc.mem_lock);
+#elif (USE_MMAP_1GiB) == 1
+     m_gsh.xang      = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsh.sin_xang  = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsh.cos_xang  = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsh.yang      = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsh.sin_yang  = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+     m_gsh.cos_yang  = gms_avx512vec16_mmap_1GiB(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						 PROT_READ | PROT_WRITE,
+				                 MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB | MAP_HUGE_1GB,-1,0,m_gsc.mem_lock);
+#else
+     m_gsh.xang      = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						64,m_gsc.mem_lock);
+     m_gsh.sin_xang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						64,m_gsc.mem_lock);
+     m_gsh.cos_xang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						64,m_gsc.mem_lock);
+     m_gsh.yang      = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						64,m_gsc.mem_lock);
+     m_gsh.sin_yang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						64,m_gsc.mem_lock);
+     m_gsh.cos_yang  = gms_avx512vec16_emalloca(static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants),
+						64,m_gsc.mem_lock);
+#endif
 }
 
 gms::math::GrassScattererAVX512
 ::~GrassScattererAVX512() {
 
+  if(m_gsc.mem_lock) {
+    int32_t dummy;
+    dummy = munlock(m_gsc.A,static_cast<size_t>(m_gsc.nplants));
+    dummy = munlock(m_gsc.moistness,static_cast<size_t>(m_gsc.nplants));
+    dummy = munlock(m_gsc.xparam,static_cast<size_t>(m_gsc.param_npts));
+    dummy = munlock(m_gsc.yparam,static_cast<size_t>(m_gsc.param_npts));
+    dummy = munlock(m_gsc.zparam,static_cast<size_t>(m_gsc.param_npts));
+    dummy = munlock(m_gsh.xang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+    dummy = munlock(m_gsh.sin_xang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+    dummy = munlock(m_gsh.cos_xang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+    dummy = munlock(m_gsh.yang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+    dummy = munlock(m_gsh.sin_yang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+    dummy = munlock(m_gsh.cos_yang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+  }
+#if (USE_MMAP_4KiB) == 1 || (USE_MMAP_2MiB) == 1 || (USE_MMAP_1GiB) == 1
+     int32_t dummy = 0;
+     dummy = munmap(m_gsc.A,static_cast<size_t>(m_gsc.nplants));
+     m_gsc.A = NULL;
+     dummy = munmap(m_gsc.moistness,static_cast<size_t>(m_gsc.nplants));
+     m_gsc.moistness = NULL;
+     dummy = munmap(m_gsc.xparam,static_cast<size_t>(m_gsc.param_npts));
+     m_gsc.xparam = NULL;
+     dummy = munmap(m_gsc.yparam,static_cast<size_t>(m_gsc.param_npts));
+     m_gsc.yparam = NULL;
+     dummy = munmap(m_gsc.zparam,static_cast<size_t>(m_gsc.param_npts));
+     m_gsc.zparam = NULL;
+     dummy = munmap(m_gsh.xang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+     m_gsh.xang = NULL;
+     dummy = munmap(m_gsh.sin_xang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+     m_gsh.sin_xang = NULL;
+     dummy = munmap(m_gsh.cos_xang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+     m_gsh.cos_xang = NULL;
+     dummy = munmap(m_gsh.yang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+     m_gsh.yang = NULL;
+     dummy = munmap(m_gsh.sin_yang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+     m_gsh.sin_yang = NULL;
+     dummy = munmap(m_gsh.cos_yang,static_cast<size_t>(m_gsc.nsteps*m_gsc.nplants));
+     m_gsh.cos_yang = NULL;
+#else
+ 
   _mm_free(m_gsc.A);
   m_gsc.A = NULL;
   _mm_free(m_gsc.moistness);
@@ -128,7 +280,7 @@ gms::math::GrassScattererAVX512
   m_gsh.sin_yang = NULL;
   _mm_free(m_gsh.cos_yang);
   m_gsh.cos_yang = NULL;
-
+#endif
 }
 
 void
@@ -157,12 +309,19 @@ gms::math::GrassScattererAVX512
   }
 }
 
+#if (SAMPLE_HW_PMC) == 1
+    #include "GMS_fast_pmc_access.h"
+    #include "GMS_pmc_events_names.h"
+    #if (CHECK_L2_LICENSE) == 1
+        #include "GMS_avx512_warmup_loops.h"
+    #endif
+    #include <string.h>
+    #include <syslog.h>
+#endif
+
 void
 gms::math::GrassScattererAVX512::
-ComputeGrassParamEq_zmm16r4(const char * __restrict pmc_event1,
-			    const char * __restrict pmc_event2,
-			    const char * __restrict pmc_event3,
-			    const char * __restrict pmc_event4) {
+ComputeGrassParamEq_zmm16r4() {
 
 
      struct _T0_ {
@@ -262,23 +421,55 @@ ComputeGrassParamEq_zmm16r4(const char * __restrict pmc_event1,
      m_gsc.A = (float*)__builtin_assume_aligned(m_gsc.A,64);
 #endif
 #if (SAMPLE_HW_PMC) == 1
-          
-            
-	      // For now -- only single batch of 4 events is supported
-	      const PFC_CNT ZERO_CNT[7] = {0,0,0,0,0,0,0};
-	      PFC_CNT CNT[7] = {0,0,0,0,0,0,0};
-	      PFC_CFG CFG[7] = {2,2,2,0,0,0,0};
-	      CFG[3] = pfcParseCfg(pmc_event1);
-	      CFG[4] = pfcParseCfg(pmc_event2);
-	      CFG[5] = pfcParseCfg(pmc_event3);
-	      CFG[6] = pfcParseCfg(pmc_event4);
-	      // Reconfigure PMC and clear their count
-	      pfcWrCfgs(0,7,CFG);
-	      pfcWrCnts(0,7,ZERO_CNT);
-	      memset(CNT,0,sizeof(CNT));
-	      // Hot section
-	      PFCSTART(CNT);
-        
+     uint64_t cycles_lvl2 = 0xFFFFFFFFFFFFFFFFULL;
+    #if (CHECK_L2_LICENSE) == 1
+         const int32_t niter = 128;
+	 cycles_lvl2 = rdpmc(0); // assume first PMC is 0
+         if(!cycles_lvl2) {
+            __m512 a = _mm512_setr_ps(0.1f,0.2f,0.3f,0.4f,
+	                              0.5f,0.6f,0.7f,0.8f,
+				      0.9f,0.10f,0.11f,0.12f,
+				      0.13f,0.14f,0.15f,0.16f);
+	    __m512 b = _mm512_setr_ps(0.0f,0.11f,0.12f,0.13f,
+	                              0.14f,0.15f,0.16f,0.17f,
+				      0.18f,0.19f,0.20f,0.21f,
+				      0.22f,0.23f,0.24f,0.25f);
+	    __m512 c = _mm512_setr_ps(1.0f,2.0f,3.0f,4.0f,
+	                              5.0f,6.0f,7.0f,8.0f,
+				      9.0f,10.0f,11.0f,12.0f,
+				      13.0f,14.0f,15.0f,16.0f);
+	    __m512 volatile d = _mm512_setzero_ps();
+	    d = avx512_warmup_loop2_ps(a,b,c,niter);
+	 }
+     #endif
+     uint64_t prog_counters_start[5] = {};
+     uint64_t prog_counters_end[5]   = {};
+     uint64_t tsc_start,tsc_stop;
+     uint64_t act_cyc_start,act_cyc_stop;
+     uint64_t ref_cyc_start,ref_cyc_stop;
+     uint64_t volatile dummy1,dummy2,dummy3,dummy4,dummy5,dummy6;
+     double utilization,nom_ghz,avg_ghz;
+     // Forcing the IF and decoding of PMC functions  before the measurement loop
+     dummy1 = rdpmc_actual_cycles();
+     dummy2 = rdpmc_reference_cycles();
+     dummy3 = rdtscp();
+     dummy4 = rdpmc(0);
+     // Actual measurements
+     // CPUID to force serialization.
+     dummy5 = get_core_counter_width();
+     if(cycles_lvl2) {
+        for(int32_t i = 1; i != 5; ++i) {
+            prog_counters_start[i] = rdpmc(i);
+        }
+     }
+     else {
+         for(int32_t i = 0; i != 4; ++i) {
+            prog_counters_start[i] = rdpmc(i);
+        }
+     }
+     act_cyc_start = rdpmc_actual_cycles();
+     ref_cyc_start = rdpmc_reference_cycles();
+     tsc_start = rdtscp();
 #endif
       for(int32_t i = 0; i != m_gsc.nplants; ++i) {
          seedr = std::clock();
@@ -351,19 +542,43 @@ ComputeGrassParamEq_zmm16r4(const char * __restrict pmc_event1,
 	}
      }
 #if (SAMPLE_HW_PMC) == 1
-            PFCEND(CNT);
-	    pfcRemoveBias(CNT,1);
-	  
+            dummy6 = get_core_counter_width()
+	    if(cycles_lvl2) {
+	       for(int32_t i = 1; i != 5; ++i) {
+                   prog_counters_stop[i] = rdpmc(i);
+               }
+	    }
+	    else {
+               for(int32_t i = 0; i != 4; ++i) {
+                   prog_counters_stop[i] = rdpmc(i);
+               }
+	    }
+            act_cyc_stop = rdpmc_actual_cycles();
+            ref_cyc_stop = rdpmc_reference_cycles();
+            tsc_stop = rdtscp();
+	    nom_ghz = get_TSC_frequency()/1.0e9;
+	    utilization = (double)(ref_cyc_end-ref_cyc_start)/(double)(tsc_end-tsc_start);
+	    avg_ghz = (double)(act_cyc_end-act_cyc_start)/(double)(tsc_end-tsc_start)*nom_ghz;
 	    syslog(LOG_INFO,"%-10s:\n", __PRETTY_FUNCTION__);
 	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump Begin **************");
-	    syslog(LOG_INFO,"Instructions Issued                  : %20lld\n", (signed long long)CNT[0]);
-	    syslog(LOG_INFO,"Unhalted core cycles                 : %20lld\n", (signed long long)CNT[1]);
-	    syslog(LOG_INFO,"Unhalted reference cycles            : %20lld\n", (signed long long)CNT[2]);
-	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , (signed long long)CNT[3]);
-	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , (signed long long)CNT[4]);
-	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , (signed long long)CNT[5]);
-	    syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , (signed long long)CNT[6]);
-	    syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+	    syslog(LOG_INFO,"Core utilization                      : %f\n",utilization );
+	    syslog(LOG_INFO,"Core average frequency                : %f\n",avg_ghz);
+	    syslog(LOG_INFO,"Reference cycles                      : %20lld\n",ref_cyc_end-ref_cyc_start);
+	    syslog(LOG_INFO,"Actual cycles                         : %20lld\n",act_cyc_stop-act_cyc_start);
+	    if(!cycles_lvl2) {
+	       syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , prog_counters_stop[0]-prog_counters_start[0]);
+	       syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , prog_counters_stop[1]-prog_counters_start[1]);
+	       syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , prog_counters_stop[2]-prog_counters_start[2]);
+	       syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , prog_counters_stop[3]-prog_counters_start[3]);
+	       syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+	    }
+	     else {
+                 syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event1                    , prog_counters_stop[1]-prog_counters_start[1]);
+	         syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event2                    , prog_counters_stop[2]-prog_counters_start[2]);
+	         syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event3                    , prog_counters_stop[3]-prog_counters_start[3]);
+	         syslog(LOG_INFO,"%-37s: %20lld\n", pmc_event4                    , prog_counters_stop[4]-prog_counters_start[4]);
+	         syslog(LOG_INFO, "*************** Hardware Counters -- Dump End   **************");
+	     }
 #endif
 }
 
