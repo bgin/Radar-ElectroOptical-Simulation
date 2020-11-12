@@ -646,6 +646,136 @@ return( 0.5*y );
 }
 
 
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_expf(const double xx) {
+float x, z;
+int n;
+x = xx;
+if( x > 88.72283905206835) {
+    return(3.4028234663852885981170418348451692544e38);
+}
+if( x < -103.278929903431851103) {
+    return(0.0);
+}
+
+/* Express e**x = e**g 2**n
+ *   = e**g e**( n loge(2) )
+ *   = e**( g + n loge(2) )
+ */
+z = ceph_floorf(1.44269504088896341 * x + 0.5 ); /* floor() truncates toward -infinity. */
+x -= z * 0.693359375;
+x -= z * -2.12194440e-4;
+n = z;
+
+z = x * x;
+/* Theoretical peak relative error in [-0.5, +0.5] is 4.2e-9. */
+z =
+((((( 1.9875691500E-4  * x
+   + 1.3981999507E-3) * x
+   + 8.3334519073E-3) * x
+   + 4.1665795894E-2) * x
+   + 1.6666665459E-1) * x
+   + 5.0000001201E-1) * z
+   + x
+   + 1.0;
+
+/* multiply by power of 2 */
+x = ceph_ldexpf( z, n );
+return( x );
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_expx2f(const float x) {
+  float u, u1, m;
+  if (x < 0.0)
+    x = -x;
+
+  /* Represent x as an exact multiple of 1/32 plus a residual.  */
+  m = .03125f * ceph_floorf(32.0f * x + 0.5f);
+  x -= m;
+  /* x**2 = m**2 + 2mf + f**2 */
+  u = m * m;
+  u1 = 2 * m * x  +  x * x;
+
+  if ((u+u1) > 88.72283905206835 )
+    return (3.4028234663852885981170418348451692544e38);
+
+  /* u is exact, u1 is small.  */
+  u = ceph_expf(u) * ceph_expf(u1);
+  return(u);
+}
+
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float logf( const double xx ) {
+register float y;
+float x, z, fe;
+int e;
+x = xx;
+fe = 0.0;
+/* Test for domain */
+if( x <= 0.0 ) {
+    if( x == 0.0 )
+	   ;
+    else
+       return(-103.278929903431851103);
+}
+x = ceph_frexpf( x, &e );
+if( x < 0.707106781186547524) {
+    e -= 1;
+    x = x + x - 1.0; /*  2x - 1  */
+}	
+else{
+    x = x - 1.0;
+}
+z = x * x;
+/* 3.4e-9 */
+/*
+p = logfcof;
+y = *p++ * x;
+for( i=0; i<8; i++ )
+	{
+	y += *p++;
+	y *= x;
+	}
+y *= z;
+*/
+
+y =
+(((((((( 7.0376836292E-2 * x
+- 1.1514610310E-1) * x
++ 1.1676998740E-1) * x
+- 1.2420140846E-1) * x
++ 1.4249322787E-1) * x
+- 1.6668057665E-1) * x
++ 2.0000714765E-1) * x
+- 2.4999993993E-1) * x
++ 3.3333331174E-1) * x * z;
+
+if( e ){
+   fe = e;
+   y += -2.12194440e-4 * fe;
+}
+
+y +=  -0.5 * z;  /* y - 0.5 x^2 */
+z = x + y;   /* ... + x  */
+if( e )
+	z += 0.693359375 * fe;
+return( z );
+}
+
 
 
 #endif /*__GMS_CEPHES_H__*/
