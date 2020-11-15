@@ -1796,6 +1796,1701 @@ float expx2f (const float x) {
   return(u);
 }
 
+/*
+  SYNOPSIS:
+ *
+ * float x, S, C;
+ * void fresnlf();
+ *
+ * fresnlf( x, _&S, _&C );
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Evaluates the Fresnel integrals
+ *
+ *           x
+ *           -
+ *          | |
+ * C(x) =   |   cos(pi/2 t**2) dt,
+ *        | |
+ *         -
+ *          0
+ *
+ *           x
+ *           -
+ *          | |
+ * S(x) =   |   sin(pi/2 t**2) dt.
+ *        | |
+ *         -
+ *          0
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+void fresnlf(const  float xxa,
+             float * __restrict ssa,
+	     float *__restrict cca ){
+/* S(x) for small x */
+__ATTR_ALIGN__(32) const float sn[7] = {
+ 1.647629463788700E-009,
+-1.522754752581096E-007,
+ 8.424748808502400E-006,
+-3.120693124703272E-004,
+ 7.244727626597022E-003,
+-9.228055941124598E-002,
+ 5.235987735681432E-001
+};
+
+/* C(x) for small x */
+__ATTR_ALIGN__(32) const float cn[7] = {
+ 1.416802502367354E-008,
+-1.157231412229871E-006,
+ 5.387223446683264E-005,
+-1.604381798862293E-003,
+ 2.818489036795073E-002,
+-2.467398198317899E-001,
+ 9.999999760004487E-001
+};
+
+
+/* Auxiliary function f(x) */
+__ATTR_ALIGN__(32) const float fn[8] = {
+-1.903009855649792E+012,
+ 1.355942388050252E+011,
+-4.158143148511033E+009,
+ 7.343848463587323E+007,
+-8.732356681548485E+005,
+ 8.560515466275470E+003,
+-1.032877601091159E+002,
+ 2.999401847870011E+000
+};
+
+/* Auxiliary function g(x) */
+__ATTR_ALIGN__(32) const float gn[8] = {
+-1.860843997624650E+011,
+ 1.278350673393208E+010,
+-3.779387713202229E+008,
+ 6.492611570598858E+006,
+-7.787789623358162E+004,
+ 8.602931494734327E+002,
+-1.493439396592284E+001,
+ 9.999841934744914E-001
+};
+float f, g, cc, ss, c, s, t, u, x, x2;
+/*debug double t1;*/
+x = xxa;
+x = ceph_fabsf(x);
+x2 = x * x;
+if( x2 < 2.5625 ) {
+	t = x2 * x2;
+	ss = x * x2 * polevlf( t, sn, 6);
+	cc = x * polevlf( t, cn, 6);
+	goto done;
+}
+
+if( x > 36974.0 ) {
+	
+	cc = 0.5;
+	ss = 0.5;
+	goto done;
+}
+
+
+/*		Asymptotic power series auxiliary functions
+ *		for large argument
+ */
+	x2 = x * x;
+	t = 3.141592653589793238 * x2;
+	u = 1.0/(t * t);
+	t = 1.0/t;
+	f = 1.0 - u * polevlf( u, fn, 7);
+	g = t * polevlf( u, gn, 7);
+
+	t = 1.5707963267948966192 * x2;
+	c = ceph_cosf(t);
+	s = ceph_sinf(t);
+	t = 3.141592653589793238 * x;
+	cc = 0.5  +  (f * s  -  g * c)/t;
+	ss = 0.5  -  (f * c  +  g * s)/t;
+
+done:
+if( xxa < 0.0 ) {
+	cc = -cc;
+	ss = -ss;
+}
+
+*cca = cc;
+*ssa = ss;
+return 0;
+}
+
+/*
+    SYNOPSIS:
+ *
+ * float x, y, gammaf();
+ * extern int sgngamf;
+ *
+ * y = gammaf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns gamma function of the argument.  The result is
+ * correctly signed, and the sign (+1 or -1) is also
+ * returned in a global (extern) variable named sgngamf.
+ * This same variable is also filled in by the logarithmic
+ * gamma function lgam().
+ *
+ * Arguments between 0 and 10 are reduced by recurrence and the
+ * function is approximated by a polynomial function covering
+ * the interval (2,3).  Large arguments are handled by Stirling's
+ * formula. Negative arguments are made positive using
+ * a reflection formula.  
+ *
+*/
+
+/* Gamma function computed by Stirling's formula,
+ * sqrt(2 pi) x^(x-.5) exp(-x) (1 + 1/x P(1/x))
+ * The polynomial STIR is valid for 33 <= x <= 172.
+ */
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float stirf(const float xx) {
+const float STIR[] = {
+-2.705194986674176E-003,
+ 3.473255786154910E-003,
+ 8.333331788340907E-002
+};
+float x, y, w, v;
+x = xx;
+w = 1.0/x;
+w = 1.0 + w * polevlf( w, STIR, 2 );
+y = ceph_expf( -x );
+if( x > 26.77) {
+	 /* Avoid overflow in pow() */
+	v = ceph_powf( x, 0.5 * x - 0.25 );
+	y *= v;
+	y *= v;
+}
+else{
+    y = ceph_powf( x, x - 0.5 ) * y;
+}
+y = 2.50662827463100050242 * y * w;
+return( y );
+}
+
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_gammaf(const float xx ) {
+/* gamma(x+2), 0 < x < 1 */
+__ATTR_ALIGN__(32) const float P[] = {
+ 1.536830450601906E-003,
+ 5.397581592950993E-003,
+ 4.130370201859976E-003,
+ 7.232307985516519E-002,
+ 8.203960091619193E-002,
+ 4.117857447645796E-001,
+ 4.227867745131584E-001,
+ 9.999999822945073E-001
+};
+float p, q, x, z, nz;
+int i, direction, negative;
+x = xx;
+sgngamf = 1;
+negative = 0;
+nz = 0.0;
+if( x < 0.0 ) {
+	negative = 1;
+	q = -x;
+	p = ceph_floorf(q);
+	if( p == q )
+		goto goverf;
+	i = p;
+	if((i & 1) == 0 )
+		sgngamf = -1;
+	nz = q - p;
+	if( nz > 0.5 ) {
+	        p += 1.0;
+		nz = q - p;
+	}
+	nz = q * ceph_sinf( 3.141592653589793238 * nz );
+	if( nz == 0.0 ) {
+		
+goverf:
+	     return(sgngamf * 3.4028234663852885981170418348451692544e38);
+        }
+	if( nz < 0 )
+		nz = -nz;
+	x = q;
+	}
+if( x >= 10.0 ) {
+    z = stirf(x);
+}
+if( x < 2.0 )
+	direction = 1;
+else
+	direction = 0;
+z = 1.0;
+while( x >= 3.0 ) {
+        x -= 1.0;
+	z *= x;
+}
+/*
+while( x < 0.0 )
+	{
+	if( x > -1.E-4 )
+		goto small;
+	z *=x;
+	x += 1.0;
+	}
+*/
+while( x < 2.0 ) {
+	
+	if( x < 1.e-4 )
+		goto small;
+	z *=x;
+	x += 1.0;
+}
+
+if( direction )
+	z = 1.0/z;
+
+if( x == 2.0 )
+	return(z);
+
+x -= 2.0;
+p = z * polevlf( x, P, 7 );
+
+gdone:
+
+if( negative ) {
+    p = sgngamf * 3.141592653589793238/(nz * p );
+}
+return(p);
+
+small:
+if( x == 0.0 ){
+	return(3.4028234663852885981170418348451692544e38);
+}
+else{
+	p = z / ((1.0 + 0.5772156649015329 * x) * x);
+	goto gdone;
+    }
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float lgamf(const float xx ){
+/* log gamma(x+2), -.5 < x < .5 */
+__ATTR_ALIGN__(32) const float B[] = {
+ 6.055172732649237E-004,
+-1.311620815545743E-003,
+ 2.863437556468661E-003,
+-7.366775108654962E-003,
+ 2.058355474821512E-002,
+-6.735323259371034E-002,
+ 3.224669577325661E-001,
+ 4.227843421859038E-001
+};
+
+/* log gamma(x+1), -.25 < x < .25 */
+__ATTR_ALIGN__(32) const float C[] = {
+ 1.369488127325832E-001,
+-1.590086327657347E-001,
+ 1.692415923504637E-001,
+-2.067882815621965E-001,
+ 2.705806208275915E-001,
+-4.006931650563372E-001,
+ 8.224670749082976E-001,
+-5.772156501719101E-001
+};
+float p, q, w, z, x;
+float nx, tx;
+int i, direction;
+sgngamf = 1;
+x = xx;
+if( x < 0.0 ) {
+	q = -x;
+	w = ceph_lgamf(q); /* note this modifies sgngam! */
+	p = ceph_floorf(q);
+	if( p == q )
+		goto loverf;
+	i = p;
+	if( (i & 1) == 0 )
+		sgngamf = -1;
+	else
+		sgngamf = 1;
+	z = q - p;
+	if( z > 0.5 ) {
+		p += 1.0;
+		z = p - q;
+	}
+	z = q * ceph_sinf(3.141592653589793238 * z);
+	if(z == 0.0)
+		goto loverf;
+	z = -ceph_logf( 0.318309886183790671538*z ) - w;
+	return( z );
+	}
+
+if( x < 6.5 ) {
+	direction = 0;
+	z = 1.0;
+	tx = x;
+	nx = 0.0;
+	if(x >= 1.5) {
+	       while( tx > 2.5 ){
+			nx -= 1.0;
+			tx = x + nx;
+			z *=tx;
+		}
+		x += nx - 2.0;
+iv1r5:
+		p = x * polevlf( x, B, 7 );
+		goto cont;
+	}
+	if( x >= 1.25 ){
+		z *= x;
+		x -= 1.0; /* x + 1 - 2 */
+		direction = 1;
+		goto iv1r5;
+	}
+	if( x >= 0.75 ) {
+	        x -= 1.0;
+		p = x * polevlf( x, C, 7 );
+		q = 0.0;
+		goto contz;
+	}
+	while( tx < 1.5 ){
+	       if( tx == 0.0 )
+			goto loverf;
+		z *=tx;
+		nx += 1.0;
+		tx = x + nx;
+	}
+	direction = 1;
+	x += nx - 2.0;
+	p = x * polevlf( x, B, 7 );
+
+cont:
+	if( z < 0.0 ){
+		sgngamf = -1;
+		z = -z;
+	}
+	else
+	    {
+		sgngamf = 1;
+	}
+	q = ceph_logf(z);
+	if( direction )
+		q = -q;
+contz:
+	return( p + q );
+	}
+if( x > 2.035093e36){
+	
+loverf:
+	return(sgngamf * 3.4028234663852885981170418348451692544e38);
+}
+
+/* Note, though an asymptotic formula could be used for x >= 3,
+ * there is cancellation error in the following if x < 6.5.  */
+q =  0.91893853320467274178 - x;
+q += ( x - 0.5 ) * ceph_logf(x);
+if( x <= 1.0e4 ){
+	z = 1.0/x;
+	p = z * z;
+	q += ((    6.789774945028216E-004 * p
+		 - 2.769887652139868E-003 ) * p
+		+  8.333316229807355E-002 ) * z;
+}
+return( q );
+}
+
+/*
+	Gauss hypergeometric function   F
+ *	                               2 1
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float a, b, c, x, y, hyp2f1f();
+ *
+ * y = hyp2f1f( a, b, c, x );
+ *
+ *
+ * DESCRIPTION:
+ *
+ *
+ *  hyp2f1( a, b, c, x )  =   F ( a, b; c; x )
+ *                           2 1
+ *
+ *           inf.
+ *            -   a(a+1)...(a+k) b(b+1)...(b+k)   k+1
+ *   =  1 +   >   -----------------------------  x   .
+ *            -         c(c+1)...(c+k) (k+1)!
+ *          k = 0
+ *
+ *  Cases addressed are
+ *	Tests and escapes for negative integer a, b, or c
+ *	Linear transformation if c - a or c - b negative integer
+ *	Special case c = a or c = b
+ *	Linear transformation for  x near +1
+ *	Transformation for x < -0.5
+ *	Psi function expansion if x > 0.5 and c - a - b integer
+ *      Conditionally, a recurrence on c to make c-a-b > 0
+ *
+*/
+
+#if !defined(ceph_roundf)
+    #define ceph_roundf(x) (ceph_floorf((x)+(float )0.5))
+#endif
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hyp2f1f(const float aa,
+              const float bb,
+	      const float cc,
+	      const float xx ){
+float a, b, c, x;
+float d, d1, d2, e;
+float p, q, r, s, y, ax;
+float ia, ib, ic, id, err;
+int flag, i, aid;
+a = aa;
+b = bb;
+c = cc;
+x = xx;
+err = 0.0;
+ax = ceph_fabsf(x);
+s = 1.0 - x;
+flag = 0;
+ia = ceph_roundf(a); /* nearest integer to a */
+ib = ceph_roundf(b);
+if( a <= 0 )
+	{
+	if( ceph_fabsf(a-ia) < 1.0e-5)		/* a is a negative integer */
+		flag |= 1;
+	}
+
+if( b <= 0 )
+	{
+	if( ceph_fabsf(b-ib) < 1.0e-5)		/* b is a negative integer */
+		flag |= 2;
+	}
+
+if( ax < 1.0 )
+	{
+	if( ceph_fabsf(b-c) < 1.0e-5)		/* b = c */
+		{
+		y = ceph_powf( s, -a );	/* s to the -a power */
+		goto hypdon;
+		}
+	if( ceph_fabsf(a-c) < 1.0e-5)		/* a = c */
+		{
+		y = ceph_powf( s, -b );	/* s to the -b power */
+		goto hypdon;
+		}
+	}
+
+if( c <= 0.0 )
+	{
+	ic = ceph_roundf(c); 	/* nearest integer to c */
+	if( ceph_fabsf(c-ic) < 1.0e-5)		/* c is a negative integer */
+		{
+		/* check if termination before explosion */
+		if( (flag & 1) && (ia > ic) )
+			goto hypok;
+		if( (flag & 2) && (ib > ic) )
+			goto hypok;
+		goto hypdiv;
+		}
+	}
+
+if( flag )			/* function is a polynomial */
+	goto hypok;
+
+if( ax > 1.0 )			/* series diverges	*/
+	goto hypdiv;
+
+p = c - a;
+ia = ceph_roundf(p);
+if( (ia <= 0.0) && (ceph_fabsf(p-ia) < 1.0e-5) )	/* negative int c - a */
+	flag |= 4;
+
+r = c - b;
+ib = ceph_roundf(r); /* nearest integer to r */
+if( (ib <= 0.0) && (ceph_fabsf(r-ib) < 1.0e-5) )	/* negative int c - b */
+	flag |= 8;
+
+d = c - a - b;
+id = ceph_roundf(d); /* nearest integer to d */
+q = ceph_fabsf(d-id);
+
+if( ceph_fabsf(ax-1.0) < 1.0e-5)			/* |x| == 1.0	*/
+	{
+	if( x > 0.0 )
+		{
+		if( flag & 12 ) /* negative int c-a or c-b */
+			{
+			if( d >= 0.0 )
+				goto hypf;
+			else
+				goto hypdiv;
+			}
+		if( d <= 0.0 )
+			goto hypdiv;
+		y = ceph_gammaf(c)*ceph_gammaf(d)/(ceph_gammaf(p)*ceph_gammaf(r));
+		goto hypdon;
+		}
+
+	if( d <= -1.0 )
+		goto hypdiv;
+	}
+
+/* Conditionally make d > 0 by recurrence on c
+ * AMS55 #15.2.27
+ */
+if( d < 0.0 )
+	{
+/* Try the power series first */
+	y = hyt2f1f( a, b, c, x, &err );
+	if( err < 1.0e-5)
+		goto hypdon;
+/* Apply the recurrence if power series fails */
+	err = 0.0;
+	aid = 2 - id;
+	e = c + aid;
+	d2 = hyp2f1f(a,b,e,x);
+	d1 = hyp2f1f(a,b,e+1.0,x);
+	q = a + b + 1.0;
+	for( i=0; i<aid; i++ )
+		{
+		r = e - 1.0;
+		y = (e*(r-(2.0*e-q)*x)*d2 + (e-a)*(e-b)*x*d1)/(e*r*s);
+		e = r;
+		d1 = d2;
+		d2 = y;
+		}
+	goto hypdon;
+	}
+
+
+if( flag & 12 )
+	goto hypf; /* negative integer c-a or c-b */
+
+hypok:
+y = hyt2f1f( a, b, c, x, &err );
+
+hypdon:
+if( err > 1.0e-5)
+	{
+//	mtherr( "hyp2f1", PLOSS );
+/*	printf( "Estimated err = %.2e\n", err );*/
+	}
+return(y);
+
+/* The transformation for c-a or c-b negative integer
+ * AMS55 #15.3.3
+ */
+hypf:
+y = ceph_powf( s, d ) * hys2f1f( c-a, c-b, c, x, &err );
+goto hypdon;
+
+/* The alarm exit */
+hypdiv:
+return(3.4028234663852885981170418348451692544e38);
+}
+
+/* Apply transformations for |x| near 1
+ * then call the power series
+ */
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hyt2f1f( const float aa,
+               const float bb,
+	       const float cc,
+	       const float xx,
+	       float *loss ) {
+float a, b, c, x;
+float p, q, r, s, t, y, d, err, err1;
+float ax, id, d1, d2, e, y1;
+int i, aid;
+
+a = aa;
+b = bb;
+c = cc;
+x = xx;
+err = 0.0;
+s = 1.0 - x;
+if( x < -0.5 )
+	{
+	if( b > a )
+		y = ceph_powf( s, -a ) * hys2f1f( a, c-b, c, -x/s, &err );
+
+	else
+		y = ceph_powf( s, -b ) * hys2f1f( c-a, b, c, -x/s, &err );
+
+	goto done;
+	}
+
+
+
+d = c - a - b;
+id = ceph_roundf(d);	/* nearest integer to d */
+
+if( x > 0.8 )
+{
+
+if( ceph_fabsf(d-id) > 1.0e-5) /* test for integer c-a-b */
+	{
+/* Try the power series first */
+	y = hys2f1f( a, b, c, x, &err );
+	if( err < 1.0e-5)
+		goto done;
+/* If power series fails, then apply AMS55 #15.3.6 */
+	q = hys2f1f( a, b, 1.0-d, s, &err );	
+	q *= ceph_gammaf(d) /(ceph_gammaf(c-a) * ceph_gammaf(c-b));
+	r = ceph_powf(s,d) * hys2f1f( c-a, c-b, d+1.0, s, &err1 );
+	r *= ceph_gammaf(-d)/(ceph_gammaf(a) * ceph_gammaf(b));
+	y = q + r;
+
+	q = ceph_fabsf(q); /* estimate cancellation error */
+	r = ceph_fabsf(r);
+	if( q > r )
+		r = q;
+	err += err1 + (5.9604644775390625E-8*r)/y;
+
+	y *= ceph_gammaf(c);
+	goto done;
+	}	
+else
+	{
+/* Psi function expansion, AMS55 #15.3.10, #15.3.11, #15.3.12 */
+	if( id >= 0.0 )
+		{
+		e = d;
+		d1 = d;
+		d2 = 0.0;
+		aid = id;
+		}
+	else
+		{
+		e = -d;
+		d1 = 0.0;
+		d2 = d;
+		aid = -id;
+		}
+
+	ax = ceph_logf(s);
+
+	/* sum for t = 0 */
+	y = psif(1.0) + psif(1.0+e) - psif(a+d1) - psif(b+d1) - ax;
+	y /= ceph_gammaf(e+1.0);
+
+	p = (a+d1) * (b+d1) * s / ceph_gammaf(e+2.0);	/* Poch for t=1 */
+	t = 1.0;
+	do
+		{
+		r = psif(1.0+t) + psif(1.0+t+e) - psif(a+t+d1)
+			- psif(b+t+d1) - ax;
+		q = p * r;
+		y += q;
+		p *= s * (a+t+d1) / (t+1.0);
+		p *= (b+t+d1) / (t+1.0+e);
+		t += 1.0;
+		}
+	while( fabsf(q/y) > EPS );
+
+
+	if( id == 0.0 )
+		{
+		y *= ceph_gammaf(c)/(ceph_gammaf(a)*ceph_gammaf(b));
+		goto psidon;
+		}
+
+	y1 = 1.0;
+
+	if( aid == 1 )
+		goto nosum;
+
+	t = 0.0;
+	p = 1.0;
+	for( i=1; i<aid; i++ )
+		{
+		r = 1.0-e+t;
+		p *= s * (a+t+d2) * (b+t+d2) / r;
+		t += 1.0;
+		p /= t;
+		y1 += p;
+		}
+
+
+nosum:
+	p = ceph_gammaf(c);
+	y1 *= ceph_gammaf(e) * p / (ceph_gammaf(a+d1) * ceph_gammaf(b+d1));
+	y *= p / (ceph_gammaf(a+d2) * ceph_gammaf(b+d2));
+	if( (aid & 1) != 0 )
+		y = -y;
+
+	q = powf( s, id );	/* s to the id power */
+	if( id > 0.0 )
+		y *= q;
+	else
+		y1 *= q;
+
+	y += y1;
+psidon:
+	goto done;
+	}
+}
+
+
+/* Use defining power series if no special cases */
+y = hys2f1f( a, b, c, x, &err );
+
+done:
+*loss = err;
+return(y);
+}
+
+/* Defining power series expansion of Gauss hypergeometric function */
+
+#if 1
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hys2f1f( const float aa,
+               const float bb,
+	       const float cc,
+	       const float xx,
+	       float *loss ) {
+int i;
+float a, b, c, x;
+float f, g, h, k, m, s, u, umax;
+
+
+a = aa;
+b = bb;
+c = cc;
+x = xx;
+i = 0;
+umax = 0.0;
+f = a;
+g = b;
+h = c;
+k = 0.0;
+s = 1.0;
+u = 1.0;
+
+do
+	{
+	if( ceph_fabsf(h) < 1.0e-5)
+		return(3.4028234663852885981170418348451692544e38);
+	m = k + 1.0;
+	u = u * ((f+k) * (g+k) * x / ((h+k) * m));
+	s += u;
+	k = ceph_fabsf(u);  /* remember largest term summed */
+	if( k > umax )
+		umax = k;
+	k = m;
+	if( ++i > 10000 ) /* should never happen */
+		{
+		*loss = 1.0;
+		return(s);
+		}
+	}
+while( ceph_fabsf(u/s) > 5.9604644775390625E-8);
+
+/* return estimated relative error */
+*loss = (5.9604644775390625E-8*umax)/ceph_fabsf(s) + (5.9604644775390625E-8*i);
+
+return(s);
+}
+
+
+#else /* 0 */
+
+
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hys2f1f( const float aa,
+                      const float bb,
+		      const float cc,
+		      const float xx,
+		      float *loss ) {
+int i;
+double a, b, c, x;
+double f, g, h, k, m, s, u, umax;
+
+a = aa;
+b = bb;
+c = cc;
+x = xx;
+i = 0;
+umax = 0.0;
+f = a;
+g = b;
+h = c;
+k = 0.0;
+s = 1.0;
+u = 1.0;
+
+do
+	{
+	if( ceph_fabsf(h) < 1.0e-5)
+		{
+		*loss = 1.0;
+		return(3.4028234663852885981170418348451692544e38);
+		}
+	m = k + 1.0;
+	u = u * ((f+k) * (g+k) * x / ((h+k) * m));
+	s += u;
+	k = ceph_fabsf(u);  /* remember largest term summed */
+	if( k > umax )
+		umax = k;
+	k = m;
+	if( ++i > 10000 ) /* should never happen */
+		{
+		*loss = 1.0;
+		return(s);
+		}
+	}
+while( ceph_fabsf(u/s) > 5.9604644775390625E-8);
+
+/* return estimated relative error */
+*loss = (5.9604644775390625E-8*umax)/ceph_fabsf(s) + (5.9604644775390625E-8*i);
+
+return(s);
+}
+#endif
+
+/*
+   	Confluent hypergeometric function
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float a, b, x, y, hypergf();
+ *
+ * y = hypergf( a, b, x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Computes the confluent hypergeometric function
+ *
+ *                          1           2
+ *                       a x    a(a+1) x
+ *   F ( a,b;x )  =  1 + ---- + --------- + ...
+ *  1 1                  b 1!   b(b+1) 2!
+ *
+ * Many higher transcendental functions are special cases of
+ * this power series.
+ *
+ * As is evident from the formula, b must not be a negative
+ * integer or zero unless a is an integer with 0 >= a > b.
+ *
+ * The routine attempts both a direct summation of the series
+ * and an asymptotic expansion.  In each case error due to
+ * roundoff, cancellation, and nonconvergence is estimated.
+ * The result with smaller estimated error is returned.
+*/
+
+ __ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hypergf( float aa, float bb, float xx ){
+float a, b, x, asum, psum, acanc, pcanc, temp;
+a = aa;
+b = bb;
+x = xx;
+/* See if a Kummer transformation will help */
+temp = b - a;
+if( ceph_fabsf(temp) < 0.001 * ceph_fabsf(a) )
+	return( ceph_expf(x) * hypergf( temp, b, -x )  );
+
+psum = hy1f1pf( a, b, x, &pcanc );
+if( pcanc < 1.0e-6 )
+	goto done;
+
+
+/* try asymptotic series */
+
+asum = hy1f1af( a, b, x, &acanc );
+
+
+/* Pick the result with less estimated error */
+
+if( acanc < pcanc )
+	{
+	pcanc = acanc;
+	psum = asum;
+	}
+
+done:
+if( pcanc > 1.0e-3 )
+    ;
+
+return( psum );
+}
+
+/* Power series summation for confluent hypergeometric function		*/
+
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hy1f1pf( const float aa,
+               const float bb,
+	       const float xx,
+	       float *err ) {
+float a, b, x, n, a0, sum, t, u, temp;
+float an, bn, maxt, pcanc;
+a = aa;
+b = bb;
+x = xx;
+/* set up for power series summation */
+an = a;
+bn = b;
+a0 = 1.0;
+sum = 1.0;
+n = 1.0;
+t = 1.0;
+maxt = 0.0;
+
+while( t > 5.9604644775390625E-8)
+	{
+	if( bn == 0 )			/* check bn first since if both	*/
+		{
+	
+		return(3.4028234663852885981170418348451692544e38 );	/* an and bn are zero it is	*/
+		}
+	if( an == 0 )			/* a singularity		*/
+		return( sum );
+	if( n > 200 )
+		goto pdone;
+	u = x * ( an / (bn * n) );
+
+	/* check for blowup */
+	temp = ceph_fabsf(u);
+	if( (temp > 1.0 ) && (maxt > (3.4028234663852885981170418348451692544e38/temp)) )
+		{
+		pcanc = 1.0;	/* estimate 100% error */
+		goto blowup;
+		}
+
+	a0 *= u;
+	sum += a0;
+	t = ceph_fabsf(a0);
+	if( t > maxt )
+		maxt = t;
+/*
+	if( (maxt/fabsf(sum)) > 1.0e17 )
+		{
+		pcanc = 1.0;
+		goto blowup;
+		}
+*/
+	an += 1.0;
+	bn += 1.0;
+	n += 1.0;
+	}
+
+pdone:
+
+/* estimate error due to roundoff and cancellation */
+if( sum != 0.0 )
+	maxt /= ceph_fabsf(sum);
+maxt *= 5.9604644775390625E-8; 	/* this way avoids multiply overflow */
+pcanc = ceph_fabsf( 5.9604644775390625E-8* n  +  maxt );
+
+blowup:
+
+*err = pcanc;
+
+return( sum );
+}
+
+/*							hy1f1a()	*/
+/* asymptotic formula for hypergeometric function:
+ *
+ *        (    -a                         
+ *  --    ( |z|                           
+ * |  (b) ( -------- 2f0( a, 1+a-b, -1/x )
+ *        (  --                           
+ *        ( |  (b-a)                      
+ *
+ *
+ *                                x    a-b                     )
+ *                               e  |x|                        )
+ *                             + -------- 2f0( b-a, 1-a, 1/x ) )
+ *                                --                           )
+ *                               |  (a)                        )
+ */
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hy1f1af( const
+                      const float aa,
+		      const float bb,
+		      const float xx,
+		      float *err ) {
+float a, b, x, h1, h2, t, u, temp, acanc, asum, err1, err2;
+
+a = aa;
+b = bb;
+x = xx;
+if( x == 0 )
+	{
+	acanc = 1.0;
+	asum = 3.4028234663852885981170418348451692544e38;
+	goto adone;
+	}
+temp = ceph_logf( ceph_fabsf(x) );
+t = x + temp * (a-b);
+u = -temp * a;
+
+if( b > 0 )
+	{
+	temp = ceph_lgamf(b);
+	t += temp;
+	u += temp;
+	}
+
+h1 = hyp2f0f( a, a-b+1, -1.0/x, 1, &err1 );
+
+temp = ceph_expf(u) / ceph_gammaf(b-a);
+h1 *= temp;
+err1 *= temp;
+
+h2 = hyp2f0f( b-a, 1.0-a, 1.0/x, 2, &err2 );
+
+if( a < 0 )
+	temp = ceph_expf(t) / ceph_gammaf(a);
+else
+	temp = ceph_expf( t - ceph_lgamf(a) );
+
+h2 *= temp;
+err2 *= temp;
+
+if( x < 0.0 )
+	asum = h1;
+else
+	asum = h2;
+
+acanc = ceph_fabsf(err1) + ceph_fabsf(err2);
+
+
+if( b < 0 )
+	{
+	temp = ceph_gammaf(b);
+	asum *= temp;
+	acanc *= ceph_fabsf(temp);
+	}
+
+
+if( asum != 0.0 )
+	acanc /= ceph_fabsf(asum);
+
+acanc *= 30.0;	/* fudge factor, since error of asymptotic formula
+		 * often seems this much larger than advertised */
+
+adone:
+
+
+*err = acanc;
+return( asum );
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float hyp2f0f(const float aa,
+              const float bb,
+	      const float xx,
+	      const int type,
+	      const float *err){
+float a, b, x, a0, alast, t, tlast, maxt;
+float n, an, bn, u, sum, temp;
+
+a = aa;
+b = bb;
+x = xx;
+an = a;
+bn = b;
+a0 = 1.0;
+alast = 1.0;
+sum = 0.0;
+n = 1.0;
+t = 1.0;
+tlast = 1.0e9;
+maxt = 0.0;
+
+do
+	{
+	if( an == 0 )
+		goto pdone;
+	if( bn == 0 )
+		goto pdone;
+
+	u = an * (bn * x / n);
+
+	/* check for blowup */
+	temp = ceph_fabsf(u);
+	if( (temp > 1.0 ) && (maxt > (3.4028234663852885981170418348451692544e38/temp)) )
+		goto error;
+
+	a0 *= u;
+	t = ceph_fabsf(a0);
+
+	/* terminating condition for asymptotic series */
+	if( t > tlast )
+		goto ndone;
+
+	tlast = t;
+	sum += alast;	/* the sum is one term behind */
+	alast = a0;
+
+	if( n > 200 )
+		goto ndone;
+
+	an += 1.0;
+	bn += 1.0;
+	n += 1.0;
+	if( t > maxt )
+		maxt = t;
+	}
+while( t > 5.9604644775390625E-8);
+
+
+pdone:	/* series converged! */
+
+/* estimate error due to roundoff and cancellation */
+*err = ceph_fabsf(  5.9604644775390625E-8 * (n + maxt)  );
+
+alast = a0;
+goto done;
+
+ndone:	/* series did not converge */
+
+/* The following "Converging factors" are supposed to improve accuracy,
+ * but do not actually seem to accomplish very much. */
+
+n -= 1.0;
+x = 1.0/x;
+
+switch( type )	/* "type" given as subroutine argument */
+{
+case 1:
+	alast *= ( 0.5 + (0.125 + 0.25*b - 0.5*a + 0.25*x - 0.25*n)/x );
+	break;
+
+case 2:
+	alast *= 2.0/3.0 - b + 2.0*a + x - n;
+	break;
+
+default:
+	;
+}
+
+/* estimate error due to roundoff, cancellation, and nonconvergence */
+*err = 5.9604644775390625E-8* (n + maxt)  +  ceph_fabsf( a0 );
+
+
+done:
+sum += alast;
+return( sum );
+
+/* series blew up: */
+error:
+*err = 3.4028234663852885981170418348451692544e38;
+return( sum );
+}
+
+/*
+    	Modified Bessel function of order zero
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, i0();
+ *
+ * y = i0f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns modified Bessel function of order zero of the
+ * argument.
+ *
+ * The function is defined as i0(x) = j0( ix ).
+ *
+ * The range is partitioned into the two intervals [0,8] and
+ * (8, infinity).  Chebyshev polynomial expansions are employed
+ * in each interval.
+ *
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float i0f( float x ) {
+__ATTR_ALIGN__(64) const float A[] =
+{
+-1.30002500998624804212E-8f,
+ 6.04699502254191894932E-8f,
+-2.67079385394061173391E-7f,
+ 1.11738753912010371815E-6f,
+-4.41673835845875056359E-6f,
+ 1.64484480707288970893E-5f,
+-5.75419501008210370398E-5f,
+ 1.88502885095841655729E-4f,
+-5.76375574538582365885E-4f,
+ 1.63947561694133579842E-3f,
+-4.32430999505057594430E-3f,
+ 1.05464603945949983183E-2f,
+-2.37374148058994688156E-2f,
+ 4.93052842396707084878E-2f,
+-9.49010970480476444210E-2f,
+ 1.71620901522208775349E-1f,
+-3.04682672343198398683E-1f,
+ 6.76795274409476084995E-1f
+};
+
+
+/* Chebyshev coefficients for exp(-x) sqrt(x) I0(x)
+ * in the inverted interval [8,infinity].
+ *
+ * lim(x->inf){ exp(-x) sqrt(x) I0(x) } = 1/sqrt(2pi).
+ */
+
+__ATTR_ALIGN__(32) const float B[] =
+{
+ 3.39623202570838634515E-9f,
+ 2.26666899049817806459E-8f,
+ 2.04891858946906374183E-7f,
+ 2.89137052083475648297E-6f,
+ 6.88975834691682398426E-5f,
+ 3.36911647825569408990E-3f,
+ 8.04490411014108831608E-1f
+};
+float y;
+
+if( x < 0 )
+	x = -x;
+if( x <= 8.0f )
+	{
+	y = 0.5f*x - 2.0f;
+	return( ceph_expf(x) * chbevlf( y, A, 18 ) );
+	}
+
+return(  ceph_expf(x) * chbevlf( 32.0f/x - 2.0f, B, 7 ) / ceph_sqrtf(x) );
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float i0ef( float x ) {
+__ATTR_ALIGN__(64) const float A[] =
+{
+-1.30002500998624804212E-8f,
+ 6.04699502254191894932E-8f,
+-2.67079385394061173391E-7f,
+ 1.11738753912010371815E-6f,
+-4.41673835845875056359E-6f,
+ 1.64484480707288970893E-5f,
+-5.75419501008210370398E-5f,
+ 1.88502885095841655729E-4f,
+-5.76375574538582365885E-4f,
+ 1.63947561694133579842E-3f,
+-4.32430999505057594430E-3f,
+ 1.05464603945949983183E-2f,
+-2.37374148058994688156E-2f,
+ 4.93052842396707084878E-2f,
+-9.49010970480476444210E-2f,
+ 1.71620901522208775349E-1f,
+-3.04682672343198398683E-1f,
+ 6.76795274409476084995E-1f
+};
+
+
+/* Chebyshev coefficients for exp(-x) sqrt(x) I0(x)
+ * in the inverted interval [8,infinity].
+ *
+ * lim(x->inf){ exp(-x) sqrt(x) I0(x) } = 1/sqrt(2pi).
+ */
+
+__ATTR_ALIGN__(32) const float B[] =
+{
+ 3.39623202570838634515E-9f,
+ 2.26666899049817806459E-8f,
+ 2.04891858946906374183E-7f,
+ 2.89137052083475648297E-6f,
+ 6.88975834691682398426E-5f,
+ 3.36911647825569408990E-3f,
+ 8.04490411014108831608E-1f
+};
+float y;
+if( x < 0 )
+	x = -x;
+if( x <= 8.0f )
+	{
+	y = 0.5f*x - 2.0f;
+	return( chbevlf( y, A, 18 ) );
+	}
+
+return(  chbevlf( 32.0f/x - 2.0f, B, 7 ) / ceph_sqrtf(x) );
+}
+
+/*
+   	Modified Bessel function of order one
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, i1f();
+ *
+ * y = i1f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns modified Bessel function of order one of the
+ * argument.
+ *
+ * The function is defined as i1(x) = -i j1( ix ).
+ *
+ * The range is partitioned into the two intervals [0,8] and
+ * (8, infinity).  Chebyshev polynomial expansions are employed
+ * in each interval.
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float i1f(const float xx) {
+/* Chebyshev coefficients for exp(-x) I1(x) / x
+ * in the interval [0,8].
+ *
+ * lim(x->0){ exp(-x) I1(x) / x } = 1/2.
+ */
+
+__ATTR_ALIGN__(64) const float A[] =
+{
+ 9.38153738649577178388E-9f,
+-4.44505912879632808065E-8f,
+ 2.00329475355213526229E-7f,
+-8.56872026469545474066E-7f,
+ 3.47025130813767847674E-6f,
+-1.32731636560394358279E-5f,
+ 4.78156510755005422638E-5f,
+-1.61760815825896745588E-4f,
+ 5.12285956168575772895E-4f,
+-1.51357245063125314899E-3f,
+ 4.15642294431288815669E-3f,
+-1.05640848946261981558E-2f,
+ 2.47264490306265168283E-2f,
+-5.29459812080949914269E-2f,
+ 1.02643658689847095384E-1f,
+-1.76416518357834055153E-1f,
+ 2.52587186443633654823E-1f
+};
+
+
+/* Chebyshev coefficients for exp(-x) sqrt(x) I1(x)
+ * in the inverted interval [8,infinity].
+ *
+ * lim(x->inf){ exp(-x) sqrt(x) I1(x) } = 1/sqrt(2pi).
+ */
+
+ __ATTR_ALIGN__(32) const float B[] =
+{
+-3.83538038596423702205E-9f,
+-2.63146884688951950684E-8f,
+-2.51223623787020892529E-7f,
+-3.88256480887769039346E-6f,
+-1.10588938762623716291E-4f,
+-9.76109749136146840777E-3f,
+ 7.78576235018280120474E-1f,
+ 0.0F
+};
+float x, y, z;
+x = xx;
+z = ceph_fabsf(x);
+if( z <= 8.0f )
+	{
+	y = 0.5f*z - 2.0f;
+	z = chbevlf( y, A, 17 ) * z * ceph_expf(z);
+	}
+else
+	{
+	z = ceph_expf(z) * chbevlf( 32.0f/z - 2.0f, B, 7 ) / ceph_sqrtf(z);
+	}
+if( x < 0.0f )
+	z = -z;
+return( z );
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float i1ef( const float xx ) {
+float x, y, z;
+__ATTR_ALIGN__(64) const float A[] =
+{
+ 9.38153738649577178388E-9f,
+-4.44505912879632808065E-8f,
+ 2.00329475355213526229E-7f,
+-8.56872026469545474066E-7f,
+ 3.47025130813767847674E-6f,
+-1.32731636560394358279E-5f,
+ 4.78156510755005422638E-5f,
+-1.61760815825896745588E-4f,
+ 5.12285956168575772895E-4f,
+-1.51357245063125314899E-3f,
+ 4.15642294431288815669E-3f,
+-1.05640848946261981558E-2f,
+ 2.47264490306265168283E-2f,
+-5.29459812080949914269E-2f,
+ 1.02643658689847095384E-1f,
+-1.76416518357834055153E-1f,
+ 2.52587186443633654823E-1f
+};
+
+
+/* Chebyshev coefficients for exp(-x) sqrt(x) I1(x)
+ * in the inverted interval [8,infinity].
+ *
+ * lim(x->inf){ exp(-x) sqrt(x) I1(x) } = 1/sqrt(2pi).
+ */
+
+ __ATTR_ALIGN__(32) const float B[] =
+{
+-3.83538038596423702205E-9f,
+-2.63146884688951950684E-8f,
+-2.51223623787020892529E-7f,
+-3.88256480887769039346E-6f,
+-1.10588938762623716291E-4f,
+-9.76109749136146840777E-3f,
+ 7.78576235018280120474E-1f,
+ 0.0F
+};
+x = xx;
+z = ceph_fabsf(x);
+if( z <= 8.0f )
+	{
+	y = 0.5f*z - 2.0f;
+	z = chbevlf( y, A, 17 ) * z;
+	}
+else
+	{
+	z = chbevlf( 32.0f/z - 2.0f, B, 7 ) / sqrtf(z);
+	}
+if( x < 0.0f )
+	z = -z;
+return( z );
+}
+
+/*
+   	Incomplete gamma integral
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float a, x, y, igamf();
+ *
+ * y = igamf( a, x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * The function is defined by
+ *
+ *                           x
+ *                            -
+ *                   1       | |  -t  a-1
+ *  igam(a,x)  =   -----     |   e   t   dt.
+ *                  -      | |
+ *                 | (a)    -
+ *                           0
+ *
+ *
+ * In this implementation both arguments must be positive.
+ * The integral is evaluated by either a power series or
+ * continued fraction expansion, depending on the relative
+ * values of a and x.
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float igamcf( const float aa, const float xx ) {
+float a, x, ans, c, yc, ax, y, z;
+float pk, pkm1, pkm2, qk, qkm1, qkm2;
+float r, t;
+const float big =  16777216.0f;
+a = aa;
+x = xx;
+if( (x <= 0) || ( a <= 0) )
+	return( 1.0 );
+
+if( (x < 1.0) || (x < a) )
+	return( 1.0 - ceph_igamf(a,x) );
+
+ax = a * ceph_logf(x) - x - ceph_lgamf(a);
+if( ax < -88.72283905206835 )
+	{
+
+	return( 0.0 );
+	}
+ax = ceph_expf(ax);
+
+/* continued fraction */
+y = 1.0 - a;
+z = x + y + 1.0;
+c = 0.0;
+pkm2 = 1.0;
+qkm2 = x;
+pkm1 = x + 1.0;
+qkm1 = z * x;
+ans = pkm1/qkm1;
+
+do
+	{
+	c += 1.0;
+	y += 1.0;
+	z += 2.0;
+	yc = y * c;
+	pk = pkm1 * z  -  pkm2 * yc;
+	qk = qkm1 * z  -  qkm2 * yc;
+	if( qk != 0 )
+		{
+		r = pk/qk;
+		t = ceph_fabsf( (ans - r)/r );
+		ans = r;
+		}
+	else
+		t = 1.0;
+	pkm2 = pkm1;
+	pkm1 = pk;
+	qkm2 = qkm1;
+	qkm1 = qk;
+	if( eph_fabsf(pk) > big )
+		{
+		pkm2 *= 5.9604644775390625E-8;
+		pkm1 *= 5.9604644775390625E-8;
+		qkm2 *= 5.9604644775390625E-8;
+		qkm1 *= 5.9604644775390625E-8;
+		}
+	}
+while( t > 5.9604644775390625E-8);
+
+return( ans * ax );
+}
+
+/* left tail of incomplete gamma function:
+ *
+ *          inf.      k
+ *   a  -x   -       x
+ *  x  e     >   ----------
+ *           -     -
+ *          k=0   | (a+k+1)
+ *
+ */
+
+
+float igamf( const float aa, const float xx ){
+float a, x, ans, ax, c, r;
+a = aa;
+x = xx;
+if( (x <= 0) || ( a <= 0) )
+	return( 0.0 );
+
+if( (x > 1.0) && (x > a ) )
+	return( 1.0 - ceph_igamcf(a,x) );
+
+/* Compute  x**a * exp(-x) / gamma(a)  */
+ax = a * ceph_logf(x) - x - ceph_lgamf(a);
+if( ax < -88.72283905206835;)
+	{
+
+	return( 0.0 );
+	}
+ax = ceph_expf(ax);
+
+/* power series */
+r = a;
+c = 1.0;
+ans = 1.0;
+
+do
+	{
+	r += 1.0;
+	c *= x/r;
+	ans += c;
+	}
+while( c/ans > 5.9604644775390625E-8 );
+
+return( ans * ax/a );
+}
+
 
 
 /** SYNOPSIS:
@@ -1832,7 +3527,7 @@ __ATTR_ALIGN__(32)
 static inline
 float polevlf( float xx, float * __restrict coef, int N ) {
 float ans, x;
-float *p;
+float * __restrict p;
 int i;
 x = xx;
 p = coef;
