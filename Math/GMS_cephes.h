@@ -23,6 +23,17 @@ Direct inquiries to 30 Frost Street, Cambridge, MA 02140
 #define EXPMSK 0x807f
 #define MEXP 255
 #define NBITS 24
+#define BIG     1.44115188075855872E+17
+#define MAXNUMF 3.4028234663852885981170418348451692544e38
+#define MAXLOGF 88.72283905206835
+#define MINLOGF -103.278929903431851103 /* log(2^-149) */
+#define LOG2EF  1.44269504088896341
+#define LOGE2F  0.693147180559945309
+#define SQRTHF  0.707106781186547524
+#define PIF     3.141592653589793238
+#define PIO2F   1.5707963267948966192
+#define PIO4F   0.7853981633974483096
+#define MACHEPF 5.9604644775390625E-8
 
 static int sgngamf;
 
@@ -3455,7 +3466,11 @@ return( ans * ax );
  *
  */
 
-
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
 float igamf( const float aa, const float xx ){
 float a, x, ans, ax, c, r;
 a = aa;
@@ -3491,6 +3506,1352 @@ while( c/ans > 5.9604644775390625E-8 );
 return( ans * ax/a );
 }
 
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float igamif( const float aa, const float yy0 ){
+float a, y0, d, y, x0, lgm;
+int i;
+
+//if( yy0 > 0.5)
+//	mtherr( "igamif", PLOSS );
+a = aa;
+y0 = yy0;
+/* approximation to inverse function */
+d = 1.0/(9.0*a);
+y = ( 1.0 - d - ndtrif(y0) * ceph_sqrtf(d) );
+x0 = a * y * y * y;
+lgm = ceph_lgamf(a);
+for( i=0; i<10; i++ )
+	{
+	if( x0 <= 0.0 )
+		{
+	          return(0.0);
+		}
+	y = igamcf(a,x0);
+/* compute the derivative of the function at this point */
+	d = (a - 1.0) * ceph_logf(x0) - x0 - lgm;
+	if( d < -88.72283905206835 )
+		{
+	           goto done;
+		}
+	d = -ceph_expf(d);
+/* compute the step to the next approximation of x */
+	if( d == 0.0 )
+		goto done;
+	d = (y - y0)/d;
+	x0 = x0 - d;
+	if( i < 3 )
+		continue;
+	if( ceph_fabsf(d/x0) < (2.0 * 5.9604644775390625E-8 ) )
+		goto done;
+	}
+
+done:
+return( x0 );
+}
+
+/*
+   	Modified Bessel function of noninteger order
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float v, x, y, ivf();
+ *
+ * y = ivf( v, x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns modified Bessel function of order v of the
+ * argument.  If x is negative, v must be integer valued.
+ *
+ * The function is defined as Iv(x) = Jv( ix ).  It is
+ * here computed in terms of the confluent hypergeometric
+ * function, according to the formula
+ *
+ *              v  -x
+ * Iv(x) = (x/2)  e   hyperg( v+0.5, 2v+1, 2x ) / gamma(v+1)
+ *
+ * If v is a negative integer, then v is replaced by -v.
+*/
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ivf( const float v, float x ){
+int sign;
+float t, ax;
+/* If v is a negative integer, invoke symmetry */
+t = ceph_floorf(v);
+if( v < 0.0 )
+	{
+	if( t == v )
+		{
+		v = -v;	/* symmetry */
+		t = -t;
+		}
+	}
+/* If x is negative, require v to be an integer */
+sign = 1;
+if( x < 0.0 )
+	{
+	if( t != v )
+		{
+	 //	mtherr( "ivf", DOMAIN );
+		return( 0.0 );
+		}
+	if( v != 2.0 * ceph_floorf(v/2.0) )
+		sign = -1;
+	}
+
+/* Avoid logarithm singularity */
+if( x == 0.0 )
+	{
+	if( v == 0.0 )
+		return( 1.0 );
+	if( v < 0.0 )
+		{
+		//mtherr( "ivf", OVERFLOW );
+		return( MAXNUMF );
+		}
+	else
+		return( 0.0 );
+	}
+
+ax = ceph_fabsf(x);
+t = v * ceph_logf( 0.5 * ax )  -  x;
+t = sign * ceph_expf(t) / ceph_gammaf( v + 1.0 );
+ax = v + 0.5;
+return( t * hypergf( ax,  2.0 * ax,  2.0 * x ) );
+}
+
+/*
+   	Bessel function of order zero
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, j0f();
+ *
+ * y = j0f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns Bessel function of order zero of the argument.
+ *
+ * The domain is divided into the intervals [0, 2] and
+ * (2, infinity). In the first interval the following polynomial
+ * approximation is used:
+ *
+ *
+ *        2         2         2
+ * (w - r  ) (w - r  ) (w - r  ) P(w)
+ *       1         2         3   
+ *
+*/
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float j0f( const float xx ){
+__ATTR_ALIGN__(32) const float MO[8] = {
+-6.838999669318810E-002f,
+ 1.864949361379502E-001f,
+-2.145007480346739E-001f,
+ 1.197549369473540E-001f,
+-3.560281861530129E-003f,
+-4.969382655296620E-002f,
+-3.355424622293709E-006f,
+ 7.978845717621440E-001f
+};
+__ATTR_ALIGN__(32) const float PH[8] = {
+ 3.242077816988247E+001f,
+-3.630592630518434E+001f,
+ 1.756221482109099E+001f,
+-4.974978466280903E+000f,
+ 1.001973420681837E+000f,
+-1.939906941791308E-001f,
+ 6.490598792654666E-002f,
+-1.249992184872738E-001f
+};
+__ATTR_ALIGN__(32) const float YP[8] = {
+ 9.454583683980369E-008f,
+-9.413212653797057E-006f,
+ 5.344486707214273E-004f,
+-1.584289289821316E-002f,
+ 1.707584643733568E-001f,
+ 0.0e+00, // padded to 32-bytes
+ 0.0e+00,
+ 0.0e+00
+};
+_attr_align__(32) const float JP[8] = {
+-6.068350350393235E-008f,
+ 6.388945720783375E-006f,
+-3.969646342510940E-004f,
+ 1.332913422519003E-002f,
+-1.729150680240724E-001f,
+ 0.0e+00, // padded to 32-bytes
+ 0.0e+00,
+ 0.0e+00
+};
+constexpr float YZ1 =  0.43221455686510834878f;
+constexpr float YZ2 = 22.401876406482861405f;
+constexpr float YZ3 = 64.130620282338755553f;
+constexpr float DR1 =  5.78318596294678452118f;
+float x, w, z, p, q, xn;
+if( xx < 0 )
+	x = -xx;
+else
+	x = xx;
+
+if( x <= 2.0f )
+	{
+	z = x * x;
+	if( x < 1.0e-3f )
+		return( 1.0f - 0.25f*z );
+
+	p = (z-DR1) * polevlf( z, JP, 4);
+	return( p );
+	}
+
+q = 1.0f/x;
+w = ceph_sqrtf(q);
+p = w * polevlf( q, MO, 7);
+w = q*q;
+xn = q * polevlf( w, PH, 7) - PIO4F;
+p = p * ceph_cosf(xn + x);
+return(p);
+}
+
+/*							y0() 2	*/
+/* Bessel function of second kind, order zero	*/
+
+/* Rational approximation coefficients YP[] are used for x < 6.5.
+ * The function computed is  y0(x)  -  2 ln(x) j0(x) / pi,
+ * whose value at x = 0 is  2 * ( log(0.5) + EUL ) / pi
+ * = 0.073804295108687225 , EUL is Euler's constant.
+ */
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float y0f( const float xx ) {
+__ATTR_ALIGN__(32) const float MO[8] = {
+-6.838999669318810E-002f,
+ 1.864949361379502E-001f,
+-2.145007480346739E-001f,
+ 1.197549369473540E-001f,
+-3.560281861530129E-003f,
+-4.969382655296620E-002f,
+-3.355424622293709E-006f,
+ 7.978845717621440E-001f
+};
+__ATTR_ALIGN__(32) const float PH[8] = {
+ 3.242077816988247E+001f,
+-3.630592630518434E+001f,
+ 1.756221482109099E+001f,
+-4.974978466280903E+000f,
+ 1.001973420681837E+000f,
+-1.939906941791308E-001f,
+ 6.490598792654666E-002f,
+-1.249992184872738E-001f
+};
+__ATTR_ALIGN__(32) const float YP[8] = {
+ 9.454583683980369E-008f,
+-9.413212653797057E-006f,
+ 5.344486707214273E-004f,
+-1.584289289821316E-002f,
+ 1.707584643733568E-001f,
+ 0.0e+00, // padded to 32-bytes
+ 0.0e+00,
+ 0.0e+00
+};
+constexpr float TWOOPI =  0.636619772367581343075535f;
+float x, w, z, p, q, xn;
+x = xx;
+if( x <= 2.0f )
+	{
+	if( x <= 0.0f )
+		{
+		//mtherr( "y0f", DOMAIN );
+		return( -MAXNUMF );
+		}
+	z = x * x;
+/*	w = (z-YZ1)*(z-YZ2)*(z-YZ3) * polevlf( z, YP, 4);*/
+	w = (z-YZ1) * polevlf( z, YP, 4);
+	w += TWOOPI * ceph_logf(x) * j0f(x);
+	return( w );
+	}
+
+q = 1.0f/x;
+w = ceph_sqrtf(q);
+p = w * polevlf( q, MO, 7);
+w = q*q;
+xn = q * polevlf( w, PH, 7) - PIO4F;
+p = p * ceph_sinf(xn + x);
+return( p );
+}
+
+/*
+   	Bessel function of order one
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, j1f();
+ *
+ * y = j1f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns Bessel function of order one of the argument.
+ *
+ * The domain is divided into the intervals [0, 2] and
+ * (2, infinity). In the first interval a polynomial approximation
+ *        2 
+ * (w - r  ) x P(w)
+ *       1  
+ *                     2 
+ * is used, where w = x  and r is the first zero of the function.
+ *
+ * In the second interval, the modulus and phase are approximated
+ * by polynomials of the form Modulus(x) = sqrt(1/x) Q(1/x)
+ * and Phase(x) = x + 1/x R(1/x^2) - 3pi/4.  The function is
+ *
+ *   j0(x) = Modulus(x) cos( Phase(x) ).
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float j1f( const float xx ) {
+__ATTR_ALIGN__(32) const float JP[8] = {
+-4.878788132172128E-009f,
+ 6.009061827883699E-007f,
+-4.541343896997497E-005f,
+ 1.937383947804541E-003f,
+-3.405537384615824E-002f,
+ 0.0f,
+ 0.0f,
+ 0.0f
+};
+_ATTR_ALIGN__(32) const float MO1[8] = {
+ 6.913942741265801E-002f,
+-2.284801500053359E-001f,
+ 3.138238455499697E-001f,
+-2.102302420403875E-001f,
+ 5.435364690523026E-003f,
+ 1.493389585089498E-001f,
+ 4.976029650847191E-006f,
+ 7.978845453073848E-001f
+};
+__ATTR_ALIGN__(32) const float PH1[8] = {
+-4.497014141919556E+001f,
+ 5.073465654089319E+001f,
+-2.485774108720340E+001f,
+ 7.222973196770240E+000f,
+-1.544842782180211E+000f,
+ 3.503787691653334E-001f,
+-1.637986776941202E-001f,
+ 3.749989509080821E-001f
+};
+constexpr float Z1 = 1.46819706421238932572E1f;
+constexpr float THPIO4F =  2.35619449019234492885f;
+float x, w, z, p, q, xn;
+x = xx;
+if( x < 0 )
+	x = -xx;
+
+if( x <= 2.0f )
+	{
+	z = x * x;	
+	p = (z-Z1) * x * polevlf( z, JP, 4 );
+	return( p );
+	}
+
+q = 1.0f/x;
+w = ceph_sqrtf(q);
+
+p = w * polevlf( q, MO1, 7);
+w = q*q;
+xn = q * polevlf( w, PH1, 7) - THPIO4F;
+p = p * ceph_cosf(xn + x);
+return(p);
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float y1f( const float xx ){
+__ATTR_ALIGN__(32) const float YP[8] = {
+ 8.061978323326852E-009f,
+-9.496460629917016E-007f,
+ 6.719543806674249E-005f,
+-2.641785726447862E-003f,
+ 4.202369946500099E-002f,
+ 0.0f,
+ 0.0f,
+ 0.0f
+};
+__ATTR_ALIGN__(32) const float MO1[8] = {
+ 6.913942741265801E-002f,
+-2.284801500053359E-001f,
+ 3.138238455499697E-001f,
+-2.102302420403875E-001f,
+ 5.435364690523026E-003f,
+ 1.493389585089498E-001f,
+ 4.976029650847191E-006f,
+ 7.978845453073848E-001f
+};
+__ATTR_ALIGN__(32) const float PH1[8] = {
+-4.497014141919556E+001f,
+ 5.073465654089319E+001f,
+-2.485774108720340E+001f,
+ 7.222973196770240E+000f,
+-1.544842782180211E+000f,
+ 3.503787691653334E-001f,
+-1.637986776941202E-001f,
+ 3.749989509080821E-001f
+};
+constexpr  float YO1     =  4.66539330185668857532f;
+constexpr  float TWOOPI  =  0.636619772367581343075535f; /* 2/pi */
+constexpr  float THPIO4F =  2.35619449019234492885f;    /* 3*pi/4 */
+float x, w, z, p, q, xn;
+
+x = xx;
+if( x <= 2.0f )
+	{
+	if( x <= 0.0f )
+		{
+		//mtherr( "y1f", DOMAIN );
+		return( -MAXNUMF );
+		}
+	z = x * x;
+	w = (z - YO1) * x * polevlf( z, YP, 4 );
+	w += TWOOPI * ( j1f(x) * ceph_logf(x)  -  1.0f/x );
+	return( w );
+	}
+
+q = 1.0f/x;
+w = ceph_sqrtf(q);
+
+p = w * polevlf( q, MO1, 7);
+w = q*q;
+xn = q * polevlf( w, PH1, 7) - THPIO4F;
+p = p * ceph_sinf(xn + x);
+return(p);
+}
+
+/*
+    	Bessel function of integer order
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * int n;
+ * float x, y, jnf();
+ *
+ * y = jnf( n, x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns Bessel function of order n, where n is a
+ * (possibly negative) integer.
+ *
+ * The ratio of jn(x) to j0(x) is computed by backward
+ * recurrence.  First the ratio jn/jn-1 is found by a
+ * continued fraction expansion.  Then the recurrence
+ * relating successive orders is applied until j0 or j1 is
+ * reached.
+ *
+ * If n = 0 or 1 the routine for j0 or j1 is called
+ * directly.
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float jnf( const int n, const float xx ) {
+float x, pkm2, pkm1, pk, xk, r, ans, xinv, sign;
+int k;
+x = xx;
+sign = 1.0;
+if( n < 0 )
+	{
+	n = -n;
+	if( (n & 1) != 0 )	/* -1**n */
+		sign = -1.0;
+	}
+
+if( n == 0 )
+	return( sign * j0f(x) );
+if( n == 1 )
+	return( sign * j1f(x) );
+if( n == 2 )
+	return( sign * (2.0 * j1f(x) / x  -  j0f(x)) );
+
+/*
+if( x < MACHEPF )
+	return( 0.0 );
+*/
+
+/* continued fraction */
+k = 24;
+pk = 2 * (n + k);
+ans = pk;
+xk = x * x;
+
+do
+	{
+	pk -= 2.0;
+	ans = pk - (xk/ans);
+	}
+while( --k > 0 );
+/*ans = x/ans;*/
+
+/* backward recurrence */
+
+pk = 1.0;
+/*pkm1 = 1.0/ans;*/
+xinv = 1.0/x;
+pkm1 = ans * xinv;
+k = n-1;
+r = (float )(2 * k);
+
+do
+	{
+	pkm2 = (pkm1 * r  -  pk * x) * xinv;
+	pk = pkm1;
+	pkm1 = pkm2;
+	r -= 2.0;
+	}
+while( --k > 0 );
+
+r = pk;
+if( r < 0 )
+	r = -r;
+ans = pkm1;
+if( ans < 0 )
+	ans = -ans;
+
+if( r > ans )  /* if( fabs(pk) > fabs(pkm1) ) */
+	ans = sign * j1f(x)/pk;
+else
+	ans = sign * j0f(x)/pkm1;
+return( ans );
+}
+
+/*
+   	Modified Bessel function, third kind, order zero
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, k0f();
+ *
+ * y = k0f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns modified Bessel function of the third kind
+ * of order zero of the argument.
+ *
+ * The range is partitioned into the two intervals [0,8] and
+ * (8, infinity).  Chebyshev polynomial expansions are employed
+ * in each interval.
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float k0f( const float xx )
+/* Chebyshev coefficients for K0(x) + log(x/2) I0(x)
+ * in the interval [0,2].  The odd order coefficients are all
+ * zero; only the even order coefficients are listed.
+ * 
+ * lim(x->0){ K0(x) + log(x/2) I0(x) } = -EUL.
+ */
+
+__ATTR_ALIGN__(32) const float A[] =
+{
+ 1.90451637722020886025E-9f,
+ 2.53479107902614945675E-7f,
+ 2.28621210311945178607E-5f,
+ 1.26461541144692592338E-3f,
+ 3.59799365153615016266E-2f,
+ 3.44289899924628486886E-1f,
+-5.35327393233902768720E-1f,
+ 0.0f
+};
+
+/* Chebyshev coefficients for exp(x) sqrt(x) K0(x)
+ * in the inverted interval [2,infinity].
+ * 
+ * lim(x->inf){ exp(x) sqrt(x) K0(x) } = sqrt(pi/2).
+ */
+
+__ATTR_ALIGN__(64) const float B[] = {
+-1.69753450938905987466E-9f,
+ 8.57403401741422608519E-9f,
+-4.66048989768794782956E-8f,
+ 2.76681363944501510342E-7f,
+-1.83175552271911948767E-6f,
+ 1.39498137188764993662E-5f,
+-1.28495495816278026384E-4f,
+ 1.56988388573005337491E-3f,
+-3.14481013119645005427E-2f,
+ 2.44030308206595545468E0f,
+ 0.0f, // padding 64-bytes
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f
+ };
+float x, y, z;
+x = xx;
+if( x <= 0.0f )
+	{
+	//mtherr( "k0f", DOMAIN );
+	return( MAXNUMF );
+	}
+
+if( x <= 2.0f )
+	{
+	y = x * x - 2.0f;
+	y = chbevlf( y, A, 7 ) - ceph_logf( 0.5f * x ) * i0f(x);
+	return( y );
+	}
+z = 8.0f/x - 2.0f;
+y = ceph_expf(-x) * chbevlf( z, B, 10 ) / ceph_sqrtf(x);
+return(y);
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float k0ef( const float xx ){
+/* Chebyshev coefficients for K0(x) + log(x/2) I0(x)
+ * in the interval [0,2].  The odd order coefficients are all
+ * zero; only the even order coefficients are listed.
+ * 
+ * lim(x->0){ K0(x) + log(x/2) I0(x) } = -EUL.
+ */
+
+__ATTR_ALIGN__(32) const float A[] =
+{
+ 1.90451637722020886025E-9f,
+ 2.53479107902614945675E-7f,
+ 2.28621210311945178607E-5f,
+ 1.26461541144692592338E-3f,
+ 3.59799365153615016266E-2f,
+ 3.44289899924628486886E-1f,
+-5.35327393233902768720E-1f,
+ 0.0f
+};
+
+/* Chebyshev coefficients for exp(x) sqrt(x) K0(x)
+ * in the inverted interval [2,infinity].
+ * 
+ * lim(x->inf){ exp(x) sqrt(x) K0(x) } = sqrt(pi/2).
+ */
+
+__ATTR_ALIGN__(64) const float B[] = {
+-1.69753450938905987466E-9f,
+ 8.57403401741422608519E-9f,
+-4.66048989768794782956E-8f,
+ 2.76681363944501510342E-7f,
+-1.83175552271911948767E-6f,
+ 1.39498137188764993662E-5f,
+-1.28495495816278026384E-4f,
+ 1.56988388573005337491E-3f,
+-3.14481013119645005427E-2f,
+ 2.44030308206595545468E0f,
+ 0.0f, // padding to 64-bytes
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f
+ };
+float x, y;
+x = xx;
+if( x <= 0.0f )
+	{
+	//mtherr( "k0ef", DOMAIN );
+	return( MAXNUMF );
+	}
+
+if( x <= 2.0f )
+	{
+	y = x * x - 2.0f;
+	y = chbevlf( y, A, 7 ) - ceph_logf( 0.5f * x ) * i0f(x);
+	return( y * ceph_expf(x) );
+	}
+
+y = chbevlf( 8.0f/x - 2.0f, B, 10 ) / ceph_sqrtf(x);
+return(y);
+}
+
+/*
+   	Modified Bessel function, third kind, order one
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, k1f();
+ *
+ * y = k1f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Computes the modified Bessel function of the third kind
+ * of order one of the argument.
+ *
+ * The range is partitioned into the two intervals [0,2] and
+ * (2, infinity).  Chebyshev polynomial expansions are employed
+ * in each interval.
+ *
+*/
+
+#define MINNUMF 6.0e-39
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float k1f(const float xx) {
+__ATTR_ALIGN__(32) const float A[] =
+{
+-2.21338763073472585583E-8f,
+-2.43340614156596823496E-6f,
+-1.73028895751305206302E-4f,
+-6.97572385963986435018E-3f,
+-1.22611180822657148235E-1f,
+-3.53155960776544875667E-1f,
+ 1.52530022733894777053E0f,
+ 0.0
+};
+
+/* Chebyshev coefficients for exp(x) sqrt(x) K1(x)
+ * in the interval [2,infinity].
+ *
+ * lim(x->inf){ exp(x) sqrt(x) K1(x) } = sqrt(pi/2).
+ */
+
+__ATTR_ALIGN__(32) const float B[] =
+{
+ 2.01504975519703286596E-9f,
+-1.03457624656780970260E-8f,
+ 5.74108412545004946722E-8f,
+-3.50196060308781257119E-7f,
+ 2.40648494783721712015E-6f,
+-1.93619797416608296024E-5f,
+ 1.95215518471351631108E-4f,
+-2.85781685962277938680E-3f,
+ 1.03923736576817238437E-1f,
+ 2.72062619048444266945E0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f
+};
+float x, y;
+x = xx;
+if( x <= MINNUMF )
+	{
+	 //mtherr( "k1f", DOMAIN );
+	return( MAXNUMF );
+	}
+
+if( x <= 2.0f )
+	{
+	y = x * x - 2.0f;
+	y =  ceph_logf( 0.5f * x ) * i1f(x)  +  chbevlf( y, A, 7 ) / x;
+	return( y );
+	}
+
+return(  ceph_expf(-x) * chbevlf( 8.0f/x - 2.0f, B, 10 ) / ceph_sqrtf(x) );
+
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float k1ef( const float xx ) {
+__ATTR_ALIGN__(32) const float A[] =
+{
+-2.21338763073472585583E-8f,
+-2.43340614156596823496E-6f,
+-1.73028895751305206302E-4f,
+-6.97572385963986435018E-3f,
+-1.22611180822657148235E-1f,
+-3.53155960776544875667E-1f,
+ 1.52530022733894777053E0f,
+ 0.0
+};
+
+/* Chebyshev coefficients for exp(x) sqrt(x) K1(x)
+ * in the interval [2,infinity].
+ *
+ * lim(x->inf){ exp(x) sqrt(x) K1(x) } = sqrt(pi/2).
+ */
+
+__ATTR_ALIGN__(32) const float B[] =
+{
+ 2.01504975519703286596E-9f,
+-1.03457624656780970260E-8f,
+ 5.74108412545004946722E-8f,
+-3.50196060308781257119E-7f,
+ 2.40648494783721712015E-6f,
+-1.93619797416608296024E-5f,
+ 1.95215518471351631108E-4f,
+-2.85781685962277938680E-3f,
+ 1.03923736576817238437E-1f,
+ 2.72062619048444266945E0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f,
+ 0.0f
+};
+float x, y;
+x = xx;
+if( x <= 0.0f )
+	{
+	//mtherr( "k1ef", DOMAIN );
+	return( MAXNUMF );
+	}
+
+if( x <= 2.0f )
+	{
+	y = x * x - 2.0f;
+	y =  ceph_logf( 0.5f * x ) * i1f(x)  +  chbevlf( y, A, 7 ) / x;
+	return( y * ceph_expf(x) );
+	}
+
+return(  chbevlf( 8.0f/x - 2.0f, B, 10 ) / ceph_sqrtf(x) );
+
+}
+
+/*
+   	Modified Bessel function, third kind, integer order
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, knf();
+ * int n;
+ *
+ * y = knf( n, x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns modified Bessel function of the third kind
+ * of order n of the argument.
+ *
+ * The range is partitioned into the two intervals [0,9.55] and
+ * (9.55, infinity).  An ascending power series is used in the
+ * low range, and an asymptotic expansion in the high range.
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float knf( const int nnn, const float xx ) {
+float x, k, kf, nk1f, nkf, zn, t, s, z0, z;
+float ans, fn, pn, pk, zmn, tlg, tox;
+int i, n, nn;
+#define EUL 5.772156649015328606065e-1
+#define MAXFAC 31
+nn = nnn;
+x = xx;
+if( nn < 0 )
+	n = -nn;
+else
+	n = nn;
+
+if( n > MAXFAC )
+	{
+overf:
+	//mtherr( "knf", OVERFLOW );
+	return( MAXNUMF );
+	}
+
+if( x <= 0.0 )
+	{
+	if( x < 0.0 )
+	   ;	//mtherr( "knf", DOMAIN );
+	else
+		//mtherr( "knf", SING );
+	return( MAXNUMF );
+	}
+
+
+if( x > 9.55 )
+	goto asymp;
+
+ans = 0.0;
+z0 = 0.25 * x * x;
+fn = 1.0;
+pn = 0.0;
+zmn = 1.0;
+tox = 2.0/x;
+
+if( n > 0 )
+	{
+	/* compute factorial of n and psi(n) */
+	pn = -EUL;
+	k = 1.0;
+	for( i=1; i<n; i++ )
+		{
+		pn += 1.0/k;
+		k += 1.0;
+		fn *= k;
+		}
+
+	zmn = tox;
+
+	if( n == 1 )
+		{
+		ans = 1.0/x;
+		}
+	else
+		{
+		nk1f = fn/n;
+		kf = 1.0;
+		s = nk1f;
+		z = -z0;
+		zn = 1.0;
+		for( i=1; i<n; i++ )
+			{
+			nk1f = nk1f/(n-i);
+			kf = kf * i;
+			zn *= z;
+			t = nk1f * zn / kf;
+			s += t;   
+			if( (MAXNUMF - ceph_fabsf(t)) < ceph_fabsf(s) )
+				goto overf;
+			if( (tox > 1.0) && ((MAXNUMF/tox) < zmn) )
+				goto overf;
+			zmn *= tox;
+			}
+		s *= 0.5;
+		t = ceph_fabsf(s);
+		if( (zmn > 1.0) && ((MAXNUMF/zmn) < t) )
+			goto overf;
+		if( (t > 1.0) && ((MAXNUMF/t) < zmn) )
+			goto overf;
+		ans = s * zmn;
+		}
+	}
+
+
+tlg = 2.0 * ceph_logf( 0.5 * x );
+pk = -EUL;
+if( n == 0 )
+	{
+	pn = pk;
+	t = 1.0;
+	}
+else
+	{
+	pn = pn + 1.0/n;
+	t = 1.0/fn;
+	}
+s = (pk+pn-tlg)*t;
+k = 1.0;
+do
+	{
+	t *= z0 / (k * (k+n));
+	pk += 1.0/k;
+	pn += 1.0/(k+n);
+	s += (pk+pn-tlg)*t;
+	k += 1.0;
+	}
+while( ceph_fabsf(t/s) > MACHEPF );
+
+s = 0.5 * s / zmn;
+if( n & 1 )
+	s = -s;
+ans += s;
+
+return(ans);
+
+
+
+/* Asymptotic expansion for Kn(x) */
+/* Converges to 1.4e-17 for x > 18.4 */
+
+asymp:
+
+if( x > MAXLOGF )
+	{
+	//mtherr( "knf", UNDERFLOW );
+	return(0.0);
+	}
+k = n;
+pn = 4.0 * k * k;
+pk = 1.0;
+z0 = 8.0 * x;
+fn = 1.0;
+t = 1.0;
+s = t;
+nkf = MAXNUMF;
+i = 0;
+do
+	{
+	z = pn - pk * pk;
+	t = t * z /(fn * z0);
+	nk1f = ceph_fabsf(t);
+	if( (i >= n) && (nk1f > nkf) )
+		{
+		goto adone;
+		}
+	nkf = nk1f;
+	s += t;
+	fn += 1.0;
+	pk += 2.0;
+	i += 1;
+	}
+while( ceph_fabsf(t/s) > MACHEPF );
+
+adone:
+ans = expf(-x) * ceph_sqrtf( PIF/(2.0*x) ) * s;
+return(ans);
+}
+
+/*
+    	Base 2 logarithm
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, log2f();
+ *
+ * y = log2f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns the base 2 logarithm of x.
+ *
+ * The argument is separated into its exponent and fractional
+ * parts.  If the exponent is between -1 and +1, the base e
+ * logarithm of the fraction is approximated by
+ *
+ *     log(1+x) = x - 0.5 x**2 + x**3 P(x)/Q(x).
+ *
+ * Otherwise, setting  z = 2(x-1)/x+1),
+ * 
+ *     log(x) = z + z**3 P(z)/Q(z).
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_log2f(const xx) {
+const float P[] = {
+ 7.0376836292E-2,
+-1.1514610310E-1,
+ 1.1676998740E-1,
+-1.2420140846E-1,
+ 1.4249322787E-1,
+-1.6668057665E-1,
+ 2.0000714765E-1,
+-2.4999993993E-1,
+ 3.3333331174E-1
+};
+
+#define LOG2EA 0.44269504088896340735992
+#define SQRTH 0.70710678118654752440
+float x, y, z;
+int e;
+x = xx;
+/* Test for domain */
+if( x <= 0.0 )
+	{
+	if( x == 0.0 )
+	    ;	//mtherr( fname, SING );
+	else
+		//mtherr( fname, DOMAIN );
+	return( MINLOGF/LOGE2F );
+	}
+
+/* separate mantissa from exponent */
+x = ceph_frexpf( x, &e );
+
+
+/* logarithm using log(1+x) = x - .5x**2 + x**3 P(x)/Q(x) */
+
+if( x < SQRTH )
+	{
+	e -= 1;
+	x = 2.0*x - 1.0;
+	}	
+else
+	{
+	x = x - 1.0;
+	}
+
+z = x*x;
+y = x * ( z * polevlf( x, P, 8 ) );
+y = y - 0.5 * z;   /*  y - 0.5 * x**2  */
+
+
+/* Multiply log of fraction by log2(e)
+ * and base 2 exponent by 1
+ *
+ * ***CAUTION***
+ *
+ * This sequence of operations is critical and it may
+ * be horribly defeated by some compiler optimizers.
+ */
+z = y * LOG2EA;
+z += x * LOG2EA;
+z += y;
+z += x;
+z += (float )e;
+return( z );
+}
+
+/*
+   	Common logarithm
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, log10f();
+ *
+ * y = log10f( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns logarithm to the base 10 of x.
+ *
+ * The argument is separated into its exponent and fractional
+ * parts.  The logarithm of the fraction is approximated by
+ *
+ *     log(1+x) = x - 0.5 x**2 + x**3 P(x).
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float log10f(const float xx) {
+const float P[] = {
+ 7.0376836292E-2,
+-1.1514610310E-1,
+ 1.1676998740E-1,
+-1.2420140846E-1,
+ 1.4249322787E-1,
+-1.6668057665E-1,
+ 2.0000714765E-1,
+-2.4999993993E-1,
+ 3.3333331174E-1
+};
+
+#define SQRTH 0.70710678118654752440
+#define L102A 3.0078125E-1
+#define L102B 2.48745663981195213739E-4
+#define L10EA 4.3359375E-1
+#define L10EB 7.00731903251827651129E-4
+
+constexpr float MAXL10 = 38.230809449325611792;
+float x, y, z;
+int e;
+
+x = xx;
+/* Test for domain */
+if( x <= 0.0 )
+	{
+	if( x == 0.0 )
+	     ;	//mtherr( fname, SING );
+	else
+		//mtherr( fname, DOMAIN );
+	return( -MAXL10 );
+	}
+
+/* separate mantissa from exponent */
+
+x = ceph_frexpf( x, &e );
+
+/* logarithm using log(1+x) = x - .5x**2 + x**3 P(x) */
+
+if( x < SQRTH )
+	{
+	e -= 1;
+	x = 2.0*x - 1.0;
+	}	
+else
+	{
+	x = x - 1.0;
+	}
+
+
+/* rational form */
+z = x*x;
+y = x * ( z * polevlf( x, P, 8 ) );
+y = y - 0.5 * z;   /*  y - 0.5 * x**2  */
+
+/* multiply log of fraction by log10(e)
+ * and base 2 exponent by log10(2)
+ */
+z = (x + y) * L10EB;  /* accumulate terms in order of size */
+z += y * L10EA;
+z += x * L10EA;
+x = e;
+z += x * L102B;
+z += x * L102A;
+return( z );
+}
+
+/*SYNOPSIS:
+ *
+ * float x, y, logf();
+ *
+ * y = logf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns the base e (2.718...) logarithm of x.
+ *
+ * The argument is separated into its exponent and fractional
+ * parts.  If the exponent is between -1 and +1, the logarithm
+ * of the fraction is approximated by
+ *
+ *     log(1+x) = x - 0.5 x**2 + x**3 P(x)
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float logf( const float xx ) {
+register float y;
+float x, z, fe;
+int e;
+
+x = xx;
+fe = 0.0;
+/* Test for domain */
+if( x <= 0.0 )
+	{
+	if( x == 0.0 )
+		;//mtherr( "logf", SING );
+	else
+		//mtherr( "logf", DOMAIN );
+	return( MINLOGF );
+	}
+
+x = frexpf( x, &e );
+if( x < SQRTHF )
+	{
+	e -= 1;
+	x = x + x - 1.0; /*  2x - 1  */
+	}	
+else
+	{
+	x = x - 1.0;
+	}
+z = x * x;
+/* 3.4e-9 */
+/*
+p = logfcof;
+y = *p++ * x;
+for( i=0; i<8; i++ )
+	{
+	y += *p++;
+	y *= x;
+	}
+y *= z;
+*/
+
+y =
+(((((((( 7.0376836292E-2 * x
+- 1.1514610310E-1) * x
++ 1.1676998740E-1) * x
+- 1.2420140846E-1) * x
++ 1.4249322787E-1) * x
+- 1.6668057665E-1) * x
++ 2.0000714765E-1) * x
+- 2.4999993993E-1) * x
++ 3.3333331174E-1) * x * z;
+
+if( e )
+	{
+	fe = e;
+	y += -2.12194440e-4 * fe;
+	}
+
+y +=  -0.5 * z;  /* y - 0.5 x^2 */
+z = x + y;   /* ... + x  */
+
+if( e )
+	z += 0.693359375 * fe;
+
+return( z );
+}
 
 
 /** SYNOPSIS:
