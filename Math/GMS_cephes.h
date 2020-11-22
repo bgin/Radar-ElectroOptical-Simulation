@@ -329,7 +329,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline 
-float ceph_acoshf(const double xx) {
+float ceph_acoshf(const float xx) {
 float x, z;
 x = xx;
 if( x < 1.0 ) {
@@ -366,7 +366,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline 
-float ceph_asinf(const double xx) {
+float ceph_asinf(const float xx) {
 float a, x, z;
 int sign, flag;
 x = xx;
@@ -497,7 +497,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline 
-float atan2f(const float y,
+float ceph_atan2f(const float y,
              const float x ) {
 float z, w;
 int code;
@@ -524,7 +524,7 @@ if( y == 0.0 ) {
 switch( code ) {
 	
 	default:
-#if ANSIC
+
 	case 0:
 	case 1: w = 0.0; break;
 	case 2: w = 3.14159265358979323846; break;
@@ -539,7 +539,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline 
-float atanhf(const double xx) {
+float ceph_atanhf(const float xx) {
 float x, z;
 x = xx;
 if( x < 0 )
@@ -581,7 +581,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline 
-float cbrtf(const double xx) {
+float ceph_cbrtf(const float xx) {
 int e, rem, sign;
 float x, z;
 x = xx;
@@ -646,7 +646,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline 
-float ceph_coshf(const double xx) {
+float ceph_coshf(const float xx) {
 float x, y;
 x = xx;
 if( x < 0 )
@@ -664,7 +664,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline
-float ceph_expf(const double xx) {
+float ceph_expf(const float xx) {
 float x, z;
 int n;
 x = xx;
@@ -732,7 +732,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline
-float logf( const double xx ) {
+float logf( const float xx ) {
 register float y;
 float x, z, fe;
 int e;
@@ -4695,7 +4695,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline
-float log10f(const float xx) {
+float ceph_log10f(const float xx) {
 const float P[] = {
  7.0376836292E-2,
 -1.1514610310E-1,
@@ -4787,7 +4787,7 @@ __ATTR_ALWAYS_INLINE__
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
 static inline
-float logf( const float xx ) {
+float ceph_logf( const float xx ) {
 register float y;
 float x, z, fe;
 int e;
@@ -4852,6 +4852,1845 @@ if( e )
 
 return( z );
 }
+
+/*
+   Negative binomial distribution
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * int k, n;
+ * float p, y, nbdtrf();
+ *
+ * y = nbdtrf( k, n, p );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns the sum of the terms 0 through k of the negative
+ * binomial distribution:
+ *
+ *   k
+ *   --  ( n+j-1 )   n      j
+ *   >   (       )  p  (1-p)
+ *   --  (   j   )
+ *  j=0
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float nbdtrcf( const int k, const int n, const float pp ) {
+float dk, dn, p;
+p = pp;
+if( (p < 0.0) || (p > 1.0) )
+	goto domerr;
+if( k < 0 )
+	{
+domerr:
+	//mtherr( "nbdtrf", DOMAIN );
+	return( 0.0 );
+	}
+
+dk = k+1;
+dn = n;
+return( incbetf( dk, dn, 1.0 - p ) );
+}
+
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float nbdtrf( const int k, const int n, const float pp ) {
+float dk, dn, p;
+p = pp;
+if( (p < 0.0) || (p > 1.0) )
+	goto domerr;
+if( k < 0 )
+	{
+domerr:
+	//mtherr( "nbdtrf", DOMAIN );
+	return( 0.0 );
+	}
+dk = k+1;
+dn = n;
+return( incbetf( dn, dk, p ) );
+}
+
+/*
+   	Power function
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, z, powf();
+ *
+ * z = powf( x, y );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Computes x raised to the yth power.  Analytically,
+ *
+ *      x**y  =  exp( y log(x) ).
+ *
+ * Following Cody and Waite, this program uses a lookup table
+ * of 2**-i/16 and pseudo extended precision arithmetic to
+ * obtain an extra three bits of accuracy in both the logarithm
+ * and the exponential.
+*/
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float powf( const float x, const float y ) {
+/* 2^(-i/16)
+ * The decimal values are rounded to 24-bit precision
+ */
+ const float A[] = {
+  1.00000000000000000000E0,
+ 9.57603275775909423828125E-1,
+ 9.17004048824310302734375E-1,
+ 8.78126084804534912109375E-1,
+ 8.40896427631378173828125E-1,
+ 8.05245161056518554687500E-1,
+ 7.71105408668518066406250E-1,
+ 7.38413095474243164062500E-1,
+ 7.07106769084930419921875E-1,
+ 6.77127778530120849609375E-1,
+ 6.48419797420501708984375E-1,
+ 6.20928883552551269531250E-1,
+ 5.94603538513183593750000E-1,
+ 5.69394290447235107421875E-1,
+ 5.45253872871398925781250E-1,
+ 5.22136867046356201171875E-1,
+  5.00000000000000000000E-1
+};
+/* continuation, for even i only
+ * 2^(i/16)  =  A[i] + B[i/2]
+ */
+const float B[] = {
+ 0.00000000000000000000E0,
+-5.61963907099083340520586E-9,
+-1.23776636307969995237668E-8,
+ 4.03545234539989593104537E-9,
+ 1.21016171044789693621048E-8,
+-2.00949968760174979411038E-8,
+ 1.89881769396087499852802E-8,
+-6.53877009617774467211965E-9,
+ 0.00000000000000000000E0
+};
+
+/* 1 / A[i]
+ * The decimal values are full precision
+ */
+const float Ainv[] = {
+ 1.00000000000000000000000E0,
+ 1.04427378242741384032197E0,
+ 1.09050773266525765920701E0,
+ 1.13878863475669165370383E0,
+ 1.18920711500272106671750E0,
+ 1.24185781207348404859368E0,
+ 1.29683955465100966593375E0,
+ 1.35425554693689272829801E0,
+ 1.41421356237309504880169E0,
+ 1.47682614593949931138691E0,
+ 1.54221082540794082361229E0,
+ 1.61049033194925430817952E0,
+ 1.68179283050742908606225E0,
+ 1.75625216037329948311216E0,
+ 1.83400808640934246348708E0,
+ 1.91520656139714729387261E0,
+ 2.00000000000000000000000E0
+};
+#define F W
+#define Fa Wa
+#define Fb Wb
+#define G W
+#define Ga Wa
+#define Gb u
+#define H W
+#define Ha Wb
+#define Hb Wb
+float u, w, z, W, Wa, Wb, ya, yb;
+/* float F, Fa, Fb, G, Ga, Gb, H, Ha, Hb */
+int e, i, nflg;
+/* Find a multiple of 1/16 that is within 1/16 of x. */
+#define reduc(x)  0.0625 * ceph_floorf( 16 * (x) )
+#define MEXP 2048.0
+#define MNEXP -2400.0
+/* log2(e) - 1 */
+#define LOG2EA 0.44269504088896340736F
+nflg = 0;	/* flag = 1 if x<0 raised to integer power */
+w = ceph_floorf(y);
+if( w < 0 )
+	z = -w;
+else
+	z = w;
+if( (w == y) && (z < 32768.0) )
+	{
+	i = w;
+	w = ceph_powif( x, i );
+	return( w );
+	}
+
+
+if( x <= 0.0F )
+	{
+	if( x == 0.0 )
+		{
+		if( y == 0.0 )
+			return( 1.0 );  /*   0**0   */
+		else  
+			return( 0.0 );  /*   0**y   */
+		}
+	else
+		{
+		if( w != y )
+			{ /* noninteger power of negative number */
+			//mtherr( fname, DOMAIN );
+			return(0.0);
+			}
+		nflg = 1;
+		if( x < 0 )
+			x = -x;
+		}
+	}
+
+/* separate significand from exponent */
+x = ceph_frexpf( x, &e );
+
+/* find significand in antilog table A[] */
+i = 1;
+if( x <= A[9] )
+	i = 9;
+if( x <= A[i+4] )
+	i += 4;
+if( x <= A[i+2] )
+	i += 2;
+if( x >= A[1] )
+	i = -1;
+i += 1;
+
+
+/* Find (x - A[i])/A[i]
+ * in order to compute log(x/A[i]):
+ *
+ * log(x) = log( a x/a ) = log(a) + log(x/a)
+ *
+ * log(x/a) = log(1+v),  v = x/a - 1 = (x-a)/a
+ */
+x -= A[i];
+x -= B[ i >> 1 ];
+x *= Ainv[i];
+
+
+/* rational approximation for log(1+v):
+ *
+ * log(1+v)  =  v  -  0.5 v^2  +  v^3 P(v)
+ * Theoretical relative error of the approximation is 3.5e-11
+ * on the interval 2^(1/16) - 1  > v > 2^(-1/16) - 1
+ */
+z = x*x;
+w = (((-0.1663883081054895  * x
+      + 0.2003770364206271) * x
+      - 0.2500006373383951) * x
+      + 0.3333331095506474) * x * z;
+w -= 0.5 * z;
+
+/* Convert to base 2 logarithm:
+ * multiply by log2(e)
+ */
+w = w + LOG2EA * w;
+/* Note x was not yet added in
+ * to above rational approximation,
+ * so do it now, while multiplying
+ * by log2(e).
+ */
+z = w + LOG2EA * x;
+z = z + x;
+
+/* Compute exponent term of the base 2 logarithm. */
+w = -i;
+w *= 0.0625;  /* divide by 16 */
+w += e;
+/* Now base 2 log of x is w + z. */
+
+/* Multiply base 2 log by y, in extended precision. */
+
+/* separate y into large part ya
+ * and small part yb less than 1/16
+ */
+ya = reduc(y);
+yb = y - ya;
+
+
+F = z * y  +  w * yb;
+Fa = reduc(F);
+Fb = F - Fa;
+
+G = Fa + w * ya;
+Ga = reduc(G);
+Gb = G - Ga;
+
+H = Fb + Gb;
+Ha = reduc(H);
+w = 16 * (Ga + Ha);
+
+/* Test the power of 2 for overflow */
+if( w > MEXP )
+	{
+	//mtherr( fname, OVERFLOW );
+	return( MAXNUMF );
+	}
+
+if( w < MNEXP )
+	{
+	//mtherr( fname, UNDERFLOW );
+	return( 0.0 );
+	}
+
+e = w;
+Hb = H - Ha;
+
+if( Hb > 0.0 )
+	{
+	e += 1;
+	Hb -= 0.0625;
+	}
+
+/* Now the product y * log2(x)  =  Hb + e/16.0.
+ *
+ * Compute base 2 exponential of Hb,
+ * where -0.0625 <= Hb <= 0.
+ * Theoretical relative error of the approximation is 2.8e-12.
+ */
+/*  z  =  2**Hb - 1    */
+z = ((( 9.416993633606397E-003 * Hb
+      + 5.549356188719141E-002) * Hb
+      + 2.402262883964191E-001) * Hb
+      + 6.931471791490764E-001) * Hb;
+
+/* Express e/16 as an integer plus a negative number of 16ths.
+ * Find lookup table entry for the fractional power of 2.
+ */
+if( e < 0 )
+	i = -( -e >> 4 );
+else
+	i = (e >> 4) + 1;
+e = (i << 4) - e;
+w = A[e];
+z = w + w * z;      /*    2**-e * ( 1 + (2**Hb-1) )    */
+z = ceph_ldexpf( z, i );  /* multiply by integer power of 2 */
+
+if( nflg )
+	{
+/* For negative x,
+ * find out if the integer exponent
+ * is odd or even.
+ */
+	w = 2 * ceph_floorf( (float) 0.5 * w );
+	if( w != y )
+		z = -z; /* odd exponent */
+	}
+
+return( z );
+}
+
+/*
+   	Real raised to integer power
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, powif();
+ * int n;
+ *
+ * y = powif( x, n );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns argument x raised to the nth power.
+ * The routine efficiently decomposes n as a sum of powers of
+ * two. The desired power is a product of two-to-the-kth
+ * powers of x.  Thus to compute the 32767 power of x requires
+ * 28 multiplications instead of 32767 multiplications.
+*/
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float powif( const float x, const int nn ) {
+int n, e, sign, asign, lx;
+float w, y, s;
+
+if( x == 0.0 )
+	{
+	if( nn == 0 )
+		return( 1.0 );
+	else if( nn < 0 )
+		return( MAXNUMF );
+	else
+		return( 0.0 );
+	}
+
+if( nn == 0 )
+	return( 1.0 );
+
+
+if( x < 0.0 )
+	{
+	asign = -1;
+	x = -x;
+	}
+else
+	asign = 0;
+
+
+if( nn < 0 )
+	{
+	sign = -1;
+	n = -nn;
+/*
+	x = 1.0/x;
+*/
+	}
+else
+	{
+	sign = 0;
+	n = nn;
+	}
+
+/* Overflow detection */
+
+/* Calculate approximate logarithm of answer */
+s = ceph_frexpf( x, &lx );
+e = (lx - 1)*n;
+if( (e == 0) || (e > 64) || (e < -64) )
+	{
+	s = (s - 7.0710678118654752e-1) / (s +  7.0710678118654752e-1);
+	s = (2.9142135623730950 * s - 0.5 + lx) * nn * LOGE2F;
+	}
+else
+	{
+	s = LOGE2F * e;
+	}
+
+if( s > MAXLOGF )
+	{
+	//mtherr( "powi", OVERFLOW );
+	y = MAXNUMF;
+	goto done;
+	}
+
+if( s < MINLOGF )
+	return(0.0);
+
+/* Handle tiny denormal answer, but with less accuracy
+ * since roundoff error in 1.0/x will be amplified.
+ * The precise demarcation should be the gradual underflow threshold.
+ */
+if( s < (-MAXLOGF+2.0) )
+	{
+	x = 1.0/x;
+	sign = 0;
+	}
+
+/* First bit of the power */
+if( n & 1 )
+	y = x;
+		
+else
+	{
+	y = 1.0;
+	asign = 0;
+	}
+
+w = x;
+n >>= 1;
+while( n )
+	{
+	w = w * w;	/* arg to the 2-to-the-kth power */
+	if( n & 1 )	/* if that bit is set, then include in product */
+		y *= w;
+	n >>= 1;
+	}
+
+
+done:
+
+if( asign )
+	y = -y; /* odd power of negative number */
+if( sign )
+	y = 1.0/y;
+return(y);
+}
+
+/*
+   	Hyperbolic sine and cosine integrals
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, Chi, Shi;
+ *
+ * shichi( x, &Chi, &Shi );
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Approximates the integrals
+ *
+ *                            x
+ *                            -
+ *                           | |   cosh t - 1
+ *   Chi(x) = eul + ln x +   |    -----------  dt,
+ *                         | |          t
+ *                          -
+ *                          0
+ *
+ *               x
+ *               -
+ *              | |  sinh t
+ *   Shi(x) =   |    ------  dt
+ *            | |       t
+ *             -
+ *             0
+ *
+ * where eul = 0.57721566490153286061 is Euler's constant.
+ * The integrals are evaluated by power series for x < 8
+ * and by Chebyshev expansions for x between 8 and 88.
+ * For large x, both functions approach exp(x)/2x.
+ * Arguments greater than 88 in magnitude return MAXNUM.
+ *
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+int shichif( const float xx, float *si, float *ci ) {
+/* x exp(-x) shi(x), inverted interval 8 to 18 */
+const float S1[] = {
+-3.56699611114982536845E-8,
+ 1.44818877384267342057E-7,
+ 7.82018215184051295296E-7,
+-5.39919118403805073710E-6,
+-3.12458202168959833422E-5,
+ 8.90136741950727517826E-5,
+ 2.02558474743846862168E-3,
+ 2.96064440855633256972E-2,
+ 1.11847751047257036625E0
+};
+
+/* x exp(-x) shi(x), inverted interval 18 to 88 */
+const float S2[] = {
+ 1.69050228879421288846E-8,
+ 1.25391771228487041649E-7,
+ 1.16229947068677338732E-6,
+ 1.61038260117376323993E-5,
+ 3.49810375601053973070E-4,
+ 1.28478065259647610779E-2,
+ 1.03665722588798326712E0
+};
+
+
+/* x exp(-x) chin(x), inverted interval 8 to 18 */
+const float C1[] = {
+ 1.31458150989474594064E-8,
+-4.75513930924765465590E-8,
+-2.21775018801848880741E-7,
+ 1.94635531373272490962E-6,
+ 4.33505889257316408893E-6,
+-6.13387001076494349496E-5,
+-3.13085477492997465138E-4,
+ 4.97164789823116062801E-4,
+ 2.64347496031374526641E-2,
+ 1.11446150876699213025E0
+};
+
+/* x exp(-x) chin(x), inverted interval 18 to 88 */
+const float C2[] = {
+-3.00095178028681682282E-9,
+ 7.79387474390914922337E-8,
+ 1.06942765566401507066E-6,
+ 1.59503164802313196374E-5,
+ 3.49592575153777996871E-4,
+ 1.28475387530065247392E-2,
+ 1.03665693917934275131E0
+};
+/* Sine and cosine integrals */
+#define EUL 0.57721566490153286061
+float x, k, z, c, s, a;
+short sign;
+
+x = xx;
+if( x < 0.0 )
+	{
+	sign = -1;
+	x = -x;
+	}
+else
+	sign = 0;
+
+
+if( x == 0.0 )
+	{
+	*si = 0.0;
+	*ci = -MAXNUMF;
+	return( 0 );
+	}
+
+if( x >= 8.0 )
+	goto chb;
+
+z = x * x;
+
+/*	Direct power series expansion	*/
+
+a = 1.0;
+s = 1.0;
+c = 0.0;
+k = 2.0;
+
+do
+	{
+	a *= z/k;
+	c += a/k;
+	k += 1.0;
+	a /= k;
+	s += a/k;
+	k += 1.0;
+	}
+while( ceph_fabsf(a/s) > MACHEPF );
+
+s *= x;
+goto done;
+
+
+chb:
+
+if( x < 18.0 )
+	{
+	a = (576.0/x - 52.0)/10.0;
+	k = ceph_expf(x) / x;
+	s = k * chbevlf( a, S1, 9 );
+	c = k * chbevlf( a, C1, 10 );
+	goto done;
+	}
+
+if( x <= 88.0 )
+	{
+	a = (6336.0/x - 212.0)/70.0;
+	k = ceph_expf(x) / x;
+	s = k * chbevlf( a, S2, 7 );
+	c = k * chbevlf( a, C2, 7 );
+	goto done;
+	}
+else
+	{
+	if( sign )
+		*si = -MAXNUMF;
+	else
+		*si = MAXNUMF;
+	*ci = MAXNUMF;
+	return(0);
+	}
+done:
+if( sign )
+	s = -s;
+
+*si = s;
+
+*ci = EUL + ceph_logf(x) + c;
+return(0);
+}
+
+/*
+   	Sine and cosine integrals
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, Ci, Si;
+ *
+ * sicif( x, &Si, &Ci );
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Evaluates the integrals
+ *
+ *                          x
+ *                          -
+ *                         |  cos t - 1
+ *   Ci(x) = eul + ln x +  |  --------- dt,
+ *                         |      t
+ *                        -
+ *                         0
+ *             x
+ *             -
+ *            |  sin t
+ *   Si(x) =  |  ----- dt
+ *            |    t
+ *           -
+ *            0
+ *
+ * where eul = 0.57721566490153286061 is Euler's constant.
+ * The integrals are approximated by rational functions.
+ * For x > 8 auxiliary functions f(x) and g(x) are employed
+ * such that
+ *
+ * Ci(x) = f(x) sin(x) - g(x) cos(x)
+ * Si(x) = pi/2 - f(x) cos(x) - g(x) sin(x)
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+int sicif( const float xx, float *si, float *ci ) {
+const float SN[] = {
+-8.39167827910303881427E-11,
+ 4.62591714427012837309E-8,
+-9.75759303843632795789E-6,
+ 9.76945438170435310816E-4,
+-4.13470316229406538752E-2,
+ 1.00000000000000000302E0,
+};
+const  float SD[] = {
+  2.03269266195951942049E-12,
+  1.27997891179943299903E-9,
+  4.41827842801218905784E-7,
+  9.96412122043875552487E-5,
+  1.42085239326149893930E-2,
+  9.99999999999999996984E-1,
+};
+
+const float CN[] = {
+ 2.02524002389102268789E-11,
+-1.35249504915790756375E-8,
+ 3.59325051419993077021E-6,
+-4.74007206873407909465E-4,
+ 2.89159652607555242092E-2,
+-1.00000000000000000080E0,
+};
+const float CD[] = {
+  4.07746040061880559506E-12,
+  3.06780997581887812692E-9,
+  1.23210355685883423679E-6,
+  3.17442024775032769882E-4,
+  5.10028056236446052392E-2,
+  4.00000000000000000080E0,
+};
+
+
+const float FN4[] = {
+  4.23612862892216586994E0,
+  5.45937717161812843388E0,
+  1.62083287701538329132E0,
+  1.67006611831323023771E-1,
+  6.81020132472518137426E-3,
+  1.08936580650328664411E-4,
+  5.48900223421373614008E-7,
+};
+const float FD4[] = {
+/*  1.00000000000000000000E0,*/
+  8.16496634205391016773E0,
+  7.30828822505564552187E0,
+  1.86792257950184183883E0,
+  1.78792052963149907262E-1,
+  7.01710668322789753610E-3,
+  1.10034357153915731354E-4,
+  5.48900252756255700982E-7,
+};
+
+const float FN8[] = {
+  4.55880873470465315206E-1,
+  7.13715274100146711374E-1,
+  1.60300158222319456320E-1,
+  1.16064229408124407915E-2,
+  3.49556442447859055605E-4,
+  4.86215430826454749482E-6,
+  3.20092790091004902806E-8,
+  9.41779576128512936592E-11,
+  9.70507110881952024631E-14,
+};
+const float FD8[] = {
+/*  1.00000000000000000000E0,*/
+  9.17463611873684053703E-1,
+  1.78685545332074536321E-1,
+  1.22253594771971293032E-2,
+  3.58696481881851580297E-4,
+  4.92435064317881464393E-6,
+  3.21956939101046018377E-8,
+  9.43720590350276732376E-11,
+  9.70507110881952025725E-14,
+};
+
+const float GN4[] = {
+  8.71001698973114191777E-2,
+  6.11379109952219284151E-1,
+  3.97180296392337498885E-1,
+  7.48527737628469092119E-2,
+  5.38868681462177273157E-3,
+  1.61999794598934024525E-4,
+  1.97963874140963632189E-6,
+  7.82579040744090311069E-9,
+};
+const float GD4[] = {
+/*  1.00000000000000000000E0,*/
+  1.64402202413355338886E0,
+  6.66296701268987968381E-1,
+  9.88771761277688796203E-2,
+  6.22396345441768420760E-3,
+  1.73221081474177119497E-4,
+  2.02659182086343991969E-6,
+  7.82579218933534490868E-9,
+};
+
+const float GN8[] = {
+  6.97359953443276214934E-1,
+  3.30410979305632063225E-1,
+  3.84878767649974295920E-2,
+  1.71718239052347903558E-3,
+  3.48941165502279436777E-5,
+  3.47131167084116673800E-7,
+  1.70404452782044526189E-9,
+  3.85945925430276600453E-12,
+  3.14040098946363334640E-15,
+};
+const float GD8[] = {
+/*  1.00000000000000000000E0,*/
+  1.68548898811011640017E0,
+  4.87852258695304967486E-1,
+  4.67913194259625806320E-2,
+  1.90284426674399523638E-3,
+  3.68475504442561108162E-5,
+  3.57043223443740838771E-7,
+  1.72693748966316146736E-9,
+  3.87830166023954706752E-12,
+  3.14040098946363335242E-15,
+};
+
+#define EUL 0.57721566490153286061
+float x, z, c, s, f, g;
+int sign;
+
+x = xx;
+if( x < 0.0 )
+	{
+	sign = -1;
+	x = -x;
+	}
+else
+	sign = 0;
+
+
+if( x == 0.0 )
+	{
+	*si = 0.0;
+	*ci = -MAXNUMF;
+	return( 0 );
+	}
+
+
+if( x > 1.0e9 )
+	{
+	*si = PIO2F - ceph_cosf(x)/x;
+	*ci = ceph_sinf(x)/x;
+	return( 0 );
+	}
+
+
+
+if( x > 4.0 )
+	goto asympt;
+
+z = x * x;
+s = x * polevlf( z, SN, 5 ) / polevlf( z, SD, 5 );
+c = z * polevlf( z, CN, 5 ) / polevlf( z, CD, 5 );
+
+if( sign )
+	s = -s;
+*si = s;
+*ci = EUL + ceph_logf(x) + c;	/* real part if x < 0 */
+return(0);
+
+
+
+/* The auxiliary functions are:
+ *
+ *
+ * *si = *si - PIO2;
+ * c = cos(x);
+ * s = sin(x);
+ *
+ * t = *ci * s - *si * c;
+ * a = *ci * c + *si * s;
+ *
+ * *si = t;
+ * *ci = -a;
+ */
+
+
+asympt:
+
+s = ceph_sinf(x);
+c = ceph_cosf(x);
+z = 1.0/(x*x);
+if( x < 8.0 )
+	{
+	f = polevlf( z, FN4, 6 ) / (x * p1evlf( z, FD4, 7 ));
+	g = z * polevlf( z, GN4, 7 ) / p1evlf( z, GD4, 7 );
+	}
+else
+	{
+	f = polevlf( z, FN8, 8 ) / (x * p1evlf( z, FD8, 8 ));
+	g = z * polevlf( z, GN8, 8 ) / p1evlf( z, GD8, 9 );
+	}
+*si = PIO2F - f * c - g * s;
+if( sign )
+	*si = -( *si );
+*ci = f * s - g * c;
+
+return(0);
+}
+
+/*
+   	Circular sine of angle in degrees
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, sindgf();
+ *
+ * y = sindgf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Range reduction is into intervals of 45 degrees.
+ *
+ * Two polynomial approximating functions are employed.
+ * Between 0 and pi/4 the sine is approximated by
+ *      x  +  x**3 P(x**2).
+ * Between pi/4 and pi/2 the cosine is represented as
+ *      1  -  x**2 Q(x**2).
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_sindgf( const float xx ) {
+float x, y, z;
+constexpr float T24M1 = 16777215.;
+constexpr float PI180 = 0.0174532925199432957692; /* pi/180 */
+long j;
+int sign;
+sign = 1;
+x = xx;
+if( xx < 0 )
+	{
+	sign = -1;
+	x = -xx;
+	}
+if( x > T24M1 )
+	{
+	 //mtherr( "sindgf", TLOSS );
+	return(0.0);
+	}
+j = 0.022222222222222222222 * x; /* integer part of x/45 */
+y = j;
+/* map zeros to origin */
+if( j & 1 )
+	{
+	j += 1;
+	y += 1.0;
+	}
+j &= 7; /* octant modulo 360 degrees */
+/* reflect in x axis */
+if( j > 3)
+	{
+	sign = -sign;
+	j -= 4;
+	}
+
+x = x - y * 45.0;
+x *= PI180;	/* multiply by pi/180 to convert to radians */
+
+z = x * x;
+if( (j==1) || (j==2) )
+	{
+/*
+	y = ((( 2.4462803166E-5 * z
+	  - 1.3887580023E-3) * z
+	  + 4.1666650433E-2) * z
+	  - 4.9999999968E-1) * z
+	  + 1.0;
+*/
+
+/* measured relative error in +/- pi/4 is 7.8e-8 */
+	y = ((  2.443315711809948E-005 * z
+	  - 1.388731625493765E-003) * z
+	  + 4.166664568298827E-002) * z * z;
+	y -= 0.5 * z;
+	y += 1.0;
+	}
+else
+	{
+/* Theoretical relative error = 3.8e-9 in [-pi/4, +pi/4] */
+	y = ((-1.9515295891E-4 * z
+	     + 8.3321608736E-3) * z
+	     - 1.6666654611E-1) * z * x;
+	y += x;
+	}
+
+if(sign < 0)
+	y = -y;
+return( y);
+}
+
+
+/* Single precision circular cosine
+ * test interval: [-pi/4, +pi/4]
+ * trials: 10000
+ * peak relative error: 8.3e-8
+ * rms relative error: 2.2e-8
+ */
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_cosdgf( const float xx ) {
+register float x, y, z;
+int j, sign;
+/* These are for a 24-bit significand: */
+constexpr float T24M1 = 16777215.;
+constexpr float PI180 = 0.0174532925199432957692; /* pi/180 */
+/* make argument positive */
+sign = 1;
+x = xx;
+if( x < 0 )
+	x = -x;
+
+if( x > T24M1 )
+	{
+	 //mtherr( "cosdgf", TLOSS );
+	return(0.0);
+	}
+
+j = 0.02222222222222222222222 * x; /* integer part of x/PIO4 */
+y = j;
+/* integer and fractional part modulo one octant */
+if( j & 1 )	/* map zeros to origin */
+	{
+	j += 1;
+	y += 1.0;
+	}
+j &= 7;
+if( j > 3)
+	{
+	j -=4;
+	sign = -sign;
+	}
+
+if( j > 1 )
+	sign = -sign;
+
+x = x - y * 45.0; /* x mod 45 degrees */
+x *= PI180;	/* multiply by pi/180 to convert to radians */
+
+z = x * x;
+
+if( (j==1) || (j==2) )
+	{
+	y = (((-1.9515295891E-4 * z
+	     + 8.3321608736E-3) * z
+	     - 1.6666654611E-1) * z * x)
+	     + x;
+	}
+else
+	{
+	y = ((  2.443315711809948E-005 * z
+	  - 1.388731625493765E-003) * z
+	  + 4.166664568298827E-002) * z * z;
+	y -= 0.5 * z;
+	y += 1.0;
+	}
+if(sign < 0)
+	y = -y;
+return( y );
+}
+
+/*
+    	Circular sine
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, sinf();
+ *
+ * y = sinf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Range reduction is into intervals of pi/4.  The reduction
+ * error is nearly eliminated by contriving an extended precision
+ * modular arithmetic.
+ *
+ * Two polynomial approximating functions are employed.
+ * Between 0 and pi/4 the sine is approximated by
+ *      x  +  x**3 P(x**2).
+ * Between pi/4 and pi/2 the cosine is represented as
+ *      1  -  x**2 Q(x**2).
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_sinf( const float xx ) {
+constexpr float FOPI = 1.27323954473516;
+/* Note, these constants are for a 32-bit significand: */
+/*
+static float DP1 =  0.7853851318359375;
+static float DP2 =  1.30315311253070831298828125e-5;
+static float DP3 =  3.03855025325309630e-11;
+static float lossth = 65536.;
+*/
+
+/* These are for a 24-bit significand: */
+constexpr float DP1 = 0.78515625;
+constexpr float DP2 = 2.4187564849853515625e-4;
+constexpr float DP3 = 3.77489497744594108e-8;
+constexpr float lossth = 8192.;
+constexpr float T24M1 = 16777215.;
+
+const float sincof[] = {
+-1.9515295891E-4,
+ 8.3321608736E-3,
+-1.6666654611E-1
+};
+const float coscof[] = {
+ 2.443315711809948E-005,
+-1.388731625493765E-003,
+ 4.166664568298827E-002
+};
+float *p;
+float x, y, z;
+register unsigned long j;
+register int sign;
+sign = 1;
+x = xx;
+if( xx < 0 )
+	{
+	sign = -1;
+	x = -xx;
+	}
+if( x > T24M1 )
+	{
+	//mtherr( "sinf", TLOSS );
+	return(0.0);
+	}
+j = FOPI * x; /* integer part of x/(PI/4) */
+y = j;
+/* map zeros to origin */
+if( j & 1 )
+	{
+	j += 1;
+	y += 1.0;
+	}
+j &= 7; /* octant modulo 360 degrees */
+/* reflect in x axis */
+if( j > 3)
+	{
+	sign = -sign;
+	j -= 4;
+	}
+
+if( x > lossth )
+	{
+	//mtherr( "sinf", PLOSS );
+	x = x - y * PIO4F;
+	}
+else
+	{
+/* Extended precision modular arithmetic */
+	x = ((x - y * DP1) - y * DP2) - y * DP3;
+	}
+/*einits();*/
+z = x * x;
+if( (j==1) || (j==2) )
+	{
+/* measured relative error in +/- pi/4 is 7.8e-8 */
+/*
+	y = ((  2.443315711809948E-005 * z
+	  - 1.388731625493765E-003) * z
+	  + 4.166664568298827E-002) * z * z;
+*/
+	p = coscof;
+	y = *p++;
+	y = y * z + *p++;
+	y = y * z + *p++;
+	y *= z * z;
+	y -= 0.5 * z;
+	y += 1.0;
+	}
+else
+	{
+/* Theoretical relative error = 3.8e-9 in [-pi/4, +pi/4] */
+/*
+	y = ((-1.9515295891E-4 * z
+	     + 8.3321608736E-3) * z
+	     - 1.6666654611E-1) * z * x;
+	y += x;
+*/
+	p = sincof;
+	y = *p++;
+	y = y * z + *p++;
+	y = y * z + *p++;
+	y *= z * x;
+	y += x;
+	}
+/*einitd();*/
+if(sign < 0)
+	y = -y;
+return( y);
+}
+
+
+/* Single precision circular cosine
+ * test interval: [-pi/4, +pi/4]
+ * trials: 10000
+ * peak relative error: 8.3e-8
+ * rms relative error: 2.2e-8
+ */
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_cosf( const float xx ) {
+/* Note, these constants are for a 32-bit significand: */
+/*
+static float DP1 =  0.7853851318359375;
+static float DP2 =  1.30315311253070831298828125e-5;
+static float DP3 =  3.03855025325309630e-11;
+static float lossth = 65536.;
+*/
+
+/* These are for a 24-bit significand: */
+constexpr float FOPI = 1.27323954473516;
+constexpr float DP1 = 0.78515625;
+constexpr float DP2 = 2.4187564849853515625e-4;
+constexpr float DP3 = 3.77489497744594108e-8;
+constexpr float lossth = 8192.;
+constexpr float T24M1 = 16777215.;
+float x, y, z;
+int j, sign;
+
+/* make argument positive */
+sign = 1;
+x = xx;
+if( x < 0 )
+	x = -x;
+
+if( x > T24M1 )
+	{
+	//mtherr( "cosf", TLOSS );
+	return(0.0);
+	}
+
+j = FOPI * x; /* integer part of x/PIO4 */
+y = j;
+/* integer and fractional part modulo one octant */
+if( j & 1 )	/* map zeros to origin */
+	{
+	j += 1;
+	y += 1.0;
+	}
+j &= 7;
+if( j > 3)
+	{
+	j -=4;
+	sign = -sign;
+	}
+
+if( j > 1 )
+	sign = -sign;
+
+if( x > lossth )
+	{
+	//mtherr( "cosf", PLOSS );
+	x = x - y * PIO4F;
+	}
+else
+/* Extended precision modular arithmetic */
+	x = ((x - y * DP1) - y * DP2) - y * DP3;
+
+z = x * x;
+
+if( (j==1) || (j==2) )
+	{
+	y = (((-1.9515295891E-4 * z
+	     + 8.3321608736E-3) * z
+	     - 1.6666654611E-1) * z * x)
+	     + x;
+	}
+else
+	{
+	y = ((  2.443315711809948E-005 * z
+	  - 1.388731625493765E-003) * z
+	  + 4.166664568298827E-002) * z * z;
+	y -= 0.5 * z;
+	y += 1.0;
+	}
+if(sign < 0)
+	y = -y;
+return( y );
+}
+
+/*
+    	Hyperbolic sine
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, sinhf();
+ *
+ * y = sinhf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns hyperbolic sine of argument in the range MINLOGF to
+ * MAXLOGF.
+ *
+ * The range is partitioned into two segments.  If |x| <= 1, a
+ * polynomial approximation is used.
+ * Otherwise the calculation is sinh(x) = ( exp(x) - exp(-x) )/2.
+ *
+*/
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_sinhf( const float xx ) {
+register float z;
+float x;
+
+x = xx;
+if( xx < 0 )
+	z = -x;
+else
+	z = x;
+
+if( z > MAXLOGF )
+	{
+	//mtherr( "sinhf", DOMAIN );
+	;
+	if( x > 0 )
+		return( MAXNUMF );
+	else
+		return( -MAXNUMF );
+	}
+if( z > 1.0 )
+	{
+	z = ceph_expf(z);
+	z = 0.5*z - (0.5/z);
+	if( x < 0 )
+		z = -z;
+	}
+else
+	{
+	z = x * x;
+	z =
+	(( 2.03721912945E-4 * z
+	  + 8.33028376239E-3) * z
+	  + 1.66667160211E-1) * z * x
+	  + x;
+	}
+return( z );
+}
+
+
+/*
+   	Square root
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, sqrtf();
+ *
+ * y = sqrtf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns the square root of x.
+ *
+ * Range reduction involves isolating the power of two of the
+ * argument and using a polynomial approximation to obtain
+ * a rough value for the square root.  Then Heron's iteration
+ * is used three times to converge to an accurate value.
+ *
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_sqrtf( const float xx ) {
+float f, x, y;
+int e;
+f = xx;
+if( f <= 0.0 )
+	{
+	if( f < 0.0 )
+		//mtherr( "sqrtf", DOMAIN );
+	return( 0.0 );
+	}
+
+x = ceph_frexpf( f, &e );	/* f = x * 2**e,   0.5 <= x < 1.0 */
+/* If power of 2 is odd, double x and decrement the power of 2. */
+if( e & 1 )
+	{
+	x = x + x;
+	e -= 1;
+	}
+
+e >>= 1;	/* The power of 2 of the square root. */
+
+if( x > 1.41421356237 )
+	{
+/* x is between sqrt(2) and 2. */
+	x = x - 2.0;
+	y =
+	((((( -9.8843065718E-4 * x
+	  + 7.9479950957E-4) * x
+	  - 3.5890535377E-3) * x
+	  + 1.1028809744E-2) * x
+	  - 4.4195203560E-2) * x
+	  + 3.5355338194E-1) * x
+	  + 1.41421356237E0;
+	goto sqdon;
+	}
+
+if( x > 0.707106781187 )
+	{
+/* x is between sqrt(2)/2 and sqrt(2). */
+	x = x - 1.0;
+	y =
+	((((( 1.35199291026E-2 * x
+	  - 2.26657767832E-2) * x
+	  + 2.78720776889E-2) * x
+	  - 3.89582788321E-2) * x
+	  + 6.24811144548E-2) * x
+	  - 1.25001503933E-1) * x * x
+	  + 0.5 * x
+	  + 1.0;
+	goto sqdon;
+	}
+
+/* x is between 0.5 and sqrt(2)/2. */
+x = x - 0.5;
+y =
+((((( -3.9495006054E-1 * x
+  + 5.1743034569E-1) * x
+  - 4.3214437330E-1) * x
+  + 3.5310730460E-1) * x
+  - 3.5354581892E-1) * x
+  + 7.0710676017E-1) * x
+  + 7.07106781187E-1;
+
+sqdon:
+y = ceph_ldexpf( y, e );  /* y = y * 2**e */
+return( y);
+}
+
+/*
+    	Circular tangent of angle in degrees
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, tandgf();
+ *
+ * y = tandgf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns the circular tangent of the radian argument x.
+ *
+ * Range reduction is into intervals of 45 degrees.
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_tancotf( float xx, int cotflg ) {
+float x, y, z, zz;
+long j;
+int sign;
+constexpr  float T24M1 = 16777215.;
+constexpr  float PI180 = 0.0174532925199432957692; /* pi/180 */
+
+/* make argument positive but save the sign */
+if( xx < 0.0 )
+	{
+	x = -xx;
+	sign = -1;
+	}
+else
+	{
+	x = xx;
+	sign = 1;
+	}
+
+if( x > T24M1 )
+	{
+	if( cotflg )
+		//mtherr( "cotdgf", TLOSS );
+	else
+		//mtherr( "tandgf", TLOSS );
+	return(0.0);
+	}
+
+/* compute x mod PIO4 */
+j = 0.022222222222222222222 * x; /* integer part of x/45 */
+y = j;
+
+/* map zeros and singularities to origin */
+if( j & 1 )
+	{
+	j += 1;
+	y += 1.0;
+	}
+
+z = x - y * 45.0;
+z *= PI180;	/* multiply by pi/180 to convert to radians */
+
+zz = z * z;
+
+if( x > 1.0e-4 )
+	{
+/* 1.7e-8 relative error in [-pi/4, +pi/4] */
+	y =
+	((((( 9.38540185543E-3 * zz
+	+ 3.11992232697E-3) * zz
+	+ 2.44301354525E-2) * zz
+	+ 5.34112807005E-2) * zz
+	+ 1.33387994085E-1) * zz
+	+ 3.33331568548E-1) * zz * z
+	+ z;
+	}
+else
+	{
+	y = z;
+	}
+
+if( j & 2 )
+	{
+	if( cotflg )
+		y = -y;
+	else
+		{
+		if( y != 0.0 )
+			{
+			y = -1.0/y;
+			}
+		else
+			{
+			//mtherr( "tandgf", SING );
+			y = MAXNUMF;
+			}
+		}
+	}
+else
+	{
+	if( cotflg )
+		{
+		if( y != 0.0 )
+			y = 1.0/y;
+		else
+			{
+			//mtherr( "cotdgf", SING );
+			y = MAXNUMF;
+			}
+		}
+	}
+
+if( sign < 0 )
+	y = -y;
+
+return( y );
+}
+
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_tandgf( const float x ) {
+
+return( ceph_tancotf(x,0) );
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float cotdgf( const float x ) {
+if( x == 0.0 )
+	{
+	//mtherr( "cotdgf", SING );
+	return( MAXNUMF );
+	}
+return( ceph_tancotf(x,1) );
+}
+
+/*
+    	Circular tangent
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, tanf();
+ *
+ * y = tanf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns the circular tangent of the radian argument x.
+ *
+ * Range reduction is modulo pi/4.  A polynomial approximation
+ * is employed in the basic interval [0, pi/4].
+*/
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_tancotf( const float xx, const int cotflg ) {
+const float DP1 = 0.78515625;
+const float DP2 = 2.4187564849853515625e-4;
+const float DP3 = 3.77489497744594108e-8;
+const float FOPI = 1.27323954473516;  /* 4/pi */
+const float lossth = 8192.;
+/*static float T24M1 = 16777215.;*/
+float x, y, z, zz;
+long j;
+int sign;
+
+
+/* make argument positive but save the sign */
+if( xx < 0.0 )
+	{
+	x = -xx;
+	sign = -1;
+	}
+else
+	{
+	x = xx;
+	sign = 1;
+	}
+
+if( x > lossth )
+	{
+	if( cotflg )
+		//mtherr( "cotf", TLOSS );
+	else
+		//mtherr( "tanf", TLOSS );
+	return(0.0);
+	}
+
+/* compute x mod PIO4 */
+j = FOPI * x; /* integer part of x/(PI/4) */
+y = j;
+
+/* map zeros and singularities to origin */
+if( j & 1 )
+	{
+	j += 1;
+	y += 1.0;
+	}
+
+z = ((x - y * DP1) - y * DP2) - y * DP3;
+
+zz = z * z;
+
+if( x > 1.0e-4 )
+	{
+/* 1.7e-8 relative error in [-pi/4, +pi/4] */
+	y =
+	((((( 9.38540185543E-3 * zz
+	+ 3.11992232697E-3) * zz
+	+ 2.44301354525E-2) * zz
+	+ 5.34112807005E-2) * zz
+	+ 1.33387994085E-1) * zz
+	+ 3.33331568548E-1) * zz * z
+	+ z;
+	}
+else
+	{
+	y = z;
+	}
+
+if( j & 2 )
+	{
+	if( cotflg )
+		y = -y;
+	else
+		y = -1.0/y;
+	}
+else
+	{
+	if( cotflg )
+		y = 1.0/y;
+	}
+
+if( sign < 0 )
+	y = -y;
+
+return( y );
+}
+
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_tanf( const float x ) {
+
+return( ceph_tancotf(x,0) );
+}
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float ceph_cotf( const float x ) {
+if( x == 0.0 )
+	{
+	//mtherr( "cotf", SING );
+	return( MAXNUMF );
+	}
+return( ceph_tancotf(x,1) );
+}
+
+/*
+   	Hyperbolic tangent
+ *
+ *
+ *
+ * SYNOPSIS:
+ *
+ * float x, y, tanhf();
+ *
+ * y = tanhf( x );
+ *
+ *
+ *
+ * DESCRIPTION:
+ *
+ * Returns hyperbolic tangent of argument in the range MINLOG to
+ * MAXLOG.
+ *
+ * A polynomial approximation is used for |x| < 0.625.
+ * Otherwise,
+ *
+ *    tanh(x) = sinh(x)/cosh(x) = 1  -  2/(exp(2x) + 1).
+*/
+
+__ATTR_PURE__
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+static inline
+float tanhf( const float xx ) {
+float x, z;
+
+if( xx < 0 )
+	x = -xx;
+else
+	x = xx;
+
+if( x > 0.5 * MAXLOGF )
+	{
+	if( xx > 0 )
+		return( 1.0 );
+	else
+		return( -1.0 );
+	}
+if( x >= 0.625 )
+	{
+	x = ceph_expf(x+x);
+	z =  1.0  - 2.0/(x + 1.0);
+	if( xx < 0 )
+		z = -z;
+	}
+else
+	{
+	z = x * x;
+	z =
+	(((( -5.70498872745E-3 * z
+	  + 2.06390887954E-2) * z
+	  - 5.37397155531E-2) * z
+	  + 1.33314422036E-1) * z
+	  - 3.33332819422E-1) * z * xx
+	  + xx;
+	}
+return( z );
+}
+
+
 
 
 /** SYNOPSIS:
