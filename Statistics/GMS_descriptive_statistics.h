@@ -20,6 +20,9 @@ namespace file_info {
 #include <math.h>
 #include <cstdint>
 #include "GMS_config.h"
+#include "GMS_cephes.h" // to eliminate cmath.h implemented by GLIBC
+                        // used only in scalar code.
+                        // Vector code is handled by SVML calls
 
 namespace gms {
 
@@ -144,7 +147,7 @@ C
 	       }
 	       varp = varp/a;
 	       dfp  = a;
-	       ch2  = a*logf(varp)-ch2;
+	       ch2  = a*ceph_logf(varp)-ch2;
 	       a    = 1.0f+(c-1.0f/a)/(3.0f*(float)n-1);
 	       x    = 0.5f*ch2;
 	       alpha = 0.5f*(float)n-1;
@@ -255,14 +258,14 @@ C
 		     pq = q;
 		  }
 		  // EVALUATE THE BETA P.D.F. AND CHECK FOR UNDERFLOW
-		  dp   = (double)(pq-1.0f)*log((double)xy)-lgamma(pq);
-		  dq   = (double)(qp-1.0f)*log((double)yx)-lgamma(qp);
-		  pdfl = (float)(lgamma(pq+qp)+dp+dq);
+		  dp   = (double)(pq-1.0f)*ceph_log((double)xy)-dgamln(pq);
+		  dq   = (double)(qp-1.0f)*ceph_log((double)yx)-dgamln(qp);
+		  pdfl = (float)(dgamln(pq+qp)+dp+dq);
 		  if(pdfl < log(uflo)) {
                      ; // ?
 		  }
 		  else {
-                     u = expf(pdfl)*xy/pq;
+                     u = ceph_expf(pdfl)*xy/pq;
 		     r = xy/yx;
 label_10:            if(qp <= 1.0f) goto label_20;
                      // INCREMENT PQ AND DECREMENT QP
@@ -497,9 +500,165 @@ C
 	       }
 	}
 
-	    
-	                  
 
+
+	      __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+	      static inline
+	      void poissf(float alamb,
+	                  const float eps,
+			  int32_t l,
+			  int32_t &nspan,
+			  float * __restrict __ATTR_ALIGN__(32) v,
+			  const int32_t nv,
+			  int32_t &iflag) {
+                  double dal,dk,dlimit,dsum;
+		  float  pl,pk;
+		  int32_t k,nk,nl,inc;
+		  dlimit = 1.0-0.5*(double)eps;
+		  k = (int32_t)alamb;
+		  l = k+1;
+		  if(alamb==0.0) {
+                     pl = 1.0f;
+		  }
+		  else {
+                     dal = (double)alamb;
+		     dk  = (double)k;
+		     pl  = (float)(ceph_exp(dk*log(dal)-dal-dgamln((float)k+1)));
+		  }
+	}
+
+#include <limits>
+#include <algorithm>
+
+              __ATTR_PURE__
+	      __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+	      static inline
+	      double dgamln(const float x) {
+	        if(x<=0.0) {
+                   return std::numeric_limits<double>::signaling_NaN();
+		}
+		double c,dx,q,r,xmin,xn,result;
+                constexpr double xmin  = 6.894;
+		constexpr double absac = 1.0e-15;
+		constexpr double C     = 0.918938533204672741780329736;
+		constexpr double B1    = 0.833333333333333333333333333E-1;
+		constexpr double B2    = -0.277777777777777777777777778E-2;
+		constexpr double B3    = 0.793650793650793650793650794E-3;
+		constexpr double B4    = -0.595238095238095238095238095E-3;
+		constexpr double B5    = 0.841750841750841750841750842E-3;
+		constexpr double B6    = -0.191752691752691752691752692E-2;
+		constexpr double B7    = 0.641025641025641025641025641E-2;
+		constexpr double B8    = -0.295506535947712418300653595E-1;
+		int32_t n;
+		dx = (double)x;
+		n  = std::max(0,(int32_t)(xmin-dx+1.0));
+		xn = dx+(double)n;
+		r  = 1.0/xn;
+		q  = r*r;
+		result = 0.0;
+		result = r*(b1+q*(b2+q*(b3+q*(b4+q*(b5+q*(b6+q*(b7+q*b8)))))))+c
+		         +(xn-0.5)*log(xn)-xn;
+		// USE RECURRENCE RELATION WHEN N>0 (X<XMIN)
+		if(n>0) {
+                   q = 1.0;
+		   for(int32_t i = 0; i != n-1; ++i) {
+                       q = q*(dx+(double)i)
+		   }
+		   result -= ceph_log(q);
+		}
+		return (result);
+	}
+
+	 /*
+             PURPOSE--THIS SUBROUTINE COMPUTES THE
+C              SAMPLE AUTOCORRELATION COEFFICIENT 
+C              OF THE DATA IN THE INPUT VECTOR X. 
+C              THE SAMPLE AUTOCORRELATION COEFFICIENT =  THE CORRELATION
+C              BETWEEN X(I) AND X(I+1) OVER THE ENTIRE SAMPLE.
+C              THE AUTOCORRELATION COEFFICIENT COEFFICIENT WILL BE A
+C              SINGLE PRECISION VALUE BETWEEN -1.0 AND 1.0
+C              (INCLUSIVELY). 
+C     INPUT  ARGUMENTS--X      = THE SINGLE PRECISION VECTOR OF
+C                                (UNSORTED) OBSERVATIONS.
+C                     --N      = THE INTEGER NUMBER OF OBSERVATIONS
+C                                IN THE VECTOR X. 
+C                     --IWRITE = AN INTEGER FLAG CODE WHICH 
+C                                (IF SET TO 0) WILL SUPPRESS
+C                                THE PRINTING OF THE
+C                                SAMPLE AUTOCORRELATION COEFFICIENT
+C                                AS IT IS COMPUTED;
+C                                OR (IF SET TO SOME INTEGER 
+C                                VALUE NOT EQUAL TO 0),
+C                                LIKE, SAY, 1) WILL CAUSE
+C                                THE PRINTING OF THE
+C                                SAMPLE AUTOCORRELATION COEFFICIENT
+C                                AT THE TIME IT IS COMPUTED.
+C     OUTPUT ARGUMENTS--XAUTOC = THE SINGLE PRECISION VALUE OF THE
+C                                COMPUTED SAMPLE AUTOCORRELATION
+C                                COEFFICIENT.
+C                                THIS SINGLE PRECISION VALUE
+C                                WILL BE BETWEEN -1.0 AND 1.0
+C                                (INCLUSIVELY).
+C     OUTPUT--THE COMPUTED SINGLE PRECISION VALUE OF THE
+C             SAMPLE AUTOCORRELATION COEFFICIENT. 
+           */
+	      
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+	      static inline
+	      float autoco(float * __restrict __ATTR_ALIGN__(64) x,
+	                   const int32_t n) {
+                    float xautoco = 0.0f;
+		    register float xbar,xbar1,xbar2,sum1,sum2,sum3;
+		    float an;
+		    int32_t nm1;
+		    register int32_t ip1;
+		    an = (float)n;
+		    xbar = 0.0f;
+#if defined __INTEL_COMPILER
+                    __assume_aligned(x,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                    x = (float*)__builtin_assume_aligned(x,64);
+#endif
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(2),avg(1000),max(5000)
+#pragma simd reduction(+:xbar)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:xbar)
+#endif
+                    for(int32_t i = 0; i != n; ++i) {
+                        xbar = xbar+x[i];
+		    }
+		    xbar1 = xbar-x[n-1];
+		    sum1 = 0.0f;
+		    xbar1 = xbar1/(an-1.0f);
+		    sum2 = 0.0f;
+		    xbar2 = xbar-x[0];
+		    sum3 = 0.0f;
+		    xbar2 = xbar2/(an-1.0f);
+		    nm1 = n-1;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(2),avg(1000),max(5000)
+#pragma simd reduction(+:sum1,sum2,sum3)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:sum1,sum2,sum3)
+#endif
+                    for(int32_t i = 0; i != nm1; ++i) {
+		        ip1 = i+1;
+                        register float txi  = x[i];
+			register float tip1 = x[ip1];
+			sum1 = sum1+(txi-xbar1)*(tip1-xbar2);
+			sum2 = sum2+(txi-xbar1)*(txi-xbar);
+			sum3 = sum3+(tip1-xbar2)*(tip1-xbar2);
+		    }
+		    xautoc = sum1/(ceph_sqrtf(sum2*sum3));
+		    return (xautoc);
+	      }
 } //math
 
 
