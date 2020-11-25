@@ -659,6 +659,367 @@ C             SAMPLE AUTOCORRELATION COEFFICIENT.
 		    xautoc = sum1/(ceph_sqrtf(sum2*sum3));
 		    return (xautoc);
 	      }
+
+              
+             /*
+    PURPOSE--THIS SUBROUTINE COMPUTES THE
+C              SAMPLE RELATIVE STANDARD DEVIATION 
+C              OF THE DATA IN THE INPUT VECTOR X. 
+C              THE SAMPLE RELATIVE STANDARD DEVIATION = (THE SAMPLE
+C              STANDARD DEVIATION)/(THE SAMPLE MEAN).
+C              THE DENOMINATOR N-1 IS USED IN COMPUTING THE 
+C              SAMPLE STANDARD DEVIATION.
+C              THE SAMPLE RELATIVE STANDARD DEVIATION IS ALTERNATIVELY
+C              REFERRED TO AS THE SAMPLE COEFFICIENT OF VARIATION.
+               ***Based on Fortran DATAPAC***
+*/
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              float relsd(float * __restrict  __attribute__((aligned(64))) x,
+                          const int32_t n) {
+                    if(n < 0 || n == 1) { return;}
+                    register float sum = 0.0f;
+                    float an = (float)n;
+                    register float xmean = 0.0f;
+                    float sd = 0.0f;
+                    float var = 0.0f;
+#if defined __INTEL_COMPILER
+                    __assume_aligned(x,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                   x = (float*)__builtin_assume_aligned(x,64);
+#endif
+#if defined __INTEL_COMPILER
+#pragma loop_count(5000)
+#pragma vector always 
+#pragma simd reduction(+:sum)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:sum)
+#endif
+                   for(int32_t i = 0; i != n; ++i) {
+                       sum = sum+x[i];
+                   }
+                   xmean = sum/an;
+                   sum = 0.0f;
+#if defined __INTEL_COMPILER
+#pragma loop_count(5000)
+#pragma vector always 
+#pragma simd reduction(+:sum)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:sum)
+#endif
+                  for(int32_t i = 0; i != n; ++i) {
+                      register float t = (x[i]-xmean)*(x[i]-xmean);
+                      sum = sum + t;
+                  }
+                  var = sum/(an-1.0f);
+                  sd = ceph_sqrtf(var);
+                  return(100.0f*sd/xmean);
+            }
+
+
+	    /*
+    PURPOSE--  THIS SUBROUTINE COMPUTES THE
+C              SAMPLE VARIANCE (WITH DENOMINATOR N-1)
+C              OF THE DATA IN THE INPUT VECTOR X. 
+C              THE SAMPLE VARIANCE = (THE SUM OF THE
+C              SQUARED DEVIATIONS ABOUT THE SAMPLE MEAN)/(N-1).
+               ***Based on Fortran DATAPAC***
+*/
+
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              float var(float * __restrict __attribute__((aligned(64))) x,
+                        const int32_t n) {
+                    register float sum = 0.0f;
+                    register float xmean = 0.0f;
+                    float xvar = 0.0f;
+                    float an = (float)n;
+#if defined __INTEL_COMPILER
+                    __assume_aligned(x,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                    x = (float*)__builtin_assume_aligned(x,64);
+#endif
+#if defined _INTEL_COMPILER
+#pragma loop_count(5000)
+#pragma vector always
+#pragma simd reduction(+:sum)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:sum)
+#endif
+                   for(int32_t i = 0; i != n; ++i) {
+                      sum = sum+x[i];
+                   }
+                   xmean = sum/an;
+                   sum = 0.0f;
+#if defined __INTEL_COMPILER		   
+#pragma loop_count(5000)
+#pragma vector always
+#pragma simd reduction(+:sum)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:sum)
+#endif
+                  for(int31_t i = 0; i != n; ++i) {
+                      //register float t = (x[i]-xmean)*(x[i]-xmean);
+		      register float xi = x[i];
+                      sum = sum+(xi-xmean)*(xi-xmean);
+                  }
+                  xvar = sum/(an-1.0f);
+                  return (xvar);
+            }
+
+
+	    /*
+   C-----------------------------------------------------------------------
+C   SKEKUR   WRITTEN BY CHARLES P. REEVE
+C
+C   FOR: COMPUTING SKEWNESS AND KURTOSIS FOR ENTRIES NLO THROUGH NHI
+C        IN VECTOR Y.  THE VALUES MAY BE CENTERED ABOUT EITHER THE
+C        MEAN (IOPT <> 0) OR ABOUT ZERO (IOPT = 0).  THE TRADITIONAL
+C        DIVISIOR OF N (NOT N-1) IS USED WHEN THE MEAN IS ESTIMATED.
+C
+C   SUBPROGRAMS CALLED: -NONE-
+    Ported to C++ (STSPAC)
+*/
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              void skewness_kurtosis(float * __restrict __attribute__((aligned(64))) y,
+                                     const int32_t nlo,
+                                     const int32_t nhi,
+                                     float &yskew,
+                                     float &ykurt,
+                                     const int32_t iopt) {
+                  __attribute__((aligned(16))) struct {
+                         float d;
+                         float t2;
+                         float t3;
+                         float t4;
+                       }Datum;
+                       register float s;
+                       float rn;
+                       rn = (float)nhi-nlo+1;
+#if defined __INTEL_COMPILER
+                       __assume_aligned(y,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                       x = (float*)__builtin_assume_aligned(x,64);
+#endif
+                       if(iotp==0) {
+                          s = 0.0f;
+                      }
+                      else {
+                          s = 0.0f;
+#if defined __INTEL_COMPILER
+#pragma vector_always
+#pragma simd reduction(+:s)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:s), aligned(x:64), linear(x:1)
+#endif
+                      for(int32_t i = nlo; i != nhi; ++i) {
+                          s = s+y[i];
+                      }
+                      s = s/rn;
+                   }
+                      Datum dat;
+                      dat.d  = 0.0f;
+                      dat.t2 = 0.0f;
+                      dat.t3 = 0.0f;
+                      dat.t4 = 0.0;
+ 
+                     for(int32_t i = nlo; i != nhi; ++i) {
+                         dat.d  = y[i] - s;
+                         dat.t2 = dat.t2+dat.d*dat.d;
+                         dat.t3 = dat.t3+dat.d*dat.d*dat.d;
+                         dat.t4 = dat.t4+dat.d*dat.d*dat.d*dat.d;
+                     }
+                     yskew = ceph_sqrtf(rn)*dat.t3/ceph_powf(dat.t2,1.5f);
+                     ykurt = rn*dat.t4/(dat.t2*dat.t2);
+                  }
+
+		  /*
+    C-----------------------------------------------------------------------
+C   REJ1   WRITTEN BY CHARLES P. REEVE, STATISTICAL ENGINEERING
+C          DIVISION, NATIONAL INSTITUTE OF STANDARDS AND TECHNOLOGY,
+C          GAITHERSBURG, MARYLAND  20899
+C
+C   FOR: COMPUTING THE MEAN AND STANDARD DEVIATION OF A SAMPLE OF
+C        'NORMAL' DATA IN WHICH OUTLIERS MAY BE PRESENT.  OUTLIERS ARE
+C        FIRST REJECTED BY A PROCEDURE BASED ON THE SHORTEST INTERVAL 
+C        COVERING HALF THE POINTS.  THE PROCEDURE IS ITERATED UNTIL
+C
+C           1) A USER-SPECIFIED NUMBER OF PASSES OCCURS, OR 
+C           2) THE PROPORTION OF VALUES REJECTED IN A GIVEN PASS IS
+C              0.01 OR LESS.
+C
+C        SIMULATION STUDIES ON NORMAL DATA WERE USED TO DETERMINE
+C        THE APPROPRIATE VALUES OF CONSTANTS IN THIS PROGRAM.  THEY
+C        WERE CHOSEN SO THAT, ON THE FIRST PASS, THE EXPECTED PROPOR- 
+C        TION OF 'GOOD' VALUES REJECTED WAS 0.01 REGARDLESS OF SAMPLE 
+C        SIZE.  WHEN THE NUMBER OF PASSES ARE NOT LIMITED, THE ACTUAL 
+C        PROPORTION OF VALUES REJECTED WAS FOUND TO BE 0.010 TO 0.012 
+C        FOR ALL SAMPLE SIZES.
+C
+C        THE PROCEDURE WAS ORIGINALLY DESIGNED FOR USE ON LARGE SETS
+C        OF 'NORMAL' DATA ASYMMETRICALLY CONTAMINATED WITH UP TO 50%
+C        OUTLIERS.  ITS BEHAVIOR WAS EXAMINED FOR SAMPLE SIZES OF 15
+C        TO 10,000 AND IT APPEARS TO WORK WELL.  WHEN THE SAMPLE SIZE 
+C        IS 25 OR LESS, HOWEVER, THE USER MAY WANT TO CONSIDER THE
+C        WELL-ESTABLISHED DIXON TEST AS AN ALTERNATIVE.  THAT TEST IS 
+C        DISCUSSED IN MANY STATISTICS BOOKS.
+*/
+
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              void rej1(const float * __restrict __attribute__((aligned(64))) y,
+                        const int32_t n,
+                        int32_t &npass,
+                        int32_t * __restrict __attribute__((aligned(64))) nrej,
+                        float &smean,
+                        float &ssd,
+                        int32_t &iflag) {
+                  constexpr float CNORM = 1.349f;
+                  constexpr float C1    = 2.576f;
+                  constexpr float C2    = 9.573f;
+                  constexpr float C3    = -3.013f;
+                  constexpr float C4    = -0.6989f;
+                  constexpr float C5    = 2.576f; 
+                  constexpr float C6    = 7.889f;
+                  constexpr float C7    = 1.687f;
+                  constexpr float C8    = -0.6729f;
+                  float sigmlt,rna,rmin,bound;
+                  register float r;
+                  int32_t nadj,nit,l,nlo,nhi,ngood;
+                  register int32_t k; 
+                  bool lg = false;
+                  // CHECK FOR VALIDITY OF INPUT VALUES 
+                  if(n<15) {
+                     iflag = 1;
+                  }
+                  else if(npass<1){
+                     iflag = 2;
+                 }
+                 else {
+#if defined __INTEL_COMPILER
+                     __assume_aligned(y,64);
+		     __assume_aligned(nrej,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                     y = (float*)__builtin_assume_aligned(y,64);
+		     nrej = (int32_t*)__builtin_assume_aligned(nrej,64);
+#endif
+                     iflag = 0;
+    
+                     // SORT Y-VALUES
+                     std::sort(y,y+n);
+                     // DETERMINE OUTLIERS BY FINDING THE SHORTEST INTERVAL COVERING
+                     // HALF THE POINTS
+                     nadj = n;
+                     nit = 0;
+label_10:
+                     nit += 1;
+                     rna = (float)nadj;
+                     if((nadj%2)==0) {
+                        sigmlt = C1+C2*ceph_powf(rna+C3,C4);
+                     }
+                     else {
+                        sigmlt = C+C6*ceph_powf(rna+C7,C8);
+                    }
+                    l = (nadj+1)/2;
+                    rmin = y[n]-y[0];
+#if defined __INTEL_COMPILER
+#pragma loop_count min(15),avg(1000),max(5000)
+#endif
+                    for(int32_t i = 1; i != (n-l); ++i) {
+                        r = y[i+l]-y[i];
+                        if(r<=rmin) {
+                           rmin = r;
+                           k = i;
+                        }
+                    }
+                    smean = 0.5f*(y[k]+y[k+l]);
+                    bound = sigmlt*rmin/cnorm;
+                    // TRIM OUTLIERS AT LOWER END
+                    nlo = 1;
+label_30: 
+                    if(smean-y[nlo]>bound) {
+                       nlo += 1;
+                       goto label_10;
+                    }
+    // TRIM OUTLIERS AT UPPER END
+                    nhi = n;
+label_40:
+                    if(y[nhi]-smean>bound) {
+                       nhi -= 1;
+                       goto label_40;
+                    }
+                    ngood = nhi-nlo+1;
+                    nrej[nit] = nadj-ngood;
+                    lg = (nit==npass) || (ngood < 15);
+                    int32_t tmp = (int32_t)(0.01*rna);
+                    if(nrej[nit]<=1+tmp || lg) {
+                       npass = nit;
+        // COMPUTE MEAN AND STANDARD DEVIATION OF NON-REJECTED VALUES
+                       smean = 0.0f;
+#if defined __INTEL_COMPILER
+#pragma loop_count min(15),avg(1000),max(5000)
+#pragma simd reduction(+:s)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:smean), aligned(y:64), linear(y:1)
+#endif
+                         for(int32_t i = nlo; i != nhi; ++i) {
+                             smean = smean+y[i];
+                         }   
+                         smean = smean/(float)ngood;
+                         ssd = 0.0f;
+#if defined __INTEL_COMPILER
+#pragma loop_count min(15),avg(1000),max(5000)
+#pragma simd reduction(+:ssd)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:ssd), aligned(y:64), linear(y:1)
+#endif
+                         for(int32_t i = nlo; i != nhi; ++i){
+			     register float yi = y[i];
+                             ssd = ssd+(yi-smean)*(yi-smean);
+                            }         
+                 }
+                  else {
+                         nadj = ngood;
+                         goto label_10;
+                   }
+
+              }
+          }
+
+/*
+   COMPUTE MEDIAN OF DATA BETWEEN POSITIONS X(NLO) AND X(NHI)
+   INCLUSIVE.  DATA IN THIS REGION OF VECTOR X ARE ALTERED.
+*/
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              float median(float * __restrict x,
+                           const int32_t nlo,
+                           const int32_t nhi) {
+                   float result;
+                   int32_t i,j;
+    // SORT REGION OF INTEREST IN VECTOR X
+                   std::sort(x+nlo,x+nhi);
+    // COMPUTE MEDIAN
+                   i = (nlo+nhi)/2;
+                   j = (nlo+nhi+1)/2;
+                   result = 0.0f;
+                   result = (x[i]+x[j])*0.5f;
+                   return (result);
+               }	  
+
+
+	      
 } //math
 
 
