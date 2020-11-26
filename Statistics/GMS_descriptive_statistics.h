@@ -1016,7 +1016,107 @@ label_40:
                    result = 0.0f;
                    result = (x[i]+x[j])*0.5f;
                    return (result);
-               }	  
+               }
+
+/*
+   COMPUTE MEDIAN ABSOLUTE DEVIATION (MAD) OF X FROM C, AN ESTIMATE 
+C--- OF THE CENTER OF DATA, BETWEEN X(NLO) AND X(NHI) INCLUSIVE.  VECTOR
+C--- X IS EXPECTED TO BE SORTED AND IS UNCHANGED BY THIS SUBROUTINE.
+C--- NOTE: IF THE NUMBER OF ENTRIES OF INTEREST, N, IS EVEN THE MAD IS
+C--- THE N/2 LARGEST DEVIATION, A SLIGHT OVERESTIMATE.
+*/
+
+	      __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              float mad(const float * __restrict __attribute__((aligned(64))) x,
+                        const int32_t nlo,
+                        const int32_t nhi,
+                        const float c) {
+                float amad = 0.0f;
+                register int32_t mlo;
+                int32_t mhi,k;
+                mlo = nlo;
+                mhi = nhi;
+                k = (mhi-mlo)/2;
+#if defined __INTEL_COMPILER		
+#pragma loop_count min(15),avg(1000),max(5000)
+#endif
+               for(int32_t  i = 0; i != k; ++i) {
+                   if(x[mhi]+x[mlo]>2.0*c) goto label_10;
+                   mlo += 1;
+                   goto label_20;
+label_10:
+                   mhi -= 1;
+               }
+label_20:
+               amad = std::max(std::abs(x[mhi]-c),std::abs(x[mlo]-c));
+               return (amad);
+           }
+
+
+/*
+    PURPOSE--THIS SUBROUTINE COMPUTES THE
+C              SAMPLE AUTOCORRELATION COEFFICIENT 
+C              OF THE DATA IN THE INPUT VECTOR X. 
+C              THE SAMPLE AUTOCORRELATION COEFFICIENT =  THE CORRELATION
+C              BETWEEN X(I) AND X(I+1) OVER THE ENTIRE SAMPLE.
+C              THE AUTOCORRELATION COEFFICIENT COEFFICIENT WILL BE A
+C              SINGLE PRECISION VALUE BETWEEN -1.0 AND 1.0
+C              (INCLUSIVELY). 
+*/
+
+               __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+              __ATTR_ALIGN__(32)
+              static inline
+              float autoco(float * __restrict __attribute__((aligned(64))) x,
+                           const int32_t n) {
+                float xautoc = 0.0f;
+                float an,xbar,xbar1,xbar2;
+                register float sum1,sum2,sum3;
+                int32_t nm1,ip1;
+                an = (float)n;
+#if defined __INTEL_COMPILER
+                __assume_aligned(x,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+		x = (float*)__builtin_assume_aligned(x,64);
+#endif
+#if defined __INTEL_COMPILER
+#pragma loop_count min(2),avg(1000),max(5000)
+#pragma simd reduction(+:xbar)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:xbar), aligned(x:64)
+                for(int32_t i = 0; i != n; ++i) {
+                    xbar = xbar+x[i];
+                }
+                xbar1 = xbar-x[n-1];
+                xbar1 = xbar1/(an-1.0f);
+                xbar2 = xbar-x[0];
+                xbar2 = xbar2/(an-1.0f);
+                sum1 = 0.0f;
+                sum2 = 0.0f;
+                sum3 = 0.0f;
+                nm1 = n-1;
+#if defined __INTEL_COMPILER
+#pragma loop_count min(2),avg(1000),max(5000)
+#pragma simd reduction(+:sum1,sum2,sum3)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:sum1,sum2,sum3), aligned(x:64)
+#endif
+               for(int32_t i = 0; i != nm1; ++i) {
+                   ip1 += 1;
+                   register float tip1 = x[ip1];
+                   register float tx   = x[i];
+                   sum1 = sum1+(tx-xbar1)*(tip1-xbar2);
+                   sum2 = sum2+(tx-xbar1)*(tx-xbar1);
+                   sum3 = sum3+(tip1-xbar2)*(tip1-xbar2);
+               }
+               xautoc = sum1/std::sqrtf(sum2*sum3);
+               return (xautoc);
+            }
+
 
 
 	      
