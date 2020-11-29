@@ -12,9 +12,10 @@
 #include "GMS_cephes.h"
 
 /*
-       Converted from F90 implementation of the following ASA algorithms
+      Converted to C++ from F90 implementation of the following ASA algorithms
       ALGORITHM AS 154  APPL. STATIST. (1980) VOL.29, P.311
       ALGORITHM AS 182  APPL. STATIST. (1982) VOL.31, NO.2
+      Modified by Bernard Gingold on 29-11-2020 SUN 2:53PM +00200
 */
 
 /*
@@ -679,13 +680,13 @@ void starma(const int32_t ip,
 !   SEE REMARK AS R17 APPL. STATIST. (1976) VOL.25, P.323
 */
 
-__attribute__((aligned(32)))
-__attribute__((always_inline))
-__attribute__((hot))
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__
 static inline
 void inclu2(const int32_t np,
             const float weight,
-            const float * __restrict __attribute__((aligned(64))) xnext,
+            float * __restrict __attribute__((aligned(64))) xnext,
             float * __restrict __attribute__((aligned(64))) xrow,
             const float ynext,
             float * __restrict __attribute__((aligned(64))) d,
@@ -710,10 +711,19 @@ void inclu2(const int32_t np,
     y = ynext;
     wt = weight;
     if(wt<=0.0f)
+#if defined __INTEL_COMPILER || defined __ICC
     __assume_aligned(xrow,64);
     __assume_aligned(xnext,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+    xrow = (float*)__builtin_assume_aligned(xrow,64);
+    xnext= (float*)__builtin_assume_aligned(xnext,64);
+#endif
+#if defined __INTEL_COMPILER || defined __ICC
 #pragma vector aligned
 #pragma vector always
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(xrow:64,xnext:64)
+#endif
      for(int32_t i = 0; i != np; ++i) {
          xrow[i] = xnext[i];
      } 
@@ -737,8 +747,12 @@ void inclu2(const int32_t np,
             wt = cbar * wt;
             if(i != np) {
                 i1 = i + 1;
+#if defined __INTEL_COMPILER || defined __ICC		
 #pragma vector aligned
 #pragma vector always
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(xrow:64,rbar:64)
+#endif
                 for(int32_t k = i1; k != np; ++i1) {
                     ithisr += 1;
                     xk = xrow[k];
@@ -769,20 +783,26 @@ lab_40:
 !   IN THE TRIANGULAR SYSTEM RBAR AND THETAB.
 */
 
-__attribute__((aligned(32)))
-__attribute__((always_inline))
-__attribute__((hot))
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__
 static inline
 void regres(const int32_t np,
             const int32_t nrbar,
-            const float * __restrict __attribute__((aligned(64))) rbar,
-            const float * __restrict __attribute__((aligned(64))) thetab,
+            float * __restrict __attribute__((aligned(64))) rbar,
+            float * __restrict __attribute__((aligned(64))) thetab,
             float * __restrict __attribute__((aligned(64))) beta) {
     register float bi;
     register int32_t im,jm,ithisr;
+#if defined __INTEL_COMPILER || defined __ICC
     __assume_aligned(rbar,64);
     __assume_aligned(thetab,64);
     __assume_aligned(beta,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+    rbar   = (float*)__builtin_assume_aligned(rbar,64);
+    thetab = (float*)__builtin_assume_aligned(thetab,64);
+    beta   = (float*)__builtin_assume_aligned(beta,64);
+#endif
     ithisr = nrbar;
     im = np;
     for(int32_t i = 0; i != np; ++i) {
@@ -790,8 +810,12 @@ void regres(const int32_t np,
         if(im!=np) {
             i1 = i - 1;
             jm = np;
+#if defined __INTEL_COMPILER
 #pragma vector aligned
 #pragma vector always
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(rbar:64,beta:64)
+#endif
             for(int32_t j = 0; j != i1; ++j) {
                 bi = bi - rbar[ithisr] * beta[jm];
                 ithisr -= 1;
@@ -802,6 +826,175 @@ void regres(const int32_t np,
         im -= 1;
     }
 }
+
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__
+static inline
+void karma(const int32_t ip,
+           const int32_t iq,
+	   const int32_t ir,
+	   float * __restrict __attribute__((aligned(64))) phi,
+	   float * __restrict __attribute__((aligned(64))) theta,
+	   float * __restrict __attribute__((aligned(64))) a,
+	   float * __restrict __attribute__((aligned(64))) p,
+	   float * __restrict __attribute__((aligned(64))) v,
+	   const int32_t n,
+	   float * __restrict __attribute__((aligned(64))) w,
+	   float * __restrict __attribute__((aligned(64))) resid,
+	   float &sumlog,
+	   float &ssq,
+	   int32_t iupd,
+	   const float delta,
+	   float * __restrict __attribute__((aligned(64))) e,
+	   int32_t &nit) {
+
+     float     wnext, a1, dt, et, ft, ut, g;
+     int32_t   i, ii, ind, inde, indn, indw, ir1, j, l;
+     ir1 = ir - 1;
+#if defined __INTEL_COMPILER || defined __ICC
+     __assume_aligned(e,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     e = (float*)__builtin_assume_aligned(e,64);
+#endif
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vector aligned
+#pragma vector always
+#elif defined __GNUC_ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(e:64)
+#endif
+     for(i = 0; i != ir; ++i) {
+         e[i] = 0.0f;
+     }
+     inde = 1;
+#if defined __INTEL_COMPILER || defined __ICC
+     __assume_aligned(phi,64);
+     __assume_aligned(theta,64);
+     __assume_aligned(a,64);
+     __assume_aligned(p,64);
+     __assume_aligned(v,64);
+     __assume_aligned(w,64);
+     __assume_aligned(resid,64);
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+     phi   = (float*)__builtin_assume_aligned(phi,64);
+     theta = (float*)__builtin_assume_aligned(theta,64);
+     a     = (float*)__builtin_assume_aligned(a,64);
+     p     = (float*)__builtin_assume_aligned(p,64);
+     v     = (float*)__builtin_assume_aligned(v,64);
+     w     = (float*)__builtin_assume_aligned(w,64);
+     resid = (float*)__builtin_assume_aligned(resid,64);
+     //  FOR NON-ZERO VALUES OF NIT, PERFORM QUICK RECURSIONS.
+     if(nit==0) {
+        for(i = 0; i != n; ++i) {
+            wnext = w[i];
+	    // Prediction
+	    if(iupd != 1 || i != 0) {
+               dt = 0.0f;
+	       if(ir != 1) dt = p[ir+1];
+	       if(dt < delta) goto L100;
+	       a1 = a[0];
+	       if(ir != 1) {
+                  for(j = 0; j != ir1; ++j) {
+                      a[j] = a[j+1];
+		  }
+	       }
+	       a[ir] = 0.0f;
+	       if(ip != 0) {
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma ivdep
+#pragma vector aligned
+#pragma vector always
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(a:64,phi:64)
+#endif
+                    for(j = 0; j != ip; ++j) {
+                        a[j] = a[j] + phi[j] * a1;
+		    }
+	       }
+	       ind = 0;
+	       indn = ir;
+	       for(l = 0; l != ir; ++l) {
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vector aligned
+#pragma vector always
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(p:64,v:64)
+#endif
+                   for(j = l; j != ir; ++j) {
+                       ind += 1;
+		       p[ind] = v[ind];
+		       if(j != ir) {
+                          indn += 1;
+			  p[ind] = p[ind] + p[indn];
+		       }
+		   }
+	       }
+	    }
+
+	    // Updating
+	    ft = p[0];
+	    ut = wnext - a[0];
+	    if(ir != 1) {
+               ind = ir;
+	       for(j = 1; j != ir; ++j) {
+                   g = p[j] / ft;
+		   a[j] = a[j] + g * ut;
+		   for(l = j; l != ir; ++l) {
+                       ind += 1;
+		       p[ind] = p[ind] - g * p[l];
+		   }
+	       }
+	    }
+	    a[0] = wnext;
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vector aligned
+#pragma vector always
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd aligned(p:64)
+#endif
+            for(int32_t i = 0; i != ir; ++i) {
+                p[i] = 0.0f;
+	    }
+	    resid[i] = ut / ceph_sqrtf(rf);
+	    e[inde] = resid[i];
+	    inde += 1;
+	    if(inde > iq) inde = 1;
+	    ssq = ssq + ut * ut / ft;
+	    sumlog = sumlog + ceph_logf(ft);
+	}
+	nit = n;
+	return;
+     }
+     //  QUICK RECURSIONS
+     i = 1;
+L100:
+     nit = i - 1;
+     for(ii = i; ii != n; ++ii) {
+         et = w[ii];
+	 indw = ii;
+	 if(ip != 0) {
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vector aligned
+#pragma simd reduction(-:et)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(-:et) aligned(theta:64,e:64)
+#endif
+              for(j = 0; j != iq; ++j) {
+                  inde -= 1;
+		  if(inde==0) inde = iq;
+		  et = et - theta[j] * e[inde];
+	      }
+	 }
+	 e[inde] = et;
+	 resid[ii] = et;
+	 ssq = ssq + et * et;
+	 inde += 1;
+	 if(inde > iq) inde = 1;
+     }
+
+}
+
+
 
 
 } // stat
