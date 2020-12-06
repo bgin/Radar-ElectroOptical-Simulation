@@ -2662,7 +2662,9 @@ C
                RETURN
                E N D
         
-               SUBROUTINE  REGRES( X,K,N,MJ1,A,SIG2,AIC,IMIN )
+               SUBROUTINE  REGRES( X,K,N,MJ1,A,SIG2,AIC,IMIN ) !GCC$ ATTRIBUTES HOT :: REGRES !GCC$ ATTRIBUTES ALIGNED(32) :: REGRES
+                 implicit none
+#if 0                 
          C
          C  ...  Regression model fitting  ...
          C  ...  Order of the model is selected by AIC  ...
@@ -2676,20 +2678,24 @@ C
          C     Outputs:
          C        A(I,M): Regression coefficients of the model with order M
          C        SIG2:   Residual variances
-         C        AIC:    AIC's
-         C        IMIN:   MAICE order
-         C
-         cxx      IMPLICIT REAL*8(A-H,O-Z)
-         cc      DIMENSION  X(MJ1,1), A(MJ2,MJ2), SIG2(0:MJ2), AIC(0:MJ2)
-         cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
+        ! C        AIC:    AIC's
+        ! C        IMIN:   MAICE order
+        ! C
+        ! cxx      IMPLICIT REAL*8(A-H,O-Z)
+       !  cc      DIMENSION  X(MJ1,1), A(MJ2,MJ2), SIG2(0:MJ2), AIC(0:MJ2)
+       !  cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
+#endif
                INTEGER :: K, N, MJ1, IMIN
                REAL(8) :: X(MJ1,K+1), A(K,K), SIG2(0:K), AIC(0:K)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED X:64,A:64,SIG2:64,AIC:64
+#endif
                REAL(8) :: AICM
-         C
-               A(1:K, 1:K) = 0.0D0
-         C
+         
+               A(1:K, 1:K) = 0.0_8
+         
                CALL  COMAIC( X,N,K,MJ1,SIG2,AIC )
-         C
+         
                IMIN = 0
                AICM = AIC(0)
                DO 10  M=1,K
@@ -2699,46 +2705,63 @@ C
                END IF
                CALL  RECOEF( X,M,K,MJ1,A(1,M) )
             10 CONTINUE
-         C
+         
                RETURN
+               
                E N D
-         C
-         C
-               SUBROUTINE  COMAIC( X,N,K,MJ1,SIG2,AIC )
+       
+               SUBROUTINE  COMAIC( X,N,K,MJ1,SIG2,AIC ) !GCC$ ATTRIBUTES ALIGNED(32) :: COMAIC !GCC$ ATTRIBUTES HOT :: COMAIC
+#if defined __GFORTRAN__
+                   use omp_lib
+#endif
+#if 0                 
          C
          C  ...  This subroutine computes residual variances and AIC's  ...
-         C
-         C     Inputs:
+        ! C
+        ! C     Inputs:
          C        X(I,J):  Householder reduced form
          C        N:       Data length
          C        K:       Highest order
-         C        MJ1:     Adjustable dimension of X
-         C     Outputs:
-         C        SIG2(I): residual variance of the model with order I
-         C        AIC(I):  AIC of the model with order I
-         C
-         cxx      IMPLICIT  REAL*8(A-H,O-Z)
-         cc      DIMENSION  X(MJ1,1), AIC(0:K), SIG2(0:K)
-         cxx      DIMENSION  X(MJ1,K+1), AIC(0:K), SIG2(0:K)
+        ! C        MJ1:     Adjustable dimension of X
+        ! C     Outputs:
+        ! C        SIG2(I): residual variance of the model with order I
+       !  C        AIC(I):  AIC of the model with order I
+       !  C
+       !  cxx      IMPLICIT  REAL*8(A-H,O-Z)
+       !  cc      DIMENSION  X(MJ1,1), AIC(0:K), SIG2(0:K)
+       !  cxx      DIMENSION  X(MJ1,K+1), AIC(0:K), SIG2(0:K)
+#endif
                INTEGER :: N, K, MJ1
                REAL(8) :: X(MJ1,K+1), SIG2(0:K), AIC(0:K)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED X:64,SIG2:64,AIC:64
+#endif
                REAL(8) :: PI2, PVAR
-               DATA  PI2/6.28318531D0/
-         C
-               PVAR = 0.0D0
+               DATA  PI2/6.28318531_8/
+        
+               PVAR = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:PVAR)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:PVAR) LINEAR(I:1)
+#endif
                DO 10 I=K,0,-1
                PVAR = PVAR + X(I+1,K+1)**2
                SIG2(I) = PVAR / N
-         cxx   10 AIC(I)  = N*DLOG( PI2*SIG2(I) ) + N + 2*(I+1)
+        ! cxx   10 AIC(I)  = N*DLOG( PI2*SIG2(I) ) + N + 2*(I+1)
                AIC(I)  = N*DLOG( PI2*SIG2(I) ) + N + 2*(I+1)
             10 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         C
-         cc      SUBROUTINE  HUSHLD( X,D,MJ1,N,K )
-               SUBROUTINE  HUSHLD( X,MJ1,N,K )
+       
+               SUBROUTINE  HUSHLD( X,MJ1,N,K ) !GCC$ ATTRIBUTES ALIGNED(32) :: HUSHLD !GCC$ ATTRIBUTES HOT :: HUSHLD
+#if defined __GFORTRAN__
+                      use omp_lib
+#endif
+                   implicit none
+#if 0
          C
          C  ...  Householder transformation  ...
          C
@@ -2754,53 +2777,76 @@ C
          cxx      IMPLICIT  REAL*8(A-H,O-Z)
          cc      DIMENSION  X(MJ1,1), D(MJ1)
          cxx      DIMENSION  X(MJ1,K), D(MJ1)
+#endif
                INTEGER :: MJ1, N, K
                REAL(8) :: X(MJ1,K)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED X:64
+#endif
                REAL(8) :: D(MJ1), TOL, H, G, F, S
-         C
-               TOL = 1.0D-60
-         C
-         cxx      DO 100  II=1,K
+#if defined __ICC
+               !DIR$ ATTRIBUTES ALIGN : 64 :: D
+#endif
+         
+               TOL = 1.0e-60_8
+         
+        ! cxx      DO 100  II=1,K
                DO 101  II=1,K
-                 H = 0.0D0
+                 H = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:H)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:H) LINEAR(I:1)
+#endif
                  DO 10  I=II,N
                    D(I) = X(I,II)
-         cxx   10     H = H + D(I)**2
+        ! cxx   10     H = H + D(I)**2
                    H = H + D(I)**2
             10 CONTINUE
                  IF( H .GT. TOL )  GO TO 20
-                 G = 0.0D0
+                 G = 0.0_8
                  GO TO 100
             20   G = DSQRT( H )
                  F = X(II,II)
                  IF( F .GE. 0.0D0 )   G = -G
                  D(II) = F - G
                  H = H - F*G
-         C
+         
                  DO 30  I=II+1,N
-         cxx   30   X(I,II) = 0.0D0
-                 X(I,II) = 0.0D0
+         !cxx   30   X(I,II) = 0.0D0
+                 X(I,II) = 0.0_8
             30   CONTINUE
                  DO 60  J=II+1,K
-                   S = 0.0D0
+                   S = 0.0_8
+#if defined __ICC
+                   !DIR$ VECTOR ALIGNED
+                   !DIR$ SIMD REDUCTION(+:S)
+#elif defined __GFORTRAN__
+                   !$OMP SIMD REDUCTION(+:S) LINEAR(I:1)
+#endif           
                    DO 40  I=II,N
-         cxx   40     S = S + D(I)*X(I,J)
+         !cxx   40     S = S + D(I)*X(I,J)
                      S = S + D(I)*X(I,J)
             40     CONTINUE
                    S = S/H
                    DO 50  I=II,N
-         cxx   50     X(I,J) = X(I,J) - D(I)*S
+        ! cxx   50     X(I,J) = X(I,J) - D(I)*S
                      X(I,J) = X(I,J) - D(I)*S
             50     CONTINUE
             60   CONTINUE
            100 X(II,II) = G
            101 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         C
-               SUBROUTINE  RECOEF( X,M,K,MJ,A )
+       
+               SUBROUTINE  RECOEF( X,M,K,MJ,A ) !GCC$ ATTRIBUTES HOT :: RECOEF !GCC$ ATTRIBUTES ALIGNED(32) :: RECOEF
+#if defined __GFORTRAN__
+                     use omp_lib
+#endif
+                     implicit none
+#if 0
          C
          C  ...  Regression coefficients  ...
          C
@@ -2815,30 +2861,41 @@ C
          cxx      IMPLICIT REAL*8 (A-H,O-Z)
          cc      DIMENSION  X(MJ,1), A(1)
          cxx      DIMENSION  X(MJ,K+1), A(M)
+#endif
                INTEGER :: M, K, MJ
                REAL(8) :: X(MJ,K+1), A(M)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED X:64, A:64
+#endif
                REAL(8) :: SUM
-         C
+         !C
                A(M) = X(M,K+1)/X(M,M)
-         c-----
+         !c-----
                IF( M .EQ. 1 ) RETURN
-         c-----
+         !c-----
                DO 20 I=M-1,1,-1
                SUM = X(I,K+1)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM)
+#endif
                DO 10 J=I+1,M
-         cxx   10 SUM  = SUM - A(J)*X(I,J)
+         !cxx   10 SUM  = SUM - A(J)*X(I,J)
                SUM  = SUM - A(J)*X(I,J)
             10 CONTINUE
-         cxx   20 A(I) = SUM/X(I,I)
+         !cxx   20 A(I) = SUM/X(I,I)
                A(I) = SUM/X(I,I)
             20 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         C
-         cc      SUBROUTINE  REDUCT( SETX,Z,D,NMK,N0,K,MJ1,X )
-               SUBROUTINE  REDUCT1( SETX,Z,NMK,N0,K,MJ1,X )
+       
+               SUBROUTINE  REDUCT1( SETX,Z,NMK,N0,K,MJ1,X ) !GCC$ ATTRIBUTES HOT :: REDUCT1 !GCC$ ATTRIBUTES ALIGNED(32) :: REDUCT1
+
+                    implicit none
+#if 0
          C
          C  ...  Successive Householder reduction  ...
          C
@@ -2857,34 +2914,38 @@ C
          cc      DIMENSION  X(MJ1,1) , D(1), Z(1)
          cx      DIMENSION  X(MJ1,1) , Z(1)
          cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK)
+#endif
                INTEGER :: NMK, N0, K, MJ1
                REAL(8) :: Z(N0+NMK), X(MJ1,K+1)
-         C
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED Z:64,X:64
+#endif
+         
                L = MIN0( NMK,MJ1 )
                K1 = K + 1
                N1 = L
-         C
+         
                CALL  SETX( Z,N0,L,K,MJ1,0,X )
-         cc      CALL  HUSHLD( X,D,MJ1,L,K1 )
+        
                CALL  HUSHLD( X,MJ1,L,K1 )
                IF( N1 .GE. NMK )  RETURN
-         C
+         
             10 L = MIN0( NMK-N1,MJ1-K1 )
-         C
+         
                LK = L + K1
                N2 = N0 + N1
                CALL  SETX( Z,N2,L,K,MJ1,1,X )
-         cc      CALL  HUSHLD( X,D,MJ1,LK,K1 )
                CALL  HUSHLD( X,MJ1,LK,K1 )
                N1 = N1 + L
                IF( N1.LT.NMK )  GO TO 10
-         C
+         
                RETURN
-         C
+         
                E N D
-         C
-         C
-               SUBROUTINE  REDUCT( SETX,Z,NMK,N0,K,MJ1,X )
+        
+               SUBROUTINE  REDUCT( SETX,Z,NMK,N0,K,MJ1,X ) !GCC$ ATTRIBUTES HOT :: REDUCT !GCC$ ATTRIBUTES ALIGNED(32) :: REDUCT
+                   implicit none 
+#if 0
          C
          C  ...  Successive Householder reduction  ...
          C
@@ -2903,35 +2964,38 @@ C
          cc      DIMENSION  X(MJ1,1) , D(1), Z(1)
          cx      DIMENSION  X(MJ1,1) , Z(1)
          cxx      DIMENSION  X(MJ1,K+1) , Z(N0+NMK+K)
+#endif
                INTEGER :: NMK, N0, K, MJ1
                REAL(8) :: Z(N0+NMK+K), X(MJ1,K+1)
-         C
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED Z:64,X:64
+#endif        
                L = MIN0( NMK,MJ1 )
                K1 = K + 1
                N1 = L
-         C
-         cdd      CALL  SETX( Z,N0,L,K,MJ1,0,X )
+       
                CALL SETXAR( Z,N0,L,K,MJ1,0,X )
-         cc      CALL  HUSHLD( X,D,MJ1,L,K1 )
+        
                CALL  HUSHLD( X,MJ1,L,K1 )
                IF( N1 .GE. NMK )  RETURN
-         C
+         
             10 L = MIN0( NMK-N1,MJ1-K1 )
-         C
+         
                LK = L + K1
                N2 = N0 + N1
                CALL  SETX( Z,N2,L,K,MJ1,1,X )
-         cc      CALL  HUSHLD( X,D,MJ1,LK,K1 )
+        
                CALL  HUSHLD( X,MJ1,LK,K1 )
                N1 = N1 + L
                IF( N1.LT.NMK )  GO TO 10
-         C
+         
                RETURN
-         C
+         
                E N D
-         C
-         C
-               SUBROUTINE  SETXAR( Z,N0,L,K,MJ1,JSW,X )
+        
+               SUBROUTINE  SETXAR( Z,N0,L,K,MJ1,JSW,X ) !GCC$ ATTRIBUTES ALIGNED(32) :: SETXAR !GCC$ ATTRIBUTES HOT :: SETXAR
+                       implicit none
+#if 0
          C
          C  ...  Data matrix for AR model  ...
          C
@@ -2948,28 +3012,34 @@ C
          C
          cc      REAL*8  X(MJ1,1), Z(1)
          cxx      REAL*8  X(MJ1,K+1), Z(N0+L+K)
+#endif
                INTEGER :: N0, L, K, MJ1, JSW
                REAL(8) :: Z(N0+L+K), X(MJ1,K+1)
-         C
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED Z:64,X:64
+#endif            
                I0 = 0
                IF( JSW .EQ. 1 )     I0 = K+1
-         cxx      DO 10  I=1,L
+      
                DO 11  I=1,L
                  II = I + I0
                  JJ = N0 + K + I
                  X(II,K+1) = Z(JJ)
                DO 10  J=1,K
                  JJ = JJ - 1
-         cxx   10 X(II,J) = Z(JJ)
-               X(II,J) = Z(JJ)
+                 X(II,J) = Z(JJ)
             10 CONTINUE
             11 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         C
-               SUBROUTINE ARYULE( C,N,MAXM,SIG2,AIC,PARCOR,A,MAR )
+       
+               SUBROUTINE ARYULE( C,N,MAXM,SIG2,AIC,PARCOR,A,MAR ) !GCC$ ATTRIBUTES HOT :: ARYULE !GCC$ ATTRIBUTES ALIGNED(32) :: ARYULE
+#if defined __GFORTRAN__
+                         use omp_lib
+#endif
+                  implicit none
+#if 0
          C
          C  ...  Yule-Walker method  ...
          C
@@ -2987,30 +3057,41 @@ C
          cxx      IMPLICIT REAL*8 (A-H,O-Z)
          cxx      DIMENSION  C(0:MAXM), SIG2(0:MAXM), AIC(0:MAXM)
          cxx      DIMENSION  PARCOR(MAXM), A(MAXM,MAXM)
+#endif
+
                INTEGER :: N, MAXM, MAR
-               REAL(8) :: C(0:MAXM), SIG2(0:MAXM), AIC(0:MAXM), PARCOR(MAXM),
-              1           A(MAXM,MAXM)
+               REAL(8) :: C(0:MAXM), SIG2(0:MAXM), AIC(0:MAXM), PARCOR(MAXM), &
+                          A(MAXM,MAXM)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED C:64,SIG2:64,AIC:64,PARCOR:64,A:64
+#endif
                REAL(8) :: CONST, AICMIN, SUM
-         C
-               CONST = N*(DLOG(2*3.1415926535D0) + 1)
-         C
+         
+               CONST = N*(DLOG(2*3.1415926535_8) + 1)
+         
                SIG2(0) = C(0)
                AIC(0) = CONST + N*DLOG(SIG2(0)) + 2
                AICMIN = AIC(0)
                MAR = 0
-         C
+         
                DO 50 M=1,MAXM
                SUM  = C(M)
                IF (M.GE.2) THEN
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif
                DO 10 I=1,M-1
-         cxx   10 SUM  = SUM - A(I,M-1)*C(M-I)
+        ! cxx   10 SUM  = SUM - A(I,M-1)*C(M-I)
                SUM  = SUM - A(I,M-1)*C(M-I)
             10 CONTINUE
                END IF
                A(M,M) = SUM /SIG2(M-1)
                IF (M.GE.2) THEN
                DO 20 J=1,M-1
-         cxx   20 A(J,M) = A(J,M-1)-A(M,M)*A(M-J,M-1)
+        ! cxx   20 A(J,M) = A(J,M-1)-A(M,M)*A(M-J,M-1)
                A(J,M) = A(J,M-1)-A(M,M)*A(M-J,M-1)
             20 CONTINUE
                END IF
@@ -3024,9 +3105,13 @@ C
             50 CONTINUE
                RETURN
                E N D
-         C
-         C
-               SUBROUTINE ARMASP( A,M,B,L,SIG2,NF,SP )
+        
+               SUBROUTINE ARMASP( A,M,B,L,SIG2,NF,SP ) !GCC$ ATTRIBUTES ALIGNED(32) :: ARMASP !GCC$ ATTRIBUTES HOT :: ARMASP
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+           implicit none 
+#if 0                 
          C
          C  ...  Logarithm of the power spectrum of the ARMA model  ...
          C
@@ -3044,46 +3129,84 @@ C
          cxx      DIMENSION A(M), B(L)
          cc      DIMENSION SP(0:NF), H(0:500), FR(0:500), FI(0:500)
          cxx      DIMENSION SP(0:NF), H(0:M+L), FR(0:NF), FI(0:NF)
+#endif
                INTEGER :: M, L, NF
                REAL(8) :: A(M), B(L), SIG2, SP(0:NF)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED A:64,B:64,SP:64
+#endif
                REAL(8) :: H(0:M+L), FR(0:NF), FI(0:NF)
-         C
-               H(0) = 1.0D0
+#if defined __ICC
+               !DIR$ ATTRIBUTES ALIGN : 64 :: H,FR,FI
+#endif         
+               H(0) = 1.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+!$OMP SIMD LINEAR(I:1)
+#endif
                DO 10 I=1,M
-         cxx   10 H(I) = -A(I)
+         !cxx   10 H(I) = -A(I)
                H(I) = -A(I)
             10 CONTINUE
-         C
+         
                CALL  FOURIE( H,M+1,NF+1,FR,FI )
-         C
+#if defined __ICC
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+               !$OMP SIMD LINEAR(I:1)
+#endif        
                DO 20 I=0,NF
-         cxx   20 SP(I) = SIG2/( FR(I)**2 + FI(I)**2 )
+         !cxx   20 SP(I) = SIG2/( FR(I)**2 + FI(I)**2 )
                SP(I) = SIG2/( FR(I)**2 + FI(I)**2 )
             20 CONTINUE
-         C
+         
                IF (L .EQ. 0) GO TO 41
-               H(0) = 1.0D0
+               H(0) = 1.0_8
+#if defined __ICC
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+               !$OMP SIMD LINEAR(I:1)
+#endif
                DO 30 I=1,L
-         cxx   30 H(I) = -B(I)
+         !cxx   30 H(I) = -B(I)
                H(I) = -B(I)
             30 CONTINUE
                CALL  FOURIE( H,L+1,NF+1,FR,FI )
+#if defined __ICC
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+               !$OMP SIMD LINEAR(I:1)
+#endif
                DO 40 I=0,NF
-         cxx   40 SP(I) = SP(I)*( FR(I)**2 + FI(I)**2 )
+         !cxx   40 SP(I) = SP(I)*( FR(I)**2 + FI(I)**2 )
                SP(I) = SP(I)*( FR(I)**2 + FI(I)**2 )
             40 CONTINUE
             41 CONTINUE
-         C
+#if defined __ICC
+            !DIR$ VECTOR ALIGNED
+            !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+            !$OMP SIMD LINEAR(I:1)
+#endif         
                DO 50 I=0,NF
-         cxx   50 SP(I) = DLOG10( SP(I) )
+         !cxx   50 SP(I) = DLOG10( SP(I) )
                SP(I) = DLOG10( SP(I) )
             50 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         C
-               SUBROUTINE FOURIE( X,N,M,FC,FS )
+        
+               SUBROUTINE FOURIE( X,N,M,FC,FS ) !GCC$ ATTRIBUTES ALIGNED(32) :: FOURIE !GCC$ ATTRIBUTES HOT :: FOURIE
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+           implicit none    
+#if 0               
          C
          C  ...  Discrete Fourier transformation by Goertzel method  ...
          C
@@ -3096,31 +3219,45 @@ C
          C
          cxx      IMPLICIT REAL*8 (A-H,O-Z)
          cxx      DIMENSION  X(N), FC(M), FS(M)
+#endif
                INTEGER :: N, M
                REAL(8) :: X(N), FC(M), FS(M)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED X:64,FC:64,FS:64
+#endif
                REAL(8) :: PI, W, CI, SI, T0, T1, T2
-               DATA  PI/3.14159265358979D0/
-         C
+               DATA  PI/3.1415926535897932384626433_8/
+         
                W = PI/(M-1)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+!$OMP SIMD LINEAR(I:1)
+#endif
                DO 20 I=1,M
                CI = DCOS(W*(I-1))
                SI = DSIN(W*(I-1))
-               T1 = 0.0
-               T2 = 0.0
+               T1 = 0.0_8
+               T2 = 0.0_8
                DO 10 J=N,2,-1
                  T0 = 2*CI*T1 - T2 + X(J)
                  T2 = T1
-         cxx   10   T1 = T0
-               T1 = T0
+                 T1 = T0
             10 CONTINUE
                FC(I) = CI*T1 - T2 + X(1)
-         cxx   20 FS(I) = SI*T1
                FS(I) = SI*T1
             20 CONTINUE
          C
                RETURN
                E N D
-               SUBROUTINE  MOMENT( Y,N,YMEAN,VAR )
+
+               SUBROUTINE  MOMENT( Y,N,YMEAN,VAR ) !GCC$ ATTRIBUTES HOT :: MOMENT !GCC$ ATTRIBUTES ALIGNED(32) :: MOMENT
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+           implicit none    
+#if 0                   
          C
          C  ...  Mean and variance of the data  ...
          C
@@ -3133,27 +3270,46 @@ C
          C
          cxx      IMPLICIT REAL*8(A-H,O-Z)
          cxx      DIMENSION  Y(N)
+#endif
+
                INTEGER :: N
                REAL(8) :: Y(N), YMEAN, VAR, SUM
-         C
-               SUM = 0.0D0
+#if defined __ICC
+              !DIR$ ASSUME_ALIGNED Y:64
+#endif         
+               SUM = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif
                DO 10 I=1,N
-         cxx   10 SUM = SUM + Y(I)
-               SUM = SUM + Y(I)
+                     SUM = SUM + Y(I)
             10 CONTINUE
                YMEAN = SUM/N
-               SUM = 0.0D0
+               SUM = 0.0_8
+#if defined __ICC
+               !DIR$ VECTOR ALIGNED
+               !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+               !$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif               
                DO 20 I=1,N
-         cxx   20 SUM = SUM + (Y(I)-YMEAN)**2
-               SUM = SUM + (Y(I)-YMEAN)**2
+                     SUM = SUM + (Y(I)-YMEAN)**2
             20 CONTINUE
                VAR = SUM/N
-         C
+         
                RETURN
                E N D
-         cc      SUBROUTINE  SMOOTH( F,M,MJ,NDIM,NS,NFE,NPE,VFS,VPS,XFS,XPS,
-         cc     *                    VSS,XSS )
-               SUBROUTINE  SMOOTH( F,M,NDIM,NS,NFE,NPE,VFS,VPS,XFS,XPS,VSS,XSS )
+
+        
+               SUBROUTINE  SMOOTH( F,M,NDIM,NS,NFE,NPE,VFS,VPS,XFS,XPS,VSS,XSS ) !GCC$ ATTRIBUTES HOT :: SMOOTH !GCC$ ATTRIBUTES ALIGNED(32) :: SMOOTH
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+           implicit none    
+#if 0                      
          C
          C  ...  Fixed Interval Smoother (General Form)  ...
          C
@@ -3185,153 +3341,181 @@ C
          cxx      DIMENSION  XFS(M,NDIM), XPS(M,NDIM), XSS(M,NDIM)
          cxx      DIMENSION  VFS(M,M,NDIM), VPS(M,M,NDIM), VSS(M,M,NDIM)
          cxx      DIMENSION  WRK(M,M), SGAIN(M,M)
+#endif
                INTEGER :: M, NDIM, NS, NFE, NPE
-               REAL(8) :: F(M,M), VFS(M,M,NDIM), VPS(M,M,NDIM), XFS(M,NDIM),
-              1           XPS(M,NDIM), VSS(M,M,NDIM), XSS(M,NDIM)
-               REAL(8) :: XS(M), VS(M,M), VP(M,M), WRK(M,M), SGAIN(M,M), VDET,
-              1           SUM
-         C
-         C
-         C  ...  SMOOTHING  ...
-         C
-         cxx      DO 10 II=NFE,NPE
-         cxx      DO 10  I=1,M
+               REAL(8) :: F(M,M), VFS(M,M,NDIM), VPS(M,M,NDIM), XFS(M,NDIM), &
+                         XPS(M,NDIM), VSS(M,M,NDIM), XSS(M,NDIM)
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED F:64,VFS:64,VPS:64,XFS:64,XPS:64,VSS:64,XSS:64
+#endif
+               REAL(8) :: XS(M), VS(M,M), VP(M,M), WRK(M,M), SGAIN(M,M), VDET, &
+                         SUM
+#if defined __ICC
+               !DIR$ ATTRIBUTES ALIGN : 64 :: XS,VS,VP,WRK,SGAIN
+#endif
+        
                DO 12 II=NFE,NPE
                DO 11  I=1,M
                XSS(I,II)   = XFS(I,II)
                DO 10  J=1,M
-         cxx   10 VSS(I,J,II) = VFS(I,J,II)
+         !cxx   10 VSS(I,J,II) = VFS(I,J,II)
                VSS(I,J,II) = VFS(I,J,II)
             10 CONTINUE
             11 CONTINUE
             12 CONTINUE
-         cxx      DO 20  I=1,M
+         !cxx      DO 20  I=1,M
                DO 21  I=1,M
                XS(I)   = XFS(I,NFE)
                DO 20  J=1,M
-         cxx   20 VS(I,J) = VFS(I,J,NFE)
+        ! cxx   20 VS(I,J) = VFS(I,J,NFE)
                VS(I,J) = VFS(I,J,NFE)
             20 CONTINUE
             21 CONTINUE
-         C
+         
                DO 500  II=NFE-1,NS,-1
-         C
+         
                NZERO = 0
                DO 100 I=1,M
-         cxx  100 IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 
+        ! cxx  100 IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 
                IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 1
            100 CONTINUE
-         C
+         
                IF( NZERO.EQ.0 )  THEN
-         cxx         DO 110  I=1,M
+         !cxx         DO 110  I=1,M
                   DO 111  I=1,M
                   XS(I)     = XFS(I,II)
                   XSS(I,II) = XFS(I,II)
                   DO 110  J=1,M
                   VS(I,J)     = VFS(I,J,II)
-         cxx  110    VSS(I,J,II) = VFS(I,J,II)
+        ! cxx  110    VSS(I,J,II) = VFS(I,J,II)
                   VSS(I,J,II) = VFS(I,J,II)
            110    CONTINUE
            111    CONTINUE
-         C
+         
                ELSE
-         cxx      DO 410  I=1,M
+         !cxx      DO 410  I=1,M
                DO 411  I=1,M
                DO 410  J=1,M
-         cxx  410 VP(I,J) = VPS(I,J,II+1)
+        ! cxx  410 VP(I,J) = VPS(I,J,II+1)
                VP(I,J) = VPS(I,J,II+1)
            410 CONTINUE
            411 CONTINUE
-         C
-         cc      CALL  GINVRS( VP,VDET,M,40 )
+        
                CALL  GINVRS( VP,VDET,M )
-         C
-         cxx      DO 425  I=1,M
+        
                DO 426  I=1,M
                DO 425  J=1,M
-               SUM = 0.0D0
+               SUM = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM)
+#endif
                DO 420  IJ=1,M
-         cxx  420 SUM = SUM + VFS(I,IJ,II)*F(J,IJ)
+        ! cxx  420 SUM = SUM + VFS(I,IJ,II)*F(J,IJ)
                SUM = SUM + VFS(I,IJ,II)*F(J,IJ)
            420 CONTINUE
-         cxx  425 WRK(I,J) = SUM
+         !cxx  425 WRK(I,J) = SUM
                WRK(I,J) = SUM
            425 CONTINUE
            426 CONTINUE
-         C
-         cxx      DO 440  I=1,M
+       
                DO 441  I=1,M
                DO 440  J=1,M
-               SUM = 0.0D0
+               SUM = 0.0_8
+#if defined __ICC
+               !DIR$ VECTOR ALIGNED
+               !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+               !$OMP SIMD REDUCTION(+:SUM)
+#endif              
                DO 430 IJ=1,M
-         cxx  430 SUM = SUM + WRK(I,IJ)*VP(IJ,J)
+         !cxx  430 SUM = SUM + WRK(I,IJ)*VP(IJ,J)
                SUM = SUM + WRK(I,IJ)*VP(IJ,J)
            430 CONTINUE
-         cxx  440 SGAIN(I,J) = SUM
+        ! cxx  440 SGAIN(I,J) = SUM
                SGAIN(I,J) = SUM
            440 CONTINUE
            441 CONTINUE
-         C
-         cxx      DO 450  I=1,M
+         
                DO 451  I=1,M
                XS(I) = XFS(I,II)
                DO 450  J=1,M
-               WRK(I,J) = 0.0D0
-         cxx  450 VS (I,J) = VFS(I,J,II)
+               WRK(I,J) = 0.0_8
+         !cxx  450 VS (I,J) = VFS(I,J,II)
                VS (I,J) = VFS(I,J,II)
            450 CONTINUE
            451 CONTINUE
-         C
-         cxx      DO 460  J=1,M
+        
                DO 461  J=1,M
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                  !$OMP SIMD 
+#endif 
                DO 460  I=1,M
-         cxx  460 XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
+         !cxx  460 XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
                XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
            460 CONTINUE
            461 CONTINUE
-         C
-         cxx      DO 470  J=1,M
-         cxx      DO 470 IJ=1,M
+        
                DO 472  J=1,M
                DO 471 IJ=1,M
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                  !$OMP SIMD 
+#endif 
                DO 470  I=1,M
-         cxx  470 WRK(I,J)=WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
+         !cxx  470 WRK(I,J)=WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
                WRK(I,J)=WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
            470 CONTINUE
            471 CONTINUE
            472 CONTINUE
-         C
-         cxx      DO 480  J=1,M
-         cxx      DO 480 IJ=1,M
+       
                DO 482  J=1,M
                DO 481 IJ=1,M
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                  !$OMP SIMD 
+#endif                   
                DO 480  I=1,M
-         cxx  480 VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
+         !cxx  480 VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
                VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
            480 CONTINUE
            481 CONTINUE
            482 CONTINUE
                DO 485 I=1,M
-         cxx  485 IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
-               IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
+        ! cxx  485 IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
+               IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0_8
            485 CONTINUE
-         C
-         cxx      DO 490  I=1,M
+        
                DO 491  I=1,M
                XSS(I,II) = XS(I)
                DO 490  J=1,M
-         cxx  490 VSS(I,J,II) = VS(I,J)
+         !cxx  490 VSS(I,J,II) = VS(I,J)
                VSS(I,J,II) = VS(I,J)
            490 CONTINUE
            491 CONTINUE
                END IF
-         C
+         
            500 CONTINUE
-         C
+         
                RETURN
                E N D
-         cc      SUBROUTINE  GINVRS( A,DET,M,MJ )
-               SUBROUTINE  GINVRS( A,DET,M )
+       
+
+               SUBROUTINE  GINVRS( A,DET,M ) !GCC$ ATTRIBUTES ALIGNED(32) :: GINVRS !GCC$ ATTRIBUTES HOT :: GINVRS
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+                 implicit none    
+#if 0  
          C
          C  ...  Generalized inverse of a square matrix A  ...
          C
@@ -3346,21 +3530,34 @@ C
          cxx      IMPLICIT REAL*8(A-H,O-Z)
          cc      DIMENSION  A(MJ,MJ), IND(50)
          cxx      DIMENSION  A(M,M), IND(M+1)
+#endif
                INTEGER :: M, IND(M+1)
+ #if defined __ICC
+               !DIR$ ATTRIBUTES ALIGN : 64 :: IND
+#endif              
                REAL(8) :: A(M,M), DET, EPS, AMAX, SUM
-         C
-               EPS = 1.0D-10
-         C
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED A:64
+#endif
+
+               EPS = 1.0E-10_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+!$OMP SIMD LINEAR(I:1)
+#endif
+
                DO 10  I=1,M
-         cxx   10 IND(I) = I
+         !cxx   10 IND(I) = I
                 IND(I) = I
             10 CONTINUE
-         cc------------
+        ! cc------------
                I0 = 0
                LMAX = 0
-         cc------------
+        ! cc------------
                DO 60  L=1,M
-               AMAX = 0.0D0
+               AMAX = 0.0_8
                DO 20  I=L,M
                IF( A(IND(I),IND(I)).GT.AMAX )  THEN
                  AMAX = A(IND(I),IND(I))
@@ -3370,62 +3567,73 @@ C
                IF( AMAX.GT.EPS*A(IND(1),IND(1)) )  THEN
                   IMAX = IND(I0)
                   DO 30  I=I0,L+1,-1
-         cxx   30    IND(I) = IND(I-1)
+       !  cxx   30    IND(I) = IND(I-1)
                   IND(I) = IND(I-1)
             30    CONTINUE
                   IND(L) = IMAX
                   LMAX   = L
-         cxx         DO 40  I=L+1,M
+        ! cxx         DO 40  I=L+1,M
                   DO 41  I=L+1,M
                   A(IND(I),IMAX) = -A(IND(I),IMAX)/A(IMAX,IMAX)
                   DO 40  J=L+1,M
-         cxx   40    A(IND(I),IND(J)) = A(IND(I),IND(J))
-                  A(IND(I),IND(J)) = A(IND(I),IND(J))
-              *                    + A(IND(I),IMAX)*A(IMAX,IND(J))
+        ! cxx   40    A(IND(I),IND(J)) = A(IND(I),IND(J))
+                  A(IND(I),IND(J)) = A(IND(I),IND(J)) &
+                                 + A(IND(I),IMAX)*A(IMAX,IND(J))
             40    CONTINUE
             41    CONTINUE
                ELSE
-         cxx         DO 50  I=L,M
+        ! cxx         DO 50  I=L,M
                   DO 51  I=L,M
                   DO 50  J=L,M
-         cxx   50    A(IND(I),IND(J)) = 0.0D0
-                  A(IND(I),IND(J)) = 0.0D0
+       !  cxx   50    A(IND(I),IND(J)) = 0.0D0
+                  A(IND(I),IND(J)) = 0.0_8
             50    CONTINUE
             51    CONTINUE
                   GO TO 70
                END IF
             60 CONTINUE
-         C
-            70 DET = 1.0D0
+       !  C
+            70 DET = 1.0_8
                DO 80  I=1,M
-         C     DET = DET*A(IND(I),IND(I))
-         C     IF( A(IND(I),IND(I)).GT.EPS*AMAX )  THEN
-               IF( A(IND(I),IND(I)).GT.0.0D0 )  THEN
-                 A(IND(I),IND(I)) = 1.0D0/A(IND(I),IND(I))
+       
+               IF( A(IND(I),IND(I)).GT.0.0_8 )  THEN
+                 A(IND(I),IND(I)) = 1.0_8/A(IND(I),IND(I))
                ELSE
-                 A(IND(I),IND(I)) = 0.0D0
+                 A(IND(I),IND(I)) = 0.0_8
                END IF
             80 CONTINUE
-         C
+         
                MS = MIN0( M-1,LMAX )
                DO 200  L=MS,1,-1
                DO 100 J=L+1,M
-               SUM = 0.0D0
+               SUM = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM)
+#endif
                DO 90  I=L+1,M
-         cxx   90 SUM = SUM + A(IND(I),IND(L))*A(IND(I),IND(J))
+       !  cxx   90 SUM = SUM + A(IND(I),IND(L))*A(IND(I),IND(J))
                SUM = SUM + A(IND(I),IND(L))*A(IND(I),IND(J))
             90 CONTINUE
-         cxx  100 A(IND(L),IND(J)) = SUM
+        ! cxx  100 A(IND(L),IND(J)) = SUM
                A(IND(L),IND(J)) = SUM
            100 CONTINUE
                SUM = A(IND(L),IND(L))
+#if defined __ICC
+               !DIR$ VECTOR ALIGNED
+               !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+               !$OMP SIMD REDUCTION(+:SUM)
+#endif
                DO 110  I=L+1,M
-         cxx  110 SUM = SUM + A(IND(L),IND(I))*A(IND(I),IND(L))
+        ! cxx  110 SUM = SUM + A(IND(L),IND(I))*A(IND(I),IND(L))
                SUM = SUM + A(IND(L),IND(I))*A(IND(I),IND(L))
            110 CONTINUE
                A(IND(L),IND(L)) = SUM
                DO 120  I=L+1,M
-         cxx  120 A(IND(I),IND(L)) = A(IND(L),IND(I))
+        ! cxx  120 A(IND(I),IND(L)) = A(IND(L),IND(I))
                A(IND(I),IND(L)) = A(IND(L),IND(I))
            120 CONTINUE
                IMAX = IND(L)
@@ -3436,13 +3644,18 @@ C
                END IF
            130 CONTINUE
            200 CONTINUE
-         C
+         
                RETURN
                E N D
          
-         cc      SUBROUTINE  CRSCOR( Y,N,ID,LAG,MJ,MJ1,OUTMIN,OUTMAX,C,R,YMEAN )
-                SUBROUTINE  CRSCOR( Y,N,ID,LAG,OUTMIN,OUTMAX,C,R,YMEAN )
-         C
+       
+                SUBROUTINE  CRSCOR( Y,N,ID,LAG,OUTMIN,OUTMAX,C,R,YMEAN ) !GCC$ ATTRIBUTES HOT :: CRSCOR !GCC$ ATTRIBUTES ALIGNED(32) :: CRSCOR
+
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+                 implicit none    
+#if 0  
          C ... cross correlation function computation ...
          C
          C     Inputs:
@@ -3466,49 +3679,66 @@ C
          cxx      DIMENSION  Y(N,ID), OUTMIN(ID), OUTMAX(ID)
          cxx      DIMENSION  C(0:LAG,ID,ID), R(0:LAG,ID,ID)
          cxx      DIMENSION  YMEAN(ID), NSUM(ID)
+#endif
                INTEGER :: N, ID, LAG, NSUM(ID)
-               REAL(8) :: Y(N,ID), OUTMIN(ID), OUTMAX(ID), C(0:LAG,ID,ID),
-              1           R(0:LAG,ID,ID), YMEAN(ID), SUM
-         C
+#if defined __ICC
+               !DIR$ ATTRIBUTES ALIGN : 64 :: NSUM
+#endif
+               REAL(8) :: Y(N,ID), OUTMIN(ID), OUTMAX(ID), C(0:LAG,ID,ID), &
+                        R(0:LAG,ID,ID), YMEAN(ID), SUM
+#if defined __ICC
+              !DIR$ ASSUME_ALIGNED Y:64,OUTMIN:64,OUTMAX:64,C:64,R:64,YMEAN:64
+#endif
+         
                DO 10 J=1,ID
-         cxx   10 CALL  MEAN( Y(1,J),N,OUTMIN(J),OUTMAX(J),NSUM(J),YMEAN(J) )
+         !cxx   10 CALL  MEAN( Y(1,J),N,OUTMIN(J),OUTMAX(J),NSUM(J),YMEAN(J) )
                CALL  MEAN( Y(1,J),N,OUTMIN(J),OUTMAX(J),NSUM(J),YMEAN(J) )
             10 CONTINUE
-         C
-         cxx      DO 30 I=1,ID
-         cxx      DO 30 J=1,ID
+        
                DO 32 I=1,ID
                DO 31 J=1,ID
-         cc      WRITE(6,*)  I,J
+        
                DO 30 L=0,LAG
-               SUM = 0.0D0
+               SUM = 0.0_8
                NNN = 0
                DO 20 II=L+1,N
                IF( Y(II,I).GT.OUTMIN(I).AND.Y(II,I).LT.OUTMAX(I) )  THEN
                  IF( Y(II-L,J).GT.OUTMIN(J).AND.Y(II-L,J).LT.OUTMAX(J) )  THEN
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM)
+#endif
                    SUM = SUM + (Y(II,I)-YMEAN(I))*(Y(II-L,J)-YMEAN(J))
                    NNN = NNN + 1
                  END IF
                END IF
             20 CONTINUE
-         cxx   30 C(L,I,J)=SUM/DSQRT( DBLE( NSUM(I)*NSUM(J) ) )
+        ! cxx   30 C(L,I,J)=SUM/DSQRT( DBLE( NSUM(I)*NSUM(J) ) )
                C(L,I,J)=SUM/DSQRT( DBLE( NSUM(I)*NSUM(J) ) )
             30 CONTINUE
             31 CONTINUE
             32 CONTINUE
-         C
-         cxx      DO 40 I=1,ID
-         cxx      DO 40 J=1,ID
+       !  C
+        ! cxx      DO 40 I=1,ID
+        ! cxx      DO 40 J=1,ID
                DO 42 I=1,ID
                DO 41 J=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+!$OMP SIMD 
+#endif
                DO 40 L=0,LAG
-         cxx   40 R(L,I,J) = C(L,I,J)/DSQRT(C(0,I,I)*C(0,J,J))
+        ! cxx   40 R(L,I,J) = C(L,I,J)/DSQRT(C(0,I,I)*C(0,J,J))
                R(L,I,J) = C(L,I,J)/DSQRT(C(0,I,I)*C(0,J,J))
             40 CONTINUE
             41 CONTINUE
             42 CONTINUE
                RETURN
-         C
+        ! 
                E N D
          
                SUBROUTINE  MEAN( Y,N,OUTMIN,OUTMAX,NSUM,YMEAN )
@@ -3863,10 +4093,11 @@ C
                Y(I,J) = ( X(I,J) - SUM2 ) / Y(J,J)
             40 CONTINUE
            100 CONTINUE
-         C
+         
                RETURN
                E N D
-         cc      SUBROUTINE ARMCOV( M,L,A,B,SIG2,K,COV )
+      
+
                SUBROUTINE ARMCOV( M,L,A,B,SIG2,K,COV,KMAX,IER )
          C
          C ...  Autocovariance Function of ARMA model  ...
@@ -3889,96 +4120,87 @@ C
                INTEGER :: M, L, K, KMAX, IER, IPS(M+1)
                REAL(8) :: A(M), B(L), SIG2, COV(0:K)
                REAL(8) :: G(0:KMAX), X(M+1,M+1), Z(M+1), UL(M+1,M+1), SUM
-         C
-         cc      KMAX = MAX(M,L,K)
+       
                CALL  IMPULS( M,L,A,B,KMAX,G )
-         C
-         cxx      DO 10 I=1,M+1
-         cxx      DO 10 J=1,M+1
-         cxx   10 X(I,J) = 0.0D0
+       
                X(1:M+1,1:M+1) = 0.0D0
                DO 20 I=1,M+1
-         cxx   20 X(I,I) = 1.0D0
+        ! cxx   20 X(I,I) = 1.0D0
                X(I,I) = 1.0D0
             20 CONTINUE
-         c
+         
                IF( M.GT.0 ) THEN
          
-         cxx      DO 30 I=1,M
+        
                DO 31 I=1,M
                DO 30 J=2,M-I+2
-         cxx   30 X(I,J) = X(I,J) - A(I+J-2)
+         !cxx   30 X(I,J) = X(I,J) - A(I+J-2)
                X(I,J) = X(I,J) - A(I+J-2)
             30 CONTINUE
             31 CONTINUE
-         cxx      DO 40 I=2,M+1
+         !cxx      DO 40 I=2,M+1
                DO 41 I=2,M+1
                DO 40 J=1,I-1
-         cxx   40 X(I,J) = X(I,J) - A(I-J)
+         !cxx   40 X(I,J) = X(I,J) - A(I-J)
                X(I,J) = X(I,J) - A(I-J)
             40 CONTINUE
             41 CONTINUE
          
                END IF
-         c
-         C
-         cc      CALL  DECOM( M+1,X,30,UL,IPS )
+        
                CALL  DECOM( M+1,X,UL,IPS,IER )
                if( ier.ne.0 ) return
-         C
+         
                SUM = 1.0D0
-         c
+         
                IF( L.GT.0 ) THEN
          
                DO 50 J=1,L
-         cxx   50 SUM = SUM - B(J)*G(J)
+        ! cxx   50 SUM = SUM - B(J)*G(J)
                SUM = SUM - B(J)*G(J)
             50 CONTINUE
          
                END IF
-         c
+         
                Z(1)= SIG2*SUM
-         c
+         
                IF( M.GT.0 ) THEN
          
                DO 70 I=2,M+1
                SUM = 0.0D0
                DO 60 J=I-1,L
-         cc   60 SUM = SUM - B(J)*G(J-I+1)
-         cxx   60 IF( L.GT. 0) SUM = SUM - B(J)*G(J-I+1)
+        
                IF( L.GT. 0) SUM = SUM - B(J)*G(J-I+1)
             60 CONTINUE
-         cxx   70 Z(I) = SIG2*SUM
+         !cxx   70 Z(I) = SIG2*SUM
                Z(I) = SIG2*SUM
             70 CONTINUE
          
                END IF
-         c
-         C
-         cc      CALL  SOLVE( M+1,UL,30,Z,COV,IPS)
+        
                CALL  SOLVE( M+1,UL,Z,COV,IPS )
-         C
+         
                DO 100 J=M+1,K
                SUM = 0.0D0
                DO 80 I=1,M
-         cc   80 SUM = SUM + A(I)*COV(J-I)
-         cxx   80 IF( M.GT.0 ) SUM = SUM + A(I)*COV(J-I)
+         
                IF( M.GT.0 ) SUM = SUM + A(I)*COV(J-I)
             80 CONTINUE
                DO 90 I=J,L
-         cc   90 SUM = SUM - B(I)*G(I-J)*SIG2
-         cxx   90 IF( L.GT.0 ) SUM = SUM - B(I)*G(I-J)*SIG2
+         !cc   90 SUM = SUM - B(I)*G(I-J)*SIG2
+         !cxx   90 IF( L.GT.0 ) SUM = SUM - B(I)*G(I-J)*SIG2
                IF( L.GT.0 ) SUM = SUM - B(I)*G(I-J)*SIG2
             90 CONTINUE
-         cxx  100 COV(J) = SUM
+         !cxx  100 COV(J) = SUM
                COV(J) = SUM
            100 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         cc      SUBROUTINE DECOM( N,A,MJ,UL,IPS )
-               SUBROUTINE DECOM( N,A,UL,IPS,IER )
+        
+               SUBROUTINE DECOM( N,A,UL,IPS,IER ) !GCC$ ATTRIBUTES ALIGNED(32) :: DECOM !GCC$ ATTRIBUTES HOT :: DECOM
+                   implicit none
+#if 0
          C
          C  ...  UL decomposition:  A = L*U  ...
          C
@@ -3995,11 +4217,15 @@ C
          cxx      IMPLICIT REAL*8(A-H,O-Z )
          cc      DIMENSION A(MJ,*),UL(MJ,*),SCALES(100),IPS(100)
          cxx      DIMENSION A(N,N),UL(N,N),SCALES(N),IPS(N)
+#endif
                INTEGER :: N, IPS(N), IER
                REAL(8) :: A(N,N), UL(N,N), SCALES(N), RNORM, BIG, SIZE, PIVOT, TM
-         C
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED A:64,IPS:64,UL:64
+               !DIR$ ATTRIBUTES ALIGN : 64 :: SCALES
+#endif         
                IER = 0
-         C
+         
                DO 20 I=1,N
                IPS(I) = I
                RNORM = 0.0D0
@@ -4011,15 +4237,15 @@ C
                    SCALES(I) = 1/RNORM
                ELSE
                    SCALES(I) = 0.0D0
-         cc          CALL  SING(0)         
+        
                    IER = 1
                END IF
             20 CONTINUE
                if( ier.ne.0 ) return
-         C
-         cc-------------
+        ! C
+       !  cc-------------
                INDEX = 0
-         cc-------------
+       !  cc-------------
                DO 60 K=1,N-1
                BIG = 0.0D0
                DO 30 I=K,N
@@ -4030,7 +4256,7 @@ C
                END IF
             30 CONTINUE
                IF( BIG.EQ. 0.0D0 )  THEN
-         cc          CALL  SING(1)
+        ! cc          CALL  SING(1)
                    IER = 2
                    GO TO 60
                END IF
@@ -4039,28 +4265,32 @@ C
                IPS(K) = IPS(INDEX)
                IPS(INDEX) = J
                END IF
-         C
+       
                PIVOT = UL(IPS(K),K)
                DO 50 I=K+1,N
                TM = UL( IPS(I),K)/PIVOT
                UL( IPS(I),K) = TM
                IF( TM.NE. 0.0D0 )  THEN
                DO 40 J = K+1,N
-         cxx   40 UL( IPS(I),J ) = UL( IPS(I),J)-TM*UL( IPS(K),J)
+         !cxx   40 UL( IPS(I),J ) = UL( IPS(I),J)-TM*UL( IPS(K),J)
                UL( IPS(I),J ) = UL( IPS(I),J)-TM*UL( IPS(K),J)
             40 CONTINUE
-         C     WRITE(6,*) (UL(IPS(I),J),J=1,N)
+        ! C     WRITE(6,*) (UL(IPS(I),J),J=1,N)
                END IF
             50 CONTINUE
             60 CONTINUE
                if( ier.ne.0 ) return
-         C
-         cc      IF( UL(IPS(N),N) .EQ. 0.0D0 )   CALL  SING(2)
+        
                IF( UL(IPS(N),N) .EQ. 0.0D0 )   IER = 3
                RETURN
                E N D
-         C
-               SUBROUTINE IMPULS( M,L,A,B,K,G )
+         
+               SUBROUTINE IMPULS( M,L,A,B,K,G ) !GCC$ ATTRIBUTES ALIGNED(32) :: IMPULS !GCC$ ATTRIBUTES HOT :: IMPULS
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+                  implicit none
+#if 0                 
          C
          C ...  Impulse Response Function  ...
          C
@@ -4076,26 +4306,41 @@ C
          cxx      IMPLICIT REAL*8( A-H,O-Z )
          cc      DIMENSION A(*), B(*), G(0:K)
          cxx      DIMENSION A(M), B(L), G(0:K)
+#endif
                INTEGER :: M, L, K
                REAL(8) :: A(M), B(L), G(0:K), SUM
-         C
-               G(0) = 1.0
+#if defined __ICC 
+               !DIR$ ASSUME_ALIGNED A:64,B:64,G:64
+#endif
+
+               G(0) = 1.0_8
                DO  20 I=1,K
-               SUM = 0.0D0
+               SUM = 0.0_8
                IF(I.LE.L) SUM = -B(I)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif
                DO  10 J=1,I
-         cxx   10 IF(J.LE.M) SUM = SUM + A(J)*G(I-J)
+        ! cxx   10 IF(J.LE.M) SUM = SUM + A(J)*G(I-J)
                IF(J.LE.M) SUM = SUM + A(J)*G(I-J)
             10 CONTINUE
-         cxx   20 G(I) = SUM
+       !  cxx   20 G(I) = SUM
                G(I) = SUM
             20 CONTINUE
-         C
+         
                RETURN
                E N D
-         C
-         cc      SUBROUTINE  SOLVE( N,UL,MJ,B,X,IPS )
-               SUBROUTINE  SOLVE( N,UL,B,X,IPS )
+        
+               
+               SUBROUTINE  SOLVE( N,UL,B,X,IPS ) !GCC$ ATTRIBUTES ALIGNED(32) :: SOLVE !GCC$ ATTRIBUTES HOT :: SOLVE
+#if defined __GFORTRAN__
+                  use omp_lib
+#endif
+                  implicit none
+#if 0
          C
          C  ...  Solve Ax=b using UL obtained by DECOM  ...
          C
@@ -4111,36 +4356,46 @@ C
          cxx      IMPLICIT REAL*8( A-H,O-Z )
          cc      DIMENSION UL(MJ,*),B(*),X(*),IPS(100)
          cxx      DIMENSION UL(N,N),B(N),X(N),IPS(N)
+#endif
                INTEGER :: N, IPS(N)
+#if defined __ICC
+                !DIR$ ASSUME_ALIGNED IPS:64
+#endif
                REAL(8) :: UL(N,N), B(N),X(N), SUM
-         C
+#if defined __ICC
+               !DIR$ ASSUME_ALIGNED UL:64,X:64,X:64
+#endif         
                DO 20 I=1,N
-               SUM = 0.0D0
+               SUM = 0.0_8
                DO 10 J=1,I-1
-         cxx   10 SUM = SUM + UL(IPS(I),J)*X(J)
+         !cxx   10 SUM = SUM + UL(IPS(I),J)*X(J)
                SUM = SUM + UL(IPS(I),J)*X(J)
             10 CONTINUE
-         cxx   20 X(I) = B(IPS(I)) - SUM
+         !cxx   20 X(I) = B(IPS(I)) - SUM
                X(I) = B(IPS(I)) - SUM
             20 CONTINUE
-         C
+         
                DO 40 I=N,1,-1
                SUM = 0.0D0
                DO 30 J=I+1,N
-         cxx   30 SUM = SUM + UL(IPS(I),J)*X(J)
+        ! cxx   30 SUM = SUM + UL(IPS(I),J)*X(J)
                SUM = SUM + UL(IPS(I),J)*X(J)
             30 CONTINUE
-         cxx   40 X(I) = ( X(I)-SUM )/UL(IPS(I),I)
+       !  cxx   40 X(I) = ( X(I)-SUM )/UL(IPS(I),I)
                X(I) = ( X(I)-SUM )/UL(IPS(I),I)
             40 CONTINUE
                RETURN
-         cxx  600 FORMAT(1H ,'N=',I10,/,(5X,'IPS=',I10 ) )
+        ! cxx  600 FORMAT(1H ,'N=',I10,/,(5X,'IPS=',I10 ) )
                E N D
-         C
-         C
-         cc      SUBROUTINE  SMOTH1( A,M,MMAX,NC,NS,N,NE,MJ,
-               SUBROUTINE  SMOTH1( A,M,MMAX,NC,NS,N,NE,NMAX,MJ,
-              *                    VFS,VPS,VSS,XFS,XPS,XSS )
+       
+               SUBROUTINE  SMOTH1( A,M,MMAX,NC,NS,N,NE,NMAX,MJ, &
+                                   VFS,VPS,VSS,XFS,XPS,XSS ) !GCC$ ATTRIBUTES ALIGNED(32) :: SMOTH1 !GCC$ ATTRIBUTES HOT :: SMOTH1
+#if defined __GFORTRAN__
+                       use omp_lib
+#endif
+                       implicit none
+#if 0
+
          C
          C  ...  Fixed Interval Smoother (General Form)  ...
          C
@@ -4173,167 +4428,192 @@ C
          cxx      DIMENSION  VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX), VSS(MJ,MJ,NMAX)
          cxx      DIMENSION  WRK(MJ,MJ), SGAIN(MJ,MJ)
          cxx      DIMENSION  I0(NC)
+#endif
                INTEGER :: MMAX, NC, N S, N, NE, NMAX, MJ, M(NC), I0(NC)
-               REAL(8) :: A(MMAX,NC), VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX),
-              1           VSS(MJ,MJ,NMAX), XFS(MJ,NMAX), XPS(MJ,NMAX),
-              2           XSS(MJ,NMAX)
-               REAL(8) :: XS(MJ), VS(MJ,MJ), VP(MJ,MJ), WRK(MJ,MJ), SGAIN(MJ,MJ),
-              1           SUM, VDET
-         C
+               REAL(8) :: A(MMAX,NC), VFS(MJ,MJ,NMAX), VPS(MJ,MJ,NMAX), &
+                         VSS(MJ,MJ,NMAX), XFS(MJ,NMAX), XPS(MJ,NMAX),  &
+                         XSS(MJ,NMAX)
+#if defined __ICC
+                !DIR$ ASSUME_ALIGNED M:64,VFS:64,VPS:64,XFS:64,XPS:64,VSS:64,XSS:64
+#endif                         
+               REAL(8) :: XS(MJ), VS(MJ,MJ), VP(MJ,MJ), WRK(MJ,MJ), SGAIN(MJ,MJ),SUM, VDET
+#if defined __ICC
+                !DIR$ ATTRIBUTES ALIGN : 64 :: XS,VS,VP,WRK,SGAIN
+#endif                      
+         
                I0(1) = 0
                DO 10 I=2,NC
-         cxx   10 I0(I) = I0(I-1) + M(I-1)
+        ! cxx   10 I0(I) = I0(I-1) + M(I-1)
                I0(I) = I0(I-1) + M(I-1)
             10 CONTINUE
                MM = I0(NC) + M(NC)
-         C
-         C  ...  SMOOTHING  ...
-         C
+         !C
+         !C  ...  SMOOTHING  ...
+        ! C
                NSS = MIN0( N,NE )
-         cxx      DO 20  I=1,MM
+        ! cxx      DO 20  I=1,MM
                DO 21  I=1,MM
                XS(I)      = XFS(I,NSS)
                XSS(I,NSS) = XFS(I,NSS)
                DO 20  J=1,MM
                VS(I,J)      = VFS(I,J,NSS)
-         cxx   20 VSS(I,J,NSS) = VFS(I,J,NSS)
+         !cxx   20 VSS(I,J,NSS) = VFS(I,J,NSS)
                VSS(I,J,NSS) = VFS(I,J,NSS)
             20 CONTINUE
             21 CONTINUE
-         cxx      DO 30 II=NSS+1,NE
-         cxx      DO 30 I=1,MM
+        ! cxx      DO 30 II=NSS+1,NE
+         !cxx      DO 30 I=1,MM
                DO 32 II=NSS+1,NE
                DO 31 I=1,MM
                XSS(I,II) = XFS(I,II)
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+!DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+!$OMP SIMD
+#endif
                DO 30 J=1,MM
-         cxx   30 VSS(I,J,II) = VFS(I,J,II)
+        ! cxx   30 VSS(I,J,II) = VFS(I,J,II)
                VSS(I,J,II) = VFS(I,J,II)
             30 CONTINUE
             31 CONTINUE
             32 CONTINUE
-         C
+         
                DO 500  II=NSS-1,NS,-1
-         C
+         
                NZERO = 0
                DO 100 I=1,MM
-         cxx  100 IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 1
+        ! cxx  100 IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 1
                IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 1
            100 CONTINUE
-         C
+         
                IF( NZERO.EQ.0 )  THEN
-         cxx         DO 110  I=1,MM
+         !cxx         DO 110  I=1,MM
                   DO 111  I=1,MM
                   XS(I)     = XFS(I,II)
                   XSS(I,II) = XFS(I,II)
                   DO 110  J=1,MM
                   VS(I,J)     = VFS(I,J,II)
-         cxx  110    VSS(I,J,II) = VFS(I,J,II)
+         !cxx  110    VSS(I,J,II) = VFS(I,J,II)
                   VSS(I,J,II) = VFS(I,J,II)
            110 CONTINUE
            111 CONTINUE
-         C
+         
                ELSE
-         cxx      DO 410  I=1,MM
+        ! cxx      DO 410  I=1,MM
                DO 411  I=1,MM
                DO 410  J=1,MM
-         cxx  410 VP(I,J) = VPS(I,J,II+1)
+        ! cxx  410 VP(I,J) = VPS(I,J,II+1)
                VP(I,J) = VPS(I,J,II+1)
            410 CONTINUE
            411 CONTINUE
-         C
-         cc      CALL  GINVRS( VP,VDET,MM,40 )
+        
                CALL  GINVRS( VP,VDET,MM )
-         C
-         cxx      DO 420  I=1,MM
-         cxx      DO 420  L=1,NC
+        
                DO 422  I=1,MM
                DO 421  L=1,NC
                WRK(I,I0(L)+M(L)) = VFS(I,I0(L)+1,II)*A(M(L),L)
                DO 420  J=1,M(L)-1
-         cxx  420 WRK(I,I0(L)+J) = VFS(I,I0(L)+1,II)*A(J,L) + VFS(I,I0(L)+J+1,II)
+         !cxx  420 WRK(I,I0(L)+J) = VFS(I,I0(L)+1,II)*A(J,L) + VFS(I,I0(L)+J+1,II)
                WRK(I,I0(L)+J) = VFS(I,I0(L)+1,II)*A(J,L) + VFS(I,I0(L)+J+1,II)
            420 CONTINUE
            421 CONTINUE
            422 CONTINUE
-         C
-         cxx      DO 440  I=1,MM
+       
                DO 441  I=1,MM
                DO 440  J=1,MM
-               SUM = 0.0D0
+               SUM = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+!DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUM)
+#endif
                DO 430 IJ=1,MM
-         cxx  430 SUM = SUM + WRK(I,IJ)*VP(IJ,J)
+         !cxx  430 SUM = SUM + WRK(I,IJ)*VP(IJ,J)
                SUM = SUM + WRK(I,IJ)*VP(IJ,J)
            430 CONTINUE
-         cxx  440 SGAIN(I,J) = SUM
+       
                SGAIN(I,J) = SUM
            440 CONTINUE
            441 CONTINUE
-         C
-         cxx      DO 450  I=1,MM
+        
                DO 451  I=1,MM
                XS(I) = XFS(I,II)
                DO 450  J=1,MM
-               WRK(I,J) = 0.0D0
-         cxx  450 VS (I,J) = VFS(I,J,II)
+               WRK(I,J) = 0.0_8
+         !cxx  450 VS (I,J) = VFS(I,J,II)
                VS (I,J) = VFS(I,J,II)
            450 CONTINUE
            451 CONTINUE
-         C
-         cxx      DO 460  J=1,MM
+       
                DO 461  J=1,MM
+#if defined __ICC
+                  !DIR$ VECTOR ALWAYS
+                  !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                  !$OMP SIMD 
+#endif
                DO 460  I=1,MM
-         cxx  460 XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
+        ! cxx  460 XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
                XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
            460 CONTINUE
            461 CONTINUE
-         C
-         cxx      DO 470  J=1,MM
-         cxx      DO 470 IJ=1,MM
+        
                DO 472  J=1,MM
                DO 471 IJ=1,MM
+#if defined __ICC
+                  !DIR$ VECTOR ALWAYS
+                  !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                  !$OMP SIMD 
+#endif
                DO 470  I=1,MM
-         cxx  470 WRK(I,J) = WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
+         !cxx  470 WRK(I,J) = WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
                WRK(I,J) = WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
            470 CONTINUE
            471 CONTINUE
            472 CONTINUE
-         C
-         cxx      DO 480  J=1,MM
-         cxx      DO 480 IJ=1,MM
+        
                DO 482  J=1,MM
                DO 481 IJ=1,MM
+#if defined __ICC
+                  !DIR$ VECTOR ALWAYS
+                  !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                  !$OMP SIMD 
+#endif
                DO 480  I=1,MM
-         cxx  480 VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
+         !cxx  480 VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
                VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
            480 CONTINUE
            481 CONTINUE
            482 CONTINUE
                DO 485 I=1,MM
-         cxx  485 IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
+         !cxx  485 IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
                IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
            485 CONTINUE
-         C
-         cxx      DO 490  I=1,MM
+         
                DO 491  I=1,MM
                XSS(I,II) = XS(I)
                DO 490  J=1,MM
-         cxx  490 VSS(I,J,II) = VS(I,J)
+        ! cxx  490 VSS(I,J,II) = VS(I,J)
                VSS(I,J,II) = VS(I,J)
            490 CONTINUE
            491 CONTINUE
                END IF
-         C
+         
            500 CONTINUE
-         C
+         
                RETURN
                E N D
-         C------------------------------------------------------------------
-         C
+        
+
                FUNCTION  ID( K )                                                 
-         C                                                                       
-         C  ...  ID = 1:    IF K > 0                                             
-         C       ID = 0:    OTHERWISE                                            
-         C                                                                       
+        ! C                                                                       
+         !C  ...  ID = 1:    IF K > 0                                             
+         !C       ID = 0:    OTHERWISE                                            
+        ! C                                                                       
                ID = 0                                                            
                IF( K .GT. 0 )  ID = 1                                            
                RETURN                                                            
@@ -4341,7 +4621,7 @@ C
          
                SUBROUTINE INIT(IX)
                INTEGER :: IX, v(8)
-         C
+         
                if ( IX .ge. 0 ) then
                    call init_genrand64(IX)
                else
@@ -4351,7 +4631,9 @@ C
                RETURN
                END
          
-               DOUBLE PRECISION FUNCTION  GAUSS( X,PARAM )
+               DOUBLE PRECISION FUNCTION  GAUSS( X,PARAM ) !GCC$ ATTRIBUTES INLINE :: GAUSS !GCC$ ATTRIBUTES ALIGNED(32) :: GAUSS !GCC$ ATTRIBUTES PURE :: GAUSS
+                 implicit none
+#if 0
          C
          C  ...  Gaussian (normal) distribution  ...
          C
@@ -4364,13 +4646,18 @@ C
          C
          cxx      IMPLICIT  REAL*8(A-H,O-Z)
          cxx      DIMENSION  PARAM(2)
+#endif
                REAL(8) :: X, PARAM(2), C1
-               DATA  C1  /2.506628275D0/
-         C
+               DATA  C1  /2.506628275_8/
+         
                GAUSS = DEXP( -(X-PARAM(1))**2/(2*PARAM(2)) )/(C1*DSQRT(PARAM(2)))
                RETURN
                E N D
-               DOUBLE PRECISION FUNCTION  PEARSN( X,PARAM )
+
+
+               DOUBLE PRECISION FUNCTION  PEARSN( X,PARAM ) !GCC$ ATTRIBUTES INLINE :: PEARSN !GCC$ ATTRIBUTES ALIGNED(32) :: PEARSN
+                  implicit none
+#if 0
          C
          C  ...  Pearson family of  distributions  ...
          C
@@ -4384,18 +4671,20 @@ C
          C
          cxx      IMPLICIT REAL*8(A-H,O-Z)
          cxx      DIMENSION  PARAM(3)
+#endif
                REAL(8) :: X, PARAM(3), PI, dgammafn
-               DATA  PI/3.1415926535D0/
-         C
-         CXX      PEARSN = DGAMMA(PARAM(3))/DGAMMA(PARAM(3)-0.5D0)
-               PEARSN = dgammafn(PARAM(3))/dgammafn(PARAM(3)-0.5D0)
-              *                  /DSQRT(PI)*PARAM(2)**(PARAM(3)-0.5D0)
-              *                  /((X-PARAM(1))**2 + PARAM(2))**PARAM(3)
+               DATA  PI/3.1415926535897932384626433_8/
+        
+               PEARSN = dgammafn(PARAM(3))/dgammafn(PARAM(3)-0.5D0) &
+                               /DSQRT(PI)*PARAM(2)**(PARAM(3)-0.5D0) &
+                                /((X-PARAM(1))**2 + PARAM(2))**PARAM(3)
                RETURN
-         C
+         
                END
          
-               DOUBLE PRECISION FUNCTION  DBLEXP( X,PARAM )
+               DOUBLE PRECISION FUNCTION  DBLEXP( X,PARAM ) !GCC$ ATTRIBUTES INLINE :: DBLEXP !GCC$ ATTRIBUTES ALIGNED(32) :: DBLEXP
+                  implicit none
+#if 0
          C
          C  ...  double exponential distribution  f(x) = exp(x - exp(x))  ...
          C
@@ -4406,15 +4695,18 @@ C
          C
          cxx      IMPLICIT REAL*8(A-H,O-Z)
          cxx      dimension PARAM(3)
+#endif
                REAL(8) :: X, PARAM(3)
-         C
-         cxx 2018/07/02      DBLEXP = DEXP( X-DEXP(X) )
+         
+       
                DBLEXP = DEXP( (X-PARAM(1))-DEXP(X-PARAM(1)) )
                RETURN
-         C
+         
                E N D
          
-               DOUBLE PRECISION FUNCTION  CAUCHY( X,PARAM )
+               DOUBLE PRECISION FUNCTION  CAUCHY( X,PARAM ) !GCC$ ATTRIBUTES INLINE :: CAUCHY !GCC$ ATTRIBUTES ALIGNED(32) :: CAUCHY
+                   implicit none
+#if 0
          C
          C  ...  Cauchy distribution  ...
          C
@@ -4427,12 +4719,1495 @@ C
          C
          cxx      IMPLICIT REAL*8(A-H,O-Z)
          cxx      DIMENSION  PARAM(2)
+#endif
                REAL(8) :: X, PARAM(2), PI
-               DATA  PI /3.1415926535D0/
-         C
+               DATA  PI /3.1415926535897932384626433_8/
+         
                CAUCHY = DSQRT( PARAM(2) )/(PARAM(2) + (X-PARAM(1))**2)/PI
                RETURN
-         C
+         
                E N D
+
+               C     PROGRAM 2.3  CRSCOR
+               SUBROUTINE CRSCORF( Y,N,L,LAG,OUTMIN,OUTMAX,C,R,YMEAN)
+         C
+               INCLUDE 'TSSS_f.h'
+         C
+         C  ...  This program computes sample cross-covariance and
+         C       sample cross-correlation functions  ...
+         C
+         C     The following inputs are required in the subroutine READMD.
+         C        TITLE:   title of the data
+         C        N:       data length
+         C        L:       dimension of the observation
+         C        IFM:     = 1   ((Y(I,J),J=1,L),I=1,N)
+         C                 = 2   ((Y(I,J),I=1,N),J=1,L)
+         C        Y(I,J):  multi-variate time series
+         C     Parameters:
+         C        MJ:      adjustable dimension of Y; (MJ.GE.N)
+         C        MJ1:     adjustable dimension of Y, C, R; (MJ1.GE.L)
+         C        LAG:     maximum lag of the cross-covariance function
+         C        IDEV:    input device specification
+         C     MAR.24,1989:  modified  12/20/90, 7/18/92
+         C
+         cc      PARAMETER( MJ=1000,MJ1=7,LAG=50,IDEV=1,JDEV=6 )
+         cxx      IMPLICIT REAL*8(A-H,O-Z)
+         cc      DIMENSION  Y(MJ,MJ1), OUTMIN(10), OUTMAX(10)
+         cc      DIMENSION  C(0:LAG,MJ1,MJ1), R(0:LAG,MJ1,MJ1), YMEAN(10)
+         cc      DATA  OUTMIN/10*-1.0D30/, OUTMAX/10*1.0D30/
+         cxx      DIMENSION  Y(N,L), OUTMIN(L), OUTMAX(L)
+         cxx      DIMENSION  C(0:LAG,L,L), R(0:LAG,L,L), YMEAN(L)
+         C
+               INTEGER :: N, L, LAG
+               REAL(8) :: Y(N,L), OUTMIN(L), OUTMAX(L), C(0:LAG,L,L),
+              1           R(0:LAG,L,L), YMEAN(L)
+         C
+         C  ...  read in multivariate time series  ...
+         C
+         cc      CALL  READMD( IDEV,MJ,Y,N,L )
+         C
+         C  ...  cross-covariance function  ...
+         C
+         cc      CALL  CRSCOR( Y,N,L,LAG,MJ,MJ1,OUTMIN,OUTMAX,C,R,YMEAN )
+               CALL  CRSCOR( Y,N,L,LAG,OUTMIN,OUTMAX,C,R,YMEAN )
+         C
+         C  ...  print out and plot cross-correlation function  ...
+         C
+         cc      CALL  PRMCOR( JDEV,C,R,L,LAG,MJ1 )
+         C
+         cc      STOP
+               RETURN
+               E N D
+
+               
+               C     PROGRAM 4.1  DENSTY
+               SUBROUTINE DENSTYF( MODEL, PARAM, XMIN, XMAX, K, F ) 
+         C
+               INCLUDE 'TSSS_f.h'
+         C
+         C  ...  This program draws probability density function  ...
+         C
+         C     The following inputs are required in the main program:
+         C        MODEL:   function number (1: GAUSS, 2: CAUCHY, etc.)
+         C        XMIN:    lower bound of the interval
+         C        XMAX:    upper bound of the interval
+         C        PARAM:   parameter vector
+         C     @TEST.PN41: DEC.26,1990, 8/6/91
+         C
+         cc      PARAMETER( K=201 )
+         cxx      IMPLICIT REAL*8(A-H,O-Z)
+         cc      CHARACTER*24   TITLE1(0:7)
+         cc      CHARACTER*72   TITLE
+         cxx      DIMENSION  F(K), PARAM(3), NP(0:7)
+         cc      COMMON  /CMDATA/  TITLE
+         C
+               INTEGER :: MODEL, K
+               REAL(8) :: PARAM(3), XMIN, XMAX, F(K)
+               INTEGER :: NP(0:7)
+               REAL(8) :: USERF, GAUSS, CAUCHY, PEARSN, EXPNTL, CHISQR, DBLEXP,
+              1           UNIFRM
+         C
+               EXTERNAL  USERF
+               EXTERNAL  GAUSS
+               EXTERNAL  CAUCHY
+               EXTERNAL  PEARSN
+               EXTERNAL  EXPNTL
+               EXTERNAL  CHISQR
+               EXTERNAL  DBLEXP
+               EXTERNAL  UNIFRM
+         C
+         cc     DATA TITLE1/'USER SUPPLIED FUNCTION  ','NORMAL DISTRIBUTION     '
+         cc    *          ,'CAUCHY DISTRIBUTION     ','PEARSON DISTRIBUTION    '
+         cc    *          ,'EXPONENTIAL DISTRIBUTION','CHI-SQUARE DISTRIBUTION '
+         cc    *          ,'DOUBLE EXPONENTIAL DIST.','UNIFORM DISTRIBUTION    '/
+               DATA  NP/0,2,2,3,1,1,0,2/
+         C
+         cc      WRITE(6,*)  'INPUT MODEL NUMBER ?'
+         cc      READ(5,*)   MODEL
+         cc      WRITE(6,*)  'INPUT XMIN AND XMAX ?'
+         cc      READ(5,*)   XMIN, XMAX
+         cc      IF( MODEL.EQ.0 )  THEN
+         cc         WRITE(6,*)  'INPUT THE NUMBER OF PARAMETERS'
+         cc         READ(5,*)   NP(0)
+         cc      END IF
+         cc      WRITE(6,*)  'INPUT PARAM(I),I=1,',NP(MODEL),' ?'
+         cc      READ(5,*)   (PARAM(I),I=1,NP(MODEL))
+         cc      TITLE = TITLE1(MODEL)
+         cc      DO 10 I=1,6
+         cc   10 TITLE = TITLE//'        '
+         C
+               IF(MODEL.EQ.1)  CALL  DENSTY( GAUSS ,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.2)  CALL  DENSTY( CAUCHY,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.3)  CALL  DENSTY( PEARSN,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.4)  CALL  DENSTY( EXPNTL,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.5)  CALL  DENSTY( CHISQR,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.6)  CALL  DENSTY( DBLEXP,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.7)  CALL  DENSTY( UNIFRM,F,K,PARAM,XMIN,XMAX )
+               IF(MODEL.EQ.0)  CALL  DENSTY( USERF ,F,K,PARAM,XMIN,XMAX )
+         C      CALL  PTDENS( F,K,XMIN,XMAX,PARAM,NP(MODEL) )
+         cc      CALL  PRDENS( F,K )
+         cc      STOP
+               RETURN
+         cxx  600 FORMAT( 1H ,10F8.4 )
+               E N D
+               SUBROUTINE  DENSTY( DIST,P,K,PARAM,XMIN,XMAX )
+         C
+         C  ...  This subroutine evaluates values of density  ...
+         C               DIST(X), X=XMIN,...,XMAX
+         C     Inputs:
+         C        DIST:    name of function
+         C        PARAM:   parameters of the density
+         C        XMIN:    minimum of X
+         C        XMAX:    maximum of X
+         C        K:       number of location, I-th location is XMIN + I*DX
+         C                 where  DX = (I-1)*(XMAX-XMIN)/(K-1)
+         C     OUTPUT:
+         C        P(I):    density of DIST at I-th location
+         C
+         cxx      IMPLICIT REAL*8( A-H,O-Z )
+         cx      DIMENSION  P(K), PARAM(*)
+         cxx      DIMENSION  P(K), PARAM(3)
+         C
+               INTEGER :: K
+               REAL(8) :: P(K), PARAM(3), XMIN, XMAX
+               REAL(8) :: DX, X, DIST
+         C
+               EXTERNAL  DIST
+         C
+               DX = (XMAX-XMIN)/(K-1)
+               DO 10 I=1,K
+               X = XMIN + DX*(I-1)
+         cxx   10 P(I) = DIST( X,PARAM )
+               P(I) = DIST( X,PARAM )
+            10 CONTINUE
+               RETURN
+               E N D
+               DOUBLE PRECISION FUNCTION  EXPNTL( X,PARAM )
+         C
+         C  ...  Exponential  distribution  ...
+         C
+         C     Inputs:
+         C        X:
+         C        PARAM(1):  lambda
+         C     Output:
+         C        EXPNTL:    density at X
+         C
+         cxx      IMPLICIT  REAL*8(A-H,O-Z)
+         cxx      DIMENSION  PARAM(1)
+               REAL(8) :: X, PARAM(1)
+         C
+               IF( X.GE.0.0D0 )  EXPNTL = PARAM(1)*DEXP( -PARAM(1)*X )
+               IF( X.LT.0.0D0 )  EXPNTL = 0.0D0
+               RETURN
+               E N D
+               DOUBLE PRECISION FUNCTION  CHISQR( X,PARAM )
+         C
+         C  ...  Chi-square  distributions  ...
+         C
+         C     Inputs:
+         C        X:
+         C        PARAM(1):  degree of freedoms, k
+         C     Output:
+         C        CHISQR:    density at X
+         C
+         cxx      IMPLICIT  REAL*8(A-H,O-Z)
+         cx      DIMENSION  PARAM(*)
+         cxx      DIMENSION  PARAM(1)
+               REAL(8) :: X, PARAM(1), dgammafn
+         C
+               CHISQR = 0.0D0
+               IF( X.GT.0.0D0 ) CHISQR = DEXP( -X/2 )*(X/2)**(PARAM(1)/2-1.D0)
+         CXX     *                           /(2*DGAMMA(PARAM(1)/2))
+              *                           /(2*dgammafn(PARAM(1)/2))
+         cxx      IF( X.LE.0.0D0 ) CHISQR = 0.0D0
+               RETURN
+               E N D
+               DOUBLE PRECISION FUNCTION  UNIFRM( X,PARAM )
+         C
+         C  ...  Uniform distribution on [a,b]  ...
+         C
+         C     Inputs:
+         C        X:
+         C        PARAM(1):  a
+         C        PARAM(2):  b
+         C     Output:
+         C        UNIFRM:    density at X
+         C
+         cxx      IMPLICIT  REAL*8(A-H,O-Z)
+         cxx      DIMENSION  PARAM(2)
+               REAL(8) :: X, PARAM(2)
+         C
+               IF( X.GT.PARAM(1) .AND. X.LE.PARAM(2) )  THEN
+                  UNIFRM = 1.0D0/(PARAM(2)-PARAM(1))
+               ELSE
+                  UNIFRM = 0.0D0
+               END IF
+               RETURN
+               E N D
+               DOUBLE PRECISION FUNCTION  USERF( X,PARAM )
+         C
+         C  ...  User supplied density function  ...
+         C       (The following is an example of two-sided exponential dist.)
+         C
+         C     Inputs:
+         C        X:
+         C        PARAM(1):  lambda
+         C     Output:
+         C        USERF:     density at X
+         C
+         cxx      IMPLICIT  REAL*8(A-H,O-Z)
+         cx      DIMENSION  PARAM(2)
+         cxx      DIMENSION  PARAM(1)
+               REAL(8) :: X, PARAM(1)
+         C
+               IF( X.GE.0.0D0 )  THEN
+                  USERF = PARAM(1)*DEXP( -PARAM(1)*X )/2
+               ELSE
+                  USERF = PARAM(1)*DEXP(  PARAM(1)*X )/2
+               END IF
+               RETURN
+               E N D
+         
+
+               
+               C     PROGRAM  3.2  FFTPER
+               cx      SUBROUTINE FFTPERF( Y,N,IWINDW,PE,SPE,NP )
+                     SUBROUTINE FFTPERF( Y,N,IWINDW,PE,SPE,NP,IFG )
+               C
+                     INCLUDE 'TSSS_f.h'
+               C
+               C  ...  This program computes periodogram via FFT  ...
+               C
+               C     The following inputs are required in READTS.
+               C        TITLE:   title of the data
+               C        N:       data length
+               C        Y(I):    time series
+               C     Parameters:
+               C        NMAX:    adjustable dimension of Y (NMAX.GE.N)
+               C        NF:      adjustable dimension of PE and SPE
+               C        MJ:      adjustable dimension of COV
+               C     @TEST.PN31:  5/16/89, 12/5/90, 12/21/90, 8/5/91, 7/19/92
+               C
+               cc      PARAMETER( NMAX=3000,NF=512,IDEV=1,JDEV=6,IWINDW=1 )
+                     PARAMETER( NF=1024 )
+               cxx      IMPLICIT REAL*8(A-H,O-Z)
+               cc      DIMENSION  Y(NMAX), PE(0:NF), SPE(0:NF)
+               cxx      DIMENSION  Y(N), PE(0:NF), SPE(0:NF)
+               C
+                     INTEGER :: N, IWINDW, NP, IFG
+                     REAL(8) :: Y(N), PE(0:NF), SPE(0:NF)
+               C
+               cc      CALL  READTS( IDEV,Y,N )
+               C
+                     IF( IWINDW.EQ.0 )  LAG = N-1
+               cxx      IF( IWINDW.GT.0 )  LAG = 2*DSQRT( DFLOAT(N) )
+                     IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DFLOAT(N) ))
+                     IF( IWINDW.EQ.0 )  NP  = (LAG+1)/2
+                     IF( IWINDW.GT.0 )  NP  = LAG
+               C
+               c----------
+                     NN = 0
+               c----------
+                     CALL  FFTPER( Y,N,NN,PE,NP )
+               cx      CALL  WINDOW( PE,NP,IWINDW,SPE )
+                     CALL  WINDOW( PE,NP,IWINDW,SPE,IFG )
+               cc      CALL  PRPER( JDEV,PE,SPE,N,NP,IWINDW )
+               C
+               cc      STOP
+                     RETURN
+                     E N D
+                     SUBROUTINE  FFTPER( Y,N,NN,P,N2 )
+               C
+               C ... periodogram computation by FFT ...
+               C
+               C     Inputs:
+               C        Y(I):   data
+               C        N:      data length
+               C        NN:     basic span for computing peiodogram (if NN>0)
+               C     Outputs:
+               C        P(J):   periodogram
+               C        NN:     basic span for computing peiodogram
+               C        N2:     number of frequencies
+               C
+               cxx      IMPLICIT REAL*8(A-H,O-Z)
+               cxx      DIMENSION Y(N),P(0:1024),X(1024),FY(1024),WK(1024)
+               C
+                     INTEGER :: N, NN, N2
+                     REAL(8) :: Y(N), P(0:1024)
+                     REAL(8) :: X(1024), FY(1024), WK(1024)
+               C
+                     IF(NN.LE.0) THEN
+                        IF( N.LE.1024 ) THEN
+               cxx           NP = ALOG( N-0.01 )/ALOG(2.0) + 1
+                          NP = INT(ALOG( N-0.01 )/ALOG(2.0) + 1)
+                          NN = 2**NP
+                          NPOOL = 1
+                        ELSE
+                          NN = 1024
+                          NPOOL = (N-1)/NN + 1
+                        END IF
+                     ELSE
+               cxx         NP = ALOG(NN-0.01)/ALOG(2.0) +1
+                        NP = INT(ALOG(NN-0.01)/ALOG(2.0) +1)
+                        NN = 2**NP
+                     IF( NN.GT.1024) NN=1024
+                        NPOOL = (N-1)/NN +1
+                     END IF
+               C
+                     N2 = NN/2
+               cxx      DO 10 I=0,N2
+               cxx   10 P(I) = 0.0D0
+                     P(0:N2) = 0.0D0
+               C
+                     DO 100 II=1,NPOOL
+                     ND = MIN(N,II*NN) - (II-1)*NN
+                     DO 20 I=1,ND
+               cxx   20 X(I) = Y((II-1)*NN+I)
+                     X(I) = Y((II-1)*NN+I)
+                  20 CONTINUE
+                     DO 30 I=ND+1,NN
+               cxx   30 X(I) = 0.0D0
+                     X(I) = 0.0D0
+                  30 CONTINUE
+               C
+                     CALL  FFTR2 ( X,NN,1,FY,WK )
+               C
+                     P(0)  = P(0) + FY(1)**2
+                     P(N2) = P(N2) + FY(N2+1)**2
+                     DO 40 I=0,N2-1
+               cxx   40 P(I) = P(I) + FY(I+1)**2 + FY(N2+1)**2
+                     P(I) = P(I) + FY(I+1)**2 + FY(N2+1)**2
+                  40 CONTINUE
+                 100 CONTINUE
+               C
+                     DO 50 I=0,N2
+               cxx   50 P(I) = P(I)/N 
+                     P(I) = P(I)/N
+                  50 CONTINUE
+               
+               C
+                     RETURN
+                     E N D
+                     SUBROUTINE  FFTR2( X,N,ISW,FX,WRK )
+               C
+               C  ...  Fast Fourier Transform  ...
+               C
+               C     Inputs:
+               C        X(I):   data
+               C        N:      data length
+               C        ISW:
+               C        WRK:    working area
+               C     Output:
+               C        FX(J):  Fourier transform
+               C                  J=1,...,N/2+1   cosine transform
+               C                  J=N/2+2,...,N   sine transform
+               C
+               cxx      IMPLICIT REAL*8(A-H,O-Z)
+               cxx      DIMENSION  X(N), FX(N), WRK(N/4)
+               C
+                     INTEGER :: N, ISW
+                     REAL(8) :: X(N), FX(N), WRK(N/4)
+                     REAL(8) :: PI2
+               C
+                     DATA  PI2 /6.2831853071796D0/
+               C
+               cxx      NP = DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5
+                     NP = INT(DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5)
+                     N2 = N/2
+                     N4 = N/4
+               C
+                     IF( ISW.EQ.1 )  THEN
+                       DO 10 I=2,N4
+               cxx   10   WRK(I) = DSIN( (I-1)*PI2/N )
+                       WRK(I) = DSIN( (I-1)*PI2/N )
+                  10   CONTINUE
+                     END IF
+               C
+                     DO 20  I=1,N2
+                     FX(I)    = X(I) + X(I+N2)
+               cxx   20 FX(I+N2) = X(I) - X(I+N2)
+                     FX(I+N2) = X(I) - X(I+N2)
+                  20 CONTINUE
+               C
+                     IFG = 1
+                     JFG = 1
+                     K =  1
+                     M = N4
+               C
+                     DO 30  I=1,NP-1
+                     M2 = M*2
+                     K2 = K*2
+                     IF( M.GE.K )  THEN
+                       IF( IFG.LT.0 )  THEN
+                         CALL  FFTSB1( X,WRK,K,M,M2,K2,FX )
+                       ELSE
+                         CALL  FFTSB1( FX,WRK,K,M,M2,K2,X )
+                       END IF
+                     ELSE
+                       IF( JFG.EQ.1 )  THEN
+                         IF( IFG.LT.0 )  THEN
+                           CALL  FFTSB2( X,K2,M2,FX )
+                         ELSE
+                           CALL  FFTSB2( FX,K2,M2,X )
+                         END IF
+                         JFG = 2
+                       END IF
+                       IF( IFG.LT.0 )  THEN
+                         CALL  FFTSB3( FX,WRK,K,M,X )
+                       ELSE
+                         CALL  FFTSB3( X,WRK,K,M,FX )
+                       END IF
+                     END IF
+                     K = K*2
+                     M = M/2
+               cxx   30 IFG = -IFG
+                     IFG = -IFG
+                  30 CONTINUE
+               C
+                     IF( IFG.GT.0 )  THEN
+                        DO 40  I=1,N
+               cxx   40    FX(I) = X(I)
+                        FX(I) = X(I)
+                  40    CONTINUE
+                     END IF
+               C
+                     RETURN
+                     E N D
+                     SUBROUTINE  FFTSB2( X,M,L,Y )
+               C
+               C  ...  slave subroutine for FFTR2  ...
+               C
+               cxx      IMPLICIT REAL*8(A-H,O-Z)
+               cxx      DIMENSION  X(L,M),  Y(M,L)
+               C
+                     INTEGER :: M, L
+                     REAL(8) :: X(L,M), Y(M,L)
+               C
+                     IF( M.GE.L )  THEN
+               cxx      DO 10  J=1,L
+                     DO 11  J=1,L
+                     DO 10  I=1,M
+               cxx   10 Y(I,J) = X(J,I)
+                     Y(I,J) = X(J,I)
+                  10 CONTINUE
+                  11 CONTINUE
+                     ELSE
+               cxx      DO 20  I=1,M
+                     DO 21  I=1,M
+                     DO 20  J=1,L
+               cxx   20 Y(I,J) = X(J,I)
+                     Y(I,J) = X(J,I)
+                  20 CONTINUE
+                  21 CONTINUE
+                     END IF
+               C
+                     RETURN
+                     E N D
+                     SUBROUTINE  FFTSB1( X,SINE,K,M,MJ1,MJ2,Y )
+               C
+               C  ...  slave subroutine for FFTR2  ...
+               C
+               cxx      IMPLICIT REAL*8(A-H,O-Z)
+               cxx      DIMENSION  X(MJ1,MJ2), Y(M,K,4), SINE(M,K)
+               C
+                     INTEGER :: K, M, MJ1, MJ2
+                     REAL(8) :: X(MJ1,MJ2), SINE(M,K), Y(M,K,4)
+                     REAL(8) :: SUM1, SUM2
+               C
+                     DO 10  I=1,M
+                     Y(I,1,1) = X(I,1) + X(I+M,1)
+                     Y(I,1,3) = X(I,1) - X(I+M,1)
+                     Y(I,1,2) = X(I,K+1)
+               cxx   10 Y(I,1,4) = X(I+M,K+1)
+                     Y(I,1,4) = X(I+M,K+1)
+                  10 CONTINUE
+               C
+               cxx      DO 20  J=2,K
+                     DO 21  J=2,K
+                     DO 20  I=1,M
+                     SUM1 = SINE(1,K-J+2)*X(I+M,J) - SINE(1,J)    *X(I+M,J+K)
+                     SUM2 = SINE(1,J)    *X(I+M,J) + SINE(1,K-J+2)*X(I+M,J+K)
+                     Y(I,J,1)     = X(I,J) + SUM1
+                     Y(I,K-J+2,2) = X(I,J) - SUM1
+                     Y(I,J,3)     = SUM2 + X(I,J+K)
+               cxx   20 Y(I,K-J+2,4) = SUM2 - X(I,J+K)
+                     Y(I,K-J+2,4) = SUM2 - X(I,J+K)
+                  20 CONTINUE
+                  21 CONTINUE
+               C
+                     RETURN
+                     E N D
+                     SUBROUTINE  FFTSB3( X,SINE,K,M,Y )
+               C
+               C  ...  slave subroutine for FFTR2  ...
+               C
+               cxx      IMPLICIT REAL*8(A-H,O-Z)
+               cxx      DIMENSION  X(K,2,M,2),  SINE(M,K),  Y(K,4,M)
+               C
+                     INTEGER :: K, M
+                     REAL(8) :: X(K,2,M,2), SINE(M,K), Y(K,4,M)
+                     REAL(8) :: SUM1, SUM2
+               C
+               cxx      DO 10  J=1,M
+                     DO 11  J=1,M
+                     Y(1,1,J) = X(1,1,J,1) + X(1,1,J,2)
+                     Y(1,3,J) = X(1,1,J,1) - X(1,1,J,2)
+                     Y(1,2,J) = X(1,2,J,1)
+                     Y(1,4,J) = X(1,2,J,2)
+                     DO 10  I=2,K
+                     SUM1 = SINE(1,K-I+2)*X(I,1,J,2) - SINE(1,I)    *X(I,2,J,2)
+                     SUM2 = SINE(1,I)    *X(I,1,J,2) + SINE(1,K-I+2)*X(I,2,J,2)
+                     Y(I,1,J)     = X(I,1,J,1) + SUM1
+                     Y(K-I+2,2,J) = X(I,1,J,1) - SUM1
+                     Y(I,3,J)     = SUM2 + X(I,2,J,1)
+               cxx   10 Y(K-I+2,4,J) = SUM2 - X(I,2,J,1)
+                     Y(K-I+2,4,J) = SUM2 - X(I,2,J,1)
+                  10 CONTINUE
+                  11 CONTINUE
+               C
+                     RETURN
+                     E N D
+   
+                     
+                     C     PROGRAM  3.2  FFTPER
+                     cx      SUBROUTINE FFTPERF( Y,N,IWINDW,PE,SPE,NP )
+                           SUBROUTINE FFTPERF( Y,N,IWINDW,PE,SPE,NP,IFG )
+                     C
+                           INCLUDE 'TSSS_f.h'
+                     C
+                     C  ...  This program computes periodogram via FFT  ...
+                     C
+                     C     The following inputs are required in READTS.
+                     C        TITLE:   title of the data
+                     C        N:       data length
+                     C        Y(I):    time series
+                     C     Parameters:
+                     C        NMAX:    adjustable dimension of Y (NMAX.GE.N)
+                     C        NF:      adjustable dimension of PE and SPE
+                     C        MJ:      adjustable dimension of COV
+                     C     @TEST.PN31:  5/16/89, 12/5/90, 12/21/90, 8/5/91, 7/19/92
+                     C
+                     cc      PARAMETER( NMAX=3000,NF=512,IDEV=1,JDEV=6,IWINDW=1 )
+                           PARAMETER( NF=1024 )
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cc      DIMENSION  Y(NMAX), PE(0:NF), SPE(0:NF)
+                     cxx      DIMENSION  Y(N), PE(0:NF), SPE(0:NF)
+                     C
+                           INTEGER :: N, IWINDW, NP, IFG
+                           REAL(8) :: Y(N), PE(0:NF), SPE(0:NF)
+                     C
+                     cc      CALL  READTS( IDEV,Y,N )
+                     C
+                           IF( IWINDW.EQ.0 )  LAG = N-1
+                     cxx      IF( IWINDW.GT.0 )  LAG = 2*DSQRT( DFLOAT(N) )
+                           IF( IWINDW.GT.0 )  LAG = INT(2*DSQRT( DFLOAT(N) ))
+                           IF( IWINDW.EQ.0 )  NP  = (LAG+1)/2
+                           IF( IWINDW.GT.0 )  NP  = LAG
+                     C
+                     c----------
+                           NN = 0
+                     c----------
+                           CALL  FFTPER( Y,N,NN,PE,NP )
+                     cx      CALL  WINDOW( PE,NP,IWINDW,SPE )
+                           CALL  WINDOW( PE,NP,IWINDW,SPE,IFG )
+                     cc      CALL  PRPER( JDEV,PE,SPE,N,NP,IWINDW )
+                     C
+                     cc      STOP
+                           RETURN
+                           E N D
+                           SUBROUTINE  FFTPER( Y,N,NN,P,N2 )
+                     C
+                     C ... periodogram computation by FFT ...
+                     C
+                     C     Inputs:
+                     C        Y(I):   data
+                     C        N:      data length
+                     C        NN:     basic span for computing peiodogram (if NN>0)
+                     C     Outputs:
+                     C        P(J):   periodogram
+                     C        NN:     basic span for computing peiodogram
+                     C        N2:     number of frequencies
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cxx      DIMENSION Y(N),P(0:1024),X(1024),FY(1024),WK(1024)
+                     C
+                           INTEGER :: N, NN, N2
+                           REAL(8) :: Y(N), P(0:1024)
+                           REAL(8) :: X(1024), FY(1024), WK(1024)
+                     C
+                           IF(NN.LE.0) THEN
+                              IF( N.LE.1024 ) THEN
+                     cxx           NP = ALOG( N-0.01 )/ALOG(2.0) + 1
+                                NP = INT(ALOG( N-0.01 )/ALOG(2.0) + 1)
+                                NN = 2**NP
+                                NPOOL = 1
+                              ELSE
+                                NN = 1024
+                                NPOOL = (N-1)/NN + 1
+                              END IF
+                           ELSE
+                     cxx         NP = ALOG(NN-0.01)/ALOG(2.0) +1
+                              NP = INT(ALOG(NN-0.01)/ALOG(2.0) +1)
+                              NN = 2**NP
+                           IF( NN.GT.1024) NN=1024
+                              NPOOL = (N-1)/NN +1
+                           END IF
+                     C
+                           N2 = NN/2
+                     cxx      DO 10 I=0,N2
+                     cxx   10 P(I) = 0.0D0
+                           P(0:N2) = 0.0D0
+                     C
+                           DO 100 II=1,NPOOL
+                           ND = MIN(N,II*NN) - (II-1)*NN
+                           DO 20 I=1,ND
+                     cxx   20 X(I) = Y((II-1)*NN+I)
+                           X(I) = Y((II-1)*NN+I)
+                        20 CONTINUE
+                           DO 30 I=ND+1,NN
+                     cxx   30 X(I) = 0.0D0
+                           X(I) = 0.0D0
+                        30 CONTINUE
+                     C
+                           CALL  FFTR2 ( X,NN,1,FY,WK )
+                     C
+                           P(0)  = P(0) + FY(1)**2
+                           P(N2) = P(N2) + FY(N2+1)**2
+                           DO 40 I=0,N2-1
+                     cxx   40 P(I) = P(I) + FY(I+1)**2 + FY(N2+1)**2
+                           P(I) = P(I) + FY(I+1)**2 + FY(N2+1)**2
+                        40 CONTINUE
+                       100 CONTINUE
+                     C
+                           DO 50 I=0,N2
+                     cxx   50 P(I) = P(I)/N 
+                           P(I) = P(I)/N
+                        50 CONTINUE
+                     
+                     C
+                           RETURN
+                           E N D
+                           SUBROUTINE  FFTR2( X,N,ISW,FX,WRK )
+                     C
+                     C  ...  Fast Fourier Transform  ...
+                     C
+                     C     Inputs:
+                     C        X(I):   data
+                     C        N:      data length
+                     C        ISW:
+                     C        WRK:    working area
+                     C     Output:
+                     C        FX(J):  Fourier transform
+                     C                  J=1,...,N/2+1   cosine transform
+                     C                  J=N/2+2,...,N   sine transform
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cxx      DIMENSION  X(N), FX(N), WRK(N/4)
+                     C
+                           INTEGER :: N, ISW
+                           REAL(8) :: X(N), FX(N), WRK(N/4)
+                           REAL(8) :: PI2
+                     C
+                           DATA  PI2 /6.2831853071796D0/
+                     C
+                     cxx      NP = DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5
+                           NP = INT(DLOG( DFLOAT(N) )/DLOG( 2.0D0 ) + 1.0D-5)
+                           N2 = N/2
+                           N4 = N/4
+                     C
+                           IF( ISW.EQ.1 )  THEN
+                             DO 10 I=2,N4
+                     cxx   10   WRK(I) = DSIN( (I-1)*PI2/N )
+                             WRK(I) = DSIN( (I-1)*PI2/N )
+                        10   CONTINUE
+                           END IF
+                     C
+                           DO 20  I=1,N2
+                           FX(I)    = X(I) + X(I+N2)
+                     cxx   20 FX(I+N2) = X(I) - X(I+N2)
+                           FX(I+N2) = X(I) - X(I+N2)
+                        20 CONTINUE
+                     C
+                           IFG = 1
+                           JFG = 1
+                           K =  1
+                           M = N4
+                     C
+                           DO 30  I=1,NP-1
+                           M2 = M*2
+                           K2 = K*2
+                           IF( M.GE.K )  THEN
+                             IF( IFG.LT.0 )  THEN
+                               CALL  FFTSB1( X,WRK,K,M,M2,K2,FX )
+                             ELSE
+                               CALL  FFTSB1( FX,WRK,K,M,M2,K2,X )
+                             END IF
+                           ELSE
+                             IF( JFG.EQ.1 )  THEN
+                               IF( IFG.LT.0 )  THEN
+                                 CALL  FFTSB2( X,K2,M2,FX )
+                               ELSE
+                                 CALL  FFTSB2( FX,K2,M2,X )
+                               END IF
+                               JFG = 2
+                             END IF
+                             IF( IFG.LT.0 )  THEN
+                               CALL  FFTSB3( FX,WRK,K,M,X )
+                             ELSE
+                               CALL  FFTSB3( X,WRK,K,M,FX )
+                             END IF
+                           END IF
+                           K = K*2
+                           M = M/2
+                     cxx   30 IFG = -IFG
+                           IFG = -IFG
+                        30 CONTINUE
+                     C
+                           IF( IFG.GT.0 )  THEN
+                              DO 40  I=1,N
+                     cxx   40    FX(I) = X(I)
+                              FX(I) = X(I)
+                        40    CONTINUE
+                           END IF
+                     C
+                           RETURN
+                           E N D
+                           SUBROUTINE  FFTSB2( X,M,L,Y )
+                     C
+                     C  ...  slave subroutine for FFTR2  ...
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cxx      DIMENSION  X(L,M),  Y(M,L)
+                     C
+                           INTEGER :: M, L
+                           REAL(8) :: X(L,M), Y(M,L)
+                     C
+                           IF( M.GE.L )  THEN
+                     cxx      DO 10  J=1,L
+                           DO 11  J=1,L
+                           DO 10  I=1,M
+                     cxx   10 Y(I,J) = X(J,I)
+                           Y(I,J) = X(J,I)
+                        10 CONTINUE
+                        11 CONTINUE
+                           ELSE
+                     cxx      DO 20  I=1,M
+                           DO 21  I=1,M
+                           DO 20  J=1,L
+                     cxx   20 Y(I,J) = X(J,I)
+                           Y(I,J) = X(J,I)
+                        20 CONTINUE
+                        21 CONTINUE
+                           END IF
+                     C
+                           RETURN
+                           E N D
+                           SUBROUTINE  FFTSB1( X,SINE,K,M,MJ1,MJ2,Y )
+                     C
+                     C  ...  slave subroutine for FFTR2  ...
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cxx      DIMENSION  X(MJ1,MJ2), Y(M,K,4), SINE(M,K)
+                     C
+                           INTEGER :: K, M, MJ1, MJ2
+                           REAL(8) :: X(MJ1,MJ2), SINE(M,K), Y(M,K,4)
+                           REAL(8) :: SUM1, SUM2
+                     C
+                           DO 10  I=1,M
+                           Y(I,1,1) = X(I,1) + X(I+M,1)
+                           Y(I,1,3) = X(I,1) - X(I+M,1)
+                           Y(I,1,2) = X(I,K+1)
+                     cxx   10 Y(I,1,4) = X(I+M,K+1)
+                           Y(I,1,4) = X(I+M,K+1)
+                        10 CONTINUE
+                     C
+                     cxx      DO 20  J=2,K
+                           DO 21  J=2,K
+                           DO 20  I=1,M
+                           SUM1 = SINE(1,K-J+2)*X(I+M,J) - SINE(1,J)    *X(I+M,J+K)
+                           SUM2 = SINE(1,J)    *X(I+M,J) + SINE(1,K-J+2)*X(I+M,J+K)
+                           Y(I,J,1)     = X(I,J) + SUM1
+                           Y(I,K-J+2,2) = X(I,J) - SUM1
+                           Y(I,J,3)     = SUM2 + X(I,J+K)
+                     cxx   20 Y(I,K-J+2,4) = SUM2 - X(I,J+K)
+                           Y(I,K-J+2,4) = SUM2 - X(I,J+K)
+                        20 CONTINUE
+                        21 CONTINUE
+                     C
+                           RETURN
+                           E N D
+                           SUBROUTINE  FFTSB3( X,SINE,K,M,Y )
+                     C
+                     C  ...  slave subroutine for FFTR2  ...
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cxx      DIMENSION  X(K,2,M,2),  SINE(M,K),  Y(K,4,M)
+                     C
+                           INTEGER :: K, M
+                           REAL(8) :: X(K,2,M,2), SINE(M,K), Y(K,4,M)
+                           REAL(8) :: SUM1, SUM2
+                     C
+                     cxx      DO 10  J=1,M
+                           DO 11  J=1,M
+                           Y(1,1,J) = X(1,1,J,1) + X(1,1,J,2)
+                           Y(1,3,J) = X(1,1,J,1) - X(1,1,J,2)
+                           Y(1,2,J) = X(1,2,J,1)
+                           Y(1,4,J) = X(1,2,J,2)
+                           DO 10  I=2,K
+                           SUM1 = SINE(1,K-I+2)*X(I,1,J,2) - SINE(1,I)    *X(I,2,J,2)
+                           SUM2 = SINE(1,I)    *X(I,1,J,2) + SINE(1,K-I+2)*X(I,2,J,2)
+                           Y(I,1,J)     = X(I,1,J,1) + SUM1
+                           Y(K-I+2,2,J) = X(I,1,J,1) - SUM1
+                           Y(I,3,J)     = SUM2 + X(I,2,J,1)
+                     cxx   10 Y(K-I+2,4,J) = SUM2 - X(I,2,J,1)
+                           Y(K-I+2,4,J) = SUM2 - X(I,2,J,1)
+                        10 CONTINUE
+                        11 CONTINUE
+                     C
+                           RETURN
+                           E N D
+
+                           
+                           C     PROGRAM  8.1  LSAR1
+                           SUBROUTINE LSAR1F( Y,N,LAG,NS0,NB,NF0,NNS,NN0,NN1,
+                          * IIF,MS,SDS,AICS,MP,SDP,AICP,AS,MFS,SIG2S,NNF )
+                     C
+                           INCLUDE 'TSSS_f.h'
+                     C
+                     C  ...  Decomposition of time interval to stationary subintevals  ...
+                     C
+                     C     Inputs:
+                     C        LAG:     Highest order od AR model
+                     C        NS:      Basic local span
+                     C     The following inputs are required in the subroutine READTS.
+                     C        TITLE:   Caption of the data set
+                     C        N:       Data length
+                     C        Y(I):    Time series, (i=1,...,N)
+                     C     Parameters:
+                     C        IDEV:    Input device for time series
+                     C        NMAX:    Adjustable dimension of Y (NMAX.GE.N)
+                     C        KMAX,MJ2:  Adjustable dimensions
+                     C        NF:      Number of frequencies for computing spectrum
+                     C
+                     cc      PARAMETER( NMAX=3000,KMAX=20,MJ2=KMAX+1,MJ1=100,NF=100,IDEV=1)
+                     cx      PARAMETER( MJ1=100 )
+                     cxx      IMPLICIT   REAL*8(A-H,O-Z)
+                     cc      DIMENSION  Y(NMAX), X(MJ1,MJ2), D(MJ1), U(MJ2,MJ2)
+                     cc      DIMENSION  AS(KMAX), A(KMAX)
+                     cx      DIMENSION  Y(N), X(MJ1,LAG+1), U(2*(LAG+1),LAG+1)
+                     cxx      DIMENSION  Y(N), X(3*(LAG+1),LAG+1), U(LAG+1,LAG+1)
+                     cxx      DIMENSION  AS(LAG,NB), A(LAG)
+                     c
+                     cxx      DIMENSION  NNS(NB), NN0(NB), NN1(NB), IIF(NB)
+                     cxx      DIMENSION  MS(NB), SDS(NB), AICS(NB), MP(NB), SDP(NB), AICP(NB)
+                     cxx      DIMENSION  MFS(NB), SIG2S(NB), NNF(NB)
+                     C
+                           INTEGER :: N, LAG, NS0, NB, NF0, NNS(NB), NN0(NB), NN1(NB), 
+                          1           IIF(NB), MS(NB), MP(NB), MFS(NB), NNF(NB)
+                           REAL(8) :: Y(N), SDS(NB), AICS(NB), SDP(NB), AICP(NB), AS(LAG,NB),
+                          1           SIG2S(NB)
+                           REAL(8) :: X(3*(LAG+1),LAG+1), U(LAG+1,LAG+1), A(LAG), SIG2, AICF
+                     c
+                           EXTERNAL   SETXAR
+                     C
+                     C     ISW = 0
+                     cc      READ( 5,* )  LAG, NS
+                           NF = NF0
+                           NS = NS0
+                           MJ1 = 3*(LAG+1)
+                     C
+                     C  ...  Read time series  ...
+                     C
+                     cc      CALL  READTS( IDEV,Y,N )
+                     C
+                           IF = 0
+                           IIF(1) = 0
+                           AICF = 0
+                     C
+                           NBLOCK = N/NS
+                           DO 100 II=1,NBLOCK
+                     C
+                           L = NS*(II-1)
+                     cc      WRITE(6,600) L
+                           IF( II.EQ.NBLOCK )  NS = N - NS*(II-1) - LAG
+                           LK  = L + LAG
+                     c
+                           NNS(II) = NS
+                           NN0(II) = LK + 1
+                           NN1(II) = LK + NS
+                     C
+                     C  ...  Locally stationary time series  ...
+                     C
+                     cc      CALL  LOCAL( SETXAR,Y,X,U,D,LAG,L,NS,LAG,IF,MJ1,MJ2,A,MF,SIG2)
+                     cx      CALL  LOCAL( SETXAR,Y,X,U,LAG,NF,L,NS,LAG,IF,MJ1,
+                           CALL  LOCAL( SETXAR,Y,N,X,U,LAG,NF,L,NS,LAG,IF,MJ1,
+                          *  A,MF,SIG2,MS(II),SDS(II),AICS(II),MP(II),SDP(II),AICP(II),AICF )
+                           IIF(II) = IF
+                     C
+                           NNF(II) = NF
+                     C
+                     cc      IF( IF .EQ. 2 )     LK0 = LK + 1
+                           IF( IF.EQ.2 .AND. II.GT.1 )  THEN
+                     C         CALL  ARMASP( AS,MFS,B,0,SIG2S,NF,SP )
+                     C         CALL  PTLSP( Y,N,SP,NF,LK0S,LK2S )
+                           END IF
+                     cc      MFS = MF
+                     cc      SIG2S = SIG2
+                           MFS(II) = MF
+                           SIG2S(II) = SIG2
+                     cc      LK0S = LK0
+                     cc      LK2S = LK + NS
+                           DO 20 I=1,MF
+                     cc   20 AS(I) = A(I)
+                     cxx   20 AS(I,II) = A(I)
+                           AS(I,II) = A(I)
+                        20 CONTINUE
+                     C
+                       100 CONTINUE
+                     C      CALL  ARMASP( AS,MFS,B,0,SIG2S,NF,SP )
+                     C      CALL  PTLSP( Y,N,SP,NF,LK0S,LK2S )
+                     C      CALL  PLOTE
+                     C      call  plot( 0.0,0.0,999 )
+                     C
+                     cc      STOP
+                           RETURN
+                     cxx  600 FORMAT( 1H ,'L =',I5 )
+                           E N D
+                     cc      SUBROUTINE  LOCAL( SETX,Z,X,U,D,LAG,N0,NS,K,IF,MJ1,MJ2,
+                     cc     *                   A,MF,SDF )
+                     cx      SUBROUTINE  LOCAL( SETX,Z,X,U,LAG,NF,N0,NS,K,IF,MJ1,
+                           SUBROUTINE  LOCAL( SETX,Z,N,X,U,LAG,NF,N0,NS,K,IF,MJ1,
+                          *   A,MF,SDF,MS,SDS,AICS,MP,SDP,AICP,AICF)
+                     C
+                     C  ...  Locally stationary AR model  ...
+                     C
+                     C     Inputs:
+                     C        SETX:    Name of the subroutine for making X(I,J)
+                     C        Z(I):    Data vector
+                     C        D,U:     Working area
+                     C        LAG:     Highest order of the model
+                     C        N0:      Time point of the previous set ofobservations
+                     C        NS:      Number of new observations
+                     C        MJ1,MJ2: Adjustable dimension
+                     C     Output:
+                     C        A(I):    AR coefficients of the current model
+                     C        MF:      Order of the current model
+                     C        SDF:     Innovation variance of the current model
+                     C
+                     cxx      IMPLICIT  REAL*8 (A-H,O-Z)
+                     cx      DIMENSION  Z(1)
+                     cc      DIMENSION  X(MJ1,1), U(MJ2,1), D(1), A(1)
+                     cx      DIMENSION  X(MJ1,K+1), U(2*(LAG+1),LAG+1), A(LAG)
+                     cc      DIMENSION  B(20), AA(20,20), AIC(0:20), SIG2(0:20)
+                     cxx      DIMENSION  Z(N)
+                     cxx      DIMENSION  X(MJ1,K+1), U(LAG+1,LAG+1), A(LAG)
+                     cxx      DIMENSION  B(LAG), AA(LAG,LAG), AIC(0:LAG), SIG2(0:LAG)
+                     C
+                           INTEGER :: N, LAG, NF, N0, NS, K, IF, MJ1, MF, MS, MP
+                           REAL(8) :: Z(N), X(MJ1,K+1), U(LAG+1,LAG+1), A(LAG), SDF, SDS,
+                          1           AICS, SDP, AICP, AICF
+                           REAL(8) :: B(LAG), AA(LAG,LAG), AIC(0:LAG), SIG2(0:LAG), AIC0
+                     C
+                           EXTERNAL   SETX
+                     C
+                           K1 = K + 1
+                           K2 = K1*2
+                     C
+                     cx      MJ2 = K2
+                           MJ2 = K1
+                     C
+                           NN0 = N0 + LAG + 1
+                           NN1 = N0 + LAG + NS
+                     cc      WRITE(6,600)  NN0, NN1
+                     C
+                     cc      CALL  REDUCT( SETX,Z,D,NS,N0,K,MJ1,X )
+                     cc      CALL  REGRES( X,K,NS,MJ1,20,AA,SIG2,AIC,MS )
+                           CALL  REDUCT( SETX,Z,NS,N0,K,MJ1,X )
+                           CALL  REGRES( X,K,NS,MJ1,AA,SIG2,AIC,MS )
+                     C
+                           SDS = SIG2(MS)
+                           DO 10 I=1,MS
+                     cxx   10 B(I) = AA(I,MS)
+                           B(I) = AA(I,MS)
+                        10 CONTINUE
+                           IF( IF.EQ.0 )  THEN
+                           CALL  COPY( X,K1,0,0,MJ1,MJ2,U )
+                           AICS = AIC(MS)
+                           AIC0 = AIC(MS)
+                     cc      WRITE(6,610)  NS, MS, SDS, AICS
+                     c-----
+                           AICP = 0.0d0
+                           SDP = 0.0d0
+                     c-----
+                           ELSE
+                     C
+                           AICS = AIC(MS) + AICF
+                           AIC0 = AIC(MS)
+                     cc      WRITE(6,620)  NF, NS, MS, SDS, AICS
+                           CALL  COPY( X,K1,0,K2,MJ1,MJ1,X )
+                           CALL  COPY( U,K1,0,K1,MJ2,MJ1,X )
+                     cc      CALL  HUSHLD( X,D,MJ1,K2,K1 )
+                           CALL  HUSHLD( X,MJ1,K2,K1 )
+                           NP = NF + NS
+                     cc      CALL  REGRES( X,K,NP,MJ1,20,AA,SIG2,AIC,MP )
+                           CALL  REGRES( X,K,NP,MJ1,AA,SIG2,AIC,MP )
+                     C
+                           AICP = AIC(MP)
+                           SDP  = SIG2(MP)
+                           DO 20 I=1,MP
+                     cxx   20 A(I) = AA(I,MP)
+                           A(I) = AA(I,MP)
+                        20 CONTINUE
+                     cc      WRITE(6,630)  NP, MP, SDP, AICP
+                           IF( AICS.GE.AICP )  GO TO 40
+                     cc      WRITE(6,640)
+                           CALL  COPY( X,K1,K2,0,MJ1,MJ2,U )
+                           END IF
+                     C
+                           IF = 2
+                           NF = NS
+                           MF = MS
+                           AICF = AIC0
+                           DO 30  I=1,MF
+                     cxx   30 A(I) = B(I)
+                           A(I) = B(I)
+                        30 CONTINUE
+                           SDF = SDS
+                     C
+                           GO TO 50
+                        40 IF = 1
+                           CALL  COPY( X,K1,0,0,MJ1,MJ2,U )
+                     cc      WRITE(6,650)
+                           SDF = SDP
+                           MF = MP
+                           AICF = AICP
+                           NF = NF + NS
+                        50 CONTINUE
+                     C
+                           RETURN
+                     cxx  600 FORMAT( 1H0,'<<< NEW DATA (N =',I4,' ---',I4,')  >>>' )
+                     cxx  610 FORMAT( 1H ,'  INITIAL MODEL: NS =',I4,/,10X,'MS =',I2,3X,
+                     cxx     1  'SDS =',D13.6,3X,'AICS =',F12.3 )
+                     cxx  620 FORMAT( 1H ,'  SWITCHED MODEL: (NF =',I4,', NS =',I4,1H),
+                     cxx     2  /,10X,'MS =',I2,3X,'SDS =',D13.6,3X,'AICS =',F12.3 )
+                     cxx  630 FORMAT( 1H ,'  POOLED MODEL:   (NP =',I4,1H),
+                     cxx     3  /,10X,'MP =',I2,3X,'SDP =',D13.6,3X,'AICP =',F12.3 )
+                     cxx  640 FORMAT( 1H ,30X,'***  SWITCHED MODEL ACCEPTED  ***' )
+                     cxx  650 FORMAT( 1H ,30X,'***   POOLED MODEL ACCEPTED   ***' )
+                           E N D
+                           SUBROUTINE  COPY( X,K,II,JJ,MJ1,MJ2,Y )
+                     C
+                     C  ...  Make a copy of X on Y
+                     C
+                     cxx      IMPLICIT  REAL*8( A-H,O-Z )
+                     cc      DIMENSION  X(MJ1,1) , Y(MJ2,1)
+                     cxx      DIMENSION  X(MJ1,K) , Y(MJ2,K)
+                     C
+                           INTEGER :: K, II, JJ, MJ1, MJ2 
+                           REAL(8) :: X(MJ1,K) , Y(MJ2,K)
+                     C
+                     cxx      DO 10  I=1,K
+                           DO 11  I=1,K
+                           I1 = I + II
+                           I2 = I + JJ
+                           DO 10  J=1,K
+                     cxx   10 Y(I2,J) = X(I1,J)
+                           Y(I2,J) = X(I1,J)
+                        10 CONTINUE
+                        11 CONTINUE
+                     C
+                           RETURN
+                           E N D
+                     
+                           C     PROGRAM  8.2  LSAR2
+                           SUBROUTINE LSAR2F( Y,N,K,N0,N1,N2,NE, AICS,AICMIN,MMIN )
+                     C
+                           INCLUDE 'TSSS_f.h'
+                     C
+                     C  ...  Estimation of the change point  ...
+                     C
+                     C     Inputs:
+                     C        K:       Highest order od AR model
+                     C        [N0,NE]: Time interval used for model fitting
+                     C        [N1,N2]: Candidate for change point
+                     C     The following inputs are required in the subroutine READTS.
+                     C        TITLE:   Caption of the data set
+                     C        N:       Data length
+                     C        FORMAT:  Reading format
+                     C        Y(I):    Time series, (i=1,...,N)
+                     C     Parameters:
+                     C        IDEV:    Input device for time series
+                     C        NMAX:    Adjustable dimension of Y (NMAX.GE.N)
+                     C        MJ,K,NSPAN:  Adjustable dimensions
+                     C     MODIFIED  2/15/93
+                     C
+                     cc      PARAMETER(NMAX=3000,MJ=100,NSPAN=1000,KMAX=20,K1=KMAX+1,IDEV=1)
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cc      DIMENSION  Y(NMAX)
+                     cc      DIMENSION  X(MJ,K1), AIC1(NSPAN), AIC2(NSPAN), AICS(NSPAN)
+                     cxx      DIMENSION  Y(N)
+                     cxx      DIMENSION  AIC1(N2-N1), AIC2(N2-N1), AICS(N2-N1)
+                     C     DIMENSION  DATA(200)
+                     C
+                           INTEGER :: N, K, N0, N1, N2, NE, MMIN
+                           REAL(8) :: Y(N), AICS(N2-N1), AICMIN
+                           REAL(8) :: AIC1(N2-N1), AIC2(N2-N1)
+                     C
+                     cc      READ( 5,* )  K, N0, N1, N2, NE
+                           NS = 1
+                           M = N2 - N1
+                     c-----
+                     cc      MJ = NE-N0
+                            MJ = NS + K + 1
+                     c-----
+                     C
+                     C  ...  Read time series  ...
+                     C
+                     cc      CALL  READTS( IDEV,Y,N )
+                     C
+                     C  ...   First models and AIC1's  ...
+                     C
+                     cc      CALL  UPDATE( X,Y,N0,N1,M,NS,K,MJ,AIC1 )
+                           CALL  UPDATE( Y,N,N0,N1,M,NS,K,MJ,AIC1 )
+                     C
+                     C  ...   Second models and AIC2's  ...
+                     C
+                     cc      CALL  BUPDAT( X,Y,N2,NE,M,NS,K,MJ,AIC2 )
+                           CALL  BUPDAT( Y,N2,NE,M,NS,K,MJ,AIC2 )
+                     C
+                     C  ...   AICs of the locally stationary AR models  ...
+                     C
+                           DO 20 I=1,M
+                     cxx   20 AICS(I) = AIC1(I) + AIC2(I)
+                           AICS(I) = AIC1(I) + AIC2(I)
+                        20 CONTINUE
+                     C
+                           AICMIN = 1.0D30
+                     c-----
+                           NMIN = 1
+                     c-----
+                           DO 60 I=1,M
+                           IF( AICS(I) .GT. AICMIN )  GO TO 60
+                              AICMIN = AICS(I)
+                              MMIN = I
+                        60 CONTINUE
+                     C
+                     C  ...   Print out and plot results  ...
+                     C
+                     cc      CALL  PRLSAR( AICS,AICMIN,MMIN,M,N0,N1,N2,NE,K )
+                     C      CALL  PTLSAR( Y,AICS,AICMIN,MMIN,N,M,N0,N1,N2,NE,K )
+                     C
+                     cc      STOP
+                           RETURN
+                           E N D
+                     cc      SUBROUTINE  UPDATE( X,Z,N0,N1,M,NS,K,MJ,AIC )
+                           SUBROUTINE  UPDATE( Z,N,N0,N1,M,NS,K,MJ,AIC )
+                     C
+                     C  ...  Fit AR models to first part of data  ...
+                     C
+                     C     Inputs:
+                     C        X:     Working area
+                     C        Z:     Time series
+                     C        N0,N1,M,NS:  Fit AR models on [N0,N1],[N0,N1+NS],...,
+                     C                                                    [N0,N1+(M-1)*NS]
+                     C        K:     Highest order of AR models
+                     C        MJ:    Adjustable dimension
+                     C     Output:
+                     C        AIC(I):  AIC of the AR model fitted on [N0,N1+(I-1)*NS]
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cc      DIMENSION  X(MJ,1), AIC(1), D(200), A(20,20), AICS(0:20)
+                     cc      DIMENSION  Z(N1), SIG2(0:20)
+                     cxx      DIMENSION  X(MJ,K+1), AIC(M), A(K,K), AICS(0:K)
+                     cxx      DIMENSION  Z(N), SIG2(0:K)
+                     C
+                     C
+                           INTEGER :: N, N0, N1, M, NS, K, MJ
+                           REAL(8) :: Z(N), AIC(M)
+                           REAL(8) :: SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
+                           EXTERNAL  SETXAR
+                     C
+                           NMK = N1 - K - N0
+                     C
+                     cc      CALL  REDUCT( SETXAR,Z,D,NMK,N0,K,MJ,X )
+                           CALL  REDUCT( SETXAR,Z,NMK,N0,K,MJ,X )   
+                     C
+                           DO 100  I=1,M
+                           II = N1 + (I-1)*NS
+                     c      CALL  REGRES( X,K,II-K-N0,MJ,20,A,SIG2,AICS,IMIN )
+                           CALL  REGRES( X,K,II-K-N0,MJ,A,SIG2,AICS,IMIN )
+                           AIC(I) = AICS(IMIN)
+                     C
+                           CALL  SETXAR( Z,II-K,NS,K,MJ,1,X )
+                     cc      CALL  HUSHL2( X,D,MJ,K+1+NS,K+1 )
+                           CALL  HUSHL2( X,MJ,K+1+NS,K+1 )
+                     C
+                       100 CONTINUE
+                           RETURN
+                           E N D
+                     cc      SUBROUTINE  BUPDAT( X,Z,N2,N,M,NS,K,MJ,AIC )
+                           SUBROUTINE  BUPDAT( Z,N2,N,M,NS,K,MJ,AIC )
+                     C
+                     C  ...  Fit AR models to the second part of data  ...
+                     C
+                     C     Inputs:
+                     C        X:     Working area
+                     C        Z:     Time series
+                     C        N0,N2,N,M,NS:  Fit AR models on [N2-(M-1)*NS,N],...,
+                     C                                           [N2-NS,S],[N2,N]
+                     C        K:     Highest order of AR models
+                     C        MJ:    Adjustable dimension
+                     C     Output:
+                     C        AIC(I):  AIC of the AR model fitted on [N0,N1+(I-1)*NS]
+                     C
+                     cxx      IMPLICIT REAL*8(A-H,O-Z)
+                     cc      DIMENSION  X(MJ,1), AIC(1), D(200), A(20,20), AICS(0:20)
+                     cc      DIMENSION  Z(1), SIG2(0:20)
+                     cxx      DIMENSION  X(MJ,K+1), AIC(M), A(K,K), AICS(0:K)
+                     cx      DIMENSION  Z(1), SIG2(0:K)
+                     cxx      DIMENSION  Z(N), SIG2(0:K)
+                     C
+                           INTEGER :: N2, N, M, NS, K, MJ
+                           REAL(8) :: Z(N), AIC(M)
+                           REAL(8) :: SIG2(0:K), X(MJ,K+1), A(K,K), AICS(0:K)
+                           EXTERNAL  SETXAR
+                     C
+                           NMK = N - N2
+                           J = M
+                     C
+                     cc      CALL  REDUCT( SETXAR,Z,D,NMK,N2-K-NS,K,MJ,X )
+                           CALL  REDUCT( SETXAR,Z,NMK,N2-K-NS,K,MJ,X )
+                     C
+                           DO 100  I=1,M
+                           II = N2 - (I-2)*NS
+                     cc      CALL  REGRES( X,K,N-II,MJ,20,A,SIG2,AICS,IMIN )
+                           CALL  REGRES( X,K,N-II,MJ,A,SIG2,AICS,IMIN )
+                           AIC(J) = AICS(IMIN)
+                           J = J - 1
+                     C
+                           CALL  SETXAR( Z,II-K-NS,NS,K,MJ,1,X )
+                     cc      CALL  HUSHL2( X,D,MJ,K+1+NS,K+1 )
+                           CALL  HUSHL2( X,MJ,K+1+NS,K+1 )
+                     C
+                       100 CONTINUE
+                           RETURN
+                           E N D
+                     cc      SUBROUTINE  HUSHL2( X,D,MJ1,N,K )
+                           SUBROUTINE  HUSHL2( X,MJ1,N,K )
+                     C
+                     C  ...  Householder transformation for adding new observations  ...
+                     C
+                     C     Inputs:
+                     C        X:     Data matrix (Householder reduced form augmented with
+                     C                            new observations)
+                     C        D:     Working area
+                     C        MJ1:   Adjustable dimension
+                     C        N:     Number of rows of X
+                     C        K:     Number of columns of X
+                     C     Output:
+                     C        X:     Householder reduced form
+                     C
+                     cxx      IMPLICIT  REAL*8 (A-H,O-Z)
+                     cxx      DIMENSION  X(MJ1,K) , D(MJ1)
+                     C
+                           INTEGER :: MJ1, N, K
+                           REAL(8) :: X(MJ1,K)
+                           REAL(8) :: D(MJ1), TOL, D1, H, G, S
+                     C
+                                TOL = 1.0D-30
+                     C
+                     cxx      DO 100  II=1,K
+                           DO 101  II=1,K
+                              D1 = X(II,II)
+                              H  = D1**2
+                              DO 10  I=K+1,N
+                                 D(I) = X(I,II)
+                     cxx   10       H = H + D(I)**2
+                                 H = H + D(I)**2
+                        10    CONTINUE
+                              IF( H .GT. TOL )  GO TO 20
+                              G = 0.0D00
+                              GO TO 100
+                        20    G = DSQRT( H )
+                              IF( D1 .GE. 0.0D00 )   G = -G
+                              H  = H - D1*G
+                              D1 = D1 - G
+                     C
+                              IF( II .EQ. K )  GO TO 100
+                              II1 = II+1
+                              DO 60  J=II1,K
+                                 S = D1*X(II,J)
+                                 DO 40  I=K+1,N
+                     cxx   40       S = S + D(I)*X(I,J)
+                                    S = S + D(I)*X(I,J)
+                        40       CONTINUE
+                                 S = S/H
+                                 X(II,J) = X(II,J) - D1*S
+                                 DO 50  I=K+1,N
+                     cxx   50       X(I,J) = X(I,J) - D(I)*S
+                                    X(I,J) = X(I,J) - D(I)*S
+                        50       CONTINUE
+                        60    CONTINUE
+                       100 X(II,II) = G
+                       101 CONTINUE
+                     C
+                           RETURN
+                           E N D
+
+                           
+                           C     PROGRAM  5.1  LSQR
+                           cxx      SUBROUTINE LSQRF(Y,N,K,AIC,SIG2,IMIN,A,DATA)
+                                 SUBROUTINE LSQRF(Y,N,K,MJ1,AIC,SIG2,IMIN,A,DATA)
+                           C
+                                 INCLUDE 'TSSS_f.h'
+                           C
+                           C  ...  The least squares method via Householder transformation  ...
+                           C
+                           C     The following inputs are required in the subroutine  READTS:
+                           C        TITLE:   title of the data
+                           C        FORMAT:  reading format of the data
+                           C        Y(I):    time series
+                           C     PARATERS:
+                           C        MJ:      Adjustable dimension of Y (MJ.GE.N)
+                           C        MJ1:     Adjustable dimension of X and D
+                           C        MJ2:     Adjustable dimension of A, SIG2 and AIC
+                           C        IDEV:    Input device
+                           C        LAG:     Number of sine and cosine terms
+                           C     @TEST.PN51:
+                           C
+                           cc      PARAMETER (MJ=1000,MJ1=100,MJ2=22,ISW=2,IDEV=1,LAG=10,K=LAG*2+1)
+                           cxx      PARAMETER (MJ1=100)
+                           cxx      IMPLICIT   REAL*8 (A-H,O-Z)
+                           cc      CHARACTER  TITLE*72
+                           cc      DIMENSION  Y(MJ), AIC(0:MJ2)
+                           cc      DIMENSION  X(MJ1,MJ2), D(MJ1), A(MJ2,MJ2), SIG2(0:MJ2)
+                           cc      COMMON     /CMDATA/  TITLE
+                           cxx      DIMENSION  Y(N), DATA(N), AIC(0:K)
+                           cxx      DIMENSION  X(MJ1,K+1), A(K,K), SIG2(0:K)
+                           C
+                                 INTEGER :: N, K, IMIN
+                                 REAL(8) :: Y(N), AIC(0:K), SIG2(0:K), A(K,K), DATA(N)
+                                 REAL(8) :: X(MJ1,K+1)
+                           C
+                                 EXTERNAL   SETXTP
+                           C
+                           cc      MJ2=K
+                           C
+                           cc      CALL  READTS( IDEV,Y,N )
+                           C
+                           cc      CALL  REDUCT( SETXTP,Y,D,N,0,K,MJ1,X )
+                           cx      CALL  REDUCT( SETXTP,Y,N,0,K,MJ1,X )
+                                 CALL  REDUCT1( SETXTP,Y,N,0,K,MJ1,X )
+                           C
+                           cc      CALL  REGRES( X,K,N,MJ1,MJ2,A,SIG2,AIC,IMIN )
+                                 CALL  REGRES( X,K,N,MJ1,A,SIG2,AIC,IMIN )
+                           C
+                           cc      CALL  PRREG( N,K,MJ2,A,SIG2,AIC )
+                           cxx      CALL  PTTPL( Y,N,A(1,IMIN),IMIN,DATA )
+                                 CALL  PTTPL( N,A(1,IMIN),IMIN,DATA )
+                           C
+                           cc      STOP
+                                 RETURN
+                                 E N D
+                           
+                                 SUBROUTINE  SETXTP( Z,N0,L,K,MJ1,JSW,X )
+                           C
+                           C  ...  Data matrix for trigonometric polynomial regression  ...
+                           C
+                           C     Inputs:
+                           C        Z(I):    Data vector
+                           C        N0:      Origin of the current observations
+                           C        L:       Number of current observations
+                           C        K:       Number of regressors
+                           C        MJ1:     Adjustable dimension of X
+                           C        JSW=0:   Make initial data matrix
+                           C           =1:   Apend L*(K+1) data matrix below the triangular one
+                           C     Output:
+                           C        X(I,J):  Data matrix
+                           C
+                           cc      REAL*8  X(MJ1,1), Z(1), W
+                           cxx      REAL*8  X(MJ1,K+1), Z(N0+L), W
+                                 INTEGER :: N0, L, K, MJ1, JSW
+                                 REAL(8) :: Z(N0+L), X(MJ1,K+1)
+                                 REAL(8) :: W
+                           C
+                                 W = 2*3.1415926536D0/365.0D0
+                                 I0 = 0
+                                 IF( JSW .EQ. 1 )     I0 = K+1
+                           cxx      DO 10  I=1,L
+                                 DO 11  I=1,L
+                                   II = I + I0
+                                   X(II,K+1) = Z(N0+I)
+                                   X(II,1) = 1.0D0
+                                 DO 10  J=1,(K-1)/2
+                                 X(II,J*2)   = DSIN( W*(I+N0)*J )
+                           cxx   10 X(II,J*2+1) = DCOS( W*(I+N0)*J )
+                                 X(II,J*2+1) = DCOS( W*(I+N0)*J )
+                              10 CONTINUE
+                              11 CONTINUE
+                           C
+                                 RETURN
+                           C
+                                 E N D
+                           
+                           cc      SUBROUTINE PTTPL( Y,N,A,M )
+                           cxx      SUBROUTINE PTTPL( Y,N,A,M,DATA )
+                                 SUBROUTINE PTTPL( N,A,M,DATA )
+                           
+                           C
+                           C  ...  This subroutine draws fitted trigonometric polynomial  ...
+                           C
+                           C     Inputs:
+                           C        Y(I):   Original data
+                           C        N:      Data length
+                           C        A(I):   Regression coefficients
+                           C        M:      Order of regression model
+                           C
+                           cxx      IMPLICIT REAL*8(A-H,O-Z)
+                           cc      CHARACTER  VNAME*8
+                           cc      DIMENSION  Y(N), A(M), DATA(1000)
+                           cxx      DIMENSION  Y(N), A(M), DATA(N)
+                           cc      DIMENSION  VNAME(5), VALUE(5)
+                           C
+                                 INTEGER :: N, M
+                                 REAL(8) :: A(M), DATA(N)
+                                 REAL(8) :: W, SUM
+                           C
+                           cc      WX = 20.0
+                           cc      WY = 6.0
+                           cc      IPOS = 1
+                           cc      CALL  PLOTS
+                           C     call  plots( 1,0,0,1,0 )
+                           C     call  form( 1 )
+                           C     call  factor( 10.0 )
+                           cc      CALL  HEADER( 'TRIGONOMETRIC REGRESSION',24,0,VNAME,VALUE )
+                           C
+                           cc      CALL  DELX( 0.0,DBLE(N),DX )
+                           cc      CALL  MAXMIN( Y,N,YMIN,YMAX,DY )
+                           cc      CALL  AXISXY( 3.0D0,15.0-WY,WX,WY,0.0D0,DBLE(N),YMIN,YMAX,
+                           cc     *              DX,DY,0.2D0,1,10,2 )
+                           cc      CALL  SYMBOL( 0.0,SNGL(WY)+0.1,0.2,'ORIGINAL AND TREND',0.0,18 )
+                           cc      CALL  NEWPEN( 1 )
+                           cc      CALL  PLOTY ( Y,N,YMIN,YMAX,WX,WY,IPOS,1 )
+                           C
+                                 W = 2*3.1415926536D0/365.0D0
+                                 DO 20 I=1,N
+                                 SUM = A(1)
+                                 DO 10 J=1,10
+                                 IF( 2*J.LE.M )   SUM = SUM + A(2*J)*DSIN(W*I*J)
+                           cxx   10 IF( 2*J+1.LE.M ) SUM = SUM + A(2*J+1)*DCOS(W*I*J)
+                                 IF( 2*J+1.LE.M ) SUM = SUM + A(2*J+1)*DCOS(W*I*J)
+                              10 CONTINUE
+                           cxx   20 DATA(I) = SUM
+                                 DATA(I) = SUM
+                              20 CONTINUE
+                           cc      CALL  NEWPEN( 2 )
+                           cc      CALL  PLOTY( DATA,N,YMIN,YMAX,WX,WY,IPOS,1 )
+                           cc      CALL  PLOTE
+                           C     call  plot( 0.0,0.0,999 )
+                           C
+                                 RETURN
+                                 E N D
+                                                   
          
    
