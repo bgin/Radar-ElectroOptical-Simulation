@@ -10658,8 +10658,11 @@ C
       340 RETURN
    END SUBROUTINE
    
-
+#if defined __ICC
+   !DIR$ ATTRIBUTES INLINE :: SUBTAC
+#endif
    SUBROUTINE SUBTAC(X,Y,Z,MM,NN)
+          use omp_lib
           implicit none
 !C     COMMON SUBROUTINE
 !C     MATRIX SUBTRACTION
@@ -10668,13 +10671,18 @@ C
 !C     MM X NN OF Y).
 !C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X, Y AND Z IN THE MAIN ROUTINE
 
-          INTEGER(I32P) :: MM, NN
-          REAL(R64P), dimension(MM,NN) :: X , Y, Z
+          INTEGER(4) :: MM, NN
+          REAL(8), dimension(MM,NN) :: X , Y, Z
+
           ! Locals
-          INTEGER(I32P) :: I,J
+          INTEGER(4) :: I,J
 !cxx      DO 10 I=1,MM
           DO 20 I=1,MM
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#if defined __ICC
+             !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD
+#endif
              DO 10 J=1,NN
 !cxx   10 Z(I,J)=X(I,J)-Y(I,J)
                 Z(I,J)=X(I,J)-Y(I,J)
@@ -10684,7 +10692,7 @@ C
    
                     
    SUBROUTINE  ADDVAR( X,IND,JND,K,L,M,MJ )  
-         
+         implicit none
 !C                                                                       
 !C         +-----------------------------------------------------------+ 
 !C         ! ADDITION OF THE VARIABLE M AS THE JJ-TH REGRESSOR (JJ<=L) ! 
@@ -10709,13 +10717,17 @@ C
 !C          JND(I)=J:     UPDATED STATUS, I-TH REGRESSOR IS VARIABLE J.  
 !C                                                                       
                     
-     INTEGER(kind=int4), dimension(K+1) :: IND, JND
-     !DIR$ ASSUME_ALIGNED IND:64,JND:64
-          INTEGER(kind=int4) :: K, L, M, MJ 
-          REAL(kind=dp), dimension(MJ,K+1) :: X
+         INTEGER(kind=4), dimension(K+1) :: IND, JND
+#if defined __ICC
+         !DIR$ ASSUME_ALIGNED IND:64,JND:64
+#endif
+          INTEGER(kind=4) :: K, L, M, MJ 
+          REAL(kind=8), dimension(MJ,K+1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: K1,J,JJ,I,I1,L1,II1
+          INTEGER(kind=4) :: K1,J,JJ,I,I1,L1,II1
                                                                       
           K1 = K + 1                                                        
           DO  60 I=1,K1                                                 
@@ -10742,21 +10754,26 @@ C
       40 RETURN                                                            
    END SUBROUTINE
    
-
+#if defined __ICC
+   !DIR$ ATTRIBUTES INLINE :: AICCOM
+#ndif
    SUBROUTINE  AICCOM( X,N,M,K,MJ,SD,AIC )  
-        
+     use omp_lib
+     implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES INNOVATION VARIANCE AND AIC OF THE MODEL 
 !C     WITH M REGRESSORS.                                                
 !C                                                                       
 
-          INTEGER(kind=int4) :: N, M, K, MJ
-          REAL(kind=dp), dimension(MJ,K+1) :: X
+          INTEGER(kind=4) :: N, M, K, MJ
+          REAL(kind=8), dimension(MJ,K+1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp) :: SD, AIC
+#endif         
+          REAL(kind=8) :: SD, AIC
           ! Locals
-          INTEGER(kind=int4) :: M1,K1,I
-          REAL(kind=dp) :: FN, SUM
+          INTEGER(kind=4) :: M1,K1,I
+          REAL(kind=8) :: FN, SUM
 !C                                                                       
 !C       INPUTS:                                                         
 !C          X:     (K+1)*(K+1) REDUCED MATRIX                            
@@ -10772,22 +10789,27 @@ C
           FN = N                                                            
           M1 = M + 1                                                        
           K1 = K + 1                                                        
-          SUM = 0._dp
+          SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)
+          !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)
+#endif
           DO 10  I=M1,K1                                                    
 !cxx   10 SUM = SUM + X(I,K1)*X(I,K1)                                       
                SUM = SUM + X(I,K1)*X(I,K1)
        10 CONTINUE
           SD = SUM / FN                                                     
 !cxx   20 AIC = FN*DLOG( SD ) + 2.D0*M                                      
-          AIC = FN*DLOG( SD ) + 2.0_dp*M                                      
+          AIC = FN*DLOG( SD ) + 2.0_8*M                                      
    END SUBROUTINE
    
 
    SUBROUTINE  ARBAYS( X,D,K,N,ISW,MJ1,SD,AIC,DIC,AICM,SDMIN,      &
                          IMIN,A,B1,B,C,SDB,PN,AICB )  
-        
+     use omp_lib
+     implicit none
 !C                                                                       
 !C         +-----------------------------------------------+             
 !C         ! AUTOREGRESSIVE MODEL FITTING (BAYESIAN MODEL) !             
@@ -10823,17 +10845,23 @@ C
 !C         AICB: AIC OF BAYESIAN MODEL                                   
 !C                                                                       
 
-          INTEGER(kind=int4) :: K, N, ISW, MJ1, IMIN
-          REAL(kind=dp), dimension(MJ1,1) :: X
+          INTEGER(kind=4) :: K, N, ISW, MJ1, IMIN
+          REAL(kind=8), dimension(MJ1,1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(K+1) :: D, SD, AIC, DIC, C
+#endif
+          REAL(kind=8), dimension(K+1) :: D, SD, AIC, DIC, C
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED D:64,SD:64,AIC:64,DIC:64,C:64
-          REAL(kind=dp), dimension(K) :: A,B1,B
+#endif
+          REAL(kind=8), dimension(K) :: A,B1,B
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64,B1:64,B:64
-          REAL(kind=dp) ::     AICM, SDMIN,   SDB, PN, AICB
+#endif
+          REAL(kind=8) ::     AICM, SDMIN,   SDB, PN, AICB
           ! Locals
-          INTEGER(kind=int4) :: I
-          REAL(kind=dp) :: FN
+          INTEGER(kind=4) :: I
+          REAL(kind=8) :: FN
                                       
           FN = N                                                            
 !C                                                                       
@@ -10872,9 +10900,13 @@ C
 !C                                                                       
 !C          EQUIVALENT NUMBER OF PARAMETERS                              
 !C                                                                       
-          PN = 1._dp
+          PN = 1._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:PN)
+          !DIR$ SIMD REDUCTION(+:PN)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:PN)
+#endif
           DO   10    I=1,K                                                  
 !cxx   10 PN = PN + D(I)*D(I)                                               
                PN = PN + D(I)*D(I)
@@ -10891,12 +10923,14 @@ C
 !C          AIC OF THE BAYESIAN MODEL                                    
 !C          -------------------------                                    
 !C                                                                       
-          AICB = FN * DLOG( SDB ) + 2.0_dp*PN                                 
+          AICB = FN * DLOG( SDB ) + 2.0_8*PN                                 
     END SUBROUTINE
                          
                                                             
                                                          
-
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: ARCOEF
+#endif
     SUBROUTINE  ARCOEF( B,K,A )    
          
 !C                                                                       
@@ -10912,27 +10946,37 @@ C
 !C                                                                       
 !C                                                                       
 
-          INTEGER(kind=int4) :: K
-          REAL(kind=dp), dimension(K) :: B, A, AA
+          INTEGER(kind=4) :: K
+          REAL(kind=8), dimension(K) :: B, A, AA
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED B:64,A:64,AA:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: II,J,JJ,IM1
+          INTEGER(kind=4) :: II,J,JJ,IM1
                                                                        
           DO  30 II=1,K                                                 
               A(II) = B(II)                                                     
               AA(II) = B(II)                                                    
               IM1 = II - 1                                                      
               IF( IM1 .LE. 0 )     GO TO 30
+#if defined __ICC
               !DIR$ VECTOR ALIGNED
               !DIR$ SIMD
+#elif defined __GFORTRAN__
+              !$OMP SIMD
+#endif
               DO  10 J=1,IM1                                                
                   JJ = II - J                                                       
 !cxx   10 A(J) = AA(J) - B(II)*AA(JJ)                                       
                   A(J) = AA(J) - B(II)*AA(JJ) 
           10 CONTINUE
                   IF( II .EQ. K )     GO TO 40
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))             
+                  !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+              !$OMP SIMD
+#endif
              DO  20     J=1,IM1                                                
 !cxx   20 AA(J) = A(J)
                  AA(J) = A(J)
@@ -10943,7 +10987,7 @@ C
     
     
     SUBROUTINE  ARMFIT( X,K,LAG,N,ISW,MJ1,A,IMIN,SD,AIC,DIC,SDMIN,AICM )
-
+      implicit none
         
 !C                                                                       
 !C          +------------------------------+                             
@@ -10977,16 +11021,22 @@ C
 !C         IMIN:   MAICE ORDER                                           
 !C                                                                       
 
-          INTEGER(kind=int4) :: K, LAG, N, ISW, MJ1, IMIN
-          REAL(kind=dp), dimension(MJ1,1) :: X
+          INTEGER(kind=4) :: K, LAG, N, ISW, MJ1, IMIN
+          REAL(kind=8), dimension(MJ1,1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(K) :: A
+#endif
+          REAL(kind=8), dimension(K) :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
-          REAL(kind=dp), dimension(K+1) :: SD, AIC, DIC
+#endif
+          REAL(kind=8), dimension(K+1) :: SD, AIC, DIC
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED SD:64,AIC:64,DIC:64
-          REAL(kind=dp) :: SDMIN,AICM
+#endif
+          REAL(kind=8) :: SDMIN,AICM
           ! Locals
-          INTEGER(kind=int4) :: M,I,M1,L1,NL
+          INTEGER(kind=4) :: M,I,M1,L1,NL
                
 !C          +-----------------------------------------+                +-
 !C          ! INNOVATION VARIANCE AND AIC COMPUTATION !                ! 
@@ -11023,6 +11073,8 @@ C
                                                             
                       
     SUBROUTINE  BAYSPC( X,C,N,K,ISW,MJ1,B,B1,D )
+      use omp_lib
+      implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES PARTIAL AUTOCORRELATION COEFFICIENTS B(I)
@@ -11046,17 +11098,23 @@ C
 !C         D:    INTEGRATED BAYESIAN WEIGHTS                             
 !C                                                                       
 
-          INTEGER(kind=int4) :: N, K, ISW, MJ1
-          REAL(kind=dp), dimension(MJ1,K+1) :: X
+          INTEGER(kind=4) :: N, K, ISW, MJ1
+          REAL(kind=8), dimension(MJ1,K+1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(K+1) :: C,D
+#endif
+          REAL(kind=8), dimension(K+1) :: C,D
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64,D:64
-          REAL(kind=dp), dimension(K) :: B,B1
+#endif
+          REAL(kind=8), dimension(K) :: B,B1
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED B:64,B1:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: K1,I,J,ISIG,ISIGP1,ISIGM1,ISIGP2,ISIGM2, &
+          INTEGER(kind=4) :: K1,I,J,ISIG,ISIGP1,ISIGM1,ISIGP2,ISIGM2, &
                            J0,
-          REAL(kind=dp) :: FN, SUM, G, SC, SIG 
+          REAL(kind=8) :: FN, SUM, G, SC, SIG 
                                            
           K1 = K + 1                                                        
           FN = N                                                            
@@ -11064,9 +11122,13 @@ C
 !C          PARTIAL AUTOCORRELATION (LEAST SQUARES ESTIMATE)             
 !C                                                                       
           SUM = X(K1,K1)**2
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ SIMD
           !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)
+#endif
           DO 10  I=1,K                                                      
                  J = K1 - I                                                        
                  SUM = SUM + X(J,K1)**2                                            
@@ -11101,8 +11163,12 @@ C
 !C          PARCOR OF BAYESIAN MODEL                                     
 !C                                                                       
 100       CONTINUE
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif          
           DO  110 I=1,K                                                 
 
               B1(I) = B(I) * D(I)
@@ -11111,7 +11177,9 @@ C
     
                                                          
 
-    SUBROUTINE  BAYSWT( AIC,AICM,K,ISW,C )  
+    SUBROUTINE  BAYSWT( AIC,AICM,K,ISW,C )
+      use omp_lib
+      implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES BAYESIAN WEIGHT OF AR-MODEL OF EACH ORDER
@@ -11138,24 +11206,30 @@ C
 !C         C(I) (I=1,K+1):   VECTOR OF BAYESIAN WEIGHTS                  
 !C                                                                       
 
-          INTEGER(kind=int4) :: K, ISW
-          REAL(kind=dp), dimension(K+1) :: AIC, C
+          INTEGER(kind=4) :: K, ISW
+          REAL(kind=8), dimension(K+1) :: AIC, C
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED AIC:64,C:64
-          REAL(kind=dp) :: AICM
+#endif
+          REAL(kind=8) :: AICM
           ! Locals
-          INTEGER(kind=int4) :: K1,I
-          REAL(kind=dp) :: SUM, EK, DIC, AI
+          INTEGER(kind=4) :: K1,I
+          REAL(kind=8) :: SUM, EK, DIC, AI
                                                                        
           K1 = K + 1                                                        
-          SUM = 0._dp                                                       
-          EK = 0._dp                                                        
+          SUM = 0._8                                                      
+          EK = 0._8
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ SIMD
-          !DIR$ SIMD REDUCTION(+:SUM)
+          !DIR$ SIMD REDUCTION(+:SUM,EK)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM,EK)
+#endif
           DO  11 I=1,K1
-              DIC = -0.5_dp * (AIC(I) - AICM)                                    
+              DIC = -0.5_8 * (AIC(I) - AICM)                                    
               C(I) = 0._dp                                                      
-              IF( DIC .LT. -40.0_dp )     GO TO 10                                
+              IF( DIC .LT. -40.0_8 )     GO TO 10                                
               C(I) = DEXP(DIC)                                                  
               EK = EK + (I-1) * C(I)                                            
            10 SUM = SUM + C(I)                                                  
@@ -11165,10 +11239,14 @@ C
 !C                                                                       
           IF( ISW .EQ. 1 )     GO TO 30                                     
           IF( ISW .EQ. 2 )     GO TO 50                                     
-          SUM = 0._dp
+          SUM = 0._8
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ SIMD
           !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)
+#endif          
           DO  20 I=1,K1                                                 
               AI = I                                                            
               C(I) = C(I) / AI                                                  
@@ -11180,10 +11258,14 @@ C
 !C          DATA ADAPTIVE DAMPER                                         
 !C                                                                       
        30 EK = EK / ( SUM+EK )                                              
-          SUM = 0._dp
+          SUM = 0._8
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ SIMD
           !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)
+#endif     
           DO  40 I=1,K1                                                 
               C(I) = C(I) * EK**(I-1)                                           
                                                  
@@ -11192,9 +11274,12 @@ C
 !C                                                                       
 !C          NORMALIZATION OF C                                           
               !C
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ SIMD
-          
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif               
        50 DO  60 I=1,K1                                                 
                                            
               C(I) = C(I) / SUM
@@ -11203,7 +11288,8 @@ C
     
 
     SUBROUTINE  COEF2( A,M,ID,II,JND,LMAX,MM,KSW,MSW,MJ1,B,C,E ) 
-        
+      use omp_lib
+      implicit none
 !C                                                                       
 !C     COMPOSITION OF AR-COEFFICIENT MATRICES WITH INSTANTANEOUS RESPONSE
 !C                                                                       
@@ -11227,21 +11313,31 @@ C
 !C                                                                       
                                
           INTEGER :: M, ID, II , LMAX, MM, KSW, MSW, MJ1
-          INTEGER(kind=int4), dimension(M) :: JND
+          INTEGER(kind=4), dimension(M) :: JND
+#if defined __ICC
           !DIR$ ASSUME_ALIGN : 64 :: JND
-          REAL(kind=dp), dimension(M) :: A
+#endif
+          REAL(kind=8), dimension(M) :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
-          REAL(kind=dp), dimension(MJ1,MJ1,MM) :: B
+#endif
+          REAL(kind=8), dimension(MJ1,MJ1,MM) :: B
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED B:64
+#endif
           REAL(kind=dp), dimension(ID) :: C
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64
+#endif
           REAL(kind=dp), dimension(MJ1,ID) :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
+#endif
           ! Locals
           INTEGER(kind=int4) :: M0,JJ,I,L,L1
                                                                        
           M0 = MSW + 1                                                      
-          C(II) = 0._dp                                                     
+          C(II) = 0._8                                                     
           IF( MSW .EQ. 1 )     C(II) = A(1)                                 
           DO  100   JJ=M0,M                                                 
               I = JND(JJ) - KSW                                                 
@@ -11260,12 +11356,12 @@ C
       100 CONTINUE                                                          
           DO  40 I=1,ID                                                 
 !cxx   40 E(I,I) = 1.D0                                                     
-                E(I,I) = 1._dp
+                E(I,I) = 1._8
        40 CONTINUE
     END SUBROUTINE
     
     SUBROUTINE  COMAIC( X,N,K,MJ1,SD,AIC ) 
-        
+        implicit none
 !C                                                                       
 !C          +-----------------------------------------+                  
 !C          ! INNOVATION VARIANCE AND AIC COMPUTATION !                  
@@ -11282,18 +11378,22 @@ C
 !C          AIC(M) (M=1,K+1):   VECTOR OF AIC'S.                         
 !C                                                                       
                         
-          INTEGER(kind=int4) :: N, K, MJ1
-          REAL(kind=dp), dimension(MJ1,K+1) :: X
+          INTEGER(kind=4) :: N, K, MJ1
+          REAL(kind=8), dimension(MJ1,K+1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(K+1)     :: SD, AIC
+#endif
+          REAL(kind=8), dimension(K+1)     :: SD, AIC
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED SD:64,AIC:64
+#endif
           ! Lcals
-          INTEGER(kind=int4) :: K1,I,M
-          REAL(kind=dp) :: FN, OSD
+          INTEGER(kind=4) :: K1,I,M
+          REAL(kind=8) :: FN, OSD
           FN = N                                                            
           K1 = K + 1                                                        
                                                                       
-          OSD = 0.0_dp                                                     
+          OSD = 0.0_8                                                    
           DO 10  I = 1,K1                                                  
                  M = K1 - I + 1                                                    
                  OSD = OSD + X(M,K1)**2                                            
@@ -11302,9 +11402,12 @@ C
                  AIC(M) = FN*DLOG( SD(M) ) + 2*M
        10 CONTINUE
     END SUBROUTINE
-    
+
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: COPY
+#endif
     SUBROUTINE  COPY( X,K,II,JJ,MJ1,MJ2,Y ) 
-       
+       implicit none
 !C                                                                       
 !C         +-----------------------+                                     
 !C         ! MAKE A COPY OF X ON Y !                                     
@@ -11321,11 +11424,15 @@ C
 !C             Y(I+JJ,J):     COPY OF X (I,J=1,...,K)                    
 !C                                                                       
                                
-          INTEGER(kind=int4) :: K, II, JJ, MJ1, MJ2
-          REAL(kind=dp), dimension(MJ1,K) :: X
+          INTEGER(kind=4) :: K, II, JJ, MJ1, MJ2
+          REAL(kind=8), dimension(MJ1,K) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(MJ2,K) :: Y
+#endif
+          REAL(kind=8), dimension(MJ2,K) :: Y
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Y:64
+#endif
           ! Locals
           INTEGER(kind=int4) :: I,I1,I2
           DO  20 I=1,K
@@ -11338,7 +11445,9 @@ C
         20 CONTINUE
     END SUBROUTINE
     
-                  
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: DELETE
+#endif
     SUBROUTINE  DELETE( X,IND,JND,K,L,M,MJ )  
        
 !C                                                                       
@@ -11363,9 +11472,9 @@ C
 !C          X:            (K+1)*(K+1)  MATRIX                            
 !C                                                                       
 
-          INTEGER(kind=int4), dimension(K+1) :: IND, JND 
-          INTEGER(kind=int4) :: K, L, M, MJ
-          REAL(kind=dp), dimension(MJ,K+1) :: X
+          INTEGER(kind=4), dimension(K+1) :: IND, JND 
+          INTEGER(kind=4) :: K, L, M, MJ
+          REAL(kind=8), dimension(MJ,K+1) :: X
           ! Locals
           INTEGER(kind=int4) :: K1,J,I,II,I1,LM1
 
@@ -11395,9 +11504,11 @@ C
        40 RETURN                                                            
     END SUBROUTINE
     
-
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: FOUGER
+#endif
     SUBROUTINE FOUGER(G,LGP1,FC,FS,LF1) 
-        
+        implicit none
 !C                                                                       
 !C     FOURIER TRANSFORM (GOERTZEL METHOD)                               
 !C     THIS SUBROUTINE COMPUTES FOURIER TRANSFORM OF G(I),I=0,1,...,LG AT
@@ -11414,14 +11525,18 @@ C
 !C          FB(I):  SINE TRANSFORM OF G  (I=0,1,...,LF)                  
 !C                                                                       
 
-          INTEGER(kind=int4) :: LGP1, LF1
-          REAL(kind=dp), dimension(LGP1) :: G
+          INTEGER(kind=4) :: LGP1, LF1
+          REAL(kind=8), dimension(LGP1) :: G
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED G:64
-          REAL(kind=dp), dimension(LF1) :: FC, FS
+#endif
+          REAL(kind=8), dimension(LF1) :: FC, FS
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED FC:64,FS:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: LG,LF,LG3,LG4,I,I2,K,LF1
-          REAL(kind=dp) :: T, PI, ALF, AK, TK, CK, SK, CK2, UM0, UM1, UM2
+          INTEGER(kind=4) :: LG,LF,LG3,LG4,I,I2,K,LF1
+          REAL(kind=7) :: T, PI, ALF, AK, TK, CK, SK, CK2, UM0, UM1, UM2
           LG=LGP1-1                                                         
           LF=LF1-1                                                          
 !C     REVERSAL OF G(I),I=1,...,LGP1 INTO G(LG3-I)   LG3=LGP1+1          
@@ -11435,7 +11550,7 @@ C
 !cxx  100 G(I2)=T                                                           
              G(I2)=T
       100 CONTINUE
-      110 PI=3.1415926536_dp                                                 
+      110 PI=3.1415926536_8                                                 
           ALF=LF                                                            
           T=PI/ALF                                                          
           DO 10 K=1,LF1                                                     
@@ -11444,8 +11559,8 @@ C
              CK=DCOS(TK)                                                       
              SK=DSIN(TK)                                                       
              CK2=CK+CK                                                         
-             UM1=0._dp                                                        
-             UM2=0._dp                                                         
+             UM1=0._8                                                        
+             UM2=0._8                                                         
           IF(LG.EQ.0) GO TO 12                                              
           DO 11 I=1,LG                                                      
              UM0=CK2*UM1-UM2+G(I)                                              
@@ -11567,7 +11682,8 @@ C
     
                             
     SUBROUTINE  HUSHLD( X,MJ1,N,K ) 
-         
+      use omp_lib
+      implicit none
 !C                                                                       
 !C          +----------------------------+                               
 !C          ! HOUSEHOLDER TRANSFORMATION !                               
@@ -11588,58 +11704,77 @@ C
 !C                                                                       
 !C                                                                       
 
-          INTEGER(kind=int4) :: MJ1, N, K
-          REAL(kind=dp), dimension(MJ1,K) :: X
+          INTEGER(kind=4) :: MJ1, N, K
+          REAL(kind=8), dimension(MJ1,K) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: II,I,II1,J
-          REAL(kind=dp) ::   TOL, H, G, F, S
-          REAL(kind=dp), dimension(MJ1) :: D
+          INTEGER(kind=4) :: II,I,II1,J
+          REAL(kind=8) ::   TOL, H, G, F, S
+          REAL(kind=8), dimension(MJ1) :: D
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: D
-                                                                      
-          TOL = 1.0E-60_dp                                                
+#endif                                                                      
+          TOL = 1.0E-60_8                                               
                                                                        
                                               
           DO 110  II=1,K
-             H = 0.0_dp
+             H = 0.0_8
+#if defined __ICC
               !DIR$ VECTOR ALIGNED
               !DIR$ SIMD
-              !DIR$ SIMD REDUCTION(+:H) 
+             !DIR$ SIMD REDUCTION(+:H)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:H)
+#endif
                  DO 10  I=II,N                                                  
                      D(I) = X(I,II)                                              
 !cxx   10       H = H + D(I)*D(I)                                           
                      H = H + D(I)*D(I)
            10    CONTINUE
                  IF( H .GT. TOL )  GO TO 20                                     
-                 G = 0.0_dp                                                    
+                 G = 0.0_8                                                    
                  GO TO 100                                                      
            20    G = DSQRT( H )                                                 
                  F = X(II,II)                                                   
-                 IF( F .GE. 0.0_dp)   G = -G                                   
+                 IF( F .GE. 0.0_8)   G = -G                                   
                  D(II) = F - G                                                  
                  H = H - F*G                                                    
 !C                                                                       
 !C          FORM  (I - D*D'/H) * X, WHERE H = D'D/2                      
 !C                                                                       
                  II1 = II+1
+#if defined __ICC
                    !DIR$ VECTOR ALIGNED
-                   !DIR$ SIMD
+                 !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+             !$OMP SIMD 
+#endif                 
                  DO 30  I=II1,N                                                 
 !cxx   30    X(I,II) = 0.0D00                                               
-                        X(I,II) = 0.0_dp
+                        X(I,II) = 0.0_8
            30    CONTINUE
                  IF( II .EQ. K )  GO TO 100                                     
                  DO 60  J=II1,K                                                 
-                    S = 0.0_dp
+                    S = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:S)
+                    !DIR$ SIMD REDUCTION(+:S)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:S)
+#endif                    
                         DO 40  I=II,N                                               
 !cxx   40       S = S + D(I)*X(I,J)                                         
                               S = S + D(I)*X(I,J)
               40       CONTINUE
                               S = S/H
+#if defined __ICC
                          !DIR$ VECTOR ALIGNED
-                         !DIR$ SIMD        
+                              !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+             !$OMP SIMD 
+#endif      
                        DO 50  I=II,N                                               
 !cxx   50      X(I,J) = X(I,J) - D(I)*S                                     
                               X(I,J) = X(I,J) - D(I)*S
@@ -11650,7 +11785,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE  MAICE( AIC,SD,K,AICM,SDM,IMIN,DIC )
-        
+        implicit none
 !C                                                                       
 !C             +-------------+                                           
 !C             ! AIC DISPLAY !                                           
@@ -11671,12 +11806,14 @@ C
 !C          IMIN:  MAICE ORDER                                           
 !C                                                                       
 
-          INTEGER(kind=int4) :: K, IMIN
-          REAL(kind=dp), dimension(K+1) :: AIC, SD,  DIC
+          INTEGER(kind=4) :: K, IMIN
+          REAL(kind=8), dimension(K+1) :: AIC, SD,  DIC
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED AIC:64,SD:64,DIC:64
-          REAL(kind=dp) :: AICM, SDM  
+#endif
+          REAL(kind=8) :: AICM, SDM  
           ! Locals
-          INTEGER(kind=int4) :: K1,I
+          INTEGER(kind=4) :: K1,I
 !C       SEARCH FOR THE MINIMUM OF AIC(I)                                
 !C                                                                       
           K1 = K + 1                                                        
@@ -11696,7 +11833,8 @@ C
     END SUBROUTINE
     
     SUBROUTINE  MARCOF( D,E,ID,M,MJ3,A,B )
-        
+      use omp_lib
+      implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES COEFFICIENT MATRICES OF MULTI-VARIATE AUT
 !C     REGRESSIVE MODEL FROM PARTIAL AUTOREGRESSION COEFFICIENT MATRICES 
@@ -11713,18 +11851,26 @@ C
 !C          A:     AR-COEFFICIENT MATRICES OF FORWARD MODEL              
 !C          B:     AR-COEFFICIENT MATRICES OF BACKWARD MODEL             
                               
-          INTEGER(kind=int4) :: ID, M, MJ3
-          REAL(kind=dp), dimension(MJ3,MJ3,M) :: D, E, A, B
+          INTEGER(kind=4) :: ID, M, MJ3
+          REAL(kind=8), dimension(MJ3,MJ3,M) :: D, E, A, B
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED D:64,E:64,A:64,B:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: II,I,J,II1,IMJ
-          REAL(kind=dp) ::  SUMA, SUMB
-          REAL(kind=dp), dimension(ID,ID) :: F, G 
-!DIR$ ATTRIBUTES ALIGN : 64 :: F,G                                            
+          INTEGER(kind=4) :: II,I,J,II1,IMJ
+          REAL(kind=8) ::  SUMA, SUMB
+          REAL(kind=8), dimension(ID,ID) :: F, G
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: F,G
+#endif
           DO 12  II=1,M                                                     
              DO 11  I=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                 DO 10  J=1,ID                                                     
                        A(I,J,II) = D(I,J,II)                                             
 !cxx   10 B(I,J,II) = E(I,J,II)                                             
@@ -11741,8 +11887,12 @@ C
                 IMJ = II - JJ                                                     
 !cxx      DO 20  I=1,ID
                 DO 21  I=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                   
+                   !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                   
                    DO 20  J=1,ID
                       
                       F(I,J) = A(I,J,IMJ)                                               
@@ -11755,9 +11905,13 @@ C
                    DO 40  J=1,ID                                                     
                       SUMA = F(I,J)                                                     
                       SUMB = G(I,J)
+#if defined __ICC
                       !DIR$ VECTOR ALIGNED
-                      !DIR$ SIMD REDUCTION(+:SUMA)
-                      !DIR$ SIMD REDUCTION(+:SUMB)
+                      !DIR$ SIMD REDUCTION(+:SUMA,SUMB)
+#elif defined __GFORTRAN__
+                      !$OMP SIMD REDUCTION(+:SUMA,SUMB)
+              
+#endif                      
                       DO 30  L=1,ID                                                     
                          SUMA = SUMA - A(I,L,II)*G(L,J)                                    
 !cxx   30 SUMB = SUMB - B(I,L,II)*F(L,J)                                    
@@ -11776,7 +11930,8 @@ C
                            
     SUBROUTINE  MARFIT( X,N,ID,M,KSW,MJ1,MJ2,MJ3,MJ4,ISW,IPR,AIC,SD,      &
                           DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AAIC )
-       
+      use omp_lib
+      implicit none
 !C                                                                       
 !C         MULTI-VARIATE AUTOREGRESSIVE MODEL FITTING                    
 !C       ----------------------------------------------------------------
@@ -11818,34 +11973,52 @@ C
 !C          LMAX:  ORDER OF THE MAICE MODEL                              
 !C                                                                       
 
-          INTEGER(kind=int4) :: N, ID, M, KSW, MJ1, MJ2, MJ3, MJ4, ISW, IPR, LMAX
+          INTEGER(kind=4) :: N, ID, M, KSW, MJ1, MJ2, MJ3, MJ4, ISW, IPR, LMAX
 
-          INTEGER(kind=int4), dimension(MJ4,ID) :: JNDF
+          INTEGER(kind=4), dimension(MJ4,ID) :: JNDF
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED JNDF:64
-          INTEGER(kind=int4), dimension(ID)     :: IM,NPR
+#endif
+          INTEGER(kind=4), dimension(ID)     :: IM,NPR
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED IM:64,NPR:64
-          REAL(kind=dp), dimension(MJ1,MJ4)   :: X
+#endif
+          REAL(kind=8), dimension(MJ1,MJ4)   :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(M+1,ID)    :: AIC, SD, DIC
+#endif
+          REAL(kind=8), dimension(M+1,ID)    :: AIC, SD, DIC
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED AIC:64,SD:64,DIC:64
-          REAL(kind=dp), dimension(ID)        :: AICM,SDM,EX,C,AAIC
+#endif
+          REAL(kind=8), dimension(ID)        :: AICM,SDM,EX,C,AAIC
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED AICM:64,SDM:64,EX:64,C:64,AAIC:64
-          REAL(kind=dp), dimension(ID,ID,M)   :: BI, B
+#endif
+          REAL(kind=8), dimension(ID,ID,M)   :: BI, B
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED BI:64,B:64
-          REAL(kind=dp), dimension(ID,ID)     :: E,EI
+#endif
+          REAL(kind=8), dimension(ID,ID)     :: E,EI
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64,EI:64
-          REAL(kind=dp), dimension(MJ4,ID)    :: AF
+#endif
+          REAL(kind=8), dimension(MJ4,ID)    :: AF
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED AF:64
-          REAL(kind=dp) :: AICS
+#endif
+          REAL(kind=8) :: AICS
           ! Locals
-          INTEGER(kind=int4) :: M1,MD0,MD,MD2,NSW,I,II,MSW,JJ,KK,KK1, &
+          INTEGER(kind=4) :: M1,MD0,MD,MD2,NSW,I,II,MSW,JJ,KK,KK1, &
                            I1,IPR2,K0,K01,KX1,K02
-          REAL(kind=dp)    ::  AICSUM, OSD, OAIC, AICMIN, &
+          REAL(kind=8)    ::  AICSUM, OSD, OAIC, AICMIN, &
                             SDMIN, SDD, AIC1, AIC2, OSP
-          INTEGER(kind=int4), dimension(MJ4)      :: IND, JND, KND
-          REAL(kind=dp),    dimension(MJ4,MJ4)  :: Y 
-          REAL(kind=dp),    dimension(MJ4)      :: A
-!DIR$ ATTRIBUTES ALIGN : 64 :: IND,JND,KND,Y,A
+          INTEGER(kind=4), dimension(MJ4)      :: IND, JND, KND
+          REAL(kind=8),    dimension(MJ4,MJ4)  :: Y 
+          REAL(kind=8),    dimension(MJ4)      :: A
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: IND,JND,KND,Y,A
+#endif
 !C                                     
 !C                                                                       
 !C         INITIAL SETTING                                               
@@ -11854,14 +12027,18 @@ C
           MD0 = M * ID                                                      
           MD = M*ID + KSW                                                   
           MD2 = M1*ID + KSW                                                 
-          AICSUM = 0._dp                                                   
+          AICSUM = 0._8                                                   
           LMAX = 0                                                          
           NSW = 0                                                           
 
-          B(1:MJ2,1:MJ2,1:MJ3) = 0._dp                                                  
-          E(1:MJ2,1:MJ2) = 0._dp
+          B(1:MJ2,1:MJ2,1:MJ3) = 0._8                                                  
+          E(1:MJ2,1:MJ2) = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 30  I=1,MD2                                                    
                 IND(I) = I
 !cxx   30 JND(I) = I                                                        
@@ -11925,9 +12102,13 @@ C
                   SD(I,II) = OSD                                                    
 !cxx   50 AIC(I,II) = OAIC                                                  
                   AIC(I,II) = OAIC
-50            CONTINUE
+50                CONTINUE
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                  !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif                  
              DO 60  I=1,MD2                                                    
 !cxx   60 KND(I) = JND(I)                                                   
                 KND(I) = JND(I)
@@ -11959,9 +12140,13 @@ C
 !C--------------------   SECOND STEP OF AIC MINIMIZATION   --------------
 !C                                                                       
            IMP1 = IMIN + 1                                                   
-           DO 230  I1=1,ID 
+           DO 230  I1=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+              !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif              
               DO 100  I=1,KK                                                    
 !cxx  100 KND(I) = JND(I)                                                   
                  KND(I) = JND(I)
@@ -12157,7 +12342,8 @@ C
                           
     SUBROUTINE  MBYSAR( X,N,M,ID,KSW,MJ1,MJ2,SD1,AIC1,DIC1,         &
                         AICM1,SDMIN1,IMIN1,C,D,A,B,G,H,E,AICB,EK )
-        
+      use omp_lib
+      implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES MULTI-VARIATE AUTOREGRESSIVE MODELS BY A 
 !C     BAYESIAN PROCEDURE USING THE OUTPUT OF SUBROUTINE MREDCT.         
@@ -12198,26 +12384,38 @@ C
 !C         EK:     EQUIVALENT NUMBER OF AUTOREGRESSIVE COEFFICIENTS      
 !C                                                                       
                                 
-          INTEGER(kind=int4) :: N, M, ID, KSW, MJ1, MJ2, IMIN1
-          REAL(kind=dp), dimension(MJ1,(M+1)*ID+KSW) :: X
+          INTEGER(kind=4) :: N, M, ID, KSW, MJ1, MJ2, IMIN1
+          REAL(kind=8), dimension(MJ1,(M+1)*ID+KSW) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(M+1) :: SD1, AIC1, DIC1,C
+#endif
+          REAL(kind=8), dimension(M+1) :: SD1, AIC1, DIC1,C
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED SD1:64,AIC1:64,DIC1:64,C:64
-          REAL(kind=dp), dimension(M) :: D
+#endif
+          REAL(kind=8), dimension(M) :: D
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED D:64
-          REAL(kind=dp), dimension(MJ2,MJ2,M) :: A,B,G,H
+#endif
+          REAL(kind=8), dimension(MJ2,MJ2,M) :: A,B,G,H
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64,B:64,G:64,H:64
-          REAL(kind=dp), dimension(MJ2,ID) :: E
+#endif
+          REAL(kind=8), dimension(MJ2,ID) :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
-          REAL(kind=dp) ::  AICM1,SDMIN1,AICB,EK
+#endif
+          REAL(kind=8) ::  AICM1,SDMIN1,AICB,EK
           !Locals
-          INTEGER(kind=int4) ::  M1,MD,MD2,MJ4,J0,ISUB,II,K1,K,MDMK,J2,J1,J3
-          REAL(kind=dp) ::   YY, AICM, SDMIN, OSD   
+          INTEGER(kind=4) ::  M1,MD,MD2,MJ4,J0,ISUB,II,K1,K,MDMK,J2,J1,J3
+          REAL(kind=8) ::   YY, AICM, SDMIN, OSD   
                             
-          INTEGER(kind=int4), dimension((M+1)*ID+KSW) :: IND, JND
-          REAL(kind=dp), dimension(M+1) :: DIC2, AIC, SD 
-          REAL(kind=dp), dimension((M+1)*ID+KSW,ID) :: Y
-!DIR$ ATTTIBUTES ALIGN : 64 :: IND,JND,DIC2,AIC,SD,Y
+          INTEGER(kind=4), dimension((M+1)*ID+KSW) :: IND, JND
+          REAL(kind=8), dimension(M+1) :: DIC2, AIC, SD 
+          REAL(kind=8), dimension((M+1)*ID+KSW,ID) :: Y
+#if defined __ICC
+          !DIR$ ATTTIBUTES ALIGN : 64 :: IND,JND,DIC2,AIC,SD,Y
+#endif
 !C
 !C                                                                       
 !C          ---------------                                              
@@ -12230,8 +12428,8 @@ C
           MD2= M1*ID + KSW                                                  
           MJ4 = MD2
 
-          SD(1:M1)  = 1._dp                                                     
-          AIC(1:M1) = 0._dp 
+          SD(1:M1)  = 1._8                                                     
+          AIC(1:M1) = 0._8 
           CALL  COPY( X,MD2,0,MD2,MJ1,MJ1,X )                               
                                                                       
 !C          ------------------------------------------------------------ 
@@ -12269,7 +12467,7 @@ C
                  YY = Y(I,I)**2 / N                                                
                  SD(II)  = SD(II) * YY                                             
                    
-                 AIC(II) = AIC(II) + N*DLOG( YY ) + 2._dp*(K+1)
+                 AIC(II) = AIC(II) + N*DLOG( YY ) + 2._8*(K+1)
          60 CONTINUE
        61 CONTINUE
                                        
@@ -12359,9 +12557,13 @@ C
 !C          -------------------------                                    
 !C          AIC OF THE BAYESIAN MODEL                                    
 !C          -------------------------                                    
-          EK = 0._dp
+          EK = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:EK)
+          !DIR$ SIMD REDUCTION(+:EK)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:EK)
+#endif
           DO 120  I=1,M                                                     
                                              
              EK = EK + D(I)**2
@@ -12373,8 +12575,13 @@ C
                                                                        
           AICB = N*DLOG( OSD ) + 2._dp*EK + 2._dp*KSW*ID + ID*(ID+1)          
     END SUBROUTINE
-                        
-    SUBROUTINE  MBYSPC( G,H,C,D,M,ID,MJ2 )   
+
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: MBYSPC
+#endif
+    SUBROUTINE  MBYSPC( G,H,C,D,M,ID,MJ2 )
+      use omp_lib
+      implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES PARTIAL AUTOREGRESSION COEFFICIENTS G(I),
@@ -12395,15 +12602,21 @@ C
 !C          D:      INTEGRATED BAYESIAN WEIGHT EACH ORDER (I=1,...,M)    
 !C                                                                       
          
-          INTEGER(kind=int4) :: M, ID, MJ2 
-          REAL(kind=dp), dimension(MJ2,MJ2,M) ::  G, H
+          INTEGER(kind=4) :: M, ID, MJ2 
+          REAL(kind=8), dimension(MJ2,MJ2,M) ::  G, H
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED G:64,H:64
-          REAL(kind=dp), dimension(M+1)       ::  C
+#endif
+          REAL(kind=8), dimension(M+1)       ::  C
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64
-          REAL(kind=dp), dimension(M)         ::  D
+#endif
+          REAL(kind=8), dimension(M)         ::  D
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED D:64
+#endif
           ! Locala
-          INTEGER(kind=int4) :: M1,I,J,II
+          INTEGER(kind=4) :: M1,I,J,II
 !C                                                                       
 !C          INTEGRATED BAYESIAN WEIGHT                                   
 !C                                                                       
@@ -12421,8 +12634,12 @@ C
                                                   
           DO 42  II=1,M
              DO 41  J=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                 DO 40  I=1,ID                                                     
                        G(I,J,II) = G(I,J,II)*D(II)                                       
 !cxx   40 H(I,J,II) = H(I,J,II)*D(II)                                       
@@ -12434,6 +12651,8 @@ C
     
        
     SUBROUTINE  MCOEF( BI,B,C,EI,E,EX,ID,LMAX,KSW,IPR,MJ2,MJ3 )
+      use omp_lib
+      implicit none
        
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES AND PRINTS OUT THE COEFFICIENT MATRICES O
@@ -12464,22 +12683,32 @@ C
 !C          E:     INNOVATION COVARIANCE MATRIX                          
 !C                                                                       
 
-          INTEGER(kind=int4) :: ID, LMAX, KSW, IPR, MJ2, MJ3 
-          REAL(kind=dp), dimension(ID,ID,LMAX) :: BI
+          INTEGER(kind=4) :: ID, LMAX, KSW, IPR, MJ2, MJ3 
+          REAL(kind=8), dimension(ID,ID,LMAX) :: BI
+#if defined __ICC 
           !DIR$ ASSUME_ALIGNED BI:64
-          REAL(kind=dp), dimension(MJ2,MJ2,MJ3) :: B
+#endif
+          REAL(kind=8), dimension(MJ2,MJ2,MJ3) :: B
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED B:64
-          REAL(kind=dp), dimension(ID) :: C,EX
+#endif
+          REAL(kind=8), dimension(ID) :: C,EX
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64,EX:64
-          REAL(kind=dp), dimension(ID,ID) ::  EI
+#endif
+          REAL(kind=8), dimension(ID,ID) ::  EI
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED EI:64
-          REAL(kind=dp), dimension(MJ2,ID) :: E
+#endif
+          REAL(kind=8), dimension(MJ2,ID) :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: MJ5,I,J,II
-          REAL(kind=dp) ::   SUM, EDET
-          REAL(kind=dp), dimension(ID)    :: C1 
-          REAL(kind=dp), dimension(ID,ID) ::  EE 
+          INTEGER(kind=4) :: MJ5,I,J,II
+          REAL(kind=8) ::   SUM, EDET
+          REAL(kind=8), dimension(ID)    :: C1 
+          REAL(kind=8), dimension(ID,ID) ::  EE 
 !C
 !C    INPUT  E ---> EI
 !C    INPUT  B ---> BI
@@ -12489,8 +12718,12 @@ C
           IF(IPR.LE.1)  GO TO 300                                           
                                                    
           DO 311  I=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8)
+             !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8)
+#elif defined __GFORTRAN__
+             !$OMP SIMD
+#endif
                 DO 310  J=1,ID
 !cxx  310 EI(I,J) = E(I,J)
                    EI(I,J) = E(I,J)
@@ -12500,8 +12733,12 @@ C
           DO  330  II=1,LMAX                                             
 
              DO  321     I=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                   
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD
+#endif
                     DO  320     J=1,ID
 !cxx  320 BI(I,J,II) = B(I,J,II)
                          BI(I,J,II) = B(I,J,II)
@@ -12517,8 +12754,12 @@ C
           DO  336   I=1,ID
                  DO  335  J=1,ID                                                
                     SUM = E(I,J)
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                        
+                    !DIR$ SIMD REDUCTION(-:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(-:SUM)
+#endif                    
                            DO  325  II=1,LMAX                                             
 !cxx  325 SUM = SUM - B(I,J,II)                                             
                                    SUM = SUM - B(I,J,II)
@@ -12529,9 +12770,13 @@ C
       336 CONTINUE
           CALL  INVDET( EE,EDET,ID,MJ5 )                                    
           DO  355 I=1,ID                                                
-             SUM = 0._dp
+             SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif   
                DO  345  J=1,ID                                                
 !cxx  345 SUM = SUM + EE(I,J)*C(J)                                          
                    SUM = SUM + EE(I,J)*C(J)
@@ -12550,9 +12795,13 @@ C
           DO  362   II=1,LMAX
                DO  351  I=1,ID
                     DO  350  J=1,ID                                                
-                       SUM = 0._dp
+                       SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                              
+                       !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif                          
                            DO  340  JJ=1,I                                                
 !cxx  340 SUM = SUM + EE(I,JJ)*B(JJ,J,II)
                                SUM = SUM + EE(I,JJ)*B(JJ,J,II)
@@ -12563,8 +12812,13 @@ C
            351 CONTINUE
 !cxx      DO  360     I=1,ID                                                
                            DO  361  I=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                              !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD 
+#endif   
+                              
                     DO  360  J=1,ID                                                
 !cxx  360 B(I,J,II) = E(I,J)                                                
                         B(I,J,II) = E(I,J)
@@ -12572,9 +12826,13 @@ C
           361 CONTINUE
       362 CONTINUE
           DO  370  I=1,ID                                                
-             SUM = 0._dp
+             SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                    
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif                
                DO  371     J=1,ID
                                      
                     SUM = SUM + EE(I,J)*C(J)
@@ -12589,9 +12847,13 @@ C
                                            
           DO  381 I=1,ID
               DO  380  J=1,I                                                 
-                 SUM = 0._dp
+                 SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                        
+                 !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif   
                         DO  385  II=1,J                                                
              
                               SUM = SUM + EE(I,II) * EE(J,II)*EX(II)
@@ -12604,7 +12866,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE  MPARCO( X,ID,M,KSW,IFG,MJ1,MJ3,G,H ) 
-        
+        implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES LEAST SQUARES ESTIMATES OF PARTIAL       
 !C     AUTOREGRESSION COEFFICIENT MATRICES OF FORWARD AND BACKWARD       
@@ -12630,15 +12892,21 @@ C
 !C          H:      AR-COEFFICIENT MATRICES OF BACKWARD MODEL            
 !C                                                                       
 
-          INTEGER(kind=int4) :: ID, M, KSW, IFG, MJ1, MJ3
-          REAL(kind=dp), dimension(MJ1,(M+1)*ID+KSW) :: X
+          INTEGER(kind=4) :: ID, M, KSW, IFG, MJ1, MJ3
+          REAL(kind=8), dimension(MJ1,(M+1)*ID+KSW) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(MJ3,MJ3,M) :: G, H
-          !DIR$ ASSUME_ALIGNED G;64,H:64
+#endif
+          REAL(kind=8), dimension(MJ3,MJ3,M) :: G, H
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED G:64,H:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: MJ2, MD,I0,II,J,I,J1,J2,I1,MM1,JS0,J0
-          REAL(kind=dp), dimension(ID,ID) :: C, R                                    
-!DIR$ ATTRIBUTES ALIGN : 64 :: C,R                                                    
+          INTEGER(kind=4) :: MJ2, MD,I0,II,J,I,J1,J2,I1,MM1,JS0,J0
+          REAL(kind=8), dimension(ID,ID) :: C, R
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: C,R
+#endif
           MJ2 = ID
           IF( IFG .NE. 0 )     GO TO 30                                     
           MD = ID*M + KSW                                                   
@@ -12686,7 +12954,8 @@ C
     
                          
     SUBROUTINE MRDATA( ZS,Z,N,ID,C,ZMEAN,ZVARI )
-         
+      use omp_lib
+      implicit none
 !C                                                                       
 !C         +-----------------------------------------+                   
 !C         ! ORIGINAL DATA LOADING AND MEAN DELETION !                   
@@ -12716,19 +12985,27 @@ C
 !C          ID:      DIMENSION OF OBSERVATION                            
 !C                                                                       
 
-          INTEGER(kind=int4) :: N, ID
-          REAL(kind=dp), dimension(N,ID) :: ZS, Z
+          INTEGER(kind=4) :: N, ID
+          REAL(kind=8), dimension(N,ID) :: ZS, Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED ZS:64,Z:64
-          REAL(kind=dp), dimension(ID)   :: C, ZMEAN, ZVARI
+#endif
+          REAL(kind=8), dimension(ID)   :: C, ZMEAN, ZVARI
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64,ZMEAN:64,ZVARI:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: I,J
-          REAL(kind=dp) :: CC, SUM
+          INTEGER(kind=4) :: I,J
+          REAL(kind=8) :: CC, SUM
                                                        
                                             
           DO  76  J=1,ID
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                              
+             !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD
+#endif
               DO  75     I=1,N
 !cxx   75 Z(I,J) = ZS(I,J)
                   Z(I,J) = ZS(I,J)
@@ -12737,8 +13014,12 @@ C
                                             
           DO  86  J=1,ID
              CC = C(J)
+#if defined __ICC
  !DIR$ VECTOR ALIGNED
- !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                  
+             !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD
+#endif             
                    DO  85  I=1,N                                                  
                                            
                       Z(I,J) = Z(I,J) * CC
@@ -12749,25 +13030,39 @@ C
 !C                                                                       
 !C     MEAN DELETION   AND  VARIANCE COMPUTATION                         
 !C                                                                       
-             SUM = 0._dp
+             SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+             
+#endif     
                    DO  90 I=1,N                                                  
 !cxx   90 SUM = SUM + Z(I,J)                                                
                         SUM = SUM + Z(I,J)
                 90 CONTINUE
                                       
                         ZMEAN(J) = SUM / DBLE(N)
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                   
+                        !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD
+#endif     
                    DO  100 I=1,N                                                 
 
                            Z(I,J) = Z(I,J) - ZMEAN(J)
                100 CONTINUE
                                                                        
-                           SUM = 0._dp
+                           SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)                   
+                           !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+             
+#endif                           
                    DO  110 I=1,N                                                 
                                        
                        SUM = SUM + Z(I,J)*Z(I,J)
@@ -12784,7 +13079,7 @@ C
     
          
     SUBROUTINE  MREDCT( Z,NMK,N0,LAG,ID,MJ,MJ1,KSW,X ) 
-          
+          implicit none
 !C                                                                       
 !C         +-------------------------+                                   
 !C         ! HOUSEHOLDER'S REDUCTION !                                   
@@ -12817,13 +13112,17 @@ C
 !C          X:      REDUCED MATRIX ( UPPER TRIANGULAR FORM )             
 !C                                                                       
 
-          INTEGER(kind=int4) :: NMK, N0, LAG, ID, MJ, MJ1, KSW
-          REAL(kind=dp), dimension(MJ,ID) :: Z
+          INTEGER(kind=4) :: NMK, N0, LAG, ID, MJ, MJ1, KSW
+          REAL(kind=8), dimension(MJ,ID) :: Z
+#if defined __ICC
           !DIR$ ASUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(MJ1,(LAG+1)*ID+KSW) ::  X
+#endif
+          REAL(kind=8), dimension(MJ1,(LAG+1)*ID+KSW) ::  X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: L,K1,KD1,N1,LK,N2
+          INTEGER(kind=4) :: L,K1,KD1,N1,LK,N2
           L = MIN0( NMK,MJ1 )                                               
           K1 = LAG + 1                                                      
           KD1 = K1*ID + KSW                                                 
@@ -12867,7 +13166,9 @@ C
           IF( N1 .LT. NMK )     GO TO 100                                   
     END SUBROUTINE
     
-    SUBROUTINE  MSDCOM( X,A,N,M,ID,KSW,MJ,E,SD )  
+    SUBROUTINE  MSDCOM( X,A,N,M,ID,KSW,MJ,E,SD )
+      use omp_lib
+      implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES THE ONE-STEP AHEAD PREDICTION ERROR VARIA
@@ -12898,26 +13199,33 @@ C
 !C          SD:   DETERMINANT OF SD                                      
 !C                                                                       
 
-          INTEGER(kind=int4) :: N, M, ID, KSW, MJ
-          REAL(kind=dp), dimension(MJ,(M+1)*ID+KSW) :: X
+          INTEGER(kind=4) :: N, M, ID, KSW, MJ
+          REAL(kind=8), dimension(MJ,(M+1)*ID+KSW) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(ID,ID,M) ::  A
+#endif
+          REAL(kind=8), dimension(ID,ID,M) ::  A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
-          REAL(kind=dp), dimension(ID,ID)   :: E
+#endif
+          REAL(kind=8), dimension(ID,ID)   :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
-          REAL(kind=dp) :: SD
+#endif
+          REAL(kind=8) :: SD
           ! Locals
-          INTEGER(kind=int4) :: MD,M1D,II,II,I0,J0,J1,I1 
-          REAL(kind=dp) :: SUM
-          REAL(kind=dp), dimension((M+1)*ID,ID) :: Y
+          INTEGER(kind=4) :: MD,M1D,II,II,I0,J0,J1,I1 
+          REAL(kind=8) :: SUM
+          REAL(kind=8), dimension((M+1)*ID,ID) :: Y
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: Y
-                                                                       
+#endif                                                                      
           MD = M * ID                                                       
           M1D= MD + ID                                                      
           DO 30  JJ=1,ID                                                    
                 DO 20  II=1,MD                                                    
                       I0 = II + KSW                                                     
-                      SUM = 0._dp                                                      
+                      SUM = 0._8                                                      
                         DO 10  J=II,MD                                                    
                                J0 = J + KSW                                                      
                                M0 = (J-1)/ID + 1                                                 
@@ -12942,9 +13250,13 @@ C
        41 CONTINUE
                                   
           CALL  HUSHLD( Y,M1D,M1D,ID )                                    
-          SD = 1._dp
+          SD = 1._8
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ SIMD REDUCTION(*:SD)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(*:SD)
+#endif          
           DO 50  I=1,ID                                                     
 !cxx   50 SD = SD * (Y(I,I)**2)/N                                           
              SD = SD * (Y(I,I)**2)/N
@@ -12952,9 +13264,13 @@ C
                                                 
           DO 71  I=1,ID
               DO 70  J=1,ID                                                     
-                 SUM = 0._dp
+                 SUM = 0._8
+#if defined __ICC
  !DIR$ VECTOR ALIGNED
- !DIR$ SIMD REDUCTION(+:SUM)                   
+                 !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)
+#endif                      
                        DO 60  II=1,ID                                                    
                                 
                               SUM = SUM + Y(II,I)*Y(II,J)
@@ -12968,7 +13284,7 @@ C
       
 
     SUBROUTINE  MSETX1( Z,N0,L,LAG,ID,MJ,MJ1,JSW,KSW,X )   
-         
+         implicit none
 !C                                                                       
 !C          +-----------------+                                          
 !C          ! MATRIX X SET UP !                                          
@@ -12996,13 +13312,17 @@ C
 !C                  (LAG+1+L)*(LAG+1) MATRIX    IF  JSW = 1              
 !C                                                                       
 
-          INTEGER(kind=int4) :: N0, L, LAG, ID, MJ, MJ1, JSW, KSW
-          REAL(kind=dp), dimension(MJ,ID) :: Z
+          INTEGER(kind=4) :: N0, L, LAG, ID, MJ, MJ1, JSW, KSW
+          REAL(kind=8), dimension(MJ,ID) :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(MJ1,(LAG+1)*ID+KSW) :: X
+#endif
+          REAL(kind=8), dimension(MJ1,(LAG+1)*ID+KSW) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: KD,KD1,I0,II,I1,I2,J,J2,J1
+          INTEGER(kind=4) :: KD,KD1,I0,II,I1,I2,J,J2,J1
                                                                      
           KD = LAG*ID + KSW                                                 
           KD1 = (LAG+1)*ID + KSW                                            
@@ -13032,13 +13352,15 @@ C
           DO  40 II=1,L                                                 
                  I = II + I0                                                       
 !cxx   40 X(I,1) = 1.D0                                                     
-                 X(I,1) = 1._dp
+                 X(I,1) = 1.0_8
        40 CONTINUE
 !C                                                                       
     END SUBROUTINE
     
                       
-    SUBROUTINE  NRASPE( SGME2,A,B,L,K,H,SXX )  
+    SUBROUTINE  NRASPE( SGME2,A,B,L,K,H,SXX )
+      use omp_lib
+      implicit none
        
 !C     THIS SUBROUTINE COMPUTES POWER SPECTRUM OF AN AR-MA PROCESS       
 !C     X(N)=A(1)X(N-1)+...+A(L)X(N-L)+E(N)+B(1)E(N-1)+...+B(K)E(N-K),    
@@ -13061,23 +13383,31 @@ C
 !C             SPEGRH                                                    
 !C       ----------------------------------------------------------------
 
-          INTEGER(kind=int4) :: L, K, H                                                       
-          REAL(kind=dp) :: SGME2 
-          REAL(kind=dp), dimension(L)   :: A
+          INTEGER(kind=4) :: L, K, H                                                       
+          REAL(kind=8) :: SGME2 
+          REAL(kind=8), dimension(L)   :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
-          REAL(kind=dp), dimension(K)   ::  B
+#endif
+          REAL(kind=8), dimension(K)   ::  B
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED B:64
-          REAL(kind=dp), dimension(H+1) :: SXX
+#endif
+          REAL(kind=8), dimension(H+1) :: SXX
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED SXX:64
-          INTEGER(kind=int4) :: H1,K1,L1,I1,I,J
-          REAL(kind=dp), dimension(L+K+1) :: G 
-          REAL(kind=dp), dimension(H+1)   ::  GR1, GI1, GR2, GI2, PXX
-!DIR$ ATTRIBUTES ALIGN : 64 :: GR1,GI1,GR2,GI2,PXX
+#endif
+          INTEGER(kind=4) :: H1,K1,L1,I1,I,J
+          REAL(kind=8), dimension(L+K+1) :: G 
+          REAL(kind=8), dimension(H+1)   ::  GR1, GI1, GR2, GI2, PXX
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: GR1,GI1,GR2,GI2,PXX
+#endif
 !cxx  310 H1=H+1                                                            
           H1=H+1                                                            
           L1=L+1                                                            
           K1=K+1                                                            
-          G(1)=1.0_dp                                                          
+          G(1)=1.0_8                                                        
           IF(L.LE.0) GO TO 400                                              
           DO 10 I=1,L                                                       
                 I1=I+1                                                            
@@ -13085,22 +13415,30 @@ C
                 G(I1)=-A(I)
        10 CONTINUE
       400 CALL FOUGER(G,L1,GR1,GI1,H1)                                      
-          G(1)=1.0_R64P                                                          
+          G(1)=1.0_8                                                         
           IF(K.LE.0) GO TO 410                                              
           DO 20 I=1,K                                                       
                 I1=I+1                                                            
 !cxx   20 G(I1)=B(I)
                 G(I1)=B(I)
        20 CONTINUE
-410       CALL FOUGER(G,K1,GR2,GI2,H1)
+410             CALL FOUGER(G,K1,GR2,GI2,H1)
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
           DO 30 I=1,H1                                                      
 !cxx   30 PXX(I)=(GR2(I)**2+GI2(I)**2)/(GR1(I)**2+GI1(I)**2)*SGME2          
                 PXX(I)=(GR2(I)**2+GI2(I)**2)/(GR1(I)**2+GI1(I)**2)*SGME2
 30              CONTINUE
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                   
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
           DO 520 I=1,H1
 !cxx  520 SXX(I)=DLOG10(PXX(I))                                             
                 SXX(I)=DLOG10(PXX(I))
@@ -13109,7 +13447,8 @@ C
     
 
     SUBROUTINE  PARCOR( AR,K,PAC ) 
-       
+      use omp_lib
+      implicit none
 !C                                                                       
 !C  ...  TRANSFORMATION FROM AR COEFFICIENTS TO PARCOR                   
 !C                                                                       
@@ -13120,16 +13459,24 @@ C
 !C          PAC:  VECTOR OF PARTIAL AUTOCORRELATIONS                     
 !C                                                                       
 
-          INTEGER(kind=int4) :: K
-          REAL(kind=dp), dimension(K)  :: AR, PAC
+          INTEGER(kind=4) :: K
+          REAL(kind=8), dimension(K)  :: AR, PAC
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED AR:64,PAC:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: I,JJ,II,II1,I2
-          REAL(kind=dp) :: S
-          REAL(kind=dp), dimension(K) :: W
-!DIR$ ATTRIBUTES ALIGN : 64 :: W
+          INTEGER(kind=4) :: I,JJ,II,II1,I2
+          REAL(kind=8) :: S
+          REAL(kind=8), dimension(K) :: W
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: W
+#endif
+#if defined __ICC
 !DIR$ VECTOR ALIGNED          
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 10  I=1,K                                                      
 !cxx   10 PAC(I) = AR(I)                                                    
              PAC(I) = AR(I)
@@ -13137,7 +13484,13 @@ C
           IF( K .EQ. 1 )   RETURN                                           
           DO 20  JJ=1,K-1                                                   
                  II = K - JJ                                                       
-                 S = 1._R64P - PAC(II+1)**2                                           
+                 S = 1._8 - PAC(II+1)**2
+#if defined __ICC
+!DIR$ VECTOR ALIGNED          
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif                 
                  DO 30  I=1,II                                                     
                         J = II - I + 1                                                    
 !cxx   30 W(I) = (PAC(I) + PAC(II+1)*PAC(J))/S                              
@@ -13146,16 +13499,25 @@ C
                 II1 = II + 1                                                      
                 I2 = II1 / 2                                                      
                 IF( MOD( II,2 ) .EQ. 1 )  W(I2) = PAC(I2)/(1.D0 - PAC(II1))
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif   
                 DO 40  I=1,II                                                     
                                                    
                        PAC(I) = W(I)
              40 CONTINUE
      20   CONTINUE                                                          
     END SUBROUTINE
-    
-    SUBROUTINE  RECOEF( X,M,K,MJ,A ) 
+
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: RECOEF
+#endif
+    SUBROUTINE  RECOEF( X,M,K,MJ,A )
+      use omp_lib
+      implicit none
       
 !C          +-------------------------------------+                      
 !C          ! REGRESSION COEFFICIENTS COMPUTATION !                      
@@ -13176,14 +13538,18 @@ C
 !C          A(I) (I=1,M):   VECTOR OF REGRESSION COEFFICIENTS            
 !C                                                                       
 
-          INTEGER(kind=int4) :: M, K, MJ                                           
-          REAL(kind=dp), dimension(MJ,K+1) :: X
+          INTEGER(kind=4) :: M, K, MJ                                           
+          REAL(kind=8), dimension(MJ,K+1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(M)      :: A
+#endif
+          REAL(kind=8), dimension(M)      :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: K1,MM1,II,I,I1,J
-          REAL(kind=dp) :: SUM
+          INTEGER(kind=4) :: K1,MM1,II,I,I1,J
+          REAL(kind=8) :: SUM
                                                                       
           K1 = K + 1                                                        
           A(M) = X(M, K1) / X(M,M)                                          
@@ -13193,8 +13559,12 @@ C
                  I = M - II                                                        
                  SUM = X(I,K1)                                                     
                  I1 = I + 1
+#if defined __ICC
                  !DIR$ VECTOR ALIGNED
                  !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                 !$OMP SIMD REDUCTION(+:SUM)
+#endif
                  DO  20  J = I1,M                                                 
                                       
                        SUM = SUM - A(J) * X(I,J)
@@ -13205,6 +13575,8 @@ C
     END SUBROUTINE
     
     SUBROUTINE  REDATA( XS,X,N,XMEAN,SUM )
+      use omp_lib
+      implicit none
        
 !C                                                                       
 !C          +---------------------------------------+                    
@@ -13229,31 +13601,45 @@ C
 !C         TITLE:  TITLE OF DATA                                         
 !C                                                                       
 
-          INTEGER(kind=int4) :: N
-          REAL(kind=dp), dimension(N) :: XS, X
+          INTEGER(kind=4) :: N
+          REAL(kind=8), dimension(N) :: XS, X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED XS:64,X:64
-          REAL(kind=dp) :: XMEAN, SUM
+#endif
+          REAL(kind=8) :: XMEAN, SUM
           ! Loals
-          INTEGER(kind=int4) :: I
+          INTEGER(kind=4) :: I
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                   
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 100 I=1,N
                  X(I)=XS(I)
       100 CONTINUE
 !C                                                                  
 !C          MEAN DELETION                                                
 !C                                                                       
-                 SUM = 0.0_dp
+                 SUM = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)          
+                 !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                 !$OMP SIMD REDUCTION(+:SUM)
+#endif
           DO 10 I=1,N                                                   
 !cxx   10 SUM = SUM + X(I)                                                  
                 SUM = SUM + X(I)
        10 CONTINUE
                                           
                 XMEAN = SUM / DBLE(N)
+#if defined __ICC
 !DIR$ VECTRO ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 20   I=1,N                                                     
                                            
                  X(I) = X(I) - XMEAN
@@ -13261,9 +13647,13 @@ C
 !C                                                                       
 !C          VARIANCE COMPUTATION                                         
 !C                                                                       
-                 SUM = 0._dp
-!DIR$ VECTRO ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)           
+                 SUM = 0._8
+#if defined __ICC      
+!DIR$ VECTOR ALIGNED
+                 !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                 !$OMP SIMD REDUCTION(+:SUM)
+#endif                 
           DO  30 I=1,N                                                  
 !cxx   30 SUM = SUM + X(I) * X(I)                                           
                 SUM = SUM + X(I) * X(I)
@@ -13274,7 +13664,7 @@ C
     
              
     SUBROUTINE  REDUCT( SETX,Z,NMK,N0,K,MJ1,LAG,X ) 
-        
+       implicit none 
 !C                                                                       
 !C          +-----------------------+                                    
 !C          ! HOUSEHOLDER REDUCTION !                                    
@@ -13304,13 +13694,17 @@ C
 !C          X:     REDUCED MATRIX ( UPPER TRIANGULAR FORM )              
 !C                                                                       
 
-          INTEGER(kind=int4) :: NMK, N0, K, MJ1, LAG
-          REAL(kind=dp), dimension(N0+LAG+NMK) :: Z
+          INTEGER(kind=4) :: NMK, N0, K, MJ1, LAG
+          REAL(kind=8), dimension(N0+LAG+NMK) :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(MJ1,LAG+1)  :: X
+#endif
+          REAL(kind=8), dimension(MJ1,LAG+1)  :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: L,K1,N1,LK,N2
+          INTEGER(kind=4) :: L,K1,N1,LK,N2
           
           L = MIN0( NMK,MJ1 )                                               
           K1 = K + 1                                                        
@@ -13352,8 +13746,13 @@ C
           N1 = N1 + L                                                       
           IF( N1 .LT. NMK )     GO TO 100                                   
     END SUBROUTINE
-    
-    SUBROUTINE  SDCOMP( X,A,N,K,MJ,SD ) 
+
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: SDCOMP
+#endif
+    SUBROUTINE  SDCOMP( X,A,N,K,MJ,SD )
+      use omp_lib
+      implicit none
          
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES THE RESIDUAL VARIANCE OF THE REGRESSION M
@@ -13371,23 +13770,33 @@ C
 !C         SD:  RESIDUAL VARIANCE                                        
 !C                                                                       
 
-          INTEGER(kind=int4) :: N, K, MJ
-          REAL(kind=dp), dimension(MJ,K+1) :: X
+          INTEGER(kind=4) :: N, K, MJ
+          REAL(kind=8), dimension(MJ,K+1) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(K)      :: A
+#endif
+          REAL(kind=8), dimension(K)      :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
-          REAL(kind=dp) ::  SD
+#endif
+          REAL(kind=8) ::  SD
           ! Locals
-          INTEGER(kind=int4) :: K1,I,J
-          REAL(kind=dp) :: SUM
-          REAL(kind=dp), dimension(K+1) :: Y 
-!DIR$ ATTRIBUTES ALIGN : 64 :: Y                                                                       
+          INTEGER(kind=4) :: K1,I,J
+          REAL(kind=8) :: SUM
+          REAL(kind=8), dimension(K+1) :: Y
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: Y
+#endif
           K1 = K + 1                                                        
                                                                        
           DO  20 I=1,K                                                  
-             SUM = 0._dp
+             SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)              
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif
               DO  10 J=I,K                                                  
 !cxx   10 SUM = SUM + X(I,J)*A(J)                                           
                      SUM = SUM + X(I,J)*A(J)
@@ -13395,11 +13804,15 @@ C
 !cxx   20 Y(I) = SUM
               Y(I) = SUM
        20 CONTINUE
-          Y(K1) = 0._dp                                                      
+          Y(K1) = 0._8                                                     
                                                                        
-          SUM = 0._dp
+          SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)            
+          !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif          
           DO  30 I=1,K1                                                 
                                  
               SUM = SUM + (Y(I)-X(I,K1))**2
@@ -13408,7 +13821,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE  SETX1( Z,N0,L,K,MJ1,JSW,LAG,X )  
-        
+        implicit none
 !C                                                                       
 !C          +-----------------+                                          
 !C          ! MATRIX X SET UP !                                          
@@ -13437,13 +13850,17 @@ C
 !C                 (K+1+L)*(K+1) MATRIX     IF  JSW = 1                  
 !C                                                                       
 
-          INTEGER(kind=int4) :: N0, L, K, MJ1, JSW, LAG 
-          REAL(kind=dp), dimension(N0+LAG+L)  :: Z
+          INTEGER(kind=4) :: N0, L, K, MJ1, JSW, LAG 
+          REAL(kind=8), dimension(N0+LAG+L)  :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(MJ1,LAG+1) ::  X
+#endif
+          REAL(kind=8), dimension(MJ1,LAG+1) ::  X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: KSW,K1,I0,I,II,JJ,J,JKSW
+          INTEGER(kind=4) :: KSW,K1,I0,I,II,JJ,J,JKSW
           KSW = 0                                                           
           IF( K .NE. LAG )     KSW = 1                                      
           K1 = K + 1                                                        
@@ -13464,11 +13881,12 @@ C
                                                                        
           IF( KSW .NE. 1 )     RETURN                                       
 
-          X(1:L,1) = 1._dp
+          X(1:L,1) = 1._8
     END SUBROUTINE
     
     SUBROUTINE  SOLVE( C,R,ID,II,MJ2,MJ3,G )   
-         
+      use omp_lib
+      implicit none
 !C                                                                       
 !C     THIS SUBROUTINE SOLVES THE MATRIX EQUATION  C*G=R,  WHERE THE MATR
 !C     IS UPPER TRIANGULAR.                                              
@@ -13485,18 +13903,26 @@ C
 !C          G:      SOLUTION OF THE MATRIX EQUATION                      
 !C                                                                       
 
-          INTEGER(kind=int4) :: ID, II, MJ2, MJ3 
-          REAL(kind=dp), dimension(MJ2,ID) :: C, R
+          INTEGER(kind=4) :: ID, II, MJ2, MJ3 
+          REAL(kind=8), dimension(MJ2,ID) :: C, R
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64,R:64
-          REAL(kind=dp), dimension(MJ3,MJ3,II) ::  G
+#endif
+          REAL(kind=8), dimension(MJ3,MJ3,II) ::  G
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED G:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: IDM1,J,JJ,I,IP1
-          REAL(kind=dp) ::  SUM
+          INTEGER(kind=4) :: IDM1,J,JJ,I,IP1
+          REAL(kind=8) ::  SUM
                                                                        
           IDM1 = ID - 1
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO  10 J=1,ID                                                   
 !cxx   10 G(J,ID,II) = R(ID,J)/C(ID,ID)
               G(J,ID,II) = R(ID,J)/C(ID,ID)
@@ -13506,9 +13932,13 @@ C
                  I = ID - JJ                                                       
                  IP1 = I + 1                                                       
                  DO  30  J=1,ID                                                   
-                    SUM = 0._dp
+                    SUM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)
+                    !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)
+#endif                    
                         DO  20   L=IP1,ID                                                 
 !cxx   20 SUM = SUM + G(J,L,II)*C(I,L)
                                  SUM = SUM + G(J,L,II)*C(I,L)
@@ -15238,8 +15668,9 @@ C
           REAL(kind=8), dimension(LM1)   ::  X 
           REAL(kind=8), dimension(L)     ::  TT 
           REAL(kind=8), dimension(M)     ::  E
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: REG,D,WI,X,TT,E
-         
+#endif         
           REAL(kind=8), dimension(312) :: F3,A3
           REAL(kind=8), dimension(200) :: GI,GC
           REAL(kind=8), dimension(10)  :: F1,F2,A1,A2
@@ -16017,8 +16448,9 @@ C
           REAL(8), dimension(N-LAG,LAG+1) ::  X
           REAL(8), dimension(LAG,LAG) :: A22 
           REAL(8), dimension(LAG) :: SDM22
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: Z,X,A22,SDM22
-
+#endif
                                                                     
          !EXTERNAL   SETX1                                                  
 
@@ -16113,8 +16545,10 @@ C
                            KI,KK,I
           REAL(8)    :: SUM, F0, AIC, SD
           REAL(8), dimension(K+1,K+1) :: R 
-          REAL(8), dimension(L+1)     ::  C 
-!DIR$ ATTRIBUTES ALIGN : 64 :: R,C                                                                       
+          REAL(8), dimension(L+1)     ::  C
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: R,C
+#endif
          ! EXTERNAL  FUNCT                                                   
           !EXTERNAL  HESIAN                                                  
                                                                        
@@ -16127,7 +16561,13 @@ C
           NML = N - L                                                       
           DO  20  II=1,L1                                                   
                   J = II - 1                                                        
-                  SUM = 0._8                                                      
+                  SUM = 0._8
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                  !$OMP SIMD REDUCTION(+:SUM)
+#endif
                   DO 10  I=L1,NML                                                   
                          IMJ = I - J                                                       
                                        
@@ -16146,14 +16586,26 @@ C
                  DO 70  JJ=II,K1                                                   
                         JMI = JJ - II                                                     
                         SUM = C(JMI+1)                                                    
-                        IF( KMI .GT. L )  GO TO 40                                        
+                        IF( KMI .GT. L )  GO TO 40
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                  !$OMP SIMD REDUCTION(+:SUM)
+#endif                        
                         DO 30  KK=KMI,L                                                   
                                KI = KK - JMI                                                     
                                         
                                SUM = SUM + Z(KK)*Z(KI) 
                      30 CONTINUE
                      40 CONTINUE                                                          
-                        IF( NMLP1 .GT. NMI )  GO TO 60                                    
+                               IF( NMLP1 .GT. NMI )  GO TO 60
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                  !$OMP SIMD REDUCTION(+:SUM)
+#endif                              
                         DO 50  KK=NMLP1,NMI                                               
                                KI = KK - JMI                                                     
                                        
@@ -18528,7 +18980,8 @@ C
     END SUBROUTINE
     
     SUBROUTINE SUBHES(CYY1,IJ,IK,HS,M,L,K,ID,IAW,MJ3,MJ4,O,Q,CM1,X2,  &
-                      CXY1,CXX1,CXV1)
+         CXY1,CXX1,CXV1)
+          use omp_lib
           implicit none
 !C     THIS SUBROUTINE COMPUTES HESSIAN.
 
@@ -18543,6 +18996,9 @@ C
           REAL(8), dimension(100,ID,ID)  :: CXY1
           REAL(8), dimension(51,ID,ID)   :: CXX1 
           REAL(8), dimension(51,ID,K)    :: CXV1
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED CYY1:64,HS:64,O:64,Q:64,CM1:64,X2:64,CXY1:64,CXX1:64,CXV1:64
+#endif
           ! Locals
           INTEGER(4) :: MP1,IDP1,JJ,I,I2,JJ2,MSP1,IKSJ,JL,KS,MSP2, &
                            IKSJ2,IJK2,JL2,KS2
@@ -18578,7 +19034,12 @@ C
                                DO 1460 J2=1,ID
                                        JJ2=JJ2+1
                                        SUMBB=CM1(1,I,I2)*CXX1(1,J,J2)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
 !DIR$ SIMD REDUCTION(+:SUMBB)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUMBB)
+#endif                                    
                                        DO 490 MSP1=2,MP1
 
                                                SUMBB=SUMBB+CM1(MSP1,I,I2)*CXX1(MSP1,J,J2)+CM1(MSP1,I2,I)*CXX1(MSP1,J2,J)
@@ -18604,6 +19065,12 @@ C
                              DO 860 J2=1,ID
                                     JJ2=JJ2+1
                                     SUMAB=CM1(1,IJK,I2)*CXV1(2,J2,J)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUMAB)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUMAB)
+#endif                                       
                                     DO 870 MS=1,M
                                            MSP1=MS+1
                                            MSP2=MSP1+1
@@ -18641,6 +19108,12 @@ C
                                            IKSJ2=IKSJ2+1
                                            IJK2=IJ(KS2)
                                            SUMAA=CM1(1,IJK,IJK2)*CVV1(1,J,J2)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+!DIR$ SIMD REDUCTION(+:SUMAA)
+#elif defined __GFORTRAN__
+!$OMP SIMD REDUCTION(+:SUMAA)
+#endif                                              
                                            DO 440 MSP1=2,MP1
 
                                                 SUMAA=SUMAA+CM1(MSP1,IJK,IJK2)*CVV1(MSP1,J,J2)+CM1(MSP1,IJK2,IJK)*  &
@@ -18655,6 +19128,7 @@ C
     END SUBROUTINE
                       
     SUBROUTINE SUBCVV(M,L,K,ID,Q,CYV1,CVV1,CYV2)
+          use omp_lib
           implicit none
 !C     THIS SUBROUTINE COMPUTES CVV1(MS) MS=0,M.
 !C     CVV1(MS)=Q(0)*CYV(MS)+Q(1)*CYV(MS-1)+...+Q(L)*CYV(MS-L)
@@ -18664,6 +19138,9 @@ C
           REAL(8), dimension(51,ID,K) :: CYV1 
           REAL(8), dimension(50,K,K)  :: CVV1 
           REAL(8), dimension(51,ID,K) :: CYV2
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED Q:64,CYV1:64,CVV1:64,CYV2:64
+#endif
           ! Locals
           INTEGER(4) ::    MP1,I,J,MSP1,LP1,KMD,IDP1,ML,LSP1,ML,IMD
           REAL(8)    ::    CST0, CST1
@@ -18682,7 +19159,13 @@ C
                  Z(1:KMD,1:K)=CST0
                  DO 300 LSP1=1,LP1
 
-                        DO 211 I=1,KMD
+                    DO 211 I=1,KMD
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif
                               DO 210 J=1,ID
 
                                     QQ(I,J)=Q(LSP1,I,J)
@@ -18692,6 +19175,12 @@ C
                        IF(ML.LT.0) GO TO 319
 
                        DO 321 I=1,ID
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif                          
                               DO 320 J=1,K
 
                                    CXV(I,J)=CYV1(ML+1,I,J)
@@ -18701,6 +19190,12 @@ C
                    319 ML=-ML
 
                        DO 331 I=1,ID
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif                          
                               DO 330 J=1,K
 
                                     CXV(I,J)=CYV2(ML+1,I,J)
@@ -18711,14 +19206,25 @@ C
                        CALL  MATADL ( Z,ZZ,KMD,K )
              300 CONTINUE
                  DO 349   I=1,ID
-
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif
                           DO 348   J=1,K
 
                                   CVV1(MSP1,I,J)=CYV1(MSP1,I,J)
                       348 CONTINUE
             349 CONTINUE
 
-                DO 351   I=IDP1,K
+                    DO 351   I=IDP1,K
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif                                     
                         DO 350   J=1,K
                                 IMD = I - ID
 
@@ -18729,6 +19235,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE SBCYV1(CYY1,MJ3,M,L,K,ID,Q,CYV1)
+          use omp_lib
           implicit none
 !C     THIS SUBROUTINE COMPUTES CYV1(MS) (MS=0,M).
 !C     CYV1(MS)=CYY1(MS)*Q(0)'+CYY1(MS+1)*Q(1)'+CYY1(MS+2)*Q(2)'+...
@@ -18738,13 +19245,18 @@ C
           REAL(8), dimension(MJ3,ID,ID) :: CYY1 
           REAL(8), dimension(50,K,ID)   :: Q 
           REAL(8), dimension(51,ID,K)   :: CYV1
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED CYY1:64,Q:64.CYV1:64
+#endif
           ! Locals
           INTEGER(4) :: MP1,LP1,I,J,KMD,MSP1,LSP1,ML,JMD,IDP1
           REAL(8) :: CST0
           REAL(8), dimension(ID,K-ID) :: QQ 
           REAL(8), dimension(ID,ID)   :: CYY 
           REAL(8), dimension(ID,K-ID) ::  Z, ZZ
-!DIR$ ATTRIBUTES ALIGN : 64 :: QQ,CYY,Z,ZZ
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: QQ,CYY,Z,ZZ
+#endif
           CST0=0.0_8
           MP1=M+1
           LP1=L+1
@@ -18757,6 +19269,12 @@ C
                              ML=MSP1+LSP1-1
 
                              DO 211 I=1,ID
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif                                
                                  DO 210 J=1,ID
 
                                        CYY(I,J)=CYY1(ML,I,J)
@@ -18764,7 +19282,12 @@ C
                         211 CONTINUE
 
                             DO 221 I=1,ID
-
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif
                                  DO 220 J=1,KMD
 
                                         QQ(I,J)=Q(LSP1,J,I)
@@ -18779,7 +19302,13 @@ C
                        DO 349 J=1,ID
 
                               CYV1(MSP1,I,J)=CYY1(MSP1,I,J)
-                   349 CONTINUE
+349                           CONTINUE
+#if defined __ICC
+                       !DIR$ VECTOR ALIGNED
+                       !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                       !$OMP SIMD
+#endif                              
                        DO 350 J=IDP1,K
                               JMD = J - ID
 
@@ -18790,6 +19319,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE SBCYV2(CYY1,MJ3,L,K,ID,Q,CYV2)
+          use omp_lib
           implicit none
 !C     THIS SUBROUTINE COMPUTES CYV2(MS) (MS=-L,0).
 !C     CYV2(MS)=CYV1(-MS)
@@ -18800,12 +19330,17 @@ C
          REAL(8), dimension(MJ3,ID,ID) :: CYY1 
          REAL(8), dimension(50,K,ID)   :: Q 
          REAL(8), dimension(51,ID,K)   :: CYV2
+#if defined __ICC
+         !DIR$ ASSUME_ALIGNED CYY1:64,Q:64,CYV2:64
+#endif
          ! Locals
          INTEGER(4) :: LP1,IDP1,KMD,MSP1,LSP1,I,J,MJ,ML,JMD
          REAL(8)    :: CST0
          REAL(8), dimension(ID,K-ID) :: QQ,Z, ZZ
          REAL(8), dimension(ID,ID)   :: CYY
-!DIR$ ATTRIBUTES ALIGN : 64 :: QQ,Z,ZZ,CYY
+#if defined __ICC
+         !DIR$ ATTRIBUTES ALIGN : 64 :: QQ,Z,ZZ,CYY
+#endif
          CST0=0.0_8
          LP1=L+1
          IDP1 = ID + 1
@@ -18815,8 +19350,13 @@ C
                    Z(1:ID,1:KMD)=CST0
                    DO 300 LSP1=1,LP1
 
-                         DO 211 I=1,ID
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                      DO 211 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif
                               DO 210 J=1,KMD
 
                                     QQ(I,J)=Q(LSP1,J,I)
@@ -18826,6 +19366,12 @@ C
                          IF(ML.LT.0) GO TO 319
 
                          DO 321 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                            
                               DO 320 J=1,ID
 
                                     CYY(I,J)=CYY1(ML+1,I,J)
@@ -18835,6 +19381,12 @@ C
                     319 ML=-ML
 
                         DO 331 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                           
                               DO 330 J=1,ID
 
                                     CYY(I,J)=CYY1(ML+1,J,I)
@@ -18845,7 +19397,13 @@ C
                        CALL  MATADL ( Z,ZZ,ID,KMD )
             300 CONTINUE
 
-                DO 351 I=1,ID
+                       DO 351 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif
                         DO 349 J=1,ID
 
                                CYV2(MSP1,I,J)=CYY1(MSP1,J,I)
@@ -18860,6 +19418,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE HCXV2(M,L,K,ID,Q,CXY1,CXY2,CXV2)
+          use omp_lib 
           implicit none
 !C     THIS SUBROUTINE COMPUTES CXV2(MS) MS=0,M-1.
 !C     CXV2(MS)=CXV1(-MS)
@@ -18870,12 +19429,17 @@ C
          REAL(8), dimension(100,ID,ID) ::  CXY1 
          REAL(8), dimension(50,ID,ID)  ::  CXY2
          REAL(8), dimension(51,ID,K)   ::  CXV2
+#if defined __ICC
+         !DIR$ ASSUME_ALIGNED Q:64,CXY1:64,CXY2:64,CXV2:64
+#endif
          ! Locals
          INTEGER(4) :: LP1,IDP1,KMD,I,J,MSP1,LSP1,ML,JMD
          REAL(8)    :: CST0
          REAL(8), dimension(ID,K-ID) :: QQ,Z, ZZ
          REAL(8), dimension(ID,ID)   :: CXY
-!DIR$    ATTRIBUTES ALIGN : 64 :: QQ,Z,ZZ,CXY
+#if defined __ICC
+         !DIR$    ATTRIBUTES ALIGN : 64 :: QQ,Z,ZZ,CXY
+#endif
          CST0=0.0_8
          LP1=L+1
          IDP1 = ID + 1
@@ -18885,7 +19449,13 @@ C
                Z(1:ID,1:KMD)=CST0
                DO 300 LSP1=1,LP1
 
-                      DO 211 I=1,ID
+                  DO 211 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                     
                             DO 210 J=1,KMD
 
                                   QQ(I,J)=Q(LSP1,J,I)
@@ -18895,6 +19465,12 @@ C
                      IF(ML.LT.0) GO TO 319
 
                      DO 321 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                        
                            DO 320 J=1,ID
 
                                  CXY(I,J)=CXY1(ML+1,I,J)
@@ -18904,6 +19480,12 @@ C
                319 ML=-ML
 
                    DO 331 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                      
                          DO 330 J=1,ID
 
                                CXY(I,J)=CXY2(ML+1,I,J)
@@ -18914,7 +19496,13 @@ C
                    CALL  MATADL ( Z,ZZ,ID,KMD )
           300 CONTINUE
 
-              DO 351 I=1,ID
+                   DO 351 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                      
                     DO 349 J=1,ID
 
                           CXV2(MSP1,I,J)=CXY2(MSP1,I,J)
@@ -18929,6 +19517,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE SBCXY2(CYY1,MJ3,M,L,ID,X2,CXY2)
+          use omp_lib
           implicit  none
 !C     THIS SUBROUTINE COMPUTES CXY2(LS) LS=0,M-1.
 !C     CXY2(LS)=CXY1(-LS)
@@ -18938,6 +19527,9 @@ C
           INTEGER(4) :: MJ3, M, L, ID
           REAL(8), dimension(MJ3,ID,ID) :: CYY1 
           REAL(8), dimension(50,ID,ID)  :: X2, CXY2
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED CYY1:64,X2:64,CXY2:64
+#endif
           ! Locals
           INTEGER(4) :: LP1,I,J,ML,LSP1,MSP1
           REAL(8) :: CST0
@@ -18950,7 +19542,13 @@ C
                      Z(1:ID,1:ID)=CST0
                      DO 300 MSP1=1,LP1
 
-                            DO 311 I=1,ID
+                        DO 311 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                              
                                    DO 310 J=1,ID
 
                                          XX(I,J)=X2(MSP1,I,J)
@@ -18959,6 +19557,12 @@ C
                            ML=LSP1+MSP1-1
 
                            DO 321 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                                 
                                  DO 320 J=1,ID
 
                                        CYY(I,J)=CYY1(ML,J,I)
@@ -18969,7 +19573,13 @@ C
                           CALL MATADL(Z,ZZ,ID,ID)
              300 CONTINUE
 
-                 DO 351 I=1,ID
+                      DO 351 I=1,ID
+#if defined __ICC
+!DIR$ VECTOR ALWAYS
+                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                         !$OMP SIMD
+#endif                                
                          DO 350 J=1,ID
 
                               CXY2(LSP1,I,J)=Z(I,J)
@@ -18979,7 +19589,8 @@ C
     END SUBROUTINE
     
       SUBROUTINE SUBDAV(CYY1,MJ3,B,AW,IAW,NH,IDD,IR,IJ,IK,VD,X,C0,G,R,    &
-                         N,K,ID,IPQ,AICD,MJ4,ISWRO,O,Q,X1,X2,CXY1,CXX1,CXV1)
+           N,K,ID,IPQ,AICD,MJ4,ISWRO,O,Q,X1,X2,CXY1,CXX1,CXV1)
+          use omp_lib
           implicit none
 !C     DAVIDON'S (MINIMIZATION) PROCEDURE
 
@@ -19003,6 +19614,12 @@ C
           REAL(8), dimension(100,ID,ID) ::  CXY1 
           REAL(8), dimension(51,ID,ID)  ::  CXX1 
           REAL(8), dimension(51,ID,K)   ::  CXV1
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED IJ:64,IK:64,NH:64,IDD:64,IR:64
+          !DIR$ ASSUME_ALIGNED CYY1:64,B:64,AW:64,VD:64
+          !DIR$ ASSUME_ALIGNED X:64,G:64,R:64,C0:64,O:64
+          !DIR$ ASSUME_ALIGNED Q:64,X1:64,X2:64,CXY1:64,CXX1:64,CXV1:64
+#endif
           REAL(8) :: AICD
           ! Locals
           INTEGER(4) :: ITN,ISPHAI,IPHAT,ITNS,I,J,IG,IRAM,ITN
@@ -19013,6 +19630,9 @@ C
                             RAMT, SPHAI, RAM1, CONSDR, OPHAI, AICS, DAIC,AICO
           REAL(8), dimension(ID,ID) :: C0D, SC0, SC0D
           REAL(8), dimension(MJ4)   :: SR, SX, SG
+#if defined __ICC
+          !DIR$N ATTRIBUTES ALIGN : 64 :: C0D,SC0,SC0D,SR,SX,SG
+#endif
           COMMON /COM101/AICO           
 !C
 !C
@@ -19047,6 +19667,12 @@ C
 !C     DETERMINANT OF CXX(0) COMPUTATION
 
           DO 102 I=1,ID
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif
                  DO 100 J=1,ID
 
                         C0D(I,J)=C0(I,J)
@@ -19065,13 +19691,24 @@ C
           RAMRO=(RAM-CST1)/RO
 
           DO 111 I=1,IPQ
-                 RAMROT=RAMRO*R(I)
+             RAMROT=RAMRO*R(I)
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif             
                  DO 110 J=1,IPQ
 
                       VD(I,J)=VD(I,J)+RAMROT*R(J)
              110 CONTINUE
       111 CONTINUE
-
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif
           DO 120 I=1,IPQ
 
                   R(I)=RAM*R(I)
@@ -19082,6 +19719,12 @@ C
 
       140 CONTINUE
           IG=0
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif          
       205 DO 210 I=1,IPQ
 
                  SX(I)=X(I)-R(I)
@@ -19093,7 +19736,13 @@ C
           IF(IG.EQ.0) GO TO 215
 
           DO 214 I=1,IPQ
-                 R(I)=CST05*R(I)
+             R(I)=CST05*R(I)
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif             
                  DO 213 J=1,IPQ
 
                         VD(I,J)=CST05*VD(I,J)
@@ -19103,7 +19752,13 @@ C
 !C
 !C     DETERMINANT OF (NEW CXX(0)) COMPUTATION
 
-      215 DO 221 I=1,ID
+215       DO 221 I=1,ID
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif
                DO 220 J=1,ID
 
                         SC0D(I,J)=SC0(I,J)
@@ -19113,7 +19768,13 @@ C
           CALL SUBDETM(SC0D,SPHAI,ID)
 
           DO 310 I=1,IPQ
-                SUM=CST0
+             SUM=CST0
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined  __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif             
                 DO 311 J=1,IPQ
 
                       SUM=SUM+VD(I,J)*SG(J)
@@ -19149,7 +19810,13 @@ C
       470 RAMSRO=(RAM-CST1)/SRO
 
           DO 481 I=1,IPQ
-                 RAMT=RAMSRO*SR(I)
+             RAMT=RAMSRO*SR(I)
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif             
                  DO 480 J=1,IPQ
 
                        VD(I,J)=VD(I,J)+RAMT*SR(J)
@@ -19161,6 +19828,12 @@ C
           RAM1=RAM-CST1
           IF(DABS(RAM1).LT.EPS3) GO TO 555
           CONSDR=DGAM*RAM1
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif          
           DO 550 I=1,IPQ
 
                 R(I)=R(I)-CONSDR*SR(I)
@@ -19179,7 +19852,13 @@ C
               R(I)=RAM*SR(I)
       560 CONTINUE
 
-          DO 571 I=1,ID
+              DO 571 I=1,ID
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ VECTOR ALWAYS
+#elif defined  __GFORTRAN__
+             !$OMP SIMD
+#endif                 
                  DO 570 J=1,ID
 
                        C0(I,J)=SC0(I,J)
@@ -23283,6 +23962,7 @@ C
           REAL(kind=8), dimension(Q+H,D) :: Y, YD, Z1, Z2, Z3, ZZ1,ZZ2,ZZ3
           REAL(kind=8), dimension(H+1,D) :: YORI
           REAL(kind=8), dimension(N,D)   :: X
+
            ! Locals
           INTEGER(kind=4) :: H1,ISW,I,J,II,JJ,KK,JX,JY,IX,IM1,JZ,IJ,I2,ISR,IQH
           REAL(kind=8) ::  CST0, CST1, Z, CCC, AN, AVE, DMAX,  DMIN, YYD
