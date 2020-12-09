@@ -14228,7 +14228,7 @@ C
     SUBROUTINE  DECOMPFF(DATA,N,TREND,SEASNL,AR,TRAD,NOISE,   &
                           para,iopt,imiss,omaxx,LM1,ier )
         
-                         
+          implicit none               
 !C
 !C                                                                       
 !c  Bug fixed (97/10/17)
@@ -14361,15 +14361,17 @@ C
           REAL(kind=dp) :: omaxx
           ! Locals
          
-          INTEGER(kind=int4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth,LLL,ISMT
-          INTEGER(kind=int4) :: ISW, ISMT, IDIF, LOG, MESH 
-          REAL(kind=dp) :: YMEAN,FF
-          INTEGER(kind=int4), dimension(N)    :: IMIS 
-          REAL(kind=dp), dimension(L+M2)    :: A 
-          REAL(kind=dp), dimension(N)       :: Z 
-          REAL(kind=dp), dimension(L,LM1,N) :: E 
-          REAL(kind=dp), dimension(N,7)     :: TDAY
-!DIR$ ATTRIBUTES ALIGN : 64 :: IMIS,A,Z,E,TDAY
+          INTEGER(kind=4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth,LLL,ISMT
+          INTEGER(kind=4) :: ISW, ISMT, IDIF, LOG, MESH 
+          REAL(kind=8) :: YMEAN,FF
+          INTEGER(kind=4), dimension(N)    :: IMIS 
+          REAL(kind=8), dimension(L+M2)    :: A 
+          REAL(kind=8), dimension(N)       :: Z 
+          REAL(kind=8), dimension(L,LM1,N) :: E 
+          REAL(kind=8), dimension(N,7)     :: TDAY
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: IMIS,A,Z,E,TDAY
+#endif
           COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER, &
                                NYEAR, nmonth
           COMMON     /CCC/     ISW, ISMT, IDIF, LOG, MESH              
@@ -14432,7 +14434,8 @@ C
                                                               
                                 
     SUBROUTINE  ARCOEFD( PAC,K,AR )  
-       
+      use omp_lib
+      implicit none
 !C                                                                       
 !C  ...  TRANSFORMATION FROM PARCOR TO AR COEFFICIENTS  ...              
 !C                                                                       
@@ -14445,18 +14448,28 @@ C
 !C                                                                       
 !C                                                                       
 
-          INTEGER(kind=int4) :: K
-          REAL(kind=dp), dimension(K) :: PAC, AR
+          INTEGER(kind=4) :: K
+          REAL(kind=8), dimension(K) :: PAC, AR
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED PAC:64,AR:64
+#endif
           ! Locals
-          INTEGER(kind=int4) :: II,IM1,J,JJ
-          REAL(kind=dp), dimension(K) :: W
-!DIR$ ATTRIBUTES ALIGN : 64 :: W                                                                      
+          INTEGER(kind=4) :: II,IM1,J,JJ
+          REAL(kind=8), dimension(K) :: W
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: W
+#endif
           DO  30 II=1,K                                                 
                 AR(II) = PAC(II)                                                  
                 W(II)  = PAC(II)                                                  
                 IM1 = II - 1                                                      
-                IF( IM1 .LE. 0 )     GO TO 30                                     
+                IF( IM1 .LE. 0 )     GO TO 30
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                 DO  10  J=1,IM1                                                
                         JJ = II - J                                                       
                                    
@@ -14473,21 +14486,32 @@ C
     
                                   
     SUBROUTINE  EPARAM( Z,E,TDAY,IMIS,N,A,iopt)
+       implicit none
          
 !C                                                                       
 !C  ...  Estimation of parameters  ...                                   
 !C                                                                       
-          INTEGER(kind=int4) ::  N, iopt
-          INTEGER(kind=int4), dimension(N)  :: IMIS
+          INTEGER(kind=4) ::  N, iopt
+          INTEGER(kind=4), dimension(N)  :: IMIS
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED IMIS:64
-          REAL(kind=dp), dimension(N) :: Z
+#endif
+          REAL(kind=8), dimension(N) :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(L,(L+M+1),N) :: E
+#endif
+          REAL(kind=8), dimension(L,(L+M+1),N) :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
-          REAL(kind=dp), dimension(N,7)         :: TDAY
+#endif
+          REAL(kind=8), dimension(N,7)         :: TDAY
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED TDAY:64
-          REAL(kind=dp), dimension(L+M2)        :: A
+#endif
+          REAL(kind=8), dimension(L+M2)        :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
+#endif
           ! Locals
           INTEGER(kind=int4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,   &
                        NYEAR,nmonth,ISW,ISMT,IDIF,LOG,MESH, &
@@ -14505,7 +14529,7 @@ C
                                                  
           COMMON /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI,GC
           COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH
-          EXTERNAL   FUNCSA                                                 
+         ! EXTERNAL   FUNCSA                                                 
                                                                        
           LM = L + M2                                                       
           ISMT = 0                                                          
@@ -14525,34 +14549,44 @@ C
                                                          
                          
     SUBROUTINE  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,M,A,F,G,IFG,L,LM1 )
-         
+         implicit none
 !C                                                                       
 !C  ...  FUNCTION EVALUATION AND NUMERICAL DIFFERENCING  ...             
 !C                                                                       
 
-          INTEGER(kind=int4), dimension(N) :: IMIS
-          !DIR$ ASSUME_ALIGNED IMIS:64
-          INTEGER(kind=int4) :: N, M, IFG, L, LM1
-          REAL(kind=dp), dimension(N) :: Z
+         INTEGER(kind=4), dimension(N) :: IMIS
+#if defined __ICC
+         !DIR$ ASSUME_ALIGNED IMIS:64
+#endif
+          INTEGER(kind=4) :: N, M, IFG, L, LM1
+          REAL(kind=8), dimension(N) :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(L,LM1,N) ::  E
+#endif
+          REAL(kind=8), dimension(L,LM1,N) ::  E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
-          REAL(kind=dp), dimension(N,7) :: TDAY
+#endif
+          REAL(kind=8), dimension(N,7) :: TDAY
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED TDAY:64
-          REAL(kind=dp), dimension(M) :: A, G
+#endif
+          REAL(kind=8), dimension(M) :: A, G
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64,G:64
-          REAL(kind=dp) :: F
+#endif
+          REAL(kind=8) :: F
           ! Locals
-          INTEGER(kind=int4) :: ISW,ISMT,IDIF,LOG,MESH,I,II,ICNT
-          REAL(kind=dp) :: CONST, FB, FF, DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI
-          REAL(kind=dp), dimension(M) :: B  
-          REAL(kind=dp), dimension(200) ::  GI, GC
+          INTEGER(kind=4) :: ISW,ISMT,IDIF,LOG,MESH,I,II,ICNT
+          REAL(kind=8) :: CONST, FB, FF, DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI
+          REAL(kind=8), dimension(M) :: B  
+          REAL(kind=8), dimension(200) ::  GI, GC
 
           COMMON     /CCC/    ISW, ISMT, IDIF, LOG, MESH              
           COMMON   /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI,GC
 
           DATA       ICNT /0/                                               
-          CONST = 0.0001_dp                                                 
+          CONST = 0.0001_8                                                 
                                         
           CALL  FUNCT( Z,E,TDAY,IMIS,N,LM1,M,A,F,IFG )                      
           FB = F                                                            
@@ -14597,40 +14631,52 @@ C
     
                             
     SUBROUTINE  FUNCSA( Z,E,TDAY,IMIS,N,LM1,KK,A,FF,IFG )
-       
+      use omp_lib
+      implicit none
 !C                                                                       
 !C  ...  Initial setting, filtering and smoothing  ...                   
 !C                                                                       
                                     
 
 
-          INTEGER(kind=int4), dimension(N) :: IMIS
-          !DIR$ ASSUME_ALIGNED IMIS:64
-          REAL(kind=dp) ::  N, LM1, KK, IFG 
-          REAL(kind=dp), dimension(N) :: Z
+      INTEGER(kind=4), dimension(N) :: IMIS
+#if defined __ICC
+      !DIR$ ASSUME_ALIGNED IMIS:64
+#endif
+          REAL(kind=8) ::  N, LM1, KK, IFG 
+          REAL(kind=8), dimension(N) :: Z
+#if defined __ICCA
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(L,LM1,N) ::  E
+#endif
+          REAL(kind=8), dimension(L,LM1,N) ::  E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
-          REAL(kind=dp), dimension(N,7) ::  TDAY
+#endif
+          REAL(kind=8), dimension(N,7) ::  TDAY
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED TDAY:64
-          REAL(kind=dp), dimension(KK) :: A
+#endif
+          REAL(kind=8), dimension(KK) :: A
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED A:64
-          REAL(kind=dp) :: FF
+#endif
+          REAL(kind=8) :: FF
           ! Locals
-          INTEGER(kind=int4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth, &
+          INTEGER(kind=4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth, &
                            ISW,ISMT,IDIF,LOG,MESH,MJ,M12,I,NI,K,MJ,NI
-          REAL(kind=dp) :: DI,TAU2,SUM
-          INTEGER(kind=int4), dimension(N) :: IMISR
-          REAL(kind=dp), dimension(N) :: ZZ 
-          REAL(kind=dp), dimension(M) :: Y 
-          REAL(kind=dp), dimension(LM1+1,LM1) :: R 
-          REAL(kind=dp), dimension(M+1,M+1)   :: S
-          REAL(kind=dp), dimension(10)  :: F1,F2,A1,A2
-          REAL(kind=dp), dimension(300) :: F3,A3
-          REAL(kind=dp), dimension(3) :: UI
-          REAL(kind=dp), dimension(7) :: TDF
+          REAL(kind=8) :: DI,TAU2,SUM
+          INTEGER(kind=4), dimension(N) :: IMISR
+          REAL(kind=8), dimension(N) :: ZZ 
+          REAL(kind=8), dimension(M) :: Y 
+          REAL(kind=8), dimension(LM1+1,LM1) :: R 
+          REAL(kind=8), dimension(M+1,M+1)   :: S
+          REAL(kind=8), dimension(10)  :: F1,F2,A1,A2
+          REAL(kind=8), dimension(300) :: F3,A3
+          REAL(kind=8), dimension(3) :: UI
+          REAL(kind=8), dimension(7) :: TDF
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: IMISR,ZZ,Y,R,S     
- 
+#endif 
          COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,   &
                      NYEAR, nmonth
          COMMON  /COMSM3/  F1, F2, F3, A1, A2, A3,  DI, UI, TDF 
@@ -14648,41 +14694,58 @@ C
 !C  ...  Backward Filtering  ...                                         
 !C                                                                       
 
-          NI=N
+         NI=N
+#if defined __ICC
+          !DIR$ VECTOR ALIGNED
+         !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+         !$OMP SIMD
+#endif
           DO 10  I=1,NI                                                     
                imisr(i) = imis(NI-I+1)
                                            
                ZZ(I) = Z(NI-I+1)
 10             CONTINUE
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
-          !DIR$ SIMD
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+               !$OMP SIMD
+#endif
           DO 20  I=1,L                                                      
-               TAU2 = 0.5_dp*(1.0_R64P + DSIN( A(I) ))  + 0.0001_dp
-               IF(TAU2 .LT. 1.0E-20_dp)  TAU2 = 1.0E-20_dp                           
+               TAU2 = 0.5_8*(1.0_8 + DSIN( A(I) ))  + 0.0001_8
+               IF(TAU2 .LT. 1.0E-20_8)  TAU2 = 1.0E-20_8                         
                                    
-               UI(I) = 1.0_dp/DSQRT( TAU2 )
+               UI(I) = 1.0_8/DSQRT( TAU2 )
        20 CONTINUE
 
-          IF( M2 .EQ. 0 )  GO TO 40
+               IF( M2 .EQ. 0 )  GO TO 40
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
-          !DIR$ SIMD     
+               !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+               !$OMP SIMD
+#endif               
           DO 30  I=1,M2                                                     
                                     
-             Y(I) = 0.90_dp*DSIN( A(L+I) )
+             Y(I) = 0.90_8*DSIN( A(L+I) )
        30 CONTINUE
                                         
           CALL  ARCOEFD( Y,M2,A2 )
 
        40 CONTINUE
-          S(1:MJ,1:MJ) = 0.0_dp
-          R(1:LM1+1,1:LM1) = 0.0_dp
+          S(1:MJ,1:MJ) = 0.0_8
+          R(1:LM1+1,1:LM1) = 0.0_8
           DI = 1.0_dp                                                      
                                           
           IF( M2 .EQ. 0 )  GO TO 90                                         
-          F2(1) = 1.0_dp/A2(M2)                                              
+          F2(1) = 1.0_8/A2(M2)                                              
           IF(M2.EQ.1)  GO TO 90
-          !DIR$ VECTOR ALIGNED
-          !DIR$ SIMD
+#if defined __ICC
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 80  I=2,M2                                                     
                                        
                F2(I) = -A2(I-1)/A2(M2)
@@ -14701,9 +14764,13 @@ C
           CALL  STATE( Y(M12+1),A3,M3 )
                                               
           DO 210  I=1,M
-                SUM = 0.0_dp                                                       
+             SUM = 0.0_8
+#if defined __ICC
                 !DIR$ VECTOR ALIGNED
-                !DIR$ SIMD REDUCTION(+:SUM)
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM)
+#endif
                 DO 220  J=I,M
 
                      SUM = SUM + S(I,J)*Y(J)
@@ -14720,21 +14787,27 @@ C
           FF = -FF                                                          
     END SUBROUTINE
     
-    SUBROUTINE  HUSHL4( X,MJ1,N,K,M,ISW )  
+    SUBROUTINE  HUSHL4( X,MJ1,N,K,M,ISW )
+      use omp_lib
+      implicit none
         
 !C                                                                       
 !C          HOUSEHOLDER TRANSFORMATION;   TYPE 4                         
 !C                                                                       
 
-          INTEGER(kind=int4) :: MJ1, N, K, M, ISW
-          REAL(R64P), dimension(MJ1,K) :: X
+          INTEGER(kind=4) :: MJ1, N, K, M, ISW
+          REAL(8), dimension(MJ1,K) :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
       ! Locals
-          INTEGER(kind=int4) :: II,J
-          REAL(kind=dp) ::  TOL, D0, D1, H, G, S
-          REAL(kind=dp), dimension(K) :: D 
-!DIR$ ATTRIBUTES ALIGN : 64 :: D
-          DATA     TOL /1.0E-30_dp/                                            
+          INTEGER(kind=4) :: II,J
+          REAL(kind=8) ::  TOL, D0, D1, H, G, S
+          REAL(kind=8), dimension(K) :: D
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: D
+#endif
+          DATA     TOL /1.0E-30_8/                                            
                                                                        
           IF( ISW .EQ. 1 )   GO TO 110                                      
                                                  
@@ -14743,17 +14816,21 @@ C
                  D1 = X(N,II)                                                      
                  H = D0**2 + D1**2                                                 
                  IF( H .GT. TOL )  GO TO 20                                        
-                 G = 0.0_R64P                                                         
+                 G = 0.0_8                                                         
                  GO TO  100                                                        
               20 G = DSQRT( H )                                                    
-                 IF( D0 .GE. 0.0_R64P )   G = -G                                      
+                 IF( D0 .GE. 0.0_8 )   G = -G                                      
                  H = H - D0*G                                                      
                  D0 = D0 - G                                                       
                  D(II) = D0                                                        
                                                                        
                  IF( II .EQ. K )  GO TO 100
+#if defined __ICC
                  !DIR$ VECTOR ALIGNED
-                 !DIR$ SIMD
+                 !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                 !$OMP SIMD
+#endif
                 DO 60  J=II+1,K                                                   
                        S = (D0*X(II,J) + D1*X(N,J))/H                                    
                        X(II,J) = X(II,J) - D0*S                                          
@@ -14764,8 +14841,12 @@ C
           RETURN                                                            
                                                                        
 110       CONTINUE
+#if defined __ICC
 !DIR$ VECTOR ALWAYS
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                 !$OMP SIMD
+#endif          
           DO 120  J=M,K-1                                                   
                   S = (D(J)*X(J,K)+X(N,J)*X(N,K))                                   
                   H = -X(J,J)*D(J)                                                  
@@ -14776,39 +14857,49 @@ C
       120 CONTINUE
     END SUBROUTINE
     
-    SUBROUTINE  HUSHL7( X,D,MJ1,K,M,KE ) 
+    SUBROUTINE  HUSHL7( X,D,MJ1,K,M,KE )
+      use omp_lib
+      implicit none
        
 !C                                                                       
 !C     Householder Transformation,  TYPE 7                               
 !C                                                                       
                                   
-          INTEGER(kind=int4) :: MJ1, K, M, KE
-          REAL(kind=dp), dimension(MJ1,K)  :: X
+          INTEGER(kind=4) :: MJ1, K, M, KE
+          REAL(kind=8), dimension(MJ1,K)  :: X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
-          REAL(kind=dp), dimension(MJ1)    :: D
+#endif
+          REAL(kind=8), dimension(MJ1)    :: D
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED D:64
+#endif
           ! Loclas
-          INTEGER(kind=int4) :: II,I,II1,NE,J
-          REAL(kind=dp) :: TOL, H, G, F, S
+          INTEGER(kind=4) :: II,I,II1,NE,J
+          REAL(kind=8) :: TOL, H, G, F, S
                                                                        
-          TOL = 1.0E-30_dp                                               
+          TOL = 1.0E-30_8                                              
                                                
           DO 101  II=1,KE
                   NE = MAX(M,II) + 1                                                
-                  H = 0.0_dp
-                  !DIR$ VECTOR ALWAYS
+                  H = 0.0_8
+#if defined __ICC
+                  !DIR$ VECTOR ALIGNED
                   !DIR$ SIMD REDUCTION(+:H)
+#elif defined __GFORTRAN__
+                  !$OMP SIMD
+#endif
                   DO 10  I=II,NE                                                 
                         D(I) = X(I,II)                                              
 
                         H = H + D(I)*D(I)
            10    CONTINUE
                  IF( H .GT. TOL )  GO TO 20                                     
-                 G = 0.0_dp                                                    
+                 G = 0.0_8                                                   
                  GO TO 100                                                      
            20    G = DSQRT( H )                                                 
                  F = X(II,II)                                                   
-                 IF( F .GE. 0.0_dp)   G = -G                                   
+                 IF( F .GE. 0.0_8)   G = -G                                   
                  D(II) = F - G                                                  
                  H = H - F*G                                                    
 !C                                                                       
@@ -14817,14 +14908,18 @@ C
                  II1 = II+1                                                     
                  DO 30 I=II1,NE                                                    
 
-                       X(I,II) = 0.0_dp
+                       X(I,II) = 0.0_8
               30 CONTINUE
                  IF( II .EQ. K )  GO TO 100                                     
                                                                        
                  DO 60  J=II1,K                                                 
-                    S = 0.0_dp
-!DIR$ VECTOR ALWAYS
-!DIR$ SIMD REDUCTION(+:S)
+                    S = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                    !DIR$ SIMD REDUCTION(+:S)
+#elif defined __GFORTRAN__
+                  !$OMP SIMD
+#endif                    
                        DO 40  I=II,NE                                              
                                        
                              S = S + D(I)*X(I,J)
@@ -14853,53 +14948,74 @@ C
                   
     SUBROUTINE  LINEA1( FUNCT,Z,E,TDAY,IMIS,N,L,LM1,      &
          X,H,RAM,EE,G,K,IG )
-      
+      use omp_lib
+      implicit none
     
 !C                                                                       
 !C  ...  LINE SEARCH (WOLFE'S ALGORITHM)  ...                            
 !C                                                                       
 
-          INTEGER(kind=int4), dimension(N) :: IMIS
-          !DIR$ ASSUME_ALIGNED IMIS:64
-          INTEGER(kind=int4) :: N, L, LM1, K, IG
-          REAL(kind=dp), dimension(N)       :: Z
+      INTEGER(kind=4), dimension(N) :: IMIS
+#if defined __ICC
+      !DIR$ ASSUME_ALIGNED IMIS:64
+#endif
+          INTEGER(kind=4) :: N, L, LM1, K, IG
+          REAL(kind=8), dimension(N)       :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
-          REAL(kind=dp), dimension(L,LM1,N) :: E
+#endif
+          REAL(kind=8), dimension(L,LM1,N) :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
-          REAL(kind=dp), dimension(N,7)     :: TDAY
+#endif
+          REAL(kind=8), dimension(N,7)     :: TDAY
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED TDAY:64
-          REAL(kind=dp), dimension(K)       ::  X, H, G
+#endif
+          REAL(kind=8), dimension(K)       ::  X, H, G
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64,H:64,G:64
-          REAL(kind=dp) ::  RAM,EE
+#endif
+          REAL(kind=8) ::  RAM,EE
      
-          INTEGER(kind=int4) :: RET, SUB, ISW, ISMT, IDIF, LOG, MESH, &
+          INTEGER(kind=4) :: RET, SUB, ISW, ISMT, IDIF, LOG, MESH, &
                            IFG,I,IPR
-          REAL(kind=dp) ::  C1, C2, F0, SUM0, CONST2, HNORM,               &
+          REAL(kind=8) ::  C1, C2, F0, SUM0, CONST2, HNORM,               &
                          RAM1, RAM2, RAM3, A1, A2, A3, B1, B2, E1, E2,  &
                          E3, H1, H2, SUM
-          REAL(kind=dp), dimension(K) :: X1 
+          REAL(kind=8), dimension(K) :: X1
+#if defined __ICC
           !DIR$ ATTRIBUTES ALIGN : 64 :: X1
+#endif
           COMMON     /CCC/     ISW, ISMT, IDIF, LOG, MESH
           EXTERNAL   FUNCT              
-          C1 = 0.01_dp                                                      
-          C2 = 0.5_dp                                                       
+          C1 = 0.01_8                                                      
+          C2 = 0.5_8                                                       
 
           IFG = 0
 
           F0 = EE                                                           
-          SUM0 = 0.0_dp
+          SUM0 = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM0)          
+          !DIR$ SIMD REDUCTION(+:SUM0)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM0) LINEAR(I:1)
+#endif
           DO 15 I=1,K                                                       
                                        
                SUM0 = SUM0 + G(I)*H(I)
        15 CONTINUE
           ISW = 1                                                           
-          RAM = 0.5_dp                                                      
-          CONST2 = 1.0E-60_dp                                                  
-          HNORM = 0._dp
+          RAM = 0.5_8                                                     
+          CONST2 = 1.0E-60_8                                                
+          HNORM = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALWAYS
-!DIR$ SIMD REDUCTION(+:HNORM)          
+          !DIR$ SIMD REDUCTION(+:HNORM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:HNORM) LINEAR(I:1)
+#endif
           DO 10  I=1,K                                                      
                                         
              HNORM = HNORM + H(I)**2
@@ -14908,11 +15024,15 @@ C
                                                                        
           RAM2 = RAM                                                        
           E1 =EE                                                            
-          RAM1 = 0._dp                                                     
+          RAM1 = 0._0                                                     
                                                                        
           IF( RAM2*HNORM .GT. 5.0_dp )  GO TO 48
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
-          !DIR$ SIMD
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD  LINEAR(I:1)
+#endif          
           DO 20  I=1,K                                                      
                                          
                 X1(I) = X(I) + RAM2*H(I)
@@ -14924,19 +15044,27 @@ C
           IF( E2 .GT. E1 )  GO TO 50                                        
                                               
           H1 = E2 - F0 - C1*RAM2*SUM0                                       
-          SUM = 0.0_dp
+          SUM = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)          
+          !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif          
           DO 25 I=1,K                                                       
                                           
               SUM = SUM + G(I)*H(I)
        25 CONTINUE
           H2 = SUM - C2*SUM0                                                
-          IF(H1.LE.0.0_dp .AND. H2.GE.0.0_dp)  RETURN                         
+          IF(H1.LE.0.0_8 .AND. H2.GE.0.0_8)  RETURN                         
                                                  
-30        RAM3 = RAM2*4._dp
+30        RAM3 = RAM2*4._8
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
-          !DIR$ SIMD
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD  LINEAR(I:1)
+#endif             
           DO 40  I=1,K                                                      
 
                  X1(I) = X(I) + RAM3*H(I)
@@ -14946,8 +15074,8 @@ C
           IF( IG.EQ.1 )  GO TO  500                                         
                           
           IF( E3 .GT. E2 )  GO TO 70                                        
-          IF(RAM3.GT.1.0E+10_dp .AND. E3.LT.E1)  GO TO 45                       
-          IF(RAM3.GT.1.0E+10_dp .AND. E3.GE.E1)  GO TO 46                       
+          IF(RAM3.GT.1.0E+10_8 .AND. E3.LT.E1)  GO TO 45                       
+          IF(RAM3.GT.1.0E+10_8 .AND. E3.GE.E1)  GO TO 46                       
           RAM1 = RAM2                                                       
           RAM2 = RAM3                                                       
           E1 = E2                                                           
@@ -14958,17 +15086,21 @@ C
           EE = E3                                                           
           RETURN                                                            
                                                                       
-       46 RAM = 0.0_dp                                                      
+       46 RAM = 0.0_8                                                      
           RETURN                                                            
                                                                        
-       48 E2 = 1.0E+30_dp                                                       
+       48 E2 = 1.0E+30_8                                                       
                                                                        
        50 RAM3 = RAM2                                                       
           E3 = E2                                                           
-          RAM2 = RAM3*0.1_dp                                                 
+          RAM2 = RAM3*0.1_8                                                 
           IF( RAM2*HNORM .LT. CONST2 )  GO TO  400
+#if defined __ICC
           !DIR$ VECTOR ALIGNED
-          !DIR$ SIMD
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD  LINEAR(I:1)
+#endif             
           DO 60  I=1,K                                                      
                                
                X1(I) = X(I) + RAM2*H(I)
@@ -14979,9 +15111,13 @@ C
           IF( E2.GT.E1 )  GO TO 50                                          
                                          
           H1 = E2 - F0 - C1*RAM2*SUM0                                       
-          SUM = 0.0_dp
+          SUM = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)
+          !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif           
           DO 65 I=1,K                                                       
                                           
             SUM = SUM + G(I)*H(I)
@@ -14992,9 +15128,13 @@ C
          RETURN                                                            
                                             
       70 RET = 80
-         GO TO 200                                                         
+         GO TO 200
+#if defined __ICC
          !DIR$ VECTOR ALIGNED
-         !DIR$ SIMD
+         !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif 
       80 DO 90  I=1,K                                                      
                        
               X1(I) = X(I) + RAM*H(I)
@@ -15049,9 +15189,13 @@ C
           IFG = IFG+1                                                       
                                                                  
           H1 = EE - F0 - C1*RAM*SUM0                                        
-          SUM = 0.0_dp
+          SUM = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)        
+          !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif           
           DO 145 I=1,K                                                      
                                 
               SUM = SUM + G(I)*H(I)
@@ -15064,23 +15208,23 @@ C
           RETURN                                                            
                                                                        
 !C      -------  INTERNAL SUBROUTINE SUB1  -------                       
-      200 IF( RAM3-RAM2 .GT. 5.0_dp*(RAM2-RAM1) )  GO TO 202                 
-          IF( RAM2-RAM1 .GT. 5.0_dp*(RAM3-RAM2) )  GO TO 204                 
+      200 IF( RAM3-RAM2 .GT. 5.0_8*(RAM2-RAM1) )  GO TO 202                 
+          IF( RAM2-RAM1 .GT. 5.0_8*(RAM3-RAM2) )  GO TO 204                 
           A1 = (RAM3-RAM2)*E1                                               
           A2 = (RAM1-RAM3)*E2                                               
           A3 = (RAM2-RAM1)*E3                                               
-          B2 = (A1+A2+A3)*2.D0                                              
+          B2 = (A1+A2+A3)*2.0_8                                              
           B1 = A1*(RAM3+RAM2) + A2*(RAM1+RAM3) + A3*(RAM2+RAM1)             
-          IF( B2 .EQ. 0._dp )  GO TO 210                                     
+          IF( B2 .EQ. 0._0 )  GO TO 210                                     
           RAM = B1 /B2                                                      
                                       
         IF( RETURN .EQ. 80 ) GO TO 80
         IF( RETURN .EQ. 130 ) GO TO 130
-    202 RAM = (4.0_dp*RAM2 + RAM3)/5.0_dp                                  
+    202 RAM = (4.0_8*RAM2 + RAM3)/5.0_8                                
                                     
         IF( RETURN .EQ. 80 ) GO TO 80
         IF( RETURN .EQ. 130 ) GO TO 130
-    204 RAM = (RAM1 + 4.0_dp*RAM2)/5.0_dp                                  
+    204 RAM = (RAM1 + 4.0_8*RAM2)/5.0_8                                  
                                          
         IF( RETURN .EQ. 80 ) GO TO 80
         IF( RETURN .EQ. 130 ) GO TO 130
@@ -15092,22 +15236,26 @@ C
 !C      -------  INTERNAL SUBROUTINE SUB2  -------                       
 !C                                                                       
     300 IF( RAM3-RAM2 .GT. RAM2-RAM1 )  GO TO 310                         
-        RAM = (RAM1+RAM2)*0.5_dp                                           
+        RAM = (RAM1+RAM2)*0.5_8                                           
                                       
         IF( RETURN .EQ. 80 ) GO TO 80
         IF( RETURN .EQ. 130 ) GO TO 130
                                                                        
-    310 RAM = (RAM2+RAM3)*0.5_dp                                           
+    310 RAM = (RAM2+RAM3)*0.5_8                                           
                                    
         IF( RETURN .EQ. 80 ) GO TO 80
         IF( RETURN .EQ. 80 ) GO TO 130
                                                                     
-    400 RAM = 0._dp                                                        
+    400 RAM = 0._8                                                        
         RETURN                                                            
                                                                       
-500     RAM = (RAM2+RAM3)*0.5_dp
+500     RAM = (RAM2+RAM3)*0.5_8
+#if defined __ICC
         !DIR$ VECTOR ALIGNED
-        !DIR$ SIMD
+        !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD  LINEAR(I:1)
+#endif         
     510 DO 520  I=1,K                                                     
                                           
            X1(I) = X(I) + RAM*H(I)
@@ -15126,29 +15274,29 @@ C
     530 RAM3 = RAM                                                        
         GO TO 70                                                          
                                                                        
-    540 RAM = (RAM2+RAM)*0.5_dp                                           
+    540 RAM = (RAM2+RAM)*0.5_8                                           
         GO TO 510                                                         
                    
     END SUBROUTINE
                              
 
     SUBROUTINE  LOGTRF( Z,IMIS,N,ilog,ier )
-         
+         implicit none
 !C                                                                       
 !C ... LOG TRANSFORMATION ...                                            
 !C                                                                       
                                             
-          INTEGER(kind=int4), dimension(N) :: IMIS 
-          REAL(kind=dp) :: N, ilog, ier
-          REAL(kind=dp), dimension(N) :: Z 
+          INTEGER(kind=4), dimension(N) :: IMIS 
+          REAL(kind=8) :: N, ilog, ier
+          REAL(kind=8), dimension(N) :: Z 
           ! Locals
-          INTEGER(kind=int4) :: I
-          REAL(kind=dp) :: DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI
-          REAL(kind=dp), dimension(200) :: GI,GC
+          INTEGER(kind=4) :: I
+          REAL(kind=8) :: DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI
+          REAL(kind=8), dimension(200) :: GI,GC
           COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI,GC
                                                                        
           ier = 0
-          DJACOB = 0.0_dp                                                  
+          DJACOB = 0.0_8                                                 
           if(ilog .eq. 0) return
           ier = -1
           DO 10 I=1,N                                                       
@@ -15165,41 +15313,53 @@ C
     
                                
     SUBROUTINE  OPTMIZ( FUNCT,Z,E,TDAY,IMIS,NN,X,N,L,LM1 )
-         
+      use omp_lib
+      implicit none
 !C                                                                       
 !C  ...  NUMERICAL OPTIMIZATION  ...                                     
 !C            LATEST REVISION:  JUNE 20, 1983                            
 !C                                                                       
 
-          INTEGER(kind=4), dimension(NN) :: IMIS
-          !!DIR$ ASSUME_ALIGNED IMIS:64
+      INTEGER(kind=4), dimension(NN) :: IMIS
+#if defined __ICC
+      !DIR$ ASSUME_ALIGNED IMIS:64
+#endif
           INTEGER(kind=4) ::  NN, N, L, LM1
           REAL(kind=8), dimension(NN) :: Z
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64
+#endif
           REAL(kind=8), dimenSion(L,LM1,NN) :: E
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
+#endif
           REAL(kind=8), dimension(NN,7)     :: TDAY
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED TDAY:64
+#endif
           REAL(kind=8), dimension(N)        ::  X
+#if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
+#endif
           ! Locals
-          INTEGER(kind=int4) ::   ISW, ISMT, IDIF, LOG, MESH, ICOUNT, &
+          INTEGER(kind=4) ::   ISW, ISMT, IDIF, LOG, MESH, ICOUNT, &
                              I,ICC,J
-          REAL(kind=dp)    ::   DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, &
+          REAL(kind=8)    ::   DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, &
                              TAU2, EPS1, EPS2, CONST1, XM, SUM, S1, S2, STEM, &
                              SS, DS2, GTEM, ED, RAMDA, XMB
-          REAL(kind=dp), dimension(N)   :: DX, G, G0, Y, WRK, S
-          REAL(kind=dp), dimension(N,N) :: H
-          REAL(kind=dp), dimension(200) :: GI,GC
-!DIR$ ATTRIBUTES ALIGN : 64 :: DX,G,G0,Y,WRK,S,H,GI,GC            
-
+          REAL(kind=8), dimension(N)   :: DX, G, G0, Y, WRK, S
+          REAL(kind=8), dimension(N,N) :: H
+          REAL(kind=8), dimension(200) :: GI,GC
+#if defined __ICC
+!DIR$ ATTRIBUTES ALIGN : 64 :: DX,G,G0,Y,WRK,S,H            
+#endif
           COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
           COMMON  /CMFUNC/    DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI,GC
           EXTERNAL   FUNCT
       
-          DATA  TAU2  /  0.1_dp  /
-          DATA  EPS1 , EPS2  / 0.01_dp, 0.01_dp  /                           
-          CONST1 = 1.0E-50_dp                                                 
+          DATA  TAU2  /  0.1_8  /
+          DATA  EPS1 , EPS2  / 0.01_8, 0.01_8  /                           
+          CONST1 = 1.0E-50_8                                                 
           ISW = 0                                                           
 
           XM = 0
@@ -15211,13 +15371,17 @@ C
 
 
      1000 CONTINUE
-          H(1:N,1:N) = 0.0_dp                                                   
-          S(1:N)     = 0.0_dp                                                    
-          DX(1:N)    = 0.0_dp
+          H(1:N,1:N) = 0.0_8                                                  
+          S(1:N)     = 0.0_8                                                    
+          DX(1:N)    = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif
           DO 20  I=1,N
-             H(I,I) = 1.0_dp
+             H(I,I) = 1.0_8
        20 CONTINUE
           ICC = 0                                                           
 
@@ -15231,16 +15395,25 @@ C
 !C                                                                       
     2000  ICC = ICC + 1                                                     
           IF( ICC .EQ. 1 )   GO TO 120
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                       
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif          
           DO 40  I=1,N                                                      
                                        
              Y(I) = G(I) - G0(I)
       40  CONTINUE
              DO 60  I=1,N
+                SUM = 0.0_8
+#if defined __ICC
                 !DIR$ VECTOR ALIGNED
                 !DIR$ SIMD REDUCTION(+:SUM)
-               SUM = 0.0_dp                                                      
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif                
+                                                  
                DO 50  J=1,N                                                      
                                       
                      SUM = SUM + Y(J)*H(I,J)
@@ -15248,11 +15421,15 @@ C
                                                     
                WRK(I) = SUM
        60 CONTINUE
-          S1 = 0.0_dp                                                      
-          S2 = 0.0_dp
+          S1 = 0.0_8                                                     
+          S2 = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
 !DIR$ SIMD REDUCTION(+:S1)
-!DIR$ SIMD REDUCTION(+:S2)          
+          !DIR$ SIMD REDUCTION(+:S2)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:S1,S2) LINEAR(I:1)
+#endif          
           DO 70  I=1,N                                                      
                S1 = S1 + WRK(I)*Y(I)                                             
                                             
@@ -15262,11 +15439,15 @@ C
 !C                                                                       
 !C  ...  BFGS FORMULA FOR UPDATING INVERSE OF HESSIAN MATRIX  ...        
 !C                                                                       
-          STEM = S1 / S2 + 1.0_dp                                          
+          STEM = S1 / S2 + 1.0_8                                         
                                                   
           DO 111  I=1,N
+#if defined __ICC
              !DIR$ VECTOR ALIGNED
-             !DIR$ SIMD
+             !DIR$ ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD 
+#endif             
              DO 110  J=I,N                                                     
                 H(I,J) = H(I,J)- (DX(I)*WRK(J)+WRK(I)*DX(J)-DX(I)*DX(J)*STEM)/S2  
                                                   
@@ -15274,11 +15455,15 @@ C
         110 CONTINUE
       111 CONTINUE
                                                                        
-      120 SS = 0.0_dp                                                        
+      120 SS = 0.0_8                                                        
           DO 150  I=1,N                                                     
-             SUM = 0.0_dp
+             SUM = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)
+             !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:SUM)  LINEAR(J:1)
+#endif
                 DO 140  J=1,N                                                     
                                          
                      SUM = SUM + H(I,J)*G(J)
@@ -15288,11 +15473,15 @@ C
           S(I) = -SUM
       150 CONTINUE
                                                                        
-          S1 = 0.0_dp                                                        
-          S2 = 0.0_dp
+          S1 = 0.0_8                                                       
+          S2 = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
 !DIR$ SIMD REDUCTION(+:S1)
-!DIR$ SIMD REDUCTION(+:S2)           
+          !DIR$ SIMD REDUCTION(+:S2)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:S1,S2)  
+#endif          
           DO 170  I=1,N                                                     
                S1 = S1 + S(I)*G(I)                                               
                                                
@@ -15301,7 +15490,7 @@ C
           DS2 = DSQRT(S2)                                                   
           GTEM = DABS(S1) / DS2                                             
     
-          IF( S1 .GE. 0.0_dp)  GO TO  1000                                  
+          IF( S1 .GE. 0.0_8)  GO TO  1000                                  
           ED = XM                                                           
 !C                                                                       
 !C  ...  LINE SEARCH  ...                                                
@@ -15309,7 +15498,7 @@ C
                       
           CALL LINEA1(FUNCT,Z,E,TDAY,IMIS,NN,L,LM1,X,S,RAMDA,ED,G,N,IG)
                                                                        
-          S1 = 0.0_dp                                                       
+          S1 = 0.0_8                                                       
           DO 210  I=1,N                                                     
                 DX(I) = S(I)*RAMDA                                                
                 S1 = S1 + DX(I)**2                                                
@@ -15322,33 +15511,44 @@ C
 
           CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,NN,N,X,XM,G,IG,L,LM1 )
                                                                        
-          S2 = 0._dp
+          S2 = 0._8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:S2)
+          !DIR$ SIMD REDUCTION(+:S2)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:S2)  LINEAR(I:1)
+#endif          
           DO 220  I=1,N                                                     
 
-               S2 = S2 + G(I)**2
+               S2 = S2 + G(I)*G(I)
       220 CONTINUE
           IF( DSQRT(S2) .LT. TAU2 )   GO TO 900                             
           IF( XMB-XM .LT. EPS1  .AND.  DSQRT(S1) .LT. EPS2 )  GO TO 900     
-          IF( XMB-XM .LT. 0.0001_dp .AND. ICC .GT. N ) GO TO 900
+          IF( XMB-XM .LT. 0.0001_8 .AND. ICC .GT. N ) GO TO 900
                                
           GO TO 2000                                                        
                                                                        
       900 CONTINUE                                                          
-          S2 = 0.0_dp                                                      
+          S2 = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ SIMD REDUCTION(+:S2)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:S2)  LINEAR(I:1)
+#endif              
           DO 230 I=1,N                                                      
                                             
-             S2 = S2 + G(I)**2
+             S2 = S2 + G(I)*G(I)
       230 CONTINUE
-          IF( DSQRT(S2) .GT. 1.0_dp )  GO TO 1000                            
+          IF( DSQRT(S2) .GT. 1.0_8)  GO TO 1000                            
     END SUBROUTINE
     
 
 
     SUBROUTINE  PLOTDD( N,Z,E,LM1,TRADE,COMP1,COMP2,COMP3, COMP4,COMP5)
                         
-                                     
+      use omp_lib
+      implicit none
 
 !C  ...  PLOT ESTIMATED PARAMETRS, ORIGINAL DATA AND ESTIMATED PARAMETERS
 !C
@@ -15371,8 +15571,10 @@ C
                             ISW, ISMT, IDIF, LOG, MESH, M12, M123, M1234,  &
                             I,J,
           REAL(kind=8)    ::  SUM, tmp
-          REAL(kind=8), dimension(N,M5) :: REG 
-!DIR$ ATTRIBUTES ALIGN : 64 :: REG        
+          REAL(kind=8), dimension(N,M5) :: REG
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: REG
+#endif
           COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER, NYEAR, nmonth
                       
           COMMON     /CCC/     ISW, ISMT, IDIF, LOG, MESH              
@@ -15383,27 +15585,29 @@ C
           M12 = M1 + M2                                                     
           M123= M1 + M2 + M3                                                
           M1234=M1 + M2 + M3 + M4
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif
           DO 5 I=1,N
-               COMP1(I) = 0.0_dp
-               COMP2(I) = 0.0_dp
-               COMP3(I) = 0.0_dp
-               COMP4(I) = 0.0_dp
+               COMP1(I) = 0.0_8
+               COMP2(I) = 0.0_8
+               COMP3(I) = 0.0_8
+               COMP4(I) = 0.0_8
         5 CONTINUE
 !C
 !C  ...  PLOT ORIGINAL DATA AND TREND  ...                               
                !C
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                         
+                    
           DO 10 I=1,N                                                       
                                             
              COMP1(I) = E(1,1,I)
        10 CONTINUE
                                                                      
              IF( SORDER .NE. 0) THEN
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))               
+            
                DO 20 I=1,N                                                       
 
                     COMP2(I) = E(1,M1+M2+1,I)
@@ -15414,9 +15618,8 @@ C
 
           IF( M4 .EQ. 6 )  then
              DO 35 I=1,N                                                       
-                SUM = 0.0_dp
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)
+                SUM = 0.0_8
+
                    DO 30 J=1,6                                                       
              
                         SUM = SUM + E(1,M123+J,N)*(TRADE(I,J)-TRADE(I,7))
@@ -15426,8 +15629,7 @@ C
           35 CONTINUE
           end if
           if(m4 .eq. 1) then
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))              
+           
                  DO 37 I=1,N
                       tmp=trade(I,2)+trade(I,3)+trade(I,4)+trade(I,5)+trade(I,6)
 
@@ -15440,8 +15642,7 @@ C
           IF( M5 .EQ. 0 )  GO TO 60                                         
           DO 55 I=1,N                                                       
              SUM = 0.0_8
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:SUM)
+
                  DO 50 J=1,M5                                                      
                            
                    SUM = SUM + E(1,M1234+J,N)*REG(I,J)
@@ -15465,8 +15666,7 @@ C
        80 CONTINUE
                                                                     
 100            IF( M4 .EQ. 0 )  GO TO 130
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))     
+   
           DO 110 I=1,N                                                      
                                                   
              COMP4(I) = E(2,1,I)
@@ -15478,7 +15678,8 @@ C
                                                                  
                 
     SUBROUTINE  REDATAD( DATA,ISW,X,N,XM ) 
-        
+      use omp_lib
+      implicit none
 !C                                                                       
 !C     THIS SUBROUTINE IS USED FOR THE LOADING OF ORIGINAL DATA,         
 !C     THE DATA IS LOADED THROUGH THE DEVICE SPECIFIED BY @MT@.          
@@ -15513,8 +15714,12 @@ C
           ! Locals
           INTEGER(kind=4)  :: I
           REAL(kind=8) :: FN, S1, S2, S3, S4, XX
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                      
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD LINEAR(I:1)
+#endif
           DO 53 I=1,N
 
                X(I)=DATA(I)
@@ -15523,9 +15728,13 @@ C
 
 
           FN = N                                                            
-          S1 = 0.0_dp
+          S1 = 0.0_8
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD REDUCTION(+:S1)
+          !DIR$ SIMD REDUCTION(+:S1)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:S1) LINEAR(I:1)
+#endif          
           DO 10 I=1,N                                                   
                                                
                 S1 = S1 + X(I)
@@ -15549,14 +15758,21 @@ C
           IF( ISW .EQ. 1 )  RETURN                                          
 !C                                                                       
 !C       MEAN DELETION                                                   
-!C                                                                       
+          !C
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD  LINEAR(I:1)
+#endif   
           DO 30  I=1,N                                                      
                                             
               X(I) = X(I) - XM
        30 CONTINUE
     END SUBROUTINE
     
-    SUBROUTINE  SETFGH                                                
+    SUBROUTINE  SETFGH
+        implicit none
 !C                                                                       
 !C  ...  SET F, G AND H MATRICES OF STATE SPACE MODEL  ...               
 !C                                                                       
@@ -15627,7 +15843,8 @@ C
     END SUBROUTINE
     
     SUBROUTINE  SMOTH3( Z,R,S,T,TRADE,IMIS,N,LM1,F,ILKF,ISMT )
-                        
+      use omp_lib
+      implicit none
 !C                                                                       
 !C     ...  INFORMATION SQUARE ROOT FILTER & SMOOTHER  ...               
 !C          FOR SEASONAL ADJUSTMENT                                      
@@ -15706,7 +15923,12 @@ C
 !C                                                                       
                 IF( M1 .EQ. 0 )  GO TO 140                                        
                 IF(M1.EQ.1)  GO TO 115                                            
-                                                 
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                DO 111  J=2,M1
                        DO 110  I=1,J                                                     
                                            
@@ -15728,7 +15950,13 @@ C
                IF(M2 .EQ. 1)  GO TO 155                                          
                                                  
                DO 151  J=2,M2
-                       JJ = M1 + J                                                       
+                  JJ = M1 + J
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                  
                        DO 150  I=1,JJ                                                    
                                     
                               R(L+I,L1+J-1) = S(I,M1+J)
@@ -15757,7 +15985,13 @@ C
              5 IF( M3 .EQ. 0 )  GO TO 55                                         
                                                   
                DO 11  J=2,M3
-                      JJ = M12 + J                                                      
+                  JJ = M12 + J
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                  
                            DO 10  I=1,JJ                                                     
                                    
                                   R(L+I,L12+J-1) = S(I,M12+J)
@@ -15786,7 +16020,13 @@ C
             55 IF( M45 .EQ. 0 )  GO TO 70                                        
 
                DO 61  J=1,M45
-                      JJ = M123 + J                                                     
+                  JJ = M123 + J
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                  
                       DO 60  I=1,JJ                                                     
 
                              R(L+I,L123+J) = S(I,M123+J)
@@ -15812,7 +16052,7 @@ C
            230 CONTINUE
 
            235 CONTINUE
-               R(1:L,1:LM+1) = 0.0_dp
+               R(1:L,1:LM+1) = 0.0_8
                DO 240  I=1,M                                                     
                                          
                        R(L+I,L+M+1) = S(I,M+1)
@@ -15826,7 +16066,7 @@ C
                CALL  HUSHL7( R,D,LM1+1,LM1,L12+1,L+M123 )
                                                    
                DO 301  I=1,L
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+
                        DO 300  J=1,LM+1                                                  
 
                               T(I,J,II) = R(I,J)
@@ -15842,7 +16082,13 @@ C
               NNN=NNN+1
                                               
               DO 411  J=1,M+1
-                      S(M+1,J) = 0.0_dp                                               
+                 S(M+1,J) = 0.0_8
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                 
                       DO 410  I=1,J                                                     
                                             
                               S(I,J) = R(L+I,L+J)
@@ -15923,12 +16169,12 @@ C
 !C   99/8/12
           IF(ILKF .EQ. 0)  GO TO 600                                        
 
-          SIG2 = SIG2/(2.0_dp*nnn)                                           
-          F = -0.5_dp*(nnn*( DLOG(PAI*2._dp) + DLOG(SIG2) + 1.0_dp ) + SDET)   
+          SIG2 = SIG2/(2.0_8*nnn)                                           
+          F = -0.5_8*(nnn*( DLOG(PAI*2._8) + DLOG(SIG2) + 1.0_8) + SDET)   
                                                       
           FC = F                                                            
 
-          AIC = -2.0_dp*(F+DJACOB) + 2.0_dp*(M2 + L + 1 + m)                  
+          AIC = -2.0_8*(F+DJACOB) + 2.0_8*(M2 + L + 1 + m)                  
                                                                      
 !C     ...  SMOOTHING  ...                                               
 !C                                                                       
@@ -15947,12 +16193,12 @@ C
 !C                                                                       
 !C  ...  WI = INVERSE OF T(I,J)  ...                                     
 !C                                                                       
-                    WI(1,1) = 1.0_dp/T(1,1,II)                                         
+                    WI(1,1) = 1.0_8/T(1,1,II)                                         
                     IF( L .EQ. 1 )  GO TO 615                                         
-                    WI(2,2) = 1.0_dp/T(2,2,II)                                         
+                    WI(2,2) = 1.0_8/T(2,2,II)                                         
                     WI(1,2) = -T(1,2,II)*WI(2,2)*WI(1,1)                              
                     IF( L .EQ. 2 )  GO TO 615                                         
-                    WI(3,3) = 1.0_dp/T(3,3,II)                                         
+                    WI(3,3) = 1.0_8/T(3,3,II)                                         
                     WI(2,3) = -T(2,3,II)*WI(2,2)*WI(3,3)                              
                     WI(1,3) = -(T(1,2,II)*WI(2,3) + T(1,3,II)*WI(3,3))*WI(1,1)        
                 615 DO 630  I=1,L                                                     
@@ -15966,7 +16212,7 @@ C
                 630 CONTINUE
                                                                        
                     DO 650  I=1,L                                                     
-                             SUM = 0.0_dp                                                      
+                             SUM = 0.0_8                                                      
                              DO 640  J=I,L                                                     
                                       
                                      SUM = SUM + WI(I,J)*TT(J)
@@ -15976,40 +16222,82 @@ C
               650 CONTINUE
                   X(1) = X(1) - D(1)                                                
                   IF(M1.GT.0 .AND. M2.GT.0)  X(M1+1) = X(M1+1) - D(2)               
-                  X(M12+1) = X(M12+1) - D(L)                                        
+                  X(M12+1) = X(M12+1) - D(L)
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                  
                  DO 660  I=1,M                                                     
 
                          D(I) = X(I)
              660 CONTINUE
                                                                        
-                 IF( M1 .EQ. 0 )  GO TO 715                                        
+             IF( M1 .EQ. 0 )  GO TO 715
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                         
                  DO 710  I=1,M1                                                    
                                              
                          X(I) = F1(I)*D(M1)
              710 CONTINUE
-             715 IF(M1.LE.1)  GO TO  730                                           
+715          IF(M1.LE.1)  GO TO  730
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                  DO 720  I=2,M1                                                    
                                            
                  X(I) = X(I) + D(I-1)
              720 CONTINUE
                                                                        
-             730 IF( M2 .EQ. 0 )  GO TO 760                                        
+730              IF( M2 .EQ. 0 )  GO TO 760
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                  DO 740  I=1,M2                                                    
 
                          X(M1+I) = F2(I)*D(M12)
              740 CONTINUE
-                 IF(M2 .LE. 1)  GO TO 760                                          
+                         IF(M2 .LE. 1)  GO TO 760
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                  DO 750  I=2,M2                                                    
                                     
                          X(M1+I) = X(M1+I) + D(M1+I-1)
              750 CONTINUE
                                                                        
-             760 IF( M3 .LE. 0 )  GO TO 775                                        
+760                      IF( M3 .LE. 0 )  GO TO 775
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                         
                  DO 770  I=1,M3                                                    
                                       
                          X(M12+I) = F3(I)*D(M123)
              770 CONTINUE
-             775 IF( M3 .LE. 1 )  GO TO 785                                        
+775                      IF( M3 .LE. 1 )  GO TO 785
+#if defined __ICC
+                !DIR$ VECTOR ALIGNED
+                !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
                  DO 780  I=2,M3                                                    
 
                          X(M12+I) = X(M12+I) + D(M12+I-1)
@@ -16030,7 +16318,7 @@ C
                    T(1,I,1) = E(I)
      1210 CONTINUE
           IF( M4 .EQ. 6 ) then
-             SUM = 0.0_dp                                                      
+             SUM = 0.0_8                                                     
              DO 1220 I=1,6                                                     
                      TDF(I) = X(M123+I)                                                
                                              
@@ -16043,7 +16331,7 @@ C
              TDF(7) = X(M123+1)
              do 1222 i=2,6
 
-                 TDF(i) = -0.4_dp*TDF(1)
+                 TDF(i) = -0.4_8*TDF(1)
         1222 continue
       end if
     END SUBROUTINE
@@ -16051,7 +16339,7 @@ C
                                                                  
 
     SUBROUTINE  SPARAM0( IPAR,NIP )
-         
+         implicit none
 !C                                                                       
 !C  ...  Set or read control parameters ...                              
 !C                                                                       
@@ -16095,6 +16383,7 @@ C
                                                                
 
     SUBROUTINE  SPARAM( A,NA,para,NPA,iopt )
+         
           implicit none
 !C                                                                       
 !C  ...  Set or read control parameters ...                              
@@ -16167,7 +16456,8 @@ C
       40 CONTINUE
     END SUBROUTINE
     
-    SUBROUTINE  STATE( X,A,K )  
+    SUBROUTINE  STATE( X,A,K )
+          use omp_lib
           implicit none
 !C                                                                       
 !C  ...  TRANSFORMATION OF STATE VECTOR FOR TIME REVERSED MODEL  ...     
@@ -16175,17 +16465,28 @@ C
 
           INTEGER(4) :: K
           REAL(8), dimension(K) :: X, A
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED X:64,A:64
+#endif
           ! Locals
           INTEGER(4) :: I,J
           REAL(8) :: SUM
           REAL(8), dimension(K) :: Y
-                                                                       
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: Y
+#endif
           IF( K .EQ. 0 )  RETURN                                            
 
           DO 21  I=1,K
                  SUM = A(I)*X(1)                                                   
                  IF( I .LT. K )  SUM = SUM + X(I+1)                                
-                 IF( I .EQ. 1 )  GO TO 20                                          
+                 IF( I .EQ. 1 )  GO TO 20
+#if defined __ICC
+                 !DIR$ VECTOR ALIGNED
+                 !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                 !$OMP SIMD REDUCTION(+:SUM)
+#endif
                  DO 10  J=1,I-1                                                    
 
                        SUM = SUM + A(J)*Y(I-J)
@@ -16196,7 +16497,13 @@ C
           X(1) = Y(1)                                                       
           IF( K .EQ. 1 ) RETURN                                             
           DO 40  I=2,K                                                      
-              SUM = 0.0_8                                                       
+             SUM = 0.0_8
+#if defined __ICC
+                 !DIR$ VECTOR ALIGNED
+                 !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+                 !$OMP SIMD REDUCTION(+:SUM)
+#endif             
               DO 30  J=I,K                                                      
                                
                   SUM = SUM + A(J)*Y(J-I+2)
@@ -16382,6 +16689,7 @@ C
     END SUBROUTINE
     
     SUBROUTINE  EXSARF( Z1,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M1,AMIN,SDM1,A1, SDM2,A2,JER )
+          use omp_lib
           implicit none
                         
 
@@ -16475,7 +16783,12 @@ C
 !C                                                                       
 
           CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M1,SD,AIC,DIC,SDM1,AMIN )
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 5  I = 1,K
 
                 A2(I) = A1(I)
@@ -16512,6 +16825,7 @@ C
                                                             
 
     SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,JER )
+          use omp_lib
           implicit none
 !C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 !C                                                                       
@@ -16637,6 +16951,7 @@ C
                                                                    
 
     SUBROUTINE  DAVIDN( FUNCT,HESIAN,Z,NZ,X,N,R,IHES,ISW,AIC,SD,JER )
+          use omp_lib
           implicit none
 !C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 !C                                                                       
@@ -16663,7 +16978,10 @@ C
           INTEGER(4) :: NZ, N, IHES, ISW, JER
           REAL(8), dimension(NZ) :: Z 
           REAL(8), dimension(N) ::  X 
-          REAL(8), dimension(N+1,N+1) ::  R 
+          REAL(8), dimension(N+1,N+1) ::  R
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED Z:64,X:64,R:64
+#endif
           REAL(8) :: AIC, SD
           ! Locals
           INTEGER(4) :: I,ICC,IC,J
@@ -16671,7 +16989,9 @@ C
                         S1, S2, STEM, SS, DS2, GTEM, ED, F, XM, XMB 
           REAL(8), dimension(N)   :: DX, G, G0, Y, WRK, S
           REAL(8), dimension(N,N) :: H
-                                                                          
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: DX,G,G0,Y,WRK,S,H
+#endif
                           
           DATA  TAU1 , TAU2  /  0.00001_8 , 0.00001_8  /                          
           DATA  EPS1 , EPS2  / 0.00001_8 ,  0.00001_8  /                           
@@ -16703,15 +17023,25 @@ C
     11110 CONTINUE                                                          
           ICC = ICC + 1                                                     
           DO  11111   IC=1,N                                                
-                      IF( IC .EQ. 1 .AND. ICC .EQ. 1 )     GO TO 120                    
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                      
+             IF( IC .EQ. 1 .AND. ICC .EQ. 1 )     GO TO 120
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+             !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD LINEAR(I:1)
+#endif             
                       DO  40   I=1,N                                                    
                                             
                          Y(I) = G(I) - G0(I)
                   40 CONTINUE
                      DO  60   I=1,N                                                    
-                              SUM = 0.0_8
-!DIR$ SIMD REDUCTION(+:SUM)
+                        SUM = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                        !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM) LINEAR(I:1)
+#endif     
                               DO  50   J=1,N                                                    
                                          
                                  SUM = SUM + Y(J) * H(I,J)
@@ -16721,8 +17051,13 @@ C
                  60 CONTINUE
                     S1 = 0.0_8                                                      
                     S2 = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
 !DIR$ SIMD REDUCTION(+:S1)
-!DIR$ SIMD REDUCTION(+:S2)                    
+                    !DIR$ SIMD REDUCTION(+:S2)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:S1,S2) LINEAR(I:1)
+#endif       
                     DO  70   I=1,N                                                    
                           S1 = S1 + WRK(I) * Y(I)                                           
                                            
@@ -16736,7 +17071,13 @@ C
 !C               ---  DAVIDON-FLETCHER-POWELL TYPE CORRECTION  ---       
 !C                                                                       
                                                
-                   DO  91   I=1,N 
+                   DO  91   I=1,N
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                        !DIR$ SIMD 
+#elif defined __GFORTRAN__
+             !$OMP SIMD 
+#endif   
                          DO  90   J=I,N                                                    
                                H(I,J) = H(I,J) + DX(I)*DX(J)/S2 - WRK(I)*WRK(J)/S1               
                                                    
@@ -16751,6 +17092,13 @@ C
                  STEM = S1 / S2 + 1.0_8                                          
                                              
                  DO  111   I=1,N
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                        !DIR$ SIMD 
+#elif defined __GFORTRAN__
+             !$OMP SIMD 
+#endif   
+                            
                         DO  110   J=I,N                                                   
                              H(I,J) = H(I,J)- (DX(I)*WRK(J)+WRK(I)*DX(J)-DX(I)*DX(J)*STEM)/S2  
                                                 
@@ -16761,8 +17109,13 @@ C
              120 CONTINUE                                                          
                  SS = 0.0_8                                                      
                  DO  150   I=1,N                                                   
-                           SUM = 0.0_8
-!DIR$ SIMD REDUCTION(+:SUM)
+                    SUM = 0.0_8
+#if defined
+!DIR$ VECTOR ALIGNED                    
+                    !DIR$ SIMD REDUCTION(+:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:SUM) 
+#endif                        
                            DO  140   J=1,N                                                   
                                        
                                SUM = SUM + H(I,J)*G(J) 
@@ -16773,9 +17126,14 @@ C
              150 CONTINUE
                                                                        
                  S1 = 0.0_8                                                      
-                 S2 = 0.0_8  
+                 S2 = 0.0_8
+#if defined
+!DIR$ VECTOR ALWAYS
 !DIR$ SIMD REDUCTION(+:S1)
-!DIR$ SIMD REDUCTION(+:S2)                   
+                 !DIR$ SIMD REDUCTION(+:S2)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(+:S1,S2) LINEAR(I:1)
+#endif   
                  DO  170   I=1,N                                                   
                       S1 = S1 + S(I)*G(I)                                               
 
@@ -16802,8 +17160,13 @@ C
                  CALL  LINEAR( FUNCT,Z,NZ,X,S,RAMDA,ED,N,R,AIC,SD,F,ISW,IG,JER )
                  IF( JER .NE. 0 ) RETURN
                                                                       
-                 S1 = 0.0_8  
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                 S1 = 0.0_8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                 !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+             !$OMP SIMD  LINEAR(I:1)
+#endif                    
                  DO  210   I=1,N                                                   
                           DX(I) = S(I) * RAMDA                                              
                           S1 = S1 + DX(I) * DX(I)                                           
@@ -16833,6 +17196,7 @@ C
      
 
     SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG,JER )
+         
           implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES THE EXACT LIKELIHOOD AND ITS GRADIENT OF 
@@ -16860,6 +17224,9 @@ C
           REAL(8), dimension(N) :: Z 
           REAL(8), dimension(M) ::  A,G 
           REAL(8), dimension(M+1,M+1) :: R
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED Z:64,A:64,G:64,R:64
+#endif
           REAL(8) :: F,AIC,SD,FF
       ! lOCALS
           INTEGER(4) :: MJ,M1,MP1,I,IM1,II,J,JJ,JM1,JE,JE1,J1, &
@@ -16867,8 +17234,9 @@ C
           REAL(8) ::   DN, DN1, SUM, DSD, USUM, DETT, UDET
           REAL(8), dimension(M+1,M+1) :: T, U, S 
           REAL(8), dimension(M) :: B
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: T,U,S,B               
-                                                       
+#endif                                                      
           MJ = M+1                                                           
                                                                        
       280 IFG = 0                                                           
@@ -16947,7 +17315,7 @@ C
                                                                        
           DO  80 J=1,M                                                  
                  SUM = 0.0_8
-!DIR$ SIMD REDUCTION(+:SUM)
+
                 DO  85  K=1,M                                                  
                                          
                   SUM = SUM + T(J,K)*Z(K)
@@ -17055,7 +17423,7 @@ C
           DSD = -2.0_8*DSD                                                 
           DO  170 I=1,M                                                 
                   SUM = 0.0_8  
-!DIR$ SIMD REDUCTION(+:SUM)
+
                   DO  160   J=1,M                                                 
 
                          SUM = SUM + S(I,J)*Z(J)
@@ -17095,6 +17463,7 @@ C
     
                                    
     SUBROUTINE  HESIAN( X,K,N,R,SD,H )
+          use omp_lib
           implicit none
 !C                                                                       
 !C     THIS SUBROUTINE RETURNS THE INVERSE OF AN APPROXIMATION TO THE HES
@@ -17121,13 +17490,24 @@ C
           REAL(8), dimension(K+1,K+1) ::  R 
           REAL(8) ::  SD 
           REAL(8), dimension(K,K) ::  H
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED X:64,R:64,H:64
+#endif
           ! Locals
           INTEGER(4) :: I,II,J
           REAL(8)    :: SUM, HDET
-          REAL(8), dimension(K) :: S 
-!DIR$ ATTRIBUTES ALIGN : 64 :: S
+          REAL(8), dimension(K) :: S
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: S
+#endif
           DO 10  I=1,K                                                      
-                 SUM = R(1,I+1)                                                    
+             SUM = R(1,I+1)
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ SIMD REDUCTION(-:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(-:SUM)
+#endif
                  DO 20  II=1,K                                                     
                                   
                       SUM = SUM - X(II)*R(II+1,I+1)
@@ -17136,10 +17516,16 @@ C
                  S(I) = SUM / SD                                                   
        10 CONTINUE
                                                   
-          DO 31  I=1,K 
+                 DO 31  I=1,K
+#if defined __ICC
+             !DIR$ VECTOR ALIGNED
+             !DIR$ SIMD REDUCTION(-:SUM)
+#elif defined __GFORTRAN__
+             !$OMP SIMD REDUCTION(-:SUM)
+#endif
                  DO 30  J=1,K                                                      
                 
-                       H(I,J) = 0.5_R64P * (R(I+1,J+1)/SD - S(I)*S(J)/N)
+                       H(I,J) = 0.5_8 * (R(I+1,J+1)/SD - S(I)*S(J)/N)
               30 CONTINUE
        31 CONTINUE
                                    
@@ -17148,6 +17534,7 @@ C
     
                  
     SUBROUTINE  LINEAR( FUNCT,Z,N,X,H,RAM,EE,K,R,AIC,SD,F,ISW,IG,JER )
+          use omp_lib
           implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PERFORMS THE LINEAR SEARCH ALONG THE DIRECTION SPE
@@ -17176,17 +17563,28 @@ C
           REAL(8) ::  RAM, EE 
           REAL(8), dimension(K+1,K+1) :: R 
           REAL(8) :: AIC, SD, F
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED Z:64,X:64,H:64,R:64
+#endif
          ! Locals
          
           INTEGER(4) :: RET, SUB,I
           REAL(8)    :: CONST2, HNORM, E1, E2, E3, &
                        RAM1, RAM2, RAM3, A1, A2, A3, B1, B2
           REAL(8), dimension(K) :: X1, G 
-                                                                       
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: X1,G
+#endif
           ISW = 1                                                           
           IF( RAM .LE. 1.0E-30_8 )  RAM = 0.01_8                           
           CONST2 = 1.0E-60_8                                                
-          HNORM = 0._R64P                                                     
+          HNORM = 0._8
+#if defined __ICC
+          !DIR$ VECTOR ALIGNED
+          !DIR$ SIMD REDUCTION(+:HNORM)
+#elif defined __GFORTRAN__
+          !$OMP SIMD REDUCTION(+:HNORM)
+#endif
           DO 10  I=1,K                                                      
                                        
                HNORM = HNORM + H(I)**2
@@ -17195,8 +17593,13 @@ C
                                                                        
           RAM2 = RAM                                                        
           E1 =EE                                                            
-          RAM1 = 0._8                                                     
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                       
+          RAM1 = 0._8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif
           DO 20  I=1,K                                                      
                                         
                  X1(I) = X(I) + RAM2*H(I)
@@ -17207,8 +17610,13 @@ C
                                                                        
           IF( IG .EQ. 1 )  GO TO  50                                        
           IF( E2 .GT. E1 )  GO TO 50                                        
-30        RAM3 = RAM2*2._R64P 
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))            
+30        RAM3 = RAM2*2._8
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif          
           DO 40  I=1,K                                                      
                                      
              X1(I) = X(I) + RAM3*H(I)
@@ -17227,9 +17635,15 @@ C
                                                                        
        50 RAM3 = RAM2                                                       
           E3 = E2                                                           
-          RAM2 = RAM3*0.1_R64P                                                 
+          RAM2 = RAM3*0.1_8                                                 
           IF( RAM2*HNORM .LT. CONST2 )  GO TO  400
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))            
+          
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif             
           DO 60  I=1,K                                                      
 
                X1(I) = X(I) + RAM2*H(I)
@@ -17242,7 +17656,12 @@ C
                                             
        70 RET = 80
           GO TO 200                                                         
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                         
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif                                                                         
        80 DO 90  I=1,K                                                      
                                       
                 X1(I) = X(I) + RAM*H(I) 
@@ -17286,7 +17705,12 @@ C
                                       
           IF( SUB .EQ. 200 ) GO TO  200
           IF( SUB .EQ. 300 ) GO TO  300
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                                                                         
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif                                                                        
       130 DO 140  I=1,K                                                     
                                          
                 X1(I) = X(I) + RAM*H(I)
@@ -17306,9 +17730,9 @@ C
       200 A1 = (RAM3-RAM2)*E1                                               
           A2 = (RAM1-RAM3)*E2                                               
           A3 = (RAM2-RAM1)*E3                                               
-          B2 = (A1+A2+A3)*2.D0                                              
+          B2 = (A1+A2+A3)*2._8                                              
           B1 = A1*(RAM3+RAM2) + A2*(RAM1+RAM3) + A3*(RAM2+RAM1)             
-          IF( B2 .EQ. 0._R64P )  GO TO 210                                     
+          IF( B2 .EQ. 0._8 )  GO TO 210                                     
           RAM = B1 /B2                                                      
                                      
           IF( RET .EQ. 80 ) GO TO 80
@@ -17319,21 +17743,27 @@ C
           RETURN                                                            
                                                                        
       300 IF( RAM3-RAM2 .GT. RAM2-RAM1 )  GO TO 310                         
-          RAM = (RAM1+RAM2)*0.5_R64P                                           
+          RAM = (RAM1+RAM2)*0.5_8                                           
                                         
           IF( RET .EQ. 80 ) GO TO 80
           IF( RET .EQ. 130 ) GO TO 130
                                                                        
-      310 RAM = (RAM2+RAM3)*0.5_R64P                                           
+      310 RAM = (RAM2+RAM3)*0.5_8                                           
                                       
           IF( RET .EQ. 80 ) GO TO 80
           IF( RET .EQ. 130 ) GO TO 130
                                                                        
-      400 RAM = 0._R64P                                                       
+      400 RAM = 0._8                                                       
           RETURN                                                            
                                                                        
-500       RAM = (RAM2+RAM3)*0.5_R64P 
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))            
+500       RAM = (RAM2+RAM3)*0.5_8
+          
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif        
       510 DO 520  I=1,K                                                     
 
                 X1(I) = X(I) + RAM*H(I)
@@ -17353,12 +17783,13 @@ C
       530 RAM3 = RAM                                                        
           GO TO 70                                                          
                                                                        
-      540 RAM = (RAM2+RAM)*0.5_R64P                                          
+      540 RAM = (RAM2+RAM)*0.5_8                                          
           GO TO 510                                                         
     END SUBROUTINE
     
     SUBROUTINE FFTCORF(LD,LAGH1,N,N2P,ISW,X1,Y1,XA,X,Y,    &
-                       CNA1,CN1,CN2,AMEAN)
+         CNA1,CN1,CN2,AMEAN)
+          use omp_lib
           implicit none
 !C
 !C     PROGRAM 5.1.3   AUTO AND/OR CROSS CORRELATIONS VIA FFT.
@@ -17398,6 +17829,10 @@ C
           REAL(8), dimension(LAGH1,2) ::   CNA1
           REAL(8), dimension(LAGH1)   ::   CN1, CN2 
           REAL(8), dimension(2)       ::   AMEAN
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED X1:64,Y1:64,XA:64,X:64
+          !DIR$ ASSUME_ALIGNED Y:64,CNA1:64,CN1:64,CN2:64
+#endif
           ! Locals
           INTEGER(4) ::  LAGH,ND,NP1,NP2,M,M1,I,ISG,NI,II,I1,J1
           REAL(8)    ::  CST0, CST1, CST2, AN, ALD, ALD1, RF, SF,  &
@@ -17406,7 +17841,9 @@ C
           COMPLEX(8) ::  ZI, ZNI
           COMPLEX(8), dimension(N)     :: Z 
           COMPLEX(8), dimension(N/2+1) :: ZS
-!DIR$ ATTRIBUTES ALIGN : 64 :: Z,ZS
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: Z,ZS
+#endif
           LAGH=LAGH1-1
           ND=LD+LAGH1
 
@@ -17420,12 +17857,22 @@ C
           AN=N
           ALD=LD
           ALD1=CST1/(AN*ALD)
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif 
           DO 20 I=1,N
                 X(I)=CST0
                 Y(I)=CST0
        20 CONTINUE
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif 
           DO 1200 I=1,LD
 
                X(I)=X1(I)
@@ -17442,7 +17889,13 @@ C
           CALL DMEADL(X,LD,XMEAN)
           IF(ISW.EQ.1) GO TO 203
           CALL DMEADL(Y,LD,YMEAN)
-!C     DOUBLE PRECISION COMPLEX REPRESENTATION
+          !C     DOUBLE PRECISION COMPLEX REPRESENTATION
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif           
       203 DO 31 I=1,N
 
              Z(I)=DCMPLX(X(I),Y(I))
@@ -17451,7 +17904,13 @@ C
           ISG=-1
           CALL MIXRAD(Z,N,N2P,ISG)
           IF(ISW.NE.1) GO TO 204
-!C     RAW SPECTRUM COMPUTATION
+          !C     RAW SPECTRUM COMPUTATION
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif           
           DO 32 I=2,M
                X(I)=DREAL(Z(I))**2+DIMAG(Z(I))**2
                NI=NP2-I
@@ -17461,7 +17920,13 @@ C
           X(1)=DREAL(Z(1))**2
           X(M1)=DREAL(Z(M1))**2
           GO TO 205
-!C     DECOMPOSITION AND RAW SPECTRUM COMPUTATION
+          !C     DECOMPOSITION AND RAW SPECTRUM COMPUTATION
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif           
       204 DO 125 I=2,M
             NI=NP2-I
             ZI=Z(I)
@@ -17494,7 +17959,13 @@ C
        126 CONTINUE
            ZS(1)=DREAL(Z(1))*DIMAG(Z(1))
            ZS(M1)=DREAL(Z(M1))*DIMAG(Z(M1))
-!C     AUTO COVARIANCE COMPUTATION
+           !C     AUTO COVARIANCE COMPUTATION
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif            
        205 DO 33 I=1,N
 
                Z(I)=DCMPLX(X(I),Y(I))
@@ -17503,6 +17974,12 @@ C
 
           CALL MIXRAD(Z,N,N2P,ISG)
           II=1
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif 
           DO 34 I=1,LAGH1
                X(I)=DREAL(Z(I))*ALD1
 
@@ -17519,6 +17996,12 @@ C
           IF(ISW.EQ.1) GO TO 300
           IF(II.EQ.2) GO TO 216
           II=2
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif 
           DO 35 I=1,LAGH1
                 X(I)=DIMAG(Z(I))*ALD1
 
@@ -17529,7 +18012,8 @@ C
           AMEAN(II)=YMEAN
           GO TO 36
       216 IF(ISW.NE.4) GO TO 300
-!C     CROSS COVARIANCE COMPUTATION
+          !C     CROSS COVARIANCE COMPUTATION
+
           DO 127 I=2,M
                NI=NP2-I
                Z(I)=ZS(I)
@@ -17540,6 +18024,12 @@ C
           Z(M1)=ZS(M1)
 !C     FOURIER TRANSFORM
           CALL MIXRAD(Z,N,N2P,ISG)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif 
           DO 41 I=1,LAGH
                 I1=I+1
                 J1=NP1-I
@@ -17557,7 +18047,8 @@ C
     END SUBROUTINE
                        
     SUBROUTINE FPEAUTF(L,N,SD,CXX,SSD,FPE,RFPE,D,CHI2,      &
-                       OFPE1,OFPE2,ORFPE,MO,OSD,A,AO)
+         OFPE1,OFPE2,ORFPE,MO,OSD,A,AO)
+          use omp_lib
           implicit none
 !C
 !C     PROGRAM 5.3.1   FPE AUTO
@@ -17587,12 +18078,18 @@ C
           INTEGER(4) :: L, N, MO
           REAL(8) :: SD, OFPE1, OFPE2, ORFPE, OSD
           REAL(8), dimension(L) :: CXX, SSD, FPE, RFPE, D, CHI2, AO
-          REAL(8), dimension(L,L) :: A 
+          REAL(8), dimension(L,L) :: A
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED CXX:64,SSD:64,FPE:64,RFPE:64,D:64
+          !DIR$ ASSUME_ALIGNED CHI2:64,A0:64,A:64
+#endif
           !Locals
           INTEGER(4) :: NP1,NM1,OOFPE,M,I,LM,IM,MP1
           REAL(8)    ::  AN, ANP1, ANM1, CST1, OOFPE, SE, SD0, D2
           REAL(8), dimension(L) :: B
-
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: B
+#endif
           AN=N
           NP1=N+1
           NM1=N-1
@@ -17610,7 +18107,8 @@ C
 
           SE=CXX(1)
           SD0=SD
-!C
+          !C
+    
           DO 400 M=1,L
               MP1=M+1
 
@@ -17628,12 +18126,24 @@ C
               IF(M.EQ.1) GO TO 410
 
               LM=M-1
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif               
               DO 420 I=1,LM
 
                    A(I,M)=A(I,M-1)-D(M)*B(I)
           420 CONTINUE
 
-          410 CONTINUE
+410                CONTINUE
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif                    
               DO 421 I=1,M
                      IM=MP1-I
 
@@ -17645,12 +18155,25 @@ C
               ORFPE=RFPE(M)
               OSD=SSD(M)
               MO=M
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ VECTOR ALWAYS
+#elif defined __GFORTRAN__
+          !$OMP SIMD
+#endif 
               DO 430 I=1,M
 
                     AO(I)=A(I,M)
           430 CONTINUE
           440 IF(M.EQ.L) GO TO 400
-              SE=CXX(MP1)
+                    SE=CXX(MP1)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+          !DIR$ SIMD REDUCTION(-:SE)
+#elif defined __GFORTRAN__
+                    !$OMP SIMD REDUCTION(-:SE)
+                    
+#endif 
               DO 441 I=1,M
 
                      SE=SE-B(I)*CXX(I)
@@ -17660,7 +18183,8 @@ C
                        
                    
     SUBROUTINE FPEC7F(N,L,IR,IP,IP0,INW,R1,R2,FPEC,RFPEC,AIC,   &
-                             IFPEC,OFPEC,ORFPEC,OAIC,OSD,AO)
+         IFPEC,OFPEC,ORFPEC,OAIC,OSD,AO)
+        
           implicit none
 !C
 !C     PROGRAM 5.3.2   FPEC(AR-MODEL FITTING FOR CONTROL)
@@ -17699,20 +18223,25 @@ C
           REAL(8) ::  OFPEC, ORFPEC, OAIC 
           REAL(8), dimension(IR,IR) :: OSD 
           REAL(8), dimension(L,IR,IP) :: AO
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED INW:64,R1:64,R2:64,FPEC:64,RFPEC:64,AIC:64
+          !DIR$ ASSUME_ALIGNED OSD:64,A0:64
+#endif
           ! Locals
           INTEGER(4) ::     L1,II,I,J,JJ,MS0,M
           REAL(8)    ::     OOFPEC, SDDET, SFDET
           REAL(8), dimension(L,IP,IP) :: A1, B1
           REAL(8), dimension(IP0,IP0) :: C1
           REAL(8), dimension(IP,IP) ::  SD,SE,SF,XSD,XSF,D,E,Z1
+#if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: A1,B1,C1,SD,SE,SF,XSD,XSF,D,E,Z1     
-
+#endif
           L1=L+1
 
           DO 10 II=1,L1
 
                 DO 22 I=1,IP0
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                    
+               
                         DO 20 J=1,IP0
 
                             C1(I,J)=R1(II,I,J)
@@ -17722,7 +18251,7 @@ C
                 CALL REARRA(C1,INW,IP0,IP)
 
                 DO 23 I=1,IP
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                      
+           
                        DO 21 J=1,IP
 
                          R2(II,I,J)=C1(I,J)
@@ -17731,7 +18260,7 @@ C
        10 CONTINUE
 
           DO 331 II=1,IP
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                
+        
               DO 330 JJ=1,IP
 
                    SD(II,JJ)=R2(1,II,JJ)
@@ -17769,7 +18298,7 @@ C
                  MS=M
 
                  DO 411 II=1,IP
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                       
+              
                         DO 410 JJ=1,IP
                                XSD(II,JJ)=SD(II,JJ)
 
@@ -17788,7 +18317,7 @@ C
                  IFPEC=M
 
                  DO 566 II=1,IR
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                       
+                     
                          DO 560 JJ=1,IR
 
                                  OSD(II,JJ)=SD(II,JJ)
@@ -17796,7 +18325,7 @@ C
               566 CONTINUE
                   DO 561 I=1,M
                          DO 562 II=1,IR
- !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))  
+ 
                                  DO 563 JJ=1,IP
 
                                          AO(I,II,JJ)=A1(I,II,JJ)
@@ -17815,10 +18344,16 @@ C
           INTEGER(4) :: N, K, IR, MS
           REAL(8), dimension(K,K) :: SD 
           REAL(8) :: Z, RZ, OOZ, AIC
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED SD:64
+#endif
           ! lOCALS
           INTEGER(4) :: KM,I,J
           REAL(8)    ::   AN, ANP, ANM, AP, APR, CST1, SDRM, ARM2
-          REAL(8), dimension(IR,IR) :: SD1 
+          REAL(8), dimension(IR,IR) :: SD1
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: SD1
+#endif
           AN=N
           KM=K*MS
           ANP=N+1+KM
@@ -17846,7 +18381,8 @@ C
     
     SUBROUTINE MARKOVF(N,LAGH3,ID,CYY0,K,NH,JAW,AW1,B1,ICONT,   &
                         IDD,IR,IJ,IK,IPQ,G,A1,A,B,VD,IQM,BM,AU,ZZ,C0,AICD, &
-                           MJ3,MJ4,MJ6,MJ7  )
+                        MJ3,MJ4,MJ6,MJ7  )
+          use omp_lib
           implicit none
 
 !cc       PROGRAM MARKOV
@@ -17930,7 +18466,7 @@ C
           INTEGER(4), dimenSion(ID) :: IJ,IK
           REAL(8), dimension(LAGH3,ID,ID)  :: CYY0 
           REAL(8), dimension(JAW) ::  AW1 
-          REAL(8), dimension(K,ID) :: B1,B 
+          REAL(8), dimension(K,ID) :: B1 
           REAL(8), dimension(MJ4) :: G 
           REAL(8), dimension(K,K) ::  A1,A
           REAL(8), dimension(K,ID) ::  B 
@@ -17938,7 +18474,13 @@ C
           REAL(8), dimension(ID,ID,MJ6) :: BM
           REAL(8), dimension(ID,ID,MJ7) :: AU, ZZ 
           REAL(8), dimension(ID,ID) :: C0 
-          REAL(8) :: AICD 
+          REAL(8) :: AICD
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED IDD:64,IR:64,NH:64,IJ:64,IK:64
+          !DIR$ ASSUME_ALIGNED CYY0:64,AW1:64,B1:64
+          !DIR$ ASSUME_ALIGNED A1:64,A:64,B:64,VD:64
+          !DIR$ ASSUME_ALIGNED BM:64,AU:64,ZZ:64,C0:64
+#endif
           ! Locals
           INTEGER(4) :: ISWR,KSWR,II,JJ,KK,I,J,IDP1,JS,ISWRO, &
                            IAW,IG,IPQ,ISFIN
@@ -17954,9 +18496,10 @@ C
           REAL(8), dimension(50,ID,ID) :: X2
           REAL(8), dimension(100,ID,ID) :: CXY1
           REAL(8), dimension(51,ID,ID) ::  CXX1 
-          REAL(8), dimension( 51,ID,K) :: CXV1 
+          REAL(8), dimension( 51,ID,K) :: CXV1
+#if defined __ICC
  !DIR$ ATTRIBUTES ALIGN : 64 :: CYY1,OB,X,R,AW,OAW,O,Q,X1,X2,CXY1,CXX1,CXV1    
-
+#endif
           COMMON /COM99/ISWR
           COMMON /COM101/AICO
           COMMON /COM102/KSWR
@@ -17967,21 +18510,34 @@ C
           DO 1011 II=1,ID
 
              DO 1010 JJ=1,ID
-                 DO 1008 KK=1,MJ3
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+                !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif
+                DO 1008 KK=1,MJ3
+
                         CYY1(KK,JJ,II)=0
 1008             CONTINUE
  !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))                
+                        !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                        
                  DO 1009 KK=1,LAGH3
                         CYY1(KK,JJ,II)=CYY0(KK,JJ,II)
          1009    CONTINUE
        1010 CONTINUE
      1011 CONTINUE
 
-          CALL SUBIDR(NH,IDD,IR,IJ,IK,K,ID,IAW)
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))   
+                        CALL SUBIDR(NH,IDD,IR,IJ,IK,K,ID,IAW)
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                        !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                        
           DO 4009 I=1,JAW
                 AW(I)=AW1(I)
      4009 CONTINUE
@@ -18018,8 +18574,12 @@ C
       400 IPQ=IAW+(K-ID)*ID
           AIPQ=IPQ
           IDP1=ID+1
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif          
           DO 500 I=1,IAW
 
                 X(I)=AW(I)
@@ -18039,9 +18599,13 @@ C
           IG=0
 
           CALL C0GR(CYY1,MJ3,B,AW,IAW,NH,IDD,IR,IJ,IK,X,C0,G,M,L,K,ID,   &
-                        MJ4,IG,O,Q,X1,X2,CXY1,CXX1,CXV1)
+               MJ4,IG,O,Q,X1,X2,CXY1,CXX1,CXV1)
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))               
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif          
           DO 1500 I=1,IAW
 
                   X(I)=AW(I)
@@ -18072,16 +18636,20 @@ C
 
                R(I)=SUM
 100       CONTINUE
-!C     ORIGINAL PARAMETER VALUES
+               !C     ORIGINAL PARAMETER VALUES
+#if defined __ICC
  !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))         
+               !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif               
           DO 2655 I=1,IAW
 
                  OAW(I)=AW(I)
      2655 CONTINUE
 
           DO 2657 I=IDP1,K
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))         
+ 
                   DO 2656 J=1,ID
 
                         OB(I,J)=B(I,J)
@@ -18107,9 +18675,13 @@ C
             151 CONTINUE
       152 CONTINUE
           GO TO 599
-      153 ISFIN=1
+153       ISFIN=1
+#if defined __ICC
 !DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif          
       599 DO 600 I=1,IAW
 
                  AW(I)=X(I)
@@ -18139,7 +18711,8 @@ C
       
 
       SUBROUTINE C0GR(CYY1,MJ3,B,AW,IAW,NH,IDD,IR,IJ,IK,X,C0,GR,M,L,K,   &
-                        ID,MJ4,IG,O,Q,X1,X2,CXY1,CXX1,CXV1)
+           ID,MJ4,IG,O,Q,X1,X2,CXY1,CXX1,CXV1)
+        
           implicit none
                                
 !C     THIS SUBROUTINE COMPUTES THE INNOVATION MATRIX CXX(0) AND
@@ -18207,6 +18780,7 @@ C
                         
 
     SUBROUTINE NSUBX1(B,AW,IAW,NH,IDD,IR,K,ID,M,IG1,X1)
+        
           implicit none
 !C     THIS SUBROUTINE COMPUTES THE IMPULSE RESPONSE OF
 !C     (INVERSE OF (C*(INVERSE OF PHAI)*B))*C*
@@ -18225,12 +18799,17 @@ C
           REAL(8), dimension(K,ID)    :: B 
           REAL(8), dimension(IAW)     :: AW 
           REAL(8), dimension(50,K,K)  :: X1
+#if defined __ICC
+          !DIR$ ASSUME_ALIGNED NH:64,IDD:64,IR:64,B:64,AW:64,X1:64
+#endif
           ! Locals
           INTEGER(4) :: ISWR,ITINP,I,J,LH,IH,NS,NSM1,IH
           REAL(8) ::    CST0, CST1, CONSTM, CONSTD, SUM, XMAX
           REAL(8), dimension(K,K)     :: V, AV, U, AU 
           REAL(8), dimension(ID,K)    :: X, Y
-!DIR$ ATTRIBUTES ALIGN : 64 :: V,AV,U,AU,X,Y               
+#if defined __ICC
+          !DIR$ ATTRIBUTES ALIGN : 64 :: V,AV,U,AU,X,Y
+#endif
           COMMON /COM99/ISWR
           CST0=0.0_8
           CST1=1.0_8
@@ -18249,7 +18828,7 @@ C
       300 CONTINUE
 
           DO 401 I=1,ID
-!DIR$ VECTOR ALIGNED
+
 !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
                 DO 400 J=1,K
                        X(I,J)=Y(I,J)
@@ -18260,7 +18839,7 @@ C
 
           U(1:K,1:K)=CST0
           DO 500 I=1,K
- !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+ 
                  DO 510 J=1,ID
 
                       U(I,J)=B(I,J)
@@ -18282,8 +18861,7 @@ C
       280 CALL SUBAWZ(AW,IAW,IDD,IR,V,AV,K,K)
 
           DO 231 I=1,K
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+
                 DO 230 J=1,K
 
                       V(I,J)=AV(I,J)
@@ -18292,8 +18870,7 @@ C
 
 
           DO 321 I=1,ID
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))              
+        
                  DO 320 J=1,K
 
                         Y(I,J)=V(I,J)
@@ -18303,8 +18880,7 @@ C
           CALL SUBAWZ(AW,IAW,IDD,IR,U,AU,K,K)
 
           DO 451 I=1,ID
-!DIR$ VECTOR ALIGNED
-!DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))              
+   
                 DO 450 J=1,K
 
                     X(I,J)=Y(I,J)-AU(I,J)
@@ -18323,7 +18899,7 @@ C
           DO 182 I=1,K
                  DO 180 J=1,K
                          SUM=CST0
-!DIR$ SIMD REDUCTION(+:SUM)
+
                            DO 181 JJ=1,ID
 
                                  SUM=SUM+B(I,JJ)*X(JJ,J)
