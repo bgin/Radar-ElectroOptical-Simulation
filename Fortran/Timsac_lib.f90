@@ -226,7 +226,7 @@
 !C     CXX0: INNOVATION VARIANCE
 !C
 
-          INTEGER(kind=4), parameter :: ICST = 190_I32P
+          INTEGER(kind=4), parameter :: ICST = 190_4
           INTEGER(kind=4) :: N, LAGH01, NEWL1,NEWN,KQ,KP,LMAX,MMAX,NMAX 
           INTEGER(kind=4), dimension(NEWL1) :: IQI1, IPI1
           INTEGER(kind=4), dimension(NMAX)  :: IQ, IP
@@ -256,11 +256,11 @@
 !DIR$ ATTRIBUTES ALIGN : 64 :: A,B,OA,OB,X
 #endif
           REAL(kind=8), dimension(ICST) ::  CC
- #if defined __ICC         
+#if defined __ICC         
 !DIR$ ATTRIBUTES ALIGN : 64 :: CC
 #endif
           REAL(kind=8), dimension(MMAX,MMAX) :: VD
- #if defined __ICC         
+#if defined __ICC         
 !DIR$ ATTRIBUTES ALIGN : 64 :: VD
 #endif
           REAL(kind=8), dimension(MMAX+1) ::  CN 
@@ -272,7 +272,7 @@
 !DIR$ ATTRIBUTES ALIGN : 64 :: SMAIC2
 #endif
           REAL(kind=8)    ::            CST0, CST1, CST2, CST05, SMAIC, AN, CXX0, SUM,    &
-                                      AIPQ, DMAIC, CONST1, SAN, SMAIC, 
+                                      AIPQ, DMAIC, CONST1, SAN
           INTEGER(kind=4) :: LAGH4,I,LAGH1,LAGH2,IIM,IIP,JQO,JPO,NEWL,JP,JQ,  &
                            NEWLM1,IDOS,ISIK,ISWRO,II,IPQ,J,ISFIN,IG,IQM1,IPM1, &
                            IDO,IDE
@@ -876,11 +876,11 @@
 #if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: Y,CXX,CXY,CYX,CUZ,CYU,CZY    
 #endif
-      REAL(kind=dp) :: CST0, CST1, DSR2, CAI1
+      REAL(kind=8) :: CST0, CST1, DSR2, CAI1
       INTEGER(kind=4) :: ISWRO,IDOS,ISIK,IORIG,I,II,IG,IPQ1,IPM1, &
                        IJ,IK,IA,L2,M2,I2P,LXX,MXX,LYZ,MYX,IAIB, &
-                       LZX,MZX,MZY,LZX,LZZ,MZZ,IQM1,LZYZ,MZYZ,  &
-                       MYZ,LUX,MUX,LUY,MUY,LUU,MUU,LUYU,MUU,    &
+                       LZX,MZX,MZY,LZZ,MZZ,IQM1,LZYZ,MZYZ,  &
+                       MYZ,LUX,MUX,LUY,MUY,LUU,MUU,LUYU,    &
                        MUYU,IA2B,LUZ,LUYZ,MUYZ,LYU,MYU,IST,IEN, &
                        IJ1,JJ,MXY,LXY,LZY,MUZ
       
@@ -1481,7 +1481,7 @@
         CONSTA=0.5_8
         CONSTB=2.0_8
         EPS1=0.01_8
-        EPS3=0.000001_d8
+        EPS3=0.000001_8
         EPS4=0.0000000001_8
         ISPHAI=0
         ITN=1
@@ -2262,7 +2262,7 @@
 !C                             +-MOD                                     
 !C                                                                       
 
-          INTEGER(kind=i4) :: NDATA, FOCAST, IART, IARS, IARN
+          INTEGER(kind=4) :: NDATA, FOCAST, IART, IARS, IARN
           INTEGER(kind=4), dimension(12) :: IPARA(12) 
           REAL(kind=8), dimension(NDATA)  :: Y,CDATA,DMOI,IRREG,ADJUST
           REAL(kind=8), dimension(NDATA+FOCAST) :: TREND,SEASON,TDCMP,EST,PSDS,PSDT
@@ -2277,10 +2277,10 @@
           REAL(kind=8) :: AVABIC
     
 
-          INTEGER(kind=4) :: ORDER, SORDER, PERIOD, SPAN, OVLAP, HEAD, SHIFT,     &
+          INTEGER(kind=4) :: ORDER, SORDER, PERIOD, SPAN, HEAD, SHIFT,     &
                        TAIL, YEAR, SPEC
-          REAL(kind=8), dimension(NDATA+FOCAST) :: TREND0, SEAS0, TDCMP0,IRREG0,ADJ0,EST0,
-          PSDS0,PSDT0
+          REAL(kind=8), dimension(NDATA+FOCAST) :: TREND0, SEAS0, TDCMP0,IRREG0,ADJ0,EST0, &
+                                                   PSDS0,PSDT0
 #if defined __ICC
           !DIR$ ATTRIBUTES ALIGN : 64 :: TREND0,SEAS0,TDCMP0,IRREG0,ADJ0,EST0,PSDS0,PSDT0
 #endif
@@ -2337,8 +2337,8 @@
           IF(YEAR .NE. 0) N2=8                                              
 !C  ************                                                         
           ZER=ZERSUM/DSQRT(AP)*RIGID                                        
-          SMTH = 1._dp/RIGID                                                 
-          SMTH2=1._dp                                                        
+          SMTH = 1._8/RIGID                                                 
+          SMTH2=1._8                                                        
 !C  ************                                                         
 
           IF(IOUTD .EQ. 0) GO TO 1212                                       
@@ -2425,7 +2425,7 @@
 !C     --------------------                                              
                    HEAD = 1 + (ICNT1-2)*SHIFT*PERIOD+SPAN*PERIOD                     
                    IF(ICNT1 .EQ. 1) HEAD=1                                           
-                   IF( ICNT . LE. 0 )   GO TO 2345                                   
+                   IF( ICNT .LE. 0 )   GO TO 2345                                   
 !C     --------------------                                              
 !C     HEAD: INITIAL POINT OF THE NEW SPAN                               
                    IF(HEAD.LE.LIMIT)   GO TO 2345                                    
@@ -2529,9 +2529,9 @@
 !cxx      CALL BCOPY(FSEA,ISTEM,1,ISTEM,1,1,SEASON,ISTEM,1,IOUT,LINKS,1)
                   CALL BCOPY(FSEA,ISTEM,1,1,1,SEASON,ISTEM,1,LINKS,1)
                   IF(ICNT1 .GT. 1) GO TO 1000                                       
-                  ALPHA = 1._dp                                                   
-                  BETA = 1._dp                                                       
-                  GAMMA = 1._dp                                                      
+                  ALPHA = 1._8                                                   
+                  BETA = 1._8                                                       
+                  GAMMA = 1._8                                                      
                   N = SPAN*PERIOD                                                   
                   IF(N .GT. NDATA) N=NDATA                                          
                   OVLAP = SPAN-SHIFT                                                
@@ -2605,7 +2605,7 @@
           !DIR$ ASSUME_ALIGNED X:64, Y:64, Z:64
 #endif
       ! Locals
-          INTEGER(kind=int4) :: I
+          INTEGER(kind=4) :: I
       ! Exec code ....
           DO 100 I=1,MX                                                     
              TEM = 0._8                            
@@ -2637,7 +2637,7 @@
           !DIR$ ASSUME_ALIGNED X:64
 #endif
           ! Locals
-          INTEGER(kind=dp) :: I0M1,J0M1,J,I
+          INTEGER(kind=8) :: I0M1,J0M1,J,I
           I0M1 = I0 - 1                                                     
           J0M1 = J0 - 1                                                     
 
@@ -2683,7 +2683,7 @@
           !DIR$ ASSUME_ALIGNED X:64, Y:64
 #endif
           ! Locals
-          INTEGER(kind=int4) :: IXM1,IYM1,JYM1,JXM1,J,I
+          INTEGER(kind=4) :: IXM1,IYM1,JYM1,JXM1,J,I
           IXM1 = IX-1                                                       
           JXM1 = JX - 1                                                     
           IYM1 = IY - 1                                                     
@@ -2820,7 +2820,7 @@
           IF(N.LE.K) MNK=N-1                                                
                                                  
           DO 101 II=1,MNK 
-                 H = 0.0_dp                                                     
+                 H = 0.0_8                                                     
                  IIOTEM = II                                                       
                  IITEM = II                                                        
                  IF( ICNT .LE. 0 )   GO TO 5                                       
@@ -2915,7 +2915,7 @@
 #if defined __ICC
          !DIR$ ATTRIBUTE INLINE :: PRDCT
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: PRDCT
-#ENDIF
+#endif
 !C     THIS SUBROUTINE COMPUTES                                          
 !C          X = Y * Z                                                    
 !C     INPUTS:                                                           
@@ -3172,7 +3172,7 @@
       3346 CONTINUE                                                          
                 ALSQE=AN*DLOG(SQE/AN)                                             
                 ABIC=ALSQE + 2._8*(ALNDN-ALNDTD)                                  
-                IF(YEAR .NE. 0 .AND. WTRD .LE. 0._dp) ABIC=ABIC+N7*2._8           
+                IF(YEAR .NE. 0 .AND. WTRD .LE. 0._8) ABIC=ABIC+N7*2._8           
 !cc      WRITE( 6,3 )    DD, ABIC, ALSQE, ALNDN, ALNDTD                    
 !C                                                                       
 !C     END OF BASIC ROUTINE                                              
@@ -3357,7 +3357,7 @@
       DO 100 I=1,N                                                      
 !cxx      DO 10 J=1,7                                                       
 !cxx   10 W0(J) = 4.D0
-          W0(1:7) = 4._dp
+          W0(1:7) = 4._8
 !cxx      GO TO (331,328,331,330,331,330,331,331,330,331,330,331), MONTH    
           IF (MONTH .EQ. 2) GO TO 328
           IF (MONTH .EQ. 4 .OR. MONTH .EQ. 6 .OR.     &
@@ -3403,7 +3403,7 @@
     
     
                                             
-    real(kind=dp) FUNCTION AMAX(A,N)
+    real(kind=8) FUNCTION AMAX(A,N)
 #if defined __ICC
       !DIR$ ATTRIBUTE INLINE :: AMAX
 #endif
@@ -3421,7 +3421,7 @@
       END                                                               
 !C                                                                       
 !CC      FUNCTION AMIN(A,N)                                                
-      real(kind=dp) FUNCTION AMIN(A,N)
+      real(kind=8) FUNCTION AMIN(A,N)
 #if defined __ICC
       !DIR$ ATTRIBUTE INLINE :: AMIN
 #endif        
@@ -3618,13 +3618,15 @@
           SUM = 0._8                                                     
           DO 20  I=1,N                                                      
              !cxx   20 IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2
-#if defined __ICC
-!DIR$      VECTOR ALIGNED
-             !DIR$    SIMD REDUCTION(+:SUM)
-#elif defined __GFORTRAN__
-             !$OMP SIMD REDUCTION(+:SUM)
-#endif              
-                 IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2
+!#if defined __ICC
+!!DIR$      VECTOR ALIGNED
+!             !DIR$    SIMD REDUCTION(+:SUM)
+!#elif defined __GFORTRAN__
+!             !$OMP SIMD REDUCTION(+:SUM)
+!#endif              
+             IF( IND(I) .EQ. 0 ) THEN
+                SUM = SUM+(X(I)-XMEAN)**2
+             ENDIF
       20  CONTINUE
           SIG2 = SUM/N                                                      
           W = 1._8                                                         
@@ -3784,7 +3786,7 @@
           !DIR$ ASSUME_ALIGNED IND:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: I1,I2,I0,IMAX,IFG,I2M1
+          INTEGER(kind=4) :: I1,I2,I0,IMAX,I2M1
 !C                                                                       
           I1 = 1                                                            
           I2 = 2                                                            
@@ -3919,7 +3921,7 @@
           !DIR$ ASSUME_ALIGNED IX:64,X:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: NM1,II,XMIN,MIN,IT
+          INTEGER(kind=4) :: NM1,II,MIN,IT
           REAL(kind=8) :: XMIN, XT
           ! Exec code ....                                                            
           NM1 = N - 1                                                       
@@ -3983,7 +3985,7 @@
 #endif
           REAL(kind=8) :: RLIM, ROUT
           ! Locals
-          INTEGER(kind=4) :: ISPRSS,N,I,L,K,NML1,IL,IC,II,II1,K1,JJ,JJ1, &
+          INTEGER(kind=4) :: ISPRSS,N,I,L,NML1,IL,IC,II,II1,K1,JJ,JJ1, &
                            K2
           REAL(kind=8) ::  EPS,DI, SUMF, DLK0, F0, TEM, FF, EXPF, W
           INTEGER(kind=4), dimension(NN) :: IX,IND
@@ -4004,7 +4006,7 @@
                                                                       
           N=0                                                               
           DO 5 I=1,NN                                                       
-          IF(RLIM .LE. 0._dp) GO TO 6                                        
+          IF(RLIM .LE. 0._8) GO TO 6                                        
           IF(Z(I) .GE. RLIM) GO TO 7                                        
     6     N=N+1                                                             
           X(N)=Z(I)                                                         
@@ -4016,7 +4018,7 @@
           CALL  BSRTMIN( X,N,IX )
           EPS = 0.001_8                                                   
           NML1 = N-L+1                                                      
-          F(1) = 0._dp                                                       
+          F(1) = 0._8                                                       
           DO 10  I=1,N                                                      
                  IND(I) = 0                                                        
                  PM(I) = 0._8                                                    
@@ -4062,8 +4064,8 @@
                   IF( IC.EQ.0 ) DLK0=FF-C(K2+1)                                     
                                                                      
                   F0 = FF-C(K2+1)-DLK0                                              
-                  IF( F0 .LT. -20._dp )  GO TO 100                                   
-                  IF(F0.LT.20._dp)GO TO 45                                           
+                  IF( F0 .LT. -20._8)  GO TO 100                                   
+                  IF(F0.LT.20._8)GO TO 45                                           
                   DLK0=F0                                                           
                   TEM=DEXP(-F0)                                                     
                   SUMF=SUMF*TEM  
@@ -4326,7 +4328,7 @@
                 IF(DABS(H3(J)).LT.EPS)GO TO 100                                   
                 D = H1(1,MM)**2 + H3(J)**2                                        
                 SQD = DSQRT(D)                                                    
-                IF(H1(1,MM).GT.0._dp) SQD=-SQD                                     
+                IF(H1(1,MM).GT.0._8) SQD=-SQD                                     
                 C = D - SQD*H1(1,MM)                                              
                 D = H1(1,MM) - SQD                                                
                 H1(1,MM) = SQD                                                    
@@ -4414,7 +4416,7 @@
           !DIR$ ASSUME_ALIGNED Y:64,WEEK:64,F:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: J,I,N2M1,N2,ITEM,IDAR,ID0,IPOS,K,  &
+          INTEGER(kind=4) :: J,I,N2M1,ITEM,IDAR,ID0,IPOS,K,  &
                            JTEM,J0,NMK,KP1
           REAL(kind=8) :: TEM,TEMO
           REAL(kind=8), dimension(N1)            ::  H3 
@@ -4523,7 +4525,7 @@
            N3 = -1                                                           
            IF(IP .GT. 1) IPOS=IPOS+1                                         
            IF(I .GT. NDATA) GO TO 90                                         
-           IF(Y(I) .GT. RLIM .AND. RLIM .GT. 0._dp) GO TO 90                  
+           IF(Y(I) .GT. RLIM .AND. RLIM .GT. 0._8) GO TO 90                  
            ICOUNT=ICOUNT+1                                                   
            N3 = ITEM                                                         
            H3(1) = 1._8                                                     
@@ -4753,7 +4755,7 @@
           !DIR$ ASSUME_ALIGNED R:64,A:64
 #endif
           ! Locals
-          INTEGER(I32P) :: I,J,IM1
+          INTEGER(4) :: I,J,IM1
           DO 20 I=1,M
 #if defined __ICC
 !DIR$      VECTOR ALIGNED
@@ -4784,10 +4786,10 @@
       INTEGER(kind=4) :: N1, N2, M1 ,NANS
       REAL(kind=8), dimension(N1,N2+M1) ::  H1 
       REAL(kind=8), dimension(N2,N2+M1) ::  H2 
-      REAL(kind=8), dimension(NANS)     ::  A,ERR SQE
+      REAL(kind=8), dimension(NANS)     ::  A,ERR
 #if defined __ICC
       !DIR$ ASSUME_ALIGNED H1:64,H2:64
-      !DIR$ ASSUME_ALIGNED A:64,ERR:64,SQE:64
+      !DIR$ ASSUME_ALIGNED A:64,ERR:64
 #endif
       REAL(kind=8) :: SQE
       ! Locals
@@ -4903,13 +4905,13 @@
           ! Locals
           INTEGER(kind=4) :: MH1,MJ1,L1,I,J,I2H,IS,ID,IR,   &
                            MMS1,NS1,MS,MC1,MC2,MC3,IRL,   &
-                           MD,MS,MR,MDR,MDS,MSR,MSD,MRD,  &
+                           MD,MR,MDR,MDS,MSR,MSD,MRD,  &
                            MRS,NS,MMS
           REAL(kind=8) ::   CST0, CST1, CST2, CST6, CST2I, CST6I, H, PI, PP, AI,  &
                           T, C00, SL0, TC1, TC2, TC3, TS1, TS3, CN0, SN0
           REAL(kind=8), dimension(MH+1,MH+1) :: C, CL, SL, CA1, CA2 
           REAL(kind=8), dimension((MH+1)*2)  :: C1,S1
-          REAL(kind=8)  dimension(MH+1)      :: CC
+          REAL(kind=8),  dimension(MH+1)      :: CC
 #if defined __ICC
 !DIR$     ATTRIBUTES ALIGN : 64 :: C,CL,SL,CA1,CA2
           !DIR$     ATTRIBUTES ALIGN : 64 :: C1,S1,CC
@@ -5915,7 +5917,7 @@
 
           CALL MNONSB( Z,X,G,H,E(1,1,M),KSW,LAG,L,NS,ID,KMAX,KC,MJ,MJ1,   &
                        MJ3,BW(1,M),AIC(1,M),A(1,1,1,M),B,AICB(M),F1,F2 )
-C                                                                       
+                                                                       
           L = L + NS                                                        
                                                    
           LKE(M) = LK + NS
@@ -5989,7 +5991,7 @@ C
           !DIR$ ASSUME_ALIGNED F1:64,F2:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: IPR,KD,JJ,KC,I,J,KC1,IM
+          INTEGER(kind=4) :: IPR,KD,JJ,I,J,KC1,IM
           REAL(kind=8)    ::  AICM, EK, SD, SDMIN
           REAL(kind=8), dimension(LAG+1) :: SD1, AIC1, DIC1,BW1
           REAL(kind=8), dimension(LAG)   :: BW2
@@ -6311,7 +6313,7 @@ C
           !DIR$ ATTRIBUTES ALIGN : 64 :: Z,X,FA
 #endif
 !C
-          COMMON     / BBB / L1(50) , L2(50) , L3(50) , SD0 , CONST         
+          COMMON     / BBB / L1 , L2 , L3 , SD0 , CONST         
           COMMON     / EEE /  G                                     
           COMMON     / AAA /  NN
 !C                                                                       
@@ -6345,7 +6347,7 @@ C
           IF ( IMODEL .EQ. 2 ) GO TO 20
           IF ( IMODEL .EQ. 3 ) GO TO 30
           IF ( IMODEL .EQ. 4 ) GO TO 40
-C                                                                       
+                                                                       
        10 K = LAG                                                           
                      
           CALL  REDUCT( SETX1,Z,NMK,0,K,MJ1,LAG,X )                       
@@ -6461,7 +6463,7 @@ C
 #lif defined __GFORTRAN__
                      !$OMP  SIMD REDUCTION(+:SUM)
 #endif
-          !$OMP
+       
           DO 10   I=1,K                                                     
                   DI = I                                                            
 !cx x   10 SUM = SUM + DLOG( DI )
@@ -6554,9 +6556,9 @@ C
           !DIR$ ASSUME_ALIGNED COV:64
 #endif
           ! Locals
-          INTEGER(I32P) :: ISTEP,ISW,LAGH,N,LAG1,NMK,I,II, &
+          INTEGER(4) :: ISTEP,ISW,LAGH,N,LAG1,NMK,I,II, &
                            J,JJ,KK,IE
-          REAL(R64P) :: SUM, COV1, SD
+          REAL(8) :: SUM, COV1, SD
                                                                        
           ISTEP = 1                                                         
           ISW = IL                                                          
@@ -6823,7 +6825,7 @@ C
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64,A:64,EZ:64
 #endif
-          INTEGER(kind=4) :: II,J1,JJ,LAG,II,J
+          INTEGER(kind=4) :: II,J1,JJ,LAG,J
           REAL(kind=8)    ::  CSTDMY, SD0DMY, SUM, XX, X
           INTEGER(kind=4), dimension(50) :: LAG1,LAG2,LAG3
           REAL(kind=8), dimension(IL) :: Y
@@ -6837,7 +6839,7 @@ C
                          JJ = J1-1                                                   
                          SUM = 0._8                                               
                          DO 40  J=1,K                                                
-                                XX = 1._R64P                                              
+                                XX = 1._8                                             
                                 LAG = LAG1(J)                                            
 
                                 X = 1._8
@@ -6868,7 +6870,7 @@ C
 
                          LAG = LAG3(J)                                            
 
-                         X = 1._dp
+                         X = 1._8
                         IF ( LAG .GT. 0 ) THEN
                            I = II+JJ-LAG
                            IF ( I .GE. II ) THEN
@@ -7050,7 +7052,7 @@ C
                     LL3 = L3(II)                                                      
 !cxx      DO  60     I=1,L
                     DO  61     I=1,L
-                               ZTEM = 1._dp                                                      
+                               ZTEM = 1._8                                                      
                                I1 = I + I0                                                       
                                J1 = N0 + LAG + I                                                 
                                IF( LL1 .EQ. 0 )     GO TO 40                                     
@@ -7110,7 +7112,7 @@ C
           I0 = JSW*K1                                                       
           M1 = M + 1                                                        
           LAG=K-M1                                                          
-          BN = 2._8/(N-LAG-1._dp)                                            
+          BN = 2._8/(N-LAG-1._8)                                            
                                                   
           DO 11  I=1,L
                  Y= BN*(NO+I-1)-1._8                                             
@@ -7296,8 +7298,8 @@ C
                   KND(I) = 0
        40 CONTINUE
           KND(K1) = 1                                                       
-          SUM = 0._dp                                                      
-          SUMC = 0._dp
+          SUM = 0._8                                                     
+          SUMC = 0._8
           M = K                                                             
           IP = 0                                                            
           IQ = 0                                                            
@@ -19832,7 +19834,7 @@ C
           REAL(8)    ::  XMAX,CST0,CST1,CONSTD,SUM
           REAL(8), dimension(K,ID) :: U,AU
           REAL(8), dimension(ID,ID) :: XX
- #if defined __ICC
+#if defined __ICC
           !DIR$ ATTRIBUTES ALIGN : 64 :: U,AU,XX
 #endif
           COMMON /COM99/ISWR
@@ -21986,7 +21988,7 @@ C
 !C          --------------------                             !     +-----
                                                            !           
           IF( AICS .GE. AICP )     GO TO  40                                
-                     !         +-
+                    
           CALL  COPY( X,K1,K2,0,MJ1,MJ2,U )                                 
                                                            !           
        20 IF1 = 2                                                            
@@ -22000,7 +22002,7 @@ C
                                                  
           SDF = SDMS                                                         
           GO TO 50                                                          
-                                                           +-----------
+                                                         
        40 IF1 = 1                                                            
                                                                       
           CALL  COPY( X,K1,0,0,MJ1,MJ2,U )                                  
@@ -22142,7 +22144,7 @@ C
           IF( LK1 .GE. N )     GO TO 300                                    
           M = M+1
                    
-          IF( M. NE. 1 )  THEN
+          IF( M. .NE. 1 )  THEN
               AICF(M) = AICF(M-1)
               NS(M) = NS(M-1)
               LK0(M) = LK0(M-1)
@@ -22806,7 +22808,7 @@ C
               XDET=-XDET
           120 XDET=XDET*XMAXP
               XC=1.0_8/XMAXP
-              X(L,L)=1.0_R64P
+              X(L,L)=1.0_8
               DO 11 J=1,MP1
 
                       X(L,J)=X(L,J)*XC
@@ -22873,7 +22875,7 @@ C
           !DIR$ ASSUME_ALIGNED C:64,S:64,ARC:64
 #endif
           REAL(8) :: PI, CST5
-          PI==3.1415926535897932384626433_8
+          PI=3.1415926535897932384626433_8
           CST5=0.5_8
           DO 10 I=1,K
 
@@ -22916,7 +22918,7 @@ C
 #endif
           REAL(8) ::  D1, D2
           ! Locals
-          INTEGER(4) :: I,LAGH,
+          INTEGER(4) :: I,LAGH
           REAL(8) :: CST0, CST1, CST100, E1, ER
           CST0=0.0_8
           CST1=1.0_8
@@ -25154,7 +25156,7 @@ C
       310 CONTINUE
 !C                                                                       
 !C-----  SRO=(SG)'*(SR)  -----                                           
-         SRO=0.0D-00  
+         SRO=0.0_8 
 #if defined __ICC
                  !DIR$ VECTOR ALIGNED
                  !DIR$ SIMD REDUCTION(+:SRO)
@@ -25166,7 +25168,7 @@ C
                  SRO=SRO+SG(I)*SR(I)
     1050 CONTINUE
                                     
-                 GSR=0.0_R64P
+                 GSR=0.0_8
 #if defined __ICC
                  !DIR$ VECTOR ALIGNED
                  !DIR$ SIMD REDUCTION(+:GSR)
@@ -25179,7 +25181,7 @@ C
     1060 CONTINUE
          DGAM=-GSR/SRO                                                     
          DGAM1=DGAM+CST1                                                   
-         DGAM1=DABS(DGAM1)+0.1E-70_R64P                                         
+         DGAM1=DABS(DGAM1)+0.1E-70_8                                         
          RAM=DABS(DGAM)/DGAM1                                              
                                                                       
          IF(RAM.GT.CONSTA) GO TO 430                                       
@@ -25919,7 +25921,7 @@ C
 
           INTEGER(kind=4) :: N, P, Q ,H, D, K, L, JSW
           REAL(kind=8), dimension(N,D) :: YY 
-          REAL(kind=8, dimension(D,D,K) :: B 
+          REAL(kind=8), dimension(D,D,K) :: B 
           REAL(kind=8), dimension(D,D,L) :: A, WW
           REAL(kind=8), dimension(D,D)   :: S
           REAL(kind=8), dimension(Q+H,D) :: Y, YD, Z1, Z2, Z3, ZZ1,ZZ2,ZZ3
@@ -25935,12 +25937,12 @@ C
           REAL(kind=8) ::  CST0, CST1, Z, CCC, AN, AVE, DMAX,  DMIN, YYD
               
           REAL(kind=8), dimension(D,D,H+1) ::  W
-          REAL(kind=8), dimension(D,D,)    ::  C 
+          REAL(kind=8), dimension(D,D)    ::  C 
           REAL(kind=8), dimension(D,H+1)   ::  SD 
           REAL(kind=8), dimension(D)       ::  CX, EY, DMXT,DMIT,AV
 #if defined __ICC
 !DIR$     ATTRIBUTES ALIGN : 64 :: W,C,SD,CX,EY,DMXT,DMIT,AV     
-#end
+#endif
 
           CHARACTER(len=1), dimension(121) :: XX
           CHARACTER(len=1) :: K1, K2, K3, K4, K5, K6
