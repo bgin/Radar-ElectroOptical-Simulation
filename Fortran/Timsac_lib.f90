@@ -882,7 +882,7 @@
                        LZX,MZX,MZY,LZZ,MZZ,IQM1,LZYZ,MZYZ,  &
                        MYZ,LUX,MUX,LUY,MUY,LUU,MUU,LUYU,    &
                        MUYU,IA2B,LUZ,LUYZ,MUYZ,LYU,MYU,IST,IEN, &
-                       IJ1,JJ,MXY,LXY,LZY,MUZ
+                       IJ1,JJ,MXY,LXY,LZY,MUZ,I1,J,LYX
       
                  
       COMMON /COM70/ISWRO
@@ -7326,13 +7326,13 @@
           IQ = IQ-1                                                         
           SUMC = SUMC + C(IQ+1)                                             
 !C                                                                       
-          IF( SUMC + CC*(K-IP+IQ) .GT. OEIC + 40.0_dp )   GO TO 180           
+          IF( SUMC + CC*(K-IP+IQ) .GT. OEIC + 40.0_8 )   GO TO 180           
           GO TO 150                                                         
 !C                                                                       
   140     IP = IP+1                                                         
           IQ = IP-1                                                         
           SUMC = C(IP)                                                      
-          IF( SUMC + CC .GT. OEIC + 40.0_dp )   GO TO 200                     
+          IF( SUMC + CC .GT. OEIC + 40.0_8 )   GO TO 200                     
 !C                                                                       
       150 M = K-IP+IQ                                                       
           SUM = SUMC                                                        
@@ -7344,8 +7344,8 @@
       160 CONTINUE                                                          
       165 CONTINUE                                                          
           EIC = SUM + CC*M - OEIC                                           
-          IF( EIC .GT. 40.0_dp )   GO TO 100                                  
-          EXIC = DEXP( -0.5_dp*EIC )                                         
+          IF( EIC .GT. 40.0_8 )   GO TO 100                                  
+          EXIC = DEXP( -0.5_8*EIC )                                         
           ESUM(M+1) = ESUM(M+1) + EXIC                                      
           DO 170   I=1,K                                                    
 !cxx  170 IF( KND(I) .EQ. 1 )   D(I,M+1) = D(I,M+1) + EXIC                  
@@ -7415,7 +7415,7 @@
           C1(1) = 1._8 / (1._8 + K)                                          
           DO 221  I=1,K                                                     
                               
-                  C1(I+1) = C1(I) * I / (1._dp + K - I) 
+                  C1(I+1) = C1(I) * I / (1._8 + K - I) 
 221               CONTINUE
 #if defined __ICC
 !DIR$ VECTOR ALIGNED       
@@ -7445,7 +7445,7 @@
 !DIR$ VECTOR ALIGNED                      
                       !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
 #elif defined __GFORTRAN__
-          !$OMP SIMD LINEAR(I:1,J)
+          !$OMP SIMD LINEAR(I:1)
 #endif                        
                    DO 250   I=1,K                                                    
                                      
@@ -7516,7 +7516,7 @@
 !C          SD:    RESIDUAL VARIANCE                                     
 !C                                                                       
 
-          INTEGER(kind=4) :: K, N, IPR, MJ1, 
+          INTEGER(kind=4) :: K, N, IPR, MJ1 
           INTEGER(kind=4), dimension(K) :: IND
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED IND:64
@@ -7962,26 +7962,26 @@
 !C     OAIC: VALUE OF AIC
 !C     AST1: MATRIX OF AR-COEFFICIENTS (IN VECTOR FORM)
 
-          INTEGER(kind=int4) :: L3, L1, N, NA, MO
-          REAL(kind=dp), dimension(3) :: CYY 
-          REAL(kind=dp), dimension(NA) :: AST1
+          INTEGER(kind=4) :: L3, L1, N, NA, MO
+          REAL(kind=8), dimension(3) :: CYY 
+          REAL(kind=8), dimension(NA) :: AST1
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED AST1:64
 #endif
-          REAL(kind=dp), dimension(L1) :: COEF, AA
+          REAL(kind=8), dimension(L1) :: COEF, AA
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED COEF:64,AA:64
 #endif
-          REAL(kind=dp), dimension(0:L1) :: SD, AIC
+          REAL(kind=8), dimension(0:L1) :: SD, AIC
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED SD:64,AIC:64
 #endif
-          REAL(kind=dp) ::       OAIC
+          REAL(kind=8) ::       OAIC
           CHARACTER AX,BL,STA,DASH,PLUS
-          INTEGER(kind=int4) :: L,INX,JJ0,JJL,JJL1,IAN,IAN1,LAN1,LAN2,I,J,NFC
-          REAL(kind=dp) ::  CST0, CST1, CST2, CST20, CST05, CST01,   &
+          INTEGER(kind=4) :: L,INX,JJ0,JJL,JJL1,IAN,IAN1,LAN1,LAN2,I,J,NFC
+          REAL(kind=8) ::  CST0, CST1, CST2, CST20, CST05, CST01,   &
                          AM, AN, RAN, SCALH, SE, SDR, D, D2, CONST, DLSD
-          REAL(kind=dp), dimension(L1) :: A, B
+          REAL(kind=8), dimension(L1) :: A, B
 #if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: A,B
 #endif      
@@ -8896,7 +8896,7 @@
           !DIR$ ASSUME_ALIGNED RIN:64
 #endif
           REAL(kind=8) :: DET
-          INTEGER(kind=4) :: KM1,L,I,L1,
+          INTEGER(kind=4) :: KM1,L,I,L1
           REAL(kind=8) :: CST0, CST1, ABC0, RR, RPIVOT, RIL
           CST0=0.0_8
           CST1=1.0_8
@@ -8959,7 +8959,7 @@
           !DIR$ ASSUME_ALIGNED AO:64,AAO:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: IP,L1,L,II,JJ,MS,INX,IMI
+          INTEGER(kind=4) :: IP,L1,II,JJ,MS,INX,IMI
           REAL(kind=8)    ::   AIC, SFDT, SDDET, SFDET
           REAL(kind=8), dimension(L,IR+IL,IR+IL) :: A1, B1
           REAL(kind=8), dimension(IR+IL,IR+IL) :: D, SE, SF,XSD, XSF,  E, Z1, SFL, B
@@ -9466,7 +9466,7 @@
           INTEGER(kind=4) :: I,J
           REAL(kind=8) :: CST0, SUM
 
-         CST0=0.0_dp
+         CST0=0.0_8
          DO 10 I=1,NN
             SUM=CST0
 #if defined __ICC
@@ -9657,13 +9657,14 @@
                 CALL SUBTAL(B,Z2,K,K)
 !cxx      DO 21 II=1,K
                 DO 23 II=1,K
-                   DO 21 JJ=1,K
 #if defined __ICC
 !DIR$ VECTOR ALIGNED                   
                       !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
 #elif defined __GFORTRAN__
                    !$OMP SIMD
-#endif                      
+#endif                     
+                   DO 21 JJ=1,K
+                    
                             A1(I,II,JJ)=A(II,JJ)
 !cxx   21 B1(MMI,II,JJ)=B(II,JJ)
                             B1(MMI,II,JJ)=B(II,JJ)
@@ -9900,7 +9901,7 @@
           !DIR$ ASSUME_ALIGNED FC:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: LG,LG3,LG4,I,I2,K,
+          INTEGER(kind=4) :: LG,LG3,LG4,I,I2,K,LF
           REAL(kind=8) :: T, PI, ALF, AK, TK, CK, CK2, UM2, UM1, UM0
           LG=LGP1-1
           LF=LF1-1
@@ -10189,7 +10190,7 @@
 #endif
           ! Locals
           INTEGER(kind=4) :: I,J
-          REAL(kind=dp)    :: CST0, SUM
+          REAL(kind=8)    :: CST0, SUM
           CST0=0.0_8                                                   
           DO 10 I=1,MM                                                      
              SUM=CST0
@@ -10257,7 +10258,7 @@
 #endif
           ! Locals
           INTEGER(kind=4) :: I,N3,M,L,M4,LM4,J,JM1,J1,J2,J3,J4,N5,I1,JF,  &
-                           NM1,LL,ISG
+                           NM1,LL
           REAL(kind=8) :: CST0, CST1, AN, PI, PI2, SG, AM4, AM5, AJM1, ARG, &
                         C1, S1, C2, S2, C3, S3
           COMPLEX(kind=8) :: ZCI, ZW1, ZW2, ZW3, ZC1, ZC2, ZC3, ZC4, ZC
@@ -10946,7 +10947,7 @@
 !C     (MJ2,MJ3): ABSOLUTE DIMENSION OF Z IN THE MAIN ROUTINE
 
           INTEGER(kind=4) :: MM, NN, NC
-          REAL(kind=8, dimension(MM,NN) ::  X
+          REAL(kind=8), dimension(MM,NN) ::  X
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
 #endif
@@ -11002,7 +11003,7 @@
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED X:64
 #endif
-          REAL(kind=8), dimesnion(NC,NN) :: Y
+          REAL(kind=8), dimension(NC,NN) :: Y
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED Y:64
 #endif
@@ -11036,7 +11037,7 @@
 #if defined __ICC
     !DIR$ ATTRIBUTES INLINE :: DSUMF
 #endif
-    REAL(kind=dp) FUNCTION DSUMF(X,N)
+    REAL(kind=8) FUNCTION DSUMF(X,N)
       use omp_lib
       implicit none
           INTEGER(kind=4) :: N
@@ -11062,7 +11063,7 @@
     END FUNCTION
     
 
-   REAL(kind=dp) FUNCTION RANDM(K,K1,K2,K3,K4)
+   REAL(kind=8) FUNCTION RANDM(K,K1,K2,K3,K4)
          implicit none
 !C     RANDOM NUMBER GENERATOR
           INTEGER(kind=4) :: K, K1, K2, K3, K4
@@ -11202,7 +11203,7 @@
           !DIR$ ASSUME_ALIGNED Q:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: I,L,J,K,NP1,II,KK,KP1,LP1,NM1,IP1,
+          INTEGER(kind=4) :: I,L,J,K,NP1,II,KK,KP1,LP1,NM1,IP1
           REAL(kind=8)    ::  EPS, TOL, CST0, CST1, CST2, C, F, G, FG, H,    &
                          S, T, X, Y, Z
           REAL(kind=8), dimension(M)    :: E
@@ -11576,7 +11577,7 @@
    
 #if defined __ICC
    !DIR$ ATTRIBUTES INLINE :: AICCOM
-#ndif
+#endif
    SUBROUTINE  AICCOM( X,N,M,K,MJ,SD,AIC )  
      use omp_lib
      implicit none
@@ -11933,7 +11934,7 @@
 #endif
           ! Locals
           INTEGER(kind=4) :: K1,I,J,ISIG,ISIGP1,ISIGM1,ISIGP2,ISIGM2, &
-                           J0,
+                           J0
           REAL(kind=8) :: FN, SUM, G, SC, SIG 
                                            
           K1 = K + 1                                                        
@@ -12048,7 +12049,7 @@
 #endif
           DO  11 I=1,K1
               DIC = -0.5_8 * (AIC(I) - AICM)                                    
-              C(I) = 0._dp                                                      
+              C(I) = 0._8                                                      
               IF( DIC .LT. -40.0_8 )     GO TO 10                                
               C(I) = DEXP(DIC)                                                  
               EK = EK + (I-1) * C(I)                                            
@@ -12145,16 +12146,16 @@
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED B:64
 #endif
-          REAL(kind=dp), dimension(ID) :: C
+          REAL(kind=8), dimension(ID) :: C
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED C:64
 #endif
-          REAL(kind=dp), dimension(MJ1,ID) :: E
+          REAL(kind=8), dimension(MJ1,ID) :: E
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED E:64
 #endif
           ! Locals
-          INTEGER(kind=int4) :: M0,JJ,I,L,L1
+          INTEGER(kind=4) :: M0,JJ,I,L,L1
                                                                        
           M0 = MSW + 1                                                      
           C(II) = 0._8                                                     
@@ -12254,7 +12255,7 @@
           !DIR$ ASSUME_ALIGNED Y:64
 #endif
           ! Locals
-          INTEGER(kind=int4) :: I,I1,I2
+          INTEGER(kind=4) :: I,I1,I2
           DO  20 I=1,K
                  I1 = I + II                                                       
                  I2 = I + JJ                                                       
@@ -12296,7 +12297,7 @@
           INTEGER(kind=4) :: K, L, M, MJ
           REAL(kind=8), dimension(MJ,K+1) :: X
           ! Locals
-          INTEGER(kind=int4) :: K1,J,I,II,I1,LM1
+          INTEGER(kind=4) :: K1,J,I,II,I1,LM1
 
           K1 = K + 1                                                        
           DO  60 I=1,K1                                                 
@@ -12355,7 +12356,7 @@
           !DIR$ ASSUME_ALIGNED FC:64,FS:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: LG,LF,LG3,LG4,I,I2,K,LF1
+          INTEGER(kind=4) :: LG,LF,LG3,LG4,I,I2,K
           REAL(kind=8) :: T, PI, ALF, AK, TK, CK, SK, CK2, UM0, UM1, UM2
           LG=LGP1-1                                                         
           LF=LF1-1                                                          
@@ -12416,7 +12417,7 @@
 !C                                                                       
 !C                                                                       
 
-          INTEGER(kind=4) :: MJ1, K, L, M, 
+          INTEGER(kind=4) :: MJ1, K, L, M
           INTEGER(kind=4), dimension(K) :: IND, JND
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED IND:64,JND:64
@@ -12922,7 +12923,7 @@
                   SD(I,II) = OSD                                                    
 !cxx   50 AIC(I,II) = OAIC                                                  
                   AIC(I,II) = OAIC
-50                CONTINUE
+              50  CONTINUE
 #if defined __ICC
 !DIR$ VECTOR ALIGNED
                   !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
@@ -12950,9 +12951,8 @@
 !C                                                                       
             IF( IPR .LT. 3 )  GO TO 90
 
-            IF( IMIN.GT.0 )
-
-            CALL  SRCOEF( X,K0,KK,N,MJ1,JND,A,SDD,AAIC(II) )
+            IF( IMIN.GT.0 ) CALL SRCOEF( X,K0,KK,N,MJ1,JND,A,SDD,AAIC(II) )
+               
 
          90 CONTINUE                                                          
 !C                                                                       
@@ -13405,7 +13405,7 @@
        
           CALL  MSDCOM( X,A,N,M,ID,KSW,MJ1,E,OSD )          
                                                                        
-          AICB = N*DLOG( OSD ) + 2._dp*EK + 2._dp*KSW*ID + ID*(ID+1)          
+          AICB = N*DLOG( OSD ) + 2._8*EK + 2._8*KSW*ID + ID*(ID+1)          
     END SUBROUTINE
 
 #if defined __ICC
@@ -14046,7 +14046,7 @@
 #endif
           REAL(kind=8) :: SD
           ! Locals
-          INTEGER(kind=4) :: MD,M1D,II,II,I0,J0,J1,I1 
+          INTEGER(kind=4) :: MD,M1D,II,I0,J0,J1,I1 
           REAL(kind=8) :: SUM
           REAL(kind=8), dimension((M+1)*ID,ID) :: Y
 #if defined __ICC
@@ -14574,7 +14574,7 @@
 !C                                                           !           
                                  
           CALL  HUSHLD( X,MJ1,LK,K1 )                                     
-                                                                    +-
+                                                                  
           N1 = N1 + L                                                       
           IF( N1 .LT. NMK )     GO TO 100                                   
     END SUBROUTINE
@@ -14799,7 +14799,7 @@
 !C         SD:    INNOVATION VARIANCE                                    
 !C                                                                       
 
-          INTEGER(kind=4) :: M, K, N, MJ, 
+          INTEGER(kind=4) :: M, K, N, MJ 
           INTEGER(kind=4), dimension(M)   :: JND
 #if defined __ICC     
           !DIR$ ASSUME_ALIGNED JND:64
@@ -14814,8 +14814,8 @@
 #endif
           REAL(kind=8) :: SD, AIC
           ! Locals
-          INTEGER(kind=int4) :: K1,M1,MM1,II,I,I1,L
-          REAL(kind=dp) :: SUM, OSD
+          INTEGER(kind=4) :: K1,M1,MM1,II,I,I1,L
+          REAL(kind=8) :: SUM, OSD
           K1 = K + 1                                                        
           M1 = M + 1                                                        
 !C                                                                       
@@ -14911,7 +14911,7 @@
     END SUBROUTINE
     
 
-    REAL(kind=dp) FUNCTION DMIN( X,N )
+    REAL(kind=8) FUNCTION DMIN( X,N )
          implicit none
 !C                                                                       
 !C       THIS FUNCTION RETURNS THE MINIMUM VALUE AMONG X(I) (I=1,N).     
@@ -15070,7 +15070,7 @@
           INTEGER(4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,LM1
           INTEGER(4) :: ISW,ISMT,IDIF,LOG,MESH
           
-          COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
+          COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER    
           COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH
 
          
@@ -15223,7 +15223,7 @@
           REAL(kind=8) :: omaxx
           ! Locals
          
-          INTEGER(kind=4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth,LLL,ISMT
+          INTEGER(kind=4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth,LLL
           INTEGER(kind=4) :: ISW, ISMT, IDIF, LOG, MESH 
           REAL(kind=8) :: YMEAN,FF
           INTEGER(kind=4), dimension(N)    :: IMIS 
@@ -15375,16 +15375,16 @@
           !DIR$ ASSUME_ALIGNED A:64
 #endif
           ! Locals
-          INTEGER(kind=int4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,   &
+          INTEGER(kind=4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,   &
                        NYEAR,nmonth,ISW,ISMT,IDIF,LOG,MESH, &
                        LM,I
-          REAL(kind=dp) :: DI, DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI
-          REAL(kind=dp), dimension(L+M2) :: AI 
-          REAL(kind=dp), dimension(10) :: F1, F2, A1, A2
-          REAL(kind=dp), dimension(300) :: F3,A3            
-          REAL(kind=dp), dimension(200) ::  GI, GC
-          REAL(kind=dp), dimension(3) :: UI
-          REAL(kind=dp), dimension(7) :: TDF
+          REAL(kind=8) :: DI, DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI
+          REAL(kind=8), dimension(L+M2) :: AI 
+          REAL(kind=8), dimension(10) :: F1, F2, A1, A2
+          REAL(kind=8), dimension(300) :: F3,A3            
+          REAL(kind=8), dimension(200) ::  GI, GC
+          REAL(kind=8), dimension(3) :: UI
+          REAL(kind=8), dimension(7) :: TDF
           COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,  &
                           NYEAR, nmonth
           COMMON  /COMSM3/  F1, F2, F3, A1, A2, A3,  DI, UI, TDF  
@@ -15468,9 +15468,9 @@
 
                 CALL  FUNCT( Z,E,TDAY,IMIS,N,LM1,M,B,FB,IFG )                    
              20 G(II) = (FF-FB)/(CONST*IDIF)                                      
-                IF( G(II) .GT. 1.0E+20_dp )  G(II) = (F-FB)/CONST                     
-                IF( G(II) .LT.-1.0E+20_dp )  G(II) = (FF-F)/CONST                     
-                IF( FB.GT.F .AND. FF.GT.F )  G(II) = 0.0_dp                      
+                IF( G(II) .GT. 1.0E+20_8 )  G(II) = (F-FB)/CONST                     
+                IF( G(II) .LT.-1.0E+20_8 )  G(II) = (FF-F)/CONST                     
+                IF( FB.GT.F .AND. FF.GT.F )  G(II) = 0.0_8                      
                                                     
                 B(II) = A(II)
        30 CONTINUE
@@ -15525,7 +15525,7 @@
           REAL(kind=8) :: FF
           ! Locals
           INTEGER(kind=4) :: PERIOD, SORDER,M1,M2,M3,M4,M5,M,L,NYEAR,nmonth, &
-                           ISW,ISMT,IDIF,LOG,MESH,MJ,M12,I,NI,K,MJ,NI
+                           ISW,ISMT,IDIF,LOG,MESH,MJ,M12,I,NI,K
           REAL(kind=8) :: DI,TAU2,SUM
           INTEGER(kind=4), dimension(N) :: IMISR
           REAL(kind=8), dimension(N) :: ZZ 
@@ -15598,7 +15598,7 @@
        40 CONTINUE
           S(1:MJ,1:MJ) = 0.0_8
           R(1:LM1+1,1:LM1) = 0.0_8
-          DI = 1.0_dp                                                      
+          DI = 1.0_8                                                      
                                           
           IF( M2 .EQ. 0 )  GO TO 90                                         
           F2(1) = 1.0_8/A2(M2)                                              
@@ -15886,9 +15886,9 @@
                                                                        
           RAM2 = RAM                                                        
           E1 =EE                                                            
-          RAM1 = 0._0                                                     
+          RAM1 = 0._8                                                     
                                                                        
-          IF( RAM2*HNORM .GT. 5.0_dp )  GO TO 48
+          IF( RAM2*HNORM .GT. 5.0_8 )  GO TO 48
 #if defined __ICC
           !DIR$ VECTOR ALIGNED
           !DIR$ VECTOR ALWAYS
@@ -15985,7 +15985,7 @@
             SUM = SUM + G(I)*H(I)
       65 CONTINUE
          H2 = SUM - C2*SUM0                                                
-         IF(H1.GT.0.0_dp .OR. H2.LT.0.0_dp)  GO TO 70                        
+         IF(H1.GT.0.0_8 .OR. H2.LT.0.0_8)  GO TO 70                        
          RAM = RAM2                                                        
          RETURN                                                            
                                             
@@ -16063,7 +16063,7 @@
               SUM = SUM + G(I)*H(I)
       145 CONTINUE
           H2 = SUM - C2*SUM0                                                
-          IF( H1.LE.0.0_dp .AND. H2.LE.0.0_dp)  GO TO 150                    
+          IF( H1.LE.0.0_8 .AND. H2.LE.0.0_8)  GO TO 150                    
           IF( IFG .LE. 20 )  GO TO 95                                       
                                                                        
       150 IF( E2 .LT. EE )  RAM = RAM2                                      
@@ -16077,7 +16077,7 @@
           A3 = (RAM2-RAM1)*E3                                               
           B2 = (A1+A2+A3)*2.0_8                                              
           B1 = A1*(RAM3+RAM2) + A2*(RAM1+RAM3) + A3*(RAM2+RAM1)             
-          IF( B2 .EQ. 0._0 )  GO TO 210                                     
+          IF( B2 .EQ. 0._8 )  GO TO 210                                     
           RAM = B1 /B2                                                      
                                       
         IF( RETURN .EQ. 80 ) GO TO 80
@@ -16429,9 +16429,9 @@
           !DIR$ ASSUME_ALIGNED TRADE:64
 #endif
           ! Locals 
-          INTEGER(kind=4) ::  PERIOD, SORDER,M1, M2, M3, M4, M5, M, L,NYEAR,nmonth &
+          INTEGER(kind=4) ::  PERIOD, SORDER,M1, M2, M3, M4, M5, M, L,NYEAR,nmonth,&
                             ISW, ISMT, IDIF, LOG, MESH, M12, M123, M1234,  &
-                            I,J,
+                            I,J
           REAL(kind=8)    ::  SUM, tmp
           REAL(kind=8), dimension(N,M5) :: REG
 #if defined __ICC
@@ -16648,8 +16648,8 @@
           REAL(kind=8), dimension(7)   :: TDF
           COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER, NYEAR, nmonth
                          
-          COMMON  /COMSM3/  F1, F2, F3, A1, A2, A3
-                        ,DI, UI(3), TDF(7)
+          COMMON  /COMSM3/  F1, F2, F3, A1, A2, A3, &
+                            DI, UI, TDF
                                   
                                                                        
           DI = 1.0_8                                                        
@@ -16870,7 +16870,7 @@
             30 CONTINUE
 
                DO 50  I=1,M12                                                    
-                       SUM = 0.0_dp                                                     
+                       SUM = 0.0_8                                                     
                        DO 40  J=1,M3                                                     
                                     
                               SUM = SUM + S(I,M12+J)*F3(J)
@@ -16976,7 +16976,7 @@
                     IF( ILKF .EQ. 0 )  JJ = N - II + 1                                
                     tmpp=TRADE(jj,2)+TRADE(jj,3)
                     tmpp=tmpp+TRADE(jj,4)+TRADE(jj,5)+TRADE(jj,6)
-                    s(m+1,m123+1)=di*(TRADE(jj,1)+TRADE(jj,7)-0.4_dp*tmpp)
+                    s(m+1,m123+1)=di*(TRADE(jj,1)+TRADE(jj,7)-0.4_8*tmpp)
              end if
 
                                      
@@ -17010,7 +17010,7 @@
              end if
              if(m4 .eq. 1) then
                 tmp=TRADE(II,2)+TRADE(II,3)+TRADE(II,4)+TRADE(II,5)+TRADE(II,6)
-                sum=sum+(TRADE(II,1)+TRADE(II,7)-0.4*tmp)*x(L123+1)
+                sum=sum+(TRADE(II,1)+TRADE(II,7)-0.4_8*tmp)*x(L123+1)
             end if
                                         
 !C                                                                       
@@ -17290,8 +17290,8 @@
           if(iopt .lt. 0) then
               do 21 i=1,3
                   TAU2(i)=para(i) - 0.0001_8
-                  if(TAU2(i) .ge. 1.0_8) TAU2(i)=1.0D0 - 0.00000000000000000001_8
-                  if(TAU2(i) .le. 0.0_8) TAU2(i)=0.0D0 + 0.00000000000000000001_8
+                  if(TAU2(i) .ge. 1.0_8) TAU2(i)=1.0_8 - 0.00000000000000000001_8
+                  if(TAU2(i) .le. 0.0_8) TAU2(i)=0.0_8 + 0.00000000000000000001_8
      21       continue
 
 
@@ -17418,7 +17418,7 @@
                        I2 = I0 + I
                        IF( I2 .GT. 7 ) I2 = I2 - 7
 
-                       if( JJ.gt.0 ) TDAY(JJ,I2) = 5.0_R64P
+                       if( JJ.gt.0 ) TDAY(JJ,I2) = 5.0_8
            20   CONTINUE
 
 
@@ -17616,7 +17616,7 @@
           !DIR$ ASSUME_ALIGNED Z1:64,SD:64,AIC:64,DIC:64,A1:64,A2:64
 #endif
           ! Locals
-          INTEGER(4) :: MJ1,ISW,K,NMK,IPR,
+          INTEGER(4) :: MJ1,ISW,K,NMK,IPR
           REAL(8), dimension(N) :: Z 
           REAL(8), dimension(N-LAG,LAG+1) ::  X
           REAL(8), dimension(LAG,LAG) :: A22 
@@ -17978,7 +17978,7 @@
                  SS = 0.0_8                                                      
                  DO  150   I=1,N                                                   
                     SUM = 0.0_8
-#if defined
+#if defined __ICC
 !DIR$ VECTOR ALIGNED                    
                     !DIR$ SIMD REDUCTION(+:SUM)
 #elif defined __GFORTRAN__
@@ -17995,7 +17995,7 @@
                                                                        
                  S1 = 0.0_8                                                      
                  S2 = 0.0_8
-#if defined
+#if defined __ICC
 !DIR$ VECTOR ALWAYS
 !DIR$ SIMD REDUCTION(+:S1)
                  !DIR$ SIMD REDUCTION(+:S2)
@@ -18098,7 +18098,7 @@
           REAL(8) :: F,AIC,SD,FF
       ! lOCALS
           INTEGER(4) :: MJ,M1,MP1,I,IM1,II,J,JJ,JM1,JE,JE1,J1, &
-                       IM1,K,JC,KM1,KK
+                        K,JC,KM1,KK
           REAL(8) ::   DN, DN1, SUM, DSD, USUM, DETT, UDET
           REAL(8), dimension(M+1,M+1) :: T, U, S 
           REAL(8), dimension(M) :: B
@@ -18217,7 +18217,7 @@
           CALL  ARCOEF( B,M,A )                                             
           GO TO  280                                                        
       220 CONTINUE                                                          
-          IF( SD .GT. 0.0_R64P ) GO TO 221
+          IF( SD .GT. 0.0_8 ) GO TO 221
           JER = 11111
           RETURN
       221 CONTINUE
@@ -18244,7 +18244,7 @@
                          S(I,1) = 0.0_8                                                  
                          IF( II .EQ. JC )      S(I,1) = -A(M)                               
                          IF( M .EQ. JC )       S(I,1) = -A(II)                               
-                         IF( IM1 .EQ. JC )     S(I,1) = S(I,1) - 1.0_R64P                    
+                         IF( IM1 .EQ. JC )     S(I,1) = S(I,1) - 1.0_8                   
       100 CONTINUE                                                          
           IF( M .EQ. 2 )     GO TO 120                                      
                                               
@@ -18952,7 +18952,7 @@
           !DIR$ ASSUME_ALIGNED CHI2:64,A0:64,A:64
 #endif
           !Locals
-          INTEGER(4) :: NP1,NM1,OOFPE,M,I,LM,IM,MP1
+          INTEGER(4) :: NP1,NM1,M,I,LM,IM,MP1
           REAL(8)    ::  AN, ANP1, ANM1, CST1, OOFPE, SE, SD0, D2
           REAL(8), dimension(L) :: B
 #if defined __ICC
@@ -19351,7 +19351,7 @@
 #endif
           ! Locals
           INTEGER(4) :: ISWR,KSWR,II,JJ,KK,I,J,IDP1,JS,ISWRO, &
-                           IAW,IG,IPQ,ISFIN
+                           IAW,IG,ISFIN
           REAL(8) :: AICO , CST0, CST1, CST05, AIPQ, SUM
      
           REAL(8), dimension(MJ3,ID,ID) :: CYY1 
@@ -19387,7 +19387,8 @@
                 DO 1008 KK=1,MJ3
 
                         CYY1(KK,JJ,II)=0
-1008             CONTINUE
+            1008 CONTINUE
+#if defined __ICC
  !DIR$ VECTOR ALIGNED
                         !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
 #elif defined __GFORTRAN__
@@ -19411,8 +19412,21 @@
      4009 CONTINUE
           JS=0
 
-          A(1:K,1:K)=CST0
-          A1(1:K,1:K)=CST0
+          !A(1:K,1:K)=CST0 <-- Error: Unclassifiable statement at (1)
+         ! A1(1:K,1:K)=CST0 <-- Error: Unclassifiable statement at (1)
+          DO J=1,K
+#if defined __ICC
+!DIR$ VECTOR ALIGNED
+                        !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
+#elif defined __GFORTRAN__
+                !$OMP SIMD
+#endif                 
+             DO I=1,K
+                A(I,J)=CST0
+                A1(I,J)=CST0
+             END DO
+          END DO
+          
           DO 4011 I=1,K
              IF(IDD(I).NE.0) GO TO 4012
              JJ=IR(I)
@@ -19676,7 +19690,7 @@
           !DIR$ ASSUME_ALIGNED NH:64,IDD:64,IR:64,B:64,AW:64,X1:64
 #endif
           ! Locals
-          INTEGER(4) :: ISWR,ITINP,I,J,LH,IH,NS,NSM1,IH
+          INTEGER(4) :: ISWR,ITINP,I,J,LH,IH,NS,NSM1
           REAL(8) ::    CST0, CST1, CONSTM, CONSTD, SUM, XMAX
           REAL(8), dimension(K,K)     :: V, AV, U, AU 
           REAL(8), dimension(ID,K)    :: X, Y
@@ -19830,7 +19844,7 @@
           !DIR$ ASSUME_ALIGNED IDD:64,IR:64,B:64,AW:64,A:64,X2:64
 #endif
       ! Locals
-          INTEGER(4) :: ISWR,I,J,LH,IH,NS,NSM1,KMD,IDP1,IPD,IG2
+          INTEGER(4) :: ISWR,I,J,LH,IH,NS,NSM1,KMD,IDP1,IPD
           REAL(8)    ::  XMAX,CST0,CST1,CONSTD,SUM
           REAL(8), dimension(K,ID) :: U,AU
           REAL(8), dimension(ID,ID) :: XX
@@ -20635,7 +20649,7 @@
           !DIR$ ASSUME_ALIGNED Q:64,CYV1:64,CVV1:64,CYV2:64
 #endif
           ! Locals
-          INTEGER(4) ::    MP1,I,J,MSP1,LP1,KMD,IDP1,ML,LSP1,ML,IMD
+          INTEGER(4) ::    MP1,I,J,MSP1,LP1,KMD,IDP1,ML,LSP1,IMD
           REAL(8)    ::    CST0, CST1
           REAL(8), dimension(K-ID,ID) :: QQ, Z, ZZ
           REAL(8), dimension(ID,K) :: CXV     
@@ -21115,7 +21129,7 @@
 #endif
           REAL(8) :: AICD
           ! Locals
-          INTEGER(4) :: ITN,ISPHAI,IPHAT,ITNS,I,J,IG,IRAM,ITN
+          INTEGER(4) :: ITN,ISPHAI,IPHAT,ITNS,I,J,IG,IRAM
           REAL(8)    ::  CST0, CST1, CST2, CST01, CST05,                       &
                             CONSTA, CONSTB, EPS1, EPS3, EPS4, EPS5, AIPQ,         &
                             AN, PHAID, RO, PHAI, EPHAI1, T1, RAM, RAMRO,          &
@@ -21406,7 +21420,7 @@
           ! Locals
           INTEGER(4) :: I,J,IQMAX,IQ,ISUM,IRS,IKI,JO,IDL,JA,JB,IQM1, &
                            IQD,JDQ,IRD,ISR,ISRD,IMAJ,NS,JMA,JW,JB1,JWJ, &
-                           JBJ,ITM1,JTBJ,JTWJ,IDL1,IDL
+                           JBJ,ITM1,JTBJ,JTWJ,IDL1
           REAL(8) :: CST0, CST1, BDET
           INTEGER(4), dimension(K)     :: IO
           REAL(8), dimension(ID,MJ6)   :: BA,BM
@@ -21963,7 +21977,7 @@
 !C          AR-MODEL FITTING TO POOLED DATA                              
 !C          -------------------------------                            +-
 !C                                                                     ! 
-                                                                    +-
+                                                                  
           CALL  COPY( X,K1,0,K2,MJ1,MJ1,X )                                 
           CALL  COPY( U,K1,0,K1,MJ2,MJ1,X )                                 
 !C                                                                     +-
@@ -21981,7 +21995,7 @@
 !C       ---  AIC FOR CONSTANT MODEL  ---                                
 !C                                                                       
                         
-          AICP = NP*DLOG(SDMP) + 2._R64P*(MP+1)                                 
+          AICP = NP*DLOG(SDMP) + 2._8*(MP+1)                                 
 !C                                                                       
 !C          --------------------                              YES  +-----
 !C          COMPARISON OF MODELS                             +-----!AICS 
@@ -22144,7 +22158,7 @@
           IF( LK1 .GE. N )     GO TO 300                                    
           M = M+1
                    
-          IF( M. .NE. 1 )  THEN
+          IF( M .NE. 1 )  THEN
               AICF(M) = AICF(M-1)
               NS(M) = NS(M-1)
               LK0(M) = LK0(M-1)
@@ -23621,7 +23635,7 @@
           !DIR$ ASSUME_ALIGNED FC:64,FS:64,P1:64,P2:64
 #endif
           ! Locals
-          INTEGER(4) :: LA, LAGSHF,
+          INTEGER(4) :: LA, LAGSHF
           REAL(8), dimension(521) :: FC1, FS1
 #if defined __ICC
           !DIR$ ATTRIBUTES ALIGN : 64 :: FC1,FS1
