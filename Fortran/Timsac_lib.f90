@@ -843,7 +843,7 @@
 
     SUBROUTINE SC0GRH(X,CYY,G,CN,CXX0,IP,IQ,AL,MM,LL,ICST) !GCC$ ATTRIBUTES HOT :: SC0GRH !GCC$ ATTRIBUTES ALIGNED(32) :: SC0GRH
       use omp_lib
-      implicit none
+     
 !C     THIS SUBROUTINE COMPUTES CXX0,GRADIENT AND HESSIAN.
 !cxx      IMPLICIT REAL*8(A-H,O-Z)
 !cc      COMMON /COM50/AL
@@ -1216,7 +1216,7 @@
 
     SUBROUTINE SC0GR1(X,CYY,G,CXX0,IP,IQ,IG,LL,ICST) !GCC$ ATTRIBUTES HOT :: SC0GR1 !GCC$ ATTRIBUTES ALIGNED(32) :: SC0GR1
       use omp_lib
-      implicit none
+    
 !C     THIS SUBROUTINE COMPUTES CXX0 AND GRADIENT.
 #if defined __ICC
           !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: SC0GR1
@@ -1249,7 +1249,7 @@
           INTEGER(kind=4) ::     I,IORIG,IGA2B,II,IB,IA,IPM1,IQM1,IGAIB,  &
                            IJ,IK,L2,M2,I2P,LXX,MXX,LXY,MXY,LYX,MYX, &
                            LZX,MZX,LZY,MZY,LYZ,MYZ,LUX,MUX,LUY,MUY, &
-                           LYU,MYU,IAIB,I1,IPQ
+                           LYU,MYU,IAIB,I1,IPQ,IA2B
 
          CST0=0.0_8
          CST1=1.0_8
@@ -1445,7 +1445,7 @@
 
     SUBROUTINE SDAV1(X,CYY,CXX0,G,C,IP,IQ,N,VD,NN,LL,ICST)
       use omp_lib
-      implicit none
+    
 !C      DADIDON'S (MINIMIZATION) PROCEDURE
           
           !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: SDAV1
@@ -1470,7 +1470,7 @@
                         AIPQ, AN, PHAI, EPHAI1, T1, RO, RAM, RAMRO, RAMROT,   &
                         SUM, SRO, SROD, DGAM, DGAM1, GSR, RAMT, RAMSRO,       &
                         RAM1, CONSDR, SPHAI, OAIC, OPHAI, AIC, DAIC
-         INTEGER(kind=4) :: ISWRO,ISPHAI,ITN,IPHAI,IPQ,ITNS,I,J,IG,IRAM        
+         INTEGER(kind=4) :: ISWRO,ISPHAI,ITN,IPHAI,IPQ,ITNS,I,J,IG,IRAM,IPQ2        
          COMMON /COM70/ISWRO
          ! Locals
 !C     CONSTANT
@@ -1685,7 +1685,7 @@
 
     SUBROUTINE SCONVL(Y,A,Z,K,L,M,LL)
       use omp_lib
-      implicit none
+  
 #if defined __ICC
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: SCONVL
       !DIR$ ATTRIBUTE INLINE :: SCONVL
@@ -1725,7 +1725,7 @@
 
     SUBROUTINE TURN(Y,Z,L,M,LL)
       use omp_lib
-      implicit none
+    
 #if defined __ICC
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: TURN
       !DIR$ ATTRIBUTE INLINE :: SCONVL
@@ -1760,7 +1760,7 @@
     
     SUBROUTINE INVERS(A,IP,B,IQ,X,IX,ICST,IG)
       use omp_lib
-      implicit none
+     
 #if defined __ICC
         !DIR$ ATTRIBUTES INLINE :: INVERS
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: INVERS
@@ -1911,7 +1911,7 @@
                          IRREG,ADJUST,EST,PSDS,PSDT,AVABIC,             &
                          IPARA,PARA,ARFT,ARFS,ARFN,IART,IARS,IARN)
       use omp_lib
-      implicit none
+     
 #if defined __ICC
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: BAYSEAF
 #endif
@@ -2583,7 +2583,7 @@
     END  SUBROUTINE
                          
     SUBROUTINE  ADD(X,MX,Y,MY,Z,MZ)
-        implicit none
+      
 #if defined __ICC
          !DIR$ ATTRIBUTE INLINE :: ADD
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: ADD
@@ -2658,7 +2658,7 @@
     
 
     SUBROUTINE BCOPY(X,MX,NX,IX,JX,Y,MY,NY,IY,JY)
-         implicit none
+       
 #if defined __ICC
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: BCOPY
       !DIR$ ATTRIBUTE INLINE :: BCOPY
@@ -2775,7 +2775,7 @@
                             
     SUBROUTINE  BHUSHLD( X,N,K,MJ1,ICNT )
       use omp_lib
-      implicit none
+     
 #if defined __ICC
           !DIR$ ATTRIBUTE INLINE :: BHUSHLD
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: BHUSHLD
@@ -2807,7 +2807,7 @@
           !DIR$ ASSUME_ALIGNED X:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: MNK,I,II,IIOTEM,IITEM,II1,KTEM,II10,JTEM
+          INTEGER(kind=4) :: J,MNK,I,II,IIOTEM,IITEM,II1,KTEM,II10,JTEM
           REAL(kind=8) :: TOL, DIIO, H, ABSLD, F, G, S
           REAL(kind=8), dimension(N) :: D
 #if defined __ICC
@@ -2911,7 +2911,7 @@
                                                                   
     SUBROUTINE  PRDCT(X,MX,NX,MMX,Y,MY,NY,MMY,Z,MZ,NZ,MMZ)
       use omp_lib
-      implicit none
+    
 #if defined __ICC
          !DIR$ ATTRIBUTE INLINE :: PRDCT
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: PRDCT
@@ -2951,9 +2951,9 @@
                     IF( J .GT. NZ ) GO TO 50 
 #if defined __ICC
 !DIR$      VECTOR ALIGNED
-             !DIR$  SIMD REDUCTION(+:S)    
+             !DIR$  SIMD REDUCTION(+:SUM)    
 #elif defined __GFORTRAN__
-             !$OMP  SIMD REDUCTION(+:S)
+             !$OMP  SIMD REDUCTION(+:SUM)
 #endif    
                     DO 20 K=1,KK                                                      
 !cxx   20 SUM = SUM + Y(I,K)*Z(K,J)
@@ -2967,7 +2967,7 @@
     
     SUBROUTINE  SBTRCT(X,MX,Y,MY,Z,MZ)
       use omp_lib
-      implicit none
+     
 #if defined __ICC
          !DIR$ ATTRIBUTE INLINE :: SBTRCT
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: SBTRCT
@@ -3015,7 +3015,7 @@
                         IART,ARFT,IARN,ARFN,PSDT,PSDS,NPF,PERIOD,IORD,ISOD,YEAR,NDAY, &
                         LOGT,ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA)
       use omp_lib
-      implicit none
+     
 #if defined __ICC
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: SUBSEA
 #endif
@@ -3052,7 +3052,7 @@
                         ZER, SMTH, SMTH2, DD, WTRD, DELTA
           ! LOcals
           INTEGER(kind=4) ::   IFLAG,MODE,ND,N7,ITRN0,IIII,I,M1,ICOUNT,K,N2M1,J, &
-                             NMJ,IPM1
+                             NMJ,IPM1,NDTEM
           REAL(kind=8)    ::   DMAX0, DMIN0, RO, DMIN, APRD,                             &
                              AN, ANN, ALNDTD, ALNDT0, WT, TEM, ALNDN, ALSQE,     &
                              SQE, ABIC, AJACOB, SSTR, SSEA, SSIR, SSAS, SAS
@@ -3305,7 +3305,7 @@
                         
                         
     SUBROUTINE CALEND(WEEK,YEAR0,MONTH0,N)
-        implicit none
+    
 #if defined __ICC
       !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: CALEND
 #endif
@@ -3440,7 +3440,7 @@
 !C                                                                       
        SUBROUTINE  POOLAV( Z,K,X,SD1 )
          use omp_lib
-         implicit none
+        
 #if defined __ICC
          !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: POOLAV
 #endif
@@ -3465,7 +3465,7 @@
 #endif
           REAL(kind=8) :: SD1
           ! Locals
-          INTEGER(kind=4) :: I,N0,I0,IFG
+          INTEGER(kind=4) :: I,N0,I0,IFG,J
           REAL(kind=8)    :: SUM
           REAL(kind=8), dimension(K) :: Y
 #if defined __ICC
@@ -3570,7 +3570,7 @@
     
     SUBROUTINE  LKOUT1( X,N,IND,JSW,F,W )
           use omp_lib
-          implicit none
+         
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES THE LIKELIHOOD OF THE MODEL THAT (X(I);  
 !C     IND(I)=1) ARE THE OUTLIERS.  (MEAN SLIPPAGE TYPE MODEL)           
@@ -3598,7 +3598,7 @@
 #endif
           REAL(kind=8)                  :: F, W
           ! Locals
-          INTEGER(kind=4) :: L,I,K,IFG
+          INTEGER(kind=4) :: L,I,K,IFG,J
           REAL(kind=8)    ::  SUM, XMEAN, SIG2, SD
           INTEGER(kind=4), dimension(N) :: JND
           REAL(kind=8), dimension(N) :: Y, Z, ZE
@@ -3672,7 +3672,7 @@
 !cc      SUBROUTINE  PRPOST( POST,X,IND,JND,KND,IC,N,L)                    
     SUBROUTINE  PRPOST( POST,X,IND,JND,KND,IC,N,L)
       use omp_lib
-      implicit none
+   
 !C                                                                       
 !C     THIS SUBROUTINE ARRANGES POST(I), JND(I) AND KND(I) (I=1,IC) IN   
 !C     DECREASING ORDER OF POST(I), AND DRAWS POSTERIOR PROBABILITY AND  
@@ -3765,7 +3765,7 @@
     
     SUBROUTINE PERMUT( IND,K,IFG ) 
       use omp_lib
-      implicit none
+  
 !C                                                                       
 !C     THIS SUBROUTINE SEQUENTIALLY SPECIFIES K] CONFIGURATIONS (IND(1), 
 !C     ...,IND(K)) OBTAINED BY PERMUTING (1,...,K)                       
@@ -3786,7 +3786,7 @@
           !DIR$ ASSUME_ALIGNED IND:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: I1,I2,I0,IMAX,I2M1
+          INTEGER(kind=4) :: I1,I2,I0,IMAX,I2M1,I
 !C                                                                       
           I1 = 1                                                            
           I2 = 2                                                            
@@ -3829,7 +3829,7 @@
     
                                                           
     SUBROUTINE  ISORT( IND,N )  
-          implicit none
+     
 !C                                                                       
 !C     THIS SUBROUTINE ARRANGES IND(I) (I=1,N) IN ORDER OF INCREASING    
 !C     MAGNITUDE                                                         
@@ -3849,7 +3849,7 @@
           INTEGER(kind=4) :: N
           
           ! Locals
-          INTEGER(kind=4) :: NM1,II,MINI,IMIN,J
+          INTEGER(kind=4) :: NM1,II,MINI,IMIN,J,I
           ! Exec code ....                                                           
           NM1 = N-1                                                         
           DO 20  II=1,NM1                                                   
@@ -3869,7 +3869,7 @@
     
                                                                 
     SUBROUTINE  BINARY( M,K,MB )    
-         implicit none
+     
 !C                                                                       
 !C       DECIMAL TO BINARY CONVERSION                                    
 !C                                                                       
@@ -3901,7 +3901,7 @@
                                                                
                                
     SUBROUTINE  BSRTMIN( X,N,IX )
-        implicit none
+      
 !C                                                                       
 !C       THIS SUBROUTINE ARRANGES X(I) (I=1,N) IN ORDER OF INCREASING    
 !C       MAGNITUDE OF X(I)                                               
@@ -3921,7 +3921,7 @@
           !DIR$ ASSUME_ALIGNED IX:64,X:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: NM1,II,MIN,IT
+          INTEGER(kind=4) :: I,NM1,II,MIN,IT
           REAL(kind=8) :: XMIN, XT
           ! Exec code ....                                                            
           NM1 = N - 1                                                       
@@ -3947,7 +3947,7 @@
                      
     SUBROUTINE OUTLIR( Z,NN,K,ISW,JSW,Y,RLIM,IOUTD,ROUT )
       use omp_lib
-      implicit none
+    
 !C     REVISED  MAY 30, 1980                                             
 !C                                                                       
 !C     INPUTS:                                                           
@@ -4142,7 +4142,7 @@
                                                                  
                 
     SUBROUTINE  MODIFY( N,L,IX,POST,JND,KND,Y,IC,IOUTD,CONST )
-        implicit none
+     
 !C     REVISED  MAY 29, 1980                                             
 !C                                                                       
 !C     THIS SUBROUTINE MODIFIES THE ORIGINAL DATA BY USING THE OUTPUTS   
@@ -4207,7 +4207,7 @@
     END SUBROUTINE
     
     SUBROUTINE SETD(W,IP,ID,C,IAR,AR)                                 
-      implicit none
+    
 #if defined __ICC
       !DIR$ ATTRIBUTES INLINE :: SETD
 #endif
@@ -4259,7 +4259,7 @@
                                                                
     SUBROUTINE  INIT(W,LENGTH,DOP,ISTEP)                              
       use omp_lib
-      implicit none
+   
           INTEGER(kind=4) :: LENGTH, ISTEP
           REAL(kind=8), dimension(LENGTH) :: W 
           REAL(kind=8), dimension((LENGTH-1)*ISTEP+1) :: DOP
@@ -4267,7 +4267,7 @@
           !DIR$ ASSUME_ALIGNED W:64,DOP:64
 #endif
           ! Locals
-          INTEGER(kind=4) :: J,ITEM,K
+          INTEGER(kind=4) :: I,J,ITEM,K
           REAL(kind=8) :: SUM
           REAL(kind=8) :: DDOP(LENGTH)
 #if defined __ICC
@@ -4302,8 +4302,7 @@
                                                                        
     SUBROUTINE  EXHSLD(H1,N1,H2,N2,H3,N3,H4,M1,IPOS)                  
       use omp_lib
-      implicit none
-          INTEGER(kind=4) :: N1, N2, N3, M1, IPOS
+         INTEGER(kind=4) :: N1, N2, N3, M1, IPOS
           REAL(kind=8), dimension(N1,IPOS)    :: H1
           REAL(kind=8), dimension(N2,N2+IPOS) :: H2
           REAL(kind=8), dimension(N3)         :: H3 
@@ -4391,7 +4390,7 @@
                     NDATA,RLIM,WEEK,IY,ALNDTD,F,DD,IART,ARFT,        &
                     ALPHA,WTRD,DELTA,IP,ID,YEAR,NPF              )
       use omp_lib
-      implicit none
+    
 
           INTEGER(kind=4) :: N1, N2, M1, ICOUNT, N, NH, NDATA, IY, IART,   &
                            IP, ID, YEAR, NPF
@@ -4417,7 +4416,7 @@
 #endif
           ! Locals
           INTEGER(kind=4) :: J,I,N2M1,ITEM,IDAR,ID0,IPOS,K,  &
-                           JTEM,J0,NMK,KP1
+                           JTEM,J0,NMK,KP1,N3
           REAL(kind=8) :: TEM,TEMO
           REAL(kind=8), dimension(N1)            ::  H3 
           REAL(kind=8), dimension(N2)            ::  H4 
@@ -4584,7 +4583,7 @@
       SUBROUTINE SETDC(H1,N1,H2,M1,FSEAS,N,WS,WZ,IARS,ARFS,IARN,      &
                         ARFN,BETA,GAMMA,IP,IS,NPF                   )
         use omp_lib
-        implicit none
+    
           
           INTEGER(kind=4) :: N1, M1, N, IARS, IARN, IP, IS, NPF
           REAL(kind=8), dimension(N1,1)  :: H1 
@@ -4782,7 +4781,7 @@
     
                 
     SUBROUTINE BSOLVE(H1,N1,H2,N2,A,M1,SQE,NANS,ERR)
-         implicit none
+       
       INTEGER(kind=4) :: N1, N2, M1 ,NANS
       REAL(kind=8), dimension(N1,N2+M1) ::  H1 
       REAL(kind=8), dimension(N2,N2+M1) ::  H2 
@@ -4794,7 +4793,7 @@
       REAL(kind=8) :: SQE
       ! Locals
       INTEGER(kind=4) :: LER,K,JJ,KA,KAM1,KKA,J,KCOPY,KM1,LTEM,KATEM, &
-                       N2MJ,L
+                       N2MJ,L,I,KK
       REAL(kind=8) :: AKA
 
       ERR(1:NANS)=0.0_8
@@ -4861,7 +4860,7 @@
     
     SUBROUTINE BISPECF(N,MH,CC0,C0,P1,P2,Q,A,BR,BI,RAT)
       use omp_lib
-      implicit none
+    
          
 !C
 !cc	   PROGRAM BISPEC
@@ -4906,7 +4905,7 @@
           INTEGER(kind=4) :: MH1,MJ1,L1,I,J,I2H,IS,ID,IR,   &
                            MMS1,NS1,MS,MC1,MC2,MC3,IRL,   &
                            MD,MR,MDR,MDS,MSR,MSD,MRD,  &
-                           MRS,NS,MMS
+                           MRS,NS,MMS,AMRS
           REAL(kind=8) ::   CST0, CST1, CST2, CST6, CST2I, CST6I, H, PI, PP, AI,  &
                           T, C00, SL0, TC1, TC2, TC3, TS1, TS3, CN0, SN0
           REAL(kind=8), dimension(MH+1,MH+1) :: C, CL, SL, CA1, CA2 
@@ -5118,7 +5117,7 @@
      
 
     SUBROUTINE SUBCA(CL,CA,MH,ISW)
-         implicit none
+        ! implicit none
 !C     ROWWISE SMOOTHING
 !C     CA(I,J)=
 !C              (CL(I-1,J)+2.0*CL(I,J)+CL(I+1,J))/4.0
@@ -5174,8 +5173,8 @@
      
 
     SUBROUTINE SUBCB(CA,CB,MH)
-        use omp_lib
-        implicit none
+       use omp_lib
+      
 !C     COLUMNWISE SMOOTHING
 !C     CB(I,J)=
 !C             (CA(I,J-1)+2.0*CA(I,J)+CA(I,J+1))/4.0
@@ -5243,7 +5242,7 @@
 
 
     SUBROUTINE SUBCD(CB,CD,MH,B)
-         implicit none
+       !  implicit none
 !C     OBLIQUE SMOOTHING
 !C     CD(I,J)=
 !C             (CB(I-1,J-1)+2.0*CB(I,J)+CB(I+1,J+1))/4.0
@@ -5307,7 +5306,7 @@
 
     SUBROUTINE SUBQ1(CL,SL,P,N,MH,A,RAT)
       use omp_lib
-      implicit none
+    !  implicit none
 !C     A MEASURE OF COHERENCE BETWEEN X(I)X(J) AND X(I+J) IS GIVEN BY Q1(
 !C     WHICH IS DEFINED BY
 !C     Q1(I,J)=(CL(I,J)**2+SL(I,J)**2)/(P(I)P(J)P(I+J)MH).
@@ -5394,7 +5393,7 @@
 
     SUBROUTINE SAUSP1(CXX,P1,P2,Q,N,LAGH3,LAGH1)
       use omp_lib
-      implicit none
+    !  implicit none
 !C     THIS SUBROUTINE COMPUTES POWER SPECTRUM.
 
           INTEGER(kind=4) :: N, LAGH3, LAGH1
@@ -5449,7 +5448,7 @@
     
     SUBROUTINE BLOCARF( ZS,N,LAG,NS0,KMAX,ZMEAN,SUM,AIC,C,B,A,SD,NP,    &
                         NE,SXX )
-        implicit none
+      !  implicit none
         
 !C
 !cc      PROGRAM  BLOCAR                                                   
@@ -5615,7 +5614,7 @@
     SUBROUTINE  NONSTB( SETX,Z,N,X,LAG,N0,NS,KMAX1,KSW,ISW,MJ1,KC,F,  &
                           AIC,C,B,A,SD )  
       use omp_lib
-      implicit none
+     ! implicit none
 !C                                                                       
 !C     BAYESIAN TYPE NON-STATIONARY AUTOREGRESSIVE MODEL FITTING PROCEDUR
 !C                                                                       
@@ -5685,7 +5684,7 @@
 #if defined __ICC
           !DIR$     ATTRIBUTES ALIGN : 64 :: D,SDD,AICC,DIC,W,B1
 #endif
-          EXTERNAL  SETX
+        !  EXTERNAL  SETX
                                                                        
           K = LAG + KSW                                                     
           KMAX = KMAX1-1
@@ -5792,7 +5791,7 @@
     SUBROUTINE  BLOMARF( ZS,N,ID,C,LAG,NS0,KMAX,ZMEAN,ZVARI,BW,AIC,A,     &
                             E,AICB,LKS,LKE,M )
       
-      implicit none
+     ! implicit none
         
    
 !C
@@ -5934,7 +5933,7 @@
     SUBROUTINE  MNONSB( Z,X,G,H,E,KSW,LAG,N0,NS,ID,KMAX1,KC,MJ,MJ1,     &
          MJ3,C,AIC,A,B,AICB,F1,F2 )
       use omp_lib
-      implicit none
+    !  implicit none
          
 !C       ----------------------------------------------------------------
 !C       THE FOLLOWING SUBROUTINES ARE DIRECTLY CALLED BY THIS SUBROUTINE
@@ -6189,7 +6188,7 @@
                         M,AICM,SDM,A1,SD,AIC,DIC,AICB,SDB,EK,A2,IND,C,C1,C2,B,OEIC,ESUM,  &
                         OMEAN,OM,E,EMEAN,VARI,SKEW,PEAK,COV,SXX )
       use omp_lib
-      implicit none
+    !  implicit none
          
 !cc      PROGRAM BSUBST
 !C.......................................................................
@@ -6432,7 +6431,7 @@
     real(kind=8)  FUNCTION BICOEF( K,J )
    
        use omp_lib
-       implicit none
+      ! implicit none
 #if defined __ICC
        !DIR$ ATTRIBUTES INLINE :: BICOEF
 #endif
@@ -6503,7 +6502,7 @@
     SUBROUTINE  CHECK( PRDCT,X,A,K,L,IL,NPS,NPE,MJ,E,F,EMEAN,VARI,     &
                         SKEW,PEAK,COV,MJ2 )
       use omp_lib
-      implicit none
+    !  implicit none
 !C                                                                       
 !C     THIS SUBROUTINE DRAWS HISTGRAMS AND AUTOCOVARIANCE FUNCTION OF ORI
 !C     DATA OR PREDICTION ERRORS.                                        
@@ -6675,7 +6674,7 @@
                         
     SUBROUTINE  MOMENT( X,N,F1,F2,F3,F4 )
       use omp_lib
-      implicit none
+     ! implicit none
 !C                                                                       
 !C          +--------------------+                                       
 !C          ! MOMENT COMPUTATION !                                       
@@ -6736,7 +6735,7 @@
                                                                
                                                                   
     SUBROUTINE  PRDCT1( Z,A,M,L,IL,NPS,NPE,MJ,EZ )
-      implicit none
+     ! implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES SEVARAL STEP AHEAD PREDICTION VALUE OF AN
 !C     AUTOREGRESSIVE MOVING AVERAGE MODEL.                              
@@ -6799,7 +6798,7 @@
     
    
     SUBROUTINE  PRDCT2( Z,A,K,L,IL,NPS,NPE,MJ1,EZ )
-      implicit none
+    !  implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES SEVERAL STEPS AHEAD PREDICTION VALUES OF 
 !C     NON-LINEAR REGRESSION MODEL.                                      
@@ -6899,7 +6898,7 @@
     
                                      
     SUBROUTINE  SETLAG( K,LAG1,LAG2,LAG3,LAG4,LAG5 )
-      implicit none
+   !   implicit none
 !C                                                                       
 !C     THIS SUBROUTINE  PREPARES SPECIFICATION OF REGRESSORS (L1(I),L2(I)
 !C     (I=1,...,K) FOR THE FITTING OF (POLYNOMIAL TYPE) NON-LINEAR MODEL.
@@ -6991,7 +6990,7 @@
     END  SUBROUTINE
     
     SUBROUTINE  SETX2( Z,N0,L,K,MJ1,JSW,LAG,X )   
-        implicit none
+     !   implicit none
 !C                                                                       
 !C          +----------------------------------------+                   
 !C          ! MATRIX X SET UP (FOR NON-LINEAR MODEL) !                   
@@ -7070,7 +7069,7 @@
     END SUBROUTINE
     
     SUBROUTINE  SETX4( Z,NO,L,K,MJ1,JSW,LAG,X )
-      implicit none
+    !  implicit none
          
 !C                                                                       
 !C     THIS SUBROUTINE PREPARES DATA MATRIX X FROM DATA VECTOR Z(I) (I=NO
@@ -7139,7 +7138,7 @@
     END SUBROUTINE
     
     SUBROUTINE  SRTMIN( X,N,IX )
-      implicit none
+    !  implicit none
          
 !C                                                                       
 !C       THIS SUBROUTINE ARRANGES X(I) (I=1,N) IN ORDER OF INCREASING    
@@ -7190,7 +7189,7 @@
 
     SUBROUTINE  SUBSPC( B,K,N,EK,IND,C,C1,C2,OEIC,ESUM1,OMEAN,OM )
       use omp_lib
-      implicit none
+      !implicit none
          
 !C                                                                       
 !C       THIS SUBROUTINE PRODUCES BAYESIAN ESTIMATES OF PARTIAL CORRELATI
@@ -7491,7 +7490,7 @@
     SUBROUTINE  SBBAYS( X,K,N,IPR,MJ1,A,SD,EK,AIC,IND,C,C1,C2,B,       &
                         OEIC,ESUM,OMEAN,OM  ) 
       use omp_lib
-      implicit none
+    !  implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES BAYESIAN MODEL BASED ON ALL SUBSET       
 !C     REGRESSION MODELS USING THE OUTPUT OF SUBROUTINE REDUCT.          
@@ -7611,7 +7610,7 @@
     SUBROUTINE CANARMF(N,LAGH3,CYY,COEF,IFPL1,SD,AIC,OAIC,MO,A,     &
              NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,MJ1,MJ2)
       use omp_lib
-      implicit none
+    !  implicit none
         
      
 !C
@@ -7902,7 +7901,7 @@
 
     SUBROUTINE ALPHAS(A,M1M,BETA,ALPHA)
       use omp_lib
-      implicit none
+     ! implicit none
 #if defined __ICC
       !DIR$ ATTRIBUTES INLINE :: ALPHAS
 #endif
@@ -7946,7 +7945,7 @@
 
     SUBROUTINE NSICP(CYY,L3,L1,N,AST1,NA,COEF,SD,AIC,AA,MO,OAIC)      
       use omp_lib
-      implicit none
+     ! implicit none
          
 !C     COMMON SUBROUTINE
 !C     THIS SUBROUTINE FITS AUTOREGRESSIVE MODELS OF SUCCESSIVELY
@@ -8111,7 +8110,7 @@
    
     SUBROUTINE SVCMAT(VC,VT,M9,AST1,NA)
       use omp_lib
-      implicit none
+    !  implicit none
 #if defined __ICC
       !DIR$ ATTRIBUTES INLINE :: SVCMAT
 #endif
@@ -8153,7 +8152,7 @@
 #endif
     SUBROUTINE SVTR(VV,V,AST1,NA,M1,MJ1)
       use omp_lib
-      implicit none
+     ! implicit none
          
 !C     THIS SUBROUTINE COMPUTES FUTURE SET CANONICAL WEIGHTS DEFINED BY
 !C     V=VV'*AST1.
@@ -8206,7 +8205,7 @@
 #endif
     SUBROUTINE SVECT(CYY,L3,AST1,NA,VC,M9,M1,INDX)
       use omp_lib
-      implicit none
+      !implicit none
 !C     THIS SUBROUTINE COMPUTES VC=(M1-TH ROW OF AST1)*(CYY MATRIX)
 !C     AST1 IS AN OUTPUT OF NSICP.
 
@@ -8248,7 +8247,7 @@
                NC,N1,N2,VV,Z,Y,XX,NDT,X3,X3MIN,MIN3,F,M1NH,NH,G,IAW,VF,                  &
                LMAX,MJ0,MJ1)
       use omp_lib
-      implicit none
+      !implicit none
       
         
 !cc	PROGRAM CANOCA
@@ -8349,7 +8348,10 @@
 #if defined __ICC          
           !DIR$ ASSUME_ALIGNED VV:64
 #endif
-          REAL(kind=8), dimension(MJ1,MJ1) :: Z,Y,XX,X3,F,VF
+#if defined __ICC
+          REAL(kind=8), dimension(MJ1*MJ1) :: VF
+#endif
+          REAL(kind=8), dimension(MJ1,MJ1) :: Z,Y,XX,X3,F
 #if defined __ICC
           !DIR$ ASSUME_ALIGNED Z:64,Y:64,XX:64,X3:64,F:64,VF:64
 #endif
@@ -8732,17 +8734,11 @@
 !C     TRANSITION MATRIX (F) COMPUTATION
 
           AII=CST1/VV(M1,M1,NC)
-#if defined __ICC
-!DIR$ VECTOR ALIGNED          
-          !DIR$ SIMD VECTORLENGTHFOR(REAL(KIND=8))
-#elif defined __GFORTRAN__
-             !$OMP SIMD LINEAR(J:1)
-#endif          
+        
           DO 5100 I=1,M1M
                   IAW=IAW+1
-
-                  F(I,NC)=-VV(M1,I,NC)*AII
-                  VF(IAW)=F(I,NC)
+                  F(I,NC)= -VV(M1,I,NC)*AII
+                 ! VF(IAW)=F(I,NC)
      5100 CONTINUE
 
           M1=M1-1
@@ -8772,7 +8768,7 @@
 #endif
     SUBROUTINE AVMLVC(Y,Z,MM,FL,MJ1)
       use omp_lib
-      implicit none
+     ! implicit none
          
 !C     Z=FL'*Y
 !C     FL: LOWER TRIANGLE
@@ -8808,7 +8804,7 @@
 #endif
     SUBROUTINE BLMLVC(Y,Z,MM,FL,MJ1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     Z=FL*Y
 !C     FL: LOWER TRIANGLE
 !C     Y: VECTOR
@@ -8846,7 +8842,7 @@
 #endif
     SUBROUTINE MWTFL(V,VV,MM,FL,MJ1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     VV=V'*FL
 
           INTEGER(kind=4) :: MM, MJ1
@@ -8876,7 +8872,7 @@
     END SUBROUTINE
     
     SUBROUTINE NLTIV(R,RIN,DET,K)
-        implicit none
+        !implicit none
 !C     INVERSE OF R IS FACTORI
 !C     INVERSE OF R IS FACTORED INTO THE FORM L'*L IS
 !C     INVERSE OF R IS FACTORED INTO THE FORM L'*L. L,LOWER
@@ -8932,7 +8928,7 @@
     SUBROUTINE NWFPEC(AAIC,OAIC,CV,AST1,OSD,AO,AAO,L,IR,IL,N,IFPEC,    &
                       MJ0,LMAX2,LCV1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     AR-FITTING
 !C     AUTOREGRESSIVE MODEL FITTING BY THE MINIMUM AIC PROCEDURE.
 
@@ -8962,7 +8958,7 @@
           INTEGER(kind=4) :: IP,L1,II,JJ,MS,INX,IMI
           REAL(kind=8)    ::   AIC, SFDT, SDDET, SFDET
           REAL(kind=8), dimension(L,IR+IL,IR+IL) :: A1, B1
-          REAL(kind=8), dimension(IR+IL,IR+IL) :: D, SE, SF,XSD, XSF,  E, Z1, SFL, B
+          REAL(kind=8), dimension(IR+IL,IR+IL) :: D, SE, SF,XSD, XSF,  E, Z1, SFL, B,SD
           REAL(kind=8), dimension(IR+IL) :: RIN
 #if defined __ICC
 !DIR$ ATTRIBUTES ALIGN : 64 :: A1,B1,D,SE,SF,XSD,XSF,E,Z1,SFL,B  
@@ -9170,7 +9166,7 @@
 
     SUBROUTINE SAIC (SD,N,K,MS,AIC)
       use omp_lib
-      implicit none
+      !implicit none
 !C     AIC COMPUTATION.
 !C     SD: COVARIANCE MATRIX OF INNOVATION
 
@@ -9209,7 +9205,7 @@
 #endif
     SUBROUTINE SBRUGT(MO,ID,AST1,CV,RGT,MJ1,MJ,LMAX2,LCV1)
       use omp_lib
-      implicit none
+      !implicit none
         
 !C     THIS SUBROUTINE COMPUTES MATRIX R12*G'.
 !C     INPUTS REQUIRED:
@@ -9317,7 +9313,7 @@
 
     SUBROUTINE SUBBMA(AO,B,NH,M1,ID,IQ,MJ1,MJ0)
       use omp_lib
-      implicit none
+      !implicit none
          
 !C     AR-FITTING
 !C     B-MATRIX COMPUTATION
@@ -9445,7 +9441,7 @@
 #endif
     SUBROUTINE VECMTX(X,Z,NH,RGT,MM,NN,MJ1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     Z=X*Y (X,Z: VECTORS, Y: SUBMATRIX)
 
           INTEGER(kind=4), dimension(MM) :: NH 
@@ -9490,7 +9486,7 @@
 #endif
     SUBROUTINE BLMULP(X,Y,Z,MM,NN)
       use omp_lib
-      implicit none
+      !implicit none
 !C     COMMON SUBROUTINE
 !C     Z=X*Y (X: LOWER TRIANGLE)
 
@@ -9529,7 +9525,7 @@
 #endif
     SUBROUTINE SUBDETC(X,XDETMI,MM)
       use omp_lib
-      implicit none
+      !implicit none
 !C     COMMON SUBROUTINE
 !C     THIS SUBROUTINE COMPUTES THE DETERMINANT OF UPPER LEFT MM X MM
 !C     OF X.  FOR GENERAL USE STATEMENTS 20-21 SHOULD BE RESTORED.
@@ -9577,7 +9573,7 @@
          
 
     SUBROUTINE AUSP(FC,P1,LAGH1,A,LA1)
-        implicit none
+        !implicit none
 !C     THIS SUBROUTINE COMPUTES SMOOTHED AUTO SPECTRUM.
 !C     FC: OUTPUT OF FGERCO
 !C     P1: SMOOTHED SPECTRUM
@@ -9612,7 +9608,7 @@
 
     SUBROUTINE COEFAB(A1,B1,D,E,MS,L,K)
       use omp_lib
-      implicit none
+     ! implicit none
 !C     AR-FITTING
 !C     THIS SUBROUTINE COMPUTES FORWARD(A) AND BACKWARD(B) PREDICTOR
 !C     COEFFICIENTS.
@@ -9692,7 +9688,7 @@
 #endif
     SUBROUTINE CORNOM(C,CN,LAGH1,CX0,CY0)
       use omp_lib
-      implicit none
+      !implicit none
 !C     NORMALIZATION OF COVARIANCE
 
           INTEGER(kind=4) :: LAGH1
@@ -9724,7 +9720,7 @@
 #endif
     SUBROUTINE CROSCO(X,Y,N,C,LAGH1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     THIS SUBROUTINE COMPUTES C(L)=COVARIANCE(X(S+L),Y(S))
 !C     (L=0,1,...,LAGH1-1).
 
@@ -9770,7 +9766,7 @@
 #endif
     SUBROUTINE DMEADL(X,N,XMEAN)
       use omp_lib
-      implicit none
+      !implicit none
           INTEGER(kind=4) :: N
           REAL(kind=8), dimension(N) :: X
 #if defined __ICC
@@ -9800,7 +9796,7 @@
    !DIR$ ATTRIBUTES INLINE :: ECORCO
 #endif
     SUBROUTINE ECORCO(FC,LAGH1,FC1,LAGSHF,LA1)
-       implicit none
+       !implicit none
 !C     FC SHIFT-RIGHT BY LA FOR REAL PART END CORRECTION
 
           INTEGER(kind=4) :: LAGH1, LAGSHF, LA1
@@ -9836,7 +9832,7 @@
     
 
     SUBROUTINE FGER1(G,GR,GI,LG,H,JJF)
-        implicit none
+        !implicit none
 !C     FOURIER TRANSFORM(GOERTZEL METHOD)
 !C     THIS SUBROUTINE COMPUTES ONE VALUE OF THE FOURIER TRANSFORM BY
 !C     GOERTZEL METHOD.
@@ -9885,7 +9881,7 @@
     END SUBROUTINE
     
     SUBROUTINE FGERCO(G,LGP1,FC,LF1)
-        implicit none
+        !implicit none
 !C     FOURIER TRANSFORM (GOERTZEL METHOD)
 !C     THIS SUBROUTINE COMPUTES FOURIER TRANSFORM OF G(I),I=0,1,...,LG AT
 !C     FREQUENCIES K/(2*LF),K=0,1,...,LF AND RETURNS COSIN TRANSFORM IN
@@ -9939,7 +9935,7 @@
     
     SUBROUTINE INVDET(X,XDET,MM,MJ)
       use omp_lib
-      implicit none
+      !implicit none
         
 !C                                                                       
 !C       THE INVERSE AND DETERMINANT OF X COMPUTATION                    
@@ -9961,7 +9957,7 @@
 #endif
           REAL(kind=8) :: XDET
           ! Locals
-          INTEGER(kind=4) :: L,I,MAXI,J,MM1
+          INTEGER(kind=4) :: L,I,MAXI,J,MM1,JJ,MMJ
           REAL(kind=8)    :: XMAXP, XC
           INTEGER(kind=4), dimension(MM) :: IDS
 #if defined __ICC
@@ -10045,7 +10041,7 @@
     END SUBROUTINE
     
     SUBROUTINE INVDETC(X,XDET,MM)
-         implicit none
+        ! implicit none
 !C     THIS SUBROUTINE COMPUTES THE INVERSE AND DETERMINANT OF
 !C     UPPER LEFT MM X MM OF COMPLEX MATRIX X.
 !C     X: ORIGINAL MATRIX
@@ -10130,7 +10126,7 @@
     
                                       
     SUBROUTINE LTINV(R,K)
-       implicit none
+       !implicit none
 !C     COMMON SUBROUTINE                                                 
 !C     THIS SUBROUTINE FACTORIZES (R(I,J): I,J=1,K) INTO R=L*L',         
 !C     WITH L LOWER TRIANGLE, AND GIVES L' ON AND ABOVE THE DIAGONAL OF R
@@ -10170,7 +10166,7 @@
 #endif
     SUBROUTINE LTRVEC(X,Y,Z,MM,NN)
       use omp_lib
-      implicit none
+      !implicit none
 !C     Z=X*Y                                                             
 !C     (VECTOR Z)=(LOWER TRIANGLE OF UPPER LEFT MM X NN OF X)*(VECTOR Y) 
 !C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE            
@@ -10214,7 +10210,7 @@
 #endif
     SUBROUTINE MATADL(X,Y,MM,NN)
       use omp_lib
-      implicit none
+      !implicit none
 !C     MATRIX ADDITION
 !C     X=X+Y
 !C     (UPPER LEFT MM X NN OF X)=(UPPER LEFT MM X NN OF X)+(UPPER LEFT
@@ -10244,7 +10240,7 @@
     
 
     SUBROUTINE MIXRAD(Z,N,N2P,ISG)
-      implicit none
+      !implicit none
          
 !C     COMMON SUBROUTINE
 !C     MIXED RADIX FAST FOURIER TRANSFORM
@@ -10353,7 +10349,7 @@
 #endif
     SUBROUTINE MULPLY(X,Y,Z,MM,NN,NC)
       use omp_lib
-      implicit none
+      !implicit none
 !C     MATRIX MULTIPLICATION
 !C     Z=X*Y
 !C     (UPPER LEFT MM X NC OF Z)=(UPPER LEFT MM X NN OF X)*(UPPER LEFT
@@ -10402,7 +10398,7 @@
 #endif
     SUBROUTINE MULVER(X,Y,Z,MM,NN)
       use omp_lib
-      implicit none
+      !implicit none
 !C     COMMON SUBROUTINE                                                 
 !C     Z=X*Y (X: MATRIX  Y,Z: VECTORS)                                   
 !C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE            
@@ -10444,7 +10440,7 @@
 
     SUBROUTINE NEWSE(A1,CV,SE,MS,L,K,LCV1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     SE COMPUTATION
 
           INTEGER(kind=4) :: MS, L, K, LCV1
@@ -10509,7 +10505,7 @@
     !DIR$ ATTRIBUTES INLINE ::  REARRA
 #endif
     SUBROUTINE REARRA(X,INW,IP0,IP)
-         implicit none
+         !implicit none
 !C     SUBMATRIX REARRANGEMENT
 !C     X: ORIGINAL MATRIX
 !C     INW: INDICATOR OF ADOPTED ROWS
@@ -10567,7 +10563,7 @@
 #endif
     SUBROUTINE REARRAC(X,INW,IP0,IP)
       use omp_lib
-      implicit none
+      !implicit none
 !C     SUBMATRIX REARRANGEMENT
 !C     X: ORIGINAL MATRIX
 !C     INW: INDICATOR OF ADOPTED ROWS
@@ -10635,7 +10631,7 @@
 #endif
     SUBROUTINE SIGNIF(P1,P2,P3,LAGH1,N)
       use omp_lib
-      implicit none
+      !implicit none
 !C     SIGNIFICANCE TEST
 !C     P1: SPECTRUM SMOOTHED BY WINDOW W1
 !C     P2: SPECTRUM SMOOTHED BY WINDOW W2
@@ -10675,7 +10671,7 @@
 #endif
     SUBROUTINE SMOSPE(X,LAGSHF,A,LA1,Z,LAGH1)
       use omp_lib
-      implicit none
+      !implicit none
 !C     SPECTRUM SMOOTHING BY THE FORMULA
 !C     Z(I)=A(0)X(I)+A(1)(X(I+1)+X(I-1))+...+A(LA)(X(I+LA)+X(I-LA))
 !C     I=0,1,...,LAGH.
@@ -10724,7 +10720,7 @@
 #endif
     SUBROUTINE SUBD12(N,LAGH,K,D1,D2)
       use omp_lib
-      implicit none
+      !implicit none
 !C     CONSTANTS D1,D2 COMPUTATION
 
           INTEGER(kind=4) :: N, LAGH, K
@@ -10779,7 +10775,7 @@
 
     SUBROUTINE SUBDET(X,XDETMI,MM,MJ)
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C       DETERMINANT OF X COMPUTATION                                    
 !C                                                                       
@@ -10838,7 +10834,7 @@
 
     SUBROUTINE SUBNOS(X,SD,IP,RS,R,MJ)
       use omp_lib
-      implicit none
+      !implicit none
 !C     THIS SUBROUTINE COMPUTES RELATIVE POWER CONTRIBUTIONS.
 !C     MJ: ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE
 !C     IP: DIMENSION OF RS1 OR RL (LESS THAN 11)
@@ -10901,7 +10897,7 @@
 #endif
     SUBROUTINE SUBTAL(X,Y,MM,NN)
       use omp_lib
-      implicit none
+      !implicit none
 !C     COMMON SUBROUTINE
 !C     MATRIX SUBTRACTION
 !C     X=X-Y
@@ -10937,7 +10933,7 @@
 #endif
     SUBROUTINE TRAMDL(X,Y,Z,MM,NN,NC)
       use omp_lib
-      implicit none
+      !implicit none
 !C     TRANSPOSE MULTIPLY (LEFT)
 !C     Z=X'*Y
 !C     (UPPER LEFT NN X NC OF Z)=(UPPER LEFT MM X NN OF X)'*(UPPER LEFT
@@ -10988,7 +10984,7 @@
 #endif
     SUBROUTINE TRAMDR(X,Y,Z,MM,NN,NC)
       use omp_lib
-      implicit none
+      !implicit none
 !C     COMMON SUBROUTINE
 !C     TRANSPOSE MULTIPLY (RIGHT)
 !C     Z=X*Y'
@@ -11039,7 +11035,7 @@
 #endif
     REAL(kind=8) FUNCTION DSUMF(X,N)
       use omp_lib
-      implicit none
+      !implicit none
           INTEGER(kind=4) :: N
           REAL(kind=8), dimension(N) :: X
 #if defined __ICC
@@ -11064,7 +11060,7 @@
     
 
    REAL(kind=8) FUNCTION RANDM(K,K1,K2,K3,K4)
-         implicit none
+         !implicit none
 !C     RANDOM NUMBER GENERATOR
           INTEGER(kind=4) :: K, K1, K2, K3, K4
           ! Locals
@@ -11108,7 +11104,7 @@
    !DIR$ ATTRIBUTES INLINE :: DINIT
 #endif
    SUBROUTINE DINIT(A,N,DD)
-          implicit none
+          !implicit none
           INTEGER(kind=4) :: N
           REAL(kind=8), dimension(N) :: A
 #if defined __ICC          
@@ -11128,7 +11124,7 @@
 #endif
    SUBROUTINE INNERP(DD1,DD2,DINP12,INP)
      use omp_lib
-     implicit none
+     !implicit none
 !C     COMMON SUBROUTINE
 !C     INNER-PRODUCT OF DD1 AND DD2.
 
@@ -11159,7 +11155,7 @@
    
 
    SUBROUTINE MATINV(M,HS,NN)
-        implicit none
+       ! implicit none
 !C      HS IS AN M*M MATRIX (IN COMMON AREA).
 !C     HS-INVERSE IS RETURNED IN HS.
 !C     DETERMINANT IS RETURNED IN DET.
@@ -11176,7 +11172,7 @@
 
    SUBROUTINE MSVD(U,V,Q,M,N,MJ2,MJ1)
      use omp_lib
-     implicit none
+     !implicit none
 !C     COMMON SUBROUTINE
 !C     THIS SUBROUTINE COMPLETES THE SINGULAR VALUE
 !C     DECOMPOSITION OF A REAL RECTANGULAR MATRIX A INTO THE FORM
@@ -11484,7 +11480,7 @@
 #endif
    SUBROUTINE SUBTAC(X,Y,Z,MM,NN)
           use omp_lib
-          implicit none
+          !implicit none
 !C     COMMON SUBROUTINE
 !C     MATRIX SUBTRACTION
 !C     Z=X-Y
@@ -11513,7 +11509,7 @@
    
                     
    SUBROUTINE  ADDVAR( X,IND,JND,K,L,M,MJ )  
-         implicit none
+         !implicit none
 !C                                                                       
 !C         +-----------------------------------------------------------+ 
 !C         ! ADDITION OF THE VARIABLE M AS THE JJ-TH REGRESSOR (JJ<=L) ! 
@@ -11580,7 +11576,7 @@
 #endif
    SUBROUTINE  AICCOM( X,N,M,K,MJ,SD,AIC )  
      use omp_lib
-     implicit none
+     !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES INNOVATION VARIANCE AND AIC OF THE MODEL 
 !C     WITH M REGRESSORS.                                                
@@ -11630,7 +11626,7 @@
    SUBROUTINE  ARBAYS( X,D,K,N,ISW,MJ1,SD,AIC,DIC,AICM,SDMIN,      &
                          IMIN,A,B1,B,C,SDB,PN,AICB )  
      use omp_lib
-     implicit none
+     !implicit none
 !C                                                                       
 !C         +-----------------------------------------------+             
 !C         ! AUTOREGRESSIVE MODEL FITTING (BAYESIAN MODEL) !             
@@ -11808,7 +11804,7 @@
     
     
     SUBROUTINE  ARMFIT( X,K,LAG,N,ISW,MJ1,A,IMIN,SD,AIC,DIC,SDMIN,AICM )
-      implicit none
+      !implicit none
         
 !C                                                                       
 !C          +------------------------------+                             
@@ -11895,7 +11891,7 @@
                       
     SUBROUTINE  BAYSPC( X,C,N,K,ISW,MJ1,B,B1,D )
       use omp_lib
-      implicit none
+     ! implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES PARTIAL AUTOCORRELATION COEFFICIENTS B(I)
@@ -12000,7 +11996,7 @@
 
     SUBROUTINE  BAYSWT( AIC,AICM,K,ISW,C )
       use omp_lib
-      implicit none
+      !implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES BAYESIAN WEIGHT OF AR-MODEL OF EACH ORDER
@@ -12110,7 +12106,7 @@
 
     SUBROUTINE  COEF2( A,M,ID,II,JND,LMAX,MM,KSW,MSW,MJ1,B,C,E ) 
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     COMPOSITION OF AR-COEFFICIENT MATRICES WITH INSTANTANEOUS RESPONSE
 !C                                                                       
@@ -12182,7 +12178,7 @@
     END SUBROUTINE
     
     SUBROUTINE  COMAIC( X,N,K,MJ1,SD,AIC ) 
-        implicit none
+        !implicit none
 !C                                                                       
 !C          +-----------------------------------------+                  
 !C          ! INNOVATION VARIANCE AND AIC COMPUTATION !                  
@@ -12228,7 +12224,7 @@
     !DIR$ ATTRIBUTES INLINE :: COPY
 #endif
     SUBROUTINE  COPY( X,K,II,JJ,MJ1,MJ2,Y ) 
-       implicit none
+      ! implicit none
 !C                                                                       
 !C         +-----------------------+                                     
 !C         ! MAKE A COPY OF X ON Y !                                     
@@ -12329,7 +12325,7 @@
     !DIR$ ATTRIBUTES INLINE :: FOUGER
 #endif
     SUBROUTINE FOUGER(G,LGP1,FC,FS,LF1) 
-        implicit none
+        !implicit none
 !C                                                                       
 !C     FOURIER TRANSFORM (GOERTZEL METHOD)                               
 !C     THIS SUBROUTINE COMPUTES FOURIER TRANSFORM OF G(I),I=0,1,...,LG AT
@@ -12397,7 +12393,7 @@
                   
     SUBROUTINE  HUSHL1( X,MJ1,K,L,M,IND,JND ) 
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PERFORMS THE HOUSEHOLDER TRANSFORMATION OF THE MAT
 !C                                                                       
@@ -12504,7 +12500,7 @@
                             
     SUBROUTINE  HUSHLD( X,MJ1,N,K ) 
       use omp_lib
-      implicit none
+     ! implicit none
 !C                                                                       
 !C          +----------------------------+                               
 !C          ! HOUSEHOLDER TRANSFORMATION !                               
@@ -12606,7 +12602,7 @@
     END SUBROUTINE
     
     SUBROUTINE  MAICE( AIC,SD,K,AICM,SDM,IMIN,DIC )
-        implicit none
+       ! implicit none
 !C                                                                       
 !C             +-------------+                                           
 !C             ! AIC DISPLAY !                                           
@@ -12655,7 +12651,7 @@
     
     SUBROUTINE  MARCOF( D,E,ID,M,MJ3,A,B )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES COEFFICIENT MATRICES OF MULTI-VARIATE AUT
 !C     REGRESSIVE MODEL FROM PARTIAL AUTOREGRESSION COEFFICIENT MATRICES 
@@ -12752,7 +12748,7 @@
     SUBROUTINE  MARFIT( X,N,ID,M,KSW,MJ1,MJ2,MJ3,MJ4,ISW,IPR,AIC,SD,      &
                           DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AAIC )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C         MULTI-VARIATE AUTOREGRESSIVE MODEL FITTING                    
 !C       ----------------------------------------------------------------
@@ -13163,7 +13159,7 @@
     SUBROUTINE  MBYSAR( X,N,M,ID,KSW,MJ1,MJ2,SD1,AIC1,DIC1,         &
                         AICM1,SDMIN1,IMIN1,C,D,A,B,G,H,E,AICB,EK )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES MULTI-VARIATE AUTOREGRESSIVE MODELS BY A 
 !C     BAYESIAN PROCEDURE USING THE OUTPUT OF SUBROUTINE MREDCT.         
@@ -13413,7 +13409,7 @@
 #endif
     SUBROUTINE  MBYSPC( G,H,C,D,M,ID,MJ2 )
       use omp_lib
-      implicit none
+      !implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES PARTIAL AUTOREGRESSION COEFFICIENTS G(I),
@@ -13484,7 +13480,7 @@
        
     SUBROUTINE  MCOEF( BI,B,C,EI,E,EX,ID,LMAX,KSW,IPR,MJ2,MJ3 )
       use omp_lib
-      implicit none
+      !implicit none
        
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES AND PRINTS OUT THE COEFFICIENT MATRICES O
@@ -13698,7 +13694,7 @@
     END SUBROUTINE
     
     SUBROUTINE  MPARCO( X,ID,M,KSW,IFG,MJ1,MJ3,G,H ) 
-        implicit none
+        !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES LEAST SQUARES ESTIMATES OF PARTIAL       
 !C     AUTOREGRESSION COEFFICIENT MATRICES OF FORWARD AND BACKWARD       
@@ -13787,7 +13783,7 @@
                          
     SUBROUTINE MRDATA( ZS,Z,N,ID,C,ZMEAN,ZVARI )
       use omp_lib
-      implicit none
+     ! implicit none
 !C                                                                       
 !C         +-----------------------------------------+                   
 !C         ! ORIGINAL DATA LOADING AND MEAN DELETION !                   
@@ -13911,7 +13907,7 @@
     
          
     SUBROUTINE  MREDCT( Z,NMK,N0,LAG,ID,MJ,MJ1,KSW,X ) 
-          implicit none
+          !implicit none
 !C                                                                       
 !C         +-------------------------+                                   
 !C         ! HOUSEHOLDER'S REDUCTION !                                   
@@ -14000,7 +13996,7 @@
     
     SUBROUTINE  MSDCOM( X,A,N,M,ID,KSW,MJ,E,SD )
       use omp_lib
-      implicit none
+      !implicit none
         
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES THE ONE-STEP AHEAD PREDICTION ERROR VARIA
@@ -14116,7 +14112,7 @@
       
 
     SUBROUTINE  MSETX1( Z,N0,L,LAG,ID,MJ,MJ1,JSW,KSW,X )   
-         implicit none
+         !implicit none
 !C                                                                       
 !C          +-----------------+                                          
 !C          ! MATRIX X SET UP !                                          
@@ -14192,7 +14188,7 @@
                       
     SUBROUTINE  NRASPE( SGME2,A,B,L,K,H,SXX )
       use omp_lib
-      implicit none
+      !implicit none
        
 !C     THIS SUBROUTINE COMPUTES POWER SPECTRUM OF AN AR-MA PROCESS       
 !C     X(N)=A(1)X(N-1)+...+A(L)X(N-L)+E(N)+B(1)E(N-1)+...+B(K)E(N-K),    
@@ -14280,7 +14276,7 @@
 
     SUBROUTINE  PARCOR( AR,K,PAC ) 
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C  ...  TRANSFORMATION FROM AR COEFFICIENTS TO PARCOR                   
 !C                                                                       
@@ -14349,7 +14345,7 @@
 #endif
     SUBROUTINE  RECOEF( X,M,K,MJ,A )
       use omp_lib
-      implicit none
+      !implicit none
       
 !C          +-------------------------------------+                      
 !C          ! REGRESSION COEFFICIENTS COMPUTATION !                      
@@ -14408,7 +14404,7 @@
     
     SUBROUTINE  REDATA( XS,X,N,XMEAN,SUM )
       use omp_lib
-      implicit none
+      !implicit none
        
 !C                                                                       
 !C          +---------------------------------------+                    
@@ -14496,7 +14492,7 @@
     
              
     SUBROUTINE  REDUCT( SETX,Z,NMK,N0,K,MJ1,LAG,X ) 
-       implicit none 
+       !implicit none 
 !C                                                                       
 !C          +-----------------------+                                    
 !C          ! HOUSEHOLDER REDUCTION !                                    
@@ -14584,7 +14580,7 @@
 #endif
     SUBROUTINE  SDCOMP( X,A,N,K,MJ,SD )
       use omp_lib
-      implicit none
+      !implicit none
          
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES THE RESIDUAL VARIANCE OF THE REGRESSION M
@@ -14653,7 +14649,7 @@
     END SUBROUTINE
     
     SUBROUTINE  SETX1( Z,N0,L,K,MJ1,JSW,LAG,X )  
-        implicit none
+        !implicit none
 !C                                                                       
 !C          +-----------------+                                          
 !C          ! MATRIX X SET UP !                                          
@@ -14718,7 +14714,7 @@
     
     SUBROUTINE  SOLVE( C,R,ID,II,MJ2,MJ3,G )   
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE SOLVES THE MATRIX EQUATION  C*G=R,  WHERE THE MATR
 !C     IS UPPER TRIANGULAR.                                              
@@ -14783,7 +14779,7 @@
     
     SUBROUTINE  SRCOEF( X,M,K,N,MJ,JND,A,SD,AIC )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     SUBSET REGRESSION COEFFICIENTS AND RESIDUAL VARIANCE COMPUTATION. 
 !C                                                                       
@@ -14912,7 +14908,7 @@
     
 
     REAL(kind=8) FUNCTION DMIN( X,N )
-         implicit none
+         !implicit none
 !C                                                                       
 !C       THIS FUNCTION RETURNS THE MINIMUM VALUE AMONG X(I) (I=1,N).     
 !C                                                                       
@@ -14936,7 +14932,7 @@
     END FUNCTION
     
     SUBROUTINE COVGENF(L,K,F,G,C,CN)
-         implicit none
+         !implicit none
      
 !C
 !cc	PROGRAM COVGEN
@@ -15044,7 +15040,7 @@
     
     SUBROUTINE  DECOMPF(DATA,N,IPAR,TREND,SEASNL,AR,   &
                           TRAD,NOISE,para,imiss,omaxx,ier )
-            implicit none        
+            !implicit none        
 
     
 
@@ -15090,7 +15086,7 @@
     SUBROUTINE  DECOMPFF(DATA,N,TREND,SEASNL,AR,TRAD,NOISE,   &
                           para,iopt,imiss,omaxx,LM1,ier )
         
-          implicit none               
+         ! implicit none               
 !C
 !C                                                                       
 !c  Bug fixed (97/10/17)
@@ -15297,7 +15293,7 @@
                                 
     SUBROUTINE  ARCOEFD( PAC,K,AR )  
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C  ...  TRANSFORMATION FROM PARCOR TO AR COEFFICIENTS  ...              
 !C                                                                       
@@ -15348,7 +15344,7 @@
     
                                   
     SUBROUTINE  EPARAM( Z,E,TDAY,IMIS,N,A,iopt)
-       implicit none
+       !implicit none
          
 !C                                                                       
 !C  ...  Estimation of parameters  ...                                   
@@ -15411,7 +15407,7 @@
                                                          
                          
     SUBROUTINE  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,M,A,F,G,IFG,L,LM1 )
-         implicit none
+         !implicit none
 !C                                                                       
 !C  ...  FUNCTION EVALUATION AND NUMERICAL DIFFERENCING  ...             
 !C                                                                       
@@ -15494,7 +15490,7 @@
                             
     SUBROUTINE  FUNCSA( Z,E,TDAY,IMIS,N,LM1,KK,A,FF,IFG )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C  ...  Initial setting, filtering and smoothing  ...                   
 !C                                                                       
@@ -15505,7 +15501,7 @@
 #if defined __ICC
       !DIR$ ASSUME_ALIGNED IMIS:64
 #endif
-          REAL(kind=8) ::  N, LM1, KK, IFG 
+          INTEGER(4) ::  N, LM1, KK, IFG 
           REAL(kind=8), dimension(N) :: Z
 #if defined __ICCA
           !DIR$ ASSUME_ALIGNED Z:64
@@ -15651,7 +15647,7 @@
     
     SUBROUTINE  HUSHL4( X,MJ1,N,K,M,ISW )
       use omp_lib
-      implicit none
+      !implicit none
         
 !C                                                                       
 !C          HOUSEHOLDER TRANSFORMATION;   TYPE 4                         
@@ -15721,7 +15717,7 @@
     
     SUBROUTINE  HUSHL7( X,D,MJ1,K,M,KE )
       use omp_lib
-      implicit none
+      !implicit none
        
 !C                                                                       
 !C     Householder Transformation,  TYPE 7                               
@@ -15811,7 +15807,7 @@
     SUBROUTINE  LINEA1( FUNCT,Z,E,TDAY,IMIS,N,L,LM1,      &
          X,H,RAM,EE,G,K,IG )
       use omp_lib
-      implicit none
+      !implicit none
     
 !C                                                                       
 !C  ...  LINE SEARCH (WOLFE'S ALGORITHM)  ...                            
@@ -16143,13 +16139,13 @@
                              
 
     SUBROUTINE  LOGTRF( Z,IMIS,N,ilog,ier )
-         implicit none
+         !implicit none
 !C                                                                       
 !C ... LOG TRANSFORMATION ...                                            
 !C                                                                       
                                             
           INTEGER(kind=4), dimension(N) :: IMIS 
-          REAL(kind=8) :: N, ilog, ier
+          INTEGER(kind=4)  :: N, ilog, ier
           REAL(kind=8), dimension(N) :: Z 
           ! Locals
           INTEGER(kind=4) :: I
@@ -16176,7 +16172,7 @@
                                
     SUBROUTINE  OPTMIZ( FUNCT,Z,E,TDAY,IMIS,NN,X,N,L,LM1 )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C  ...  NUMERICAL OPTIMIZATION  ...                                     
 !C            LATEST REVISION:  JUNE 20, 1983                            
@@ -16410,7 +16406,7 @@
     SUBROUTINE  PLOTDD( N,Z,E,LM1,TRADE,COMP1,COMP2,COMP3, COMP4,COMP5)
                         
       use omp_lib
-      implicit none
+      !implicit none
 
 !C  ...  PLOT ESTIMATED PARAMETRS, ORIGINAL DATA AND ESTIMATED PARAMETERS
 !C
@@ -16541,7 +16537,7 @@
                 
     SUBROUTINE  REDATAD( DATA,ISW,X,N,XM ) 
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     THIS SUBROUTINE IS USED FOR THE LOADING OF ORIGINAL DATA,         
 !C     THE DATA IS LOADED THROUGH THE DEVICE SPECIFIED BY @MT@.          
@@ -16634,7 +16630,7 @@
     END SUBROUTINE
     
     SUBROUTINE  SETFGH
-        implicit none
+        !implicit none
 !C                                                                       
 !C  ...  SET F, G AND H MATRICES OF STATE SPACE MODEL  ...               
 !C                                                                       
@@ -16706,7 +16702,7 @@
     
     SUBROUTINE  SMOTH3( Z,R,S,T,TRADE,IMIS,N,LM1,F,ILKF,ISMT )
       use omp_lib
-      implicit none
+      !implicit none
 !C                                                                       
 !C     ...  INFORMATION SQUARE ROOT FILTER & SMOOTHER  ...               
 !C          FOR SEASONAL ADJUSTMENT                                      
@@ -17201,7 +17197,7 @@
                                                                  
 
     SUBROUTINE  SPARAM0( IPAR,NIP )
-         implicit none
+         !implicit none
 !C                                                                       
 !C  ...  Set or read control parameters ...                              
 !C                                                                       
@@ -17246,7 +17242,7 @@
 
     SUBROUTINE  SPARAM( A,NA,para,NPA,iopt )
          
-          implicit none
+          !implicit none
 !C                                                                       
 !C  ...  Set or read control parameters ...                              
 !C                                                                       
@@ -17320,7 +17316,7 @@
     
     SUBROUTINE  STATE( X,A,K )
           use omp_lib
-          implicit none
+          !implicit none
 !C                                                                       
 !C  ...  TRANSFORMATION OF STATE VECTOR FOR TIME REVERSED MODEL  ...     
 !C                                                                       
@@ -17377,7 +17373,7 @@
     
 
     SUBROUTINE  TRADE( JSYEAR,nmonth,N,TDAY )
-          implicit none
+        
                                    
 
 !C
@@ -17436,7 +17432,7 @@
     
 
     SUBROUTINE  TRADE2( JSYEAR,nquart,N,TDAY )
-          implicit none
+        
                                      
 
 !C
@@ -17552,7 +17548,7 @@
     
     SUBROUTINE  EXSARF( Z1,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M1,AMIN,SDM1,A1, SDM2,A2,JER )
           use omp_lib
-          implicit none
+        
                         
 
 !cc      PROGRAM  EXSAR                                                    
@@ -17691,7 +17687,7 @@
 
     SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,JER )
           use omp_lib
-          implicit none
+        
 !C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 !C                                                                       
 !C     THIS SUBROUTINE PRODUCES EXACT MAXIMUM LIKELIHOOD ESTIMATES OF THE
@@ -17820,7 +17816,7 @@
 
     SUBROUTINE  DAVIDN( FUNCT,HESIAN,Z,NZ,X,N,R,IHES,ISW,AIC,SD,JER )
           use omp_lib
-          implicit none
+        
 !C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 !C                                                                       
 !C          MINIMIZATION BY DAVIDON-FLETCHER-POWELL PROCEDURE            
@@ -18065,7 +18061,7 @@
 
     SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG,JER )
          
-          implicit none
+         
 !C                                                                       
 !C     THIS SUBROUTINE COMPUTES THE EXACT LIKELIHOOD AND ITS GRADIENT OF 
 !C     THE M-TH ORDER AR-MODEL.                                          
@@ -18332,7 +18328,7 @@
                                    
     SUBROUTINE  HESIAN( X,K,N,R,SD,H )
           use omp_lib
-          implicit none
+      
 !C                                                                       
 !C     THIS SUBROUTINE RETURNS THE INVERSE OF AN APPROXIMATION TO THE HES
 !C     OF LOG-LIKELIHOOD FUNCTION OF THE AUTOREGRESSIVE MODEL OF ORDER K.
@@ -18403,7 +18399,7 @@
                  
     SUBROUTINE  LINEAR( FUNCT,Z,N,X,H,RAM,EE,K,R,AIC,SD,F,ISW,IG,JER )
           use omp_lib
-          implicit none
+       
 !C                                                                       
 !C     THIS SUBROUTINE PERFORMS THE LINEAR SEARCH ALONG THE DIRECTION SPE
 !C     BY THE VECTOR H                                                   
@@ -18658,7 +18654,7 @@
     SUBROUTINE FFTCORF(LD,LAGH1,N,N2P,ISW,X1,Y1,XA,X,Y,    &
          CNA1,CN1,CN2,AMEAN)
           use omp_lib
-          implicit none
+      
 !C
 !C     PROGRAM 5.1.3   AUTO AND/OR CROSS CORRELATIONS VIA FFT.
 !C-----------------------------------------------------------------------
@@ -18917,7 +18913,7 @@
     SUBROUTINE FPEAUTF(L,N,SD,CXX,SSD,FPE,RFPE,D,CHI2,      &
          OFPE1,OFPE2,ORFPE,MO,OSD,A,AO)
           use omp_lib
-          implicit none
+       
 !C
 !C     PROGRAM 5.3.1   FPE AUTO
 !C-----------------------------------------------------------------------
@@ -19053,7 +19049,7 @@
     SUBROUTINE FPEC7F(N,L,IR,IP,IP0,INW,R1,R2,FPEC,RFPEC,AIC,   &
          IFPEC,OFPEC,ORFPEC,OAIC,OSD,AO)
         
-          implicit none
+        
 !C
 !C     PROGRAM 5.3.2   FPEC(AR-MODEL FITTING FOR CONTROL)
 !C-----------------------------------------------------------------------
@@ -19208,7 +19204,7 @@
     END SUBROUTINE
 
     SUBROUTINE SFPEC(SD,N,K,IR,MS,Z,RZ,OOZ,AIC)
-          implicit none
+        
           INTEGER(4) :: N, K, IR, MS
           REAL(8), dimension(K,K) :: SD 
           REAL(8) :: Z, RZ, OOZ, AIC
@@ -19251,7 +19247,7 @@
                         IDD,IR,IJ,IK,IPQ,G,A1,A,B,VD,IQM,BM,AU,ZZ,C0,AICD, &
                         MJ3,MJ4,MJ6,MJ7  )
           use omp_lib
-          implicit none
+      
 
 !cc       PROGRAM MARKOV
 !C     PROGRAM 74.2.2. MAXIMUM LIKELIHOOD COMPUTATION OF MARKOVIAN MODEL
@@ -19595,7 +19591,7 @@
       SUBROUTINE C0GR(CYY1,MJ3,B,AW,IAW,NH,IDD,IR,IJ,IK,X,C0,GR,M,L,K,   &
            ID,MJ4,IG,O,Q,X1,X2,CXY1,CXX1,CXV1)
         
-          implicit none
+        
                                
 !C     THIS SUBROUTINE COMPUTES THE INNOVATION MATRIX CXX(0) AND
 !C     THE GRADIENT OF LOG(DET CXX(0))
@@ -19668,7 +19664,7 @@
 
     SUBROUTINE NSUBX1(B,AW,IAW,NH,IDD,IR,K,ID,M,IG1,X1)
         
-          implicit none
+          
 !C     THIS SUBROUTINE COMPUTES THE IMPULSE RESPONSE OF
 !C     (INVERSE OF (C*(INVERSE OF PHAI)*B))*C*
 !C     (INVERSE OF PHAI). PHAI = INVERSE OF (I-A*EXP(-I*2*PI*F)).
@@ -19827,7 +19823,7 @@
 
     SUBROUTINE NSUBX2(B,AW,IAW,IDD,IR,K,ID,KK,IG2,Q,X2)
          
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES X2(NS,I,J) AND U(NS),
 !C     NS=0,1,2,...,L(=KK).
 !C
@@ -19952,7 +19948,7 @@
 
     SUBROUTINE NSUBO(C0,K,ID,M,O,X1)
           use omp_lib
-          implicit none
+   
 !C     THIS SUBROUTINE COMPUTES O(NS).
 !C     O(NS)=(INVERSE OF C0)*X1(NS)
 
@@ -20016,7 +20012,7 @@
     !DIR$ ATTRIBUTES INLINE :: SUBMAX
 #endif
     SUBROUTINE SUBMAX(XX,XMAX,IA,IB)
-          implicit none
+      
 !C     MAXIMUM ABSOLUTE VALUE OF XX(I,J) SEARCH
 
           INTEGER(4) :: IA, IB
@@ -20040,7 +20036,7 @@
     
 
     SUBROUTINE GRAD(IJ,IK,GR,M,K,ID,IAW,MJ4,O,CXX1,CXV1)
-          implicit none
+        
 !C     THIS SUBROUTINE COMPUTES GRADIENT (GA AND GB).
 !C     GA=-2.0*(O(0)'*CXV1(1)+O(1)'*CXV1(2)+O(2)'*CXV1(3)+...+O(NSL)'*CXV
 !C     1(1+NSL)).
@@ -20139,7 +20135,7 @@
     END SUBROUTINE
     
       SUBROUTINE SBCXY1(CYY1,MJ3,M,L,ID,X2,CXY1)
-          implicit none
+       
 !C     THIS SUBROUTINE COMPUTES CXY1(LS) LS=0,M+1+L.
 !C     CXY1(LS)=X2(0)*CYY1(LS)+X2(1)*CYY1(LS-1)+X2(2)*CYY1(LS-2)+...
 !C     +X2(L)*CYY1(LS-L).
@@ -20212,7 +20208,7 @@
     END SUBROUTINE
       
     SUBROUTINE SUBCXX(C0,M,KK,ID,X2,CXY1,CXX1)
-          implicit none
+        
 !C     THIS SUBROUTINE COMPUTES CXX1(NS) NS=0,M+1.
 !C     CXX1(NS)=CXY1(NS)*X2(0)'+CXY1(NS+1)*X2(1)'+CXY1(NS+2)*X2(2)'+...
 !C     +CXY1(NS+MSL)*X2(MSL)'.
@@ -20275,7 +20271,7 @@
     END SUBROUTINE
     
     SUBROUTINE GCXV1(M,L,K,ID,Q,CXY1,CXV1)
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES CXV1(MS) MS=0,M+1.
 !C     CXV1(MS)=CXY1(MS)*Q(0)'+CXY1(MS+1)*Q(1)'+...+CXY1(MS+L)*Q(L)'
 
@@ -20337,7 +20333,7 @@
     END SUBROUTINE
     
     SUBROUTINE  SUBIDR ( NH,IDD,IR,IJ,IK,K,ID,IAW )
-        implicit none
+        
 !C     CONSTRUCTION OF CHARACTERISTIC VECTORS
 
           INTEGER(4), dimension(K)  :: NH, IDD, IR 
@@ -20373,7 +20369,7 @@
     END SUBROUTINE
     
     SUBROUTINE SUBA(A,AW,IJ,IK,K,ID,IAW)
-          implicit none
+        
 !C     CONSTRUCTION OF A FROM AW
 
           INTEGER(4), dimension(ID) :: IJ, IK 
@@ -20399,7 +20395,7 @@
     END SUBROUTINE
     
     SUBROUTINE SUBAWZ(AW,IAW,IDD,IR,Z,ZP,K,IC)
-          implicit none
+        
 !C     ZP=A*Z
 
           INTEGER(4) :: IAW, K, IC
@@ -20436,7 +20432,7 @@
     END SUBROUTINE
     
     SUBROUTINE SUBCM(M,K,ID,O,CM1)
-          implicit none
+          
 !C     THIS SUBROUTINE COMPUTES CM1(MS).
 
           INTEGER(4) :: M, K, ID
@@ -20489,7 +20485,7 @@
     SUBROUTINE SUBHES(CYY1,IJ,IK,HS,M,L,K,ID,IAW,MJ3,MJ4,O,Q,CM1,X2,  &
          CXY1,CXX1,CXV1)
           use omp_lib
-          implicit none
+       
 !C     THIS SUBROUTINE COMPUTES HESSIAN.
 
           INTEGER(4), dimension(ID) :: IJ, IK 
@@ -20636,7 +20632,7 @@
                       
     SUBROUTINE SUBCVV(M,L,K,ID,Q,CYV1,CVV1,CYV2)
           use omp_lib
-          implicit none
+       
 !C     THIS SUBROUTINE COMPUTES CVV1(MS) MS=0,M.
 !C     CVV1(MS)=Q(0)*CYV(MS)+Q(1)*CYV(MS-1)+...+Q(L)*CYV(MS-L)
 
@@ -20743,7 +20739,7 @@
     
     SUBROUTINE SBCYV1(CYY1,MJ3,M,L,K,ID,Q,CYV1)
           use omp_lib
-          implicit none
+      
 !C     THIS SUBROUTINE COMPUTES CYV1(MS) (MS=0,M).
 !C     CYV1(MS)=CYY1(MS)*Q(0)'+CYY1(MS+1)*Q(1)'+CYY1(MS+2)*Q(2)'+...
 !C     -CYY1(MS+L)*Q(L)'.
@@ -20827,7 +20823,7 @@
     
     SUBROUTINE SBCYV2(CYY1,MJ3,L,K,ID,Q,CYV2)
           use omp_lib
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES CYV2(MS) (MS=-L,0).
 !C     CYV2(MS)=CYV1(-MS)
 !C     =CYY1(-MS)*Q(0)'+CYY1(-MS+1)*Q(1)'+CYY1(-MS+2)*Q(2)'+...
@@ -20926,7 +20922,7 @@
     
     SUBROUTINE HCXV2(M,L,K,ID,Q,CXY1,CXY2,CXV2)
           use omp_lib 
-          implicit none
+   
 !C     THIS SUBROUTINE COMPUTES CXV2(MS) MS=0,M-1.
 !C     CXV2(MS)=CXV1(-MS)
 !C     =CXY1(-MS)*Q(0)'+CXY1(-MS+1)*Q(1)'+...+CXY1(-MS+L)*Q(L)'
@@ -21025,7 +21021,7 @@
     
     SUBROUTINE SBCXY2(CYY1,MJ3,M,L,ID,X2,CXY2)
           use omp_lib
-          implicit  none
+        
 !C     THIS SUBROUTINE COMPUTES CXY2(LS) LS=0,M-1.
 !C     CXY2(LS)=CXY1(-LS)
 !C     =X2(0)*CYY1(-LS)+X2(1)*CYY1(-LS-1)+X2(2)*CYY1(-LS-2)+...
@@ -21098,7 +21094,7 @@
       SUBROUTINE SUBDAV(CYY1,MJ3,B,AW,IAW,NH,IDD,IR,IJ,IK,VD,X,C0,G,R,    &
            N,K,ID,IPQ,AICD,MJ4,ISWRO,O,Q,X1,X2,CXY1,CXX1,CXV1)
           use omp_lib
-          implicit none
+        
 !C     DAVIDON'S (MINIMIZATION) PROCEDURE
 
       
@@ -21402,7 +21398,7 @@
 
     SUBROUTINE ARMACO(B,AW,IAW,IH,IDD,IR,IK,ID,ICONT,K,BBM,    &
                        AAU,ZZ,IQM,MJ6,MJ7)
-          implicit none
+        
 !C     AR-MA COEFFICIENTS COMPUTATION
 
           INTEGER(4) :: IAW,  ID, ICONT,K, IQM, MJ6, MJ7
@@ -21584,7 +21580,7 @@
                        
     SUBROUTINE  RESCAL ( B,AW,IAW,NH,IDD,IR,K,ID )
           use omp_lib
-          implicit none
+       
 !C     RESCALING OF F AND G MATRICES FOR A FEASIBLE INITIAL
 
          INTEGER(4) :: IAW,K, ID 
@@ -21642,7 +21638,7 @@
     
     SUBROUTINE SUBDETM(X,XDETMI,MM)
           use omp_lib
-          implicit none
+        
 !C     THIS SUBROUTINE COMPUTES THE DETERMINANT OF UPPER LEFT MM X MM
 !C     OF X.  FOR GENERAL USE STATEMENTS 20-21 SHOULD BE RESTORED.
 !C     X: ORIGINAL MATRIX
@@ -21704,7 +21700,7 @@
     
     SUBROUTINE MLOCARF( ZS,N,LAG,NS0,KSW,NML,ZMEAN,SUM,A,MF,SDF,LK0,      &
                         LK2,SXX,NNF,NNS,MS,SDMS,AICS,MP,SDMP,AICP )
-          implicit none
+        
 
 !cc      PROGRAM  MLOCAR                                                   
 !C.......................................................................
@@ -21858,7 +21854,7 @@
                                                    
     SUBROUTINE  NONSTA( SETX,Z,X,U,LAG,N0,NF,NS,K,IF1,ISW,MJ1,MJ2,A,MF,    &
                    SDF,NNF,NNS,MS,SDMS,AICS,MP,SDMP,AICP )
-          implicit none
+        
 !C                                                                       
 !C     IN THIS SUBROUTINE THE FOLLOWING TWO MODELS ARE COMPARED AND      
 !C     THE MODEL WITH LESS AIC IS ACCEPTED AS THE CURRENT MODEL.         
@@ -22032,7 +22028,7 @@
 
     SUBROUTINE  MLOMARF( ZS,N,ID,C,LAG,NS0,KSW,K,ZMEAN,ZVARI,NF,NS,MS,  &
                             AIC,MP,AICP,MF,AICF,A,E,LK0,LKE,M )
-          implicit none             
+               
 
 !cc      PROGRAM  MLOMAR                                                   
 !C.......................................................................
@@ -22183,7 +22179,7 @@
     SUBROUTINE  MNONST( Z,X,U,KSW,LAG,N0,NNF,NF,NS,ID,IF1,MJ,MJ1,MJ2,         &
          MJ3,A,B,E,MS,AICFS,MP,AICP,MF,AICF )
           use omp_lib
-          implicit none
+         
 !C                                                                       
 !C     IN THIS SUBROUTINE THE FOLLOWING TWO MODELS ARE COMPARED AND      
 !C     THE MODEL WITH THE SMALLER AIC IS ACCEPTED AS THE CURRENT MODEL.  
@@ -22358,7 +22354,7 @@
 
     SUBROUTINE MULBARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD,AIC,DIC,IMIN,   &
                         AICM,SDMIN,BW1,BW2,A,B,G,H,E,AICB )
-        implicit none
+       
 
 !cc      PROGRAM  MULBAR                                                   
 !C.......................................................................
@@ -22495,7 +22491,7 @@
                         
     SUBROUTINE MULCORF(X1,N,K,LAGH1,SM,C,CN)
           use omp_lib
-          implicit none
+          
 !C     PROGRAM 5.1.2   MULTIPLE CORRELATION
 !C-----------------------------------------------------------------------
 !C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS
@@ -22630,7 +22626,7 @@
     
     SUBROUTINE MULFRFF(K,INW,N,LAGH1,IP0,P,X,C,S,G,PH,PCH,R,CHM)
           use omp_lib
-          implicit none
+          
 
 !C     PROGRAM 5.2.4   FREQUENCY RESPONSE FUNCTION (MULTIPLE CHANNEL)
 !C-----------------------------------------------------------------------
@@ -22777,7 +22773,7 @@
     END SUBROUTINE
 
     SUBROUTINE FQCPIV(X,XDET,MM,MJ)
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES MULTIPLE FREQUENCY RESPONSE FUNCTION.
 !C     MM: THE TOTAL NUMBER OF INPUTS (LESS THAN 10)
 !C     MJ: ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE
@@ -22856,7 +22852,7 @@
     END SUBROUTINE
 
     SUBROUTINE MPHASE(C,S,OARC,PH,K,JJF)
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES PHASE.
 !C     (MULTIPLE CHANNEL)
 
@@ -22879,7 +22875,7 @@
     
 
     SUBROUTINE MULARC(C,S,ARC,K)
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES RAW PHASE.
 !C     (MULTIPLE CHANNEL)
 
@@ -22921,7 +22917,7 @@
     
 
     SUBROUTINE MULERR(PCH,R,N,LAGH1,K,JJF,D1,D2)
-          implicit none
+         
 !C     THIS SUBROUTINE COMPUTES RELATIVE ERROR STATISTICS.
 !C     (MULTIPLE CHANNEL)
 
@@ -22961,7 +22957,7 @@
 
     SUBROUTINE MULPAC(ARC,OARC,PH,K,JJF)
           use omp_lib
-          implicit none
+         
 !C     THIS SUBROUTINE MAKES PHASE CURVE CONTINUOUS.
 !C     (MULTIPLE CHANNEL)
 
@@ -23006,7 +23002,7 @@
     
     SUBROUTINE  MULMARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD1,AIC1,DIC1,IM,      &
                          AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS )
-          implicit none  
+       
 
 !cc      PROGRAM  MULMAR                                                   
 !C.......................................................................
@@ -23127,7 +23123,7 @@
 
     SUBROUTINE MULNOSF(H,L,IP,SD,A,RS1,RS2,R)
           use omp_lib
-          implicit none
+       
 !C     PROGRAM 5.3.3   MULTIPLE UNOISE
 !C-----------------------------------------------------------------------
 !C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS
@@ -23216,7 +23212,7 @@
     
     SUBROUTINE MULRSPF(H,L,IP,K,SD,A,B,Y,CH) 
         
-          implicit none
+       
 !C
 !C     PROGRAM 5.4.2   MULTIPLE RATIONAL SPECTRUM
 !C-----------------------------------------------------------------------
@@ -23370,7 +23366,7 @@
 
     SUBROUTINE XYCTRX(X,Y,Z,MM,NN) !GCC$ ATTRIBUTES ALIGNED(32) :: XYCTRX !GCC$ ATTRIBUTES HOT :: XYCTRX
           use omp_lib
-          implicit none
+          
 !C     Z=X*Y*CONJG(X')
 !C     Y,Z: HERMITIAN
 !C     (UPPER LEFT MM X MM OF Z)=(UPPER LEFT MM X NN OF X)*(UPPER LEFT
@@ -23437,7 +23433,7 @@
     
     SUBROUTINE MULSPEF(N,K,LAGH1,LAGH3,CV,P1,P2,PS,PCH1,PCH2) !GCC$ ATTRIBUTES HOT :: MULSPEF !GCC$ ATTRIBUTES ALIGNED(32) :: MULSPEF
           use omp_lib
-          implicit none
+          !implicit none
 !C     PROGRAM 5.2.2   MULTIPLE SPECTRUM
 !C-----------------------------------------------------------------------
 !C      SUBROUTINE MULSPEF(N,K,LAGH1,LAGH3,IR0,IR1,IR2,IC0,IC1,IC2,
@@ -23620,7 +23616,7 @@
    
 
     SUBROUTINE CROSSP(FC,FS,P1,P2,LAGH1,A,LA1) !GCC$ ATTRIBUTES HOT :: CROSSP !GCC$ ATTRIBUTES ALIGNED(32) ::  CROSSP
-          implicit none
+          !implicit none
 !C     THIS SUBROUTINE COMPUTES SMOOTHED CROSS SPECTRUM.
 !C     FC,FS: OUTPUTS OF FGERCO AND FGERSI
 !C     P1,P2: REAL AND IMAGINARY PART OF SMOOTHED CROSS SPECTRUM
@@ -23654,14 +23650,14 @@
     END SUBROUTINE
 
     SUBROUTINE ECORSI(FS,LAGH1,FS1,LAGSHF,LA1) !GCC$ ATTRIBUTES HOT :: ECORSI !GCC$ ATTRIBUTES ALIGNED(32) :: ECORSI
-          implicit none
+          !implicit none
 !C     FS SHIFT-RIGHT BY LA FOR IMAGINARY PART END CORRECTION
 
           INTEGER(4):: LAGH1, LAGSHF, LA1
           REAL(8), dimension(LAGH1)  :: FS 
           REAL(8), dimension(LAGSHF) :: FS1
           ! Locals
-          INTEGER(4) :: LAGH2,LA,I,I1,I2,LA2,I3,I4,LA1
+          INTEGER(4) :: LAGH2,LA,I,I1,I2,LA2,I3,I4
           LAGH2=LAGH1+1
           LA=LA1-1
           DO 100 I=1,LAGH1
@@ -23686,7 +23682,7 @@
 
     SUBROUTINE FGERSI(G,LGP1,FS,LF1) !GCC$ ATTRIBUTES HOT :: FGERSI !GCC$ ATTRIBUTES ALIGNED(32) :: FGERSI
           
-          implicit none
+          !implicit none
 !C     FOURIER TRANSFORM (GOERTZEL METHOD)
 !C     THIS SUBROUTINE COMPUTES FOURIER TRANSFORM OF G(I),I=0,1,...,LG AT
 !C     FREQUENCIES K/(2*LF),K=0,1,...,LF AND RETURNS SIN TRANSFORM IN
@@ -23739,7 +23735,7 @@
 
     SUBROUTINE SIMCOH(P1,P2,C,S,P3,LAGH1) !GCC$ ATTRIBUTES HOT :: SIMCOH !GCC$ ATTRIBUTES ALIGNED(32) :: SIMCOH
           use omp_lib
-          implicit none
+         ! implicit none
 !C     THIS SUBROUTINE COMPUTES SIMPLE COHERENCE.
 
           INTEGER(4) :: LAGH1
@@ -23765,7 +23761,7 @@
     SUBROUTINE NONSTF(N,ISTP,DATA0,NM,LAGH,JP0,COEF0,VA0,AIC0,DAIC21,  &
          DAIC,K01,KOUNT2,SXX) !GCC$ ATTRIBUTES ALIGNED(32) :: NONSTF !GCC$ ATTRIBUTES HOT :: NONSTF
           use omp_lib
-          implicit none        
+          !implicit none        
 
 !cc      PROGRAM NONST
 !C     PROGRAM 74.4.1. NON-STATIONARY POWER SPECTRUM ANALYSIS
@@ -24037,7 +24033,7 @@
 
     SUBROUTINE SICP(CXX,COEF,OSD,L1,N,MO) !GCC$ ATTRIBUTES HOT :: SICP !GCC$ ATTRIBUTES ALIGNED(32) :: SICP
           use omp_lib
-          implicit none
+          !implicit none
 !C     THIS SUBROUTINE FITS AUTOREGRESSIVE MODELS
 !C     X(N)=A(1)X(N-1)+...+A(M)X(N-M)+E(N)
 !C     OF SUCCESSIVELY INCREASING ORDER UP TO L(=L1-1).
@@ -24057,7 +24053,7 @@
           !DIR$ ASSUME_ALIGNED CXX:64,COEF:64
 #endif
           ! Locals
-          INTEGER(4) :: L,I,M,MP1,LM,IM,MP1
+          INTEGER(4) :: L,I,M,MP1,LM,IM
           REAL(8) :: CST1, CST2, SD, AN, OAIC, SE, D, D2, &
                         AM, DLSD, AIC
           REAL(8), dimension(L1-1) :: A,B
@@ -24141,7 +24137,7 @@
     END SUBROUTINE
     
     SUBROUTINE OPTDESF(IR,L,NS,M,Q1,R,GR1,A,B,GI) 
-          implicit none
+          !implicit none
 !cc      PROGRAM OPTDES
 !C     PROGRAM 5.5.1   OPTIMAL CONTROLLER DESIGN
 !C-----------------------------------------------------------------------
@@ -24345,7 +24341,7 @@
 
     SUBROUTINE MULTRB(X,Y,Z,MM,NN) !GCC$ ATTRIBUTES HOT :: MULTRB !GCC$ ATTRIBUTES ALIGNED(32) :: MULTRB
           use omp_lib
-          implicit none
+          !implicit none
 !C     Z=X*Y
 !C     Z: SYMMETRIC
 !C     (LOWER TRIANGLE OF UPPER LEFT MM X MM OF Z)=(UPPER LEFT MM X NN OF
@@ -24386,7 +24382,7 @@
     
     SUBROUTINE MULTRL(X,Y,Z,MM,NN) !GCC$ ATTRIBUTES HOT :: MULTRL !GCC$ ATTRIBUTES ALIGNED(32) :: MULTRL
           use omp_lib
-          implicit none
+          !implicit none
 !C     TRANSPOSE MULTIPLY (LEFT)
 !C     Z=X'*Y
 !C     Z: SYMMETRIC
@@ -24429,7 +24425,7 @@
     SUBROUTINE OPTSIMF(NS,M,IR,L,A,B,G,W,X,Y,XMEAN,YMEAN,XS2,YS2,    &
          XS2MEA,YS2MEA,XVAR,YVAR) !GCC$ ATTRIBUTES HOT :: OPTSIMF
           use omp_lib
-          implicit none
+          !implicit none
 !cc      PROGRAM OPTSIM
 !C     PROGRAM 5.5.2   OPTIMAL CONTROL SIMULATION
 !C-----------------------------------------------------------------------
@@ -24525,7 +24521,7 @@
        10 CONTINUE
 !C     MEAN, MEAN SQUARE AND VARIANCE COMPUTATION
           ANS=NS
-          CST1=1.0_R64P
+          CST1=1.0_8
           BNS=CST1/ANS
 !$OMP SIMD
           DO 40 I=1,IR
@@ -24544,10 +24540,12 @@
 
     END  SUBROUTINE
                        
-   
+#if defined __ICC
+    !DIR$ ATTRIBUTES INLINE :: VECADL
+#endif
     SUBROUTINE VECADL(X,Y,MM) !GCC$ ATTRIBUTES HOT :: VECADL !GCC$ ATTRIBUTES INLINE :: VECADL
           use omp_lib
-          implicit none
+          !implicit none
           INTEGER(kind=4) :: MM
           REAL(kind=8), dimension(MM) :: X, Y
 #if defined __ICC
@@ -24570,7 +24568,7 @@
     
     SUBROUTINE XSARMAF( YS,N,IQ,IP,P01,G1,TL1,P02,G2,ALPHB,ALPHA,TL2, SIGMA2 ) !GCC$ ATTRIBUTES HOT :: XSARMAF
                         
-          implicit none
+          !implicit none
 !cc      PROGRAM XSARMA                                                    
 !C.......................................................................
 !C.....PLANNED BY H.AKAIKE...............................................
@@ -24657,7 +24655,7 @@
                                                                  
     SUBROUTINE ARCHCK(A,ALPH,M,ICOND) !GCC$ ATTRIBUTES HOT :: ARCHCK !GCC$ ATTRIBUTES ALIGNED(32) :: ARCHCK
           use omp_lib
-          implicit none
+          !implicit none
 !C                                                                       
 !C-----------------------------------------------------------------------
 !C     THIS SUBROUTINE CHECKS STABILITY OF AR OR MA PART.                
@@ -24742,7 +24740,7 @@
     
     SUBROUTINE  FUNCT2( F,SD,Y,N,P0,IQ,IP,IR ) !GCC$ ATTRIBUTES HOT :: FUNCT2 !GCC$ ATTRIBUTES ALIGNED(32) :: FUNCT2
           use omp_lib
-          implicit none
+          !implicit none
 !C                                                                       
 !C-----------------------------------------------------------------------
 !C!     THIS SUBROUTINE COMPUTES SD AND F(=(-2)LOG LIKELIHOOD) BY         
@@ -25009,7 +25007,7 @@
 
     SUBROUTINE MSDAV2(PHAI,SIGMA2,G,C,Y,N,X,IQ,IP,ISWRO,VD) !GCC$ ATTRIBUTES HOT :: MSDAV2 !GCC$ ATTRIBUTES ALIGNED(32) :: MSDAV2
           use omp_lib
-          implicit none
+          !implicit none
 !C                                                                       
 !C-----------------------------------------------------------------------
 !C     DAVIDON'S (MINIMIZATION) PROCEDURE                                
@@ -25046,7 +25044,7 @@
 
           INTEGER(kind=4) :: N, IQ, IP, ISWRO
           REAL(kind=8) :: PHAI, SIGMA2
-          REAL(kind=8), dimension(IP+IQ) :: G, C, Y, X
+          REAL(kind=8), dimension(IP+IQ) :: G, C, X
           REAL(kind=8), dimension(N)     :: Y 
           REAL(kind=8), dimension(IP+IQ,IP+IQ) :: VD
 #if defined __ICC
@@ -25274,7 +25272,7 @@
                           
     SUBROUTINE SDATPR(YS,Y,N) !GCC$ ATTRIBUTES INLINE :: SDATPR !GCC$ ATTRIBUTES HOT :: SDATPR !GCC$ ATTRIBUTES ALIGNED(32) :: SDATPR
           use omp_lib
-          implicit none
+         ! implicit none
 !C                                                                       
 !C-----------------------------------------------------------------------
 !C     THIS SUBROUTINE READS IN AND PRINTS OUT INITIAL CONDITION AND DELE
@@ -25343,7 +25341,7 @@
                                                   
                 
     SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP) !GCC$ ATTRIBUTES HOT :: SGRAD !GCC$ ATTRIBUTES ALIGNED(32) :: SGRAD
-          implicit none
+         ! implicit none
 !C                                                                       
 !C-----------------------------------------------------------------------
 !C     THIS SUBROUTINE COMPUTES AN APPROXIMATION TO GRADIENT BY DIFFERENC
@@ -25453,7 +25451,7 @@
                    
     SUBROUTINE SMINOP( TL,TL2,SIGMA2,Y,N,P0,G,P02,G2,ALPHB,ALPHA,IQ, IP  ) !GC$$ ATTRIBUTES HOT :: SMINOP !GCC$ ATTRIBUTES ALIGNED(32) :: SMINOP
           use omp_lib
-          implicit none
+          !implicit none
     
 !C C                                                                       
 !C-----------------------------------------------------------------------
@@ -25650,7 +25648,7 @@
                                                      
     SUBROUTINE SUBPM(P,B,A,IQ,IP,IR) !GCC$ ATTRIBUTES HOT :: SUBPM !GCC$ ATTRIBUTES ALIGNED(32)
           use omp_lib
-          implicit none
+          !implicit none
 !C                                                                       
 !C-----------------------------------------------------------------------
 !C     THIS SUBROUTINE COMPUTES THE VARIANCE MATRIX OF A STATIONARY STATE
@@ -25880,7 +25878,7 @@
                         Z2,Z3,ZZ1,ZZ2,ZZ3) !GCC$ ATTRIBUTES HOT :: PRDCTRF !GCC$ ATTRIBUTES ALIGNED(32) :: PRDCTRF
 
            use omp_lib
-           implicit none
+           !implicit none
 
 !cc      PROGRAM PRDCTR
 !C     PROGRAM 74.3.1.  PREDICTION PROGRAM
@@ -25982,7 +25980,7 @@
           CALL DINIT(YORI,(H+1)*D,CST0)
           CALL DINIT(DMXT,D,CST0)
           CALL DINIT(DMIT,D,CST0)
-          CALL DINIT(AV,D,SCT0)
+          CALL DINIT(AV,D,CST0)
 
           DO 71 I = 1,N
                    DO 70 J = 1,D
@@ -26113,7 +26111,7 @@
 
                           IF  (CCC.GT.0) GO TO 131
 
-                          SD(IX,I)=0.0_R64P
+                          SD(IX,I)=0.0_8
                           GO TO 139
 
                          131 SD(IX,I)=DSQRT(CCC)
@@ -26277,7 +26275,7 @@
 
 
     SUBROUTINE MAXMIN(DMAX,DMIN,YD) !GCC$ ATTRIBUTES INLINE :: MAXMIN
-         implicit none
+         !implicit none
       REAL(kind=8) :: DMAX, DMIN, YD
 
       IF(DMAX-YD.GE.0) GO TO 1002
