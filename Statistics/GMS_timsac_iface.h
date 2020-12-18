@@ -8,15 +8,12 @@
 
 namespace file_info {
 
-#if defined _WIN64  
-  #include "../GMS_version.h"
-#elif defined __linux
-  #include "GMS_version.h"
-#endif
 
-  const unsigned int gGMS_TIMSAC_IFACE_MAJOR =  gms::common::gVersionInfo.m_VersionMajor;
-  const unsigned int gGMS_TIMSAC_IFACE_MINOR =  gms::common::gVersionInfo.m_VersionMinor;
-  const unsigned int gGMS_TIMSAC_IFACE_MICRO =  gms::common::gVersionInfo.m_VersionMicro;
+
+
+  const unsigned int gGMS_TIMSAC_IFACE_MAJOR =  1;
+  const unsigned int gGMS_TIMSAC_IFACE_MINOR =  1;
+  const unsigned int gGMS_TIMSAC_IFACE_MICRO =  0;
   const unsigned int gGMS_TIMSAC_IFACE_FULLVER =
     1000U*gGMS_TIMSAC_IFACE_MAJOR+100U*gGMS_TIMSAC_IFACE_MINOR+10U*gGMS_TIMSAC_IFACE_MICRO;
   const char * const pgGMS_TIMSAC_IFACE_CREATE_DATE = "16-08-2018 14:04 +00200 (THR 16 AUG 2018 GMT+2)";
@@ -25,11 +22,10 @@ namespace file_info {
   const char * const pgGMS_TIMSAC_IFACE_SYNOPSIS    = " Timsac 'C' interface for Fortran 77 subroutines.";
 }
 
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
+
+
     #include "GMS_config.h"
-#endif
+
 
 #if defined (GMS_CXX_98) || defined (GMS_CXX_11) || defined (GMS_CXX_14)
 
