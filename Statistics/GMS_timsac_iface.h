@@ -47,7 +47,7 @@ extern "C"  {
 			    AND THE TEST STATISTICS Q(I) FOR THE DIFFERENCES BETWEEN P1(I) AND
 			    P2(I).   Q(I) GREATER THAN 1 MEANS SIGNIFICANT DIFFERENCE.
 	*/
-	 void MOD_TIMSAC_mp_AUSPECF(int *, 
+	 void AUSPECF(int *, 
 			      int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -66,7 +66,7 @@ extern "C"  {
 				 PURE AUTOREGRESSION IS NOT ALLOWED.
 				 FOR AR-MODELS USE THE INTERMEDIATE OUTPUTS OF CANARM.
 	 */
-	 void MOD_TIMSAC_mp_AUTARMF(
+	 void AUTARMF(
 				     int *,
 					 int *,
 					 double * __restrict,
@@ -103,7 +103,7 @@ extern "C"  {
 					 THE OUTPUTS ARE AUTOCOVARIANCES (CXX(I); I=0,LAGH) AND
 					 AUTO CORRELATIONS (NORMALIZED COVARIANCES).
 	 */
-	 void MOD_TIMSAC_mp_AUTCORF(double * __restrict, 
+	 void AUTCORF(double * __restrict, 
 				  int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -122,7 +122,7 @@ extern "C"  {
 					 PERFORMANCE IS CONTROLLED BY THE SELECTION OF THE PARAMETERS OF   
 					 THE PRIOR DISTRIBUTION.  
 	 */
-	 void MOD_TIMSAC_mp_BAYSEAF(double * __restrict, 
+	 /*void BAYSEAF(double * __restrict, 
 				  int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -142,7 +142,7 @@ extern "C"  {
 				  double * __restrict,
 				  int *, 
 				  int *, 
-				  int * );
+				  int * );*/
 
 	 /*
 				     THIS PROGRAM COMPUTES BISPECTRUM USING THE DIRECT FOURIER TRANSFOR
@@ -154,7 +154,7 @@ extern "C"  {
 					 CC(I); AUTOCOVARIANCES,
 					 C(I,J); THIRD ORDER MOMENTS.   
 	 */
-	 void MOD_TIMSAC_mp_BISPECF(int *, 
+	 void BISPECF(int *, 
 			      int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -188,7 +188,7 @@ extern "C"  {
                        -- EXAMPLE  --     (8F10.5)                     
                        (Z(I),I=1,N):  ORIGINAL DATA         
 	 */
-	 void MOD_TIMSAC_mp_BLOCARF(double * __restrict, 
+	 void BLOCARF(double * __restrict, 
 				  int * , 
 				  int *, 
 				  int *, 
@@ -234,7 +234,7 @@ extern "C"  {
                         C(J):  CALIBRATION CONSTANT FOR CHANNEL J (J=1,ID)           
                         Z(I,J): ORIGINAL DATA            
 	 */
-	 void MOD_TIMSAC_mp_BLOMARF(double * __restrict, 
+	 void BLOMARF(double * __restrict, 
 				  int *, 
 				  int *, 
 				  double *, 
@@ -293,7 +293,7 @@ extern "C"  {
                                -- EXAMPLE --  (8F10.5 )                            
                                X(I) (I=1,N):   ORIGINAL DATA            
 	 */
-	 void MOD_TIMSAC_mp_BSUBSTF(
+	 void BSUBSTF(
 								 double * __restrict,
 								 int *,
 								 int *,
@@ -355,7 +355,7 @@ extern "C"  {
                     Y(N)+BETA(1)Y(N-1)+...+BETA(M1M)Y(N-M1M) = X(N)+ALPHA(1)X(N-1)+...
                                                  ...+ALPHA(M1N)X(N-M1N)    
 	 */
-	 void MOD_TIMSAC_mp_CANARMF(int *, 
+	 void CANARMF(int *, 
 				  int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -399,7 +399,7 @@ extern "C"  {
 					THE COVARIANCE MATRIX C OF THE INNOVATION, OBTAINED BY USING
 					THE F-MATRIX AND THE AR-MODEL, ARE ALSO PUNCHED OUT.
 	 */
-	 void MOD_TIMSAC_mp_CANOCAF(int * , 
+	 void CANOCAF(int * , 
 				  int * __restrict, 
 				  int *, 
 				  int *, 
@@ -451,7 +451,7 @@ extern "C"  {
                      (N,LAGH): N=2048
 			         C(I)(I=0,LAGH): 
 	 */
-	 void MOD_TIMSAC_mp_COVGENF(int *, 
+	 void COVGENF(int *, 
 				  int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -493,7 +493,7 @@ extern "C"  {
                      TRADE(n,i):  number of i-th days of the week in n-th data  
                      b(1) + ... + b(7) = 0           
 	 */
-	 void MOD_TIMSAC_mp_DECOMPF(double * __restrict, 
+	 void DECOMPF(double * __restrict, 
 				  int *, 
 				  int * __restrict, 
 				  double * __restrict, 
@@ -538,7 +538,7 @@ extern "C"  {
                  -- EXAMPLE --     (8F10.5)                           
                     (Z(I),I=1,N):  ORIGINAL DATA           
 	 */
-	 void MOD_TIMSAC_mp_EXSARF(double * __restrict, 
+	 void EXSARF(double * __restrict, 
 				 int *, 
 				 int *, 
 				 double *, 
@@ -569,7 +569,7 @@ extern "C"  {
                    (X(I); I=1,LD): DATA OF CHANNEL X
                    (Y(I); I=1,LD): DATA OF CHANNEL Y (FOR ISW=2 OR 4 ONLY)
 	 */
-	 void MOD_TIMSAC_mp_FFTCORF(int *, 
+	 void FFTCORF(int *, 
 				  int *, 
 				  int *, 
 				  int *, 
@@ -597,7 +597,7 @@ extern "C"  {
                     CHI**2 SHOWS THE SIGNIFICANCE OF PARCOR=A(M) AS A CHI-SQUARED
                     VARIABLE WITH D.F.=1.
 	 */
-	 void MOD_TIMSAC_mp_FPEAUTF(int *, 
+	 void FPEAUTF(int *, 
 				  int *, 
 				  double * __restrict, 
 				  double * __restrict, 
@@ -629,7 +629,7 @@ extern "C"  {
 					 THE SET OF COEFFICIENT MATRICES A AND B TO BE USED IN
 					 PROGRAM 5.5.1   OPTIMAL CONTROLLER DESIGN.
 	 */
-	 void MOD_TIMSAC_mp_FPEC7F(int *, 
+	 void FPEC7F(int *, 
 				 int *, 
 				 int *, 
 				 int *, 
@@ -691,7 +691,7 @@ extern "C"  {
 					     ! AND
 						 !      (C0(I,J))(I,J=1,ID): INNOVATION COVARIANCE.
 	 */
-	 void MOD_TIMSAC_mp_MARKOVF(int *, 
+	 void MARKOVF(int *, 
 				  int *, 
 				  int *,
 				  double * __restrict,
@@ -725,7 +725,7 @@ extern "C"  {
 	 /*
 				'MLOCARF'  
 	 */
-	 void MOD_TIMSAC_mp_MLOCARF(double * __restrict,
+	 void MLOCARF(double * __restrict,
 				  int *,
 				  int *,
 				  int *,
@@ -767,7 +767,7 @@ extern "C"  {
 			  !     AT EACH LOCAL SPAN, THE PROCESS IS REPRESENTED BY A STATIONARY    
 			  !     AUTOREGRESSIVE MODEL. 
 	 */
-	 void MOD_TIMSAC_mp_MLOMARF(double * __restrict,
+	 void MLOMARF(double * __restrict,
 				  int *,
 				  int *,
 				  double * __restrict,
@@ -827,7 +827,7 @@ extern "C"  {
                   !     EK = (D(1)**2 + ... + D(LAG)**2)*ID + ID*(ID+1)/2             
                   ! WHERE ID DENOTES DIMENSION OF THE PROCESS.     
 	 */
-	 void MOD_TIMSAC_mp_MULBARF(double * __restrict,
+	 void MULBARF(double * __restrict,
 				  int *,
 				  int *,
 				  double * __restrict,
@@ -865,7 +865,7 @@ extern "C"  {
 				  ! WHERE CIJ(L)=COVARIANCE(XI(S+L),XJ(S)),
 				  ! !AND THEIR NORMALIZED (CORRELATION) VALUES.   
 	 */
-	 void MOD_TIMSAC_mp_MULCORF(double * __restrict,
+	 void MULCORF(double * __restrict,
 				  int *,
 				  int *,
 				  int *,
@@ -898,7 +898,7 @@ extern "C"  {
     !       MARFIT                                                      
     !   --------------------------------------------------------------- 
 	 */
-	 void MOD_TIMSAC_mp_MULMARF(double * __restrict,
+	 void MULMARF(double * __restrict,
 				  int * ,
 				  int *,
 				  double * __restrict,
@@ -930,7 +930,7 @@ extern "C"  {
     !     IL=0.
     !     THE RESULTS ARE GIVEN AT FREQUIENCIES I/(2*H).
 	 */
-	 void MOD_TIMSAC_mp_MULNOSF(int *,
+	 void MULNOSF(int *,
 				  int *,
 				  int *,
 				  double * __restrict,
@@ -949,7 +949,7 @@ extern "C"  {
     ! REAL PARTS AND UPPER DIAGONAL ARE IMAGINARY PARTS OF ON AND LOWER
     ! DIAGONAL SPECTRAL ELEMENTS.
 	 */
-	 void MOD_TIMSAC_mp_MULSPEF(int *,
+	 void MULSPEF(int *,
 				  int *,
 				  int *,
 				  int *,
@@ -970,7 +970,7 @@ extern "C"  {
     !     DFORM : INPUT FORMAT SPECIFICATION IN ONE CARD, FOR EXAMPLE,'(8
     !     (X(I),I=1,N) : ORIGINAL DATA.
 	 */
-	 void MOD_TIMSAC_mp_NONSTF(int *,
+	 void NONSTF(int *,
 				 int *,
 				 double * __restrict,
 				 int *,
@@ -1024,7 +1024,7 @@ extern "C"  {
     !      THE OUTPUTS OF THIS PROGRAM ARE THE REAL
     !!     AND PREDICTED VALUES OF Y(I).
 	 */
-	 void MOD_TIMSAC_mp_PRDCTRF(int * ,
+	 void PRDCTRF(int * ,
 				  int *,
 				  int *,
 				  int *,
@@ -1061,7 +1061,7 @@ extern "C"  {
     !                                                                   
     ! WHERE X(I) IS A ZERO MEAN WHITE NOISE.
 	 */
-	 void MOD_TIMSAC_mp_XSARMAF(double * __restrict,
+	 void XSARMAF(double * __restrict,
 				  int *,
 				  int *,
 				  int *,
