@@ -1,0 +1,34 @@
+
+   
+          _mm512_store_pd(&PMC0_f64[i+0], _mm512_castsi512_pd(&PMC0[i+0]));                  
+          _mm512_store_pd(&PMC1_f64[i+0], _mm512_castsi512_pd(&PMC1[i+0]));                 
+          _mm512_store_pd(&PMC2_f64[i+0], _mm512_castsi512_pd(&PMC2[i+0]));
+          _mm512_store_pd(&PMC3_f64[i+0], _mm512_castsi512_pd(&PMC3[i+0]));
+          _mm512_store_pd(&FCRef_f64[i+0],_mm512_castsi512_pd(&FCRef[i+0]));
+          _mm512_store_pd(&FCAct_f64[i+0],_mm512_castsi512_pd(&FCAct[i+0]));
+          _mm512_store_pd(&FCIns_f64[i+0],_mm512_castsi512_pd(&FCIns[i+0]));
+          _mm512_store_pd(&TSC_f64[i+0],  _mm512_castsi512_pd(&TSC[i+0]));
+	  _mm512_store_pd(&PMC0_f64[i+8], _mm512_castsi512_pd(&PMC0[i+8]));
+          _mm512_store_pd(&PMC1_f64[i+8], _mm512_castsi512_pd(&PMC1[i+8]));
+          _mm512_store_pd(&PMC2_f64[i+8], _mm512_castsi512_pd(&PMC2[i+8]));
+          _mm512_store_pd(&PMC3_f64[i+8], _mm512_castsi512_pd(&PMC3[i+8]));
+          _mm512_store_pd(&FCRef_f64[i+8],_mm512_castsi512_pd(&FCRef[i+8]));
+          _mm512_store_pd(&FCAct_f64[i+8],_mm512_castsi512_pd(&FCAct[i+8]));
+          _mm512_store_pd(&FCIns_f64[i+8],_mm512_castsi512_pd(&FCIns[i+8]));
+          _mm512_store_pd(&TSC_f64[i+8],  _mm512_castsi512_pd(&TSC[i+8]));
+          _mm512_store_pd(&PMC0_f64[i+16], _mm512_castsi512_pd(&PMC0[i+16]));
+          _mm512_store_pd(&PMC1_f64[i+16], _mm512_castsi512_pd(&PMC1[i+16]));
+          _mm512_store_pd(&PMC2_f64[i+16], _mm512_castsi512_pd(&PMC2[i+16]));
+          _mm512_store_pd(&PMC3_f64[i+16], _mm512_castsi512_pd(&PMC3[i+16]));
+          _mm512_store_pd(&FCRef_f64[i+16],_mm512_castsi512_pd(&FCRef[i+16]));
+          _mm512_store_pd(&FCAct_f64[i+16],_mm512_castsi512_pd(&FCAct[i+16]));
+          _mm512_store_pd(&FCIns_f64[i+16],_mm512_castsi512_pd(&FCIns[i+16]));
+          _mm512_store_pd(&TSC_f64[i+16],  _mm512_castsi512_pd(&TSC[i+16]));
+	  _mm512_store_pd(&PMC0_f64[i+24], _mm512_castsi512_pd(&PMC0[i+24]));
+          _mm512_store_pd(&PMC1_f64[i+24], _mm512_castsi512_pd(&PMC1[i+24]));
+          _mm512_store_pd(&PMC2_f64[i+24], _mm512_castsi512_pd(&PMC2[i+24]));
+          _mm512_store_pd(&PMC3_f64[i+24], _mm512_castsi512_pd(&PMC3[i+24]));
+          _mm512_store_pd(&FCRef_f64[i+24],_mm512_castsi512_pd(&FCRef[i+24]));
+          _mm512_store_pd(&FCAct_f64[i+24],_mm512_castsi512_pd(&FCAct[i+24]));
+          _mm512_store_pd(&FCIns_f64[i+24],_mm512_castsi512_pd(&FCIns[i+24]));
+          _mm512_store_pd(&TSC_f64[i+24],  _mm512_castsi512_pd(&TSC[i+24]));
