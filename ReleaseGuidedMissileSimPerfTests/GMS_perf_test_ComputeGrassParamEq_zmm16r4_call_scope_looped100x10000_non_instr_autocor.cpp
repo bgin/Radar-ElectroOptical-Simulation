@@ -402,7 +402,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&PMC0_f64[0],&data_len,&PMC0_acov[0],&PMC0_acor[0],&lagh,&PMC0_xmean);
-     if(fopen(&fp1,fname1,"wt") != 0) {
+     if(fopen(&fp1,fname1,"w") != 0) {
         printf("File open error: %s\n",fname1);
 	std::exit(EXIT_FAILURE);
      }
@@ -428,7 +428,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&PMC1_f64[0],&data_len,&PMC1_acov[0],&PMC1_acor[0],&lagh,&PMC1_xmean);
-     if(fopen(&fp2,fname2,"wt") != 0) {
+     if(fopen(&fp2,fname2,"w") != 0) {
         printf("File open error: %s\n",fname2);
 	std::exit(EXIT_FAILURE);
      }
@@ -453,7 +453,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&PMC2_f64[0],&data_len,&PMC2_acov[0],&PMC2_acor[0],&lagh,&PMC2_xmean);
-     if(fopen(&fp3,fname3,"wt") != 0) {
+     if(fopen(&fp3,fname3,"w") != 0) {
         printf("File open error: %s\n",fname3);
 	std::exit(EXIT_FAILURE);
      }
@@ -478,7 +478,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&PMC3_f64[0],&data_len,&PMC3_acov[0],&PMC3_acor[0],&lagh,&PMC3_xmean);
-     if(fopen(&fp4,fname4,"wt") != 0) {
+     if(fopen(&fp4,fname4,"w") != 0) {
         printf("File open error: %s\n",fname4);
 	std::exit(EXIT_FAILURE);
      }
@@ -503,7 +503,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&FCRef_f64[0],&data_len,&FCRef_acov[0],&FCRef_acor[0],&lagh,&FCRef_xmean);
-     if(fopen(&fp5,fname5,"wt") != 0) {
+     if(fopen(&fp5,fname5,"w") != 0) {
         printf("File open error: %s\n",fname5);
 	std::exit(EXIT_FAILURE);
      }
@@ -528,7 +528,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&FCAct_f64[0],&data_len,&FCAct_acov[0],&FCAct_acor[0],&lagh,&FCAct_xmean);
-     if(fopen(&fp6,fname6,"wt") != 0) {
+     if(fopen(&fp6,fname6,"w") != 0) {
         printf("File open error: %s\n",fname6);
 	std::exit(EXIT_FAILURE);
      }
@@ -553,7 +553,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&FCIns_f64[0],&data_len,&FCIns_acov[0],&FCIns_acor[0],&lagh,&FCIns_xmean);
-     if(fopen(&fp7,fname7,"wt") != 0) {
+     if(fopen(&fp7,fname7,"w") != 0) {
         printf("File open error: %s\n",fname7);
 	std::exit(EXIT_FAILURE);
      }
@@ -578,7 +578,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&TSC_f64[0],&data_len,&TSC_acov[0],&TSC_acor[0],&lagh,&TSC_xmean);
-     if(fopen(&fp8,fname8,"wt") != 0) {
+     if(fopen(&fp8,fname8,"w") != 0) {
         printf("File open error: %s\n",fname8);
 	std::exit(EXIT_FAILURE);
      }
@@ -603,7 +603,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&core_util[0],&data_len,&Core_util_acov[0],&Core_util_acor[0],&lagh,&Core_util_xmean);
-     if(fopen(&fp9,fname9,"wt") != 0) {
+     if(fopen(&fp9,fname9,"w") != 0) {
         printf("File open error: %s\n",fname9);
 	std::exit(EXIT_FAILURE);
      }
@@ -628,7 +628,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&core_avg_f[0],&data_len,&Core_avg_f_acov[0],&Core_avg_f_acor[0],&lagh,&Core_avg_f_xmean);
-     if(fopen(&fp10,fname10,"wt") != 0) {
+     if(fopen(&fp10,fname10,"w") != 0) {
         printf("File open error: %s\n",fname10);
 	std::exit(EXIT_FAILURE);
      }
