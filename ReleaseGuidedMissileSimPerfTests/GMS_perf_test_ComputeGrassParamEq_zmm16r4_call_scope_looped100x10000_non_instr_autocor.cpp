@@ -149,7 +149,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      _mm512_stream_si512(&FCIns[0],vzi64);
      _mm512_store_epi64(&TSC[0],vzi64);
      _mm512_stream_pd(&core_util[0],vzf64);
-     _mm512_stream_pd(&core_avg[0],vzf64);
+     _mm512_stream_pd(&core_avg_f[0],vzf64);
      if(int32_t i = 7; i != tot_samples-3; i += 32) {
      
 #include "call_scope_looped_tests_zero_init_arrays_loop_body.c"
@@ -345,6 +345,15 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
 	 }
      }
 
+     // Compute core utilization and core average frequency over test period span
+     double res_copy  = 0.0;
+     for(int32_t i = 0; i != tot_samples; ++i) {
+         res_copy = (double)(FCRef[i]/TSC[i]);
+	 core_util[i] = res_copy;
+	 double tmp = res_copy*nominal_ghz;
+	 core_avg_f[i] = tmp;
+     }
+
      for(int32_t i = 0; i != tot_samples-3; i += 32) {
      
 #include "call_scope_looped_tests_zero_init_deltas_loop_body.c"
@@ -451,6 +460,181 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fprintf(fp3,"PMC2_xmean=%.16f\n",PMC2_xmean);
      for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp3," %.16f  %.16f  %.16f\n",PMC2_f64[i],PMC2_acov[i],PMC2_acor[i]);}
      fclose(fp3);
+     const char * fname4 = "PMC3_acor_acov.csv";
+     FILE * fp4;
+     double * __restrict PMC3_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict PMC3_acov = NULL; // Autocovariance  of PMC0
+     double PMC3_xmean = 0.0;
+     PMC3_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==PMC3_acor) { MALLOC_FAILED}
+     PMC3_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==PMC3_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&PMC3_acor[i+0], vzf64);
+       _mm512_stream_pd(&PMC3_acov[i+0], vzf64);
+       _mm512_stream_pd(&PMC3_acor[i+8], vzf64);
+       _mm512_stream_pd(&PMC3_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&PMC3_f64[0],&data_len,&PMC3_acov[0],&PMC3_acor[0],&lagh,&PMC3_xmean);
+     if(fopen(&fp4,fname4,"wt") != 0) {
+        printf("File open error: %s\n",fname4);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp4,"PMC3_xmean=%.16f\n",PMC3_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp4," %.16f  %.16f  %.16f\n",PMC3_f64[i],PMC3_acov[i],PMC3_acor[i]);}
+     fclose(fp4);
+     const char * fname5 = "FCRef_acor_acov.csv";
+     FILE * fp5;
+     double * __restrict FCRef_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict FCRef_acov = NULL; // Autocovariance  of PMC0
+     double FCRef_xmean = 0.0;
+     FCRef_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==FCRef_acor) { MALLOC_FAILED}
+     FCRef_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==FCRef_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&FCRef_acor[i+0], vzf64);
+       _mm512_stream_pd(&FCRef_acov[i+0], vzf64);
+       _mm512_stream_pd(&FCRef_acor[i+8], vzf64);
+       _mm512_stream_pd(&FCRef_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&FCRef_f64[0],&data_len,&FCRef_acov[0],&FCRef_acor[0],&lagh,&FCRef_xmean);
+     if(fopen(&fp5,fname5,"wt") != 0) {
+        printf("File open error: %s\n",fname5);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp5,"FCRef_xmean=%.16f\n",FCRef_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp5," %.16f  %.16f  %.16f\n",FCRef_f64[i],FCRef_acov[i],FCRef_acor[i]);}
+     fclose(fp5);
+     const char * fname6 = "FCAct_acor_acov.csv";
+     FILE * fp6;
+     double * __restrict FCAct_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict FCAct_acov = NULL; // Autocovariance  of PMC0
+     double FCAct_xmean = 0.0;
+     FCAct_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==FCAct_acor) { MALLOC_FAILED}
+     FCAct_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==FCAct_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&FCAct_acor[i+0], vzf64);
+       _mm512_stream_pd(&FCAct_acov[i+0], vzf64);
+       _mm512_stream_pd(&FCAct_acor[i+8], vzf64);
+       _mm512_stream_pd(&FCAct_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&FCAct_f64[0],&data_len,&FCAct_acov[0],&FCAct_acor[0],&lagh,&FCAct_xmean);
+     if(fopen(&fp6,fname6,"wt") != 0) {
+        printf("File open error: %s\n",fname6);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp6,"FCAct_xmean=%.16f\n",FCAct_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp6," %.16f  %.16f  %.16f\n",FCAct_f64[i],FCAct_acov[i],FCAct_acor[i]);}
+     fclose(fp6);
+     const char * fname7 = "FCIns_acor_acov.csv";
+     FILE * fp7;
+     double * __restrict FCIns_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict FCIns_acov = NULL; // Autocovariance  of PMC0
+     double FCIns_xmean = 0.0;
+     FCIns_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==FCIns_acor) { MALLOC_FAILED}
+     FCIns_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==FCIns_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&FCIns_acor[i+0], vzf64);
+       _mm512_stream_pd(&FCIns_acov[i+0], vzf64);
+       _mm512_stream_pd(&FCIns_acor[i+8], vzf64);
+       _mm512_stream_pd(&FCIns_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&FCIns_f64[0],&data_len,&FCIns_acov[0],&FCIns_acor[0],&lagh,&FCIns_xmean);
+     if(fopen(&fp7,fname7,"wt") != 0) {
+        printf("File open error: %s\n",fname7);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp7,"FCIns_xmean=%.16f\n",FCIns_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp7," %.16f  %.16f  %.16f\n",FCIns_f64[i],FCIns_acov[i],FCIns_acor[i]);}
+     fclose(fp7);
+     const char * fname8 = "TSC_acor_acov.csv";
+     FILE * fp8;
+     double * __restrict TSC_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict TSC_acov = NULL; // Autocovariance  of PMC0
+     double TSC_xmean = 0.0;
+     TSC_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==TSC_acor) { MALLOC_FAILED}
+     TSC_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==TSC_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&TSC_acor[i+0], vzf64);
+       _mm512_stream_pd(&TSC_acov[i+0], vzf64);
+       _mm512_stream_pd(&TSC_acor[i+8], vzf64);
+       _mm512_stream_pd(&TSC_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&TSC_f64[0],&data_len,&TSC_acov[0],&TSC_acor[0],&lagh,&TSC_xmean);
+     if(fopen(&fp8,fname8,"wt") != 0) {
+        printf("File open error: %s\n",fname8);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp8,"TSC_xmean=%.16f\n",TSC_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp8," %.16f  %.16f  %.16f\n",TSC_f64[i],TSC_acov[i],TSC_acor[i]);}
+     fclose(fp8);
+     const char * fname9 = "Core-utilization_acor_acov.csv";
+     FILE * fp9;
+     double * __restrict Core_util_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict Core_util_acov = NULL; // Autocovariance  of PMC0
+     double Core_util_xmean = 0.0;
+     Core_util_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==Core_util_acor) { MALLOC_FAILED}
+     Core_util_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==Core_util_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&Core_util_acor[i+0], vzf64);
+       _mm512_stream_pd(&Core_util_acov[i+0], vzf64);
+       _mm512_stream_pd(&Core_util_acor[i+8], vzf64);
+       _mm512_stream_pd(&Core_util_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&core_util[0],&data_len,&Core_util_acov[0],&Core_util_acor[0],&lagh,&Core_util_xmean);
+     if(fopen(&fp9,fname9,"wt") != 0) {
+        printf("File open error: %s\n",fname9);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp9,"Core_util_xmean=%.16f\n",Core_util_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp9," %.16f  %.16f  %.16f\n",core_util[i],Core_util_acov[i],Core_util_acor[i]);}
+     fclose(fp9);
+     const char * fname10 = "Core-avg-freq_acor_acov.csv";
+     FILE * fp10;
+     double * __restrict Core_avg_f_acor = NULL; // Autocorrelation of PMC2
+     double * __restrict Core_avg_f_acov = NULL; // Autocovariance  of PMC0
+     double Core_avg_f_xmean = 0.0;
+     Core_avg_f_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==Core_avg_f_acor) { MALLOC_FAILED}
+     Core_avg_f_acov = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
+     if(NULL==Core_avg_f_acov)  { MALLOC_FAILED};
+     // Initialize the result arrays
+     for(int32_t i = 0; i != tot_samples; i += 16) {
+       _mm512_stream_pd(&Core_avg_f_acor[i+0], vzf64);
+       _mm512_stream_pd(&Core_avg_f_acov[i+0], vzf64);
+       _mm512_stream_pd(&Core_avg_f_acor[i+8], vzf64);
+       _mm512_stream_pd(&Core_avg_f_acov[i+8], vzf64);
+     }
+     // Call F77 C-interface
+     AUTCORF(&core_avg_f[0],&data_len,&Core_avg_f_acov[0],&Core_avg_f_acor[0],&lagh,&Core_avg_f_xmean);
+     if(fopen(&fp10,fname10,"wt") != 0) {
+        printf("File open error: %s\n",fname10);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp10,"Core_avg_f_xmean=%.16f\n",Core_avg_f_xmean);
+     for(int32_t i = 0; i != tot_samples; ++i) { fprintf(fp10," %.16f  %.16f  %.16f\n",core_avg_f[i],Core_avg_f_acov[i],Core_avg_f_acor[i]);}
+     fclose(fp10);
      // Core utilization
      //utilization = (double)(corrected_pmc_delta(gen_ref_end,gen_ref_start,core_ctr_width)) /
      //                      (tsc_end-tsc_start-rdtscp_latency);
@@ -470,15 +654,33 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      printf("The core count:      %d\n", get_core_number());
      printf("The socket number:   %d\n", get_socket_number());
      printf("CPU socket executing now: %d,  CPU core executing now: %d\n",chip,core);
-     printf("Core utilization: %f,  Core average frequency: %f\n",utilization,avg_ghz);
-     printf("Unhalt-to-Halt discrepancy: %lu\n",core_halt_delta);
-     printf("L2 cycles: %lu\n", lvl2_cyc_end-lvl_cyc_start);
+     //printf("Core utilization: %f,  Core average frequency: %f\n",utilization,avg_ghz);
+     //printf("Unhalt-to-Halt discrepancy: %lu\n",core_halt_delta);
+     //printf("L2 cycles: %lu\n", lvl2_cyc_end-lvl_cyc_start);
+     printf("Warmup-loop statistics: TSC=%lu,Ins=%lu,Ref_cyc=%lu\n",tsc_end-tsc_start,
+	    fix_ins_end-fix_ins_start,ref_warmup_end-ref_warmup_start);
      if(fd >= 0) {
         printf(" 0x186: 0x%08, 0x187: 0x%08, 0x188: 0x%08, 0x189: 0x%08\n",data[0],data[1],data[2],data[3]);
      }
-     for(int32_t i = 0; i != 4; ++i) {
-         printf(" %lu ", corrected_pmc_delta(core_counters_end[i],core_counters_start[i],core_ctr_width));
-     }
+     //for(int32_t i = 0; i != 4; ++i) {
+     //    printf(" %lu ", corrected_pmc_delta(core_counters_end[i],core_counters_start[i],core_ctr_width));
+     //}
+     // Begin deallocation of arrays
+     _mm_free(core_avg_f);        _mm_free(core_util);
+     _mm_free(TSC_f64);           _mm_free(FCIns_f64);
+     _mm_free(FCAct_f64);         _mm_free(FCRef_f64);
+     _mm_free(PMC3_f64);          _mm_free(PMC2_f64);
+     _mm_free(PMC1_f64);          _mm_free(PMC0_f64);
+     _mm_free(Core_avg_f_acov);   _mm_free(Core_avg_f_acor);
+     _mm_free(Core_util_acov);    _mm_free(Core_util_acor);
+     _mm_free(TSC_acov);          _mm_free(TSC_acor);
+     _mm_free(FCIns_acov);        _mm_free(FCIns_acor);
+     _mm_free(FCAct_acov);        _mm_free(FCAct_acor);
+     _mm_free(FCRef_acov);        _mm_free(FCRef_acor);
+     _mm_free(PMC3_acov);         _mm_free(PMC3_acor);
+     _mm_free(PMC2_acov);         _mm_free(PMC2_acor);
+     _mm_free(PMC1_acov);         _mm_free(PMC1_acor);
+     _mm_free(PMC0_acov);         _mm_free(PMC0_acor);
 }
 
 
