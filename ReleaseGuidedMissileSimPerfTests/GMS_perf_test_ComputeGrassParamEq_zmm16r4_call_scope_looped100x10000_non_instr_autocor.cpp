@@ -412,8 +412,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      // Autocorrelation and autocovariance of PMC1 data
      const char * fname2 = "PMC1_acor_acov.csv";
      FILE * fp2;
-     double * __restrict PMC1_acor = NULL; // Autocorrelation of PMC0
-     double * __restrict PMC1_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict PMC1_acor = NULL; // Autocorrelation of PMC1
+     double * __restrict PMC1_acov = NULL; // Autocovariance  of PMC1
      double PMC1_xmean = 0.0;
      PMC1_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==PMC1_acor) { MALLOC_FAILED}
@@ -438,7 +438,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      const char * fname3 = "PMC2_acor_acov.csv";
      FILE * fp3;
      double * __restrict PMC2_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict PMC2_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict PMC2_acov = NULL; // Autocovariance  of PMC2
      double PMC2_xmean = 0.0;
      PMC2_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==PMC2_acor) { MALLOC_FAILED}
@@ -462,8 +462,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp3);
      const char * fname4 = "PMC3_acor_acov.csv";
      FILE * fp4;
-     double * __restrict PMC3_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict PMC3_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict PMC3_acor = NULL; // Autocorrelation of PMC3
+     double * __restrict PMC3_acov = NULL; // Autocovariance  of PMC3
      double PMC3_xmean = 0.0;
      PMC3_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==PMC3_acor) { MALLOC_FAILED}
@@ -487,8 +487,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp4);
      const char * fname5 = "FCRef_acor_acov.csv";
      FILE * fp5;
-     double * __restrict FCRef_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict FCRef_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict FCRef_acor = NULL; // Autocorrelation of FCRef
+     double * __restrict FCRef_acov = NULL; // Autocovariance  of FCRef
      double FCRef_xmean = 0.0;
      FCRef_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==FCRef_acor) { MALLOC_FAILED}
@@ -512,8 +512,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp5);
      const char * fname6 = "FCAct_acor_acov.csv";
      FILE * fp6;
-     double * __restrict FCAct_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict FCAct_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict FCAct_acor = NULL; // Autocorrelation of FCAct
+     double * __restrict FCAct_acov = NULL; // Autocovariance  of FCAct
      double FCAct_xmean = 0.0;
      FCAct_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==FCAct_acor) { MALLOC_FAILED}
@@ -537,8 +537,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp6);
      const char * fname7 = "FCIns_acor_acov.csv";
      FILE * fp7;
-     double * __restrict FCIns_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict FCIns_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict FCIns_acor = NULL; // Autocorrelation of FCIns
+     double * __restrict FCIns_acov = NULL; // Autocovariance  of FCIns
      double FCIns_xmean = 0.0;
      FCIns_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==FCIns_acor) { MALLOC_FAILED}
@@ -562,8 +562,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp7);
      const char * fname8 = "TSC_acor_acov.csv";
      FILE * fp8;
-     double * __restrict TSC_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict TSC_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict TSC_acor = NULL; // Autocorrelation of TSC
+     double * __restrict TSC_acov = NULL; // Autocovariance  of TSC
      double TSC_xmean = 0.0;
      TSC_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==TSC_acor) { MALLOC_FAILED}
@@ -587,8 +587,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp8);
      const char * fname9 = "Core-utilization_acor_acov.csv";
      FILE * fp9;
-     double * __restrict Core_util_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict Core_util_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict Core_util_acor = NULL; // Autocorrelation of core_util
+     double * __restrict Core_util_acov = NULL; // Autocovariance  of core_util
      double Core_util_xmean = 0.0;
      Core_util_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==Core_util_acor) { MALLOC_FAILED}
@@ -612,8 +612,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp9);
      const char * fname10 = "Core-avg-freq_acor_acov.csv";
      FILE * fp10;
-     double * __restrict Core_avg_f_acor = NULL; // Autocorrelation of PMC2
-     double * __restrict Core_avg_f_acov = NULL; // Autocovariance  of PMC0
+     double * __restrict Core_avg_f_acor = NULL; // Autocorrelation of core_avg_f
+     double * __restrict Core_avg_f_acov = NULL; // Autocovariance  of core_avg_f
      double Core_avg_f_xmean = 0.0;
      Core_avg_f_acor = reinterpret_cast<double*>(_mm_malloc(tot_samples*sizeof(double),alignment));
      if(NULL==Core_avg_f_acor) { MALLOC_FAILED}
