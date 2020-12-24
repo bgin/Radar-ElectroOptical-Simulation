@@ -46,7 +46,8 @@
        int32_t idx = 0;                                          \
        const int32_t len = npoints/8;                            \
        register __m256 aVal, d, pi, pio2, x, y, z, arccosine;    \
-       register __m256 n_third,p_third;                          \
+       register __m256 n_third,p_third,condition,fzeroes,fones;	 \
+       register __m256 ftwos,ffours;                             \ 
        pi = _mm256_set1_ps(3.14159265358979323846f);             \
        pio2 = _mm256_set1_ps(1.5707963267948966192f);            \
        fzeroes = _mm256_setzero_ps();                            \
