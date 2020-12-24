@@ -93,12 +93,12 @@ __ATTR_ALIGN__(32)
 static inline
 __m512 avx512_warmup_loop2_ps(const __m512 a,
                               const __m512 b,
-			      const __m512 c,
-			      const int32_t niter) {
+			      const __m512 c){
+	      
        __m512 volatile result = _mm512_setzero_ps();
 #pragma nounroll
-#pragma loop_count min(16),avg(128),max(1024)
-        for(int32_t i = 0; i != niter; ++i) {
+#pragma loop_count(1000000)
+        for(int32_t i = 0; i != 1000000; ++i) {
             result = _mm512_fmadd_ps(a,b,c);
 	}
 	return (result);
