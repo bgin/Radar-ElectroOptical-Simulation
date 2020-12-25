@@ -144,5 +144,101 @@ IppStatus gms_ippGetCpuFreqMhz(int32_t * Mhz) {
     return (ippGetCpuFreqMhz(&Mhz));
 }
 
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+const char * gms_ippGetStatusString(IppStatus code) {
+
+      return (ippGetStatusString(code));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippGetL2CacheSize(int32_t * pResult) {
+
+      return (ippGetL2CacheSize(&pResult));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippGetCpuFeatures(Ipp64u * pFeaturesMask,
+                                Ipp32u pCpuidInfoRegs[4]) {
+
+       return (ippGetCpuFeatures(&pFeaturesMask,
+                                  pCpuidInfoRegs));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+Ipp64u gms_ippGetEnabledCpuFeatures() {
+
+      return (ippGetEnabledCpuFeatures());
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippGetMaxCacheSizeB(int32_t * pResult) {
+
+       return (ippGetMaxCacheSizeB(&pResult));
+}
+
+/*
+    An argument values
+#define PX_FM ( ippCPUID_MMX | ippCPUID_SSE | ippCPUID_SSE2 )
+#define M7_FM ( PX_FM | ippCPUID_SSE3 )
+#define U8_FM ( M7_FM | ippCPUID_SSSE3 )
+#define N8_FM ( U8_FM | ippCPUID_MOVBE )
+#define Y8_FM ( U8_FM | ippCPUID_SSE41 | ippCPUID_SSE42 | ippCPUID_AES | ippCPUID_CLMUL |
+ippCPUID_SHA )
+#define E9_FM ( Y8_FM | ippCPUID_AVX | ippAVX_ENABLEDBYOS | ippCPUID_RDRAND | ippCPUID_F16C )
+#define L9_FM ( E9_FM | ippCPUID_MOVBE | ippCPUID_AVX2 | ippCPUID_ADCOX | ippCPUID_RDSEED |
+ippCPUID_PREFETCHW )
+#define K0_FM ( L9_FM | ippCPUID_AVX512F )
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippSetCpuFeatures(Ipp64u cpuFeatures) {
+
+       return (ippSetCpuFeatures(cpuFeatures));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippSetFlushToZero(int32_t value,
+                                uint32_t * pUMask) {
+
+       return (ippSetFlushToZero(value,&pUMask));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippSetDenormAreZeros(int32_t value) {
+
+       return (ippSetDenormAreZeros(value));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippSetNumThreads(int32_t nThreads) {
+
+       return (ippSetNumThreads(nThreads));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_COLD__
+static inline
+IppStatus gms_ippGetNumThreads(int32_t * pNumThr) {
+
+       return (ippGetNumThreads(&pNumThr));
+}
 
 #endif /*__GMS_IPPS_COMMON_WRAPPERS_H__*/
