@@ -532,6 +532,470 @@ IppStatus gms_ippsRandUniformGetSize_64f(int * pRandUniformStateSize) {
 }
 
 
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandUniform_32f(Ipp32f * pDst, int32_t len, IppsRandUniState_32f *
+				  pRandUniState) {
+
+	  return (ippsRandUniform_32f(pDst,len,pRandUniState));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandUniform_64f(Ipp64f * pDst, int32_t len, IppsRandUniState_64f *
+				  pRandUniState) {
+
+	  return (ippsRandUniform_64f(pDst,len,pRandUniState));
+}
+
+#include <immintrin.h>
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+bool      vecf32_fill_ippsRandUniform_32f(Ipp32f * __restrict pDst, int32_t len,
+                                          Ipp32f low, Ipp32f high) {
+
+      IppsRandUniState_32f * __restrict pRandStateObj = NULL;
+      IppStatus stat;
+      int32_t sizeRndObj;
+      uint32_t seed; 
+      stat = ippsRandUniformGetSize_32f(&sizeRndObj);
+      if(stat != ippStsNoErr) { goto Failed;}
+      pRandStateObj = (IppsRandUniState_32f*)ippsMalloc_32f(sizeRndObj);
+      if(NULL==pRandStateObj && sizeRndObj != 0) {goto Failed;}
+      _rdseed32_step(&seed);
+      if(0==seed) { seed = (uint32_t)__rdtsc();}
+      stat = ippsRandUniformInit_32f(pRandStateObj,low,high,seed);
+      if(stat != ippStsNoErr) { goto Failed;}
+      stat = ippsRandUniform_32f(pDst,len,pRandStateObj);
+      if(stat != ippStsNoErr) { goto Failed;}
+      ippsFree(pRandStateObj);
+      return (true); // Success
+Failed:
+     {
+        if(NULL!=pRandStateObj) {ippsFree(pRandStateObj);}
+        return (false);
+   }
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+bool      vecf64_fill_ippsRandUniform_64f(Ipp64f * __restrict pDst, int32_t len,
+                                          Ipp64f low, Ipp64f high) {
+
+      IppsRandUniState_64f * __restrict pRandStateObj = NULL;
+      IppStatus stat;
+      int32_t sizeRndObj;
+      uint32_t seed;
+      stat = ippsRandUniformGetSize_64f(&sizeRndObj);
+      if(stat != ippStsNoErr) { goto Failed;}
+      pRandStateObj = (IppsRandUniState_64f*)ippsMalloc_64f(sizeRndObj);
+      if(NULL==pRandStateObj && sizeRndObj != 0) { goto Failed;}
+      _rdseed32_step(&seed);
+      if(0==seed) {seed = (uint32_t)__rdtsc();}
+      stat = ippsRandUniformInit_64f(pRandStateObj,low,high,seed);
+      if(stat != ippStsNoErr) { goto Failed;}
+      stat = ippsRandUniform_64f(pDst,len,pRandStateObj);
+      if(stat != ippStsNoErr) { goto Failed;}
+      ippsFree(pRandStatObj);
+      return (true);
+Failed:
+     {
+        if(NULL!=pRandStateObj) {ippsFree(pRandStateObj);}
+        return (false);
+   }      
+}
+
+/*
+        RandGaussInit
+Initializes a noise generator with Gaussian
+distribution.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandGaussInit_32f(IppsRandGaussState_32f * pRandGaussState, Ipp32f mean,
+                                    Ipp32f stdDev, uint32_t seed) {
+
+	return (ippsRandGaussinit_32f(pRandGaussState,mean,stdDev,seed));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandGaussInit_64f(IppsRandGaussState_64f * pRandGaussState, Ipp64f mean,
+                                    Ipp64f stdDev, uint32_t seed) {
+
+	return (ippsRandGaussinit_64f(pRandGaussState,mean,stdDev,seed));
+}
+
+/*
+    RandGaussGetSize
+Computes the length of the Gaussian distribution
+generator structure.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandGaussGetSize_32f(int32_t * pRandGaussStateSize) {
+
+        return (ippsRandGaussGetSize_32f(&pRandGaussStateSize));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandGaussGetSize_64f(int32_t * pRandGaussStateSize) {
+
+        return (ippsRandGaussGetSize_64f(&pRandGaussStateSize));
+}
+
+/*
+   RandGauss
+Generates the pseudo-random samples with a
+Gaussian distribution.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandGauss_32f(Ipp32f * pDst, int32_t len,
+                                IppsRandGaussState_32f * pRandGaussState) {
+
+	  return (ippsRandGauss_32f(pDst,len,pRandGaussState));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsRandGauss_64f(Ipp64f * pDst, int32_t len,
+                                IppsRandGaussState_64f * pRandGaussState) {
+
+	  return (ippsRandGauss_64f(pDst,len,pRandGaussState));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+bool gms_vecf32_fill_ippsRandGauss_f32(Ipp32f * pDst, int32_len,
+                                       Ipp32f mean,   Ipp32f stdDev) {
+
+      IppsRandGaussState_32f * __restrict pRandGaussState = NULL;
+      IppStatus stat;
+      int32_t sizeRndObj;
+      uint32_t seed;
+      stat = ippsRandGaussGetSize_32f(&sizeRndObj);
+      if(stat != ippStsNoErr) { goto Failed;}
+      pRandGaussState = (IppsRandGaussState_32f*)ippMalloc_32f(sizeRndObj);
+      if(NULL==pRandGaussState && 0 != sizeRndObj) { goto Failed;}
+      _rdseed32_step(&seed);
+      if(0==seed) { seed = (uint32_t)__rdtsc();}
+      stat = ippsRandGaussInit_32f(pRandGaussState,mean,stdDev,seed);
+      if(stat != ippStsNoErr) { goto Failed;}
+      stat = ippsRandGauss_32f(pDst,len,pRandGaussState);
+      if(stat != ippStsNoErr) { goto Failed;}
+      ippsFree(pRandGaussState);
+      return (true);
+Failed:
+         {
+           if(NULL!=pRandGaussState) { ippsFree(pRandGaussState); }
+	   return (false);
+   }
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1)))
+__attribute__((assume_aligned(64)))
+static inline
+bool gms_vecf64_fill_ippsRandGauss_f64(Ipp64f * pDst, int32_len,
+                                       Ipp64f mean,   Ipp64f stdDev) {
+
+      IppsRandGaussState_64f * __restrict pRandGaussState = NULL;
+      IppStatus stat;
+      int32_t sizeRndObj;
+      uint32_t seed;
+      stat = ippsRandGaussGetSize_64f(&sizeRndObj);
+      if(stat != ippStsNoErr) { goto Failed;}
+      pRandGaussState = (IppsRandGaussState_64f*)ippMalloc_64f(sizeRndObj);
+      if(NULL==pRandGaussState && 0 != sizeRndObj) { goto Failed;}
+      _rdseed32_step(&seed);
+      if(0==seed) { seed = (uint32_t)__rdtsc();}
+      stat = ippsRandGaussInit_64f(pRandGaussState,mean,stdDev,seed);
+      if(stat != ippStsNoErr) { goto Failed;}
+      stat = ippsRandGauss_64f(pDst,len,pRandGaussState);
+      if(stat != ippStsNoErr) { goto Failed;}
+      ippsFree(pRandGaussState);
+      return (true);
+Failed:
+         {
+           if(NULL!=pRandGaussState) { ippsFree(pRandGaussState); }
+	   return (false);
+   }
+}
+
+/*
+    VectorJaehne
+    Creates a Jaehne vector.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsVectorJaehne_32f(Ipp32f * pDst, int32_t len, Ipp32f magn) {
+
+         return (ippsVectorJaehne_32f(pDst,len,magn));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsVectorJaehne_64f(Ipp64f * pDst, int32_t len, Ipp64f magn) {
+
+         return (ippsVectorJaehne_64f(pDst,len,magn));
+}
+
+/*
+    VectorSlope
+Creates a slope vector.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsVectorSlope_32f(Ippf32 * pDst, int32_t len, Ipp32f offset, Ipp32f slope) {
+
+         return (ippsVectorSlope_32f(pDst,len,offset,slope));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsVectorSlope_64f(Ippf64 * pDst, int32_t len, Ipp64f offset, Ipp64f slope) {
+
+         return (ippsVectorSlope_64f(pDst,len,offset,slope));
+}
+
+
+/*
+    AddC
+    Adds a constant value to each element of a vector.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_32f(const Ipp32f * pSrc, Ipp32f val, Ipp32f * pDst, int32_t len) {
+
+         return (ippsAddC_32f(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_64f(const Ipp64f * pSrc, Ipp64f val, Ipp64f * pDst, int32_t len) {
+
+         return (ippsAddC_64f(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_32fc(const Ipp32fc * pSrc, Ipp32fc val, Ipp32fc * pDst, int32_t len) {
+
+         return (ippsAddC_32fc(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_64fc(const Ipp64fc * pSrc, Ipp64fc val, Ipp64fc * pDst, int32_t len) {
+
+         return (ippsAddC_64fc(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_32f_I(Ipp32f val, Ipp32f * pSrcDst, int32_t len) {
+
+         return (ippsAddC_32f_I(val,pSrcDst,len));
+}
+
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_64f_I(Ipp64f val, Ipp64f * pSrcDst, int32_t len) {
+
+         return (ippsAddC_64f_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_32fc_I(Ipp32fc val, Ipp32fc * pSrcDst, int32_t len) {
+
+         return (ippsAddC_32fc_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddC_64fc_I(Ipp64fc val, Ipp64fc * pSrcDst, int32_t len) {
+
+         return (ippsAddC_64fc_I(val,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3)
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_32f(const Ipp32f * pSrc1, const Ipp32f * pSrc2, Ipp32f * pDst, int32_t len) {
+
+         return (ippsAdd_32f(pSrc1,pSrc2,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_64f(const Ipp64f * pSrc1, const Ipp64f * pSrc2, Ipp64f * pDst, int32_t len) {
+
+         return (ippsAdd_64f(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_32fc(const Ipp32fc * pSrc1, const Ipp32fc * pSrc2, Ipp32fc * pDst, int32_t len) {
+
+         return (ippsAdd_32fc(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_64fc(const Ipp64fc * pSrc1, const Ipp64fc * pSrc2, Ipp64fc * pDst, int32_t len) {
+
+         return (ippsAdd_64fc(pSrc1,pSrc2,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_32f_I(const Ipp32f * pSrc, Ipp32f * pSrcDst, int32_t len) {
+
+          return (ippsAdd_32f_I(pSrc,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_64f_I(const Ipp64f * pSrc, Ipp64f * pSrcDst, int32_t len) {
+
+          return (ippsAdd_64f_I(pSrc,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_32fc_I(const Ipp32fc * pSrc, Ipp32fc * pSrcDst, int32_t len) {
+
+          return (ippsAdd_32fc_I(pSrc,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAdd_64fc_I(const Ipp64fc * pSrc, Ipp64fc * pSrcDst, int32_t len) {
+
+          return (ippsAdd_64fc_I(pSrc,pSrcDst,len));
+}
+
+
 
 
 #endif /*__GMS_IPPS_COMPUTATIONAL_WRAPPERS_HPP__*/
