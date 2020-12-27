@@ -995,7 +995,605 @@ IppStatus gms_ippsAdd_64fc_I(const Ipp64fc * pSrc, Ipp64fc * pSrcDst, int32_t le
           return (ippsAdd_64fc_I(pSrc,pSrcDst,len));
 }
 
+/*
+        AddProductC
+Adds product of a vector and a constant to the
+accumulator vector
+*/
+
+	      
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddProdC_32f(const Ipp32f * pSrc, const Ipp32f val, Ipp32f * pSrcDst, int32_t len) {
+
+          return (ippsAddProdC_32f(pSrc,val,pSrcDst,len));
+}
 
 
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddProdC_64f(const Ipp64f * pSrc, const Ipp64f val, Ipp64f * pSrcDst, int32_t len) {
+
+          return (ippsAddProdC_64f(pSrc,val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddProduct_32f(const Ipp32f * pSrc1, const Ipp32f * pSrc2, Ipp32f * pSrcDst, int32_t len) {
+
+          return (ippsAddProduct_32f(pSrc1,pSrc2,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddProduct_64f(const Ipp64f * pSrc1, const Ipp64f * pSrc2, Ipp64f * pSrcDst, int32_t len) {
+
+          return (ippsAddProduct_64f(pSrc1,pSrc2,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddProduct_32fc(const Ipp32fc * pSrc1, const Ipp32fc * pSrc2, Ipp32fc * pSrcDst, int32_t len) {
+
+          return (ippsAddProduct_32fc(pSrc1,pSrc2,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsAddProduct_64fc(const Ipp64fc * pSrc1, const Ipp64fc * pSrc2, Ipp64fc * pSrcDst, int32_t len) {
+
+          return (ippsAddProduct_64fc(pSrc1,pSrc2,pSrcDst,len));
+}
+
+/*
+     MulC
+Multiplies each element of a vector by a constant
+value.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_32f(const Ipp32f * pSrc, Ipp32f val, Ipp32f * pDst, int32_t len) {
+
+          return (ippsMulC_32f(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_64f(const Ipp64f * pSrc, Ipp64f val, Ipp64f * pDst, int32_t len) {
+
+          return (ippsMulC_64f(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_32fc(const Ipp32fc * pSrc, Ipp32fc val, Ipp32fc * pDst, int32_t len) {
+
+          return (ippsMulC_32fc(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_64fc(const Ipp64fc * pSrc, Ipp64fc val, Ipp64fc * pDst, int32_t len) {
+
+          return (ippsMulC_64fc(pSrc,val,pDst,len));
+}
+
+/*
+      In-place operations without scaling.
+*/
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_32f_I(Ipp32f val, Ipp32f * pSrcDst, int32_t len) {
+ 
+          return (ippsMulC_32f_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_64f_I(Ipp64f val, Ipp64f * pSrcDst, int32_t len) {
+ 
+          return (ippsMulC_64f_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_32fc_I(Ipp32fc val, Ipp32fc * pSrcDst, int32_t len) {
+ 
+          return (ippsMulC_32fc_I(val,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMulC_64fc_I(Ipp64fc val, Ipp64fc * pSrcDst, int32_t len) {
+ 
+          return (ippsMulC_64fc_I(val,pSrcDst,len));
+}
+
+
+/*
+       Mul
+Multiplies the elements of two vectors.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_32f(const Ipp32f * pSrc1, const Ipp32f * pSrc2, Ipp32f * pDst, int32_t len) {
+
+          return (ippsMul_32f(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_64f(const Ipp64f * pSrc1, const Ipp64f * pSrc2, Ipp64f * pDst, int32_t len) {
+
+          return (ippsMul_64f(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_32fc(const Ipp32fc * pSrc1, const Ipp32fc * pSrc2, Ipp32fc * pDst, int32_t len) {
+
+          return (ippsMul_32fc(pSrc1,pSrc2,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_64fc(const Ipp64fc * pSrc1, const Ipp64fc * pSrc2, Ipp64fc * pDst, int32_t len) {
+
+          return (ippsMul_64fc(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_32f32fc(const Ipp32f * pSrc1, const Ipp32fc * pSrc2, Ipp32fc * pDst, int32_t len) {
+
+          return (ippsMul_32f32fc(pSrc1,pSrc2,pDst,len));
+}
+
+
+
+/*
+    In-place operations on floating point and integer data without scaling
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_32f_I(const Ipp32f * pSrc, Ipp32f * pSrcDst, int32_t len) {
+ 
+          return (ippsMul_32f_I(pSrc,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_64f_I(const Ipp64f * pSrc, Ipp64f * pSrcDst, int32_t len) {
+ 
+          return (ippsMul_64f_I(pSrc,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_32fc_I(const Ipp32fc * pSrc, Ipp32fc * pSrcDst, int32_t len) {
+ 
+          return (ippsMul_32fc_I(pSrc,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsMul_64fc_I(const Ipp64fc * pSrc, Ipp64fc * pSrcDst, int32_t len) {
+ 
+          return (ippsMul_64fc_I(pSrc,pSrcDst,len));
+}
+
+
+/*
+   SubC
+Subtracts a constant value from each element of a
+vector.
+*/
+
+/*
+     Not-in-place operations on floating point data.
+*/
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_32f(const Ipp32f * pSrc, Ipp32f val, Ipp32f * pDst, int32_t len) {
+  
+          return (ippsSubC_32f(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_64f(const Ipp64f * pSrc, Ipp64f val, Ipp64f * pDst, int32_t len) {
+  
+          return (ippsSubC_64f(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_32fc(const Ipp32fc * pSrc, Ipp32fc val, Ipp32fc * pDst, int32_t len) {
+  
+          return (ippsSubC_32fc(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_64fc(const Ipp64fc * pSrc, Ipp64fc val, Ipp64fc * pDst, int32_t len) {
+  
+          return (ippsSubC_64fc(pSrc,val,pDst,len));
+}
+
+/*
+     In-place operations on floating point data.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_32f_I(Ipp32f val, Ipp32f * pSrcDst, int32_t len) {
+
+          return (ippsSubC_32f(val,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_64f_I(Ipp64f val, Ipp64f * pSrcDst, int32_t len) {
+
+          return (ippsSubC_64f(val,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_32fc_I(Ipp32fc val, Ipp32fc * pSrcDst, int32_t len) {
+
+          return (ippsSubC_32fc(val,pSrcDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubC_64fc_I(Ipp64fc val, Ipp64fc * pSrcDst, int32_t len) {
+
+          return (ippsSubC_64fc(val,pSrcDst,len));
+}
+
+/*
+   SubCRev
+Subtracts each element of a vector from a constant
+value.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_32f(const Ipp32f * pSrc, Ipp32f val, Ipp32f * pDst, int32_t len) {
+
+          return (ippsSubCRev_32f(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_64f(const Ipp64f * pSrc, Ipp64f val, Ipp64f * pDst, int32_t len) {
+
+          return (ippsSubCRev_64f(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_32fc(const Ipp32fc * pSrc, Ipp32fc val, Ipp32fc * pDst, int32_t len) {
+
+          return (ippsSubCRev_32fc(pSrc,val,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_64fc(const Ipp64fc * pSrc, Ipp64fc val, Ipp64fc * pDst, int32_t len) {
+
+          return (ippsSubCRev_64fc(pSrc,val,pDst,len));
+}
+
+/*
+    In-place operations on floating point data.
+*/
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_32f_I(Ipp32f val, Ipp32f * pSrcDst, int32_t len) {
+
+          return (ippsSubCRev_32f_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_64f_I(Ipp64f val, Ipp64f * pSrcDst, int32_t len) {
+
+          return (ippsSubCRev_64f_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_32fc_I(Ipp32fc val, Ipp32fc * pSrcDst, int32_t len) {
+
+          return (ippsSubCRev_32fc_I(val,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSubCRev_64fc_I(Ipp64fc val, Ipp64fc * pSrcDst, int32_t len) {
+
+          return (ippsSubCRev_64fc_I(val,pSrcDst,len));
+}
+
+/*
+    Sub
+Subtracts the elements of two vectors.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_32f(const Ipp32f * pSrc1, const Ipp32f * pSrc2, Ipp32f * pDst, int32_t len) {
+
+          return (ippsSub_32f(pSrc1,pSrc2,pDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_64f(const Ipp64f * pSrc1, const Ipp64f * pSrc2, Ipp64f * pDst, int32_t len) {
+
+          return (ippsSub_64f(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_32fc(const Ipp32fc * pSrc1, const Ipp32fc * pSrc2, Ipp32fc * pDst, int32_t len) {
+
+          return (ippsSub_32fc(pSrc1,pSrc2,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2,3))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_64fc(const Ipp64fc * pSrc1, const Ipp64fc * pSrc2, Ipp64fc * pDst, int32_t len) {
+
+          return (ippsSub_64fc(pSrc1,pSrc2,pDst,len));
+}
+
+/*
+    In-place operations on floating point data and integer data without scaling.
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_32f_I(const Ipp32f * pSrc, Ipp32f * pSrcDst, int32_t len) {
+
+          return (ippsSub_32f_I(pSrc,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_64f_I(const Ipp64f * pSrc, Ipp64f * pSrcDst, int32_t len) {
+
+          return (ippsSub_64f_I(pSrc,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_32fc_I(const Ipp32fc * pSrc, Ipp32fc * pSrcDst, int32_t len) {
+
+          return (ippsSub_32fc_I(pSrc,pSrcDst,len));
+}
+
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsSub_64fc_I(const Ipp64fc * pSrc, Ipp64fc * pSrcDst, int32_t len) {
+
+          return (ippsSub_64fc_I(pSrc,pSrcDst,len));
+}
+
+/*
+   DivC
+Divides each element of a vector by a constant value
+*/
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsDivC_32f(const Ipp32f * pSrc, Ipp32f val, Ipp32f * pDst, int32_t len) {
+
+          return (ippsDivC_32f(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsDivC_64f(const Ipp64f * pSrc, Ipp64f val, Ipp64f * pDst, int32_t len) {
+
+          return (ippsDivC_64f(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsDivC_32fc(const Ipp32fc * pSrc, Ipp32fc val, Ipp32fc * pDst, int32_t len) {
+
+          return (ippsDivC_32fc(pSrc,val,pDst,len));
+}
+
+__ATTR_ALWAYS_INLINE__
+__ATTR_HOT__
+__attribute__((nonnull (1,2))
+__attribute__((assume_aligned(64)))
+static inline
+IppStatus gms_ippsDivC_64fc(const Ipp64fc * pSrc, Ipp64fc val, Ipp64fc * pDst, int32_t len) {
+
+          return (ippsDivC_64fc(pSrc,val,pDst,len));
+}
 
 #endif /*__GMS_IPPS_COMPUTATIONAL_WRAPPERS_HPP__*/
