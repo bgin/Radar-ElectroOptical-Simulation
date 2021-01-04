@@ -560,7 +560,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
 	std::exit(EXIT_FAILURE);
      }
      fprintf(fp8,"TSC_xmean=%.16f\n",TSC_xmean);
-     fprintf(fp8,"FCIns input data\n");
+     fprintf(fp8,"TSC input data\n");
      for(int32_t i = 0; i != data_len; ++i) { fprintf(fp8," %.16f\n",TSC_f64[i]);}
      fprintf(fp8," TSC-autocor, TSC-autocov\n");
      for(int32_t i = 0; i != lagh; ++i) {fprintf(fp8,"%.16f %.16f\n",TSC_acor[i],TSC_acov[i]);}
