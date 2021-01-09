@@ -241,17 +241,11 @@ namespace  gms {
 			  void SetThickDensAng_zmm16r4(const AVX512Vec16 * __restrict __ATTR_ALIGN__(64)) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			  void ComputeLeavesParamEq_zmm16r4( const AVX512Vec16,
-							     const AVX512Vec16,
-							     const char * __restrict,
-							     const char * __restrict,
-							     const char * __restrict,
-							     const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);
+							     const AVX512Vec16
+							    ) __ATTR_COLD__ __ATTR_ALIGN__(32);
 
-			void ComputeBranchesParamEq_zmm16r4(  const int32_t,
-							      const char * __restrict,
-							      const char * __restrict,
-							      const char * __restrict,
-							      const char * __restrict) __ATTR_COLD__ __ATTR_ALIGN__(32);                                 
+			void ComputeBranchesParamEq_zmm16r4(  const int32_t
+							      ) __ATTR_COLD__ __ATTR_ALIGN__(32);                                 
 
                           					// Length of arrays is the number of leaves.
                           void ComputeLeafPhaseMatrices(const float * __restrict __ATTR_ALIGN__(64),
