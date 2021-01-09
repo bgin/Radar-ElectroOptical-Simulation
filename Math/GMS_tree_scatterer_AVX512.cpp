@@ -641,11 +641,8 @@ SetThicknessDensAng_zmm16r4(const AVX512vEC16 * __restrict bradii) {
 void
 gms::math::TreeScattererAVX512::
 ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
-                              const AVX512Vec16 vb,
-			      const char * __restrict pmc_event1,
-			      const char * __restrict pmc_event2,
-			      const char * __restrict pmc_event3,
-			      const char * __restrict pmc_event4){
+                              const AVX512Vec16 vb) {
+			     
 
 
 
@@ -794,11 +791,8 @@ ComputeLeavesParamEq_zmm16r4( const AVX512Vec16 va,
 
 bool
 gms::math::TreeScattererAVX512::
-ComputeBranchParamEq_zmm16r4( const int32_t nzpts,
-                              const char * __restrict pmc_event1,
-			      const char * __restrict pmc_event2,
-			      const char * __restrict pmc_event3,
-			      const char * __restrict pmc_event4) {
+ComputeBranchParamEq_zmm16r4( const int32_t nzpts) {
+                             
 
 			     
 
