@@ -44,15 +44,11 @@ namespace file_info{
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_2args( const float* __restrict,
                             float* __restrict,
 			    const char * ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_2args( const float* __restrict,
-                            float* __restrict,
-			    const char * );
-#endif		
+
      /*
         @Description: Checks for C-style array's NULL pointer.
                       
@@ -65,14 +61,11 @@ bool  check_null_ptr_2args( const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER	
+
 bool  check_null_ptr_2args( const double* __restrict,
                             double* __restrict,
 			    const char *) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_2args( const double* __restrict,
-                            double* __restrict,
-			    const char *);
+
 
 	 
      /*
@@ -87,15 +80,10 @@ bool  check_null_ptr_2args( const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_3args( const float* __restrict,
                             const float* __restrict, 
                             float* __restrict, const char *) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_3args( const float* __restrict,
-                            const float* __restrict, 
-                            float* __restrict, const char *);
-#endif
 
 	 
      /*
@@ -110,15 +98,11 @@ bool  check_null_ptr_3args( const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_3args( const double* __restrict,
                             const double* __restrict, 
                             double* __restrict, const char * ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_3args( const double* __restrict,
-                            const double* __restrict, 
-                            double* __restrict, const char * );
-#endif
+
 
     /*
         @Description: Checks for C-style array's NULL pointer.
@@ -132,15 +116,11 @@ bool  check_null_ptr_3args( const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_2args( const int* __restrict,
                             int* __restrict,
 			    const char *) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_2args( const int* __restrict,
-                            int* __restrict,
-			    const char *);
-#endif
+
 
 	
      /*
@@ -155,15 +135,11 @@ bool  check_null_ptr_2args( const int* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
 */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_2args( const long long* __restrict,
                             long long* __restrict,
 			    const char *)  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_2args( const long long* __restrict,
-                            long long* __restrict,
-			    const char *);
-#endif
+
      /*
         @Description: Checks for C-style array's NULL pointer.
                      
@@ -176,15 +152,11 @@ bool  check_null_ptr_2args( const long long* __restrict,
         @Throws:  Nothing
       
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_3args(const int* __restrict,
                            const int* __restrict, 
                            int* __restrict, const char *)  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_3args(const int* __restrict,
-                           const int* __restrict, 
-                           int* __restrict, const char *);
-#endif
+
      /*
         @Description: Checks for C-style array's NULL pointer.
                      
@@ -197,15 +169,11 @@ bool  check_null_ptr_3args(const int* __restrict,
         @Throws:  Nothing
         
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 bool  check_null_ptr_3args(const long long* __restrict,
                            const long long* __restrict,
 			   const long long* __restrict, const char *) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-bool  check_null_ptr_3args(const int* __restrict,
-                           const int* __restrict, 
-                           int* __restrict, const char *);
-#endif
+
 
 
 
@@ -277,15 +245,11 @@ check_32alignment_3args(const Ptr* __restrict src1_ptr,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  dump_timing_stats(const unsigned __int64, const int,
 		        const int, const int, const int,
                         const unsigned __int64, const int, const char * )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  dump_timing_stats(_In_ const unsigned __int64, _In_ const int,
-		        _In_ const int, _In_ const int, _In_ const int,
-                        _In_ const unsigned __int64, _In_ const int, _In_ const char * );
-#endif
+
 
      /*
         @Description: Checks for input domain of x >= 0.0
@@ -301,13 +265,9 @@ void  dump_timing_stats(_In_ const unsigned __int64, _In_ const int,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_lt_zero(const float* __restrict, 
 			    const int, _Inout_ int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_lt_zero(_In_ const float* __restrict, 
-			    _In_ const int, _Inout_ int* );
-#endif
 
     /*
         @Description: Checks for input domain of x >= 0.0
@@ -323,17 +283,12 @@ void  is_domain_f32_lt_zero(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_lt_zero(const float* __restrict,
                             const float* __restrict,
 			    const int,
 			     int *    )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_lt_zero(_In_ const float* __restrict,
-                            _In_ const float* __restrict,
-			    _In_ const int,
-			    _Inout_  int *    )	;
-#endif
+
 
 
     /*
@@ -925,11 +880,9 @@ int  clear_fe_overflow();
         @Throws:  Nothing
         @Calls:   'feclearexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  clear_fe_underflow()  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_fe_underflow();
-#endif
+
      /*
         @Description: Tests all floating-point exceptions.
                       
@@ -944,11 +897,9 @@ int  clear_fe_underflow();
         @Throws:  Nothing
         @Calls:   'fetestexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  test_fe_excepts(const int) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  test_fe_excepts(const int);
-#endif
+
 
 
      /*
@@ -965,11 +916,8 @@ int  test_fe_excepts(const int);
         @Throws:  Nothing
         @Calls:   'fetestexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  test_fe_invalid(const int) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  test_fe_invalid(const int);
-#endif
 
      /*
         @Description: Tests for existance of FE_INEXACT exception.
@@ -985,11 +933,8 @@ int  test_fe_invalid(const int);
         @Throws:  Nothing
         @Calls:   'fetestexcept'
 	 */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  test_fe_inexact(const int)  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  test_fe_inexact(const int);
-#endif
 
      /*
         @Description: Tests for existance of FE_DIVBYZERO exception.
@@ -1005,11 +950,9 @@ int  test_fe_inexact(const int);
         @Throws:  Nothing
         @Calls:   'fetestexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int test_fe_divbyzero(const int) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int test_fe_divbyzero(const int);
-#endif
+
 
      /*
         @Description: Tests for existance of FE_UNNORMAL exception.
@@ -1025,11 +968,9 @@ int test_fe_divbyzero(const int);
         @Throws:  Nothing
         @Calls:   'fetestexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int test_fe_unnormal(const int) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int test_fe_unnormal(const int);
-#endif
+
 
      /*
         @Description: Tests for existance of FE_UNDERFLOW exception.
@@ -1045,11 +986,9 @@ int test_fe_unnormal(const int);
         @Throws:  Nothing
         @Calls:   'fetestexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int test_fe_underflow(const int) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int test_fe_underflow(const int);
-#endif
+
 
      /*
         @Description: Tests for existance of FE_OVERFLOW exception.
@@ -1065,11 +1004,9 @@ int test_fe_underflow(const int);
         @Throws:  Nothing
         @Calls:   'fetestexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  test_fe_overflow(const int) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  test_fe_overflow(const int);
-#endif
+
 
 	
 
