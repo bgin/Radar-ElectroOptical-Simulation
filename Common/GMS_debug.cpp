@@ -4,159 +4,11 @@
 
 
 #if (GMS_DEBUG_ON) == 1
-     #if defined (_WIN64)
+   
 
-double *
-gms::common
-::gms_dmallocu_dbg(_In_ const size_t Size,
-		   _In_ int32_t BlockType,
-		   _In_ const char * filename,
-		   _In_ int32_t linenum) {
-	_ASSERTE(Size > 0ULL);
-	return (reinterpret_cast<double*>(_malloc_dbg(Size * sizeof(double),BlockType,filename,linenum)));
-}
 
-float * 
-gms::common
-::gms_fmallocu_dbg(_In_ const size_t Size,
-				   _In_ int32_t BlockType,
-				   _In_ const char * filename,
-				   _In_ int32_t linenum) {
-	_ASSERTE(Size > 0ULL);
-	return (reinterpret_cast<float*>(_malloc_dbg(Size * sizeof(float),BlockType,filename,linenum)));
-}
 
-int32_t *
-gms::common
-::gms_imallocu_dbg(_In_ const size_t Size,
-				   _In_ int32_t BlockType,
-				   _In_ const char * filename,
-				   _In_ int32_t linenum) {
-	_ASSERTE(Size > 0ULL);
-	return (reinterpret_cast<int32_t*>(_malloc_dbg(Size * sizeof(int32_t),BlockType,filename,linenum)));
-}
-
-double * 
-gms::common
-::gms_dmalloca_dbg(_In_ const size_t Size,
-				   _In_ size_t Alignment,
-				   _In_ const char * filename,
-				   _In_ int32_t linenum) {
-	_ASSERTE(Size > 0ULL);
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	return (reinterpret_cast<double*>(
-				_aligned_malloc_dbg(Size * sizeof(double) + padding64B,Alignment,filename,linenum)));
-#else
-	return (reinterpret_cast<double*>(
-			   _aligned_malloc_dbg(Size * sizeof(double),Alignment,filename,linenum)));
-#endif
-}
-					 
-float * 
-gms::common
-::gms_fmalloca_dbg(_In_ const size_t Size,
-				   _In_ size_t Alignment,
-				   _In_ const char * filename,
-				   _In_ int32_t linenum) {
-	_ASSERTE(Size > 0ULL);
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	return (reinterpret_cast<float*>(
-				_aligned_malloc_dbg(Size * sizeof(float) + padding64B, Alignment,filename,linenum)));
-#else
-	return (reinterpret_cast<float*>(
-				_aligned_malloc_dbg(Size * sizeof(float), Alignment, filename,linenum)));
-#endif
-}
-
-int32_t *
-gms::common
-::gms_imalloca_dbg(_In_ const size_t Size,
-				   _In_ size_t Alignment,
-				   _In_ const char * filename,
-				   _In_ int32_t linenum) {
-	_ASSERTE(Size > 0ULL);
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	return (reinterpret_cast<int32_t*>(
-				 _aligned_malloc_dbg(Size * sizeof(int32_t) + padding64B, Alignment,filename,linenum)));
-#else
-	return (reinterpret_cast<int32_t*>(
-		        _aligned_malloc_dbg(Size * sizeof(int32_t), Alignment, filename, linenum)));
-#endif
-}
-
-double * 
-gms::common
-::gms_edmalloca_dbg(_In_ const size_t Size,
-					_In_ size_t Alignment,
-					_In_ const char * filename,
-					_In_ int32_t linenum) {
-	typedef double * __restrict __declspec(align_value(64)) r8ptra;
-	r8ptra ptr = NULL;
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	ptr = reinterpret_cast<double*>(
-				_aligned_malloc_dbg(Size * sizeof(double) + padding64B,Alignment,filename,linenum));
-#else
-	ptr = reinterpret_cast<double*>(
-		       _aligned_malloc_dbg(Size * sizeof(double), Alignment, filename, linenum));
-#endif
-	if (NULL == ptr && 0ULL != Size) {
-#if (PRINT_CALLSTACK_ON_ERROR) == 1
-		DUMP_CALLSTACK_ON_ERROR
-#endif
-			ABORT_ON_ERROR("gms_edmalloca_dbg -- !!! Memory Allocation Failure !!!", MALLOC_FAILED)
-	}
-	return (ptr);
-}
-
-float * 
-gms::common::
-gms_efmalloca_dbg(_In_ const size_t Size,
-				  _In_ size_t Alignment,
-				  _In_ const char * filename,
-				  _In_ int32_t linenum) {
-	typedef float * __restrict __declspec(align_value(64)) r4ptr;
-	r4ptr ptr = NULL;
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	ptr = reinterpret_cast<float*>(
-					_aligned_malloc_dbg(Size * sizeof(float) + padding64B, Alignment,filename,linenum));
-#else
-	ptr = reinterpret_cast<float*>(
-				   _aligned_malloc_dbg(Size * sizeof(float), Alignment, filename, linenum));
-#endif
-	if (NULL == ptr && 0ULL != Size) {
-#if (PRINT_CALLSTACK_ON_ERROR) == 1
-		DUMP_CALLSTACK_ON_ERROR
-#endif
-			ABORT_ON_ERROR("gms_efmalloca_dbg -- !!! Memory Allocation Failure !!!", MALLOC_FAILED)
-	}
-	return (ptr);
-}
-
-int64_t * 
-gms::common
-::gms_eimalloca_dbg(_In_ const size_t Size,
-				    _In_ size_t Alignment,
-					_In_ const char * filename,
-				    _In_ int32_t linenum) {
-	typedef int32_t * __restrict __declspec(align_value(64)) i4ptr;
-	i4ptr ptr = NULL;
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-		ptr = reinterpret_cast<int32_t*>(
-					_aligned_malloc_dbg(Size * sizeof(int32_t) + padding64B,Alignment,filename,linenum));
-#else
-	ptr = reinterpret_cast<int32_t*>(
-		_aligned_malloc_dbg(Size * sizeof(int32_t), Alignment, filename, linenum));
-#endif
-	if (NULL == ptr && 0ULL != Size) {
-#if (PRINT_CALLSTACK_ON_ERROR) == 1
-		DUMP_CALLSTACK_ON_ERROR
-#endif
-			ABORT_ON_ERROR("gms_eimalloca_dbg -- !!! Memory Allocation Failure !!!", MALLOC_FAILED)
-	}
-	return (ptr);
-}
-
-     #elif defined (__linux)
+  
 
      // use mallopt with value 3
 
@@ -289,7 +141,7 @@ gms_common
       return (ptr);      
 }
 
-     #endif
+    
 
 
 #else
