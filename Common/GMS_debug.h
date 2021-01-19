@@ -30,74 +30,14 @@ namespace gms {
 	namespace common {
 
 #if (GMS_DEBUG_ON) == 1
-         #if defined (_WIN64)
-		// Debug version of aligned malloc wrappers.
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		 double * gms_dmallocu_dbg(_In_ const size_t Size,
-					   _In_ int32_t,
-					   _In_ const char *,
-					   _In_ int32_t );
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		float *  gms_fmallocu_dbg(_In_ const size_t Size ,
-					  _In_ int32_t,
-					  _In_ const char *,
-					  _In_ int32_t );
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		int32_t * gms_imallocu_dbg(_In_ const size_t Size,
-								   _In_ int32_t,
-								   _In_ const char *,
-								   _In_ int32_t);
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		double * gms_dmalloca_dbg( _In_ const size_t Size,
-								   _In_ size_t,
-								   _In_ const char *,
-								   _In_ int32_t);
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		float *  gms_fmalloca_dbg(_In_ const size_t Size,
-								  _In_ size_t ,
-								  _In_ const char *,
-								  _In_ int32_t );
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		int32_t * gms_imalloca_dbg(_In_ const size_t Size,
-								   _In_ size_t,
-								   _In_ const char *,
-								   _In_ int32_t);
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		double *  gms_edmalloca_dbg(_In_ const size_t Size,
-								    _In_ size_t,
-								    _In_ const char *,
-									_In_ int32_t);
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		float *   lam_efmalloca_dbg(_In_ const size_t Size,
-								    _In_ size_t,
-									_In_ const char *,
-									_In_ int32_t );
-
-		_Check_return_ _Ret_maybenull_ 
-		_Post_writable_byte_size_(Size)
-		int32_t * gms_eimalloca_dbg(_In_ const size_t Size,
-									_In_ size_t,
-									_In_ const char *,
-									_In_ int32_t);
+        
 
 		
-         #elif defined (__linux)	                                     
+
+	
+
+		
+                                            
 
 	  	
 		double * gms_dmallocu_dbg(const size_t);			 
@@ -119,7 +59,7 @@ namespace gms {
 		int32_t * gms_eimalloca_dbg(const size_t,const size_t);
 					 
 		
-         #endif
+       
 		
 
 
