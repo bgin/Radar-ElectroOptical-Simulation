@@ -305,15 +305,11 @@ void  is_domain_f32_lt_zero(const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_lt_zero(const double* __restrict,
 	                    const int,
 			    int *) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_lt_zero(_In_ const double* __restrict,
-	                    _In_ const int,
-			    _Inout_ int *);
-#endif	 
+
      /*
         @Description: Checks for input domain of x >= 0.0
                       Upon detecting error condition 'domain range'
@@ -328,17 +324,12 @@ void  is_domain_f64_lt_zero(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_lt_zero(const double* __restrict,
                             const double* __restrict,
 			    const int,
 			    int *   ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_lt_zero(_In_ const double* __restrict,
-                            _In_ const double* __restrict,
-			    _In_ const int,
-			    _Inout_  int *   );
-#endif
+
 	  
      /*
         @Description: Checks for input domain of -1.0F <= x <= 1.0F
@@ -354,15 +345,11 @@ void  is_domain_f64_lt_zero(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
 	 */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_bt_ones(const float* __restrict, 
 			    const int,
 			    int *) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_bt_ones(_In_ const float* __restrict, 
-			    _In_ const int,
-			    _Inout_ int *);
-#endif
+
      /*
         @Description: Checks for input domain of -1.0F <= 0 <= 1.0F
                       Upon detecting error condition 'domain range'
@@ -377,15 +364,11 @@ void  is_domain_f32_bt_ones(_In_ const float* __restrict,
        @Throws:  Nothing
        @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_bt_ones(const float* __restrict,
                             const float* __restrict,
 			    const int ,_Inout_  int*)  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_bt_ones(_In_ const float* __restrict,
-                            _In_ const float* __restrict,
-			    _In_ const int ,_Inout_  int*);
-#endif
+
 
 	 /*
         @Description: Checks for input domain of -1.0F <= x <= 1.0F
@@ -401,15 +384,11 @@ void  is_domain_f32_bt_ones(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_bt_ones(const double* __restrict, 
 			    const int,
 			    int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_bt_ones(_In_ const double* __restrict, 
-			    _In_ const int,
-			    _Inout_ int* );
-#endif
+
 
     /*
         @Description: Checks for input domain of -1.0F <= 0 <= 1.0F
@@ -425,15 +404,11 @@ void  is_domain_f64_bt_ones(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_bt_ones(const double* __restrict,
                             const double* __restrict,
 			    const int, _Inout_  int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_bt_ones(_In_ const double* __restrict,
-                            _In_ const double* __restrict,
-			    _In_ const int, _Inout_  int* );
-#endif
+
 
      /*
         @Description: Checks for input domain of  x != 0 && y != 0
@@ -449,17 +424,12 @@ void  is_domain_f64_bt_ones(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_ne_zero(const float* __restrict,
                             const float* __restrict,
 			    const int ,
 			    int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_ne_zero(_In_ const float* __restrict,
-                            _In_ const float* __restrict,
-			    _In_ const int ,
-			    _Inout_  int* );
-#endif
+
      /*
         @Description: Checks for input domain of  x != 0 && y != 0
                       Upon detecting error condition 'domain range'
@@ -474,17 +444,12 @@ void  is_domain_f32_ne_zero(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
 	 */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_ne_zero(const double* __restrict,
                             const double* __restrict,
 			    const int,
 			     int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined 
-void  is_domain_f64_ne_zero(_In_ const double* __restrict,
-                            _In_ const double* __restrict,
-			    _In_ const int,
-			    _Inout_  int* );
-#endif
+
 
 
      /*
@@ -501,15 +466,10 @@ void  is_domain_f64_ne_zero(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_ne_zero(const float* __restrict,
 			    const int,
 			    int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_ne_zero(_In_ const float* __restrict,
-			    _In_ const int,
-			    _Inout_ int* );
-#endif
 
 	 /*
         @Description: Checks for input domain of  x != 0.0L
@@ -525,15 +485,11 @@ void  is_domain_f32_ne_zero(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_ne_zero(const double* __restrict,
 			    const int,
 			    int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_ne_zero(_In_ const double* __restrict,
-			    _In_ const int,
-			    _Inout_ int* );
-#endif
+
 			    
 
      /*
@@ -550,15 +506,11 @@ void  is_domain_f64_ne_zero(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_ne_negone(const float* __restrict,
 			      const int,
 			      int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_ne_negone(_In_ const float* __restrict,
-			      _In_ const int,
-			      _Inout_ int* );
-#endif
+
      /*
         @Description: Checks for input domain of  x >= -1.0
                       Upon detecting error condition 'domain range'
@@ -573,15 +525,10 @@ void  is_domain_f32_ne_negone(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f64_ne_negone(const double* __restrict,
 			      const int,
 			      int* ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_ne_negone(_In_ const double* __restrict,
-			      _In_ const int,
-			      _Inout_ int* );
-#endif
 
 	 
      /*
@@ -599,15 +546,10 @@ void  is_domain_f64_ne_negone(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_denormal_f32_present(const float* __restrict,
 			      const int,
 			      int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_denormal_f32_present(_In_ const float* __restrict,
-			      _In_ const int,
-			      _Inout_ int* );
-#endif
 
      /*
         @Description: Checks for existance of denormal values in
@@ -624,16 +566,11 @@ void  is_denormal_f32_present(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_denormal_f64_present(const double* __restrict,
 			      const int,
 			      int* ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_denormal_f64_present(_In_ const double* __restrict,
-			      _In_ const int,
-			      _Inout_ int* );
-#endif
-							  
+						  
 	 /*
         @Description: Checks for existance of denormal values in
                       input range i.e. for some |x| < FLT_MIN
@@ -650,15 +587,11 @@ void  is_denormal_f64_present(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  check_denormf32_raise_except(const float* __restrict,
 				   const int,
 				   int* ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  check_denormf32_raise_except(_In_ const float* __restrict,
-				   _In_ const int,
-				   _Inout_ int* );
-#endif
+
 
      /*
         @Description: Checks for existance of denormal values in
@@ -676,15 +609,10 @@ void  check_denormf32_raise_except(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  check_denormf64_raise_except(const double* __restrict,
 				   const int,
 				   int* )  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  check_denormf64_raise_except(_In_ const double* __restrict,
-				   _In_ const int,
-				   _Inout_ int* );
-#endif
 
      /*
         @Description: Checks for existance of NaN and INF values
@@ -702,15 +630,11 @@ void  check_denormf64_raise_except(_In_ const double* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 void  is_domain_f32_nan_inf(_In_ const float* __restrict,
 			    _In_ const int,
 			    _Inout_ int*) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f32_nan_inf(_In_ const float* __restrict,
-			    _In_ const int,
-			    _Inout_ int*);
-#endif
+
 
      /*
          @Description: Checks for existance of NaN and INF values
@@ -728,37 +652,11 @@ void  is_domain_f32_nan_inf(_In_ const float* __restrict,
         @Throws:  Nothing
         @Calls:   Nothing
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
-void  is_domain_f64_nan_inf(const double* __restrict,
-			    const int,
-			    int* ) __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-void  is_domain_f64_nan_inf(_In_ const double* __restrict,
-			    _In_ const int,
-			    _Inout_ int* );
-#endif
-     /*
-        @Description: Clears all floating-point state exceptions
-                      Exception cleared:
-					  FE_DENORMAL, FE_INVALID, FE_INEXACT, FE_UNDERFLOW
-					  FE_OVERFLOW.
-                      Scalar version
-        @Params:  none
-        @Params:  none
-        @Params:  none
-        @Params:  none
-        @Params:  none
-        @Returns: integer 'err' which indicates success or error as a return
-				  value from library 'feclearexcept' function
-				  Non-zero value means error.
-        @Throws:  Nothing
-        @Calls:   'feclearexcept'
-     */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
+
+
 int  clear_all_feexcept() __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_all_feexcept();
-#endif
+
 
      /*
         @Description: Clears only FE_DENORMAL exception
@@ -775,11 +673,9 @@ int  clear_all_feexcept();
         @Throws:  Nothing
         @Calls:   'feclearexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  clear_fe_denormal() __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_fe_denormal();
-#endif
+
 
 
 	 /*
@@ -797,11 +693,8 @@ int  clear_fe_denormal();
         @Throws:  Nothing
         @Calls:   'feclearexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+#
 int  clear_fe_inexact()  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_fe_inexact();
-#endif
 
      /*
         @Description: Clears only FE_INVALID exception
@@ -818,11 +711,9 @@ int  clear_fe_inexact();
         @Throws:  Nothing
         @Calls:   'feclearexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  clear_fe_invalid()  __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_fe_invalid();
-#endif
+
 	 /*
         @Description: Clears only FE_DIVBYZERO exception
                       Exception cleared:
@@ -838,11 +729,9 @@ int  clear_fe_invalid();
         @Throws:  Nothing
         @Calls:   'feclearexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER
+
 int  clear_fe_divbyezero() __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_fe_divbyzero();
-#endif
+
 
      /*
         @Description: Clears only FE_OVERFLOW exception
@@ -859,11 +748,9 @@ int  clear_fe_divbyzero();
        @Throws:  Nothing
        @Calls:   'feclearexcept'
      */
-#if defined __GNUC__ || defined __INTEL_COMPILER	
+
 int  clear_fe_overflow() __attributes__((cold)) __attributes__((aligned(32)));
-#elif defined _MSC_VER
-int  clear_fe_overflow();
-#endif
+
 	
      /*
         @Description: Clears only FE_UNDERFLOW exception
