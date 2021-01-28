@@ -116,11 +116,11 @@ as reported by reading __cplusplus macro def.*/
 #define GMS_COMPILED_BY_ICC 1
 #else
 #define GMS_COMPILED_BY_ICC 0
-#define GMS_COMPILED_BY_MSVC 1
+#define GMS_COMPILED_BY_GCC 1
 #endif
 
 /* Is 64bit mode current? */
-#if defined (_Win64)
+#if defined (_linux)
    #if (defined (_M_AMD64) || defined (_M_X64_) || defined (__amd64) ) \
         	&& !defined (__x86_64__)
     #define __x86_64__ 1
@@ -245,10 +245,8 @@ Include all headers - master header file.
 #endif
 
 // Debug mode.
-#if defined (_DEBUG) && !defined (__linux)
-#define GMS_DEBUG_ON 1
-#include <crtdbg.h>
-#elif defined (_DEBUG) && defined (__linux)
+
+#if defined (_DEBUG) && defined (__linux)
 #define GMS_DEBUG_ON 1
 #endif
 
@@ -275,18 +273,14 @@ Include all headers - master header file.
   char pad##ordinal[(size)];
 #endif
 
-#if !defined (PAD_TO_ALIGNED) && !defined (__linux)
-#define PAD_TO_ALIGNED(alignment,ordinal,size) \
-	__declspec(align((alignment))) char pad##ordinal[(size)];
-#elif !defined (PAD_TO_ALIGNED) && defined (__linux)
+
+#if !defined (PAD_TO_ALIGNED) && defined (__linux)
 #define PAD_TO_ALIGNED(alignment,ordinal,size) #
         __attribute__((align((alignment))) char pad##ordinal[(size)];
 #endif
 
-#if !defined (ALIGN_AT) && !defined (__linux)
-#define ALIGN_AT(alignment) \
-	__declspec(align((alignment)))
-#elif !defined (ALIGN_AT) && defined (__linux)
+
+#if !defined (ALIGN_AT) && defined (__linux)
 #define ALIGN_AT(alignment)  \
         __attribute__((align(alignment)))
 #endif
@@ -436,11 +430,7 @@ constexpr unsigned long long align64B{ 64 };
 #define ADD_PADDING_64B_LOOP_PEEL 1
 #endif
 
-#if (USE_PERF_PROFILER) == 1
-       #if !defined (PERF_PROFILE_FUNCTIONS)
-           #define PERF_PROFILE_FUNCTIONS 1
-       #endif
-#endif
+
 // Rely on John D. McCalpin low overhead counters.
 #if (USE_DIRECTLY_RDPMC) == 1
        #if !defined (RDPMC_MEASURE_SUITABLE_BLOCK)
@@ -491,15 +481,7 @@ constexpr int padding64B{64};
 2) max.
 */
 
-#if defined _MSC_VER
-#if defined (_WINDEF_) && defined (min) && defined (max)
-#undef min
-#undef max
-#endif
-#if !defined NOMINMAX
-#define NOMINMAX
-#endif
-#endif
+
 
 #if !defined (C_WRAPPER_ODEPACK_FPTR_WORKAROUND)
 #define C_WRAPPER_ODEPACK_FPTR_WORKAROUND 1
@@ -625,12 +607,9 @@ constexpr int padding64B{64};
 #define CHECK_FP_EXCEPTIONS 1
 #if (GMS_COMPILED_BY_ICC) == 1
 #include <fenv.h>
-#else
-#if defined (_WIN64) && defined (_WIN32)
-#include <../../../Microsoft Visual Studio 12.0/VC/include/fenv.h>
 #endif
 #endif
-#endif
+
 
 #if !defined (SILENCE_COMPILER)
 #define SILENCE_COMPILER 1
