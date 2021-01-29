@@ -9,7 +9,7 @@
 
 MODULE module_mp_wsm6
   !
-   use mod_kinds, int4,sp
+   use mod_kinds, i4,sp
    IMPLICIT NONE
 !
    REAL(kind=sp), PARAMETER, PUBLIC :: dtcldcr     = 120._sp ! maximum time step for minor loops
@@ -126,7 +126,7 @@ CONTAINS
 !             Rutledge, Hobbs (RH84, 1984) J. Atmos. Sci.
 !             Juang and Hong (JH, 2010) Mon. Wea. Rev.
 !
-  INTEGER(kind=int4),      INTENT(IN   )    ::   ids,ide, jds,jde, kds,kde , &
+  INTEGER(kind=i4),      INTENT(IN   )    ::   ids,ide, jds,jde, kds,kde , &
                                       ims,ime, jms,jme, kms,kme , &
                                       its,ite, jts,jte, kts,kte,  &
                                       lat
@@ -348,15 +348,15 @@ CONTAINS
   REAL(kind=sp), DIMENSION( its:ite ) :: tstepgraup !GCC$ ATTRIBUTES aligned(64) :: tstepgraup
 #endif
 #if defined __INTEL_COMPILER
-  INTEGER(kind=int4), DIMENSION( its:ite ) ::              mstep, &
+  INTEGER(kind=i4), DIMENSION( its:ite ) ::              mstep, &
                                                            numdt
   !DIR$ ATTRIBUTES ALIGN : 64 :: mstep,numdt
 #elif defined __GFORTRAN__
-  INTEGER(kind=int4), DIMENSION( its:ite ) :: mstep  !GCC$ ATTRIBUTES aligned(64) :: mstep
-  INTEGER(kind=int4), DIMENSION( its:ite ) :: numdt  !GCC$ ATTRIBUTES aligned(64) :: numdt
+  INTEGER(kind=i4), DIMENSION( its:ite ) :: mstep  !GCC$ ATTRIBUTES aligned(64) :: mstep
+  INTEGER(kind=i4), DIMENSION( its:ite ) :: numdt  !GCC$ ATTRIBUTES aligned(64) :: numdt
 #endif
 #if defined __INTEL_COMPILER
-  LOGICAL(kind=int4), DIMENSION( its:ite ) :: flgcld 
+  LOGICAL(kind=i4), DIMENSION( its:ite ) :: flgcld 
 #endif
   !DIR$ ATTRIBUTES ALIGN : 64 :: flgcld
   REAL(kind=sp)  ::                                                        &
@@ -372,9 +372,9 @@ CONTAINS
             xlf, pfrzdtc, pfrzdtr, supice, alpha2
   REAL(kind=sp)  :: vt2ave
   REAL(kind=sp)  :: holdc, holdci
-  INTEGER(kind=int4) :: i, j, k, mstepmax,                                   &
+  INTEGER(kind=i4) :: i, j, k, mstepmax,                                   &
             iprt, latd, lond, loop, loops, ifsat, n, idim, kdim
-  INTEGER(kind=int4) :: itest,ktest
+  INTEGER(kind=i4) :: itest,ktest
 ! Temporaries used for inlining fpvs function
   REAL(kind=sp)  :: dldti, xb, xai, tr, xbi, xa, hvap, cvap, hsub, dldt, ttp
   ! variables for optimization
@@ -1970,7 +1970,7 @@ ktest=1
         !DIR$ ATTIRBUTES VECTOR :: slope_rain
 #endif
   IMPLICIT NONE
-  INTEGER(kind=int4)       ::               kts,kte
+  INTEGER(kind=i4)       ::               kts,kte
   REAL(kind=sp), DIMENSION( kts:kte) ::                                                 &
                                                                           qrs, &
                                                                        rslope, &
@@ -1985,7 +1985,7 @@ ktest=1
   REAL(kind=sp), DIMENSION( kts:kte ) ::                                                &
                                                                        n0sfac
   REAL(kind=sp)       ::  lamdar, x, y, z, supcol
-  integer(kind=int4)  :: k
+  integer(kind=i4)  :: k
 !----------------------------------------------------------------
 !     size distributions: (x=mixing ratio, y=air density):
 !     valid for mixing ratio > 1.e-9 kg/kg.
@@ -2028,7 +2028,7 @@ ktest=1
        !DIR$ ATTIRBUTES VECTOR :: slope_snow
 #endif
   IMPLICIT NONE
-  INTEGER(kind=int4)       ::               kts,kte
+  INTEGER(kind=i4)       ::               kts,kte
   REAL(kind=sp), DIMENSION( kts:kte) ::                                                 &
                                                                           qrs, &
                                                                        rslope, &
@@ -2043,7 +2043,7 @@ ktest=1
   REAL(kind=sp), DIMENSION( kts:kte ) ::                                                &
                                                                        n0sfac
   REAL(kind=sp)       ::  lamdas, x, y, z, supcol
-  integer(kind=int4) :: k
+  integer(kind=i4) :: k
 !----------------------------------------------------------------
 !     size distributions: (x=mixing ratio, y=air density):
 !     valid for mixing ratio > 1.e-9 kg/kg.
@@ -2092,7 +2092,7 @@ ktest=1
         !DIR$ ATTRIBUTES VECTOR :: slope_graup
 #endif
   IMPLICIT NONE
-  INTEGER(kind=int4)       :: kts,kte
+  INTEGER(kind=i4)       :: kts,kte
   REAL(kind=sp), DIMENSION( kts:kte) ::                                                 &
                                                                           qrs, &
                                                                        rslope, &
@@ -2107,7 +2107,7 @@ ktest=1
   REAL(kind=sp), DIMENSION( kts:kte ) ::                                                &
                                                                        n0sfac
   REAL(kind=sp)       ::  lamdag, x, y, z, supcol
-  integer(kind=int4) :: j, k
+  integer(kind=i4) :: j, k
 !----------------------------------------------------------------
 !     size distributions: (x=mixing ratio, y=air density):
 !     valid for mixing ratio > 1.e-9 kg/kg.
@@ -2174,14 +2174,14 @@ ktest=1
 !         implemented by song-you hong
 !
    
-      integer(kind=int4) ::   its,ite,kts,kte,id
+      integer(kind=i4) ::   its,ite,kts,kte,id
       real(kind=sp)      ::  dt
       real(kind=sp),  dimension(its:ite,kts:kte) ::  dzl,wwl,rql
       real(kind=sp),  dimension(its:ite) :: precip
       real(kind=sp),  dimension(its:ite,kts:kte) ::  denl,denfacl,tkl
       !
 
-      integer(kind=int4) ::  i,k,n,m,kk,kb,kt,iter
+      integer(kind=i4) ::  i,k,n,m,kk,kb,kt,iter
       real(kind=sp)      ::  tl,tl2,qql,dql,qqd
       real(kind=sp)      ::  th,th2,qqh,dqh
       real(kind=sp)      ::  zsum,qsum,dim,dip,c1,con1,fa1,fa2
@@ -2531,13 +2531,13 @@ ktest=1
 !         implemented by song-you hong
 !
       
-      integer(kind=int4) ::   its,ite,kts,kte,id
+      integer(kind=i4) ::   its,ite,kts,kte,id
       real(kind=sp)      ::  dt
       real(kind=sp), dimension(its:ite,kts:kte) ::  dzl,wwl,rql,rql2
       real(kind=sp), dimension(its:ite)         ::  precip,precip1,precip2
       real(kind=sp), dimension(its:ite,kts:kte) ::  denl,denfacl,tkl
 !
-      integer(kind=int4) ::  i,k,n,m,kk,kb,kt,iter,ist
+      integer(kind=i4) ::  i,k,n,m,kk,kb,kt,iter,ist
       real(kind=sp)      ::  tl,tl2,qql,dql,qqd
       real(kind=sp)      ::  th,th2,qqh,dqh
       real(kind=sp)      ::  zsum,qsum,dim,dip,c1,con1,fa1,fa2
@@ -2903,7 +2903,7 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 #endif
                     
  
-  INTEGER(kind=int4)       :: its,ite,kts,kte
+  INTEGER(kind=i4)       :: its,ite,kts,kte
   REAL(kind=sp), DIMENSION( its:ite , kts:kte) ::                                       &
                                                                           qrs, &
                                                                        rslope, &
@@ -2915,7 +2915,7 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                                                                        denfac, &
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
-  LOGICAL(kind=int4) :: lmask(its:ite)
+  LOGICAL(kind=i4) :: lmask(its:ite)
   REAL(kind=sp)       ::  lamdar, x, y, z, supcol
   integer :: i, k
 !----------------------------------------------------------------
@@ -2965,7 +2965,7 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES
              vt,its,ite,kts,kte,lmask)
 #endif
   
-  INTEGER(kind=int4)       :: its,ite,kts,kte
+  INTEGER(kind=i4)       :: its,ite,kts,kte
   REAL(kind=sp), DIMENSION( its:ite , kts:kte) ::                                       &
                                                                           qrs, &
                                                                        rslope, &
@@ -2983,9 +2983,9 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES
   REAL(kind=sp), DIMENSION( its:ite , kts:kte ) ::       n0sfac 
   !DIR$ ATTRIBUTES ALIGN : 64 :: n0sfac
 #endif
-  LOGICAL(kind=int4) :: lmask(its:ite)
+  LOGICAL(kind=i4) :: lmask(its:ite)
   REAL(kind=sp)       ::  lamdas, x, y, z, supcol
-  integer(kind=int4) :: i, k
+  integer(kind=i4) :: i, k
 !----------------------------------------------------------------
 !     size distributions: (x=mixing ratio, y=air density):
 !     valid for mixing ratio > 1.e-9 kg/kg.
@@ -3033,7 +3033,7 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES
       subroutine slope_graup_ii(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,&
 vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTES always_inline :: slope_graup_ii !GCC$ ATTRIBUTES aligned(32) :: slope_graup_ii !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_graup_ii
 
-  INTEGER(kind=int4)      :: its,ite,kts,kte
+  INTEGER(kind=i4)      :: its,ite,kts,kte
   REAL(kind=sp), DIMENSION( its:ite , kts:kte) ::                                       &
                                                                           qrs, &
                                                                        rslope, &
@@ -3045,9 +3045,9 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
                                                                        denfac, &
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
-  LOGICAL(kind=int4) :: lmask(its:ite)
+  LOGICAL(kind=i4) :: lmask(its:ite)
   REAL(kind=sp)       ::  lamdag, x, y, z, supcol
-  integer(kind=int4) :: i, k
+  integer(kind=i4) :: i, k
 !----------------------------------------------------------------
 !     size distributions: (x=mixing ratio, y=air density):
 !     valid for mixing ratio > 1.e-9 kg/kg.
@@ -3120,21 +3120,21 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
 !         implemented by song-you hong
 !
       
-      integer(kind=int4) ::   its,ite,kts,kte,id
+      integer(kind=i4) ::   its,ite,kts,kte,id
       real(kind=sp)      ::   dt
       real(kind=sp), dimension(its:ite,kts:kte) ::  dzl,wwl,rql
       real(kind=sp), dimension(its:ite)         ::  precip
       real(kind=sp), dimension(its:ite,kts:kte) ::  denl,denfacl,tkl
 !
-      integer(kind=int4) ::   i,k,n,m,kk,iter
+      integer(kind=i4) ::   i,k,n,m,kk,iter
 #ifdef MASK_HISTOGRAM
 #if defined __GFORTRAN__
-      integer(kind=int4), dimension(kts:kte)     :: intp_count   !GCC$ ATTRIBUTES aligned(64) :: intp_count
-      integer(kind=int4), dimension(0:ite-its+1) :: intp_hist    !GCC$ ATTRIBUTES aligned(64) :: intp_hist
+      integer(kind=i4), dimension(kts:kte)     :: intp_count   !GCC$ ATTRIBUTES aligned(64) :: intp_count
+      integer(kind=i4), dimension(0:ite-its+1) :: intp_hist    !GCC$ ATTRIBUTES aligned(64) :: intp_hist
 #elif defined __INTEL_COMPILER
-      integer(kind=int4), dimension(kts:kte)     :: intp_count
+      integer(kind=i4), dimension(kts:kte)     :: intp_count
       !DIR$ ATTRIBUTES ALIGN : 64 :: intp_count
-      integer(kind=int4), dimension(0:ite-its+1) :: intp_hist
+      integer(kind=i4), dimension(0:ite-its+1) :: intp_hist
 #endif
 #endif
       real(kind=sp) ::  dim,dip,con1,fa1,fa2,decfl
@@ -3176,16 +3176,16 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       !DIR$ ATTRIBUTES ALIGN : 64 :: qn, qr,tmp,tmp1,tmp2,tmp3
       real(kind=sp), dimension(its:ite,kts:kte)   ::   dza, qa, qmi, qpi
       !DIR$ ATTRIBUTES ALIGN : 64 :: dza, qa, qmi, qpi
-      logical(kind=int4), dimension(its:ite)      ::   lmask
+      logical(kind=i4), dimension(its:ite)      ::   lmask
       !DIR$ ATTRIBUTES ALIGN : 64 :: lmask
 #endif
       !
 #if defined __GFORTRAN__
-      INTEGER(kind=int4) ::  minkb, minkt
-      LOGICAL(kind=int4), DIMENSION(its:ite) :: intp_mask  !GCC$ ATTRIBUTES aligned(64) :: intp_mask
-      LOGICAL(kind=int4), DIMENSION(its:ite) :: tmask      !GCC$ ATTRIBUTES aligned(64) :: tmask
-      INTEGER(kind=int4), DIMENSION(its:ite) :: kb         !GCC$ ATTRIBUTES aligned(64) :: kb
-      INTEGER(kind=int4), DIMENSION(its:ite) :: kt         !GCC$ ATTRIBUTES aligned(64) :: kt
+      INTEGER(kind=i4) ::  minkb, minkt
+      LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask  !GCC$ ATTRIBUTES aligned(64) :: intp_mask
+      LOGICAL(kind=i4), DIMENSION(its:ite) :: tmask      !GCC$ ATTRIBUTES aligned(64) :: tmask
+      INTEGER(kind=i4), DIMENSION(its:ite) :: kb         !GCC$ ATTRIBUTES aligned(64) :: kb
+      INTEGER(kind=i4), DIMENSION(its:ite) :: kt         !GCC$ ATTRIBUTES aligned(64) :: kt
       REAL(kind=sp),      DIMENSION(its:ite) :: tl         !GCC$ ATTRIBUTES aligned(64) :: tl
       REAL(kind=sp),      DIMENSION(its:ite) :: tl2        !GCC$ ATTRIBUTES aligned(64) :: tl2
       REAL(kind=sp),      DIMENSION(its:ite) :: th         !GCC$ ATTRIBUTES aligned(64) :: th
@@ -3207,10 +3207,10 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_t !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_t
       REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_b !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_b
 #elif defined __INTEL_COMPILER
-      INTEGER(kind=int4) ::  minkb, minkt
-      LOGICAL(kind=int4), DIMENSION(its:ite) :: intp_mask, tmask
+      INTEGER(kind=i4) ::  minkb, minkt
+      LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask, tmask
       !DIR$ ATTRIBUTES ALIGN : 64 :: intp_mask, tmask
-      INTEGER(kind=int4), DIMENSION(its:ite) :: kb, kt
+      INTEGER(kind=i4), DIMENSION(its:ite) :: kb, kt
       !DIR$ ATTRIBUTES ALIGN : 64 :: kb, kt
       REAL(kind=sp),      DIMENSION(its:ite) :: tl,tl2,th,th2,qqd,qqh,qql,zsum,qsum,dql,dqh
       !DIR$ ATTRIBUTES ALIGN : 64 :: tl,tl2,th,th2,qqd,qqh,qql,zsum,qsum,dql,dqh
@@ -3824,13 +3824,13 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
 !         implemented by song-you hong
 !
      
-      integer(kind=int4) ::   its,ite,kts,kte,id
+      integer(kind=i4) ::   its,ite,kts,kte,id
       real(kind=sp)      ::   dt
       real(kind=sp), dimension(its:ite,kts:kte) ::  dzl,wwl,rql,rql2
       real(kind=sp), dimension(its:ite)         ::  precip,precip1,precip2
       real(kind=sp), dimension(its:ite,kts:kte) ::  denl,denfacl,tkl
 !
-      integer(kind=int4) ::   i,k,n,m,kk,iter,ist
+      integer(kind=i4) ::   i,k,n,m,kk,iter,ist
       real(kind=sp)      ::   dim,dip,con1,fa1,fa2,defcl
 #if defined __GFORTRAN__
       real(kind=sp), dimension(its:ite) ::   allold
@@ -3860,7 +3860,7 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       real(kind=sp), dimension(its:ite,kts:kte+1) ::  qa2     !GCC$ ATTRIBUTES aligned(64) :: qa2
       real(kind=sp), dimension(its:ite,kts:kte+1) ::  qmi     !GCC$ ATTRIBUTES aligned(64) :: qmi
       real(kind=sp), dimension(its:ite,kts:kte+1) ::  qpi     !GCC$ ATTRIBUTES aligned(64) :: qpi
-      logical(kind=int4), dimension(its:ite)      ::  lmask   !GCC$ ATTRIBUTES aligned(64) :: lmask
+      logical(kind=i4), dimension(its:ite)      ::  lmask   !GCC$ ATTRIBUTES aligned(64) :: lmask
 #elif defined __INTEL_COMPILER
       real(kind=sp), dimension(its:ite)           ::   allold
       !DIR$ ATTRIBUTES ALIGN : 64 :: allold
@@ -3874,16 +3874,16 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       !DIR$ ATTRIBUTES ALIGN : 64 ::    qn,qr,qr2,tmp,tmp1,tmp2,tmp3
       real(kind=sp), dimension(its:ite,kts:kte+1) ::   dza, qa,qa2,qmi,qpi
       !DIR$ ATTRIBUTES ALIGN : 64 ::     dza, qa,qa2,qmi,qpi
-      logical(kind=int4), dimension(its:ite)      ::   lmask
+      logical(kind=i4), dimension(its:ite)      ::   lmask
       !DIR$ ATTRIBUTES ALIGN : 64 ::     lmask
 #endif
 !
-      INTEGER(kind=int4) ::  minkb, minkt
+      INTEGER(kind=i4) ::  minkb, minkt
 #if defined __GFORTRAN__
-      LOGICAL(kind=int4), DIMENSION(its:ite) :: intp_mask     !GCC$ ATTRIBUTES aligned(64) :: intp_mask
-      LOGICAL(kind=int4), DIMENSION(its:ite) :: tmask         !GCC$ ATTRIBUTES aligned(64) :: tmask
-      INTEGER(kind=int4), DIMENSION(its:ite) :: kb            !GCC$ ATTRIBUTES aligned(64) :: kb
-      INTEGER(kind=int4), DIMENSION(its:ite) :: kt            !GCC$ ATTRIBUTES aligned(64) :: kt
+      LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask     !GCC$ ATTRIBUTES aligned(64) :: intp_mask
+      LOGICAL(kind=i4), DIMENSION(its:ite) :: tmask         !GCC$ ATTRIBUTES aligned(64) :: tmask
+      INTEGER(kind=i4), DIMENSION(its:ite) :: kb            !GCC$ ATTRIBUTES aligned(64) :: kb
+      INTEGER(kind=i4), DIMENSION(its:ite) :: kt            !GCC$ ATTRIBUTES aligned(64) :: kt
       REAL(kind=sp),      DIMENSION(its:ite) :: tl            !GCC$ ATTRIBUTES aligned(64) :: tl
       REAL(kind=sp),      DIMENSION(its:ite) :: tl2           !GCC$ ATTRIBUTES aligned(64) :: tl2
       REAL(kind=sp),      DIMENSION(its:ite) :: th            !GCC$ ATTRIBUTES aligned(64) :: th
@@ -3905,9 +3905,9 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_t    !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_t
       REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_b    !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_b
 #elif defined __INTEL_COMPILER
-      LOGICAL(kind=int4), DIMENSION(its:ite) :: intp_mask, tmask
+      LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask, tmask
       !DIR$ ATTRIBUTES ALIGN : 64 :: intp_mask, tmask
-      INTEGER(kind=int4), DIMENSION(its:ite) :: kb, kt
+      INTEGER(kind=i4), DIMENSION(its:ite) :: kb, kt
       !DIR$ ATTRIBUTES ALIGN : 64 :: kb, kt
       REAL(kind=sp),      DIMENSION(its:ite) :: tl,tl2,th,th2,qqd,qqh,qql,zsum,qsum,dql,dqh
       !DIR$ ATTRIBUTES ALIGN : 64 ::  tl,tl2,th,th2,qqd,qqh,qql,zsum,qsum,dql,dqh
@@ -4583,10 +4583,10 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
 #endif
     REAL(kind=sp), contiguous,   INTENT(OUT) :: arr(:,:)
     CHARACTER(LEN=*),            INTENT(IN)  :: arrname
-    INTEGER(kind=int4),          INTENT(IN)  :: unitno
-    INTEGER(kind=int4),          INTENT(IN)  :: ips,ipe
+    INTEGER(kind=i4),          INTENT(IN)  :: unitno
+    INTEGER(kind=i4),          INTENT(IN)  :: ips,ipe
     REAL(kind=sp), ALLOCATABLE :: tmparr(:)
-    INTEGER(kind=int4) :: i,j,ij,jsize,CHUNK,ipn
+    INTEGER(kind=i4) :: i,j,ij,jsize,CHUNK,ipn
     CHUNK = size(arr,1)
     jsize = size(arr,2)
     ALLOCATE(tmparr(ips:ipe))
@@ -4614,10 +4614,10 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
 #endif
     REAL(kind=sp),  contiguous   INTENT(OUT) :: arr(:,:,:)
     CHARACTER(LEN=*),            INTENT(IN)  :: arrname
-    INTEGER(kind=int4),          INTENT(IN)  :: unitno
-    INTEGER(kind=int4),          INTENT(IN)  :: ips,ipe
+    INTEGER(kind=i4),          INTENT(IN)  :: unitno
+    INTEGER(kind=i4),          INTENT(IN)  :: ips,ipe
     REAL(kind=sp), ALLOCATABLE :: tmparr(:,:)
-    INTEGER(kind=int4) :: i,j,k,ij,ksize,jsize,CHUNK,ipn
+    INTEGER(kind=i4) :: i,j,k,ij,ksize,jsize,CHUNK,ipn
     CHUNK = size(arr,1)
     ksize = size(arr,2)
     jsize = size(arr,3)
@@ -4643,10 +4643,10 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
   SUBROUTINE readarray4(arr,arrname,unitno,ips,ipe)
     REAL(kind=sp),  contiguous           INTENT(OUT) :: arr(:,:,:,:)
     CHARACTER(LEN=*),                    INTENT(IN)  :: arrname
-    INTEGER(kind=int4),                  INTENT(IN)  :: unitno
-    INTEGER(kind=int4),                  INTENT(IN)  :: ips,ipe
+    INTEGER(kind=i4),                  INTENT(IN)  :: unitno
+    INTEGER(kind=i4),                  INTENT(IN)  :: ips,ipe
     REAL(kind=sp), ALLOCATABLE :: tmparr(:,:,:)
-    INTEGER(kind=int4) :: i,j,k,ij,ksize,jsize,CHUNK,ipn,m,msize
+    INTEGER(kind=i4) :: i,j,k,ij,ksize,jsize,CHUNK,ipn,m,msize
     CHUNK = size(arr,1)
     ksize = size(arr,2)
     msize = size(arr,3)
@@ -4675,8 +4675,8 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
   SUBROUTINE writearray2(arr,arrname,unitno,ips,ipe)
     REAL(kind=sp),    contiguous,           INTENT(IN) :: arr(:,:)
     CHARACTER(LEN=*),                       INTENT(IN) :: arrname
-    INTEGER(kind=int4),                     INTENT(IN) :: unitno
-    INTEGER(kind=int4) ,                    INTENT(IN) :: ips,ipe
+    INTEGER(kind=i4),                     INTENT(IN) :: unitno
+    INTEGER(kind=i4) ,                    INTENT(IN) :: ips,ipe
     REAL(kind=sp), ALLOCATABLE :: tmparr(:)
     INTEGER(kind=sp) :: i,j,ij,jsize,CHUNK,ipn
     CHUNK = size(arr,1)
@@ -4703,10 +4703,10 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
   SUBROUTINE writearray3(arr,arrname,unitno,ips,ipe)
     REAL(kind=sp),    contiguous,         INTENT(IN) :: arr(:,:,:)
     CHARACTER(LEN=*),                     INTENT(IN) :: arrname
-    INTEGER(kind=int4),                   INTENT(IN) :: unitno
-    INTEGER(kind=int4),                   INTENT(IN) :: ips,ipe
+    INTEGER(kind=i4),                   INTENT(IN) :: unitno
+    INTEGER(kind=i4),                   INTENT(IN) :: ips,ipe
     REAL(kind=sp), ALLOCATABLE :: tmparr(:,:)
-    INTEGER(kind=int4) :: i,j,k,ij,ksize,jsize,CHUNK,ipn
+    INTEGER(kind=i4) :: i,j,k,ij,ksize,jsize,CHUNK,ipn
     CHUNK = size(arr,1)
     ksize = size(arr,2)
     jsize = size(arr,3)
@@ -4734,8 +4734,8 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
   SUBROUTINE writearray4(arr,arrname,unitno,ips,ipe)
     REAL(kind=sp),          contiguous,   INTENT(IN) :: arr(:,:,:,:)
     CHARACTER(LEN=*),                     INTENT(IN) :: arrname
-    INTEGER(kind=int4),                   INTENT(IN) :: unitno
-    INTEGER(kind=int4),                   INTENT(IN) :: ips,ipe
+    INTEGER(kind=i4),                   INTENT(IN) :: unitno
+    INTEGER(kind=i4),                   INTENT(IN) :: ips,ipe
     REAL(kind=sp), ALLOCATABLE :: tmparr(:,:,:)
     INTEGER :: i,j,k,ij,ksize,jsize,CHUNK,ipn,m,msize
     CHUNK = size(arr,1)
@@ -4795,7 +4795,7 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
 !  Mimic memory access patterns of wsm62D() while setting physics arrays 
 !  to zero.  
 !
-  INTEGER(kind=int4),      INTENT(IN   )    ::   ids,ide, jds,jde, kds,kde , &
+  INTEGER(kind=i4),      INTENT(IN   )    ::   ids,ide, jds,jde, kds,kde , &
                                       ims,ime, jms,jme, kms,kme , &
                                       its,ite, jts,jte, kts,kte,  &
                                       lat
