@@ -43,7 +43,7 @@ module mod_wsm6_driver
     ! Tab:10,11 col - Type , function and subroutine code blocks.
     
     
-    use mod_kinds,   only : int4,sp
+    use mod_kinds,   only : i4,sp
     use module_mp_wsm6, only : firstTouch,wsm62D,
                                readarray2,readarray3,readarray4,     &
                                pi, xlv1,                             &
@@ -76,16 +76,16 @@ module mod_wsm6_driver
     !=====================================================59
     
     ! Major version
-    integer(kind=int4), parameter, public :: MOD_WSM6_DRIVER_MAJOR = 1
+    integer(kind=i4), parameter, public :: MOD_WSM6_DRIVER_MAJOR = 1
     
     ! Minor version
-    integer(kind=int4), parameter, public :: MOD_WSM6_DRIVER_MINOR = 1
+    integer(kind=i4), parameter, public :: MOD_WSM6_DRIVER_MINOR = 1
     
     ! Micro version
-    integer(kind=int4), parameter, public :: MOD_WSM6_DRIVER_MICRO = 0
+    integer(kind=i4), parameter, public :: MOD_WSM6_DRIVER_MICRO = 0
     
     ! Module full version
-    integer(kind=int4), parameter, public :: MOD_WSM6_DRIVER_FULLVER = 1000*MOD_WSM6_DRIVER_MAJOR + &
+    integer(kind=i4), parameter, public :: MOD_WSM6_DRIVER_FULLVER = 1000*MOD_WSM6_DRIVER_MAJOR + &
                                                                   100*MOD_WSM6_DRIVER_MINOR  + &
                                                                   10*MOD_WSM6_DRIVER_MICRO
     ! Module creation date
@@ -107,7 +107,7 @@ module mod_wsm6_driver
         
           public
            ! WRF indexing
-          integer(kind=int4) :: ids,ide,jds,jde,kds,kde,  &
+          integer(kind=i4) :: ids,ide,jds,jde,kds,kde,  &
                                 ims,ime,jms,jme,kms,kme,  &
                                 its,ite,jts,jte,kts,kte
           ! Meteo fields
@@ -224,7 +224,7 @@ module mod_wsm6_driver
           use mod_print_error, only : handle_fatal_memory_error
 !          use mod_code_timing
 
-          integer(kind=int4), intent(inout) :: ids,ide,jds,jde,kds,kde,  &
+          integer(kind=i4), intent(inout) :: ids,ide,jds,jde,kds,kde,  &
                                           ims,ime,jms,jme,kms,kme,  &
                                           its,ite,jts,jte,kts,kte  
           real(kind=sp), allocatable, dimension(:,:,:),   intent(inout)   :: t 
@@ -255,27 +255,27 @@ module mod_wsm6_driver
          
           real(kind=sp), allocatable, dimension(:,:),     intent(inout)   :: graupelncv
          
-          logical(kind=int4),                               intent(in)      :: logging,verbose
+          logical(kind=i4),                               intent(in)      :: logging,verbose
           character(len=*),                                 intent(in)      :: fname
-          logical(kind=int4),                               intent(in)      :: append
-          integer(kind=int4),                               intent(in)      :: nthreads
-          integer(kind=int4),                               intent(inout)   :: err
+          logical(kind=i4),                               intent(in)      :: append
+          integer(kind=i4),                               intent(in)      :: nthreads
+          integer(kind=i4),                               intent(inout)   :: err
           
 !          type(QPCTimer_t),allocatable, dimension(:),  intent(inout)   :: timers -- dummy argument
           !Locals
           real(kind=sp) :: delt,g,rd,rv,t0c,den0,cpd,cpv,ep1,   &
                         ep2,qmin,XLS,XLV0,cliq,cice,psat,denr
-          integer(kind=int4) :: i,j,k,CHUNK,num_tiles_C
-          integer(kind=int4) :: ios,unitno
+          integer(kind=i4) :: i,j,k,CHUNK,num_tiles_C
+          integer(kind=i4) :: ios,unitno
           character(len=256) :: emsg
           character(len=64)  :: fn ! filename
-          integer(kind=int4)      :: aerr
+          integer(kind=i4)      :: aerr
           ! So called 'chunk indices'
-          integer(kind=int4) :: iids,iide,jjds,jjde, &
+          integer(kind=i4) :: iids,iide,jjds,jjde, &
                            iims,iime,jjms,jjme, &
                            iits,iite,jjts,jjte
           integer(kind=1)      :: ifail
-          logical(kind=int4)      :: bfail
+          logical(kind=i4)      :: bfail
           ! Exec code ....
           if(err < 0) err = 0
           ! Check allocation status, if allocated return immediately
@@ -474,7 +474,7 @@ module mod_wsm6_driver
            
     character(len=20) function to_str(ivalue)
           implicit none
-          integer(kind=int4), intent(in) :: ivalue
+          integer(kind=i4), intent(in) :: ivalue
           ! Exec code ...
           write(to_str,*) ivalue
           to_str = adjustl(to_str)
