@@ -7,7 +7,7 @@
 namespace file_info {
 
    const unsigned int gGMS_SIMD_MEMOPS_MAJOR = 1U;
-   const unsigned int gGMS_SIMD_MEMOPS_MINOR = 0U;
+   const unsigned int gGMS_SIMD_MEMOPS_MINOR = 1U;
    const unsigned int gGMS_SIMD_MEMOPS_MICRO = 0U;
    const unsigned int gGMS_SIMD_MEMOPS_FULLVER =
          1000U*gGMS_SIMD_MEMOPS_MAJOR+100U*gGMS_SIMD_MEMOPS_MINOR+10U*gGMS_SIMD_MEMOPS_MICRO;
