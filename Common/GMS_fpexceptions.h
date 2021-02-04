@@ -39,7 +39,7 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf32_present(const float * __restrict,
-					    const int64_t, 
+					    const int32_t, 
 					    uint32_t *,
 					    const bool);
 
@@ -60,8 +60,8 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf32_present(const float * __restrict,
-					    const int64_t,
-					    const int64_t,
+					    const int32_t,
+					    const int32_t,
 					    uint32_t *,
 					    const bool );
 
@@ -82,9 +82,9 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf32_present(const float * __restrict,
-					    const int64_t,
-					    const int64_t,
-					    const int64_t,
+					    const int32_t,
+					    const int32_t,
+					    const int32_t,
 					    uint32_t *,
 					    const bool );
 
@@ -105,10 +105,10 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf32_present(const float * __restrict,
-					    const int64_t,
-					    const int64_t,
-					    const int64_t,
-					    const int64_t,
+					    const int32_t,
+					    const int32_t,
+					    const int32_t,
+					    const int32_t,
 					    uint32_t *,
 					    const bool );
 
@@ -129,7 +129,7 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf64_present(const double * __restrict,
-					    const int64_t,
+					    const int32_t,
 					    uint32_t *,
 					    const bool );
 
@@ -151,8 +151,8 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf64_present(const double * __restrict,
-					    const int64_t,
-					    const int64_t,
+					    const int32_t,
+					    const int32_t,
 					    uint32_t *,
 					    const bool );
 
@@ -173,9 +173,9 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf64_present(const double * __restrict,
-					    const int64_t ,
-					    const int64_t,
-					    const int64_t,
+					    const int32_t ,
+					    const int32_t,
+					    const int32_t,
 					    uint32_t *,
 					    const bool );
 
@@ -196,10 +196,10 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_denormalf64_present(const double * __restrict,
-					    const int64_t,
-					    const int64_t,
-					    const int64_t,
-					    const int64_t,
+					    const int32_t,
+					    const int32_t,
+					    const int32_t,
+					    const int32_t,
 					    uint32_t * ,
 					    const bool);
 
@@ -224,7 +224,7 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf32(   const float * __restrict,
-				       const int64_t,
+				       const int32_t,
 				       uint32_t * ,
 				       const bool,
 				       const uint32_t);
@@ -250,8 +250,8 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf32(const float * __restrict,
-				    const int64_t,
-				    const int64_t ,
+				    const int32_t,
+				    const int32_t ,
 				    uint32_t * ,
 				    const bool,
 				    const uint32_t);
@@ -277,9 +277,9 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf32(const float * __restrict,
-				    const int64_t,
-				    const int64_t,
-				    const int64_t,
+				    const int32_t,
+				    const int32_t,
+				    const int32_t,
 				    uint32_t * ,
 				    const bool,
 				    const uint32_t );
@@ -305,10 +305,10 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf32(const float * __restrict,
-				    const int64_t,
-				    const int64_t,
-				    const int64_t,
-				    const int64_t,
+				    const int32_t,
+				    const int32_t,
+				    const int32_t,
+				    const int32_t,
 				    uint32_t * ,
 				    const bool,
 				    const uint32_t );
@@ -334,7 +334,7 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf64(const double * __restrict,
-				    const int64_t ,
+				    const int32_t ,
 				    uint32_t *,
 				    const bool,
 				    const uint32_t );
@@ -360,8 +360,8 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf64(const double * __restrict,
-				    const int64_t nx,
-				    const int64_t ny,
+				    const int32_t nx,
+				    const int32_t ny,
 				    uint32_t * ,
 				    const bool,
 				    const uint32_t );
@@ -387,9 +387,9 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf64(const double * __restrict,
-				    const int64_t ,
-				    const int64_t ,
-				    const int64_t,
+				    const int32_t ,
+				    const int32_t ,
+				    const int32_t,
 				    uint32_t * ,
 				    const bool,
 				    const uint32_t );
@@ -415,10 +415,10 @@ namespace gms {
 		@Calls:   fpclassify
 		*/
 		void is_abnormalf64(const double * __restrict,
-				    const int64_t ,
-				    const int64_t,
-				    const int64_t,
-				    const int64_t,
+				    const int32_t ,
+				    const int32_t,
+				    const int32_t,
+				    const int32_t,
 				    uint32_t * ,
 				    const bool,
 				    const uint32_t );
