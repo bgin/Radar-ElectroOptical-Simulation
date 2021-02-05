@@ -4,13 +4,9 @@
 #include "GMS_config.h"
 #include "GMS_indices.h"
 #include "GMS_error_macros.h"
-#if (GMS_COMPILED_BY_ICC) == 1
+
 #include <fenv.h>
-#else
-#if defined _WIN64
-#include <../../../Microsoft Visual Studio 12.0/VC/include/fenv.h>
-#endif
-#endif
+
 
 //
 //	Implementation
@@ -42,30 +38,22 @@
 
 
 void gms::math::is_denormalf32_present(const float * __restrict data,
-				       const int64_t nx,
+				       const int32_t nx,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size nx
+
 
 	if (process_slowly == true) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
-		for (int64_t i = 0LL; i != nx; ++i) {
+
+		for (int32_t i = 0LL; i != nx; ++i) {
 			if (fpclassify(data[i]) == FP_SUBNORMAL)
 				*dnc += 1;
 	    }
 	}
 	else {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
-		for (int64_t i = 0LL; i != nx; ++i) {
+
+		for (int32_t i = 0LL; i != nx; ++i) {
 			if (fpclassify(data[i]) == FP_SUBNORMAL){
 				*dnc = 1;
 				return;
@@ -75,33 +63,25 @@ void gms::math::is_denormalf32_present(const float * __restrict data,
 }
 
 void gms::math::is_denormalf32_present(const float * __restrict data,
-				       const int64_t nx,
-				       const int64_t ny,
+				       const int32_t nx,
+				       const int32_t ny,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size ((nx)*(ny))
+
 	if (process_slowly == true) {
-		for (int64_t i = 0LL; i != nx; ++i) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
-			for (int64_t j = 0LL; j != ny; ++j) {
+		for (int32_t i = 0LL; i != nx; ++i) {
+
+			for (int32_t j = 0LL; j != ny; ++j) {
 				if (fpclassify(data[I2D(i,j)]) == FP_SUBNORMAL)
 					*dnc += 1;
 			}
 		}
 	}
 	else {
-		for (int64_t i = 0LL; i != nx; ++i) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
-			for (int64_t j = 0LL; j != ny; ++j) {
+		for (int32_t i = 0LL; i != nx; ++i) {
+
+			for (int32_t j = 0LL; j != ny; ++j) {
 				if (fpclassify(data[I2D(i,j)]) == FP_SUBNORMAL){
 					*dnc = 1;
 					return;
@@ -112,21 +92,17 @@ void gms::math::is_denormalf32_present(const float * __restrict data,
 }
 
 void gms::math::is_denormalf32_present(const float * __restrict data,
-				       const int64_t nx,
-				       const int64_t ny,
-				       const int64_t nz,
+				       const int32_t nx,
+				       const int32_t ny,
+				       const int32_t nz,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size ((nx)*(ny)*(nz))
+
 	if (process_slowly == true) {
 		for (int64_t i = 0ULL; i != nx; ++i) {
 			for (int64_t j = 0ULL; j != ny; ++j) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 				for (int64_t k = 0ULL; k != nz; ++k) {
 					if (fpclassify(data[I3D(i,j,k)]) == FP_SUBNORMAL)
 						*dnc += 1;
@@ -137,11 +113,7 @@ void gms::math::is_denormalf32_present(const float * __restrict data,
 	else {
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0LL; j != ny; ++j) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 				for (int64_t k = 0LL; k != nz; ++k) {
 					if (fpclassify(data[I3D(i,j,k)]) == FP_SUBNORMAL) {
 						*dnc = 1;
@@ -161,16 +133,12 @@ void gms::math::is_denormalf32_present(const float * __restrict data,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size ((nx)*(ny)*(nz)*(nw))
+
 	if (process_slowly == true) {
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0LL; j != ny; ++j) {
 				for (int64_t k = 0LL; k != nz; ++k) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 					for (int64_t l = 0LL; l != nw; ++l) {
 						if (fpclassify(data[I4D(i,j,k,l)]) == FP_SUBNORMAL)
 							*dnc += 1;
@@ -183,11 +151,7 @@ void gms::math::is_denormalf32_present(const float * __restrict data,
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0LL; j != ny; ++j) {
 				for (int64_t k = 0LL; k != nz; ++k) {
-#if size < L1_SIZE_FLOATS
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 					for (int64_t l = 0LL; l != nw; ++l) {
 						if (fpclassify(data[I4D(i,j,k,l)]) == FP_SUBNORMAL) {
 							*dnc = 1;
@@ -205,24 +169,16 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size nx
+
 	if (process_slowly == true) {
-#if size < L1_SIZE_DOUBLES
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 		for (int64_t i = 0LL; i != nx; ++i) {
 			if (fpclassify(data[i]) == FP_SUBNORMAL)
 				*dnc += 1;
 		}
 	}
 	else {
-#if size < L1_SIZE_DOUBLES
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 		for (int64_t i = 0LL; i != nx; ++i) {
 			if (fpclassify(data[i]) == FP_SUBNORMAL) {
 				*dnc = 1;
@@ -238,14 +194,10 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size ((nx)*(ny))
+
 	if (process_slowly == true) {
 		for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 			for (int64_t j = 0LL; j != ny; ++j) {
 				if (fpclassify(data[I2D(i, j)]) == FP_SUBNORMAL)
 					*dnc += 1;
@@ -254,11 +206,7 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 	}
 	else {
 		for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 			for (int64_t j = 0LL; j != ny; ++j) {
 				if (fpclassify(data[I2D(i,j)]) == FP_SUBNORMAL) {
 					*dnc = 1;
@@ -276,16 +224,11 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size ((nx)*(ny)*(nz))
+
 	if (process_slowly == true) {
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0ULL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
-				for (int64_t k = 0LL; k != nz; ++k) {
+			for (int64_t k = 0LL; k != nz; ++k) {
 					if (fpclassify(data[I3D(i, j, k)]) == FP_SUBNORMAL)
 						*dnc += 1;
 				}
@@ -295,12 +238,7 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 	else {
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
-				for (int64_t k = 0LL; k != nz; ++k) {
+			for (int64_t k = 0LL; k != nz; ++k) {
 					if (fpclassify(data[I3D(i,j,k)]) == FP_SUBNORMAL) {
 						*dnc = 1;
 						return;
@@ -319,16 +257,12 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 				       uint32_t * dnc,
 				       const bool process_slowly) {
 	FPEXCEPT_CHECK_COUNTER(dnc)
-#define size ((nx)*(ny)*(nz)*(nw))
+
 	if (process_slowly == true) {
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0LL; j != ny; ++j) {
 				for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 					for (int64_t l = 0LL; l != nw; ++l) {
 						if (fpclassify(data[I4D(i, j, k, l)]) == FP_SUBNORMAL)
 							*dnc += 1;
@@ -341,12 +275,7 @@ void gms::math::is_denormalf64_present(const double * __restrict data,
 		for (int64_t i = 0LL; i != nx; ++i) {
 			for (int64_t j = 0LL; j != ny; ++j) {
 				for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
-					for (int64_t l = 0LL; l != nw; ++l) {
+			for (int64_t l = 0LL; l != nw; ++l) {
 						if (fpclassify(data[I4D(i, j, k, l)]) == FP_SUBNORMAL) {
 							*dnc = 1;
 							return;
@@ -364,27 +293,19 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 			       const bool process_slowly,
 			       const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size (nx)
+
 		switch (option) {
 
 		case 0: { // DENORMAL
-					if (process_slowly == true) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif						
-						for (int64_t i = 0LL; i != nx; ++i) {
+				if (process_slowly == true) {
+				
+			                  for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_SUBNORMAL)
 								 *count += 1;
 						}
 					}
 					else {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_SUBNORMAL) {
 								*count = 1;
@@ -398,22 +319,14 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 		case 1: {
 					// NAN
 					if (process_slowly == true) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_NAN)
 								*count += 1;
 						}
 					}
 					else {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_NAN) {
 								*count = 1;
@@ -427,22 +340,14 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 		case 2: {
 					// INF
 					if (process_slowly == true) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_INFINITE)
 								*count += 1;
 						}
 				 }
 				 else {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 					 for (int64_t i = 0LL; i != nx; ++i) {
 						 if (fpclassify(data[i]) == FP_INFINITE) {
 							 *count = 1;
@@ -466,18 +371,14 @@ void gms::math::is_abnormalf32( const float * __restrict data,
 				const bool process_slowly,
 			        const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size ((nx)*(ny))
+
 		switch (option) {
 
 		case 0: {
 					// DENORMAL
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i,j)]) == FP_SUBNORMAL)
 									*count += 1;
@@ -486,11 +387,7 @@ void gms::math::is_abnormalf32( const float * __restrict data,
 					}
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_SUBNORMAL){
 									*count = 1;
@@ -506,11 +403,7 @@ void gms::math::is_abnormalf32( const float * __restrict data,
 					// NAN
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i,j)]) == FP_NAN)
 									*count += 1;
@@ -519,11 +412,7 @@ void gms::math::is_abnormalf32( const float * __restrict data,
 					}
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_NAN) {
 									*count = 1;
@@ -539,11 +428,7 @@ void gms::math::is_abnormalf32( const float * __restrict data,
 					// INFINITE
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i,j)]) == FP_INFINITE)
 									*count += 1;
@@ -552,11 +437,7 @@ void gms::math::is_abnormalf32( const float * __restrict data,
 					}
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_INFINITE) {
 									*count = 1;
@@ -582,7 +463,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 				  const bool process_slowly,
 				  const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size ((nx)*(ny)*(nz))
+
 		switch (option) {
 
 		case 0: {
@@ -590,11 +471,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i,j,k)]) == FP_SUBNORMAL)
 										*count += 1;
@@ -605,11 +482,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_SUBNORMAL) {
 										*count = 1;
@@ -627,11 +500,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i,j,k)]) == FP_NAN)
 										*count += 1;
@@ -642,11 +511,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_NAN) {
 										*count = 1;
@@ -664,11 +529,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i,j,k)]) == FP_INFINITE)
 										*count += 1;
@@ -679,11 +540,7 @@ void	gms::math::is_abnormalf32(const float * __restrict data,
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_INFINITE) {
 										*count = 1;
@@ -711,7 +568,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 			       const bool process_slowly,
 			       const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size ((nx)*(ny)*(nz)*(nw))
+
 		switch (option) {
 			
 		case 0: {
@@ -720,11 +577,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i,j,k,l)]) == FP_SUBNORMAL)
 											 *count += 1;
@@ -737,12 +590,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
-									for (int64_t l = 0LL; l != nw; ++l) {
+							for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_SUBNORMAL) {
 											*count = 1;
 											return;
@@ -761,11 +609,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i,j,k,l)]) == FP_NAN)
 											*count += 1;
@@ -778,11 +622,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_NAN) {
 											*count = 1;
@@ -802,12 +642,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
-									for (int64_t l = 0; l != nw; ++l) {
+								for (int64_t l = 0; l != nw; ++l) {
 										if (fpclassify(data[I4D(i,j,k,l)]) == FP_INFINITE)
 											*count += 1;
 									}
@@ -819,11 +654,7 @@ void gms::math::is_abnormalf32(const float * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_FLOATS)
-#pragma prefetch data:0:16
-#else
-#pragma prefetch data:1:16
-#endif
+
 									for (int64_t l = 0; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_INFINITE) {
 											*count = 1;
@@ -850,27 +681,19 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 			       const bool process_slowly,
 			       const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size (nx)
+
 		switch (option) {
 
 		case 0: { // DENORMAL
 					if (process_slowly == true) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif						
+				
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_SUBNORMAL)
 								*count += 1;
 						}
 					}
 					else {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_SUBNORMAL) {
 								*count = 1;
@@ -884,22 +707,14 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 		case 1: {
 					// NAN
 					if (process_slowly == true) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_NAN)
 								*count += 1;
 						}
 					}
 					else {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_NAN) {
 								*count = 1;
@@ -913,23 +728,15 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 		case 2: {
 					// INF
 					if (process_slowly == true) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 						for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_INFINITE)
 								*count += 1;
 						}
 					}
 					else {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
-						for (int64_t i = 0LL; i != nx; ++i) {
+						
+				for (int64_t i = 0LL; i != nx; ++i) {
 							if (fpclassify(data[i]) == FP_INFINITE) {
 								*count = 1;
 								return;
@@ -952,18 +759,14 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 			       const bool process_slowly,
 			       uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size ((nx)*(ny))
+
 		switch (option) {
 
 		case 0: {
 					// DENORMAL
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_SUBNORMAL)
 									*count += 1;
@@ -972,11 +775,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					}
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_SUBNORMAL){
 									*count = 1;
@@ -992,11 +791,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					// NAN
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_NAN)
 									*count += 1;
@@ -1005,11 +800,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					}
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_NAN) {
 									*count = 1;
@@ -1025,11 +816,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					// INFINITE
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_INFINITE)
 									*count += 1;
@@ -1038,11 +825,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					}
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 							for (int64_t j = 0LL; j != ny; ++j) {
 								if (fpclassify(data[I2D(i, j)]) == FP_INFINITE) {
 									*count = 1;
@@ -1068,7 +851,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 			       const bool process_slowly,
 			       const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size ((nx)*(ny)*(nz))
+
 		switch (option) {
 
 		case 0: {
@@ -1076,11 +859,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_SUBNORMAL)
 										*count += 1;
@@ -1091,11 +870,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_SUBNORMAL) {
 										*count = 1;
@@ -1113,11 +888,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_NAN)
 										*count += 1;
@@ -1128,11 +899,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_NAN) {
 										*count = 1;
@@ -1150,11 +917,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					if (process_slowly == true) {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_INFINITE)
 										*count += 1;
@@ -1165,11 +928,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 					else {
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 								for (int64_t k = 0LL; k != nz; ++k) {
 									if (fpclassify(data[I3D(i, j, k)]) == FP_INFINITE) {
 										*count = 1;
@@ -1197,7 +956,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 			       const bool process_slowly,
 			       const uint32_t option) {
 	FPEXCEPT_CHECK_COUNTER(count)
-#define size ((nx)*(ny)*(nz)*(nw))
+
 		switch (option) {
 
 		case 0: {
@@ -1206,11 +965,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_SUBNORMAL)
 											*count += 1;
@@ -1223,11 +978,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_SUBNORMAL) {
 											*count = 1;
@@ -1247,11 +998,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_NAN)
 											*count += 1;
@@ -1264,11 +1011,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 									for (int64_t l = 0LL; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_NAN) {
 											*count = 1;
@@ -1288,11 +1031,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 									for (int64_t l = 0; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_INFINITE)
 											*count += 1;
@@ -1305,11 +1044,7 @@ void gms::math::is_abnormalf64(const double * __restrict data,
 						for (int64_t i = 0LL; i != nx; ++i) {
 							for (int64_t j = 0LL; j != ny; ++j) {
 								for (int64_t k = 0LL; k != nz; ++k) {
-#if (size) < (L1_SIZE_DOUBLES)
-#pragma prefetch data:0:8
-#else
-#pragma prefetch data:1:8
-#endif
+
 									for (int64_t l = 0; l != nw; ++l) {
 										if (fpclassify(data[I4D(i, j, k, l)]) == FP_INFINITE) {
 											*count = 1;
