@@ -37,12 +37,13 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
 #include <cstdint>
-#include "GMS_config.h"
+#include "GMS_config.h" // must define 'CONJ'
 
 // TODO:
 // Count the number of uops and implement version for SKX,CLK CPUs.
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__  
 static inline
 void caxpy_kernel_8(const int32_t n,
 		    float * __restrict __ATTR_ALIGN__(32) x,
@@ -246,6 +247,7 @@ void caxpy_kernel_8(const int32_t n,
 
 __ATTR_HOT__
 __ATTR_ALIGN__(16)
+__ATTR_ALWAYS_INLINE__
 static inline
 int caxpy(const int32_t n,
           const float da_r,
