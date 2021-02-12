@@ -174,6 +174,10 @@ of SIMD registers*/
     #endif
 #endif
 
+#if !defined(BREAK_INT3)
+     #define BREAK_INT3()           asm ("int $3")
+#endif
+
 #if !defined(CHECK_L2_LICENSE)
    #define CHECK_L2_LICENSE 0
 #endif
