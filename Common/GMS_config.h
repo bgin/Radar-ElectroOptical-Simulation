@@ -95,9 +95,9 @@ namespace file_info {
 #endif
 
 // For Modified OpenBLAS kernels
-#if !defined(CONJ)
-  #define CONJ 1
-#endif
+
+#define CONJ 
+#define XCONJ
 
 /* Start of Compiler specific declarations.* /
 
@@ -172,10 +172,6 @@ of SIMD registers*/
     #if !defined(SAMPLE_HW_PMC)
         #define SAMPLE_HW_PMC 1
     #endif
-#endif
-
-#if !defined(BREAK_INT3)
-     #define BREAK_INT3()           asm ("int $3")
 #endif
 
 #if !defined(CHECK_L2_LICENSE)
@@ -322,6 +318,10 @@ Include all headers - master header file.
 
 #ifndef GMS_MAN_PREFETCH
 #define GMS_MAN_PREFETCH 0
+#endif
+
+#if !defined(BREAK_INT3)
+     #define BREAK_INT3()           asm ("int $3")
 #endif
 
 // Verbose mode on
