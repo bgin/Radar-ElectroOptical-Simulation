@@ -39,6 +39,14 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cstdint>
 #include "GMS_config" // must define 'CONJ'
 
+// This is important macro definition
+// Set this to '1' in order to enable simd reduction in zgemv_function
+// Vectorized reduction may cause (probably) performance reduction
+// because of irregular stride advancing.
+#if !defined(GMS_ZGEMV_EXPLICITLY_VECTORIZE)
+#define GMS_ZGEMV_EXPLICITLY_VECTORIZE 0
+#endif
+
 // Kernels
 
 #if !defined(ZGEMV_KERNEL_USE_PREFETCHT0)
@@ -766,6 +774,300 @@ void add_y(const int32_t n,
 	      "memory"
 	     );
 	}
+}
+
+#include <cstring>
+#if defined __GNUC__ && !defined __INTEL_COMPILER
+#include <omp.h>
+#endif
+
+#define ZGEMV_NBMAX 1024
+
+__ATTR_HOT__
+__ATTR_ALIGN__(32) // default alignment on boundary of 32-bytes (should be tested against ICC or GCC alignment logic)
+__ATTR_ALWAYS_INLINE__
+static inline
+void zgemv(const int32_t m,
+           const int32_t n,
+	   const double alpha_r,
+	   const double alpha_i,
+	   double * __restrict a,
+	   const int32_t lda,
+	   double * __restrict x,
+	   const int32_t inc_x,
+	   double * __restrict y,
+	   const int32_t inc_y,
+	   double * buffer) {
+
+      if(m<1 || n<1) return(0);
+      __ATTR_ALIGN__(32) double xbuffer[8] = {};
+      __ATTR_ALIGN__(32) double *ap[4] = {};
+      double * __restrict ybuffer = NULL;
+      double * __restrict a_ptr = NULL;
+      double * __restrict x_ptr = NULL;
+      double * __restrict y_ptr = NULL;
+      int32_t n1,m1,m2,m3,n2,lda4,i,t0,nb;
+      char pad[18] = {};
+
+      ybuffer = buffer;
+      inc_x *= 2;
+      inc_y *= 2;
+      lda   *= 2;
+      lda4   = 4*lda;
+      n1 = n/4;
+      n2 = n%4;
+      t0 = m%4;
+      m3 = t0;
+      m1 = m-t0;
+      m2 = (m%ZGEMV_NBMAX)-t0;
+      y_ptr = y;
+      nb = NBMAX;
+      
+      while(nb == NBMAX) {
+           m1 -= nb;
+	   if(m1<0) {
+	      if(m2==0) break;
+	      nb = m2;
+	   }
+	   a_ptr = a;
+	   ap[0] = a_ptr;
+	   ap[1] = a_ptr+lda;
+	   ap[2] = ap[1]+lda;
+	   ap[3] = ap[2]+lda;
+	   x_ptr = x;
+	   memset(ybuffer,0,nb*16);
+
+	   if(inc_x == 2) {
+
+	       for(i = 0; i != n1; ++i) {
+                   zgemv_kernel_4x4(nb,ap,x_ptr,ybuffer);
+		   ap[0] += lda4;
+		   ap[1] += lda4;
+		   ap[2] += lda4;
+		   ap[3] += lda4;
+		   a_ptr += lda4;
+		   x_ptr += 8;
+	       }
+
+	       if(n2 & 2) {
+                  zgemv_kernel_4x2(nb,ap,x_ptr,ybuffer);
+		  x_ptr += 4;
+		  a_ptr += (lda + lda);
+	       }
+
+	       if(n2 & 1) {
+                  zgemv_kernel_4x1(nb,a_ptr,x_ptr,ybuffer);
+	       }
+	   }
+	   else {
+
+	          for(i = 0; i != n1; ++i) {
+                      xbuffer[0] = x_ptr[0];
+		      xbuffer[1] = x_ptr[1];
+		      x_ptr += inc_x;
+		      xbuffer[2] = x_ptr[0];
+		      xbuffer[3] = x_ptr[1];
+		      x_ptr += inc_x;	
+		      xbuffer[4] = x_ptr[0];
+		      xbuffer[5] = x_ptr[1];
+		      x_ptr += inc_x;	
+		      xbuffer[6] = x_ptr[0];
+		      xbuffer[7] = x_ptr[1];
+		      x_ptr += inc_x;
+		      zgemv_kernel_4x4(nb,ap_xbuffer,ybuffer);
+		      ap[0] += lda4;
+		      ap[1] += lda4;
+		      ap[2] += lda4;
+		      ap[3] += lda4;
+		      a_ptr += lda4;
+		  }
+		  for(i = 0; i != n2; ++i) {
+                      xbuffer[0] = x_ptr[0];
+		      xbuffer[1] = x_ptr[1];
+		      x_ptr += inc_x;
+		      zgemv_kernel_4x1(nb,a_ptr,xbuffer,ybuffer);
+		      a_ptr += lda;
+		  }
+	   }
+
+	   add_y(nb,ybuffer,y_ptr,inc_y,alpha_r,alpha_i);
+	   a  += 2*nb;
+	   y_ptr += nb*inc_y;
+      }
+
+      if(m3 == 0) return(0);
+      if(m3 == 1) {
+         a_ptr = a;
+	 x_ptr = x;
+	 double temp_r = 0.0;
+	 double temp_i = 0.0;
+	 if(lda==2 && inc_x==2) {
+#if (GMS_ZGEMV_EXPLICITLY_VECTORIZE) == 1
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vectorlengthfor(double) reduction(+:temp_r,temp_i)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:temp_r,temp_i)
+#endif
+#endif
+            for(i = 0; i != (n & -2); i += 2) {
+#if ( !defined(CONJ) && !defined(XCONJ) ) || ( defined(CONJ) && defined(XCONJ) )
+		    temp_r += a_ptr[0] * x_ptr[0] - a_ptr[1] * x_ptr[1];
+		    temp_i += a_ptr[0] * x_ptr[1] + a_ptr[1] * x_ptr[0];
+		    temp_r += a_ptr[2] * x_ptr[2] - a_ptr[3] * x_ptr[3];
+		    temp_i += a_ptr[2] * x_ptr[3] + a_ptr[3] * x_ptr[2];
+#else
+		    temp_r += a_ptr[0] * x_ptr[0] + a_ptr[1] * x_ptr[1];
+		    temp_i += a_ptr[0] * x_ptr[1] - a_ptr[1] * x_ptr[0];
+		    temp_r += a_ptr[2] * x_ptr[2] + a_ptr[3] * x_ptr[3];
+		    temp_i += a_ptr[2] * x_ptr[3] - a_ptr[3] * x_ptr[2];
+#endif
+
+		    a_ptr += 4;
+		    x_ptr += 4;
+	    }
+#if ( GMS_ZGEMV_EXPLICITLY_VECTORIZE) == 1
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vectorlengthfor(double) reduction(+:temp_r,temp_i)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:temp_r,temp_i)
+#endif
+#endif
+	    for(; i != n; ++i) {
+#if ( !defined(CONJ) && !defined(XCONJ) ) || ( defined(CONJ) && defined(XCONJ) )
+		    temp_r += a_ptr[0] * x_ptr[0] - a_ptr[1] * x_ptr[1];
+		    temp_i += a_ptr[0] * x_ptr[1] + a_ptr[1] * x_ptr[0];
+#else
+		    temp_r += a_ptr[0] * x_ptr[0] + a_ptr[1] * x_ptr[1];
+		    temp_i += a_ptr[0] * x_ptr[1] - a_ptr[1] * x_ptr[0];
+#endif
+
+		    a_ptr += 2;
+		    x_ptr += 2;
+	    }
+	 }
+	 else {
+#if ( GMS_ZGEMV_EXPLICITLY_VECTORIZE) == 1
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vectorlengthfor(double) reduction(+:temp_r,temp_i)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:temp_r,temp_i)
+#endif
+#endif
+	        for(i = 0; i != n; ++i) {
+#if ( !defined(CONJ) && !defined(XCONJ) ) || ( defined(CONJ) && defined(XCONJ) )
+		    temp_r += a_ptr[0] * x_ptr[0] - a_ptr[1] * x_ptr[1];
+		    temp_i += a_ptr[0] * x_ptr[1] + a_ptr[1] * x_ptr[0];
+#else
+		    temp_r += a_ptr[0] * x_ptr[0] + a_ptr[1] * x_ptr[1];
+		    temp_i += a_ptr[0] * x_ptr[1] - a_ptr[1] * x_ptr[0];
+#endif
+
+		    a_ptr += lda;
+		    x_ptr += inc_x;
+		}
+	 }
+#if !defined(XCONJ) 
+		y_ptr[0] += alpha_r * temp_r - alpha_i * temp_i;
+		y_ptr[1] += alpha_r * temp_i + alpha_i * temp_r;
+#else
+		y_ptr[0] += alpha_r * temp_r + alpha_i * temp_i;
+		y_ptr[1] -= alpha_r * temp_i - alpha_i * temp_r;
+#endif
+		return(0);	 
+      }
+
+      if(m3 == 2) {
+
+         a_ptr = a;
+	 x_ptr = x;
+	 double temp_r0 = 0.0;
+	 double temp_i0 = 0.0;
+	 double temp_r1 = 0.0;
+	 double temp_i1 = 0.0;
+	 double temp_r2 = 0.0;
+	 double temp_i2 = 0.0;
+
+	 if(lda==6 && inc_x==2) {
+#if ( GMS_ZGEMV_EXPLICITLY_VECTORIZE) == 1
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vectorlengthfor(double) reduction(+:temp_r0,temp_i0,temp_r1,temp_i1,temp_r2,temp_i2)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:temp_r0,temp_i0,temp_r1,temp_i1,temp_r2,temp_i2)
+#endif
+#endif
+	     for(i = 0; i != n; ++i) {
+#if ( !defined(CONJ) && !defined(XCONJ) ) || ( defined(CONJ) && defined(XCONJ) )
+		 temp_r0 += a_ptr[0] * x_ptr[0] - a_ptr[1] * x_ptr[1];
+		 temp_i0 += a_ptr[0] * x_ptr[1] + a_ptr[1] * x_ptr[0];
+		 temp_r1 += a_ptr[2] * x_ptr[0] - a_ptr[3] * x_ptr[1];
+		 temp_i1 += a_ptr[2] * x_ptr[1] + a_ptr[3] * x_ptr[0];
+		 temp_r2 += a_ptr[4] * x_ptr[0] - a_ptr[5] * x_ptr[1];
+		 temp_i2 += a_ptr[4] * x_ptr[1] + a_ptr[5] * x_ptr[0];
+#else
+		 temp_r0 += a_ptr[0] * x_ptr[0] + a_ptr[1] * x_ptr[1];
+		 temp_i0 += a_ptr[0] * x_ptr[1] - a_ptr[1] * x_ptr[0];
+		 temp_r1 += a_ptr[2] * x_ptr[0] + a_ptr[3] * x_ptr[1];
+		 temp_i1 += a_ptr[2] * x_ptr[1] - a_ptr[3] * x_ptr[0];
+		 temp_r2 += a_ptr[4] * x_ptr[0] + a_ptr[5] * x_ptr[1];
+		 temp_i2 += a_ptr[4] * x_ptr[1] - a_ptr[5] * x_ptr[0];
+#endif
+
+		 a_ptr += 6;
+		 x_ptr += 2;               
+	     }
+	 }
+	 else {
+#if ( GMS_ZGEMV_EXPLICITLY_VECTORIZE) == 1
+#if defined __INTEL_COMPILER || defined __ICC
+#pragma vectorlengthfor(double) reduction(+:temp_r0,temp_i0,temp_r1,temp_i1,temp_r2,temp_i2)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+#pragma omp simd reduction(+:temp_r0,temp_i0,temp_r1,temp_i1,temp_r2,temp_i2)
+#endif
+#endif
+	      for(i = 0; i != n; ++i) {
+#if ( !defined(CONJ) && !defined(XCONJ) ) || ( defined(CONJ) && defined(XCONJ) )
+
+		   temp_r0 += a_ptr[0] * x_ptr[0] - a_ptr[1] * x_ptr[1];
+		   temp_i0 += a_ptr[0] * x_ptr[1] + a_ptr[1] * x_ptr[0];
+		   temp_r1 += a_ptr[2] * x_ptr[0] - a_ptr[3] * x_ptr[1];
+		   temp_i1 += a_ptr[2] * x_ptr[1] + a_ptr[3] * x_ptr[0];
+		   temp_r2 += a_ptr[4] * x_ptr[0] - a_ptr[5] * x_ptr[1];
+		   temp_i2 += a_ptr[4] * x_ptr[1] + a_ptr[5] * x_ptr[0];
+#else
+		   temp_r0 += a_ptr[0] * x_ptr[0] + a_ptr[1] * x_ptr[1];
+		   temp_i0 += a_ptr[0] * x_ptr[1] - a_ptr[1] * x_ptr[0];
+		   temp_r1 += a_ptr[2] * x_ptr[0] + a_ptr[3] * x_ptr[1];
+		   temp_i1 += a_ptr[2] * x_ptr[1] - a_ptr[3] * x_ptr[0];
+		   temp_r2 += a_ptr[4] * x_ptr[0] + a_ptr[5] * x_ptr[1];
+		   temp_i2 += a_ptr[4] * x_ptr[1] - a_ptr[5] * x_ptr[0];
+#endif
+
+				a_ptr += lda;
+				x_ptr += inc_x;
+	      }
+	 }
+
+#if !defined(XCONJ) 
+		y_ptr[0] += alpha_r * temp_r0 - alpha_i * temp_i0;
+		y_ptr[1] += alpha_r * temp_i0 + alpha_i * temp_r0;
+		y_ptr    += inc_y;
+		y_ptr[0] += alpha_r * temp_r1 - alpha_i * temp_i1;
+		y_ptr[1] += alpha_r * temp_i1 + alpha_i * temp_r1;
+		y_ptr    += inc_y;
+		y_ptr[0] += alpha_r * temp_r2 - alpha_i * temp_i2;
+		y_ptr[1] += alpha_r * temp_i2 + alpha_i * temp_r2;
+#else
+		y_ptr[0] += alpha_r * temp_r0 + alpha_i * temp_i0;
+		y_ptr[1] -= alpha_r * temp_i0 - alpha_i * temp_r0;
+		y_ptr    += inc_y;
+		y_ptr[0] += alpha_r * temp_r1 + alpha_i * temp_i1;
+		y_ptr[1] -= alpha_r * temp_i1 - alpha_i * temp_r1;
+		y_ptr    += inc_y;
+		y_ptr[0] += alpha_r * temp_r2 + alpha_i * temp_i2;
+		y_ptr[1] -= alpha_r * temp_i2 - alpha_i * temp_r2;
+#endif
+		return(0);	 
+      }
 }
 
 
