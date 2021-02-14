@@ -22,18 +22,18 @@
 #if !defined(TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK)
 #define TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(a1,a2)          \
         do {                                                      \
-              __attribute__((aligned(64))) double (a1)[lagh+8];   \                               
-              __attribute__((aligned(64))) double (a2)[lagh+8];   \
+              __attribute__((aligned(64))) double a1[lagh+8];   \                               
+              __attribute__((aligned(64))) double a2[lagh+8];   \
         } while(0)
 #endif
 
 #if !defined(TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT)
 #define TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(a1,a2)              \ 
        do {                                                          \
-             _mm512_stream_pd(&(a1)[i+0], vzf64);                   \
-             _mm512_stream_pd(&(a2)[i+0], vzf64);                     \
-             _mm512_stream_pd(&(a1)[i+8], vzf64);                    \
-             _mm512_stream_pd(&(a2)[i+8], vzf64);                      \
+             _mm512_stream_pd(&a1[i+0], vzf64);                   \
+             _mm512_stream_pd(&a2[i+0], vzf64);                     \
+             _mm512_stream_pd(&a1[i+8], vzf64);                    \
+             _mm512_stream_pd(&a2[i+8], vzf64);                      \
        } while(0)
 #endif
 
@@ -316,7 +316,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      dumm3 = rdpmc(3);
      for(int32_t i = 0; i != n_runs; ++i) {
          for(int32_t j = 0; j != n_samples; ++j) {
-               __asm__ __volatile__ ("cpuid"); // CPUID overhead
+               __asm__ __volatile__ ("lfence"); // CPUID overhead
                PMC0_start = rdpmc(0);
                PMC1_start = rdpmc(1);
                PMC2_start = rdpmc(2);
@@ -335,7 +335,9 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
               // THe results here are plagued by noise.
               // For real world measurement it is a needed scenario
               // For idealized measurement the overhead should be measured and subtracted.
+	       __asm__ __volatile__("lfence");
                ScattererZMM16r4_1.ComputeGrassParamEq_zmm16r4();
+	       __asm__ __volatile__("lfence");
 	       TSC_end  = rdtscp();
                FCIns_end = rdpmc_instructions();
                FCAct_end = rdpmc_actual_cycles();
@@ -344,8 +346,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
                PMC2_end  = rdpmc(2);
                PMC1_end  = rdpmc(1);
                PMC0_end  = rdpmc(0);
-               __asm__ __volatile__ ("cpuid");
-               TSC[i*n_samples+j]     = corrected_pmc_delta(TSC_end,TSC_start,core_ctr_width)-cpuid_bias;
+               __asm__ __volatile__ ("lfence");
+               TSC[i*n_samples+j]     = corrected_pmc_delta(TSC_end,TSC_start,core_ctr_width);
                FCIns[i*n_samples+j]   = corrected_pmc_delta(FCIns_end,FCIns_start,core_ctr_width);
                FCAct[i*n_samples+j]   = corrected_pmc_delta(FCAct_end,FCAct_start,core_ctr_width);
                FCRef[i*n_samples+j]   = corrected_pmc_delta(FCRef_end,FCRef_start,core_ctr_width);
@@ -372,14 +374,14 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
 
      //Convert results delta arrays to double precision.
-      _mm512_store_pd(&PMC0_f64[0], _mm512_castsi512_pd(&PMC0[0]));
-      _mm512_store_pd(&PMC1_f64[0], _mm512_castsi512_pd(&PMC1[0]));
-      _mm512_store_pd(&PMC2_f64[0], _mm512_castsi512_pd(&PMC2[0]));
-      _mm512_store_pd(&PMC3_f64[0], _mm512_castsi512_pd(&PMC3[0]));
-      _mm512_store_pd(&FCRef_f64[0],_mm512_castsi512_pd(&FCRef[0]));
-      _mm512_store_pd(&FCAct_f64[0],_mm512_castsi512_pd(&FCAct[0]));
-      _mm512_store_pd(&FCIns_f64[0],_mm512_castsi512_pd(&FCIns[0]));
-      _mm512_store_pd(&TSC_f64[0],  _mm512_castsi512_pd(&TSC[0]));
+     _mm512_store_pd(&PMC0_f64[0], _mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&PMC0[0]))));
+     _mm512_store_pd(&PMC1_f64[0], _mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&PMC1[0]))));
+     _mm512_store_pd(&PMC2_f64[0], _mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&PMC2[0]))));
+     _mm512_store_pd(&PMC3_f64[0], _mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&PMC3[0]))));
+      _mm512_store_pd(&FCRef_f64[0],_mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&FCRef[0]))));
+      _mm512_store_pd(&FCAct_f64[0],_mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&FCAct[0]))));
+      _mm512_store_pd(&FCIns_f64[0],_mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&FCIns[0]))));
+      _mm512_store_pd(&TSC_f64[0],  _mm512_castsi512_pd(_mm512_load_pd(_mm512_load_epi64(&TSC[0]))));
       for(int32_t i = 7; i != tot_samples-3; i += 32) {
       
 #include "call_scope_looped_tests_cast_to_f64_loop_body.c"
@@ -402,11 +404,12 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-         TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((PMC0_acor),(PMC0_acov))
+         TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(PMC0_acor,PMC0_acov)
      }
      // Call F77 C-interface
      AUTCORF(&PMC0_f64[0],&data_len,&PMC0_acov[0],&PMC0_acor[0],&lagh,&PMC0_xmean);
-     if(fopen(&fp1,fname1,"a+") != 0) {
+     fp1 = fopen(fname1,"a+");
+     if(fp1 == NULL) {
         printf("File open error: %s\n",fname1);
 	std::exit(EXIT_FAILURE);
      }
@@ -419,15 +422,16 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      // Autocorrelation and autocovariance of PMC1 data
      const char * fname2 = "PMC1_acor_acov.csv";
      FILE * fp2;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((PMC1_acor),(PMC1_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(PMC1_acor,PMC1_acov)
      double PMC1_xmean = 0.0;
       // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-       TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((PMC1_acor),(PMC1_acov))
+       TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(PMC1_acor,PMC1_acov)
      }
      // Call F77 C-interface
      AUTCORF(&PMC1_f64[0],&data_len,&PMC1_acov[0],&PMC1_acor[0],&lagh,&PMC1_xmean);
-     if(fopen(&fp2,fname2,"a+") != 0) {
+     fp2 = fopen(fname2,"a+");
+     if(fp2 == NULL) {
         printf("File open error: %s\n",fname2);
 	std::exit(EXIT_FAILURE);
      }
@@ -440,16 +444,17 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp2);
      const char * fname3 = "PMC2_acor_acov.csv";
      FILE * fp3;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((PMC2_acor),(PMC2_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(PMC2_acor,PMC2_acov)
      double PMC2_xmean = 0.0;
      
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-       TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((PMC2_acor),(PMC2_acov))
+       TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(PMC2_acor,PMC2_acov)
      }
      // Call F77 C-interface
      AUTCORF(&PMC2_f64[0],&data_len,&PMC2_acov[0],&PMC2_acor[0],&lagh,&PMC2_xmean);
-     if(fopen(&fp3,fname3,"a+") != 0) {
+     fp3 = fopen(fname3,"a+");
+     if(fp3 == NULL) {
         printf("File open error: %s\n",fname3);
 	std::exit(EXIT_FAILURE);
      }
@@ -462,16 +467,17 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp3);
      const char * fname4 = "PMC3_acor_acov.csv";
      FILE * fp4;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((PMC3_acor),(PMC3_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(PMC3_acor,PMC3_acov)
      double PMC3_xmean = 0.0;
    
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-        TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((PMC3_acor),(PMC3_acov))
+        TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(PMC3_acor,PMC3_acov)
      }
      // Call F77 C-interface
      AUTCORF(&PMC3_f64[0],&data_len,&PMC3_acov[0],&PMC3_acor[0],&lagh,&PMC3_xmean);
-     if(fopen(&fp4,fname4,"a+") != 0) {
+     fp4 = fopen(fname4,"a+");
+     if(fp4 == NULL) {
         printf("File open error: %s\n",fname4);
 	std::exit(EXIT_FAILURE);
      }
@@ -483,16 +489,17 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp4);
      const char * fname5 = "FCRef_acor_acov.csv";
      FILE * fp5;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((FCRef_acor),(FCRef_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(FCRef_acor,FCRef_acov)
      double FCRef_xmean = 0.0;
      
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-         TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((FCRef_acor),(FCRef_acov))
+         TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(FCRef_acor,FCRef_acov)
      }
      // Call F77 C-interface
      AUTCORF(&FCRef_f64[0],&data_len,&FCRef_acov[0],&FCRef_acor[0],&lagh,&FCRef_xmean);
-     if(fopen(&fp5,fname5,"a+") != 0) {
+     fp = fopen(fname5,"a+");
+     if(fp5 == NULL) {
         printf("File open error: %s\n",fname5);
 	std::exit(EXIT_FAILURE);
      }
@@ -504,16 +511,17 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp5);
      const char * fname6 = "FCAct_acor_acov.csv";
      FILE * fp6;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((FCAct_acor),(FCAct_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(FCAct_acor,FCAct_acov)
      double FCAct_xmean = 0.0;
      
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-          TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((FCAct_acor),(FCAct_acov))
+          TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(FCAct_acor,FCAct_acov)
      }
      // Call F77 C-interface
      AUTCORF(&FCAct_f64[0],&data_len,&FCAct_acov[0],&FCAct_acor[0],&lagh,&FCAct_xmean);
-     if(fopen(&fp6,fname6,"a+") != 0) {
+     fp6 = fopen(fname6,"a+");
+     if(fp6 == NULL) {
         printf("File open error: %s\n",fname6);
 	std::exit(EXIT_FAILURE);
      }
@@ -525,16 +533,17 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp6);
      const char * fname7 = "FCIns_acor_acov.csv";
      FILE * fp7;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((FCIns_acor),(FCIns_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(FCIns_acor,FCIns_acov)
      double FCIns_xmean = 0.0;
      
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-         TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((FCIns_acor),(FCIns_acov))
+         TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(FCIns_acor,FCIns_acov)
      }
      // Call F77 C-interface
      AUTCORF(&FCIns_f64[0],&data_len,&FCIns_acov[0],&FCIns_acor[0],&lagh,&FCIns_xmean);
-     if(fopen(&fp7,fname7,"a+") != 0) {
+     fp7 = fopen(fname7,"a+");
+     if(fp7 == NULL) {
         printf("File open error: %s\n",fname7);
 	std::exit(EXIT_FAILURE);
      }
@@ -546,28 +555,29 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp7);
      const char * fname8 = "TSC_acor_acov.csv";
      FILE * fp8;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((TSC_acor),(TSC_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(TSC_acor,TSC_acov)
      double TSC_xmean = 0.0;
      
      // Initialize the result arrays
      for(int32_t i = 0; i != (lagh+8); i += 16) {
-          TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT((TSC_acor),(TSC_acov))
+          TIMSAC_AUTOCORF_STATIC_ARRAYS_ZERO_INIT(TSC_acor,TSC_acov))
      }
      // Call F77 C-interface
      AUTCORF(&TSC_f64[0],&data_len,&TSC_acov[0],&TSC_acor[0],&lagh,&TSC_xmean);
-     if(fopen(&fp8,fname8,"a+") != 0) {
+     fp8 = fopen(fname8,"a+");
+     if(fp8 == NULL) {
         printf("File open error: %s\n",fname8);
 	std::exit(EXIT_FAILURE);
      }
      fprintf(fp8,"TSC_xmean=%.16f\n",TSC_xmean);
-     fprintf(fp8,"TSC input data\n");
+     fprintf(fp8,"FCIns input data\n");
      for(int32_t i = 0; i != data_len; ++i) { fprintf(fp8," %.16f\n",TSC_f64[i]);}
      fprintf(fp8," TSC-autocor, TSC-autocov\n");
      for(int32_t i = 0; i != lagh; ++i) {fprintf(fp8,"%.16f %.16f\n",TSC_acor[i],TSC_acov[i]);}
      fclose(fp8);
      const char * fname9 = "Core-utilization_acor_acov.csv";
      FILE * fp9;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((Core_util_acor),(Core_util_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(Core_util_acor,Core_util_acov)
      double Core_util_xmean = 0.0;
      
      // Initialize the result arrays
@@ -576,7 +586,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&core_util[0],&data_len,&Core_util_acov[0],&Core_util_acor[0],&lagh,&Core_util_xmean);
-     if(fopen(&fp9,fname9,"a+") != 0) {
+     fp9 = fopen(fname9,"a+");
+     if(fp9 == NULL) {
         printf("File open error: %s\n",fname9);
 	std::exit(EXIT_FAILURE);
      }
@@ -588,7 +599,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      fclose(fp9);
      const char * fname10 = "Core-avg-freq_acor_acov.csv";
      FILE * fp10;
-     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK((Core_avg_f_acor),(Core_avg_f_acov))
+     TIMSAC_AUTOCORF_STATIC_ARRAY_DEFINE_BLOCK(Core_avg_f_acor,Core_avg_f_acov)
      double Core_avg_f_xmean = 0.0;
      
      // Initialize the result arrays
@@ -597,7 +608,8 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      }
      // Call F77 C-interface
      AUTCORF(&core_avg_f[0],&data_len,&Core_avg_f_acov[0],&Core_avg_f_acor[0],&lagh,&Core_avg_f_xmean);
-     if(fopen(&fp10,fname10,"a+") != 0) {
+     fp10 = fopen(fname10,"a+");
+     if(fp10 == NULL) {
         printf("File open error: %s\n",fname10);
 	std::exit(EXIT_FAILURE);
      }
