@@ -78,12 +78,12 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_non_looped_non_instr() {
 							     elev,
 							     ceps,
 							     mlock);
-     // Forcing core to fetch and decode ahead of first usage a CPUID and RDPMC
-     // instructions.
-     __asm__ __volatile__ ("CPUID");
      dummy0 = rdpmc(0);
      // Begin of test block
-     dummy1 = get_core_counter_width();
+     //dummy1 = get_core_counter_width();
+     // Forcing core to fetch and decode ahead of first usage a lfence
+     // instructions.
+     __asm__ __volatile__ ("lfence");
      for(int32_t i = 0; i != 4; ++i) {
          core_counters_start[i] = rdpmc(i);
      }
@@ -99,8 +99,10 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_non_looped_non_instr() {
      // THe results here are plagued by noise.
      // For real world measurement it is a needed scenario
      // For idealized measurement the overhead should be measured and subtracted.
+     __asm__ __volatile__("lfence");
      ScattererZMM16r4_1.ComputeGrassParamEq_zmm16r4();
-     dummy2 = get_core_counter_width();
+     __asm__ __volatile__("lfence");
+     //dummy2 = get_core_counter_width();
      for(int32_t i = 0; i != 4; ++i) {
          core_counters_end[i] = rdpmc(i);
      }
@@ -109,6 +111,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_non_looped_non_instr() {
      gen_cyc_end  = rdpmc_actual_cycles();
      gen_ref_end  = rdpmc_reference_cycles();
      tsc_end      = rdtscp();
+     __asm__ __volatile__("lfence");
      // Measurements end.
      core_halt_delta = (tsc_end-tsc_start-rdtscp_latency)-(gen_ref_end-gen_ref_start);
     
