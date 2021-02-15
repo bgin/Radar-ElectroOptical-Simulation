@@ -316,7 +316,7 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      dumm3 = rdpmc(3);
      for(int32_t i = 0; i != n_runs; ++i) {
          for(int32_t j = 0; j != n_samples; ++j) {
-               __asm__ __volatile__ ("lfence"); // CPUID overhead
+               __asm__ __volatile__ ("lfence"); // LFENCE overhead shoule be measured averaged and subtracted.
                PMC0_start = rdpmc(0);
                PMC1_start = rdpmc(1);
                PMC2_start = rdpmc(2);
