@@ -37,7 +37,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
 #include <cstdint>
-#include "GMS_config" 
+#include "GMS_config.h" 
 
 __ATTR_HOT__
 __ATTR_ALIGN__(32) // default alignment on boundary of 32-bytes (should be tested against ICC or GCC alignment logic)
