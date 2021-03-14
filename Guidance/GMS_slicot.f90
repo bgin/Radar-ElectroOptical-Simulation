@@ -6,6 +6,16 @@
 #define GMS_SLICOT_OMP_LOOP_PARALLELIZE 1
 #endif
 
+#if !defined(GMS_SLICOT_USE_MKL_LAPACK)
+#define GMS_SLICOT_USE_MKL_LAPACK 1
+#endif
+
+#if !defined(GMS_SLICOT_USE_REFERENCE_LAPACK)
+#define GMS_SLICOT_USE_REFERENCE_LAPACK 0
+#endif
+
+
+
 #if defined __GFORTRAN__ && (!defined(__ICC) || !defined(__INTEL_COMPILER))
  SUBROUTINE AB08MZ(EQUIL, N, M, P, A, LDA, B, LDB, C, LDC, D, LDD, &
       RANK, TOL, IWORK, DWORK, ZWORK, LZWORK, INFO ) !GCC$ ATTRIBUTES aligned(32) :: AB08MZ !GCC$ ATTRIBUTES hot :: AB08MZ !GCC$ ATTRIBUTES no_stack_protector :: AB08MZ
@@ -166,22 +176,24 @@ C
 C     ******************************************************************
 C
 #endif
-C     .. Parameters ..
+!C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
       PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
-C     .. Scalar Arguments ..
+!C     .. Scalar Arguments ..
       CHARACTER         EQUIL
       INTEGER           INFO, LDA, LDB, LDC, LDD, LZWORK, M, N, P, RANK
       DOUBLE PRECISION  TOL
-C     .. Array Arguments ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       INTEGER           IWORK(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       INTEGER           IWORK(*)
       !DIR$ ASSUME_ALIGNED IWORK:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       COMPLEX*16        A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), ZWORK(*)
       DOUBLE PRECISION  DWORK(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       COMPLEX*16        A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), ZWORK(*)
 !DIR$ ASSUME_ALIGNED A:64
 !DIR$ ASSUME_ALIGNED B:64
@@ -517,22 +529,24 @@ C
                         NU, P, RO, SIGMA
       DOUBLE PRECISION  SVLMAX, TOL
       !C     .. Array Arguments ..
- 
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER)) 
       INTEGER           INFZ(*), IWORK(*), KRONL(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       INTEGER           INFZ(*), IWORK(*), KRONL(*)
       !DIR$ ASSUME_ALIGNED INFZ:64
       !DIR$ ASSUME_ALIGNED IWORK:64
       !DIR$ ASSUME_ALIGNED KRONL:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       COMPLEX*16        ABCD(LDABCD,*), ZWORK(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       COMPLEX*16        ABCD(LDABCD,*), ZWORK(*)
       !DIR$ ASSUME_ALIGNED ABCD:64
       !DIR$ ASSUME_ALIGNED ZWORK:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       DOUBLE PRECISION  DWORK(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       DOUBLE PRECISION  DWORK(*)
       !DIR$ ASSUME_ALIGNED DWORK:64
 #endif
@@ -1000,21 +1014,23 @@ C
       INTEGER            INFO, LDA, M, N, RANK
       DOUBLE PRECISION   RCOND, SVLMAX
 !C     .. Array Arguments ..
-
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       INTEGER            JPVT( * )
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       INTEGER            JPVT( * )
       !DIR$ ASSUME_ALIGNED JPVT:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
       !DIR$ ASSUME_ALIGNED A:64
       !DIR$ ASSUME_ALIGNED TAU:64
       !DIR$ ASSUME_ALIGNED ZWORK:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
       !DIR$ ASSUME_ALIGNED DWORK:64
 #endif
@@ -1409,21 +1425,24 @@ C
 !C     .. Scalar Arguments ..
       INTEGER            INFO, LDA, M, N, RANK
       DOUBLE PRECISION   RCOND, SVLMAX
-!C     .. Array Arguments ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       INTEGER            JPVT( * )
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       INTEGER            JPVT( * )
 !DIR$ ASSUME_ALIGNED JPVT:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
 !DIR$ ASSUME_ALIGNED A:64
 !DIR$ ASSUME_ALIGNED TAU:64
 !DIR$ ASSUME_ALIGNED ZWORK:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
 !DIR$ ASSUME_ALIGNED DWORK:64
 #endif
@@ -1848,21 +1867,21 @@ C      |  i      i   i-1           |     |       i              |
 C      |                      1/2  | T = |                      |
 C      | 0      A x S    B x Q     |     |     AK       S     0 |
 C      |         i   i-1  i   i    |     |       i       i      |
-C
-C          (Pre-array)                      (Post-array)
-C
-C     where T is an orthogonal transformation triangularizing the
-C     pre-array.
-C
-C     The state covariance matrix P    is factorized as
-C                                  i|i-1
-C        P     = S  S'
+!C
+!C          (Pre-array)                      (Post-array)
+!C
+!C     where T is an orthogonal transformation triangularizing the
+!C     pre-array.
+!C
+!C     The state covariance matrix P    is factorized as
+!C                                  i|i-1
+!C        P     = S  S'
 !C         i|i-1   i  i
 !C
 !C     and one combined time and measurement update for the state X
-C                                                                 i|i-1
-C     is given by
-C
+!C                                                                 i|i-1
+!C     is given by
+!C
 C        X     = A X      + K (Y - C X     ),
 C         i+1|i   i i|i-1    i  i   i i|i-1
 C
@@ -1928,15 +1947,17 @@ C     CONTRIBUTORS
       INTEGER           INFO, LDA, LDB, LDC, LDK, LDQ, LDR, LDS, LDWORK, &
                         M, N, P
       DOUBLE PRECISION  TOL
-!C     .. Array Arguments ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       INTEGER           IWORK(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       INTEGER           IWORK(*)
 !DIR$ ASSUME_ALIGNED IWORK:64
 #endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
                         K(LDK,*), Q(LDQ,*), R(LDR,*), S(LDS,*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
       DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
                         K(LDK,*), Q(LDQ,*), R(LDR,*), S(LDS,*)
 !DIR$ ASSUME_ALIGNED A:64
@@ -2098,8 +2119,2313 @@ C     CONTRIBUTORS
       DWORK(1) = WRKOPT
 !C
     
-C *** Last line of FB01QD ***
+
 END SUBROUTINE FB01QD
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTRL_COMPILER))
+SUBROUTINE FB01SD( JOBX, MULTAB, MULTRC, N, M, P, SINV, LDSINV, &
+          AINV, LDAINV, B, LDB, RINV, LDRINV, C, LDC,           &
+          QINV, LDQINV, X, RINVY, Z, E, TOL, IWORK,             &
+          DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES hot :: FB01SD !GCC$ ATTRIBUTES aligned(32) :: FB01SD !GCC$ ATTRIBUTES no_stack_protector :: FB01SD
+#elif defined(__ICC)  || defined(__INTEL_COMPILER)
+SUBROUTINE FB01SD( JOBX, MULTAB, MULTRC, N, M, P, SINV, LDSINV, &
+          AINV, LDAINV, B, LDB, RINV, LDRINV, C, LDC,           &
+          QINV, LDQINV, X, RINVY, Z, E, TOL, IWORK,             &
+          DWORK, LDWORK, INFO )
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: FB01SD
+  !DIR$ OPTIMIZE : 2
+  !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: FB01SD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To calculate a combined measurement and time update of one
+C     iteration of the time-varying Kalman filter. This update is given
+C     for the square root information filter, using dense matrices.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOBX    CHARACTER*1
+C             Indicates whether X    is to be computed as follows:
+C                                i+1
+C             = 'X':  X    is computed and stored in array X;
+C                      i+1
+C             = 'N':  X    is not required.
+C                      i+1
+C
+C     MULTAB  CHARACTER*1             -1
+C             Indicates how matrices A   and B  are to be passed to
+C                                     i       i
+C             the routine as follows:                       -1
+C             = 'P':  Array AINV must contain the matrix   A    and the
+C                                                       -1  i
+C                     array B must contain the product A  B ;
+C                                                       i  i
+C             = 'N':  Arrays AINV and B must contain the matrices
+C                     as described below.
+C
+C     MULTRC  CHARACTER*1             -1/2
+C             Indicates how matrices R     and C    are to be passed to
+C                                     i+1       i+1
+C             the routine as follows:
+C             = 'P':  Array RINV is not used and the array C must
+C                                          -1/2
+C                     contain the product R    C   ;
+C                                          i+1  i+1
+C             = 'N':  Arrays RINV and C must contain the matrices
+C                     as described below.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The actual state dimension, i.e., the order of the
+C                       -1      -1
+C             matrices S   and A  .  N >= 0.
+C                       i       i
+C
+C     M       (input) INTEGER
+C             The actual input dimension, i.e., the order of the matrix
+C              -1/2
+C             Q    .  M >= 0.
+C              i
+C
+C     P       (input) INTEGER
+C             The actual output dimension, i.e., the order of the matrix
+C              -1/2
+C             R    .  P >= 0.
+C              i+1
+C
+C     SINV    (input/output) DOUBLE PRECISION array, dimension
+C             (LDSINV,N)
+C             On entry, the leading N-by-N upper triangular part of this
+C                                 -1
+C             array must contain S  , the inverse of the square root
+C                                 i
+C             (right Cholesky factor) of the state covariance matrix
+C             P    (hence the information square root) at instant i.
+C              i|i
+C             On exit, the leading N-by-N upper triangular part of this
+C                             -1
+C             array contains S   , the inverse of the square root (right
+C                             i+1
+C             Cholesky factor) of the state covariance matrix P
+C                                                              i+1|i+1
+C             (hence the information square root) at instant i+1.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C
+C     LDSINV  INTEGER
+C             The leading dimension of array SINV.  LDSINV >= MAX(1,N).
+C
+C     AINV    (input) DOUBLE PRECISION array, dimension (LDAINV,N)
+C                                                                 -1
+C             The leading N-by-N part of this array must contain A  ,
+C                                                                 i
+C             the inverse of the state transition matrix of the discrete
+C             system at instant i.
+C
+C     LDAINV  INTEGER
+C             The leading dimension of array AINV.  LDAINV >= MAX(1,N).
+C
+C     B       (input) DOUBLE PRECISION array, dimension (LDB,M)
+C             The leading N-by-M part of this array must contain B ,
+C                                                      -1         i
+C             the input weight matrix (or the product A  B  if
+C                                                      i  i
+C             MULTAB = 'P') of the discrete system at instant i.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,N).
+C
+C     RINV    (input) DOUBLE PRECISION array, dimension (LDRINV,*)
+C             If MULTRC = 'N', then the leading P-by-P upper triangular
+C                                              -1/2
+C             part of this array must contain R    , the inverse of the
+C                                              i+1
+C             covariance square root (right Cholesky factor) of the
+C             output (measurement) noise (hence the information square
+C             root) at instant i+1.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C             Otherwise, RINV is not referenced and can be supplied as a
+C             dummy array (i.e., set parameter LDRINV = 1 and declare
+C             this array to be RINV(1,1) in the calling program).
+C
+C     LDRINV  INTEGER
+C             The leading dimension of array RINV.
+C             LDRINV >= MAX(1,P) if MULTRC = 'N';
+C             LDRINV >= 1        if MULTRC = 'P'.
+C
+C     C       (input) DOUBLE PRECISION array, dimension (LDC,N)
+C             The leading P-by-N part of this array must contain C   ,
+C                                                       -1/2      i+1
+C             the output weight matrix (or the product R    C    if
+C                                                       i+1  i+1
+C             MULTRC = 'P') of the discrete system at instant i+1.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,P).
+C
+C     QINV    (input/output) DOUBLE PRECISION array, dimension
+C             (LDQINV,M)
+C             On entry, the leading M-by-M upper triangular part of this
+C                                 -1/2
+C             array must contain Q    , the inverse of the covariance
+C                                 i
+C             square root (right Cholesky factor) of the input (process)
+C             noise (hence the information square root) at instant i.
+C             On exit, the leading M-by-M upper triangular part of this
+C                                    -1/2
+C             array contains (QINOV )    , the inverse of the covariance
+C                                  i
+C             square root (right Cholesky factor) of the process noise
+C             innovation (hence the information square root) at
+C             instant i.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C
+C     LDQINV  INTEGER
+C             The leading dimension of array QINV.  LDQINV >= MAX(1,M).
+C
+C     X       (input/output) DOUBLE PRECISION array, dimension (N)
+C             On entry, this array must contain X , the estimated
+C                                                i
+C             filtered state at instant i.
+C             On exit, if JOBX = 'X', and INFO = 0, then this array
+C             contains X   , the estimated filtered state at
+C                       i+1
+C             instant i+1.
+C             On exit, if JOBX = 'N', or JOBX = 'X' and INFO = 1, then
+C                                  -1
+C             this array contains S   X   .
+C                                  i+1 i+1
+C
+C     RINVY   (input) DOUBLE PRECISION array, dimension (P)
+C                                      -1/2
+C             This array must contain R    Y   , the product of the
+C                                      i+1  i+1
+C                                      -1/2
+C             upper triangular matrix R     and the measured output
+C                                      i+1
+C             vector Y    at instant i+1.
+C                     i+1
+C
+C     Z       (input) DOUBLE PRECISION array, dimension (M)
+C             This array must contain Z , the mean value of the state
+C                                      i
+C             process noise at instant i.
+C
+C     E       (output) DOUBLE PRECISION array, dimension (P)
+C             This array contains E   , the estimated error at instant
+C                                  i+1
+C             i+1.
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             If JOBX = 'X', then TOL is used to test for near
+C                                        -1
+C             singularity of the matrix S   . If the user sets
+C                                        i+1
+C             TOL > 0, then the given value of TOL is used as a
+C             lower bound for the reciprocal condition number of that
+C             matrix; a matrix whose estimated condition number is less
+C             than 1/TOL is considered to be nonsingular. If the user
+C             sets TOL <= 0, then an implicitly computed, default
+C             tolerance, defined by TOLDEF = N*N*EPS, is used instead,
+C             where EPS is the machine precision (see LAPACK Library
+C             routine DLAMCH).
+C             Otherwise, TOL is not referenced.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (LIWORK)
+C             where LIWORK = N if JOBX = 'X',
+C             and   LIWORK = 1 otherwise.
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.  If INFO = 0 and JOBX = 'X', DWORK(2) returns
+C             an estimate of the reciprocal of the condition number
+C                                 -1
+C             (in the 1-norm) of S   .
+C                                 i+1
+C
+C     LDWORK  The length of the array DWORK.
+C             LDWORK >= MAX(1,N*(N+2*M)+3*M,(N+P)*(N+1)+2*N),
+C                           if JOBX = 'N';
+C             LDWORK >= MAX(2,N*(N+2*M)+3*M,(N+P)*(N+1)+2*N,3*N),
+C                           if JOBX = 'X'.
+C             For optimum performance LDWORK should be larger.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;                        -1
+C             = 1:  if JOBX = 'X' and the matrix S   is singular,
+C                                                 i+1       -1
+C                   i.e., the condition number estimate of S    (in the
+C                                                           i+1
+C                                                         -1    -1/2
+C                   1-norm) exceeds 1/TOL.  The matrices S   , Q
+C                                                         i+1   i
+C                   and E have been computed.
+C
+C     METHOD
+C
+C     The routine performs one recursion of the square root information
+C     filter algorithm, summarized as follows:
+C
+C       |    -1/2             -1/2    |     |         -1/2             |
+C       |   Q         0      Q    Z   |     | (QINOV )     *     *     |
+C       |    i                i    i  |     |       i                  |
+C       |                             |     |                          |
+C       |  -1 -1     -1 -1    -1      |     |             -1    -1     |
+C     T | S  A  B   S  A     S  X     |  =  |    0       S     S   X   |
+C       |  i  i  i   i  i     i  i    |     |             i+1   i+1 i+1|
+C       |                             |     |                          |
+C       |           -1/2      -1/2    |     |                          |
+C       |    0     R    C    R    Y   |     |    0         0     E     |
+C       |           i+1  i+1  i+1  i+1|     |                     i+1  |
+C
+C                  (Pre-array)                      (Post-array)
+C
+C     where T is an orthogonal transformation triangularizing the
+C                        -1/2
+C     pre-array, (QINOV )     is the inverse of the covariance square
+C                      i
+C     root (right Cholesky factor) of the process noise innovation
+C     (hence the information square root) at instant i, and E    is the
+C                                                            i+1
+C     estimated error at instant i+1.
+C
+C     The inverse of the corresponding state covariance matrix P
+C                                                               i+1|i+1
+C     (hence the information matrix I) is then factorized as
+C
+C                   -1         -1     -1
+C        I       = P       = (S   )' S
+C         i+1|i+1   i+1|i+1    i+1    i+1
+C
+C     and one combined time and measurement update for the state is
+C     given by X   .
+C               i+1
+C
+C     The triangularization is done entirely via Householder
+C     transformations exploiting the zero pattern of the pre-array.
+C
+C     REFERENCES
+C
+C     [1] Anderson, B.D.O. and Moore, J.B.
+C         Optimal Filtering.
+C         Prentice Hall, Englewood Cliffs, New Jersey, 1979.
+C
+C     [2] Verhaegen, M.H.G. and Van Dooren, P.
+C         Numerical Aspects of Different Kalman Filter Implementations.
+C         IEEE Trans. Auto. Contr., AC-31, pp. 907-917, Oct. 1986.
+C
+C     [3] Vanbegin, M., Van Dooren, P., and Verhaegen, M.H.G.
+C         Algorithm 675: FORTRAN Subroutines for Computing the Square
+C         Root Covariance Filter and Square Root Information Filter in
+C         Dense or Hessenberg Forms.
+C         ACM Trans. Math. Software, 15, pp. 243-256, 1989.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm requires approximately
+C
+C           3    2                              2   2
+C     (7/6)N  + N x (7/2 x M + P) + N x (1/2 x P + M )
+C
+C     operations and is backward stable (see [2]).
+C
+C     CONTRIBUTORS
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C     Supersedes Release 2.0 routine FB01GD by M. Vanbegin,
+C     P. Van Dooren, and M.H.G. Verhaegen.
+C
+C     REVISIONS
+C
+C     February 20, 1998, November 20, 2003, February 14, 2004.
+C
+C     KEYWORDS
+C
+C     Kalman filtering, optimal filtering, orthogonal transformation,
+C     recursive estimation, square-root filtering, square-root
+C     information filtering.
+C
+C     ******************************************************************
+C
+#endif
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      use omp_lib
+#endif
+      implicit none
+
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE, TWO
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0, TWO = 2.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         JOBX, MULTAB, MULTRC
+      INTEGER           INFO, LDAINV, LDB, LDC, LDQINV, LDRINV, LDSINV, &
+                        LDWORK, M, N, P
+      DOUBLE PRECISION  TOL
+!C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER           IWORK(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IWORK(*)
+      !DIR$ ASSUME_ALIGNED IWORK:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  AINV(LDAINV,*), B(LDB,*), C(LDC,*), DWORK(*), &
+                        E(*), QINV(LDQINV,*), RINV(LDRINV,*), RINVY(*), &
+                        SINV(LDSINV,*), X(*), Z(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+       DOUBLE PRECISION  AINV(LDAINV,*), B(LDB,*), C(LDC,*), DWORK(*), &
+                        E(*), QINV(LDQINV,*), RINV(LDRINV,*), RINVY(*), &
+                        SINV(LDSINV,*), X(*), Z(*)
+      !DIR$ ASSUME_ALIGNED AINV:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED E:64
+      !DIR$ ASSUME_ALIGNED QINV:64
+      !DIR$ ASSUME_ALIGNED RINV:64
+      !DIR$ ASSUME_ALIGNED RINVY:64
+      !DIR$ ASSUME_ALIGNED SINV:64
+      !DIR$ ASSUME_ALIGNED X:64
+      !DIR$ ASSUME_ALIGNED Z:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           LJOBX, LMULTA, LMULTR
+      INTEGER           I, I12, I13, I21, I23, IJ, ITAU, JWORK, LDW, M1, &
+                        N1, NP, WRKOPT
+      DOUBLE PRECISION  RCOND
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION  DDOT
+      EXTERNAL          DDOT
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DGEMM, DGEQRF, DLACPY, DORMQR,
+     $                  DTRMM, DTRMV
+!C     .. Intrinsic Functions ..
+      INTRINSIC         INT, MAX
+!C     .. Executable Statements ..
+!C
+      NP = N + P
+      N1 = MAX( 1, N )
+      M1 = MAX( 1, M )
+      INFO = 0
+      LJOBX  = LSAME( JOBX, 'X' )
+      LMULTA = LSAME( MULTAB, 'P' )
+      LMULTR = LSAME( MULTRC, 'P' )
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LMULTA .AND. .NOT.LSAME( MULTAB, 'N' ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LDSINV.LT.N1 ) THEN
+         INFO = -8
+      ELSE IF( LDAINV.LT.N1 ) THEN
+         INFO = -10
+      ELSE IF( LDB.LT.N1 ) THEN
+         INFO = -12
+      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
+         INFO = -14
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -16
+      ELSE IF( LDQINV.LT.M1 ) THEN
+         INFO = -18
+      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(N + 2*M) + 3*M,  &
+                                           NP*(N + 1) + 2*N, 3*N ) ) &
+                                                                  .OR. &
+          ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(N + 2*M) + 3*M,  &
+                                            NP*(N + 1) + 2*N ) ) ) THEN &
+         INFO = -26
+      END IF
+
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( MAX( N, P ).EQ.0 ) THEN
+         IF ( LJOBX ) THEN
+            DWORK(1) = TWO
+            DWORK(2) = ONE
+         ELSE
+            DWORK(1) = ONE
+         END IF
+         RETURN
+      END IF
+!C
+!C     Construction of the needed part of the pre-array in DWORK.
+!C     To save workspace, only the blocks (1,3), (2,1)-(2,3), (3,2), and
+!C     (3,3) will be constructed when needed as shown below.
+!C
+!C     Storing SINV x AINV and SINV x AINV x B in the (1,1) and (1,2)
+!C     blocks of DWORK, respectively.
+!C     The variables called Ixy define the starting positions where the
+!C     (x,y) blocks of the pre-array are initially stored in DWORK.
+!C     Workspace: need N*(N+M).
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.
+!C     NB refers to the optimal block size for the immediately
+!C     following subroutine, as returned by ILAENV.)
+!C
+      LDW = N1
+      I21 = N*N + 1
+
+      CALL DLACPY( 'Full', N, N, AINV, LDAINV, DWORK, LDW )
+      IF ( LMULTA ) THEN
+         CALL DLACPY( 'Full', N, M, B, LDB, DWORK(I21), LDW )
+      ELSE
+         CALL DGEMM( 'No transpose', 'No transpose', N, M, N, ONE,  &
+                     DWORK, LDW, B, LDB, ZERO, DWORK(I21), LDW )
+      END IF
+      CALL DTRMM(  'Left', 'Upper', 'No transpose', 'Non-unit', N, N+M,  &
+                   ONE, SINV, LDSINV, DWORK, LDW )
+!C
+!C     Storing the process noise mean value in (1,3) block of DWORK.
+!C     Workspace: need N*(N+M) + M.
+!C
+      I13 = N*( N + M ) + 1
+!C
+      CALL DCOPY( M, Z, 1, DWORK(I13), 1 )
+      CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', M, QINV, LDQINV, &
+                 DWORK(I13), 1 )
+!C
+!C     Computing SINV x X in X.
+!C
+      CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', N, SINV, LDSINV,  &
+                  X, 1 )
+!C
+!C     Triangularization (2 steps).
+!C
+!C     Step 1: annihilate the matrix SINV x AINV x B.
+!C     Workspace: need N*(N+2*M) + 3*M.
+!C
+      I12   = I13  + M
+      ITAU  = I12  + M*N
+      JWORK = ITAU + M
+!C
+      CALL MB04KD( 'Full', M, N, N, QINV, LDQINV, DWORK(I21), LDW,  &
+                  DWORK, LDW, DWORK(I12), M1, DWORK(ITAU), &
+                  DWORK(JWORK) )
+      WRKOPT = MAX( 1, N*( N + 2*M ) + 3*M )
+
+      IF ( N.EQ.0 ) THEN
+         CALL DCOPY( P, RINVY, 1, E, 1 )
+         IF ( LJOBX )
+     $      DWORK(2) = ONE
+         DWORK(1) = WRKOPT
+         RETURN
+      END IF
+!C
+!C     Apply the transformations to the last column of the pre-array.
+!C     (Only the updated (2,3) block is now needed.)
+!C
+      IJ = I21
+!C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFULT(SHARED) PRIVATE(I)
+      DO 10 I = 1, M
+         CALL DAXPY( N, -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
+                    DDOT( N, DWORK(IJ), 1, X, 1 ) ), &
+                              DWORK(IJ), 1, X, 1 )
+         IJ = IJ + N
+   10 CONTINUE
+!$OMP END PARALLEL DO
+#endif
+!C
+!C     Now, the workspace for SINV x AINV x B, as well as for the updated
+!C     (1,2) block of the pre-array, are no longer needed.
+!C     Move the computed (2,3) block of the pre-array in the (1,2) block
+!C     position of DWORK, to save space for the following computations.
+!C     Then, adjust the implicitly defined leading dimension of DWORK,
+!C     to make space for storing the (3,2) and (3,3) blocks of the
+!C     pre-array.
+!C     Workspace: need (N+P)*(N+1).
+!C
+      CALL DCOPY( N, X, 1, DWORK(I21), 1 )
+      LDW = MAX( 1, NP )
+!C
+      DO 30 I = N + 1, 1, -1
+         DO 20 IJ = N, 1, -1
+            DWORK(NP*(I-1)+IJ) = DWORK(N*(I-1)+IJ)
+   20    CONTINUE
+   30 CONTINUE
+!C
+!C     Copy of RINV x C in the (2,1) block of DWORK.
+!C
+      CALL DLACPY( 'Full', P, N, C, LDC, DWORK(N+1), LDW )
+      IF ( .NOT.LMULTR ) &
+         CALL DTRMM(  'Left', 'Upper', 'No transpose', 'Non-unit', P, N, &
+                     ONE, RINV, LDRINV, DWORK(N+1), LDW )
+!C
+!C     Copy the inclusion measurement in the (2,2) block of DWORK.
+!C
+      I21 = NP*N + 1
+      I23 = I21  + N
+      CALL DCOPY( P, RINVY, 1, DWORK(I23), 1 )
+      WRKOPT = MAX( WRKOPT, NP*( N + 1 ) )
+!C
+!C     Step 2: QR factorization of the first block column of the matrix
+!C
+!C        [ SINV x AINV  SINV x X ]
+!C        [ RINV x C     RINV x Y ],
+!C
+!C     where the first block row was modified at Step 1.
+!C     Workspace: need   (N+P)*(N+1) + 2*N;
+!C                prefer (N+P)*(N+1) + N + N*NB.
+!C
+      ITAU  = I21  + NP
+      JWORK = ITAU + N
+!C
+      CALL DGEQRF( NP, N, DWORK, LDW, DWORK(ITAU), DWORK(JWORK), &
+                   LDWORK-JWORK+1, INFO )
+      WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK) )+JWORK-1 )
+!C
+!C     Apply the Householder transformations to the last column.
+!C     Workspace: need (N+P)*(N+1) + 1;  prefer (N+P)*(N+1) + NB.
+!C
+      CALL DORMQR( 'Left', 'Transpose', NP, 1, N, DWORK, LDW,  &
+                  DWORK(ITAU), DWORK(I21), LDW, DWORK(JWORK),  &
+                   LDWORK-JWORK+1, INFO )  
+      WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK) )+JWORK-1 )
+!C
+!C     Output SINV, X, and E and set the optimal workspace dimension
+!C     (and the reciprocal of the condition number estimate).
+!C
+      CALL DLACPY( 'Upper', N, N, DWORK, LDW, SINV, LDSINV )
+      CALL DCOPY( N, DWORK(I21), 1, X, 1 )
+      CALL DCOPY( P, DWORK(I23), 1, E, 1 )
+!C
+      IF ( LJOBX ) THEN
+!C
+!C        Compute X.
+!C        Workspace: need 3*N.
+!C
+         CALL MB02OD( 'Left', 'Upper', 'No transpose', 'Non-unit',   &
+                     '1-norm', N, 1, ONE, SINV, LDSINV, X, N, RCOND, &
+                     TOL, IWORK, DWORK, INFO )
+         IF ( INFO.EQ.0 ) THEN
+            WRKOPT = MAX( WRKOPT, 3*N )
+            DWORK(2) = RCOND
+         END IF
+      END IF
+
+      DWORK(1) = WRKOPT
+
+END SUBROUTINE FB01SD
+
+
+
+    
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB02OD( SIDE, UPLO, TRANS, DIAG, NORM, M, N, ALPHA, A,
+  LDA, B, LDB, RCOND, TOL, IWORK, DWORK, INFO ) !GCC$ ATTRIBUTES HOT :: MB02OD !GCC$ ATTRIBUTES aligned(32) :: MB020D !GCC$ ATTRIBUTES no_stack_protector :: MB020D
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE MB02OD( SIDE, UPLO, TRANS, DIAG, NORM, M, N, ALPHA, A,
+   LDA, B, LDB, RCOND, TOL, IWORK, DWORK, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: NB020D
+   !DIR$ OPTIMIZE : 2
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB02OD
+#endif
+#if 0 
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To solve (if well-conditioned) one of the matrix equations
+C
+C        op( A )*X = alpha*B,   or   X*op( A ) = alpha*B,
+C
+C     where alpha is a scalar, X and B are m-by-n matrices, A is a unit,
+C     or non-unit, upper or lower triangular matrix and op( A ) is one
+C     of
+C
+C        op( A ) = A   or   op( A ) = A'.
+C
+C     An estimate of the reciprocal of the condition number of the
+C     triangular matrix A, in either the 1-norm or the infinity-norm, is
+C     also computed as
+C
+C        RCOND = 1 / ( norm(A) * norm(inv(A)) ).
+C
+C     and the specified matrix equation is solved only if RCOND is
+C     larger than a given tolerance TOL.  In that case, the matrix X is
+C     overwritten on B.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     SIDE    CHARACTER*1
+C             Specifies whether op( A ) appears on the left or right
+C             of X as follows:
+C             = 'L':  op( A )*X = alpha*B;
+C             = 'R':  X*op( A ) = alpha*B.
+C
+C     UPLO    CHARACTER*1
+C             Specifies whether the matrix A is an upper or lower
+C             triangular matrix as follows:
+C             = 'U':  A is an upper triangular matrix;
+C             = 'L':  A is a lower triangular matrix.
+C
+C     TRANS   CHARACTER*1
+C             Specifies the form of op( A ) to be used in the matrix
+C             multiplication as follows:
+C             = 'N':  op( A ) = A;
+C             = 'T':  op( A ) = A';
+C             = 'C':  op( A ) = A'.
+C
+C     DIAG    CHARACTER*1
+C             Specifies whether or not A is unit triangular as follows:
+C             = 'U':  A is assumed to be unit triangular;
+C             = 'N':  A is not assumed to be unit triangular.
+C
+C     NORM    CHARACTER*1
+C             Specifies whether the 1-norm condition number or the
+C             infinity-norm condition number is required:
+C             = '1' or 'O':  1-norm;
+C             = 'I':         Infinity-norm.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of rows of B.  M >= 0.
+C
+C     N       (input) INTEGER
+C             The number of columns of B.  N >= 0.
+C
+C     ALPHA   (input) DOUBLE PRECISION
+C             The scalar  alpha. When alpha is zero then A is not
+C             referenced and B need not be set before entry.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,k),
+C             where k is M when SIDE = 'L' and is N when SIDE = 'R'.
+C             On entry with UPLO = 'U', the leading k-by-k upper
+C             triangular part of this array must contain the upper
+C             triangular matrix and the strictly lower triangular part
+C             of A is not referenced.
+C             On entry with UPLO = 'L', the leading k-by-k lower
+!C             triangular part of this array must contain the lower
+C             triangular matrix and the strictly upper triangular part
+C             of A is not referenced.
+C             Note that when DIAG = 'U', the diagonal elements of A are
+C             not referenced either, but are assumed to be unity.
+!C
+!C     LDA     INTEGER
+!C             The leading dimension of array A.
+!C             LDA >= max(1,M) when SIDE = 'L';
+C             LDA >= max(1,N) when SIDE = 'R'.
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,N)
+C             On entry, the leading M-by-N part of this array must
+C             contain the right-hand side matrix B.
+C             On exit, if INFO = 0, the leading M-by-N part of this
+C             array contains the solution matrix X.
+C             Otherwise, this array is not modified by the routine.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= max(1,M).
+C
+C     RCOND   (output) DOUBLE PRECISION
+C             The reciprocal of the condition number of the matrix A,
+C             computed as RCOND = 1/(norm(A) * norm(inv(A))).
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             The tolerance to be used to test for near singularity of
+C             the matrix A. If the user sets TOL > 0, then the given
+C             value of TOL is used as a lower bound for the reciprocal
+C             condition number of that matrix; a matrix whose estimated
+!C             condition number is less than 1/TOL is considered to be
+!C             nonsingular. If the user sets TOL <= 0, then an implicitly
+!C             computed, default tolerance, defined by TOLDEF = k*k*EPS,
+!C             is used instead, where EPS is the machine precision (see
+!C             LAPACK Library routine DLAMCH).
+!C
+!C     Workspace
+!C
+!C     IWORK   INTEGER array, dimension (k)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (3*k)
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+!C             = 1:  the matrix A is numerically singular, i.e. the
+!C                   condition number estimate of A (in the specified
+!C                   norm) exceeds 1/TOL.
+!C
+!C     METHOD
+!C
+!C     An estimate of the reciprocal of the condition number of the
+!C     triangular matrix A (in the specified norm) is computed, and if
+!C     this estimate is larger then the given (or default) tolerance,
+!C     the specified matrix equation is solved using Level 3 BLAS
+!C     routine DTRSM.
+C
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C                             2
+C     The algorithm requires k N/2 operations.
+C
+C     CONTRIBUTORS
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C
+C     REVISIONS
+C
+C     February 20, 1998.
+C
+C     KEYWORDS
+C
+C     Condition number, matrix algebra, matrix operations.
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER          DIAG, NORM, SIDE, TRANS, UPLO
+      INTEGER            INFO, LDA, LDB, M, N
+      DOUBLE PRECISION   ALPHA, RCOND, TOL
+!C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER            IWORK(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER IWORK(*)
+!DIR$ ASSUME_ALIGNED IWORK:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
+!DIR$ ASSUME_ALIGNED A:64
+!DIR$ ASSUME_ALIGNED B:64
+!DIR$ ASSUME_ALIGNED DWORK:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL            LSIDE, ONENRM
+      INTEGER            NROWA
+      DOUBLE PRECISION   TOLDEF
+
+
+!C     .. External Subroutines ..
+      EXTERNAL           DTRCON, DTRSM
+!C     .. Intrinsic Functions ..
+      INTRINSIC          DBLE, MAX
+!C     .. Executable Statements ..
+!C
+      LSIDE  = LSAME( SIDE, 'L' )
+      IF( LSIDE )THEN
+         NROWA = M
+      ELSE
+         NROWA = N
+      END IF
+      ONENRM = NORM.EQ.'1' .OR. LSAME( NORM, 'O' )
+!C
+!C     Test the input scalar arguments.
+!C
+      INFO = 0
+      IF( ( .NOT.LSIDE ).AND.( .NOT.LSAME( SIDE, 'R' ) ) )THEN
+         INFO = -1
+      ELSE IF( ( .NOT.LSAME( UPLO,  'U' ) ).AND.  &
+               ( .NOT.LSAME( UPLO,  'L' ) )      )THEN
+         INFO = -2
+      ELSE IF( ( .NOT.LSAME( TRANS, 'N' ) ).AND. &
+               ( .NOT.LSAME( TRANS, 'T' ) ).AND.
+               ( .NOT.LSAME( TRANS, 'C' ) )      )THEN &
+         INFO = -3
+      ELSE IF( ( .NOT.LSAME( DIAG,  'U' ) ).AND.  &
+              ( .NOT.LSAME( DIAG,  'N' ) )      )THEN
+         INFO = -4
+      ELSE IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
+         INFO = -5
+      ELSE IF( M.LT.0 )THEN
+         INFO = -6
+      ELSE IF( N.LT.0 )THEN
+         INFO = -7
+      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+         INFO = -10
+      ELSE IF( LDB.LT.MAX( 1, M ) )THEN
+         INFO = -12
+      END IF
+!C
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( NROWA.EQ.0 ) THEN
+         RCOND = ONE
+         RETURN
+      END IF
+
+      TOLDEF = TOL
+      IF ( TOLDEF.LE.ZERO ) &
+         TOLDEF = DBLE( NROWA*NROWA )*DLAMCH( 'Epsilon' )
+
+      CALL DTRCON( NORM, UPLO, DIAG, NROWA, A, LDA, RCOND, DWORK, &
+                   IWORK, INFO )
+
+      IF ( RCOND.GT.TOLDEF ) THEN
+         CALL DTRSM( SIDE, UPLO, TRANS, DIAG, M, N, ALPHA, A, LDA, B, &
+                     LDB )
+      ELSE
+         INFO = 1
+      END IF
+
+END SUBROUTINE FB01SD
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE FB01TD( JOBX, MULTRC, N, M, P, SINV, LDSINV, AINV, &
+        LDAINV, AINVB, LDAINB, RINV, LDRINV, C, LDC,          &
+        QINV, LDQINV, X, RINVY, Z, E, TOL, IWORK,             &
+        DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES HOT :: FB01TD !GCC$ ATTRIBUTES aligned(32) :: FB01TD !GCC$ ATTRIBUTES no_stack_protector :: FB01TD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE FB01TD( JOBX, MULTRC, N, M, P, SINV, LDSINV, AINV, &
+        LDAINV, AINVB, LDAINB, RINV, LDRINV, C, LDC,          &
+        QINV, LDQINV, X, RINVY, Z, E, TOL, IWORK,             &
+        DWORK, LDWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: FB01TD
+   !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: FB01TD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To calculate a combined measurement and time update of one
+C     iteration of the time-invariant Kalman filter. This update is
+C     given for the square root information filter, using the condensed
+C     controller Hessenberg form.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOBX    CHARACTER*1
+C             Indicates whether X    is to be computed as follows:
+C                                i+1
+C             = 'X':  X    is computed and stored in array X;
+C                      i+1
+C             = 'N':  X    is not required.
+C                      i+1
+C
+C     MULTRC  CHARACTER*1             -1/2
+C             Indicates how matrices R     and C    are to be passed to
+C                                     i+1       i+1
+C             the routine as follows:
+C             = 'P':  Array RINV is not used and the array C must
+C                                          -1/2
+C                     contain the product R    C   ;
+C                                          i+1  i+1
+C             = 'N':  Arrays RINV and C must contain the matrices
+C                     as described below.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The actual state dimension, i.e., the order of the
+C                       -1      -1
+C             matrices S   and A  .  N >= 0.
+C                       i
+C
+C     M       (input) INTEGER
+C             The actual input dimension, i.e., the order of the matrix
+C              -1/2
+C             Q    .  M >= 0.
+C              i
+C
+C     P       (input) INTEGER
+C             The actual output dimension, i.e., the order of the matrix
+C              -1/2
+C             R    .  P >= 0.
+C              i+1
+C
+C     SINV    (input/output) DOUBLE PRECISION array, dimension
+C             (LDSINV,N)
+C             On entry, the leading N-by-N upper triangular part of this
+C                                 -1
+C             array must contain S  , the inverse of the square root
+C                                 i
+C             (right Cholesky factor) of the state covariance matrix
+C             P    (hence the information square root) at instant i.
+C              i|i
+C             On exit, the leading N-by-N upper triangular part of this
+C                             -1
+C             array contains S   , the inverse of the square root (right
+C                             i+1
+C             Cholesky factor) of the state covariance matrix P
+C                                                              i+1|i+1
+C             (hence the information square root) at instant i+1.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C
+C     LDSINV  INTEGER
+C             The leading dimension of array SINV.  LDSINV >= MAX(1,N).
+C
+C     AINV    (input) DOUBLE PRECISION array, dimension (LDAINV,N)
+C                                                                 -1
+C             The leading N-by-N part of this array must contain A  ,
+C             the inverse of the state transition matrix of the discrete
+C             system in controller Hessenberg form (e.g., as produced by
+C             SLICOT Library Routine TB01MD).
+C
+C     LDAINV  INTEGER
+C             The leading dimension of array AINV.  LDAINV >= MAX(1,N).
+C
+C     AINVB   (input) DOUBLE PRECISION array, dimension (LDAINB,M)
+C                                                                  -1
+C             The leading N-by-M part of this array must contain  A  B,
+C                             -1
+C             the product of A   and the input weight matrix B of the
+C             discrete system, in upper controller Hessenberg form
+C             (e.g., as produced by SLICOT Library Routine TB01MD).
+C
+C     LDAINB  INTEGER
+C             The leading dimension of array AINVB.  LDAINB >= MAX(1,N).
+C
+C     RINV    (input) DOUBLE PRECISION array, dimension (LDRINV,*)
+C             If MULTRC = 'N', then the leading P-by-P upper triangular
+C                                              -1/2
+C             part of this array must contain R    , the inverse of the
+C                                              i+1
+C             covariance square root (right Cholesky factor) of the
+C             output (measurement) noise (hence the information square
+C             root) at instant i+1.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C             Otherwise, RINV is not referenced and can be supplied as a
+C             dummy array (i.e., set parameter LDRINV = 1 and declare
+C             this array to be RINV(1,1) in the calling program).
+C
+C     LDRINV  INTEGER
+C             The leading dimension of array RINV.
+C             LDRINV >= MAX(1,P) if MULTRC = 'N';
+C             LDRINV >= 1        if MULTRC = 'P'.
+C
+C     C       (input) DOUBLE PRECISION array, dimension (LDC,N)
+C             The leading P-by-N part of this array must contain C   ,
+C                                                       -1/2      i+1
+C             the output weight matrix (or the product R    C    if
+C                                                       i+1  i+1
+C             MULTRC = 'P') of the discrete system at instant i+1.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,P).
+C
+C     QINV    (input/output) DOUBLE PRECISION array, dimension
+C             (LDQINV,M)
+C             On entry, the leading M-by-M upper triangular part of this
+C                                 -1/2
+C             array must contain Q    , the inverse of the covariance
+C                                 i
+C             square root (right Cholesky factor) of the input (process)
+C             noise (hence the information square root) at instant i.
+C             On exit, the leading M-by-M upper triangular part of this
+C                                    -1/2
+C             array contains (QINOV )    , the inverse of the covariance
+C                                  i
+C             square root (right Cholesky factor) of the process noise
+C             innovation (hence the information square root) at
+C             instant i.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C
+C     LDQINV  INTEGER
+C             The leading dimension of array QINV.  LDQINV >= MAX(1,M).
+C
+C     X       (input/output) DOUBLE PRECISION array, dimension (N)
+C             On entry, this array must contain X , the estimated
+C                                                i
+C             filtered state at instant i.
+C             On exit, if JOBX = 'X', and INFO = 0, then this array
+C             contains X   , the estimated filtered state at
+C                       i+1
+C             instant i+1.
+C             On exit, if JOBX = 'N', or JOBX = 'X' and INFO = 1, then
+C                                  -1
+C             this array contains S   X   .
+C                                  i+1 i+1
+C
+C     RINVY   (input) DOUBLE PRECISION array, dimension (P)
+C                                      -1/2
+C             This array must contain R    Y   , the product of the
+C                                      i+1  i+1
+C                                      -1/2
+C             upper triangular matrix R     and the measured output
+C                                      i+1
+C             vector Y    at instant i+1.
+C                     i+1
+C
+C     Z       (input) DOUBLE PRECISION array, dimension (M)
+C             This array must contain Z , the mean value of the state
+C                                      i
+C             process noise at instant i.
+C
+C     E       (output) DOUBLE PRECISION array, dimension (P)
+C             This array contains E   , the estimated error at instant
+C                                  i+1
+C             i+1.
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             If JOBX = 'X', then TOL is used to test for near
+C                                        -1
+C             singularity of the matrix S   . If the user sets
+C                                        i+1
+C             TOL > 0, then the given value of TOL is used as a
+C             lower bound for the reciprocal condition number of that
+C             matrix; a matrix whose estimated condition number is less
+C             than 1/TOL is considered to be nonsingular. If the user
+C             sets TOL <= 0, then an implicitly computed, default
+C             tolerance, defined by TOLDEF = N*N*EPS, is used instead,
+C             where EPS is the machine precision (see LAPACK Library
+C             routine DLAMCH).
+C             Otherwise, TOL is not referenced.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (LIWORK)
+C             where LIWORK = N if JOBX = 'X',
+C             and   LIWORK = 1 otherwise.
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.  If INFO = 0 and JOBX = 'X', DWORK(2) returns
+C             an estimate of the reciprocal of the condition number
+C                                 -1
+C             (in the 1-norm) of S   .
+C                                 i+1
+C
+C     LDWORK  The length of the array DWORK.
+C             LDWORK >= MAX(1,N*(N+2*M)+3*M,(N+P)*(N+1)+N+MAX(N-1,M+1)),
+C                                 if JOBX = 'N';
+C             LDWORK >= MAX(2,N*(N+2*M)+3*M,(N+P)*(N+1)+N+MAX(N-1,M+1),
+C                           3*N), if JOBX = 'X'.
+C             For optimum performance LDWORK should be larger.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;                        -1
+C             = 1:  if JOBX = 'X' and the matrix S    is singular,
+C                                                 i+1       -1
+C                   i.e., the condition number estimate of S    (in the
+C                                                           i+1
+C                                                         -1    -1/2
+C                   1-norm) exceeds 1/TOL.  The matrices S   , Q
+C                                                         i+1   i
+C                   and E have been computed.
+C
+C     METHOD
+C
+C     The routine performs one recursion of the square root information
+C     filter algorithm, summarized as follows:
+C
+C       |    -1/2             -1/2    |     |         -1/2             |
+C       |   Q         0      Q    Z   |     | (QINOV )     *     *     |
+C       |    i                i    i  |     |       i                  |
+C       |                             |     |                          |
+C       |           -1/2      -1/2    |     |             -1    -1     |
+C     T |    0     R    C    R    Y   |  =  |    0       S     S   X   |
+C       |           i+1  i+1  i+1  i+1|     |             i+1   i+1 i+1|
+C       |                             |     |                          |
+C       |  -1 -1     -1 -1    -1      |     |                          |
+C       | S  A  B   S  A     S  X     |     |    0         0     E     |
+C       |  i         i        i  i    |     |                     i+1  |
+C
+C                   (Pre-array)                      (Post-array)
+C
+C     where T is an orthogonal transformation triangularizing the
+C                        -1/2
+C     pre-array, (QINOV )     is the inverse of the covariance square
+C                      i
+C     root (right Cholesky factor) of the process noise innovation
+C                                                            -1  -1
+C     (hence the information square root) at instant i and (A  ,A  B) is
+C     in upper controller Hessenberg form.
+C
+C     An example of the pre-array is given below (where N = 6, M = 2,
+C     and P = 3):
+C
+C         |x x |             | x|
+C         |  x |             | x|
+C         _______________________
+C         |    | x x x x x x | x|
+C         |    | x x x x x x | x|
+C         |    | x x x x x x | x|
+C         _______________________
+C         |x x | x x x x x x | x|
+C         |  x | x x x x x x | x|
+C         |    | x x x x x x | x|
+C         |    |   x x x x x | x|
+C         |    |     x x x x | x|
+C         |    |       x x x | x|
+C
+C     The inverse of the corresponding state covariance matrix P
+C                                                               i+1|i+1
+C     (hence the information matrix I) is then factorized as
+C
+C                    -1         -1     -1
+C         I       = P       = (S   )' S
+C          i+1|i+1   i+1|i+1    i+1    i+1
+C
+C     and one combined time and measurement update for the state is
+C     given by X   .
+C               i+1
+C
+C     The triangularization is done entirely via Householder
+C     transformations exploiting the zero pattern of the pre-array.
+C
+C     REFERENCES
+C
+C     [1] Anderson, B.D.O. and Moore, J.B.
+C         Optimal Filtering.
+C         Prentice Hall, Englewood Cliffs, New Jersey, 1979.
+C
+C     [2] Van Dooren, P. and Verhaegen, M.H.G.
+C         Condensed Forms for Efficient Time-Invariant Kalman Filtering.
+C         SIAM J. Sci. Stat. Comp., 9. pp. 516-530, 1988.
+C
+C     [3] Verhaegen, M.H.G. and Van Dooren, P.
+C         Numerical Aspects of Different Kalman Filter Implementations.
+C         IEEE Trans. Auto. Contr., AC-31, pp. 907-917, Oct. 1986.
+C
+C     [4] Vanbegin, M., Van Dooren, P., and Verhaegen, M.H.G.
+C         Algorithm 675: FORTRAN Subroutines for Computing the Square
+C         Root Covariance Filter and Square Root Information Filter in
+C         Dense or Hessenberg Forms.
+C         ACM Trans. Math. Software, 15, pp. 243-256, 1989.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm requires approximately
+C
+C           3    2                           2          3
+C     (1/6)N  + N x (3/2 x M + P) + 2 x N x M  + 2/3 x M
+C
+C     operations and is backward stable (see [3]).
+C
+C     CONTRIBUTORS
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C     Supersedes Release 2.0 routine FB01HD by M. Vanbegin,
+C     P. Van Dooren, and M.H.G. Verhaegen.
+C
+C     REVISIONS
+C
+C     February 20, 1998, November 20, 2003, February 14, 2004.
+C
+C     KEYWORDS
+C
+C     Controller Hessenberg form, Kalman filtering, optimal filtering,
+C     orthogonal transformation, recursive estimation, square-root
+C     filtering, square-root information filtering.
+C
+C     ******************************************************************
+C
+#endif
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+     use omp_lib
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ONE, TWO
+      PARAMETER         ( ONE = 1.0D0, TWO = 2.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         JOBX, MULTRC
+      INTEGER           INFO, LDAINB, LDAINV, LDC, LDQINV, LDRINV, &
+                        LDSINV, LDWORK, M, N, P
+      DOUBLE PRECISION  TOL
+!C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER           IWORK(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IWORK(*)
+!DIR$ ASSUME_ALIGNED IWORK:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
+                       DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
+                       RINVY(*), SINV(LDSINV,*), X(*), Z(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+       DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
+                       DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
+                       RINVY(*), SINV(LDSINV,*), X(*), Z(*)
+!DIR$ ASSUME_ALIGNED ANIV:64
+!DIR$ ASSUME_ALIGNED AINVB:64
+!DIR$ ASSUME_ALIGNED C:64
+!DIR$ ASSUME_ALIGNED DWORK:64
+!DIR$ ASSUME_ALIGNED E:64
+!DIR$ ASSUME_ALIGNED QINV:64
+!DIR$ ASSUME_ALIGNED RINV:64
+!DIR$ ASSUME_ALIGNED RINVY:64
+!DIR$ ASSUME_ALIGNED SINV:64
+!DIR$ ASSUME_ALIGNED X:64
+!DIR$ ASSUME_ALIGNED Z:64
+#endif
+
+!C     .. Local Scalars ..
+      LOGICAL           LJOBX, LMULTR
+      INTEGER           I, I12, I13, I23, I32, I33, II, IJ, ITAU, JWORK, &
+                        LDW, M1, MP1, N1, NM, NP, WRKOPT
+      DOUBLE PRECISION  RCOND
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION  DDOT
+      EXTERNAL          DDOT
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DLACPY, DTRMM, DTRMV, MB02OD, &
+                        MB04ID, MB04KD
+!C     .. Intrinsic Functions ..
+      INTRINSIC         INT, MAX, MIN
+!C     .. Executable Statements ..
+!C
+      NP = N + P
+      NM = N + M
+      N1 = MAX( 1, N )
+      M1 = MAX( 1, M )
+      MP1 = M + 1
+      INFO = 0
+      LJOBX  = LSAME( JOBX, 'X' )
+      LMULTR = LSAME( MULTRC, 'P' )
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDSINV.LT.N1 ) THEN
+         INFO = -7
+      ELSE IF( LDAINV.LT.N1 ) THEN
+         INFO = -9
+      ELSE IF( LDAINB.LT.N1 ) THEN
+         INFO = -11
+      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
+         INFO = -13
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -15
+      ELSE IF( LDQINV.LT.M1 ) THEN
+         INFO = -17
+      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(NM + M) + 3*M, &
+                                           NP*(N + 1) + N + &
+                                           MAX( N - 1, MP1 ), 3*N ) ) &
+                                                                  .OR. &
+         ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(NM + M) + 3*M, &
+                                           NP*(N + 1) + N + &
+                                           MAX( N - 1, MP1 ) ) ) ) THEN &
+         INFO = -25
+      END IF
+
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( MAX( N, P ).EQ.0 ) THEN
+         IF ( LJOBX ) THEN
+            DWORK(1) = TWO
+            DWORK(2) = ONE
+         ELSE
+            DWORK(1) = ONE
+         END IF
+         RETURN
+      END IF
+!C
+!C     Construction of the needed part of the pre-array in DWORK.
+!C     To save workspace, only the blocks (1,3), (3,1)-(3,3), (2,2), and
+!C     (2,3) will be constructed when needed as shown below.
+!C
+!C     Storing SINV x AINVB and SINV x AINV in the (1,1) and (1,2)
+!C     blocks of DWORK, respectively. The upper trapezoidal structure of
+!C     [ AINVB AINV ] is fully exploited. Specifically, if M <= N, the
+!C     following partition is used:
+!C
+!C       [ S1  S2 ] [ B1  A1 A3 ]
+!C       [ 0   S3 ] [ 0   A2 A4 ],
+!C
+!C     where B1, A3, and S1 are M-by-M matrices, A1 and S2 are
+!C     M-by-(N-M), A2 and S3 are (N-M)-by-(N-M), A4 is (N-M)-by-M, and
+!C     B1, S1, A2, and S3 are upper triangular. The right hand side
+!C     matrix above is stored in the workspace. If M > N, the partition
+!C     is [ SINV ] [ B1 B2  A ], where B1 is N-by-N, B2 is N-by-(M-N),
+!C     and B1 and SINV are upper triangular.
+!C     The variables called Ixy define the starting positions where the
+!C     (x,y) blocks of the pre-array are initially stored in DWORK.
+!C     Workspace: need N*(M+N).
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.
+!C     NB refers to the optimal block size for the immediately
+!C     following subroutine, as returned by ILAENV.)
+!C
+      LDW = N1
+      I32 = N*M + 1
+
+      CALL DLACPY( 'Upper', N, M, AINVB, LDAINB, DWORK, LDW )
+      CALL DLACPY( 'Full',  MIN( M, N ), N, AINV, LDAINV, DWORK(I32), &
+                  LDW )
+      IF ( N.GT.M ) &
+        CALL DLACPY( 'Upper', N-M, N, AINV(MP1,1), LDAINV, &
+                      DWORK(I32+M), LDW )
+!C
+!C                    [ B1  A1 ]
+!C     Compute SINV x [ 0   A2 ] or SINV x B1 as a product of upper
+!C     triangular matrices.
+!C     Workspace: need N*(M+N+1).
+!C
+      II  = 1
+      I13 = N*NM + 1
+      WRKOPT = MAX( 1, N*NM + N )
+!C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,II)
+#endi
+      DO 10 I = 1, N
+         CALL DCOPY( I, DWORK(II), 1, DWORK(I13), 1 )
+         CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', I, SINV,
+     $               LDSINV, DWORK(I13), 1 )
+         CALL DCOPY( I, DWORK(I13), 1, DWORK(II), 1 )
+         II = II + N
+   10 CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO END
+#endif
+!C
+!C                    [ A3 ]
+!C     Compute SINV x [ A4 ] or SINV x [ B2 A ].
+!C
+      CALL DTRMM( 'Left', 'Upper', 'No transpose', 'Non-unit', N, M, &
+                  ONE, SINV, LDSINV, DWORK(II), LDW ) 
+!C
+!C     Storing the process noise mean value in (1,3) block of DWORK.
+!C     Workspace: need N*(M+N) + M.
+!C
+      CALL DCOPY( M, Z, 1, DWORK(I13), 1 )
+      CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', M, QINV, LDQINV, &
+                  DWORK(I13), 1 )
+!C
+!C     Computing SINV x X in X.
+!C
+      CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', N, SINV, LDSINV, &
+                 X, 1 )
+!C
+!C     Triangularization (2 steps).
+!C
+!C     Step 1: annihilate the matrix SINV x AINVB.
+!C     Workspace: need N*(N+2*M) + 3*M.
+!C
+      I12   = I13  + M
+      ITAU  = I12  + M*N
+      JWORK = ITAU + M
+!C
+      CALL MB04KD( 'Upper', M, N, N, QINV, LDQINV, DWORK, LDW, &
+                  DWORK(I32), LDW, DWORK(I12), M1, DWORK(ITAU), &
+                  DWORK(JWORK) )
+      WRKOPT = MAX( WRKOPT, N*( NM + M ) + 3*M )
+!C
+      IF ( N.EQ.0 ) THEN
+         CALL DCOPY( P, RINVY, 1, E, 1 )
+         IF ( LJOBX ) &
+           DWORK(2) = ONE
+         DWORK(1) = WRKOPT
+         RETURN
+      END IF
+!C
+!C     Apply the transformations to the last column of the pre-array.
+!C     (Only the updated (3,3) block is now needed.)
+!C
+      IJ = 1
+!C
+      DO 20 I = 1, M
+         CALL DAXPY( MIN( I, N ), -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
+                    DDOT( MIN( I, N ), DWORK(IJ), 1, X, 1 ) ), &
+                                       DWORK(IJ), 1, X, 1 )
+         IJ = IJ + N
+   20 CONTINUE
+!C
+!C     Now, the workspace for SINV x AINVB, as well as for the updated
+!C!     (1,2) block of the pre-array, are no longer needed.
+!C     Move the computed (3,2) and (3,3) blocks of the pre-array in the
+!C     (1,1) and (1,2) block positions of DWORK, to save space for the
+!C     following computations.
+!C     Then, adjust the implicitly defined leading dimension of DWORK,
+!C     to make space for storing the (2,2) and (2,3) blocks of the
+!C     pre-array.
+!C     Workspace: need (P+N)*(N+1).
+!C
+      CALL DLACPY( 'Full', MIN( M, N ), N, DWORK(I32), LDW, DWORK, LDW )
+      IF ( N.GT.M ) &
+        CALL DLACPY( 'Upper', N-M, N, DWORK(I32+M), LDW, DWORK(MP1), &
+                      LDW )
+      LDW = MAX( 1, NP )
+
+      DO 40 I = N, 1, -1
+         DO 30 IJ = MIN( N, I+M ), 1, -1
+            DWORK(NP*(I-1)+P+IJ) = DWORK(N*(I-1)+IJ)
+   30    CONTINUE
+   40 CONTINUE
+
+!C     Copy of RINV x C in the (1,1) block of DWORK.
+!C
+      CALL DLACPY( 'Full', P, N, C, LDC, DWORK, LDW )
+      IF ( .NOT.LMULTR ) &
+        CALL DTRMM( 'Left', 'Upper', 'No transpose', 'Non-unit', P, N, &
+                    ONE, RINV, LDRINV, DWORK, LDW )
+!C
+!C     Copy the inclusion measurement in the (1,2) block and the updated
+!C     X in the (2,2) block of DWORK.
+!C
+      I23 = NP*N + 1
+      I33 = I23  + P
+      CALL DCOPY( P, RINVY, 1, DWORK(I23), 1 )
+      CALL DCOPY( N, X, 1, DWORK(I33), 1 )
+      WRKOPT = MAX( WRKOPT, NP*( N + 1 ) )
+!C
+!C     Step 2: QR factorization of the first block column of the matrix
+!C
+!C        [ RINV x C     RINV x Y ],
+!C        [ SINV x AINV  SINV x X ]
+!C
+!C     where the second block row was modified at Step 1.
+!C     Workspace: need   (P+N)*(N+1) + N + MAX(N-1,M+1);
+!C                prefer (P+N)*(N+1) + N + (M+1)*NB, where NB is the
+!C                       optimal block size for DGEQRF called in MB04ID.
+!C
+      ITAU  = I23  + NP
+      JWORK = ITAU + N
+
+      CALL MB04ID( NP, N, MAX( N-MP1, 0 ), 1, DWORK, LDW, DWORK(I23), &
+                  LDW, DWORK(ITAU), DWORK(JWORK), LDWORK-JWORK+1, &
+                  INFO )
+      WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK) )+JWORK-1 )
+!C
+!C     Output SINV, X, and E and set the optimal workspace dimension
+!C     (and the reciprocal of the condition number estimate).
+!C
+      CALL DLACPY( 'Upper', N, N, DWORK, LDW, SINV, LDSINV )
+      CALL DCOPY( N, DWORK(I23), 1, X, 1 )
+      IF( P.GT.0 ) &
+         CALL DCOPY( P, DWORK(I23+N), 1, E, 1 )
+!C
+      IF ( LJOBX ) THEN
+!C
+!C        Compute X.
+!C        Workspace: need 3*N.
+!C
+         CALL MB02OD( 'Left', 'Upper', 'No transpose', 'Non-unit', &
+                     '1-norm', N, 1, ONE, SINV, LDSINV, X, N, RCOND, &
+                     TOL, IWORK, DWORK, INFO )
+         IF ( INFO.EQ.0 ) THEN
+            WRKOPT = MAX( WRKOPT, 3*N )
+            DWORK(2) = RCOND
+         END IF
+      END IF
+
+      DWORK(1) = WRKOPT
+
+END SUBROUTINE FB01TD
+
+    
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB04KD( UPLO, N, M, P, R, LDR, A, LDA, B, LDB, C, LDC, &
+     TAU, DWORK ) !GCC$ ATTRIBUTES hot :: MB04KD !GCC$ ATTRIBUTES aligned(32) :: MB04KD !GCC$ ATTRIBUTES no_stack_protector :: MB04KD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE MB04KD( UPLO, N, M, P, R, LDR, A, LDA, B, LDB, C, LDC, &
+     TAU, DWORK )
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB04KD
+  !DIR$ OPTIMIZE : 2
+  !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB04KD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To calculate a QR factorization of the first block column and
+C     apply the orthogonal transformations (from the left) also to the
+C     second block column of a structured matrix, as follows
+C                          _
+C            [ R   0 ]   [ R   C ]
+C       Q' * [       ] = [       ]
+C            [ A   B ]   [ 0   D ]
+C                 _
+C     where R and R are upper triangular. The matrix A can be full or
+C     upper trapezoidal/triangular. The problem structure is exploited.
+C     This computation is useful, for instance, in combined measurement
+C     and time update of one iteration of the Kalman filter (square
+C     root information filter).
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     UPLO    CHARACTER*1
+C             Indicates if the matrix A is or not triangular as follows:
+C             = 'U':  Matrix A is upper trapezoidal/triangular;
+C             = 'F':  Matrix A is full.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER                 _
+C             The order of the matrices R and R.  N >= 0.
+C
+C     M       (input) INTEGER
+C             The number of columns of the matrices B, C and D.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of rows of the matrices A, B and D.  P >= 0.
+C
+C     R       (input/output) DOUBLE PRECISION array, dimension (LDR,N)
+C             On entry, the leading N-by-N upper triangular part of this
+C             array must contain the upper triangular matrix R.
+C             On exit, the leading N-by-N upper triangular part of this
+C                                                        _
+C             array contains the upper triangular matrix R.
+C             The strict lower triangular part of this array is not
+C             referenced.
+C
+C     LDR     INTEGER
+C             The leading dimension of array R.  LDR >= MAX(1,N).
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, if UPLO = 'F', the leading P-by-N part of this
+C             array must contain the matrix A. If UPLO = 'U', the
+C             leading MIN(P,N)-by-N part of this array must contain the
+C             upper trapezoidal (upper triangular if P >= N) matrix A,
+C             and the elements below the diagonal are not referenced.
+C             On exit, the leading P-by-N part (upper trapezoidal or
+C             triangular, if UPLO = 'U') of this array contains the
+C             trailing components (the vectors v, see Method) of the
+C             elementary reflectors used in the factorization.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,P).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,M)
+C             On entry, the leading P-by-M part of this array must
+C             contain the matrix B.
+C             On exit, the leading P-by-M part of this array contains
+C             the computed matrix D.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,P).
+C
+C     C       (output) DOUBLE PRECISION array, dimension (LDC,M)
+C             The leading N-by-M part of this array contains the
+C             computed matrix C.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,N).
+C
+C     TAU     (output) DOUBLE PRECISION array, dimension (N)
+C             The scalar factors of the elementary reflectors used.
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (N)
+C
+C     METHOD
+C
+C     The routine uses N Householder transformations exploiting the zero
+C     pattern of the block matrix.  A Householder matrix has the form
+C
+C                                     ( 1 ),
+C        H  = I - tau *u *u',    u  = ( v )
+C         i          i  i  i      i   (  i)
+C
+C     where v  is a P-vector, if UPLO = 'F', or an min(i,P)-vector, if
+C            i
+C     UPLO = 'U'.  The components of v  are stored in the i-th column
+C                                     i
+C     of A, and tau  is stored in TAU(i).
+C                  i
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm is backward stable.
+C
+C     CONTRIBUTORS
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Elementary reflector, QR factorization, orthogonal transformation.
+C
+C     ******************************************************************
+C
+#endif
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+use omp_lib
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         UPLO
+      INTEGER           LDA, LDB, LDC, LDR, M, N, P
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           R(LDR,*), TAU(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           R(LDR,*), TAU(*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED R:64
+      !DIR$ ASSUME_ALIGNED TAU:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           LUPLO
+      INTEGER           I, IM
+
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DGEMV, DGER, DLARFG, DSCAL
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MIN
+!C     .. Executable Statements ..
+!C
+      IF( MIN( N, P ).EQ.0 ) RETURN
+       
+!C
+      LUPLO = LSAME( UPLO, 'U' )
+      IM = P
+      !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,IM)
+      DO 10 I = 1, N
+!C
+!C        Annihilate the I-th column of A and apply the transformations
+!C        to the entire block matrix, exploiting its structure.
+!C
+         IF( LUPLO ) IM = MIN( I, P )
+         CALL DLARFG( IM+1, R(I,I), A(1,I), 1, TAU(I) )
+         IF( TAU(I).NE.ZERO ) THEN
+!C
+!C                                      [ R(I,I+1:N)        0     ]
+!C           [ w C(I,:) ] := [ 1 v' ] * [                         ]
+!C                                      [ A(1:IM,I+1:N) B(1:IM,:) ]
+!C
+            IF( I.LT.N ) THEN
+               CALL DCOPY( N-I, R(I,I+1), LDR, DWORK, 1 )
+               CALL DGEMV( 'Transpose', IM, N-I, ONE, A(1,I+1), LDA, &
+                           A(1,I), 1, ONE, DWORK, 1 )
+            END IF
+            CALL DGEMV( 'Transpose', IM, M, ONE, B, LDB, A(1,I), 1, &
+                        ZERO, C(I,1), LDC )
+!C
+!C           [ R(I,I+1:N)      C(I,:)  ]    [ R(I,I+1:N)        0     ]
+!C           [                         ] := [                         ]
+!C           [ A(1:IM,I+1:N) D(1:IM,:) ]    [ A(1:IM,I+1:N) B(1:IM,:) ]
+!C
+!C                                                 [ 1 ]
+!C                                         - tau * [   ] * [ w C(I,:) ]
+!C                                                 [ v ]
+!C
+            IF( I.LT.N ) THEN
+               CALL DAXPY( N-I, -TAU(I), DWORK, 1, R(I,I+1), LDR )
+               CALL DGER( IM, N-I, -TAU(I), A(1,I), 1, DWORK, 1, &
+                          A(1,I+1), LDA )
+            END IF
+            CALL DSCAL( M, -TAU(I), C(I,1), LDC )
+            CALL DGER( IM, M, ONE, A(1,I), 1, C(I,1), LDC, B, LDB )
+         END IF
+   10 CONTINUE
+         !$OMP END PARALLEL DO
+#endif
+     
+END SUBROUTINE MB04KD
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB04ID(N, M, P, L, A, LDA, B, LDB, TAU, DWORK, LDWORK,INFO) !GCC$ ATTRIBUTES hot :: MB04ID !GCC$ ATTRIBUTES aligned(32) :: MB04ID !GCC$ ATTRIBUTES no_stack_protector :: MB04ID
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE MB04ID(N, M, P, L, A, LDA, B, LDB, TAU, DWORK, LDWORK,INFO)
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB04ID
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB04ID
+#endif
+#if 0                     
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute a QR factorization of an n-by-m matrix A (A = Q * R),
+C     having a p-by-min(p,m) zero triangle in the lower left-hand side
+C     corner, as shown below, for n = 8, m = 7, and p = 2:
+C
+C            [ x x x x x x x ]
+C            [ x x x x x x x ]
+C            [ x x x x x x x ]
+C            [ x x x x x x x ]
+C        A = [ x x x x x x x ],
+C            [ x x x x x x x ]
+C            [ 0 x x x x x x ]
+C            [ 0 0 x x x x x ]
+C
+C     and optionally apply the transformations to an n-by-l matrix B
+C     (from the left). The problem structure is exploited. This
+C     computation is useful, for instance, in combined measurement and
+C     time update of one iteration of the time-invariant Kalman filter
+C     (square root information filter).
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The number of rows of the matrix A.  N >= 0.
+C
+C     M       (input) INTEGER
+C             The number of columns of the matrix A.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The order of the zero triagle.  P >= 0.
+C
+C     L       (input) INTEGER
+C             The number of columns of the matrix B.  L >= 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,M)
+C             On entry, the leading N-by-M part of this array must
+C             contain the matrix A. The elements corresponding to the
+C             zero P-by-MIN(P,M) lower trapezoidal/triangular part
+C             (if P > 0) are not referenced.
+C             On exit, the elements on and above the diagonal of this
+C             array contain the MIN(N,M)-by-M upper trapezoidal matrix
+C             R (R is upper triangular, if N >= M) of the QR
+C             factorization, and the relevant elements below the
+C             diagonal contain the trailing components (the vectors v,
+C             see Method) of the elementary reflectors used in the
+C             factorization.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,L)
+C             On entry, the leading N-by-L part of this array must
+C             contain the matrix B.
+C             On exit, the leading N-by-L part of this array contains
+C             the updated matrix B.
+C             If L = 0, this array is not referenced.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.
+C             LDB >= MAX(1,N) if L > 0;
+C             LDB >= 1        if L = 0.
+C
+C     TAU     (output) DOUBLE PRECISION array, dimension MIN(N,M)
+C             The scalar factors of the elementary reflectors used.
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.
+C
+C     LDWORK  The length of the array DWORK.
+C             LDWORK >= MAX(1,M-1,M-P,L).
+C             For optimum performance LDWORK should be larger.
+C
+C             If LDWORK = -1, then a workspace query is assumed;
+C             the routine only calculates the optimal size of the
+C             DWORK array, returns this value as the first entry of
+C             the DWORK array, and no error message related to LDWORK
+C             is issued by XERBLA.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The routine uses min(N,M) Householder transformations exploiting
+C     the zero pattern of the matrix.  A Householder matrix has the form
+C
+C                                     ( 1 ),
+C        H  = I - tau *u *u',    u  = ( v )
+C         i          i  i  i      i   (  i)
+C
+C     where v  is an (N-P+I-2)-vector.  The components of v  are stored
+C            i                                             i
+C     in the i-th column of A, beginning from the location i+1, and
+C     tau  is stored in TAU(i).
+C        i
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm is backward stable.
+C
+C     CONTRIBUTORS
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Jan. 2009,
+C     Apr. 2009, Apr. 2011.
+C
+C     KEYWORDS
+C
+C     Elementary reflector, QR factorization, orthogonal transformation.
+C
+C     ******************************************************************
+C
+#endif
+#if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, L, LDA, LDB, LDWORK, M, N, P
+!C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+       DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
+!DIR$ ASSUME_ALIGNED A:64
+!DIR$ ASSUME_ALIGNED B:64
+!DIR$ ASSUME_ALIGNED DWORK:64
+!DIR$ ASSUME_ALIGNED TAU:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           LQUERY
+      INTEGER           I, WRKOPT
+      DOUBLE PRECISION  FIRST
+!C     .. External Subroutines ..
+      EXTERNAL          DGEQRF, DLARF, DLARFG, DORMQR
+!C     .. Intrinsic Functions ..
+      INTRINSIC         INT, MAX, MIN
+!C     .. Executable Statements ..
+!C
+!C     Test the input scalar arguments.
+!C
+      INFO = 0
+      LQUERY = LDWORK.EQ.-1
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( L.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -6
+      ELSE IF( LDB.LT.1 .OR. ( L.GT.0 .AND. LDB.LT.N ) ) THEN
+         INFO = -8
+      ELSE
+         I = MAX( 1, M - 1, M - P, L )
+         IF( LQUERY ) THEN
+            IF( M.GT.P ) THEN
+               CALL DGEQRF( N-P, M-P, A, LDA, TAU, DWORK, -1, INFO )
+               WRKOPT = MAX( I, INT( DWORK( 1 ) ) )
+               IF ( L.GT.0 ) THEN
+                  CALL DORMQR( 'Left', 'Transpose', N-P, L, MIN(N,M)-P, &
+                              A, LDA, TAU, B, LDB, DWORK, -1, INFO )
+                  WRKOPT = MAX( WRKOPT, INT( DWORK( 1 ) ) )
+               END IF
+            END IF
+         ELSE IF( LDWORK.LT.I ) THEN
+            INFO = -11
+         END IF
+      END IF
+!C
+      IF( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      ELSE IF( LQUERY ) THEN
+         DWORK(1) = WRKOPT
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( MIN( M, N ).EQ.0 ) THEN
+         DWORK(1) = ONE
+         RETURN
+      ELSE IF( N.LE.P+1 ) THEN
+         DO 5 I = 1, MIN( N, M )
+            TAU(I) = ZERO
+    5    CONTINUE
+         DWORK(1) = ONE
+         RETURN
+      END IF
+!C
+!C     Annihilate the subdiagonal elements of A and apply the
+!C     transformations to B, if L > 0.
+!C     Workspace: need MAX(M-1,L).
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.
+!C     NB refers to the optimal block size for the immediately
+!C     following subroutine, as returned by ILAENV.)
+!C
+#if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,FIRST)
+      DO 10 I = 1, MIN( P, M )
+!C
+!C        Exploit the structure of the I-th column of A.
+!C
+         CALL DLARFG( N-P, A(I,I), A(I+1,I), 1, TAU(I) )
+         IF( TAU(I).NE.ZERO ) THEN
+!C
+            FIRST = A(I,I)
+            A(I,I) = ONE
+!C
+            IF ( I.LT.M ) CALL DLARF( 'Left', N-P, M-I, A(I,I), 1,  &
+                                     TAU(I), A(I,I+1), LDA, DWORK )
+            IF ( L.GT.0 ) CALL DLARF( 'Left', N-P, L, A(I,I), 1, TAU(I), &
+                                     B(I,1), LDB, DWORK )
+!C
+            A(I,I) = FIRST
+         END IF
+   10 CONTINUE
+!$OMP END PARALLEL DO
+#endif
+
+      WRKOPT = MAX( 1, M - 1, L )
+!C
+!C     Fast QR factorization of the remaining right submatrix, if any.
+!C     Workspace: need M-P;  prefer (M-P)*NB.
+!C
+      IF( M.GT.P ) THEN
+         CALL DGEQRF( N-P, M-P, A(P+1,P+1), LDA, TAU(P+1), DWORK,  &
+                     LDWORK, INFO )
+         WRKOPT = MAX( WRKOPT, INT( DWORK(1) ) )
+!C
+         IF ( L.GT.0 ) THEN
+!C
+!C           Apply the transformations to B.
+!C           Workspace: need L;  prefer L*NB.
+!C
+            CALL DORMQR( 'Left', 'Transpose', N-P, L, MIN(N,M)-P,  &
+                        A(P+1,P+1), LDA, TAU(P+1), B(P+1,1), LDB,  &
+                        DWORK, LDWORK, INFO )
+            WRKOPT = MAX( WRKOPT, INT( DWORK(1) ) )
+         END IF
+      END IF
+!C
+      DWORK(1) = WRKOPT
+    
+END SUBROUTINE MB04ID
+
+   
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB04LD( UPLO, N, M, P, L, LDL, A, LDA, B, LDB, C, LDC &
+                  TAU, DWORK ) !GCC$ ATTRIBUTES hot :: MB04LD !GCC$ ATTRIBUTES aligned(32) :: MB04LD !GCC$ ATTRIBUTES no_stack_protector :: MB04LD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE MB04LD( UPLO, N, M, P, L, LDL, A, LDA, B, LDB, C, LDC &
+                  TAU, DWORK )
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB04LD
+!DIR$ OPTIMIZE : 2
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB04LD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To calculate an LQ factorization of the first block row and apply
+C     the orthogonal transformations (from the right) also to the second
+C     block row of a structured matrix, as follows
+C                        _
+C        [ L   A ]     [ L   0 ]
+C        [       ]*Q = [       ]
+C        [ 0   B ]     [ C   D ]
+C                 _
+C     where L and L are lower triangular. The matrix A can be full or
+C     lower trapezoidal/triangular. The problem structure is exploited.
+C     This computation is useful, for instance, in combined measurement
+C     and time update of one iteration of the Kalman filter (square
+C     root covariance filter).
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     UPLO    CHARACTER*1
+C             Indicates if the matrix A is or not triangular as follows:
+C             = 'L':  Matrix A is lower trapezoidal/triangular;
+C             = 'F':  Matrix A is full.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER                 _
+C             The order of the matrices L and L.  N >= 0.
+C
+C     M       (input) INTEGER
+C             The number of columns of the matrices A, B and D.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of rows of the matrices B, C and D.  P >= 0.
+C
+C     L       (input/output) DOUBLE PRECISION array, dimension (LDL,N)
+C             On entry, the leading N-by-N lower triangular part of this
+C             array must contain the lower triangular matrix L.
+C             On exit, the leading N-by-N lower triangular part of this
+C                                                        _
+C             array contains the lower triangular matrix L.
+C             The strict upper triangular part of this array is not
+C             referenced.
+C
+C     LDL     INTEGER
+C             The leading dimension of array L.  LDL >= MAX(1,N).
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,M)
+C             On entry, if UPLO = 'F', the leading N-by-M part of this
+C             array must contain the matrix A. If UPLO = 'L', the
+C             leading N-by-MIN(N,M) part of this array must contain the
+C             lower trapezoidal (lower triangular if N <= M) matrix A,
+C             and the elements above the diagonal are not referenced.
+C             On exit, the leading N-by-M part (lower trapezoidal or
+C             triangular, if UPLO = 'L') of this array contains the
+C             trailing components (the vectors v, see Method) of the
+C             elementary reflectors used in the factorization.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,M)
+C             On entry, the leading P-by-M part of this array must
+C             contain the matrix B.
+C             On exit, the leading P-by-M part of this array contains
+C             the computed matrix D.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,P).
+C
+C     C       (output) DOUBLE PRECISION array, dimension (LDC,N)
+C             The leading P-by-N part of this array contains the
+C             computed matrix C.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,P).
+C
+C     TAU     (output) DOUBLE PRECISION array, dimension (N)
+C             The scalar factors of the elementary reflectors used.
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (N)
+C
+C     METHOD
+C
+C     The routine uses N Householder transformations exploiting the zero
+C     pattern of the block matrix.  A Householder matrix has the form
+C
+C                                     ( 1 ),
+C        H  = I - tau *u *u',    u  = ( v )
+C         i          i  i  i      i   (  i)
+C
+C     where v  is an M-vector, if UPLO = 'F', or an min(i,M)-vector, if
+C            i
+C     UPLO = 'L'.  The components of v  are stored in the i-th row of A,
+C                                     i
+C     and tau  is stored in TAU(i).
+C            i
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm is backward stable.
+C
+C     CONTRIBUTORS
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Elementary reflector, LQ factorization, orthogonal transformation.
+C
+C     ******************************************************************
+C
+#endif
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+use omp_lib
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         UPLO
+      INTEGER           LDA, LDB, LDC, LDL, M, N, P
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           L(LDL,*), TAU(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           L(LDL,*), TAU(*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED L:64
+      !DIR$ ASSUME_ALIGNED TAU:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           LUPLO
+      INTEGER           I, IM
+
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DGEMV, DGER, DLARFG, DSCAL
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MIN
+!C     .. Executable Statements ..
+!C
+      IF( MIN( M, N ).EQ.0 ) RETURN
+       
+!C
+      LUPLO = LSAME( UPLO, 'L' )
+      IM = M
+      !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      !$OMP PARALLEL DO DEAFULT(SHARED) PRIVATE(I,IM) SCHEDULE(STATIC)
+#endif
+      DO 10 I = 1, N
+!C
+!C        Annihilate the I-th row of A and apply the transformations to
+!C        the entire block matrix, exploiting its structure.
+!C
+         IF( LUPLO ) IM = MIN( I, M )
+         CALL DLARFG( IM+1, L(I,I), A(I,1), LDA, TAU(I) )
+         IF( TAU(I).NE.ZERO ) THEN
+!C
+!C           [    w   ]    [ L(I+1:N,I) A(I+1:N,1:IM) ]   [ 1 ]
+!C           [        ] := [                          ] * [   ]
+!C           [ C(:,I) ]    [      0        B(:,1:IM)  ]   [ v ]
+!C
+            IF( I.LT.N ) THEN
+               CALL DCOPY( N-I, L(I+1,I), 1, DWORK, 1 )
+               CALL DGEMV( 'No transpose', N-I, IM, ONE, A(I+1,1), LDA, &
+                           A(I,1), LDA, ONE, DWORK, 1 )
+            END IF
+            CALL DGEMV( 'No transpose', P, IM, ONE, B, LDB, A(I,1),  &
+                        LDA, ZERO, C(1,I), 1 )
+!C
+!C           [ L(I+1:N,I) A(I+1:N,1:IM) ]    [ L(I+1:N,I) A(I+1:N,1:IM) ]
+!C           [                          ] := [                          ]
+!C           [   C(:,I)      D(:,1:IM)  ]    [      0        B(:,1:IM)  ]
+!C
+!C                                                 [    w   ]
+!C                                         - tau * [        ] * [ 1 , v']
+!C                                                 [ C(:,I) ]
+!C
+            IF( I.LT.N ) THEN
+               CALL DAXPY( N-I, -TAU(I), DWORK, 1, L(I+1,I), 1 )
+               CALL DGER( N-I, IM, -TAU(I), DWORK, 1, A(I,1), LDA,  &
+                          A(I+1,1), LDA )
+            END IF
+            CALL DSCAL( P, -TAU(I), C(1,I), 1 )
+            CALL DGER( P, IM, ONE, C(1,I), 1, A(I,1), LDA, B, LDB )
+         END IF
+   10 CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP END PARALLEL DO
+#endif
+    
+END SUBROUTINE MB04LD
+
+
 
 
 
