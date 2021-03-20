@@ -360,8 +360,8 @@ C                  ( B  A )
 C                  ( D  C )
 C     an (NU+MU)-by-(M+NU) "reduced" system
 C                  ( B' A')
-C                  ( D' C')
-C     having the same transmission zeros but with D' of full row rank.
+!C                  ( D' C')
+!C     having the same transmission zeros but with D' of full row rank.
 C
 C     ARGUMENTS
 C
@@ -433,10 +433,10 @@ C             The normal rank of the transfer function matrix of the
 C             original system.
 C
 C     NU      (output) INTEGER
-C             The dimension of the reduced system matrix and the number
-C             of (finite) invariant zeros if D' is invertible.
-C
-C     NKROL   (output) INTEGER
+!C             The dimension of the reduced system matrix and the number
+!C             of (finite) invariant zeros if D' is invertible.
+!C
+!C     NKROL   (output) INTEGER
 C             The number of left Kronecker indices.
 C
 C     Tolerances
@@ -669,7 +669,8 @@ C
 !C           CWorkspace: need   M+N-1.
             !C
 #if(GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-!$OMP PARALLEL DO PRIVATE(I1,IROW) SCHEDULE(STATIC)            
+            !$OMP PARALLEL DO PRIVATE(I1,IROW) SCHEDULE(STATIC)
+#endif
             DO 40 I1 = 1, SIGMA
                CALL ZLARFG( RO+1, ABCD(IROW,I1), ABCD(IROW+1,I1), 1, &
                            TC )
@@ -678,8 +679,7 @@ C
                            ABCD(IROW+1,I1+1), LDABCD, ZWORK )
                IROW = IROW + 1
 40             CONTINUE
-!$OMP END PARALLEL DO
-#endif
+
             CALL ZLASET( 'Lower', RO+SIGMA-1, SIGMA, ZERO, ZERO, &
                         ABCD(NU+2,1), LDABCD )
          END IF
@@ -951,8 +951,8 @@ C
 C        Q = H(1) H(2) . . . H(k), where k = rank <= min(m,n).
 C
 C     Each H(i) has the form
-C
-C        H = I - tau * v * v'
+!C
+!C        H = I - tau * v * v'
 C
 C     where tau is a complex scalar, and v is a complex vector with
 C     v(1:i-1) = 0 and v(i) = 1; v(i+1:m) is stored on exit in
@@ -988,7 +988,7 @@ C     Bucharest, Nov. 2008.
 C
 C     REVISIONS
 C
-C     V. Sima, Jan. 2010, following Bujanovic and Drmac's suggestion.
+!C     V. Sima, Jan. 2010, following Bujanovic and Drmac's suggestion.
 C
 C     KEYWORDS
 C
@@ -2133,7 +2133,7 @@ SUBROUTINE FB01SD( JOBX, MULTAB, MULTRC, N, M, P, SINV, LDSINV, &
           QINV, LDQINV, X, RINVY, Z, E, TOL, IWORK,             &
           DWORK, LDWORK, INFO )
   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: FB01SD
-  !DIR$ OPTIMIZE : 2
+  !DIR$ OPTIMIZE : 3
   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: FB01SD
 #endif
 #if 0
@@ -2412,14 +2412,14 @@ C     The inverse of the corresponding state covariance matrix P
 C                                                               i+1|i+1
 C     (hence the information matrix I) is then factorized as
 C
-C                   -1         -1     -1
-C        I       = P       = (S   )' S
-C         i+1|i+1   i+1|i+1    i+1    i+1
-C
-C     and one combined time and measurement update for the state is
-C     given by X   .
-C               i+1
-C
+!C                   -1         -1     -1
+!C        I       = P       = (S   )' S
+!C         i+1|i+1   i+1|i+1    i+1    i+1
+!C
+!C     and one combined time and measurement update for the state is
+!C     given by X   .
+!C               i+1
+!C
 C     The triangularization is done entirely via Householder
 C     transformations exploiting the zero pattern of the pre-array.
 C
@@ -2655,13 +2655,15 @@ C
       IJ = I21
 !C
 #if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFULT(SHARED) PRIVATE(I)
+      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFULT(SHARED) PRIVATE(I)
+#endif
       DO 10 I = 1, M
          CALL DAXPY( N, -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
                     DDOT( N, DWORK(IJ), 1, X, 1 ) ), &
                               DWORK(IJ), 1, X, 1 )
          IJ = IJ + N
-   10 CONTINUE
+10       CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1         
 !$OMP END PARALLEL DO
 #endif
 !C
@@ -2746,6 +2748,427 @@ C
 
 END SUBROUTINE FB01SD
 
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE FB01VD( N, M, L, P, LDP, A, LDA, B, LDB, C, LDC, Q, &
+  LDQ, R, LDR, K, LDK, TOL, IWORK, DWORK, LDWORK,INFO) !GCC$ ATTRIBUTES hot :: FB01VD !GCC$ ATTRIBUTES aligned(32) :: FB01VD !GCC$ ATTRIBUTES no_stack_protector :: FB01VD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE FB01VD( N, M, L, P, LDP, A, LDA, B, LDB, C, LDC, Q, &
+  LDQ, R, LDR, K, LDK, TOL, IWORK, DWORK, LDWORK,INFO)
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: FB01VD
+  !DIR$ OPTIMIZE : 3
+  !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: FB01VD
+#endif
+#if 0                       
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute one recursion of the conventional Kalman filter
+C     equations. This is one update of the Riccati difference equation
+C     and the Kalman filter gain.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The actual state dimension, i.e., the order of the
+C             matrices P      and A .  N >= 0.
+C                       i|i-1      i
+C
+C     M       (input) INTEGER
+C             The actual input dimension, i.e., the order of the matrix
+C             Q .  M >= 0.
+C              i
+C
+C     L       (input) INTEGER
+C             The actual output dimension, i.e., the order of the matrix
+C             R .  L >= 0.
+C              i
+C
+C     P       (input/output) DOUBLE PRECISION array, dimension (LDP,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain P     , the state covariance matrix at instant
+C                      i|i-1
+C             (i-1). The upper triangular part only is needed.
+C             On exit, if INFO = 0, the leading N-by-N part of this
+C             array contains P     , the state covariance matrix at
+C                             i+1|i
+C             instant i. The strictly lower triangular part is not set.
+C             Otherwise, the leading N-by-N part of this array contains
+C             P     , its input value.
+C              i|i-1
+C
+C     LDP     INTEGER
+C             The leading dimension of array P.  LDP >= MAX(1,N).
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,N)
+C             The leading N-by-N part of this array must contain A ,
+C                                                                 i
+C             the state transition matrix of the discrete system at
+C             instant i.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input) DOUBLE PRECISION array, dimension (LDB,M)
+C             The leading N-by-M part of this array must contain B ,
+C                                                                 i
+C             the input weight matrix of the discrete system at
+C             instant i.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,N).
+C
+C     C       (input) DOUBLE PRECISION array, dimension (LDC,N)
+C             The leading L-by-N part of this array must contain C ,
+C                                                                 i
+C             the output weight matrix of the discrete system at
+C             instant i.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,L).
+C
+C     Q       (input) DOUBLE PRECISION array, dimension (LDQ,M)
+C             The leading M-by-M part of this array must contain Q ,
+C                                                                 i
+C             the input (process) noise covariance matrix at instant i.
+C             The diagonal elements of this array are modified by the
+C             routine, but are restored on exit.
+C
+C     LDQ     INTEGER
+C             The leading dimension of array Q.  LDQ >= MAX(1,M).
+C
+C     R       (input/output) DOUBLE PRECISION array, dimension (LDR,L)
+C             On entry, the leading L-by-L part of this array must
+C             contain R , the output (measurement) noise covariance
+C                      i
+C             matrix at instant i.
+C             On exit, if INFO = 0, or INFO = L+1, the leading L-by-L
+C                                                                  1/2
+C             upper triangular part of this array contains (RINOV )   ,
+C                                                                i
+C             the square root (left Cholesky factor) of the covariance
+C             matrix of the innovations at instant i.
+C
+C     LDR     INTEGER
+C             The leading dimension of array R.  LDR >= MAX(1,L).
+C
+C     K       (output) DOUBLE PRECISION array, dimension (LDK,L)
+C             If INFO = 0, the leading N-by-L part of this array
+C             contains K , the Kalman filter gain matrix at instant i.
+C                       i
+!C             If INFO > 0, the leading N-by-L part of this array
+!C             contains the matrix product P     C'.
+C                                          i|i-1 i
+C
+C     LDK     INTEGER
+C             The leading dimension of array K.  LDK >= MAX(1,N).
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             The tolerance to be used to test for near singularity of
+C             the matrix RINOV . If the user sets TOL > 0, then the
+C                             i
+C             given value of TOL is used as a lower bound for the
+C             reciprocal condition number of that matrix; a matrix whose
+C             estimated condition number is less than 1/TOL is
+C             considered to be nonsingular. If the user sets TOL <= 0,
+C             then an implicitly computed, default tolerance, defined by
+C             TOLDEF = L*L*EPS, is used instead, where EPS is the
+C             machine precision (see LAPACK Library routine DLAMCH).
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (L)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, or INFO = L+1, DWORK(1) returns an
+C             estimate of the reciprocal of the condition number (in the
+C             1-norm) of the matrix RINOV .
+C                                        i
+C
+C     LDWORK  The length of the array DWORK.
+C             LDWORK >= MAX(1,L*N+3*L,N*N,N*M).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -k, the k-th argument had an illegal
+C                   value;
+C             = k:  if INFO = k, 1 <= k <= L, the leading minor of order
+C                   k of the matrix RINOV  is not positive-definite, and
+C                                        i
+C                   its Cholesky factorization could not be completed;
+C             = L+1: the matrix RINOV  is singular, i.e., the condition
+C                                    i
+C                   number estimate of RINOV  (in the 1-norm) exceeds
+C                                           i
+C                   1/TOL.
+C
+C     METHOD
+C
+C     The conventional Kalman filter gain used at the i-th recursion
+C     step is of the form
+C
+C                            -1
+C        K  = P     C'  RINOV  ,
+!C         i    i|i-1 i       i
+!C
+!C     where RINOV  = C P     C' + R , and the state covariance matrix
+C                i    i i|i-1 i    i
+C
+C     P      is updated by the discrete-time difference Riccati equation
+C      i|i-1
+C
+C        P      = A  (P      - K C P     ) A'  + B Q B'.
+C         i+1|i    i   i|i-1    i i i|i-1   i     i i i
+C
+C     Using these two updates, the combined time and measurement update
+C     of the state X      is given by
+C                   i|i-1
+C
+C        X      = A X      + A K (Y  - C X     ),
+C         i+1|i    i i|i-1    i i  i    i i|i-1
+C
+C     where Y  is the new observation at step i.
+C            i
+C
+C     REFERENCES
+C
+C     [1] Anderson, B.D.O. and Moore, J.B.
+C         Optimal Filtering,
+C         Prentice Hall, Englewood Cliffs, New Jersey, 1979.
+C
+C     [2] Verhaegen, M.H.G. and Van Dooren, P.
+C         Numerical Aspects of Different Kalman Filter Implementations.
+C         IEEE Trans. Auto. Contr., AC-31, pp. 907-917, 1986.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm requires approximately
+C
+C             3   2
+C      3/2 x N + N  x (3 x L + M/2)
+C
+C     operations.
+C
+C     CONTRIBUTORS
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1997.
+C     Supersedes Release 2.0 routine FB01JD by M.H.G. Verhaegen,
+C     M. Vanbegin, and P. Van Dooren.
+C
+C     REVISIONS
+C
+C     February 20, 1998, November 20, 2003, April 20, 2004.
+C
+C     KEYWORDS
+C
+C     Kalman filtering, optimal filtering, recursive estimation.
+C
+C     ******************************************************************
+C
+#endif
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE, TWO
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0, TWO = 2.0D0 )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, L, LDA, LDB, LDC, LDK, LDP, LDQ, LDR, &
+                        LDWORK, M, N
+      DOUBLE PRECISION  TOL
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER           IWORK(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IWORK(*)
+      !DIR$ ASSUME_ALIGNED IWORK:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED K:64
+      !DIR$ ASSUME_ALIGNED P:64
+      !DIR$ ASSUME_ALIGNED Q:64
+      !DIR$ ASSUME_ALIGNED R:64
+#endif
+!C     .. Local Scalars ..
+      INTEGER           J, JWORK, LDW, N1
+      DOUBLE PRECISION  RCOND, RNORM, TOLDEF
+!C     .. External Functions ..
+      DOUBLE PRECISION   DLANSY
+      EXTERNAL           DLANSY
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DGEMV, DLACPY, DLASET, DPOCON, &
+                        DPOTRF, DSCAL, DTRMM, DTRSM, MB01RD
+!C     .. Intrinsic Functions ..
+      INTRINSIC         DBLE, MAX
+!C     .. Executable Statements ..
+!C
+!C     Test the input scalar arguments.
+!C
+      INFO = 0
+      N1 = MAX( 1, N )
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( L.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDP.LT.N1 ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.N1 ) THEN
+         INFO = -7
+      ELSE IF( LDB.LT.N1 ) THEN
+         INFO = -9
+      ELSE IF( LDC.LT.MAX( 1, L ) ) THEN
+         INFO = -11
+      ELSE IF( LDQ.LT.MAX( 1, M ) ) THEN
+         INFO = -13
+      ELSE IF( LDR.LT.MAX( 1, L ) ) THEN
+         INFO = -15
+      ELSE IF( LDK.LT.N1 ) THEN
+         INFO = -17
+      ELSE IF( LDWORK.LT.MAX( 1, L*N + 3*L, N*N, N*M ) ) THEN
+         INFO = -21
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( MAX( N, L ).EQ.0 ) THEN
+         DWORK(1) = ONE
+         RETURN
+      END IF
+!C
+!C     Efficiently compute RINOV = CPC' + R in R and put CP in DWORK and
+!C     PC' in K. (The content of DWORK on exit from MB01RD is used.)
+!C     Workspace: need L*N.
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code.)
+!C
+      CALL MB01RD( 'Upper', 'No transpose', L, N, ONE, ONE, R, LDR, C, &
+                   LDC, P, LDP, DWORK, LDWORK, INFO )
+      LDW = MAX( 1, L )
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+      DO 10 J = 1, L
+         CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
+   10 CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP END PARALLEL DO
+#endif
+      CALL DLACPY( 'Full', L, N, C, LDC, DWORK, LDW )
+      CALL DTRMM( 'Right', 'Upper', 'Transpose', 'Non-unit', L, N, ONE, &
+                  P, LDP, DWORK, LDW )
+      CALL DSCAL( N, TWO, P, LDP+1 )
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+      DO 20 J = 1, L
+         CALL DAXPY( N, ONE, K(1,J), 1, DWORK(J), LDW )
+         CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
+20       CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP END PARALLEL DO
+#endif
+!C
+!C     Calculate the Cholesky decomposition U'U of the innovation
+!C     covariance matrix RINOV, and its reciprocal condition number.
+!C     Workspace: need L*N + 3*L.
+!C
+      JWORK = L*N + 1
+      RNORM = DLANSY( '1-norm', 'Upper', L, R, LDR, DWORK(JWORK) )
+!C
+      TOLDEF = TOL
+      IF ( TOLDEF.LE.ZERO ) &
+         TOLDEF = DBLE( L*L )*DLAMCH( 'Epsilon' )
+      CALL DPOTRF( 'Upper', L, R, LDR, INFO )
+      IF ( INFO.NE.0 ) RETURN
+     
+!C
+      CALL DPOCON( 'Upper', L, R, LDR, RNORM, RCOND, DWORK(JWORK), &
+                  IWORK, INFO )
+!C
+      IF ( RCOND.LT.TOLDEF ) THEN
+!C
+!C        Error return: RINOV is numerically singular.
+!C
+         INFO = L+1
+         DWORK(1) = RCOND
+         RETURN
+      END IF
+
+      IF ( L.GT.1 ) &
+        CALL DLASET( 'Lower', L-1, L-1, ZERO, ZERO, R(2,1),LDR )
+!C                                                          -1
+!C     Calculate the Kalman filter gain matrix  K = PC'RINOV .
+!C     Workspace: need L*N.
+!C
+      CALL DTRSM( 'Right', 'Upper', 'No transpose', 'Non-unit', N, L, &
+                  ONE, R, LDR, K, LDK )
+      CALL DTRSM( 'Right', 'Upper', 'Transpose', 'Non-unit', N, L,  &
+                  ONE, R, LDR, K, LDK )
+!C
+!C     First part of the Riccati equation update: compute A(P-KCP)A'.
+!C     The upper triangular part of the symmetric matrix P-KCP is formed.
+!C     Workspace: need max(L*N,N*N).
+!C
+      JWORK = 1
+      !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JWORK)
+#endif
+      DO 30 J = 1, N
+         CALL DGEMV( 'No transpose', J, L, -ONE, K, LDK, DWORK(JWORK), &
+                     1, ONE, P(1,J), 1 )
+         JWORK = JWORK + L
+30       CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP END PARALLEL DO
+#endif
+!C
+      CALL MB01RD( 'Upper', 'No transpose', N, N, ZERO, ONE, P, LDP, A, &
+                   LDA, P, LDP, DWORK, LDWORK, INFO )
+!C
+!C     Second part of the Riccati equation update: add BQB'.
+!C     Workspace: need N*M.
+!C
+      CALL MB01RD( 'Upper', 'No transpose', N, M, ONE, ONE, P, LDP, B, &
+                   LDB, Q, LDQ, DWORK, LDWORK, INFO )
+      CALL DSCAL( M, TWO, Q, LDQ+1 )
+!C
+!C     Set the reciprocal of the condition number estimate.
+!C
+      DWORK(1) = RCOND
+!C
+   
+END SUBROUTINE FB01VD
 
 
     
@@ -2775,8 +3198,8 @@ C
 C     where alpha is a scalar, X and B are m-by-n matrices, A is a unit,
 C     or non-unit, upper or lower triangular matrix and op( A ) is one
 C     of
-C
-C        op( A ) = A   or   op( A ) = A'.
+!C
+!C        op( A ) = A   or   op( A ) = A'.
 C
 C     An estimate of the reciprocal of the condition number of the
 C     triangular matrix A, in either the 1-norm or the infinity-norm, is
@@ -3323,7 +3746,7 @@ C                                                               i+1|i+1
 C     (hence the information matrix I) is then factorized as
 C
 C                    -1         -1     -1
-C         I       = P       = (S   )' S
+!C         I       = P       = (S   )' S
 C          i+1|i+1   i+1|i+1    i+1    i+1
 C
 C     and one combined time and measurement update for the state is
@@ -3548,7 +3971,7 @@ C
 !C
 #if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
 !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,II)
-#endi
+#endif
       DO 10 I = 1, N
          CALL DCOPY( I, DWORK(II), 1, DWORK(I13), 1 )
          CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', I, SINV,
@@ -3604,13 +4027,19 @@ C
 !C     (Only the updated (3,3) block is now needed.)
 !C
       IJ = 1
-!C
+      !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,IJ)
+#endif
       DO 20 I = 1, M
          CALL DAXPY( MIN( I, N ), -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
                     DDOT( MIN( I, N ), DWORK(IJ), 1, X, 1 ) ), &
                                        DWORK(IJ), 1, X, 1 )
          IJ = IJ + N
-   20 CONTINUE
+20       CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO END
+#endif
 !C
 !C     Now, the workspace for SINV x AINVB, as well as for the updated
 !C!     (1,2) block of the pre-array, are no longer needed.
@@ -3627,13 +4056,17 @@ C
         CALL DLACPY( 'Upper', N-M, N, DWORK(I32+M), LDW, DWORK(MP1), &
                       LDW )
       LDW = MAX( 1, NP )
-
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
       DO 40 I = N, 1, -1
          DO 30 IJ = MIN( N, I+M ), 1, -1
             DWORK(NP*(I-1)+P+IJ) = DWORK(N*(I-1)+IJ)
    30    CONTINUE
    40 CONTINUE
-
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+!$OMP PARALLEL DO END
+#endif
 !C     Copy of RINV x C in the (1,1) block of DWORK.
 !C
       CALL DLACPY( 'Full', P, N, C, LDC, DWORK, LDW )
@@ -3718,7 +4151,7 @@ C     apply the orthogonal transformations (from the left) also to the
 C     second block column of a structured matrix, as follows
 C                          _
 C            [ R   0 ]   [ R   C ]
-C       Q' * [       ] = [       ]
+!C       Q' * [       ] = [       ]
 C            [ A   B ]   [ 0   D ]
 C                 _
 C     where R and R are upper triangular. The matrix A can be full or
@@ -3802,7 +4235,7 @@ C     The routine uses N Householder transformations exploiting the zero
 C     pattern of the block matrix.  A Householder matrix has the form
 C
 C                                     ( 1 ),
-C        H  = I - tau *u *u',    u  = ( v )
+!C        H  = I - tau *u *u',    u  = ( v )
 C         i          i  i  i      i   (  i)
 C
 C     where v  is a P-vector, if UPLO = 'F', or an min(i,P)-vector, if
@@ -3872,7 +4305,8 @@ use omp_lib
       IM = P
       !C
 #if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,IM)
+      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,IM)
+#endif
       DO 10 I = 1, N
 !C
 !C        Annihilate the I-th column of A and apply the transformations
@@ -3910,7 +4344,8 @@ use omp_lib
             CALL DSCAL( M, -TAU(I), C(I,1), LDC )
             CALL DGER( IM, M, ONE, A(1,I), 1, C(I,1), LDC, B, LDB )
          END IF
-   10 CONTINUE
+10       CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
          !$OMP END PARALLEL DO
 #endif
      
@@ -4026,8 +4461,8 @@ C
 C     The routine uses min(N,M) Householder transformations exploiting
 C     the zero pattern of the matrix.  A Householder matrix has the form
 C
-C                                     ( 1 ),
-C        H  = I - tau *u *u',    u  = ( v )
+!C                                     ( 1 ),
+!C        H  = I - tau *u *u',    u  = ( v )
 C         i          i  i  i      i   (  i)
 C
 C     where v  is an (N-P+I-2)-vector.  The components of v  are stored
@@ -4152,7 +4587,8 @@ C
 !C     following subroutine, as returned by ILAENV.)
 !C
 #if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,FIRST)
+      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,FIRST)
+#endif
       DO 10 I = 1, MIN( P, M )
 !C
 !C        Exploit the structure of the I-th column of A.
@@ -4170,7 +4606,8 @@ C
 !C
             A(I,I) = FIRST
          END IF
-   10 CONTINUE
+10       CONTINUE
+#if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
 !$OMP END PARALLEL DO
 #endif
 
@@ -4308,8 +4745,8 @@ C
 C     The routine uses N Householder transformations exploiting the zero
 C     pattern of the block matrix.  A Householder matrix has the form
 C
-C                                     ( 1 ),
-C        H  = I - tau *u *u',    u  = ( v )
+!C                                     ( 1 ),
+!C        H  = I - tau *u *u',    u  = ( v )
 C         i          i  i  i      i   (  i)
 C
 C     where v  is an M-vector, if UPLO = 'F', or an min(i,M)-vector, if
@@ -4424,6 +4861,1762 @@ use omp_lib
 #endif
     
 END SUBROUTINE MB04LD
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE SB01BD( DICO, N, M, NP, ALPHA, A, LDA, B, LDB, WR, WI, &
+   NFP, NAP, NUP, F, LDF, Z, LDZ, TOL, DWORK, &
+   LDWORK, IWARN, INFO ) !GCC$ ATTRIBUTES hot :: SB01BD !GCC$ ATTRIBUTES aligned(32) :: SB01BD !GCC$ ATTRIBUTES no_stack_protector :: SB01BD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE SB01BD( DICO, N, M, NP, ALPHA, A, LDA, B, LDB, WR, WI, &
+   NFP, NAP, NUP, F, LDF, Z, LDZ, TOL, DWORK, &
+   LDWORK, IWARN, INFO )
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB01BD
+!DIR$ OPTIMIZE : 3
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: SB01BD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To determine the state feedback matrix F for a given system (A,B)
+C     such that the closed-loop state matrix A+B*F has specified
+C     eigenvalues.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     DICO    CHARACTER*1
+C             Specifies the type of the original system as follows:
+C             = 'C':  continuous-time system;
+C             = 'D':  discrete-time system.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The dimension of the state vector, i.e. the order of the
+C             matrix A, and also the number of rows of the matrix B and
+C             the number of columns of the matrix F.  N >= 0.
+C
+C     M       (input) INTEGER
+C             The dimension of input vector, i.e. the number of columns
+C             of the matrix B and the number of rows of the matrix F.
+C             M >= 0.
+C
+C     NP      (input) INTEGER
+C             The number of given eigenvalues. At most N eigenvalues
+C             can be assigned.  0 <= NP.
+C
+C     ALPHA   (input) DOUBLE PRECISION
+C             Specifies the maximum admissible value, either for real
+C             parts, if DICO = 'C', or for moduli, if DICO = 'D',
+C             of the eigenvalues of A which will not be modified by
+C             the eigenvalue assignment algorithm.
+C             ALPHA >= 0 if DICO = 'D'.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the state dynamics matrix A.
+C             On exit, the leading N-by-N part of this array contains
+!C             the matrix Z'*(A+B*F)*Z in a real Schur form.
+C             The leading NFP-by-NFP diagonal block of A corresponds
+C             to the fixed (unmodified) eigenvalues having real parts
+C             less than ALPHA, if DICO = 'C', or moduli less than ALPHA,
+C             if DICO = 'D'. The trailing NUP-by-NUP diagonal block of A
+C             corresponds to the uncontrollable eigenvalues detected by
+C             the eigenvalue assignment algorithm. The elements under
+C             the first subdiagonal are set to zero.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input) DOUBLE PRECISION array, dimension (LDB,M)
+C             The leading N-by-M part of this array must contain the
+C             input/state matrix.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,N).
+C
+C     WR,WI   (input/output) DOUBLE PRECISION array, dimension (NP)
+C             On entry, these arrays must contain the real and imaginary
+C             parts, respectively, of the desired eigenvalues of the
+C             closed-loop system state-matrix A+B*F. The eigenvalues
+C             can be unordered, except that complex conjugate pairs
+C             must appear consecutively in these arrays.
+C             On exit, if INFO = 0, the leading NAP elements of these
+C             arrays contain the real and imaginary parts, respectively,
+C             of the assigned eigenvalues. The trailing NP-NAP elements
+C             contain the unassigned eigenvalues.
+C
+C     NFP     (output) INTEGER
+C             The number of eigenvalues of A having real parts less than
+C             ALPHA, if DICO = 'C', or moduli less than ALPHA, if
+C             DICO = 'D'. These eigenvalues are not modified by the
+C             eigenvalue assignment algorithm.
+C
+C     NAP     (output) INTEGER
+C             The number of assigned eigenvalues. If INFO = 0 on exit,
+C             then NAP = N-NFP-NUP.
+C
+C     NUP     (output) INTEGER
+C             The number of uncontrollable eigenvalues detected by the
+C             eigenvalue assignment algorithm (see METHOD).
+C
+C     F       (output) DOUBLE PRECISION array, dimension (LDF,N)
+C             The leading M-by-N part of this array contains the state
+C             feedback F, which assigns NAP closed-loop eigenvalues and
+C             keeps unaltered N-NAP open-loop eigenvalues.
+C
+C     LDF     INTEGER
+C             The leading dimension of array F.  LDF >= MAX(1,M).
+C
+C     Z       (output) DOUBLE PRECISION array, dimension (LDZ,N)
+C             The leading N-by-N part of this array contains the
+C             orthogonal matrix Z which reduces the closed-loop
+C             system state matrix A + B*F to upper real Schur form.
+C
+C     LDZ     INTEGER
+C             The leading dimension of array Z.  LDZ >= MAX(1,N).
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             The absolute tolerance level below which the elements of A
+C             or B are considered zero (used for controllability tests).
+C             If the user sets TOL <= 0, then the default tolerance
+C             TOL = N * EPS * max(NORM(A),NORM(B)) is used, where EPS is
+C             the machine precision (see LAPACK Library routine DLAMCH)
+C             and NORM(A) denotes the 1-norm of A.
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.
+C
+C     LDWORK  INTEGER
+C             The dimension of working array DWORK.
+C             LDWORK >= MAX( 1,5*M,5*N,2*N+4*M ).
+C             For optimum performance LDWORK should be larger.
+C
+C     Warning Indicator
+C
+C     IWARN   INTEGER
+C             = 0:  no warning;
+C             = K:  K violations of the numerical stability condition
+C                   NORM(F) <= 100*NORM(A)/NORM(B) occured during the
+C                   assignment of eigenvalues.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  the reduction of A to a real Schur form failed;
+C             = 2:  a failure was detected during the ordering of the
+C                   real Schur form of A, or in the iterative process
+!C                   for reordering the eigenvalues of Z'*(A + B*F)*Z
+C                   along the diagonal.
+C             = 3:  the number of eigenvalues to be assigned is less
+C                   than the number of possibly assignable eigenvalues;
+C                   NAP eigenvalues have been properly assigned,
+C                   but some assignable eigenvalues remain unmodified.
+C             = 4:  an attempt is made to place a complex conjugate
+C                   pair on the location of a real eigenvalue. This
+C                   situation can only appear when N-NFP is odd,
+C                   NP > N-NFP-NUP is even, and for the last real
+C                   eigenvalue to be modified there exists no available
+C                   real eigenvalue to be assigned. However, NAP
+C                   eigenvalues have been already properly assigned.
+C
+C     METHOD
+C
+C     SB01BD is based on the factorization algorithm of [1].
+C     Given the matrices A and B of dimensions N-by-N and N-by-M,
+C     respectively, this subroutine constructs an M-by-N matrix F such
+C     that A + BF has eigenvalues as follows.
+C     Let NFP eigenvalues of A have real parts less than ALPHA, if
+C     DICO = 'C', or moduli less then ALPHA, if DICO = 'D'. Then:
+C     1) If the pair (A,B) is controllable, then A + B*F has
+C        NAP = MIN(NP,N-NFP) eigenvalues assigned from those specified
+C        by WR + j*WI and N-NAP unmodified eigenvalues;
+C     2) If the pair (A,B) is uncontrollable, then the number of
+C        assigned eigenvalues NAP satifies generally the condition
+C        NAP <= MIN(NP,N-NFP).
+C
+C     At the beginning of the algorithm, F = 0 and the matrix A is
+C     reduced to an ordered real Schur form by separating its spectrum
+C     in two parts. The leading NFP-by-NFP part of the Schur form of
+C     A corresponds to the eigenvalues which will not be modified.
+C     These eigenvalues have real parts less than ALPHA, if
+C     DICO = 'C', or moduli less than ALPHA, if DICO = 'D'.
+C     The performed orthogonal transformations are accumulated in Z.
+C     After this preliminary reduction, the algorithm proceeds
+C     recursively.
+C
+C     Let F be the feedback matrix at the beginning of a typical step i.
+C     At each step of the algorithm one real eigenvalue or two complex
+C     conjugate eigenvalues are placed by a feedback Fi of rank 1 or
+C     rank 2, respectively. Since the feedback Fi affects only the
+C     last 1 or 2 columns of Z'*(A+B*F)*Z, the matrix Z'*(A+B*F+B*Fi)*Z
+C     therefore remains in real Schur form. The assigned eigenvalue(s)
+C     is (are) then moved to another diagonal position of the real
+C     Schur form using reordering techniques and a new block is
+C     transfered in the last diagonal position. The feedback matrix F
+C     is updated as F <-- F + Fi. The eigenvalue(s) to be assigned at
+C     each step is (are) chosen such that the norm of each Fi is
+C     minimized.
+C
+C     If uncontrollable eigenvalues are encountered in the last diagonal
+!C     position of the real Schur matrix Z'*(A+B*F)*Z, the algorithm
+C     deflates them at the bottom of the real Schur form and redefines
+C     accordingly the position of the "last" block.
+C
+C     Note: Not all uncontrollable eigenvalues of the pair (A,B) are
+C     necessarily detected by the eigenvalue assignment algorithm.
+C     Undetected uncontrollable eigenvalues may exist if NFP > 0 and/or
+C     NP < N-NFP.
+C
+C     REFERENCES
+C
+C     [1] Varga A.
+C         A Schur method for pole assignment.
+C         IEEE Trans. Autom. Control, Vol. AC-26, pp. 517-519, 1981.
+C
+C     NUMERICAL ASPECTS
+C                                            3
+C     The algorithm requires no more than 14N  floating point
+C     operations. Although no proof of numerical stability is known,
+C     the algorithm has always been observed to yield reliable
+C     numerical results.
+C
+C     CONTRIBUTOR
+C
+C     A. Varga, German Aerospace Center, DLR Oberpfaffenhofen.
+C     February 1999. Based on the RASP routine SB01BD.
+C
+C     REVISIONS
+C
+C     March 30, 1999, V. Sima, Research Institute for Informatics,
+C     Bucharest.
+C     April 4, 1999. A. Varga, German Aerospace Center,
+C     DLR Oberpfaffenhofen.
+C     May 18, 2003. A. Varga, German Aerospace Center,
+C     DLR Oberpfaffenhofen.
+C     Feb. 15, 2004, V. Sima, Research Institute for Informatics,
+C     Bucharest.
+C     May 12, 2005. A. Varga, German Aerospace Center,
+C     DLR Oberpfaffenhofen.
+C     Dec. 29, 2012, V. Sima, Research Institute for Informatics,
+C     Bucharest.
+C
+C     KEYWORDS
+C
+C     Eigenvalues, eigenvalue assignment, feedback control,
+C     pole placement, state-space model.
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION HUNDR, ONE, TWO, ZERO
+      PARAMETER        ( HUNDR = 1.0D2, ONE = 1.0D0, TWO = 2.0D0, &
+                        ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER        DICO
+      INTEGER          INFO, IWARN, LDA, LDB, LDF, LDWORK, LDZ, M, N, &
+                       NAP, NFP, NP, NUP
+      DOUBLE PRECISION ALPHA, TOL
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+           WI(*), WR(*), Z(LDZ,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+           WI(*), WR(*), Z(LDZ,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED F:64
+      !DIR$ ASSUME_ALIGNED WI:64
+      !DIR$ ASSUME_ALIGNED WR:64
+      !DIR$ ASSUME_ALIGNED Z:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL          CEIG, DISCR, SIMPLB
+      INTEGER          I, IB, IB1, IERR, IPC, J, K, KFI, KG, KW, KWI, &
+                      KWR, NCUR, NCUR1, NL, NLOW, NMOVES, NPC, NPR,   &
+                      NSUP, WRKOPT
+      DOUBLE PRECISION ANORM, BNORM, C, P, RMAX, S, X, Y, TOLER, TOLERB
+!C     .. Local Arrays ..
+      LOGICAL          BWORK(1)
+      DOUBLE PRECISION A2(2,2)
+!C     .. External Functions ..
+      LOGICAL           SELECT
+      DOUBLE PRECISION  DLANGE
+      EXTERNAL          DLANGE, SELECT
+!C     .. External Subroutines ..
+      EXTERNAL         DCOPY, DGEES, DGEMM, DLAEXC, DLASET, DROT, &
+                       DSWAP
+!C     .. Intrinsic Functions ..
+      INTRINSIC        DBLE, INT, MAX
+!C     ..
+!C     .. Executable Statements ..
+!C
+      DISCR = LSAME( DICO, 'D' )
+      IWARN = 0
+      INFO  = 0
+!C
+!C     Check the scalar input parameters.
+!C
+      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( NP.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( DISCR .AND. ( ALPHA.LT.ZERO ) ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -7
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -9
+      ELSE IF( LDF.LT.MAX( 1, M ) ) THEN
+         INFO = -16
+      ELSE IF( LDZ.LT.MAX( 1, N ) ) THEN
+         INFO = -18
+      ELSE IF( LDWORK.LT.MAX( 1, 5*M, 5*N, 2*N + 4*M ) ) THEN
+         INFO = -21
+      END IF
+      IF( INFO.NE.0 )THEN
+           RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( N.EQ.0 ) THEN
+         NFP = 0
+         NAP = 0
+         NUP = 0
+         DWORK(1) = ONE
+         RETURN
+      END IF
+!C
+!C     Compute the norms of A and B, and set default tolerances
+!C     if necessary.
+!C
+      ANORM = DLANGE( '1-norm', N, N, A, LDA, DWORK )
+      BNORM = DLANGE( '1-norm', N, M, B, LDB, DWORK )
+      IF( TOL.LE.ZERO ) THEN
+         X = DLAMCH( 'Epsilon' )
+         TOLER  = DBLE( N ) * MAX( ANORM, BNORM ) * X
+         TOLERB = DBLE( N ) * BNORM * X
+      ELSE
+         TOLER  = TOL
+         TOLERB = TOL
+      END IF
+!C
+!C     Allocate working storage.
+!C
+      KWR = 1
+      KWI = KWR + N
+      KW  = KWI + N
+!C
+!C     Reduce A to real Schur form using an orthogonal similarity
+!C     transformation A <- Z'*A*Z and accumulate the transformation in Z.
+!C
+!C     Workspace:  need   5*N;
+!C                 prefer larger.
+!C
+      CALL DGEES( 'Vectors', 'No ordering', SELECT, N, A, LDA, NCUR, &
+                 DWORK(KWR), DWORK(KWI), Z, LDZ, DWORK(KW), &
+                 LDWORK-KW+1, BWORK, INFO )
+      WRKOPT = KW - 1 + INT( DWORK( KW ) )
+      IF( INFO.NE.0 ) THEN
+         INFO = 1
+         RETURN
+      END IF
+!C
+!C     Reduce A to an ordered real Schur form using an orthogonal
+!C     similarity transformation A <- Z'*A*Z and accumulate the
+!C     transformations in Z. The separation of the spectrum of A is
+!C     performed such that the leading NFP-by-NFP submatrix of A
+!C     corresponds to the "good" eigenvalues which will not be
+!C     modified. The bottom (N-NFP)-by-(N-NFP) diagonal block of A
+!C     corresponds to the "bad" eigenvalues to be modified.
+!C
+!C     Workspace needed:  N.
+!C
+      CALL MB03QD( DICO, 'Stable', 'Update', N, 1, N, ALPHA, &
+                  A, LDA, Z, LDZ, NFP, DWORK, INFO )
+      IF( INFO.NE.0 ) &
+          RETURN
+!C
+!C     Set F = 0.
+!C
+      CALL DLASET( 'Full', M, N, ZERO, ZERO, F, LDF )
+!C
+!C     Return if B is negligible (uncontrollable system).
+!C
+      IF( BNORM.LE.TOLERB ) THEN
+         NAP = 0
+         NUP = N
+         DWORK(1) = WRKOPT
+         RETURN
+      END IF
+!C
+!C     Compute the bound for the numerical stability condition.
+!C
+      RMAX = HUNDR * ANORM / BNORM
+!C
+!C     Perform eigenvalue assignment if there exist "bad" eigenvalues.
+!C
+      NAP = 0
+      NUP = 0
+      IF( NFP.LT.N ) THEN
+         KG  = 1
+         KFI = KG  + 2*M
+         KW  = KFI + 2*M
+!C
+!C        Set the limits for the bottom diagonal block.
+!C
+         NLOW = NFP + 1
+         NSUP = N
+!C
+!C        Separate and count real and complex eigenvalues to be assigned.
+!C
+         NPR = 0
+         DO 10 I = 1, NP
+            IF( WI(I).EQ.ZERO ) THEN
+               NPR = NPR + 1
+               K = I - NPR
+               IF( K.GT.0 ) THEN
+                  S = WR(I)
+                  DO 5 J = NPR + K - 1, NPR, -1
+                     WR(J+1) = WR(J)
+                     WI(J+1) = WI(J)
+    5             CONTINUE
+                  WR(NPR) = S
+                  WI(NPR) = ZERO
+               END IF
+            END IF
+   10    CONTINUE
+         NPC = NP - NPR
+!C
+!C        The first NPR elements of WR and WI contain the real
+!C        eigenvalues, the last NPC elements contain the complex
+!C        eigenvalues. Set the pointer to complex eigenvalues.
+!C
+         IPC = NPR + 1
+!C
+!C        Main loop for assigning one or two eigenvalues.
+!C
+!C        Terminate if all eigenvalues were assigned, or if there
+!C        are no more eigenvalues to be assigned, or if a non-fatal
+!C        error condition was set.
+!C
+!C        WHILE (NLOW <= NSUP and INFO = 0) DO
+!C
+   20    IF( NLOW.LE.NSUP .AND. INFO.EQ.0 ) THEN
+!C
+!C           Determine the dimension of the last block.
+!C
+            IB = 1
+            IF( NLOW.LT.NSUP ) THEN
+               IF( A(NSUP,NSUP-1).NE.ZERO ) IB = 2
+            END IF
+!C
+!C           Compute G, the current last IB rows of Z'*B.
+!C
+            NL = NSUP - IB + 1
+            CALL DGEMM( 'Transpose', 'NoTranspose', IB, M, N, ONE, &
+                       Z(1,NL), LDZ, B, LDB, ZERO, DWORK(KG), IB )
+!C
+!C           Check the controllability for a simple block.
+!C
+            IF( DLANGE( '1', IB, M, DWORK(KG), IB, DWORK(KW) )  &
+                .LE. TOLERB ) THEN
+!C
+!C              Deflate the uncontrollable block and resume the
+!C              main loop.
+!C
+               NSUP = NSUP - IB
+               NUP = NUP + IB
+               GO TO 20
+            END IF
+!C
+!C           Test for termination with INFO = 3.
+!C
+            IF( NAP.EQ.NP ) THEN
+               INFO = 3
+!C
+!C              Test for compatibility. Terminate if an attempt occurs
+!C              to place a complex conjugate pair on a 1x1 block.
+!C
+            ELSE IF( IB.EQ.1 .AND. NPR.EQ.0 .AND. NLOW.EQ.NSUP ) THEN
+               INFO = 4
+            ELSE
+!C
+!C              Set the simple block flag.
+!C
+               SIMPLB = .TRUE.
+!C
+!C              Form a 2-by-2 block if necessary from two 1-by-1 blocks.
+!C              Consider special case IB = 1, NPR = 1 and
+!C              NPR+NPC > NSUP-NLOW+1 to avoid incompatibility.
+!C
+               IF( ( IB.EQ.1 .AND. NPR.EQ.0 ) .OR.  &
+                  ( IB.EQ.1 .AND. NPR.EQ.1 .AND. NSUP.GT.NLOW .AND. &
+                    NPR+NPC.GT.NSUP-NLOW+1 ) ) THEN
+                  IF( NSUP.GT.2 ) THEN
+                     IF( A(NSUP-1,NSUP-2).NE.ZERO ) THEN
+!C
+!C                       Interchange with the adjacent 2x2 block.
+!C
+!C                       Workspace needed: N.
+!C
+                        CALL DLAEXC( .TRUE., N, A, LDA, Z, LDZ, NSUP-2,  &
+                                     2, 1, DWORK(KW), INFO )
+                        IF( INFO.NE.0 ) THEN
+                           INFO = 2
+                           RETURN
+                        END IF
+                     ELSE
+!C
+!C                       Form a non-simple block by extending the last
+!C                       block with a 1x1 block.
+!C
+                        SIMPLB = .FALSE.
+                     END IF
+                  ELSE
+                     SIMPLB = .FALSE.
+                  END IF
+                  IB = 2
+                  NL = NSUP - IB + 1
+!C
+!C                 Compute G, the current last IB rows of Z'*B.
+!C
+                  CALL DGEMM( 'Transpose', 'NoTranspose', IB, M, N, ONE, &
+                             Z(1,NL), LDZ, B, LDB, ZERO, DWORK(KG), IB )
+                            
+!C
+!C                 Check the controllability for the current block.
+!C
+                  IF( DLANGE( '1', IB, M, DWORK(KG), IB, DWORK(KW) ) &
+                    .LE.TOLERB ) THEN
+!C
+!C                    Deflate the uncontrollable block and resume the
+!C                    main loop.
+!C
+                     NSUP = NSUP - IB
+                     NUP = NUP + IB
+                     GO TO 20
+                  END IF
+               END IF
+!C
+               IF( NAP+IB.GT.NP ) THEN
+!C
+!C                 No sufficient eigenvalues to be assigned.
+!C
+                  INFO = 3
+               ELSE
+                  IF( IB.EQ.1 ) THEN
+!C
+!1C                    A 1-by-1 block.
+!C
+!C                    Assign the real eigenvalue nearest to A(NSUP,NSUP).
+!C
+                     X = A(NSUP,NSUP)
+                     CALL SB01BX( .TRUE., NPR, X, X, WR, X, S, P )
+                     NPR  = NPR - 1
+                     CEIG = .FALSE.
+                  ELSE
+!C
+!C                    A 2-by-2 block.
+!C
+                     IF( SIMPLB ) THEN
+!C
+!C                       Simple 2-by-2 block with complex eigenvalues.
+!C                       Compute the eigenvalues of the last block.
+!C
+                        CALL MB03QY( N, NL, A, LDA, Z, LDZ, X, Y, INFO )
+                        IF( NPC.GT.1 ) THEN
+                           CALL SB01BX( .FALSE., NPC, X, Y, &
+                                       WR(IPC), WI(IPC), S, P )
+                           NPC  = NPC - 2
+                           CEIG = .TRUE.
+                        ELSE
+!C
+!C                          Choose the nearest two real eigenvalues.
+!C
+                           CALL SB01BX( .TRUE., NPR, X, X, WR, X, S, P )
+                           CALL SB01BX( .TRUE., NPR-1, X, X, WR, X,  &
+                                        Y, P )
+                           P = S * Y
+                           S = S + Y
+                           NPR = NPR - 2
+                           CEIG = .FALSE.
+                        END IF
+                     ELSE
+!C
+!C                       Non-simple 2x2 block with real eigenvalues.
+!C                       Choose the nearest pair of complex eigenvalues.
+!C
+                        X = ( A(NL,NL) + A(NSUP,NSUP) )/TWO
+                        CALL SB01BX( .FALSE., NPC, X, ZERO, WR(IPC), &
+                                   WI(IPC), S, P )
+                        NPC = NPC - 2
+                     END IF
+                  END IF
+!C
+!C                 Form the IBxIB matrix A2 from the current diagonal
+!C                 block.
+!!C
+                  A2(1,1) = A(NL,NL)
+                  IF( IB.GT.1 ) THEN
+                     A2(1,2) = A(NL,NSUP)
+                     A2(2,1) = A(NSUP,NL)
+                     A2(2,2) = A(NSUP,NSUP)
+                  END IF
+!C
+!C                 Determine the M-by-IB feedback matrix FI which
+!C                 assigns the chosen IB eigenvalues for the pair (A2,G).
+!C
+!C                 Workspace needed: 5*M.
+!C
+                  CALL SB01BY( IB, M, S, P, A2, DWORK(KG), DWORK(KFI),  &
+                              TOLER, DWORK(KW), IERR )
+                  IF( IERR.NE.0 ) THEN
+                     IF( IB.EQ.1 .OR. SIMPLB ) THEN
+!C
+!C                       The simple 1x1 block is uncontrollable.
+!C
+                        NSUP = NSUP - IB
+                        IF( CEIG ) THEN
+                           NPC = NPC + IB
+                        ELSE
+                           NPR = NPR + IB
+                        END IF
+                        NUP  = NUP + IB
+                     ELSE
+!C
+!C                       The non-simple 2x2 block is uncontrollable.
+!C                       Eliminate its uncontrollable part by using
+!C                       the information in elements FI(1,1) and F(1,2).
+!C
+                        C = DWORK(KFI)
+                        S = DWORK(KFI+IB)
+!C
+!C                       Apply the transformation to A and accumulate it
+!C                       in Z.
+!C
+                        CALL DROT( N-NL+1, A(NL,NL), LDA,  &
+                                  A(NSUP,NL), LDA, C, S )
+                        CALL DROT( N, A(1,NL), 1, A(1,NSUP), 1, C, S )
+                        CALL DROT( N, Z(1,NL), 1, Z(1,NSUP), 1, C, S )
+!C
+!C                       Annihilate the subdiagonal element of the last
+!C                       block, redefine the upper limit for the bottom
+!C                       block and resume the main loop.
+!C
+                        A(NSUP,NL) = ZERO
+                        NSUP = NL
+                        NUP  = NUP + 1
+                        NPC  = NPC + 2
+                     END IF
+                  ELSE
+!C
+!C                    Successful assignment of IB eigenvalues.
+!C
+!C                    Update the feedback matrix F <-- F + [0 FI]*Z'.
+!C
+                     CALL DGEMM( 'NoTranspose', 'Transpose', M, N, &
+                                IB, ONE, DWORK(KFI), M, Z(1,NL),   &
+                                LDZ, ONE, F, LDF )
+!C
+!C                    Check for possible numerical instability.
+!C
+                     IF( DLANGE( '1', M, IB, DWORK(KFI), M, DWORK(KW) ) &
+                                .GT. RMAX ) IWARN = IWARN + 1
+!C
+!C                    Update the state matrix A <-- A + Z'*B*[0 FI].
+!C                    Workspace needed: 2*N+4*M.
+!C
+                     CALL DGEMM( 'NoTranspose', 'NoTranspose', N, IB, &
+                                M, ONE, B, LDB, DWORK(KFI), M, ZERO,  &
+                                DWORK(KW), N )
+                     CALL DGEMM( 'Transpose', 'NoTranspose', NSUP,    & 
+                                IB, N, ONE, Z, LDZ, DWORK(KW), N,    &
+                                ONE, A(1,NL), LDA )
+!C
+!C                    Try to split the 2x2 block.
+!C
+                     IF( IB.EQ.2 ) &
+                      CALL MB03QY( N, NL, A, LDA, Z, LDZ, X, Y, &
+                                   INFO )
+                     NAP = NAP + IB
+                     IF( NLOW+IB.LE.NSUP ) THEN
+!C
+!C                       Move the last block(s) to the leading
+!C                       position(s) of the bottom block.
+!C
+                        NCUR1 = NSUP - IB
+                        NMOVES = 1
+                        IF( IB.EQ.2 .AND. A(NSUP,NSUP-1).EQ.ZERO ) THEN
+                           IB = 1
+                           NMOVES = 2
+                        END IF
+!C
+!C                       WHILE (NMOVES > 0) DO
+   30                   IF( NMOVES.GT.0 ) THEN
+                           NCUR = NCUR1
+!C
+!C                          WHILE (NCUR >= NLOW) DO
+   40                      IF( NCUR.GE.NLOW ) THEN
+!C
+!C                             Loop for the last block positioning.
+!C
+                              IB1 = 1
+                              IF( NCUR.GT.NLOW ) THEN
+                                 IF( A(NCUR,NCUR-1).NE.ZERO ) IB1 = 2
+                              END IF
+                              CALL DLAEXC( .TRUE., N, A, LDA, Z, LDZ, &
+                                          NCUR-IB1+1, IB1, IB,        &
+                                          DWORK(KW), INFO )
+                              IF( INFO.NE.0 ) THEN
+                                 INFO = 2
+                                 RETURN
+                              END IF
+                              NCUR = NCUR - IB1
+                              GO TO 40
+                           END IF
+!C
+!C                          END WHILE 40
+!C
+                           NMOVES = NMOVES - 1
+                           NCUR1 = NCUR1 + 1
+                           NLOW = NLOW + IB
+                           GO TO 30
+                        END IF
+!C
+!C                       END WHILE 30
+!C
+                     ELSE
+                        NLOW = NLOW + IB
+                     END IF
+                  END IF
+               END IF
+            END IF
+            IF( INFO.EQ.0 ) GO TO 20
+!C
+!C        END WHILE 20
+!C
+         END IF
+!C
+         WRKOPT = MAX( WRKOPT, 5*M, 2*N + 4*M )
+      END IF
+!C
+!C     Annihilate the elements below the first subdiagonal of A.
+!C
+      IF( N.GT.2) &
+        CALL DLASET( 'L', N-2, N-2, ZERO, ZERO, A(3,1), LDA )
+      IF( NAP .GT. 0 ) THEN
+!C
+!C        Move the assigned eigenvalues in the first NAP positions of
+!C        WR and WI.
+!C
+         K = IPC - NPR - 1
+         IF( K.GT.0 ) THEN
+            IF( K.LE.NPR ) THEN
+               CALL DSWAP( K, WR(NPR+1), 1, WR, 1 )
+            ELSE
+               CALL DCOPY( K, WR(NPR+1), 1, DWORK, 1 )
+               CALL DCOPY( NPR, WR, 1, DWORK(K+1), 1 )
+               CALL DCOPY( K+NPR, DWORK, 1, WR, 1 )
+            END IF
+         END IF
+         J = NAP - K
+         IF( J.GT.0 ) THEN
+            CALL DSWAP( J, WR(IPC+NPC), 1, WR(K+1), 1 )
+            CALL DSWAP( J, WI(IPC+NPC), 1, WI(K+1), 1 )
+         END IF
+      END IF
+!C
+      DWORK(1) = WRKOPT
+!C
+   
+END SUBROUTINE SB01BD
+
+#if defined(__GFORTAN__) && (!defined(__ICC) || defined(__INTEL_COMPILER))
+SUBROUTINE SB01BX(REIG,N,XR,XI,WR,WI,S,P) !GCC$ ATTRIBUTES INLINE :: SB01BX !GCC$ ATTRIBUTES ALIGNED(32) :: SB01BX
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE SB01BX(REIG,N,XR,XI,WR,WI,S,P)
+ !DIR$ ATTRIBUTES FORCEINLINE :: SB01BX
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB01BX
+!DIR$ OPTIMIZE : 3
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: SB01BX
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To choose a real eigenvalue or a pair of complex conjugate
+C     eigenvalues at "minimal" distance to a given real or complex
+C     value.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     REIG    LOGICAL
+C             Specifies the type of eigenvalues as follows:
+C             = .TRUE.,  a real eigenvalue is to be selected;
+C             = .FALSE., a pair of complex eigenvalues is to be
+C                        selected.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The number of eigenvalues contained in the arrays WR
+C             and WI.  N >= 1.
+C
+C     XR,XI   (input) DOUBLE PRECISION
+C             If REIG = .TRUE., XR must contain the real value and XI
+C             is assumed zero and therefore not referenced.
+C             If REIG = .FALSE., XR must contain the real part and XI
+C             the imaginary part, respectively, of the complex value.
+C
+C     WR,WI   (input/output) DOUBLE PRECISION array, dimension (N)
+C             On entry, if REIG = .TRUE., WR must contain the real
+C             eigenvalues from which an eigenvalue at minimal distance
+C             to XR is to be selected. In this case, WI is considered
+C             zero and therefore not referenced.
+C             On entry, if REIG = .FALSE., WR and WI must contain the
+C             real and imaginary parts, respectively, of the eigenvalues
+C             from which a pair of complex conjugate eigenvalues at
+C             minimal "distance" to XR + jXI is to be selected.
+C             The eigenvalues of each pair of complex conjugate
+C             eigenvalues must appear consecutively.
+C             On exit, the elements of these arrays are reordered such
+C             that the selected eigenvalue(s) is (are) found in the
+C             last element(s) of these arrays.
+C
+C     S,P     (output) DOUBLE PRECISION
+C             If REIG = .TRUE., S (and also P) contains the value of
+C             the selected real eigenvalue.
+C             If REIG = .FALSE., S and P contain the sum and product,
+C             respectively, of the selected complex conjugate pair of
+C             eigenvalues.
+C
+C     FURTHER COMMENTS
+C
+C     For efficiency reasons, |x| + |y| is used for a complex number
+C     x + jy, instead of its modulus.
+C
+C     CONTRIBUTOR
+C
+C     A. Varga, German Aerospace Center, DLR Oberpfaffenhofen.
+C     February 1999. Based on the RASP routine PMDIST.
+C
+C     REVISIONS
+C
+C     March 30, 1999, V. Sima, Research Institute for Informatics,
+C     Bucharest.
+C     Feb. 15, 2004, V. Sima, Research Institute for Informatics,
+C     Bucharest.
+C
+C     ******************************************************************
+C
+#endif
+!C     .. Scalar Arguments ..
+      LOGICAL          REIG
+      INTEGER          N
+      DOUBLE PRECISION P, S, XI ,XR
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION WI(*), WR(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION WI(*), WR(*)
+      !DIR$ ASSUME_ALIGNED WI:64
+      !DIR$ ASSUME_ALIGNED WR:64
+#endif
+!C     .. Local Scalars ..
+      INTEGER          I, J, K
+      DOUBLE PRECISION X, Y
+!C     .. Intrinsic Functions ..
+      INTRINSIC        ABS
+!C     .. Executable Statements ..
+!C
+      J = 1
+      IF( REIG ) THEN
+         Y = ABS( WR(1)-XR )
+         DO 10 I = 2, N
+            X = ABS( WR(I)-XR )
+            IF( X .LT. Y ) THEN
+               Y = X
+               J = I
+            END IF
+   10    CONTINUE
+         S = WR(J)
+         K = N - J
+         IF( K .GT. 0 ) THEN
+            DO 20 I = J, J + K - 1
+               WR(I) = WR(I+1)
+   20       CONTINUE
+            WR(N) = S
+         END IF
+         P = S
+      ELSE
+         Y = ABS( WR(1)-XR ) + ABS( WI(1)-XI )
+         DO 30 I = 3, N, 2
+            X = ABS( WR(I)-XR ) + ABS( WI(I)-XI )
+            IF( X .LT. Y ) THEN
+               Y = X
+               J = I
+            END IF
+   30    CONTINUE
+         X = WR(J)
+         Y = WI(J)
+         K = N - J - 1
+         IF( K .GT. 0 ) THEN
+            DO 40 I = J, J + K - 1
+               WR(I) = WR(I+2)
+               WI(I) = WI(I+2)
+   40       CONTINUE
+            WR(N-1) = X
+            WI(N-1) = Y
+            WR(N) = X
+            WI(N) = -Y
+         END IF
+         S = X + X
+         P = X * X + Y * Y
+      END IF
+     
+END SUBROUTINE
+
+#if defined(__GFORTAN__) && (!defined(__ICC) || defined(__INTEL_COMPILER))
+SUBROUTINE SB01BY(N,M,S,P,A B,F,TOL,DWORK,INFO) !GCC$ ATTRIBUTES hot :: SB01BY !GCC$ ATTRIBUTES ALIGNED(32) :: SB01BY !GCC$ ATTRIBUTES no_stack_protector :: SB01BY
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE SB01BY(N,M,S,P,A B,F,TOL,DWORK,INFO)
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB01BY
+!DIR$ OPTIMIZE : 3
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: SB01BY
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To solve an N-by-N pole placement problem for the simple cases
+C     N = 1 or N = 2: given the N-by-N matrix A and N-by-M matrix B,
+C     construct an M-by-N matrix F such that A + B*F has prescribed
+C     eigenvalues. These eigenvalues are specified by their sum S and
+C     product P (if N = 2). The resulting F has minimum Frobenius norm.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrix A and also the number of rows of
+C             the matrix B and the number of columns of the matrix F.
+C             N is either 1, if a single real eigenvalue is prescribed
+C             or 2, if a complex conjugate pair or a set of two real
+C             eigenvalues are prescribed.
+C
+C     M       (input) INTEGER
+C             The number of columns of the matrix B and also the number
+C             of rows of the matrix F.  M >= 1.
+C
+C     S       (input) DOUBLE PRECISION
+C             The sum of the prescribed eigenvalues if N = 2 or the
+C             value of prescribed eigenvalue if N = 1.
+C
+C     P       (input) DOUBLE PRECISION
+C             The product of the prescribed eigenvalues if N = 2.
+C             Not referenced if N = 1.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (N,N)
+C             On entry, this array must contain the N-by-N state
+C             dynamics matrix whose eigenvalues have to be moved to
+C             prescribed locations.
+C             On exit, this array contains no useful information.
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (N,M)
+C             On entry, this array must contain the N-by-M input/state
+C             matrix B.
+C             On exit, this array contains no useful information.
+C
+C     F       (output) DOUBLE PRECISION array, dimension (M,N)
+C             The state feedback matrix F which assigns one pole or two
+C             poles of the closed-loop matrix A + B*F.
+C             If N = 2 and the pair (A,B) is not controllable
+C             (INFO = 1), then F(1,1) and F(1,2) contain the elements of
+C             an orthogonal rotation which can be used to remove the
+C             uncontrollable part of the pair (A,B).
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             The absolute tolerance level below which the elements of A
+C             and B are considered zero (used for controllability test).
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (M)
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             = 1:  if uncontrollability of the pair (A,B) is detected.
+C
+C     CONTRIBUTOR
+C
+C     A. Varga, German Aerospace Center,
+C     DLR Oberpfaffenhofen, July 1998.
+C     Based on the RASP routine SB01BY.
+C
+C     REVISIONS
+C
+C     Nov. 1998, V. Sima, Research Institute for Informatics, Bucharest.
+C     Dec. 1998, V. Sima, Katholieke Univ. Leuven, Leuven.
+C     May  2003, A. Varga, German Aerospace Center.
+C
+C     KEYWORDS
+C
+C     Eigenvalue, eigenvalue assignment, feedback control, pole
+C     placement, state-space model.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  FOUR, ONE, THREE, ZERO
+      PARAMETER         ( FOUR = 4.0D0,  ONE = 1.0D0, THREE = 3.0D0, &
+                         ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, M, N
+      DOUBLE PRECISION  P, S, TOL
+!C     .. Array Arguments ..
+      DOUBLE PRECISION  A(N,*), B(N,*), DWORK(*), F(M,*)
+!C     .. Local Scalars ..
+      INTEGER           IR, J
+      DOUBLE PRECISION  ABSR, B1, B2, B21, C, C0, C1, C11, C12, C21,    &
+                       C22, C3, C4, CS, CU, CV, DC0, DC2, DC3, DIFFR,  &
+                       R, RN, S12, S21, SIG, SN, SU, SV, TAU1, TAU2,   &
+                       WI, WI1, WR, WR1, X, Y, Z
+!C     .. External Functions ..
+      DOUBLE PRECISION  DLAMC3
+      EXTERNAL          DLAMC3
+!C     .. External Subroutines ..
+      EXTERNAL          DLANV2, DLARFG, DLASET, DLASV2, DLATZM, DROT
+!C     .. Intrinsic Functions ..
+      INTRINSIC         ABS, MIN
+!C     .. Executable Statements ..
+!C
+!C     For efficiency reasons, the parameters are not checked.
+!C
+      INFO = 0
+      IF( N.EQ.1 ) THEN
+!C
+!C        The case N = 1.
+!C
+         IF( M.GT.1 ) &
+            CALL DLARFG( M, B(1,1), B(1,2), N, TAU1 )
+         B1 = B(1,1)
+         IF( ABS( B1 ).LE.TOL ) THEN
+!C
+!C           The pair (A,B) is uncontrollable.
+!C
+            INFO = 1
+            RETURN
+         END IF
+!C
+         F(1,1) = ( S - A(1,1) )/B1
+         IF( M.GT.1 ) THEN
+            CALL DLASET( 'Full', M-1, 1, ZERO, ZERO, F(2,1), M )
+            CALL DLATZM( 'Left', M, N, B(1,2), N, TAU1, F(1,1), F(2,1), &
+                         M, DWORK )
+         END IF
+         RETURN
+      END IF
+!C
+!C     In the sequel N = 2.
+!C
+!C     Compute the singular value decomposition of B in the form
+!C
+!C                    ( V  0 )                ( B1 0  )
+!C     B = U*( G1 0 )*(      )*H2*H1 ,   G1 = (       ),
+!C                    ( 0  I )                ( 0  B2 )
+!C
+!C               ( CU   SU )          ( CV   SV )
+!C     where U = (         )  and V = (         )  are orthogonal
+!C               (-SU   CU )          (-SV   CV )
+!C
+!C     rotations and H1 and H2 are elementary Householder reflectors.
+!C     ABS(B1) and ABS(B2) are the singular values of matrix B,
+!C     with ABS(B1) >= ABS(B2).
+!C
+!C     Reduce first B to the lower bidiagonal form  ( B1  0  ... 0 ).
+!C                                                  ( B21 B2 ... 0 )
+      IF( M.EQ.1 ) THEN
+!C
+!C        Initialization for the case M = 1; no reduction required.
+!C
+         B1  = B(1,1)
+         B21 = B(2,1)
+         B2  = ZERO
+      ELSE
+!C
+!C        Postmultiply B with elementary Householder reflectors H1
+!C        and H2.
+!C
+         CALL DLARFG( M, B(1,1), B(1,2), N, TAU1 )
+         CALL DLATZM( 'Right', N-1, M, B(1,2), N, TAU1, B(2,1), B(2,2),  &
+                      N, DWORK )
+         B1  = B(1,1)
+         B21 = B(2,1)
+         IF( M.GT.2 ) &
+            CALL DLARFG( M-1, B(2,2), B(2,3), N, TAU2 )
+         B2  = B(2,2)
+      END IF
+!C
+!C     Reduce B to a diagonal form by premultiplying and postmultiplying
+!C     it with orthogonal rotations U and V, respectively, and order the
+!C     diagonal elements to have decreasing magnitudes.
+!C     Note: B2 has been set to zero if M = 1. Thus in the following
+!1C     computations the case M = 1 need not to be distinguished.
+!1C     Note also that LAPACK routine DLASV2 assumes an upper triangular
+!C     matrix, so the results should be adapted.
+!C
+      CALL DLASV2( B1, B21, B2, X, Y, SU, CU, SV, CV )
+      SU = -SU
+      B1 =  Y
+      B2 =  X
+!1C
+!C     Compute  A1 = U'*A*U.
+!C
+      CALL DROT( 2, A(2,1), 2, A(1,1), 2, CU, SU )
+      CALL DROT( 2, A(1,2), 1, A(1,1), 1, CU, SU )
+!C
+!C     Compute the rank of B and check the controllability of the
+!C     pair (A,B).
+!C
+      IR = 0
+      IF( ABS( B2 ).GT.TOL ) IR = IR + 1
+      IF( ABS( B1 ).GT.TOL ) IR = IR + 1
+      IF( IR.EQ.0 .OR. ( IR.EQ.1 .AND. ABS( A(2,1) ).LE.TOL ) ) THEN
+         F(1,1) =  CU
+         F(1,2) = -SU
+!C
+!C        The pair (A,B) is uncontrollable.
+!C
+         INFO = 1
+         RETURN
+      END IF
+!C
+!C     Compute F1 which assigns N poles for the reduced pair (A1,G1).
+!C
+      X = DLAMC3( B1, B2 )
+      IF( X.EQ.B1 ) THEN
+!C
+!C        Rank one G1.
+!C
+         F(1,1) = ( S - ( A(1,1) + A(2,2) ) )/B1
+         F(1,2) = -( A(2,2)*( A(2,2) - S ) + A(2,1)*A(1,2) + P )/ &
+                   A(2,1)/B1
+         IF( M.GT.1 ) THEN
+            F(2,1) = ZERO
+            F(2,2) = ZERO
+         END IF
+      ELSE
+!C
+!C        Rank two G1.
+!C
+         Z = ( S - ( A(1,1) + A(2,2) ) )/( B1*B1 + B2*B2 )
+         F(1,1) = B1*Z
+         F(2,2) = B2*Z
+!C
+!C        Compute an approximation for the minimum norm parameter
+!C        selection.
+!C
+         X = A(1,1) + B1*F(1,1)
+         C = X*( S - X ) - P
+         IF( C.GE.ZERO ) THEN
+            SIG =  ONE
+         ELSE
+            SIG = -ONE
+         END IF
+         S12 = B1/B2
+         S21 = B2/B1
+         C11 = ZERO
+         C12 = ONE
+         C21 = SIG*S12*C
+         C22 = A(1,2) - SIG*S12*A(2,1)
+         CALL DLANV2( C11, C12, C21, C22, WR, WI, WR1, WI1, CS, SN )
+         IF( ABS( WR - A(1,2) ).GT.ABS( WR1 - A(1,2) ) ) THEN
+            R = WR1
+         ELSE
+            R = WR
+         END IF
+!C
+!C        Perform Newton iteration to solve the equation for minimum.
+!C
+         C0 = -C*C
+         C1 =  C*A(2,1)
+         C4 =  S21*S21
+         C3 = -C4*A(1,2)
+         DC0 = C1
+         DC2 = THREE*C3
+         DC3 = FOUR*C4
+!C
+         DO 10 J = 1, 10
+            X  = C0 + R*( C1 + R*R*( C3 + R*C4 ) )
+            Y  = DC0 + R*R*( DC2 + R*DC3 )
+            IF( Y.EQ.ZERO ) EXIT
+            RN = R - X/Y
+            ABSR  = ABS( R )
+            DIFFR = ABS( R - RN )
+            Z = DLAMC3( ABSR, DIFFR )
+            IF( Z.EQ.ABSR ) &
+              EXIT
+            R = RN
+   10    CONTINUE
+!C
+   20    CONTINUE
+         IF( R.EQ.ZERO ) R = DLAMCH( 'Epsilon' )
+         F(1,2) = (  R  - A(1,2) )/B1
+         F(2,1) = ( C/R - A(2,1) )/B2
+      END IF
+!C
+!C     Back-transform F1. Compute first F1*U'.
+!C
+      CALL DROT( MIN( M, 2 ), F(1,1), 1, F(1,2), 1, CU, SU )
+      IF( M.EQ.1 ) &
+          RETURN
+!C
+!C     Compute V'*F1.
+!C
+      CALL DROT( 2, F(2,1), M, F(1,1), M, CV, SV )
+!C
+!C               ( F1 )
+!C     Form  F = (    ) .
+!C               ( 0  )
+!C
+      IF( M.GT.N ) &
+         CALL DLASET( 'Full', M-N, N, ZERO, ZERO, F(N+1,1), M )
+!C
+!C     Compute H1*H2*F.
+!C
+      IF( M.GT.2 ) &
+        CALL DLATZM( 'Left', M-1, N, B(2,3), N, TAU2, F(2,1), F(3,1), &
+                     M, DWORK )
+      CALL DLATZM( 'Left', M, N, B(1,2), N, TAU1, F(1,1), F(2,1), M,  &
+                   DWORK )
+
+END SUBROUTINE
+
+    
+    
+
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || defined(__INTEL_COMPILER))
+SUBROUTINE MB03QD( DICO, STDOM, JOBU, N, NLOW, NSUP, ALPHA, &
+     A, LDA, U, LDU, NDIM, DWORK, INFO ) !GCC$ ATTRIBUTES hot :: MB03QD !GCC$ ATTRIBUTES aligned(32) :: MB03QD !GCC$ ATTRIBUTES no_stack_protector :: MB03QD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE MB03QD( DICO, STDOM, JOBU, N, NLOW, NSUP, ALPHA, &
+       A, LDA, U, LDU, NDIM, DWORK, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB03QD
+!DIR$ OPTIMIZE : 3
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB03QD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To reorder the diagonal blocks of a principal submatrix of an
+C     upper quasi-triangular matrix A together with their eigenvalues by
+C     constructing an orthogonal similarity transformation UT.
+C     After reordering, the leading block of the selected submatrix of A
+C     has eigenvalues in a suitably defined domain of interest, usually
+C     related to stability/instability in a continuous- or discrete-time
+C     sense.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     DICO    CHARACTER*1
+C             Specifies the type of the spectrum separation to be
+C             performed as follows:
+C             = 'C':  continuous-time sense;
+C             = 'D':  discrete-time sense.
+C
+C     STDOM   CHARACTER*1
+C             Specifies whether the domain of interest is of stability
+C             type (left part of complex plane or inside of a circle)
+C             or of instability type (right part of complex plane or
+C             outside of a circle) as follows:
+C             = 'S':  stability type domain;
+C             = 'U':  instability type domain.
+C
+C     JOBU    CHARACTER*1
+C             Indicates how the performed orthogonal transformations UT
+C             are accumulated, as follows:
+C             = 'I':  U is initialized to the unit matrix and the matrix
+C                     UT is returned in U;
+C             = 'U':  the given matrix U is updated and the matrix U*UT
+C                     is returned in U.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A and U.  N >= 1.
+C
+C     NLOW,   (input) INTEGER
+C     NSUP    NLOW and NSUP specify the boundary indices for the rows
+C             and columns of the principal submatrix of A whose diagonal
+C             blocks are to be reordered.  1 <= NLOW <= NSUP <= N.
+C
+C     ALPHA   (input) DOUBLE PRECISION
+C             The boundary of the domain of interest for the eigenvalues
+C             of A. If DICO = 'C', ALPHA is the boundary value for the
+C             real parts of eigenvalues, while for DICO = 'D',
+C             ALPHA >= 0 represents the boundary value for the moduli of
+C             eigenvalues.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain a matrix in a real Schur form whose 1-by-1 and
+C             2-by-2 diagonal blocks between positions NLOW and NSUP
+C             are to be reordered.
+C             On exit, the leading N-by-N part contains the ordered
+!C             real Schur matrix UT' * A * UT with the elements below the
+C             first subdiagonal set to zero.
+C             The leading NDIM-by-NDIM part of the principal submatrix
+C             D = A(NLOW:NSUP,NLOW:NSUP) has eigenvalues in the domain
+C             of interest and the trailing part of this submatrix has
+C             eigenvalues outside the domain of interest.
+C             The domain of interest for lambda(D), the eigenvalues of
+C             D, is defined by the parameters ALPHA, DICO and STDOM as
+C             follows:
+C               For DICO = 'C':
+C                  Real(lambda(D)) < ALPHA if STDOM = 'S';
+C                  Real(lambda(D)) > ALPHA if STDOM = 'U'.
+C               For DICO = 'D':
+C                  Abs(lambda(D)) < ALPHA if STDOM = 'S';
+C                  Abs(lambda(D)) > ALPHA if STDOM = 'U'.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= N.
+C
+C     U       (input/output) DOUBLE PRECISION array, dimension (LDU,N)
+C             On entry with JOBU = 'U', the leading N-by-N part of this
+C             array must contain a transformation matrix (e.g. from a
+C             previous call to this routine).
+C             On exit, if JOBU = 'U', the leading N-by-N part of this
+C             array contains the product of the input matrix U and the
+C             orthogonal matrix UT used to reorder the diagonal blocks
+C             of A.
+C             On exit, if JOBU = 'I', the leading N-by-N part of this
+C             array contains the matrix UT of the performed orthogonal
+C             transformations.
+C             Array U need not be set on entry if JOBU = 'I'.
+C
+C     LDU     INTEGER
+C             The leading dimension of array U.  LDU >= N.
+C
+C     NDIM    (output) INTEGER
+C             The number of eigenvalues of the selected principal
+C             submatrix lying inside the domain of interest.
+C             If NLOW = 1, NDIM is also the dimension of the invariant
+C             subspace corresponding to the eigenvalues of the leading
+C             NDIM-by-NDIM submatrix. In this case, if U is the
+C             orthogonal transformation matrix used to compute and
+C             reorder the real Schur form of A, its first NDIM columns
+C             form an orthonormal basis for the above invariant
+C             subspace.
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (N)
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  A(NLOW,NLOW-1) is nonzero, i.e. A(NLOW,NLOW) is not
+C                   the leading element of a 1-by-1 or 2-by-2 diagonal
+C                   block of A, or A(NSUP+1,NSUP) is nonzero, i.e.
+C                   A(NSUP,NSUP) is not the bottom element of a 1-by-1
+C                   or 2-by-2 diagonal block of A;
+C             = 2:  two adjacent blocks are too close to swap (the
+C                   problem is very ill-conditioned).
+C
+C     METHOD
+C
+C     Given an upper quasi-triangular matrix A with 1-by-1 or 2-by-2
+C     diagonal blocks, the routine reorders its diagonal blocks along
+C     with its eigenvalues by performing an orthogonal similarity
+!C     transformation UT' * A * UT. The column transformation UT is also
+C     performed on the given (initial) transformation U (resulted from
+C     a possible previous step or initialized as the identity matrix).
+C     After reordering, the eigenvalues inside the region specified by
+C     the parameters ALPHA, DICO and STDOM appear at the top of
+C     the selected diagonal block between positions NLOW and NSUP.
+C     In other words, lambda(A(NLOW:NSUP,NLOW:NSUP)) are ordered such
+C     that lambda(A(NLOW:NLOW+NDIM-1,NLOW:NLOW+NDIM-1)) are inside and
+C     lambda(A(NLOW+NDIM:NSUP,NLOW+NDIM:NSUP)) are outside the domain
+C     of interest. If NLOW = 1, the first NDIM columns of U*UT span the
+C     corresponding invariant subspace of A.
+C
+C     REFERENCES
+C
+C     [1] Stewart, G.W.
+C         HQR3 and EXCHQZ: FORTRAN subroutines for calculating and
+C         ordering the eigenvalues of a real upper Hessenberg matrix.
+C         ACM TOMS, 2, pp. 275-280, 1976.
+C
+C     NUMERICAL ASPECTS
+C                                         3
+C     The algorithm requires less than 4*N  operations.
+C
+C     CONTRIBUTOR
+C
+C     A. Varga, German Aerospace Center, DLR Oberpfaffenhofen,
+C     April 1998. Based on the RASP routine SEOR1.
+C
+C     KEYWORDS
+C
+C     Eigenvalues, invariant subspace, orthogonal transformation, real
+C     Schur form, similarity transformation.
+C
+C    ******************************************************************
+C
+#endif
+!C     .. Parameters ..
+      DOUBLE PRECISION ONE, ZERO
+      PARAMETER        ( ONE = 1.0D0, ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER        DICO, JOBU, STDOM
+      INTEGER          INFO, LDA, LDU, N, NDIM, NLOW, NSUP
+      DOUBLE PRECISION ALPHA
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED U:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL          DISCR, LSTDOM
+      INTEGER          IB, L, LM1, NUP
+      DOUBLE PRECISION E1, E2, TLAMBD
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION DLAPY2
+      EXTERNAL         DLAPY2
+!C     .. External Subroutines ..
+      EXTERNAL         DLASET, DTREXC
+!C     .. Intrinsic Functions ..
+      INTRINSIC        ABS
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      DISCR = LSAME( DICO, 'D' )
+      LSTDOM = LSAME( STDOM, 'S' )
+!C
+!C     Check input scalar arguments.
+!C
+      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT. ( LSTDOM .OR. LSAME( STDOM, 'U' ) ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT. ( LSAME( JOBU, 'I' ) .OR.  &
+                      LSAME( JOBU, 'U' ) ) ) THEN
+         INFO = -3
+      ELSE IF( N.LT.1 ) THEN
+         INFO = -4
+      ELSE IF( NLOW.LT.1 ) THEN
+         INFO = -5
+      ELSE IF( NLOW.GT.NSUP .OR. NSUP.GT.N ) THEN
+         INFO = -6
+      ELSE IF( DISCR .AND. ALPHA.LT.ZERO ) THEN
+         INFO = -7
+      ELSE IF( LDA.LT.N ) THEN
+         INFO = -9
+      ELSE IF( LDU.LT.N ) THEN
+         INFO = -11
+      END IF
+!C
+      IF( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      END IF
+
+      IF( NLOW.GT.1 ) THEN
+         IF( A(NLOW,NLOW-1).NE.ZERO ) INFO = 1
+      END IF
+      IF( NSUP.LT.N ) THEN
+         IF( A(NSUP+1,NSUP).NE.ZERO ) INFO = 1
+      END IF
+      IF( INFO.NE.0 ) &
+          RETURN
+!C
+!C     Initialize U with an identity matrix if necessary.
+!C
+      IF( LSAME( JOBU, 'I' ) ) &
+        CALL DLASET( 'Full', N, N, ZERO, ONE, U, LDU )
+
+      NDIM = 0
+      L = NSUP
+      NUP = NSUP
+!C
+!C     NUP is the minimal value such that the submatrix A(i,j) with
+!C     NUP+1 <= i,j <= NSUP contains no eigenvalues inside the domain of
+!C     interest. L is such that all the eigenvalues of the submatrix
+!C     A(i,j) with L+1 <= i,j <= NUP lie inside the domain of interest.
+!C
+!C     WHILE( L >= NLOW ) DO
+!C
+   10 IF( L.GE.NLOW ) THEN
+         IB = 1
+         IF( L.GT.NLOW ) THEN
+            LM1 = L - 1
+            IF( A(L,LM1).NE.ZERO ) THEN
+               CALL MB03QY( N, LM1, A, LDA, U, LDU, E1, E2, INFO )
+               IF( A(L,LM1).NE.ZERO ) IB = 2
+            END IF
+         END IF
+         IF( DISCR ) THEN
+            IF( IB.EQ.1 ) THEN
+               TLAMBD = ABS( A(L,L) )
+            ELSE
+               TLAMBD = DLAPY2( E1, E2 )
+            END IF
+         ELSE
+            IF( IB.EQ.1 ) THEN
+               TLAMBD = A(L,L)
+            ELSE
+               TLAMBD = E1
+            END IF
+         END IF
+         IF( (      LSTDOM .AND. TLAMBD.LT.ALPHA ) .OR.    &
+             ( .NOT.LSTDOM .AND. TLAMBD.GT.ALPHA ) ) THEN
+            NDIM = NDIM + IB
+            L = L - IB
+         ELSE
+            IF( NDIM.NE.0 ) THEN
+               CALL DTREXC( 'V', N, A, LDA, U, LDU, L, NUP, DWORK,  &
+                           INFO )
+               IF( INFO.NE.0 ) THEN
+                  INFO = 2
+                  RETURN
+               END IF
+               NUP = NUP - 1
+               L = L - 1
+            ELSE
+               NUP = NUP - IB
+               L = L - IB
+            END IF
+         END IF
+         GO TO 10
+      END IF
+
+END SUBROUTINE 
+
+#if defined(__GFORTRAN__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+SUBROUTINE MB03QY(N,L,A,LDA,U,LDU,E1,E2,INFO) !GCC$ ATTRIBUTES INLINE :: MB03QY !GCC$ ATTRIBUTES ALIGNED(32) :: MB03QY
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE MB03QY(N,L,A,LDA,U,LDU,E1,E2,INFO)
+    !DIR$ ATTRIBUTES FORCEINLINE :: MB03QY
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB03QY
+!DIR$ OPTIMIZE : 3
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB03QY
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute the eigenvalues of a selected 2-by-2 diagonal block
+C     of an upper quasi-triangular matrix, to reduce the selected block
+C     to the standard form and to split the block in the case of real
+C     eigenvalues by constructing an orthogonal transformation UT.
+C     This transformation is applied to A (by similarity) and to
+C     another matrix U from the right.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A and UT.  N >= 2.
+C
+C     L       (input) INTEGER
+C             Specifies the position of the block.  1 <= L < N.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the upper quasi-triangular matrix A whose
+C             selected 2-by-2 diagonal block is to be processed.
+C             On exit, the leading N-by-N part of this array contains
+C             the upper quasi-triangular matrix A after its selected
+C             block has been splitt and/or put in the LAPACK standard
+C             form.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= N.
+C
+C     U       (input/output) DOUBLE PRECISION array, dimension (LDU,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain a transformation matrix U.
+C             On exit, the leading N-by-N part of this array contains
+C             U*UT, where UT is the transformation matrix used to
+C             split and/or standardize the selected block.
+C
+C     LDU     INTEGER
+C             The leading dimension of array U.  LDU >= N.
+C
+C     E1, E2  (output) DOUBLE PRECISION
+C             E1 and E2 contain either the real eigenvalues or the real
+C             and positive imaginary parts, respectively, of the complex
+C             eigenvalues of the selected 2-by-2 diagonal block of A.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     Let A1 = ( A(L,L)    A(L,L+1)   )
+C              ( A(L+1,L)  A(L+1,L+1) )
+C     be the specified 2-by-2 diagonal block of matrix A.
+C     If the eigenvalues of A1 are complex, then they are computed and
+C     stored in E1 and E2, where the real part is stored in E1 and the
+C     positive imaginary part in E2. The 2-by-2 block is reduced if
+C     necessary to the standard form, such that A(L,L) = A(L+1,L+1), and
+C     A(L,L+1) and A(L+1,L) have oposite signs. If the eigenvalues are
+C     real, the 2-by-2 block is reduced to an upper triangular form such
+C     that ABS(A(L,L)) >= ABS(A(L+1,L+1)).
+C     In both cases, an orthogonal rotation U1' is constructed such that
+C     U1'*A1*U1 has the appropriate form. Let UT be an extension of U1
+!C     to an N-by-N orthogonal matrix, using identity submatrices. Then A
+!C     is replaced by UT'*A*UT and the contents of array U is U * UT.
+C
+C     CONTRIBUTOR
+C
+C     A. Varga, German Aerospace Center, DLR Oberpfaffenhofen,
+C     March 1998. Based on the RASP routine SPLITB.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Eigenvalues, orthogonal transformation, real Schur form,
+C     similarity transformation.
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION ZERO
+      PARAMETER        ( ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      INTEGER          INFO, L, LDA, LDU, N
+      DOUBLE PRECISION E1, E2
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION A(LDA,*), U(LDU,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION A(LDA,*), U(LDU,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED U:64
+#endif
+!C     .. Local Scalars ..
+      INTEGER          L1
+      DOUBLE PRECISION EW1, EW2, CS, SN
+!C     .. External Subroutines ..
+      EXTERNAL         DLANV2, DROT
+!1C     .. Executable Statements ..
+!C
+      INFO = 0
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( N.LT.2 ) THEN
+         INFO = -1
+      ELSE IF( L.LT.1 .OR. L.GE.N ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.N ) THEN
+         INFO = -4
+      ELSE IF( LDU.LT.N ) THEN
+         INFO = -6
+      END IF
+
+      IF( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      END IF
+!C
+!C     Compute the eigenvalues and the elements of the Givens
+!C     transformation.
+!C
+      L1 = L + 1
+      CALL DLANV2( A(L,L), A(L,L1), A(L1,L), A(L1,L1), E1, E2, &
+                   EW1, EW2, CS, SN )
+      IF( E2.EQ.ZERO ) E2 = EW1
+!C
+!C     Apply the transformation to A.
+!C
+      IF( L1.LT.N ) &
+         CALL DROT( N-L1, A(L,L1+1), LDA, A(L1,L1+1), LDA, CS, SN )
+      CALL DROT( L-1, A(1,L), 1, A(1,L1), 1, CS, SN )
+!C
+!C     Accumulate the transformation in U.
+!C
+      CALL DROT( N, U(1,L), 1, U(1,L1), 1, CS, SN )
+!C
+ 
+END SUBROUTINE MB03QY
 
 
 
