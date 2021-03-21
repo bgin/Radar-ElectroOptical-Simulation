@@ -6618,7 +6618,2159 @@ C
  
 END SUBROUTINE MB03QY
 
+#if defined(__GFORTRAN__) && (!defined(__ICC) || defined(__INTEL_COMPILER))
+SUBROUTINE TB04CD( JOBD, EQUIL, N, M, P, NPZ, A, LDA, B, LDB, C,  &
+LDC, D, LDD, NZ, LDNZ, NP, LDNP, ZEROSR,                          &
+ZEROSI, POLESR, POLESI, GAINS, LDGAIN, TOL,                       &
+IWORK, DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES HOT :: TB04CD !GCC$ ATTRIBUTES ALIGNED(32) :: TB04CD !GCC$ ATTRIBUTES no_stack_protector :: TB04CD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE TB04CD( JOBD, EQUIL, N, M, P, NPZ, A, LDA, B, LDB, C,  &
+LDC, D, LDD, NZ, LDNZ, NP, LDNP, ZEROSR,                          &
+ZEROSI, POLESR, POLESI, GAINS, LDGAIN, TOL,                       &
+IWORK, DWORK, LDWORK, INFO )
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TB04CD
+!DIR$ OPTIMIZE : 3
+!DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: TB04CD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute the transfer function matrix G of a state-space
+C     representation (A,B,C,D) of a linear time-invariant multivariable
+C     system, using the pole-zeros method. The transfer function matrix
+C     is returned in a minimal pole-zero-gain form.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOBD    CHARACTER*1
+C             Specifies whether or not a non-zero matrix D appears in
+C             the given state-space model:
+C             = 'D':  D is present;
+C             = 'Z':  D is assumed to be a zero matrix.
+C
+C     EQUIL   CHARACTER*1
+C             Specifies whether the user wishes to preliminarily
+C             equilibrate the triplet (A,B,C) as follows:
+C             = 'S':  perform equilibration (scaling);
+C             = 'N':  do not perform equilibration.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the system (A,B,C,D).  N >= 0.
+C
+C     M       (input) INTEGER
+C             The number of the system inputs.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of the system outputs.  P >= 0.
+C
+C     NPZ     (input) INTEGER
+C             The maximum number of poles or zeros of the single-input
+C             single-output channels in the system. An upper bound
+C             for NPZ is N.  NPZ >= 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the original state dynamics matrix A.
+C             On exit, if EQUIL = 'S', the leading N-by-N part of this
+C             array contains the balanced matrix inv(S)*A*S, as returned
+C             by SLICOT Library routine TB01ID.
+C             If EQUIL = 'N', this array is unchanged on exit.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,M)
+C             On entry, the leading N-by-M part of this array must
+C             contain the input matrix B.
+C             On exit, the contents of B are destroyed: all elements but
+C             those in the first row are set to zero.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,N).
+C
+C     C       (input/output) DOUBLE PRECISION array, dimension (LDC,N)
+C             On entry, the leading P-by-N part of this array must
+C             contain the output matrix C.
+C             On exit, if EQUIL = 'S', the leading P-by-N part of this
+C             array contains the balanced matrix C*S, as returned by
+C             SLICOT Library routine TB01ID.
+C             If EQUIL = 'N', this array is unchanged on exit.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,P).
+C
+C     D       (input) DOUBLE PRECISION array, dimension (LDD,M)
+C             If JOBD = 'D', the leading P-by-M part of this array must
+C             contain the matrix D.
+C             If JOBD = 'Z', the array D is not referenced.
+C
+C     LDD     INTEGER
+C             The leading dimension of array D.
+C             LDD >= MAX(1,P), if JOBD = 'D';
+C             LDD >= 1,        if JOBD = 'Z'.
+C
+C     NZ      (output) INTEGER array, dimension (LDNZ,M)
+C             The leading P-by-M part of this array contains the numbers
+C             of zeros of the elements of the transfer function
+C             matrix G. Specifically, the (i,j) element of NZ contains
+C             the number of zeros of the transfer function G(i,j) from
+C             the j-th input to the i-th output.
+C
+C     LDNZ    INTEGER
+C             The leading dimension of array NZ.  LDNZ >= max(1,P).
+C
+C     NP      (output) INTEGER array, dimension (LDNP,M)
+C             The leading P-by-M part of this array contains the numbers
+C             of poles of the elements of the transfer function
+C             matrix G. Specifically, the (i,j) element of NP contains
+C             the number of poles of the transfer function G(i,j).
+C
+C     LDNP    INTEGER
+C             The leading dimension of array NP.  LDNP >= max(1,P).
+C
+C     ZEROSR  (output) DOUBLE PRECISION array, dimension (P*M*NPZ)
+C             This array contains the real parts of the zeros of the
+C             transfer function matrix G. The real parts of the zeros
+C             are stored in a column-wise order, i.e., for the transfer
+C             functions (1,1), (2,1), ..., (P,1), (1,2), (2,2), ...,
+C             (P,2), ..., (1,M), (2,M), ..., (P,M); NPZ memory locations
+C             are reserved for each transfer function, hence, the real
+C             parts of the zeros for the (i,j) transfer function
+C             are stored starting from the location ((j-1)*P+i-1)*NPZ+1.
+C             Pairs of complex conjugate zeros are stored in consecutive
+C             memory locations. Note that only the first NZ(i,j) entries
+C             are initialized for the (i,j) transfer function.
+C
+C     ZEROSI  (output) DOUBLE PRECISION array, dimension (P*M*NPZ)
+C             This array contains the imaginary parts of the zeros of
+C             the transfer function matrix G, stored in a similar way
+C             as the real parts of the zeros.
+C
+C     POLESR  (output) DOUBLE PRECISION array, dimension (P*M*NPZ)
+C             This array contains the real parts of the poles of the
+C             transfer function matrix G, stored in the same way as
+C             the zeros. Note that only the first NP(i,j) entries are
+C             initialized for the (i,j) transfer function.
+C
+C     POLESI  (output) DOUBLE PRECISION array, dimension (P*M*NPZ)
+C             This array contains the imaginary parts of the poles of
+C             the transfer function matrix G, stored in the same way as
+C             the poles.
+C
+C     GAINS   (output) DOUBLE PRECISION array, dimension (LDGAIN,M)
+C             The leading P-by-M part of this array contains the gains
+C             of the transfer function matrix G. Specifically,
+C             GAINS(i,j) contains the gain of the transfer function
+C             G(i,j).
+C
+C     LDGAIN  INTEGER
+C             The leading dimension of array GAINS.  LDGAIN >= max(1,P).
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             The tolerance to be used in determining the
+C             controllability of a single-input system (A,b) or (A',c'),
+C             where b and c' are columns in B and C' (C transposed). If
+C             the user sets TOL > 0, then the given value of TOL is used
+C             as an absolute tolerance; elements with absolute value
+C             less than TOL are considered neglijible. If the user sets
+C             TOL <= 0, then an implicitly computed, default tolerance,
+C             defined by TOLDEF = N*EPS*MAX( NORM(A), NORM(bc) ) is used
+C             instead, where EPS is the machine precision (see LAPACK
+C             Library routine DLAMCH), and bc denotes the currently used
+!C             column in B or C' (see METHOD).
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.
+C             LDWORK >= MAX(1, N*(N+P) +
+C                              MAX( N + MAX( N,P ), N*(2*N+3)))
+C             If N >= P, N >= 1, the formula above can be written as
+C             LDWORK >= N*(3*N + P + 3).
+C             For optimum performance LDWORK should be larger.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  the QR algorithm failed to converge when trying to
+C                   compute the zeros of a transfer function;
+C             = 2:  the QR algorithm failed to converge when trying to
+C                   compute the poles of a transfer function.
+C                   The errors INFO = 1 or 2 are unlikely to appear.
+C
+C     METHOD
+C
+C     The routine implements the pole-zero method proposed in [1].
+C     This method is based on an algorithm for computing the transfer
+C     function of a single-input single-output (SISO) system.
+C     Let (A,b,c,d) be a SISO system. Its transfer function is computed
+C     as follows:
+C
+C     1) Find a controllable realization (Ac,bc,cc) of (A,b,c).
+C     2) Find an observable realization (Ao,bo,co) of (Ac,bc,cc).
+C     3) Compute the r eigenvalues of Ao (the poles of (Ao,bo,co)).
+C     4) Compute the zeros of (Ao,bo,co,d).
+C     5) Compute the gain of (Ao,bo,co,d).
+C
+C     This algorithm can be implemented using only orthogonal
+C     transformations [1]. However, for better efficiency, the
+C     implementation in TB04CD uses one elementary transformation
+C     in Step 4 and r elementary transformations in Step 5 (to reduce
+C     an upper Hessenberg matrix to upper triangular form). These
+C     special elementary transformations are numerically stable
+C     in practice.
+C
+C     In the multi-input multi-output (MIMO) case, the algorithm
+C     computes each element (i,j) of the transfer function matrix G,
+C     for i = 1 : P, and for j = 1 : M. For efficiency reasons, Step 1
+C     is performed once for each value of j (each column of B). The
+C     matrices Ac and Ao result in Hessenberg form.
+C
+C     REFERENCES
+C
+C     [1] Varga, A. and Sima, V.
+C         Numerically Stable Algorithm for Transfer Function Matrix
+C         Evaluation.
+C         Int. J. Control, vol. 33, nr. 6, pp. 1123-1133, 1981.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm is numerically stable in practice and requires about
+C     20*N**3 floating point operations at most, but usually much less.
+C
+C     CONTRIBUTORS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, May 2002.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Eigenvalue, state-space representation, transfer function, zeros.
+C
+C     ******************************************************************
+C
+#endif
 
+     use omp_lib
+
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, C100
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0, C100 = 100.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER          EQUIL, JOBD
+      DOUBLE PRECISION   TOL
+      INTEGER            INFO, LDA, LDB, LDC, LDD, LDGAIN, LDNP, LDNZ, &
+                         LDWORK, M, N, NPZ, P
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
+                         DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
+                         POLESR(*), ZEROSI(*), ZEROSR(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+       DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
+                         DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
+                         POLESR(*), ZEROSI(*), ZEROSR(*)
+       !DIR$ ASSUME_ALIGNED A:64
+       !DIR$ ASSUME_ALIGNED B:64
+       !DIR$ ASSUME_ALIGNED C:64
+       !DIR$ ASSUME_ALIGNED D:64
+       !DIR$ ASSUME_ALIGNED DWORK:64
+       !DIR$ ASSUME_ALIGNED GAINS:64
+       !DIR$ ASSUME_ALIGNED POLESI:64
+       !DIR$ ASSUME_ALIGNED POLESR:64
+       !DIR$ ASSUME_ALIGNED ZEROSI:64
+       !DIR$ ASSUME_ALIGNED ZEROSR:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+       INTEGER            IWORK(*), NP(LDNP,*), NZ(LDNZ,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+       INTEGER            IWORK(*), NP(LDNP,*), NZ(LDNZ,*)
+       !DIR$ ASSUME_ALIGNED IWORK:64
+       !DIR$ ASSUME_ALIGNED NP:64
+       !DIR$ ASSUME_ALIGNED NZ:64
+#endif
+!C     .. Local Scalars ..
+      DOUBLE PRECISION   ANORM, DIJ, EPSN, MAXRED, TOLDEF
+      INTEGER            I, IA, IAC, IAS, IB, IC, ICC, IERR, IM, IP,    &
+                         IPM1, ITAU, ITAU1, IZ, J, JWK, JWORK, JWORK1,  &
+                         K, NCONT, WRKOPT
+      LOGICAL            DIJNZ, FNDEIG, WITHD
+!C     .. Local Arrays ..
+      DOUBLE PRECISION   Z(1)
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION   DLANGE
+      EXTERNAL           DLANGE
+!C     .. External Subroutines ..
+      EXTERNAL           DAXPY, DCOPY, DHSEQR, DLACPY
+!C     .. Intrinsic Functions ..
+      INTRINSIC          ABS, DBLE, INT, MAX, MIN
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Test the input scalar parameters.
+!C
+      INFO  = 0
+      WITHD = LSAME( JOBD, 'D' )
+      IF( .NOT.WITHD .AND. .NOT.LSAME( JOBD, 'Z' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT. ( LSAME( EQUIL, 'S' ) .OR.     &
+                      LSAME( EQUIL, 'N' ) ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( NPZ.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -12
+      ELSE IF( LDD.LT.1 .OR. ( WITHD .AND. LDD.LT.P ) ) THEN
+         INFO = -14
+      ELSE IF( LDNZ.LT.MAX( 1, P ) ) THEN
+         INFO = -16
+      ELSE IF( LDNP.LT.MAX( 1, P ) ) THEN
+         INFO = -18
+      ELSE IF( LDGAIN.LT.MAX( 1, P ) ) THEN
+         INFO = -24
+      ELSE IF( LDWORK.LT.MAX( 1, N*( N + P ) +
+                  MAX( N + MAX( N, P ), N*( 2*N + 3 ) ) ) ) THEN
+                  INFO = -28
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      DIJ = ZERO
+      IF( MIN( N, P, M ).EQ.0 ) THEN
+         IF( MIN( P, M ).GT.0 ) THEN
+!C
+            DO 20 J = 1, M
+               !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD 
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 10 I = 1, P
+                  NZ(I,J) = 0
+                  NP(I,J) = 0
+                  IF ( WITHD ) &
+                     DIJ = D(I,J)
+                  GAINS(I,J) = DIJ
+   10          CONTINUE
+!C
+   20       CONTINUE
+!C
+         END IF
+         DWORK(1) = ONE
+         RETURN
+      END IF
+!C
+!C     Prepare the computation of the default tolerance.
+!C
+      TOLDEF = TOL
+      IF( TOLDEF.LE.ZERO ) THEN
+         EPSN  = DBLE( N )*DLAMCH( 'Epsilon' )
+         ANORM = DLANGE( 'Frobenius', N, N, A, LDA, DWORK )
+      END IF
+!C
+!C     Initializations.
+!C
+      IA    = 1
+      IC    = IA + N*N
+      ITAU  = IC + P*N
+      JWORK = ITAU + N
+      IAC   = ITAU
+!C
+      K = 1
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.)
+!C
+      IF( LSAME( EQUIL, 'S' ) ) THEN
+!C
+!C        Scale simultaneously the matrices A, B and C:
+!C        A <- inv(S)*A*S,  B <- inv(S)*B and C <- C*S, where S is a
+!C        diagonal scaling matrix.
+!C        Workspace: need   N.
+!C
+         MAXRED = C100
+         CALL TB01ID( 'All', N, M, P, MAXRED, A, LDA, B, LDB, C, LDC,  &
+                      DWORK, IERR )
+      END IF
+!C
+!C     Compute the transfer function matrix of the system (A,B,C,D),
+!C     in the pole-zero-gain form.
+      !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE)  == 1
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,IB,ICC,ITAU1.JWK,IAS,JWORK1)
+#endif
+      DO 80 J = 1, M
+!C
+!C        Save A and C.
+!C        Workspace: need   W1 = N*(N+P).
+!C
+         CALL DLACPY( 'Full', N, N, A, LDA, DWORK(IA), N )
+         CALL DLACPY( 'Full', P, N, C, LDC, DWORK(IC), P )
+!C
+!C        Remove the uncontrollable part of the system (A,B(J),C).
+!C        Workspace: need   W1+N+MAX(N,P);
+!C                   prefer larger.
+!C
+         CALL TB01ZD( 'No Z', N, P, DWORK(IA), N, B(1,J), DWORK(IC), P,  &
+                     NCONT, Z, 1, DWORK(ITAU), TOL, DWORK(JWORK),        &
+                     LDWORK-JWORK+1, IERR )
+         IF ( J.EQ.1 )  &
+             WRKOPT = INT( DWORK(JWORK) ) + JWORK - 1
+!C
+         IB     = IAC   + NCONT*NCONT
+         ICC    = IB    + NCONT
+         ITAU1  = ICC   + NCONT
+         JWK    = ITAU1 + NCONT
+         IAS    = ITAU1
+         JWORK1 = IAS   + NCONT*NCONT
+!C
+         DO 70 I = 1, P
+            IF ( NCONT.GT.0 ) THEN
+               IF ( WITHD )  &
+                  DIJ = D(I,J)
+!C
+!C              Form the matrices of the state-space representation of
+!C              the dual system for the controllable part.
+!C              Workspace: need   W2 = W1+N*(N+2).
+!C
+               CALL MA02AD( 'Full', NCONT, NCONT, DWORK(IA), N,  &
+                            DWORK(IAC), NCONT )
+               CALL DCOPY( NCONT, B(1,J), 1, DWORK(IB), 1 )
+               CALL DCOPY( NCONT, DWORK(IC+I-1), P, DWORK(ICC), 1 )
+!C
+!C              Remove the unobservable part of the system (A,B(J),C(I)).
+!C              Workspace: need   W2+2*N;
+!C                         prefer larger.
+!C
+               CALL TB01ZD( 'No Z', NCONT, 1, DWORK(IAC), NCONT, &
+                           DWORK(ICC), DWORK(IB), 1, IP, Z, 1,   &
+                           DWORK(ITAU1), TOL, DWORK(JWK), LDWORK-JWK+1,IERR)
+                         
+               IF ( I.EQ.1 ) &
+                  WRKOPT = MAX( WRKOPT, INT( DWORK(JWK) ) + JWK - 1 )
+!C
+               IF ( IP.GT.0 ) THEN
+!C
+!C                 Save the state matrix of the minimal part.
+!C                 Workspace: need   W3 = W2+N*N.
+!C
+                  CALL DLACPY( 'Full', IP, IP, DWORK(IAC), NCONT,  &
+                               DWORK(IAS), IP )
+!C
+!C                 Compute the poles of the transfer function.
+!C                 Workspace: need   W3+N;
+!C                            prefer larger.
+!C
+                  CALL DHSEQR( 'Eigenvalues', 'No vectors', IP, 1, IP, &
+                              DWORK(IAC), NCONT, POLESR(K), POLESI(K), &
+                              Z, 1, DWORK(JWORK1), LDWORK-JWORK1+1, IERR )
+                             
+                  IF ( IERR.NE.0 ) THEN
+                     INFO = 2
+                     RETURN
+                  END IF
+                  WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK1) ) + JWORK1 - 1 )
+                              
+!C
+!C                 Compute the zeros of the transfer function.
+!C
+                  IPM1   = IP - 1
+                  DIJNZ  = WITHD .AND. DIJ.NE.ZERO
+                  FNDEIG = DIJNZ .OR. IPM1.GT.0
+                  IF ( .NOT.FNDEIG ) THEN
+                     IZ = 0
+                  ELSE IF ( DIJNZ ) THEN
+!C
+!C                    Add the contribution due to D(i,j).
+!C                    Note that the matrix whose eigenvalues have to
+!C                    be computed remains in an upper Hessenberg form.
+!C
+                     IZ = IP
+                     CALL DLACPY( 'Full', IZ, IZ, DWORK(IAS), IP,   &
+                                 DWORK(IAC), NCONT )
+                     CALL DAXPY( IZ, -DWORK(ICC)/DIJ, DWORK(IB), 1, &
+                                 DWORK(IAC), NCONT )
+                  ELSE
+                     IF( TOL.LE.ZERO ) &
+                       TOLDEF = EPSN*MAX(ANORM, &
+                                          DLANGE( 'Frobenius', IP, 1, &
+                                                  DWORK(IB), 1, DWORK ))
+                                                
+!C
+                     DO 30 IM = 1, IPM1
+                        IF ( ABS( DWORK(IB+IM-1) ).GT.TOLDEF ) GO TO 40
+   30                CONTINUE
+!C
+                     IZ = 0
+                     GO TO 50
+!C
+   40                CONTINUE
+!C
+!C                    Restore (part of) the saved state matrix.
+!C
+                     IZ = IP - IM
+                     CALL DLACPY( 'Full', IZ, IZ, DWORK(IAS+IM*(IP+1)), &
+                                   IP, DWORK(IAC), NCONT )
+!C
+!C                    Apply the output injection.
+!C
+                     CALL DAXPY( IZ, -DWORK(IAS+IM*(IP+1)-IP)/   &
+                                DWORK(IB+IM-1), DWORK(IB+IM), 1, &
+                                DWORK(IAC), NCONT )
+                  END IF
+!C
+                  IF ( FNDEIG ) THEN
+!C
+!C                    Find the zeros.
+!C                    Workspace: need   W3+N;
+!C                               prefer larger.
+!C
+                     CALL DHSEQR( 'Eigenvalues', 'No vectors', IZ, 1,  &
+                                 IZ, DWORK(IAC), NCONT, ZEROSR(K),     &
+                                 ZEROSI(K), Z, 1, DWORK(JWORK1),       &
+                                 LDWORK-JWORK1+1, IERR )
+                     IF ( IERR.NE.0 ) THEN
+                        INFO = 1
+                        RETURN
+                     END IF
+                  END IF
+!C
+!C                 Compute the gain.
+!C
+   50             CONTINUE
+                  IF ( DIJNZ ) THEN
+                     GAINS(I,J) = DIJ
+                  ELSE
+                     CALL TB04BX( IP, IZ, DWORK(IAS), IP, DWORK(ICC),     &
+                                 DWORK(IB), DIJ, POLESR(K), POLESI(K),   &
+                                 ZEROSR(K), ZEROSI(K), GAINS(I,J),       &
+                                 IWORK )
+                  END IF
+                  NZ(I,J) = IZ
+                  NP(I,J) = IP
+               ELSE
+!C
+!C                 Null element.
+!C
+                  NZ(I,J) = 0
+                  NP(I,J) = 0
+               END IF
+!C
+            ELSE
+!C
+!C              Null element.
+!C
+               NZ(I,J) = 0
+               NP(I,J) = 0
+            END IF
+!C
+            K = K + NPZ
+   70    CONTINUE
+!C
+80          CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE)  == 1
+            !$OMP END PARALLEL DO
+#endif
+!C
+  
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TB01ID( JOB, N, M, P, MAXRED, A, LDA, B, LDB, C, LDC,  &
+     SCALE, INFO) !GCC$ ATTRIBUTES INLINE :: TB01ID !GCC$ ATTRIBUTES aligned(32) :: TB01ID
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE TB01ID( JOB, N, M, P, MAXRED, A, LDA, B, LDB, C, LDC,  &
+      SCALE, INFO)
+  !DIR$ ATTRIBUTES FORCEINLINE :: TB01ID
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TB01ID
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: TB01ID
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To reduce the 1-norm of a system matrix
+C
+C             S =  ( A  B )
+C                  ( C  0 )
+C
+C     corresponding to the triple (A,B,C), by balancing. This involves
+C     a diagonal similarity transformation inv(D)*A*D applied
+C     iteratively to A to make the rows and columns of
+C                           -1
+C                  diag(D,I)  * S * diag(D,I)
+C
+C     as close in norm as possible.
+C
+C     The balancing can be performed optionally on the following
+C     particular system matrices
+C
+C              S = A,    S = ( A  B )    or    S = ( A )
+C                                                  ( C )
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOB     CHARACTER*1
+C             Indicates which matrices are involved in balancing, as
+C             follows:
+C             = 'A':  All matrices are involved in balancing;
+C             = 'B':  B and A matrices are involved in balancing;
+C             = 'C':  C and A matrices are involved in balancing;
+C             = 'N':  B and C matrices are not involved in balancing.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrix A, the number of rows of matrix B
+C             and the number of columns of matrix C.
+C             N represents the dimension of the state vector.  N >= 0.
+C
+C     M       (input) INTEGER.
+C             The number of columns of matrix B.
+C             M represents the dimension of input vector.  M >= 0.
+C
+C     P       (input) INTEGER.
+C             The number of rows of matrix C.
+C             P represents the dimension of output vector.  P >= 0.
+C
+C     MAXRED  (input/output) DOUBLE PRECISION
+C             On entry, the maximum allowed reduction in the 1-norm of
+C             S (in an iteration) if zero rows or columns are
+C             encountered.
+C             If MAXRED > 0.0, MAXRED must be larger than one (to enable
+C             the norm reduction).
+C             If MAXRED <= 0.0, then the value 10.0 for MAXRED is
+C             used.
+C             On exit, if the 1-norm of the given matrix S is non-zero,
+C             the ratio between the 1-norm of the given matrix and the
+C             1-norm of the balanced matrix.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the system state matrix A.
+C             On exit, the leading N-by-N part of this array contains
+C             the balanced matrix inv(D)*A*D.
+C
+C     LDA     INTEGER
+C             The leading dimension of the array A.  LDA >= max(1,N).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,M)
+C             On entry, if M > 0, the leading N-by-M part of this array
+C             must contain the system input matrix B.
+C             On exit, if M > 0, the leading N-by-M part of this array
+C             contains the balanced matrix inv(D)*B.
+C             The array B is not referenced if M = 0.
+C
+C     LDB     INTEGER
+C             The leading dimension of the array B.
+C             LDB >= MAX(1,N) if M > 0.
+C             LDB >= 1        if M = 0.
+C
+C     C       (input/output) DOUBLE PRECISION array, dimension (LDC,N)
+C             On entry, if P > 0, the leading P-by-N part of this array
+C             must contain the system output matrix C.
+C             On exit, if P > 0, the leading P-by-N part of this array
+C             contains the balanced matrix C*D.
+C             The array C is not referenced if P = 0.
+C
+C     LDC     INTEGER
+C             The leading dimension of the array C.  LDC >= MAX(1,P).
+C
+C     SCALE   (output) DOUBLE PRECISION array, dimension (N)
+C             The scaling factors applied to S.  If D(j) is the scaling
+C             factor applied to row and column j, then SCALE(j) = D(j),
+C             for j = 1,...,N.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit.
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     Balancing consists of applying a diagonal similarity
+C     transformation
+C                           -1
+C                  diag(D,I)  * S * diag(D,I)
+C
+C     to make the 1-norms of each row of the first N rows of S and its
+C     corresponding column nearly equal.
+C
+C     Information about the diagonal matrix D is returned in the vector
+C     SCALE.
+C
+C     REFERENCES
+C
+C     [1] Anderson, E., Bai, Z., Bischof, C., Demmel, J., Dongarra, J.,
+C         Du Croz, J., Greenbaum, A., Hammarling, S., McKenney, A.,
+C         Ostrouchov, S., and Sorensen, D.
+!C         LAPACK Users' Guide: Second Edition.
+!C         SIAM, Philadelphia, 1995.
+C
+C     NUMERICAL ASPECTS
+C
+C     None.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Jan. 1998.
+C     This subroutine is based on LAPACK routine DGEBAL, and routine
+C     BALABC (A. Varga, German Aerospace Research Establishment, DLR).
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Balancing, eigenvalue, matrix algebra, matrix operations,
+C     similarity transformation.
+C
+C  *********************************************************************
+C
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+         use omp_lib
+#endif
+         implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0 )
+      DOUBLE PRECISION   SCLFAC
+      PARAMETER          ( SCLFAC = 1.0D+1 )
+      DOUBLE PRECISION   FACTOR, MAXR
+      PARAMETER          ( FACTOR = 0.95D+0, MAXR = 10.0D+0 )
+!C     ..
+!C     .. Scalar Arguments ..
+      CHARACTER          JOB
+      INTEGER            INFO, LDA, LDB, LDC, M, N, P
+      DOUBLE PRECISION   MAXRED
+!C     ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+           SCALE( * )
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+           SCALE( * )
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED SCALE:64
+#endif
+!C     ..
+!C     .. Local Scalars ..
+      LOGICAL            NOCONV, WITHB, WITHC
+      INTEGER            I, ICA, IRA, J
+      DOUBLE PRECISION   CA, CO, F, G, MAXNRM, RA, RO, S, SFMAX1, &
+                         SFMAX2, SFMIN1, SFMIN2, SNORM, SRED
+!C     ..
+!C     .. External Functions ..
+     
+      
+      DOUBLE PRECISION   DASUM
+      EXTERNAL           DASUM
+!C     ..
+!C     .. External Subroutines ..
+      EXTERNAL           DSCAL
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, MIN
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Test the scalar input arguments.
+!C
+      INFO  = 0
+      WITHB = LSAME( JOB, 'A' ) .OR. LSAME( JOB, 'B' )
+      WITHC = LSAME( JOB, 'A' ) .OR. LSAME( JOB, 'C' )
+!C
+      IF( .NOT.WITHB .AND. .NOT.WITHC .AND. .NOT.LSAME( JOB, 'N' ) ) &
+         THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( MAXRED.GT.ZERO .AND. MAXRED.LT.ONE ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -7
+      ELSE IF( ( M.GT.0 .AND. LDB.LT.MAX( 1, N ) ) .OR. &
+               ( M.EQ.0 .AND. LDB.LT.1 ) ) THEN
+         INFO = -9
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -11
+      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
+!C
+      IF( N.EQ.0 ) RETURN
+      
+!C
+!C     Compute the 1-norm of the required part of matrix S and exit if
+!C!     it is zero.
+!C
+      SNORM = ZERO
+      !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A:64,C:64)
+#elif  defined(__ICC) || defined(__INTEL_COMPILER)
+      !DIR$ VECTOR ALIGNED
+      !DIR$ SIMD REDUCTION(+:CO)
+#endif
+      DO 10 J = 1, N
+         SCALE( J ) = ONE
+         CO = DASUM( N, A( 1, J ), 1 )
+         IF( WITHC .AND. P.GT.0 )  &
+            CO = CO + DASUM( P, C( 1, J ), 1 )
+         SNORM = MAX( SNORM, CO )
+   10 CONTINUE
+!C
+      IF( WITHB ) THEN
+!C
+         DO 20 J = 1, M
+            SNORM = MAX( SNORM, DASUM( N, B( 1, J ), 1 ) )
+   20    CONTINUE
+!C
+      END IF
+!C
+      IF( SNORM.EQ.ZERO ) RETURN
+        
+!C
+!C     Set some machine parameters and the maximum reduction in the
+!C     1-norm of S if zero rows or columns are encountered.
+!C
+      SFMIN1 = DLAMCH( 'S' ) / DLAMCH( 'P' )
+      SFMAX1 = ONE / SFMIN1
+      SFMIN2 = SFMIN1*SCLFAC
+      SFMAX2 = ONE / SFMIN2
+!C
+      SRED = MAXRED
+      IF( SRED.LE.ZERO ) SRED = MAXR
+!C
+      MAXNRM = MAX( SNORM/SRED, SFMIN1 )
+!C
+!C     Balance the matrix.
+!C
+!C     Iterative loop for norm reduction.
+!C
+   30 CONTINUE
+      NOCONV = .FALSE.
+!C
+      DO 90 I = 1, N
+         CO = ZERO
+         RO = ZERO
+!C
+         DO 40 J = 1, N
+            IF( J.EQ.I ) &
+                CYCLE
+            CO = CO + ABS( A( J, I ) )
+            RO = RO + ABS( A( I, J ) )
+   40    CONTINUE
+!C
+         ICA = IDAMAX( N, A( 1, I ), 1 )
+         CA  = ABS( A( ICA, I ) )
+         IRA = IDAMAX( N, A( I, 1 ), LDA )
+         RA  = ABS( A( I, IRA ) )
+!C
+         IF( WITHC .AND. P.GT.0 ) THEN
+            CO  = CO + DASUM( P, C( 1, I ), 1 )
+            ICA = IDAMAX( P, C( 1, I ), 1 )
+            CA  = MAX( CA, ABS( C( ICA, I ) ) )
+         END IF
+!C
+         IF( WITHB .AND. M.GT.0 ) THEN
+            RO  = RO + DASUM( M, B( I, 1 ), LDB )
+            IRA = IDAMAX( M, B( I, 1 ), LDB )
+            RA  = MAX( RA, ABS( B( I, IRA ) ) )
+         END IF
+!C
+!C        Special case of zero CO and/or RO.
+!C
+         IF( CO.EQ.ZERO .AND. RO.EQ.ZERO ) &
+             EXIT
+         IF( CO.EQ.ZERO ) THEN
+            IF( RO.LE.MAXNRM ) &
+              EXIT
+            CO = MAXNRM
+         END IF
+         IF( RO.EQ.ZERO ) THEN
+            IF( CO.LE.MAXNRM ) &
+               EXIT
+            RO = MAXNRM
+         END IF
+!C
+!C        Guard against zero CO or RO due to underflow.
+!C
+         G = RO / SCLFAC
+         F = ONE
+         S = CO + RO
+   50    CONTINUE
+         IF( CO.GE.G .OR. MAX( F, CO, CA ).GE.SFMAX2 .OR. &
+            MIN( RO, G, RA ).LE.SFMIN2 ) GO TO 60
+         F  =  F*SCLFAC
+         CO = CO*SCLFAC
+         CA = CA*SCLFAC
+         G  =  G / SCLFAC
+         RO = RO / SCLFAC
+         RA = RA / SCLFAC
+         GO TO 50
+!C
+   60    CONTINUE
+         G = CO / SCLFAC
+   70    CONTINUE
+         IF( G.LT.RO .OR. MAX( RO, RA ).GE.SFMAX2 .OR. &
+             MIN( F, CO, G, CA ).LE.SFMIN2 )GO TO 80
+         F  =  F / SCLFAC
+         CO = CO / SCLFAC
+         CA = CA / SCLFAC
+         G  =  G / SCLFAC
+         RO = RO*SCLFAC
+         RA = RA*SCLFAC
+         GO TO 70
+!C
+!C        Now balance.
+!C
+   80    CONTINUE
+         IF( ( CO+RO ).GE.FACTOR*S ) &
+            EXIT
+         IF( F.LT.ONE .AND. SCALE( I ).LT.ONE ) THEN
+            IF( F*SCALE( I ).LE.SFMIN1 ) &
+               EXIT
+         END IF
+         IF( F.GT.ONE .AND. SCALE( I ).GT.ONE ) THEN
+            IF( SCALE( I ).GE.SFMAX1 / F ) &
+               EXIT
+         END IF
+         G = ONE / F
+         SCALE( I ) = SCALE( I )*F
+         NOCONV = .TRUE.
+!C
+         CALL DSCAL( N, G, A( I, 1 ), LDA )
+         CALL DSCAL( N, F, A( 1, I ), 1 )
+         IF( M.GT.0 ) CALL DSCAL( M, G, B( I, 1 ), LDB )
+         IF( P.GT.0 ) CALL DSCAL( P, F, C( 1, I ), 1 )
+!C
+   90 CONTINUE
+!C
+      IF( NOCONV ) &
+         GO TO 30
+!C
+!C     Set the norm reduction parameter.
+!C
+      MAXRED = SNORM
+      SNORM  = ZERO
+      !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A:64,C:64)
+#elif  defined(__ICC) || defined(__INTEL_COMPILER)
+      !DIR$ VECTOR ALIGNED
+      !DIR$ SIMD REDUCTION(+:CO)
+#endif      
+      DO 100 J = 1, N
+         CO = DASUM( N, A( 1, J ), 1 )
+         IF( WITHC .AND. P.GT.0 ) &
+           CO = CO + DASUM( P, C( 1, J ), 1 )
+         SNORM = MAX( SNORM, CO )
+  100 CONTINUE
+!C
+      IF( WITHB ) THEN
+!C
+         DO 110 J = 1, M
+            SNORM = MAX( SNORM, DASUM( N, B( 1, J ), 1 ) )
+  110    CONTINUE
+!C
+      END IF
+      MAXRED = MAXRED/SNORM
+   
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TB01ZD( JOBZ, N, P, A, LDA, B, C, LDC, NCONT, Z, LDZ,
+  TAU, TOL, DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES hot :: TB01ZD !GCC$ ATTRIBUTES aligned(32) :: TB01ZD !GCC$ ATTRIBUTES no_stack_protector :: TB01ZD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE TB01ZD( JOBZ, N, P, A, LDA, B, C, LDC, NCONT, Z, LDZ,
+    TAU, TOL, DWORK, LDWORK, INFO )
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TB01ZD
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: TB01ZD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To find a controllable realization for the linear time-invariant
+C     single-input system
+C
+C             dX/dt = A * X + B * U,
+C                Y  = C * X,
+C
+C     where A is an N-by-N matrix, B is an N element vector, C is an
+C     P-by-N matrix, and A and B are reduced by this routine to
+C     orthogonal canonical form using (and optionally accumulating)
+C     orthogonal similarity transformations, which are also applied
+C     to C.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOBZ    CHARACTER*1
+C             Indicates whether the user wishes to accumulate in a
+C             matrix Z the orthogonal similarity transformations for
+C             reducing the system, as follows:
+C             = 'N':  Do not form Z and do not store the orthogonal
+C                     transformations;
+C             = 'F':  Do not form Z, but store the orthogonal
+C                     transformations in the factored form;
+C             = 'I':  Z is initialized to the unit matrix and the
+C                     orthogonal transformation matrix Z is returned.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the original state-space representation,
+C             i.e. the order of the matrix A.  N >= 0.
+C
+C     P       (input) INTEGER
+C             The number of system outputs, or of rows of C.  P >= 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the original state dynamics matrix A.
+C             On exit, the leading NCONT-by-NCONT upper Hessenberg
+C             part of this array contains the canonical form of the
+!C             state dynamics matrix, given by Z' * A * Z, of a
+C             controllable realization for the original system. The
+C             elements below the first subdiagonal are set to zero.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (N)
+C             On entry, the original input/state vector B.
+C             On exit, the leading NCONT elements of this array contain
+!C             canonical form of the input/state vector, given by Z' * B,
+C             with all elements but B(1) set to zero.
+C
+C     C       (input/output) DOUBLE PRECISION array, dimension (LDC,N)
+C             On entry, the leading P-by-N part of this array must
+C             contain the output/state matrix C.
+C             On exit, the leading P-by-N part of this array contains
+C             the transformed output/state matrix, given by C * Z, and
+C             the leading P-by-NCONT part contains the output/state
+C             matrix of the controllable realization.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,P).
+C
+C     NCONT   (output) INTEGER
+C             The order of the controllable state-space representation.
+C
+C     Z       (output) DOUBLE PRECISION array, dimension (LDZ,N)
+C             If JOBZ = 'I', then the leading N-by-N part of this array
+C             contains the matrix of accumulated orthogonal similarity
+C             transformations which reduces the given system to
+C             orthogonal canonical form.
+C             If JOBZ = 'F', the elements below the diagonal, with the
+C             array TAU, represent the orthogonal transformation matrix
+C             as a product of elementary reflectors. The transformation
+C             matrix can then be obtained by calling the LAPACK Library
+C             routine DORGQR.
+C             If JOBZ = 'N', the array Z is not referenced and can be
+C             supplied as a dummy array (i.e. set parameter LDZ = 1 and
+C             declare this array to be Z(1,1) in the calling program).
+C
+C     LDZ     INTEGER
+C             The leading dimension of array Z. If JOBZ = 'I' or
+C             JOBZ = 'F', LDZ >= MAX(1,N); if JOBZ = 'N', LDZ >= 1.
+C
+C     TAU     (output) DOUBLE PRECISION array, dimension (N)
+C             The elements of TAU contain the scalar factors of the
+C             elementary reflectors used in the reduction of B and A.
+C
+C     Tolerances
+C
+C     TOL     DOUBLE PRECISION
+C             The tolerance to be used in determining the
+C             controllability of (A,B). If the user sets TOL > 0, then
+C             the given value of TOL is used as an absolute tolerance;
+C             elements with absolute value less than TOL are considered
+C             neglijible. If the user sets TOL <= 0, then an implicitly
+C             computed, default tolerance, defined by
+C             TOLDEF = N*EPS*MAX( NORM(A), NORM(B) ) is used instead,
+C             where EPS is the machine precision (see LAPACK Library
+C             routine DLAMCH).
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK. LDWORK >= MAX(1,N,P).
+C             For optimum performance LDWORK should be larger.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The Householder matrix which reduces all but the first element
+C     of vector B to zero is found and this orthogonal similarity
+C     transformation is applied to the matrix A. The resulting A is then
+C     reduced to upper Hessenberg form by a sequence of Householder
+C     transformations. Finally, the order of the controllable state-
+C     space representation (NCONT) is determined by finding the position
+C     of the first sub-diagonal element of A which is below an
+C     appropriate zero threshold, either TOL or TOLDEF (see parameter
+C     TOL); if NORM(B) is smaller than this threshold, NCONT is set to
+C     zero, and no computations for reducing the system to orthogonal
+C     canonical form are performed.
+C     All orthogonal transformations determined in this process are also
+C     applied to the matrix C, from the right.
+C
+C     REFERENCES
+C
+C     [1] Konstantinov, M.M., Petkov, P.Hr. and Christov, N.D.
+C         Orthogonal Invariants and Canonical Forms for Linear
+C         Controllable Systems.
+C         Proc. 8th IFAC World Congress, Kyoto, 1, pp. 49-54, 1981.
+C
+C     [2] Hammarling, S.J.
+C         Notes on the use of orthogonal similarity transformations in
+C         control.
+C         NPL Report DITC 8/82, August 1982.
+C
+C     [3] Paige, C.C
+C         Properties of numerical algorithms related to computing
+C         controllability.
+C         IEEE Trans. Auto. Contr., AC-26, pp. 130-138, 1981.
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations and is backward stable.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Feb. 1998.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Oct. 2001,
+C     Sept. 2003.
+C
+C     KEYWORDS
+C
+C     Controllability, minimal realization, orthogonal canonical form,
+C     orthogonal transformation.
+C
+C     ******************************************************************
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         JOBZ
+      INTEGER           INFO, LDA, LDC, LDWORK, LDZ, N, NCONT, P
+      DOUBLE PRECISION  TOL
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
+           Z(LDZ,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+       DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
+            Z(LDZ,*)
+       !DIR$ ASSUME_ALIGNED A:64
+       !DIR$ ASSUME_ALIGNED B:64
+       !DIR$ ASSUME_ALIGNED C:64
+       !DIR$ ASSUME_ALIGNED DWORK:64
+       !DIR$ ASSUME_ALIGNED TAU:64
+       !DIR$ ASSUME_ALIGNED Z:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           LJOBF, LJOBI, LJOBZ
+      INTEGER           ITAU, J
+      DOUBLE PRECISION  ANORM, B1, BNORM, FANORM, FBNORM, H, THRESH, &
+                        TOLDEF, WRKOPT
+!C     .. Local Arrays ..
+      DOUBLE PRECISION  NBLK(1)
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION  DLANGE
+      EXTERNAL          DLANGE
+!C     .. External Subroutines ..
+      EXTERNAL          DGEHRD, DLACPY, DLARF, DLARFG, DLASET, DORGQR, &
+                        DORMHR
+!C     .. Intrinsic Functions ..
+      INTRINSIC         ABS, DBLE, MAX
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      LJOBF = LSAME( JOBZ, 'F' )
+      LJOBI = LSAME( JOBZ, 'I' )
+      LJOBZ = LJOBF.OR.LJOBI
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.LJOBZ .AND. .NOT.LSAME( JOBZ, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -8
+      ELSE IF( LDZ.LT.1 .OR. ( LJOBZ .AND. LDZ.LT.N ) ) THEN
+         INFO = -11
+      ELSE IF( LDWORK.LT.MAX( 1, N, P ) ) THEN
+         INFO = -15
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      NCONT = 0
+      DWORK(1) = ONE
+      IF ( N.EQ.0 ) &
+           RETURN
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.
+!C     NB refers to the optimal block size for the immediately
+!C     following subroutine, as returned by ILAENV.)
+!C
+      WRKOPT = ONE
+!C
+!C     Calculate the absolute norms of A and B (used for scaling).
+!C
+      ANORM = DLANGE( 'Max', N, N, A, LDA, DWORK )
+      BNORM = DLANGE( 'Max', N, 1, B, N, DWORK )
+!C
+!C     Return if matrix B is zero.
+!C
+      IF( BNORM.EQ.ZERO ) THEN
+         IF( LJOBF ) THEN
+            CALL DLASET( 'Full', N, N, ZERO, ZERO, Z, LDZ )
+            CALL DLASET( 'Full', N, 1, ZERO, ZERO, TAU, N )
+         ELSE IF( LJOBI ) THEN
+            CALL DLASET( 'Full', N, N, ZERO, ONE, Z, LDZ )
+         END IF
+         RETURN
+      END IF
+!C
+!C     Scale (if needed) the matrices A and B.
+!C
+      CALL MB01PD( 'S', 'G', N, N, 0, 0, ANORM, 0, NBLK, A, LDA, INFO )
+      CALL MB01PD( 'S', 'G', N, 1, 0, 0, BNORM, 0, NBLK, B, N, INFO )
+!C
+!C     Calculate the Frobenius norm of A and the 1-norm of B (used for
+!C     controllability test).
+!C
+      FANORM = DLANGE( 'Frobenius', N, N, A, LDA, DWORK )
+      FBNORM = DLANGE( '1-norm', N, 1, B, N, DWORK )
+!C
+      TOLDEF = TOL
+      IF ( TOLDEF.LE.ZERO ) THEN
+!C
+!C        Use the default tolerance in controllability determination.
+!C
+         THRESH = DBLE(N)*DLAMCH( 'EPSILON' )
+         TOLDEF = THRESH*MAX( FANORM, FBNORM )
+      END IF
+!C
+      ITAU = 1
+      IF ( FBNORM.GT.TOLDEF ) THEN
+!C
+!C        B is not negligible compared with A.
+!C
+         IF ( N.GT.1 ) THEN
+!C
+!C           Transform B by a Householder matrix Z1: store vector
+!C           describing this temporarily in B and in the local scalar H.
+!C
+            CALL DLARFG( N, B(1), B(2), 1, H )
+!C
+            B1 = B(1)
+            B(1) = ONE
+!C
+!C           Form Z1 * A * Z1.
+!C           Workspace: need N.
+!C
+            CALL DLARF( 'Right', N, N, B, 1, H, A, LDA, DWORK )
+            CALL DLARF( 'Left',  N, N, B, 1, H, A, LDA, DWORK )
+!C
+!C           Form C * Z1.
+!C           Workspace: need P.
+!C
+            CALL DLARF( 'Right', P, N, B, 1, H, C, LDC, DWORK )
+!C
+            B(1) = B1
+            TAU(1) = H
+            ITAU = ITAU + 1
+         ELSE
+            B1 = B(1)
+            TAU(1) = ZERO
+         END IF
+!C
+!C        Reduce modified A to upper Hessenberg form by an orthogonal
+!C        similarity transformation with matrix Z2.
+!C        Workspace: need N;  prefer N*NB.
+!C
+         CALL DGEHRD( N, 1, N, A, LDA, TAU(ITAU), DWORK, LDWORK, INFO )
+         WRKOPT = DWORK(1)
+!C
+!C        Form C * Z2.
+!C        Workspace: need P;  prefer P*NB.
+!C
+         CALL DORMHR( 'Right', 'No transpose', P, N, 1, N, A, LDA,  &
+                      TAU(ITAU), C, LDC, DWORK, LDWORK, INFO )
+         WRKOPT = MAX( WRKOPT, DWORK(1) )
+!C
+         IF ( LJOBZ ) THEN
+!C
+!C           Save the orthogonal transformations used, so that they could
+!C           be accumulated by calling DORGQR routine.
+!C
+            IF ( N.GT.1 )  &
+               CALL DLACPY( 'Full',  N-1, 1, B(2), N-1, Z(2,1), LDZ )
+            IF ( N.GT.2 )  &
+               CALL DLACPY( 'Lower', N-2, N-2, A(3,1), LDA, Z(3,2),
+                           LDZ )
+            IF ( LJOBI ) THEN
+!C
+!C              Form the orthogonal transformation matrix Z = Z1 * Z2.
+!C              Workspace: need N;  prefer N*NB.
+!C
+               CALL DORGQR( N, N, N, Z, LDZ, TAU, DWORK, LDWORK, INFO )
+               WRKOPT = MAX( WRKOPT, DWORK(1) )
+            END IF
+         END IF
+!C
+!C        Annihilate the lower part of A and B.
+!C
+         IF ( N.GT.2 ) &
+            CALL DLASET( 'Lower', N-2, N-2, ZERO, ZERO, A(3,1), LDA )
+         IF ( N.GT.1 ) &
+            CALL DLASET( 'Full',  N-1, 1, ZERO, ZERO, B(2), N-1 )
+!C
+!C        Find NCONT by checking sizes of the sub-diagonal elements of
+!C        transformed A.
+!C
+         IF ( TOL.LE.ZERO ) &
+            TOLDEF = THRESH*MAX( FANORM, ABS( B1 ) )
+!C
+         J = 1
+!C
+!C        WHILE ( J < N and ABS( A(J+1,J) ) > TOLDEF ) DO
+!C
+   10    CONTINUE
+         IF ( J.LT.N ) THEN
+            IF ( ABS( A(J+1,J) ).GT.TOLDEF ) THEN
+               J = J + 1
+               GO TO 10
+            END IF
+         END IF
+!C
+!C        END WHILE 10
+!C
+!C        First negligible sub-diagonal element found, if any: set NCONT.
+!C
+         NCONT = J
+         IF ( J.LT.N ) &
+            A(J+1,J) = ZERO
+!C
+!C        Undo scaling of A and B.
+!C
+         CALL MB01PD( 'U', 'H', NCONT, NCONT, 0, 0, ANORM, 0, NBLK, A, &
+                      LDA, INFO )
+         CALL MB01PD( 'U', 'G', 1, 1, 0, 0, BNORM, 0, NBLK, B, N, INFO )
+         IF ( NCONT.LT.N ) &
+           CALL MB01PD( 'U', 'G', N, N-NCONT, 0, 0, ANORM, 0, NBLK, &
+                        A(1,NCONT+1), LDA, INFO )
+      ELSE
+!C
+!C        B is negligible compared with A. No computations for reducing
+!C        the system to orthogonal canonical form have been performed,
+!C        except scaling (which is undoed).
+!C
+         CALL MB01PD( 'U', 'G', N, N, 0, 0, ANORM, 0, NBLK, A, LDA, &
+                      INFO )
+         CALL MB01PD( 'U', 'G', N, 1, 0, 0, BNORM, 0, NBLK, B, N, INFO )
+         IF( LJOBF ) THEN
+            CALL DLASET( 'Full', N, N, ZERO, ZERO, Z, LDZ )
+            CALL DLASET( 'Full', N, 1, ZERO, ZERO, TAU, N )
+         ELSE IF( LJOBI ) THEN
+            CALL DLASET( 'Full', N, N, ZERO, ONE, Z, LDZ )
+         END IF
+      END IF
+!C
+!C     Set optimal workspace dimension.
+!C
+      DWORK(1) = WRKOPT
+!C
+  
+END SUBROUTINE TB01ZD
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB01PD( SCUN, TYPE, M, N, KL, KU, ANRM, NBL, NROWS, A, &
+  LDA, INFO ) !GCC$ ATTRIBUTES hot :: MB01PD !GCC$ ATTRIBUTES aligned(32) :: MB01PD !GCC$ ATTRIBUTES no_stack_protector :: MB01PD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE MB01PD( SCUN, TYPE, M, N, KL, KU, ANRM, NBL, NROWS, A, &
+   LDA, INFO )
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB01PD
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB01PD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To scale a matrix or undo scaling.  Scaling is performed, if
+C     necessary, so that the matrix norm will be in a safe range of
+C     representable numbers.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     SCUN    CHARACTER*1
+C             SCUN indicates the operation to be performed.
+C             = 'S':  scale the matrix.
+C             = 'U':  undo scaling of the matrix.
+C
+C     TYPE    CHARACTER*1
+C             TYPE indicates the storage type of the input matrix.
+C             = 'G':  A is a full matrix.
+C             = 'L':  A is a (block) lower triangular matrix.
+C             = 'U':  A is an (block) upper triangular matrix.
+C             = 'H':  A is an (block) upper Hessenberg matrix.
+C             = 'B':  A is a symmetric band matrix with lower bandwidth
+C                     KL and upper bandwidth KU and with the only the
+C                     lower half stored.
+C             = 'Q':  A is a symmetric band matrix with lower bandwidth
+C                     KL and upper bandwidth KU and with the only the
+C                     upper half stored.
+C             = 'Z':  A is a band matrix with lower bandwidth KL and
+C                     upper bandwidth KU.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of rows of the matrix A. M >= 0.
+C
+C     N       (input) INTEGER
+C             The number of columns of the matrix A. N >= 0.
+C
+C     KL      (input) INTEGER
+C             The lower bandwidth of A.  Referenced only if TYPE = 'B',
+C             'Q' or 'Z'.
+C
+C     KU      (input) INTEGER
+C             The upper bandwidth of A.  Referenced only if TYPE = 'B',
+C             'Q' or 'Z'.
+C
+C     ANRM    (input) DOUBLE PRECISION
+C             The norm of the initial matrix A.  ANRM >= 0.
+C             When  ANRM = 0  then an immediate return is effected.
+C             ANRM should be preserved between the call of the routine
+C             with SCUN = 'S' and the corresponding one with SCUN = 'U'.
+C
+C     NBL     (input) INTEGER
+C             The number of diagonal blocks of the matrix A, if it has a
+C             block structure.  To specify that matrix A has no block
+C             structure, set NBL = 0.  NBL >= 0.
+C
+C     NROWS   (input) INTEGER array, dimension max(1,NBL)
+C             NROWS(i) contains the number of rows and columns of the
+C             i-th diagonal block of matrix A.  The sum of the values
+C             NROWS(i),  for  i = 1: NBL,  should be equal to min(M,N).
+C             The elements of the array  NROWS  are not referenced if
+C             NBL = 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading M by N part of this array must
+C             contain the matrix to be scaled/unscaled.
+C             On exit, the leading M by N part of A will contain
+C             the modified matrix.
+C             The storage mode of A is specified by TYPE.
+C
+C     LDA     (input) INTEGER
+C             The leading dimension of the array A.  LDA  >= max(1,M).
+C
+C     Error Indicator
+C
+C     INFO    (output) INTEGER
+C             = 0:  successful exit
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     Denote by ANRM the norm of the matrix, and by SMLNUM and BIGNUM,
+C     two positive numbers near the smallest and largest safely
+C     representable numbers, respectively.  The matrix is scaled, if
+C     needed, such that the norm of the result is in the range
+C     [SMLNUM, BIGNUM].  The scaling factor is represented as a ratio
+C     of two numbers, one of them being ANRM, and the other one either
+C     SMLNUM or BIGNUM, depending on ANRM being less than SMLNUM or
+C     larger than BIGNUM, respectively.  For undoing the scaling, the
+C     norm is again compared with SMLNUM or BIGNUM, and the reciprocal
+C     of the previous scaling factor is used.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Nov. 1996.
+C
+C     REVISIONS
+C
+C     Oct. 2001, V. Sima, Research Institute for Informatics, Bucharest.
+C
+C    ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER          SCUN, TYPE
+      INTEGER            INFO, KL, KU, LDA, M, MN, N, NBL
+      DOUBLE PRECISION   ANRM
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))      
+      INTEGER            NROWS ( * )
+      DOUBLE PRECISION   A( LDA, * )
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER            NROWS ( * )
+      !DIR$ ASSUME_ALIGNED NROWS:64
+       DOUBLE PRECISION   A( LDA, * )
+       !DIR$ ASSUME_ALIGNED A:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL            FIRST, LSCALE
+      INTEGER            I, ISUM, ITYPE
+      DOUBLE PRECISION   BIGNUM, SMLNUM
+!C     .. External Functions ..
+      !LOGICAL            LSAME
+      !DOUBLE PRECISION   DLAMCH
+      !EXTERNAL           DLAMCH, LSAME
+!C     ..
+C     .. External Subroutines ..
+      EXTERNAL           DLABAD, MB01QD, XERBLA
+!C     .. Intrinsic Functions ..
+      INTRINSIC          MAX, MIN
+!C     .. Save statement ..
+      SAVE               BIGNUM, FIRST, SMLNUM
+!C     .. Data statements ..
+      DATA               FIRST/.TRUE./
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Test the input scalar arguments.
+!C
+      INFO = 0
+      LSCALE = LSAME( SCUN, 'S' )
+ 
+     IF( LSAME( TYPE, 'G' ) ) THEN
+         ITYPE = 0
+     ELSE IF( LSAME( TYPE, 'L' ) ) THEN
+         ITYPE = 1
+     ELSE IF( LSAME( TYPE, 'U' ) ) THEN
+         ITYPE = 2
+     ELSE IF( LSAME( TYPE, 'H' ) ) THEN
+         ITYPE = 3
+     ELSE IF( LSAME( TYPE, 'B' ) ) THEN
+         ITYPE = 4
+     ELSE IF( LSAME( TYPE, 'Q' ) ) THEN
+        ITYPE = 5
+     ELSE IF( LSAME( TYPE, 'Z' ) ) THEN
+         ITYPE = 6
+     ELSE
+        ITYPE = -1
+     END IF
+      
+!C
+      MN = MIN( M, N )
+!C
+      ISUM = 0
+      IF( NBL.GT.0 ) THEN
+         DO 10 I = 1, NBL
+            ISUM = ISUM + NROWS(I)
+ 10      CONTINUE
+      END IF
+!C
+      IF( .NOT.LSCALE .AND. .NOT.LSAME( SCUN, 'U' ) ) THEN
+         INFO = -1
+      ELSE IF( ITYPE.EQ.-1 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 .OR. &
+              ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. N.NE.M ) ) THEN
+         INFO = -4
+      ELSE IF( ANRM.LT.ZERO ) THEN
+         INFO = -7
+      ELSE IF( NBL.LT.0 ) THEN
+         INFO = -8
+      ELSE IF( NBL.GT.0 .AND. ISUM.NE.MN ) THEN
+         INFO = -9
+      ELSE IF( ITYPE.LE.3 .AND. LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -11
+      ELSE IF( ITYPE.GE.4 ) THEN
+         IF( KL.LT.0 .OR. KL.GT.MAX( M-1, 0 ) ) THEN
+            INFO = -5
+         ELSE IF( KU.LT.0 .OR. KU.GT.MAX( N-1, 0 ) .OR. &
+                 ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. KL.NE.KU ) )
+                  THEN
+            INFO = -6
+         ELSE IF( ( ITYPE.EQ.4 .AND. LDA.LT.KL+1 ) .OR.  &
+                 ( ITYPE.EQ.5 .AND. LDA.LT.KU+1 ) .OR.   &
+                ( ITYPE.EQ.6 .AND. LDA.LT.2*KL+KU+1 ) ) THEN
+            INFO = -11
+         END IF
+      END IF
+!C
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( MN.EQ.0 .OR. ANRM.EQ.ZERO ) &
+         RETURN
+!C
+      IF ( FIRST ) THEN
+!C
+!C!        Get machine parameters.
+!C
+         SMLNUM = DLAMCH( 'S' ) / DLAMCH( 'P' )
+         BIGNUM = ONE / SMLNUM
+         CALL DLABAD( SMLNUM, BIGNUM )
+         FIRST = .FALSE.
+      END IF
+!C
+      IF ( LSCALE ) THEN
+!C
+!C        Scale A, if its norm is outside range [SMLNUM,BIGNUM].
+!C
+         IF( ANRM.LT.SMLNUM ) THEN
+!C
+!C           Scale matrix norm up to SMLNUM.
+!C
+            CALL MB01QD( TYPE, M, N, KL, KU, ANRM, SMLNUM, NBL, NROWS, &
+                         A, LDA, INFO )
+         ELSE IF( ANRM.GT.BIGNUM ) THEN
+!C
+!C           Scale matrix norm down to BIGNUM.
+!C
+            CALL MB01QD( TYPE, M, N, KL, KU, ANRM, BIGNUM, NBL, NROWS, &
+                         A, LDA, INFO )
+         END IF
+!C
+      ELSE
+!C
+!C        Undo scaling.
+!C
+         IF( ANRM.LT.SMLNUM ) THEN
+            CALL MB01QD( TYPE, M, N, KL, KU, SMLNUM, ANRM, NBL, NROWS, &
+                         A, LDA, INFO )
+         ELSE IF( ANRM.GT.BIGNUM ) THEN
+            CALL MB01QD( TYPE, M, N, KL, KU, BIGNUM, ANRM, NBL, NROWS, &
+                        A, LDA, INFO )
+         END IF
+      END IF
+!C
+
+END SUBROUTINE
+
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB01QD( TYPE, M, N, KL, KU, CFROM, CTO, NBL, NROWS, A,
+  LDA, INFO ) !GCC$ ATTRIBUTES INLINE :: MB01QD !GCC$ ATTRIBUTES aligned(32) :: MB01QD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE MB01QD( TYPE, M, N, KL, KU, CFROM, CTO, NBL, NROWS, A,
+   LDA, INFO )
+!DIR$ ATTRIBUTES FORCEINLINE :: MB01QD
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB01QD
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: MB01QD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To multiply the M by N real matrix A by the real scalar CTO/CFROM.
+C     This is done without over/underflow as long as the final result
+C     CTO*A(I,J)/CFROM does not over/underflow. TYPE specifies that
+C     A may be full, (block) upper triangular, (block) lower triangular,
+C     (block) upper Hessenberg, or banded.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     TYPE    CHARACTER*1
+C             TYPE indices the storage type of the input matrix.
+C             = 'G':  A is a full matrix.
+C             = 'L':  A is a (block) lower triangular matrix.
+C             = 'U':  A is a (block) upper triangular matrix.
+C             = 'H':  A is a (block) upper Hessenberg matrix.
+C             = 'B':  A is a symmetric band matrix with lower bandwidth
+C                     KL and upper bandwidth KU and with the only the
+C                     lower half stored.
+C             = 'Q':  A is a symmetric band matrix with lower bandwidth
+C                     KL and upper bandwidth KU and with the only the
+C                     upper half stored.
+C             = 'Z':  A is a band matrix with lower bandwidth KL and
+C                     upper bandwidth KU.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of rows of the matrix A.  M >= 0.
+C
+C     N       (input) INTEGER
+C             The number of columns of the matrix A.  N >= 0.
+C
+C     KL      (input) INTEGER
+C             The lower bandwidth of A.  Referenced only if TYPE = 'B',
+C             'Q' or 'Z'.
+C
+C     KU      (input) INTEGER
+C             The upper bandwidth of A.  Referenced only if TYPE = 'B',
+C             'Q' or 'Z'.
+C
+C     CFROM   (input) DOUBLE PRECISION
+C     CTO     (input) DOUBLE PRECISION
+C             The matrix A is multiplied by CTO/CFROM. A(I,J) is
+C             computed without over/underflow if the final result
+C             CTO*A(I,J)/CFROM can be represented without over/
+C             underflow.  CFROM must be nonzero.
+C
+C     NBL     (input) INTEGER
+C             The number of diagonal blocks of the matrix A, if it has a
+C             block structure.  To specify that matrix A has no block
+C             structure, set NBL = 0.  NBL >= 0.
+C
+C     NROWS   (input) INTEGER array, dimension max(1,NBL)
+C             NROWS(i) contains the number of rows and columns of the
+C             i-th diagonal block of matrix A.  The sum of the values
+C             NROWS(i),  for  i = 1: NBL,  should be equal to min(M,N).
+C             The array  NROWS  is not referenced if NBL = 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             The matrix to be multiplied by CTO/CFROM.  See TYPE for
+C             the storage type.
+C
+C     LDA     (input) INTEGER
+C             The leading dimension of the array A.  LDA >= max(1,M).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             Not used in this implementation.
+C
+C     METHOD
+C
+C     Matrix A is multiplied by the real scalar CTO/CFROM, taking into
+C     account the specified storage mode of the matrix.
+C     MB01QD is a version of the LAPACK routine DLASCL, modified for
+C     dealing with block triangular, or block Hessenberg matrices.
+C     For efficiency, no tests of the input scalar parameters are
+C     performed.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Nov. 1996.
+C
+C    ******************************************************************
+C
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+    use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     ..
+!C     .. Scalar Arguments ..
+      CHARACTER          TYPE
+      INTEGER            INFO, KL, KU, LDA, M, N, NBL
+      DOUBLE PRECISION   CFROM, CTO
+!C     ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER            NROWS ( * )
+      DOUBLE PRECISION   A( LDA, * )
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER            NROWS ( * )
+      !DIR$ ASSUME_ALIGNED NROWS:64
+      DOUBLE PRECISION   A( LDA, * )
+      !DIR$ ASSUME_ALIGNED A:64
+#endif
+!C     ..
+!C     .. Local Scalars ..
+      LOGICAL            DONE, NOBLC
+      INTEGER            I, IFIN, ITYPE, J, JFIN, JINI, K, K1, K2, K3, &
+                         K4
+      DOUBLE PRECISION   BIGNUM, CFROM1, CFROMC, CTO1, CTOC, MUL, SMLNUM,TMP
+!C     ..
+!C     .. External Functions ..
+!      LOGICAL            LSAME
+!      DOUBLE PRECISION   DLAMCH
+!      EXTERNAL           LSAME, DLAMCH
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, MIN
+!C     ..
+!C     .. Executable Statements ..
+!C
+      IF( LSAME( TYPE, 'G' ) ) THEN
+         ITYPE = 0
+      ELSE IF( LSAME( TYPE, 'L' ) ) THEN
+         ITYPE = 1
+      ELSE IF( LSAME( TYPE, 'U' ) ) THEN
+         ITYPE = 2
+      ELSE IF( LSAME( TYPE, 'H' ) ) THEN
+         ITYPE = 3
+      ELSE IF( LSAME( TYPE, 'B' ) ) THEN
+         ITYPE = 4
+      ELSE IF( LSAME( TYPE, 'Q' ) ) THEN
+         ITYPE = 5
+      ELSE
+         ITYPE = 6
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( MIN( M, N ).EQ.0 ) &
+         RETURN
+!C
+!C     Get machine parameters.
+!C
+      SMLNUM = DLAMCH( 'S' )
+      BIGNUM = ONE / SMLNUM
+!C
+      CFROMC = CFROM
+      CTOC = CTO
+!C
+   10 CONTINUE
+      CFROM1 = CFROMC*SMLNUM
+      CTO1 = CTOC / BIGNUM
+      IF( ABS( CFROM1 ).GT.ABS( CTOC ) .AND. CTOC.NE.ZERO ) THEN
+         MUL = SMLNUM
+         DONE = .FALSE.
+         CFROMC = CFROM1
+      ELSE IF( ABS( CTO1 ).GT.ABS( CFROMC ) ) THEN
+         MUL = BIGNUM
+         DONE = .FALSE.
+         CTOC = CTO1
+      ELSE
+         MUL = CTOC / CFROMC
+         DONE = .TRUE.
+      END IF
+!C
+      NOBLC = NBL.EQ.0
+!C
+      IF( ITYPE.EQ.0 ) THEN
+!C
+!C        Full matrix
+!C
+         DO 30 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64), LINEAR(I:1)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD LINEAR(I:1)
+#endif
+            DO 20 I = 1, M
+               TMP = A(I,J)
+               A( I, J ) = TMP*MUL
+   20       CONTINUE
+   30    CONTINUE
+!C
+      ELSE IF( ITYPE.EQ.1 ) THEN
+!C
+         IF ( NOBLC ) THEN
+!C
+!C           Lower triangular matrix
+!C
+            DO 50 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64), LINEAR(I:1)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD LINEAR(I:1)
+#endif   
+               DO 40 I = J, M
+                  TMP = A(I,J)
+                  A( I, J ) = TMP*MUL
+   40          CONTINUE
+   50       CONTINUE
+!C
+         ELSE
+!C
+!C           Block lower triangular matrix
+!C
+            JFIN = 0
+            DO 80 K = 1, NBL
+               JINI = JFIN + 1
+               JFIN = JFIN + NROWS( K )
+               DO 70 J = JINI, JFIN
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD LINEAR(I:1)
+#endif
+                  DO 60 I = JINI, M
+                     TMP = A(I,J)
+                     A( I, J ) = TMP*MUL
+   60             CONTINUE
+   70          CONTINUE
+   80       CONTINUE
+         END IF
+!C
+      ELSE IF( ITYPE.EQ.2 ) THEN
+!C
+         IF ( NOBLC ) THEN
+!C
+!C           Upper triangular matrix
+!C
+            DO 100 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD 
+#endif
+               DO 90 I = 1, MIN( J, M )
+                  TMP = A(I,J)
+                  A( I, J ) = TMP*MUL
+   90          CONTINUE
+  100       CONTINUE
+!C
+         ELSE
+!C
+!C           Block upper triangular matrix
+!C
+            JFIN = 0
+            DO 130 K = 1, NBL
+               JINI = JFIN + 1
+               JFIN = JFIN + NROWS( K )
+               IF ( K.EQ.NBL ) JFIN = N
+               DO 120 J = JINI, JFIN
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD
+#endif                  
+                  DO 110 I = 1, MIN( JFIN, M )
+                     TMP = A(I,J)
+                     A( I, J ) = TMP*MUL
+  110             CONTINUE
+  120          CONTINUE
+  130       CONTINUE
+         END IF
+!C
+      ELSE IF( ITYPE.EQ.3 ) THEN
+         IF ( NOBLC ) THEN
+!¬C
+!C           Upper Hessenberg matrix
+!C
+            DO 150 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD
+#endif               
+               DO 140 I = 1, MIN( J+1, M )
+                  TMP = A(I,J)
+                  A( I, J ) = TMP*MUL
+  140          CONTINUE
+  150       CONTINUE
+!C
+         ELSE
+!C
+!C           Block upper Hessenberg matrix
+!C
+            JFIN = 0
+            DO 180 K = 1, NBL
+               JINI = JFIN + 1
+               JFIN = JFIN + NROWS( K )
+!C
+               IF ( K.EQ.NBL ) THEN
+                  JFIN = N
+                  IFIN = N
+               ELSE
+                  IFIN = JFIN + NROWS( K+1 )
+               END IF
+!C
+               DO 170 J = JINI, JFIN
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD
+#endif                  
+                  DO 160 I = 1, MIN( IFIN, M )
+                     TMP = A(I,J)
+                     A( I, J ) = TMP*MUL
+  160             CONTINUE
+  170          CONTINUE
+  180       CONTINUE
+         END IF
+!C
+      ELSE IF( ITYPE.EQ.4 ) THEN
+!C
+!C        Lower half of a symmetric band matrix
+!C
+         K3 = KL + 1
+         K4 = N + 1
+         DO 200 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD 
+#endif            
+            DO 190 I = 1, MIN( K3, K4-J )
+               TMP = A(I,J)
+               A( I, J ) = TMP*MUL
+  190       CONTINUE
+  200    CONTINUE
+!C
+      ELSE IF( ITYPE.EQ.5 ) THEN
+!C
+!C        Upper half of a symmetric band matrix
+!C
+         K1 = KU + 2
+         K3 = KU + 1
+         DO 220 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ SIMD 
+#endif               
+            DO 210 I = MAX( K1-J, 1 ), K3
+               TMP = A(I,J)
+               A( I, J ) = TMP*MUL
+  210       CONTINUE
+  220    CONTINUE
+!C
+      ELSE IF( ITYPE.EQ.6 ) THEN
+!C
+!C        Band matrix
+!C
+         K1 = KL + KU + 2
+         K2 = KL + 1
+         K3 = 2*KL + KU + 1
+         K4 = KL + KU + 1 + M
+         DO 240 J = 1, N
+            
+            DO 230 I = MAX( K1-J, K2 ), MIN( K3, K4-J )
+               A( I, J ) = A( I, J )*MUL
+  230       CONTINUE
+  240    CONTINUE
+!C
+      END IF
+!C
+      IF( .NOT.DONE ) &
+        GO TO 10
+!C
+   
+!C *** Last line of MB01QD ***
+END SUBROUTINE
 
 
 
