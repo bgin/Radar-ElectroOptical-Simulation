@@ -8772,6 +8772,1942 @@ C
 !C *** Last line of MB01QD ***
 END SUBROUTINE
 
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TB05AD( BALEIG, INITA, N, M, P, FREQ, A, LDA, B, LDB, &
+  C, LDC, RCOND, G, LDG, EVRE, EVIM, HINVB,                      &
+  LDHINV, IWORK, DWORK, LDWORK, ZWORK, LZWORK,INFO) !GCC$ ATTRIBUTES hot :: TB05AD !GCC$ ATTRIBUTES aligned(32) :: TB05AD !GCC$ ATTRIBUTES no_stack_protector :: TB05AD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE TB05AD( BALEIG, INITA, N, M, P, FREQ, A, LDA, B, LDB, &
+  C, LDC, RCOND, G, LDG, EVRE, EVIM, HINVB,                      &
+  LDHINV, IWORK, DWORK, LDWORK, ZWORK, LZWORK,INFO)
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TB05AD
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: TB05AD
+#endif
+#if 0                   
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To find the complex frequency response matrix (transfer matrix)
+C     G(freq) of the state-space representation (A,B,C) given by
+C                                   -1
+C        G(freq) = C * ((freq*I - A)  ) * B
+C
+C     where A, B and C are real N-by-N, N-by-M and P-by-N matrices
+C     respectively and freq is a complex scalar.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     BALEIG  CHARACTER*1
+C             Determines whether the user wishes to balance matrix A
+C             and/or compute its eigenvalues and/or estimate the
+C             condition number of the problem as follows:
+C             = 'N':  The matrix A should not be balanced and neither
+C                     the eigenvalues of A nor the condition number
+C                     estimate of the problem are to be calculated;
+C             = 'C':  The matrix A should not be balanced and only an
+C                     estimate of the condition number of the problem
+C                     is to be calculated;
+C             = 'B' or 'E' and INITA = 'G':  The matrix A is to be
+C                     balanced and its eigenvalues calculated;
+C             = 'A' and INITA = 'G':  The matrix A is to be balanced,
+C                     and its eigenvalues and an estimate of the
+C                     condition number of the problem are to be
+C                     calculated.
+C
+C     INITA   CHARACTER*1
+C             Specifies whether or not the matrix A is already in upper
+C             Hessenberg form as follows:
+C             = 'G':  The matrix A is a general matrix;
+C             = 'H':  The matrix A is in upper Hessenberg form and
+C                     neither balancing nor the eigenvalues of A are
+C                     required.
+C             INITA must be set to 'G' for the first call to the
+C             routine, unless the matrix A is already in upper
+C             Hessenberg form and neither balancing nor the eigenvalues
+C             of A are required. Thereafter, it must be set to 'H' for
+C             all subsequent calls.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The number of states, i.e. the order of the state
+C             transition matrix A.  N >= 0.
+C
+C     M       (input) INTEGER
+C             The number of inputs, i.e. the number of columns in the
+C             matrix B.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of outputs, i.e. the number of rows in the
+C             matrix C.  P >= 0.
+C
+C     FREQ    (input) COMPLEX*16
+C             The frequency freq at which the frequency response matrix
+C             (transfer matrix) is to be evaluated.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the state transition matrix A.
+C             If INITA = 'G', then, on exit, the leading N-by-N part of
+C             this array contains an upper Hessenberg matrix similar to
+C             (via an orthogonal matrix consisting of a sequence of
+C             Householder transformations) the original state transition
+C             matrix A.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     B       (input/output) DOUBLE PRECISION array, dimension (LDB,M)
+C             On entry, the leading N-by-M part of this array must
+C             contain the input/state matrix B.
+C             If INITA = 'G', then, on exit, the leading N-by-M part of
+C             this array contains the product of the transpose of the
+C             orthogonal transformation matrix used to reduce A to upper
+C             Hessenberg form and the original input/state matrix B.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,N).
+C
+C     C       (input/output) DOUBLE PRECISION array, dimension (LDC,N)
+C             On entry, the leading P-by-N part of this array must
+C             contain the state/output matrix C.
+C             If INITA = 'G', then, on exit, the leading P-by-N part of
+C             this array contains the product of the original output/
+C             state matrix C and the orthogonal transformation matrix
+C             used to reduce A to upper Hessenberg form.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,P).
+C
+C     RCOND   (output) DOUBLE PRECISION
+C             If BALEIG = 'C' or BALEIG = 'A', then RCOND contains an
+C             estimate of the reciprocal of the condition number of
+C             matrix H with respect to inversion (see METHOD).
+C
+C     G       (output) COMPLEX*16 array, dimension (LDG,M)
+C             The leading P-by-M part of this array contains the
+C             frequency response matrix G(freq).
+C
+C     LDG     INTEGER
+C             The leading dimension of array G.  LDG >= MAX(1,P).
+C
+C     EVRE,   (output) DOUBLE PRECISION arrays, dimension (N)
+C     EVIM    If INITA = 'G' and BALEIG = 'B' or 'E' or BALEIG = 'A',
+C             then these arrays contain the real and imaginary parts,
+C             respectively, of the eigenvalues of the matrix A.
+C             Otherwise, these arrays are not referenced.
+C
+C     HINVB   (output) COMPLEX*16 array, dimension (LDHINV,M)
+C             The leading N-by-M part of this array contains the
+C                      -1
+C             product H  B.
+C
+C     LDHINV  INTEGER
+C             The leading dimension of array HINVB.  LDHINV >= MAX(1,N).
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK.
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.
+C             LDWORK >= MAX(1, N - 1 + MAX(N,M,P)),
+C                       if INITA = 'G' and BALEIG = 'N', or 'B', or 'E';
+C             LDWORK >= MAX(1, N + MAX(N,M-1,P-1)),
+C                       if INITA = 'G' and BALEIG = 'C', or 'A';
+C             LDWORK >= MAX(1, 2*N),
+C                       if INITA = 'H' and BALEIG = 'C', or 'A';
+C             LDWORK >= 1, otherwise.
+C             For optimum performance when INITA = 'G' LDWORK should be
+C             larger.
+C
+C     ZWORK   COMPLEX*16 array, dimension (LZWORK)
+C
+C     LZWORK  INTEGER
+C             The length of the array ZWORK.
+C             LZWORK >= MAX(1,N*N+2*N), if BALEIG = 'C', or 'A';
+C             LZWORK >= MAX(1,N*N),     otherwise.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  if more than 30*N iterations are required to
+C                   isolate all the eigenvalues of the matrix A; the
+C                   computations are continued;
+C             = 2:  if either FREQ is too near to an eigenvalue of the
+C                   matrix A, or RCOND is less than EPS, where EPS is
+C                   the machine  precision (see LAPACK Library routine
+C                   DLAMCH).
+C
+C     METHOD
+C
+C     The matrix A is first balanced (if BALEIG = 'B' or 'E', or
+C     BALEIG = 'A') and then reduced to upper Hessenberg form; the same
+C     transformations are applied to the matrix B and the matrix C.
+C     The complex Hessenberg matrix  H = (freq*I - A) is then used
+C                       -1
+C     to solve for C * H  * B.
+C
+C     Depending on the input values of parameters BALEIG and INITA,
+C     the eigenvalues of matrix A and the condition number of
+C     matrix H with respect to inversion are also calculated.
+C
+C     REFERENCES
+C
+C     [1] Laub, A.J.
+C         Efficient Calculation of Frequency Response Matrices from
+C         State-Space Models.
+C         ACM TOMS, 12, pp. 26-33, 1986.
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TB01FD by A.J.Laub, University of
+C     Southern California, Los Angeles, CA 90089, United States of
+C     America, June 1982.
+C
+C     REVISIONS
+C
+C     V. Sima, February 22, 1998 (changed the name of TB01RD).
+C     V. Sima, February 12, 1999, August 7, 2003.
+C     A. Markovski, Technical University of Sofia, September 30, 2003.
+C     V. Sima, October 1, 2003.
+C
+C     KEYWORDS
+C
+C     Frequency response, Hessenberg form, matrix algebra, input output
+C     description, multivariable system, orthogonal transformation,
+C     similarity transformation, state-space representation, transfer
+C     matrix.
+C
+C     ******************************************************************
+C
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+     use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+      COMPLEX*16        CZERO
+      PARAMETER         ( CZERO = ( 0.0D0, 0.0D0 ) )
+!C     .. Scalar Arguments ..
+      CHARACTER         BALEIG, INITA
+      INTEGER           INFO, LDA, LDB, LDC, LDG, LDHINV, LDWORK, &
+                        LZWORK, M, N, P
+      DOUBLE PRECISION  RCOND
+      COMPLEX*16        FREQ
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER           IWORK(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IWORK(*)
+      !DIR$ ASSUME_ALIGNED IWORK:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
+           EVRE(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
+           EVRE(*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED EWIM:64
+      !DIR$ ASSUME_ALIGNED EWRE:64
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
+      !DIR$ ASSUME_ALIGNED ZWORK:64
+      !DIR$ ASSUME_ALIGNED G:64
+      !DIR$ ASSUME_ALIGNED HINVB:64
+#endif
+!C     .. Local Scalars ..
+      CHARACTER         BALANC
+      LOGICAL           LBALBA, LBALEA, LBALEB, LBALEC, LINITA,
+                        STAT1,STAT2,STAT3
+      INTEGER           I, IGH, IJ, ITAU, J, JJ, JP, JWORK, K, LOW, WRKOPT
+                        
+      DOUBLE PRECISION  HNORM, T
+!C     .. External Functions ..
+      
+      DOUBLE PRECISION  DASUM
+      EXTERNAL          DASUM
+!C     .. External Subroutines ..
+      EXTERNAL          DGEBAL, DGEHRD, DHSEQR, DORMHR, DSCAL, DSWAP, &
+                        ZLASET
+!C     .. Intrinsic Functions ..
+      INTRINSIC         DBLE, DCMPLX, INT, MAX, MIN
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      LBALEC = LSAME( BALEIG, 'C' )
+      LBALEB = LSAME( BALEIG, 'B' ) .OR. LSAME( BALEIG, 'E' )
+      LBALEA = LSAME( BALEIG, 'A' )
+      LBALBA = LBALEB.OR.LBALEA
+      LINITA = LSAME( INITA,  'G' )
+!C
+!C     Test the input scalar arguments.
+      !C
+      STAT1 = .false.
+      STAT2 = .false.
+      STAT3 = .false.
+      STAT1 = ( LINITA .AND. .NOT.LBALEC .AND. .NOT.LBALEA .AND. &
+               LDWORK.LT.N - 1 + MAX( N, M, P ) )
+      STAT2 =  ( LINITA .AND. ( LBALEC .OR. LBALEA ) .AND.  &
+               LDWORK.LT.N + MAX( N, M-1, P-1 ) )
+      STAT3 =  ( .NOT.LINITA .AND. ( LBALEC .OR. LBALEA ) .AND. &
+               LDWORK.LT.2*N )
+      
+      IF( .NOT.LBALEC .AND. .NOT.LBALBA .AND. &
+          .NOT.LSAME( BALEIG, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LINITA .AND. .NOT.LSAME( INITA, 'H' ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -12
+      ELSE IF( LDG.LT.MAX( 1, P ) ) THEN
+         INFO = -15
+      ELSE IF( LDHINV.LT.MAX( 1, N ) ) THEN
+         INFO = -19
+      ELSE IF( STAT1 .OR. STAT2 .OR. STAT3 .OR. LDWORK.LT.1)
+         INFO = -22
+      ELSE IF( ( ( LBALEC .OR. LBALEA ) .AND. LZWORK.LT.N*( N + 2 ) ) &
+           .OR. ( LZWORK.LT.MAX( 1, N*N ) ) ) THEN
+         INFO = -24
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return
+!C
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( N.EQ.0 ) THEN
+         IF ( MIN( M, P ).GT.0 ) &
+            CALL ZLASET( 'Full', P, M, CZERO, CZERO, G, LDG )
+         RCOND = ONE
+         DWORK(1) = ONE
+         RETURN
+      END IF
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.
+!C     NB refers to the optimal block size for the immediately
+!C     following subroutine, as returned by ILAENV.)
+!C
+      WRKOPT = 1
+!C
+      IF ( LINITA ) THEN
+         BALANC = 'N'
+         IF ( LBALBA ) BALANC = 'B'
+!C
+!C        Workspace: need N.
+!C
+         CALL DGEBAL( BALANC, N, A, LDA, LOW, IGH, DWORK, INFO )
+         IF ( LBALBA ) THEN
+!C
+!C           Adjust B and C matrices based on information in the
+!C           vector DWORK which describes the balancing of A and is
+!C           defined in the subroutine DGEBAL.
+            !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ,JP)
+#endif
+            DO 10 J = 1, N
+               JJ = J
+               IF ( JJ.LT.LOW .OR. JJ.GT.IGH ) THEN
+                  IF ( JJ.LT.LOW ) JJ = LOW - JJ
+                  JP = DWORK(JJ)
+                  IF ( JP.NE.JJ ) THEN
+!C
+!C                    Permute rows of B.
+!C
+                     IF ( M.GT.0 ) &
+                       CALL DSWAP( M, B(JJ,1), LDB, B(JP,1), LDB )
+!C
+!C                    Permute columns of C.
+!C
+                     IF ( P.GT.0 ) &
+                        CALL DSWAP( P, C(1,JJ), 1, C(1,JP), 1 )
+                  END IF
+               END IF
+10             CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+               !$OMP END PARALLEL DO
+#endif
+!C
+            IF ( IGH.NE.LOW ) THEN
+               !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,T)
+#endif
+               DO 20 J = LOW, IGH
+                  T = DWORK(J)
+!C
+!C                 Scale rows of permuted B.
+!C
+                  IF ( M.GT.0 ) &
+                    CALL DSCAL( M, ONE/T, B(J,1), LDB )
+!C
+!C                 Scale columns of permuted C.
+!C
+                  IF ( P.GT.0 ) &
+                     CALL DSCAL( P, T, C(1,J), 1 )
+20                CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+                  !$OMP END PARALLEL DO
+#endif
+!C
+            END IF
+         END IF
+!C
+!C        Reduce A to Hessenberg form by orthogonal similarities and
+!C        accumulate the orthogonal transformations into B and C.
+!C        Workspace: need 2*N - 1;  prefer N - 1 + N*NB.
+!C
+         ITAU = 1
+         JWORK = ITAU + N - 1
+         CALL DGEHRD( N, LOW, IGH, A, LDA, DWORK(ITAU), DWORK(JWORK), &
+                     LDWORK-JWORK+1, INFO )
+         WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK) )+JWORK-1 )
+!C
+!C        Workspace: need N - 1 + M;  prefer N - 1 + M*NB.
+!C
+         CALL DORMHR( 'Left', 'Transpose', N, M, LOW, IGH, A, LDA, &
+                     DWORK(ITAU), B, LDB, DWORK(JWORK), LDWORK-JWORK+1, INFO)
+                    
+         WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK) )+JWORK-1 )
+!C
+!C        Workspace: need N - 1 + P;  prefer N - 1 + P*NB.
+!C
+         CALL DORMHR( 'Right', 'No transpose', P, N, LOW, IGH, A, LDA, &
+                     DWORK(ITAU), C, LDC, DWORK(JWORK), LDWORK-JWORK+1, INFO)
+                    
+         WRKOPT = MAX( WRKOPT, INT( DWORK(JWORK) )+JWORK-1 )
+         IF ( LBALBA ) THEN
+!C
+!C           Temporarily store Hessenberg form of A in array ZWORK.
+!C
+            IJ = 0
+            DO 40 J = 1, N
+               !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(ZWORK:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 30 I = 1, N
+                  IJ = IJ + 1
+                  ZWORK(IJ) = DCMPLX( A(I,J), ZERO )
+   30          CONTINUE
+!C
+   40       CONTINUE
+!C
+!C           Compute the eigenvalues of A if that option is requested.
+!C           Workspace: need N.
+!C
+            CALL DHSEQR( 'Eigenvalues', 'No Schur', N, LOW, IGH, A, LDA, &
+                         EVRE, EVIM, DWORK, 1, DWORK, LDWORK, INFO )
+!C
+!C           Restore upper Hessenberg form of A.
+!C
+            IJ = 0
+            DO 60 J = 1, N
+               !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(ZWORK:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 50 I = 1, N
+                  IJ = IJ + 1
+                  A(I,J) = DBLE( ZWORK(IJ) )
+   50          CONTINUE
+!C
+   60       CONTINUE
+!C
+            IF ( INFO.GT.0 ) THEN
+!C
+!C              DHSEQR could not evaluate the eigenvalues of A.
+!C
+               INFO = 1
+            END IF
+         END IF
+      END IF
+!C
+!C     Update  H := (FREQ * I) - A   with appropriate value of FREQ.
+!C
+      IJ = 0
+      JJ = 1
+      DO 80 J = 1, N
+         !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(ZWORK:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif        
+         DO 70 I = 1, N
+            IJ = IJ + 1
+            ZWORK(IJ) = -DCMPLX( A(I,J), ZERO )
+   70    CONTINUE
+!C
+         ZWORK(JJ) = FREQ + ZWORK(JJ)
+         JJ = JJ + N + 1
+   80 CONTINUE
+!C
+      IF ( LBALEC .OR. LBALEA ) THEN
+!C
+!C        Efficiently compute the 1-norm of the matrix for condition
+!C        estimation.
+!C
+         HNORM = ZERO
+         JJ = 1
+         !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,T,HNORM,JJ)
+#endif
+         DO 90 J = 1, N
+            T = ABS( ZWORK(JJ) ) + DASUM( J-1, A(1,J), 1 )
+            IF ( J.LT.N ) T = T + ABS( A(J+1,J) )
+            HNORM = MAX( HNORM, T )
+            JJ = JJ + N + 1
+90          CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+            !$OMP END PARALLEL DO
+#endif
+!C
+      END IF
+!C
+!C     Factor the complex Hessenberg matrix.
+!C
+      CALL MB02SZ( N, ZWORK, N, IWORK, INFO )
+      IF ( INFO.NE.0 ) INFO = 2
+!C
+      IF ( LBALEC .OR. LBALEA ) THEN
+!C
+!C        Estimate the condition of the matrix.
+!C
+!C        Workspace: need 2*N.
+!C
+         CALL MB02TZ( '1-norm', N, HNORM, ZWORK, N, IWORK, RCOND, DWORK, &
+                      ZWORK(N*N+1), INFO )
+         WRKOPT = MAX( WRKOPT, 2*N )
+         IF ( RCOND.LT.DLAMCH( 'Epsilon' ) ) INFO = 2
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return: Linear system is numerically or exactly singular.
+!C
+         RETURN
+      END IF
+!C
+!C     Compute  (H-INVERSE)*B.
+!C
+      DO 110 J = 1, M
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(HINVB:64,B:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif   
+!C
+         DO 100 I = 1, N
+            HINVB(I,J) = DCMPLX( B(I,J), ZERO )
+  100    CONTINUE
+!C
+  110 CONTINUE
+!C
+      CALL MB02RZ( 'No transpose', N, M, ZWORK, N, IWORK, HINVB, LDHINV, INFO)
+     
+!C
+!C     Compute  C*(H-INVERSE)*B.
+!C
+      DO 150 J = 1, M
+         !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(G:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif   
+         DO 120 I = 1, P
+            G(I,J) = CZERO
+  120    CONTINUE
+!C
+         DO 140 K = 1, N
+            !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(G:64,C:64,HINVB:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif   
+            DO 130 I = 1, P
+               G(I,J) = G(I,J) + DCMPLX( C(I,K), ZERO )*HINVB(K,J)
+  130       CONTINUE
+!C
+  140    CONTINUE
+!C
+  150 CONTINUE
+!C
+!C     G now contains the desired frequency response matrix.
+!C     Set the optimal workspace.
+!C
+      DWORK(1) = WRKOPT
+!C
+  
+ END SUBROUTINE
+
+    
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+ SUBROUTINE MB02RZ(TRANS,N,NRHS,H,LDH,IPIV,B,LDB,INFO) !GCC$ ATTRIBUTES hot :: MB02RZ !GCC$ ATTRIBUTES aligned(32) :: MB02RZ !GCC$ ATTRIBUTES no_stack_protector :: MB02RZ
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE MB02RZ(TRANS,N,NRHS,H,LDH,IPIV,B,LDB,INFO)
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB02RZ
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB02RZ
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To solve a system of linear equations
+!C        H * X = B,  H' * X = B  or  H**H * X = B
+C     with a complex upper Hessenberg N-by-N matrix H using the LU
+C     factorization computed by MB02SZ.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     TRANS   CHARACTER*1
+C             Specifies the form of the system of equations:
+C             = 'N':  H * X = B  (No transpose)
+!C             = 'T':  H'* X = B  (Transpose)
+C             = 'C':  H**H * X = B  (Conjugate transpose)
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrix H.  N >= 0.
+C
+C     NRHS    (input) INTEGER
+C             The number of right hand sides, i.e., the number of
+C             columns of the matrix B.  NRHS >= 0.
+C
+C     H       (input) COMPLEX*16 array, dimension (LDH,N)
+C             The factors L and U from the factorization H = P*L*U
+C             as computed by MB02SZ.
+C
+C     LDH     INTEGER
+C             The leading dimension of the array H.  LDH >= max(1,N).
+C
+C     IPIV    (input) INTEGER array, dimension (N)
+C             The pivot indices from MB02SZ; for 1<=i<=N, row i of the
+C             matrix was interchanged with row IPIV(i).
+C
+C     B       (input/output) COMPLEX*16 array, dimension (LDB,NRHS)
+C             On entry, the right hand side matrix B.
+C             On exit, the solution matrix X.
+C
+C     LDB     INTEGER
+C             The leading dimension of the array B.  LDB >= max(1,N).
+C
+C     INFO    (output) INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The routine uses the factorization
+C        H = P * L * U
+C     where P is a permutation matrix, L is lower triangular with unit
+C     diagonal elements (and one nonzero subdiagonal), and U is upper
+C     triangular.
+C
+C     REFERENCES
+C
+C     -
+C
+C     NUMERICAL ASPECTS
+C                                2
+C     The algorithm requires 0( N x NRHS ) complex operations.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TB01FW by A.J. Laub, University of
+C     Southern California, United States of America, May 1980.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Frequency response, Hessenberg form, matrix algebra.
+C
+C     ******************************************************************
+C
+#endif
+
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1 
+     use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      COMPLEX*16         ONE
+      PARAMETER          ( ONE = ( 1.0D+0, 0.0D+0 ) )
+!C     .. Scalar Arguments ..
+      CHARACTER          TRANS
+      INTEGER            INFO, LDB, LDH, N, NRHS
+!C     ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER            IPIV( * )
+      COMPLEX*16         B( LDB, * ), H( LDH, * )
+      !INTEGER,     DIMENSION(:), ALLOCATABLE :: IPIV
+      !COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: B,H
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER            IPIV( * )
+      !DIR$ ASSUME_ALIGNED IPIV:64
+      COMPLEX*16         B( LDB, * ), H( LDH, * )
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED H:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL            NOTRAN
+      INTEGER            J, JP
+!C     .. External Functions ..
+      
+!C     .. External Subroutines ..
+      EXTERNAL           ZAXPY, ZSWAP, ZTRSM
+!C     .. Intrinsic Functions ..
+      INTRINSIC          DCONJG, MAX
+!C     .. Executable Statements ..
+!C
+!C     Test the input parameters.
+!C
+      INFO = 0
+      NOTRAN = LSAME( TRANS, 'N' )
+      IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'T' ) .AND. .NOT. &
+          LSAME( TRANS, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( NRHS.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( N.EQ.0 .OR. NRHS.EQ.0 ) RETURN
+      
+!C
+      IF( NOTRAN ) THEN
+!C
+!C        Solve H * X = B.
+!C
+!C        Solve L * X = B, overwriting B with X.
+!C
+!C        L is represented as a product of permutations and unit lower
+!C        triangular matrices L = P(1) * L(1) * ... * P(n-1) * L(n-1),
+!C        where each transformation L(i) is a rank-one modification of
+!C        the identity matrix.
+         !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JP)
+#endif
+         DO 10 J = 1, N - 1
+            JP = IPIV( J )
+            IF( JP.NE.J ) &
+               CALL ZSWAP( NRHS, B( JP, 1 ), LDB, B( J, 1 ), LDB )
+            CALL ZAXPY( NRHS, -H( J+1, J ), B( J, 1 ), LDB, B( J+1, 1 ),LDB)
+           
+        10  CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+            !$OMP END PARALLLEL DO
+#endif
+!C
+!C        Solve U * X = B, overwriting B with X.
+!C
+         CALL ZTRSM( 'Left', 'Upper', 'No transpose', 'Non-unit', N, &
+                    NRHS, ONE, H, LDH, B, LDB )
+!C
+      ELSE IF( LSAME( TRANS, 'T' ) ) THEN
+!C
+!C        Solve H' * X = B.
+!C
+!C        Solve U' * X = B, overwriting B with X.
+!C
+         CALL ZTRSM( 'Left', 'Upper', TRANS, 'Non-unit', N, NRHS, ONE, &
+                     H, LDH, B, LDB )
+!C
+!C        Solve L' * X = B, overwriting B with X.
+         !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JP)
+#endif
+         DO 20 J = N - 1, 1, -1
+            CALL ZAXPY( NRHS, -H( J+1, J ), B( J+1, 1 ), LDB, B( J, 1 ),LDB)
+            JP = IPIV( J )
+            IF( JP.NE.J ) &
+               CALL ZSWAP( NRHS, B( JP, 1 ), LDB, B( J, 1 ), LDB )
+20          CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+            !$OMP END PARALLLEL DO
+#endif
+!C
+      ELSE
+!C
+!C!        Solve H**H * X = B.
+!C
+!C        Solve U**H * X = B, overwriting B with X.
+!C
+         CALL ZTRSM( 'Left', 'Upper', TRANS, 'Non-unit', N, NRHS, ONE, &
+                     H, LDH, B, LDB )
+!C
+!C        Solve L**H * X = B, overwriting B with X.
+         !C
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JP)
+#endif
+         DO 30 J = N - 1, 1, -1
+            CALL ZAXPY( NRHS, -DCONJG( H( J+1, J ) ), B( J+1, 1 ), LDB, &
+                       B( J, 1 ), LDB )
+            JP = IPIV( J )
+            IF( JP.NE.J ) &
+              CALL ZSWAP( NRHS, B( JP, 1 ), LDB, B( J, 1 ), LDB )
+30          CONTINUE
+#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
+            !$OMP END PARALLLEL DO
+#endif
+!C
+      END IF
+!C
+ 
+END SUBROUTINE
+
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB02SZ(N, H, LDH, IPIV, INFO) !GCC$ ATTRIBUTES aligned(32) :: MB02SZ !GCC$ ATTRIBUTES inline :: MB02SZ
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE MB02SZ(N, H, LDH, IPIV, INFO)
+!DIR$ ATTRIBUTES FORCEINLINE :: MB02SZ
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB02SZ
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB02SZ
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute an LU factorization of a complex n-by-n upper
+C     Hessenberg matrix H using partial pivoting with row interchanges.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrix H.  N >= 0.
+C
+C     H       (input/output) COMPLEX*16 array, dimension (LDH,N)
+C             On entry, the n-by-n upper Hessenberg matrix to be
+C             factored.
+C             On exit, the factors L and U from the factorization
+C             H = P*L*U; the unit diagonal elements of L are not stored,
+C             and L is lower bidiagonal.
+C
+C     LDH     INTEGER
+C             The leading dimension of the array H.  LDH >= max(1,N).
+C
+C     IPIV    (output) INTEGER array, dimension (N)
+C             The pivot indices; for 1 <= i <= N, row i of the matrix
+C             was interchanged with row IPIV(i).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             > 0:  if INFO = i, U(i,i) is exactly zero. The
+C                   factorization has been completed, but the factor U
+C                   is exactly singular, and division by zero will occur
+C                   if it is used to solve a system of equations.
+C
+C     METHOD
+C
+C     The factorization has the form
+C        H = P * L * U
+C     where P is a permutation matrix, L is lower triangular with unit
+C     diagonal elements (and one nonzero subdiagonal), and U is upper
+C     triangular.
+C
+C     This is the right-looking Level 2 BLAS version of the algorithm
+C     (adapted after ZGETF2).
+C
+C     REFERENCES
+C
+C     -
+C
+C     NUMERICAL ASPECTS
+C                                2
+C     The algorithm requires 0( N ) complex operations.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TB01FX by A.J. Laub, University of
+C     Southern California, United States of America, May 1980.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Oct. 2000,
+C     Jan. 2005.
+C
+C     KEYWORDS
+C
+C     Frequency response, Hessenberg form, matrix algebra.
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Parameters ..
+      COMPLEX*16        ZERO
+      PARAMETER         ( ZERO = ( 0.0D+0, 0.0D+0 ) )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, LDH, N
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER           IPIV(*)
+      COMPLEX*16        H(LDH,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IPIV(*)
+      !DIR4 ASSUME_ALIGNED IPIV:64
+      COMPLEX*16        H(LDH,*)
+      !DIR$ ASSUME_ALIGNED H:64
+#endif
+!C     .. Local Scalars ..
+      INTEGER           J, JP
+!C     .. External Functions ..
+      DOUBLE PRECISION  DCABS1
+      EXTERNAL          DCABS1
+!C     .. External Subroutines ..
+      EXTERNAL          ZAXPY, ZSWAP
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MAX
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Check the scalar input parameters.
+!C
+      INFO = 0
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+         INFO = -3
+      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( N.EQ.0 ) RETURN
+      
+
+      DO 10 J = 1, N
+!C
+!C        Find pivot and test for singularity.
+!C
+         JP = J
+         IF ( J.LT.N ) THEN
+            IF ( DCABS1( H( J+1, J ) ).GT.DCABS1( H( J, J ) ) ) &
+               JP = J + 1
+         END IF
+         IPIV( J ) = JP
+         IF( H( JP, J ).NE.ZERO ) THEN
+!C
+!C           Apply the interchange to columns J:N.
+!C
+            IF( JP.NE.J ) &
+               CALL ZSWAP( N-J+1, H( J, J ), LDH, H( JP, J ), LDH )
+!C
+!C           Compute element J+1 of J-th column.
+!C
+            IF( J.LT.N ) &
+               H( J+1, J ) = H( J+1, J )/H( J, J )
+
+         ELSE IF( INFO.EQ.0 ) THEN
+
+            INFO = J
+         END IF
+
+         IF( J.LT.N ) THEN
+!C
+!C           Update trailing submatrix.
+!C
+            CALL ZAXPY( N-J, -H( J+1, J ), H( J, J+1 ), LDH, &
+                        H( J+1, J+1 ), LDH )
+         END IF
+   10 CONTINUE
+     
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB02TZ( NORM, N, HNORM, H, LDH, IPIV, RCOND, DWORK, &
+     ZWORK, INFO ) !GCC$ ATTRIBUTES aligned(32) :: MB02TZ !GCC$ ATTRIBUTES inline :: MB02TZ
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE MB02TZ( NORM, N, HNORM, H, LDH, IPIV, RCOND, DWORK, &
+     ZWORK, INFO )
+!DIR$ ATTRIBUTES FORCEINLINE :: MB02TZ
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB02TZ
+!DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MB02TZ
+#endif
+
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To estimate the reciprocal of the condition number of a complex
+C     upper Hessenberg matrix H, in either the 1-norm or the
+C     infinity-norm, using the LU factorization computed by MB02SZ.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     NORM    CHARACTER*1
+C             Specifies whether the 1-norm condition number or the
+C             infinity-norm condition number is required:
+C             = '1' or 'O':  1-norm;
+C             = 'I':         Infinity-norm.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrix H.  N >= 0.
+C
+C     HNORM   (input) DOUBLE PRECISION
+C             If NORM = '1' or 'O', the 1-norm of the original matrix H.
+C             If NORM = 'I', the infinity-norm of the original matrix H.
+C
+C     H       (input) COMPLEX*16 array, dimension (LDH,N)
+C             The factors L and U from the factorization H = P*L*U
+C             as computed by MB02SZ.
+C
+C     LDH     INTEGER
+C             The leading dimension of the array H.  LDH >= max(1,N).
+C
+C     IPIV    (input) INTEGER array, dimension (N)
+C             The pivot indices; for 1 <= i <= N, row i of the matrix
+C             was interchanged with row IPIV(i).
+C
+C     RCOND   (output) DOUBLE PRECISION
+C             The reciprocal of the condition number of the matrix H,
+C             computed as RCOND = 1/(norm(H) * norm(inv(H))).
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (N)
+C
+C     ZWORK   COMPLEX*16 array, dimension (2*N)
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     An estimate is obtained for norm(inv(H)), and the reciprocal of
+C     the condition number is computed as
+C        RCOND = 1 / ( norm(H) * norm(inv(H)) ).
+C
+C     REFERENCES
+C
+C     -
+C
+C     NUMERICAL ASPECTS
+C                                2
+C     The algorithm requires 0( N ) complex operations.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TB01FY by A.J. Laub, University of
+C     Southern California, United States of America, May 1980.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Feb. 2005.
+C
+C     KEYWORDS
+C
+C     Frequency response, Hessenberg form, matrix algebra.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!C     .. Scalar Arguments ..
+      CHARACTER          NORM
+      INTEGER            INFO, LDH, N
+      DOUBLE PRECISION   HNORM, RCOND
+!C     ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER            IPIV(*)
+      DOUBLE PRECISION   DWORK( * )
+      COMPLEX*16         H( LDH, * ), ZWORK( * )
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER            IPIV(*)
+      !DIR$ ASSUME_ALIGNED IPIV:64
+      DOUBLE PRECISION   DWORK( * )
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      COMPLEX*16         H( LDH, * ), ZWORK( * )
+      !DIR$ ASSUME_ALIGNED H:64
+      !DIR$ ASSUME_ALIGNED ZWORK:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL            ONENRM
+      CHARACTER          NORMIN
+      INTEGER            IX, J, JP, KASE, KASE1
+!C
+      DOUBLE PRECISION   HINVNM, SCALE, SMLNUM
+      COMPLEX*16         T, ZDUM
+!C     ..
+!C     .. External Functions ..
+      
+!C     ..
+!C     .. External Subroutines ..
+      EXTERNAL           ZDRSCL, ZLACON, ZLATRS
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          ABS, DBLE, DCONJG, DIMAG, MAX
+!C     ..
+!C     .. Statement Functions ..
+      DOUBLE PRECISION   CABS1
+!C     ..
+!C     .. Statement Function definitions ..
+      CABS1( ZDUM ) = ABS( DBLE( ZDUM ) ) + ABS( DIMAG( ZDUM ) )
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Test the input parameters.
+!C
+      INFO = 0
+      ONENRM = NORM.EQ.'1' .OR. LSAME( NORM, 'O' )
+      IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( HNORM.LT.ZERO ) THEN
+         INFO = -3
+      ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      RCOND = ZERO
+      IF( N.EQ.0 ) THEN
+         RCOND = ONE
+         RETURN
+      ELSE IF( HNORM.EQ.ZERO ) THEN
+         RETURN
+      END IF
+!C
+      SMLNUM = DLAMCH( 'Safe minimum' )
+!C
+!C     Estimate the norm of inv(H).
+!C
+      HINVNM = ZERO
+      NORMIN = 'N'
+      IF( ONENRM ) THEN
+         KASE1 = 1
+      ELSE
+         KASE1 = 2
+      END IF
+      KASE = 0
+   10 CONTINUE
+      CALL ZLACON( N, ZWORK( N+1 ), ZWORK, HINVNM, KASE )
+      IF( KASE.NE.0 ) THEN
+         IF( KASE.EQ.KASE1 ) THEN
+!C
+!C           Multiply by inv(L).
+!C
+            DO 20 J = 1, N - 1
+               JP = IPIV( J )
+               T = ZWORK( JP )
+               IF( JP.NE.J ) THEN
+                  ZWORK( JP ) = ZWORK( J )
+                  ZWORK( J ) = T
+               END IF
+               ZWORK( J+1 ) = ZWORK( J+1 ) - T * H( J+1, J )
+   20       CONTINUE
+!C
+!C           Multiply by inv(U).
+!C
+            CALL ZLATRS( 'Upper', 'No transpose', 'Non-unit', NORMIN, N, &
+                         H, LDH, ZWORK, SCALE, DWORK, INFO )
+         ELSE
+!C
+!C           Multiply by inv(U').
+!C
+            CALL ZLATRS( 'Upper', 'Conjugate transpose', 'Non-unit', &
+                        NORMIN, N, H, LDH, ZWORK, SCALE, DWORK, INFO )
+!C
+!C           Multiply by inv(L').
+!C
+            DO 30 J = N - 1, 1, -1
+               ZWORK( J ) = ZWORK( J ) -
+                            DCONJG( H( J+1, J ) ) * ZWORK( J+1 ) &
+               JP = IPIV( J )
+               IF( JP.NE.J ) THEN
+                  T = ZWORK( JP )
+                  ZWORK( JP ) = ZWORK( J )
+                  ZWORK( J ) = T
+               END IF
+   30       CONTINUE
+         END IF
+!C
+!C        Divide X by 1/SCALE if doing so will not cause overflow.
+!C
+         NORMIN = 'Y'
+         IF( SCALE.NE.ONE ) THEN
+            IX = IZAMAX( N, ZWORK, 1 )
+            IF( SCALE.LT.CABS1( ZWORK( IX ) )*SMLNUM .OR. SCALE.EQ.ZERO &
+              ) GO TO 40
+            CALL ZDRSCL( N, SCALE, ZWORK, 1 )
+         END IF
+         GO TO 10
+      END IF
+!C
+!C     Compute the estimate of the reciprocal condition number.
+!C
+      IF( HINVNM.NE.ZERO ) &
+        RCOND = ( ONE / HINVNM ) / HNORM
+!C
+   40 CONTINUE
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE SB02MD( DICO, HINV, UPLO, SCAL, SORT, N, A, LDA, G, &
+    LDG, Q, LDQ, RCOND, WR, WI, S, LDS, U, LDU,                &
+    IWORK, DWORK, LDWORK, BWORK, INFO ) !GCC$ ATTRIBUTES hot :: SB02MD !GCC$ ATTRIBUTES aligned(32) :: SB02MD !GCC$ ATTRIBUTES no_stack_protector :: SB02MD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE SB02MD( DICO, HINV, UPLO, SCAL, SORT, N, A, LDA, G, &
+    LDG, Q, LDQ, RCOND, WR, WI, S, LDS, U, LDU,                &
+    IWORK, DWORK, LDWORK, BWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB02MD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: SB02MD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To solve for X either the continuous-time algebraic Riccati
+C     equation
+C                              -1
+C        Q + A'*X + X*A - X*B*R  B'*X = 0                            (1)
+C
+C     or the discrete-time algebraic Riccati equation
+C                                        -1
+C        X = A'*X*A - A'*X*B*(R + B'*X*B)  B'*X*A + Q                (2)
+C
+C     where A, B, Q and R are N-by-N, N-by-M, N-by-N and M-by-M matrices
+C     respectively, with Q symmetric and R symmetric nonsingular; X is
+C     an N-by-N symmetric matrix.
+C                       -1
+C     The matrix G = B*R  B' must be provided on input, instead of B and
+C     R, that is, for instance, the continuous-time equation
+C
+C        Q + A'*X + X*A - X*G*X = 0                                  (3)
+C
+C     is solved, where G is an N-by-N symmetric matrix. SLICOT Library
+C     routine SB02MT should be used to compute G, given B and R. SB02MT
+C     also enables to solve Riccati equations corresponding to optimal
+C     problems with coupling terms.
+C
+C     The routine also returns the computed values of the closed-loop
+C     spectrum of the optimal system, i.e., the stable eigenvalues
+C     lambda(1),...,lambda(N) of the corresponding Hamiltonian or
+C     symplectic matrix associated to the optimal problem.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     DICO    CHARACTER*1
+C             Specifies the type of Riccati equation to be solved as
+C             follows:
+C             = 'C':  Equation (3), continuous-time case;
+C             = 'D':  Equation (2), discrete-time case.
+C
+C     HINV    CHARACTER*1
+C             If DICO = 'D', specifies which symplectic matrix is to be
+C             constructed, as follows:
+C             = 'D':  The matrix H in (5) (see METHOD) is constructed;
+C             = 'I':  The inverse of the matrix H in (5) is constructed.
+C             HINV is not used if DICO = 'C'.
+C
+C     UPLO    CHARACTER*1
+C             Specifies which triangle of the matrices G and Q is
+C             stored, as follows:
+C             = 'U':  Upper triangle is stored;
+C             = 'L':  Lower triangle is stored.
+C
+C     SCAL    CHARACTER*1
+C             Specifies whether or not a scaling strategy should be
+C             used, as follows:
+C             = 'G':  General scaling should be used;
+C             = 'N':  No scaling should be used.
+C
+C     SORT    CHARACTER*1
+C             Specifies which eigenvalues should be obtained in the top
+C             of the Schur form, as follows:
+C             = 'S':  Stable   eigenvalues come first;
+C             = 'U':  Unstable eigenvalues come first.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A, Q, G and X.  N >= 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the coefficient matrix A of the equation.
+C             On exit, if DICO = 'D', and INFO = 0 or INFO > 1, the
+C                                                                    -1
+C             leading N-by-N part of this array contains the matrix A  .
+C             Otherwise, the array A is unchanged on exit.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     G       (input) DOUBLE PRECISION array, dimension (LDG,N)
+C             The leading N-by-N upper triangular part (if UPLO = 'U')
+C             or lower triangular part (if UPLO = 'L') of this array
+C             must contain the upper triangular part or lower triangular
+C             part, respectively, of the symmetric matrix G.
+C             The strictly lower triangular part (if UPLO = 'U') or
+C             strictly upper triangular part (if UPLO = 'L') is not
+C             referenced.
+C
+C     LDG     INTEGER
+C             The leading dimension of array G.  LDG >= MAX(1,N).
+C
+C     Q       (input/output) DOUBLE PRECISION array, dimension (LDQ,N)
+C             On entry, the leading N-by-N upper triangular part (if
+C             UPLO = 'U') or lower triangular part (if UPLO = 'L') of
+C             this array must contain the upper triangular part or lower
+C             triangular part, respectively, of the symmetric matrix Q.
+C             The strictly lower triangular part (if UPLO = 'U') or
+C             strictly upper triangular part (if UPLO = 'L') is not
+C             used.
+C             On exit, if INFO = 0, the leading N-by-N part of this
+C             array contains the solution matrix X of the problem.
+C
+C     LDQ     INTEGER
+C             The leading dimension of array N.  LDQ >= MAX(1,N).
+C
+C     RCOND   (output) DOUBLE PRECISION
+C             An estimate of the reciprocal of the condition number (in
+C             the 1-norm) of the N-th order system of algebraic
+C             equations from which the solution matrix X is obtained.
+C
+C     WR      (output) DOUBLE PRECISION array, dimension (2*N)
+C     WI      (output) DOUBLE PRECISION array, dimension (2*N)
+C             If INFO = 0 or INFO = 5, these arrays contain the real and
+C             imaginary parts, respectively, of the eigenvalues of the
+C             2N-by-2N matrix S, ordered as specified by SORT (except
+C             for the case HINV = 'D', when the order is opposite to
+C             that specified by SORT). The leading N elements of these
+C             arrays contain the closed-loop spectrum of the system
+C                           -1
+!C             matrix A - B*R  *B'*X, if DICO = 'C', or of the matrix
+C                               -1
+C             A - B*(R + B'*X*B)  B'*X*A, if DICO = 'D'. Specifically,
+C                lambda(k) = WR(k) + j*WI(k), for k = 1,2,...,N.
+C
+C     S       (output) DOUBLE PRECISION array, dimension (LDS,2*N)
+C             If INFO = 0 or INFO = 5, the leading 2N-by-2N part of this
+C             array contains the ordered real Schur form S of the
+C             Hamiltonian or symplectic matrix H. That is,
+C
+C                    (S   S  )
+C                    ( 11  12)
+C                S = (       ),
+C                    (0   S  )
+C                    (     22)
+C
+C             where S  , S   and S   are N-by-N matrices.
+C                    11   12      22
+C
+C     LDS     INTEGER
+C             The leading dimension of array S.  LDS >= MAX(1,2*N).
+C
+C     U       (output) DOUBLE PRECISION array, dimension (LDU,2*N)
+C             If INFO = 0 or INFO = 5, the leading 2N-by-2N part of this
+C             array contains the transformation matrix U which reduces
+C             the Hamiltonian or symplectic matrix H to the ordered real
+C             Schur form S. That is,
+C
+C                    (U   U  )
+C                    ( 11  12)
+C                U = (       ),
+C                    (U   U  )
+C                    ( 21  22)
+C
+C             where U  , U  , U   and U   are N-by-N matrices.
+C                    11   12   21      22
+C
+C     LDU     INTEGER
+C             The leading dimension of array U.  LDU >= MAX(1,2*N).
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (2*N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK and DWORK(2) returns the scaling factor used
+C             (set to 1 if SCAL = 'N'), also set if INFO = 5;
+C             if DICO = 'D', DWORK(3) returns the reciprocal condition
+C             number of the given matrix  A.
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.
+C             LDWORK >= MAX(2,6*N) if DICO = 'C';
+C             LDWORK >= MAX(3,6*N) if DICO = 'D'.
+C             For optimum performance LDWORK should be larger.
+C
+C     BWORK   LOGICAL array, dimension (2*N)
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  if matrix A is (numerically) singular in discrete-
+C                   time case;
+C             = 2:  if the Hamiltonian or symplectic matrix H cannot be
+C                   reduced to real Schur form;
+C             = 3:  if the real Schur form of the Hamiltonian or
+C                   symplectic matrix H cannot be appropriately ordered;
+C             = 4:  if the Hamiltonian or symplectic matrix H has less
+C                   than N stable eigenvalues;
+C             = 5:  if the N-th order system of linear algebraic
+C                   equations, from which the solution matrix X would
+C                   be obtained, is singular to working precision.
+C
+C     METHOD
+C
+C     The method used is the Schur vector approach proposed by Laub.
+C     It is assumed that [A,B] is a stabilizable pair (where for (3) B
+!C     is any matrix such that B*B' = G with rank(B) = rank(G)), and
+C     [E,A] is a detectable pair, where E is any matrix such that
+!C     E*E' = Q with rank(E) = rank(Q). Under these assumptions, any of
+C     the algebraic Riccati equations (1)-(3) is known to have a unique
+C     non-negative definite solution. See [2].
+C     Now consider the 2N-by-2N Hamiltonian or symplectic matrix
+C
+C                 ( A   -G )
+C            H =  (        ),                                    (4)
+!C                 (-Q   -A'),
+C
+C     for continuous-time equation, and
+C                    -1        -1
+C                 ( A         A  *G   )
+C            H =  (   -1          -1  ),                         (5)
+!C                 (Q*A    A' + Q*A  *G)
+C                                                            -1
+!C     for discrete-time equation, respectively, where G = B*R  *B'.
+C     The assumptions guarantee that H in (4) has no pure imaginary
+C     eigenvalues, and H in (5) has no eigenvalues on the unit circle.
+C     If Y is an N-by-N matrix then there exists an orthogonal matrix U
+!C     such that U'*Y*U is an upper quasi-triangular matrix. Moreover, U
+C     can be chosen so that the 2-by-2 and 1-by-1 diagonal blocks
+C     (corresponding to the complex conjugate eigenvalues and real
+C     eigenvalues respectively) appear in any desired order. This is the
+C     ordered real Schur form. Thus, we can find an orthogonal
+C     similarity transformation U which puts (4) or (5) in ordered real
+C     Schur form
+C
+!C            U'*H*U = S = (S(1,1)  S(1,2))
+C                         (  0     S(2,2))
+C
+C     where S(i,j) is an N-by-N matrix and the eigenvalues of S(1,1)
+C     have negative real parts in case of (4), or moduli greater than
+C     one in case of (5). If U is conformably partitioned into four
+C     N-by-N blocks
+C
+C               U = (U(1,1)  U(1,2))
+C                   (U(2,1)  U(2,2))
+C
+C     with respect to the assumptions we then have
+C     (a) U(1,1) is invertible and X = U(2,1)*inv(U(1,1)) solves (1),
+!C         (2), or (3) with X = X' and non-negative definite;
+C     (b) the eigenvalues of S(1,1) (if DICO = 'C') or S(2,2) (if
+C         DICO = 'D') are equal to the eigenvalues of optimal system
+C         (the 'closed-loop' spectrum).
+C
+C     [A,B] is stabilizable if there exists a matrix F such that (A-BF)
+C     is stable. [E,A] is detectable if [A',E'] is stabilizable.
+C
+C     REFERENCES
+C
+C     [1] Laub, A.J.
+C         A Schur Method for Solving Algebraic Riccati equations.
+C         IEEE Trans. Auto. Contr., AC-24, pp. 913-921, 1979.
+C
+C     [2] Wonham, W.M.
+C         On a matrix Riccati equation of stochastic control.
+C         SIAM J. Contr., 6, pp. 681-697, 1968.
+C
+C     [3] Sima, V.
+C         Algorithms for Linear-Quadratic Optimization.
+C         Pure and Applied Mathematics: A Series of Monographs and
+C         Textbooks, vol. 200, Marcel Dekker, Inc., New York, 1996.
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations.
+C
+C     FURTHER COMMENTS
+C
+C     To obtain a stabilizing solution of the algebraic Riccati
+C     equation for DICO = 'D', set SORT = 'U', if HINV = 'D', or set
+C     SORT = 'S', if HINV = 'I'.
+C
+C     The routine can also compute the anti-stabilizing solutions of
+C     the algebraic Riccati equations, by specifying
+C         SORT = 'U' if DICO = 'D' and HINV = 'I', or DICO = 'C', or
+C         SORT = 'S' if DICO = 'D' and HINV = 'D'.
+C
+C     Usually, the combinations HINV = 'D' and SORT = 'U', or HINV = 'I'
+C     and SORT = 'U', will be faster then the other combinations [3].
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Aug. 1997.
+C     Supersedes Release 2.0 routine SB02AD by Control Systems Research
+C     Group, Kingston Polytechnic, United Kingdom, March 1982.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Dec. 2002.
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, continuous-time
+C     system, discrete-time system, optimal regulator, Schur form.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, HALF, ONE
+      PARAMETER         ( ZERO = 0.0D0, HALF = 0.5D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         DICO, HINV, SCAL, SORT, UPLO
+      INTEGER           INFO, LDA, LDG, LDQ, LDS, LDU, LDWORK, N
+      DOUBLE PRECISION  RCOND
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      LOGICAL           BWORK(*)
+      INTEGER           IWORK(*)
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*), U(LDU,*), WR(*), WI(*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      LOGICAL           BWORK(*)
+      !DIR$ ASSUME_ALIGNED BWORK:64
+      INTEGER           IWORK(*)
+      !DIR$ ASSUME_ALIGNED IWORK:64
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*), U(LDU,*), WR(*), WI(*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED G:64
+      !DIR$ ASSUME_ALIGNED Q:64
+      !DIR$ ASSUME_ALIGNED S:64
+      !DIR$ ASSUME_ALIGNED U:64
+      !DIR$ ASSUME_ALIGNED WR:64
+      !DIR$ ASSUME_ALIGNED WI:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           DISCR, LHINV, LSCAL, LSORT, LUPLO
+      INTEGER           I, IERR, ISCL, N2, NP1, NROT
+      DOUBLE PRECISION  GNORM, QNORM, RCONDA, UNORM, WRKOPT
+!C     .. External Functions ..
+      LOGICAL           SB02MR, SB02MS, SB02MV, SB02MW
+      DOUBLE PRECISION  DLANGE, DLANSY
+      EXTERNAL          DLANGE, DLANSY,SB02MR, SB02MS, &
+                        SB02MV, SB02MW
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DGECON, DGEES, DGETRF, DGETRS, &
+                        DLACPY, DLASCL, DLASET, DSCAL, DSWAP
+     
+!C     .. Intrinsic Functions ..
+      INTRINSIC         INT, MAX
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      N2  = N + N
+      NP1 = N + 1
+      DISCR = LSAME( DICO, 'D' )
+      LSCAL = LSAME( SCAL, 'G' )
+      LSORT = LSAME( SORT, 'S' )
+      LUPLO = LSAME( UPLO, 'U' )
+      IF ( DISCR ) LHINV = LSAME( HINV, 'D' )
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( DISCR ) THEN
+         IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
+            INFO = -2
+      END IF
+      IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.LSCAL .AND. .NOT.LSAME( SCAL, 'N' ) ) THEN
+         INFO = -4
+      ELSE IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
+         INFO = -5
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
+         INFO = -12
+      ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
+         INFO = -17
+      ELSE IF( LDU.LT.MAX( 1, N2 ) ) THEN
+         INFO = -19
+      ELSE IF( ( .NOT.DISCR .AND. LDWORK.LT.MAX( 2, 6*N ) ) .OR. &
+               (      DISCR .AND. LDWORK.LT.MAX( 3, 6*N ) ) ) THEN
+         INFO = -22
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( N.EQ.0 ) THEN
+         RCOND = ONE
+         DWORK(1) = ONE
+         DWORK(2) = ONE
+         IF ( DISCR ) DWORK(3) = ONE
+         RETURN
+      END IF
+!C
+      IF ( LSCAL ) THEN
+!C
+!C        Compute the norms of the matrices Q and G.
+!C
+         QNORM = DLANSY( '1-norm', UPLO, N, Q, LDQ, DWORK )
+         GNORM = DLANSY( '1-norm', UPLO, N, G, LDG, DWORK )
+      END IF
+!C
+!C     Initialise the Hamiltonian or symplectic matrix associated with
+!C     the problem.
+!C     Workspace:  need   1          if DICO = 'C';
+!C                        max(2,4*N) if DICO = 'D';
+!C                 prefer larger if DICO = 'D'.
+!C
+      CALL SB02MU( DICO, HINV, UPLO, N, A, LDA, G, LDG, Q, LDQ, S, LDS, &
+                   IWORK, DWORK, LDWORK, INFO )
+      IF ( INFO.NE.0 ) THEN
+         INFO = 1
+         RETURN
+      END IF
+
+      WRKOPT = DWORK(1)
+      IF ( DISCR ) RCONDA = DWORK(2)
+
+      ISCL = 0
+      IF ( LSCAL ) THEN
+!C
+!C        Scale the Hamiltonian or symplectic matrix.
+!C
+         IF( QNORM.GT.GNORM .AND. GNORM.GT.ZERO ) THEN
+            CALL DLASCL( 'G', 0, 0, QNORM, GNORM, N, N, S(NP1,1), N2, &
+                        IERR )
+            CALL DLASCL( 'G', 0, 0, GNORM, QNORM, N, N, S(1,NP1), N2, &
+                        IERR )
+            ISCL = 1
+         END IF
+      END IF
+!C
+!C     Find the ordered Schur factorization of S,   S = U*H*U'.
+!C     Workspace:  need   6*N;
+!C                 prefer larger.
+!C
+      IF ( .NOT.DISCR ) THEN
+         IF ( LSORT ) THEN
+            CALL DGEES( 'Vectors', 'Sorted', SB02MV, N2, S, LDS, NROT, &
+                        WR, WI, U, LDU, DWORK, LDWORK, BWORK, INFO )
+         ELSE
+            CALL DGEES( 'Vectors', 'Sorted', SB02MR, N2, S, LDS, NROT, &
+                        WR, WI, U, LDU, DWORK, LDWORK, BWORK, INFO )
+         END IF
+      ELSE
+         IF ( LSORT ) THEN
+            CALL DGEES( 'Vectors', 'Sorted', SB02MW, N2, S, LDS, NROT, &
+                       WR, WI, U, LDU, DWORK, LDWORK, BWORK, INFO )
+         ELSE
+            CALL DGEES( 'Vectors', 'Sorted', SB02MS, N2, S, LDS, NROT, &
+                        WR, WI, U, LDU, DWORK, LDWORK, BWORK, INFO )
+         END IF
+         IF ( LHINV ) THEN
+            CALL DSWAP( N, WR, 1, WR(NP1), 1 )
+            CALL DSWAP( N, WI, 1, WI(NP1), 1 )
+         END IF
+      END IF
+      IF ( INFO.GT.N2 ) THEN
+         INFO = 3
+      ELSE IF ( INFO.GT.0 ) THEN
+         INFO = 2
+      ELSE IF ( NROT.NE.N ) THEN
+         INFO = 4
+      END IF
+      IF ( INFO.NE.0 ) RETURN
+    
+!C
+      WRKOPT = MAX( WRKOPT, DWORK(1) )
+!C!
+!C     Check if U(1,1) is singular.  Use the (2,1) block of S as a
+!C     workspace for factoring U(1,1).
+!C
+      UNORM = DLANGE( '1-norm', N, N, U, LDU, DWORK )
+!C
+      CALL DLACPY( 'Full', N, N, U, LDU, S(NP1,1), LDS )
+      CALL DGETRF( N, N, S(NP1,1), LDS, IWORK, INFO )
+!C
+      IF ( INFO.GT.0 ) THEN
+!C
+!C        Singular matrix.  Set INFO and RCOND for error return.
+!C
+         INFO  = 5
+         RCOND = ZERO
+         GO TO 100
+      END IF
+!C
+!C     Estimate the reciprocal condition of U(1,1).
+!C     Workspace: 6*N.
+!C
+      CALL DGECON( '1-norm', N, S(NP1,1), LDS, UNORM, RCOND, &
+                   DWORK, IWORK(NP1), INFO )
+!C
+      IF ( RCOND.LT.DLAMCH( 'Epsilon' ) ) THEN
+!C
+!C        Nearly singular matrix.  Set INFO for error return.
+!C
+         INFO = 5
+         RETURN
+      END IF
+!C
+!C     Transpose U(2,1) in Q and compute the solution.
+!C
+      DO 60 I = 1, N
+         CALL DCOPY( N, U(NP1,I), 1, Q(I,1), LDQ )
+   60 CONTINUE
+!C
+      CALL DGETRS( 'Transpose', N, N, S(NP1,1), LDS, IWORK, Q, LDQ, &
+                  INFO )
+!C
+!C     Set S(2,1) to zero.
+!C
+      CALL DLASET( 'Full', N, N, ZERO, ZERO, S(NP1,1), LDS )
+!C
+!C     Make sure the solution matrix X is symmetric.
+!C
+      DO 80 I = 1, N - 1
+         CALL DAXPY( N-I, ONE, Q(I,I+1), LDQ, Q(I+1,I), 1 )
+         CALL DSCAL( N-I, HALF, Q(I+1,I), 1 )
+         CALL DCOPY( N-I, Q(I+1,I), 1, Q(I,I+1), LDQ )
+   80 CONTINUE
+!C
+      IF( LSCAL ) THEN
+!C
+!C        Undo scaling for the solution matrix.
+!C
+         IF( ISCL.EQ.1 ) &
+            CALL DLASCL( 'G', 0, 0, GNORM, QNORM, N, N, Q, LDQ, IERR )
+      END IF
+!C
+!C     Set the optimal workspace, the scaling factor, and reciprocal
+!C     condition number (if any).
+!C
+      DWORK(1) = WRKOPT
+  100 CONTINUE
+      IF( ISCL.EQ.1 ) THEN
+         DWORK(2) = QNORM / GNORM
+      ELSE
+         DWORK(2) = ONE
+      END IF
+      IF ( DISCR ) DWORK(3) = RCONDA
+!C
+
+END SUBROUTINE
+    
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+PURE LOGICAL FUNCTION SB02MR( REIG, IEIG ) !GCC$ ATTRIBUTES inline :: SB02MR !GCC$ ATTRIBUTES pure :: SB02MR
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  PURE LOGICAL FUNCTION SB02MR( REIG, IEIG )
+    !DIR$ ATTRIBUTES FORCEINLINE :: SB02MR
+    !DIR$ OPTIMIZATION :: 3
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To select the unstable eigenvalues for solving the continuous-time
+C     algebraic Riccati equation.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     REIG    (input) DOUBLE PRECISION
+C             The real part of the current eigenvalue considered.
+C
+C     IEIG    (input) DOUBLE PRECISION
+C             The imaginary part of the current eigenvalue considered.
+C
+C     METHOD
+C
+C     The function value SB02MR is set to .TRUE. for an unstable
+C     eigenvalue and to .FALSE., otherwise.
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C
+C     None.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Aug. 1997.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, continuous-time
+C     system, optimal regulator, Schur form.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO
+      PARAMETER         ( ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      DOUBLE PRECISION  IEIG, REIG
+!C     .. Executable Statements ..
+!C
+      SB02MR = REIG.GE.ZERO
+END FUNCTION
 
 
 !Helpers
