@@ -10639,7 +10639,590 @@ C
       IF ( DISCR ) DWORK(3) = RCONDA
 !C
 
+    END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+SUBROUTINE SB02MU(DICO, HINV, UPLO, N, A, LDA, G, LDG, Q, LDQ, S, &
+     LDS, IWORK, DWORK, LDWORK, INFO) !GCC$ ATTRIBUTES aligned(32) :: SB02MU !GCC$ ATTRIBUTES hot :: SB02MU !GCC$ ATTRIBUTES no_stack_protector
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE SB02MU(DICO, HINV, UPLO, N, A, LDA, G, LDG, Q, LDQ, S, &
+      LDS, IWORK, DWORK, LDWORK, INFO)
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB02MU
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: SB02MU
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To construct the 2n-by-2n Hamiltonian or symplectic matrix S
+C     associated to the linear-quadratic optimization problem, used to
+C     solve the continuous- or discrete-time algebraic Riccati equation,
+C     respectively.
+C
+C     For a continuous-time problem, S is defined by
+C
+C             (  A  -G )
+C         S = (        ),                                       (1)
+!C             ( -Q  -A')
+C
+C     and for a discrete-time problem by
+C
+C                 -1       -1
+C             (  A        A  *G     )
+C         S = (   -1           -1   ),                          (2)
+!C             ( QA     A' + Q*A  *G )
+C
+C     or
+C
+C                       -T         -T
+C             (  A + G*A  *Q   -G*A   )
+C         S = (      -T            -T ),                        (3)
+C             (    -A  *Q         A   )
+C
+C     where A, G, and Q are N-by-N matrices, with G and Q symmetric.
+C     Matrix A must be nonsingular in the discrete-time case.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     DICO    CHARACTER*1
+C             Specifies the type of the system as follows:
+C             = 'C':  Continuous-time system;
+C             = 'D':  Discrete-time system.
+C
+C     HINV    CHARACTER*1
+C             If DICO = 'D', specifies which of the matrices (2) or (3)
+C             is constructed, as follows:
+C             = 'D':  The matrix S in (2) is constructed;
+C             = 'I':  The (inverse) matrix S in (3) is constructed.
+C             HINV is not referenced if DICO = 'C'.
+C
+C     UPLO    CHARACTER*1
+C             Specifies which triangle of the matrices G and Q is
+C             stored, as follows:
+C             = 'U':  Upper triangle is stored;
+C             = 'L':  Lower triangle is stored.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A, G, and Q.  N >= 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the matrix A.
+C             On exit, if DICO = 'D', and INFO = 0, the leading N-by-N
+C                                                     -1
+C             part of this array contains the matrix A  .
+C             Otherwise, the array A is unchanged on exit.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,N).
+C
+C     G       (input) DOUBLE PRECISION array, dimension (LDG,N)
+C             The leading N-by-N upper triangular part (if UPLO = 'U')
+C             or lower triangular part (if UPLO = 'L') of this array
+C             must contain the upper triangular part or lower triangular
+C             part, respectively, of the symmetric matrix G.
+C             The strictly lower triangular part (if UPLO = 'U') or
+C             strictly upper triangular part (if UPLO = 'L') is not
+C             referenced.
+C
+C     LDG     INTEGER
+C             The leading dimension of array G.  LDG >= MAX(1,N).
+C
+C     Q       (input) DOUBLE PRECISION array, dimension (LDQ,N)
+C             The leading N-by-N upper triangular part (if UPLO = 'U')
+C             or lower triangular part (if UPLO = 'L') of this array
+C             must contain the upper triangular part or lower triangular
+C             part, respectively, of the symmetric matrix Q.
+C             The strictly lower triangular part (if UPLO = 'U') or
+C             strictly upper triangular part (if UPLO = 'L') is not
+C             referenced.
+C
+C     LDQ     INTEGER
+C             The leading dimension of array Q.  LDQ >= MAX(1,N).
+C
+C     S       (output) DOUBLE PRECISION array, dimension (LDS,2*N)
+C             If INFO = 0, the leading 2N-by-2N part of this array
+C             contains the Hamiltonian or symplectic matrix of the
+C             problem.
+C
+C     LDS     INTEGER
+C             The leading dimension of array S.  LDS >= MAX(1,2*N).
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (2*N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) returns the optimal value
+C             of LDWORK; if DICO = 'D', DWORK(2) returns the reciprocal
+C             condition number of the given matrix  A.
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.
+C             LDWORK >= 1          if DICO = 'C';
+C             LDWORK >= MAX(2,4*N) if DICO = 'D'.
+C             For optimum performance LDWORK should be larger, if
+C             DICO = 'D'.
+C
+C             If LDWORK = -1, then a workspace query is assumed;
+C             the routine only calculates the optimal size of the
+C             DWORK array, returns this value as the first entry of
+C             the DWORK array, and no error message related to LDWORK
+C             is issued by XERBLA.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = i:  if the leading i-by-i (1 <= i <= N) upper triangular
+C                   submatrix of A is singular in discrete-time case;
+C             = N+1:  if matrix A is numerically singular in discrete-
+C                   time case.
+C
+C     METHOD
+C
+C     For a continuous-time problem, the 2n-by-2n Hamiltonian matrix (1)
+C     is constructed.
+C     For a discrete-time problem, the 2n-by-2n symplectic matrix (2) or
+C     (3) - the inverse of the matrix in (2) - is constructed.
+C
+C     NUMERICAL ASPECTS
+C
+C     The discrete-time case needs the inverse of the matrix A, hence
+C     the routine should not be used when A is ill-conditioned.
+C                               3
+C     The algorithm requires 0(n ) floating point operations in the
+C     discrete-time case.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Aug. 1997.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Feb. 2004,
+C     Aug. 2011.
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, continuous-time
+C     system, discrete-time system, optimal regulator, Schur form.
+C
+C     ******************************************************************
+C
+#endif
+      use omp_lib
+      implicit none
+!1C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         DICO, HINV, UPLO
+      INTEGER           INFO, LDA, LDG, LDQ, LDS, LDWORK, N
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      INTEGER           IWORK(*)
+      !DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+      !     S(LDS,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IWORK(*)
+      !DIR$ ASSUME_ALIGNED IWORK:64
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED G:64
+      !DIR$ ASSUME_ALIGNED Q:64
+      !DIR$ ASSUME_ALIGNED S:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           DISCR, LHINV, LQUERY, LUPLO
+      INTEGER           I, J, MAXWRK, MINWRK, N2, NJ, NP1
+      DOUBLE PRECISION  ANORM, RCOND
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION  DLANGE
+      EXTERNAL          DLANGE
+!C     .. External Subroutines ..
+      EXTERNAL          DCOPY, DGECON, DGEMM, DGETRF, DGETRI, DGETRS, &
+                        DLACPY, DSWAP
+!C     .. Intrinsic Functions ..
+      INTRINSIC         INT, MAX
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      N2 = N + N
+      DISCR = LSAME( DICO, 'D' )
+      LUPLO = LSAME( UPLO, 'U' )
+      IF( DISCR ) THEN
+         LHINV = LSAME( HINV, 'D' )
+      ELSE
+         LHINV = .FALSE.
+      END IF
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( DISCR ) THEN
+         IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
+            INFO = -2
+      END IF
+      IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -6
+      ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
+         INFO = -12
+      ELSE 
+         MINWRK = MAX( 2, 4*N )
+         LQUERY = LDWORK.EQ.-1
+         IF( ( LDWORK.LT.1 .OR. ( DISCR .AND. LDWORK.LT.MINWRK ) ) .AND. &
+             .NOT.LQUERY ) THEN
+            INFO = -15
+         ELSE IF( DISCR ) THEN
+!C
+!C           Compute workspace.
+!C           (Note: Comments in the code beginning "Workspace:" describe
+!C           the minimal amount of workspace needed at that point in the
+!C           code, as well as the preferred amount for good performance.
+!C           NB refers to the optimal block size for the immediately
+!C           following subroutine, as returned by ILAENV.)
+!C
+            CALL DGETRI( N, A, LDA, IWORK, DWORK, -1, INFO )
+            MAXWRK = MAX( MINWRK, INT( DWORK(1) ) ) 
+         ELSE
+            MAXWRK = 1
+         END IF
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      ELSE IF( LQUERY ) THEN
+         DWORK(1) = MAXWRK
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( N.EQ.0 ) THEN
+         DWORK(1) = ONE
+         IF ( DISCR ) DWORK(2) = ONE
+         RETURN
+      END IF
+!C
+!C     The code tries to exploit data locality as much as possible.
+!C
+      IF ( .NOT.LHINV ) THEN
+         CALL DLACPY( 'Full', N, N, A, LDA, S, LDS )
+!C
+!C        Construct Hamiltonian matrix in the continuous-time case, or
+!C        prepare symplectic matrix in (3) in the discrete-time case:
+!C
+!C        Construct full Q in S(N+1:2*N,1:N) and change the sign, and
+!C        construct full G in S(1:N,N+1:2*N) and change the sign.
+         !C
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,NJ)         
+         DO 200 J = 1, N
+            NJ = N + J
+            IF ( LUPLO ) THEN
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 20 I = 1, J
+                  S(N+I,J) = -Q(I,J)
+   20          CONTINUE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 40 I = J + 1, N
+                  S(N+I,J) = -Q(J,I)
+   40          CONTINUE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 60 I = 1, J
+                  S(I,NJ) = -G(I,J)
+   60          CONTINUE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 80 I = J + 1, N
+                  S(I,NJ) = -G(J,I)
+   80          CONTINUE
+
+            ELSE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 100 I = 1, J - 1
+                  S(N+I,J) = -Q(J,I)
+  100          CONTINUE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 120 I = J, N
+                  S(N+I,J) = -Q(I,J)
+  120          CONTINUE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 140 I = 1, J - 1
+                  S(I,NJ) = -G(J,I)
+  140          CONTINUE
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
+               !$OMP SIMD ALIGNED(S:64,Q:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 180 I = J, N
+                  S(I,NJ) = -G(I,J)
+  180          CONTINUE
+
+            END IF
+  200    CONTINUE
+
+         IF ( .NOT.DISCR ) THEN
+!C
+            DO 240 J = 1, N
+               NJ = N + J
+!C
+               DO 220 I = 1, N
+                  S(N+I,NJ) = -A(J,I)
+  220          CONTINUE
+!C
+  240       CONTINUE
+!C
+            DWORK(1) = ONE
+         END IF
+      END IF
+!C
+      IF ( DISCR ) THEN
+!C
+!C        Construct the symplectic matrix (2) or (3) in the discrete-time
+!C        case.
+!C
+         NP1 = N + 1
+!C
+         IF ( LHINV ) THEN
+!C
+!C           Put  A'  in  S(N+1:2*N,N+1:2*N).
+            !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+            DO 260 I = 1, N
+               CALL DCOPY( N, A(I, 1), LDA, S(NP1,N+I), 1 )
+  260       CONTINUE
+!C
+         END IF
+!C
+!C        Compute the norm of the matrix A.
+!C
+         ANORM = DLANGE( '1-norm', N, N, A, LDA, DWORK )
+!C
+!C        Compute the LU factorization of A.
+!C
+         CALL DGETRF( N, N, A, LDA, IWORK, INFO )
+!C
+!C        Return if INFO is non-zero.
+!C
+         IF( INFO.GT.0 ) THEN
+            DWORK(2) = ZERO
+            RETURN
+         END IF
+!C
+!C        Compute the reciprocal of the condition number of A.
+!C        Workspace: need 4*N.
+!C
+         CALL DGECON( '1-norm', N, A, LDA, ANORM, RCOND, DWORK, &
+                      IWORK(NP1), INFO )
+!C
+!C        Return if the matrix is singular to working precision.
+!C
+         IF( RCOND.LT.DLAMCH( 'Epsilon' ) ) THEN
+            INFO = N + 1
+            DWORK(2) = RCOND
+            RETURN
+         END IF
+!C
+         IF ( LHINV ) THEN
+!C
+!C           Compute S in (2).
+!C
+!C           Construct full Q in S(N+1:2*N,1:N).
+!C
+            IF ( LUPLO ) THEN
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+               DO 270 J = 1, N - 1
+                  CALL DCOPY( J, Q(1,J), 1, S(NP1,J), 1 )
+                  CALL DCOPY( N-J, Q(J,J+1), LDQ, S(NP1+J,J), 1 )
+  270          CONTINUE
+               CALL DCOPY( N, Q(1,N), 1, S(NP1,N), 1 )
+            ELSE
+               CALL DCOPY( N, Q(1,1), 1, S(NP1,1), 1 )
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+               DO 280 J = 2, N
+                  CALL DCOPY( J-1, Q(J,1), LDQ, S(NP1,J), 1 )
+                  CALL DCOPY( N-J+1, Q(J,J), 1, S(N+J,J), 1 )
+  280          CONTINUE
+            END IF
+!C
+!C           Compute the solution matrix  X  of the system  X*A = Q  by
+!C                                                                    -1
+!C           solving  A'*X' = Q and transposing the result to get  Q*A  .
+!C
+            CALL DGETRS( 'Transpose', N, N, A, LDA, IWORK, S(NP1,1), &
+                        LDS, INFO )
+            !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+            DO 300 J = 1, N - 1
+               CALL DSWAP( N-J, S(NP1+J,J), 1, S(N+J,J+1), LDS )
+  300       CONTINUE
+!C
+!C           Construct full G in S(1:N,N+1:2*N).
+!C
+               IF ( LUPLO ) THEN
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+               DO 310 J = 1, N - 1
+                  CALL DCOPY( J, G(1,J), 1, S(1,N+J), 1 )
+                  CALL DCOPY( N-J, G(J,J+1), LDG, S(J+1,N+J), 1 )
+  310          CONTINUE
+               CALL DCOPY( N, G(1,N), 1, S(1,N2), 1 )
+            ELSE
+               CALL DCOPY( N, G(1,1), 1, S(1,NP1), 1 )
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+               DO 320 J = 2, N
+                  CALL DCOPY( J-1, G(J,1), LDG, S(1,N+J), 1 )
+                  CALL DCOPY( N-J+1, G(J,J), 1, S(J,N+J), 1 )
+  320          CONTINUE
+            END IF
+!C                            -1
+!C           Compute  A' + Q*A  *G  in  S(N+1:2N,N+1:2N).
+!C
+            CALL DGEMM( 'No transpose', 'No transpose', N, N, N, ONE,  &
+                       S(NP1,1), LDS, S(1,NP1), LDS, ONE, S(NP1,NP1), LDS)
+   
+!C
+!C           Compute the solution matrix  Y  of the system  A*Y = G.
+!C
+            CALL DGETRS( 'No transpose', N, N, A, LDA, IWORK, S(1,NP1), &
+                        LDS, INFO )
+!C
+!C           Compute the inverse of  A  in situ.
+!C           Workspace: need N;  prefer N*NB.
+!C
+            CALL DGETRI( N, A, LDA, IWORK, DWORK, LDWORK, INFO )
+!C                  -1
+!C           Copy  A    in  S(1:N,1:N).
+!C
+            CALL DLACPY( 'Full', N, N, A, LDA, S, LDS )
+!C
+         ELSE
+!C
+!C           Compute S in (3) using the already prepared part.
+!C
+!C           Compute the solution matrix  X'  of the system  A*X' = -G
+!C                                                       -T
+!C           and transpose the result to obtain  X = -G*A  .
+!C
+            CALL DGETRS( 'No transpose', N, N, A, LDA, IWORK, S(1,NP1), &
+                         LDS, INFO )
+            !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+            DO 340 J = 1, N - 1
+               CALL DSWAP( N-J, S(J+1,N+J), 1, S(J,NP1+J), LDS )
+  340       CONTINUE
+!C                           -T
+!C           Compute  A + G*A  *Q  in  S(1:N,1:N).
+!C
+            CALL DGEMM( 'No transpose', 'No transpose', N, N, N, ONE, &
+                       S(1,NP1), LDS, S(NP1, 1), LDS, ONE, S, LDS )
+!C
+!C           Compute the solution matrix  Y  of the system  A'*Y = -Q.
+!C
+            CALL DGETRS( 'Transpose', N, N, A, LDA, IWORK, S(NP1,1), &
+                         LDS, INFO )
+!C
+!C           Compute the inverse of  A  in situ.
+!C           Workspace: need N;  prefer N*NB.
+!C
+            CALL DGETRI( N, A, LDA, IWORK, DWORK, LDWORK, INFO )
+!C                  -T
+!C           Copy  A    in  S(N+1:2N,N+1:2N).
+            !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+            DO 360 J = 1, N
+               CALL DCOPY( N, A(J,1), LDA, S(NP1,N+J), 1 )
+  360       CONTINUE
+!C
+         END IF
+         DWORK(1) = MAXWRK
+         DWORK(2) = RCOND
+      END IF
 END SUBROUTINE
+
     
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
 PURE LOGICAL FUNCTION SB02MR( REIG, IEIG ) !GCC$ ATTRIBUTES inline :: SB02MR !GCC$ ATTRIBUTES pure :: SB02MR
@@ -10698,6 +11281,7 @@ C
 C     ******************************************************************
 C
 #endif
+
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO
@@ -10708,6 +11292,1317 @@ C
 !C
       SB02MR = REIG.GE.ZERO
 END FUNCTION
+    
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+PURE LOGICAL FUNCTION SB02MS(REIG, IEIG) !GCC$ ATTRIBUTES inline :: SB02MS !GCC$ ATTRIBUTES aligned(32) :: SB02MS
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+PURE LOGICAL FUNCTION SB02MS(REIG,IEIG)
+ !DIR$ ATTRIBUTES FORCEINLINE :: SB02MS
+    !DIR$ OPTIMIZATION :: 3
+#endif
+
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To select the unstable eigenvalues for solving the discrete-time
+C     algebraic Riccati equation.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     REIG    (input) DOUBLE PRECISION
+C             The real part of the current eigenvalue considered.
+C
+C     IEIG    (input) DOUBLE PRECISION
+C             The imaginary part of the current eigenvalue considered.
+C
+C     METHOD
+C
+C     The function value SB02MS is set to .TRUE. for an unstable
+C     eigenvalue (i.e., with modulus greater than or equal to one) and
+C     to .FALSE., otherwise.
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C
+C     None.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Aug. 1997.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, discrete-time
+C     system, optimal regulator, Schur form.
+C
+C     ******************************************************************
+C
+#endif
+!C     .. Parameters ..
+      DOUBLE PRECISION  ONE
+      PARAMETER         ( ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      DOUBLE PRECISION  IEIG, REIG
+!C     .. External Functions ..
+      DOUBLE PRECISION   DLAPY2
+      EXTERNAL           DLAPY2
+!C     .. Executable Statements ..
+!C
+      SB02MS = DLAPY2( REIG, IEIG ).GE.ONE
+
+END FUNCTION
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+PURE LOGICAL FUNCTION SB02MV(REIG,IEIG) !GCC$ ATTRIBUTES inline :: SB02MV !GCC$ ATTRIBUTES aligned(32) :: SB02MV
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  PURE LOGICAL FUNCTION SB02MV(REIG,IEIG)
+    !DIR$ ATTRIBUTES FORCEINLINE :: SB02MV
+    !DIR$ OPTIMIZATION :: 3
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To select the stable eigenvalues for solving the continuous-time
+C     algebraic Riccati equation.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     REIG    (input) DOUBLE PRECISION
+C             The real part of the current eigenvalue considered.
+C
+C     IEIG    (input) DOUBLE PRECISION
+C             The imaginary part of the current eigenvalue considered.
+C
+C     METHOD
+C
+C     The function value SB02MV is set to .TRUE. for a stable eigenvalue
+C     and to .FALSE., otherwise.
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C
+C     None.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Aug. 1997.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, continuous-time
+C     system, optimal regulator, Schur form.
+C
+C     ******************************************************************
+C
+C     .. Parameters ..
+#endif
+      implicit none
+      DOUBLE PRECISION  ZERO
+      PARAMETER         ( ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      DOUBLE PRECISION  IEIG, REIG
+!C     .. Executable Statements ..
+!C
+      SB02MV = REIG.LT.ZERO
+END FUNCTION 
+    
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+PURE LOGICAL FUNCTION SB02MW(REIG, IEIG) !GCC$ ATTRIBUTES inline :: SB02MW !GCC$ ATTRIBUTES aligned(32) :: SB02MW
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  PURE LOGICAL FUNCTION SB02MW(REIG, IEIG)
+    !DIR$ ATTRIBUTES FORCEINLINE :: SB02MW
+    !DIR$ OPTIMIZATION :: 3   
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To select the stable eigenvalues for solving the discrete-time
+C     algebraic Riccati equation.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     REIG    (input) DOUBLE PRECISION
+C             The real part of the current eigenvalue considered.
+C
+C     IEIG    (input) DOUBLE PRECISION
+C             The imaginary part of the current eigenvalue considered.
+C
+C     METHOD
+C
+C     The function value SB02MW is set to .TRUE. for a stable
+C     eigenvalue (i.e., with modulus less than one) and to .FALSE.,
+C     otherwise.
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C
+C     None.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, Aug. 1997.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, discrete-time
+C     system, optimal regulator, Schur form.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ONE
+      PARAMETER         ( ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      DOUBLE PRECISION  IEIG, REIG
+!C     .. External Functions ..
+      DOUBLE PRECISION   DLAPY2
+      EXTERNAL           DLAPY2
+!C     .. Executable Statements ..
+!C
+      SB02MW = DLAPY2( REIG, IEIG ).LT.ONE
+!C
+ 
+END FUNCTION
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+SUBROUTINE SB02ND( DICO, FACT, UPLO, JOBL, N, M, P, A, LDA, B, &
+    LDB, R, LDR, IPIV, L, LDL, X, LDX, RNORM, F,               &
+    LDF, OUFACT, IWORK, DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES hot :: SB02ND !GCC$ ATTRIBUTES aligned(32) :: SB02ND !GCC$ ATTRIBUTES no_stack_protector :: SB02ND
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE SB02ND( DICO, FACT, UPLO, JOBL, N, M, P, A, LDA, B, &
+    LDB, R, LDR, IPIV, L, LDL, X, LDX, RNORM, F,               &
+    LDF, OUFACT, IWORK, DWORK, LDWORK, INFO )
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB02ND
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: SB02ND
+  
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute the optimal feedback matrix F for the problem of
+C     optimal control given by
+C
+C                        -1
+!C          F = (R + B'XB)  (B'XA + L')                           (1)
+C
+C     in the discrete-time case and
+C
+C               -1
+C          F = R  (B'X + L')                                     (2)
+C
+C     in the continuous-time case, where A, B and L are N-by-N, N-by-M
+C     and N-by-M matrices respectively; R and X are M-by-M and N-by-N
+C     symmetric matrices respectively.
+C
+C     Optionally, matrix R may be specified in a factored form, and L
+C     may be zero.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     DICO    CHARACTER*1
+C             Specifies the equation from which F is to be determined,
+C             as follows:
+C             = 'D':  Equation (1), discrete-time case;
+C             = 'C':  Equation (2), continuous-time case.
+C
+C     FACT    CHARACTER*1
+C             Specifies how the matrix R is given (factored or not), as
+C             follows:
+C             = 'N':  Array R contains the matrix R;
+!C             = 'D':  Array R contains a P-by-M matrix D, where R = D'D;
+C             = 'C':  Array R contains the Cholesky factor of R;
+!C             = 'U':  Array R contains the symmetric indefinite UdU' or
+!C                     LdL' factorization of R. This option is not
+C                     available for DICO = 'D'.
+C
+C     UPLO    CHARACTER*1
+C             Specifies which triangle of the possibly factored matrix R
+!C             (or R + B'XB, on exit) is or should be stored, as follows:
+C             = 'U':  Upper triangle is stored;
+C             = 'L':  Lower triangle is stored.
+C
+C     JOBL    CHARACTER*1
+C             Specifies whether or not the matrix L is zero, as follows:
+C             = 'Z':  L is zero;
+C             = 'N':  L is nonzero.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A and X.  N >= 0.
+C             No computations are performed if MIN(N,M) = 0.
+C
+C     M       (input) INTEGER
+C             The number of system inputs.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of rows of the matrix D.
+C             P >= M for DICO = 'C';
+C             P >= 0 for DICO = 'D'.
+C             This parameter must be specified only for FACT = 'D'.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,N)
+C             If DICO = 'D', the leading N-by-N part of this array must
+C             contain the state matrix A of the system.
+C             If DICO = 'C', this array is not referenced.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.
+C             LDA >= MAX(1,N) if DICO = 'D';
+C             LDA >= 1        if DICO = 'C'.
+C
+C     B       (input/worksp.) DOUBLE PRECISION array, dimension (LDB,M)
+C             The leading N-by-M part of this array must contain the
+C             input matrix B of the system.
+C             If DICO = 'D' and FACT = 'D' or 'C', the contents of this
+C             array is destroyed. Specifically, if, on exit,
+C             OUFACT(2) = 1, this array contains chol(X)*B, and if
+C             OUFACT(2) = 2 and INFO < M+2, but INFO >= 0, its trailing
+C             part (in the first N rows) contains the submatrix of
+!C             sqrt(V)*U'B corresponding to the non-negligible, positive
+C             eigenvalues of X, where V and U are the matrices with the
+C             eigenvalues and eigenvectors of X.
+C             Otherwise, B is unchanged on exit.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,N).
+C
+C     R       (input/output) DOUBLE PRECISION array, dimension (LDR,M)
+C             On entry, if FACT = 'N', the leading M-by-M upper
+C             triangular part (if UPLO = 'U') or lower triangular part
+C             (if UPLO = 'L') of this array must contain the upper
+C             triangular part or lower triangular part, respectively,
+C             of the symmetric input weighting matrix R.
+C             On entry, if FACT = 'D', the leading P-by-M part of this
+C             array must contain the direct transmission matrix D of the
+C             system.
+C             On entry, if FACT = 'C', the leading M-by-M upper
+C             triangular part (if UPLO = 'U') or lower triangular part
+C             (if UPLO = 'L') of this array must contain the Cholesky
+C             factor of the positive definite input weighting matrix R
+C             (as produced by LAPACK routine DPOTRF).
+C             On entry, if DICO = 'C' and FACT = 'U', the leading M-by-M
+C             upper triangular part (if UPLO = 'U') or lower triangular
+C             part (if UPLO = 'L') of this array must contain the
+C             factors of the UdU' or LdL' factorization, respectively,
+C             of the symmetric indefinite input weighting matrix R (as
+C             produced by LAPACK routine DSYTRF).
+C             The strictly lower triangular part (if UPLO = 'U') or
+C             strictly upper triangular part (if UPLO = 'L') of this
+C             array is used as workspace (filled in by symmetry with the
+!C             other strictly triangular part of R, of R+B'XB, or of the
+C             result, if DICO = 'C', DICO = 'D', or (DICO = 'D' and
+C             (FACT = 'D' or FACT = 'C') and UPLO = 'L'), respectively.
+C             On exit, if OUFACT(1) = 1, and INFO = 0 (or INFO = M+1),
+C             the leading M-by-M upper triangular part (if UPLO = 'U')
+C             or lower triangular part (if UPLO = 'L') of this array
+C             contains the Cholesky factor of the given input weighting
+!C             matrix R (for DICO = 'C'), or that of the matrix R + B'XB
+C             (for DICO = 'D').
+C             On exit, if OUFACT(1) = 2, and INFO = 0 (or INFO = M+1),
+C             the leading M-by-M upper triangular part (if UPLO = 'U')
+C             or lower triangular part (if UPLO = 'L') of this array
+C             contains the factors of the UdU' or LdL' factorization,
+C             respectively, of the given input weighting matrix
+!C             (for DICO = 'C'), or that of the matrix R + B'XB
+C             (for DICO = 'D' and FACT = 'N').
+C             On exit R is unchanged if FACT = 'U' or N = 0.
+C
+C     LDR     INTEGER.
+C             The leading dimension of the array R.
+C             LDR >= MAX(1,M)   if FACT <> 'D';
+C             LDR >= MAX(1,M,P) if FACT =  'D'.
+C
+C     IPIV    (input/output) INTEGER array, dimension (M)
+C             On entry, if FACT = 'U', this array must contain details
+C             of the interchanges performed and the block structure of
+C             the d factor in the UdU' or LdL' factorization of matrix R
+C             (as produced by LAPACK routine DSYTRF).
+C             On exit, if OUFACT(1) = 2, this array contains details of
+C             the interchanges performed and the block structure of the
+C             d factor in the UdU' or LdL' factorization of matrix R or
+!C             R + B'XB, as produced by LAPACK routine DSYTRF.
+C             This array is not referenced if FACT = 'D', or FACT = 'C',
+C             or N = 0.
+C
+C     L       (input) DOUBLE PRECISION array, dimension (LDL,M)
+C             If JOBL = 'N', the leading N-by-M part of this array must
+C             contain the cross weighting matrix L.
+C             If JOBL = 'Z', this array is not referenced.
+C
+C     LDL     INTEGER
+C             The leading dimension of array L.
+C             LDL >= MAX(1,N) if JOBL = 'N';
+C             LDL >= 1        if JOBL = 'Z'.
+C
+C     X       (input/output) DOUBLE PRECISION array, dimension (LDX,N)
+C             On entry, the leading N-by-N part of this array must
+C             contain the solution matrix X of the algebraic Riccati
+C             equation as produced by SLICOT Library routines SB02MD or
+C             SB02OD. Matrix X is assumed non-negative definite if
+C             DICO = 'D' and (FACT = 'D' or FACT = 'C').
+C             The full matrix X must be given on input if LDWORK < N*M
+C             or if DICO = 'D' and (FACT = 'D' or FACT = 'C').
+C             On exit, if DICO = 'D', FACT = 'D' or FACT = 'C', and
+C             OUFACT(2) = 1, the N-by-N upper triangular part
+C             (if UPLO = 'U') or lower triangular part (if UPLO = 'L')
+C             of this array contains the Cholesky factor of the given
+C             matrix X, which is found to be positive definite.
+C             On exit, if DICO = 'D', FACT = 'D' or 'C', OUFACT(2) = 2,
+C             and INFO < M+2 (but INFO >= 0), the leading N-by-N part of
+C             this array contains the matrix of orthonormal eigenvectors
+C             of X.
+C             On exit X is unchanged if DICO = 'C' or FACT = 'N'.
+C
+C     LDX     INTEGER
+C             The leading dimension of array X.  LDX >= MAX(1,N).
+C
+C     RNORM   (input) DOUBLE PRECISION
+C             If FACT = 'U', this parameter must contain the 1-norm of
+C             the original matrix R (before factoring it).
+C             Otherwise, this parameter is not used.
+C
+C     F       (output) DOUBLE PRECISION array, dimension (LDF,N)
+C             The leading M-by-N part of this array contains the
+C             optimal feedback matrix F.
+C             This array is not referenced if DICO = 'C' and FACT = 'D'
+C             and P < M.
+C
+C     LDF     INTEGER
+C             The leading dimension of array F.  LDF >= MAX(1,M).
+C
+C     OUFACT  (output) INTEGER array, dimension (2)
+C             Information about the factorization finally used.
+!C             OUFACT(1) = 1:  Cholesky factorization of R (or R + B'XB)
+C                             has been used;
+C             OUFACT(1) = 2:  UdU' (if UPLO = 'U') or LdL' (if UPLO =
+!C                             'L') factorization of R (or R + B'XB)
+C                             has been used;
+C             OUFACT(2) = 1:  Cholesky factorization of X has been used;
+C             OUFACT(2) = 2:  Spectral factorization of X has been used.
+C             The value of OUFACT(2) is not set for DICO = 'C' or for
+C             DICO = 'D' and FACT = 'N'.
+C             This array is not set if N = 0 or M = 0.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (M)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0 or LDWORK = -1, DWORK(1) returns the
+C             optimal value of LDWORK, and for LDWORK set as specified
+C             below, DWORK(2) contains the reciprocal condition number
+!C             of the matrix R (for DICO = 'C') or of R + B'XB (for
+C             DICO = 'D'); DWORK(2) is set to 1 if N = 0.
+C             On exit, if LDWORK = -2 on input or INFO = -25, then
+C             DWORK(1) returns the minimal value of LDWORK.
+C             If on exit INFO = 0, and OUFACT(2) = 2, then DWORK(3),...,
+C             DWORK(N+2) contain the eigenvalues of X, in ascending
+C             order.
+C
+C     LDWORK  INTEGER
+C             Dimension of working array DWORK.
+C             LDWORK >= max(2,2*M)           if FACT =  'U';
+C             LDWORK >= max(2,3*M)           if FACT <> 'U', DICO = 'C';
+C             LDWORK >= max(2,3*M,N)         if FACT =  'N', DICO = 'D';
+C             LDWORK >= max(N+3*M+2,4*N+1)   if FACT <> 'N', DICO = 'D'.
+C             For optimum performance LDWORK should be larger.
+C
+C             If LDWORK = -1, an optimal workspace query is assumed; the
+C             routine only calculates the optimal size of the DWORK
+C             array, returns this value as the first entry of the DWORK
+C             array, and no error message is issued by XERBLA.
+C
+C             If LDWORK = -2, a minimal workspace query is assumed; the
+C             routine only calculates the minimal size of the DWORK
+C             array, returns this value as the first entry of the DWORK
+C             array, and no error message is issued by XERBLA.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = i:  if the i-th element of the d factor is exactly zero;
+C                   the UdU' (or LdL') factorization has been completed,
+C                   but the block diagonal matrix d is exactly singular;
+!C             = M+1:  if the matrix R (if DICO = 'C'), or R + B'XB
+C                   (if DICO = 'D') is numerically singular (to working
+C                   precision);
+C             = M+2:  if one or more of the eigenvalues of X has not
+C                   converged;
+C             = M+3:  if the matrix X is indefinite and updating the
+C                   triangular factorization failed.
+C             If INFO > M+1, call the routine again with an appropriate,
+C             unfactored matrix R.
+C
+C     METHOD
+C
+C     The optimal feedback matrix F is obtained as the solution to the
+C     system of linear equations
+C
+!C        (R + B'XB) * F = B'XA + L'
+C
+C     in the discrete-time case and
+C
+C        R * F = B'X + L'
+C
+!C     in the continuous-time case, with R replaced by D'D if FACT = 'D'.
+C     If FACT = 'N', Cholesky factorization is tried first, but
+!C     if the coefficient matrix is not positive definite, then UdU' (or
+!C     LdL') factorization is used. If FACT <> 'N', the factored form
+C     of R is taken into account. The discrete-time case then involves
+!C     updating of a triangular factorization of R (or D'D); Cholesky or
+C     symmetric spectral factorization of X is employed to avoid
+C     squaring of the condition number of the matrix. When D is given,
+C     its QR factorization is determined, and the triangular factor is
+C     used as described above.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm consists of numerically stable steps.
+C                                    3     2
+C     For DICO = 'C', it requires O(m  + mn ) floating point operations
+C                           2
+C     if FACT = 'N' and O(mn ) floating point operations, otherwise.
+C     For DICO = 'D', the operation counts are similar, but additional
+C        3
+C     O(n ) floating point operations may be needed in the worst case.
+C     These estimates assume that M <= N.
+C
+C     CONTRIBUTORS
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Sep. 1997.
+C     Supersedes Release 2.0 routine SB02BD by M. Vanbegin, and
+C     P. Van Dooren, Philips Research Laboratory, Brussels, Belgium.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Dec. 2013,
+C     Jan. 2014.
+C
+C     KEYWORDS
+C
+C     Algebraic Riccati equation, closed loop system, continuous-time
+C     system, discrete-time system, matrix algebra, optimal control,
+C     optimal regulator.
+C
+C     ******************************************************************
+C
+#endif
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+     use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE, TWO
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0, TWO = 2.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         DICO, FACT, JOBL, UPLO
+      INTEGER           INFO, LDA, LDB, LDF, LDL, LDR, LDWORK, LDX, M, &
+                        N, P
+      DOUBLE PRECISION  RNORM
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      INTEGER           IPIV(*), IWORK(*), OUFACT(2)
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+           L(LDL,*), R(LDR,*), X(LDX,*)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER           IPIV(*), IWORK(*), OUFACT(2)
+      !DIR$ ASSUME_ALIGNED IPIV:64
+      !DIR$ ASSUME_ALIGNED IWORK:64
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+           L(LDL,*), R(LDR,*), X(LDX,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED F:64
+      !DIR$ ASSUME_ALIGNED L:6
+      !DIR$ ASSUME_ALIGNED R:64
+      !DIR$ ASSUME_ALIGNED X:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           DISCR, LFACTA, LFACTC, LFACTD, LFACTU, LNFACT, &
+                        LUPLOU, SUFWRK, WITHL
+      CHARACTER         NT, NUPLO, TR, TRL
+      INTEGER           I, IFAIL, JW, JZ, MS, NR, WRKMIN, WRKOPT
+      DOUBLE PRECISION  EPS, RCOND, RNORMP, TEMP
+!C     .. Local Arrays ..
+      DOUBLE PRECISION  DUMMY(1)
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION  DLANSY
+      EXTERNAL          DLANSY
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DCOPY, DGEMM, DGEQRF, DLACPY, DLASET,
+                       DPOCON, DPOTRF, DPOTRS, DSCAL, DSYCON, DSYEV,
+                       DSYMM, DSYTRF, DSYTRS, DTRCON, DTRMM
+!C     .. Intrinsic Functions ..
+      INTRINSIC         ABS, DBLE, INT, MAX, MIN, SQRT
+!C     .. Executable Statements ..
+!C
+      INFO   = 0
+      DISCR  = LSAME( DICO, 'D' )
+      LFACTC = LSAME( FACT, 'C' )
+      LFACTD = LSAME( FACT, 'D' )
+      LFACTU = LSAME( FACT, 'U' )
+      LUPLOU = LSAME( UPLO, 'U' )
+      WITHL  = LSAME( JOBL, 'N' )
+      LFACTA = LFACTC .OR. LFACTD .OR. LFACTU
+      LNFACT = .NOT.LFACTA
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( ( LNFACT .AND. .NOT.LSAME( FACT, 'N' ) ) .OR. &
+              ( DISCR  .AND. LFACTU ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.WITHL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
+         INFO = -4
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LFACTD .AND. ( P.LT.0 .OR. ( .NOT.DISCR .AND. P.LT.M ) ) &
+             ) THEN
+         INFO = -7
+      ELSE IF( LDA.LT.1 .OR. ( DISCR .AND. LDA.LT.N ) ) THEN
+         INFO = -9
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -11 
+      ELSE IF( LDR.LT.MAX( 1, M ) .OR. ( LFACTD .AND.  &
+               LDR.LT.MAX( 1, P ) ) ) THEN
+         INFO = -13
+      ELSE IF( LDL.LT.1 .OR. ( WITHL .AND. LDL.LT.N ) ) THEN
+         INFO = -16
+      ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
+         INFO = -18
+      ELSE IF( LFACTU ) THEN
+         IF( RNORM.LT.ZERO ) &
+           INFO = -19
+      END IF
+      IF ( INFO.EQ.0 ) THEN
+         IF( LDF.LT.MAX( 1, M ) ) THEN
+            INFO = -21
+         ELSE
+            IF ( DISCR ) THEN
+               IF( LNFACT ) THEN
+                  WRKMIN = MAX( 2, 3*M, N )
+               ELSE
+                  WRKMIN = MAX( N + 3*M + 2, 4*N + 1 )
+               END IF
+            ELSE
+               IF( LFACTU ) THEN
+                  WRKMIN = MAX( 2, 2*M )
+               ELSE
+                  WRKMIN = MAX( 2, 3*M )
+               END IF
+            END IF
+            IF( LDWORK.EQ.-1 ) THEN
+               WRKOPT = MAX( WRKMIN, N*M )
+               IF ( LFACTD ) THEN
+                  CALL DGEQRF( P, M, R, LDR, DWORK, DWORK, -1, IFAIL )
+                  WRKOPT = MAX( WRKOPT, INT( DWORK(1) )+MIN( P, M ) )
+               END IF
+               IF( LFACTA ) THEN
+                  IF( DISCR ) THEN
+                     CALL DSYEV( 'Vectors', 'Lower', N, X, LDX, DWORK, &
+                                DWORK, -1, IFAIL )
+                     WRKOPT = MAX( WRKOPT, INT( DWORK(1) )+N+2,  &
+                                  N*M+2*N+2 )
+                  END IF
+               ELSE
+                  CALL DSYTRF( UPLO, M, R, LDR, IPIV, DWORK, -1, IFAIL )
+                  WRKOPT = MAX( WRKOPT, INT( DWORK(1) ) )
+               END IF
+               DWORK(1) = WRKOPT
+               RETURN
+            ELSE IF( LDWORK.EQ.-2 ) THEN
+               DWORK(1) = WRKMIN
+               RETURN
+            ELSE IF( LDWORK.LT.WRKMIN ) THEN
+               INFO = -25
+               DWORK(1) = WRKMIN
+               RETURN
+            END IF
+         END IF
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+          RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( N.EQ.0 .OR. M.EQ.0 ) THEN
+         DWORK(1) = TWO
+         IF ( N.EQ.0 ) THEN
+            DWORK(2) = ONE
+         ELSE
+            DWORK(2) = ZERO
+         END IF
+         RETURN
+      END IF
+!C
+      NT = 'No transpose'
+      TR = 'Transpose'
+!C
+      EPS = DLAMCH( 'Precision' )
+!C
+!C     Determine the right-hand side of the matrix equation, and R+B'XB,
+!C     if needed.
+!C     Compute  B'X  in F or XB in the workspace, if enough space. In the
+!C     first case and for DICO = 'D' and FACT = 'N', compute R+B'XB in R.
+!C     Then, compute in F
+!C        B'XA + L', if DICO = 'D';
+!C        B'X  + L', if DICO = 'C'.
+!C     In the second case, reverse the order of the last two steps.
+!C
+!C     (Note: Comments in the code beginning "Workspace:" describe the
+!C     minimal amount of real workspace needed at that point in the
+!C     code, as well as the preferred amount for good performance.
+!C     NB refers to the optimal block size for the immediately
+!C     following subroutine, as returned by ILAENV.)
+!C
+!C     Workspace: need   0;
+!C                prefer M*N. This will need only a triangle of X.
+!C
+      WRKOPT = MAX( WRKMIN, N*M )
+      SUFWRK = LDWORK.GE.N*M
+      IF ( SUFWRK ) THEN
+         IF ( DISCR .OR. .NOT.WITHL ) THEN
+            CALL DSYMM(  'Left', UPLO, N, M, ONE, X, LDX, B, LDB, ZERO, &
+                        DWORK, N )
+            IF ( WITHL ) THEN
+               CALL MA02AD( 'All', N, M, L, LDL, F, LDF )
+               CALL DGEMM(  TR, NT, M, N, N, ONE, DWORK, N, A, LDA, ONE, &
+                           F, LDF )
+            ELSE IF ( DISCR ) THEN
+               CALL DGEMM(  TR, NT, M, N, N, ONE, DWORK, N, A, LDA, &
+                           ZERO, F, LDF )
+            ELSE
+               CALL MA02AD( 'All', N, M, DWORK, N, F, LDF )
+            END IF
+         ELSE
+            CALL DLACPY( 'All', N, M, L, LDL, DWORK, N )
+            CALL DSYMM(  'Left', UPLO, N, M, ONE, X, LDX, B, LDB, ONE, &
+                         DWORK, N )
+            CALL MA02AD( 'All', N, M, DWORK, N, F, LDF )
+         END IF
+      ELSE
+         CALL DGEMM( TR, NT, M, N, N, ONE, B, LDB, X, LDX, ZERO, &
+                     F, LDF )
+      END IF
+!C
+      IF ( LNFACT ) THEN
+!C
+!C        R not factored.
+!C
+         IF ( DISCR ) THEN
+!C
+!C           Discrete-time case. Compute a triangle of R + B'XB.
+!C
+            IF ( SUFWRK ) THEN
+               CALL MB01RB( 'Left', UPLO, TR, M, N, ONE, ONE, R, LDR, &
+                            DWORK, N, B, LDB, IFAIL )
+            ELSE
+               CALL MB01RB( 'Left', UPLO, NT, M, N, ONE, ONE, R, LDR, F, &
+                           LDF, B, LDB, IFAIL )
+            END IF
+         END IF
+!C
+!C        Compute the 1-norm of the matrix  R  or  R + B'XB.
+!C        Workspace: need M.
+!C
+         RNORMP = DLANSY( '1-norm', UPLO, M, R, LDR, DWORK )
+      END IF
+!C
+      IF ( DISCR .AND. .NOT.SUFWRK ) THEN
+         MS = MAX( LDWORK/N, 1 )
+!C
+!C        Postmultiply B'X by A.
+!C        Workspace: need   N;
+!C                   prefer N*M.
+         !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+         DO 10 I = 1, M, MS
+            NR = MIN( MS, M-I+1 )
+            CALL DLACPY( 'All', NR, N, F(I,1), LDF, DWORK, NR )
+            CALL DGEMM(  NT, NT, NR, N, N, ONE, DWORK, NR, A, LDA, ZERO, &
+                         F(I,1), LDF )
+   10    CONTINUE
+!C
+      END IF
+!C
+      IF( WITHL .AND. .NOT.SUFWRK ) THEN
+!C
+!C        Add L'.
+         !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif         
+         DO 20 I = 1, M
+            CALL DAXPY( N, ONE, L(1,I), 1, F(I,1), LDF )
+   20    CONTINUE
+!C
+      END IF
+!C
+!C     Solve the matrix equation.
+!C
+      IF ( LFACTA ) THEN
+!C
+!C        Case 1: Matrix R is given in a factored form.
+!C
+         IF ( LFACTD ) THEN
+!C
+!C           Use QR factorization of D.
+!C           Workspace: need   min(P,M) + M,
+!C                      prefer min(P,M) + M*NB.
+!C
+            JW = MIN( P, M ) + 1
+            CALL DGEQRF( P, M, R, LDR, DWORK, DWORK(JW), LDWORK-JW+1, &
+                         IFAIL )
+            WRKOPT = MAX( WRKOPT, INT( DWORK(JW) )+JW-1 )
+            IF ( P.LT.M ) &
+              CALL DLASET( 'Full', M-P, M, ZERO, ZERO, R(P+1,1), LDR )
+!C
+!C           Make positive the diagonal elements of the triangular
+!C           factor. Construct the strictly lower triangle, if requested.
+            !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+            DO 30 I = 1, M
+               IF ( R(I,I).LT.ZERO ) &
+                  CALL DSCAL( M-I+1, -ONE, R(I,I), LDR ) 
+               IF ( .NOT.LUPLOU ) &
+                  CALL DCOPY( I-1, R(1,I), 1, R(I,1), LDR )
+   30       CONTINUE
+!C
+         END IF
+!C
+         IF ( DISCR ) THEN
+            JZ = 0
+!C
+            IF ( LUPLOU ) THEN
+               NUPLO = 'Lower'
+            ELSE
+               NUPLO = 'Upper'
+            END IF
+!C
+!C           Discrete-time case. Update the factorization for B'XB.
+!C           Try first the Cholesky factorization of X, saving the
+!C           diagonal of X, in order to recover it, if X is not positive
+!C           definite. In the later case, use spectral factorization.
+!C           Workspace: need N.
+!C           Define     JW = 1   for Cholesky factorization of X,
+!C                      JW = N+3 for spectral factorization of X.
+!C
+            CALL DCOPY(  N, X, LDX+1, DWORK, 1 )
+            CALL DPOTRF( UPLO, N, X, LDX, IFAIL )
+!C
+            IF ( IFAIL.EQ.0 ) THEN
+!C
+!C              Use Cholesky factorization of X to compute chol(X)*B.
+!C
+               JW = 1
+               OUFACT(2) = 1
+               IF ( LUPLOU ) THEN
+                  TRL = NT
+               ELSE
+                  TRL = TR
+               END IF
+               CALL DTRMM( 'Left', UPLO, TRL, 'Non unit', N, M, ONE, X, &
+                           LDX, B, LDB )
+            ELSE
+!C
+!C              Use spectral factorization of X, X = UVU'.
+!C              Workspace: need   4*N+1,
+!C                         prefer N*(NB+2)+N+2.
+!C
+               JW = N + 3
+               OUFACT(2) = 2
+               CALL DCOPY( N, DWORK, 1, X, LDX+1 )
+               CALL DSYEV( 'Vectors', NUPLO, N, X, LDX, DWORK(3), &
+                           DWORK(JW), LDWORK-JW+1, IFAIL )
+               IF ( IFAIL.GT.0 ) THEN
+                  INFO = M + 2
+                  RETURN
+               END IF
+               WRKOPT = MAX( WRKOPT, INT( DWORK(JW) )+JW-1 )
+               TEMP   = ABS( DWORK(N+2) )*EPS*DBLE( N )
+!C
+!C              Check out the positive (semi-)definiteness of X.
+!C              First, count the negligible eigenvalues.
+!C
+   40          CONTINUE
+               IF ( ABS( DWORK(JZ+3) ).LE.TEMP ) THEN
+                  JZ = JZ + 1
+                  IF ( JZ.LT.N ) GO TO 40
+               END IF
+!C
+               IF ( LFACTD .AND. N-JZ+P.LT.M ) THEN
+!C
+!C                 The coefficient matrix is (numerically) singular.
+!C
+                  OUFACT(1) = 1
+                  DWORK(2)  = ZERO
+                  INFO = M + 1
+                  RETURN
+               END IF
+!C
+               IF ( DWORK(JZ+3).LT.ZERO ) THEN
+!C
+!C                 X is not positive (semi-)definite. Updating fails.
+!C
+                  INFO = M + 3
+                  RETURN
+               ELSE
+!C
+!C                 Compute sqrt(V)U'B.
+!C                 Workspace: need     2*N+2;
+!C                            prefer N*M+N+2.
+!C
+                  WRKOPT = MAX( WRKOPT, N*M + JW - 1 )
+                  MS = MAX( ( LDWORK - JW + 1 )/N, 1 )
+                  !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+                  DO 50 I = 1, M, MS
+                     NR = MIN( MS, M-I+1 )
+                     CALL DLACPY( 'All', N, NR, B(1,I), LDB, DWORK(JW),N)
+                     CALL DGEMM(  TR, NT, N-JZ, NR, N, ONE, X(1,JZ+1), &
+                                 LDX, DWORK(JW), N, ZERO, B(JZ+1,I),LDB)
+                         
+   50             CONTINUE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif
+                  DO 60 I = JZ + 1, N
+                     CALL DSCAL( M, SQRT( DWORK(I+2) ), B(I,1), LDB )
+   60             CONTINUE
+
+               END IF
+
+            END IF
+!C
+!C           Update the triangular factorization.
+!C
+            IF ( .NOT.LUPLOU )    CALL MA02ED( UPLO, M, R, LDR )
+!C
+!C              Transpose the lower triangle for using MB04KD.
+!C
+           
+!C
+!C           Workspace: need JW+2*M-1.
+!C
+            CALL MB04KD( 'Full', M, 0, N-JZ, R, LDR, B(JZ+1,1), LDB,  &
+                         DUMMY, N, DUMMY, M, DWORK(JW), DWORK(JW+M) )
+!C
+!C           Make positive the diagonal elements of the triangular
+!C           factor.
+            !C
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
+#endif    
+            DO 70 I = 1, M
+               IF ( R(I,I).LT.ZERO ) &
+                 CALL DSCAL( M-I+1, -ONE, R(I,I), LDR )
+   70       CONTINUE
+!C
+            IF ( .NOT.LUPLOU )  CALL MA02ED( NUPLO, M, R, LDR )
+!C
+!C              Construct the lower triangle.
+!C
+             
+!C
+          ELSE
+                  JW = 1
+        END IF
+!C
+!C        Compute the condition number of the coefficient matrix.
+!C
+         IF ( .NOT.LFACTU ) THEN
+!C
+!C           Workspace: need JW+3*M-1.
+!C
+            CALL DTRCON( '1-norm', UPLO, 'Non unit', M, R, LDR, RCOND, &
+                         DWORK(JW), IWORK, IFAIL )
+            OUFACT(1) = 1
+         ELSE
+!C
+!C           Workspace: need 2*M.
+!C
+            CALL DSYCON( UPLO, M, R, LDR, IPIV, RNORM, RCOND, DWORK, &
+                         IWORK, IFAIL )
+            OUFACT(1) = 2
+         END IF
+!C
+      ELSE
+!C
+!C        Case 2: Matrix R is given in an unfactored form.
+!C
+!C        Save the given triangle of  R  or  R + B'XB  in the other
+!C        strict triangle and the diagonal in the workspace, and try
+!C        Cholesky factorization.
+!C        Workspace: need M.
+!C
+         CALL DCOPY( M, R, LDR+1, DWORK, 1 )
+         CALL MA02ED( UPLO, M, R, LDR )
+         CALL DPOTRF( UPLO, M, R, LDR, IFAIL )
+         IF( IFAIL.EQ.0 ) THEN
+            OUFACT(1) = 1
+!C
+!C           Compute the reciprocal of the condition number of R.
+!C           Workspace: need 3*M.
+!C
+            CALL DPOCON( UPLO, M, R, LDR, RNORMP, RCOND, DWORK, IWORK, &
+                         IFAIL )
+         ELSE
+            OUFACT(1) = 2
+!C
+!C           Use UdU' or LdL' factorization, first restoring the saved
+!C           triangle.
+!C
+            CALL DCOPY( M, DWORK, 1, R, LDR+1 )
+            IF ( LUPLOU ) THEN
+               NUPLO = 'Lower'
+            ELSE
+               NUPLO = 'Upper'
+            END IF
+!C
+            CALL MA02ED( NUPLO, M, R, LDR )
+!C
+!C           Workspace: need   1,
+!C                      prefer M*NB.
+!C
+            CALL DSYTRF( UPLO, M, R, LDR, IPIV, DWORK, LDWORK, INFO )
+            IF( INFO.GT.0 ) &
+              RETURN
+            WRKOPT = MAX( WRKOPT, INT( DWORK(1) ) )
+!C
+!C           Compute the reciprocal of the condition number of R.
+!C           Workspace: need   2*M.
+!C
+            CALL DSYCON( UPLO, M, R, LDR, IPIV, RNORMP, RCOND, DWORK, &
+                         IWORK, IFAIL )
+         END IF
+      END IF
+!C
+!C     Return if the matrix is singular to working precision.
+!C
+      DWORK(2) = RCOND
+      IF( RCOND.LT.EPS ) THEN
+         INFO = M + 1
+         RETURN
+      END IF
+!C
+      IF ( OUFACT(1).EQ.1 ) THEN
+!C
+!C        Solve the positive definite linear system.
+!C
+         CALL DPOTRS( UPLO, M, N, R, LDR, F, LDF, IFAIL )
+      ELSE
+!C
+!C        Solve the indefinite linear system.
+!C
+         CALL DSYTRS( UPLO, M, N, R, LDR, IPIV, F, LDF, IFAIL )
+      END IF
+!C
+!C     Set the optimal workspace.
+!C
+      DWORK(1) = WRKOPT
+!C
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+SUBROUTINE MA02AD(JOB, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES inline :: MA02AD !GCC$ ATTRIBUTES aligned(32) :: MA02AD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE MA02AD(JOB, M, N, A, LDA, B, LDB)
+  !DIR$ ATTRIBUTES FORCEINLINE :: MA02AD
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MA02AD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: MA02AD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To transpose all or part of a two-dimensional matrix A into
+C     another matrix B.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOB     CHARACTER*1
+C             Specifies the part of the matrix A to be transposed into B
+C             as follows:
+C             = 'U': Upper triangular part;
+C             = 'L': Lower triangular part;
+C             Otherwise:  All of the matrix A.
+C
+C     Input/Output Parameters
+C
+C     M      (input) INTEGER
+C            The number of rows of the matrix A.  M >= 0.
+C
+C     N      (input) INTEGER
+C            The number of columns of the matrix A.  N >= 0.
+C
+C     A      (input) DOUBLE PRECISION array, dimension (LDA,N)
+C            The m-by-n matrix A.  If JOB = 'U', only the upper
+C            triangle or trapezoid is accessed; if JOB = 'L', only the
+C            lower triangle or trapezoid is accessed.
+C
+C     LDA    INTEGER
+C            The leading dimension of the array A.  LDA >= max(1,M).
+C
+C     B      (output) DOUBLE PRECISION array, dimension (LDB,M)
+!C            B = A' in the locations specified by JOB.
+C
+C     LDB    INTEGER
+C            The leading dimension of the array B.  LDB >= max(1,N).
+C
+C     CONTRIBUTOR
+C
+C     A. Varga, German Aerospace Center,
+C     DLR Oberpfaffenhofen, March 1998.
+C     Based on the RASP routine DMTRA.
+C
+C     REVISIONS
+C
+C     -
+C
+C     ******************************************************************
+C
+C     .. Scalar Arguments ..
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+       use omp_lib
+#endif
+      implicit none
+      CHARACTER          JOB
+      INTEGER            LDA, LDB, M, N
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      !DOUBLE PRECISION   A(LDA,*), B(LDB,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+#endif
+!C     .. Local Scalars ..
+      INTEGER            I, J
+!C     .. External Functions ..
+   
+!C     .. Intrinsic Functions ..
+      INTRINSIC          MIN
+!C
+!C     .. Executable Statements ..
+!C
+      IF( LSAME( JOB, 'U' ) ) THEN
+         DO 20 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(B:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ VECTOR ALWAYS
+#endif
+            DO 10 I = 1, MIN( J, M )
+               B(J,I) = A(I,J)
+   10       CONTINUE
+   20    CONTINUE
+      ELSE IF( LSAME( JOB, 'L' ) ) THEN
+         DO 40 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(B:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ VECTOR ALWAYS
+#endif            
+            DO 30 I = J, M
+               B(J,I) = A(I,J)
+   30       CONTINUE
+   40    CONTINUE
+      ELSE
+         DO 60 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+            !$OMP SIMD ALIGNED(B:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+            !DIR$ VECTOR ALIGNED
+            !DIR$ VECTOR ALWAYS
+#endif            
+            DO 50 I = 1, M
+               B(J,I) = A(I,J)
+   50       CONTINUE
+   60    CONTINUE
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+SUBROUTINE MA02ED(UPLO, N, A, LDA) !GCC$ ATTRIBUTES inline :: MA02ED !GCC$ ATTRIBUTES aligned(32) :: MA02ED
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE MA02ED(UPLO, N, A, LDA)
+ !DIR$ ATTRIBUTES FORCEINLINE :: MA02ED
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MA02ED
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: MA02ED
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To store by symmetry the upper or lower triangle of a symmetric
+C     matrix, given the other triangle.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     UPLO    CHARACTER*1
+C             Specifies which part of the matrix is given as follows:
+C             = 'U':  Upper triangular part;
+C             = 'L':  Lower triangular part.
+C             For all other values, the array A is not referenced.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrix A.  N >= 0.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading N-by-N upper triangular part
+C             (if UPLO = 'U'), or lower triangular part (if UPLO = 'L'),
+C             of this array must contain the corresponding upper or
+C             lower triangle of the symmetric matrix A.
+C             On exit, the leading N-by-N part of this array contains
+C             the symmetric matrix A with all elements stored.
+C
+C     LDA     INTEGER
+C             The leading dimension of the array A.  LDA >= max(1,N).
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Romania,
+C     Oct. 1998.
+C
+C     REVISIONS
+C
+C     -
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            LDA, N
+!C     .. Array Arguments ..
+      DOUBLE PRECISION   A(LDA,*)
+!C     .. Local Scalars ..
+      INTEGER            J
+
+!C     .. External Subroutines ..
+      EXTERNAL           DCOPY
+!C
+!C     .. Executable Statements ..
+!C
+!C     For efficiency reasons, the parameters are not checked for errors.
+!C
+      IF( LSAME( UPLO, 'L' ) ) THEN
+!C
+!C        Construct the upper triangle of A.
+!C
+         DO 20 J = 2, N
+            CALL DCOPY( J-1, A(J,1), LDA, A(1,J), 1 )
+   20    CONTINUE
+!C
+      ELSE IF( LSAME( UPLO, 'U' ) ) THEN
+!C
+!C        Construct the lower triangle of A.
+!C
+         DO 40 J = 2, N
+            CALL DCOPY( J-1, A(1,J), 1, A(J,1), LDA )
+   40    CONTINUE
+!C
+      END IF
+END SUBROUTINE
+
+
 
 
 !Helpers
