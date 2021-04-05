@@ -224,26 +224,26 @@ C
       LEQUIL = LSAME( EQUIL, 'S' )
       LQUERY = ( LZWORK.EQ.-1 )
       WRKOPT = NP*NM
-C
-C     Test the input scalar arguments.
-C
-      IF( .NOT.LEQUIL .AND. .NOT.LSAME( EQUIL, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -6
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -8
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -10
-      ELSE IF( LDD.LT.MAX( 1, P ) ) THEN
-         INFO = -12
-      ELSE
+!C
+!C     Test the input scalar arguments.
+!C
+!      IF( .NOT.LEQUIL .AND. .NOT.LSAME( EQUIL, 'N' ) ) THEN
+!         INFO = -1
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+!         INFO = -6
+!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+!         INFO = -8
+!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+!         INFO = -10
+!      ELSE IF( LDD.LT.MAX( 1, P ) ) THEN
+!         INFO = -12
+!      ELSE
          KW = WRKOPT + MAX( MIN( P, M ) + MAX( 3*M-1, N ), 1, &
                            MIN( P, N ) + MAX( 3*P-1, NP, NM ) )
          IF( LQUERY ) THEN
@@ -256,7 +256,7 @@ C
          ELSE IF( LZWORK.LT.KW ) THEN
             INFO = -17
          END IF
-      END IF
+!      END IF
 !C
       IF ( INFO.NE.0 ) THEN
 !C
@@ -571,23 +571,23 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( N.LT.0 ) THEN
-         INFO = -1
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( RO.NE.P .AND. RO.NE.MAX( P-M, 0 ) ) THEN
-         INFO = -4
-      ELSE IF( SIGMA.NE.0 .AND. SIGMA.NE.M ) THEN
-         INFO = -5
-      ELSE IF( SVLMAX.LT.DZERO ) THEN
-         INFO = -6
-      ELSE IF( LDABCD.LT.MAX( 1, NP ) ) THEN
-         INFO = -8
-      ELSE IF( NINFZ.LT.0 ) THEN
-         INFO = -9
-      ELSE
+!      IF( N.LT.0 ) THEN
+!         INFO = -1
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( RO.NE.P .AND. RO.NE.MAX( P-M, 0 ) ) THEN
+!         INFO = -4
+!      ELSE IF( SIGMA.NE.0 .AND. SIGMA.NE.M ) THEN
+!         INFO = -5
+!      ELSE IF( SVLMAX.LT.DZERO ) THEN
+!         INFO = -6
+!      ELSE IF( LDABCD.LT.MAX( 1, NP ) ) THEN
+!         INFO = -8
+!      ELSE IF( NINFZ.LT.0 ) THEN
+!!         INFO = -9
+!      ELSE
          JWORK = MAX( 1,      MPM + MAX( 3*M - 1, N ), &
                      MIN( P, N ) + MAX( 3*P - 1, NP, N+M ) )
          IF( LQUERY ) THEN
@@ -610,7 +610,7 @@ C
          ELSE IF( LZWORK.LT.JWORK ) THEN
             INFO = -19
          END IF
-      END IF
+!      END IF
 !C
       IF ( INFO.NE.0 ) THEN
 !C
@@ -1054,21 +1054,21 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-      IF( M.LT.0 ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
-         INFO = -4
-      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
-         INFO = -5
-      ELSE IF( SVLMAX.LT.ZERO ) THEN
-         INFO = -6
-      END IF
+!      IF( M.LT.0 ) THEN
+!         INFO = -1
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+!         INFO = -4
+!      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
+!         INFO = -5
+!      ELSE IF( SVLMAX.LT.ZERO ) THEN
+!         INFO = -6
+!      END IF
 !C
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+!      IF( INFO.NE.0 ) THEN
+!!          RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -1469,21 +1469,21 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-      IF( M.LT.0 ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
-         INFO = -4
-      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
-         INFO = -5
-      ELSE IF( SVLMAX.LT.ZERO ) THEN
-         INFO = -6
-      END IF
+!      IF( M.LT.0 ) THEN
+!         INFO = -1
+!      ELSE IF( N.LT.0 ) THEN
+!!         INFO = -2
+!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+!         INFO = -4
+!      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
+!         INFO = -5
+!      ELSE IF( SVLMAX.LT.ZERO ) THEN
+!         INFO = -6
+!      END IF
 !C
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+!      IF( INFO.NE.0 ) THEN
+!          RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -1989,43 +1989,43 @@ C     CONTRIBUTORS
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.LJOBK .AND. .NOT.LSAME( JOBK, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.LMULTB .AND. .NOT.LSAME( MULTBQ, 'N' ) ) THEN
-         INFO = -2
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( LDS.LT.N1 ) THEN
-         INFO = -7
-      ELSE IF( LDA.LT.N1 ) THEN
-         INFO = -9
-      ELSE IF( LDB.LT.N1 ) THEN
-         INFO = -11
-      ELSE IF( LDQ.LT.1 .OR. ( .NOT.LMULTB .AND. LDQ.LT.M ) ) THEN
-         INFO = -13
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -15
-      ELSE IF( LDR.LT.MAX( 1, P ) ) THEN
-         INFO = -17
-      ELSE IF( LDK.LT.N1 ) THEN
-         INFO = -19
-      ELSE IF( ( LJOBK .AND. LDWORK.LT.MAX( 2, PN*N + 2*P,  &
-                                           N*(N + M + 2), 3*P ) ) .OR. &
-           ( .NOT.LJOBK .AND. LDWORK.LT.MAX( 1, PN*N + 2*P, &
-                                           N*(N + M + 2) ) ) ) THEN
-         INFO = -23
-      END IF
+!      IF( .NOT.LJOBK .AND. .NOT.LSAME( JOBK, 'N' ) ) THEN
+!         INFO = -1
+!      ELSE IF( .NOT.LMULTB .AND. .NOT.LSAME( MULTBQ, 'N' ) ) THEN
+!         INFO = -2
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -5
+!      ELSE IF( LDS.LT.N1 ) THEN
+!         INFO = -7
+!      ELSE IF( LDA.LT.N1 ) THEN
+!         INFO = -9
+!      ELSE IF( LDB.LT.N1 ) THEN
+!         INFO = -11
+!      ELSE IF( LDQ.LT.1 .OR. ( .NOT.LMULTB .AND. LDQ.LT.M ) ) THEN
+!         INFO = -13
+!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+!         INFO = -15
+!      ELSE IF( LDR.LT.MAX( 1, P ) ) THEN
+!         INFO = -17
+!      ELSE IF( LDK.LT.N1 ) THEN
+!         INFO = -19
+!      ELSE IF( ( LJOBK .AND. LDWORK.LT.MAX( 2, PN*N + 2*P,  &
+!                                           N*(N + M + 2), 3*P ) ) .OR. &
+!           ( .NOT.LJOBK .AND. LDWORK.LT.MAX( 1, PN*N + 2*P, &
+! !                                          N*(N + M + 2) ) ) ) THEN
+!         INFO = -23
+!      END IF
 !C
       IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-         RETURN
-      END IF
+!         RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -2533,44 +2533,44 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.LMULTA .AND. .NOT.LSAME( MULTAB, 'N' ) ) THEN
-         INFO = -2
-      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
-         INFO = -3
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -6
-      ELSE IF( LDSINV.LT.N1 ) THEN
-         INFO = -8
-      ELSE IF( LDAINV.LT.N1 ) THEN
-         INFO = -10
-      ELSE IF( LDB.LT.N1 ) THEN
-         INFO = -12
-      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
-         INFO = -14
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -16
-      ELSE IF( LDQINV.LT.M1 ) THEN
-         INFO = -18
-      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(N + 2*M) + 3*M,  &
-                                           NP*(N + 1) + 2*N, 3*N ) ) &
-                                                                  .OR. &
-          ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(N + 2*M) + 3*M,  &
-                                            NP*(N + 1) + 2*N ) ) ) THEN &
-         INFO = -26
-      END IF
+!      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
+!         INFO = -1
+!      ELSE IF( .NOT.LMULTA .AND. .NOT.LSAME( MULTAB, 'N' ) ) THEN
+!!         INFO = -2
+!      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
+!         INFO = -3
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -5
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -6
+!      ELSE IF( LDSINV.LT.N1 ) THEN
+!         INFO = -8
+!      ELSE IF( LDAINV.LT.N1 ) THEN
+!         INFO = -10
+!      ELSE IF( LDB.LT.N1 ) THEN
+!         INFO = -12
+!      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
+!         INFO = -14
+!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+ !        INFO = -16
+!      ELSE IF( LDQINV.LT.M1 ) THEN
+!         INFO = -18
+!      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(N + 2*M) + 3*M,  &
+!                                           NP*(N + 1) + 2*N, 3*N ) ) &
+!                                                                  .OR. &
+!          ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(N + 2*M) + 3*M,  &
+!                                            NP*(N + 1) + 2*N ) ) ) THEN &
+!         INFO = -26
+!      END IF
 
-      IF ( INFO.NE.0 ) THEN
+!      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+!          RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3025,36 +3025,36 @@ C
 !C
       INFO = 0
       N1 = MAX( 1, N )
-      IF( N.LT.0 ) THEN
-         INFO = -1
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( L.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( LDP.LT.N1 ) THEN
-         INFO = -5
-      ELSE IF( LDA.LT.N1 ) THEN
-         INFO = -7
-      ELSE IF( LDB.LT.N1 ) THEN
-         INFO = -9
-      ELSE IF( LDC.LT.MAX( 1, L ) ) THEN
-         INFO = -11
-      ELSE IF( LDQ.LT.MAX( 1, M ) ) THEN
-         INFO = -13
-      ELSE IF( LDR.LT.MAX( 1, L ) ) THEN
-         INFO = -15
-      ELSE IF( LDK.LT.N1 ) THEN
-         INFO = -17
-      ELSE IF( LDWORK.LT.MAX( 1, L*N + 3*L, N*N, N*M ) ) THEN
-         INFO = -21
-      END IF
+!      IF( N.LT.0 ) THEN
+!         INFO = -1
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( L.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( LDP.LT.N1 ) THEN
+!         INFO = -5
+!      ELSE IF( LDA.LT.N1 ) THEN
+!         INFO = -7
+!      ELSE IF( LDB.LT.N1 ) THEN
+!         INFO = -9
+!      ELSE IF( LDC.LT.MAX( 1, L ) ) THEN
+!         INFO = -11
+!      ELSE IF( LDQ.LT.MAX( 1, M ) ) THEN
+!         INFO = -13
+!      ELSE IF( LDR.LT.MAX( 1, L ) ) THEN
+!         INFO = -15
+!      ELSE IF( LDK.LT.N1 ) THEN
+!         INFO = -17
+!      ELSE IF( LDWORK.LT.MAX( 1, L*N + 3*L, N*N, N*M ) ) THEN
+!         INFO = -21
+!      END IF
 !C
-      IF ( INFO.NE.0 ) THEN
+!      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-         RETURN
-      END IF
+!         RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3396,33 +3396,33 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-      IF( ( .NOT.LSIDE ).AND.( .NOT.LSAME( SIDE, 'R' ) ) )THEN
-         INFO = -1
-      ELSE IF( ( .NOT.LSAME( UPLO,  'U' ) ).AND.  &
-               ( .NOT.LSAME( UPLO,  'L' ) )      )THEN
-         INFO = -2
-      ELSE IF( ( .NOT.LSAME( TRANS, 'N' ) ).AND. &
-               ( .NOT.LSAME( TRANS, 'T' ) ).AND.
-               ( .NOT.LSAME( TRANS, 'C' ) )      )THEN &
-         INFO = -3
-      ELSE IF( ( .NOT.LSAME( DIAG,  'U' ) ).AND.  &
-              ( .NOT.LSAME( DIAG,  'N' ) )      )THEN
-         INFO = -4
-      ELSE IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
-         INFO = -5
-      ELSE IF( M.LT.0 )THEN
-         INFO = -6
-      ELSE IF( N.LT.0 )THEN
-         INFO = -7
-      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
-         INFO = -10
-      ELSE IF( LDB.LT.MAX( 1, M ) )THEN
-         INFO = -12
-      END IF
+!      IF( ( .NOT.LSIDE ).AND.( .NOT.LSAME( SIDE, 'R' ) ) )THEN
+!         INFO = -1
+!      ELSE IF( ( .NOT.LSAME( UPLO,  'U' ) ).AND.  &
+!               ( .NOT.LSAME( UPLO,  'L' ) )      )THEN
+!         INFO = -2
+!      ELSE IF( ( .NOT.LSAME( TRANS, 'N' ) ).AND. &
+!               ( .NOT.LSAME( TRANS, 'T' ) ).AND.
+!               ( .NOT.LSAME( TRANS, 'C' ) )      )THEN &
+!         INFO = -3
+!      ELSE IF( ( .NOT.LSAME( DIAG,  'U' ) ).AND.  &
+!              ( .NOT.LSAME( DIAG,  'N' ) )      )THEN
+!         INFO = -4
+!      ELSE IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
+!         INFO = -5
+!      ELSE IF( M.LT.0 )THEN
+!         INFO = -6
+!      ELSE IF( N.LT.0 )THEN
+!         INFO = -7
+!      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+!         INFO = -10
+!      ELSE IF( LDB.LT.MAX( 1, M ) )THEN
+!         INFO = -12
+!      END IF
 !C
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+!      IF( INFO.NE.0 ) THEN
+!          RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3854,7 +3854,7 @@ C
       DOUBLE PRECISION  DDOT
       EXTERNAL          DDOT
 !C     .. External Subroutines ..
-      EXTERNAL          DAXPY, DCOPY, DLACPY, DTRMM, DTRMV, MB02OD
+      EXTERNAL          DAXPY, DCOPY, DLACPY, DTRMM, DTRMV
                         
 !C     .. Intrinsic Functions ..
       INTRINSIC         INT, MAX, MIN
@@ -3871,44 +3871,44 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
-         INFO = -2
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( LDSINV.LT.N1 ) THEN
-         INFO = -7
-      ELSE IF( LDAINV.LT.N1 ) THEN
-         INFO = -9
-      ELSE IF( LDAINB.LT.N1 ) THEN
-         INFO = -11
-      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
-         INFO = -13
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -15
-      ELSE IF( LDQINV.LT.M1 ) THEN
-         INFO = -17
-      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(NM + M) + 3*M, &
-                                           NP*(N + 1) + N + &
-                                           MAX( N - 1, MP1 ), 3*N ) ) &
-                                                                  .OR. &
-         ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(NM + M) + 3*M, &
-                                           NP*(N + 1) + N + &
-                                           MAX( N - 1, MP1 ) ) ) ) THEN &
-         INFO = -25
-      END IF
-
+!      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
+!         INFO = -1
+!      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
+!         INFO = -2
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -5
+!      ELSE IF( LDSINV.LT.N1 ) THEN
+!         INFO = -7
+!      ELSE IF( LDAINV.LT.N1 ) THEN
+!         INFO = -9
+!      ELSE IF( LDAINB.LT.N1 ) THEN
+ !        INFO = -11
+!      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
+!         INFO = -13
+!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+!         INFO = -15
+!      ELSE IF( LDQINV.LT.M1 ) THEN
+!         INFO = -17
+!      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(NM + M) + 3*M, &
+!                                           NP*(N + 1) + N + &
+!                                           MAX( N - 1, MP1 ), 3*N ) ) &
+!                                                                  .OR. &
+!         ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(NM + M) + 3*M, &
+!                                           NP*(N + 1) + N + &
+!                                           MAX( N - 1, MP1 ) ) ) ) THEN &
+!         INFO = -25
+!      END IF
+!
       IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-         RETURN
-      END IF
+!         RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3974,8 +3974,8 @@ C
 #endif
       DO 10 I = 1, N
          CALL DCOPY( I, DWORK(II), 1, DWORK(I13), 1 )
-         CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', I, SINV,
-     $               LDSINV, DWORK(I13), 1 )
+         CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', I, SINV, &
+                     LDSINV, DWORK(I13), 1 )
          CALL DCOPY( I, DWORK(I13), 1, DWORK(II), 1 )
          II = II + N
    10 CONTINUE
@@ -4524,19 +4524,19 @@ C
 !C
       INFO = 0
       LQUERY = LDWORK.EQ.-1
-      IF( N.LT.0 ) THEN
-         INFO = -1
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( L.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -6
-      ELSE IF( LDB.LT.1 .OR. ( L.GT.0 .AND. LDB.LT.N ) ) THEN
-         INFO = -8
-      ELSE
+!      IF( N.LT.0 ) THEN
+!         INFO = -1
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( L.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+!         INFO = -6
+!      ELSE IF( LDB.LT.1 .OR. ( L.GT.0 .AND. LDB.LT.N ) ) THEN
+!         INFO = -8
+!      ELSE
          I = MAX( 1, M - 1, M - P, L )
          IF( LQUERY ) THEN
             IF( M.GT.P ) THEN
@@ -4551,7 +4551,7 @@ C
          ELSE IF( LDWORK.LT.I ) THEN
             INFO = -11
          END IF
-      END IF
+!      END IF
 !C
       IF( INFO.NE.0 ) THEN
 !C
@@ -5175,30 +5175,30 @@ C
 !C
 !C     Check the scalar input parameters.
 !C
-      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( NP.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( DISCR .AND. ( ALPHA.LT.ZERO ) ) THEN
-         INFO = -5
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -7
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -9
-      ELSE IF( LDF.LT.MAX( 1, M ) ) THEN
-         INFO = -16
-      ELSE IF( LDZ.LT.MAX( 1, N ) ) THEN
-         INFO = -18
-      ELSE IF( LDWORK.LT.MAX( 1, 5*M, 5*N, 2*N + 4*M ) ) THEN
-         INFO = -21
-      END IF
-      IF( INFO.NE.0 )THEN
-           RETURN
-      END IF
+!      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
+!         INFO = -1
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( NP.LT.0 ) THEN
+ !        INFO = -4
+!      ELSE IF( DISCR .AND. ( ALPHA.LT.ZERO ) ) THEN
+!         INFO = -5
+!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+!         INFO = -7
+!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+!         INFO = -9
+!      ELSE IF( LDF.LT.MAX( 1, M ) ) THEN
+!         INFO = -16
+!      ELSE IF( LDZ.LT.MAX( 1, N ) ) THEN
+!         INFO = -18
+!      ELSE IF( LDWORK.LT.MAX( 1, 5*M, 5*N, 2*N + 4*M ) ) THEN
+!         INFO = -21
+!      END IF
+!      IF( INFO.NE.0 )THEN
+!           RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -6353,33 +6353,33 @@ C
 !C
 !C     Check input scalar arguments.
 !C
-      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT. ( LSTDOM .OR. LSAME( STDOM, 'U' ) ) ) THEN
-         INFO = -2
-      ELSE IF( .NOT. ( LSAME( JOBU, 'I' ) .OR.  &
-                      LSAME( JOBU, 'U' ) ) ) THEN
-         INFO = -3
-      ELSE IF( N.LT.1 ) THEN
-         INFO = -4
-      ELSE IF( NLOW.LT.1 ) THEN
-         INFO = -5
-      ELSE IF( NLOW.GT.NSUP .OR. NSUP.GT.N ) THEN
-         INFO = -6
-      ELSE IF( DISCR .AND. ALPHA.LT.ZERO ) THEN
-         INFO = -7
-      ELSE IF( LDA.LT.N ) THEN
-         INFO = -9
-      ELSE IF( LDU.LT.N ) THEN
-         INFO = -11
-      END IF
+!      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
+!         INFO = -1
+!      ELSE IF( .NOT. ( LSTDOM .OR. LSAME( STDOM, 'U' ) ) ) THEN
+!         INFO = -2
+!      ELSE IF( .NOT. ( LSAME( JOBU, 'I' ) .OR.  &
+!                      LSAME( JOBU, 'U' ) ) ) THEN
+!         INFO = -3
+!      ELSE IF( N.LT.1 ) THEN
+!         INFO = -4
+!      ELSE IF( NLOW.LT.1 ) THEN
+!         INFO = -5
+!      ELSE IF( NLOW.GT.NSUP .OR. NSUP.GT.N ) THEN
+!         INFO = -6
+!      ELSE IF( DISCR .AND. ALPHA.LT.ZERO ) THEN
+!         INFO = -7
+!      ELSE IF( LDA.LT.N ) THEN
+!         INFO = -9
+!      ELSE IF( LDU.LT.N ) THEN
+!         INFO = -11
+!      END IF
 !C
-      IF( INFO.NE.0 ) THEN
+!      IF( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+!          RETURN
+!      END IF
 
       IF( NLOW.GT.1 ) THEN
          IF( A(NLOW,NLOW-1).NE.ZERO ) INFO = 1
@@ -6580,22 +6580,22 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( N.LT.2 ) THEN
-         INFO = -1
-      ELSE IF( L.LT.1 .OR. L.GE.N ) THEN
-         INFO = -2
-      ELSE IF( LDA.LT.N ) THEN
-         INFO = -4
-      ELSE IF( LDU.LT.N ) THEN
-         INFO = -6
-      END IF
+!      IF( N.LT.2 ) THEN
+!         INFO = -1
+!      ELSE IF( L.LT.1 .OR. L.GE.N ) THEN
+!         INFO = -2
+!      ELSE IF( LDA.LT.N ) THEN
+!         INFO = -4
+!!      ELSE IF( LDU.LT.N ) THEN
+!         INFO = -6
+!      END IF
 
-      IF( INFO.NE.0 ) THEN
+!      IF( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+!          RETURN
+!      END IF
 !C
 !C     Compute the eigenvalues and the elements of the Givens
 !C     transformation.
@@ -6936,44 +6936,44 @@ C
 !C
       INFO  = 0
       WITHD = LSAME( JOBD, 'D' )
-      IF( .NOT.WITHD .AND. .NOT.LSAME( JOBD, 'Z' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT. ( LSAME( EQUIL, 'S' ) .OR.     &
-                      LSAME( EQUIL, 'N' ) ) ) THEN
-         INFO = -2
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( NPZ.LT.0 ) THEN
-         INFO = -6
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -8
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -10
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -12
-      ELSE IF( LDD.LT.1 .OR. ( WITHD .AND. LDD.LT.P ) ) THEN
-         INFO = -14
-      ELSE IF( LDNZ.LT.MAX( 1, P ) ) THEN
-         INFO = -16
-      ELSE IF( LDNP.LT.MAX( 1, P ) ) THEN
-         INFO = -18
-      ELSE IF( LDGAIN.LT.MAX( 1, P ) ) THEN
-         INFO = -24
-      ELSE IF( LDWORK.LT.MAX( 1, N*( N + P ) +
-                  MAX( N + MAX( N, P ), N*( 2*N + 3 ) ) ) ) THEN
-                  INFO = -28
-      END IF
+!      IF( .NOT.WITHD .AND. .NOT.LSAME( JOBD, 'Z' ) ) THEN
+!         INFO = -1
+!      ELSE IF( .NOT. ( LSAME( EQUIL, 'S' ) .OR.     &
+!                      LSAME( EQUIL, 'N' ) ) ) THEN
+!         INFO = -2
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( P.LT.0 ) THEN
+!         INFO = -5
+!      ELSE IF( NPZ.LT.0 ) THEN
+!         INFO = -6
+!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+!         INFO = -8
+!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+!         INFO = -10
+!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+!         INFO = -12
+!      ELSE IF( LDD.LT.1 .OR. ( WITHD .AND. LDD.LT.P ) ) THEN
+!         INFO = -14
+!      ELSE IF( LDNZ.LT.MAX( 1, P ) ) THEN
+!         INFO = -16
+!      ELSE IF( LDNP.LT.MAX( 1, P ) ) THEN
+!         INFO = -18
+!      ELSE IF( LDGAIN.LT.MAX( 1, P ) ) THEN
+!         INFO = -24
+!      ELSE IF( LDWORK.LT.MAX( 1, N*( N + P ) +
+!                  MAX( N + MAX( N, P ), N*( 2*N + 3 ) ) ) ) THEN
+!                  INFO = -28
+!      END IF
 !C
-      IF ( INFO.NE.0 ) THEN
+!      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+!          RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -7439,30 +7439,30 @@ C
       WITHB = LSAME( JOB, 'A' ) .OR. LSAME( JOB, 'B' )
       WITHC = LSAME( JOB, 'A' ) .OR. LSAME( JOB, 'C' )
 !C
-      IF( .NOT.WITHB .AND. .NOT.WITHC .AND. .NOT.LSAME( JOB, 'N' ) ) &
-         THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( MAXRED.GT.ZERO .AND. MAXRED.LT.ONE ) THEN
-         INFO = -5
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -7
-      ELSE IF( ( M.GT.0 .AND. LDB.LT.MAX( 1, N ) ) .OR. &
-               ( M.EQ.0 .AND. LDB.LT.1 ) ) THEN
-         INFO = -9
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -11
-      END IF
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+!      IF( .NOT.WITHB .AND. .NOT.WITHC .AND. .NOT.LSAME( JOB, 'N' ) ) &
+!         THEN
+!         INFO = -1
+!!      ELSE IF( N.LT.0 ) THEN
+ !        INFO = -2
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -3
+ !     ELSE IF( P.LT.0 ) THEN
+ !        INFO = -4
+ !     ELSE IF( MAXRED.GT.ZERO .AND. MAXRED.LT.ONE ) THEN
+ !        INFO = -5
+ !     ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+ !        INFO = -7
+ !     ELSE IF( ( M.GT.0 .AND. LDB.LT.MAX( 1, N ) ) .OR. &
+ !              ( M.EQ.0 .AND. LDB.LT.1 ) ) THEN
+ !!        INFO = -9
+ !     ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+!         INFO = -11
+ !!     END IF
+ !     IF( INFO.NE.0 ) THEN
+ !         RETURN
+ !     END IF
 !C
-      IF( N.EQ.0 ) RETURN
+ !     IF( N.EQ.0 ) RETURN
       
 !C
 !C     Compute the 1-norm of the required part of matrix S and exit if
@@ -7881,28 +7881,28 @@ C     ******************************************************************
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.LJOBZ .AND. .NOT.LSAME( JOBZ, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -5
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -8
-      ELSE IF( LDZ.LT.1 .OR. ( LJOBZ .AND. LDZ.LT.N ) ) THEN
-         INFO = -11
-      ELSE IF( LDWORK.LT.MAX( 1, N, P ) ) THEN
-         INFO = -15
-      END IF
+!      IF( .NOT.LJOBZ .AND. .NOT.LSAME( JOBZ, 'N' ) ) THEN
+ !        INFO = -1
+ !     ELSE IF( N.LT.0 ) THEN
+  !       INFO = -2
+  !    ELSE IF( P.LT.0 ) THEN
+ !        INFO = -3
+ !     ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+ !        INFO = -5
+ !     ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+ !        INFO = -8
+ !     ELSE IF( LDZ.LT.1 .OR. ( LJOBZ .AND. LDZ.LT.N ) ) THEN
+ !        INFO = -11
+ !     ELSE IF( LDWORK.LT.MAX( 1, N, P ) ) THEN
+ !        INFO = -15
+ !     END IF
 !C
-      IF ( INFO.NE.0 ) THEN
+ !     IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+  !        RETURN
+  !    END IF
 !C
 !C     Quick return if possible.
 !C
@@ -8281,40 +8281,40 @@ C     .. External Subroutines ..
  10      CONTINUE
       END IF
 !C
-      IF( .NOT.LSCALE .AND. .NOT.LSAME( SCUN, 'U' ) ) THEN
-         INFO = -1
-      ELSE IF( ITYPE.EQ.-1 ) THEN
-         INFO = -2
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( N.LT.0 .OR. &
-              ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. N.NE.M ) ) THEN
-         INFO = -4
-      ELSE IF( ANRM.LT.ZERO ) THEN
-         INFO = -7
-      ELSE IF( NBL.LT.0 ) THEN
-         INFO = -8
-      ELSE IF( NBL.GT.0 .AND. ISUM.NE.MN ) THEN
-         INFO = -9
-      ELSE IF( ITYPE.LE.3 .AND. LDA.LT.MAX( 1, M ) ) THEN
-         INFO = -11
-      ELSE IF( ITYPE.GE.4 ) THEN
-         IF( KL.LT.0 .OR. KL.GT.MAX( M-1, 0 ) ) THEN
-            INFO = -5
-         ELSE IF( KU.LT.0 .OR. KU.GT.MAX( N-1, 0 ) .OR. &
-                 ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. KL.NE.KU ) )
-                  THEN
-            INFO = -6
-         ELSE IF( ( ITYPE.EQ.4 .AND. LDA.LT.KL+1 ) .OR.  &
-                 ( ITYPE.EQ.5 .AND. LDA.LT.KU+1 ) .OR.   &
-                ( ITYPE.EQ.6 .AND. LDA.LT.2*KL+KU+1 ) ) THEN
-            INFO = -11
-         END IF
-      END IF
+   !   IF( .NOT.LSCALE .AND. .NOT.LSAME( SCUN, 'U' ) ) THEN
+   !      INFO = -1
+   !   ELSE IF( ITYPE.EQ.-1 ) THEN
+    !     INFO = -2
+   !   ELSE IF( M.LT.0 ) THEN
+   !      INFO = -3
+   !   ELSE IF( N.LT.0 .OR. &
+   !           ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. N.NE.M ) ) THEN
+   !      INFO = -4
+   !   ELSE IF( ANRM.LT.ZERO ) THEN
+    !     INFO = -7
+    !  ELSE IF( NBL.LT.0 ) THEN
+    !     INFO = -8
+    !  ELSE IF( NBL.GT.0 .AND. ISUM.NE.MN ) THEN
+     !    INFO = -9
+     ! ELSE IF( ITYPE.LE.3 .AND. LDA.LT.MAX( 1, M ) ) THEN
+    !     INFO = -11
+    !  ELSE IF( ITYPE.GE.4 ) THEN
+    !     IF( KL.LT.0 .OR. KL.GT.MAX( M-1, 0 ) ) THEN
+    !        INFO = -5
+    !     ELSE IF( KU.LT.0 .OR. KU.GT.MAX( N-1, 0 ) .OR. &
+    !             ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. KL.NE.KU ) )
+    !              THEN
+    !        INFO = -6
+    !     ELSE IF( ( ITYPE.EQ.4 .AND. LDA.LT.KL+1 ) .OR.  &
+     !            ( ITYPE.EQ.5 .AND. LDA.LT.KU+1 ) .OR.   &
+     !           ( ITYPE.EQ.6 .AND. LDA.LT.2*KL+KU+1 ) ) THEN
+     !       INFO = -11
+    !     END IF
+     ! END IF
 !C
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+    !  IF( INFO.NE.0 ) THEN
+    !      RETURN
+    !  END IF
 !C
 !C     Quick return if possible.
 !C
@@ -9046,8 +9046,8 @@ C
 #endif
 !C     .. Local Scalars ..
       CHARACTER         BALANC
-      LOGICAL           LBALBA, LBALEA, LBALEB, LBALEC, LINITA,
-                        STAT1,STAT2,STAT3
+      LOGICAL           LBALBA, LBALEA, LBALEB, LBALEC, LINITA
+                       
       INTEGER           I, IGH, IJ, ITAU, J, JJ, JP, JWORK, K, LOW, WRKOPT
                         
       DOUBLE PRECISION  HNORM, T
@@ -9071,50 +9071,50 @@ C
 !C
 !C     Test the input scalar arguments.
       !C
-      STAT1 = .false.
-      STAT2 = .false.
-      STAT3 = .false.
-      STAT1 = ( LINITA .AND. .NOT.LBALEC .AND. .NOT.LBALEA .AND. &
-               LDWORK.LT.N - 1 + MAX( N, M, P ) )
-      STAT2 =  ( LINITA .AND. ( LBALEC .OR. LBALEA ) .AND.  &
-               LDWORK.LT.N + MAX( N, M-1, P-1 ) )
-      STAT3 =  ( .NOT.LINITA .AND. ( LBALEC .OR. LBALEA ) .AND. &
-               LDWORK.LT.2*N )
+    !  STAT1 = .false.
+    !  STAT2 = .false.
+     ! STAT3 = .false.
+     ! STAT1 = ( LINITA .AND. .NOT.LBALEC .AND. .NOT.LBALEA .AND. &
+     !          LDWORK.LT.N - 1 + MAX( N, M, P ) )
+    !  STAT2 =  ( LINITA .AND. ( LBALEC .OR. LBALEA ) .AND.  &
+    !           LDWORK.LT.N + MAX( N, M-1, P-1 ) )
+    !  STAT3 =  ( .NOT.LINITA .AND. ( LBALEC .OR. LBALEA ) .AND. &
+    !           LDWORK.LT.2*N )
       
-      IF( .NOT.LBALEC .AND. .NOT.LBALBA .AND. &
-          .NOT.LSAME( BALEIG, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.LINITA .AND. .NOT.LSAME( INITA, 'H' ) ) THEN
-         INFO = -2
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( P.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -8
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -10
-      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-         INFO = -12
-      ELSE IF( LDG.LT.MAX( 1, P ) ) THEN
-         INFO = -15
-      ELSE IF( LDHINV.LT.MAX( 1, N ) ) THEN
-         INFO = -19
-      ELSE IF( STAT1 .OR. STAT2 .OR. STAT3 .OR. LDWORK.LT.1)
-         INFO = -22
-      ELSE IF( ( ( LBALEC .OR. LBALEA ) .AND. LZWORK.LT.N*( N + 2 ) ) &
-           .OR. ( LZWORK.LT.MAX( 1, N*N ) ) ) THEN
-         INFO = -24
-      END IF
+    !  IF( .NOT.LBALEC .AND. .NOT.LBALBA .AND. &
+     !     .NOT.LSAME( BALEIG, 'N' ) ) THEN
+    !     INFO = -1
+     ! ELSE IF( .NOT.LINITA .AND. .NOT.LSAME( INITA, 'H' ) ) THEN
+     !    INFO = -2
+     ! ELSE IF( N.LT.0 ) THEN
+     !    INFO = -3
+     ! ELSE IF( M.LT.0 ) THEN
+     !    INFO = -4
+     ! ELSE IF( P.LT.0 ) THEN
+     !    INFO = -5
+     ! ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+     !    INFO = -8
+     ! ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+      !   INFO = -10
+     ! ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+     !    INFO = -12
+     ! ELSE IF( LDG.LT.MAX( 1, P ) ) THEN
+     !    INFO = -15
+     ! ELSE IF( LDHINV.LT.MAX( 1, N ) ) THEN
+     !    INFO = -19
+    !  ELSE IF( STAT1 .OR. STAT2 .OR. STAT3 .OR. LDWORK.LT.1)
+     !    INFO = -22
+     ! ELSE IF( ( ( LBALEC .OR. LBALEA ) .AND. LZWORK.LT.N*( N + 2 ) ) &
+      !     .OR. ( LZWORK.LT.MAX( 1, N*N ) ) ) THEN
+      !   INFO = -24
+     ! END IF
 !C
-      IF ( INFO.NE.0 ) THEN
+     ! IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return
 !C
-         RETURN
-      END IF
+    !     RETURN
+    !  END IF
 !C
 !C     Quick return if possible.
 !C
@@ -14749,83 +14749,83 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.LJOBB .AND. .NOT.LSAME( JOBB, 'G' ) ) THEN
-         INFO = -2
-      ELSE IF( .NOT.LFACQ .AND. .NOT.LFACR .AND. .NOT.LFACB &
-                                           .AND. .NOT.LFACN ) THEN
-         INFO = -3
-      ELSE IF( .NOT.LJOBB .OR. LFACN ) THEN
-         IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) &
-            INFO = -4
-      END IF
-      IF( INFO.EQ.0 .AND. LJOBB ) THEN
-         IF( .NOT.LJOBL .AND. .NOT.LJOBLN ) &
-            INFO = -5
-      END IF
-      IF( INFO.EQ.0 ) THEN
-         IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
-            INFO = -6
-         ELSE IF( N.LT.0 ) THEN
-            INFO = -7
-         ELSE IF( LJOBB ) THEN
-            IF( M.LT.0 ) &
-              INFO = -8
-         END IF
-      END IF
-      IF( INFO.EQ.0 .AND. .NOT.LFACN ) THEN
-         IF( P.LT.0 ) &
-          INFO = -9
-      END IF
-      IF( INFO.EQ.0 ) THEN
-         IF( LDA.LT.MAX( 1, N ) ) THEN
-            INFO = -11
-         ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-            INFO = -13
-         ELSE IF( ( ( LFACN.OR.LFACR ) .AND. LDQ.LT.MAX( 1, N ) ) .OR.  &
-                 ( ( LFACQ.OR.LFACB ) .AND. LDQ.LT.MAX( 1, P ) ) ) THEN
-            INFO = -15
-         ELSE IF( LDR.LT.1 ) THEN
-            INFO = -17
-         ELSE IF( LDL.LT.1 ) THEN
-            INFO = -19
-         ELSE IF( LJOBB ) THEN
-            IF ( ( LFACN.OR.LFACQ ) .AND. LDR.LT.M .OR.   &
-                 ( LFACR.OR.LFACB ) .AND. LDR.LT.P ) THEN
-               INFO = -17
-            ELSE IF( LJOBLN .AND. LDL.LT.N ) THEN
-               INFO = -19
-            END IF
-         END IF
-      END IF
-      IF( INFO.EQ.0 ) THEN
-         IF( LDX.LT.MAX( 1, N ) ) THEN
-            INFO = -22
-         ELSE IF( LDS.LT.MAX( 1, NNM ) ) THEN
-            INFO = -27
-         ELSE IF( LDT.LT.1 ) THEN
-            INFO = -29
-         ELSE IF( LDU.LT.MAX( 1, NN ) ) THEN
-            INFO = -31
-         ELSE IF( LDWORK.LT.MAX( 3, 6*N ) ) THEN
-            INFO = -35
-         ELSE IF( DISCR .OR. LJOBB ) THEN
-            IF( LDT.LT.NNM ) THEN
-               INFO = -29
-            ELSE IF( LDWORK.LT.MAX( 14*N + 23, 16*N, LDW ) ) THEN
-               INFO = -35
-            END IF
-         END IF
-      END IF
+ !     IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+ !        INFO = -1
+ !     ELSE IF( .NOT.LJOBB .AND. .NOT.LSAME( JOBB, 'G' ) ) THEN
+ !        INFO = -2
+ !     ELSE IF( .NOT.LFACQ .AND. .NOT.LFACR .AND. .NOT.LFACB &
+ !                                          .AND. .NOT.LFACN ) THEN
+ !        INFO = -3
+ !     ELSE IF( .NOT.LJOBB .OR. LFACN ) THEN
+ !        IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) &
+ !           INFO = -4
+!      END IF
+ !     IF( INFO.EQ.0 .AND. LJOBB ) THEN
+ !        IF( .NOT.LJOBL .AND. .NOT.LJOBLN ) &
+!            INFO = -5
+!      END IF
+ !     IF( INFO.EQ.0 ) THEN
+ !        IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
+ !           INFO = -6
+ !        ELSE IF( N.LT.0 ) THEN
+ !           INFO = -7
+ !        ELSE IF( LJOBB ) THEN
+ !           IF( M.LT.0 ) &
+ !             INFO = -8
+ !        END IF
+ !     END IF
+ !     IF( INFO.EQ.0 .AND. .NOT.LFACN ) THEN
+ !        IF( P.LT.0 ) &
+ !         INFO = -9
+ !     END IF
+ !     IF( INFO.EQ.0 ) THEN
+ !        IF( LDA.LT.MAX( 1, N ) ) THEN
+ !           INFO = -11
+ !        ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+ !           INFO = -13
+ !        ELSE IF( ( ( LFACN.OR.LFACR ) .AND. LDQ.LT.MAX( 1, N ) ) .OR.  &
+ !                ( ( LFACQ.OR.LFACB ) .AND. LDQ.LT.MAX( 1, P ) ) ) THEN
+ !           INFO = -15
+ !        ELSE IF( LDR.LT.1 ) THEN
+ !           INFO = -17
+ !        ELSE IF( LDL.LT.1 ) THEN
+ !           INFO = -19
+ !        ELSE IF( LJOBB ) THEN
+ !           IF ( ( LFACN.OR.LFACQ ) .AND. LDR.LT.M .OR.   &
+ !                ( LFACR.OR.LFACB ) .AND. LDR.LT.P ) THEN
+ !              INFO = -17
+ !           ELSE IF( LJOBLN .AND. LDL.LT.N ) THEN
+!               INFO = -19
+!            END IF
+ !        END IF
+ !     END IF
+ !     IF( INFO.EQ.0 ) THEN
+ !        IF( LDX.LT.MAX( 1, N ) ) THEN
+ !           INFO = -22
+ !        ELSE IF( LDS.LT.MAX( 1, NNM ) ) THEN
+ !           INFO = -27
+ !        ELSE IF( LDT.LT.1 ) THEN
+ !           INFO = -29
+ !        ELSE IF( LDU.LT.MAX( 1, NN ) ) THEN
+ !           INFO = -31
+ !        ELSE IF( LDWORK.LT.MAX( 3, 6*N ) ) THEN
+ !           INFO = -35
+ !        ELSE IF( DISCR .OR. LJOBB ) THEN
+ !           IF( LDT.LT.NNM ) THEN
+ !              INFO = -29
+ !           ELSE IF( LDWORK.LT.MAX( 14*N + 23, 16*N, LDW ) ) THEN
+ !              INFO = -35
+ !           END IF
+ !        END IF
+ !     END IF
 !C
-      IF ( INFO.NE.0 ) THEN
+ !     IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-         CALL XERBLA( 'SB02OD', -INFO )
-         RETURN
-      END IF
+!         CALL XERBLA( 'SB02OD', -INFO )
+!1         RETURN
+!      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -14924,7 +14924,7 @@ C
       END IF
 !C
       IF ( INFO.NE.0 ) &
-     $   RETURN
+          RETURN
       WRKOPT = DWORK(1)
       IF ( LJOBB ) RCONDL = DWORK(2)
 
@@ -15069,13 +15069,13 @@ C
 !C        Estimate the reciprocal condition of U1.
 !C        Workspace: need 3*N.
 !C
-         CALL DGECON( '1-norm', N, S(NP1,1), LDS, UNORM, RCOND, DWORK,
-     $                IWORK(NP1), INFO )
-C
+         CALL DGECON( '1-norm', N, S(NP1,1), LDS, UNORM, RCOND, DWORK, &
+                     IWORK(NP1), INFO )
+!C
          IF ( RCOND.LT.DLAMCH( 'Epsilon' ) ) THEN
-C
-C           Nearly singular matrix.  Set INFO for error return.
-C
+!C
+!C           Nearly singular matrix.  Set INFO for error return.
+!C
             INFO = 6
             RETURN
          END IF
@@ -17700,6 +17700,2306 @@ C
 
 END SUBROUTINE
     
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+SUBROUTINE SB03QD( JOB, FACT, TRANA, UPLO, LYAPUN, N, SCALE, A, &
+LDA, T, LDT, U, LDU, C, LDC, X, LDX, SEP,  &
+RCOND, FERR, IWORK, DWORK, LDWORK, INFO) !GCC$ ATTRIBUTES hot :: SB03QD !GCC$ ATTRIBUTES aligned(32) :: SB03QD !GCC$ ATTRIBUTES no_stack_protector :: SB03QD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE SB03QD( JOB, FACT, TRANA, UPLO, LYAPUN, N, SCALE, A, &
+LDA, T, LDT, U, LDU, C, LDC, X, LDX, SEP,  &
+RCOND, FERR, IWORK, DWORK, LDWORK, INFO)
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB03QD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: SB03QD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To estimate the conditioning and compute an error bound on the
+C     solution of the real continuous-time Lyapunov matrix equation
+C
+!C         op(A)'*X + X*op(A) = scale*C
+C
+!C     where op(A) = A or A' (A**T) and C is symmetric (C = C**T). The
+C     matrix A is N-by-N, the right hand side C and the solution X are
+C     N-by-N symmetric matrices, and scale is a given scale factor.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOB     CHARACTER*1
+C             Specifies the computation to be performed, as follows:
+C             = 'C':  Compute the reciprocal condition number only;
+C             = 'E':  Compute the error bound only;
+C             = 'B':  Compute both the reciprocal condition number and
+C                     the error bound.
+C
+C     FACT    CHARACTER*1
+C             Specifies whether or not the real Schur factorization
+C             of the matrix A is supplied on entry, as follows:
+C             = 'F':  On entry, T and U (if LYAPUN = 'O') contain the
+C                     factors from the real Schur factorization of the
+C                     matrix A;
+C             = 'N':  The Schur factorization of A will be computed
+C                     and the factors will be stored in T and U (if
+C                     LYAPUN = 'O').
+C
+C     TRANA   CHARACTER*1
+C             Specifies the form of op(A) to be used, as follows:
+C             = 'N':  op(A) = A    (No transpose);
+C             = 'T':  op(A) = A**T (Transpose);
+C             = 'C':  op(A) = A**T (Conjugate transpose = Transpose).
+C
+C     UPLO    CHARACTER*1
+C             Specifies which part of the symmetric matrix C is to be
+C             used, as follows:
+C             = 'U':  Upper triangular part;
+C             = 'L':  Lower triangular part.
+C
+C     LYAPUN  CHARACTER*1
+C             Specifies whether or not the original Lyapunov equations
+C             should be solved in the iterative estimation process,
+C             as follows:
+C             = 'O':  Solve the original Lyapunov equations, updating
+C                     the right-hand sides and solutions with the
+!C                     matrix U, e.g., X <-- U'*X*U;
+C             = 'R':  Solve reduced Lyapunov equations only, without
+C                     updating the right-hand sides and solutions.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A, X and C.  N >= 0.
+C
+C     SCALE   (input) DOUBLE PRECISION
+C             The scale factor, scale, set by a Lyapunov solver.
+C             0 <= SCALE <= 1.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,N)
+C             If FACT = 'N' or LYAPUN = 'O', the leading N-by-N part of
+C             this array must contain the original matrix A.
+C             If FACT = 'F' and LYAPUN = 'R', A is not referenced.
+C
+C     LDA     INTEGER
+C             The leading dimension of the array A.
+C             LDA >= MAX(1,N), if FACT = 'N' or  LYAPUN = 'O';
+C             LDA >= 1,        if FACT = 'F' and LYAPUN = 'R'.
+C
+C     T       (input/output) DOUBLE PRECISION array, dimension
+C             (LDT,N)
+C             If FACT = 'F', then on entry the leading N-by-N upper
+C             Hessenberg part of this array must contain the upper
+C             quasi-triangular matrix T in Schur canonical form from a
+C             Schur factorization of A.
+C             If FACT = 'N', then this array need not be set on input.
+C             On exit, (if INFO = 0 or INFO = N+1, for FACT = 'N') the
+C             leading N-by-N upper Hessenberg part of this array
+C             contains the upper quasi-triangular matrix T in Schur
+C             canonical form from a Schur factorization of A.
+C
+C     LDT     INTEGER
+C             The leading dimension of the array T.  LDT >= MAX(1,N).
+C
+C     U       (input or output) DOUBLE PRECISION array, dimension
+C             (LDU,N)
+C             If LYAPUN = 'O' and FACT = 'F', then U is an input
+C             argument and on entry, the leading N-by-N part of this
+C             array must contain the orthogonal matrix U from a real
+C             Schur factorization of A.
+C             If LYAPUN = 'O' and FACT = 'N', then U is an output
+C             argument and on exit, if INFO = 0 or INFO = N+1, it
+C             contains the orthogonal N-by-N matrix from a real Schur
+C             factorization of A.
+C             If LYAPUN = 'R', the array U is not referenced.
+C
+C     LDU     INTEGER
+C             The leading dimension of the array U.
+C             LDU >= 1,        if LYAPUN = 'R';
+C             LDU >= MAX(1,N), if LYAPUN = 'O'.
+C
+C     C       (input) DOUBLE PRECISION array, dimension (LDC,N)
+C             If UPLO = 'U', the leading N-by-N upper triangular part of
+C             this array must contain the upper triangular part of the
+C             matrix C of the original Lyapunov equation (with
+C             matrix A), if LYAPUN = 'O', or of the reduced Lyapunov
+C             equation (with matrix T), if LYAPUN = 'R'.
+C             If UPLO = 'L', the leading N-by-N lower triangular part of
+C             this array must contain the lower triangular part of the
+C             matrix C of the original Lyapunov equation (with
+C             matrix A), if LYAPUN = 'O', or of the reduced Lyapunov
+C             equation (with matrix T), if LYAPUN = 'R'.
+C
+C     LDC     INTEGER
+C             The leading dimension of the array C.  LDC >= MAX(1,N).
+C
+C     X       (input) DOUBLE PRECISION array, dimension (LDX,N)
+C             The leading N-by-N part of this array must contain the
+C             symmetric solution matrix X of the original Lyapunov
+C             equation (with matrix A), if LYAPUN = 'O', or of the
+C             reduced Lyapunov equation (with matrix T), if
+C             LYAPUN = 'R'.
+C
+C     LDX     INTEGER
+C             The leading dimension of the array X.  LDX >= MAX(1,N).
+C
+C     SEP     (output) DOUBLE PRECISION
+C             If JOB = 'C' or JOB = 'B', the estimated quantity
+!C             sep(op(A),-op(A)').
+C             If N = 0, or X = 0, or JOB = 'E', SEP is not referenced.
+C
+C     RCOND   (output) DOUBLE PRECISION
+C             If JOB = 'C' or JOB = 'B', an estimate of the reciprocal
+C             condition number of the continuous-time Lyapunov equation.
+C             If N = 0 or X = 0, RCOND is set to 1 or 0, respectively.
+C             If JOB = 'E', RCOND is not referenced.
+C
+C     FERR    (output) DOUBLE PRECISION
+C             If JOB = 'E' or JOB = 'B', an estimated forward error
+C             bound for the solution X. If XTRUE is the true solution,
+C             FERR bounds the magnitude of the largest entry in
+C             (X - XTRUE) divided by the magnitude of the largest entry
+C             in X.
+C             If N = 0 or X = 0, FERR is set to 0.
+C             If JOB = 'C', FERR is not referenced.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (N*N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0 or INFO = N+1, DWORK(1) returns the
+C             optimal value of LDWORK.
+C
+C     LDWORK  INTEGER
+C             The dimension of the array DWORK.
+C             If JOB = 'C', then
+C             LDWORK >= MAX(1,2*N*N),         if FACT = 'F';
+C             LDWORK >= MAX(1,2*N*N,5*N),     if FACT = 'N'.
+C             If JOB = 'E', or JOB = 'B', and LYAPUN  = 'O', then
+C             LDWORK >= MAX(1,3*N*N),         if FACT = 'F';
+C             LDWORK >= MAX(1,3*N*N,5*N),     if FACT = 'N'.
+C             If JOB = 'E', or JOB = 'B', and LYAPUN  = 'R', then
+C             LDWORK >= MAX(1,3*N*N+N-1),     if FACT = 'F';
+C             LDWORK >= MAX(1,3*N*N+N-1,5*N), if FACT = 'N'.
+C             For optimum performance LDWORK should sometimes be larger.
+C
+C             If LDWORK = -1, then a workspace query is assumed;
+C             the routine only calculates the optimal size of the
+C             DWORK array, returns this value as the first entry of
+C             the DWORK array, and no error message related to LDWORK
+C             is issued by XERBLA.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             > 0:  if INFO = i, i <= N, the QR algorithm failed to
+C                   complete the reduction to Schur canonical form (see
+C                   LAPACK Library routine DGEES); on exit, the matrix
+C                   T(i+1:N,i+1:N) contains the partially converged
+C                   Schur form, and DWORK(i+1:N) and DWORK(N+i+1:2*N)
+C                   contain the real and imaginary parts, respectively,
+C                   of the converged eigenvalues; this error is unlikely
+C                   to appear;
+!C             = N+1:  if the matrices T and -T' have common or very
+C                   close eigenvalues; perturbed values were used to
+C                   solve Lyapunov equations, but the matrix T, if given
+C                   (for FACT = 'F'), is unchanged.
+C
+C     METHOD
+C
+C     The condition number of the continuous-time Lyapunov equation is
+C     estimated as
+C
+C     cond = (norm(Theta)*norm(A) + norm(inv(Omega))*norm(C))/norm(X),
+C
+C     where Omega and Theta are linear operators defined by
+C
+!C     Omega(W) = op(A)'*W + W*op(A),
+!C     Theta(W) = inv(Omega(op(W)'*X + X*op(W))).
+C
+C     The routine estimates the quantities
+C
+!C     sep(op(A),-op(A)') = 1 / norm(inv(Omega))
+C
+C     and norm(Theta) using 1-norm condition estimators.
+C
+C     The forward error bound is estimated using a practical error bound
+C     similar to the one proposed in [1].
+C
+C     REFERENCES
+C
+C     [1] Higham, N.J.
+C         Perturbation theory and backward error for AX-XB=C.
+C         BIT, vol. 33, pp. 124-136, 1993.
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations.
+C     The accuracy of the estimates obtained depends on the solution
+C     accuracy and on the properties of the 1-norm estimator.
+C
+C     FURTHER COMMENTS
+C
+C     The option LYAPUN = 'R' may occasionally produce slightly worse
+C     or better estimates, and it is much faster than the option 'O'.
+C     When SEP is computed and it is zero, the routine returns
+C     immediately, with RCOND and FERR (if requested) set to 0 and 1,
+C     respectively. In this case, the equation is singular.
+C
+C     CONTRIBUTORS
+C
+C     P. Petkov, Tech. University of Sofia, December 1998.
+C     V. Sima, Katholieke Univ. Leuven, Belgium, February 1999.
+C
+C     REVISIONS
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, March 2003, July 2012.
+C
+C     KEYWORDS
+C
+C     Lyapunov equation, orthogonal transformation, real Schur form.
+C
+C     ******************************************************************
+C
+#endif
+       use omp_lib
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, TWO, THREE
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0, TWO = 2.0D0, &
+                           THREE = 3.0D0 )
+!C     ..
+!C     .. Scalar Arguments ..
+      CHARACTER          FACT, JOB, LYAPUN, TRANA, UPLO
+      INTEGER            INFO, LDA, LDC, LDT, LDU, LDWORK, LDX, N
+      DOUBLE PRECISION   FERR, RCOND, SCALE, SEP
+!C     ..
+      !C!     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+      INTEGER            IWORK( * )
+      !DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
+      !     T( LDT, * ), U( LDU, * ), X( LDX, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
+           T( LDT, * ), U( LDU, * ), X( LDX, * )
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED C:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED T:64
+      !DIR$ ASSUME_ALIGNED U:64
+      !DIR$ ASSUME_ALIGNED X:64
+#endif
+!C     ..
+!C     .. Local Scalars ..
+      LOGICAL            JOBB, JOBC, JOBE, LOWER, LQUERY, NOFACT, &
+                         NOTRNA, UPDATE
+      CHARACTER          SJOB, TRANAT
+      INTEGER            I, IABS, IRES, IWRK, IXBS, J, JJ, JX, LDW, NN, &
+                         SDIM, WRKOPT
+      DOUBLE PRECISION   ANORM, CNORM, DENOM, EPS, EPSN, TEMP, THNORM,  &
+                         TMAX, XANORM, XNORM
+!C     ..
+!C     .. Local Arrays ..
+      LOGICAL            BWORK( 1 )
+!C     ..
+!C     .. External Functions ..
+      LOGICAL            SELECT
+      DOUBLE PRECISION   DLANGE, DLANHS, DLANSY
+      EXTERNAL           DLANGE, DLANHS, DLANSY,SELECT
+!C     ..
+!C     .. External Subroutines ..
+      EXTERNAL           DAXPY, DGEES, DLACPY, DLASET, DSYR2K
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          ABS, DBLE, INT, MAX, MIN
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Decode and Test input parameters.
+!C
+      JOBC   = LSAME( JOB,    'C' )
+      JOBE   = LSAME( JOB,    'E' )
+      JOBB   = LSAME( JOB,    'B' )
+      NOFACT = LSAME( FACT,   'N' )
+      NOTRNA = LSAME( TRANA,  'N' )
+      LOWER  = LSAME( UPLO,   'L' )
+      UPDATE = LSAME( LYAPUN, 'O' )
+!C
+      NN = N*N
+      IF( JOBC ) THEN
+         LDW = 2*NN
+      ELSE
+         LDW = 3*NN
+      END IF
+      IF( .NOT.( JOBC .OR. UPDATE ) ) &
+          LDW = LDW + N - 1
+
+      INFO = 0
+    !  IF( .NOT.( JOBB .OR. JOBC .OR. JOBE ) ) THEN
+    !     INFO = -1
+    !  ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT, 'F' ) ) ) THEN
+    !     INFO = -2
+    !  ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR.
+    ! $                            LSAME( TRANA,  'C' ) ) ) THEN
+    !     INFO = -3
+    !  ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
+    !     INFO = -4
+    !  ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
+    !     INFO = -5
+    !  ELSE IF( N.LT.0 ) THEN
+    !     INFO = -6
+    !  ELSE IF( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) THEN
+    !     INFO = -7
+    !  ELSE IF( LDA.LT.1 .OR.
+   !  $       ( LDA.LT.N .AND. ( UPDATE .OR. NOFACT ) ) ) THEN
+    !     INFO = -9
+    !  ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
+   !      INFO = -11
+    !  ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
+   !      INFO = -13
+   !   ELSE IF( LDC.LT.MAX( 1, N ) ) THEN
+   !      INFO = -15
+   !   ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
+   !      INFO = -17
+   !   ELSE
+         IF( NOFACT ) THEN
+            IWRK = MAX( LDW, 5*N )
+         ELSE
+            IWRK = LDW
+         END IF
+         IWRK = MAX( 1, IWRK )
+         LQUERY = LDWORK.EQ.-1
+         IF( UPDATE ) THEN
+            SJOB = 'V'
+         ELSE
+            SJOB = 'N'
+         END IF
+         IF( LQUERY ) THEN
+            IF( NOFACT ) THEN
+               CALL DGEES( SJOB, 'Not ordered', SELECT, N, T, LDT, SDIM, &
+                           DWORK, DWORK, U, LDU, DWORK, -1, BWORK, INFO)
+               WRKOPT = MAX( IWRK, INT( DWORK( 1 ) ) + 2*N )
+            ELSE
+               WRKOPT = IWRK
+            END IF
+            IF( .NOT.UPDATE ) &
+               WRKOPT = MAX( WRKOPT, 4*N*N )
+         END IF
+         !IF( LDWORK.LT.IWRK .AND. .NOT. LQUERY ) &
+         !    INFO = -23
+      !END IF
+!C
+      !IF( INFO.NE.0 ) THEN
+      !   CALL XERBLA( 'SB03QD', -INFO )
+      !   RETURN
+      IF( LQUERY ) THEN
+         DWORK( 1 ) = WRKOPT
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( N.EQ.0 ) THEN
+         IF( .NOT.JOBE ) &
+           RCOND = ONE
+         IF( .NOT.JOBC ) &
+            FERR  = ZERO
+         DWORK( 1 ) = ONE
+         RETURN
+      END IF
+!C
+!C     Compute the 1-norm of the matrix X.
+!C
+      XNORM = DLANSY( '1-norm', UPLO, N, X, LDX, DWORK )
+      IF( XNORM.EQ.ZERO ) THEN
+!C
+!C        The solution is zero.
+!C
+         IF( .NOT.JOBE ) &
+            RCOND = ZERO
+         IF( .NOT.JOBC ) &
+            FERR  = ZERO
+         DWORK( 1 ) = DBLE( N )
+         RETURN
+      END IF
+!C
+!C     Compute the 1-norm of A or T.
+!C
+      IF( NOFACT .OR. UPDATE ) THEN
+         ANORM  = DLANGE( '1-norm', N, N, A, LDA, DWORK )
+      ELSE
+         ANORM  = DLANHS( '1-norm', N, T, LDT, DWORK )
+      END IF
+!C
+!C     For the special case A = 0, set SEP and RCOND to 0.
+!C     For the special case A = I, set SEP to 2 and RCOND to 1.
+!C     A quick test is used in general.
+!C
+      IF( ANORM.EQ.ONE ) THEN
+         IF( NOFACT .OR. UPDATE ) THEN
+            CALL DLACPY( 'Full', N, N, A, LDA, DWORK, N )
+         ELSE
+            CALL DLACPY( 'Full', N, N, T, LDT, DWORK, N )
+            IF( N.GT.2 ) &
+               CALL DLASET( 'Lower', N-2, N-2, ZERO, ZERO, DWORK( 3 ), N)
+                   
+         END IF
+         DWORK( NN+1 ) = ONE
+         CALL DAXPY( N, -ONE, DWORK( NN+1 ), 0, DWORK, N+1 )
+         IF( DLANGE( 'Max', N, N, DWORK, N, DWORK ).EQ.ZERO ) THEN
+            IF( .NOT.JOBE ) THEN
+               SEP   = TWO
+               RCOND = ONE
+            END IF
+            IF( JOBC ) THEN
+               DWORK( 1 ) = DBLE( NN + 1 )
+               RETURN
+            ELSE
+!C
+!C              Set FERR for the special case A = I.
+!C
+               CALL DLACPY( UPLO, N, N, X, LDX, DWORK, N )
+!C
+               IF( LOWER ) THEN
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif
+                  DO 10 J = 1, N
+                     CALL DAXPY( N-J+1, -SCALE/TWO, C( J, J ), 1, &
+                                 DWORK( (J-1)*N+J ), 1 )
+   10             CONTINUE
+               ELSE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+#endif                     
+                  DO 20 J = 1, N
+                     CALL DAXPY( J, -SCALE/TWO, C( 1, J ), 1, &
+                                 DWORK( (J-1)*N+1 ), 1 )
+   20             CONTINUE
+               END IF
+
+               FERR = MIN( ONE, DLANSY( '1-norm', UPLO, N, DWORK, N, &
+                                        DWORK( NN+1 ) ) / XNORM )
+               DWORK( 1 ) = DBLE( NN + N )
+               RETURN
+            END IF
+         END IF
+
+      ELSE IF( ANORM.EQ.ZERO ) THEN
+         IF( .NOT.JOBE ) THEN
+            SEP   = ZERO
+            RCOND = ZERO
+         END IF
+         IF( .NOT.JOBC ) &
+            FERR = ONE
+         DWORK( 1 ) = DBLE( N )
+         RETURN
+      END IF
+!C
+!C     General case.
+!C
+      CNORM = DLANSY( '1-norm', UPLO, N, C, LDC, DWORK )
+!C
+!C     Workspace usage.
+!C
+      IABS = 0
+      IXBS = IABS + NN
+      IRES = IXBS + NN
+      IWRK = IRES + NN
+      WRKOPT = 0
+!C
+      IF( NOFACT ) THEN
+!C
+!C        Compute the Schur factorization of A, A = U*T*U'.
+!C        Workspace:  need   5*N;
+!C                    prefer larger.
+!C        (Note: Comments in the code beginning "Workspace:" describe the
+!C        minimal amount of real workspace needed at that point in the
+!C        code, as well as the preferred amount for good performance.)
+!C
+         CALL DLACPY( 'Full', N, N, A, LDA, T, LDT )
+         CALL DGEES( SJOB, 'Not ordered', SELECT, N, T, LDT, SDIM,   &
+                     DWORK( 1 ), DWORK( N+1 ), U, LDU, DWORK( 2*N+1 ), &
+                     LDWORK-2*N, BWORK, INFO )
+         IF( INFO.GT.0 ) &
+            RETURN
+         WRKOPT = INT( DWORK( 2*N+1 ) ) + 2*N
+      END IF
+!C
+      IF( .NOT.JOBE ) THEN
+!C
+!C        Estimate sep(op(A),-op(A)') = sep(op(T),-op(T)') and
+!C        norm(Theta).
+!C        Workspace 2*N*N.
+!C
+         CALL SB03QY( 'Both', TRANA, LYAPUN, N, T, LDT, U, LDU, X, LDX, &
+                      SEP, THNORM, IWORK, DWORK, LDWORK, INFO )
+!C
+         WRKOPT = MAX( WRKOPT, 2*NN )
+!C
+!C        Return if the equation is singular.
+!C
+         IF( SEP.EQ.ZERO ) THEN
+            RCOND = ZERO
+            IF( JOBB ) &
+               FERR  = ONE
+            DWORK( 1 ) = DBLE( WRKOPT )
+            RETURN
+         END IF
+!C
+!C        Estimate the reciprocal condition number.
+!C
+         TMAX = MAX( SEP, XNORM, ANORM )
+         IF( TMAX.LE.ONE ) THEN
+            TEMP  =     SEP*XNORM
+            DENOM = ( SCALE*CNORM ) + ( SEP*ANORM )*THNORM
+         ELSE
+            TEMP  =   (   SEP / TMAX )*( XNORM / TMAX )
+            DENOM = ( ( SCALE / TMAX )*( CNORM / TMAX ) ) + &
+                    ( (   SEP / TMAX )*( ANORM / TMAX ) )*THNORM
+         END IF
+         IF( TEMP.GE.DENOM ) THEN
+            RCOND = ONE
+         ELSE
+            RCOND = TEMP / DENOM
+         END IF
+      END IF
+!C
+      IF( .NOT.JOBC ) THEN
+!C
+!C        Form a triangle of the residual matrix
+!C        R = op(A)'*X + X*op(A) - scale*C, or
+!C        R = op(T)'*X + X*op(T) - scale*C,
+!C        exploiting the symmetry.
+!C        Workspace 3*N*N.
+!C
+         IF( NOTRNA ) THEN
+            TRANAT = 'T'
+         ELSE
+            TRANAT = 'N'
+         END IF
+!C
+         IF( UPDATE ) THEN
+!C
+            CALL DLACPY( UPLO, N, N, C, LDC, DWORK( IRES+1 ), N )
+            CALL DSYR2K( UPLO, TRANAT, N, N, ONE, A, LDA, X, LDX,  &
+                         -SCALE, DWORK( IRES+1 ), N )
+         ELSE
+            CALL MB01UD( 'Right', TRANA, N, N, ONE, T, LDT, X, LDX, &
+                         DWORK( IRES+1 ), N, INFO )
+            JJ = IRES + 1
+            IF( LOWER ) THEN
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ)
+#endif                  
+               DO 30 J = 1, N
+                  CALL DAXPY( N-J+1, ONE, DWORK( JJ ), N, DWORK( JJ ),1)
+                  CALL DAXPY( N-J+1, -SCALE, C( J, J ), 1, DWORK( JJ ),1)
+                  JJ = JJ + N + 1
+   30          CONTINUE
+             ELSE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ)
+#endif                     
+               DO 40 J = 1, N
+                  CALL DAXPY( J, ONE, DWORK( IRES+J ), N, DWORK( JJ ),1)
+                  CALL DAXPY( J, -SCALE, C( 1, J ), 1, DWORK( JJ ), 1 )
+                  JJ = JJ + N
+   40          CONTINUE
+            END IF
+         END IF
+!C
+         WRKOPT = MAX( WRKOPT, 3*NN )
+!C
+!C        Get the machine precision.
+!C
+         EPS  = DLAMCH( 'Epsilon' )
+         EPSN = EPS*DBLE( N + 3 )
+         TEMP = EPS*THREE*SCALE
+!C
+!C        Add to abs(R) a term that takes account of rounding errors in
+!C        forming R:
+!C          abs(R) := abs(R) + EPS*(3*scale*abs(C) +
+!C                    (n+3)*(abs(op(A))'*abs(X) + abs(X)*abs(op(A)))), or
+!C          abs(R) := abs(R) + EPS*(3*scale*abs(C) +
+!C                    (n+3)*(abs(op(T))'*abs(X) + abs(X)*abs(op(T)))),
+!C        where EPS is the machine precision.
+         !C
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+         DO 60 J = 1, N
+            !$OMP SIMD ALIGNED(DWORK:64,X:64)
+            DO 50 I = 1, N
+               DWORK( IXBS+(J-1)*N+I ) = ABS( X( I, J ) )
+   50       CONTINUE
+   60    CONTINUE
+
+         IF( LOWER ) THEN
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)                  
+            DO 80 J = 1, N
+               !$OMP SIMD ALIGNED(DWORK:64,C:64)
+               DO 70 I = J, N
+                  DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
+                         ABS( DWORK( IRES+(J-1)*N+I ) )
+   70          CONTINUE
+   80       CONTINUE
+         ELSE
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)                        
+            DO 100 J = 1, N
+              !$OMP SIMD ALIGNED(DWORK:64,C:64) 
+               DO 90 I = 1, J
+                  DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
+                         ABS( DWORK( IRES+(J-1)*N+I ) )
+   90          CONTINUE
+  100       CONTINUE
+         END IF
+!C
+         IF( UPDATE ) THEN
+!C
+!C           Workspace 3*N*N.
+            !C
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)              
+            DO 120 J = 1, N
+               !$OMP SIMD ALIGNED(DWORK:64,A:64)
+               DO 110 I = 1, N
+                  DWORK( IABS+(J-1)*N+I ) = ABS( A( I, J ) )
+  110          CONTINUE
+  120       CONTINUE
+!C
+            CALL DSYR2K( UPLO, TRANAT, N, N, EPSN, DWORK( IABS+1 ), N,  &
+                         DWORK( IXBS+1 ), N, ONE,  DWORK( IRES+1 ), N )
+         ELSE
+!C
+!C           Workspace 3*N*N + N - 1.
+            !C
+!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)                
+            DO 140 J = 1, N
+               !$OMP SIMD ALIGNED(DWORK:64,T:64)
+               DO 130 I = 1, MIN( J+1, N )
+                  DWORK( IABS+(J-1)*N+I ) = ABS( T( I, J ) )
+  130          CONTINUE
+  140       CONTINUE
+
+            CALL MB01UW( 'Left', TRANAT, N, N, EPSN, DWORK( IABS+1 ),  &
+                        N, DWORK( IXBS+1), N, DWORK( IWRK+1 ),        &
+                        LDWORK-IWRK, INFO )
+            JJ = IRES + 1
+            JX = IXBS + 1
+            IF( LOWER ) THEN
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ,JX)
+#endif
+               DO 150 J = 1, N
+                  CALL DAXPY( N-J+1, ONE, DWORK( JX ), N, DWORK( JX ),1)
+                  CALL DAXPY( N-J+1, ONE, DWORK( JX ), 1, DWORK( JJ ),1)
+                  JJ = JJ + N + 1
+                  JX = JX + N + 1
+  150          CONTINUE
+            ELSE
+#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ,JX)
+#endif                  
+               DO 160 J = 1, N
+                  CALL DAXPY( J, ONE, DWORK( IXBS+J ), N, DWORK( JX ),1)
+                  CALL DAXPY( J, ONE, DWORK( JX ), 1, DWORK( JJ ), 1 )
+                  JJ = JJ + N
+                  JX = JX + N
+  160          CONTINUE
+            END IF
+!C
+            WRKOPT = MAX( WRKOPT, 3*NN + N - 1 )
+         END IF
+!C
+!C        Compute forward error bound, using matrix norm estimator.
+!C        Workspace 3*N*N.
+!C
+         XANORM = DLANSY( 'Max', UPLO, N, X, LDX, DWORK )
+!C
+         CALL SB03QX( TRANA, UPLO, LYAPUN, N, XANORM, T, LDT, U, LDU, &
+                      DWORK( IRES+1 ), N, FERR, IWORK, DWORK, IRES,   &
+                      INFO )
+      END IF
+
+      DWORK( 1 ) = DBLE( WRKOPT )
+   
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+SUBROUTINE MB01UD( SIDE, TRANS, M, N, ALPHA, H, LDH, A, LDA, B, &
+  LDB, INFO ) !GCC$ ATTRIBUTES inline :: MB01UD !GCC$ ATTRIBUTES aligned(32) :: MB01UD
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+ SUBROUTINE MB01UD( SIDE, TRANS, M, N, ALPHA, H, LDH, A, LDA, B, &
+      LDB, INFO )
+   !DIR$ ATTRIBUTES FORCEINLINE :: MB01UD
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB01UD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: MB01UD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute one of the matrix products
+C
+C        B = alpha*op( H ) * A, or B = alpha*A * op( H ),
+C
+C     where alpha is a scalar, A and B are m-by-n matrices, H is an
+C     upper Hessenberg matrix, and op( H ) is one of
+C
+!C        op( H ) = H   or   op( H ) = H',  the transpose of H.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     SIDE    CHARACTER*1
+C             Specifies whether the Hessenberg matrix H appears on the
+C             left or right in the matrix product as follows:
+C             = 'L':  B = alpha*op( H ) * A;
+C             = 'R':  B = alpha*A * op( H ).
+C
+C     TRANS   CHARACTER*1
+C             Specifies the form of op( H ) to be used in the matrix
+C             multiplication as follows:
+C             = 'N':  op( H ) = H;
+C             = 'T':  op( H ) = H';
+C             = 'C':  op( H ) = H'.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of rows of the matrices A and B.  M >= 0.
+C
+C     N       (input) INTEGER
+C             The number of columns of the matrices A and B.  N >= 0.
+C
+C     ALPHA   (input) DOUBLE PRECISION
+C             The scalar alpha. When alpha is zero then H is not
+C             referenced and A need not be set before entry.
+C
+C     H       (input) DOUBLE PRECISION array, dimension (LDH,k)
+C             where k is M when SIDE = 'L' and is N when SIDE = 'R'.
+C             On entry with SIDE = 'L', the leading M-by-M upper
+C             Hessenberg part of this array must contain the upper
+C             Hessenberg matrix H.
+C             On entry with SIDE = 'R', the leading N-by-N upper
+C             Hessenberg part of this array must contain the upper
+C             Hessenberg matrix H.
+C             The elements below the subdiagonal are not referenced,
+C             except possibly for those in the first column, which
+C             could be overwritten, but are restored on exit.
+C
+C     LDH     INTEGER
+C             The leading dimension of the array H.  LDH >= max(1,k),
+C             where k is M when SIDE = 'L' and is N when SIDE = 'R'.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,N)
+C             The leading M-by-N part of this array must contain the
+C             matrix A.
+C
+C     LDA     INTEGER
+C             The leading dimension of the array A.  LDA >= max(1,M).
+C
+C     B       (output) DOUBLE PRECISION array, dimension (LDB,N)
+C             The leading M-by-N part of this array contains the
+C             computed product.
+C
+C     LDB     INTEGER
+C             The leading dimension of the array B.  LDB >= max(1,M).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The required matrix product is computed in two steps. In the first
+C     step, the upper triangle of H is used; in the second step, the
+C     contribution of the subdiagonal is added. A fast BLAS 3 DTRMM
+C     operation is used in the first step.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, January 1999.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Elementary matrix operations, matrix operations.
+C
+C     ******************************************************************
+C
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO
+      PARAMETER         ( ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         SIDE, TRANS
+      INTEGER           INFO, LDA, LDB, LDH, M, N
+      DOUBLE PRECISION  ALPHA
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), H(LDH,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), H(LDH,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED B:64
+      !DIR$ ASSUME_ALIGNED H:64
+#endif
+      !C     .. Local Scalars ..
+      DOUBLE PRECISION  T0
+      LOGICAL           LSIDE, LTRANS
+      INTEGER           I, J
+!C     .. External Functions ..
+
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DLACPY, DLASET, DSWAP, DTRMM
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MAX, MIN
+!C
+!1C     .. Executable Statements ..
+!C
+!C     Test the input scalar arguments.
+!C
+      INFO   = 0
+      LSIDE  = LSAME( SIDE,  'L' )
+      LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
+!C
+!      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+!!         INFO = -1
+!      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+!         INFO = -2
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( LDH.LT.1 .OR. ( LSIDE .AND. LDH.LT.M ) .OR.
+!     $                  ( .NOT.LSIDE .AND. LDH.LT.N ) ) THEN
+!         INFO = -7
+!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+!         INFO = -9
+!      ELSE IF( LDB.LT.MAX( 1, M ) ) THEN
+!         INFO = -11
+!      END IF
+!C
+!      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+!         CALL XERBLA( 'MB01UD', -INFO )
+!         RETURN
+!      END IF
+!C
+!C     Quick return, if possible.
+!C
+      IF ( MIN( M, N ).EQ.0 ) &
+          RETURN
+!C
+      IF( ALPHA.EQ.ZERO ) THEN
+!C
+!C        Set B to zero and return.
+!C
+         CALL DLASET( 'Full', M, N, ZERO, ZERO, B, LDB )
+         RETURN
+      END IF
+!C
+!C     Copy A in B and compute one of the matrix products
+!C       B = alpha*op( triu( H ) ) * A, or
+!C       B = alpha*A * op( triu( H ) ),
+!C     involving the upper triangle of H.
+!C
+      CALL DLACPY( 'Full', M, N, A, LDA, B, LDB )
+      CALL DTRMM( SIDE, 'Upper', TRANS, 'Non-unit', M, N, ALPHA, H, &
+                  LDH, B, LDB )
+!C
+!C     Add the contribution of the subdiagonal of H.
+!C     If SIDE = 'L', the subdiagonal of H is swapped with the
+!C     corresponding elements in the first column of H, and the
+!C     calculations are organized for column operations.
+!C
+      IF( LSIDE ) THEN
+         IF( M.GT.2 ) &
+            CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+         IF( LTRANS ) THEN
+            DO 20 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(B:64,H:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif
+               DO 10 I = 1, M - 1
+                  T0 = B(I,J)
+                  B( I, J ) = T0 + ALPHA*H( I+1, 1 )*A( I+1, J )
+   10          CONTINUE
+   20       CONTINUE
+         ELSE
+            DO 40 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+               !$OMP SIMD ALIGNED(B:64,H:64,A:64)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+               !DIR$ VECTOR ALIGNED
+               !DIR$ VECTOR ALWAYS
+#endif               
+               DO 30 I = 2, M
+                  T0 = B(I,J)
+                  B( I, J ) = T0 + ALPHA*H( I, 1 )*A( I-1, J )
+   30          CONTINUE
+   40       CONTINUE
+         END IF
+         IF( M.GT.2 ) &
+            CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+!C
+      ELSE
+!C
+         IF( LTRANS ) THEN
+            DO 50 J = 1, N - 1
+               IF ( H( J+1, J ).NE.ZERO ) &
+                  CALL DAXPY( M, ALPHA*H( J+1, J ), A( 1, J ), 1, &
+                              B( 1, J+1 ), 1 )
+   50       CONTINUE
+         ELSE
+            DO 60 J = 1, N - 1
+               IF ( H( J+1, J ).NE.ZERO ) &
+                 CALL DAXPY( M, ALPHA*H( J+1, J ), A( 1, J+1 ), 1, &
+                             B( 1, J ), 1 )
+   60       CONTINUE
+         END IF
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE MB01UW( SIDE, TRANS, M, N, ALPHA, H, LDH, A, LDA, &
+     DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES hot :: MB01UW !GCC$ ATTRIBUTES aligned(32) :: MB01UW !GCC$ ATTRIBUTES no_stack_protector :: MB01UW
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE MB01UW( SIDE, TRANS, M, N, ALPHA, H, LDH, A, LDA, &
+     DWORK, LDWORK, INFO )
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB01UW
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: MB01UW
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute one of the matrix products
+C
+C        A : = alpha*op( H ) * A, or A : = alpha*A * op( H ),
+C
+C     where alpha is a scalar, A is an m-by-n matrix, H is an upper
+C     Hessenberg matrix, and op( H ) is one of
+C
+!C        op( H ) = H   or   op( H ) = H',  the transpose of H.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     SIDE    CHARACTER*1
+C             Specifies whether the Hessenberg matrix H appears on the
+C             left or right in the matrix product as follows:
+C             = 'L':  A := alpha*op( H ) * A;
+C             = 'R':  A := alpha*A * op( H ).
+C
+C     TRANS   CHARACTER*1
+C             Specifies the form of op( H ) to be used in the matrix
+C             multiplication as follows:
+C             = 'N':  op( H ) = H;
+C             = 'T':  op( H ) = H';
+C             = 'C':  op( H ) = H'.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of rows of the matrix A.  M >= 0.
+C
+C     N       (input) INTEGER
+C             The number of columns of the matrix A.  N >= 0.
+C
+C     ALPHA   (input) DOUBLE PRECISION
+C             The scalar alpha. When alpha is zero then H is not
+C             referenced and A need not be set before entry.
+C
+C     H       (input) DOUBLE PRECISION array, dimension (LDH,k)
+C             where k is M when SIDE = 'L' and is N when SIDE = 'R'.
+C             On entry with SIDE = 'L', the leading M-by-M upper
+C             Hessenberg part of this array must contain the upper
+C             Hessenberg matrix H.
+C             On entry with SIDE = 'R', the leading N-by-N upper
+C             Hessenberg part of this array must contain the upper
+C             Hessenberg matrix H.
+C             The elements below the subdiagonal are not referenced,
+C             except possibly for those in the first column, which
+C             could be overwritten, but are restored on exit.
+C
+C     LDH     INTEGER
+C             The leading dimension of the array H.  LDH >= max(1,k),
+C             where k is M when SIDE = 'L' and is N when SIDE = 'R'.
+C
+C     A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+C             On entry, the leading M-by-N part of this array must
+C             contain the matrix A.
+C             On exit, the leading M-by-N part of this array contains
+C             the computed product.
+C
+C     LDA     INTEGER
+C             The leading dimension of the array A.  LDA >= max(1,M).
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, alpha <> 0, and LDWORK >= M*N > 0,
+C             DWORK contains a copy of the matrix A, having the leading
+C             dimension M.
+C             This array is not referenced when alpha = 0.
+C
+C     LDWORK  The length of the array DWORK.
+C             LDWORK >= 0,   if  alpha =  0 or MIN(M,N) = 0;
+C             LDWORK >= M-1, if  SIDE  = 'L';
+C             LDWORK >= N-1, if  SIDE  = 'R'.
+C             For maximal efficiency LDWORK should be at least M*N.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The required matrix product is computed in two steps. In the first
+C     step, the upper triangle of H is used; in the second step, the
+C     contribution of the subdiagonal is added. If the workspace can
+C     accomodate a copy of A, a fast BLAS 3 DTRMM operation is used in
+C     the first step.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Katholieke Univ. Leuven, Belgium, January 1999.
+C
+C     REVISIONS
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Feb. 2004.
+C
+C     KEYWORDS
+C
+C     Elementary matrix operations, matrix operations.
+C
+C     ******************************************************************
+C
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+       use omp_lib
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         SIDE, TRANS
+      INTEGER           INFO, LDA, LDH, LDWORK, M, N
+      DOUBLE PRECISION  ALPHA
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      !DOUBLE PRECISION  A(LDA,*), DWORK(*), H(LDH,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), H(LDH,*)
+      !DIR$ ASSUME_ALIGNED A:64
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED H:64
+#endif
+!C     .. Local Scalars ..
+      LOGICAL           LSIDE, LTRANS
+      INTEGER           I, J, JW
+!C     .. External Functions ..
+
+!C     .. External Subroutines ..
+      EXTERNAL          DAXPY, DLACPY, DLASCL, DLASET, DSCAL, DSWAP, &
+                       DTRMM, DTRMV
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MAX, MIN
+!C
+!C     .. Executable Statements ..
+!C
+!C     Test the input scalar arguments.
+!C
+      INFO   = 0
+      LSIDE  = LSAME( SIDE,  'L' )
+      LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
+!C
+!      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+!         INFO = -1
+!      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+!         INFO = -2
+!      ELSE IF( M.LT.0 ) THEN
+!         INFO = -3
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( LDH.LT.1 .OR. ( LSIDE .AND. LDH.LT.M ) .OR.
+!     $                  ( .NOT.LSIDE .AND. LDH.LT.N ) ) THEN
+!1         INFO = -7
+!!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+!         INFO = -9
+!      ELSE IF( LDWORK.LT.0 .OR.
+!     $       ( ALPHA.NE.ZERO .AND. MIN( M, N ).GT.0 .AND.
+!     $            ( ( LSIDE .AND. LDWORK.LT.M-1 ) .OR.
+!     $         ( .NOT.LSIDE .AND. LDWORK.LT.N-1 ) ) ) ) THEN
+!         INFO = -11
+!      END IF
+!C
+!      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+!         CALL XERBLA( 'MB01UW', -INFO )
+!         RETURN
+!      END IF
+!C
+!C     Quick return, if possible.
+!C
+      IF ( MIN( M, N ).EQ.0 ) THEN
+         RETURN
+      ELSE IF ( LSIDE ) THEN
+         IF ( M.EQ.1 ) THEN
+            CALL DSCAL( N, ALPHA*H(1,1), A, LDA )
+            RETURN
+         END IF
+      ELSE
+         IF ( N.EQ.1 ) THEN
+            CALL DSCAL( M, ALPHA*H(1,1), A, 1 )
+            RETURN
+         END IF
+      END IF
+!C
+      IF( ALPHA.EQ.ZERO ) THEN
+!C
+!C        Set A to zero and return.
+!C
+         CALL DLASET( 'Full', M, N, ZERO, ZERO, A, LDA )
+         RETURN
+      END IF
+!C
+      IF( LDWORK.GE.M*N ) THEN
+!C
+!C        Enough workspace for a fast BLAS 3 calculation.
+!C        Save A in the workspace and compute one of the matrix products
+!C          A : = alpha*op( triu( H ) ) * A, or
+!C          A : = alpha*A * op( triu( H ) ),
+!C        involving the upper triangle of H.
+!C
+         CALL DLACPY( 'Full', M, N, A, LDA, DWORK, M )
+         CALL DTRMM( SIDE, 'Upper', TRANS, 'Non-unit', M, N, ALPHA, H, &
+                     LDH, A, LDA )
+!C
+!C        Add the contribution of the subdiagonal of H.
+!C        If SIDE = 'L', the subdiagonal of H is swapped with the
+!C        corresponding elements in the first column of H, and the
+!C        calculations are organized for column operations.
+!C
+         IF( LSIDE ) THEN
+            IF( M.GT.2 ) &
+               CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+            IF( LTRANS ) THEN
+               JW = 1
+               DO 20 J = 1, N
+                  JW = JW + 1
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) PRIVATE(JW)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD PRIVATE(JW)
+#endif
+                  DO 10 I = 1, M - 1
+                     A( I, J ) = A( I, J ) + &
+                                 ALPHA*H( I+1, 1 )*DWORK( JW )
+                     JW = JW + 1
+   10             CONTINUE
+   20          CONTINUE
+            ELSE
+               JW = 0
+               DO 40 J = 1, N
+                  JW = JW + 1
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) PRIVATE(JW)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD PRIVATE(JW)
+#endif
+                  DO 30 I = 2, M
+                     A( I, J ) = A( I, J ) + &
+                                 ALPHA*H( I, 1 )*DWORK( JW )
+                     JW = JW + 1
+   30             CONTINUE
+   40          CONTINUE
+            END IF
+            IF( M.GT.2 ) &
+              CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+
+         ELSE
+
+            IF( LTRANS ) THEN
+               JW = 1
+               DO 50 J = 1, N - 1
+                  IF ( H( J+1, J ).NE.ZERO ) &
+                    CALL DAXPY( M, ALPHA*H( J+1, J ), DWORK( JW ), 1, &
+                                A( 1, J+1 ), 1 )
+                  JW = JW + M
+   50          CONTINUE
+            ELSE
+               JW = M + 1
+               DO 60 J = 1, N - 1
+                  IF ( H( J+1, J ).NE.ZERO ) &
+                    CALL DAXPY( M, ALPHA*H( J+1, J ), DWORK( JW ), 1, &
+                                A( 1, J ), 1 )
+                  JW = JW + M
+   60          CONTINUE
+            END IF
+         END IF
+
+      ELSE
+!C
+!C        Use a BLAS 2 calculation.
+!C
+         IF( LSIDE ) THEN
+            IF( M.GT.2 ) &
+               CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+            IF( LTRANS ) THEN
+               DO 80 J = 1, N
+!C
+!C                 Compute the contribution of the subdiagonal of H to
+!C                 the j-th column of the product.
+                  !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#endif
+                  DO 70 I = 1, M - 1
+                     DWORK( I ) = H( I+1, 1 )*A( I+1, J )
+   70             CONTINUE
+!C
+!C                 Multiply the upper triangle of H by the j-th column
+!C                 of A, and add to the above result.
+!C
+                  CALL DTRMV( 'Upper', TRANS, 'Non-unit', M, H, LDH, &
+                              A( 1, J ), 1 )
+                  CALL DAXPY( M-1, ONE, DWORK, 1, A( 1, J ), 1 )
+   80          CONTINUE
+!C
+            ELSE
+               DO 100 J = 1, N
+!C
+!C                 Compute the contribution of the subdiagonal of H to
+!C                 the j-th column of the product.
+                  !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#endif                  
+                  DO 90 I = 1, M - 1
+                     DWORK( I ) = H( I+1, 1 )*A( I, J )
+   90             CONTINUE
+!C
+!C                 Multiply the upper triangle of H by the j-th column
+!C                 of A, and add to the above result.
+!C
+                  CALL DTRMV( 'Upper', TRANS, 'Non-unit', M, H, LDH, &
+                             A( 1, J  ), 1 )
+                  CALL DAXPY( M-1, ONE, DWORK, 1, A( 2, J ), 1 )
+  100          CONTINUE
+            END IF
+            IF( M.GT.2 ) &
+               CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+!C
+         ELSE
+!C
+!C           Below, row-wise calculations are used for A.
+!C
+            IF( N.GT.2 ) &
+               CALL DSWAP( N-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+            IF( LTRANS ) THEN
+               DO 120 I = 1, M
+!C
+!C                 Compute the contribution of the subdiagonal of H to
+!C                 the i-th row of the product.
+                  !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#endif
+                  DO 110 J = 1, N - 1
+                     DWORK( J ) = A( I, J )*H( J+1, 1 )
+  110             CONTINUE
+!C
+!C                 Multiply the i-th row of A by the upper triangle of H,
+!C                 and add to the above result.
+!C
+                  CALL DTRMV( 'Upper', 'NoTranspose', 'Non-unit', N, H, &
+                              LDH, A( I, 1 ), LDA )
+                  CALL DAXPY( N-1, ONE, DWORK, 1, A( I, 2 ), LDA )
+  120          CONTINUE
+
+            ELSE
+               DO 140 I = 1, M
+!C
+!C                 Compute the contribution of the subdiagonal of H to
+!C                 the i-th row of the product.
+                  !C
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ VECTOR ALWAYS
+#endif
+                  DO 130 J = 1, N - 1
+                     DWORK( J ) = A( I, J+1 )*H( J+1, 1 )
+  130             CONTINUE
+!C
+!C                 Multiply the i-th row of A by the upper triangle of H,
+!C                 and add to the above result.
+!C
+                  CALL DTRMV( 'Upper', 'Transpose', 'Non-unit', N, H, &
+                              LDH, A( I, 1 ), LDA )
+                  CALL DAXPY( N-1, ONE, DWORK, 1, A( I, 1 ), LDA )
+  140          CONTINUE
+            END IF
+            IF( N.GT.2 ) &
+               CALL DSWAP( N-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
+
+         END IF
+!C
+!C        Scale the result by alpha.
+!C
+         IF ( ALPHA.NE.ONE ) &
+           CALL DLASCL( 'General', 0, 0, ONE, ALPHA, M, N, A, LDA, &
+                         INFO )
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE SB03QX( TRANA, UPLO, LYAPUN, N, XANORM, T, LDT, U, LDU, &
+     R, LDR, FERR, IWORK, DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES Hot :: SB03QX !GCC$ ATTRIBUTES aligned(32) :: SB03QX !GCC$ ATTRIBUTES no_stack_protector :: SB03QX
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE SB03QX( TRANA, UPLO, LYAPUN, N, XANORM, T, LDT, U, LDU, &
+       R, LDR, FERR, IWORK, DWORK, LDWORK, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB03QX
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: SB03QX
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To estimate a forward error bound for the solution X of a real
+C     continuous-time Lyapunov matrix equation,
+C
+C            op(A)'*X + X*op(A) = C,
+C
+C     where op(A) = A or A' (A**T) and C is symmetric (C = C**T). The
+C     matrix A, the right hand side C, and the solution X are N-by-N.
+C     An absolute residual matrix, which takes into account the rounding
+C     errors in forming it, is given in the array R.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     TRANA   CHARACTER*1
+C             Specifies the form of op(A) to be used, as follows:
+C             = 'N':  op(A) = A    (No transpose);
+C             = 'T':  op(A) = A**T (Transpose);
+C             = 'C':  op(A) = A**T (Conjugate transpose = Transpose).
+C
+C     UPLO    CHARACTER*1
+C             Specifies which part of the symmetric matrix R is to be
+C             used, as follows:
+C             = 'U':  Upper triangular part;
+C             = 'L':  Lower triangular part.
+C
+C     LYAPUN  CHARACTER*1
+C             Specifies whether or not the original Lyapunov equations
+C             should be solved, as follows:
+C             = 'O':  Solve the original Lyapunov equations, updating
+C                     the right-hand sides and solutions with the
+!C                     matrix U, e.g., X <-- U'*X*U;
+C             = 'R':  Solve reduced Lyapunov equations only, without
+C                     updating the right-hand sides and solutions.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A and R.  N >= 0.
+C
+C     XANORM  (input) DOUBLE PRECISION
+C             The absolute (maximal) norm of the symmetric solution
+C             matrix X of the Lyapunov equation.  XANORM >= 0.
+C
+C     T       (input) DOUBLE PRECISION array, dimension (LDT,N)
+C             The leading N-by-N upper Hessenberg part of this array
+C             must contain the upper quasi-triangular matrix T in Schur
+C             canonical form from a Schur factorization of A.
+C
+C     LDT     INTEGER
+C             The leading dimension of array T.  LDT >= MAX(1,N).
+C
+C     U       (input) DOUBLE PRECISION array, dimension (LDU,N)
+C             The leading N-by-N part of this array must contain the
+C             orthogonal matrix U from a real Schur factorization of A.
+C             If LYAPUN = 'R', the array U is not referenced.
+C
+C     LDU     INTEGER
+C             The leading dimension of array U.
+C             LDU >= 1,        if LYAPUN = 'R';
+C             LDU >= MAX(1,N), if LYAPUN = 'O'.
+C
+C     R       (input/output) DOUBLE PRECISION array, dimension (LDR,N)
+C             On entry, if UPLO = 'U', the leading N-by-N upper
+C             triangular part of this array must contain the upper
+C             triangular part of the absolute residual matrix R, with
+C             bounds on rounding errors added.
+C             On entry, if UPLO = 'L', the leading N-by-N lower
+C             triangular part of this array must contain the lower
+C             triangular part of the absolute residual matrix R, with
+C             bounds on rounding errors added.
+C             On exit, the leading N-by-N part of this array contains
+C             the symmetric absolute residual matrix R (with bounds on
+C             rounding errors added), fully stored.
+C
+C     LDR     INTEGER
+C             The leading dimension of array R.  LDR >= MAX(1,N).
+C
+C     FERR    (output) DOUBLE PRECISION
+C             An estimated forward error bound for the solution X.
+C             If XTRUE is the true solution, FERR bounds the magnitude
+C             of the largest entry in (X - XTRUE) divided by the
+C             magnitude of the largest entry in X.
+C             If N = 0 or XANORM = 0, FERR is set to 0, without any
+C             calculations.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (N*N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.  LDWORK >= 2*N*N.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+!C             = N+1:  if the matrices T and -T' have common or very
+C                   close eigenvalues; perturbed values were used to
+C                   solve Lyapunov equations (but the matrix T is
+C                   unchanged).
+C
+C     METHOD
+C
+C     The forward error bound is estimated using a practical error bound
+C     similar to the one proposed in [1], based on the 1-norm estimator
+C     in [2].
+C
+C     REFERENCES
+C
+C     [1] Higham, N.J.
+C         Perturbation theory and backward error for AX-XB=C.
+C         BIT, vol. 33, pp. 124-136, 1993.
+C
+C     [2] Higham, N.J.
+C         FORTRAN codes for estimating the one-norm of a real or
+C         complex matrix, with applications to condition estimation.
+C         ACM Trans. Math. Softw., 14, pp. 381-396, 1988.
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations.
+C
+C     FURTHER COMMENTS
+C
+C     The option LYAPUN = 'R' may occasionally produce slightly worse
+C     or better estimates, and it is much faster than the option 'O'.
+C     The routine can be also used as a final step in estimating a
+C     forward error bound for the solution of a continuous-time
+C     algebraic matrix Riccati equation.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Romania,
+C     Oct. 1998. Partly based on DGLSVX (and then SB03QD) by P. Petkov,
+C     Tech. University of Sofia, March 1998 (and December 1998).
+C
+C     REVISIONS
+C
+C     February 6, 1999, V. Sima, Katholieke Univ. Leuven, Belgium.
+C     V. Sima, Research Institute for Informatics, Bucharest, Oct. 2004,
+C     May 2020
+C
+C     KEYWORDS
+C
+C     Lyapunov equation, orthogonal transformation, real Schur form.
+C
+C     ******************************************************************
+C
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      use omp_lib
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, HALF
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0, HALF = 0.5D+0 )
+!C     ..
+!C     .. Scalar Arguments ..
+      CHARACTER          LYAPUN, TRANA, UPLO
+      INTEGER            INFO, LDR, LDT, LDU, LDWORK, N
+      DOUBLE PRECISION   FERR, XANORM
+!C     ..
+      !C     .. Array Arguments ..
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      INTEGER            IWORK( * )
+     ! DOUBLE PRECISION   DWORK( * ), R( LDR, * ), T( LDT, * ),
+      !                    U( LDU, * )
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION   DWORK( * ), R( LDR, * ), T( LDT, * ), &
+                         U( LDU, * )
+      !DIR$ ASSUME_ALIGNED DWORK:64
+      !DIR$ ASSUME_ALIGNED R:64
+      !DIR$ ASSUME_ALIGNED T:64
+      !DIR$ ASSUME_ALIGNED U:64
+#endif
+!C     ..
+!C     .. Local Scalars ..
+      LOGICAL            LOWER, NOTRNA, UPDATE
+      CHARACTER          TRANAT, UPLOW
+      INTEGER            I, IJ, INFO2, ITMP, J, KASE, NN
+      DOUBLE PRECISION   EST, SCALE, TEMP
+!C     ..
+!C     .. Local Arrays ..
+      INTEGER            ISAVE( 3 )
+!C     ..
+!C     .. External Functions ..
+!      LOGICAL            LSAME
+      DOUBLE PRECISION   DLANSY
+      EXTERNAL           DLANSY
+!C     ..
+!C     .. External Subroutines ..
+      EXTERNAL           DLACN2, DSCAL
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          MAX
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Decode and Test input parameters.
+!C
+      NOTRNA = LSAME( TRANA,  'N' )
+      UPDATE = LSAME( LYAPUN, 'O' )
+!C
+      NN   = N*N
+      INFO = 0
+    !  IF( .NOT.( NOTRNA .OR. LSAME( TRANA, 'T' ) .OR.
+    ! $                       LSAME( TRANA, 'C' ) ) ) THEN
+    !     INFO = -1
+    !  ELSE IF( .NOT.( LSAME( UPLO, 'L' ) .OR. LSAME( UPLO, 'U' ) ) )
+    ! $   THEN
+    !     INFO = -2
+    !  ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
+    !     INFO = -3
+   !   ELSE IF( N.LT.0 ) THEN
+    !!     INFO = -4
+    !  ELSE IF( XANORM.LT.ZERO ) THEN
+    !     INFO = -5
+    !  ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
+    !     INFO = -7
+    !  ELSE IF( LDU.LT.1 .OR. ( UPDATE .AND. LDU.LT.N ) ) THEN
+    !     INFO = -9
+    !  ELSE IF( LDR.LT.MAX( 1, N ) ) THEN
+    !     INFO = -11
+    !  ELSE IF( LDWORK.LT.2*NN ) THEN
+    !     INFO = -15
+    !  END IF
+!C
+ !     IF( INFO.NE.0 ) THEN
+ !        CALL XERBLA( 'SB03QX', -INFO )
+!         RETURN
+!      END IF
+!C
+!C     Quick return if possible.
+!C
+      FERR = ZERO
+      IF( N.EQ.0 .OR. XANORM.EQ.ZERO ) &
+         RETURN
+
+      ITMP = NN + 1
+
+      IF( NOTRNA ) THEN
+         TRANAT = 'T'
+      ELSE
+         TRANAT = 'N'
+      END IF
+!C
+!C     Fill in the remaining triangle of the symmetric residual matrix.
+!C
+      CALL MA02ED( UPLO, N, R, LDR )
+!C
+      KASE = 0
+!C
+!C     REPEAT
+   10 CONTINUE
+      CALL DLACN2( NN, DWORK( ITMP ), DWORK, IWORK, EST, KASE, ISAVE )
+      IF( KASE.NE.0 ) THEN
+!C
+!C        Select the triangular part of symmetric matrix to be used.
+!C
+         IF( DLANSY( '1-norm', 'Upper', N, DWORK, N, DWORK( ITMP ) ) &
+            .GE.                                                    &
+            DLANSY( '1-norm', 'Lower', N, DWORK, N, DWORK( ITMP ) ) &
+            ) THEN
+            UPLOW = 'U'
+            LOWER = .FALSE.
+         ELSE
+            UPLOW = 'L'
+            LOWER = .TRUE.
+         END IF
+
+         IF( KASE.EQ.2 ) THEN
+            IJ = 0
+            IF( LOWER ) THEN
+!C
+!C              Scale the lower triangular part of symmetric matrix
+!C              by the residual matrix.
+!C
+               DO 30 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD PRIVATE(IJ)
+#endif
+                  DO 20 I = J, N
+                     IJ = IJ + 1
+                     DWORK( IJ ) = DWORK( IJ )*R( I, J )
+   20             CONTINUE
+                  IJ = IJ + J
+   30          CONTINUE
+            ELSE
+!C
+!C              Scale the upper triangular part of symmetric matrix
+!C              by the residual matrix.
+!C
+               DO 50 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD PRIVATE(IJ)
+#endif   
+                  DO 40 I = 1, J
+                     IJ = IJ + 1
+                     DWORK( IJ ) = DWORK( IJ )*R( I, J )
+   40             CONTINUE
+                  IJ = IJ + N - J
+   50          CONTINUE
+            END IF
+         END IF
+!C
+         IF( UPDATE ) THEN
+!C
+!C           Transform the right-hand side: RHS := U'*RHS*U.
+!C
+            CALL MB01RU( UPLOW, 'Transpose', N, N, ZERO, ONE, DWORK, N, &
+                         U, LDU, DWORK, N, DWORK( ITMP ), NN, INFO2 )
+            CALL DSCAL( N, HALF, DWORK, N+1 )
+         END IF
+         CALL MA02ED( UPLOW, N, DWORK, N )
+!C
+         IF( KASE.EQ.2 ) THEN
+!C
+!C           Solve op(T)'*Y + Y*op(T) = scale*RHS.
+!C
+            CALL SB03MY( TRANA, N, T, LDT, DWORK, N, SCALE, INFO2 )
+         ELSE
+!C
+!C           Solve op(T)*W + W*op(T)' = scale*RHS.
+!C
+            CALL SB03MY( TRANAT, N, T, LDT, DWORK, N, SCALE, INFO2 )
+         END IF
+!C
+         IF( INFO2.GT.0 ) &
+            INFO = N + 1
+!C
+         IF( UPDATE ) THEN
+!C
+!C           Transform back to obtain the solution: Z := U*Z*U', with
+!C           Z = Y or Z = W.
+!C
+            CALL MB01RU( UPLOW, 'No transpose', N, N, ZERO, ONE, DWORK, &
+                        N, U, LDU, DWORK, N, DWORK( ITMP ), NN, INFO2 )
+            CALL DSCAL( N, HALF, DWORK, N+1 )
+         END IF
+!C
+         IF( KASE.EQ.1 ) THEN
+            IJ = 0
+            IF( LOWER ) THEN
+!C
+!C              Scale the lower triangular part of symmetric matrix
+!C              by the residual matrix.
+!C
+               DO 70 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD PRIVATE(IJ)
+#endif                     
+                  DO 60 I = J, N
+                     IJ = IJ + 1
+                     DWORK( IJ ) = DWORK( IJ )*R( I, J )
+   60             CONTINUE
+                  IJ = IJ + J
+   70          CONTINUE
+            ELSE
+!C
+!C              Scale the upper triangular part of symmetric matrix
+!C              by the residual matrix.
+!C
+               DO 90 J = 1, N
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+                  !DIR$ VECTOR ALIGNED
+                  !DIR$ SIMD PRIVATE(IJ)
+#endif                     
+                  DO 80 I = 1, J
+                     IJ = IJ + 1
+                     DWORK( IJ ) = DWORK( IJ )*R( I, J )
+   80             CONTINUE
+                  IJ = IJ + N - J
+   90          CONTINUE
+            END IF
+         END IF
+!C
+!C        Fill in the remaining triangle of the symmetric matrix.
+!C
+         CALL MA02ED( UPLOW, N, DWORK, N )
+         GO TO 10
+      END IF
+!C
+!C     UNTIL KASE = 0
+!C
+!C     Compute the estimate of the relative error.
+!C
+      TEMP = XANORM*SCALE
+      IF( TEMP.GT.EST ) THEN
+         FERR = EST / TEMP
+      ELSE
+         FERR = ONE
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE SB03QY( JOB, TRANA, LYAPUN, N, T, LDT, U, LDU, X, LDX, &
+     SEP, THNORM, IWORK, DWORK, LDWORK, INFO) !GCC$ ATTRIBUTES hot :: SB03QY !GCC$ ATTRIBUTES aligned(32) :: SB03QY !GCC$ ATTRIBUTES no_stack_protector :: SB03QY
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+SUBROUTINE SB03QY( JOB, TRANA, LYAPUN, N, T, LDT, U, LDU, X, LDX, &
+     SEP, THNORM, IWORK, DWORK, LDWORK, INFO)
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB03QY
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: SB03QY
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+!C     To estimate the separation between the matrices op(A) and -op(A)',
+C
+C     sep(op(A),-op(A)') = min norm(op(A)'*X + X*op(A))/norm(X)
+C                        = 1 / norm(inv(Omega))
+C
+C     and/or the 1-norm of Theta, where op(A) = A or A' (A**T), and
+C     Omega and Theta are linear operators associated to the real
+C     continuous-time Lyapunov matrix equation
+C
+C            op(A)'*X + X*op(A) = C,
+C
+C     defined by
+C
+C     Omega(W) = op(A)'*W + W*op(A),
+C     Theta(W) = inv(Omega(op(W)'*X + X*op(W))).
+C
+C     The 1-norm condition estimators are used.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JOB     CHARACTER*1
+C             Specifies the computation to be performed, as follows:
+C             = 'S':  Compute the separation only;
+C             = 'T':  Compute the norm of Theta only;
+C             = 'B':  Compute both the separation and the norm of Theta.
+C
+C     TRANA   CHARACTER*1
+C             Specifies the form of op(A) to be used, as follows:
+C             = 'N':  op(A) = A    (No transpose);
+C             = 'T':  op(A) = A**T (Transpose);
+C             = 'C':  op(A) = A**T (Conjugate transpose = Transpose).
+C
+C     LYAPUN  CHARACTER*1
+C             Specifies whether or not the original Lyapunov equations
+C             should be solved, as follows:
+C             = 'O':  Solve the original Lyapunov equations, updating
+C                     the right-hand sides and solutions with the
+!C                     matrix U, e.g., X <-- U'*X*U;
+C             = 'R':  Solve reduced Lyapunov equations only, without
+C                     updating the right-hand sides and solutions.
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the matrices A and X.  N >= 0.
+C
+C     T       (input) DOUBLE PRECISION array, dimension (LDT,N)
+C             The leading N-by-N upper Hessenberg part of this array
+C             must contain the upper quasi-triangular matrix T in Schur
+C             canonical form from a Schur factorization of A.
+C
+C     LDT     INTEGER
+C             The leading dimension of array T.  LDT >= MAX(1,N).
+C
+C     U       (input) DOUBLE PRECISION array, dimension (LDU,N)
+C             The leading N-by-N part of this array must contain the
+C             orthogonal matrix U from a real Schur factorization of A.
+C             If LYAPUN = 'R', the array U is not referenced.
+C
+C     LDU     INTEGER
+C             The leading dimension of array U.
+C             LDU >= 1,        if LYAPUN = 'R';
+C             LDU >= MAX(1,N), if LYAPUN = 'O'.
+C
+C     X       (input) DOUBLE PRECISION array, dimension (LDX,N)
+C             The leading N-by-N part of this array must contain the
+C             solution matrix X of the Lyapunov equation (reduced
+C             Lyapunov equation if LYAPUN = 'R').
+C             If JOB = 'S', the array X is not referenced.
+C
+C     LDX     INTEGER
+C             The leading dimension of array X.
+C             LDX >= 1,        if JOB = 'S';
+C             LDX >= MAX(1,N), if JOB = 'T' or 'B'.
+C
+C     SEP     (output) DOUBLE PRECISION
+C             If JOB = 'S' or JOB = 'B', and INFO >= 0, SEP contains the
+!C             estimated separation of the matrices op(A) and -op(A)'.
+C             If JOB = 'T' or N = 0, SEP is not referenced.
+C
+C     THNORM  (output) DOUBLE PRECISION
+C             If JOB = 'T' or JOB = 'B', and INFO >= 0, THNORM contains
+C             the estimated 1-norm of operator Theta.
+C             If JOB = 'S' or N = 0, THNORM is not referenced.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (N*N)
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.  LDWORK >= 2*N*N.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+!C             = N+1:  if the matrices T and -T' have common or very
+C                   close eigenvalues; perturbed values were used to
+C                   solve Lyapunov equations (but the matrix T is
+C                   unchanged).
+C
+C     METHOD
+C
+C     SEP is defined as the separation of op(A) and -op(A)':
+C
+C            sep( op(A), -op(A)' ) = sigma_min( K )
+C
+C     where sigma_min(K) is the smallest singular value of the
+C     N*N-by-N*N matrix
+C
+C        K = kprod( I(N), op(A)' ) + kprod( op(A)', I(N) ).
+C
+C     I(N) is an N-by-N identity matrix, and kprod denotes the Kronecker
+C     product. The routine estimates sigma_min(K) by the reciprocal of
+C     an estimate of the 1-norm of inverse(K), computed as suggested in
+C     [1]. This involves the solution of several continuous-time
+C     Lyapunov equations, either direct or transposed. The true
+C     reciprocal 1-norm of inverse(K) cannot differ from sigma_min(K) by
+C     more than a factor of N.
+C     The 1-norm of Theta is estimated similarly.
+C
+C     REFERENCES
+C
+C     [1] Higham, N.J.
+C         FORTRAN codes for estimating the one-norm of a real or
+C         complex matrix, with applications to condition estimation.
+C         ACM Trans. Math. Softw., 14, pp. 381-396, 1988.
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations.
+C
+C     FURTHER COMMENTS
+C
+C     When SEP is zero, the routine returns immediately, with THNORM
+C     (if requested) not set. In this case, the equation is singular.
+C     The option LYAPUN = 'R' may occasionally produce slightly worse
+C     or better estimates, and it is much faster than the option 'O'.
+C
+C     CONTRIBUTOR
+C
+C     V. Sima, Research Institute for Informatics, Bucharest, Romania,
+C     Oct. 1998. Partly based on DGLSVX (and then SB03QD) by P. Petkov,
+C     Tech. University of Sofia, March 1998 (and December 1998).
+C
+C     REVISIONS
+C
+C     February 13, 1999, V. Sima, Katholieke Univ. Leuven, Belgium.
+C     V. Sima, Research Institute for Informatics, Bucharest, Oct. 2004,
+C     May 2020.
+C
+C     KEYWORDS
+C
+C     Lyapunov equation, orthogonal transformation, real Schur form.
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, HALF
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0, HALF = 0.5D+0 )
+!C     ..
+!C     .. Scalar Arguments ..
+      CHARACTER          JOB, LYAPUN, TRANA
+      INTEGER            INFO, LDT, LDU, LDWORK, LDX, N
+      DOUBLE PRECISION   SEP, THNORM
+!C     ..
+!C     .. Array Arguments ..
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION   DWORK( * ), T( LDT, * ), U( LDU, * ), &
+                         X( LDX, * )
+!C     ..
+!C     .. Local Scalars ..
+      LOGICAL            NOTRNA, UPDATE, WANTS, WANTT
+      CHARACTER          TRANAT, UPLO
+      INTEGER            INFO2, ITMP, KASE, NN
+      DOUBLE PRECISION   BIGNUM, EST, SCALE
+!C     ..
+!C     .. Local Arrays ..
+      INTEGER            ISAVE( 3 )
+!C     ..
+!C     .. External Functions ..
+     
+      DOUBLE PRECISION   DLANSY
+      EXTERNAL           DLANSY
+!C     ..
+!C     .. External Subroutines ..
+      EXTERNAL           DLACN2, DLACPY, DSCAL, DSYR2K
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          MAX
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Decode and Test input parameters.
+!C
+      WANTS  = LSAME( JOB,    'S' )
+      WANTT  = LSAME( JOB,    'T' )
+      NOTRNA = LSAME( TRANA,  'N' )
+      UPDATE = LSAME( LYAPUN, 'O' )
+!C
+      NN   = N*N
+      INFO = 0
+!      IF( .NOT. ( WANTS .OR. WANTT .OR. LSAME( JOB, 'B' ) ) ) THEN
+!         INFO = -1
+      !ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA, 'T' ) .OR.
+!     $                            LSAME( TRANA, 'C' ) ) ) THEN
+!         INFO = -2
+!      ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
+!         INFO = -3
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -4
+!      ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
+!         INFO = -6
+ !     ELSE IF( LDU.LT.1 .OR. ( UPDATE .AND. LDU.LT.N ) ) THEN
+!         INFO = -8
+!      ELSE IF( LDX.LT.1 .OR. ( .NOT.WANTS .AND. LDX.LT.N ) ) THEN
+!         INFO = -10
+!      ELSE IF( LDWORK.LT.2*NN ) THEN
+!         INFO = -15
+!      END IF
+!C
+!      IF( INFO.NE.0 ) THEN
+!         CALL XERBLA( 'SB03QY', -INFO )
+!         RETURN
+!      END IF
+!C
+!C     Quick return if possible.
+!C
+!      IF( N.EQ.0 )
+!     $   RETURN
+!C
+      ITMP = NN + 1
+!C
+      IF( NOTRNA ) THEN
+         TRANAT = 'T'
+      ELSE
+         TRANAT = 'N'
+      END IF
+!C
+      IF( .NOT.WANTT ) THEN
+!C
+!C        Estimate sep(op(A),-op(A)').
+!C        Workspace:  2*N*N.
+!C
+         KASE = 0
+!C
+!C        REPEAT
+   10    CONTINUE
+         CALL DLACN2( NN, DWORK( ITMP ), DWORK, IWORK, EST, KASE, ISAVE)
+                    
+         IF( KASE.NE.0 ) THEN
+!C
+!C           Select the triangular part of symmetric matrix to be used.
+!C
+            IF( DLANSY( '1-norm', 'Upper', N, DWORK, N, DWORK( ITMP ) ) &
+               .GE.   &
+               DLANSY( '1-norm', 'Lower', N, DWORK, N, DWORK( ITMP ) ) &
+             ) THEN
+               UPLO = 'U'
+            ELSE
+               UPLO = 'L'
+            END IF
+!C
+            IF( UPDATE ) THEN
+!C
+!C              Transform the right-hand side: RHS := U'*RHS*U.
+!C
+               CALL MB01RU( UPLO, 'Transpose', N, N, ZERO, ONE, DWORK, &
+                           N, U, LDU, DWORK, N, DWORK( ITMP ), NN,  &
+                           INFO2 )
+               CALL DSCAL( N, HALF, DWORK, N+1 )
+            END IF
+            CALL MA02ED( UPLO, N, DWORK, N )
+!C
+            IF( KASE.EQ.1 ) THEN
+!C
+!C              Solve op(T)'*Y + Y*op(T) = scale*RHS.
+!C
+               CALL SB03MY( TRANA, N, T, LDT, DWORK, N, SCALE, INFO2 )
+            ELSE
+!C
+!C              Solve op(T)*W + W*op(T)' = scale*RHS.
+!C
+               CALL SB03MY( TRANAT, N, T, LDT, DWORK, N, SCALE, INFO2 )
+            END IF
+!C
+            IF( INFO2.GT.0 ) &
+               INFO = N + 1
+!C
+            IF( UPDATE ) THEN
+!C
+!C              Transform back to obtain the solution: Z := U*Z*U', with
+!C              Z = Y or Z = W.
+!C
+               CALL MB01RU( UPLO, 'No transpose', N, N, ZERO, ONE,  &
+                           DWORK, N, U, LDU, DWORK, N, DWORK( ITMP ), &
+                           NN, INFO2 )
+               CALL DSCAL( N, HALF, DWORK, N+1 )
+!C
+!C              Fill in the remaining triangle of the symmetric matrix.
+!C
+               CALL MA02ED( UPLO, N, DWORK, N )
+            END IF
+!C
+            GO TO 10
+         END IF
+!C!        UNTIL KASE = 0
+!C
+         IF( EST.GT.SCALE ) THEN
+            SEP = SCALE / EST
+         ELSE
+            BIGNUM = ONE / DLAMCH( 'Safe minimum' )
+            IF( SCALE.LT.EST*BIGNUM ) THEN
+               SEP = SCALE / EST
+            ELSE
+               SEP = BIGNUM
+            END IF
+         END IF
+!C
+!C        Return if the equation is singular.
+!C
+         IF( SEP.EQ.ZERO ) &
+            RETURN
+      END IF
+!C
+      IF( .NOT.WANTS ) THEN
+!C
+!C        Estimate norm(Theta).
+!C        Workspace:  2*N*N.
+!C
+         KASE = 0
+!C
+!C        REPEAT
+   20    CONTINUE
+         CALL DLACN2( NN, DWORK( ITMP ), DWORK, IWORK, EST, KASE, ISAVE)
+                  
+         IF( KASE.NE.0 ) THEN
+!C
+!C           Select the triangular part of symmetric matrix to be used.
+!C
+            IF( DLANSY( '1-norm', 'Upper', N, DWORK, N, DWORK( ITMP ) ) &
+               .GE. &
+               DLANSY( '1-norm', 'Lower', N, DWORK, N, DWORK( ITMP ) ) &
+             ) THEN
+               UPLO = 'U'
+            ELSE
+               UPLO = 'L'
+            END IF
+!C
+!C           Fill in the remaining triangle of the symmetric matrix.
+!C
+            CALL MA02ED( UPLO, N, DWORK, N )
+!C
+!C           Compute RHS = op(W)'*X + X*op(W).
+!C
+            CALL DSYR2K( UPLO, TRANAT, N, N, ONE, DWORK, N, X, LDX, &
+                         ZERO, DWORK( ITMP ), N )
+            CALL DLACPY( UPLO, N, N, DWORK( ITMP ), N, DWORK, N )
+!C
+            IF( UPDATE ) THEN
+!C
+!C              Transform the right-hand side: RHS := U'*RHS*U.
+!C
+               CALL MB01RU( UPLO, 'Transpose', N, N, ZERO, ONE, DWORK, &
+                           N, U, LDU, DWORK, N, DWORK( ITMP ), NN, &
+                           INFO2 )
+               CALL DSCAL( N, HALF, DWORK, N+1 )
+            END IF
+            CALL MA02ED( UPLO, N, DWORK, N )
+
+            IF( KASE.EQ.1 ) THEN
+
+!C              Solve op(T)'*Y + Y*op(T) = scale*RHS.
+!C
+               CALL SB03MY( TRANA, N, T, LDT, DWORK, N, SCALE, INFO2 )
+            ELSE
+!C
+!C              Solve op(T)*W + W*op(T)' = scale*RHS.
+!C
+               CALL SB03MY( TRANAT, N, T, LDT, DWORK, N, SCALE, INFO2 )
+            END IF
+!C
+            IF( INFO2.GT.0 ) &
+               INFO = N + 1
+!C
+            IF( UPDATE ) THEN
+!C
+!C              Transform back to obtain the solution: Z := U*Z*U', with
+!C              Z = Y or Z = W.
+!C
+               CALL MB01RU( UPLO, 'No transpose', N, N, ZERO, ONE, &
+                          DWORK, N, U, LDU, DWORK, N, DWORK( ITMP ), &
+                           NN, INFO2 )
+               CALL DSCAL( N, HALF, DWORK, N+1 )
+!C
+!C              Fill in the remaining triangle of the symmetric matrix.
+!C
+               CALL MA02ED( UPLO, N, DWORK, N )
+            END IF
+!C
+            GO TO 20
+         END IF
+!C        UNTIL KASE = 0
+!C
+         IF( EST.LT.SCALE ) THEN
+            THNORM = EST / SCALE
+         ELSE
+            BIGNUM = ONE / DLAMCH( 'Safe minimum' )
+            IF( EST.LT.SCALE*BIGNUM ) THEN
+               THNORM = EST / SCALE
+            ELSE
+               THNORM = BIGNUM
+            END IF
+         END IF
+      END IF
+
+END SUBROUTINE
 
 
 !Helpers
