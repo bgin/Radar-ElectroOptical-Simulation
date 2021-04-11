@@ -209,9 +209,9 @@ C
                         SIGMA, WRKOPT
       DOUBLE PRECISION  MAXRED, SVLMAX, THRESH, TOLER
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION   ZLANGE
-      EXTERNAL           ZLANGE
+      LOGICAL            LSAME
+      DOUBLE PRECISION   DLAMCH,ZLANGE
+      EXTERNAL           DLAMCH,ZLANGE, LSAME
 !C     .. External Subroutines ..
       EXTERNAL           ZLACPY
 !C     .. Intrinsic Functions ..
@@ -1042,7 +1042,8 @@ C
 !C     ..
 !C     .. External Functions ..
       INTEGER            IDAMAX
-     
+      DOUBLE PRECISION   DLAMCH, DZNRM2
+      EXTERNAL           DLAMCH, DZNRM2, IDAMAX
       
 !C     .. External Subroutines ..
       EXTERNAL           ZLAIC1, ZLARF, ZLARFG, ZSCAL, ZSWAP
@@ -1453,9 +1454,9 @@ C
       DOUBLE PRECISION   SMAX, SMAXPR, SMIN, SMINPR, TEMP, TEMP2, TOLZ
 !C     ..
 !C     .. External Functions ..
-!      INTEGER            IDAMAX
-!      DOUBLE PRECISION   DLAMCH, DZNRM2
-!      EXTERNAL           DLAMCH, DZNRM2, IDAMAX
+      INTEGER            IDAMAX
+      DOUBLE PRECISION   DLAMCH, DZNRM2
+      EXTERNAL           DLAMCH, DZNRM2, IDAMAX
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           ZCOPY, ZLACGV, ZLAIC1, ZLARF, ZLARFG, &
@@ -1974,6 +1975,8 @@ C     CONTRIBUTORS
       INTEGER           I12, ITAU, JWORK, N1, PN, WRKOPT
       DOUBLE PRECISION  RCOND
 
+      LOGICAL           LSAME
+      EXTERNAL          LSAME
      
 !C     .. External Subroutines ..
       EXTERNAL          DGELQF, DLACPY, DTRMM
@@ -2513,12 +2516,12 @@ C
                         N1, NP, WRKOPT
       DOUBLE PRECISION  RCOND
 !C     .. External Functions ..
-     
+      LOGICAL           LSAME
       DOUBLE PRECISION  DDOT
-      EXTERNAL          DDOT
+      EXTERNAL          DDOT, LSAME
 !C     .. External Subroutines ..
-      EXTERNAL          DAXPY, DCOPY, DGEMM, DGEQRF, DLACPY, DORMQR,
-     $                  DTRMM, DTRMV
+      EXTERNAL          DAXPY, DCOPY, DGEMM, DGEQRF, DLACPY, DORMQR, &
+                        DTRMM, DTRMV
 !C     .. Intrinsic Functions ..
       INTRINSIC         INT, MAX
 !C     .. Executable Statements ..
@@ -2643,8 +2646,8 @@ C
 
       IF ( N.EQ.0 ) THEN
          CALL DCOPY( P, RINVY, 1, E, 1 )
-         IF ( LJOBX )
-     $      DWORK(2) = ONE
+         IF ( LJOBX ) &
+            DWORK(2) = ONE
          DWORK(1) = WRKOPT
          RETURN
       END IF
@@ -3012,8 +3015,8 @@ C
       INTEGER           J, JWORK, LDW, N1
       DOUBLE PRECISION  RCOND, RNORM, TOLDEF
 !C     .. External Functions ..
-      DOUBLE PRECISION   DLANSY
-      EXTERNAL           DLANSY
+      DOUBLE PRECISION   DLAMCH, DLANSY
+      EXTERNAL           DLAMCH, DLANSY
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DGEMV, DLACPY, DLASET, DPOCON, &
                         DPOTRF, DSCAL, DTRMM, DTRSM, MB01RD
@@ -3377,7 +3380,10 @@ C
       LOGICAL            LSIDE, ONENRM
       INTEGER            NROWA
       DOUBLE PRECISION   TOLDEF
-
+      
+      LOGICAL            LSAME
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH, LSAME
 
 !C     .. External Subroutines ..
       EXTERNAL           DTRCON, DTRSM
@@ -3445,7 +3451,7 @@ C
          INFO = 1
       END IF
 
-END SUBROUTINE FB01SD
+END SUBROUTINE 
 
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
 SUBROUTINE FB01TD( JOBX, MULTRC, N, M, P, SINV, LDSINV, AINV, &
@@ -3850,9 +3856,9 @@ C
                         LDW, M1, MP1, N1, NM, NP, WRKOPT
       DOUBLE PRECISION  RCOND
 !C     .. External Functions ..
-     
+      LOGICAL           LSAME
       DOUBLE PRECISION  DDOT
-      EXTERNAL          DDOT
+      EXTERNAL          LSAME, DDOT
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DLACPY, DTRMM, DTRMV
                         
@@ -4291,7 +4297,8 @@ use omp_lib
 !C     .. Local Scalars ..
       LOGICAL           LUPLO
       INTEGER           I, IM
-
+      LOGICAL           LSAME
+      EXTERNAL          LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DGEMV, DGER, DLARFG, DSCAL
 !C     .. Intrinsic Functions ..
@@ -4802,7 +4809,8 @@ use omp_lib
 !C     .. Local Scalars ..
       LOGICAL           LUPLO
       INTEGER           I, IM
-
+      LOGICAL           LSAME
+      EXTERNAL          LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DGEMV, DGER, DLARFG, DSCAL
 !C     .. Intrinsic Functions ..
@@ -5158,9 +5166,9 @@ C
       LOGICAL          BWORK(1)
       DOUBLE PRECISION A2(2,2)
 !C     .. External Functions ..
-      LOGICAL           SELECT
-      DOUBLE PRECISION  DLANGE
-      EXTERNAL          DLANGE, SELECT
+      LOGICAL           LSAME, SELECT
+      DOUBLE PRECISION  DLANGE, DLAMCH
+      EXTERNAL          DLANGE, DLAMCH, LSAME, SELECT
 !C     .. External Subroutines ..
       EXTERNAL         DCOPY, DGEES, DGEMM, DLAEXC, DLASET, DROT, &
                        DSWAP
@@ -5923,8 +5931,8 @@ C
                        R, RN, S12, S21, SIG, SN, SU, SV, TAU1, TAU2,   &
                        WI, WI1, WR, WR1, X, Y, Z
 !C     .. External Functions ..
-      DOUBLE PRECISION  DLAMC3
-      EXTERNAL          DLAMC3
+      DOUBLE PRECISION  DLAMC3, DLAMCH
+      EXTERNAL          DLAMC3, DLAMCH
 !C     .. External Subroutines ..
       EXTERNAL          DLANV2, DLARFG, DLASET, DLASV2, DLATZM, DROT
 !C     .. Intrinsic Functions ..
@@ -6338,9 +6346,9 @@ C
       INTEGER          IB, L, LM1, NUP
       DOUBLE PRECISION E1, E2, TLAMBD
 !C     .. External Functions ..
-     
+      LOGICAL          LSAME
       DOUBLE PRECISION DLAPY2
-      EXTERNAL         DLAPY2
+      EXTERNAL         DLAPY2, LSAME
 !C     .. External Subroutines ..
       EXTERNAL         DLASET, DTREXC
 !C     .. Intrinsic Functions ..
@@ -6922,9 +6930,9 @@ C
 !C     .. Local Arrays ..
       DOUBLE PRECISION   Z(1)
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION   DLANGE
-      EXTERNAL           DLANGE
+      LOGICAL            LSAME
+      DOUBLE PRECISION   DLANGE, DLAMCH
+      EXTERNAL           DLANGE,DLAMCH,LSAME
 !C     .. External Subroutines ..
       EXTERNAL           DAXPY, DCOPY, DHSEQR, DLACPY
 !C     .. Intrinsic Functions ..
@@ -7402,8 +7410,12 @@ C
 !C     ..
       !C     .. Array Arguments ..
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
-           SCALE( * )
+      !DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+      !     SCALE( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: SCALE
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
       DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
            SCALE( * )
@@ -7421,9 +7433,10 @@ C
 !C     ..
 !C     .. External Functions ..
      
-      
-      DOUBLE PRECISION   DASUM
-      EXTERNAL           DASUM
+      LOGICAL            LSAME
+      INTEGER            IDAMAX
+      DOUBLE PRECISION   DASUM, DLAMCH
+      EXTERNAL           DASUM, DLAMCH,IDAMAX,LSAME
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           DSCAL
@@ -7864,9 +7877,9 @@ C     ******************************************************************
 !C     .. Local Arrays ..
       DOUBLE PRECISION  NBLK(1)
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION  DLANGE
-      EXTERNAL          DLANGE
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLANGE, DLAMCH
+      EXTERNAL          DLANGE, DLAMCH, LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DGEHRD, DLACPY, DLARF, DLARFG, DLASET, DORGQR, &
                         DORMHR
@@ -8233,9 +8246,9 @@ C
       INTEGER            I, ISUM, ITYPE
       DOUBLE PRECISION   BIGNUM, SMLNUM
 !C     .. External Functions ..
-      !LOGICAL            LSAME
-      !DOUBLE PRECISION   DLAMCH
-      !EXTERNAL           DLAMCH, LSAME
+      LOGICAL            LSAME
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH, LSAME
 !C     ..
 C     .. External Subroutines ..
       EXTERNAL           DLABAD, MB01QD, XERBLA
@@ -8488,7 +8501,8 @@ C
       !C     .. Array Arguments ..
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
       INTEGER            NROWS ( * )
-      DOUBLE PRECISION   A( LDA, * )
+      ! DOUBLE PRECISION   A( LDA, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
       INTEGER            NROWS ( * )
       !DIR$ ASSUME_ALIGNED NROWS:64
@@ -8503,9 +8517,9 @@ C
       DOUBLE PRECISION   BIGNUM, CFROM1, CFROMC, CTO1, CTOC, MUL, SMLNUM,TMP
 !C     ..
 !C     .. External Functions ..
-!      LOGICAL            LSAME
-!      DOUBLE PRECISION   DLAMCH
-!      EXTERNAL           LSAME, DLAMCH
+      LOGICAL            LSAME
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           LSAME, DLAMCH
 !C     ..
 !C     .. Intrinsic Functions ..
       INTRINSIC          ABS, MAX, MIN
@@ -9024,8 +9038,14 @@ C
       !DIR$ ASSUME_ALIGNED IWORK:64
 #endif
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
-           EVRE(*)
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
+      !     EVRE(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVIM
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVRE
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
       DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
            EVRE(*)
@@ -9052,9 +9072,9 @@ C
                         
       DOUBLE PRECISION  HNORM, T
 !C     .. External Functions ..
-      
-      DOUBLE PRECISION  DASUM
-      EXTERNAL          DASUM
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH, DASUM
+      EXTERNAL          DLAMCH, DASUM, LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DGEBAL, DGEHRD, DHSEQR, DORMHR, DSCAL, DSWAP, &
                         ZLASET
@@ -9525,7 +9545,8 @@ C
       LOGICAL            NOTRAN
       INTEGER            J, JP
 !C     .. External Functions ..
-      
+         LOGICAL            LSAME
+      EXTERNAL           LSAME
 !C     .. External Subroutines ..
       EXTERNAL           ZAXPY, ZSWAP, ZTRSM
 !C     .. Intrinsic Functions ..
@@ -9536,21 +9557,21 @@ C
 !C
       INFO = 0
       NOTRAN = LSAME( TRANS, 'N' )
-      IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'T' ) .AND. .NOT. &
-          LSAME( TRANS, 'C' ) ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( NRHS.LT.0 ) THEN
-         INFO = -3
-      ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
-         INFO = -5
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -8
-      END IF
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+    !  IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'T' ) .AND. .NOT. &
+    !      LSAME( TRANS, 'C' ) ) THEN
+    !     INFO = -1
+   !   ELSE IF( N.LT.0 ) THEN
+   !      INFO = -2
+   !   ELSE IF( NRHS.LT.0 ) THEN
+   !      INFO = -3
+   !   ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+   !      INFO = -5
+  !    ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+  !!       INFO = -8
+  !    END IF
+  !    IF( INFO.NE.0 ) THEN
+  !        RETURN
+  !    END IF
 !C
 !C     Quick return if possible.
 !C
@@ -9948,7 +9969,10 @@ C
       COMPLEX*16         T, ZDUM
 !C     ..
 !C     .. External Functions ..
-      
+        LOGICAL            LSAME
+      INTEGER            IZAMAX
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH, IZAMAX, LSAME
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           ZDRSCL, ZLACON, ZLATRS
@@ -9968,18 +9992,18 @@ C
 !C
       INFO = 0
       ONENRM = NORM.EQ.'1' .OR. LSAME( NORM, 'O' )
-      IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
-         INFO = -1
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -2
-      ELSE IF( HNORM.LT.ZERO ) THEN
-         INFO = -3
-      ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
-         INFO = -5
-      END IF
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+    !  IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
+    !     INFO = -1
+    !  ELSE IF( N.LT.0 ) THEN
+    !     INFO = -2
+    !  ELSE IF( HNORM.LT.ZERO ) THEN
+    !     INFO = -3
+   ! !  ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+   !      INFO = -5
+   !   END IF
+  !    IF( INFO.NE.0 ) THEN
+  !        RETURN
+  !    END IF
 !C
 !C     Quick return if possible.
 !C
@@ -10422,9 +10446,9 @@ C
       INTEGER           I, IERR, ISCL, N2, NP1, NROT
       DOUBLE PRECISION  GNORM, QNORM, RCONDA, UNORM, WRKOPT
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION  DLANGE, DLANSY
-      EXTERNAL          DLANGE, DLANSY
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH,DLANGE, DLANSY
+      EXTERNAL          DLAMCH, DLANGE, DLANSY, LSAME
                         
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DGECON, DGEES, DGETRF, DGETRS, &
@@ -10445,41 +10469,41 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-         INFO = -1
-      ELSE IF( DISCR ) THEN
-         IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
-            INFO = -2
-      END IF
-      IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-         INFO = -3
-      ELSE IF( .NOT.LSCAL .AND. .NOT.LSAME( SCAL, 'N' ) ) THEN
-         INFO = -4
-      ELSE IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
-         INFO = -5
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -6
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -8
-      ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
-         INFO = -10
-      ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
-         INFO = -12
-      ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
-         INFO = -17
-      ELSE IF( LDU.LT.MAX( 1, N2 ) ) THEN
-         INFO = -19
-      ELSE IF( ( .NOT.DISCR .AND. LDWORK.LT.MAX( 2, 6*N ) ) .OR. &
-               (      DISCR .AND. LDWORK.LT.MAX( 3, 6*N ) ) ) THEN
-         INFO = -22
-      END IF
+   !   IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+   !      INFO = -1
+   !   ELSE IF( DISCR ) THEN
+   !      IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
+   !         INFO = -2
+   !   END IF
+  !    IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+   !      INFO = -3
+   !   ELSE IF( .NOT.LSCAL .AND. .NOT.LSAME( SCAL, 'N' ) ) THEN
+   !      INFO = -4
+   !   ELSE IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
+  !       INFO = -5
+   !   ELSE IF( N.LT.0 ) THEN
+   !      INFO = -6
+  !    ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+   !      INFO = -8
+   !   ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
+   !      INFO = -10
+   !   ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
+   !      INFO = -12
+   !   ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
+    !     INFO = -17
+    !  ELSE IF( LDU.LT.MAX( 1, N2 ) ) THEN
+    !     INFO = -19
+    !  ELSE IF( ( .NOT.DISCR .AND. LDWORK.LT.MAX( 2, 6*N ) ) .OR. &
+    !           (      DISCR .AND. LDWORK.LT.MAX( 3, 6*N ) ) ) THEN
+    !     INFO = -22
+    !  END IF
 !C
-      IF ( INFO.NE.0 ) THEN
+   !   IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-         RETURN
-      END IF
+   !      RETURN
+   !   END IF
 !C
 !C     Quick return if possible.
 !C
@@ -10856,9 +10880,9 @@ C
       INTEGER           I, J, MAXWRK, MINWRK, N2, NJ, NP1
       DOUBLE PRECISION  ANORM, RCOND
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION  DLANGE
-      EXTERNAL          DLANGE
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH,DLANGE
+      EXTERNAL          DLAMCH,DLANGE,LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DCOPY, DGECON, DGEMM, DGETRF, DGETRI, DGETRS, &
                         DLACPY, DSWAP
@@ -10878,25 +10902,25 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-         INFO = -1
-      ELSE IF( DISCR ) THEN
-         IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
-            INFO = -2
-      END IF
-      IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-         INFO = -3
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-         INFO = -6
-      ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
-         INFO = -8
-      ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
-         INFO = -10
-      ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
-         INFO = -12
-      ELSE 
+    !  IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+   !      INFO = -1
+   !   ELSE IF( DISCR ) THEN
+   !      IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
+   !         INFO = -2
+   !   END IF
+   !   IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+   !      INFO = -3
+  !    ELSE IF( N.LT.0 ) THEN
+   !      INFO = -4
+   !   ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+   !      INFO = -6
+  !    ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
+   !      INFO = -8
+   !   ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
+   !      INFO = -10
+   !   ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
+   !      INFO = -12
+   !   ELSE 
          MINWRK = MAX( 2, 4*N )
          LQUERY = LDWORK.EQ.-1
          IF( ( LDWORK.LT.1 .OR. ( DISCR .AND. LDWORK.LT.MINWRK ) ) .AND. &
@@ -12116,9 +12140,9 @@ C
 !C     .. Local Arrays ..
       DOUBLE PRECISION  DUMMY(1)
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION  DLANSY
-      EXTERNAL          DLANSY
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH,DLANSY
+      EXTERNAL          DLANSY,DLAMCH,LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DGEMM, DGEQRF, DLACPY, DLASET,
                        DPOCON, DPOTRF, DPOTRS, DSCAL, DSYCON, DSYEV,
@@ -12139,38 +12163,38 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-         INFO = -1
-      ELSE IF( ( LNFACT .AND. .NOT.LSAME( FACT, 'N' ) ) .OR. &
-              ( DISCR  .AND. LFACTU ) ) THEN
-         INFO = -2
-      ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-         INFO = -3
-      ELSE IF( .NOT.WITHL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
-         INFO = -4
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -6
-      ELSE IF( LFACTD .AND. ( P.LT.0 .OR. ( .NOT.DISCR .AND. P.LT.M ) ) &
-             ) THEN
-         INFO = -7
-      ELSE IF( LDA.LT.1 .OR. ( DISCR .AND. LDA.LT.N ) ) THEN
-         INFO = -9
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -11 
-      ELSE IF( LDR.LT.MAX( 1, M ) .OR. ( LFACTD .AND.  &
-               LDR.LT.MAX( 1, P ) ) ) THEN
-         INFO = -13
-      ELSE IF( LDL.LT.1 .OR. ( WITHL .AND. LDL.LT.N ) ) THEN
-         INFO = -16
-      ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
-         INFO = -18
-      ELSE IF( LFACTU ) THEN
-         IF( RNORM.LT.ZERO ) &
-           INFO = -19
-      END IF
-      IF ( INFO.EQ.0 ) THEN
+     ! IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+     !    INFO = -1
+    !  ELSE IF( ( LNFACT .AND. .NOT.LSAME( FACT, 'N' ) ) .OR. &
+     !         ( DISCR  .AND. LFACTU ) ) THEN
+     !    INFO = -2
+    !  ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+    !     INFO = -3
+    !  ELSE IF( .NOT.WITHL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
+    !     INFO = -4
+    !  ELSE IF( N.LT.0 ) THEN
+    !     INFO = -5
+    !  ELSE IF( M.LT.0 ) THEN
+    !     INFO = -6
+   !   ELSE IF( LFACTD .AND. ( P.LT.0 .OR. ( .NOT.DISCR .AND. P.LT.M ) ) &
+   !!          ) THEN
+   !      INFO = -7
+    !  ELSE IF( LDA.LT.1 .OR. ( DISCR .AND. LDA.LT.N ) ) THEN
+    !     INFO = -9
+    !  ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+   !      INFO = -11 
+    !  ELSE IF( LDR.LT.MAX( 1, M ) .OR. ( LFACTD .AND.  &
+    !           LDR.LT.MAX( 1, P ) ) ) THEN
+    !     INFO = -13
+    !  ELSE IF( LDL.LT.1 .OR. ( WITHL .AND. LDL.LT.N ) ) THEN
+    !     INFO = -16
+    !  ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
+    !     INFO = -18
+    !  ELSE IF( LFACTU ) THEN
+    !     IF( RNORM.LT.ZERO ) &
+    !       INFO = -19
+   !   END IF
+   !   IF ( INFO.EQ.0 ) THEN
          IF( LDF.LT.MAX( 1, M ) ) THEN
             INFO = -21
          ELSE
@@ -12215,7 +12239,7 @@ C
                RETURN
             END IF
          END IF
-      END IF
+     ! END IF
 !C
       IF ( INFO.NE.0 ) THEN
 !C
@@ -12696,7 +12720,8 @@ C     .. Scalar Arguments ..
 !C     .. Local Scalars ..
       INTEGER            I, J
 !C     .. External Functions ..
-   
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
 !C     .. Intrinsic Functions ..
       INTRINSIC          MIN
 !C
@@ -12808,7 +12833,8 @@ C
       DOUBLE PRECISION   A(LDA,*)
 !C     .. Local Scalars ..
       INTEGER            J
-
+       LOGICAL            LSAME
+      EXTERNAL           LSAME
 !C     .. External Subroutines ..
       EXTERNAL           DCOPY
 !C
@@ -13155,9 +13181,9 @@ C
       INTEGER           J, WRKMIN, WRKOPT
       DOUBLE PRECISION  EPS, RCOND, RNORM
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION  DLANSY
-      EXTERNAL          DLANSY
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH,DLANSY
+      EXTERNAL          DLANSY,DLAMCH,LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DCOPY, DGEMM, DLASET, DPOCON, DPOTRF, DSYCON, &
                         DSYRK, DSYTRF, DSYTRS, DTRSM
@@ -13175,31 +13201,31 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-      IF(      .NOT.LJOBG  .AND. .NOT.LSAME( JOBG, 'N' ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.LJOBL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
-         INFO = -2
-      ELSE IF(     LNFACT  .AND. .NOT.LSAME( FACT, 'N' ) ) THEN
-         INFO = -3
-      ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-         INFO = -4
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -6
-      ELSE IF( LDA.LT.1 .OR. ( LJOBL .AND. LDA.LT.N ) ) THEN
-         INFO = -8
-      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-         INFO = -10
-      ELSE IF( LDQ.LT.1 .OR. ( LJOBL .AND. LDQ.LT.N ) ) THEN
-         INFO = -12
-      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-         INFO = -14
-      ELSE IF( LDL.LT.1 .OR. ( LJOBL .AND. LDL.LT.N ) ) THEN
-         INFO = -16
-      ELSE IF( LDG.LT.1 .OR. ( LJOBG .AND. LDG.LT.N ) ) THEN
-         INFO = -20
-      ELSE
+     ! IF(      .NOT.LJOBG  .AND. .NOT.LSAME( JOBG, 'N' ) ) THEN
+     !    INFO = -1
+     ! ELSE IF( .NOT.LJOBL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
+     !    INFO = -2
+     ! ELSE IF(     LNFACT  .AND. .NOT.LSAME( FACT, 'N' ) ) THEN
+     !    INFO = -3
+     ! ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+     !    INFO = -4
+     ! ELSE IF( N.LT.0 ) THEN
+    !     INFO = -5
+    !  ELSE IF( M.LT.0 ) THEN
+    !     INFO = -6
+    !  ELSE IF( LDA.LT.1 .OR. ( LJOBL .AND. LDA.LT.N ) ) THEN
+    !     INFO = -8
+    !  ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+    !     INFO = -10
+   !   ELSE IF( LDQ.LT.1 .OR. ( LJOBL .AND. LDQ.LT.N ) ) THEN
+    !     INFO = -12
+    !  ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+    !     INFO = -14
+    !  ELSE IF( LDL.LT.1 .OR. ( LJOBL .AND. LDL.LT.N ) ) THEN
+    !     INFO = -16
+    !  ELSE IF( LDG.LT.1 .OR. ( LJOBG .AND. LDG.LT.N ) ) THEN
+   !      INFO = -20
+   !   ELSE
          IF( LFACTC ) THEN
             WRKMIN = 1
          ELSE IF( LFACTU ) THEN
@@ -13231,7 +13257,7 @@ C
             INFO = -23
             DWORK(1) = WRKMIN
          END IF
-      END IF
+    !  END IF
 !C
       IF( INFO.NE.0 ) THEN
 !C
@@ -13637,9 +13663,9 @@ C
 !C     .. Local Arrays ..
       DOUBLE PRECISION  D(1)
 !C     .. External Functions ..
-    
+      LOGICAL           LSAME
       INTEGER           ILAENV
-      EXTERNAL          ILAENV
+      EXTERNAL          LSAME,ILAENV
 !C     .. External Subroutines ..
       EXTERNAL          DGEMM, DGEQRF, DLASCL, DLASET
 !C     .. Intrinsic Functions ..
@@ -13653,36 +13679,36 @@ C
       LUPLO  = LSAME( UPLO,  'U' )
       LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
 !C
-      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
-         INFO = -1
-      ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
-         INFO = -2
-      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
-         INFO = -3
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-         INFO = -9
-      ELSE IF( LDA.LT.1 .OR. &
-         ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
-            ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
-        ( ( (      LSIDE .AND.      LTRANS ) .OR. &
-            ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
-         INFO = -11
-      ELSE IF( LDB.LT.1 .OR.  &
-            (      LSIDE .AND. LDB.LT.N ) .OR.  &
-            ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
-         INFO = -13
-      END IF
+    !  IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+    !     INFO = -1
+    !  ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
+    !     INFO = -2
+    !  ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+    !     INFO = -3
+   !   ELSE IF( M.LT.0 ) THEN
+   !      INFO = -4
+   !   ELSE IF( N.LT.0 ) THEN
+   !      INFO = -5
+   !   ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+   !      INFO = -9
+   !   ELSE IF( LDA.LT.1 .OR. &
+   !      ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
+   !         ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
+   !     ( ( (      LSIDE .AND.      LTRANS ) .OR. &
+   !         ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
+   !      INFO = -11
+   !   ELSE IF( LDB.LT.1 .OR.  &
+   !         (      LSIDE .AND. LDB.LT.N ) .OR.  &
+   !         ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
+   !      INFO = -13
+   !   END IF
 !C
-      IF (INFO.NE.0 .OR. M.EQ.0) THEN
+   !   IF (INFO.NE.0 .OR. M.EQ.0) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+    !      RETURN
+   !   END IF
 !C
 !C     Quick return if possible.
 !C
@@ -14092,7 +14118,8 @@ C
       LOGICAL           LSIDE, LTRANS, LUPLO
       INTEGER           J
 !C     .. External Functions ..
-    
+        LOGICAL           LSAME
+      EXTERNAL          LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DGEMV, DLASCL, DLASET
 !C     .. Intrinsic Functions ..
@@ -14106,36 +14133,36 @@ C
       LUPLO  = LSAME( UPLO,  'U' )
       LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
 
-      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
-         INFO = -1
-      ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
-         INFO = -2
-      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
-         INFO = -3
-      ELSE IF( M.LT.0 ) THEN
-         INFO = -4
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -5
-      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-         INFO = -9
-      ELSE IF( LDA.LT.1 .OR.  &
-        ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
-            ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
-        ( ( (      LSIDE .AND.      LTRANS ) .OR. &
-            ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
-         INFO = -11
-      ELSE IF( LDB.LT.1 .OR.  &
-            (      LSIDE .AND. LDB.LT.N ) .OR.  &
-            ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
-         INFO = -13
-      END IF
+     ! IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+    !     INFO = -1
+    !  ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
+    !     INFO = -2
+     ! ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+     !    INFO = -3
+     ! ELSE IF( M.LT.0 ) THEN
+     !    INFO = -4
+     ! ELSE IF( N.LT.0 ) THEN
+    !     INFO = -5
+    !  ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+    !     INFO = -9
+    !  ELSE IF( LDA.LT.1 .OR.  &
+    !    ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
+    !        ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
+    !!    ( ( (      LSIDE .AND.      LTRANS ) .OR. &
+    !        ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
+    !     INFO = -11
+    !  ELSE IF( LDB.LT.1 .OR.  &
+   !         (      LSIDE .AND. LDB.LT.N ) .OR.  &
+   !         ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
+    !     INFO = -13
+   !   END IF
 
-      IF (INFO.NE.0 .OR. M.EQ.0) THEN
+   !   IF (INFO.NE.0 .OR. M.EQ.0) THEN
 !C
 !C        Error return.
 !C
-          RETURN
-      END IF
+   !       RETURN
+   !   END IF
 !C
 !C     Quick return if possible.
 !C
@@ -14714,9 +14741,9 @@ C
 !C     .. Local Arrays ..
       DOUBLE PRECISION  DUM(1)
 !C     .. External Functions ..
-     
-      DOUBLE PRECISION  DLANGE, DLANSY
-      EXTERNAL          DLANGE, DLANSY
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH,DLANGE, DLANSY
+      EXTERNAL          DLAMCH, DLANGE, DLANSY, LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DCOPY, DGECON, DGEES, DGETRF, DGETRS, &
                         DGGES, DLACPY, DLASCL, DLASET, DSCAL, DSWAP
@@ -15496,7 +15523,9 @@ C
                         WRKOPT
       DOUBLE PRECISION  RCOND, TOLDEF
 !C     .. External Functions ..
-     
+         LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH
+      EXTERNAL          DLAMCH, LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DCOPY, DGEQLF, DLACPY, DLASET, DORMQL, DSYRK,
                         DTRCON
@@ -16332,8 +16361,8 @@ C
       LOGICAL            BWORK( 1 )
 !C     ..
 !C     .. External Functions ..
-      LOGICAL            SELECT
-      EXTERNAL           SELECT
+      LOGICAL            LSAME,SELECT
+      EXTERNAL           LSAME,SELECT
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           DGEES, DLACPY, DSCAL
@@ -16373,41 +16402,41 @@ C
 !C     Test the scalar input parameters.
 !C
       INFO = 0
-      IF( .NOT.( JOBX .OR. JOBS .OR. JOBC .OR. JOBE .OR. JOBA ) ) THEN
-         INFO = -1
-      ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT,   'F' ) ) ) THEN
-         INFO = -2
-      ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR. &
-                                  LSAME( TRANA,  'C' ) ) ) THEN
-         INFO = -3
-      ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
-         INFO = -4
-      ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
-         INFO = -5
-      ELSE IF( N.LT.0 ) THEN
-         INFO = -6
-      ELSE IF( ( JOBC .OR. JOBE ) .AND. &
-               ( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) )THEN
-         INFO = -7
-      ELSE IF( LDA.LT.1 .OR. &
-            ( LDA.LT.N .AND. ( ( UPDATE .AND. .NOT.JOBX ) .OR. &
-                                 NOFACT ) ) ) THEN
-         INFO = -9
-      ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
-         INFO = -11
-      ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
-         INFO = -13
-      ELSE IF( LDC.LT.1 .OR. ( .NOT.JOBS .AND. LDC.LT.N ) ) THEN
-         INFO = -15
-      ELSE IF( LDX.LT.1 .OR. ( .NOT.JOBS .AND. LDX.LT.N ) ) THEN
-         INFO = -17
-      ELSE IF( LDWORK.LT.1 .OR. ( LDWORK.LT.LDW ) ) THEN
-         INFO = -25
-      END IF
+   !   IF( .NOT.( JOBX .OR. JOBS .OR. JOBC .OR. JOBE .OR. JOBA ) ) THEN
+   !      INFO = -1
+   !   ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT,   'F' ) ) ) THEN
+   !      INFO = -2
+   !   ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR. &
+   !                               LSAME( TRANA,  'C' ) ) ) THEN
+   !      INFO = -3
+   !   ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
+   !      INFO = -4
+   !   ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
+   !      INFO = -5
+   !   ELSE IF( N.LT.0 ) THEN
+   !      INFO = -6
+   !   ELSE IF( ( JOBC .OR. JOBE ) .AND. &
+   !            ( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) )THEN
+   !      INFO = -7
+   !   ELSE IF( LDA.LT.1 .OR. &
+   !         ( LDA.LT.N .AND. ( ( UPDATE .AND. .NOT.JOBX ) .OR. &
+   !                              NOFACT ) ) ) THEN
+   !      INFO = -9
+   !   ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
+   !      INFO = -11
+   !   ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
+   !      INFO = -13
+   !   ELSE IF( LDC.LT.1 .OR. ( .NOT.JOBS .AND. LDC.LT.N ) ) THEN
+   !      INFO = -15
+   !   ELSE IF( LDX.LT.1 .OR. ( .NOT.JOBS .AND. LDX.LT.N ) ) THEN
+   !      INFO = -17
+   !   ELSE IF( LDWORK.LT.1 .OR. ( LDWORK.LT.LDW ) ) THEN
+   !!      INFO = -25
+   !   END IF
 
-      IF( INFO.NE.0 ) THEN
-          RETURN
-      END IF
+   !   IF( INFO.NE.0 ) THEN
+    !      RETURN
+    !  END IF
 !C
 !C     Quick return if possible.
 !C
@@ -16710,7 +16739,8 @@ C
 !C     .. Local Scalars ..
       LOGICAL           LTRANS, LUPLO
 !C     .. External Functions ..
-      
+       LOGICAL           LSAME
+      EXTERNAL          LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DLACPY, DLASCL, DLASET, DSCAL, DSYR2K, DTRMM
                       
@@ -16941,9 +16971,9 @@ C
       DOUBLE PRECISION   DUM( 1 ), VEC( 2, 2 ), X( 2, 2 )
 !C     ..
 !C     .. External Functions ..
-     
+      LOGICAL            LSAME
       DOUBLE PRECISION   DDOT, DLANHS
-      EXTERNAL           DDOT, DLANHS
+      EXTERNAL           LSAME,DDOT, DLANHS
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           DLABAD, DLALN2, DLASY2, DSCAL
@@ -17560,7 +17590,8 @@ C
       INTEGER            JPIV( 3 )
       DOUBLE PRECISION   BTMP( 4 ), T9( 3, 4 ), TMP( 4 )
 !C     ..
-
+        DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH
 !C     .. External Subroutines ..
       EXTERNAL           DSWAP
 !C     ..
@@ -18018,10 +18049,11 @@ C
 !C     .. Local Arrays ..
       LOGICAL            BWORK( 1 )
 !C     ..
-!C     .. External Functions ..
-      LOGICAL            SELECT
-      DOUBLE PRECISION   DLANGE, DLANHS, DLANSY
-      EXTERNAL           DLANGE, DLANHS, DLANSY,SELECT
+      !C     .. External Functions ..
+      
+      LOGICAL            LSAME,SELECT
+      DOUBLE PRECISION   DLAMCH,DLANGE, DLANHS, DLANSY
+      EXTERNAL           DLAMCH,DLANGE, DLANHS, DLANSY,LSAME,SELECT
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           DAXPY, DGEES, DLACPY, DLASET, DSYR2K
@@ -18583,7 +18615,8 @@ C
       LOGICAL           LSIDE, LTRANS
       INTEGER           I, J
 !C     .. External Functions ..
-
+         LOGICAL           LSAME
+      EXTERNAL          LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DLACPY, DLASET, DSWAP, DTRMM
 !C     .. Intrinsic Functions ..
@@ -18853,7 +18886,8 @@ C
       LOGICAL           LSIDE, LTRANS
       INTEGER           I, J, JW
 !C     .. External Functions ..
-
+         LOGICAL           LSAME
+      EXTERNAL          LSAME
 !C     .. External Subroutines ..
       EXTERNAL          DAXPY, DLACPY, DLASCL, DLASET, DSCAL, DSWAP, &
                        DTRMM, DTRMV
@@ -19337,9 +19371,9 @@ C
       INTEGER            ISAVE( 3 )
 !C     ..
 !C     .. External Functions ..
-!      LOGICAL            LSAME
+      LOGICAL            LSAME
       DOUBLE PRECISION   DLANSY
-      EXTERNAL           DLANSY
+      EXTERNAL           DLANSY,LSAME
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           DLACN2, DSCAL
@@ -19764,9 +19798,9 @@ C
       INTEGER            ISAVE( 3 )
 !C     ..
 !C     .. External Functions ..
-     
+      LOGICAL            LSAME
       DOUBLE PRECISION   DLANSY
-      EXTERNAL           DLANSY
+      EXTERNAL           DLANSY,LSAME
 !C     ..
 !C     .. External Subroutines ..
       EXTERNAL           DLACN2, DLACPY, DSCAL, DSYR2K
@@ -20001,361 +20035,4 @@ C
 
 END SUBROUTINE
 
-
-!Helpers
-
-
-
-
-
-DOUBLE PRECISION FUNCTION DZNRM2(N,X,INCX)
-  implicit none
-!$OMP DECLARE SIMD(DZNRM2) UNIFORM(X), LINEAR(IX:1)
-  
-!*
-!*  -- Reference BLAS level1 routine (version 3.8.0) --
-!*  -- Reference BLAS is a software package provided by Univ. of Tennessee,    --
-!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
-!*     November 2017
-!*
-!*     .. Scalar Arguments ..
-      INTEGER INCX,N
-!*     ..
-!*     .. Array Arguments ..
-      COMPLEX*16 X(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
-      COMPLEX*16 X(*)
-      !DIR$ ASSUME_ALIGNED X:64
-#endif
-!*     ..
-!*
-!*  =====================================================================
-!*
-!*     .. Parameters ..
-      DOUBLE PRECISION ONE,ZERO
-      PARAMETER (ONE=1.0D+0,ZERO=0.0D+0)
-!*     ..
-!*     .. Local Scalars ..
-      DOUBLE PRECISION NORM,SCALE,SSQ,TEMP
-      INTEGER IX
-!*     ..
-!*     .. Intrinsic Functions ..
-      INTRINSIC ABS,DBLE,DIMAG,SQRT
-!*     ..
-      IF (N.LT.1 .OR. INCX.LT.1) THEN
-          NORM = ZERO
-      ELSE
-          SCALE = ZERO
-          SSQ = ONE
-!*        The following loop is equivalent to this call to the LAPACK
-!*        auxiliary routine:
-!*        CALL ZLASSQ( N, X, INCX, SCALE, SSQ )
-!*
-          DO 10 IX = 1,1 + (N-1)*INCX,INCX
-              IF (DBLE(X(IX)).NE.ZERO) THEN
-                  TEMP = ABS(DBLE(X(IX)))
-                  IF (SCALE.LT.TEMP) THEN
-                      SSQ = ONE + SSQ* (SCALE/TEMP)**2
-                      SCALE = TEMP
-                  ELSE
-                      SSQ = SSQ + (TEMP/SCALE)**2
-                  END IF
-              END IF
-              IF (DIMAG(X(IX)).NE.ZERO) THEN
-                  TEMP = ABS(DIMAG(X(IX)))
-                  IF (SCALE.LT.TEMP) THEN
-                      SSQ = ONE + SSQ* (SCALE/TEMP)**2
-                      SCALE = TEMP
-                  ELSE
-                      SSQ = SSQ + (TEMP/SCALE)**2
-                  END IF
-              END IF
-   10     CONTINUE
-          NORM = SCALE*SQRT(SSQ)
-      END IF
-
-      DZNRM2 = NORM
-END FUNCTION DZNRM2
-
-
-
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-INTEGER FUNCTION IDAMAX(N,DX,INCX) !GCC$ ATTRIBUTES aligned(32) :: IDAMAX !GCC$ ATTRIBUTES PURE :: IDAMAX !GCC$ ATTRIBUTES INLINE :: IDAMAX
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-INTEGER FUNCTION IDAMAX(N,DX,INCX)
-!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: IDAMAX
-!DIR$ ATTRIBUTES FORCEINLINE :: IDAMAX
-#endif
-   implicit none
-
-!*
-!*  -- Reference BLAS level1 routine (version 3.8.0) --
-!*  -- Reference BLAS is a software package provided by Univ. of Tennessee,    --
-!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
-!*     November 2017
-!*
-!*     .. Scalar Arguments ..
-      INTEGER INCX,N
-!*     ..
-!*     .. Array Arguments ..
-      DOUBLE PRECISION DX(*)
-#if defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION DX(*)
-!DIR$ ASSUME_ALIGNED DX:64
-#endif
-
-!*     ..
-!*
-!*  =====================================================================
-!*
-!*     .. Local Scalars ..
-      DOUBLE PRECISION DMAX
-      INTEGER I,IX
-!*     ..
-!*     .. Intrinsic Functions ..
-      INTRINSIC DABS
-!*     ..
-      IDAMAX = 0
-      IF (N.LT.1 .OR. INCX.LE.0) RETURN
-      IDAMAX = 1
-      IF (N.EQ.1) RETURN
-      IF (INCX.EQ.1) THEN
-!*
-!*        code for increment equal to 1
-!*
-         DMAX = DABS(DX(1))
-         DO I = 2,N
-            IF (DABS(DX(I)).GT.DMAX) THEN
-               IDAMAX = I
-               DMAX = DABS(DX(I))
-            END IF
-         END DO
-      ELSE
-!*
-!*        code for increment not equal to 1
-!*
-         IX = 1
-         DMAX = DABS(DX(1))
-         IX = IX + INCX
-         DO I = 2,N
-            IF (DABS(DX(IX)).GT.DMAX) THEN
-               IDAMAX = I
-               DMAX = DABS(DX(IX))
-            END IF
-            IX = IX + INCX
-         END DO
-      END IF
-     
-END FUNCTION IDAMAX
-
-
-#if defined __GFORTRAN__ && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-      LOGICAL          FUNCTION LSAME( CA, CB ) !GCC$ ATTRIBUTES inline :: LSAME
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      LOGICAL          FUNCTION LSAME( CA, CB)
-      !DIR$ ATTRIBUTES INLINE :: LSAME
-#endif
-
-!*
-!*  -- LAPACK auxiliary routine (preliminary version) --
-!*     Univ. of Tennessee, Oak Ridge National Lab, Argonne National Lab,
-!*     Courant Institute, NAG Ltd., and Rice University
-!*     March 26, 1990
-!*
-!*     .. Scalar Arguments ..
-      CHARACTER          CA, CB
-!*     ..
-!*
-!*  Purpose
-!*  =======
-!*
-!*  LSAME returns .TRUE. if CA is the same letter as CB regardless of
-!*  case.
-!*
-!*  This version of the routine is only correct for ASCII code.
-!*  Installers must modify the routine for other character-codes.
-!*
-!*  For EBCDIC systems the constant IOFF must be changed to -64.
-!*  For CDC systems using 6-12 bit representations, the system-
-!*  specific code in comments must be activated.
-!*
-!*  Arguments
-!*  =========
-!*
-!*  CA      (input) CHARACTER*1
-!*  CB      (input) CHARACTER*1
-!*          CA and CB specify the single characters to be compared.
-!*
-!*
-!*     .. Parameters ..
-      INTEGER            IOFF
-      PARAMETER        ( IOFF = 32 )
-!*     ..
-!*     .. Intrinsic Functions ..
-      INTRINSIC          ICHAR
-!*     ..
-!*     .. Executable Statements ..
-!*
-!*     Test if the characters are equal
-!*
-      LSAME = CA.EQ.CB
-!*
-!*     Now test for equivalence
-!*
-      IF( .NOT.LSAME ) THEN
-         LSAME = ICHAR( CA ) - IOFF.EQ.ICHAR( CB )
-      END IF
-      IF( .NOT.LSAME ) THEN
-         LSAME = ICHAR( CA ).EQ.ICHAR( CB ) - IOFF
-      END IF
-
-END FUNCTION LSAME
-
-
-
-
-*!> DLAMCH determines double precision machine parameters.
-!*> \endverbatim
-!*
-!*  Arguments:
-!*  ==========
-!*
-!*> \param[in] CMACH
-!*> \verbatim
-!*>          CMACH is CHARACTER*1
-!*>          Specifies the value to be returned by DLAMCH:
-!*>          = 'E' or 'e',   DLAMCH := eps
-!*>          = 'S' or 's ,   DLAMCH := sfmin
-!*>          = 'B' or 'b',   DLAMCH := base
-!*>          = 'P' or 'p',   DLAMCH := eps*base
-!*>          = 'N' or 'n',   DLAMCH := t
-!*>          = 'R' or 'r',   DLAMCH := rnd
-!*>          = 'M' or 'm',   DLAMCH := emin
-!*>          = 'U' or 'u',   DLAMCH := rmin
-!*>          = 'L' or 'l',   DLAMCH := emax
-!*>          = 'O' or 'o',   DLAMCH := rmax
-!*>          where
-!*>          eps   = relative machine precision
-!*>          sfmin = safe minimum, such that 1/sfmin does not overflow
-!*>          base  = base of the machine
-!*>          prec  = eps*base
-!*>          t     = number of (base) digits in the mantissa
-!*>          rnd   = 1.0 when rounding occurs in addition, 0.0 otherwise
-!*>          emin  = minimum exponent before (gradual) underflow
-!*>          rmin  = underflow threshold - base**(emin-1)
-!*>          emax  = largest exponent before overflow
-!*>          rmax  = overflow threshold  - (base**emax)*(1-eps)
-!*> \endverbatim
-!*
-!*  Authors:
-!*  ========
-!*
-!*> \author Univ. of Tennessee
-!*> \author Univ. of California Berkeley
-!*> \author Univ. of Colorado Denver
-!*> \author NAG Ltd.
-!*
-!*> \date December 2016
-!*
-!*> \ingroup auxOTHERauxiliary
-!*
-!*  =====================================================================
-
-      DOUBLE PRECISION FUNCTION DLAMCH( CMACH )
-!*
-!*  -- LAPACK auxiliary routine (version 3.7.0) --
-!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
-!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
-!*     December 2016
-!*
-!*     .. Scalar Arguments ..
-      CHARACTER          CMACH
-!*     ..
-!*
-!* =====================================================================
-!*
-!*     .. Parameters ..
-      DOUBLE PRECISION   ONE, ZERO
-      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
-!*     ..
-!*     .. Local Scalars ..
-      DOUBLE PRECISION   RND, EPS, SFMIN, SMALL, RMACH
-!*     ..
-!*     .. External Functions ..
-!      LOGICAL            LSAME
-!      EXTERNAL           LSAME
-!*     ..
-!*     .. Intrinsic Functions ..
-      INTRINSIC          DIGITS, EPSILON, HUGE, MAXEXPONENT, &
-                         MINEXPONENT, RADIX, TINY
-!*     ..
-!*     .. Executable Statements ..
-!*
-!*
-!*     Assume rounding, not chopping. Always.
-!*
-      RND = ONE
-!*
-      IF( ONE.EQ.RND ) THEN
-         EPS = EPSILON(ZERO) * 0.5
-      ELSE
-         EPS = EPSILON(ZERO)
-      END IF
-!*
-      IF( LSAME( CMACH, 'E' ) ) THEN
-         RMACH = EPS
-      ELSE IF( LSAME( CMACH, 'S' ) ) THEN
-         SFMIN = TINY(ZERO)
-         SMALL = ONE / HUGE(ZERO)
-         IF( SMALL.GE.SFMIN ) THEN
-!*
-!*           Use SMALL plus a bit, to avoid the possibility of rounding
-!*           causing overflow when computing  1/sfmin.
-!*
-            SFMIN = SMALL*( ONE+EPS )
-         END IF
-         RMACH = SFMIN
-      ELSE IF( LSAME( CMACH, 'B' ) ) THEN
-         RMACH = RADIX(ZERO)
-      ELSE IF( LSAME( CMACH, 'P' ) ) THEN
-         RMACH = EPS * RADIX(ZERO)
-      ELSE IF( LSAME( CMACH, 'N' ) ) THEN
-         RMACH = DIGITS(ZERO)
-      ELSE IF( LSAME( CMACH, 'R' ) ) THEN
-         RMACH = RND
-      ELSE IF( LSAME( CMACH, 'M' ) ) THEN
-         RMACH = MINEXPONENT(ZERO)
-      ELSE IF( LSAME( CMACH, 'U' ) ) THEN
-         RMACH = tiny(zero)
-      ELSE IF( LSAME( CMACH, 'L' ) ) THEN
-         RMACH = MAXEXPONENT(ZERO)
-      ELSE IF( LSAME( CMACH, 'O' ) ) THEN
-         RMACH = HUGE(ZERO)
-      ELSE
-         RMACH = ZERO
-      END IF
-
-      DLAMCH = RMACH
-     
-
-END FUNCTION DLAMCH
-
-DOUBLE PRECISION FUNCTION DLAMC3( A, B )
-!*
-!*  -- LAPACK auxiliary routine (version 3.7.0) --
-!*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd..
-!*     November 2010
-!*
-!*     .. Scalar Arguments ..
-      DOUBLE PRECISION   A, B
-!*     ..
-!* =====================================================================
-!*
-!*     .. Executable Statements ..
-!*
-      DLAMC3 = A + B
-!*
-   
-
-END FUNCTION DLAMC3
 
