@@ -618,7 +618,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
 !*
           JX = KX
           IF (INCY.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,K,JX) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,I,JX) IF(N>=100)
               DO 60 J = 1,N
                   TEMP = ALPHA*X(JX)
                   K = KUP1 - J
@@ -629,7 +629,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
    60          CONTINUE
                !$OMP END PARALLEL DO   
           ELSE
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,K,IY,JX) IF(N>=400)  
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,IY,I,JX) IF(N>=400)  
               DO 80 J = 1,N
                   TEMP = ALPHA*X(JX)
                   IY = KY
@@ -649,7 +649,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
 !*
           JY = KY
           IF (INCX.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,K,JY) IF(N>=400)  
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,I,JY) IF(N>=400)  
               DO 100 J = 1,N
                   TEMP = ZERO
                   K = KUP1 - J
@@ -661,7 +661,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
 100           CONTINUE
               !$OMP END PARALLEL DO
                ELSE
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,K,JY) IF(N>=400)      
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,K,I,KX,JY) IF(N>=400)      
               DO 120 J = 1,N
                   TEMP = ZERO
                   IX = KX
@@ -812,23 +812,23 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*     And if  alpha.eq.zero.
 !*
       IF (ALPHA.EQ.ZERO) THEN
-         IF (BETA.EQ.ZERO) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)
-            DO 20 J = 1,N
-                  !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
-                  DO 10 I = 1,M
-                      C(I,J) = ZERO
-   10             CONTINUE
-   20         CONTINUE
-         ELSE
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)        
-            DO 40 J = 1,N
-                   !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(6)
-                  DO 30 I = 1,M
-                      C(I,J) = BETA*C(I,J)
-   30             CONTINUE
-   40         CONTINUE
-          END IF
+       !  IF (BETA.EQ.ZERO) THEN
+        !      !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)
+         !   DO 20 J = 1,N
+         !         !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
+         !1         DO 10 I = 1,M
+         !             C(I,J) = ZERO
+  ! 10    !         CONTINUE
+  ! 20         CONTINUE
+       !  ELSE
+       !        !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=100)        
+       !     DO 40 J = 1,N
+       !            !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(6)
+        !          DO 30 I = 1,M
+        !              C(I,J) = BETA*C(I,J)
+  ! 30             CONTINUE
+  ! 40         CONTINUE
+   !       END IF
           RETURN
       END IF
 !*
@@ -839,7 +839,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A*B + beta*C.
              !*
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)       
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)       
               DO 90 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                          !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -866,7 +866,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A**T*B + beta*C
              !*
-                 !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP) IF(N>=400)   
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP) IF(N>=100)   
               DO 120 J = 1,N
                   DO 110 I = 1,M
                      TEMP = ZERO
@@ -888,7 +888,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A*B**T + beta*C
              !*
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)      
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)      
               DO 170 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                          !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)   
@@ -903,7 +903,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
                   END IF
                   DO 160 L = 1,K
                      TEMP = ALPHA*B(J,L)
-                         !$OMP SIMD ALIGNED(C:64) LINEAR(I:1)  UNROLL PARTIAL(10)   
+                         !$OMP SIMD ALIGNED(C:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)   
                       DO 150 I = 1,M
                           C(I,J) = C(I,J) + TEMP*A(I,L)
   150                 CONTINUE
@@ -914,7 +914,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A**T*B**T + beta*C
              !*
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP) IF(N>=400)   
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP,L) IF(N>=100)   
               DO 200 J = 1,N
                   DO 190 I = 1,M
                      TEMP = ZERO
@@ -1105,7 +1105,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 !*
           JX = KX
           IF (INCY.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,JX) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,JX) IF(N>=100)
               DO 60 J = 1,N
                  TEMP = ALPHA*X(JX)
                     !$OMP SIMD ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)    
@@ -1116,7 +1116,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 60            CONTINUE
               !$OMP END PARALLEL DO    
            ELSE
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IY,JX) IF(N>=400)   
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IY,I,JX) IF(N>=100)   
               DO 80 J = 1,N
                   TEMP = ALPHA*X(JX)
                   IY = KY
@@ -1135,7 +1135,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 !*
           JY = KY
           IF (INCX.EQ.1) THEN
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,JY) IF(N>=400)   
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,JY) IF(N>=100)   
               DO 100 J = 1,N
                  TEMP = ZERO
                    !$OMP SIMD ALIGNED(Y:64) LINEAR(I:1) REDUCTION(+:TEMP) UNROLL PARTIAL(10)    
@@ -1147,7 +1147,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 100            CONTINUE
                 !$OMP END PARALLEL DO       
            ELSE
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JY) IF(N>=400)      
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,I,JY) IF(N>=100)      
               DO 120 J = 1,N
                   TEMP = ZERO
                   IX = KX
@@ -1271,7 +1271,7 @@ SUBROUTINE DGER(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES inline :: DGER !
           JY = 1 - (N-1)*INCY
       END IF
       IF (INCX.EQ.1) THEN
-          !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,JY) IF(N>=400)
+          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,JY) IF(N>=100)
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*Y(JY)
@@ -1289,7 +1289,7 @@ SUBROUTINE DGER(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES inline :: DGER !
           ELSE
               KX = 1 - (M-1)*INCX
           END IF
-            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JY) IF(N>=400)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,I,JY) IF(N>=100)
           DO 40 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                   TEMP = ALPHA*Y(JY)
@@ -2021,7 +2021,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
 !*
           KPLUS1 = K + 1
           IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-             !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,L) IF(N>=400)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,L,I) IF(N>=100)
               DO 60 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2036,7 +2036,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY,KX,KY,L) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY,KX,KY,L) IF(N>=100)
               DO 80 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2064,7 +2064,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
 !*        Form  y  when lower triangle of A is stored.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,L) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,L,I) IF(N>=100)
               DO 100 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2080,7 +2080,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY,L) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY,L) IF(N>=100)
               DO 120 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2434,7 +2434,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
 !*        Form  y  when AP contains the upper triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,KK) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,I,K,KK) IF(N>=100)
               DO 60 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2452,7 +2452,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY,KK) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)
               DO 80 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2477,7 +2477,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
 !*        Form  y  when AP contains the lower triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,KK) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,I,KK) IF(N>=100)
               DO 100 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2496,7 +2496,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY,KK) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)
               DO 120 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2627,7 +2627,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
 !*        Form  A  when upper triangle is stored in AP.
 !*
          IF (INCX.EQ.1) THEN
-            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,K,KK) IF(N>=100)
               DO 20 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                       TEMP = ALPHA*X(J)
@@ -2643,7 +2643,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
               !$OMP END PARALLEL DO    
           ELSE
              JX = KX
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,K,JX,KK) IF(N>=100)
               DO 40 J = 1,N
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
@@ -2664,7 +2664,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
 !*        Form  A  when lower triangle is stored in AP.
 !*
          IF (INCX.EQ.1) THEN
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
               DO 60 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                       TEMP = ALPHA*X(J)
@@ -2680,7 +2680,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
                  !$OMP END PARALLEL DO 
           ELSE
              JX = KX
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
               DO 80 J = 1,N
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
@@ -2819,7 +2819,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 !*        Form  A  when upper triangle is stored in AP.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-             !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,KK) IF(N>=400)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,I,KK) IF(N>=100)
               DO 20 J = 1,N
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
@@ -2836,7 +2836,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
               !$OMP END PARALLEL DO    
           ELSE
              DO 40 J = 1,N
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)
                   IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(JY)
                       TEMP2 = ALPHA*X(JX)
@@ -2860,7 +2860,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 !*        Form  A  when lower triangle is stored in AP.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,KK) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,I,KK) IF(N>=100)
               DO 60 J = 1,N
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
@@ -2876,7 +2876,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 60            CONTINUE
               !$OMP END PARALLEL DO  
           ELSE
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY,KK) IF(N>=400)   
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)   
               DO 80 J = 1,N
                   IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(JY)
@@ -3124,19 +3124,19 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 !*     And when  alpha.eq.zero.
 !*
       IF (ALPHA.EQ.ZERO) THEN
-         IF (BETA.EQ.ZERO) THEN
-              DO 20 J = 1,N
-                  DO 10 I = 1,M
-                      C(I,J) = ZERO
-   10             CONTINUE
-   20         CONTINUE
-          ELSE
-              DO 40 J = 1,N
-                  DO 30 I = 1,M
-                      C(I,J) = BETA*C(I,J)
-   30             CONTINUE
-   40         CONTINUE
-          END IF
+   !      IF (BETA.EQ.ZERO) THEN
+   !           DO 20 J = 1,N
+   !               DO 10 I = 1,M
+  !                    C(I,J) = ZERO
+  ! 10             CONTINUE
+  ! 20         CONTINUE
+  !        ELSE
+  !            DO 40 J = 1,N
+  !                DO 30 I = 1,M
+  !                    C(I,J) = BETA*C(I,J)
+ !  30             CONTINUE
+  ! 40         CONTINUE
+  !        END IF
           RETURN
       END IF
 !*
@@ -3147,7 +3147,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 !*        Form  C := alpha*A*B + beta*C.
 !*
          IF (UPPER) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP1,TEMP2) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP1,TEMP2,K) IF(N>=100)
               DO 70 J = 1,N
                   DO 60 I = 1,M
                       TEMP1 = ALPHA*B(I,J)
@@ -3167,7 +3167,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 70             CONTINUE
                 !$OMP END PARALLEL DO      
           ELSE
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)        
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,TEMP1,TEMP2,K) IF(N>=100)        
               DO 100 J = 1,N
                   DO 90 I = M,1,-1
                       TEMP1 = ALPHA*B(I,J)
@@ -3191,7 +3191,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 !*
 !*        Form  C := alpha*B*A + beta*C.
          !*
-          !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEAFULT(SHARED) PRIVATE(J,TEMP1) IF(N>=400)
+          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEAFULT(SHARED) PRIVATE(J,TEMP1,I,K) IF(N>=100)
           DO 170 J = 1,N
               TEMP1 = ALPHA*A(J,J)
               IF (BETA.EQ.ZERO) THEN
@@ -3388,7 +3388,7 @@ SUBROUTINE DSYMV(UPLO,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES inline 
 !*        Form  y  when A is stored in upper triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-             !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2) IF(N>=400)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,I) IF(N>=100)
               DO 60 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -3403,7 +3403,7 @@ SUBROUTINE DSYMV(UPLO,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES inline 
           ELSE
               JX = KX
               JY = KY
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY) IF(N>=100)
               DO 80 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -3427,7 +3427,7 @@ SUBROUTINE DSYMV(UPLO,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES inline 
 !*        Form  y  when A is stored in lower triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,I) IF(N>=100)
               DO 100 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -3443,7 +3443,7 @@ SUBROUTINE DSYMV(UPLO,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES inline 
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY) IF(N>=100)
               DO 120 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -3580,7 +3580,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
 *        Form  A  when A is stored in upper triangle.
 *
           IF (INCX.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I) IF(N>=100)
               DO 20 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                      TEMP = ALPHA*X(J)
@@ -3593,7 +3593,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
              !$OMP END PARALLEL DO     
           ELSE
              JX = KX
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JX) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
               DO 40 J = 1,N
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
@@ -3613,7 +3613,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
 !*        Form  A  when A is stored in lower triangle.
 !*
          IF (INCX.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I) IF(N>=100)
               DO 60 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                      TEMP = ALPHA*X(J)
@@ -3626,7 +3626,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
               !$OMP END PARALLEL DO
           ELSE
              JX = KX
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JX) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
               DO 80 J = 1,N
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
@@ -3771,7 +3771,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
 !*        Form  A  when A is stored in the upper triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,I) IF(N>=100)
               DO 20 J = 1,N
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
@@ -3784,7 +3784,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
 20            CONTINUE
                  !$OMP END PARALLEL DO 
          ELSE
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY) IF(N>=100)
               DO 40 J = 1,N
                   IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(JY)
@@ -3808,7 +3808,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
 !*        Form  A  when A is stored in the lower triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-               !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2) IF(N>=400)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,I) IF(N>=100)
               DO 60 J = 1,N
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
@@ -3821,7 +3821,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
 60            CONTINUE
                !$OMP END PARALLEL DO   
         ELSE
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,JX,JY) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY) IF(N>=100)
               DO 80 J = 1,N
                   IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(JY)
@@ -3963,35 +3963,35 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
 !*     And when  alpha.eq.zero.
 !*
       IF (ALPHA.EQ.ZERO) THEN
-          IF (UPPER) THEN
-              IF (BETA.EQ.ZERO) THEN
-                  DO 20 J = 1,N
-                      DO 10 I = 1,J
-                          C(I,J) = ZERO
-   10                 CONTINUE
-   20             CONTINUE
-              ELSE
-                  DO 40 J = 1,N
-                      DO 30 I = 1,J
+       !   IF (UPPER) THEN
+       !       IF (BETA.EQ.ZERO) THEN
+       !           DO 20 J = 1,N
+      !                DO 10 I = 1,J
+       !                   C(I,J) = ZERO
+!   10                 CONTINUE
+ !  20             CONTINUE
+    !          ELSE
+  !                DO 40 J = 1,N
+     !                 DO 30 I = 1,J
+     !                     C(I,J) = BETA*C(I,J)
+  ! 30                 CONTINUE
+  ! 40             CONTINUE
+   !           END IF
+    !      ELSE
+    !          IF (BETA.EQ.ZERO) THEN
+    !              DO 60 J = 1,N
+     !                 DO 50 I = J,N
+     !                     C(I,J) = ZERO
+ !  50                 CONTINUE
+  ! 60             CONTINUE
+  !            ELSE
+  !                DO 80 J = 1,N
+   !                   DO 70 I = J,N
                           C(I,J) = BETA*C(I,J)
-   30                 CONTINUE
-   40             CONTINUE
-              END IF
-          ELSE
-              IF (BETA.EQ.ZERO) THEN
-                  DO 60 J = 1,N
-                      DO 50 I = J,N
-                          C(I,J) = ZERO
-   50                 CONTINUE
-   60             CONTINUE
-              ELSE
-                  DO 80 J = 1,N
-                      DO 70 I = J,N
-                          C(I,J) = BETA*C(I,J)
-   70                 CONTINUE
-   80             CONTINUE
-              END IF
-          END IF
+  ! 70                 CONTINUE
+  ! 80             CONTINUE
+   !           END IF
+    !      END IF
           RETURN
       END IF
 !*
@@ -4002,7 +4002,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
 !*        Form  C := alpha*A*B**T + alpha*B*A**T + C.
 !*
          IF (UPPER) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L) IF(N>=100)
               DO 130 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                      !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(10)
@@ -4029,7 +4029,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
 130            CONTINUE
                !$OMP END PARALLEL DO        
              ELSE
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)    
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L) IF(N>=100)    
               DO 180 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                         !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(10)
@@ -4061,7 +4061,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
 !*        Form  C := alpha*A**T*B + alpha*B**T*A + C.
 !*
          IF (UPPER) THEN
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP1,TEMP2) IF(N>=400)    
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP1,TEMP2,L) IF(N>=100)    
               DO 210 J = 1,N
                   DO 200 I = 1,J
                       TEMP1 = ZERO
@@ -4081,7 +4081,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
 210            CONTINUE
                 !$OMP END PARALLEL DO      
             ELSE
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED)  PRIVATE(J,TEMP1,TEMP2) IF(N>=400)         
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED)  PRIVATE(J,I,TEMP1,TEMP2,L) IF(N>=100)         
               DO 240 J = 1,N
                   DO 230 I = J,N
                       TEMP1 = ZERO
@@ -4218,35 +4218,35 @@ SUBROUTINE DSYRK(UPLO,TRANS,N,K,ALPHA,A,LDA,BETA,C,LDC) !GCC$ ATTRIBUTES hot :: 
 !!*     And when  alpha.eq.zero.
 !*
       IF (ALPHA.EQ.ZERO) THEN
-          IF (UPPER) THEN
-              IF (BETA.EQ.ZERO) THEN
-                  DO 20 J = 1,N
-                      DO 10 I = 1,J
-                          C(I,J) = ZERO
-   10                 CONTINUE
-   20             CONTINUE
-              ELSE
-                  DO 40 J = 1,N
-                      DO 30 I = 1,J
-                          C(I,J) = BETA*C(I,J)
-   30                 CONTINUE
-   40             CONTINUE
-              END IF
-          ELSE
-              IF (BETA.EQ.ZERO) THEN
-                  DO 60 J = 1,N
-                      DO 50 I = J,N
-                          C(I,J) = ZERO
-   50                 CONTINUE
-   60             CONTINUE
-              ELSE
-                  DO 80 J = 1,N
-                      DO 70 I = J,N
-                          C(I,J) = BETA*C(I,J)
-   70                 CONTINUE
-   80             CONTINUE
-              END IF
-          END IF
+      !    IF (UPPER) THEN
+      !        IF (BETA.EQ.ZERO) THEN
+      !            DO 20 J = 1,N
+       !               DO 10 I = 1,J
+        !                  C(I,J) = ZERO
+ !  10   !              CONTINUE
+  ! 20             CONTINUE
+     !         ELSE
+        !          DO 40 J = 1,N
+         !             DO 30 I = 1,J
+         !                 C(I,J) = BETA*C(I,J)
+  ! 30                 CONTINUE
+  ! 40             CONTINUE
+   !           END IF
+    !      ELSE
+     !         IF (BETA.EQ.ZERO) THEN
+     !             DO 60 J = 1,N
+     !                 DO 50 I = J,N
+     !                     C(I,J) = ZERO
+  ! 50                 CONTINUE
+  ! 60             CONTINUE
+   !           ELSE
+     !             DO 80 J = 1,N
+      !                DO 70 I = J,N
+      !                    C(I,J) = BETA*C(I,J)
+  ! 70                 CONTINUE
+  ! 80             CONTINUE
+  !            END IF
+   !       END IF
           RETURN
       END IF
 !*
@@ -4257,7 +4257,7 @@ SUBROUTINE DSYRK(UPLO,TRANS,N,K,ALPHA,A,LDA,BETA,C,LDC) !GCC$ ATTRIBUTES hot :: 
 !*        Form  C := alpha*A*A**T + beta*C.
 !*
          IF (UPPER) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)
               DO 130 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                       !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -4282,7 +4282,7 @@ SUBROUTINE DSYRK(UPLO,TRANS,N,K,ALPHA,A,LDA,BETA,C,LDC) !GCC$ ATTRIBUTES hot :: 
 130           CONTINUE
                !$OMP END PARALLEL DO       
           ELSE
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)        
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)        
               DO 180 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                         !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -4312,7 +4312,7 @@ SUBROUTINE DSYRK(UPLO,TRANS,N,K,ALPHA,A,LDA,BETA,C,LDC) !GCC$ ATTRIBUTES hot :: 
 !*        Form  C := alpha*A**T*A + beta*C.
 !*
          IF (UPPER) THEN
-              !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP) IF(N>=400)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,L,TEMP) IF(N>=100)
               DO 210 J = 1,N
                   DO 200 I = 1,J
                      TEMP = ZERO
@@ -4329,7 +4329,7 @@ SUBROUTINE DSYRK(UPLO,TRANS,N,K,ALPHA,A,LDA,BETA,C,LDC) !GCC$ ATTRIBUTES hot :: 
 210           CONTINUE
                !$OMP END PARALLEL DO       
            ELSE
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(SHARED) PRIVATE(J) IF(N>=400)         
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)         
               DO 240 J = 1,N
                   DO 230 I = J,N
                      TEMP = ZERO
@@ -4474,7 +4474,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
           IF (LSAME(UPLO,'U')) THEN
               KPLUS1 = K + 1
               IF (INCX.EQ.1) THEN
-                 !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L) IF(N>=400)
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L,I) IF(N>=100)
                   DO 20 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                           TEMP = X(J)
@@ -4488,7 +4488,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
                    !$OMP END PARALLEL DO   
               ELSE
                  JX = KX
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX,L) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX,L,I,KX) IF(N>=100)
                   DO 40 J = 1,N
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -4507,7 +4507,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
               END IF
           ELSE
              IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L,I) IF(N>=100)
                   DO 60 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                           TEMP = X(J)
@@ -4522,7 +4522,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX,L) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX,L,KX) IF(N>=100)
                   DO 80 J = N,1,-1
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -4547,7 +4547,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
           IF (LSAME(UPLO,'U')) THEN
               KPLUS1 = K + 1
               IF (INCX.EQ.1) THEN
-                 !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L) IF(N>=400)
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L,I) IF(N>=100)
                   DO 100 J = N,1,-1
                       TEMP = X(J)
                       L = KPLUS1 - J
@@ -4561,7 +4561,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,KX,IX,JX,L) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,KX,IX,JX,L,I) IF(N>=100)
                   DO 120 J = N,1,-1
                       TEMP = X(JX)
                       KX = KX - INCX
@@ -4579,7 +4579,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
               END IF
           ELSE
              IF (INCX.EQ.1) THEN
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,L,I) IF(N>=100)
                   DO 140 J = 1,N
                       TEMP = X(J)
                       L = 1 - J
@@ -4592,7 +4592,7 @@ SUBROUTINE DTBMV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBMV
                    !$OMP END PARALLEL DO   
               ELSE
                  JX = KX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,KX,IX,JX,L) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,KX,IX,JX,L,I) IF(N>=100)
                   DO 160 J = 1,N
                       TEMP = X(JX)
                       KX = KX + INCX
@@ -4736,7 +4736,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
           IF (LSAME(UPLO,'U')) THEN
               KPLUS1 = K + 1
               IF (INCX.EQ.1) THEN
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP,I) IF(N>=100)
                   DO 20 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                           L = KPLUS1 - J
@@ -4751,7 +4751,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,KX,IX,L,JX,TEMP) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,KX,IX,L,JX,TEMP,I) IF(N>=100)
                   DO 40 J = N,1,-1
                       KX = KX - INCX
                       IF (X(JX).NE.ZERO) THEN
@@ -4770,7 +4770,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
               END IF
           ELSE
              IF (INCX.EQ.1) THEN
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP,I) IF(N>=100)
                   DO 60 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                           L = 1 - J
@@ -4784,7 +4784,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
                     !$OMP END PARALLEL DO  
               ELSE
                  JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,KX,IX,L,JX,TEMP) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,KX,IX,L,I,JX,TEMP) IF(N>=100)
                   DO 80 J = 1,N
                       KX = KX + INCX
                       IF (X(JX).NE.ZERO) THEN
@@ -4809,7 +4809,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
           IF (LSAME(UPLO,'U')) THEN
               KPLUS1 = K + 1
               IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP,I) IF(N>=100)
                   DO 100 J = 1,N
                       TEMP = X(J)
                       L = KPLUS1 - J
@@ -4822,7 +4822,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
                     !$OMP END PARALLEL DO  
               ELSE
                  JX = KX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,IX,L,JX,KX,TEMP) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,IX,L,I,JX,KX,TEMP) IF(N>=100)
                   DO 120 J = 1,N
                       TEMP = X(JX)
                       IX = KX
@@ -4840,7 +4840,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
               END IF
           ELSE
              IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,L,TEMP,I) IF(N>=100)
                   DO 140 J = N,1,-1
                       TEMP = X(J)
                       L = 1 - J
@@ -4854,7 +4854,7 @@ SUBROUTINE DTBSV(UPLO,TRANS,DIAG,N,K,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTBSV
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,KX,IX,L,JX,KX,TEMP) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,KX,IX,L,I,JX,KX,TEMP) IF(N>=100)
                   DO 160 J = N,1,-1
                       TEMP = X(JX)
                       IX = KX
@@ -4992,7 +4992,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
           IF (LSAME(UPLO,'U')) THEN
               KK = 1
               IF (INCX.EQ.1) THEN
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
                   DO 20 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                           TEMP = X(J)
@@ -5009,7 +5009,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                    !$OMP END PARALLEL DO   
               ELSE
                  JX = KX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
                   DO 40 J = 1,N
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -5029,7 +5029,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
           ELSE
               KK = (N* (N+1))/2
               IF (INCX.EQ.1) THEN
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
                   DO 60 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                           TEMP = X(J)
@@ -5047,7 +5047,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,K,JX,KK) IF(N>=100)
                   DO 80 J = N,1,-1
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -5072,7 +5072,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
           IF (LSAME(UPLO,'U')) THEN
               KK = (N* (N+1))/2
               IF (INCX.EQ.1) THEN
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,KK) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
                   DO 100 J = N,1,-1
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*AP(KK)
@@ -5088,7 +5088,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                      !$OMP END PARALLEL DO 
               ELSE
                  JX = KX + (N-1)*INCX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
                   DO 120 J = N,1,-1
                       TEMP = X(JX)
                       IX = JX
@@ -5107,7 +5107,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
           ELSE
               KK = 1
               IF (INCX.EQ.1) THEN
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
                   DO 140 J = 1,N
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*AP(KK)
@@ -5123,7 +5123,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                     !$OMP END PARALLEL DO  
               ELSE
                  JX = KX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
                   DO 160 J = 1,N
                       TEMP = X(JX)
                       IX = JX
@@ -5261,7 +5261,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
           IF (LSAME(UPLO,'U')) THEN
               KK = (N* (N+1))/2
               IF (INCX.EQ.1) THEN
-                 !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,KK,I) IF(N>=100)
                   DO 20 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                           IF (NOUNIT) X(J) = X(J)/AP(KK)
@@ -5278,7 +5278,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                     !$OMP END PARALLEL DO  
               ELSE
                  JX = KX + (N-1)*INCX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
                   DO 40 J = N,1,-1
                       IF (X(JX).NE.ZERO) THEN
                           IF (NOUNIT) X(JX) = X(JX)/AP(KK)
@@ -5298,7 +5298,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
           ELSE
               KK = 1
               IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
                   DO 60 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                           IF (NOUNIT) X(J) = X(J)/AP(KK)
@@ -5315,7 +5315,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                     !$OMP END PARALLEL DO 
               ELSE
                  JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
                   DO 80 J = 1,N
                       IF (X(JX).NE.ZERO) THEN
                           IF (NOUNIT) X(JX) = X(JX)/AP(KK)
@@ -5340,7 +5340,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
           IF (LSAME(UPLO,'U')) THEN
               KK = 1
               IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,KK,I) IF(N>=100)
                   DO 100 J = 1,N
                       TEMP = X(J)
                       K = KK
@@ -5356,7 +5356,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                  !$OMP END PARALLEL DO     
               ELSE
                  JX = KX
-                 !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,K,JX,KK) IF(N>=100)
                   DO 120 J = 1,N
                       TEMP = X(JX)
                       IX = KX
@@ -5375,7 +5375,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
           ELSE
               KK = (N* (N+1))/2
               IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
                   DO 140 J = N,1,-1
                       TEMP = X(J)
                       K = KK
@@ -5392,7 +5392,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,KK) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AP,X) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=400)
                   DO 160 J = N,1,-1
                       TEMP = X(JX)
                       IX = KX
@@ -5531,11 +5531,11 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*     And when  alpha.eq.zero.
 !*
       IF (ALPHA.EQ.ZERO) THEN
-          DO 20 J = 1,N
-              DO 10 I = 1,M
-                  B(I,J) = ZERO
-   10         CONTINUE
-   20     CONTINUE
+      !    DO 20 J = 1,N
+       !       DO 10 I = 1,M
+       !           B(I,J) = ZERO
+  ! 10         CONTINUE
+  ! 20     CONTINUE
           RETURN
       END IF
 !*
@@ -5547,7 +5547,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*A*B.
 !*
              IF (UPPER) THEN
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,K,TEMP) COLLAPSE(2) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,K,TEMP,I) COLLAPSE(2) IF(N>=100)
                   DO 50 J = 1,N
                       DO 40 K = 1,M
                           IF (B(K,J).NE.ZERO) THEN
@@ -5563,7 +5563,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 50                 CONTINUE
                     !$OMP END PARALLEL DO      
                ELSE
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,TEMP)  IF(N>=400)       
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,K,TEMP,I)  IF(N>=100)       
                   DO 80 J = 1,N
                       DO 70 K = M,1,-1
                           IF (B(K,J).NE.ZERO) THEN
@@ -5584,7 +5584,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !!*           Form  B := alpha*A**T*B.
 !*
              IF (UPPER) THEN
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,TEMP)  IF(N>=400)     
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,I,K,TEMP)  IF(N>=100)     
                   DO 110 J = 1,N
                       DO 100 I = M,1,-1
                           TEMP = B(I,J)
@@ -5598,7 +5598,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 110               CONTINUE
                    !$OMP END PARALLEL DO       
               ELSE
-                     !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,K,TEMP) COLLAPSE(2) IF(N>=400)      
+                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,I,K,TEMP) COLLAPSE(2) IF(N>=100)      
                   DO 140 J = 1,N
                       DO 130 I = 1,M
                           TEMP = B(I,J)
@@ -5968,6 +5968,551 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
 
 END SUBROUTINE
 
+!*  Authors:
+!*  ========
+!*
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup double_blas_level3
+!*
+!*> \par Further Details:
+!*  =====================
+!*>
+!*> \verbatim
+!*>
+!*>  Level 3 Blas routine.
+!*>
+!*>
+!*>  -- Written on 8-February-1989.
+!*>     Jack Dongarra, Argonne National Laboratory.
+!*>     Iain Duff, AERE Harwell.
+!*>     Jeremy Du Croz, Numerical Algorithms Group Ltd.
+!*>     Sven Hammarling, Numerical Algorithms Group Ltd.
+!*> \endverbatim
+!*>
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES hot :: DTRSM !GCC$ ATTRIBUTES aligned(32) :: DTRSM !GCC$ ATTRIBUTES no_stack_protector :: DTRSM
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
+         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DTRSM
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DTRSM
+#endif
+      use omp_lib
+      implicit none 
+
+
+!*
+!*  -- Reference BLAS level3 routine (version 3.7.0) --
+!*  -- Reference BLAS is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      DOUBLE PRECISION ALPHA
+      INTEGER LDA,LDB,M,N
+      CHARACTER DIAG,SIDE,TRANSA,UPLO
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION A(LDA,*),B(LDB,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. External Functions ..
+      LOGICAL LSAME
+      EXTERNAL LSAME
+!*     ..
+!*     .. External Subroutines ..
+!      EXTERNAL XERBLA
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC MAX
+!*     ..
+!*     .. Local Scalars ..
+      DOUBLE PRECISION TEMP
+      INTEGER I,INFO,J,K,NROWA
+      LOGICAL LSIDE,NOUNIT,UPPER
+!*     ..
+!*     .. Parameters ..
+      DOUBLE PRECISION ONE,ZERO
+      PARAMETER (ONE=1.0D+0,ZERO=0.0D+0)
+!*     ..
+!*
+!*     Test the input parameters.
+!!*
+      LSIDE = LSAME(SIDE,'L')
+      IF (LSIDE) THEN
+          NROWA = M
+      ELSE
+          NROWA = N
+      END IF
+      NOUNIT = LSAME(DIAG,'N')
+      UPPER = LSAME(UPLO,'U')
+!*
+    !  INFO = 0
+    !  IF ((.NOT.LSIDE) .AND. (.NOT.LSAME(SIDE,'R'))) THEN
+    !      INFO = 1
+     ! ELSE IF ((.NOT.UPPER) .AND. (.NOT.LSAME(UPLO,'L'))) THEN
+    !      INFO = 2
+    !  ELSE IF ((.NOT.LSAME(TRANSA,'N')) .AND.
+    ! +         (.NOT.LSAME(TRANSA,'T')) .AND.
+    ! +         (.NOT.LSAME(TRANSA,'C'))) THEN
+     !     INFO = 3
+     ! ELSE IF ((.NOT.LSAME(DIAG,'U')) .AND. (.NOT.LSAME(DIAG,'N'))) THEN
+    !      INFO = 4
+    !  ELSE IF (M.LT.0) THEN
+     !     INFO = 5
+    !!  ELSE IF (N.LT.0) THEN
+     !     INFO = 6
+    !  ELSE IF (LDA.LT.MAX(1,NROWA)) THEN
+     !     INFO = 9
+     ! ELSE IF (LDB.LT.MAX(1,M)) THEN
+     !     INFO = 11
+    !  END IF
+     ! IF (INFO.NE.0) THEN
+     !     CALL XERBLA('DTRSM ',INFO)
+     !     RETURN
+    !  END IF
+!*
+!*     Quick return if possible.
+!*
+ !     IF (M.EQ.0 .OR. N.EQ.0) RETURN
+!*
+!*     And when  alpha.eq.zero.
+!*
+      IF (ALPHA.EQ.ZERO) THEN
+      !    DO 20 J = 1,N
+     !         DO 10 I = 1,M
+                  B(I,J) = ZERO
+  ! 10!         CONTINUE
+  ! 20     CONTINUE
+          RETURN
+      END IF
+!*
+!*     Start the operations.
+!*
+      IF (LSIDE) THEN
+          IF (LSAME(TRANSA,'N')) THEN
+!*
+!*           Form  B := alpha*inv( A )*B.
+!*
+             IF (UPPER) THEN
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J) IF(N>=400)
+                  DO 60 J = 1,N
+                     IF (ALPHA.NE.ONE) THEN
+                        !$OMP SIMD ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
+                          DO 30 I = 1,M
+                              B(I,J) = ALPHA*B(I,J)
+   30                     CONTINUE
+                      END IF
+                      DO 50 K = M,1,-1
+                          IF (B(K,J).NE.ZERO) THEN
+                             IF (NOUNIT) B(K,J) = B(K,J)/A(K,K)
+                              !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(6)
+                              DO 40 I = 1,K - 1
+                                  B(I,J) = B(I,J) - B(K,J)*A(I,K)
+   40                         CONTINUE
+                          END IF
+   50                 CONTINUE
+60                 CONTINUE
+                    !$OMP END PARALLEL DO      
+              ELSE
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J) IF(N>=400)       
+                  DO 100 J = 1,N
+                     IF (ALPHA.NE.ONE) THEN
+                              !$OMP SIMD ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
+                          DO 70 I = 1,M
+                              B(I,J) = ALPHA*B(I,J)
+   70                     CONTINUE
+                      END IF
+                      DO 90 K = 1,M
+                          IF (B(K,J).NE.ZERO) THEN
+                             IF (NOUNIT) B(K,J) = B(K,J)/A(K,K)
+                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(6)
+                              DO 80 I = K + 1,M
+                                  B(I,J) = B(I,J) - B(K,J)*A(I,K)
+   80                         CONTINUE
+                          END IF
+   90                 CONTINUE
+100                CONTINUE
+                   !$OMP END PARALLEL DO       
+              END IF
+          ELSE
+!*
+!*           Form  B := alpha*inv( A**T )*B.
+!*
+             IF (UPPER) THEN
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) COLLAPSE(2) PRIVATE(J,I) IF(N>=400)       
+                  DO 130 J = 1,N
+                      DO 120 I = 1,M
+                         TEMP = ALPHA*B(I,J)
+                           !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) REDUCTION(-:TEMP) UNROLL PARTIAL(10)
+                          DO 110 K = 1,I - 1
+                              TEMP = TEMP - A(K,I)*B(K,J)
+  110                     CONTINUE
+                          IF (NOUNIT) TEMP = TEMP/A(I,I)
+                          B(I,J) = TEMP
+  120                 CONTINUE
+130               CONTINUE
+                   !$OMP END PARALLEL DO       
+               ELSE
+                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J) IF(N>=400)          
+                  DO 160 J = 1,N
+                      DO 150 I = M,1,-1
+                         TEMP = ALPHA*B(I,J)
+                           !$OMP SIMD ALIGNED(B:64,A) LINEAR(K:1) REDUCTION(-:TEMP) UNROLL PARTIAL(10)
+                          DO 140 K = I + 1,M
+                              TEMP = TEMP - A(K,I)*B(K,J)
+  140                     CONTINUE
+                          IF (NOUNIT) TEMP = TEMP/A(I,I)
+                          B(I,J) = TEMP
+  150                 CONTINUE
+160               CONTINUE
+                   !$OMP END PARALLEL DO       
+              END IF
+          END IF
+      ELSE
+          IF (LSAME(TRANSA,'N')) THEN
+!*
+!*           Form  B := alpha*B*inv( A ).
+!*
+             IF (UPPER) THEN
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,TEMP) IF(N>=400)     
+                  DO 210 J = 1,N
+                     IF (ALPHA.NE.ONE) THEN
+                          !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 170 I = 1,M
+                              B(I,J) = ALPHA*B(I,J)
+  170                     CONTINUE
+                      END IF
+                      DO 190 K = 1,J - 1
+                         IF (A(K,J).NE.ZERO) THEN
+                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                              DO 180 I = 1,M
+                                  B(I,J) = B(I,J) - A(K,J)*B(I,K)
+  180                         CONTINUE
+                          END IF
+  190                 CONTINUE
+                      IF (NOUNIT) THEN
+                         TEMP = ONE/A(J,J)
+                            !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 200 I = 1,M
+                              B(I,J) = TEMP*B(I,J)
+  200                     CONTINUE
+                      END IF
+210             CONTINUE
+                 !$OMP END PARALLEL DO     
+              ELSE
+                      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,TEMP) IF(N>=400)      
+                  DO 260 J = N,1,-1
+                     IF (ALPHA.NE.ONE) THEN
+                            !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 220 I = 1,M
+                              B(I,J) = ALPHA*B(I,J)
+  220                     CONTINUE
+                      END IF
+                      DO 240 K = J + 1,N
+                         IF (A(K,J).NE.ZERO) THEN
+                                !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                              DO 230 I = 1,M
+                                  B(I,J) = B(I,J) - A(K,J)*B(I,K)
+  230                         CONTINUE
+                          END IF
+  240                 CONTINUE
+                      IF (NOUNIT) THEN
+                         TEMP = ONE/A(J,J)
+                            !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 250 I = 1,M
+                              B(I,J) = TEMP*B(I,J)
+  250                     CONTINUE
+                      END IF
+260              CONTINUE
+                !$OMP END PARALLEL DO      
+              END IF
+          ELSE
+!*
+!*           Form  B := alpha*B*inv( A**T ).
+!*
+             IF (UPPER) THEN
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(K,TEMP) IF(N>=400)     
+                  DO 310 K = N,1,-1
+                      IF (NOUNIT) THEN
+                         TEMP = ONE/A(K,K)
+                           !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 270 I = 1,M
+                              B(I,K) = TEMP*B(I,K)
+  270                     CONTINUE
+                      END IF
+                      DO 290 J = 1,K - 1
+                          IF (A(J,K).NE.ZERO) THEN
+                             TEMP = A(J,K)
+                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                              DO 280 I = 1,M
+                                  B(I,J) = B(I,J) - TEMP*B(I,K)
+  280                         CONTINUE
+                          END IF
+  290                 CONTINUE
+                       IF (ALPHA.NE.ONE) THEN
+                            !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 300 I = 1,M
+                              B(I,K) = ALPHA*B(I,K)
+  300                     CONTINUE
+                      END IF
+310              CONTINUE
+                  !$OMP END PARALLEL DO    
+              ELSE
+                      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(K,TEMP) IF(N>=400)    
+                  DO 360 K = 1,N
+                      IF (NOUNIT) THEN
+                         TEMP = ONE/A(K,K)
+                             !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
+                          DO 320 I = 1,M
+                              B(I,K) = TEMP*B(I,K)
+  320                     CONTINUE
+                      END IF
+                      DO 340 J = K + 1,N
+                          IF (A(J,K).NE.ZERO) THEN
+                             TEMP = A(J,K)
+                                 !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                              DO 330 I = 1,M
+                                  B(I,J) = B(I,J) - TEMP*B(I,K)
+  330                         CONTINUE
+                          END IF
+  340                 CONTINUE
+                      IF (ALPHA.NE.ONE) THEN
+                             !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)   
+                          DO 350 I = 1,M
+                              B(I,K) = ALPHA*B(I,K)
+  350                     CONTINUE
+                      END IF
+360              CONTINUE
+                  !$OMP END PARALLEL DO    
+              END IF
+          END IF
+      END IF
+
+END SUBROUTINE
+
+    
+*  Authors:
+*  ========
+*
+*> \author Univ. of Tennessee
+*> \author Univ. of California Berkeley
+*> \author Univ. of Colorado Denver
+*> \author NAG Ltd.
+*
+*> \date December 2016
+*
+*> \ingroup double_blas_level1
+*
+*  =====================================================================
+      SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX)
+*
+*  -- Reference BLAS level1 routine (version 3.7.0) --
+*  -- Reference BLAS is a software package provided by Univ. of Tennessee,    --
+*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+*     December 2016
+*
+*     .. Scalar Arguments ..
+      INTEGER INCX,LDA,N
+      CHARACTER DIAG,TRANS,UPLO
+*     ..
+*     .. Array Arguments ..
+      DOUBLE PRECISION A(LDA,*),X(*)
+*     ..
+*
+*  =====================================================================
+*
+*     .. Parameters ..
+      DOUBLE PRECISION ZERO
+      PARAMETER (ZERO=0.0D+0)
+*     ..
+*     .. Local Scalars ..
+      DOUBLE PRECISION TEMP
+      INTEGER I,INFO,IX,J,JX,KX
+      LOGICAL NOUNIT
+*     ..
+*     .. External Functions ..
+      LOGICAL LSAME
+      EXTERNAL LSAME
+*     ..
+*     .. External Subroutines ..
+      EXTERNAL XERBLA
+*     ..
+*     .. Intrinsic Functions ..
+      INTRINSIC MAX
+*     ..
+*
+*     Test the input parameters.
+*
+      INFO = 0
+      IF (.NOT.LSAME(UPLO,'U') .AND. .NOT.LSAME(UPLO,'L')) THEN
+          INFO = 1
+      ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
+     +         .NOT.LSAME(TRANS,'C')) THEN
+          INFO = 2
+      ELSE IF (.NOT.LSAME(DIAG,'U') .AND. .NOT.LSAME(DIAG,'N')) THEN
+          INFO = 3
+      ELSE IF (N.LT.0) THEN
+          INFO = 4
+      ELSE IF (LDA.LT.MAX(1,N)) THEN
+          INFO = 6
+      ELSE IF (INCX.EQ.0) THEN
+          INFO = 8
+      END IF
+      IF (INFO.NE.0) THEN
+          CALL XERBLA('DTRSV ',INFO)
+          RETURN
+      END IF
+*
+*     Quick return if possible.
+*
+      IF (N.EQ.0) RETURN
+*
+      NOUNIT = LSAME(DIAG,'N')
+*
+*     Set up the start point in X if the increment is not unity. This
+*     will be  ( N - 1 )*INCX  too small for descending loops.
+*
+      IF (INCX.LE.0) THEN
+          KX = 1 - (N-1)*INCX
+      ELSE IF (INCX.NE.1) THEN
+          KX = 1
+      END IF
+*
+*     Start the operations. In this version the elements of A are
+*     accessed sequentially with one pass through A.
+*
+      IF (LSAME(TRANS,'N')) THEN
+*
+*        Form  x := inv( A )*x.
+*
+          IF (LSAME(UPLO,'U')) THEN
+              IF (INCX.EQ.1) THEN
+                  DO 20 J = N,1,-1
+                      IF (X(J).NE.ZERO) THEN
+                          IF (NOUNIT) X(J) = X(J)/A(J,J)
+                          TEMP = X(J)
+                          DO 10 I = J - 1,1,-1
+                              X(I) = X(I) - TEMP*A(I,J)
+   10                     CONTINUE
+                      END IF
+   20             CONTINUE
+              ELSE
+                  JX = KX + (N-1)*INCX
+                  DO 40 J = N,1,-1
+                      IF (X(JX).NE.ZERO) THEN
+                          IF (NOUNIT) X(JX) = X(JX)/A(J,J)
+                          TEMP = X(JX)
+                          IX = JX
+                          DO 30 I = J - 1,1,-1
+                              IX = IX - INCX
+                              X(IX) = X(IX) - TEMP*A(I,J)
+   30                     CONTINUE
+                      END IF
+                      JX = JX - INCX
+   40             CONTINUE
+              END IF
+          ELSE
+              IF (INCX.EQ.1) THEN
+                  DO 60 J = 1,N
+                      IF (X(J).NE.ZERO) THEN
+                          IF (NOUNIT) X(J) = X(J)/A(J,J)
+                          TEMP = X(J)
+                          DO 50 I = J + 1,N
+                              X(I) = X(I) - TEMP*A(I,J)
+   50                     CONTINUE
+                      END IF
+   60             CONTINUE
+              ELSE
+                  JX = KX
+                  DO 80 J = 1,N
+                      IF (X(JX).NE.ZERO) THEN
+                          IF (NOUNIT) X(JX) = X(JX)/A(J,J)
+                          TEMP = X(JX)
+                          IX = JX
+                          DO 70 I = J + 1,N
+                              IX = IX + INCX
+                              X(IX) = X(IX) - TEMP*A(I,J)
+   70                     CONTINUE
+                      END IF
+                      JX = JX + INCX
+   80             CONTINUE
+              END IF
+          END IF
+      ELSE
+*
+*        Form  x := inv( A**T )*x.
+*
+          IF (LSAME(UPLO,'U')) THEN
+              IF (INCX.EQ.1) THEN
+                  DO 100 J = 1,N
+                      TEMP = X(J)
+                      DO 90 I = 1,J - 1
+                          TEMP = TEMP - A(I,J)*X(I)
+   90                 CONTINUE
+                      IF (NOUNIT) TEMP = TEMP/A(J,J)
+                      X(J) = TEMP
+  100             CONTINUE
+              ELSE
+                  JX = KX
+                  DO 120 J = 1,N
+                      TEMP = X(JX)
+                      IX = KX
+                      DO 110 I = 1,J - 1
+                          TEMP = TEMP - A(I,J)*X(IX)
+                          IX = IX + INCX
+  110                 CONTINUE
+                      IF (NOUNIT) TEMP = TEMP/A(J,J)
+                      X(JX) = TEMP
+                      JX = JX + INCX
+  120             CONTINUE
+              END IF
+          ELSE
+              IF (INCX.EQ.1) THEN
+                  DO 140 J = N,1,-1
+                      TEMP = X(J)
+                      DO 130 I = N,J + 1,-1
+                          TEMP = TEMP - A(I,J)*X(I)
+  130                 CONTINUE
+                      IF (NOUNIT) TEMP = TEMP/A(J,J)
+                      X(J) = TEMP
+  140             CONTINUE
+              ELSE
+                  KX = KX + (N-1)*INCX
+                  JX = KX
+                  DO 160 J = N,1,-1
+                      TEMP = X(JX)
+                      IX = KX
+                      DO 150 I = N,J + 1,-1
+                          TEMP = TEMP - A(I,J)*X(IX)
+                          IX = IX - INCX
+  150                 CONTINUE
+                      IF (NOUNIT) TEMP = TEMP/A(J,J)
+                      X(JX) = TEMP
+                      JX = JX - INCX
+  160             CONTINUE
+              END IF
+          END IF
+      END IF
+*
+      RETURN
+*
+*     End of DTRSV .
+*
+      END
+    
+
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
 SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
   BETA, C, LDC, RCB, CB ) !GCC$ ATTRIBUTES hot :: DSYMM !GCC$ ATTRIBUTES aligned(32) :: DSYMM !GCC$ ATTRIBUTES no_stack_protector :: DSYMM
@@ -5978,6 +6523,8 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
     !DIR$ OPTIMIZE : 3
     !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DSYMM_Blocked
 #endif
+        use omp_lib
+      implicit none
 !*     .. Scalar Arguments ..
       CHARACTER*1        SIDE, UPLO
       INTEGER            M, N, LDA, LDB, LDC, RCB, CB ! RCB, CB Blocking arguments
@@ -6121,8 +6668,7 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
 *
 *     .. Local Scalars ..
 #endif
-      use omp_lib
-      implicit none
+    
       INTEGER            INFO, NROWA
       LOGICAL            LSIDE, UPPER
       INTEGER            I, II, IX, ISEC, J, JJ, JX, JSEC
@@ -6201,7 +6747,7 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
 !*
             !*           Form  C := alpha*A*B + beta*C. Left, Upper.
             
-           !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(II,ISEC) IF(M>=100)
+           !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(II,ISEC,I,JJ,JSEC,J) IF(M>=100)
             DO 40, II = 1, M, RCB
                ISEC = MIN( RCB, M-II+1 )
 !*
@@ -6261,7 +6807,7 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
 !*
 !*           Form  C := alpha*A*B + beta*C. Left, Lower.
             !*
-            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(IX,II,ISEC) IF(M>=100)
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(IX,II,ISEC,I,JX,JJ,JSEC,J) IF(M>=100)
             DO 80, IX = M, 1, -RCB
                II = MAX( 1, IX-RCB+1 )
                ISEC = IX-II+1
@@ -6325,7 +6871,7 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
 !*
 !*           Form  C := alpha*B*A + beta*C. Right, Upper.
             !*
-            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(JJ,JSEC) IF(N>=100)
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(JJ,JSEC,J,II,ISEC) IF(N>=100)
             DO 120, JJ = 1, N, RCB
                JSEC = MIN( RCB, N-JJ+1 )
 !*
@@ -6384,7 +6930,7 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
 !*
 !*           Form  C := alpha*B*A + beta*C. Right, Lower.
             !*
-            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(JX,JJ,JSEC) IF(N>=100)
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(JX,JJ,JSEC,J,IX,II,ISEC) IF(N>=100)
             DO 160, JX = N, 1, -RCB
                JJ = MAX( 1, JX-RCB+1 )
                JSEC = JX-JJ+1
@@ -6448,3 +6994,1078 @@ SUBROUTINE DSYMM_Blocked( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
 
 END SUBROUTINE
     
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DSYR2K_Blocked( UPLO, TRANS, N, K, ALPHA, A, LDA, B, LDB, &
+     BETA, C, LDC, RCB, CB ) !GCC$ ATTRIBUTES hot :: DSYR2K_Blocked !GCC$ ATTRIBUTES aligned(32) :: DSYR2K_Blocked !GCC$ ATTRIBUTES no_stack_protector :: DSYR2K_Blocked
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DSYR2K_Blocked( UPLO, TRANS, N, K, ALPHA, A, LDA, B, LDB, &
+     BETA, C, LDC, RCB, CB )
+          !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DSYR2K_Blocked
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DSYR2K_Blocked
+#endif
+        use omp_lib
+      implicit none
+
+!*     .. Scalar Arguments ..
+      CHARACTER*1        UPLO, TRANS
+      INTEGER            N, K, LDA, LDB, LDC, RCB, CB
+      DOUBLE PRECISION   ALPHA, BETA
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+#if 0
+*     ..
+*
+*  Purpose
+*  =======
+*
+*  DSYR2K  performs one of the symmetric rank 2k operations
+*
+*     C := alpha*A*B' + alpha*B*A' + beta*C,
+*
+*  or
+*
+*     C := alpha*A'*B + alpha*B'*A + beta*C,
+*
+*  where  alpha and beta  are scalars, C is an  n by n  symmetric matrix
+*  and  A and B  are  n by k  matrices  in the  first  case  and  k by n
+*  matrices in the second case.
+*
+*  Parameters
+*  ==========
+*
+*  UPLO   - CHARACTER*1.
+*           On  entry,   UPLO  specifies  whether  the  upper  or  lower
+*           triangular  part  of the  array  C  is to be  referenced  as
+*           follows:
+*
+*              UPLO = 'U' or 'u'   Only the  upper triangular part of  C
+*                                  is to be referenced.
+*
+*              UPLO = 'L' or 'l'   Only the  lower triangular part of  C
+*                                  is to be referenced.
+*
+*           Unchanged on exit.
+*
+*  TRANS  - CHARACTER*1.
+*           On entry,  TRANS  specifies the operation to be performed as
+*           follows:
+*
+*              TRANS = 'N' or 'n'   C := alpha*A*B' + alpha*B*A' +
+*                                        beta*C.
+*
+*              TRANS = 'T' or 't'   C := alpha*A'*B + alpha*B'*A +
+*                                        beta*C.
+*
+*              TRANS = 'C' or 'c'   C := alpha*A'*B + alpha*B'*A +
+*                                        beta*C.
+*
+*           Unchanged on exit.
+*
+*  N      - INTEGER.
+*           On entry,  N specifies the order of the matrix C.  N must be
+*           at least zero.
+*           Unchanged on exit.
+*
+*  K      - INTEGER.
+*           On entry with  TRANS = 'N' or 'n',  K  specifies  the number
+*           of  columns  of the  matrices  A and B,  and on  entry  with
+*           TRANS = 'T' or 't' or 'C' or 'c',  K  specifies  the  number
+*           of rows of the matrices  A and B.  K must be at least  zero.
+*           Unchanged on exit.
+*
+*  ALPHA  - DOUBLE PRECISION.
+*           On entry, ALPHA specifies the scalar alpha.
+*           Unchanged on exit.
+*
+*  A      - DOUBLE PRECISION array of DIMENSION ( LDA, ka ), where ka is
+*           k  when  TRANS = 'N' or 'n',  and is  n  otherwise.
+*           Before entry with  TRANS = 'N' or 'n',  the  leading  n by k
+*           part of the array  A  must contain the matrix  A,  otherwise
+*           the leading  k by n  part of the array  A  must contain  the
+*           matrix A.
+*           Unchanged on exit.
+*
+*  LDA    - INTEGER.
+*           On entry, LDA specifies the first dimension of A as declared
+*           in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'
+*           then  LDA must be at least  max( 1, n ), otherwise  LDA must
+*           be at least  max( 1, k ).
+*           Unchanged on exit.
+*
+*  B      - DOUBLE PRECISION array of DIMENSION ( LDB, kb ), where kb is
+*           k  when  TRANS = 'N' or 'n',  and is  n  otherwise.
+*           Before entry with  TRANS = 'N' or 'n',  the  leading  n by k
+*           part of the array  B  must contain the matrix  B,  otherwise
+*           the leading  k by n  part of the array  B  must contain  the
+*           matrix B.
+*           Unchanged on exit.
+*
+*  LDB    - INTEGER.
+*           On entry, LDB specifies the first dimension of B as declared
+*           in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'
+*           then  LDB must be at least  max( 1, n ), otherwise  LDB must
+*           be at least  max( 1, k ).
+*           Unchanged on exit.
+*
+*  BETA   - DOUBLE PRECISION.
+*           On entry, BETA specifies the scalar beta.
+*           Unchanged on exit.
+*
+*  C      - DOUBLE PRECISION array of DIMENSION ( LDC, n ).
+*           Before entry  with  UPLO = 'U' or 'u',  the leading  n by n
+*           upper triangular part of the array C must contain the upper
+*           triangular part  of the  symmetric matrix  and the strictly
+*           lower triangular part of C is not referenced.  On exit, the
+*           upper triangular part of the array  C is overwritten by the
+*           upper triangular part of the updated matrix.
+*           Before entry  with  UPLO = 'L' or 'l',  the leading  n by n
+*           lower triangular part of the array C must contain the lower
+*           triangular part  of the  symmetric matrix  and the strictly
+*           upper triangular part of C is not referenced.  On exit, the
+*           lower triangular part of the array  C is overwritten by the
+*           lower triangular part of the updated matrix.
+*
+*  LDC    - INTEGER.
+*           On entry, LDC specifies the first dimension of C as declared
+*           in  the  calling  (sub)  program.   LDC  must  be  at  least
+*           max( 1, n ).
+*           Unchanged on exit.
+*
+*
+*  Level 3 Blas routine.
+*
+*  -- Written on 8-February-1989.
+*     Jack Dongarra, Argonne National Laboratory.
+*     Iain Duff, AERE Harwell.
+*     Jeremy Du Croz, Numerical Algorithms Group Ltd.
+*     Sven Hammarling, Numerical Algorithms Group Ltd.
+*
+*  -- Rewritten in December-1993
+*     GEMM-Based Level 3 BLAS.
+*     Per Ling, Institute of Information Processing,
+*     University of Umea, Sweden.
+*
+*
+*     .. Local Scalars ..
+#endif
+      INTEGER            INFO, NROWA
+      INTEGER            I, II, IX, ISEC, JJ, JX, JSEC
+      LOGICAL            UPPER, NOTR
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MIN, MAX
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+!*     .. External Subroutines ..
+   !   EXTERNAL           XERBLA
+   !   EXTERNAL           DGEMM, DAXPY, DSCAL
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER        ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!*     .. User specified parameters for DSYR2K ..
+ !     INTEGER            RCB, CB
+ !     PARAMETER        ( RCB = 128, CB = 64 )
+!*     .. Local Arrays ..
+      DOUBLE PRECISION   T1( RCB, RCB )
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+      !DIR$ ATTRIBUTES ALIGN : 64 :: T1
+#endif
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      UPPER = LSAME( UPLO, 'U' )
+      NOTR = LSAME( TRANS, 'N' )
+      IF( NOTR )THEN
+         NROWA = N
+      ELSE
+         NROWA = K
+      END IF
+     ! INFO = 0
+     ! IF( ( .NOT.UPPER ).AND.( .NOT.LSAME( UPLO, 'L' ) ) )THEN
+     !    INFO = 1
+    !  ELSE IF( ( .NOT.NOTR ).AND.( .NOT.LSAME( TRANS, 'T' ) ).AND.
+    ! $                                ( .NOT.LSAME( TRANS, 'C' ) ) )THEN
+    !     INFO = 2
+    !  ELSE IF( N.LT.0 )THEN
+    !     INFO = 3
+    !  ELSE IF( K.LT.0 )THEN
+    !     INFO = 4
+    !  ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+    !     INFO = 7
+    !  ELSE IF( LDB.LT.MAX( 1, NROWA ) )THEN
+    !     INFO = 9
+     ! ELSE IF( LDC.LT.MAX( 1, N ) )THEN
+     !    INFO = 12
+     ! END IF
+     ! IF( INFO.NE.0 )THEN
+     !    CALL XERBLA( 'DSYR2K', INFO )
+     !    RETURN
+     ! END IF
+!*
+!*     Quick return if possible.
+!*
+     ! IF( ( N.EQ.0 ).OR.
+    ! $    ( ( ( ALPHA.EQ.ZERO ).OR.( K.EQ.0 ) ).AND.( BETA.EQ.ONE ) ) )
+    ! $   RETURN
+!*
+!*     And when alpha.eq.zero or k.eq.0.
+!*
+    !  IF( ( ALPHA.EQ.ZERO ).OR.( K.EQ.0 ) )THEN
+     !    IF( UPPER )THEN
+     !       DO 10, I = 1, N
+      !         CALL DSCAL ( I, BETA, C( 1, I ), 1 )
+ !  10       CONTINUE
+  !       ELSE
+   !         DO 20, I = 1, N
+  !             CALL DSCAL ( N-I+1, BETA, C( I, I ), 1 )
+  ! 20       CONTINUE
+  !       END IF
+  !       RETURN
+  !    END IF
+!*
+!*     Start the operations.
+!*
+      IF( UPPER )THEN
+         IF( NOTR )THEN
+!*
+!*           Form  C := alpha*A*B' + alpha*B*A' + beta*C. Upper, Notr.
+            !*
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(II,ISEC,I,JJ,JSEC) IF(N>=100)
+            DO 70, II = 1, N, RCB
+               ISEC = MIN( RCB, N-II+1 )
+!*
+!*              T1 := alpha*A*B', general matrix multiply on rectangular
+!*              blocks of A and B. T1 is square.
+               !*
+               !$OMP SINGLE
+               CALL DGEMM ( 'N', 'T', ISEC, ISEC, K, ALPHA, A( II, 1 ),  &
+                    LDA, B( II, 1 ), LDB, ZERO, T1( 1, 1 ), RCB )
+               !$OMP END SINGLE NOWAIT
+!*
+!*              C :=  beta*C, a upper triangular diagonal block of C is
+!*              updated with beta.
+!*
+               IF( BETA.NE.ONE )THEN
+                  DO 30, I = II, II+ISEC-1
+                     CALL DSCAL ( I-II+1, BETA, C( II, I ), 1 )
+   30             CONTINUE
+               END IF
+!*
+!*              C := T1 + C, the upper triangular part of T1 is added to
+!*              the upper triangular diagonal block of C.
+!*
+               DO 40, I = II, II+ISEC-1
+                  CALL DAXPY ( I-II+1, ONE, T1( 1, I-II+1 ), 1,   &
+                                                         C( II, I ), 1 )
+   40          CONTINUE
+!*
+!*              C := T1' + C, the transpose of the lower triangular part
+!*              of T1 is added to the upper triangular diagonal block
+!*              of C. Notice that T1 is referenced by row and that the
+!*              maximum length of a vector referenced by DAXPY is CB.
+!*
+               DO 60, JJ = II, II+ISEC-1, CB
+                  JSEC = MIN( CB, II+ISEC-JJ )
+                  DO 50, I = JJ, II+ISEC-1
+                     CALL DAXPY ( MIN( JSEC, I-JJ+1 ), ONE,   &
+                             T1( I-II+1, JJ-II+1 ), RCB, C( JJ, I ), 1 )
+   50             CONTINUE
+   60          CONTINUE
+!*
+!*              C := alpha*A*B' + beta*C  and  C := alpha*B*A' + C,
+!*              general matrix multiply on upper vertical blocks of C.
+                     !*
+               !$OMP SINGLE
+               IF( II.GT.1 )THEN
+                  CALL DGEMM ( 'N', 'T', II-1, ISEC, K, ALPHA,  &
+                                 A( 1, 1 ), LDA, B( II, 1 ), LDB, BETA, &
+                                                      C( 1, II ), LDC )
+                  CALL DGEMM ( 'N', 'T', II-1, ISEC, K, ALPHA,  &
+                                  B( 1, 1 ), LDB, A( II, 1 ), LDA, ONE,  &
+                                                      C( 1, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+70         CONTINUE
+           !$OMP END PARALLEL DO    
+         ELSE
+!*
+!*           Form  C := alpha*A'*B + alpha*B'*A + beta*C. Upper, Trans.
+            !*
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(II,ISEC,I,JSEC) IF(N>=100)
+            DO 120, II = 1, N, RCB
+               ISEC = MIN( RCB, N-II+1 )
+!*
+!*              T1 := alpha*A'*B, general matrix multiply on rectangular
+!*              blocks of A and B. T1 is square.
+               !*
+               !$OMP SINGLE
+               CALL DGEMM ( 'T', 'N', ISEC, ISEC, K, ALPHA, A( 1, II ),   &
+                    LDA, B( 1, II ), LDB, ZERO, T1( 1, 1 ), RCB )
+               !$OMP END SINGLE NOWAIT
+!*
+!*              C :=  beta*C, a upper triangular diagonal block of C is
+!*              updated with beta.
+!*
+               IF( BETA.NE.ONE )THEN
+                  DO 80, I = II, II+ISEC-1
+                     CALL DSCAL ( I-II+1, BETA, C( II, I ), 1 )
+   80             CONTINUE
+               END IF
+!*
+!*              C := T1 + C, the upper triangular part of T1 is added to
+!*              the upper triangular diagonal block of C.
+!*
+               DO 90, I = II, II+ISEC-1
+                  CALL DAXPY ( I-II+1, ONE, T1( 1, I-II+1 ), 1,  &
+                                                         C( II, I ), 1 )
+   90          CONTINUE
+!*
+!*              C := T1' + C, the transpose of the lower triangular part
+!*              of T1 is added to the upper triangular diagonal block
+!*              of C. Notice that T1 is referenced by row and that the
+!*              maximum length of a vector referenced by DAXPY is CB.
+!*
+               DO 110, JJ = II, II+ISEC-1, CB
+                  JSEC = MIN( CB, II+ISEC-JJ )
+                  DO 100, I = JJ, II+ISEC-1
+                     CALL DAXPY ( MIN( JSEC, I-JJ+1 ), ONE, &
+                             T1( I-II+1, JJ-II+1 ), RCB, C( JJ, I ), 1 )
+  100             CONTINUE
+  110          CONTINUE
+!*
+!*              C := alpha*A'*B + beta*C  and  C := alpha*B'*A + C,
+!*              general matrix multiply on upper vertical blocks of C.
+                     !*
+                !$OMP SINGLE
+               IF( II.GT.1 )THEN
+                  CALL DGEMM ( 'T', 'N', II-1, ISEC, K, ALPHA,  &
+                                 A( 1, 1 ), LDA, B( 1, II ), LDB, BETA, &
+                                                      C( 1, II ), LDC )
+                  CALL DGEMM ( 'T', 'N', II-1, ISEC, K, ALPHA, &
+                                  B( 1, 1 ), LDB, A( 1, II ), LDA, ONE, &
+                                                      C( 1, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT                                    
+120         CONTINUE
+              !$OMP END PARALLEL DO 
+         END IF
+      ELSE
+         IF( NOTR )THEN
+!*
+!*           Form  C := alpha*A*B' + alpha*B*A' + beta*C. Lower, Notr.
+            !*
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(IX,II,ISEC,I,JJ,JSEC) IF(N>=100)
+            DO 170, IX = N, 1, -RCB
+               II = MAX( 1, IX-RCB+1 )
+               ISEC = IX-II+1
+!*
+!*              T1 := alpha*A*B', general matrix multiply on rectangular
+!*              blocks of A and B. T1 is square.
+               !*
+               !$OMP SINGLE
+               CALL DGEMM ( 'N', 'T', ISEC, ISEC, K, ALPHA, A( II, 1 ), &
+                    LDA, B( II, 1 ), LDB, ZERO, T1( 1, 1 ), RCB )
+               !$OMP END SINGLE NOWAIT
+!*
+!*              C :=  beta*C, a lower triangular diagonal block of C is
+!*              updated with beta.
+!*
+               IF( BETA.NE.ONE )THEN
+                  DO 130, I = II, II+ISEC-1
+                     CALL DSCAL ( II+ISEC-I, BETA, C( I, I ), 1 )
+  130             CONTINUE
+               END IF
+!*
+!*              C := T1 + C, the lower triangular part of T1 is added to
+!*              the lower triangular diagonal block of C.
+!*
+               DO 140, I = II, II+ISEC-1
+                  CALL DAXPY ( II+ISEC-I, ONE, T1( I-II+1, I-II+1 ), 1,  &
+                                                          C( I, I ), 1 )
+  140          CONTINUE
+!*
+!*              C := T1' + C, the transpose of the upper triangular part
+!*              of T1 is added to the lower triangular diagonal block
+!*              of C. Notice that T1 is referenced by row and that the
+!*              maximum length of a vector referenced by DAXPY is CB.
+!*
+               DO 160, JX = II+ISEC-1, II, -CB
+                  JJ = MAX( II, JX-CB+1 )
+                  JSEC = JX-JJ+1
+                  DO 150, I = II, JJ+JSEC-1
+                     CALL DAXPY ( MIN( JSEC, JJ+JSEC-I ), ONE, &
+                            T1( I-II+1, MAX( JJ-II+1, I-II+1 ) ), RCB, &
+                                              C( MAX( JJ, I ), I ), 1 )
+  150             CONTINUE
+  160          CONTINUE
+!*
+!*              C := alpha*A*B' + beta*C  and  C := alpha*B*A' + C,
+!*              general matrix multiply on lower vertical blocks of C.
+                     !*
+                !$OMP SINGLE
+               IF( II+ISEC.LE.N )THEN
+                  CALL DGEMM ( 'N', 'T', N-II-ISEC+1, ISEC, K, ALPHA,   &
+                                 A( II+ISEC, 1 ), LDA, B( II, 1 ), LDB, &
+                                          BETA, C( II+ISEC, II ), LDC )
+                  CALL DGEMM ( 'N', 'T', N-II-ISEC+1, ISEC, K, ALPHA,  &
+                                 B( II+ISEC, 1 ), LDB, A( II, 1 ), LDA, &
+                                           ONE, C( II+ISEC, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+170         CONTINUE
+            !$OMP END PARALLEL DO   
+         ELSE
+!*
+!*           Form  C := alpha*A'*B + alpha*B'*A + beta*C. Lower, Trans.
+            !*
+            !$OMP PARALLEL DO SCHEDULE(DYNAMIC) PRIVATE(IX,II,ISEC,I,JX,JJ,JSEC) IF(N>=100)
+            DO 220, IX = N, 1, -RCB
+               II = MAX( 1, IX-RCB+1 )
+               ISEC = IX-II+1
+!*
+!*              T1 := alpha*A*B', general matrix multiply on rectangular
+!*              blocks of A and B. T1 is square.
+               !*
+               !$OMP SINGLE
+               CALL DGEMM ( 'T', 'N', ISEC, ISEC, K, ALPHA, A( 1, II ),  &
+                    LDA, B( 1, II ), LDB, ZERO, T1( 1, 1 ), RCB )
+               !$OMP END SINGLE NOWAIT
+!*
+!*              C :=  beta*C, a lower triangular diagonal block of C is
+!*              updated with beta.
+!*
+               IF( BETA.NE.ONE )THEN
+                  DO 180, I = II, II+ISEC-1
+                     CALL DSCAL ( II+ISEC-I, BETA, C( I, I ), 1 )
+  180             CONTINUE
+               END IF
+!*
+!*              C := T1 + C, the lower triangular part of T1 is added to
+!*              the lower triangular diagonal block of C.
+!*
+               DO 190, I = II, II+ISEC-1
+                  CALL DAXPY ( II+ISEC-I, ONE, T1( I-II+1, I-II+1 ), 1,  &
+                                                         C( I, I ), 1 )
+  190          CONTINUE
+!*
+!*              C := T1' + C, the transpose of the upper triangular part
+!*              of T1 is added to the lower triangular diagonal block
+!*              of C. Notice that T1 is referenced by row and that the
+!*              maximum length of a vector referenced by DAXPY is CB.
+!*
+               DO 210, JX = II+ISEC-1, II, -CB
+                  JJ = MAX( II, JX-CB+1 )
+                  JSEC = JX-JJ+1
+                  DO 200, I = II, JJ+JSEC-1
+                     CALL DAXPY ( MIN( JSEC, JJ+JSEC-I ), ONE,  &
+                             T1( I-II+1, MAX( JJ-II+1, I-II+1 ) ), RCB,  &
+                                              C( MAX( JJ, I ), I ), 1 )
+  200             CONTINUE
+  210          CONTINUE
+!*
+!*              C := alpha*A'*B + beta*C  and  C := alpha*B'*A + C,
+!*              general matrix multiply on lower vertical blocks of C.
+                     !*
+                !$OMP SINGLE
+               IF( II+ISEC.LE.N )THEN
+                  CALL DGEMM ( 'T', 'N', N-II-ISEC+1, ISEC, K, ALPHA, &
+                                 A( 1, II+ISEC ), LDA, B( 1, II ), LDB, &
+                                           BETA, C( II+ISEC, II ), LDC )
+                  CALL DGEMM ( 'T', 'N', N-II-ISEC+1, ISEC, K, ALPHA, & 
+                                 B( 1, II+ISEC ), LDB, A( 1, II ), LDA, &
+                                           ONE, C( II+ISEC, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+220        CONTINUE
+            !$OMP END PARALLEL DO   
+         END IF
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DSYMM_Blocked_Unrolled( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
+     BETA, C, LDC, RCB ) !GCC$ ATTRIBUTES hot :: DSYMM_Blocked_Unrolled !GCC$ ATTRIBUTES aligned(32) :: DSYMM_Blocked_Unrolled !GCC$ ATTRIBUTES no_stack_protector :: DSYMM_Blocked_Unrolled
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DSYMM_Blocked_Unrolled( SIDE, UPLO, M, N, ALPHA, A, LDA, B, LDB, &
+     BETA, C, LDC, RCB)
+             !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DSYMM_Blocked_Unrolled
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DSYMM_Blocked_Unrolled
+#endif
+        use omp_lib
+      implicit none
+#endif
+!*     .. Scalar Arguments ..
+      CHARACTER*1        SIDE, UPLO
+      INTEGER            M, N, LDA, LDB, LDC, RCB
+      DOUBLE PRECISION   ALPHA, BETA
+!*     .. Array Arguments ..
+      !  DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+#if 0
+*     ..
+*
+*  Purpose
+*  =======
+*
+*  DSYMM  performs one of the matrix-matrix operations
+*
+*     C := alpha*A*B + beta*C,
+*
+*  or
+*
+*     C := alpha*B*A + beta*C,
+*
+*  where alpha and beta are scalars,  A is a symmetric matrix and  B and
+*  C are  m by n matrices.
+*
+*  Parameters
+*  ==========
+*
+*  SIDE   - CHARACTER*1.
+*           On entry,  SIDE  specifies whether  the  symmetric matrix  A
+*           appears on the  left or right  in the  operation as follows:
+*
+*              SIDE = 'L' or 'l'   C := alpha*A*B + beta*C,
+*
+*              SIDE = 'R' or 'r'   C := alpha*B*A + beta*C,
+*
+*           Unchanged on exit.
+*
+*  UPLO   - CHARACTER*1.
+*           On  entry,   UPLO  specifies  whether  the  upper  or  lower
+*           triangular  part  of  the  symmetric  matrix   A  is  to  be
+*           referenced as follows:
+*
+*              UPLO = 'U' or 'u'   Only the upper triangular part of the
+*                                  symmetric matrix is to be referenced.
+*
+*              UPLO = 'L' or 'l'   Only the lower triangular part of the
+*                                  symmetric matrix is to be referenced.
+*
+*           Unchanged on exit.
+*
+*  M      - INTEGER.
+*           On entry,  M  specifies the number of rows of the matrix  C.
+*           M  must be at least zero.
+*           Unchanged on exit.
+*
+*  N      - INTEGER.
+*           On entry, N specifies the number of columns of the matrix C.
+*           N  must be at least zero.
+*           Unchanged on exit.
+*
+*  ALPHA  - DOUBLE PRECISION.
+*           On entry, ALPHA specifies the scalar alpha.
+*           Unchanged on exit.
+*
+*  A      - DOUBLE PRECISION array of DIMENSION ( LDA, ka ), where ka is
+*           m  when  SIDE = 'L' or 'l'  and is  n otherwise.
+*           Before entry  with  SIDE = 'L' or 'l',  the  m by m  part of
+*           the array  A  must contain the  symmetric matrix,  such that
+*           when  UPLO = 'U' or 'u', the leading m by m upper triangular
+*           part of the array  A  must contain the upper triangular part
+*           of the  symmetric matrix and the  strictly  lower triangular
+*           part of  A  is not referenced,  and when  UPLO = 'L' or 'l',
+*           the leading  m by m  lower triangular part  of the  array  A
+*           must  contain  the  lower triangular part  of the  symmetric
+*           matrix and the  strictly upper triangular part of  A  is not
+*           referenced.
+*           Before entry  with  SIDE = 'R' or 'r',  the  n by n  part of
+*           the array  A  must contain the  symmetric matrix,  such that
+*           when  UPLO = 'U' or 'u', the leading n by n upper triangular
+*           part of the array  A  must contain the upper triangular part
+*           of the  symmetric matrix and the  strictly  lower triangular
+*           part of  A  is not referenced,  and when  UPLO = 'L' or 'l',
+*           the leading  n by n  lower triangular part  of the  array  A
+*           must  contain  the  lower triangular part  of the  symmetric
+*           matrix and the  strictly upper triangular part of  A  is not
+*           referenced.
+*           Unchanged on exit.
+*
+*  LDA    - INTEGER.
+*           On entry, LDA specifies the first dimension of A as declared
+*           in the calling (sub) program.  When  SIDE = 'L' or 'l'  then
+*           LDA must be at least  max( 1, m ), otherwise  LDA must be at
+*           least  max( 1, n ).
+*           Unchanged on exit.
+*
+*  B      - DOUBLE PRECISION array of DIMENSION ( LDB, n ).
+*           Before entry, the leading  m by n part of the array  B  must
+*           contain the matrix B.
+*           Unchanged on exit.
+*
+*  LDB    - INTEGER.
+*           On entry, LDB specifies the first dimension of B as declared
+*           in  the  calling  (sub)  program.   LDB  must  be  at  least
+*           max( 1, m ).
+*           Unchanged on exit.
+*
+*  BETA   - DOUBLE PRECISION.
+*           On entry,  BETA  specifies the scalar  beta.  When  BETA  is
+*           supplied as zero then C need not be set on input.
+*           Unchanged on exit.
+*
+*  C      - DOUBLE PRECISION array of DIMENSION ( LDC, n ).
+*           Before entry, the leading  m by n  part of the array  C must
+*           contain the matrix  C,  except when  beta  is zero, in which
+*           case C need not be set on entry.
+*           On exit, the array  C  is overwritten by the  m by n updated
+*           matrix.
+*
+*  LDC    - INTEGER.
+*           On entry, LDC specifies the first dimension of C as declared
+*           in  the  calling  (sub)  program.   LDC  must  be  at  least
+*           max( 1, m ).
+*           Unchanged on exit.
+*
+*
+*  Level 3 Blas routine.
+*
+*  -- Written on 8-February-1989.
+*     Jack Dongarra, Argonne National Laboratory.
+*     Iain Duff, AERE Harwell.
+*     Jeremy Du Croz, Numerical Algorithms Group Ltd.
+*     Sven Hammarling, Numerical Algorithms Group Ltd.
+*
+*  -- Rewritten in December-1993.
+*     GEMM-Based Level 3 BLAS.
+*     Per Ling, Institute of Information Processing,
+*     University of Umea, Sweden.
+*
+*  -- Rewritten in Mars-1995.
+*     Superscalar GEMM-Based Level 3 BLAS (Version 0.1).
+*     Per Ling, Department of Computing Science,
+*     University of Umea, Sweden.
+*
+*
+*     .. Local Scalars ..
+#endif
+      INTEGER            INFO, NROWA
+      LOGICAL            LSIDE, UPPER
+      INTEGER            I, J, II, IX, ISEC, UISEC
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MAX, MIN, MOD
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+!*     .. External Subroutines ..
+!      EXTERNAL           XERBLA
+!      EXTERNAL           DGEMM
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER        ( ZERO = 0.0D+0, ONE = 1.0D+0 )
+!*     .. User specified parameters for DSYMM ..
+!      INTEGER            RCB
+!      PARAMETER        ( RCB = 96 )
+!*     .. Local Arrays ..
+      DOUBLE PRECISION   T1( RCB, RCB )
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+      !DIR$ ATTRIBUTES ALIGN : 64 :: T1
+#endif
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      LSIDE = LSAME( SIDE, 'L' )
+      UPPER = LSAME( UPLO, 'U' )
+      IF( LSIDE )THEN
+         NROWA = M
+      ELSE
+         NROWA = N
+      END IF
+   !   INFO = 0
+   !   IF( ( .NOT.LSIDE ).AND.( .NOT.LSAME( SIDE, 'R' ) ) )THEN
+   !      INFO = 1
+   !   ELSE IF( ( .NOT.UPPER ).AND.( .NOT.LSAME( UPLO, 'L' ) ) )THEN
+   !      INFO = 2
+   !   ELSE IF( M.LT.0 )THEN
+   !      INFO = 3
+    !  ELSE IF( N.LT.0 )THEN
+   !      INFO = 4
+    !  ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+    !     INFO = 7
+    !  ELSE IF( LDB.LT.MAX( 1, M ) )THEN
+    !     INFO = 9
+    !  ELSE IF( LDC.LT.MAX( 1, M ) )THEN
+    !     INFO = 12
+    !  END IF
+    !  IF( INFO.NE.0 )THEN
+    !     CALL XERBLA( 'DSYMM ', INFO )
+    !     RETURN
+    !  END IF
+!*
+!*     Quick return if possible.
+!*
+      IF( ( M.EQ.0 ).OR.( N.EQ.0 ).OR.  &
+         ( ( ALPHA.EQ.ZERO ).AND.( BETA.EQ.ONE ) ) ) &
+         RETURN
+!*
+!*     And when alpha.eq.zero.
+!*
+      IF( ALPHA.EQ.ZERO )THEN
+        ! IF( BETA.EQ.ZERO )THEN
+          !  UISEC = M-MOD( M, 4 )
+         !   DO 30, J = 1, N
+           !    DO 10, I = 1, UISEC, 4
+           !       C( I, J ) = ZERO
+           !       C( I+1, J ) = ZERO
+           !       C( I+2, J ) = ZERO
+           !       C( I+3, J ) = ZERO
+  ! 10      !    CONTINUE
+   !            DO 20, I = UISEC+1, M
+   !               C( I, J ) = ZERO
+  ! 20          CONTINUE
+  ! 30       CONTINUE
+   !      ELSE
+  !          UISEC = M-MOD( M, 4 )
+   !         DO 60, J = 1, N
+    !           DO 40, I = 1, UISEC, 4
+    !              C( I, J ) = BETA*C( I, J )
+    !              C( I+1, J ) = BETA*C( I+1, J )
+    !              C( I+2, J ) = BETA*C( I+2, J )
+    !              C( I+3, J ) = BETA*C( I+3, J )
+  ! 40          CONTINUE
+  !             DO 50, I = UISEC+1, M
+   !               C( I, J ) = BETA*C( I, J )
+  ! 50          CONTINUE
+  ! 60       CONTINUE
+   !      END IF
+         RETURN
+      END IF
+!*
+!*     Start the operations.
+!*
+      IF( LSIDE )THEN
+         IF( UPPER )THEN
+!*
+!*           Form  C := alpha*A*B + beta*C. Left, Upper.
+            !*
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(T1,A,B,C) PRIVATE(II,ISEC,JSEC,UISEC,I) 
+            DO 90, II = 1, M, RCB
+               ISEC = MIN( RCB, M-II+1 )
+!*
+!*              T1 := A, the upper triangular part of a square diagonal
+!*              block of A is copied to upper pangular part of T1 and
+!*              the transpose of the strictly upper triangular part of
+!*              the block of A is copied to the strictly lower
+!*              triangular part of T1.
+!*
+               DO 80, J = II+ISEC-2, II-1, -2
+                  UISEC = J-II-MOD( J-II, 2 )
+                  !$OMP SIMD ALIGNED(T1:64,A) LINEAR(I:2)
+                  DO 70, I = II, II+UISEC-1, 2
+                     T1( I-II+1, J-II+1 ) = ALPHA*A( I, J )
+                     T1( I-II+2, J-II+1 ) = ALPHA*A( I+1, J )
+                     T1( I-II+1, J-II+2 ) = ALPHA*A( I, J+1 )
+                     T1( I-II+2, J-II+2 ) = ALPHA*A( I+1, J+1 )
+                     T1( J-II+1, I-II+1 ) = ALPHA*A( I, J )
+                     T1( J-II+1, I-II+2 ) = ALPHA*A( I+1, J )
+                     T1( J-II+2, I-II+1 ) = ALPHA*A( I, J+1 )
+                     T1( J-II+2, I-II+2 ) = ALPHA*A( I+1, J+1 )
+   70             CONTINUE
+                  IF( MOD( J-II, 2 ).EQ.1 )THEN
+                     T1( J-II, J-II+1 ) = ALPHA*A( J-1, J )
+                     T1( J-II+1, J-II+1 ) = ALPHA*A( J, J )
+                     T1( J-II, J-II+2 ) = ALPHA*A( J-1, J+1 )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J, J+1 )
+                     T1( J-II+1, J-II ) = ALPHA*A( J-1, J )
+                     T1( J-II+2, J-II ) = ALPHA*A( J-1, J+1 )
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J, J+1 )
+                  ELSE IF( J.GE.II )THEN
+                     T1( J-II+1, J-II+1 ) = ALPHA*A( J, J )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J, J+1 )
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J, J+1 )
+                  END IF
+                  T1( J-II+2, J-II+2 ) = ALPHA*A( J+1, J+1 )
+   80          CONTINUE
+!*
+!*              C := T1'*B + beta*C, general matrix multiplication
+!*              involving the symmetric diagonal block of A stored
+!*              as a full matrix block in T1.
+                  !*
+                  !$OMP SINGLE
+               CALL DGEMM ( 'T', 'N', ISEC, N, ISEC, ONE,  &
+                                      T1( 1, 1 ), RCB, B( II, 1 ), LDB, &
+                                      BETA, C( II, 1 ), LDC )
+               !$OMP END SINGLE NOWAIT
+               
+               !$OMP SINGLE
+               IF( II.GT.1 )THEN
+!*
+!*                 C := alpha*A'*B + C, general matrix multiplication
+!*                 involving the transpose of a rectangular block of A.
+!*
+                  CALL DGEMM ( 'T', 'N', ISEC, N, II-1, ALPHA,  &
+                                       A( 1, II ), LDA, B( 1, 1 ), LDB, &
+                                                 ONE, C( II, 1 ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II+ISEC.LE.M )THEN
+!*
+!*                 C := alpha*A*B + C, general matrix multiplication
+!*                 involving a rectangular block of A.
+!*
+                  CALL DGEMM ( 'N', 'N', ISEC, N, M-II-ISEC+1, ALPHA,  &
+                           A( II, II+ISEC ), LDA, B( II+ISEC, 1 ), LDB, &
+                                                 ONE, C( II, 1 ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+90         CONTINUE
+             !$OMP END PARALLEL DO  
+         ELSE
+!*
+!*           Form  C := alpha*A*B + beta*C. Left, Lower.
+            !*
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEAFULT(NONE) SHARED(T1,A,B,C) PRIVATE(IX,II,ISEC,J,UISEC,I)
+            DO 120, IX = M, 1, -RCB
+               II = MAX( 1, IX-RCB+1 )
+               ISEC = IX-II+1
+!*
+!*              T1 := A, the lower triangular part of a square diagonal
+!*              block of A is copied to lower pangular part of T1 and
+!*              the transpose of the strictly lower triangular part of
+!*              the block of A is copied to the strictly upper
+!*              triangular part of T1.
+               !*
+               !$OMP SIMD ALIGNED(T1:64,A) LINEAR(J:2)
+               DO 110, J = II, II+ISEC-1, 2
+                  UISEC = II+ISEC-J-2-MOD( II+ISEC-J-2, 2 )
+                  T1( J-II+1, J-II+1 ) = ALPHA*A( J, J )
+                  IF( MOD( II+ISEC-J-2, 2 ).EQ.0 )THEN
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J+1, J )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J+1, J )
+                     T1( J-II+2, J-II+2 ) = ALPHA*A( J+1, J+1 )
+                  ELSE IF( J.LE.II+ISEC-3 )THEN
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J+1, J )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J+1, J )
+                     T1( J-II+3, J-II+1 ) = ALPHA*A( J+2, J )
+                     T1( J-II+1, J-II+3 ) = ALPHA*A( J+2, J )
+                     T1( J-II+2, J-II+2 ) = ALPHA*A( J+1, J+1 )
+                     T1( J-II+3, J-II+2 ) = ALPHA*A( J+2, J+1 )
+                     T1( J-II+2, J-II+3 ) = ALPHA*A( J+2, J+1 )
+                  END IF
+                  DO 100 I = II+ISEC-UISEC, II+ISEC-1, 2
+                     T1( I-II+1, J-II+1 ) = ALPHA*A( I, J )
+                     T1( I-II+2, J-II+1 ) = ALPHA*A( I+1, J )
+                     T1( I-II+1, J-II+2 ) = ALPHA*A( I, J+1 )
+                     T1( I-II+2, J-II+2 ) = ALPHA*A( I+1, J+1 )
+                     T1( J-II+1, I-II+1 ) = ALPHA*A( I, J )
+                     T1( J-II+1, I-II+2 ) = ALPHA*A( I+1, J )
+                     T1( J-II+2, I-II+1 ) = ALPHA*A( I, J+1 )
+                     T1( J-II+2, I-II+2 ) = ALPHA*A( I+1, J+1 )
+  100             CONTINUE
+  110          CONTINUE
+!*
+!*              C := T1'*B + beta*C, general matrix multiplication
+!*              involving the symmetric diagonal block of A stored
+!*              as a full matrix block in T1.
+                     !*
+                !$OMP SINGLE
+               CALL DGEMM ( 'T', 'N', ISEC, N, ISEC, ONE,  &
+                                      T1( 1, 1 ), RCB, B( II, 1 ), LDB, &
+                                      BETA, C( II, 1 ), LDC )
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II.GT.1 )THEN
+!*
+!*                 C := alpha*A'*B + C, general matrix multiplication
+!*                 involving the transpose of a rectangular block of A.
+!*
+                  CALL DGEMM ( 'N', 'N', ISEC, N, II-1, ALPHA,  &
+                                       A( II, 1 ), LDA, B( 1, 1 ), LDB, &
+                                                 ONE, C( II, 1 ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II+ISEC.LE.M )THEN
+!*
+!*                 C := alpha*A*B + C, general matrix multiplication
+!*                 involving a rectangular block of A.
+!*
+                  CALL DGEMM ( 'T', 'N', ISEC, N, M-II-ISEC+1, ALPHA, &
+                           A( II+ISEC, II ), LDA, B( II+ISEC, 1 ), LDB, &
+                                                 ONE, C( II, 1 ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+120         CONTINUE
+             !$OMP END PARALLEL DO  
+         END IF
+      ELSE
+         IF( UPPER )THEN
+!*
+!*           Form  C := alpha*B*A + beta*C. Right, Upper.
+            !*
+             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEAFULT(NONE) SHARED(T1,A,B,C) PRIVATE(II,ISEC,J,UISEC,I)
+            DO 150, II = 1, N, RCB
+               ISEC = MIN( RCB, N-II+1 )
+!*
+!*              T1 := A, the upper triangular part of a square diagonal
+!*              block of A is copied to upper pangular part of T1 and
+!*              the transpose of the strictly upper triangular part of
+!*              the block of A is copied to the strictly lower
+!*              triangular part of T1.
+!*
+               DO 140, J = II+ISEC-2, II-1, -2
+                  UISEC = J-II-MOD( J-II, 2 )
+                  !$OMP SIMD ALIGNED(T1:64,A) LINEAR(I:2)
+                  DO 130, I = II, II+UISEC-1, 2
+                     T1( I-II+1, J-II+1 ) = ALPHA*A( I, J )
+                     T1( I-II+2, J-II+1 ) = ALPHA*A( I+1, J )
+                     T1( I-II+1, J-II+2 ) = ALPHA*A( I, J+1 )
+                     T1( I-II+2, J-II+2 ) = ALPHA*A( I+1, J+1 )
+                     T1( J-II+1, I-II+1 ) = ALPHA*A( I, J )
+                     T1( J-II+1, I-II+2 ) = ALPHA*A( I+1, J )
+                     T1( J-II+2, I-II+1 ) = ALPHA*A( I, J+1 )
+                     T1( J-II+2, I-II+2 ) = ALPHA*A( I+1, J+1 )
+  130             CONTINUE
+                  IF( MOD( J-II, 2 ).EQ.1 )THEN
+                     T1( J-II, J-II+1 ) = ALPHA*A( J-1, J )
+                     T1( J-II+1, J-II+1 ) = ALPHA*A( J, J )
+                     T1( J-II, J-II+2 ) = ALPHA*A( J-1, J+1 )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J, J+1 )
+                     T1( J-II+1, J-II ) = ALPHA*A( J-1, J )
+                     T1( J-II+2, J-II ) = ALPHA*A( J-1, J+1 )
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J, J+1 )
+                  ELSE IF( J.GE.II )THEN
+                     T1( J-II+1, J-II+1 ) = ALPHA*A( J, J )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J, J+1 )
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J, J+1 )
+                  END IF
+                  T1( J-II+2, J-II+2 ) = ALPHA*A( J+1, J+1 )
+  140          CONTINUE
+!*
+!*              C := T1'*B + beta*C, general matrix multiplication
+!*              involving the symmetric diagonal block of A stored
+!*              as a full matrix block in T1.
+                  !*
+                !$OMP SINGLE
+               CALL DGEMM ( 'N', 'N', M, ISEC, ISEC, ONE,  &
+                                      B( 1, II ), LDB, T1( 1, 1 ), RCB, &
+                                      BETA, C( 1, II ), LDC )
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II.GT.1 )THEN
+!*
+!*                 C := alpha*B*A + C, general matrix multiply
+!*                 involving a rectangular block of A.
+!*
+                  CALL DGEMM ( 'N', 'N', M, ISEC, II-1, ALPHA, &
+                                       B( 1, 1 ), LDB, A( 1, II ), LDA, &
+                                                 ONE, C( 1, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II+ISEC.LE.N )THEN
+!*
+!*                 C := alpha*B*A' + C, general matrix multiply involving
+!*                 the transpose of a rectangular block of A.
+!*
+                  CALL DGEMM ( 'N', 'T', M, ISEC, N-II-ISEC+1, ALPHA,  &
+                           B( 1, II+ISEC ), LDB, A( II, II+ISEC ), LDA, &
+                                                 ONE, C( 1, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+150         CONTINUE
+            !$OMP END PARALLEL DO   
+         ELSE
+!*
+!!*           Form  C := alpha*B*A + beta*C. Right, Lower.
+            !*
+             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEAFULT(NONE) SHARED(T1,A,B,C) PRIVATE(IX,II,ISEC,J,UISEC,I)
+            DO 180, IX = N, 1, -RCB
+               II = MAX( 1, IX-RCB+1 )
+               ISEC = IX-II+1
+!*
+!*              T1 := A, the lower triangular part of a square diagonal
+!*              block of A is copied to lower pangular part of T1 and
+!*              the transpose of the strictly lower triangular part of
+!*              the block of A is copied to the strictly upper
+!*              triangular part of T1.
+               !*
+                
+               DO 170, J = II, II+ISEC-1, 2
+                  UISEC = II+ISEC-J-2-MOD( II+ISEC-J-2, 2 )
+                  T1( J-II+1, J-II+1 ) = ALPHA*A( J, J )
+                  IF( MOD( II+ISEC-J-2, 2 ).EQ.0 )THEN
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J+1, J )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J+1, J )
+                     T1( J-II+2, J-II+2 ) = ALPHA*A( J+1, J+1 )
+                  ELSE IF( J.LE.II+ISEC-3 )THEN
+                     T1( J-II+2, J-II+1 ) = ALPHA*A( J+1, J )
+                     T1( J-II+1, J-II+2 ) = ALPHA*A( J+1, J )
+                     T1( J-II+3, J-II+1 ) = ALPHA*A( J+2, J )
+                     T1( J-II+1, J-II+3 ) = ALPHA*A( J+2, J )
+                     T1( J-II+2, J-II+2 ) = ALPHA*A( J+1, J+1 )
+                     T1( J-II+3, J-II+2 ) = ALPHA*A( J+2, J+1 )
+                     T1( J-II+2, J-II+3 ) = ALPHA*A( J+2, J+1 )
+                  END IF
+                  !$OMP SIMD ALIGNED(T1:64,A) LINEAR(I:2)
+                  DO 160 I = II+ISEC-UISEC, II+ISEC-1, 2
+                     T1( I-II+1, J-II+1 ) = ALPHA*A( I, J )
+                     T1( I-II+2, J-II+1 ) = ALPHA*A( I+1, J )
+                     T1( I-II+1, J-II+2 ) = ALPHA*A( I, J+1 )
+                     T1( I-II+2, J-II+2 ) = ALPHA*A( I+1, J+1 )
+                     T1( J-II+1, I-II+1 ) = ALPHA*A( I, J )
+                     T1( J-II+1, I-II+2 ) = ALPHA*A( I+1, J )
+                     T1( J-II+2, I-II+1 ) = ALPHA*A( I, J+1 )
+                     T1( J-II+2, I-II+2 ) = ALPHA*A( I+1, J+1 )
+  160             CONTINUE
+  170          CONTINUE
+!*
+!*              C := T1'*B + beta*C, general matrix multiplication
+!*              involving the symmetric diagonal block of A stored
+!*              as a full matrix block in T1.
+                     !*
+               !$OMP SINGLE
+               CALL DGEMM ( 'N', 'N', M, ISEC, ISEC, ONE,  &
+                                      B( 1, II ), LDB, T1( 1, 1 ), RCB, &
+                                      BETA, C( 1, II ), LDC )
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II.GT.1 )THEN
+!*
+!*                 C := alpha*B*A' + C, general matrix multiply involving
+!*                 the transpose of a rectangular block of A.
+!*
+                  CALL DGEMM ( 'N', 'T', M, ISEC, II-1, ALPHA, &
+                                       B( 1, 1 ), LDB, A( II, 1 ), LDA, &
+                                                 ONE, C( 1, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+
+               !$OMP SINGLE
+               IF( II+ISEC.LE.N )THEN
+!*
+!*                 C := alpha*B*A + C, general matrix multiply
+!*                 involving a rectangular block of A.
+!*
+                  CALL DGEMM ( 'N', 'N', M, ISEC, N-II-ISEC+1, ALPHA, &
+                           B( 1, II+ISEC ), LDB, A( II+ISEC, II ), LDA, &
+                                                 ONE, C( 1, II ), LDC )
+               END IF
+               !$OMP END SINGLE NOWAIT
+180         CONTINUE
+             !$OMP END PARALLEL DO  
+         END IF
+      END IF
+
+END SUBROUTINE
+
