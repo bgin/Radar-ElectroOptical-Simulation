@@ -5619,7 +5619,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*B*A.
 !*
              IF (UPPER) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,TEMP)  IF(N>=400)     
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,TEMP,I,K)  IF(N>=100)     
                   DO 180 J = N,1,-1
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
@@ -5639,7 +5639,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 180               CONTINUE
                     !$OMP END PARALLEL DO      
                ELSE
-                     !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,TEMP)  IF(N>=400)           
+                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,TEMP,I,K)  IF(N>=100)           
                   DO 220 J = 1,N
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
@@ -5664,7 +5664,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*B*A**T.
 !*
              IF (UPPER) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(K,TEMP)  IF(N>=400)    
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(K,J,TEMP,I)  IF(N>=100)    
                   DO 260 K = 1,N
                       DO 240 J = 1,K - 1
                           IF (A(J,K).NE.ZERO) THEN
@@ -5686,7 +5686,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 260               CONTINUE
                   !$OMP END PARALLEL DO    
               ELSE
-                     !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(A,B) PRIVATE(K,TEMP)  IF(N>=400)       
+                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B) PRIVATE(K,J,TEMP,I)  IF(N>=100)       
                   DO 300 K = N,1,-1
                       DO 280 J = K + 1,N
                           IF (A(J,K).NE.ZERO) THEN
@@ -5835,7 +5835,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
 !*
           IF (LSAME(UPLO,'U')) THEN
              IF (INCX.EQ.1) THEN
-                !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 20 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
@@ -5849,7 +5849,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                   !$OMP END PARALLEL DO    
               ELSE
                  JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 40 J = 1,N
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -5867,7 +5867,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
               END IF
           ELSE
              IF (INCX.EQ.1) THEN
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 60 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
@@ -5882,7 +5882,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
-                  !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX) IF(N>=400)
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 80 J = N,1,-1
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -5905,7 +5905,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
 !*
           IF (LSAME(UPLO,'U')) THEN
              IF (INCX.EQ.1) THEN
-                     !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP) IF(N>=400)
+                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 100 J = N,1,-1
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
@@ -5918,7 +5918,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                    !$OMP END PARALLEL DO   
               ELSE
                  JX = KX + (N-1)*INCX
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 120 J = N,1,-1
                       TEMP = X(JX)
                       IX = JX
@@ -5935,7 +5935,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
               END IF
           ELSE
              IF (INCX.EQ.1) THEN
-                    !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP) IF(N>=400)
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 140 J = 1,N
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
@@ -5948,7 +5948,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                      !$OMP END PARALLEL DO 
               ELSE
                  JX = KX
-                   !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,JX) IF(N>=400)
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 160 J = 1,N
                       TEMP = X(JX)
                       IX = JX
@@ -6106,7 +6106,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*inv( A )*B.
 !*
              IF (UPPER) THEN
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J) IF(N>=400)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I,K) IF(N>=100)
                   DO 60 J = 1,N
                      IF (ALPHA.NE.ONE) THEN
                         !$OMP SIMD ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
@@ -6126,7 +6126,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 60                 CONTINUE
                     !$OMP END PARALLEL DO      
               ELSE
-                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J) IF(N>=400)       
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I,K) IF(N>=100)       
                   DO 100 J = 1,N
                      IF (ALPHA.NE.ONE) THEN
                               !$OMP SIMD ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
@@ -6151,7 +6151,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*inv( A**T )*B.
 !*
              IF (UPPER) THEN
-                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) COLLAPSE(2) PRIVATE(J,I) IF(N>=400)       
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) COLLAPSE(2) PRIVATE(J,I,TEMP,K) IF(N>=100)       
                   DO 130 J = 1,N
                       DO 120 I = 1,M
                          TEMP = ALPHA*B(I,J)
@@ -6165,7 +6165,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 130               CONTINUE
                    !$OMP END PARALLEL DO       
                ELSE
-                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J) IF(N>=400)          
+                     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,I,TEMP,K) IF(N>=100)          
                   DO 160 J = 1,N
                       DO 150 I = M,1,-1
                          TEMP = ALPHA*B(I,J)
@@ -6186,7 +6186,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*B*inv( A ).
 !*
              IF (UPPER) THEN
-                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,TEMP) IF(N>=400)     
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,I,K,TEMP) IF(N>=100)     
                   DO 210 J = 1,N
                      IF (ALPHA.NE.ONE) THEN
                           !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
@@ -6212,7 +6212,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 210             CONTINUE
                  !$OMP END PARALLEL DO     
               ELSE
-                      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,TEMP) IF(N>=400)      
+                      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(J,I,K,TEMP) IF(N>=400)      
                   DO 260 J = N,1,-1
                      IF (ALPHA.NE.ONE) THEN
                             !$OMP SIMD ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(6)
@@ -6243,7 +6243,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 !*           Form  B := alpha*B*inv( A**T ).
 !*
              IF (UPPER) THEN
-                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(K,TEMP) IF(N>=400)     
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(K,TEMP,I,J) IF(N>=100)     
                   DO 310 K = N,1,-1
                       IF (NOUNIT) THEN
                          TEMP = ONE/A(K,K)
@@ -6270,7 +6270,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 310              CONTINUE
                   !$OMP END PARALLEL DO    
               ELSE
-                      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(K,TEMP) IF(N>=400)    
+                      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A)  PRIVATE(K,I,TEMP,J) IF(N>=100)    
                   DO 360 K = 1,N
                       IF (NOUNIT) THEN
                          TEMP = ONE/A(K,K)
@@ -6303,172 +6303,201 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
 END SUBROUTINE
 
     
-*  Authors:
-*  ========
-*
-*> \author Univ. of Tennessee
-*> \author Univ. of California Berkeley
-*> \author Univ. of Colorado Denver
-*> \author NAG Ltd.
-*
-*> \date December 2016
-*
-*> \ingroup double_blas_level1
-*
-*  =====================================================================
-      SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX)
-*
-*  -- Reference BLAS level1 routine (version 3.7.0) --
-*  -- Reference BLAS is a software package provided by Univ. of Tennessee,    --
-*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
-*     December 2016
-*
-*     .. Scalar Arguments ..
+!*  Authors:
+!*  ========
+!*
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup double_blas_level1
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !GCC$ ATTRIBUTES aligned(32) :: DTRSV !GCC$ ATTRIBUTES no_stack_protector :: DTRSV
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX)
+          !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DTRSV
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DTRSV
+#endif
+      use omp_lib
+      implicit none 
+
+!*
+!*  -- Reference BLAS level1 routine (version 3.7.0) --
+!*  -- Reference BLAS is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
       INTEGER INCX,LDA,N
       CHARACTER DIAG,TRANS,UPLO
-*     ..
-*     .. Array Arguments ..
-      DOUBLE PRECISION A(LDA,*),X(*)
-*     ..
-*
-*  =====================================================================
-*
-*     .. Parameters ..
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION A(LDA,*),X(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: X
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
       DOUBLE PRECISION ZERO
       PARAMETER (ZERO=0.0D+0)
-*     ..
-*     .. Local Scalars ..
+!*     ..
+!*     .. Local Scalars ..
       DOUBLE PRECISION TEMP
       INTEGER I,INFO,IX,J,JX,KX
       LOGICAL NOUNIT
-*     ..
-*     .. External Functions ..
+!*     ..
+!*     .. External Functions ..
       LOGICAL LSAME
       EXTERNAL LSAME
-*     ..
-*     .. External Subroutines ..
-      EXTERNAL XERBLA
-*     ..
-*     .. Intrinsic Functions ..
+!*     ..
+!*     .. External Subroutines ..
+!      EXTERNAL XERBLA
+!*     ..
+!*     .. Intrinsic Functions ..
       INTRINSIC MAX
-*     ..
-*
-*     Test the input parameters.
-*
-      INFO = 0
-      IF (.NOT.LSAME(UPLO,'U') .AND. .NOT.LSAME(UPLO,'L')) THEN
-          INFO = 1
-      ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
-     +         .NOT.LSAME(TRANS,'C')) THEN
-          INFO = 2
-      ELSE IF (.NOT.LSAME(DIAG,'U') .AND. .NOT.LSAME(DIAG,'N')) THEN
-          INFO = 3
-      ELSE IF (N.LT.0) THEN
-          INFO = 4
-      ELSE IF (LDA.LT.MAX(1,N)) THEN
-          INFO = 6
-      ELSE IF (INCX.EQ.0) THEN
-          INFO = 8
-      END IF
-      IF (INFO.NE.0) THEN
-          CALL XERBLA('DTRSV ',INFO)
-          RETURN
-      END IF
-*
-*     Quick return if possible.
-*
-      IF (N.EQ.0) RETURN
-*
+!*     ..
+!*
+!*     Test the input parameters.
+!*
+    !  INFO = 0
+    !  IF (.NOT.LSAME(UPLO,'U') .AND. .NOT.LSAME(UPLO,'L')) THEN
+    !      INFO = 1
+    !  ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
+    ! +         .NOT.LSAME(TRANS,'C')) THEN
+    !      INFO = 2
+    !  ELSE IF (.NOT.LSAME(DIAG,'U') .AND. .NOT.LSAME(DIAG,'N')) THEN
+    !      INFO = 3
+    !  ELSE IF (N.LT.0) THEN
+    !      INFO = 4
+    !  ELSE IF (LDA.LT.MAX(1,N)) THEN
+    !      INFO = 6
+    !  ELSE IF (INCX.EQ.0) THEN
+    !      INFO = 8
+    !  END IF
+    !  IF (INFO.NE.0) THEN
+    !      CALL XERBLA('DTRSV ',INFO)
+    !      RETURN
+     ! END IF
+!*
+!*     Quick return if possible.
+!*
+  !    IF (N.EQ.0) RETURN
+!*
       NOUNIT = LSAME(DIAG,'N')
-*
-*     Set up the start point in X if the increment is not unity. This
-*     will be  ( N - 1 )*INCX  too small for descending loops.
-*
+!*
+!*     Set up the start point in X if the increment is not unity. This
+!*     will be  ( N - 1 )*INCX  too small for descending loops.
+!*
       IF (INCX.LE.0) THEN
           KX = 1 - (N-1)*INCX
       ELSE IF (INCX.NE.1) THEN
           KX = 1
       END IF
-*
-*     Start the operations. In this version the elements of A are
-*     accessed sequentially with one pass through A.
-*
+!*
+!*     Start the operations. In this version the elements of A are
+!*     accessed sequentially with one pass through A.
+!*
       IF (LSAME(TRANS,'N')) THEN
-*
-*        Form  x := inv( A )*x.
-*
+!*
+!*        Form  x := inv( A )*x.
+!*
           IF (LSAME(UPLO,'U')) THEN
-              IF (INCX.EQ.1) THEN
+             IF (INCX.EQ.1) THEN
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 20 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                           IF (NOUNIT) X(J) = X(J)/A(J,J)
                           TEMP = X(J)
+                          !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 10 I = J - 1,1,-1
                               X(I) = X(I) - TEMP*A(I,J)
    10                     CONTINUE
                       END IF
-   20             CONTINUE
+20               CONTINUE
+                  !$OMP END PARALLEL DO    
               ELSE
-                  JX = KX + (N-1)*INCX
+                 JX = KX + (N-1)*INCX
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 40 J = N,1,-1
                       IF (X(JX).NE.ZERO) THEN
                           IF (NOUNIT) X(JX) = X(JX)/A(J,J)
                           TEMP = X(JX)
                           IX = JX
+                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 30 I = J - 1,1,-1
                               IX = IX - INCX
                               X(IX) = X(IX) - TEMP*A(I,J)
    30                     CONTINUE
                       END IF
                       JX = JX - INCX
-   40             CONTINUE
+40               CONTINUE
+                   !$OMP END PARALLEL DO   
               END IF
           ELSE
-              IF (INCX.EQ.1) THEN
+             IF (INCX.EQ.1) THEN
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 60 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                           IF (NOUNIT) X(J) = X(J)/A(J,J)
                           TEMP = X(J)
+                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 50 I = J + 1,N
                               X(I) = X(I) - TEMP*A(I,J)
    50                     CONTINUE
                       END IF
-   60             CONTINUE
+60               CONTINUE
+                  !$OMP END PARALLEL DO    
               ELSE
-                  JX = KX
+                 JX = KX
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 80 J = 1,N
                       IF (X(JX).NE.ZERO) THEN
                           IF (NOUNIT) X(JX) = X(JX)/A(J,J)
                           TEMP = X(JX)
                           IX = JX
+                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 70 I = J + 1,N
                               IX = IX + INCX
                               X(IX) = X(IX) - TEMP*A(I,J)
    70                     CONTINUE
                       END IF
                       JX = JX + INCX
-   80             CONTINUE
+80               CONTINUE
+                    !$OMP END PARALLEL DO  
               END IF
           END IF
       ELSE
-*
-*        Form  x := inv( A**T )*x.
-*
+!*
+!*        Form  x := inv( A**T )*x.
+!*
           IF (LSAME(UPLO,'U')) THEN
-              IF (INCX.EQ.1) THEN
+             IF (INCX.EQ.1) THEN
+                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 100 J = 1,N
-                      TEMP = X(J)
+                     TEMP = X(J)
+                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) REDUCTION(-:TEMP) UNROLL PARTIAL(10)
                       DO 90 I = 1,J - 1
                           TEMP = TEMP - A(I,J)*X(I)
    90                 CONTINUE
                       IF (NOUNIT) TEMP = TEMP/A(J,J)
                       X(J) = TEMP
-  100             CONTINUE
+100               CONTINUE
+                  !$OMP END PARALLEL DO    
               ELSE
-                  JX = KX
+                 JX = KX
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 120 J = 1,N
                       TEMP = X(JX)
                       IX = KX
+                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) REDUCTION(-:TEMP) UNROLL PARTIAL(10)
                       DO 110 I = 1,J - 1
                           TEMP = TEMP - A(I,J)*X(IX)
                           IX = IX + INCX
@@ -6476,24 +6505,30 @@ END SUBROUTINE
                       IF (NOUNIT) TEMP = TEMP/A(J,J)
                       X(JX) = TEMP
                       JX = JX + INCX
-  120             CONTINUE
+120               CONTINUE
+                   !$OMP END PARALLEL DO   
               END IF
           ELSE
-              IF (INCX.EQ.1) THEN
+             IF (INCX.EQ.1) THEN
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) IF(N>=100)
                   DO 140 J = N,1,-1
-                      TEMP = X(J)
+                     TEMP = X(J)
+                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) REDUCTION(-:TEMP) UNROLL PARTIAL(10)
                       DO 130 I = N,J + 1,-1
                           TEMP = TEMP - A(I,J)*X(I)
   130                 CONTINUE
                       IF (NOUNIT) TEMP = TEMP/A(J,J)
                       X(J) = TEMP
-  140             CONTINUE
+140               CONTINUE
+                  !$OMP END PARALLEL DO    
               ELSE
                   KX = KX + (N-1)*INCX
                   JX = KX
+                    !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) IF(N>=100)
                   DO 160 J = N,1,-1
                       TEMP = X(JX)
                       IX = KX
+                        !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) REDUCTION(-:TEMP) UNROLL PARTIAL(10)
                       DO 150 I = N,J + 1,-1
                           TEMP = TEMP - A(I,J)*X(IX)
                           IX = IX - INCX
@@ -6501,16 +6536,13 @@ END SUBROUTINE
                       IF (NOUNIT) TEMP = TEMP/A(J,J)
                       X(JX) = TEMP
                       JX = JX - INCX
-  160             CONTINUE
+160              CONTINUE
+                  !$OMP END PARALLEL DO    
               END IF
           END IF
       END IF
-*
-      RETURN
-*
-*     End of DTRSV .
-*
-      END
+
+END SUBROUTINE
     
 
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
