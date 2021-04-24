@@ -1504,3 +1504,350 @@ T, LDT, C, LDC, WORK, LDWORK )  !GCC$ ATTRIBUTES hot :: DLARFB !GCC$ ATTRIBUTES 
       END IF
 
 END SUBROUTINE
+
+
+!*  Authors:
+!*  ========
+!*
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup doubleOTHERauxiliary
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLARF( SIDE, M, N, V, INCV, TAU, C, LDC, WORK) !GCC$ ATTRIBUTES hot :: DLARF !GCC$ ATTRIBUTES aligned(32) :: DLARF !GCC$ ATTRIBUTES no_stack_protector :: DLARF
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE DLARF(SIDE, M, N, V, INCV, TAU, C, LDC, WORK)
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLARF
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLARF
+#endif
+  
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          SIDE
+      INTEGER            INCV, LDC, M, N
+      DOUBLE PRECISION   TAU
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   C( LDC, * ), V( * ), WORK( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: V
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WORK
+      
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            APPLYLEFT
+      INTEGER            I, LASTV, LASTC
+!!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DGEMV, DGER
+!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      INTEGER            ILADLR, ILADLC
+      EXTERNAL           LSAME, ILADLR, ILADLC
+!*     ..
+!*     .. Executable Statements ..
+!*
+      APPLYLEFT = LSAME( SIDE, 'L' )
+      LASTV = 0
+      LASTC = 0
+      IF( TAU.NE.ZERO ) THEN
+!     Set up variables for scanning V.  LASTV begins pointing to the end
+!     of V.
+         IF( APPLYLEFT ) THEN
+            LASTV = M
+         ELSE
+            LASTV = N
+         END IF
+         IF( INCV.GT.0 ) THEN
+            I = 1 + (LASTV-1) * INCV
+         ELSE
+            I = 1
+         END IF
+!     Look for the last non-zero row in V.
+         DO WHILE( LASTV.GT.0 .AND. V( I ).EQ.ZERO )
+            LASTV = LASTV - 1
+            I = I - INCV
+         END DO
+         IF( APPLYLEFT ) THEN
+!     Scan for the last non-zero column in C(1:lastv,:).
+            LASTC = ILADLC(LASTV, N, C, LDC)
+         ELSE
+!     Scan for the last non-zero row in C(:,1:lastv).
+            LASTC = ILADLR(M, LASTV, C, LDC)
+         END IF
+      END IF
+!     Note that lastc.eq.0 renders the BLAS operations null; no special
+!     case is needed at this level.
+      IF( APPLYLEFT ) THEN
+!*
+!*        Form  H * C
+!*
+         IF( LASTV.GT.0 ) THEN
+!*
+!*           w(1:lastc,1) := C(1:lastv,1:lastc)**T * v(1:lastv,1)
+!*
+            CALL DGEMV( 'Transpose', LASTV, LASTC, ONE, C, LDC, V, INCV, &
+                ZERO, WORK, 1 )
+!*
+!*           C(1:lastv,1:lastc) := C(...) - v(1:lastv,1) * w(1:lastc,1)**T
+!*
+            CALL DGER( LASTV, LASTC, -TAU, V, INCV, WORK, 1, C, LDC )
+         END IF
+      ELSE
+!*
+!*        Form  C * H
+!*
+         IF( LASTV.GT.0 ) THEN
+!*
+!*           w(1:lastc,1) := C(1:lastc,1:lastv) * v(1:lastv,1)
+!*
+            CALL DGEMV( 'No transpose', LASTC, LASTV, ONE, C, LDC, &
+                 V, INCV, ZERO, WORK, 1 )
+!*
+!*           C(1:lastc,1:lastv) := C(...) - w(1:lastc,1) * v(1:lastv,1)**T
+!*
+            CALL DGER( LASTC, LASTV, -TAU, WORK, 1, V, INCV, C, LDC )
+         END IF
+      END IF
+ 
+END SUBROUTINE
+
+
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup doubleOTHERauxiliary
+!*
+!*> \par Further Details:
+!*  =====================
+!*>
+!*> \verbatim
+!*>
+!*>  The shape of the matrix V and the storage of the vectors which define
+!*>  the H(i) is best illustrated by the following example with n = 5 and
+!*>  k = 3. The elements equal to 1 are not stored.
+!*>
+!*>  DIRECT = 'F' and STOREV = 'C':         DIRECT = 'F' and STOREV = 'R':
+!*>
+!*>               V = (  1       )                 V = (  1 v1 v1 v1 v1 )
+!*>                   ( v1  1    )                     (     1 v2 v2 v2 )
+!*>                   ( v1 v2  1 )                     (        1 v3 v3 )
+!*>                   ( v1 v2 v3 )
+!*>                   ( v1 v2 v3 )
+!*>
+!*>  DIRECT = 'B' and STOREV = 'C':         DIRECT = 'B' and STOREV = 'R':
+!*>
+!*>               V = ( v1 v2 v3 )                 V = ( v1 v1  1       )
+!*>                   ( v1 v2 v3 )                     ( v2 v2 v2  1    )
+!*>                   (  1 v2 v3 )                     ( v3 v3 v3 v3  1 )
+!*>                   (     1 v3 )
+!*>                   (        1 )
+!*> \endverbatim
+!*>
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT )  !GCC$ ATTRIBUTES hot :: DLARFT !GCC$ ATTRIBUTES aligned(32) :: DLARFT !GCC$ ATTRIBUTES no_stack_protector :: DLARFT
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+  SUBROUTINE DLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT)
+!DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLARFT
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLARFT
+#endif
+      use omp_lib
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          DIRECT, STOREV
+      INTEGER            K, LDT, LDV, N
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   T( LDT, * ), TAU( * ), V( LDV, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: V
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, J, PREVLASTV, LASTV
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DGEMV, DTRMV
+!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Quick return if possible
+!*
+!      IF( N.EQ.0 )
+!     $   RETURN
+!*
+      IF( LSAME( DIRECT, 'F' ) ) THEN
+         PREVLASTV = N
+         DO I = 1, K
+            PREVLASTV = MAX( I, PREVLASTV )
+            IF( TAU( I ).EQ.ZERO ) THEN
+!*
+!*              H(i)  =  I
+               !*
+               !$OMP SIMD ALIGNED(T:64) LINEAR(J:1) UNROLL PARTIAL(8)
+               DO J = 1, I
+                  T( J, I ) = ZERO
+               END DO
+            ELSE
+!*
+!*              general case
+!*
+               IF( LSAME( STOREV, 'C' ) ) THEN
+!*                 Skip any trailing zeros.
+                  DO LASTV = N, I+1, -1
+                     IF( V( LASTV, I ).NE.ZERO ) EXIT
+                  END DO
+                  
+                  DO J = 1, I-1
+                     T( J, I ) = -TAU( I ) * V( I , J )
+                  END DO
+                  J = MIN( LASTV, PREVLASTV )
+!*
+!*                 T(1:i-1,i) := - tau(i) * V(i:j,1:i-1)**T * V(i:j,i)
+!*
+                  CALL DGEMV( 'Transpose', J-I, I-1, -TAU( I ),  &
+                            V( I+1, 1 ), LDV, V( I+1, I ), 1, ONE, &
+                             T( 1, I ), 1 )
+               ELSE
+!*                 Skip any trailing zeros.
+                  DO LASTV = N, I+1, -1
+                     IF( V( I, LASTV ).NE.ZERO ) EXIT
+                  END DO
+                   !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                  DO J = 1, I-1
+                     T( J, I ) = -TAU( I ) * V( J , I )
+                  END DO
+                  J = MIN( LASTV, PREVLASTV )
+!*
+!*                 T(1:i-1,i) := - tau(i) * V(1:i-1,i:j) * V(i,i:j)**T
+!*
+                  CALL DGEMV( 'No transpose', I-1, J-I, -TAU( I ), &
+                             V( 1, I+1 ), LDV, V( I, I+1 ), LDV, ONE, &
+                             T( 1, I ), 1 )
+               END IF
+!*
+!*              T(1:i-1,i) := T(1:i-1,1:i-1) * T(1:i-1,i)
+!*
+               CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', I-1, T, &
+                          LDT, T( 1, I ), 1 )
+               T( I, I ) = TAU( I )
+               IF( I.GT.1 ) THEN
+                  PREVLASTV = MAX( PREVLASTV, LASTV )
+               ELSE
+                  PREVLASTV = LASTV
+               END IF
+            END IF
+         END DO
+      ELSE
+         PREVLASTV = 1
+         DO I = K, 1, -1
+            IF( TAU( I ).EQ.ZERO ) THEN
+!*
+!*              H(i)  =  I
+               !*
+                !$OMP SIMD ALIGNED(T:64) LINEAR(J:1) UNROLL PARTIAL(8)
+               DO J = I, K
+                  T( J, I ) = ZERO
+               END DO
+            ELSE
+!*
+!*              general case
+!*
+               IF( I.LT.K ) THEN
+                  IF( LSAME( STOREV, 'C' ) ) THEN
+!*                    Skip any leading zeros.
+                     DO LASTV = 1, I-1
+                        IF( V( LASTV, I ).NE.ZERO ) EXIT
+                     END DO
+                      !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                     DO J = I+1, K
+                        T( J, I ) = -TAU( I ) * V( N-K+I , J )
+                     END DO
+                     J = MAX( LASTV, PREVLASTV )
+!*
+!*                    T(i+1:k,i) = -tau(i) * V(j:n-k+i,i+1:k)**T * V(j:n-k+i,i)
+!*
+                     CALL DGEMV( 'Transpose', N-K+I-J, K-I, -TAU( I ),
+                                V( J, I+1 ), LDV, V( J, I ), 1, ONE,
+                                T( I+1, I ), 1 )
+                  ELSE
+!*                    Skip any leading zeros.
+                     DO LASTV = 1, I-1
+                        IF( V( I, LASTV ).NE.ZERO ) EXIT
+                     END DO
+                      !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                     DO J = I+1, K
+                        T( J, I ) = -TAU( I ) * V( J, N-K+I )
+                     END DO
+                     J = MAX( LASTV, PREVLASTV )
+!*
+!*                    T(i+1:k,i) = -tau(i) * V(i+1:k,j:n-k+i) * V(i,j:n-k+i)**T
+!*
+                     CALL DGEMV( 'No transpose', K-I, N-K+I-J, &
+                         -TAU( I ), V( I+1, J ), LDV, V( I, J ), LDV, &
+                         ONE, T( I+1, I ), 1 )
+                  END IF
+!*
+!*                 T(i+1:k,i) := T(i+1:k,i+1:k) * T(i+1:k,i)
+!*
+                  CALL DTRMV( 'Lower', 'No transpose', 'Non-unit', K-I, &
+                             T( I+1, I+1 ), LDT, T( I+1, I ), 1 )
+                  IF( I.GT.1 ) THEN
+                     PREVLASTV = MIN( PREVLASTV, LASTV )
+                  ELSE
+                     PREVLASTV = LASTV
+                  END IF
+               END IF
+               T( I, I ) = TAU( I )
+            END IF
+         END DO
+      END IF
+  
+END SUBROUTINE
+
+    
+
+    
