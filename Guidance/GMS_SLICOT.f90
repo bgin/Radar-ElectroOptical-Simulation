@@ -2923,9 +2923,8 @@ C
 C     ******************************************************************
 C
 #endif
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+
       use omp_lib
-#endif
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE, TWO
@@ -2935,27 +2934,21 @@ C
                         LDWORK, M, N
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      INTEGER           IWORK(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IWORK(*)
-      !DIR$ ASSUME_ALIGNED IWORK:64
-#endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-           K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-           K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED K:64
-      !DIR$ ASSUME_ALIGNED P:64
-      !DIR$ ASSUME_ALIGNED Q:64
-      !DIR$ ASSUME_ALIGNED R:64
-#endif
+
+      !INTEGER           IWORK(*)
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+      !     K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: K
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: P
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+
 !C     .. Local Scalars ..
       INTEGER           J, JWORK, LDW, N1
       DOUBLE PRECISION  RCOND, RNORM, TOLDEF
@@ -3022,29 +3015,25 @@ C
       CALL MB01RD( 'Upper', 'No transpose', L, N, ONE, ONE, R, LDR, C, &
                    LDC, P, LDP, DWORK, LDWORK, INFO )
       LDW = MAX( 1, L )
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
+      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,K) PRIVATE(J)
       DO 10 J = 1, L
          CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
    10 CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP END PARALLEL DO
-#endif
+      !$OMP END PARALLEL DO
+
       CALL DLACPY( 'Full', L, N, C, LDC, DWORK, LDW )
       CALL DTRMM( 'Right', 'Upper', 'Transpose', 'Non-unit', L, N, ONE, &
                   P, LDP, DWORK, LDW )
       CALL DSCAL( N, TWO, P, LDP+1 )
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
+      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(K,DWORK)  PRIVATE(J)
       DO 20 J = 1, L
          CALL DAXPY( N, ONE, K(1,J), 1, DWORK(J), LDW )
          CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
-20       CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+20    CONTINUE
          !$OMP END PARALLEL DO
-#endif
+
 !C
 !C     Calculate the Cholesky decomposition U'U of the innovation
 !C     covariance matrix RINOV, and its reciprocal condition number.
@@ -3089,17 +3078,14 @@ C
 !C
       JWORK = 1
       !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JWORK)
-#endif
+
+     
       DO 30 J = 1, N
          CALL DGEMV( 'No transpose', J, L, -ONE, K, LDK, DWORK(JWORK), &
                      1, ONE, P(1,J), 1 )
          JWORK = JWORK + L
-30       CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP END PARALLEL DO
-#endif
+30    CONTINUE
+
 !C
       CALL MB01RD( 'Upper', 'No transpose', N, N, ZERO, ONE, P, LDP, A, &
                    LDA, P, LDP, DWORK, LDWORK, INFO )
@@ -3307,20 +3293,14 @@ C
       INTEGER            INFO, LDA, LDB, M, N
       DOUBLE PRECISION   ALPHA, RCOND, TOL
 !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      INTEGER            IWORK(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER IWORK(*)
-!DIR$ ASSUME_ALIGNED IWORK:64
-#endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
-!DIR$ ASSUME_ALIGNED A:64
-!DIR$ ASSUME_ALIGNED B:64
-!DIR$ ASSUME_ALIGNED DWORK:64
-#endif
+
+      !INTEGER            IWORK(*)
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      !DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+
 !C     .. Local Scalars ..
       LOGICAL            LSIDE, ONENRM
       INTEGER            NROWA
@@ -3755,9 +3735,8 @@ C
 C     ******************************************************************
 C
 #endif
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-     use omp_lib
-#endif
+
+       use omp_lib
        implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ONE, TWO
@@ -3768,32 +3747,24 @@ C
                         LDSINV, LDWORK, M, N, P
       DOUBLE PRECISION  TOL
 !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      INTEGER           IWORK(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IWORK(*)
-!DIR$ ASSUME_ALIGNED IWORK:64
-#endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
-                       DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
-                       RINVY(*), SINV(LDSINV,*), X(*), Z(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-       DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
-                       DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
-                       RINVY(*), SINV(LDSINV,*), X(*), Z(*)
-!DIR$ ASSUME_ALIGNED ANIV:64
-!DIR$ ASSUME_ALIGNED AINVB:64
-!DIR$ ASSUME_ALIGNED C:64
-!DIR$ ASSUME_ALIGNED DWORK:64
-!DIR$ ASSUME_ALIGNED E:64
-!DIR$ ASSUME_ALIGNED QINV:64
-!DIR$ ASSUME_ALIGNED RINV:64
-!DIR$ ASSUME_ALIGNED RINVY:64
-!DIR$ ASSUME_ALIGNED SINV:64
-!DIR$ ASSUME_ALIGNED X:64
-!DIR$ ASSUME_ALIGNED Z:64
-#endif
+
+      !INTEGER           IWORK(*)
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+
+      !DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
+      !                 DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
+      !                 RINVY(*), SINV(LDSINV,*), X(*), Z(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINVB
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: E
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: QINV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: RINV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: RINVY
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: SINV
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: X
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: Z
 
 !C     .. Local Scalars ..
       LOGICAL           LJOBX, LMULTR
@@ -3854,7 +3825,7 @@ C
 !         INFO = -25
 !      END IF
 !
-      IF ( INFO.NE.0 ) THEN
+      !IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
@@ -3920,9 +3891,7 @@ C
       I13 = N*NM + 1
       WRKOPT = MAX( 1, N*NM + N )
 !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,II)
-#endif
+
       DO 10 I = 1, N
          CALL DCOPY( I, DWORK(II), 1, DWORK(I13), 1 )
          CALL DTRMV( 'Upper', 'No transpose', 'Non-unit', I, SINV, &
@@ -3930,9 +3899,7 @@ C
          CALL DCOPY( I, DWORK(I13), 1, DWORK(II), 1 )
          II = II + N
    10 CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO END
-#endif
+
 !C
 !C                    [ A3 ]
 !C     Compute SINV x [ A4 ] or SINV x [ B2 A ].
@@ -3979,18 +3946,16 @@ C
 !C
       IJ = 1
       !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,IJ)
-#endif
+
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK) PRIVATE(I,IJ)
       DO 20 I = 1, M
          CALL DAXPY( MIN( I, N ), -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
                     DDOT( MIN( I, N ), DWORK(IJ), 1, X, 1 ) ), &
                                        DWORK(IJ), 1, X, 1 )
          IJ = IJ + N
-20       CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
+20    CONTINUE
 !$OMP PARALLEL DO END
-#endif
+
 !C
 !C     Now, the workspace for SINV x AINVB, as well as for the updated
 !C!     (1,2) block of the pre-array, are no longer needed.
@@ -4007,17 +3972,15 @@ C
         CALL DLACPY( 'Upper', N-M, N, DWORK(I32+M), LDW, DWORK(MP1), &
                       LDW )
       LDW = MAX( 1, NP )
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK) PRIVATE(I,IJ)
       DO 40 I = N, 1, -1
          DO 30 IJ = MIN( N, I+M ), 1, -1
             DWORK(NP*(I-1)+P+IJ) = DWORK(N*(I-1)+IJ)
    30    CONTINUE
    40 CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP PARALLEL DO END
-#endif
+   !$OMP PARALLEL DO END
+            
 !C     Copy of RINV x C in the (1,1) block of DWORK.
 !C
       CALL DLACPY( 'Full', P, N, C, LDC, DWORK, LDW )
