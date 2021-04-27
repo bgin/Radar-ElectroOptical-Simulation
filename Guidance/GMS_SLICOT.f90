@@ -4178,9 +4178,7 @@ C
 C     ******************************************************************
 C
 #endif
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-use omp_lib
-#endif
+
        implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
@@ -4189,19 +4187,16 @@ use omp_lib
       CHARACTER         UPLO
       INTEGER           LDA, LDB, LDC, LDR, M, N, P
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-           R(LDR,*), TAU(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-           R(LDR,*), TAU(*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED R:64
-      !DIR$ ASSUME_ALIGNED TAU:64
-#endif
+
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+      !     R(LDR,*), TAU(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+
 !C     .. Local Scalars ..
       LOGICAL           LUPLO
       INTEGER           I, IM
@@ -4219,9 +4214,7 @@ use omp_lib
       LUPLO = LSAME( UPLO, 'U' )
       IM = P
       !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,IM)
-#endif
+
       DO 10 I = 1, N
 !C
 !C        Annihilate the I-th column of A and apply the transformations
@@ -4259,10 +4252,8 @@ use omp_lib
             CALL DSCAL( M, -TAU(I), C(I,1), LDC )
             CALL DGER( IM, M, ONE, A(1,I), 1, C(I,1), LDC, B, LDB )
          END IF
-10       CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP END PARALLEL DO
-#endif
+10    CONTINUE
+
      
 END SUBROUTINE MB04KD
 
@@ -4416,15 +4407,13 @@ C
 !C     .. Scalar Arguments ..
       INTEGER           INFO, L, LDA, LDB, LDWORK, M, N, P
 !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-       DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
-!DIR$ ASSUME_ALIGNED A:64
-!DIR$ ASSUME_ALIGNED B:64
-!DIR$ ASSUME_ALIGNED DWORK:64
-!DIR$ ASSUME_ALIGNED TAU:64
-#endif
+
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+
 !C     .. Local Scalars ..
       LOGICAL           LQUERY
       INTEGER           I, WRKOPT
@@ -4501,9 +4490,7 @@ C
 !C     NB refers to the optimal block size for the immediately
 !C     following subroutine, as returned by ILAENV.)
 !C
-#if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I,FIRST)
-#endif
+
       DO 10 I = 1, MIN( P, M )
 !C
 !C        Exploit the structure of the I-th column of A.
@@ -4521,10 +4508,8 @@ C
 !C
             A(I,I) = FIRST
          END IF
-10       CONTINUE
-#if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-!$OMP END PARALLEL DO
-#endif
+10    CONTINUE
+
 
       WRKOPT = MAX( 1, M - 1, L )
 !C
@@ -4701,19 +4686,16 @@ use omp_lib
       CHARACTER         UPLO
       INTEGER           LDA, LDB, LDC, LDL, M, N, P
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-           L(LDL,*), TAU(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-           L(LDL,*), TAU(*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED L:64
-      !DIR$ ASSUME_ALIGNED TAU:64
-#endif
+
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+      !     L(LDL,*), TAU(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+
 !C     .. Local Scalars ..
       LOGICAL           LUPLO
       INTEGER           I, IM
@@ -4731,9 +4713,7 @@ use omp_lib
       LUPLO = LSAME( UPLO, 'L' )
       IM = M
       !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      !$OMP PARALLEL DO DEAFULT(SHARED) PRIVATE(I,IM) SCHEDULE(STATIC)
-#endif
+
       DO 10 I = 1, N
 !C
 !C        Annihilate the I-th row of A and apply the transformations to
@@ -4772,9 +4752,7 @@ use omp_lib
             CALL DGER( P, IM, ONE, C(1,I), 1, A(I,1), LDA, B, LDB )
          END IF
    10 CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP END PARALLEL DO
-#endif
+
     
 END SUBROUTINE MB04LD
 
@@ -5050,20 +5028,17 @@ C
                        NAP, NFP, NP, NUP
       DOUBLE PRECISION ALPHA, TOL
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
-           WI(*), WR(*), Z(LDZ,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
-           WI(*), WR(*), Z(LDZ,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED F:64
-      !DIR$ ASSUME_ALIGNED WI:64
-      !DIR$ ASSUME_ALIGNED WR:64
-      !DIR$ ASSUME_ALIGNED Z:64
-#endif
+
+     ! DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+      !     WI(*), WR(*), Z(LDZ,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: F
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WI
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+
 !C     .. Local Scalars ..
       LOGICAL          CEIG, DISCR, SIMPLB
       INTEGER          I, IB, IB1, IERR, IPC, J, K, KFI, KG, KW, KWI, &
@@ -5656,18 +5631,15 @@ C
 C     ******************************************************************
 C
 #endif
+      implicit none
 !C     .. Scalar Arguments ..
       LOGICAL          REIG
       INTEGER          N
       DOUBLE PRECISION P, S, XI ,XR
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       DOUBLE PRECISION WI(*), WR(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION WI(*), WR(*)
-      !DIR$ ASSUME_ALIGNED WI:64
-      !DIR$ ASSUME_ALIGNED WR:64
-#endif
+
 !C     .. Local Scalars ..
       INTEGER          I, J, K
       DOUBLE PRECISION X, Y
@@ -5831,7 +5803,11 @@ C
       INTEGER           INFO, M, N
       DOUBLE PRECISION  P, S, TOL
 !C     .. Array Arguments ..
-      DOUBLE PRECISION  A(N,*), B(N,*), DWORK(*), F(M,*)
+      !DOUBLE PRECISION  A(N,*), B(N,*), DWORK(*), F(M,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: F
 !C     .. Local Scalars ..
       INTEGER           IR, J
       DOUBLE PRECISION  ABSR, B1, B2, B21, C, C0, C1, C11, C12, C21,    &
@@ -6233,6 +6209,7 @@ C
 C    ******************************************************************
 C
 #endif
+      implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION ONE, ZERO
       PARAMETER        ( ONE = 1.0D0, ZERO = 0.0D0 )
@@ -6241,14 +6218,12 @@ C
       INTEGER          INFO, LDA, LDU, N, NDIM, NLOW, NSUP
       DOUBLE PRECISION ALPHA
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED U:64
-#endif
+
+      !DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+
 !C     .. Local Scalars ..
       LOGICAL          DISCR, LSTDOM
       INTEGER          IB, L, LM1, NUP
