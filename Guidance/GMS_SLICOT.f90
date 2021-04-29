@@ -18742,9 +18742,8 @@ C
 C     ******************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
        use omp_lib
-#endif
        implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
@@ -18754,17 +18753,12 @@ C
       INTEGER           INFO, LDA, LDH, LDWORK, M, N
       DOUBLE PRECISION  ALPHA
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       !DOUBLE PRECISION  A(LDA,*), DWORK(*), H(LDH,*)
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), DWORK(*), H(LDH,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED H:64
-#endif
+
 !C     .. Local Scalars ..
       LOGICAL           LSIDE, LTRANS
       INTEGER           I, J, JW
@@ -18859,14 +18853,10 @@ C
                CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
             IF( LTRANS ) THEN
                JW = 1
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,H,DWORK) PRIVATE(J,JW,I)
                DO 20 J = 1, N
                   JW = JW + 1
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) PRIVATE(JW)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ SIMD PRIVATE(JW)
-#endif
+                  !$OMP SIMD ALIGNED(A:64,H,DWORK) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 10 I = 1, M - 1
                      A( I, J ) = A( I, J ) + &
                                  ALPHA*H( I+1, 1 )*DWORK( JW )
@@ -18875,14 +18865,10 @@ C
    20          CONTINUE
             ELSE
                JW = 0
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,H,DWORK) PRIVATE(J,JW,I)
                DO 40 J = 1, N
                   JW = JW + 1
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) PRIVATE(JW)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ SIMD PRIVATE(JW)
-#endif
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 30 I = 2, M
                      A( I, J ) = A( I, J ) + &
                                  ALPHA*H( I, 1 )*DWORK( JW )
@@ -18897,6 +18883,7 @@ C
 
             IF( LTRANS ) THEN
                JW = 1
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,JW)
                DO 50 J = 1, N - 1
                   IF ( H( J+1, J ).NE.ZERO ) &
                     CALL DAXPY( M, ALPHA*H( J+1, J ), DWORK( JW ), 1, &
@@ -18905,6 +18892,7 @@ C
    50          CONTINUE
             ELSE
                JW = M + 1
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,JW)
                DO 60 J = 1, N - 1
                   IF ( H( J+1, J ).NE.ZERO ) &
                     CALL DAXPY( M, ALPHA*H( J+1, J ), DWORK( JW ), 1, &
@@ -18922,50 +18910,48 @@ C
             IF( M.GT.2 ) &
                CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
             IF( LTRANS ) THEN
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,I)
                DO 80 J = 1, N
 !C
 !C                 Compute the contribution of the subdiagonal of H to
 !C                 the j-th column of the product.
                   !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ VECTOR ALWAYS
-#endif
+
+                  !$OMP SIMD ALIGNED(A:64,H,DWORK)  LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 70 I = 1, M - 1
                      DWORK( I ) = H( I+1, 1 )*A( I+1, J )
    70             CONTINUE
 !C
 !C                 Multiply the upper triangle of H by the j-th column
 !C                 of A, and add to the above result.
-!C
+                     !C
+                  !$OMP SINGLE
                   CALL DTRMV( 'Upper', TRANS, 'Non-unit', M, H, LDH, &
-                              A( 1, J ), 1 )
+                       A( 1, J ), 1 )
+                  !$OMP END SINGLE NOWAIT
                   CALL DAXPY( M-1, ONE, DWORK, 1, A( 1, J ), 1 )
    80          CONTINUE
 !C
             ELSE
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,I)  
                DO 100 J = 1, N
 !C
 !C                 Compute the contribution of the subdiagonal of H to
 !C                 the j-th column of the product.
                   !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ VECTOR ALWAYS
-#endif                  
+
+                  !$OMP SIMD ALIGNED(A:64,H,DWORK)   LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 90 I = 1, M - 1
                      DWORK( I ) = H( I+1, 1 )*A( I, J )
    90             CONTINUE
 !C
 !C                 Multiply the upper triangle of H by the j-th column
 !C                 of A, and add to the above result.
-!C
+                     !C
+                     !$OMP SINGLE
                   CALL DTRMV( 'Upper', TRANS, 'Non-unit', M, H, LDH, &
-                             A( 1, J  ), 1 )
+                       A( 1, J  ), 1 )
+                  !$OMP END SINGLE NOWAIT
                   CALL DAXPY( M-1, ONE, DWORK, 1, A( 2, J ), 1 )
   100          CONTINUE
             END IF
@@ -18979,50 +18965,48 @@ C
             IF( N.GT.2 ) &
                CALL DSWAP( N-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
             IF( LTRANS ) THEN
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,I)  
                DO 120 I = 1, M
 !C
 !C                 Compute the contribution of the subdiagonal of H to
 !C                 the i-th row of the product.
                   !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ VECTOR ALWAYS
-#endif
+
+                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64)  LINEAR(J:1) UNROLL PARTIAL(6)
                   DO 110 J = 1, N - 1
                      DWORK( J ) = A( I, J )*H( J+1, 1 )
   110             CONTINUE
 !C
 !C                 Multiply the i-th row of A by the upper triangle of H,
 !C                 and add to the above result.
-!C
+                     !C
+                     !$OMP SINGLE
                   CALL DTRMV( 'Upper', 'NoTranspose', 'Non-unit', N, H, &
-                              LDH, A( I, 1 ), LDA )
+                       LDH, A( I, 1 ), LDA )
+                  !$OMP END SINGLE NOWAIT
                   CALL DAXPY( N-1, ONE, DWORK, 1, A( I, 2 ), LDA )
   120          CONTINUE
 
-            ELSE
+           ELSE
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,I)  
                DO 140 I = 1, M
 !C
 !C                 Compute the contribution of the subdiagonal of H to
 !C                 the i-th row of the product.
                   !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) 
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ VECTOR ALWAYS
-#endif
+
+                  !$OMP SIMD ALIGNED(A:64,H,DWORK)   LINEAR(J:1) UNROLL PARTIAL(6)
                   DO 130 J = 1, N - 1
                      DWORK( J ) = A( I, J+1 )*H( J+1, 1 )
   130             CONTINUE
 !C
 !C                 Multiply the i-th row of A by the upper triangle of H,
 !C                 and add to the above result.
-!C
+                     !C
+                     !$OMP SINGLE
                   CALL DTRMV( 'Upper', 'Transpose', 'Non-unit', N, H, &
-                              LDH, A( I, 1 ), LDA )
+                       LDH, A( I, 1 ), LDA )
+                  !$OMP END SINGLE NOWAIT
                   CALL DAXPY( N-1, ONE, DWORK, 1, A( I, 1 ), LDA )
   140          CONTINUE
             END IF
@@ -19212,9 +19196,8 @@ C
 C     ******************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       use omp_lib
-#endif
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION   ZERO, ONE, HALF
@@ -19226,7 +19209,7 @@ C
       DOUBLE PRECISION   FERR, XANORM
 !C     ..
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       INTEGER            IWORK( * )
      ! DOUBLE PRECISION   DWORK( * ), R( LDR, * ), T( LDT, * ),
       !                    U( LDU, * )
@@ -19234,15 +19217,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            IWORK( * )
-      DOUBLE PRECISION   DWORK( * ), R( LDR, * ), T( LDT, * ), &
-                         U( LDU, * )
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED R:64
-      !DIR$ ASSUME_ALIGNED T:64
-      !DIR$ ASSUME_ALIGNED U:64
-#endif
+
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            LOWER, NOTRNA, UPDATE
@@ -19344,38 +19319,32 @@ C
 !C
 !C              Scale the lower triangular part of symmetric matrix
 !C              by the residual matrix.
-!C
+               !C
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,R) PRIVATE(J,I,IJ)
                DO 30 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ SIMD PRIVATE(IJ)
-#endif
+                  !$OMP SIMD ALIGNED(DWORK:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 20 I = J, N
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
    20             CONTINUE
                   IJ = IJ + J
-   30          CONTINUE
+30            CONTINUE
+              !$OMP END PARALLEL DO    
             ELSE
 !C
 !C              Scale the upper triangular part of symmetric matrix
 !C              by the residual matrix.
-!C
+               !C
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,R) PRIVATE(J,I,IJ)
                DO 50 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ SIMD PRIVATE(IJ)
-#endif   
-                  DO 40 I = 1, J
+                  !$OMP SIMD ALIGNED(DWORK:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
+                   DO 40 I = 1, J
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
    40             CONTINUE
                   IJ = IJ + N - J
-   50          CONTINUE
+50             CONTINUE
+               !$OMP END PARALLEL DO   
             END IF
          END IF
 !C
@@ -19420,39 +19389,34 @@ C
 !C
 !C              Scale the lower triangular part of symmetric matrix
 !C              by the residual matrix.
-!C
+               !C
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,R) PRIVATE(J,I,IJ)
                DO 70 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ SIMD PRIVATE(IJ)
-#endif                     
+                  !$OMP SIMD ALIGNED(DWORK:64,R)  LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 60 I = J, N
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
    60             CONTINUE
                   IJ = IJ + J
-   70          CONTINUE
+70             CONTINUE
+               !$OMP END PARALLEL DO   
             ELSE
 !C
 !C              Scale the upper triangular part of symmetric matrix
 !C              by the residual matrix.
-!C
+               !C
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,R) PRIVATE(J,I,IJ)
                DO 90 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-                  !$OMP SIMD ALIGNED(DWORK:64,R:64) PRIVATE(IJ)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-                  !DIR$ VECTOR ALIGNED
-                  !DIR$ SIMD PRIVATE(IJ)
-#endif                     
+                  !$OMP SIMD ALIGNED(DWORK:64,R)  LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 80 I = 1, J
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
    80             CONTINUE
                   IJ = IJ + N - J
-   90          CONTINUE
+90            CONTINUE
+               !$OMP END PARALLEL DO   
             END IF
+               
          END IF
 !C
 !C        Fill in the remaining triangle of the symmetric matrix.
@@ -19667,9 +19631,14 @@ C
       DOUBLE PRECISION   SEP, THNORM
 !C     ..
 !C     .. Array Arguments ..
-      INTEGER            IWORK( * )
-      DOUBLE PRECISION   DWORK( * ), T( LDT, * ), U( LDU, * ), &
-                         X( LDX, * )
+      !INTEGER            IWORK( * )
+      !DOUBLE PRECISION   DWORK( * ), T( LDT, * ), U( LDU, * ), &
+      !                   X( LDX, * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            NOTRNA, UPDATE, WANTS, WANTT
