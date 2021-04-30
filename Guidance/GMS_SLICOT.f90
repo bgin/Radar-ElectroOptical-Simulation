@@ -16212,26 +16212,21 @@ C
       DOUBLE PRECISION   FERR, RCOND, SCALE, SEP
 !C     ..
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      INTEGER            IWORK( * )
-      DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
-                         T( LDT, * ), U( LDU, * ), WI( * ), WR( * ), &
-                         X( LDX, * )
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            IWORK( * )
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
-                         T( LDT, * ), U( LDU, * ), WI( * ), WR( * ), &
-                         X( LDX, * )
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED T:64
-      !DIR$ ASSUME_ALIGNED U:64
-      !DIR$ ASSUME_ALIGNED WI:64
-      !DIR$ ASSUME_ALIGNED WR:64
-      !DIR$ ASSUME_ALIGNED X:64
-#endif
+
+      !INTEGER            IWORK( * )
+      !DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
+      !                   T( LDT, * ), U( LDU, * ), WI( * ), WR( * ), &
+      !                   X( LDX, * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WI
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            JOBA, JOBC, JOBE, JOBS, JOBX, LOWER, NOFACT, &
@@ -16610,15 +16605,13 @@ C
       INTEGER           INFO, LDA, LDR, LDWORK, LDX, M, N
       DOUBLE PRECISION  ALPHA, BETA
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), DWORK(*), R(LDR,*), X(LDX,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), DWORK(*), R(LDR,*), X(LDX,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED R:64
-      !DIR$ ASSUME_ALIGNED X:64
-#endif
+
+      !DOUBLE PRECISION  A(LDA,*), DWORK(*), R(LDR,*), X(LDX,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+
 !C     .. Local Scalars ..
       LOGICAL           LTRANS, LUPLO
 !C     .. External Functions ..
@@ -17523,7 +17516,8 @@ C
       BTMP( 3 ) = B( 2, 2 )/TWO
 !C
 !C     Perform elimination
-!C
+      !C
+     
       DO 50 I = 1, 2
          XMAX = ZERO
 !C
@@ -17898,7 +17892,7 @@ C
       DOUBLE PRECISION   FERR, RCOND, SCALE, SEP
 !C     ..
       !C!     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+  
       INTEGER            IWORK( * )
       !DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
       !     T( LDT, * ), U( LDU, * ), X( LDX, * )
@@ -17908,17 +17902,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            IWORK( * )
-      DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
-           T( LDT, * ), U( LDU, * ), X( LDX, * )
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED T:64
-      !DIR$ ASSUME_ALIGNED U:64
-      !DIR$ ASSUME_ALIGNED X:64
-#endif
+
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            JOBB, JOBC, JOBE, LOWER, LQUERY, NOFACT, &
@@ -18092,17 +18076,15 @@ C
                CALL DLACPY( UPLO, N, N, X, LDX, DWORK, N )
 !C
                IF( LOWER ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(C,DWORK) PRIVATE(J)
                   DO 10 J = 1, N
                      CALL DAXPY( N-J+1, -SCALE/TWO, C( J, J ), 1, &
                                  DWORK( (J-1)*N+J ), 1 )
    10             CONTINUE
                ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif                     
+
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(C,DWORK) PRIVATE(J) 
                   DO 20 J = 1, N
                      CALL DAXPY( J, -SCALE/TWO, C( 1, J ), 1, &
                                  DWORK( (J-1)*N+1 ), 1 )
@@ -18220,18 +18202,16 @@ C
                          DWORK( IRES+1 ), N, INFO )
             JJ = IRES + 1
             IF( LOWER ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ)
-#endif                  
+
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,C) PRIVATE(J,JJ)
                DO 30 J = 1, N
                   CALL DAXPY( N-J+1, ONE, DWORK( JJ ), N, DWORK( JJ ),1)
                   CALL DAXPY( N-J+1, -SCALE, C( J, J ), 1, DWORK( JJ ),1)
                   JJ = JJ + N + 1
    30          CONTINUE
              ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-                  !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ)
-#endif                     
+
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,C) PRIVATE(J,JJ)
                DO 40 J = 1, N
                   CALL DAXPY( J, ONE, DWORK( IRES+J ), N, DWORK( JJ ),1)
                   CALL DAXPY( J, -SCALE, C( 1, J ), 1, DWORK( JJ ), 1 )
@@ -18256,27 +18236,27 @@ C
 !C                    (n+3)*(abs(op(T))'*abs(X) + abs(X)*abs(op(T)))),
 !C        where EPS is the machine precision.
          !C
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)SHARED(DWORK,X) PRIVATE(J,I)
          DO 60 J = 1, N
-            !$OMP SIMD ALIGNED(DWORK:64,X:64)
+            !$OMP SIMD ALIGNED(DWORK:64,X) LINEAR(I:1)
             DO 50 I = 1, N
                DWORK( IXBS+(J-1)*N+I ) = ABS( X( I, J ) )
    50       CONTINUE
    60    CONTINUE
 
          IF( LOWER ) THEN
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)                  
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)SHARED(DWORK,C) PRIVATE(J,I)                  
             DO 80 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,C:64)
+               !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
                DO 70 I = J, N
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
    70          CONTINUE
    80       CONTINUE
          ELSE
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)                        
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)SHARED(DWORK,X) PRIVATE(J,I)                       
             DO 100 J = 1, N
-              !$OMP SIMD ALIGNED(DWORK:64,C:64) 
+              !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
                DO 90 I = 1, J
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
@@ -18288,9 +18268,9 @@ C
 !C
 !C           Workspace 3*N*N.
             !C
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)              
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,A) PRIVATE(J,I)                  
             DO 120 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,A:64)
+               !$OMP SIMD ALIGNED(DWORK:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 110 I = 1, N
                   DWORK( IABS+(J-1)*N+I ) = ABS( A( I, J ) )
   110          CONTINUE
@@ -18302,9 +18282,9 @@ C
 !C
 !C           Workspace 3*N*N + N - 1.
             !C
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)                
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,T) PRIVATE(J,I)                
             DO 140 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,T:64)
+               !$OMP SIMD ALIGNED(DWORK:64,T) UNROLL PARTIAL(8)
                DO 130 I = 1, MIN( J+1, N )
                   DWORK( IABS+(J-1)*N+I ) = ABS( T( I, J ) )
   130          CONTINUE
@@ -18316,9 +18296,8 @@ C
             JJ = IRES + 1
             JX = IXBS + 1
             IF( LOWER ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ,JX)
-#endif
+
+               !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK) PRIVATE(J,JJ,JX)
                DO 150 J = 1, N
                   CALL DAXPY( N-J+1, ONE, DWORK( JX ), N, DWORK( JX ),1)
                   CALL DAXPY( N-J+1, ONE, DWORK( JX ), 1, DWORK( JJ ),1)
@@ -18326,10 +18305,9 @@ C
                   JX = JX + N + 1
   150          CONTINUE
             ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ,JX)
-#endif                  
-               DO 160 J = 1, N
+
+               !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK) PRIVATE(J,JJ,JX)
+              DO 160 J = 1, N
                   CALL DAXPY( J, ONE, DWORK( IXBS+J ), N, DWORK( JX ),1)
                   CALL DAXPY( J, ONE, DWORK( JX ), 1, DWORK( JJ ), 1 )
                   JJ = JJ + N
@@ -18470,9 +18448,8 @@ C
 C     ******************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+
       use omp_lib
-#endif
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO
@@ -18482,17 +18459,12 @@ C
       INTEGER           INFO, LDA, LDB, LDH, M, N
       DOUBLE PRECISION  ALPHA
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+
       !DOUBLE PRECISION  A(LDA,*), B(LDB,*), H(LDH,*)
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), H(LDH,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED H:64
-#endif
+
       !C     .. Local Scalars ..
       DOUBLE PRECISION  T0
       LOGICAL           LSIDE, LTRANS
@@ -18569,26 +18541,18 @@ C
          IF( M.GT.2 ) &
             CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
          IF( LTRANS ) THEN
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,H,A) PRIVATE(J,I,T0)
             DO 20 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(B:64,H:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+               !$OMP SIMD ALIGNED(B:64,H,A) LINEAR(I:1) UNROLL PARTIAL(10)
                DO 10 I = 1, M - 1
                   T0 = B(I,J)
                   B( I, J ) = T0 + ALPHA*H( I+1, 1 )*A( I+1, J )
    10          CONTINUE
    20       CONTINUE
-         ELSE
+          ELSE
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,H,A) PRIVATE(J,I,T0)   
             DO 40 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(B:64,H:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif               
+               !$OMP SIMD ALIGNED(B:64,H,A) LINEAR(I:1) UNROLL PARTIAL(10)
                DO 30 I = 2, M
                   T0 = B(I,J)
                   B( I, J ) = T0 + ALPHA*H( I, 1 )*A( I-1, J )
@@ -18883,7 +18847,6 @@ C
 
             IF( LTRANS ) THEN
                JW = 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,JW)
                DO 50 J = 1, N - 1
                   IF ( H( J+1, J ).NE.ZERO ) &
                     CALL DAXPY( M, ALPHA*H( J+1, J ), DWORK( JW ), 1, &
@@ -18892,7 +18855,6 @@ C
    50          CONTINUE
             ELSE
                JW = M + 1
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(H,DWORK,A) PRIVATE(J,JW)
                DO 60 J = 1, N - 1
                   IF ( H( J+1, J ).NE.ZERO ) &
                     CALL DAXPY( M, ALPHA*H( J+1, J ), DWORK( JW ), 1, &
