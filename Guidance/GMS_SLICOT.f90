@@ -8,9 +8,7 @@
 #define GMS_SLICOT_USE_MKL_LAPACK 1
 #endif
 
-#if !defined(GMS_SLICOT_USE_REFERENCE_LAPACK)
-#define GMS_SLICOT_USE_REFERENCE_LAPACK 0
-#endif
+
 
 
 
@@ -6453,13 +6451,12 @@ C
       INTEGER          INFO, L, LDA, LDU, N
       DOUBLE PRECISION E1, E2
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION A(LDA,*), U(LDU,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION A(LDA,*), U(LDU,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED U:64
-#endif
+
+      !DOUBLE PRECISION A(LDA,*), U(LDU,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      
+      
 !C     .. Local Scalars ..
       INTEGER          L1
       DOUBLE PRECISION EW1, EW2, CS, SN
@@ -6765,7 +6762,7 @@ C     ******************************************************************
 C
 #endif
 
-     use omp_lib
+    
 
        implicit none
 !C     .. Parameters ..
@@ -6777,33 +6774,25 @@ C
       INTEGER            INFO, LDA, LDB, LDC, LDD, LDGAIN, LDNP, LDNZ, &
                          LDWORK, M, N, NPZ, P
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
-                         DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
-                         POLESR(*), ZEROSI(*), ZEROSR(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-       DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
-                         DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
-                         POLESR(*), ZEROSI(*), ZEROSR(*)
-       !DIR$ ASSUME_ALIGNED A:64
-       !DIR$ ASSUME_ALIGNED B:64
-       !DIR$ ASSUME_ALIGNED C:64
-       !DIR$ ASSUME_ALIGNED D:64
-       !DIR$ ASSUME_ALIGNED DWORK:64
-       !DIR$ ASSUME_ALIGNED GAINS:64
-       !DIR$ ASSUME_ALIGNED POLESI:64
-       !DIR$ ASSUME_ALIGNED POLESR:64
-       !DIR$ ASSUME_ALIGNED ZEROSI:64
-       !DIR$ ASSUME_ALIGNED ZEROSR:64
-#endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
+      !DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
+      !                   DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
+      !                   POLESR(*), ZEROSI(*), ZEROSR(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GAINS
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: POLESI
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: POLESR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZEROSI
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZEROSR
+      
+
+
        INTEGER            IWORK(*), NP(LDNP,*), NZ(LDNZ,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-       INTEGER            IWORK(*), NP(LDNP,*), NZ(LDNZ,*)
-       !DIR$ ASSUME_ALIGNED IWORK:64
-       !DIR$ ASSUME_ALIGNED NP:64
-       !DIR$ ASSUME_ALIGNED NZ:64
-#endif
+
 !C     .. Local Scalars ..
       DOUBLE PRECISION   ANORM, DIJ, EPSN, MAXRED, TOLDEF
       INTEGER            I, IA, IAC, IAS, IB, IC, ICC, IERR, IM, IP,    &
@@ -6874,12 +6863,7 @@ C
 !C
             DO 20 J = 1, M
                !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD 
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+
                DO 10 I = 1, P
                   NZ(I,J) = 0
                   NP(I,J) = 0
@@ -6932,9 +6916,7 @@ C
 !C     Compute the transfer function matrix of the system (A,B,C,D),
 !C     in the pole-zero-gain form.
       !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE)  == 1
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,IB,ICC,ITAU1.JWK,IAS,JWORK1)
-#endif
+
       DO 80 J = 1, M
 !C
 !C        Save A and C.
@@ -7104,9 +7086,7 @@ C
    70    CONTINUE
 !C
 80          CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE)  == 1
-            !$OMP END PARALLEL DO
-#endif
+
 !C
   
 END SUBROUTINE
@@ -7274,9 +7254,8 @@ C
 C  *********************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
          use omp_lib
-#endif
          implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION   ZERO, ONE
@@ -7292,21 +7271,14 @@ C
       DOUBLE PRECISION   MAXRED
 !C     ..
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       !DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
       !     SCALE( * )
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: SCALE
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
-           SCALE( * )
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED SCALE:64
-#endif
+
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            NOCONV, WITHB, WITHC
@@ -7366,12 +7338,8 @@ C
 !C
       SNORM = ZERO
       !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A:64,C:64)
-#elif  defined(__ICC) || defined(__INTEL_COMPILER)
-      !DIR$ VECTOR ALIGNED
-      !DIR$ SIMD REDUCTION(+:CO)
-#endif
+
+      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A,C)
       DO 10 J = 1, N
          SCALE( J ) = ONE
          CO = DASUM( N, A( 1, J ), 1 )
@@ -7410,7 +7378,8 @@ C
 !C
    30 CONTINUE
       NOCONV = .FALSE.
-!C
+      !C
+      
       DO 90 I = 1, N
          CO = ZERO
          RO = ZERO
@@ -7515,12 +7484,8 @@ C
       MAXRED = SNORM
       SNORM  = ZERO
       !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A:64,C:64)
-#elif  defined(__ICC) || defined(__INTEL_COMPILER)
-      !DIR$ VECTOR ALIGNED
-      !DIR$ SIMD REDUCTION(+:CO)
-#endif      
+
+      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A,C)
       DO 100 J = 1, N
          CO = DASUM( N, A( 1, J ), 1 )
          IF( WITHC .AND. P.GT.0 ) &
@@ -7739,19 +7704,17 @@ C     ******************************************************************
       INTEGER           INFO, LDA, LDC, LDWORK, LDZ, N, NCONT, P
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
-           Z(LDZ,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-       DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
-            Z(LDZ,*)
-       !DIR$ ASSUME_ALIGNED A:64
-       !DIR$ ASSUME_ALIGNED B:64
-       !DIR$ ASSUME_ALIGNED C:64
-       !DIR$ ASSUME_ALIGNED DWORK:64
-       !DIR$ ASSUME_ALIGNED TAU:64
-       !DIR$ ASSUME_ALIGNED Z:64
-#endif
+
+      !DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
+      !     Z(LDZ,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: TAU
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+      
+
 !C     .. Local Scalars ..
       LOGICAL           LJOBF, LJOBI, LJOBZ
       INTEGER           ITAU, J
@@ -8115,15 +8078,11 @@ C
       INTEGER            INFO, KL, KU, LDA, M, MN, N, NBL
       DOUBLE PRECISION   ANRM
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))      
+   
       INTEGER            NROWS ( * )
-      DOUBLE PRECISION   A( LDA, * )
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            NROWS ( * )
-      !DIR$ ASSUME_ALIGNED NROWS:64
-       DOUBLE PRECISION   A( LDA, * )
-       !DIR$ ASSUME_ALIGNED A:64
-#endif
+      !DOUBLE PRECISION   A( LDA, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+
 !C     .. Local Scalars ..
       LOGICAL            FIRST, LSCALE
       INTEGER            I, ISUM, ITYPE
@@ -8368,9 +8327,8 @@ C
 C    ******************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-    use omp_lib
-#endif
+
+      use omp_lib
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION   ZERO, ONE
@@ -8382,16 +8340,11 @@ C
       DOUBLE PRECISION   CFROM, CTO
 !C     ..
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       INTEGER            NROWS ( * )
       ! DOUBLE PRECISION   A( LDA, * )
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            NROWS ( * )
-      !DIR$ ASSUME_ALIGNED NROWS:64
-      DOUBLE PRECISION   A( LDA, * )
-      !DIR$ ASSUME_ALIGNED A:64
-#endif
+
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            DONE, NOBLC
@@ -8459,14 +8412,11 @@ C
       IF( ITYPE.EQ.0 ) THEN
 !C
 !C        Full matrix
-!C
+         !C
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
          DO 30 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(A:64), LINEAR(I:1)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD LINEAR(I:1)
-#endif
+
+            !$OMP SIMD ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(6)
             DO 20 I = 1, M
                TMP = A(I,J)
                A( I, J ) = TMP*MUL
@@ -8478,14 +8428,10 @@ C
          IF ( NOBLC ) THEN
 !C
 !C           Lower triangular matrix
-!C
+            !C
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
             DO 50 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(A:64), LINEAR(I:1)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD LINEAR(I:1)
-#endif   
+            !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
                DO 40 I = J, M
                   TMP = A(I,J)
                   A( I, J ) = TMP*MUL
@@ -8497,16 +8443,13 @@ C
 !C           Block lower triangular matrix
 !C
             JFIN = 0
+             !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,NROWS) PRIVATE(K,JINI,JFIN,J,I,TMP)
             DO 80 K = 1, NBL
                JINI = JFIN + 1
                JFIN = JFIN + NROWS( K )
                DO 70 J = JINI, JFIN
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD LINEAR(I:1)
-#endif
                   DO 60 I = JINI, M
                      TMP = A(I,J)
                      A( I, J ) = TMP*MUL
@@ -8520,14 +8463,10 @@ C
          IF ( NOBLC ) THEN
 !C
 !C           Upper triangular matrix
-!C
+            !C
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
             DO 100 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD 
-#endif
+            !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
                DO 90 I = 1, MIN( J, M )
                   TMP = A(I,J)
                   A( I, J ) = TMP*MUL
@@ -8539,18 +8478,14 @@ C
 !C           Block upper triangular matrix
 !C
             JFIN = 0
+             !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,NROWS) PRIVATE(K,JINI,JFIN,J,I,TMP)
             DO 130 K = 1, NBL
                JINI = JFIN + 1
                JFIN = JFIN + NROWS( K )
                IF ( K.EQ.NBL ) JFIN = N
                DO 120 J = JINI, JFIN
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
             !$OMP SIMD ALIGNED(A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD
-#endif                  
-                  DO 110 I = 1, MIN( JFIN, M )
+                 DO 110 I = 1, MIN( JFIN, M )
                      TMP = A(I,J)
                      A( I, J ) = TMP*MUL
   110             CONTINUE
@@ -8562,15 +8497,11 @@ C
          IF ( NOBLC ) THEN
 !¬C
 !C           Upper Hessenberg matrix
-!C
+            !C
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
             DO 150 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD
-#endif               
-               DO 140 I = 1, MIN( J+1, M )
+            !$OMP SIMD ALIGNED(A:64) UNROLL PARTIAL(6)
+            DO 140 I = 1, MIN( J+1, M )
                   TMP = A(I,J)
                   A( I, J ) = TMP*MUL
   140          CONTINUE
@@ -8581,6 +8512,7 @@ C
 !C           Block upper Hessenberg matrix
 !C
             JFIN = 0
+             !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,NROWS) PRIVATE(K,JINI,JFIN,IFIN,J,I,TMP)
             DO 180 K = 1, NBL
                JINI = JFIN + 1
                JFIN = JFIN + NROWS( K )
@@ -8593,13 +8525,9 @@ C
                END IF
 !C
                DO 170 J = JINI, JFIN
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
             !$OMP SIMD ALIGNED(A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD
-#endif                  
-                  DO 160 I = 1, MIN( IFIN, M )
+                DO 160 I = 1, MIN( IFIN, M )
                      TMP = A(I,J)
                      A( I, J ) = TMP*MUL
   160             CONTINUE
@@ -8613,13 +8541,10 @@ C
 !C
          K3 = KL + 1
          K4 = N + 1
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
          DO 200 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
             !$OMP SIMD ALIGNED(A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD 
-#endif            
             DO 190 I = 1, MIN( K3, K4-J )
                TMP = A(I,J)
                A( I, J ) = TMP*MUL
@@ -8632,13 +8557,10 @@ C
 !C
          K1 = KU + 2
          K3 = KU + 1
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
          DO 220 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
             !$OMP SIMD ALIGNED(A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ SIMD 
-#endif               
             DO 210 I = MAX( K1-J, 1 ), K3
                TMP = A(I,J)
                A( I, J ) = TMP*MUL
@@ -8914,13 +8836,9 @@ C
       DOUBLE PRECISION  RCOND
       COMPLEX*16        FREQ
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       INTEGER           IWORK(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IWORK(*)
-      !DIR$ ASSUME_ALIGNED IWORK:64
-#endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
       !     EVRE(*)
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
@@ -8929,24 +8847,13 @@ C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVIM
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVRE
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
-           EVRE(*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED C:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED EWIM:64
-      !DIR$ ASSUME_ALIGNED EWRE:64
-#endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
-      !DIR$ ASSUME_ALIGNED ZWORK:64
-      !DIR$ ASSUME_ALIGNED G:64
-      !DIR$ ASSUME_ALIGNED HINVB:64
-#endif
+
+
+      !COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
+      COMPLEX(16), DIMENSION(:), ALLOCATABLE :: ZWORK
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: G
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: HINVB
+
 !C     .. Local Scalars ..
       CHARACTER         BALANC
       LOGICAL           LBALBA, LBALEA, LBALEB, LBALEC, LINITA
@@ -9050,9 +8957,8 @@ C
 !C           vector DWORK which describes the balancing of A and is
 !C           defined in the subroutine DGEBAL.
             !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JJ,JP)
-#endif
+
+            !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,B,C) PRIVATE(J,JJ,JP)
             DO 10 J = 1, N
                JJ = J
                IF ( JJ.LT.LOW .OR. JJ.GT.IGH ) THEN
@@ -9072,15 +8978,13 @@ C
                   END IF
                END IF
 10             CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
                !$OMP END PARALLEL DO
-#endif
+
 !C
             IF ( IGH.NE.LOW ) THEN
                !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,T)
-#endif
+
+               !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,B,C) PRIVATE(J,T)
                DO 20 J = LOW, IGH
                   T = DWORK(J)
 !C
@@ -9094,9 +8998,8 @@ C
                   IF ( P.GT.0 ) &
                      CALL DSCAL( P, T, C(1,J), 1 )
 20                CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
                   !$OMP END PARALLEL DO
-#endif
+
 !C
             END IF
          END IF
@@ -9129,14 +9032,11 @@ C
 !C           Temporarily store Hessenberg form of A in array ZWORK.
 !C
             IJ = 0
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(ZWORK,A) PRIVATE(J,I,IJ)
             DO 40 J = 1, N
                !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(ZWORK:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+
+               !$OMP SIMD ALIGNED(ZWORK:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 30 I = 1, N
                   IJ = IJ + 1
                   ZWORK(IJ) = DCMPLX( A(I,J), ZERO )
@@ -9153,14 +9053,11 @@ C
 !C           Restore upper Hessenberg form of A.
 !C
             IJ = 0
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(ZWORK,A) PRIVATE(J,I,IJ)
             DO 60 J = 1, N
                !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(ZWORK:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+
+               !$OMP SIMD ALIGNED(ZWORK:64,A)  LINEAR(I:1) UNROLL PARTIAL(8)
                DO 50 I = 1, N
                   IJ = IJ + 1
                   A(I,J) = DBLE( ZWORK(IJ) )
@@ -9181,14 +9078,11 @@ C
 !C
       IJ = 0
       JJ = 1
+        !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(ZWORK,A) PRIVATE(J,I,IJ)
       DO 80 J = 1, N
          !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(ZWORK:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif        
+
+         !$OMP SIMD ALIGNED(ZWORK:64,A)  LINEAR(I:1) UNROLL PARTIAL(8)
          DO 70 I = 1, N
             IJ = IJ + 1
             ZWORK(IJ) = -DCMPLX( A(I,J), ZERO )
@@ -9206,18 +9100,15 @@ C
          HNORM = ZERO
          JJ = 1
          !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,T,HNORM,JJ)
-#endif
+
+       
          DO 90 J = 1, N
             T = ABS( ZWORK(JJ) ) + DASUM( J-1, A(1,J), 1 )
             IF ( J.LT.N ) T = T + ABS( A(J+1,J) )
             HNORM = MAX( HNORM, T )
             JJ = JJ + N + 1
 90          CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-            !$OMP END PARALLEL DO
-#endif
+
 !C
       END IF
 !C
@@ -9246,16 +9137,12 @@ C
       END IF
 !C
 !C     Compute  (H-INVERSE)*B.
-!C
+      !C
+       !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(HINVB,B) PRIVATE(J,I)
       DO 110 J = 1, M
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(HINVB:64,B:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif   
-!C
-         DO 100 I = 1, N
+
+          !$OMP SIMD ALIGNED(HINVB:64,B)  LINEAR(I:1) UNROLL PARTIAL(8)
+          DO 100 I = 1, N
             HINVB(I,J) = DCMPLX( B(I,J), ZERO )
   100    CONTINUE
 !C
@@ -9265,27 +9152,20 @@ C
      
 !C
 !C     Compute  C*(H-INVERSE)*B.
-!C
+      !C
+       !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(G,C,HINVB) PRIVATE(J,I,K)
       DO 150 J = 1, M
          !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(G:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif   
+
+         !$OMP SIMD ALIGNED(G:64) LINEAR(I:1) UNROLL PARTIAL(8)
          DO 120 I = 1, P
             G(I,J) = CZERO
   120    CONTINUE
 !C
          DO 140 K = 1, N
             !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(G:64,C:64,HINVB:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif   
+
+            !$OMP SIMD ALIGNED(G:64,C,HINVB) UNROLL PARTIAL(10)
             DO 130 I = 1, P
                G(I,J) = G(I,J) + DCMPLX( C(I,K), ZERO )*HINVB(K,J)
   130       CONTINUE
@@ -9400,9 +9280,7 @@ C     ******************************************************************
 C
 #endif
 
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1 
-     use omp_lib
-#endif
+
       implicit none
 !C     .. Parameters ..
       COMPLEX*16         ONE
@@ -9412,18 +9290,12 @@ C
       INTEGER            INFO, LDB, LDH, N, NRHS
 !C     ..
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-      INTEGER            IPIV( * )
-      COMPLEX*16         B( LDB, * ), H( LDH, * )
-      !INTEGER,     DIMENSION(:), ALLOCATABLE :: IPIV
-      !COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: B,H
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            IPIV( * )
-      !DIR$ ASSUME_ALIGNED IPIV:64
-      COMPLEX*16         B( LDB, * ), H( LDH, * )
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED H:64
-#endif
+
+      !INTEGER            IPIV( * )
+      !COMPLEX*16         B( LDB, * ), H( LDH, * )
+      INTEGER,     DIMENSION(:), ALLOCATABLE :: IPIV
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: B,H
+
 !C     .. Local Scalars ..
       LOGICAL            NOTRAN
       INTEGER            J, JP
@@ -9472,9 +9344,7 @@ C
 !C        where each transformation L(i) is a rank-one modification of
 !C        the identity matrix.
          !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JP)
-#endif
+
          DO 10 J = 1, N - 1
             JP = IPIV( J )
             IF( JP.NE.J ) &
@@ -9482,9 +9352,7 @@ C
             CALL ZAXPY( NRHS, -H( J+1, J ), B( J, 1 ), LDB, B( J+1, 1 ),LDB)
            
         10  CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-            !$OMP END PARALLLEL DO
-#endif
+
 !C
 !C        Solve U * X = B, overwriting B with X.
 !C
@@ -9502,18 +9370,14 @@ C
 !C
 !C        Solve L' * X = B, overwriting B with X.
          !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JP)
-#endif
+
          DO 20 J = N - 1, 1, -1
             CALL ZAXPY( NRHS, -H( J+1, J ), B( J+1, 1 ), LDB, B( J, 1 ),LDB)
             JP = IPIV( J )
             IF( JP.NE.J ) &
                CALL ZSWAP( NRHS, B( JP, 1 ), LDB, B( J, 1 ), LDB )
 20          CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-            !$OMP END PARALLLEL DO
-#endif
+
 !C
       ELSE
 !C
@@ -9526,9 +9390,7 @@ C
 !C
 !C        Solve L**H * X = B, overwriting B with X.
          !C
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,JP)
-#endif
+
          DO 30 J = N - 1, 1, -1
             CALL ZAXPY( NRHS, -DCONJG( H( J+1, J ) ), B( J+1, 1 ), LDB, &
                        B( J, 1 ), LDB )
@@ -9536,9 +9398,7 @@ C
             IF( JP.NE.J ) &
               CALL ZSWAP( NRHS, B( JP, 1 ), LDB, B( J, 1 ), LDB )
 30          CONTINUE
-#if (GMS_SLICOT_OMP_LOOP_PARALLELIZE) == 1
-            !$OMP END PARALLLEL DO
-#endif
+
 !C
       END IF
 !C
@@ -9642,15 +9502,11 @@ C
 !C     .. Scalar Arguments ..
       INTEGER           INFO, LDH, N
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       INTEGER           IPIV(*)
-      COMPLEX*16        H(LDH,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IPIV(*)
-      !DIR4 ASSUME_ALIGNED IPIV:64
-      COMPLEX*16        H(LDH,*)
-      !DIR$ ASSUME_ALIGNED H:64
-#endif
+      !COMPLEX*16        H(LDH,*)
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: H
+
 !C     .. Local Scalars ..
       INTEGER           J, JP
 !C     .. External Functions ..
@@ -9830,19 +9686,14 @@ C
       DOUBLE PRECISION   HNORM, RCOND
 !C     ..
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       INTEGER            IPIV(*)
-      DOUBLE PRECISION   DWORK( * )
-      COMPLEX*16         H( LDH, * ), ZWORK( * )
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER            IPIV(*)
-      !DIR$ ASSUME_ALIGNED IPIV:64
-      DOUBLE PRECISION   DWORK( * )
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      COMPLEX*16         H( LDH, * ), ZWORK( * )
-      !DIR$ ASSUME_ALIGNED H:64
-      !DIR$ ASSUME_ALIGNED ZWORK:64
-#endif
+      !DOUBLE PRECISION   DWORK( * )
+      !COMPLEX*16         H( LDH, * ), ZWORK( * )
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      COMPLEX(16),      DIMENSION(:,:), ALLOCATABLE :: H
+      COMPLEX(16),      DIMENSION(:),   ALLOCATABLE :: ZWORK
+
 !C     .. Local Scalars ..
       LOGICAL            ONENRM
       CHARACTER          NORMIN
@@ -10303,27 +10154,20 @@ C
       INTEGER           INFO, LDA, LDG, LDQ, LDS, LDU, LDWORK, N
       DOUBLE PRECISION  RCOND
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       LOGICAL           BWORK(*)
       INTEGER           IWORK(*)
-      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
-           S(LDS,*), U(LDU,*), WR(*), WI(*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      LOGICAL           BWORK(*)
-      !DIR$ ASSUME_ALIGNED BWORK:64
-      INTEGER           IWORK(*)
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
-           S(LDS,*), U(LDU,*), WR(*), WI(*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED G:64
-      !DIR$ ASSUME_ALIGNED Q:64
-      !DIR$ ASSUME_ALIGNED S:64
-      !DIR$ ASSUME_ALIGNED U:64
-      !DIR$ ASSUME_ALIGNED WR:64
-      !DIR$ ASSUME_ALIGNED WI:64
-#endif
+      !DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+      !     S(LDS,*), U(LDU,*), WR(*), WI(*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: WI
+
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LHINV, LSCAL, LSORT, LUPLO
       INTEGER           I, IERR, ISCL, N2, NP1, NROT
@@ -10738,7 +10582,7 @@ C
       CHARACTER         DICO, HINV, UPLO
       INTEGER           INFO, LDA, LDG, LDQ, LDS, LDWORK, N
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+ 
       INTEGER           IWORK(*)
       !DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
       !     S(LDS,*)
@@ -10747,17 +10591,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IWORK(*)
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
-           S(LDS,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED G:64
-      !DIR$ ASSUME_ALIGNED Q:64
-      !DIR$ ASSUME_ALIGNED S:64
-#endif
+
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LHINV, LQUERY, LUPLO
       INTEGER           I, J, MAXWRK, MINWRK, N2, NJ, NP1
@@ -10854,81 +10688,45 @@ C
 !C        Construct full Q in S(N+1:2*N,1:N) and change the sign, and
 !C        construct full G in S(1:N,N+1:2*N) and change the sign.
          !C
-!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,NJ)         
+!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  SHARED(S,Q,G) PRIVATE(J,NJ,I)         
          DO 200 J = 1, N
             NJ = N + J
             IF ( LUPLO ) THEN
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+             !$OMP SIMD ALIGNED(S:64,Q) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 20 I = 1, J
                   S(N+I,J) = -Q(I,J)
    20          CONTINUE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+               
                DO 40 I = J + 1, N
                   S(N+I,J) = -Q(J,I)
    40          CONTINUE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+                
+               !$OMP SIMD ALIGNED(S:64,Q)  LINEAR(I:1) UNROLL PARTIAL(8)
                DO 60 I = 1, J
                   S(I,NJ) = -G(I,J)
    60          CONTINUE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+                 
                DO 80 I = J + 1, N
                   S(I,NJ) = -G(J,I)
    80          CONTINUE
 
             ELSE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
-               DO 100 I = 1, J - 1
+              
+              DO 100 I = 1, J - 1
                   S(N+I,J) = -Q(J,I)
   100          CONTINUE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+                
+               !$OMP SIMD ALIGNED(S:64,Q)  LINEAR(I:1) UNROLL PARTIAL(8)
                DO 120 I = J, N
                   S(N+I,J) = -Q(I,J)
   120          CONTINUE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+             
+           
                DO 140 I = 1, J - 1
                   S(I,NJ) = -G(J,I)
   140          CONTINUE
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))                  
-               !$OMP SIMD ALIGNED(S:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+           
+               !$OMP SIMD ALIGNED(S:64,Q)  LINEAR(I:1) UNROLL PARTIAL(8)
                DO 180 I = J, N
                   S(I,NJ) = -G(I,J)
   180          CONTINUE
@@ -10937,7 +10735,8 @@ C
   200    CONTINUE
 
          IF ( .NOT.DISCR ) THEN
-!C
+            !C
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  SHARED(S,A) PRIVATE(J,NJ,I)      
             DO 240 J = 1, N
                NJ = N + J
 !C
@@ -10962,9 +10761,8 @@ C
 !C
 !C           Put  A'  in  S(N+1:2*N,N+1:2*N).
             !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
+            !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) shared(a,s) PRIVATE(I) IF(N>=100)
             DO 260 I = 1, N
                CALL DCOPY( N, A(I, 1), LDA, S(NP1,N+I), 1 )
   260       CONTINUE
@@ -11007,9 +10805,8 @@ C
 !C           Construct full Q in S(N+1:2*N,1:N).
 !C
             IF ( LUPLO ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
+           
                DO 270 J = 1, N - 1
                   CALL DCOPY( J, Q(1,J), 1, S(NP1,J), 1 )
                   CALL DCOPY( N-J, Q(J,J+1), LDQ, S(NP1+J,J), 1 )
@@ -11017,9 +10814,7 @@ C
                CALL DCOPY( N, Q(1,N), 1, S(NP1,N), 1 )
             ELSE
                CALL DCOPY( N, Q(1,1), 1, S(NP1,1), 1 )
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 280 J = 2, N
                   CALL DCOPY( J-1, Q(J,1), LDQ, S(NP1,J), 1 )
                   CALL DCOPY( N-J+1, Q(J,J), 1, S(N+J,J), 1 )
@@ -11033,9 +10828,7 @@ C
             CALL DGETRS( 'Transpose', N, N, A, LDA, IWORK, S(NP1,1), &
                         LDS, INFO )
             !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
             DO 300 J = 1, N - 1
                CALL DSWAP( N-J, S(NP1+J,J), 1, S(N+J,J+1), LDS )
   300       CONTINUE
@@ -11043,9 +10836,7 @@ C
 !C           Construct full G in S(1:N,N+1:2*N).
 !C
                IF ( LUPLO ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 310 J = 1, N - 1
                   CALL DCOPY( J, G(1,J), 1, S(1,N+J), 1 )
                   CALL DCOPY( N-J, G(J,J+1), LDG, S(J+1,N+J), 1 )
@@ -11053,9 +10844,7 @@ C
                CALL DCOPY( N, G(1,N), 1, S(1,N2), 1 )
             ELSE
                CALL DCOPY( N, G(1,1), 1, S(1,NP1), 1 )
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
                DO 320 J = 2, N
                   CALL DCOPY( J-1, G(J,1), LDG, S(1,N+J), 1 )
                   CALL DCOPY( N-J+1, G(J,J), 1, S(J,N+J), 1 )
@@ -11093,9 +10882,7 @@ C
             CALL DGETRS( 'No transpose', N, N, A, LDA, IWORK, S(1,NP1), &
                          LDS, INFO )
             !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
             DO 340 J = 1, N - 1
                CALL DSWAP( N-J, S(J+1,N+J), 1, S(J,NP1+J), LDS )
   340       CONTINUE
@@ -11117,9 +10904,7 @@ C
 !C                  -T
 !C           Copy  A    in  S(N+1:2N,N+1:2N).
             !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-            !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
             DO 360 J = 1, N
                CALL DCOPY( N, A(J,1), LDA, S(NP1,N+J), 1 )
   360       CONTINUE
@@ -11983,9 +11768,7 @@ C
 C     ******************************************************************
 C
 #endif
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-     use omp_lib
-#endif
+
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE, TWO
@@ -11996,24 +11779,21 @@ C
                         N, P
       DOUBLE PRECISION  RNORM
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
-      INTEGER           IPIV(*), IWORK(*), OUFACT(2)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
-           L(LDL,*), R(LDR,*), X(LDX,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IPIV(*), IWORK(*), OUFACT(2)
-      !DIR$ ASSUME_ALIGNED IPIV:64
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
-           L(LDL,*), R(LDR,*), X(LDX,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED F:64
-      !DIR$ ASSUME_ALIGNED L:6
-      !DIR$ ASSUME_ALIGNED R:64
-      !DIR$ ASSUME_ALIGNED X:64
-#endif
+ 
+      !INTEGER           IPIV(*), IWORK(*), OUFACT(2)
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+      !     L(LDL,*), R(LDR,*), X(LDX,*)
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      INTEGER, DIMENSION(2) :: OUFACT
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: F
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LFACTA, LFACTC, LFACTD, LFACTU, LNFACT, &
                         LUPLOU, SUFWRK, WITHL
@@ -12223,9 +12003,7 @@ C
 !C        Workspace: need   N;
 !C                   prefer N*M.
          !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
          DO 10 I = 1, M, MS
             NR = MIN( MS, M-I+1 )
             CALL DLACPY( 'All', NR, N, F(I,1), LDF, DWORK, NR )
@@ -12239,9 +12017,7 @@ C
 !C
 !C        Add L'.
          !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif         
+        
          DO 20 I = 1, M
             CALL DAXPY( N, ONE, L(1,I), 1, F(I,1), LDF )
    20    CONTINUE
@@ -12270,9 +12046,7 @@ C
 !C           Make positive the diagonal elements of the triangular
 !C           factor. Construct the strictly lower triangle, if requested.
             !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
             DO 30 I = 1, M
                IF ( R(I,I).LT.ZERO ) &
                   CALL DSCAL( M-I+1, -ONE, R(I,I), LDR ) 
@@ -12367,9 +12141,7 @@ C
                   WRKOPT = MAX( WRKOPT, N*M + JW - 1 )
                   MS = MAX( ( LDWORK - JW + 1 )/N, 1 )
                   !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
                   DO 50 I = 1, M, MS
                      NR = MIN( MS, M-I+1 )
                      CALL DLACPY( 'All', N, NR, B(1,I), LDB, DWORK(JW),N)
@@ -12377,9 +12149,7 @@ C
                                  LDX, DWORK(JW), N, ZERO, B(JZ+1,I),LDB)
                          
    50             CONTINUE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif
+
                   DO 60 I = JZ + 1, N
                      CALL DSCAL( M, SQRT( DWORK(I+2) ), B(I,1), LDB )
    60             CONTINUE
@@ -12404,9 +12174,7 @@ C
 !C           Make positive the diagonal elements of the triangular
 !C           factor.
             !C
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(I)
-#endif    
+  
             DO 70 I = 1, M
                IF ( R(I,I).LT.ZERO ) &
                  CALL DSCAL( M-I+1, -ONE, R(I,I), LDR )
@@ -12584,22 +12352,17 @@ C     ******************************************************************
 C
 C     .. Scalar Arguments ..
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
        use omp_lib
-#endif
       implicit none
       CHARACTER          JOB
       INTEGER            LDA, LDB, M, N
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
       !DOUBLE PRECISION   A(LDA,*), B(LDB,*)
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION   A(LDA,*), B(LDB,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-#endif
+
 !C     .. Local Scalars ..
       INTEGER            I, J
 !C     .. External Functions ..
@@ -12611,37 +12374,25 @@ C     .. Scalar Arguments ..
 !C     .. Executable Statements ..
 !C
       IF( LSAME( JOB, 'U' ) ) THEN
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)
          DO 20 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(B:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ VECTOR ALWAYS
-#endif
+            !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
             DO 10 I = 1, MIN( J, M )
                B(J,I) = A(I,J)
    10       CONTINUE
    20    CONTINUE
       ELSE IF( LSAME( JOB, 'L' ) ) THEN
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)     
          DO 40 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(B:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ VECTOR ALWAYS
-#endif            
+            !$OMP SIMD ALIGNED(B:64,A) UNROLL PARTIAL(8)
             DO 30 I = J, M
                B(J,I) = A(I,J)
    30       CONTINUE
    40    CONTINUE
       ELSE
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)     
          DO 60 J = 1, N
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-            !$OMP SIMD ALIGNED(B:64,A:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-            !DIR$ VECTOR ALIGNED
-            !DIR$ VECTOR ALWAYS
-#endif            
+            !$OMP SIMD ALIGNED(B:64,A) UNROLL PARTIAL(8)
             DO 50 I = 1, M
                B(J,I) = A(I,J)
    50       CONTINUE
@@ -12713,7 +12464,8 @@ C
       CHARACTER          UPLO
       INTEGER            LDA, N
 !C     .. Array Arguments ..
-      DOUBLE PRECISION   A(LDA,*)
+      !DOUBLE PRECISION   A(LDA,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
 !C     .. Local Scalars ..
       INTEGER            J
        LOGICAL            LSAME
@@ -13040,24 +12792,20 @@ C
       INTEGER           INFO, LDA, LDB, LDG, LDL, LDQ, LDR, LDWORK, M, &
                         N, OUFACT
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))  
-      INTEGER           IPIV(*), IWORK(*)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), G(LDG,*), &
-           L(LDL,*), Q(LDQ,*), R(LDR,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IPIV(*), IWORK(*)
-      !DIR$ ASSUME_ALIGNED IPIV:64
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), G(LDG,*), &
-           L(LDL,*), Q(LDQ,*), R(LDR,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED G:64
-      !DIR$ ASSUME_ALIGNED L:64
-      !DIR$ ASSUME_ALIGNED Q:64
-      !DIR$ ASSUME_ALIGNED R:64
-#endif
+
+      !INTEGER           IPIV(*), IWORK(*)
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), G(LDG,*), &
+      !     L(LDL,*), Q(LDQ,*), R(LDR,*)
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+
 !C     .. Local Scalars ..
       LOGICAL           LFACTC, LFACTU, LJOBG, LJOBL, LNFACT, LUPLOU
       CHARACTER         NT, TR, TRANS
@@ -13532,14 +13280,12 @@ C
       INTEGER           INFO, LDA, LDB, LDR, M, N
       DOUBLE PRECISION  ALPHA, BETA
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))  
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED R:64
-#endif
+
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      
 !C     .. Local Scalars ..
       LOGICAL           LSIDE, LTRANS, LUPLO
       INTEGER           I, IB, J, JB, MN, MX, N1, N2, NB, NBMIN, NX
@@ -13977,9 +13723,7 @@ C
 C     ******************************************************************
 C
 #endif
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-     use omp_lib
-#endif
+
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
@@ -13989,14 +13733,13 @@ C
       INTEGER           INFO, LDA, LDB, LDR, M, N
       DOUBLE PRECISION  ALPHA, BETA
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED R:64
-#endif
+  
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      
+
 !C     .. Local Scalars ..
       LOGICAL           LSIDE, LTRANS, LUPLO
       INTEGER           J
@@ -14075,17 +13818,13 @@ C
       IF( LSIDE ) THEN
          IF( LUPLO ) THEN
             IF ( LTRANS ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 10 J = 1, M
                   CALL DGEMV( TRANS, N, J, BETA, A, LDA, B(1,J), 1, &
                               ALPHA, R(1,J), 1 )
    10          CONTINUE
             ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 20 J = 1, M
                   CALL DGEMV( TRANS, J, N, BETA, A, LDA, B(1,J), 1, &
                               ALPHA, R(1,J), 1 )
@@ -14093,17 +13832,13 @@ C
             END IF
          ELSE
             IF ( LTRANS ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 30 J = 1, M
                   CALL DGEMV( TRANS, N, M-J+1, BETA, A(1,J), LDA,  &
                               B(1,J), 1, ALPHA, R(J,J), 1 )
    30          CONTINUE
             ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 40 J = 1, M
                   CALL DGEMV( TRANS, M-J+1, N, BETA, A(J,1), LDA, &
                               B(1,J), 1, ALPHA, R(J,J), 1 )
@@ -14114,17 +13849,13 @@ C
       ELSE
          IF( LUPLO ) THEN
             IF( LTRANS ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 50 J = 1, M
                   CALL DGEMV( 'NoTranspose', J, N, BETA, B, LDB, A(J,1), &
                               LDA, ALPHA, R(1,J), 1 )
    50          CONTINUE
                ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 60 J = 1, M
                   CALL DGEMV( 'NoTranspose', J, N, BETA, B, LDB, A(1,J), &
                               1, ALPHA, R(1,J), 1 )
@@ -14132,17 +13863,13 @@ C
             END IF
          ELSE
             IF( LTRANS ) THEN
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 70 J = 1, M
                   CALL DGEMV( 'NoTranspose', M-J+1, N, BETA, B(J,1), &
                               LDB, A(J,1), LDA, ALPHA, R(J,J), 1 )
    70           CONTINUE
             ELSE
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-               !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif
+
                DO 80 J = 1, M
                   CALL DGEMV( 'NoTranspose', M-J+1, N, BETA, B(J,1), &
                               LDB, A(1,J), 1, ALPHA, R(J,J), 1 )
@@ -14586,34 +14313,28 @@ C
                         LDWORK, LDX, M, N, P
       DOUBLE PRECISION  RCOND, TOL
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
-      LOGICAL           BWORK(*)
-      INTEGER           IWORK(*)
-      DOUBLE PRECISION  A(LDA,*), ALFAI(*), ALFAR(*), B(LDB,*), BETA(*), &
-                        DWORK(*), L(LDL,*), Q(LDQ,*), R(LDR,*),          &
-                        S(LDS,*), T(LDT,*), U(LDU,*), X(LDX,*)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      LOGICAL           BWORK(*)
-      !DIR$ ASSUME_ALIGNED BWORK:64
-      INTEGER           IWORK(*)
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION  A(LDA,*), ALFAI(*), ALFAR(*), B(LDB,*), BETA(*), &
-                        DWORK(*), L(LDL,*), Q(LDQ,*), R(LDR,*),          &
-                        S(LDS,*), T(LDT,*), U(LDU,*), X(LDX,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED ALFAI:64
-      !DIR$ ASSUME_ALIGNED ALFAR:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED BETA:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED L:64
-      !DIR$ ASSUME_ALIGNED Q:64
-      !DIR$ ASSUME_ALIGNED R:64
-      !DIR$ ASSUME_ALIGNED S:64
-      !DIR$ ASSUME_ALIGNED T:64
-      !DIR$ ASSUME_ALIGNED U:64
-      !DIR$ ASSUME_ALIGNED X:64
-#endif
+ 
+      !LOGICAL           BWORK(*)
+      !INTEGER           IWORK(*)
+      !DOUBLE PRECISION  A(LDA,*), ALFAI(*), ALFAR(*), B(LDB,*), BETA(*), &
+      !                  DWORK(*), L(LDL,*), Q(LDQ,*), R(LDR,*),          &
+      !                  S(LDS,*), T(LDT,*), U(LDU,*), X(LDX,*)
+      LOGICAL, DIMENSION(:), ALLOCATABLE :: BWORK
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: ALFAI
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: ALFAR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: BETA
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+     
 !C     .. Local Scalars ..
       CHARACTER         QTYPE, RTYPE
       LOGICAL           DISCR, LFACB, LFACN, LFACQ, LFACR, LJOBB, LJOBL, &
@@ -15358,10 +15079,9 @@ C
 C     ******************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
        use omp_lib
-#endif
-      implicit none
+       implicit none
       DOUBLE PRECISION  ZERO, ONE
       PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
 !C     .. Scalar Arguments ..
@@ -15370,7 +15090,7 @@ C
                         LDWORK, M, N, P
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))  
+
       !INTEGER           IWORK(*)
       !DOUBLE PRECISION  A(LDA,*), AF(LDAF,*), B(LDB,*), BF(LDBF,*),  &
       !     DWORK(*), E(LDE,*), L(LDL,*), Q(LDQ,*), R(LDR,*)
@@ -15384,21 +15104,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-      INTEGER           IWORK(*)
-      !DIR$ ASSUME_ALIGNED IWORK:64
-      DOUBLE PRECISION  A(LDA,*), AF(LDAF,*), B(LDB,*), BF(LDBF,*),  &
-           DWORK(*), E(LDE,*), L(LDL,*), Q(LDQ,*), R(LDR,*)
-      !DIR$ ASSUME_ALIGNED A:64
-      !DIR$ ASSUME_ALIGNED AF:64
-      !DIR$ ASSUME_ALIGNED B:64
-      !DIR$ ASSUME_ALIGNED BF:64
-      !DIR$ ASSUME_ALIGNED DWORK:64
-      !DIR$ ASSUME_ALIGNED E:64
-      !DIR$ ASSUME_ALIGNED L:64
-      !DIR$ ASSUME_ALIGNED Q:64
-      !DIR$ ASSUME_ALIGNED R:64
-#endif
+
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LFACB, LFACN, LFACQ, LFACR, LJOBB, LJOBE, &
                         LJOBL, LUPLO, OPTC
@@ -15525,7 +15231,8 @@ C
          IF ( LUPLO ) THEN
 !C
 !C           Construct the lower triangle of Q.
-!C
+            !C
+            
             DO 20 J = 1, N - 1
                CALL DCOPY( N-J, Q(J,J+1), LDQ, AF(NP1+J,J), 1 )
    20       CONTINUE
@@ -15567,15 +15274,11 @@ C
          IF ( LUPLO ) THEN
 !C
 !C           Construct (1,2) block of AF using the upper triangle of G.
-!C
+            !C
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,B) PRIVATE(J,I)
             DO 140 J = 1, N
                !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(AF:64,G:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+               !$OMP SIMD ALIGNED(AF:64,B) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 100 I = 1, J
                   AF(I,N+J)= -B(I,J)
   100          CONTINUE
@@ -15589,7 +15292,8 @@ C
          ELSE
 !C
 !C           Construct (1,2) block of AF using the lower triangle of G.
-!C
+            !C
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,B) PRIVATE(J,I)
             DO 200 J = 1, N
 
                DO 160 I = 1, J - 1
@@ -15609,7 +15313,7 @@ C
          IF ( LJOBE ) THEN
             CALL DLASET( 'Full', NM, N, ZERO, -ONE, AF(NP1,NP1), LDAF )
          ELSE
-
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,E) PRIVATE(J,I)
             DO 240 J = 1, N
 
                DO 220 I = 1, N
@@ -15623,7 +15327,7 @@ C
                            LDAF )
          END IF
       ELSE
-
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,A) PRIVATE(J,I)
          DO 280 J = 1, N
 
             DO 260 I = 1, N
@@ -15634,7 +15338,7 @@ C
 
          IF ( LJOBB ) THEN
             IF ( OPTC ) THEN
-
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(AF,B) PRIVATE(J)
                DO 300 J = 1, N
                   CALL DCOPY ( M, B(J,1), LDB, AF(N2P1,N+J), 1 )
   300          CONTINUE
@@ -15650,7 +15354,7 @@ C
          IF ( OPTC ) THEN
             CALL DLACPY( 'Full', N, M, B, LDB, AF(1,N2P1), LDAF )
          ELSE
-
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,Q) PRIVATE(J)
             DO 320 I = 1, P
                CALL DCOPY( N, Q(I,1), LDQ, AF(1,N2+I), 1 )
   320       CONTINUE
@@ -15691,7 +15395,8 @@ C
   380       CONTINUE
 !C
          ELSE
-!C
+            !C
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,R) PRIVATE(J,I)
             DO 420 J = 1, M
 !C
                DO 400 I = 1, P
@@ -15721,15 +15426,11 @@ C
          IF ( LUPLO ) THEN
 !C
 !C           Construct (1,2) block of BF using the upper triangle of G.
-!C
+            !C
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,B) PRIVATE(J,I)
             DO 480 J = 1, N
                !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(BF:64,B:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif               
+               !$OMP SIMD ALIGNED(BF:64,B) LINEAR(I:1)
                DO 440 I = 1, J
                   BF(I,N+J)= B(I,J)
   440          CONTINUE
@@ -15743,14 +15444,16 @@ C
          ELSE
 !C
 !C           Construct (1,2) block of BF using the lower triangle of G.
-!C
+            !C
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,B) PRIVATE(J,I)
             DO 540 J = 1, N
                !C
                
                DO 500 I = 1, J - 1
                   BF(I,N+J)= B(J,I)
   500          CONTINUE
-!C
+                  !C
+                 !$OMP SIMD ALIGNED(BF:64,B) LINEAR(I:1)   
                DO 520 I = J, N
                   BF(I,N+J)= B(I,J)
   520          CONTINUE
@@ -15761,7 +15464,8 @@ C
       END IF
 !C
       IF ( DISCR ) THEN
-!C
+         !C
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,A) PRIVATE(J,I)
          DO 580 J = 1, N
 !C
             DO 560 I = 1, N
@@ -15773,7 +15477,8 @@ C
          IF ( LJOBB ) THEN
 !C
             IF ( OPTC ) THEN
-!C
+               !C
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,B) PRIVATE(J,I)
                DO 620 J = 1, N
 !C
                   DO 600 I = 1, M
@@ -15783,15 +15488,11 @@ C
   620          CONTINUE
 !C
             ELSE
-!C
+               !C
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,Q) PRIVATE(J,I)
                DO 660 J = 1, N
                   !C
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-               !$OMP SIMD ALIGNED(BF:64,Q:64)
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-               !DIR$ VECTOR ALIGNED
-               !DIR$ VECTOR ALWAYS
-#endif
+               !$OMP SIMD ALIGNED(BF:64,Q) LINEAR(I:1) UNROLL PARTIAL(8)
                   DO 640 I = 1, P
                      BF(N2+I,N+J) = -Q(I,J)
   640             CONTINUE
@@ -15805,7 +15506,7 @@ C
          IF ( LJOBE ) THEN
             CALL DLASET( 'Full', NM, N, ZERO, -ONE, BF(NP1,NP1), LDBF )
          ELSE
-
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,E) PRIVATE(J,I)
             DO 700 J = 1, N
 
                DO 680 I = 1, N
