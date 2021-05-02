@@ -618,7 +618,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
 !*
           JX = KX
           IF (INCY.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,I,JX) IF(N>=100)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP,K,I,JX)
               DO 60 J = 1,N
                   TEMP = ALPHA*X(JX)
                   K = KUP1 - J
@@ -629,7 +629,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
    60          CONTINUE
                !$OMP END PARALLEL DO   
           ELSE
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,IY,I,JX) IF(N>=400)  
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP,K,IY,I,JX)  
               DO 80 J = 1,N
                   TEMP = ALPHA*X(JX)
                   IY = KY
@@ -649,7 +649,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
 !*
           JY = KY
           IF (INCX.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,I,JY) IF(N>=400)  
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A,Y) PRIVATE(J,TEMP,K,I,JY) 
               DO 100 J = 1,N
                   TEMP = ZERO
                   K = KUP1 - J
@@ -661,7 +661,7 @@ SUBROUTINE DGBMV(TRANS,M,N,KL,KU,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTE
 100           CONTINUE
               !$OMP END PARALLEL DO
                ELSE
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,K,I,KX,JY) IF(N>=400)      
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A,Y) PRIVATE(J,TEMP,IX,K,I,KX,JY)  
               DO 120 J = 1,N
                   TEMP = ZERO
                   IX = KX
@@ -839,7 +839,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A*B + beta*C.
              !*
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)       
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,B,A) PRIVATE(J,I,L,TEMP)       
               DO 90 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                          !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -866,7 +866,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A**T*B + beta*C
              !*
-                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP) IF(N>=100)   
+                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B,C) COLLAPSE(2) PRIVATE(J,I,TEMP,L)  
               DO 120 J = 1,N
                   DO 110 I = 1,M
                      TEMP = ZERO
@@ -888,7 +888,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A*B**T + beta*C
              !*
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,L,TEMP) IF(N>=100)      
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,A,B) PRIVATE(J,I,L,TEMP)     
               DO 170 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                          !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)   
@@ -914,7 +914,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A**T*B**T + beta*C
              !*
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP,L) IF(N>=100)   
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) COLLAPSE(2) SHARED(A,B,C) PRIVATE(J,I,TEMP,L)  
               DO 200 J = 1,N
                   DO 190 I = 1,M
                      TEMP = ZERO
@@ -1105,7 +1105,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 !*
           JX = KX
           IF (INCY.EQ.1) THEN
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,JX) IF(N>=100)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP,I,JX) 
               DO 60 J = 1,N
                  TEMP = ALPHA*X(JX)
                     !$OMP SIMD ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)    
@@ -1116,7 +1116,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 60            CONTINUE
               !$OMP END PARALLEL DO    
            ELSE
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IY,I,JX) IF(N>=100)   
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP,IY,I,JX)   
               DO 80 J = 1,N
                   TEMP = ALPHA*X(JX)
                   IY = KY
@@ -1135,7 +1135,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 !*
           JY = KY
           IF (INCX.EQ.1) THEN
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,JY) IF(N>=100)   
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP,I,JY)  
               DO 100 J = 1,N
                  TEMP = ZERO
                    !$OMP SIMD ALIGNED(Y:64) LINEAR(I:1) REDUCTION(+:TEMP) UNROLL PARTIAL(10)    
@@ -1147,7 +1147,7 @@ SUBROUTINE DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot 
 100            CONTINUE
                 !$OMP END PARALLEL DO       
            ELSE
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,I,JY) IF(N>=100)      
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  SHARED(X,Y,A) PRIVATE(J,TEMP,IX,I,JY)    
               DO 120 J = 1,N
                   TEMP = ZERO
                   IX = KX
@@ -1271,7 +1271,7 @@ SUBROUTINE DGER(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES inline :: DGER !
           JY = 1 - (N-1)*INCY
       END IF
       IF (INCX.EQ.1) THEN
-          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,JY) IF(N>=100)
+          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,X) PRIVATE(J,TEMP,I,JY) 
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*Y(JY)
@@ -1289,7 +1289,7 @@ SUBROUTINE DGER(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES inline :: DGER !
           ELSE
               KX = 1 - (M-1)*INCX
           END IF
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,I,JY) IF(N>=100)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,X) PRIVATE(J,TEMP,IX,I,JY)
           DO 40 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                   TEMP = ALPHA*Y(JY)
@@ -1964,7 +1964,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
 !!*
 !*     Quick return if possible.
 !*
-!      IF ((N.EQ.0) .OR. ((ALPHA.EQ.ZERO).AND. (BETA.EQ.ONE))) RETURN
+      IF ((N.EQ.0) .OR. ((ALPHA.EQ.ZERO).AND. (BETA.EQ.ONE))) RETURN
 !*
 !*     Set up the start points in  X  and  Y.
 !*
@@ -2014,14 +2014,14 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
               END IF
           END IF
       END IF
-!      IF (ALPHA.EQ.ZERO) RETURN
+      IF (ALPHA.EQ.ZERO) RETURN
       IF (LSAME(UPLO,'U')) THEN
 !*
 !*        Form  y  when upper triangle of A is stored.
 !*
           KPLUS1 = K + 1
           IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,L,I) IF(N>=100)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP1,TEMP2,L,I) 
               DO 60 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2036,7 +2036,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY,KX,KY,L) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY,KX,KY,L)
               DO 80 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2064,7 +2064,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
 !*        Form  y  when lower triangle of A is stored.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,L,I) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP1,TEMP2,L,I) 
               DO 100 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2080,7 +2080,7 @@ SUBROUTINE DSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY,L) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP1,TEMP2,IX,IY,I,JX,JY,L) 
               DO 120 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2427,14 +2427,14 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
               END IF
           END IF
       END IF
-      !IF (ALPHA.EQ.ZERO) RETURN
+      IF (ALPHA.EQ.ZERO) RETURN
       KK = 1
       IF (LSAME(UPLO,'U')) THEN
 !*
 !*        Form  y  when AP contains the upper triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,I,K,KK) IF(N>=100)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,I,K,KK) 
               DO 60 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2452,7 +2452,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK)
               DO 80 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2477,7 +2477,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
 !*        Form  y  when AP contains the lower triangle.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,I,KK) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,K,I,KK) 
               DO 100 J = 1,N
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
@@ -2496,7 +2496,7 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
           ELSE
               JX = KX
               JY = KY
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK)
               DO 120 J = 1,N
                   TEMP1 = ALPHA*X(JX)
                   TEMP2 = ZERO
@@ -2601,7 +2601,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
  !     ELSE IF (INCX.EQ.0) THEN
    !       INFO = 5
    !   END IF
-      IF (INFO.NE.0) THEN
+    !  IF (INFO.NE.0) THEN
   !        CALL XERBLA('DSPR  ',INFO)
   !        RETURN
    !   END IF
@@ -2627,7 +2627,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
 !*        Form  A  when upper triangle is stored in AP.
 !*
          IF (INCX.EQ.1) THEN
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,I,K,KK) IF(N>=100)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,I,K,KK) 
               DO 20 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                       TEMP = ALPHA*X(J)
@@ -2643,7 +2643,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
               !$OMP END PARALLEL DO    
           ELSE
              JX = KX
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,K,JX,KK) IF(N>=100)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP)  PRIVATE(J,TEMP,IX,K,JX,KK) 
               DO 40 J = 1,N
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
@@ -2664,7 +2664,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
 !*        Form  A  when lower triangle is stored in AP.
 !*
          IF (INCX.EQ.1) THEN
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,K,I,KK) IF(N>=100)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,K,I,KK) 
               DO 60 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                       TEMP = ALPHA*X(J)
@@ -2680,7 +2680,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
                  !$OMP END PARALLEL DO 
           ELSE
              JX = KX
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP,IX,JX,K,KK) IF(N>=100)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,AP) PRIVATE(J,TEMP,IX,JX,K,KK) 
               DO 80 J = 1,N
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
@@ -2819,7 +2819,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 !*        Form  A  when upper triangle is stored in AP.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,I,KK) IF(N>=100)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,K,I,KK)
               DO 20 J = 1,N
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
@@ -2835,9 +2835,9 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 20            CONTINUE
               !$OMP END PARALLEL DO    
           ELSE
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK)   
              DO 40 J = 1,N
-                   !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)
-                  IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
+                IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(JY)
                       TEMP2 = ALPHA*X(JX)
                       IX = KX
@@ -2860,7 +2860,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 !*        Form  A  when lower triangle is stored in AP.
 !*
          IF ((INCX.EQ.1) .AND. (INCY.EQ.1)) THEN
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,K,I,KK) IF(N>=100)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,K,I,KK) 
               DO 60 J = 1,N
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
@@ -2876,7 +2876,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
 60            CONTINUE
               !$OMP END PARALLEL DO  
           ELSE
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK) IF(N>=100)   
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,AP) PRIVATE(J,TEMP1,TEMP2,IX,IY,K,JX,JY,KK)   
               DO 80 J = 1,N
                   IF ((X(JX).NE.ZERO) .OR. (Y(JY).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(JY)
@@ -3113,8 +3113,8 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
     !  END IF
    !   IF (INFO.NE.0) THEN
     !      CALL XERBLA('DSYMM ',INFO)
-   !       RETURN
-    !  END IF
+         RETURN
+     END IF
 !*
 !*     Quick return if possible.
 !*
@@ -3147,7 +3147,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 !*        Form  C := alpha*A*B + beta*C.
 !*
          IF (UPPER) THEN
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) COLLAPSE(2) PRIVATE(J,I,TEMP1,TEMP2,K) IF(N>=100)
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) COLLAPSE(2) SHARED(B,C,A) PRIVATE(J,I,TEMP1,TEMP2,K) 
               DO 70 J = 1,N
                   DO 60 I = 1,M
                       TEMP1 = ALPHA*B(I,J)
@@ -3167,7 +3167,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 70             CONTINUE
                 !$OMP END PARALLEL DO      
           ELSE
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(SHARED) PRIVATE(J,I,TEMP1,TEMP2,K) IF(N>=100)        
+              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,B,A) PRIVATE(J,I,TEMP1,TEMP2,K)       
               DO 100 J = 1,N
                   DO 90 I = M,1,-1
                       TEMP1 = ALPHA*B(I,J)
@@ -3191,7 +3191,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
 !*
 !*        Form  C := alpha*B*A + beta*C.
          !*
-          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEAFULT(SHARED) PRIVATE(J,TEMP1,I,K) IF(N>=100)
+          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEAFULT(NONE) SHARED(C,B,A) PRIVATE(J,TEMP1,I,K) 
           DO 170 J = 1,N
               TEMP1 = ALPHA*A(J,J)
               IF (BETA.EQ.ZERO) THEN
