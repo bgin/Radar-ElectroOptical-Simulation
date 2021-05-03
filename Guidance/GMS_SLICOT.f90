@@ -5,7 +5,7 @@
 
 
 #if !defined(GMS_SLICOT_USE_MKL_LAPACK)
-#define GMS_SLICOT_USE_MKL_LAPACK 1
+#define GMS_SLICOT_USE_MKL_LAPACK 0
 #endif
 
 
@@ -181,10 +181,11 @@ C
       INTEGER           INFO, LDA, LDB, LDC, LDD, LZWORK, M, N, P, RANK
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-
-     ! INTEGER           IWORK(*)
-     ! COMPLEX*16        A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), ZWORK(*)
-     ! DOUBLE PRECISION  DWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+     INTEGER           IWORK(*)
+     COMPLEX*16        A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), ZWORK(*)
+     DOUBLE PRECISION  DWORK(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: A
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: B
@@ -192,6 +193,7 @@ C
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: D
       COMPLEX(16), DIMENSION(:),   ALLOCATABLE :: ZWORK
       DOUBLE PRECISION, DIMENSION, ALLOCATABLE :: DWORK
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL           LEQUIL, LQUERY
@@ -518,16 +520,24 @@ C
                         NU, P, RO, SIGMA
       DOUBLE PRECISION  SVLMAX, TOL
       !C     .. Array Arguments ..
-      
-      !INTEGER           INFZ(*), IWORK(*), KRONL(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      INTEGER           INFZ(*), IWORK(*), KRONL(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: INFZ
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       INTEGER, DIMENSION(:), ALLOCATABLE :: KRONL
-      !COMPLEX*16        ABCD(LDABCD,*), ZWORK(*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      COMPLEX*16        ABCD(LDABCD,*), ZWORK(*)
+#else
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: ABCD
       COMPLEX(16), DIMENSION(:),   ALLOCATABLE :: ZWORK
-      !DOUBLE PRECISION  DWORK(*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  DWORK(*)
+#else
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL           LQUERY
@@ -993,16 +1003,24 @@ C
       DOUBLE PRECISION   RCOND, SVLMAX
 !C     .. Array Arguments ..
 
-
-      !INTEGER            JPVT( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            JPVT( * )
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: JPVT
-      !COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
+#else
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: A
       COMPLEX(16), DIMENSION(:),   ALLOCATABLE :: TAU
       COMPLEX(16), DIMENSION(:),   ALLOCATABLE :: ZWORK
-      !DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
+#else
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(3) :: SVAL
+#endif
 !C     ..
 !C     .. Local Scalars ..
       INTEGER            I, ISMAX, ISMIN, ITEMP, J, MN, PVT
@@ -1398,16 +1416,24 @@ C
       INTEGER            INFO, LDA, M, N, RANK
       DOUBLE PRECISION   RCOND, SVLMAX
       !C     .. Array Arguments ..
-
-      !INTEGER            JPVT( * )
-       INTEGER, DIMENSION(:), ALLOCATABLE :: JPVT
-       !COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            JPVT( * )
+#else
+      INTEGER, DIMENSION(:), ALLOCATABLE :: JPVT
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      COMPLEX*16         A( LDA, * ), TAU( * ), ZWORK( * )
+#else
        COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: A
        COMPLEX(16), DIMENSION(:),   ALLOCATABLE :: TAU
        COMPLEX(16), DIMENSION(:),   ALLOCATABLE :: ZWORK
-      ! DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+       DOUBLE PRECISION   DWORK( * ), SVAL( 3 )
+#else      
        DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
        DOUBLE PRECISION, DIMENSION(3) :: SVAL
+#endif
 !C     .. Local Scalars ..
       INTEGER            I, ISMAX, ISMIN, ITEMP, J, JWORK, K, MKI, NKI, &
                          PVT
@@ -1910,11 +1936,15 @@ C     CONTRIBUTORS
                         M, N, P
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-
-      !INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           IWORK(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-      !     K(LDK,*), Q(LDQ,*), R(LDR,*), S(LDS,*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           K(LDK,*), Q(LDQ,*), R(LDR,*), S(LDS,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
@@ -1923,7 +1953,7 @@ C     CONTRIBUTORS
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LJOBK, LMULTB
       INTEGER           I12, ITAU, JWORK, N1, PN, WRKOPT
@@ -2437,12 +2467,16 @@ C
                         LDWORK, M, N, P
       DOUBLE PRECISION  TOL
 !C     .. Array Arguments ..
-
-      !INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           IWORK(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
-      !DOUBLE PRECISION  AINV(LDAINV,*), B(LDB,*), C(LDC,*), DWORK(*), &
-      !                  E(*), QINV(LDQINV,*), RINV(LDRINV,*), RINVY(*), &
-      !                  SINV(LDSINV,*), X(*), Z(*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  AINV(LDAINV,*), B(LDB,*), C(LDC,*), DWORK(*), &
+                        E(*), QINV(LDQINV,*), RINV(LDRINV,*), RINVY(*), &
+                        SINV(LDSINV,*), X(*), Z(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINV
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
@@ -2454,6 +2488,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: SINV
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: X
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: Z
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL           LJOBX, LMULTA, LMULTR
@@ -2932,12 +2967,15 @@ C
                         LDWORK, M, N
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-
-      !INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           IWORK(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-      !     K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           K(LDK,*), P(LDP,*), Q(LDQ,*), R(LDR,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
@@ -2946,7 +2984,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: P
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
-
+#endif
 !C     .. Local Scalars ..
       INTEGER           J, JWORK, LDW, N1
       DOUBLE PRECISION  RCOND, RNORM, TOLDEF
@@ -3291,13 +3329,18 @@ C
       INTEGER            INFO, LDA, LDB, M, N
       DOUBLE PRECISION   ALPHA, RCOND, TOL
 !C     .. Array Arguments ..
-
-      !INTEGER            IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IWORK(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
-      !DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL            LSIDE, ONENRM
@@ -3745,13 +3788,16 @@ C
                         LDSINV, LDWORK, M, N, P
       DOUBLE PRECISION  TOL
 !C     .. Array Arguments ..
-
-      !INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           IWORK(*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
-
-      !DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
-      !                 DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
-      !                 RINVY(*), SINV(LDSINV,*), X(*), Z(*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
+                       DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
+                       RINVY(*), SINV(LDSINV,*), X(*), Z(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINV
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINVB
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
@@ -3763,6 +3809,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: SINV
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: X
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: Z
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL           LJOBX, LMULTR
@@ -4185,16 +4232,17 @@ C
       CHARACTER         UPLO
       INTEGER           LDA, LDB, LDC, LDR, M, N, P
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-      !     R(LDR,*), TAU(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           R(LDR,*), TAU(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LUPLO
       INTEGER           I, IM
@@ -4395,9 +4443,8 @@ C
 C     ******************************************************************
 C
 #endif
-#if(GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-      use omp_lib
-#endif
+
+     
       implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
@@ -4405,13 +4452,14 @@ C
 !C     .. Scalar Arguments ..
       INTEGER           INFO, L, LDA, LDB, LDWORK, M, N, P
 !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LQUERY
       INTEGER           I, WRKOPT
@@ -4673,9 +4721,7 @@ C
 C     ******************************************************************
 C
 #endif
-#if (GMS_SLICOT_USE_REFERENCE_LAPACK) == 1
-use omp_lib
-#endif
+
        implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
@@ -4684,16 +4730,17 @@ use omp_lib
       CHARACTER         UPLO
       INTEGER           LDA, LDB, LDC, LDL, M, N, P
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
-      !     L(LDL,*), TAU(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           L(LDL,*), TAU(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LUPLO
       INTEGER           I, IM
@@ -5026,9 +5073,10 @@ C
                        NAP, NFP, NP, NUP
       DOUBLE PRECISION ALPHA, TOL
       !C     .. Array Arguments ..
-
-     ! DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
-      !     WI(*), WR(*), Z(LDZ,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+     DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+          WI(*), WR(*), Z(LDZ,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: C
@@ -5036,7 +5084,7 @@ C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WI
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL          CEIG, DISCR, SIMPLB
       INTEGER          I, IB, IB1, IERR, IPC, J, K, KFI, KG, KW, KWI, &
@@ -5800,12 +5848,15 @@ C
 !C     .. Scalar Arguments ..
       INTEGER           INFO, M, N
       DOUBLE PRECISION  P, S, TOL
-!C     .. Array Arguments ..
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
       !DOUBLE PRECISION  A(N,*), B(N,*), DWORK(*), F(M,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: F
+#endif
 !C     .. Local Scalars ..
       INTEGER           IR, J
       DOUBLE PRECISION  ABSR, B1, B2, B21, C, C0, C1, C11, C12, C21,    &
@@ -6216,12 +6267,13 @@ C
       INTEGER          INFO, LDA, LDU, N, NDIM, NLOW, NSUP
       DOUBLE PRECISION ALPHA
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL          DISCR, LSTDOM
       INTEGER          IB, L, LM1, NUP
@@ -6451,11 +6503,12 @@ C
       INTEGER          INFO, L, LDA, LDU, N
       DOUBLE PRECISION E1, E2
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION A(LDA,*), U(LDU,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION A(LDA,*), U(LDU,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
-      
+#endif      
       
 !C     .. Local Scalars ..
       INTEGER          L1
@@ -6774,10 +6827,11 @@ C
       INTEGER            INFO, LDA, LDB, LDC, LDD, LDGAIN, LDNP, LDNZ, &
                          LDWORK, M, N, NPZ, P
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
-      !                   DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
-      !                   POLESR(*), ZEROSI(*), ZEROSR(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
+                         DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
+                         POLESR(*), ZEROSI(*), ZEROSR(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
@@ -6788,7 +6842,7 @@ C
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: POLESR
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZEROSI
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZEROSR
-      
+#endif      
 
 
        INTEGER            IWORK(*), NP(LDNP,*), NZ(LDNZ,*)
@@ -7271,14 +7325,15 @@ C
       DOUBLE PRECISION   MAXRED
 !C     ..
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
-      !     SCALE( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+           SCALE( * )
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: SCALE
-
+#endif
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            NOCONV, WITHB, WITHC
@@ -7704,16 +7759,17 @@ C     ******************************************************************
       INTEGER           INFO, LDA, LDC, LDWORK, LDZ, N, NCONT, P
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
-      !     Z(LDZ,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
+           Z(LDZ,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: TAU
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
-      
+#endif      
 
 !C     .. Local Scalars ..
       LOGICAL           LJOBF, LJOBI, LJOBZ
@@ -8080,9 +8136,11 @@ C
       !C     .. Array Arguments ..
    
       INTEGER            NROWS ( * )
-      !DOUBLE PRECISION   A( LDA, * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * )
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL            FIRST, LSCALE
       INTEGER            I, ISUM, ITYPE
@@ -8342,9 +8400,11 @@ C
       !C     .. Array Arguments ..
 
       INTEGER            NROWS ( * )
-      ! DOUBLE PRECISION   A( LDA, * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      DOUBLE PRECISION   A( LDA, * )
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
-
+#endif
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            DONE, NOBLC
@@ -8820,10 +8880,9 @@ C
 C     ******************************************************************
 C
 #endif
-#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+
      use omp_lib
-#endif
-      implicit none
+     implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ZERO, ONE
       PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
@@ -8838,22 +8897,24 @@ C
       !C     .. Array Arguments ..
 
       INTEGER           IWORK(*)
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
-      !     EVRE(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
+           EVRE(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVIM
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVRE
-
-
-      !COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
+#else
       COMPLEX(16), DIMENSION(:), ALLOCATABLE :: ZWORK
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: G
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: HINVB
-
+#endif
 !C     .. Local Scalars ..
       CHARACTER         BALANC
       LOGICAL           LBALBA, LBALEA, LBALEB, LBALEC, LINITA
@@ -9290,12 +9351,13 @@ C
       INTEGER            INFO, LDB, LDH, N, NRHS
 !C     ..
       !C     .. Array Arguments ..
-
-      !INTEGER            IPIV( * )
-      !COMPLEX*16         B( LDB, * ), H( LDH, * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IPIV( * )
+      COMPLEX*16         B( LDB, * ), H( LDH, * )
+#else
       INTEGER,     DIMENSION(:), ALLOCATABLE :: IPIV
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: B,H
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL            NOTRAN
       INTEGER            J, JP
@@ -9504,9 +9566,11 @@ C
       !C     .. Array Arguments ..
 
       INTEGER           IPIV(*)
-      !COMPLEX*16        H(LDH,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      COMPLEX*16        H(LDH,*)
+#else
       COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: H
-
+#endif
 !C     .. Local Scalars ..
       INTEGER           J, JP
 !C     .. External Functions ..
@@ -9688,11 +9752,14 @@ C
       !C     .. Array Arguments ..
 
       INTEGER            IPIV(*)
-      !DOUBLE PRECISION   DWORK( * )
-      !COMPLEX*16         H( LDH, * ), ZWORK( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   DWORK( * )
+      COMPLEX*16         H( LDH, * ), ZWORK( * )
+#else
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       COMPLEX(16),      DIMENSION(:,:), ALLOCATABLE :: H
       COMPLEX(16),      DIMENSION(:),   ALLOCATABLE :: ZWORK
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL            ONENRM
@@ -10157,8 +10224,10 @@ C
 
       LOGICAL           BWORK(*)
       INTEGER           IWORK(*)
-      !DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
-      !     S(LDS,*), U(LDU,*), WR(*), WI(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*), U(LDU,*), WR(*), WI(*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
@@ -10167,7 +10236,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: WI
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LHINV, LSCAL, LSORT, LUPLO
       INTEGER           I, IERR, ISCL, N2, NP1, NROT
@@ -10584,13 +10653,16 @@ C
       !C     .. Array Arguments ..
  
       INTEGER           IWORK(*)
-      !DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
-      !     S(LDS,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+#endif
 
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LHINV, LQUERY, LUPLO
@@ -11779,10 +11851,11 @@ C
                         N, P
       DOUBLE PRECISION  RNORM
       !C     .. Array Arguments ..
- 
-      !INTEGER           IPIV(*), IWORK(*), OUFACT(2)
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
-      !     L(LDL,*), R(LDR,*), X(LDX,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1 
+      INTEGER           IPIV(*), IWORK(*), OUFACT(2)
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+           L(LDL,*), R(LDR,*), X(LDX,*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       INTEGER, DIMENSION(2) :: OUFACT
@@ -11793,6 +11866,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+#endif      
 
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LFACTA, LFACTC, LFACTD, LFACTU, LNFACT, &
@@ -12358,10 +12432,12 @@ C     .. Scalar Arguments ..
       CHARACTER          JOB
       INTEGER            LDA, LDB, M, N
       !C     .. Array Arguments ..
-
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
       !DOUBLE PRECISION   A(LDA,*), B(LDB,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+#endif
 
 !C     .. Local Scalars ..
       INTEGER            I, J
@@ -12463,9 +12539,12 @@ C
 !C     .. Scalar Arguments ..
       CHARACTER          UPLO
       INTEGER            LDA, N
-!C     .. Array Arguments ..
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
       !DOUBLE PRECISION   A(LDA,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+#endif
 !C     .. Local Scalars ..
       INTEGER            J
        LOGICAL            LSAME
@@ -12792,10 +12871,11 @@ C
       INTEGER           INFO, LDA, LDB, LDG, LDL, LDQ, LDR, LDWORK, M, &
                         N, OUFACT
       !C     .. Array Arguments ..
-
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
       !INTEGER           IPIV(*), IWORK(*)
       !DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), G(LDG,*), &
       !     L(LDL,*), Q(LDQ,*), R(LDR,*)
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
@@ -12805,7 +12885,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LFACTC, LFACTU, LJOBG, LJOBL, LNFACT, LUPLOU
       CHARACTER         NT, TR, TRANS
@@ -13280,12 +13360,13 @@ C
       INTEGER           INFO, LDA, LDB, LDR, M, N
       DOUBLE PRECISION  ALPHA, BETA
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
-      
+#endif      
 !C     .. Local Scalars ..
       LOGICAL           LSIDE, LTRANS, LUPLO
       INTEGER           I, IB, J, JB, MN, MX, N1, N2, NB, NBMIN, NX
@@ -13733,12 +13814,13 @@ C
       INTEGER           INFO, LDA, LDB, LDR, M, N
       DOUBLE PRECISION  ALPHA, BETA
       !C     .. Array Arguments ..
-  
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1  
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), R(LDR,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
-      
+#endif      
 
 !C     .. Local Scalars ..
       LOGICAL           LSIDE, LTRANS, LUPLO
@@ -14313,12 +14395,13 @@ C
                         LDWORK, LDX, M, N, P
       DOUBLE PRECISION  RCOND, TOL
       !C     .. Array Arguments ..
- 
-      !LOGICAL           BWORK(*)
-      !INTEGER           IWORK(*)
-      !DOUBLE PRECISION  A(LDA,*), ALFAI(*), ALFAR(*), B(LDB,*), BETA(*), &
-      !                  DWORK(*), L(LDL,*), Q(LDQ,*), R(LDR,*),          &
-      !                  S(LDS,*), T(LDT,*), U(LDU,*), X(LDX,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1 
+      LOGICAL           BWORK(*)
+      INTEGER           IWORK(*)
+      DOUBLE PRECISION  A(LDA,*), ALFAI(*), ALFAR(*), B(LDB,*), BETA(*), &
+                        DWORK(*), L(LDL,*), Q(LDQ,*), R(LDR,*),          &
+                        S(LDS,*), T(LDT,*), U(LDU,*), X(LDX,*)
+#else
       LOGICAL, DIMENSION(:), ALLOCATABLE :: BWORK
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
@@ -14334,7 +14417,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
-     
+#endif     
 !C     .. Local Scalars ..
       CHARACTER         QTYPE, RTYPE
       LOGICAL           DISCR, LFACB, LFACN, LFACQ, LFACR, LJOBB, LJOBL, &
@@ -15090,10 +15173,11 @@ C
                         LDWORK, M, N, P
       DOUBLE PRECISION  TOL
       !C     .. Array Arguments ..
-
-      !INTEGER           IWORK(*)
-      !DOUBLE PRECISION  A(LDA,*), AF(LDAF,*), B(LDB,*), BF(LDBF,*),  &
-      !     DWORK(*), E(LDE,*), L(LDL,*), Q(LDQ,*), R(LDR,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           IWORK(*)
+      DOUBLE PRECISION  A(LDA,*), AF(LDAF,*), B(LDB,*), BF(LDBF,*),  &
+           DWORK(*), E(LDE,*), L(LDL,*), Q(LDQ,*), R(LDR,*)
+#else
       INTEGER, DIMENSION(:),ALLOCATABLE :: IWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AF
@@ -15104,7 +15188,7 @@ C
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           DISCR, LFACB, LFACN, LFACQ, LFACR, LJOBB, LJOBE, &
                         LJOBL, LUPLO, OPTC
@@ -15913,11 +15997,12 @@ C
       DOUBLE PRECISION   FERR, RCOND, SCALE, SEP
 !C     ..
       !C     .. Array Arguments ..
-
-      !INTEGER            IWORK( * )
-      !DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
-      !                   T( LDT, * ), U( LDU, * ), WI( * ), WR( * ), &
-      !                   X( LDX, * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
+                         T( LDT, * ), U( LDU, * ), WI( * ), WR( * ), &
+                         X( LDX, * )
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
@@ -15927,7 +16012,7 @@ C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WI
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
-
+#endif
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            JOBA, JOBC, JOBE, JOBS, JOBX, LOWER, NOFACT, &
@@ -16306,13 +16391,14 @@ C
       INTEGER           INFO, LDA, LDR, LDWORK, LDX, M, N
       DOUBLE PRECISION  ALPHA, BETA
       !C     .. Array Arguments ..
-
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
       !DOUBLE PRECISION  A(LDA,*), DWORK(*), R(LDR,*), X(LDX,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LTRANS, LUPLO
 !C     .. External Functions ..
@@ -17156,8 +17242,10 @@ C
       INTEGER            INFO, LDB, LDT, LDX
       DOUBLE PRECISION   SCALE, XNORM
 !C     ..
-!C     .. Array Arguments ..
+      !C     .. Array Arguments ..
+  
       DOUBLE PRECISION   B( LDB, * ), T( LDT, * ), X( LDX, * )
+
 !C     ..
 !C     .. Local Scalars ..
       INTEGER            I, IP, IPSV, J, JP, JPSV, K
@@ -17595,15 +17683,17 @@ C
       !C!     .. Array Arguments ..
   
       INTEGER            IWORK( * )
-      !DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
-      !     T( LDT, * ), U( LDU, * ), X( LDX, * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * ), C( LDC, * ), DWORK( * ), &
+           T( LDT, * ), U( LDU, * ), X( LDX, * )
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
-
+#endif
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            JOBB, JOBC, JOBE, LOWER, LQUERY, NOFACT, &
@@ -17778,14 +17868,14 @@ C
 !C
                IF( LOWER ) THEN
 
-                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(C,DWORK) PRIVATE(J)
+                
                   DO 10 J = 1, N
                      CALL DAXPY( N-J+1, -SCALE/TWO, C( J, J ), 1, &
                                  DWORK( (J-1)*N+J ), 1 )
    10             CONTINUE
                ELSE
 
-                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(C,DWORK) PRIVATE(J) 
+               
                   DO 20 J = 1, N
                      CALL DAXPY( J, -SCALE/TWO, C( 1, J ), 1, &
                                  DWORK( (J-1)*N+1 ), 1 )
@@ -18160,12 +18250,13 @@ C
       INTEGER           INFO, LDA, LDB, LDH, M, N
       DOUBLE PRECISION  ALPHA
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), H(LDH,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), H(LDH,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
-
+#endif
       !C     .. Local Scalars ..
       DOUBLE PRECISION  T0
       LOGICAL           LSIDE, LTRANS
@@ -18418,12 +18509,13 @@ C
       INTEGER           INFO, LDA, LDH, LDWORK, M, N
       DOUBLE PRECISION  ALPHA
       !C     .. Array Arguments ..
-
-      !DOUBLE PRECISION  A(LDA,*), DWORK(*), H(LDH,*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), H(LDH,*)
+#else
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
-
+#endif
 !C     .. Local Scalars ..
       LOGICAL           LSIDE, LTRANS
       INTEGER           I, J, JW
@@ -18874,13 +18966,15 @@ C
       !C     .. Array Arguments ..
 
       INTEGER            IWORK( * )
-     ! DOUBLE PRECISION   DWORK( * ), R( LDR, * ), T( LDT, * ),
-      !                    U( LDU, * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+     DOUBLE PRECISION   DWORK( * ), R( LDR, * ), T( LDT, * ), &
+     U( LDU, * )
+#else 
       DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
-
+#endif
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            LOWER, NOTRNA, UPDATE
@@ -19293,15 +19387,18 @@ C
       INTEGER            INFO, LDT, LDU, LDWORK, LDX, N
       DOUBLE PRECISION   SEP, THNORM
 !C     ..
-!C     .. Array Arguments ..
-      !INTEGER            IWORK( * )
-      !DOUBLE PRECISION   DWORK( * ), T( LDT, * ), U( LDU, * ), &
-      !                   X( LDX, * )
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION   DWORK( * ), T( LDT, * ), U( LDU, * ), &
+           X( LDX, * )
+#else
       INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+#endif
 !C     ..
 !C     .. Local Scalars ..
       LOGICAL            NOTRNA, UPDATE, WANTS, WANTT
@@ -19550,4 +19647,688 @@ C
 
 END SUBROUTINE
 
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE FD01AD( JP, L, LAMBDA, XIN, YIN, EFOR, XF, EPSBCK, &
+CTETA, STETA, YQ, EPOS, EOUT, SALPH, IWARN, &
+INFO ) !GCC$ ATTRIBUTES hot :: FD01AD !GCC$ ATTRIBUTES aligned(32) :: FD01AD !GCC$ ATTRIBUTES no_stack_protector :: FD01AD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE FD01AD( JP, L, LAMBDA, XIN, YIN, EFOR, XF, EPSBCK, &
+CTETA, STETA, YQ, EPOS, EOUT, SALPH, IWARN, &
+INFO )
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: FD01AD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: FD01AD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To solve the least-squares filtering problem recursively in time.
+C     Each subroutine call implements one time update of the solution.
+C     The algorithm uses a fast QR-decomposition based approach.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     JP      CHARACTER*1
+C             Indicates whether the user wishes to apply both prediction
+C             and filtering parts, as follows:
+C             = 'B':  Both prediction and filtering parts are to be
+C                     applied;
+C             = 'P':  Only the prediction section is to be applied.
+C
+C     Input/Output Parameters
+C
+C     L       (input) INTEGER
+C             The length of the impulse response of the equivalent
+C             transversal filter model.  L >= 1.
+C
+C     LAMBDA  (input) DOUBLE PRECISION
+C             Square root of the forgetting factor.
+C             For tracking capabilities and exponentially stable error
+C             propagation, LAMBDA < 1.0 (strict inequality) should
+C             be used.  0.0 < LAMBDA <= 1.0.
+C
+C     XIN     (input) DOUBLE PRECISION
+C             The input sample at instant n.
+C             (The situation just before and just after the call of
+C             the routine are denoted by instant (n-1) and instant n,
+C             respectively.)
+C
+C     YIN     (input) DOUBLE PRECISION
+C             If JP = 'B', then YIN must contain the reference sample
+C             at instant n.
+C             Otherwise, YIN is not referenced.
+C
+C     EFOR    (input/output) DOUBLE PRECISION
+C             On entry, this parameter must contain the square root of
+C             exponentially weighted forward prediction error energy
+C             at instant (n-1).  EFOR >= 0.0.
+C             On exit, this parameter contains the square root of the
+C             exponentially weighted forward prediction error energy
+C             at instant n.
+C
+C     XF      (input/output) DOUBLE PRECISION array, dimension (L)
+C             On entry, this array must contain the transformed forward
+C             prediction variables at instant (n-1).
+C             On exit, this array contains the transformed forward
+C             prediction variables at instant n.
+C
+C     EPSBCK  (input/output) DOUBLE PRECISION array, dimension (L+1)
+C             On entry, the leading L elements of this array must
+C             contain the normalized a posteriori backward prediction
+C             error residuals of orders zero through L-1, respectively,
+C             at instant (n-1), and EPSBCK(L+1) must contain the
+C             square-root of the so-called "conversion factor" at
+C             instant (n-1).
+C             On exit, this array contains the normalized a posteriori
+C             backward prediction error residuals, plus the square root
+C             of the conversion factor at instant n.
+C
+C     CTETA   (input/output) DOUBLE PRECISION array, dimension (L)
+C             On entry, this array must contain the cosines of the
+C             rotation angles used in time updates, at instant (n-1).
+C             On exit, this array contains the cosines of the rotation
+C             angles at instant n.
+C
+C     STETA   (input/output) DOUBLE PRECISION array, dimension (L)
+C             On entry, this array must contain the sines of the
+C             rotation angles used in time updates, at instant (n-1).
+C             On exit, this array contains the sines of the rotation
+C             angles at instant n.
+C
+C     YQ      (input/output) DOUBLE PRECISION array, dimension (L)
+C             On entry, if JP = 'B', then this array must contain the
+C             orthogonally transformed reference vector at instant
+C             (n-1). These elements are also the tap multipliers of an
+C             equivalent normalized lattice least-squares filter.
+C             Otherwise, YQ is not referenced and can be supplied as
+C             a dummy array (i.e., declare this array to be YQ(1) in
+C             the calling program).
+C             On exit, if JP = 'B', then this array contains the
+C             orthogonally transformed reference vector at instant n.
+C
+C     EPOS    (output) DOUBLE PRECISION
+C             The a posteriori forward prediction error residual.
+C
+C     EOUT    (output) DOUBLE PRECISION
+C             If JP = 'B', then EOUT contains the a posteriori output
+C             error residual from the least-squares filter at instant n.
+C
+C     SALPH   (output) DOUBLE PRECISION array, dimension (L)
+C             The element SALPH(i), i=1,...,L, contains the opposite of
+C             the i-(th) reflection coefficient for the least-squares
+C             normalized lattice predictor (whose value is -SALPH(i)).
+C
+C     Warning Indicator
+C
+C     IWARN   INTEGER
+C             = 0:  no warning;
+C             = 1:  an element to be annihilated by a rotation is less
+C                   than the machine precision (see LAPACK Library
+C                   routine DLAMCH).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The output error EOUT at instant n, denoted by EOUT(n), is the
+C     reference sample minus a linear combination of L successive input
+C     samples:
+C
+C                           L-1
+C        EOUT(n) = YIN(n) - SUM h_i * XIN(n-i),
+C                           i=0
+C
+C     where YIN(n) and XIN(n) are the scalar samples at instant n.
+C     A least-squares filter uses those h_0,...,h_{L-1} which minimize
+C     an exponentially weighted sum of successive output errors squared:
+C
+C         n
+C        SUM [LAMBDA**(2(n-k)) * EOUT(k)**2].
+C        k=1
+C
+C     Each subroutine call performs a time update of the least-squares
+C     filter using a fast least-squares algorithm derived from a
+C     QR decomposition, as described in references [1] and [2] (the
+C     notation from [2] is followed in the naming of the arrays).
+C     The algorithm does not compute the parameters h_0,...,h_{L-1} from
+C     the above formula, but instead furnishes the parameters of an
+C     equivalent normalized least-squares lattice filter, which are
+C     available from the arrays SALPH (reflection coefficients) and YQ
+C     (tap multipliers), as well as the exponentially weighted input
+C     signal energy
+C
+C         n                                              L
+C        SUM [LAMBDA**(2(n-k)) * XIN(k)**2] = EFOR**2 + SUM XF(i)**2.
+C        k=1                                            i=1
+C
+C     For more details on reflection coefficients and tap multipliers,
+C     references [2] and [4] are recommended.
+C
+C     REFERENCES
+C
+C     [1]  Proudler, I. K., McWhirter, J. G., and Shepherd, T. J.
+C          Fast QRD based algorithms for least-squares linear
+C          prediction.
+C          Proceedings IMA Conf. Mathematics in Signal Processing
+C          Warwick, UK, December 1988.
+C
+C     [2]  Regalia, P. A., and Bellanger, M. G.
+C          On the duality between QR methods and lattice methods in
+C          least-squares adaptive filtering.
+C          IEEE Trans. Signal Processing, SP-39, pp. 879-891,
+C          April 1991.
+C
+C     [3]  Regalia, P. A.
+C          Numerical stability properties of a QR-based fast
+C          least-squares algorithm.
+C          IEEE Trans. Signal Processing, SP-41, June 1993.
+C
+C     [4]  Lev-Ari, H., Kailath, T., and Cioffi, J.
+C          Least-squares adaptive lattice and transversal filters:
+C          A unified geometric theory.
+C          IEEE Trans. Information Theory, IT-30, pp. 222-236,
+C          March 1984.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm requires O(L) operations for each subroutine call.
+C     It is backward consistent for all input sequences XIN, and
+C     backward stable for persistently exciting input sequences,
+C     assuming LAMBDA < 1.0 (see [3]).
+C     If the condition of the signal is very poor (IWARN = 1), then the
+C     results are not guaranteed to be reliable.
+C
+C     FURTHER COMMENTS
+C
+C     1.  For tracking capabilities and exponentially stable error
+C         propagation, LAMBDA < 1.0 should be used.  LAMBDA is typically
+C         chosen slightly less than 1.0 so that "past" data are
+C         exponentially forgotten.
+C     2.  Prior to the first subroutine call, the variables must be
+C         initialized. The following initial values are recommended:
+C
+C         XF(i) = 0.0,        i=1,...,L
+C         EPSBCK(i) = 0.0     i=1,...,L
+C         EPSBCK(L+1) = 1.0
+C         CTETA(i) = 1.0      i=1,...,L
+C         STETA(i) = 0.0      i=1,...,L
+C         YQ(i) = 0.0         i=1,...,L
+C
+C         EFOR = 0.0          (exact start)
+C         EFOR = "small positive constant" (soft start).
+C
+C         Soft starts are numerically more reliable, but result in a
+C         biased least-squares solution during the first few iterations.
+C         This bias decays exponentially fast provided LAMBDA < 1.0.
+C         If sigma is the standard deviation of the input sequence
+C         XIN, then initializing EFOR = sigma*1.0E-02 usually works
+C         well.
+C
+C     CONTRIBUTOR
+C
+C     P. A. Regalia (October 1994).
+C     Release 4.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1999.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Kalman filtering, least-squares estimator, optimal filtering,
+C     orthogonal transformation, recursive estimation, QR decomposition.
+C
+C     ******************************************************************
+C
+#endif
+      use omp_lib
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ONE, ZERO
+      PARAMETER         ( ONE = 1.0D0, ZERO = 0.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         JP
+      INTEGER           INFO, IWARN, L
+      DOUBLE PRECISION  EFOR, EOUT, EPOS, LAMBDA, XIN, YIN
+!C     .. Array Arguments ..
+      !DOUBLE PRECISION  CTETA(*), EPSBCK(*), SALPH(*), STETA(*), XF(*), &
+      !                  YQ(*)
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: CTETA
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: EPSBCK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: SALPH
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: STETA
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: XF
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: YQ
+!C     .. Local Scalars ..
+      LOGICAL           BOTH
+      INTEGER           I
+      DOUBLE PRECISION  CTEMP, EPS, FNODE, NORM, TEMP, XFI, YQI
+!C     .. External Functions ..
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH, DLAPY2, DNRM2
+      EXTERNAL          DLAMCH, DLAPY2, DNRM2, LSAME
+!C     .. External Subroutines ..
+      EXTERNAL          DLARTG
+!C     .. Intrinsic Functions
+      INTRINSIC         ABS, SQRT
+!C     .. Executable statements ..
+!C
+!C     Test the input scalar arguments.
+!C
+      BOTH  = LSAME( JP, 'B' )
+      IWARN = 0
+      INFO  = 0
+!C
+      IF( .NOT.BOTH .AND. .NOT.LSAME( JP, 'P' ) ) THEN
+         INFO = -1
+      ELSE IF( L.LT.1 ) THEN
+         INFO = -2
+      ELSE IF( ( LAMBDA.LE.ZERO ) .OR. ( LAMBDA.GT.ONE  ) ) THEN
+         INFO = -3
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+        ! CALL XERBLA( 'FD01AD', -INFO )
+         RETURN
+      END IF
+!C
+!C     Computation of the machine precision EPS.
+!C
+      EPS = DLAMCH( 'Epsilon' )
+!C
+!C     Forward prediction rotations.
+!C
+      FNODE = XIN
+      !C
+        !$OMP SIMD ALIGNED(XF:64,STETA,CTETA) LINEAR(I:1) UNROLL PARTIAL(10)
+      DO 10  I = 1, L
+         XFI   = XF(I) * LAMBDA
+         XF(I) = STETA(I) * FNODE + CTETA(I) * XFI
+         FNODE = CTETA(I) * FNODE - STETA(I) * XFI
+   10 CONTINUE
 
+      EPOS = FNODE * EPSBCK(L+1)
+!C
+!C     Update the square root of the prediction energy.
+!C
+      EFOR = EFOR * LAMBDA
+      TEMP = DLAPY2( FNODE, EFOR )
+      IF ( TEMP.LT.EPS ) THEN
+         FNODE = ZERO
+         IWARN = 1
+      ELSE
+         FNODE = FNODE * EPSBCK(L+1)/TEMP
+      END IF
+      EFOR = TEMP
+!C
+!C     Calculate the reflection coefficients and the backward prediction
+!C     errors.
+!C
+      DO 20 I = L, 1, -1
+         IF ( ABS( XF(I) ).LT.EPS ) &
+           IWARN = 1
+         CALL DLARTG( TEMP, XF(I), CTEMP, SALPH(I), NORM )
+         EPSBCK(I+1) = CTEMP * EPSBCK(I) - SALPH(I) * FNODE
+         FNODE = CTEMP * FNODE + SALPH(I) * EPSBCK(I)
+         TEMP  = NORM
+   20 CONTINUE
+
+      EPSBCK(1) = FNODE
+!C
+!C     Update to new rotation angles.
+!C
+      NORM = DNRM2( L, EPSBCK, 1 )
+      TEMP = SQRT( ( ONE + NORM )*( ONE - NORM ) )
+      EPSBCK(L+1) = TEMP
+!C
+      DO 30 I = L, 1, -1
+         IF ( ABS( EPSBCK(I) ).LT.EPS ) &
+            IWARN = 1
+         CALL DLARTG( TEMP, EPSBCK(I), CTETA(I), STETA(I), NORM )
+         TEMP = NORM
+   30 CONTINUE
+!C
+!C     Joint process section.
+!C
+      IF ( BOTH) THEN
+         FNODE = YIN
+         !C
+         !$OMP SIMD ALIGNED(YQ:64,STETA,CTETA) LINEAR(I:1) UNROLL PARTIAL(10)
+         DO 40  I = 1, L
+            YQI   = YQ(I) * LAMBDA
+            YQ(I) = STETA(I) * FNODE + CTETA(I) * YQI
+            FNODE = CTETA(I) * FNODE - STETA(I) * YQI
+   40    CONTINUE
+!C
+         EOUT = FNODE * EPSBCK(L+1)
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TD05AD( UNITF, OUTPUT, NP1, MP1, W, A, B, VALR, VALI, &
+     INFO ) !GCC$ ATTRIBUTES hot :: TD05AD !GCC$ ATTRIBUTES aligned(32) :: TD05AD !GCC$ ATTRIBUTES no_stack_protector :: TD05AD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE TD05AD( UNITF, OUTPUT, NP1, MP1, W, A, B, VALR, VALI, &
+     INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TD05AD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: TD05AD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     Given a complex valued rational function of frequency (transfer
+C     function) G(jW) this routine will calculate its complex value or
+C     its magnitude and phase for a specified frequency value.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     UNITF   CHARACTER*1
+C             Indicates the choice of frequency unit as follows:
+C             = 'R':  Input frequency W in radians/second;
+C             = 'H':  Input frequency W in hertz.
+C
+C     OUTPUT  CHARACTER*1
+C             Indicates the choice of co-ordinates for output as folows:
+C             = 'C':  Cartesian co-ordinates (output real and imaginary
+C                     parts of G(jW));
+C             = 'P':  Polar co-ordinates (output magnitude and phase
+C                     of G(jW)).
+C
+C     Input/Output Parameters
+C
+C     NP1     (input) INTEGER
+C             The order of the denominator + 1, i.e. N + 1.  NP1 >= 1.
+C
+C     MP1     (input) INTEGER
+C             The order of the numerator + 1, i.e. M + 1.  MP1 >= 1.
+C
+C     W       (input) DOUBLE PRECISION
+C             The frequency value W for which the transfer function is
+C             to be evaluated.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (NP1)
+C             This array must contain the vector of denominator
+C             coefficients in ascending order of powers. That is, A(i)
+C             must contain the coefficient of (jW)**(i-1) for i = 1,
+C             2,...,NP1.
+C
+C     B       (input) DOUBLE PRECISION array, dimension (MP1)
+C             This array must contain the vector of numerator
+C             coefficients in ascending order of powers. That is, B(i)
+C             must contain the coefficient of (jW)**(i-1) for i = 1,
+C             2,...,MP1.
+C
+C     VALR    (output) DOUBLE PRECISION
+C             If OUTPUT = 'C', VALR contains the real part of G(jW).
+C             If OUTPUT = 'P', VALR contains the magnitude of G(jW)
+C                              in dBs.
+C
+C     VALI    (output) DOUBLE PRECISION
+C             If OUTPUT = 'C', VALI contains the imaginary part of
+C                              G(jW).
+C             If OUTPUT = 'P', VALI contains the phase of G(jW) in
+C                              degrees.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  if the frequency value W is a pole of G(jW), or all
+C                   the coefficients of the A polynomial are zero.
+C
+C     METHOD
+C
+C     By substituting the values of A, B and W in the following
+C     formula:
+C
+C            B(1)+B(2)*(jW)+B(3)*(jW)**2+...+B(MP1)*(jW)**(MP1-1)
+C     G(jW) = ---------------------------------------------------.
+C            A(1)+A(2)*(jW)+A(3)*(jW)**2+...+A(NP1)*(jW)**(NP1-1)
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm requires 0(N+M) operations.
+C
+C     CONTRIBUTORS
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TD01AD by Control Systems Research
+C     Group, Kingston Polytechnic, United Kingdom, March 1981.
+C
+C     REVISIONS
+C
+C     February 1997.
+C     February 22, 1998 (changed the name of TD01MD).
+C
+C     KEYWORDS
+C
+C     Elementary polynomial operations, frequency response, matrix
+C     fraction, polynomial matrix, state-space representation, transfer
+C     matrix.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE, EIGHT, TWENTY, NINETY, ONE80, THRE60
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0, EIGHT=8.0D0, &
+                         TWENTY=20.0D0, NINETY=90.0D0, ONE80 = 180.0D0, &
+                         THRE60=360.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         OUTPUT, UNITF
+      INTEGER           INFO, MP1, NP1
+      DOUBLE PRECISION  VALI, VALR, W
+!C     .. Array Arguments ..
+      !DOUBLE PRECISION  A(*), B(*)
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: B
+      
+!C     .. Local Scalars ..
+      LOGICAL           LOUTPU, LUNITF
+      INTEGER           I, IPHASE, M, M2, N, N2, NPZERO, NZZERO
+      DOUBLE PRECISION  BIMAG, BREAL, G, TIMAG, TREAL, TWOPI, W2, WC
+      COMPLEX*16        ZTEMP
+!C     .. External Functions ..
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAPY2
+      COMPLEX*16        ZLADIV
+      EXTERNAL          DLAPY2, LSAME, ZLADIV
+!C     .. External Subroutines ..
+      !EXTERNAL          XERBLA
+!C     .. Intrinsic Functions ..
+      INTRINSIC         ABS, ATAN, DBLE, DCMPLX, DIMAG, LOG10, MAX, MOD, &
+                        SIGN
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      LUNITF = LSAME( UNITF,  'H' )
+      LOUTPU = LSAME( OUTPUT, 'P' )
+!C
+!C     Test the input scalar arguments.
+!C
+      IF( .NOT.LUNITF .AND. .NOT.LSAME( UNITF,  'R' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LOUTPU .AND. .NOT.LSAME( OUTPUT, 'C' ) ) THEN
+         INFO = -2
+      ELSE IF( NP1.LT.1 ) THEN
+         INFO = -3
+      ELSE IF( MP1.LT.1 ) THEN
+         INFO = -4
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+         !CALL XERBLA( 'TD05AD', -INFO )
+         RETURN
+      END IF
+!C
+      M = MP1 - 1
+      N = NP1 - 1
+      WC = W
+      TWOPI = EIGHT*ATAN( ONE )
+      IF ( LUNITF ) WC = WC*TWOPI
+      W2 = WC**2
+!C
+!C     Determine the orders z (NZZERO) and p (NPZERO) of the factors
+!C     (jW)**k in the numerator and denominator polynomials, by counting
+!C     the zero trailing coefficients.  The value of G(jW) will then be
+!C     computed as (jW)**(z-p)*m(jW)/n(jW), for appropriate m and n.
+!C
+      I = 0
+!C
+   10 CONTINUE
+      I = I + 1
+      IF ( I.LE.M ) THEN
+         IF ( B(I).EQ.ZERO ) GO TO 10
+      END IF
+!C
+      NZZERO = I - 1
+      I = 0
+!C
+   20 CONTINUE
+      I = I + 1
+      IF ( I.LE.N ) THEN
+         IF ( A(I).EQ.ZERO ) GO TO 20
+      END IF
+!C
+      NPZERO = I - 1
+      IPHASE = NZZERO - NPZERO
+!C
+      M2 = MOD( M - NZZERO, 2 )
+!C
+!C     Add real parts of the numerator m(jW).
+!C
+      TREAL = B(MP1-M2)
+!C
+      DO 30 I = M - 1 - M2, NZZERO + 1, -2
+         TREAL = B(I) - W2*TREAL
+   30 CONTINUE
+!C
+!C     Add imaginary parts of the numerator m(jW).
+!C
+      IF ( M.EQ.0 ) THEN
+         TIMAG = ZERO
+      ELSE
+         TIMAG = B(M+M2)
+!C
+         DO 40 I = M + M2 - 2, NZZERO + 2, -2
+            TIMAG = B(I) - W2*TIMAG
+   40    CONTINUE
+!C
+         TIMAG = TIMAG*WC
+      END IF
+!C
+      N2 = MOD( N - NPZERO, 2 )
+!C
+!C     Add real parts of the denominator n(jW).
+!C
+      BREAL = A(NP1-N2)
+!C
+      DO 50 I = N - 1 - N2, NPZERO + 1, -2
+         BREAL = A(I) - W2*BREAL
+   50 CONTINUE
+!C
+!C     Add imaginary parts of the denominator n(jW).
+!C
+      IF ( N.EQ.0 ) THEN
+         BIMAG = ZERO
+      ELSE
+         BIMAG = A(N+N2)
+!C
+         DO 60 I = N + N2 - 2, NPZERO + 2, -2
+            BIMAG = A(I) - W2*BIMAG
+   60    CONTINUE
+!C
+         BIMAG = BIMAG*WC
+      END IF
+!C
+      IF ( ( MAX( ABS( BREAL ), ABS( BIMAG ) ).EQ.ZERO ) .OR. &
+           ( W.EQ.ZERO .AND. IPHASE.LT.0 ) ) THEN
+!C
+!C        Error return:  The specified frequency W is a pole of G(jW),
+!C              or all the coefficients of the A polynomial are zero.
+!C
+         INFO = 1
+      ELSE
+!C
+!C        Evaluate the complex number W**(z-p)*m(jW)/n(jW).
+!C
+         ZTEMP = &
+            ZLADIV( DCMPLX( TREAL, TIMAG ), DCMPLX( BREAL, BIMAG ) )
+         VALR = DBLE(  ZTEMP )*WC**IPHASE
+         VALI = DIMAG( ZTEMP )*WC**IPHASE
+!C
+         IF ( .NOT.LOUTPU ) THEN
+!C
+!C           Cartesian co-ordinates: Update the result for j**(z-p).
+!C
+            I = MOD( ABS( IPHASE ), 4 )
+            IF ( ( IPHASE.GT.0 .AND. I.GT.1 ) .OR. &
+                ( IPHASE.LT.0 .AND. ( I.EQ.1 .OR. I.EQ.2) ) ) THEN
+               VALR = -VALR
+               VALI = -VALI
+            END IF
+
+            IF ( MOD( I, 2 ).NE.0 ) THEN
+               G    =  VALR
+               VALR = -VALI
+               VALI =  G
+            END IF
+
+         ELSE
+!C
+!C           Polar co-ordinates: Compute the magnitude and phase.
+!C
+            G = DLAPY2( VALR, VALI )
+
+            IF ( VALR.EQ.ZERO ) THEN
+               VALI = SIGN( NINETY, VALI )
+            ELSE
+               VALI = ( ATAN( VALI/VALR )/TWOPI )*THRE60 &
+               IF ( VALI.EQ.ZERO .AND. NZZERO.EQ.M .AND. NPZERO.EQ.N &
+                                .AND. B(NZZERO+1)*A(NPZERO+1).LT.ZERO )
+                 VALI = ONE80
+            END IF
+
+            VALR = TWENTY*LOG10( G )
+
+            IF ( IPHASE.NE.0 ) &
+              VALI = VALI + DBLE( NZZERO - NPZERO )*NINETY
+         END IF
+
+      END IF
+
+END SUBROUTINE
