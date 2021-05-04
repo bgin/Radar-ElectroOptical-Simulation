@@ -20332,3 +20332,1753 @@ C
       END IF
 
 END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TF01QD( NC, NB, N, IORD, AR, MA, H, LDH, INFO ) !GCC$ ATTRIBUTES hot :: TF01QD !GCC$ ATTRIBUTES aligned(32) :: TF01QD !GCC$ ATTRIBUTES no_stack_protector :: TF01QD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE TF01QD( NC, NB, N, IORD, AR, MA, H, LDH, INFO )
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TF01QD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: TF01QD
+#endif
+#if 0  
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute N Markov parameters M(1), M(2),..., M(N) from a
+C     multivariable system whose transfer function matrix G(z) is given.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     NC      (input) INTEGER
+C             The number of system outputs, i.e. the number of rows in
+C             the transfer function matrix G(z).  NC >= 0.
+C
+C     NB      (input) INTEGER
+C             The number of system inputs, i.e. the number of columns in
+C             the transfer function matrix G(z).  NB >= 0.
+C
+C     N       (input) INTEGER
+C             The number of Markov parameters M(k) to be computed.
+C             N >= 0.
+C
+C     IORD    (input) INTEGER array, dimension (NC*NB)
+C             This array must contain the order r of the elements of the
+C             transfer function matrix G(z), stored row by row.
+C             For example, the order of the (i,j)-th element of G(z) is
+C             given by IORD((i-1)xNB+j).
+C
+C     AR      (input) DOUBLE PRECISION array, dimension (NA), where
+C             NA = IORD(1) + IORD(2) + ... + IORD(NC*NB).
+C             The leading NA elements of this array must contain the
+C             denominator coefficients AR(1),...,AR(r) in equation (1)
+C             of the (i,j)-th element of the transfer function matrix
+C             G(z), stored row by row, i.e. in the order
+C             (1,1),(1,2),...,(1,NB), (2,1),(2,2),...,(2,NB), ...,
+C             (NC,1),(NC,2),...,(NC,NB). The coefficients must be given
+C             in decreasing order of powers of z; the coefficient of the
+C             highest order term is assumed to be equal to 1.
+C
+C     MA      (input) DOUBLE PRECISION array, dimension (NA)
+C             The leading NA elements of this array must contain the
+C             numerator coefficients MA(1),...,MA(r) in equation (1)
+C             of the (i,j)-th element of the transfer function matrix
+C             G(z), stored row by row, i.e. in the order
+C             (1,1),(1,2),...,(1,NB), (2,1),(2,2),...,(2,NB), ...,
+C             (NC,1),(NC,2),...,(NC,NB). The coefficients must be given
+C             in decreasing order of powers of z.
+C
+C     H       (output) DOUBLE PRECISION array, dimension (LDH,N*NB)
+C             The leading NC-by-N*NB part of this array contains the
+C             multivariable Markov parameter sequence M(k), where each
+C             parameter M(k) is an NC-by-NB matrix and k = 1,2,...,N.
+C             The Markov parameters are stored such that H(i,(k-1)xNB+j)
+C             contains the (i,j)-th element of M(k) for i = 1,2,...,NC
+C             and j = 1,2,...,NB.
+C
+C     LDH     INTEGER
+C             The leading dimension of array H.  LDH >= MAX(1,NC).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     The (i,j)-th element of G(z), defining the particular I/O transfer
+C     between output i and input j, has the following form:
+C
+C                          -1         -2               -r
+C                    MA(1)z   + MA(2)z   + ... + MA(r)z
+C         G  (z) = ----------------------------------------.         (1)
+C          ij                -1         -2               -r
+C                  1 + AR(1)z   + AR(2)z   + ... + AR(r)z
+C
+C     The (i,j)-th element of G(z) is defined by its order r, its r
+C     moving average coefficients (= numerator) MA(1),...,MA(r) and its
+C     r autoregressive coefficients (= denominator) AR(1),...,AR(r). The
+C     coefficient of the constant term in the denominator is assumed to
+C     be equal to 1.
+C
+C     The relationship between the (i,j)-th element of the Markov
+C     parameters M(1),M(2),...,M(N) and the corresponding element of the
+C     transfer function matrix G(z) is given by:
+C
+C                               -1          -2                -k
+C      G  (z) = M  (0) + M  (1)z   + M  (2)z   + ... + M  (k)z  + ...(2)
+C       ij       ij       ij          ij                ij
+C
+C     Equating (1) and (2), we find that the relationship between the
+C     (i,j)-th element of the Markov parameters M(k) and the ARMA
+C     parameters AR(1),...,AR(r) and MA(1),...,MA(r) of the (i,j)-th
+C     element of the transfer function matrix G(z) is as follows:
+C
+C        M  (1)   = MA(1),
+C         ij
+C                           k-1
+C        M  (k)   = MA(k) - SUM AR(p) x M  (k-p) for 1 < k <= r and
+C         ij                p=1          ij
+C                      r
+C        M  (k+r) = - SUM AR(p) x M  (k+r-p) for k > 0.
+C         ij          p=1          ij
+C
+C     From these expressions the Markov parameters M(k) are computed
+C     element by element.
+C
+C     REFERENCES
+C
+C     [1] Luenberger, D.G.
+C         Introduction to Dynamic Systems: Theory, Models and
+C         Applications.
+C         John Wiley & Sons, New York, 1979.
+C
+C     NUMERICAL ASPECTS
+C
+C     The computation of the (i,j)-th element of M(k) requires:
+C        (k-1) multiplications and k additions if k <= r;
+C          r   multiplications and r additions if k > r.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TF01ED by S. Van Huffel, Katholieke
+C     Univ. Leuven, Belgium.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Markov parameters, multivariable system, transfer function,
+C     transfer matrix.
+C
+C     ******************************************************************
+C
+#endif
+     
+      implicit none
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, LDH, N, NB, NC
+!C     .. Array Arguments ..
+      INTEGER           IORD(*)
+      DOUBLE PRECISION  AR(*), H(LDH,*), MA(*)
+      !INTEGER, DIMENSION(:), ALLOCATABLE :: IORD
+     ! DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: AR
+      !DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
+      !DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: MA
+!C     .. Local Scalars ..
+      INTEGER           I, J, JJ, JK, K, KI, LDHNB, NL, NORD
+!C     .. External Functions ..
+      DOUBLE PRECISION  DDOT
+      EXTERNAL          DDOT
+!C     .. External Subroutines ..
+!      EXTERNAL          XERBLA
+!C     .. Intrinsic Functions ..
+!      INTRINSIC         MAX
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+!C
+!C     Test the input scalar arguments.
+!C
+!      IF( NC.LT.0 ) THEN
+!         INFO = -1
+!      ELSE IF( NB.LT.0 ) THEN
+!         INFO = -2
+!      ELSE IF( N.LT.0 ) THEN
+!         INFO = -3
+      IF( LDH.LT.MAX( 1, NC ) ) THEN
+         INFO = -8
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!!C
+!C        Error return.
+!C
+!!         CALL XERBLA( 'TF01QD', -INFO )
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( MAX( NC, NB, N ).EQ.0 ) &
+         RETURN
+!C
+      LDHNB = LDH*NB
+      NL = 1
+      K = 1
+      !C
+      
+      DO 60 I = 1, NC
+!C
+         DO 50 J = 1, NB
+            NORD = IORD(K)
+            H(I,J) = MA(NL)
+            JK = J
+!C
+            DO 20 KI = 1, NORD - 1
+               JK = JK + NB
+               H(I,JK) = MA(NL+KI) - DDOT( KI, AR(NL), 1, H(I,J), &
+                                          -LDHNB )
+   20       CONTINUE
+!C
+            DO 40 JJ = J, J + (N - NORD - 1)*NB, NB
+               JK = JK + NB
+               H(I,JK) = -DDOT( NORD, AR(NL), 1, H(I,JJ), -LDHNB )
+   40       CONTINUE
+!C
+            NL = NL + NORD
+            K = K + 1
+   50    CONTINUE
+!C
+   60 CONTINUE
+!C
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TF01RD( NA, NB, NC, N, A, LDA, B, LDB, C, LDC, H, LDH, &
+DWORK, LDWORK, INFO ) !GCC$ ATTRIBUTES hot :: TF01RD !GCC$ ATTRIBUTES aligned(32) :: TF01RD !GCC$ ATTRIBUTES no_stack_protector :: TF01RD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE TF01RD( NA, NB, NC, N, A, LDA, B, LDB, C, LDC, H, LDH, &
+     DWORK, LDWORK, INFO )
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TF01RD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell:: TF01RD 
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute N Markov parameters M(1), M(2),..., M(N) from the
+C     parameters (A,B,C) of a linear time-invariant system, where each
+C     M(k) is an NC-by-NB matrix and k = 1,2,...,N.
+C
+C     All matrices are treated as dense, and hence TF01RD is not
+C     intended for large sparse problems.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     NA      (input) INTEGER
+C             The order of the matrix A.  NA >= 0.
+C
+C     NB      (input) INTEGER
+C             The number of system inputs.  NB >= 0.
+C
+C     NC      (input) INTEGER
+C             The number of system outputs.  NC >= 0.
+C
+C     N       (input) INTEGER
+C             The number of Markov parameters M(k) to be computed.
+C             N >= 0.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,NA)
+C             The leading NA-by-NA part of this array must contain the
+C             state matrix A of the system.
+C
+C     LDA     INTEGER
+C             The leading dimension of array A.  LDA >= MAX(1,NA).
+C
+C     B       (input) DOUBLE PRECISION array, dimension (LDB,NB)
+C             The leading NA-by-NB part of this array must contain the
+C             input matrix B of the system.
+C
+C     LDB     INTEGER
+C             The leading dimension of array B.  LDB >= MAX(1,NA).
+C
+C     C       (input) DOUBLE PRECISION array, dimension (LDC,NA)
+C             The leading NC-by-NA part of this array must contain the
+C             output matrix C of the system.
+C
+C     LDC     INTEGER
+C             The leading dimension of array C.  LDC >= MAX(1,NC).
+C
+C     H       (output) DOUBLE PRECISION array, dimension (LDH,N*NB)
+C             The leading NC-by-N*NB part of this array contains the
+C             multivariable parameters M(k), where each parameter M(k)
+C             is an NC-by-NB matrix and k = 1,2,...,N. The Markov
+C             parameters are stored such that H(i,(k-1)xNB+j) contains
+C             the (i,j)-th element of M(k) for i = 1,2,...,NC and
+C             j = 1,2,...,NB.
+C
+C     LDH     INTEGER
+C             The leading dimension of array H.  LDH >= MAX(1,NC).
+C
+C     Workspace
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C
+C     LDWORK  INTEGER
+C             The length of the array DWORK.
+C             LDWORK >= MAX(1, 2*NA*NC).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     For the linear time-invariant discrete-time system
+C
+C            x(k+1) = A x(k) + B u(k)
+C             y(k)  = C x(k) + D u(k),
+C
+C     the transfer function matrix G(z) is given by
+C                            -1
+C              G(z) = C(zI-A)  B + D
+C                             -1        -2     2   -3
+C                   = D + CB z   + CAB z   + CA B z   + ...          (1)
+C
+C     Using Markov parameters, G(z) can also be written as
+C                                 -1        -2        -3
+C              G(z) = M(0) + M(1)z   + M(2)z   + M(3)z   + ...       (2)
+C
+C                                                               k-1
+C     Equating (1) and (2), we find that M(0) = D and M(k) = C A    B
+C     for k > 0, from which the Markov parameters M(1),M(2)...,M(N) are
+C     computed.
+C
+C     REFERENCES
+C
+C     [1] Chen, C.T.
+C         Introduction to Linear System Theory.
+C         H.R.W. Series in Electrical Engineering, Electronics and
+C         Systems, Holt, Rinehart and Winston Inc., London, 1970.
+C
+C     NUMERICAL ASPECTS
+C
+C     The algorithm requires approximately (NA + NB) x NA x NC x N
+C     multiplications and additions.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TF01FD by S. Van Huffel, Katholieke
+C     Univ. Leuven, Belgium.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Markov parameters, multivariable system, time-invariant system,
+C     transfer function, transfer matrix.
+C
+C     ******************************************************************
+C
+#endif
+       implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, LDA, LDB, LDC, LDH, LDWORK, N, NA, NB, NC
+!C     .. Array Arguments ..
+      !DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), H(LDH,*)
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
+      
+!C     .. Local Scalars ..
+      INTEGER           I, JWORK, K, LDW
+!C     .. External Subroutines ..
+      EXTERNAL          DGEMM, DLACPY
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MAX, MIN
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+!C
+!C     Test the input scalar arguments.
+!C
+    
+      IF( LDWORK.LT.MAX( 1, 2*NA*NC ) ) THEN
+         INFO = -14
+      END IF
+!C
+      IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+        ! CALL XERBLA( 'TF01RD', -INFO )
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( MIN( NA, NB, NC, N ).EQ.0 ) &
+         RETURN
+
+      JWORK = 1 + NC*NA
+      LDW   = MAX( 1, NC )
+      I = 1
+!C
+!C     Copy C in the workspace beginning from the position JWORK.
+!C     This workspace will contain the product C*A**(K-1), K = 1,2,...,N.
+!C
+      CALL DLACPY( 'Full', NC, NA, C, LDC, DWORK(JWORK), LDW )
+!C
+!C     Form M(1), M(2), ..., M(N).
+!C
+      DO 10 K = 1, N
+         CALL DLACPY( 'Full', NC, NA, DWORK(JWORK), LDW, DWORK, LDW )
+!C
+!C        Form (C * A**(K-1)) * B = M(K).
+!C
+         CALL DGEMM( 'No transpose', 'No transpose', NC, NB, NA, ONE, &
+                     DWORK, LDW, B, LDB, ZERO, H(1,I), LDH )
+!C
+         IF ( K.NE.N ) THEN
+!C
+!C           Form C * A**K.
+!C
+            CALL DGEMM( 'No transpose', 'No transpose', NC, NA, NA, ONE, &
+                      DWORK, LDW, A, LDA, ZERO, DWORK(JWORK), LDW )
+!C
+            I = I + NB
+         END IF
+   10 CONTINUE
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TC05AD( LERI, M, P, SVAL, INDEX, PCOEFF, LDPCO1, &
+LDPCO2, QCOEFF, LDQCO1, LDQCO2, RCOND, CFREQR,&
+LDCFRE, IWORK, DWORK, ZWORK, INFO ) !GCC$ ATTRIBUTES hot :: TC05AD !GCC$ ATTRIBUTES aligned(32) :: TC05AD !GCC$ no_stack_protector :: TC05AD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TC05AD 
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: TC05AD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To evaluate the transfer matrix T(s) of a left polynomial matrix
+C     representation [T(s) = inv(P(s))*Q(s)] or a right polynomial
+C     matrix representation [T(s) = Q(s)*inv(P(s))] at any specified
+C     complex frequency s = SVAL.
+C
+C     This routine will calculate the standard frequency response
+C     matrix at frequency omega if SVAL is supplied as (0.0,omega).
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     LERI    CHARACTER*1
+C             Indicates whether a left polynomial matrix representation
+C             or a right polynomial matrix representation is to be used
+C             to evaluate the transfer matrix as follows:
+C             = 'L':  A left matrix fraction is input;
+C             = 'R':  A right matrix fraction is input.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of system inputs.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of system outputs.  P >= 0.
+C
+C     SVAL    (input) COMPLEX*16
+C             The frequency at which the transfer matrix or the
+C             frequency respose matrix is to be evaluated.
+C             For a standard frequency response set the real part
+C             of SVAL to zero.
+C
+C     INDEX   (input) INTEGER array, dimension (MAX(M,P))
+C             If LERI = 'L', INDEX(I), I = 1,2,...,P, must contain the
+C             maximum degree of the polynomials in the I-th row of the
+C             denominator matrix P(s) of the given left polynomial
+C             matrix representation.
+C             If LERI = 'R', INDEX(I), I = 1,2,...,M, must contain the
+C             maximum degree of the polynomials in the I-th column of
+C             the denominator matrix P(s) of the given right polynomial
+C             matrix representation.
+C
+C     PCOEFF  (input) DOUBLE PRECISION array, dimension
+C             (LDPCO1,LDPCO2,kpcoef), where kpcoef = MAX(INDEX(I)) + 1.
+C             If LERI = 'L' then porm = P, otherwise porm = M.
+C             The leading porm-by-porm-by-kpcoef part of this array must
+C             contain the coefficients of the denominator matrix P(s).
+C             PCOEFF(I,J,K) is the coefficient in s**(INDEX(iorj)-K+1)
+C             of polynomial (I,J) of P(s), where K = 1,2,...,kpcoef; if
+C             LERI = 'L' then iorj = I, otherwise iorj = J.
+C             Thus for LERI = 'L', P(s) =
+C             diag(s**INDEX(I))*(PCOEFF(.,.,1)+PCOEFF(.,.,2)/s+...).
+C             If LERI = 'R', PCOEFF is modified by the routine but
+C             restored on exit.
+C
+C     LDPCO1  INTEGER
+C             The leading dimension of array PCOEFF.
+C             LDPCO1 >= MAX(1,P) if LERI = 'L',
+C             LDPCO1 >= MAX(1,M) if LERI = 'R'.
+C
+C     LDPCO2  INTEGER
+C             The second dimension of array PCOEFF.
+C             LDPCO2 >= MAX(1,P) if LERI = 'L',
+C             LDPCO2 >= MAX(1,M) if LERI = 'R'.
+C
+C     QCOEFF  (input) DOUBLE PRECISION array, dimension
+C             (LDQCO1,LDQCO2,kpcoef)
+C             If LERI = 'L' then porp = M, otherwise porp = P.
+C             The leading porm-by-porp-by-kpcoef part of this array must
+C             contain the coefficients of the numerator matrix Q(s).
+C             QCOEFF(I,J,K) is defined as for PCOEFF(I,J,K).
+C             If LERI = 'R', QCOEFF is modified by the routine but
+C             restored on exit.
+C
+C     LDQCO1  INTEGER
+C             The leading dimension of array QCOEFF.
+C             LDQCO1 >= MAX(1,P)   if LERI = 'L',
+C             LDQCO1 >= MAX(1,M,P) if LERI = 'R'.
+C
+C     LDQCO2  INTEGER
+C             The second dimension of array QCOEFF.
+C             LDQCO2 >= MAX(1,M)   if LERI = 'L',
+C             LDQCO2 >= MAX(1,M,P) if LERI = 'R'.
+C
+C     RCOND   (output) DOUBLE PRECISION
+C             The estimated reciprocal of the condition number of the
+C             denominator matrix P(SVAL).
+C             If RCOND is nearly zero, SVAL is approximately a system
+C             pole.
+C
+C     CFREQR  (output) COMPLEX*16 array, dimension (LDCFRE,MAX(M,P))
+C             The leading porm-by-porp part of this array contains the
+C             frequency response matrix T(SVAL).
+C
+C     LDCFRE  INTEGER
+C             The leading dimension of array CFREQR.
+C             LDCFRE >= MAX(1,P)   if LERI = 'L',
+C             LDCFRE >= MAX(1,M,P) if LERI = 'R'.
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (liwork)
+C             where liwork = P, if LERI = 'L',
+C                   liwork = M, if LERI = 'R'.
+C
+C     DWORK   DOUBLE PRECISION array, dimension (ldwork)
+C             where ldwork = 2*P, if LERI = 'L',
+C                   ldwork = 2*M, if LERI = 'R'.
+C
+C     ZWORK   COMPLEX*16 array, dimension (lzwork),
+C             where lzwork = P*(P+2), if LERI = 'L',
+C                   lzwork = M*(M+2), if LERI = 'R'.
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  if P(SVAL) is exactly or nearly singular;
+C                   no frequency response is calculated.
+C
+C     METHOD
+C
+C     The method for a left matrix fraction will be described here;
+C     right matrix fractions are dealt with by obtaining the dual left
+C     fraction and calculating its frequency response (see SLICOT
+C     Library routine TC01OD). The first step is to calculate the
+C     complex value P(SVAL) of the denominator matrix P(s) at the
+C     desired frequency SVAL. If P(SVAL) is approximately singular,
+C     SVAL is approximately a pole of this system and so the frequency
+C     response matrix T(SVAL) is not calculated; in this case, the
+C     routine returns with the Error Indicator (INFO) set to 1.
+C     Otherwise, the complex value Q(SVAL) of the numerator matrix Q(s)
+C     at frequency SVAL is calculated in a similar way to P(SVAL), and
+C     the desired response matrix T(SVAL) = inv(P(SVAL))*Q(SVAL) is
+C     found by solving the corresponding system of complex linear
+C     equations.
+C
+C     REFERENCES
+C
+C     None
+C
+C     NUMERICAL ASPECTS
+C                               3
+C     The algorithm requires 0(N ) operations.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TC01AD by T.W.C.Williams, Kingston
+C     Polytechnic, United Kingdom, March 1982.
+C
+C     REVISIONS
+C
+C     February 22, 1998 (changed the name of TC01MD).
+C
+C     KEYWORDS
+C
+C     Coprime matrix fraction, elementary polynomial operations,
+C     polynomial matrix, state-space representation, transfer matrix.
+C
+C     ******************************************************************
+C
+#endif
+      use omp_lib
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION  ZERO, ONE
+      PARAMETER         ( ZERO = 0.0D0, ONE = 1.0D0 )
+!C     .. Scalar Arguments ..
+      CHARACTER         LERI
+      INTEGER           INFO, LDCFRE, LDPCO1, LDPCO2, LDQCO1, LDQCO2, M, P
+    
+      DOUBLE PRECISION  RCOND
+      COMPLEX*16        SVAL
+!C     .. Array Arguments ..
+      !INTEGER           INDEX(*), IWORK(*)
+      !DOUBLE PRECISION  DWORK(*), PCOEFF(LDPCO1,LDPCO2,*), &
+      !                  QCOEFF(LDQCO1,LDQCO2,*)
+      !COMPLEX*16        CFREQR(LDCFRE,*), ZWORK(*)
+      INTEGER, DIMENSION(:), ALLOCATABLE :: INDEX, IWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:,:), ALLOCATABLE :: PCOEFF
+      DOUBLE PRECISION, DIMENSION(:,:,:), ALLOCATABLE :: QCOEFF
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: CFREQR
+      COMPLEX(16), DIMENSION(:), ALLOCATABLE :: ZWORK
+     
+!C     .. Local Scalars ..
+      LOGICAL           LLERI
+      INTEGER           I, IZWORK, IJ, INFO1, J, K, KPCOEF, LDZWOR, &
+                        MAXIND, MINMP, MPLIM, MWORK, PWORK
+      DOUBLE PRECISION  CNORM
+!C     .. External Functions ..
+      LOGICAL           LSAME
+      DOUBLE PRECISION  DLAMCH, ZLANGE
+      EXTERNAL          DLAMCH, LSAME, ZLANGE
+!C     .. External Subroutines ..
+      EXTERNAL          ZCOPY, ZGECON, ZGETRF, ZGETRS, &
+                        ZSWAP
+!C     .. Intrinsic Functions ..
+      INTRINSIC         DCMPLX, MAX, MIN
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      LLERI = LSAME( LERI, 'L' )
+      MPLIM = MAX( M, P )
+!C
+!C     Test the input scalar arguments.
+!C
+   !   IF( .NOT.LLERI .AND. .NOT.LSAME( LERI, 'R' ) ) THEN
+    !     INFO = -1
+    !  ELSE IF( M.LT.0 ) THEN
+    !     INFO = -2
+    !  ELSE IF( P.LT.0 ) THEN
+    !     INFO = -3
+    !  ELSE IF( ( LLERI .AND. LDPCO1.LT.MAX( 1, P ) ) .OR.
+    ! $    ( .NOT.LLERI .AND. LDPCO1.LT.MAX( 1, M ) ) ) THEN
+    !     INFO = -7
+   !   ELSE IF( ( LLERI .AND. LDPCO2.LT.MAX( 1, P ) ) .OR.
+   !  $    ( .NOT.LLERI .AND. LDPCO2.LT.MAX( 1, M ) ) ) THEN
+   !      INFO = -8
+   !   ELSE IF( ( LLERI .AND. LDQCO1.LT.MAX( 1, P ) ) .OR.
+   !  $    ( .NOT.LLERI .AND. LDQCO1.LT.MAX( 1, M, P ) ) ) THEN
+   !      INFO = -10
+  !    ELSE IF( ( LLERI .AND. LDQCO2.LT.MAX( 1, M ) ) .OR.
+  !   $    ( .NOT.LLERI .AND. LDQCO2.LT.MAX( 1, MPLIM ) ) ) THEN
+   !      INFO = -11
+    !  ELSE IF( ( LLERI .AND. LDCFRE.LT.MAX( 1, P ) ) .OR.
+    ! $    ( .NOT.LLERI .AND. LDCFRE.LT.MAX( 1, MPLIM ) ) ) THEN
+    !     INFO = -14
+    !  END IF
+
+    !  IF ( INFO.NE.0 ) THEN
+
+   
+     !    RETURN
+    !  END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( M.EQ.0 .OR. P.EQ.0 ) THEN
+         RCOND = ONE
+         RETURN
+      END IF
+!C
+      IF ( LLERI ) THEN
+!C
+!C        Initialization for left matrix fraction.
+!C
+         PWORK = P
+         MWORK = M
+      ELSE
+!C
+!C        Initialization for right matrix fraction: obtain dual system.
+!C
+         PWORK = M
+         MWORK = P
+         IF ( MPLIM.GT.1 ) &
+           CALL TC01OD( 'R', M, P, KPCOEF, PCOEFF, LDPCO1, LDPCO2, &
+                        QCOEFF, LDQCO1, LDQCO2, INFO ) 
+      END IF
+
+      LDZWOR = PWORK
+      IZWORK = LDZWOR*LDZWOR + 1
+      MAXIND = 0
+
+      DO 10 I = 1, PWORK
+         IF ( INDEX(I).GT.MAXIND ) MAXIND = INDEX(I)
+   10 CONTINUE
+
+      KPCOEF = MAXIND + 1
+!C
+!C     Calculate the complex denominator matrix P(SVAL), row by row.
+      !C
+      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(ZWORK,PCOEFF,INDEX) PRIVATE(I,IJ,J,K)
+      DO 50 I = 1, PWORK
+         IJ = I
+!C
+         DO 20 J = 1, PWORK
+            ZWORK(IJ) = DCMPLX( PCOEFF(I,J,1), ZERO )
+            IJ = IJ + PWORK
+   20    CONTINUE
+!C
+!C        Possibly non-constant row: finish evaluating it.
+!C
+         DO 40 K = 2, INDEX(I) + 1
+!C
+            IJ = I
+!C
+            DO 30 J = 1, PWORK
+               ZWORK(IJ) = ( SVAL*ZWORK(IJ) ) + &
+                             DCMPLX( PCOEFF(I,J,K), ZERO )
+               IJ = IJ + PWORK
+   30       CONTINUE
+!C
+   40    CONTINUE
+
+  50 CONTINUE
+   !$OMP END PARALLEL DO
+!C
+!C     Check if this P(SVAL) is singular: if so, don't compute T(SVAL).
+!C     Note that DWORK is not actually referenced in ZLANGE routine.
+!C
+      CNORM = ZLANGE( '1-norm', PWORK, PWORK, ZWORK, LDZWOR, DWORK )
+!C
+      CALL ZGETRF( PWORK, PWORK, ZWORK, LDZWOR, IWORK, INFO )
+!C
+      IF ( INFO.GT.0 ) THEN
+!C
+!C        Singular matrix.  Set INFO and RCOND for error return.
+!C
+         INFO  = 1
+         RCOND = ZERO
+      ELSE
+!C
+!C        Estimate the reciprocal condition of P(SVAL).
+!C        Workspace: ZWORK: PWORK*PWORK + 2*PWORK, DWORK: 2*PWORK.
+!C
+         CALL ZGECON( '1-norm', PWORK, ZWORK, LDZWOR, CNORM, RCOND, &
+                      ZWORK(IZWORK), DWORK, INFO )
+!C
+         IF ( RCOND.LE.DLAMCH( 'Epsilon' ) ) THEN
+!C
+!C           Nearly singular matrix.  Set INFO for error return.
+!C
+            INFO  = 1
+         ELSE
+!C
+!C           Calculate the complex numerator matrix Q(SVAL), row by row.
+            !C
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(CFREQR,QCOEFF,INDEX) PRIVATE(I,J,K)
+            DO 90 I = 1, PWORK
+!C
+               DO 60 J = 1, MWORK
+                  CFREQR(I,J) = DCMPLX( QCOEFF(I,J,1), ZERO )
+   60          CONTINUE
+!C
+!C              Possibly non-constant row: finish evaluating it.
+!C
+               DO 80 K = 2, INDEX(I) + 1
+!C
+                  DO 70 J = 1, MWORK
+                     CFREQR(I,J) = ( SVAL*CFREQR(I,J) ) + &
+                                   DCMPLX( QCOEFF(I,J,K), ZERO )
+   70             CONTINUE
+!C
+   80          CONTINUE
+!C
+   90       CONTINUE
+!C
+!C           Now calculate frequency response T(SVAL).
+!C
+            CALL ZGETRS( 'No transpose', PWORK, MWORK, ZWORK, LDZWOR, &
+                         IWORK, CFREQR, LDCFRE, INFO )
+         END IF
+      END IF
+!C
+!C     For right matrix fraction, return to original (dual of the dual)
+!C     system.
+!C
+      IF ( ( .NOT.LLERI ) .AND. ( MPLIM.NE.1 ) ) THEN
+         CALL TC01OD( 'L', MWORK, PWORK, KPCOEF, PCOEFF, LDPCO1, &
+                     LDPCO2, QCOEFF, LDQCO1, LDQCO2, INFO1 )
+
+         IF ( INFO.EQ.0 ) THEN
+!C
+!C           Also, transpose T(SVAL) here if this was successfully
+!C           calculated.
+!C
+            MINMP = MIN( M, P )
+!C
+            DO 100 J = 1, MPLIM
+               IF ( J.LT.MINMP ) THEN
+                  CALL ZSWAP( MINMP-J, CFREQR(J+1,J), 1, CFREQR(J,J+1), &
+                              LDCFRE )
+               ELSE IF ( J.GT.P ) THEN
+                  CALL ZCOPY( P, CFREQR(1,J), 1, CFREQR(J,1), LDCFRE )
+               ELSE IF ( J.GT.M ) THEN
+                  CALL ZCOPY( M, CFREQR(J,1), LDCFRE, CFREQR(1,J), 1 )
+               END IF
+  100       CONTINUE
+
+         END IF
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE TC01OD( LERI, M, P, INDLIM, PCOEFF, LDPCO1, LDPCO2, &
+     QCOEFF, LDQCO1, LDQCO2, INFO ) !GCC$ ATTRIBUTES inline :: TC01OD !GCC$ ATTRIBUTES aligned(32) :: TC01OD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE TC01OD( LERI, M, P, INDLIM, PCOEFF, LDPCO1, LDPCO2, &
+     QCOEFF, LDQCO1, LDQCO2, INFO )
+  !DIR$ ATTRIBUTES FORCEINLINE :: TC01OD
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: TC01OD 
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: TC01OD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To find the dual right (left) polynomial matrix representation of
+C     a given left (right) polynomial matrix representation, where the
+C     right and left polynomial matrix representations are of the form
+C     Q(s)*inv(P(s)) and inv(P(s))*Q(s) respectively.
+C
+C     ARGUMENTS
+C
+C     Mode Parameters
+C
+C     LERI    CHARACTER*1
+C             Indicates whether a left or right matrix fraction is input
+C             as follows:
+C             = 'L':  A left matrix fraction is input;
+C             = 'R':  A right matrix fraction is input.
+C
+C     Input/Output Parameters
+C
+C     M       (input) INTEGER
+C             The number of system inputs.  M >= 0.
+C
+C     P       (input) INTEGER
+C             The number of system outputs.  P >= 0.
+C
+C     INDLIM  (input) INTEGER
+C             The highest value of K for which PCOEFF(.,.,K) and
+C             QCOEFF(.,.,K) are to be transposed.
+C             K = kpcoef + 1, where kpcoef is the maximum degree of the
+C             polynomials in P(s).  INDLIM >= 1.
+C
+C     PCOEFF  (input/output) DOUBLE PRECISION array, dimension
+C             (LDPCO1,LDPCO2,INDLIM)
+C             If LERI = 'L' then porm = P, otherwise porm = M.
+C             On entry, the leading porm-by-porm-by-INDLIM part of this
+C             array must contain the coefficients of the denominator
+C             matrix P(s).
+C             PCOEFF(I,J,K) is the coefficient in s**(INDLIM-K) of
+C             polynomial (I,J) of P(s), where K = 1,2,...,INDLIM.
+C             On exit, the leading porm-by-porm-by-INDLIM part of this
+C             array contains the coefficients of the denominator matrix
+!C             P'(s) of the dual system.
+C
+C     LDPCO1  INTEGER
+C             The leading dimension of array PCOEFF.
+C             LDPCO1 >= MAX(1,P) if LERI = 'L',
+C             LDPCO1 >= MAX(1,M) if LERI = 'R'.
+C
+C     LDPCO2  INTEGER
+C             The second dimension of array PCOEFF.
+C             LDPCO2 >= MAX(1,P) if LERI = 'L',
+C             LDPCO2 >= MAX(1,M) if LERI = 'R'.
+C
+C     QCOEFF  (input/output) DOUBLE PRECISION array, dimension
+C             (LDQCO1,LDQCO2,INDLIM)
+C             On entry, the leading P-by-M-by-INDLIM part of this array
+C             must contain the coefficients of the numerator matrix
+C             Q(s).
+C             QCOEFF(I,J,K) is the coefficient in s**(INDLIM-K) of
+C             polynomial (I,J) of Q(s), where K = 1,2,...,INDLIM.
+C             On exit, the leading M-by-P-by-INDLIM part of the array
+!C             contains the coefficients of the numerator matrix Q'(s)
+C             of the dual system.
+C
+C     LDQCO1  INTEGER
+C             The leading dimension of array QCOEFF.
+C             LDQCO1 >= MAX(1,M,P).
+C
+C     LDQCO2  INTEGER
+C             The second dimension of array QCOEFF.
+C             LDQCO2 >= MAX(1,M,P).
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value.
+C
+C     METHOD
+C
+C     If the given M-input/P-output left (right) polynomial matrix
+C     representation has numerator matrix Q(s) and denominator matrix
+C     P(s), its dual P-input/M-output right (left) polynomial matrix
+C     representation simply has numerator matrix Q'(s) and denominator
+C     matrix P'(s).
+C
+C     REFERENCES
+C
+C     None.
+C
+C     NUMERICAL ASPECTS
+C
+C     None.
+C
+C     CONTRIBUTOR
+C
+C     Release 3.0: V. Sima, Katholieke Univ. Leuven, Belgium, Dec. 1996.
+C     Supersedes Release 2.0 routine TC01CD by T.W.C.Williams, Kingston
+C     Polytechnic, United Kingdom, March 1982.
+C
+C     REVISIONS
+C
+C     -
+C
+C     KEYWORDS
+C
+C     Coprime matrix fraction, elementary polynomial operations,
+C     polynomial matrix, state-space representation, transfer matrix.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+C     .. Scalar Arguments ..
+      CHARACTER         LERI
+      INTEGER           INFO, INDLIM, LDPCO1, LDPCO2, LDQCO1, LDQCO2, M, P
+     
+!C     .. Array Arguments ..
+      !DOUBLE PRECISION  PCOEFF(LDPCO1,LDPCO2,*), QCOEFF(LDQCO1,LDQCO2,*)
+      DOUBLE PRECISION, DIMENSION(:,:,:), ALLOCATABLE :: PCOEFF
+      DOUBLE PRECISION, DIMENSION(:,:,:), ALLOCATABLE :: QCOEFF
+      
+!C     .. Local Scalars ..
+!      LOGICAL           LLERI
+      INTEGER           J, K, MINMP, MPLIM, PORM
+!C     .. External Functions ..
+      LOGICAL           LSAME
+      EXTERNAL          LSAME
+!C     .. External Subroutines ..
+      EXTERNAL          DCOPY, DSWAP
+!C     .. Intrinsic Functions ..
+      INTRINSIC         MAX, MIN
+!C     .. Executable Statements ..
+!C
+      INFO = 0
+      LLERI = LSAME( LERI, 'L' )
+      MPLIM = MAX( M, P )
+      MINMP = MIN( M, P )
+!C
+!C     Test the input scalar arguments.
+!C
+     ! IF( .NOT.LLERI .AND. .NOT.LSAME( LERI, 'R' ) ) THEN
+     !    INFO = -1
+     ! ELSE IF( M.LT.0 ) THEN
+     !    INFO = -2
+    !  ELSE IF( P.LT.0 ) THEN
+     !    INFO = -3
+     ! ELSE IF( INDLIM.LT.1 ) THEN
+    !     INFO = -4
+     ! ELSE IF( ( LLERI .AND. LDPCO1.LT.MAX( 1, P ) ) .OR.
+    ! $    ( .NOT.LLERI .AND. LDPCO1.LT.MAX( 1, M ) ) ) THEN
+    !     INFO = -6
+    !  ELSE IF( ( LLERI .AND. LDPCO2.LT.MAX( 1, P ) ) .OR.
+   !  $    ( .NOT.LLERI .AND. LDPCO2.LT.MAX( 1, M ) ) ) THEN
+    !     INFO = -7
+    !  ELSE IF( LDQCO1.LT.MAX( 1, MPLIM ) ) THEN
+    !     INFO = -9
+    !  ELSE IF( LDQCO2.LT.MAX( 1, MPLIM ) ) THEN
+    !     INFO = -10
+    !  END IF
+!C
+  !    IF ( INFO.NE.0 ) THEN
+!C
+!C        Error return.
+!C
+!         CALL XERBLA( 'TC01OD', -INFO )
+!         RETURN
+!      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF ( M.EQ.0 .OR. P.EQ.0 ) &
+         RETURN
+!C
+      IF ( MPLIM.NE.1 ) THEN
+!C
+!C        Non-scalar system: transpose numerator matrix Q(s).
+!C
+         DO 20 K = 1, INDLIM
+!C
+            DO 10 J = 1, MPLIM
+               IF ( J.LT.MINMP ) THEN
+                  CALL DSWAP( MINMP-J, QCOEFF(J+1,J,K), 1, &
+                              QCOEFF(J,J+1,K), LDQCO1 )
+               ELSE IF ( J.GT.P ) THEN
+                  CALL DCOPY( P, QCOEFF(1,J,K), 1, QCOEFF(J,1,K), &
+                             LDQCO1 )
+               ELSE IF ( J.GT.M ) THEN
+                  CALL DCOPY( M, QCOEFF(J,1,K), LDQCO1, QCOEFF(1,J,K), &
+                             1 )
+               END IF
+   10       CONTINUE
+
+   20    CONTINUE
+!C
+!C        Find dimension of denominator matrix P(s): M (P) for
+!C        right (left) polynomial matrix representation.
+!C
+         PORM = M
+         IF ( LLERI ) PORM = P
+         IF ( PORM.NE.1 ) THEN
+!C
+!C           Non-scalar P(s): transpose it.
+!C
+            DO 40 K = 1, INDLIM
+!C
+               DO 30 J = 1, PORM - 1
+                  CALL DSWAP( PORM-J, PCOEFF(J+1,J,K), 1, &
+                              PCOEFF(J,J+1,K), LDPCO1 )
+   30          CONTINUE
+!C
+   40       CONTINUE
+!C
+         END IF
+      END IF
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+SUBROUTINE SB10KD( N, M, NP, A, LDA, B, LDB, C, LDC, FACTOR, &
+AK, LDAK, BK, LDBK, CK, LDCK, DK, LDDK, RCOND, &
+IWORK, DWORK, LDWORK, BWORK, INFO ) !GCC$ ATTRIBUTES hot :: SB10KD !GCC$ ATTRIBUTES aligned(32) :: SB10KD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE SB10KD( N, M, NP, A, LDA, B, LDB, C, LDC, FACTOR, &
+AK, LDAK, BK, LDBK, CK, LDCK, DK, LDDK, RCOND, &
+IWORK, DWORK, LDWORK, BWORK, INFO )
+  !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: SB10KD
+    !DIR$ OPTIMIZE : 3
+   !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: SB10KD
+#endif
+#if 0
+C
+C     SLICOT RELEASE 5.7.
+C
+C     Copyright (c) 2002-2020 NICONET e.V.
+C
+C     PURPOSE
+C
+C     To compute the matrices of the positive feedback controller
+C
+C              | Ak | Bk |
+C          K = |----|----|
+C              | Ck | Dk |
+C
+C     for the shaped plant
+C
+C              | A | B |
+C          G = |---|---|
+C              | C | 0 |
+C
+C     in the Discrete-Time Loop Shaping Design Procedure.
+C
+C     ARGUMENTS
+C
+C     Input/Output Parameters
+C
+C     N       (input) INTEGER
+C             The order of the plant.  N >= 0.
+C
+C     M       (input) INTEGER
+C             The column size of the matrix B.  M >= 0.
+C
+C     NP      (input) INTEGER
+C             The row size of the matrix C.  NP >= 0.
+C
+C     A       (input) DOUBLE PRECISION array, dimension (LDA,N)
+C             The leading N-by-N part of this array must contain the
+C             system state matrix A of the shaped plant.
+C
+C     LDA     INTEGER
+C             The leading dimension of the array A.  LDA >= max(1,N).
+C
+C     B       (input) DOUBLE PRECISION array, dimension (LDB,M)
+C             The leading N-by-M part of this array must contain the
+C             system input matrix B of the shaped plant.
+C
+C     LDB     INTEGER
+C             The leading dimension of the array B.  LDB >= max(1,N).
+C
+C     C       (input) DOUBLE PRECISION array, dimension (LDC,N)
+C             The leading NP-by-N part of this array must contain the
+C             system output matrix C of the shaped plant.
+C
+C     LDC     INTEGER
+C             The leading dimension of the array C.  LDC >= max(1,NP).
+C
+C     FACTOR  (input) DOUBLE PRECISION
+C             = 1  implies that an optimal controller is required;
+C             > 1  implies that a suboptimal controller is required
+C                  achieving a performance FACTOR less than optimal.
+C             FACTOR >= 1.
+C
+C     AK      (output) DOUBLE PRECISION array, dimension (LDAK,N)
+C             The leading N-by-N part of this array contains the
+C             controller state matrix Ak.
+C
+C     LDAK    INTEGER
+C             The leading dimension of the array AK.  LDAK >= max(1,N).
+C
+C     BK      (output) DOUBLE PRECISION array, dimension (LDBK,NP)
+C             The leading N-by-NP part of this array contains the
+C             controller input matrix Bk.
+C
+C     LDBK    INTEGER
+C             The leading dimension of the array BK.  LDBK >= max(1,N).
+C
+C     CK      (output) DOUBLE PRECISION array, dimension (LDCK,N)
+C             The leading M-by-N part of this array contains the
+C             controller output matrix Ck.
+C
+C     LDCK    INTEGER
+C             The leading dimension of the array CK.  LDCK >= max(1,M).
+C
+C     DK      (output) DOUBLE PRECISION array, dimension (LDDK,NP)
+C             The leading M-by-NP part of this array contains the
+C             controller matrix Dk.
+C
+C     LDDK    INTEGER
+C             The leading dimension of the array DK.  LDDK >= max(1,M).
+C
+C     RCOND   (output) DOUBLE PRECISION array, dimension (4)
+C             RCOND(1) contains an estimate of the reciprocal condition
+C                      number of the linear system of equations from
+C                      which the solution of the P-Riccati equation is
+C                      obtained;
+C             RCOND(2) contains an estimate of the reciprocal condition
+C                      number of the linear system of equations from
+C                      which the solution of the Q-Riccati equation is
+C                      obtained;
+C             RCOND(3) contains an estimate of the reciprocal condition
+C                      number of the linear system of equations from
+C                      which the solution of the X-Riccati equation is
+C                      obtained;
+C             RCOND(4) contains an estimate of the reciprocal condition
+!C                      number of the matrix Rx + Bx'*X*Bx (see the
+C                      comments in the code).
+C
+C     Workspace
+C
+C     IWORK   INTEGER array, dimension (2*max(N,NP+M))
+C
+C     DWORK   DOUBLE PRECISION array, dimension (LDWORK)
+C             On exit, if INFO = 0, DWORK(1) contains the optimal value
+C             of LDWORK.
+C
+C     LDWORK  INTEGER
+C             The dimension of the array DWORK.
+C             LDWORK >= 15*N*N + 6*N +
+C                       max( 14*N+23, 16*N, 2*N+NP+M, 3*(NP+M) ) +
+C                       max( N*N, 11*N*NP + 2*M*M + 8*NP*NP + 8*M*N +
+C                                 4*M*NP + NP ).
+C             For good performance, LDWORK must generally be larger.
+C
+C     BWORK   LOGICAL array, dimension (2*N)
+C
+C     Error Indicator
+C
+C     INFO    INTEGER
+C             = 0:  successful exit;
+C             < 0:  if INFO = -i, the i-th argument had an illegal
+C                   value;
+C             = 1:  the P-Riccati equation is not solved successfully;
+C             = 2:  the Q-Riccati equation is not solved successfully;
+C             = 3:  the X-Riccati equation is not solved successfully;
+C             = 4:  the iteration to compute eigenvalues failed to
+C                   converge;
+!C             = 5:  the matrix Rx + Bx'*X*Bx is singular;
+C             = 6:  the closed-loop system is unstable.
+C
+C     METHOD
+C
+C     The routine implements the method presented in [1].
+C
+C     REFERENCES
+C
+C     [1] McFarlane, D. and Glover, K.
+C         A loop shaping design procedure using H_infinity synthesis.
+C         IEEE Trans. Automat. Control, vol. AC-37, no. 6, pp. 759-769,
+C         1992.
+C
+C     NUMERICAL ASPECTS
+C
+C     The accuracy of the results depends on the conditioning of the
+C     two Riccati equations solved in the controller design. For
+C     better conditioning it is advised to take FACTOR > 1.
+C
+C     CONTRIBUTORS
+C
+C     P.Hr. Petkov, D.W. Gu and M.M. Konstantinov, October 2000.
+C
+C     REVISIONS
+C
+C     V. Sima, Katholieke University Leuven, January 2001,
+C     February 2001.
+C
+C     KEYWORDS
+C
+C     H_infinity control, Loop-shaping design, Robust control.
+C
+C     ******************************************************************
+C
+#endif
+      implicit none
+!C     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0 )
+!C     ..
+!C     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDAK, LDB, LDBK, LDC, LDCK, LDDK, &
+                         LDWORK, M, N, NP
+      DOUBLE PRECISION   FACTOR
+!C     ..
+!C     .. Array Arguments ..
+     ! INTEGER            IWORK( * )
+     ! LOGICAL            BWORK( * )
+     ! DOUBLE PRECISION   A( LDA, * ), AK( LDAK, * ), B( LDB, * ), &
+     !                   BK( LDBK, * ), C( LDC, * ), CK( LDCK, * ), &
+      !                   DK( LDDK, * ), DWORK( * ), RCOND( 4 )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      LOGICAL, DIMENSION(:), ALLOCATABLE :: BWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(4) :: RCOND
+!C     ..
+!C     .. Local Scalars ..
+      INTEGER            I, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10,   &
+                        I11, I12, I13, I14, I15, I16, I17, I18, I19,  &
+                        I20, I21, I22, I23, I24, I25, I26, INFO2,     &
+                        IWRK, J, LWA, LWAMAX, MINWRK, N2, NS, SDIM
+      DOUBLE PRECISION   GAMMA, RNORM
+!C     ..
+!C     .. External Functions ..
+      LOGICAL            SELECT
+      DOUBLE PRECISION   DLANSY, DLAPY2
+      EXTERNAL           DLANSY, DLAPY2, SELECT
+     
+!C     .. External Subroutines ..
+      EXTERNAL           DGEMM, DGEES, DLACPY, DLASET, DPOTRF, DPOTRS, &
+                       DSYCON, DSYEV, DSYRK, DSYTRF, DSYTRS
+    
+!C     ..
+!C     .. Intrinsic Functions ..
+      INTRINSIC          DBLE, INT, MAX, SQRT
+!C     ..
+!C     .. Executable Statements ..
+!C
+!C     Decode and Test input parameters.
+!C
+      INFO = 0
+     ! IF( N.LT.0 ) THEN
+     !    INFO = -1
+     ! ELSE IF( M.LT.0 ) THEN
+     !    INFO = -2
+     ! ELSE IF( NP.LT.0 ) THEN
+     !    INFO = -3
+    !  ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+     !    INFO = -5
+     ! ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+     !    INFO = -7
+     ! ELSE IF( LDC.LT.MAX( 1, NP ) ) THEN
+     !    INFO = -9
+     ! ELSE IF( FACTOR.LT.ONE ) THEN
+     !    INFO = -10
+     ! ELSE IF( LDAK.LT.MAX( 1, N ) ) THEN
+     !    INFO = -12
+     ! ELSE IF( LDBK.LT.MAX( 1, N ) ) THEN
+     !    INFO = -14
+     ! ELSE IF( LDCK.LT.MAX( 1, M ) ) THEN
+     !    INFO = -16
+     ! ELSE IF( LDDK.LT.MAX( 1, M ) ) THEN
+    !     INFO = -18
+    !  END IF
+!C
+!C     Compute workspace.
+!C
+      MINWRK = 15*N*N + 6*N + MAX( 14*N+23, 16*N, 2*N+NP+M, 3*(NP+M) ) + &
+              MAX( N*N, 11*N*NP + 2*M*M + 8*NP*NP + 8*M*N +  &
+                      4*M*NP + NP )
+      IF( LDWORK.LT.MINWRK ) THEN
+         INFO = -22
+      END IF
+      IF( INFO.NE.0 ) THEN
+       
+         RETURN
+      END IF
+!C
+!C     Quick return if possible.
+!C
+      IF( N.EQ.0 .OR. M.EQ.0 .OR. NP.EQ.0 ) THEN
+         RCOND( 1 ) = ONE
+         RCOND( 2 ) = ONE
+         RCOND( 3 ) = ONE
+         RCOND( 4 ) = ONE
+         DWORK( 1 ) = ONE
+         RETURN
+      END IF
+!C
+!C     Workspace usage.
+!C
+      N2 = 2*N
+      I1 = N*N
+      I2 = I1 + N*N
+      I3 = I2 + N*N
+      I4 = I3 + N*N
+      I5 = I4 + N2
+      I6 = I5 + N2
+      I7 = I6 + N2
+      I8 = I7 + N2*N2
+      I9 = I8 + N2*N2
+!C
+      IWRK = I9 + N2*N2
+      LWAMAX = 0
+!C
+!C     Compute Cr = C'*C .
+!C
+      CALL DSYRK( 'U', 'T', N, NP, ONE, C, LDC, ZERO, DWORK( I2+1 ), N )
+!C
+!C     Compute Dr = B*B' .
+!C
+      CALL DSYRK( 'U', 'N', N, M, ONE, B, LDB, ZERO, DWORK( I3+1 ), N )
+!C                                                     -1
+!C     Solution of the Riccati equation A'*P*(In + Dr*P) *A - P + Cr = 0.
+!C
+      CALL SB02OD( 'D', 'G', 'N', 'U', 'Z', 'S', N, M, NP, A, LDA,    &
+                  DWORK( I3+1 ), N, DWORK( I2+1 ), N, DWORK, M, DWORK, &
+                  N, RCOND( 1 ), DWORK, N, DWORK( I4+1 ), &
+                  DWORK( I5+1 ), DWORK( I6+1 ), DWORK( I7+1 ), N2, &
+                  DWORK( I8+1 ), N2, DWORK( I9+1 ), N2, -ONE, IWORK, &
+                  DWORK( IWRK+1 ), LDWORK-IWRK, BWORK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 1
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+!C
+!C     Transpose A in AK (used as workspace).
+!C
+      DO 40 J = 1, N
+         DO 30 I = 1, N
+            AK( I,J ) = A( J,I )
+   30    CONTINUE
+   40 CONTINUE
+!C                                                    -1
+!C     Solution of the Riccati equation A*Q*(In + Cr*Q) *A' - Q + Dr = 0.
+!C
+      CALL SB02OD( 'D', 'G', 'N', 'U', 'Z', 'S', N, M, NP, AK, LDAK, &
+                  DWORK( I2+1 ), N, DWORK( I3+1 ), N, DWORK, M, DWORK, &
+                  N, RCOND( 2 ), DWORK( I1+1 ), N, DWORK( I4+1 ), &
+                  DWORK( I5+1 ), DWORK( I6+1 ), DWORK( I7+1 ), N2, &
+                  DWORK( I8+1 ), N2, DWORK( I9+1 ), N2, -ONE, IWORK, &
+                  DWORK( IWRK+1 ), LDWORK-IWRK, BWORK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 2
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+!C
+!C     Compute gamma.
+!C
+      CALL DGEMM( 'N', 'N', N, N, N, ONE, DWORK( I1+1 ), N, DWORK, N, &
+                  ZERO, AK, LDAK )
+      CALL DGEES( 'N', 'N', SELECT, N, AK, LDAK, SDIM, DWORK( I6+1 ), &
+                 DWORK( I7+1 ), DWORK( IWRK+1 ), N, DWORK( IWRK+1 ), &
+                 LDWORK-IWRK, BWORK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 4
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+      GAMMA = ZERO
+      DO 50 I = 1, N
+         GAMMA = MAX( GAMMA, DWORK( I6+I ) )
+   50 CONTINUE
+      GAMMA = FACTOR*SQRT( ONE + GAMMA )
+!C
+!C     Workspace usage.
+!C
+      I3  = I2  + N*NP
+      I4  = I3  + NP*NP
+      I5  = I4  + NP*NP
+      I6  = I5  + NP*NP
+      I7  = I6  + NP
+      I8  = I7  + NP*NP
+      I9  = I8  + NP*NP
+      I10 = I9  + NP*NP
+      I11 = I10 + N*NP
+      I12 = I11 + N*NP
+      I13 = I12 + ( NP+M )*( NP+M )
+      I14 = I13 + N*( NP+M )
+      I15 = I14 + N*( NP+M )
+      I16 = I15 + N*N
+      I17 = I16 + N2
+      I18 = I17 + N2
+      I19 = I18 + N2
+      I20 = I19 + ( N2+NP+M )*( N2+NP+M )
+      I21 = I20 + ( N2+NP+M )*N2
+!C
+      IWRK = I21 + N2*N2
+!C
+!C     Compute Q*C' .
+!C
+      CALL DGEMM( 'N', 'T', N, NP, N, ONE, DWORK( I1+1 ), N, C, LDC, &
+                 ZERO, DWORK( I2+1 ), N )
+!C
+!C     Compute Ip + C*Q*C' .
+!C
+      CALL DLASET( 'Full', NP, NP, ZERO, ONE, DWORK( I3+1 ), NP )
+      CALL DGEMM( 'N', 'N', NP, NP, N, ONE, C, LDC, DWORK( I2+1 ), N, &
+                 ONE, DWORK( I3+1 ), NP )
+!C
+!C     Compute the eigenvalues and eigenvectors of Ip + C'*Q*C
+!C
+      CALL DLACPY( 'U', NP, NP, DWORK( I3+1 ), NP, DWORK( I5+1 ), NP )
+      CALL DSYEV( 'V', 'U', NP, DWORK( I5+1 ), NP, DWORK( I6+1 ), &
+                 DWORK( IWRK+1 ), LDWORK-IWRK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 4
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+!C                            -1
+!C     Compute ( Ip + C'*Q*C )  .
+!C
+      DO 70 J = 1, NP
+         DO 60 I = 1, NP
+            DWORK( I9+I+(J-1)*NP ) = DWORK( I5+J+(I-1)*NP ) / &
+                                     DWORK( I6+I )
+   60    CONTINUE
+   70 CONTINUE
+      CALL DGEMM( 'N', 'N', NP, NP, NP, ONE, DWORK( I5+1 ), NP, &
+                 DWORK( I9+1 ), NP, ZERO, DWORK( I4+1 ), NP )
+!C
+!C     Compute Z2 .
+!C
+      DO 90 J = 1, NP
+         DO 80 I = 1, NP
+            DWORK( I9+I+(J-1)*NP ) = DWORK( I5+J+(I-1)*NP ) / &
+                                     SQRT( DWORK( I6+I ) )
+   80    CONTINUE
+   90 CONTINUE
+      CALL DGEMM( 'N', 'N', NP, NP, NP, ONE, DWORK( I5+1 ), NP, &
+                 DWORK( I9+1 ), NP, ZERO, DWORK( I7+1 ), NP )
+!C               -1
+!C     Compute Z2  .
+!C
+      DO 110 J = 1, NP
+         DO 100 I = 1, NP
+            DWORK( I9+I+(J-1)*NP ) = DWORK( I5+J+(I-1)*NP )* &
+                                    SQRT( DWORK( I6+I ) )
+  100    CONTINUE
+  110 CONTINUE
+      CALL DGEMM( 'N', 'N', NP, NP, NP, ONE, DWORK( I5+1 ), NP, &
+                DWORK( I9+1 ), NP, ZERO, DWORK( I8+1 ), NP )
+!C
+!C     Compute A*Q*C' .
+!C
+      CALL DGEMM( 'N', 'N', N, NP, N, ONE, A, LDA, DWORK( I2+1 ), N, &
+                  ZERO, DWORK( I10+1 ), N )
+!C                                        -1
+!C     Compute H = -A*Q*C'*( Ip + C*Q*C' )  .
+!C
+      CALL DGEMM( 'N', 'N', N, NP, NP, -ONE, DWORK( I10+1 ), N, &
+                 DWORK( I4+1 ), NP, ZERO, DWORK( I11+1 ), N )
+!C
+!C     Compute Rx .
+!C
+      CALL DLASET( 'F', NP+M, NP+M, ZERO, ONE, DWORK( I12+1 ), NP+M )
+      DO 130 J = 1, NP
+         DO 120 I = 1, NP
+            DWORK( I12+I+(J-1)*(NP+M) ) = DWORK( I3+I+(J-1)*NP )
+  120    CONTINUE
+         DWORK( I12+J+(J-1)*(NP+M) ) = DWORK( I3+J+(J-1)*NP ) - &
+                                       GAMMA*GAMMA
+  130 CONTINUE
+!C
+!C     Compute Bx .
+!C
+      CALL DGEMM( 'N', 'N', N, NP, NP, -ONE, DWORK( I11+1 ), N, &
+                  DWORK( I8+1 ), NP, ZERO, DWORK( I13+1 ), N )
+      DO 150 J = 1, M
+         DO 140 I = 1, N
+            DWORK( I13+N*NP+I+(J-1)*N ) = B( I, J )
+  140    CONTINUE
+  150 CONTINUE
+!C
+!C     Compute Sx .
+!C
+      CALL DGEMM( 'T', 'N', N, NP, NP, ONE, C, LDC, DWORK( I8+1 ), NP, &
+                 ZERO, DWORK( I14+1 ), N )
+      CALL DLASET( 'F', N, M, ZERO, ZERO, DWORK( I14+N*NP+1 ), N )
+!C
+!C     Solve the Riccati equation
+!C                                                      -1
+C!       X = A'*X*A + Cx - (Sx + A'*X*Bx)*(Rx + Bx'*X*B ) *(Sx'+Bx'*X*A).
+!C
+      CALL SB02OD( 'D', 'B', 'C', 'U', 'N', 'S', N, NP+M, NP, A, LDA, &
+                  DWORK( I13+1 ), N, C, LDC, DWORK( I12+1 ), NP+M, &
+                  DWORK( I14+1 ), N, RCOND( 3 ), DWORK( I15+1 ), N, &
+                  DWORK( I16+1 ), DWORK( I17+1 ), DWORK( I18+1 ), &
+                  DWORK( I19+1 ), N2+NP+M, DWORK( I20+1 ), N2+NP+M, &
+                 DWORK( I21+1 ), N2, -ONE, IWORK, DWORK( IWRK+1 ), &
+                  LDWORK-IWRK, BWORK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 3
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+
+      I22 = I16
+      I23 = I22 + ( NP+M )*N
+      I24 = I23 + ( NP+M )*( NP+M )
+      I25 = I24 + ( NP+M )*N
+      I26 = I25 + M*N
+
+      IWRK = I25
+!C
+!C     Compute Bx'*X .
+!C
+      CALL DGEMM( 'T', 'N', NP+M, N, N, ONE, DWORK( I13+1 ), N,  &
+                  DWORK( I15+1 ), N, ZERO, DWORK( I22+1 ), NP+M )
+!C
+!C     Compute Rx + Bx'*X*Bx .
+!C
+      CALL DLACPY( 'F', NP+M, NP+M, DWORK( I12+1 ), NP+M, &
+                  DWORK( I23+1 ), NP+M )
+      CALL DGEMM( 'N', 'N', NP+M, NP+M, N, ONE, DWORK( I22+1 ), NP+M, &
+                 DWORK( I13+1 ), N, ONE, DWORK( I23+1 ), NP+M )
+!C
+!C     Compute -( Sx' + Bx'*X*A ) .
+!C
+      DO 170 J = 1, N
+         DO 160 I = 1, NP+M
+            DWORK( I24+I+(J-1)*(NP+M) ) = DWORK( I14+J+(I-1)*N )
+ 160     CONTINUE
+ 170  CONTINUE
+      CALL DGEMM( 'N', 'N', NP+M, N, N, -ONE, DWORK( I22+1 ), NP+M, &
+                 A, LDA, -ONE, DWORK( I24+1 ), NP+M )
+
+!C     Factorize Rx + Bx'*X*Bx .
+!C
+      RNORM = DLANSY( '1', 'U', NP+M, DWORK( I23+1 ), NP+M, &
+                      DWORK( IWRK+1 ) )
+      CALL DSYTRF( 'U', NP+M, DWORK( I23+1 ), NP+M, IWORK, &
+                  DWORK( IWRK+1 ), LDWORK-IWRK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 5
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+      CALL DSYCON( 'U', NP+M, DWORK( I23+1 ), NP+M, IWORK, RNORM, &
+                  RCOND( 4 ), DWORK( IWRK+1 ), IWORK( NP+M+1), INFO2 )
+!C                                   -1
+!C     Compute F = -( Rx + Bx'*X*Bx )  ( Sx' + Bx'*X*A ) .
+!C
+      CALL DSYTRS( 'U', NP+M, N, DWORK( I23+1 ), NP+M, IWORK, &
+                  DWORK( I24+1 ), NP+M, INFO2 )
+!C
+!C     Compute B'*X .
+!C
+      CALL DGEMM( 'T', 'N', M, N, N, ONE, B, LDB, DWORK( I15+1 ), N, &
+                 ZERO, DWORK( I25+1 ), M )
+!C
+!C     Compute Im + B'*X*B .
+!C
+      CALL DLASET( 'F', M, M, ZERO, ONE, DWORK( I23+1 ), M )
+      CALL DGEMM( 'N', 'N', M, M, N, ONE, DWORK( I25+1 ), M, B, LDB, &
+                  ONE, DWORK( I23+1 ), M )
+!C
+!C     Factorize Im + B'*X*B .
+!C
+      CALL DPOTRF( 'U', M, DWORK( I23+1 ), M, INFO2 )
+!C                            -1
+!C     Compute ( Im + B'*X*B )  B'*X .
+!C
+      CALL DPOTRS( 'U', M, N, DWORK( I23+1 ), M, DWORK( I25+1 ), M, &
+                   INFO2 )
+!C                                 -1
+!C     Compute Dk = ( Im + B'*X*B )  B'*X*H .
+!C
+      CALL DGEMM( 'N', 'N', M, NP, N, ONE, DWORK( I25+1 ), M, &
+                  DWORK( I11+1 ), N, ZERO, DK, LDDK )
+!C
+!C     Compute Bk = -H + B*Dk .
+!C
+      CALL DLACPY( 'F', N, NP, DWORK( I11+1 ), N, BK, LDBK )
+      CALL DGEMM( 'N', 'N', N, NP, M, ONE, B, LDB, DK, LDDK, -ONE, &
+                  BK, LDBK )
+!C                  -1
+!C     Compute Dk*Z2  .
+!C
+      CALL DGEMM( 'N', 'N', M, NP, NP, ONE, DK, LDDK, DWORK( I8+1 ), &
+                 NP, ZERO, DWORK( I26+1 ), M )
+!C
+!C     Compute F1 + Z2*C .
+C!
+      CALL DLACPY( 'F', NP, N, DWORK( I24+1 ), NP+M, DWORK( I12+1 ), &
+                  NP )
+      CALL DGEMM( 'N', 'N', NP, N, NP, ONE, DWORK( I7+1 ), NP, C, LDC, &
+                 ONE, DWORK( I12+1 ), NP )
+!C                            -1
+!C     Compute Ck = F2 - Dk*Z2  *( F1 + Z2*C ) .
+!C
+      CALL DLACPY( 'F', M, N, DWORK( I24+NP+1 ), NP+M, CK, LDCK )
+      CALL DGEMM( 'N', 'N', M, N, NP, -ONE, DWORK( I26+1 ), M, &
+                 DWORK( I12+1 ), NP, ONE, CK, LDCK )
+!C
+!C     Compute Ak = A + H*C + B*Ck .
+!C
+      CALL DLACPY( 'F', N, N, A, LDA, AK, LDAK )
+      CALL DGEMM( 'N', 'N', N, N, NP, ONE, DWORK( I11+1 ), N, C, LDC, &
+                 ONE, AK, LDAK )
+      CALL DGEMM( 'N', 'N', N, N, M, ONE, B, LDB, CK, LDCK, ONE, AK, &
+                 LDAK )
+!C
+!C     Workspace usage.
+!C
+      I1 = M*N
+      I2 = I1 + N2*N2
+      I3 = I2 + N2
+!C
+      IWRK = I3 + N2
+!C
+!C     Compute Dk*C .
+!C
+      CALL DGEMM( 'N', 'N', M, N, NP, ONE, DK, LDDK, C, LDC, ZERO, &
+                 DWORK, M )
+!C
+!C     Compute the closed-loop state matrix.
+!C
+      CALL DLACPY( 'F', N, N, A, LDA, DWORK( I1+1 ), N2 )
+      CALL DGEMM( 'N', 'N', N, N, M, -ONE, B, LDB, DWORK, M, ONE,
+                 DWORK( I1+1 ), N2 )
+      CALL DGEMM( 'N', 'N', N, N, NP, -ONE, BK, LDBK, C, LDC, ZERO, &
+                 DWORK( I1+N+1 ), N2 )
+      CALL DGEMM( 'N', 'N', N, N, M, ONE, B, LDB, CK, LDCK, ZERO, &
+                 DWORK( I1+N2*N+1 ), N2 )
+      CALL DLACPY( 'F', N, N, AK, LDAK, DWORK( I1+N2*N+N+1 ), N2 )
+!C
+!C     Compute the closed-loop poles.
+!C
+      CALL DGEES( 'N', 'N', SELECT, N2, DWORK( I1+1 ), N2, SDIM, &
+                 DWORK( I2+1 ), DWORK( I3+1 ), DWORK( IWRK+1 ), N, &
+                 DWORK( IWRK+1 ), LDWORK-IWRK, BWORK, INFO2 )
+      IF( INFO2.NE.0 ) THEN
+         INFO = 4
+         RETURN
+      END IF
+      LWA = INT( DWORK( IWRK+1 ) ) + IWRK
+      LWAMAX = MAX( LWA, LWAMAX )
+!C
+!C     Check the stability of the closed-loop system.
+
+      NS = 0
+      DO 180 I = 1, N2
+        IF( DLAPY2( DWORK( I2+I ), DWORK( I3+I ) ).GT.ONE ) NS = NS + 1
+  180 CONTINUE
+      IF( NS.GT.0 ) THEN
+         INFO = 6
+         RETURN
+      END IF
+
+      DWORK( 1 ) = DBLE( LWAMAX )
+   
+END SUBROUTINE
