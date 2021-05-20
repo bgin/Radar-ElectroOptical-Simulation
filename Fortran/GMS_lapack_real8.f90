@@ -2814,7 +2814,7 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*     ..
 !*     .. External Subroutines ..
       EXTERNAL           DBDSQR,DGEMM,DLACPY, &
-     $                   DLASCL, DLASET
+                         DLASCL, DLASET
                         
 !*     ..
 !*     .. External Functions ..
@@ -3887,9 +3887,9 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    singular vectors of A in A
 !*                    (Workspace: need BDSPAC)
 !*
-                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), A,
-     $                            LDA, U, LDU, DUM, 1, WORK( IWORK ),
-     $                            INFO )
+                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), A, &
+                                 LDA, U, LDU, DUM, 1, WORK( IWORK ), &
+                                 INFO )
 !*
                   END IF
 !*
@@ -3918,977 +3918,732 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
                      END IF
                      ITAU = IU + LDWRKU*N
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R
-*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy R to WORK(IU), zeroing out below it
-*
-                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IU ),
-     $                            LDWRKU )
-                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                            WORK( IU+1 ), LDWRKU )
-*
-*                    Generate Q in A
-*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
-*
-                     CALL DORGQR( M, N, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Compute A=Q*R
+!*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
+!*
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Copy R to WORK(IU), zeroing out below it
+!*
+                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IU ), &
+                                 LDWRKU )
+                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                 WORK( IU+1 ), LDWRKU )
+!*
+!*                    Generate Q in A
+!*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
+!*
+                     CALL DORGQR( M, N, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Bidiagonalize R in WORK(IU), copying result to VT
-*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'U', N, N, WORK( IU ), LDWRKU, VT,
-     $                            LDVT )
-*
-*                    Generate left bidiagonalizing vectors in WORK(IU)
-*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + N*NB)
-*
-                     CALL DORGBR( 'Q', N, N, N, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUQ ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in VT
-*                    (Workspace: need N*N + 4*N-1,
-*                                prefer N*N+3*N+(N-1)*NB)
-*
-                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Bidiagonalize R in WORK(IU), copying result to VT
+!*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + 2*N*NB)
+!*
+                     CALL DGEBRD( N, N, WORK( IU ), LDWRKU, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'U', N, N, WORK( IU ), LDWRKU, VT, &
+                                LDVT )
+!*
+!*                    Generate left bidiagonalizing vectors in WORK(IU)
+!*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + N*NB)
+!*
+                     CALL DORGBR( 'Q', N, N, N, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUQ ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+!*
+!*                    Generate right bidiagonalizing vectors in VT
+!*                    (Workspace: need N*N + 4*N-1,
+!*                                prefer N*N+3*N+(N-1)*NB)
+!*
+                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of R in WORK(IU) and computing
-*                    right singular vectors of R in VT
-*                    (Workspace: need N*N + BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, N, N, 0, S, WORK( IE ), VT,
-     $                            LDVT, WORK( IU ), LDWRKU, DUM, 1,
-     $                            WORK( IWORK ), INFO )
-*
-*                    Multiply Q in A by left singular vectors of R in
-*                    WORK(IU), storing result in U
-*                    (Workspace: need N*N)
-*
-                     CALL DGEMM( 'N', 'N', M, N, N, ONE, A, LDA,
-     $                           WORK( IU ), LDWRKU, ZERO, U, LDU )
-*
+!*
+!*                    Perform bidiagonal QR iteration, computing left
+!*                    singular vectors of R in WORK(IU) and computing
+!*                    right singular vectors of R in VT
+!*                    (Workspace: need N*N + BDSPAC)
+!*
+                     CALL DBDSQR( 'U', N, N, N, 0, S, WORK( IE ), VT, &
+                                 LDVT, WORK( IU ), LDWRKU, DUM, 1, &
+                                 WORK( IWORK ), INFO )
+!*
+!*                    Multiply Q in A by left singular vectors of R in
+!*                    WORK(IU), storing result in U
+!*                    (Workspace: need N*N)
+!*
+                     CALL DGEMM( 'N', 'N', M, N, N, ONE, A, LDA, &
+                                WORK( IU ), LDWRKU, ZERO, U, LDU )
+!*
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+!*
+!*                    Insufficient workspace for a fast algorithm
+!*
                      ITAU = 1
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need 2*N, prefer N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Compute A=Q*R, copying result to U
+!*                    (Workspace: need 2*N, prefer N + N*NB)
+!*
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Generate Q in U
-*                    (Workspace: need 2*N, prefer N + N*NB)
-*
-                     CALL DORGQR( M, N, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy R to VT, zeroing out below it
-*
+!*
+!*                    Generate Q in U
+!*                    (Workspace: need 2*N, prefer N + N*NB)
+!*
+                     CALL DORGQR( M, N, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Copy R to VT, zeroing out below it
+!*
                      CALL DLACPY( 'U', N, N, A, LDA, VT, LDVT )
-                     IF( N.GT.1 )
-     $                  CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                               VT( 2, 1 ), LDVT )
+                     IF( N.GT.1 ) &
+                       CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                    VT( 2, 1 ), LDVT )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Bidiagonalize R in VT
-*                    (Workspace: need 4*N, prefer 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, VT, LDVT, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply Q in U by left bidiagonalizing vectors
-*                    in VT
-*                    (Workspace: need 3*N + M, prefer 3*N + M*NB)
-*
-                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, VT, LDVT,
-     $                            WORK( ITAUQ ), U, LDU, WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in VT
-*                    (Workspace: need 4*N-1, prefer 3*N + (N-1)*NB)
-*
-                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Bidiagonalize R in VT
+!*                    (Workspace: need 4*N, prefer 3*N + 2*N*NB)
+!*
+                     CALL DGEBRD( N, N, VT, LDVT, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Multiply Q in U by left bidiagonalizing vectors
+!*                    in VT
+!*                    (Workspace: need 3*N + M, prefer 3*N + M*NB)
+!*
+                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, VT, LDVT, &
+                                 WORK( ITAUQ ), U, LDU, WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+!*
+!*                    Generate right bidiagonalizing vectors in VT
+!*                    (Workspace: need 4*N-1, prefer 3*N + (N-1)*NB)
+!*
+                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of A in U and computing right
-*                    singular vectors of A in VT
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), VT,
-     $                            LDVT, U, LDU, DUM, 1, WORK( IWORK ),
-     $                            INFO )
-*
+!*
+!!*                    Perform bidiagonal QR iteration, computing left
+!*!                    singular vectors of A in U and computing right
+!*                    singular vectors of A in VT
+!*                    (Workspace: need BDSPAC)
+!*
+                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), VT, &
+                                 LDVT, U, LDU, DUM, 1, WORK( IWORK ), &
+                                 INFO )
+!*
                   END IF
-*
+!*
                END IF
-*
+!*
             ELSE IF( WNTUA ) THEN
-*
+!*
                IF( WNTVN ) THEN
-*
-*                 Path 7 (M much larger than N, JOBU='A', JOBVT='N')
-*                 M left singular vectors to be computed in U and
-*                 no right singular vectors to be computed
-*
+!*
+!*                 Path 7 (M much larger than N, JOBU='A', JOBVT='N')
+!*                 M left singular vectors to be computed in U and
+!*                 no right singular vectors to be computed
+!*
                   IF( LWORK.GE.N*N+MAX( N+M, 4*N, BDSPAC ) ) THEN
-*
-*                    Sufficient workspace for a fast algorithm
-*
+!*
+!*                    Sufficient workspace for a fast algorithm
+!*
                      IR = 1
                      IF( LWORK.GE.WRKBL+LDA*N ) THEN
-*
-*                       WORK(IR) is LDA by N
-*
+!*
+!*                       WORK(IR) is LDA by N
+!*
                         LDWRKR = LDA
                      ELSE
-*
-*                       WORK(IR) is N by N
-*
+!*
+!*                       WORK(IR) is N by N
+!*
                         LDWRKR = N
                      END IF
                      ITAU = IR + LDWRKR*N
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Compute A=Q*R, copying result to U
+!*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
+!*
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Copy R to WORK(IR), zeroing out below it
-*
-                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IR ),
-     $                            LDWRKR )
-                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                            WORK( IR+1 ), LDWRKR )
-*
-*                    Generate Q in U
-*                    (Workspace: need N*N + N + M, prefer N*N + N + M*NB)
-*
-                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Copy R to WORK(IR), zeroing out below it
+!*
+                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IR ), &
+                                 LDWRKR )
+                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                 WORK( IR+1 ), LDWRKR )
+!*
+!*!                    Generate Q in U
+!*                    (Workspace: need N*N + N + M, prefer N*N + N + M*NB)
+!*
+                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Bidiagonalize R in WORK(IR)
-*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, WORK( IR ), LDWRKR, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate left bidiagonalizing vectors in WORK(IR)
-*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + N*NB)
-*
-                     CALL DORGBR( 'Q', N, N, N, WORK( IR ), LDWRKR,
-     $                            WORK( ITAUQ ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( N, N, WORK( IR ), LDWRKR, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'Q', N, N, N, WORK( IR ), LDWRKR, &
+                                 WORK( ITAUQ ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of R in WORK(IR)
-*                    (Workspace: need N*N + BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, 0, N, 0, S, WORK( IE ), DUM,
-     $                            1, WORK( IR ), LDWRKR, DUM, 1,
-     $                            WORK( IWORK ), INFO )
-*
-*                    Multiply Q in U by left singular vectors of R in
-*                    WORK(IR), storing result in A
-*                    (Workspace: need N*N)
-*
-                     CALL DGEMM( 'N', 'N', M, N, N, ONE, U, LDU,
-     $                           WORK( IR ), LDWRKR, ZERO, A, LDA )
-*
-*                    Copy left singular vectors of A from A to U
-*
+
+                     CALL DBDSQR( 'U', N, 0, N, 0, S, WORK( IE ), DUM, &
+                                 1, WORK( IR ), LDWRKR, DUM, 1, &
+                                 WORK( IWORK ), INFO )
+
+                     CALL DGEMM( 'N', 'N', M, N, N, ONE, U, LDU, &
+                                WORK( IR ), LDWRKR, ZERO, A, LDA )
+
                      CALL DLACPY( 'F', M, N, A, LDA, U, LDU )
-*
+
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+
                      ITAU = 1
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need 2*N, prefer N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Generate Q in U
-*                    (Workspace: need N + M, prefer N + M*NB)
-*
-                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Zero out below R in A
-*
+
                      IF( N .GT. 1 ) THEN
-                        CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                                A( 2, 1 ), LDA )
+                        CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                     A( 2, 1 ), LDA )
                      END IF
-*
-*                    Bidiagonalize R in A
-*                    (Workspace: need 4*N, prefer 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, A, LDA, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply Q in U by left bidiagonalizing vectors
-*                    in A
-*                    (Workspace: need 3*N + M, prefer 3*N + M*NB)
-*
-                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, A, LDA,
-     $                            WORK( ITAUQ ), U, LDU, WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( N, N, A, LDA, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, A, LDA, &
+                                 WORK( ITAUQ ), U, LDU, WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of A in U
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, 0, M, 0, S, WORK( IE ), DUM,
-     $                            1, U, LDU, DUM, 1, WORK( IWORK ),
-     $                            INFO )
-*
+
+                     CALL DBDSQR( 'U', N, 0, M, 0, S, WORK( IE ), DUM, &
+                                 1, U, LDU, DUM, 1, WORK( IWORK ), &
+                                 INFO )
+
                   END IF
-*
+
                ELSE IF( WNTVO ) THEN
-*
-*                 Path 8 (M much larger than N, JOBU='A', JOBVT='O')
-*                 M left singular vectors to be computed in U and
-*                 N right singular vectors to be overwritten on A
-*
+
                   IF( LWORK.GE.2*N*N+MAX( N+M, 4*N, BDSPAC ) ) THEN
-*
-*                    Sufficient workspace for a fast algorithm
-*
+
                      IU = 1
                      IF( LWORK.GE.WRKBL+2*LDA*N ) THEN
-*
-*                       WORK(IU) is LDA by N and WORK(IR) is LDA by N
-*
+
                         LDWRKU = LDA
                         IR = IU + LDWRKU*N
                         LDWRKR = LDA
                      ELSE IF( LWORK.GE.WRKBL+( LDA + N )*N ) THEN
-*
-*                       WORK(IU) is LDA by N and WORK(IR) is N by N
-*
+
                         LDWRKU = LDA
                         IR = IU + LDWRKU*N
                         LDWRKR = N
                      ELSE
-*
-*                       WORK(IU) is N by N and WORK(IR) is N by N
-*
+
                         LDWRKU = N
                         IR = IU + LDWRKU*N
                         LDWRKR = N
                      END IF
                      ITAU = IR + LDWRKR*N
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need 2*N*N + 2*N, prefer 2*N*N + N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Generate Q in U
-*                    (Workspace: need 2*N*N + N + M, prefer 2*N*N + N + M*NB)
-*
-                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy R to WORK(IU), zeroing out below it
-*
-                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IU ),
-     $                            LDWRKU )
-                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                            WORK( IU+1 ), LDWRKU )
+
+                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IU ), &
+                                 LDWRKU )
+                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                 WORK( IU+1 ), LDWRKU )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Bidiagonalize R in WORK(IU), copying result to
-*                    WORK(IR)
-*                    (Workspace: need 2*N*N + 4*N,
-*                                prefer 2*N*N+3*N+2*N*NB)
-*
-                     CALL DGEBRD( N, N, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'U', N, N, WORK( IU ), LDWRKU,
-     $                            WORK( IR ), LDWRKR )
-*
-*                    Generate left bidiagonalizing vectors in WORK(IU)
-*                    (Workspace: need 2*N*N + 4*N, prefer 2*N*N + 3*N + N*NB)
-*
-                     CALL DORGBR( 'Q', N, N, N, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUQ ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in WORK(IR)
-*                    (Workspace: need 2*N*N + 4*N-1,
-*                                prefer 2*N*N+3*N+(N-1)*NB)
-*
-                     CALL DORGBR( 'P', N, N, N, WORK( IR ), LDWRKR,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( N, N, WORK( IU ), LDWRKU, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'U', N, N, WORK( IU ), LDWRKU, &
+                                 WORK( IR ), LDWRKR )
+
+                     CALL DORGBR( 'Q', N, N, N, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUQ ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'P', N, N, N, WORK( IR ), LDWRKR, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of R in WORK(IU) and computing
-*                    right singular vectors of R in WORK(IR)
-*                    (Workspace: need 2*N*N + BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, N, N, 0, S, WORK( IE ),
-     $                            WORK( IR ), LDWRKR, WORK( IU ),
-     $                            LDWRKU, DUM, 1, WORK( IWORK ), INFO )
-*
-*                    Multiply Q in U by left singular vectors of R in
-*                    WORK(IU), storing result in A
-*                    (Workspace: need N*N)
-*
-                     CALL DGEMM( 'N', 'N', M, N, N, ONE, U, LDU,
-     $                           WORK( IU ), LDWRKU, ZERO, A, LDA )
-*
-*                    Copy left singular vectors of A from A to U
-*
+
+                     CALL DBDSQR( 'U', N, N, N, 0, S, WORK( IE ), &
+                                 WORK( IR ), LDWRKR, WORK( IU ), &
+                                 LDWRKU, DUM, 1, WORK( IWORK ), INFO )
+
+                     CALL DGEMM( 'N', 'N', M, N, N, ONE, U, LDU, &
+                                WORK( IU ), LDWRKU, ZERO, A, LDA )
+
                      CALL DLACPY( 'F', M, N, A, LDA, U, LDU )
-*
-*                    Copy right singular vectors of R from WORK(IR) to A
-*
-                     CALL DLACPY( 'F', N, N, WORK( IR ), LDWRKR, A,
-     $                            LDA )
-*
+
+                     CALL DLACPY( 'F', N, N, WORK( IR ), LDWRKR, A, &
+                                 LDA )
+
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+
                      ITAU = 1
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need 2*N, prefer N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Generate Q in U
-*                    (Workspace: need N + M, prefer N + M*NB)
-*
-                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Zero out below R in A
-*
+
                      IF( N .GT. 1 ) THEN
-                        CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                                A( 2, 1 ), LDA )
+                        CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                     A( 2, 1 ), LDA )
                      END IF
-*
-*                    Bidiagonalize R in A
-*                    (Workspace: need 4*N, prefer 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, A, LDA, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply Q in U by left bidiagonalizing vectors
-*                    in A
-*                    (Workspace: need 3*N + M, prefer 3*N + M*NB)
-*
-                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, A, LDA,
-     $                            WORK( ITAUQ ), U, LDU, WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in A
-*                    (Workspace: need 4*N-1, prefer 3*N + (N-1)*NB)
-*
-                     CALL DORGBR( 'P', N, N, N, A, LDA, WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( N, N, A, LDA, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, A, LDA, &
+                                 WORK( ITAUQ ), U, LDU, WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'P', N, N, N, A, LDA, WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of A in U and computing right
-*                    singular vectors of A in A
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), A,
-     $                            LDA, U, LDU, DUM, 1, WORK( IWORK ),
-     $                            INFO )
-*
+
+                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), A, &
+                                 LDA, U, LDU, DUM, 1, WORK( IWORK ), &
+                                 INFO )
+
                   END IF
-*
+
                ELSE IF( WNTVAS ) THEN
-*
-*                 Path 9 (M much larger than N, JOBU='A', JOBVT='S'
-*                         or 'A')
-*                 M left singular vectors to be computed in U and
-*                 N right singular vectors to be computed in VT
-*
+
                   IF( LWORK.GE.N*N+MAX( N+M, 4*N, BDSPAC ) ) THEN
-*
-*                    Sufficient workspace for a fast algorithm
-*
+
                      IU = 1
                      IF( LWORK.GE.WRKBL+LDA*N ) THEN
-*
-*                       WORK(IU) is LDA by N
-*
+
                         LDWRKU = LDA
                      ELSE
-*
-*                       WORK(IU) is N by N
-*
+
                         LDWRKU = N
                      END IF
                      ITAU = IU + LDWRKU*N
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need N*N + 2*N, prefer N*N + N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Generate Q in U
-*                    (Workspace: need N*N + N + M, prefer N*N + N + M*NB)
-*
-                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy R to WORK(IU), zeroing out below it
-*
-                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IU ),
-     $                            LDWRKU )
-                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                            WORK( IU+1 ), LDWRKU )
+
+                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DLACPY( 'U', N, N, A, LDA, WORK( IU ), &
+                                 LDWRKU )
+                     CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                 WORK( IU+1 ), LDWRKU )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Bidiagonalize R in WORK(IU), copying result to VT
-*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'U', N, N, WORK( IU ), LDWRKU, VT,
-     $                            LDVT )
-*
-*                    Generate left bidiagonalizing vectors in WORK(IU)
-*                    (Workspace: need N*N + 4*N, prefer N*N + 3*N + N*NB)
-*
-                     CALL DORGBR( 'Q', N, N, N, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUQ ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in VT
-*                    (Workspace: need N*N + 4*N-1,
-*                                prefer N*N+3*N+(N-1)*NB)
-*
-                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( N, N, WORK( IU ), LDWRKU, S, &
+                                WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'U', N, N, WORK( IU ), LDWRKU, VT, &
+                                LDVT )
+
+                     CALL DORGBR( 'Q', N, N, N, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUQ ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of R in WORK(IU) and computing
-*                    right singular vectors of R in VT
-*                    (Workspace: need N*N + BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, N, N, 0, S, WORK( IE ), VT,
-     $                            LDVT, WORK( IU ), LDWRKU, DUM, 1,
-     $                            WORK( IWORK ), INFO )
-*
-*                    Multiply Q in U by left singular vectors of R in
-*                    WORK(IU), storing result in A
-*                    (Workspace: need N*N)
-*
-                     CALL DGEMM( 'N', 'N', M, N, N, ONE, U, LDU,
-     $                           WORK( IU ), LDWRKU, ZERO, A, LDA )
-*
-*                    Copy left singular vectors of A from A to U
-*
+
+                     CALL DBDSQR( 'U', N, N, N, 0, S, WORK( IE ), VT, &
+                                 LDVT, WORK( IU ), LDWRKU, DUM, 1, &
+                                 WORK( IWORK ), INFO )
+
+                     CALL DGEMM( 'N', 'N', M, N, N, ONE, U, LDU, &
+                                WORK( IU ), LDWRKU, ZERO, A, LDA )
+
                      CALL DLACPY( 'F', M, N, A, LDA, U, LDU )
-*
+
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+
                      ITAU = 1
                      IWORK = ITAU + N
-*
-*                    Compute A=Q*R, copying result to U
-*                    (Workspace: need 2*N, prefer N + N*NB)
-*
-                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-*
-*                    Generate Q in U
-*                    (Workspace: need N + M, prefer N + M*NB)
-*
-                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy R from A to VT, zeroing out below it
-*
+
+                     CALL DORGQR( M, M, N, U, LDU, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
                      CALL DLACPY( 'U', N, N, A, LDA, VT, LDVT )
-                     IF( N.GT.1 )
-     $                  CALL DLASET( 'L', N-1, N-1, ZERO, ZERO,
-     $                               VT( 2, 1 ), LDVT )
+                     IF( N.GT.1 ) &
+                       CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, &
+                                    VT( 2, 1 ), LDVT )
                      IE = ITAU
                      ITAUQ = IE + N
                      ITAUP = ITAUQ + N
                      IWORK = ITAUP + N
-*
-*                    Bidiagonalize R in VT
-*                    (Workspace: need 4*N, prefer 3*N + 2*N*NB)
-*
-                     CALL DGEBRD( N, N, VT, LDVT, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply Q in U by left bidiagonalizing vectors
-*                    in VT
-*                    (Workspace: need 3*N + M, prefer 3*N + M*NB)
-*
-                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, VT, LDVT,
-     $                            WORK( ITAUQ ), U, LDU, WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in VT
-*                    (Workspace: need 4*N-1, prefer 3*N + (N-1)*NB)
-*
-                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( N, N, VT, LDVT, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORMBR( 'Q', 'R', 'N', M, N, N, VT, LDVT, &
+                                 WORK( ITAUQ ), U, LDU, WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + N
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of A in U and computing right
-*                    singular vectors of A in VT
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), VT,
-     $                            LDVT, U, LDU, DUM, 1, WORK( IWORK ),
-     $                            INFO )
-*
+
+                     CALL DBDSQR( 'U', N, N, M, 0, S, WORK( IE ), VT, &
+                                 LDVT, U, LDU, DUM, 1, WORK( IWORK ), &
+                                 INFO )
+
                   END IF
-*
+
                END IF
-*
+
             END IF
-*
+
          ELSE
-*
-*           M .LT. MNTHR
-*
-*           Path 10 (M at least N, but not much larger)
-*           Reduce to bidiagonal form without QR decomposition
-*
+
             IE = 1
             ITAUQ = IE + N
             ITAUP = ITAUQ + N
             IWORK = ITAUP + N
-*
-*           Bidiagonalize A
-*           (Workspace: need 3*N + M, prefer 3*N + (M + N)*NB)
-*
-            CALL DGEBRD( M, N, A, LDA, S, WORK( IE ), WORK( ITAUQ ),
-     $                   WORK( ITAUP ), WORK( IWORK ), LWORK-IWORK+1,
-     $                   IERR )
+
+            CALL DGEBRD( M, N, A, LDA, S, WORK( IE ), WORK( ITAUQ ), &
+                        WORK( ITAUP ), WORK( IWORK ), LWORK-IWORK+1, &
+                        IERR )
             IF( WNTUAS ) THEN
-*
-*              If left singular vectors desired in U, copy result to U
-*              and generate left bidiagonalizing vectors in U
-*              (Workspace: need 3*N + NCU, prefer 3*N + NCU*NB)
-*
+
                CALL DLACPY( 'L', M, N, A, LDA, U, LDU )
-               IF( WNTUS )
-     $            NCU = N
-               IF( WNTUA )
-     $            NCU = M
-               CALL DORGBR( 'Q', M, NCU, N, U, LDU, WORK( ITAUQ ),
-     $                      WORK( IWORK ), LWORK-IWORK+1, IERR )
+               IF( WNTUS ) &
+                 NCU = N
+               IF( WNTUA ) &
+                 NCU = M
+               CALL DORGBR( 'Q', M, NCU, N, U, LDU, WORK( ITAUQ ), &
+                           WORK( IWORK ), LWORK-IWORK+1, IERR )
             END IF
             IF( WNTVAS ) THEN
-*
-*              If right singular vectors desired in VT, copy result to
-*              VT and generate right bidiagonalizing vectors in VT
-*              (Workspace: need 4*N-1, prefer 3*N + (N-1)*NB)
-*
+
                CALL DLACPY( 'U', N, N, A, LDA, VT, LDVT )
-               CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ),
-     $                      WORK( IWORK ), LWORK-IWORK+1, IERR )
+               CALL DORGBR( 'P', N, N, N, VT, LDVT, WORK( ITAUP ), &
+                           WORK( IWORK ), LWORK-IWORK+1, IERR )
             END IF
             IF( WNTUO ) THEN
-*
-*              If left singular vectors desired in A, generate left
-*              bidiagonalizing vectors in A
-*              (Workspace: need 4*N, prefer 3*N + N*NB)
-*
-               CALL DORGBR( 'Q', M, N, N, A, LDA, WORK( ITAUQ ),
-     $                      WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+               CALL DORGBR( 'Q', M, N, N, A, LDA, WORK( ITAUQ ), &
+                           WORK( IWORK ), LWORK-IWORK+1, IERR )
             END IF
             IF( WNTVO ) THEN
-*
-*              If right singular vectors desired in A, generate right
-*              bidiagonalizing vectors in A
-*              (Workspace: need 4*N-1, prefer 3*N + (N-1)*NB)
-*
-               CALL DORGBR( 'P', N, N, N, A, LDA, WORK( ITAUP ),
-     $                      WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+               CALL DORGBR( 'P', N, N, N, A, LDA, WORK( ITAUP ), &
+                           WORK( IWORK ), LWORK-IWORK+1, IERR )
             END IF
             IWORK = IE + N
-            IF( WNTUAS .OR. WNTUO )
-     $         NRU = M
-            IF( WNTUN )
-     $         NRU = 0
-            IF( WNTVAS .OR. WNTVO )
-     $         NCVT = N
-            IF( WNTVN )
-     $         NCVT = 0
+            IF( WNTUAS .OR. WNTUO ) &
+              NRU = M
+            IF( WNTUN ) &
+              NRU = 0
+            IF( WNTVAS .OR. WNTVO ) &
+              NCVT = N
+            IF( WNTVN ) &
+              NCVT = 0
             IF( ( .NOT.WNTUO ) .AND. ( .NOT.WNTVO ) ) THEN
-*
-*              Perform bidiagonal QR iteration, if desired, computing
-*              left singular vectors in U and computing right singular
-*              vectors in VT
-*              (Workspace: need BDSPAC)
-*
-               CALL DBDSQR( 'U', N, NCVT, NRU, 0, S, WORK( IE ), VT,
-     $                      LDVT, U, LDU, DUM, 1, WORK( IWORK ), INFO )
+
+               CALL DBDSQR( 'U', N, NCVT, NRU, 0, S, WORK( IE ), VT, &
+                           LDVT, U, LDU, DUM, 1, WORK( IWORK ), INFO )
             ELSE IF( ( .NOT.WNTUO ) .AND. WNTVO ) THEN
-*
-*              Perform bidiagonal QR iteration, if desired, computing
-*              left singular vectors in U and computing right singular
-*              vectors in A
-*              (Workspace: need BDSPAC)
-*
-               CALL DBDSQR( 'U', N, NCVT, NRU, 0, S, WORK( IE ), A, LDA,
-     $                      U, LDU, DUM, 1, WORK( IWORK ), INFO )
+
+               CALL DBDSQR( 'U', N, NCVT, NRU, 0, S, WORK( IE ), A, LDA, &
+                           U, LDU, DUM, 1, WORK( IWORK ), INFO )
             ELSE
-*
-*              Perform bidiagonal QR iteration, if desired, computing
-*              left singular vectors in A and computing right singular
-*              vectors in VT
-*              (Workspace: need BDSPAC)
-*
-               CALL DBDSQR( 'U', N, NCVT, NRU, 0, S, WORK( IE ), VT,
-     $                      LDVT, A, LDA, DUM, 1, WORK( IWORK ), INFO )
+
+               CALL DBDSQR( 'U', N, NCVT, NRU, 0, S, WORK( IE ), VT, &
+                           LDVT, A, LDA, DUM, 1, WORK( IWORK ), INFO )
             END IF
-*
+
          END IF
-*
+
       ELSE
-*
-*        A has more columns than rows. If A has sufficiently more
-*        columns than rows, first reduce using the LQ decomposition (if
-*        sufficient workspace available)
-*
+
          IF( N.GE.MNTHR ) THEN
-*
+
             IF( WNTVN ) THEN
-*
-*              Path 1t(N much larger than M, JOBVT='N')
-*              No right singular vectors to be computed
-*
+
                ITAU = 1
                IWORK = ITAU + M
-*
-*              Compute A=L*Q
-*              (Workspace: need 2*M, prefer M + M*NB)
-*
-               CALL DGELQF( M, N, A, LDA, WORK( ITAU ), WORK( IWORK ),
-     $                      LWORK-IWORK+1, IERR )
-*
-*              Zero out above L
-*
+!*
+!*              Compute A=L*Q
+!*              (Workspace: need 2*M, prefer M + M*NB)
+!*
+               CALL DGELQF( M, N, A, LDA, WORK( ITAU ), WORK( IWORK ), &
+                           LWORK-IWORK+1, IERR )
+!*
+!*              Zero out above L
+!*
                CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ), LDA )
                IE = 1
                ITAUQ = IE + M
                ITAUP = ITAUQ + M
                IWORK = ITAUP + M
-*
-*              Bidiagonalize L in A
-*              (Workspace: need 4*M, prefer 3*M + 2*M*NB)
-*
-               CALL DGEBRD( M, M, A, LDA, S, WORK( IE ), WORK( ITAUQ ),
-     $                      WORK( ITAUP ), WORK( IWORK ), LWORK-IWORK+1,
-     $                      IERR )
+!*
+!*              Bidiagonalize L in A
+!*              (Workspace: need 4*M, prefer 3*M + 2*M*NB)
+!*
+               CALL DGEBRD( M, M, A, LDA, S, WORK( IE ), WORK( ITAUQ ), &
+                           WORK( ITAUP ), WORK( IWORK ), LWORK-IWORK+1, &
+                           IERR )
                IF( WNTUO .OR. WNTUAS ) THEN
-*
-*                 If left singular vectors desired, generate Q
-*                 (Workspace: need 4*M, prefer 3*M + M*NB)
-*
-                  CALL DORGBR( 'Q', M, M, M, A, LDA, WORK( ITAUQ ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                 If left singular vectors desired, generate Q
+!                 (Workspace: need 4*M, prefer 3*M + M*NB)
+!
+                  CALL DORGBR( 'Q', M, M, M, A, LDA, WORK( ITAUQ ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
                END IF
                IWORK = IE + M
                NRU = 0
-               IF( WNTUO .OR. WNTUAS )
-     $            NRU = M
-*
-*              Perform bidiagonal QR iteration, computing left singular
-*              vectors of A in A if desired
-*              (Workspace: need BDSPAC)
-*
-               CALL DBDSQR( 'U', M, 0, NRU, 0, S, WORK( IE ), DUM, 1, A,
-     $                      LDA, DUM, 1, WORK( IWORK ), INFO )
-*
-*              If left singular vectors desired in U, copy them there
-*
-               IF( WNTUAS )
-     $            CALL DLACPY( 'F', M, M, A, LDA, U, LDU )
-*
+               IF( WNTUO .OR. WNTUAS ) &
+                 NRU = M
+!*
+!*              Perform bidiagonal QR iteration, computing left singular
+!*              vectors of A in A if desired
+!*              (Workspace: need BDSPAC)
+!*
+               CALL DBDSQR( 'U', M, 0, NRU, 0, S, WORK( IE ), DUM, 1, A, &
+                           LDA, DUM, 1, WORK( IWORK ), INFO )
+!*
+!*              If left singular vectors desired in U, copy them there
+!*
+               IF( WNTUAS ) &
+                 CALL DLACPY( 'F', M, M, A, LDA, U, LDU )
+!*
             ELSE IF( WNTVO .AND. WNTUN ) THEN
-*
-*              Path 2t(N much larger than M, JOBU='N', JOBVT='O')
-*              M right singular vectors to be overwritten on A and
-*              no left singular vectors to be computed
-*
+!*
+!*              Path 2t(N much larger than M, JOBU='N', JOBVT='O')
+!*              M right singular vectors to be overwritten on A and
+!*              no left singular vectors to be computed
+!*
                IF( LWORK.GE.M*M+MAX( 4*M, BDSPAC ) ) THEN
-*
-*                 Sufficient workspace for a fast algorithm
-*
+!*
+!*                 Sufficient workspace for a fast algorithm
+!*
                   IR = 1
                   IF( LWORK.GE.MAX( WRKBL, LDA*N + M ) + LDA*M ) THEN
-*
-*                    WORK(IU) is LDA by N and WORK(IR) is LDA by M
-*
+!*
+!*                    WORK(IU) is LDA by N and WORK(IR) is LDA by M
+!*
                      LDWRKU = LDA
                      CHUNK = N
                      LDWRKR = LDA
                   ELSE IF( LWORK.GE.MAX( WRKBL, LDA*N + M ) + M*M ) THEN
-*
-*                    WORK(IU) is LDA by N and WORK(IR) is M by M
-*
+!*
+!*                    WORK(IU) is LDA by N and WORK(IR) is M by M
+!*
                      LDWRKU = LDA
                      CHUNK = N
                      LDWRKR = M
                   ELSE
-*
-*                    WORK(IU) is M by CHUNK and WORK(IR) is M by M
-*
+!*
+!*                    WORK(IU) is M by CHUNK and WORK(IR) is M by M
+!*
                      LDWRKU = M
                      CHUNK = ( LWORK-M*M-M ) / M
                      LDWRKR = M
                   END IF
                   ITAU = IR + LDWRKR*M
                   IWORK = ITAU + M
-*
-*                 Compute A=L*Q
-*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                  CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                 Copy L to WORK(IR) and zero out above it
-*
+!*
+!*                 Compute A=L*Q
+!*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
+!*
+                  CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                 Copy L to WORK(IR) and zero out above it
+!*
                   CALL DLACPY( 'L', M, M, A, LDA, WORK( IR ), LDWRKR )
-                  CALL DLASET( 'U', M-1, M-1, ZERO, ZERO,
-     $                         WORK( IR+LDWRKR ), LDWRKR )
-*
-*                 Generate Q in A
-*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                  CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
+                  CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, &
+                              WORK( IR+LDWRKR ), LDWRKR )
+!*
+!*                 Generate Q in A
+!*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
+!*
+                  CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
                   IE = ITAU
                   ITAUQ = IE + M
                   ITAUP = ITAUQ + M
                   IWORK = ITAUP + M
-*
-*                 Bidiagonalize L in WORK(IR)
-*                 (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
-*
-                  CALL DGEBRD( M, M, WORK( IR ), LDWRKR, S, WORK( IE ),
-     $                         WORK( ITAUQ ), WORK( ITAUP ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                 Generate right vectors bidiagonalizing L
-*                 (Workspace: need M*M + 4*M-1, prefer M*M + 3*M + (M-1)*NB)
-*
-                  CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR,
-     $                         WORK( ITAUP ), WORK( IWORK ),
-     $                         LWORK-IWORK+1, IERR )
+!*
+!*                 Bidiagonalize L in WORK(IR)
+!*                 (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
+!*
+                  CALL DGEBRD( M, M, WORK( IR ), LDWRKR, S, WORK( IE ), &
+                              WORK( ITAUQ ), WORK( ITAUP ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                 Generate right vectors bidiagonalizing L
+!*                 (Workspace: need M*M + 4*M-1, prefer M*M + 3*M + (M-1)*NB)
+!*
+                  CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR, &
+                              WORK( ITAUP ), WORK( IWORK ), &
+                              LWORK-IWORK+1, IERR )
                   IWORK = IE + M
-*
-*                 Perform bidiagonal QR iteration, computing right
-*                 singular vectors of L in WORK(IR)
-*                 (Workspace: need M*M + BDSPAC)
-*
-                  CALL DBDSQR( 'U', M, M, 0, 0, S, WORK( IE ),
-     $                         WORK( IR ), LDWRKR, DUM, 1, DUM, 1,
-     $                         WORK( IWORK ), INFO )
+!*
+!*                 Perform bidiagonal QR iteration, computing right
+!*                 singular vectors of L in WORK(IR)
+!*                 (Workspace: need M*M + BDSPAC)
+!*
+                  CALL DBDSQR( 'U', M, M, 0, 0, S, WORK( IE ), &
+                              WORK( IR ), LDWRKR, DUM, 1, DUM, 1, &
+                              WORK( IWORK ), INFO )
                   IU = IE + M
-*
-*                 Multiply right singular vectors of L in WORK(IR) by Q
-*                 in A, storing result in WORK(IU) and copying to A
-*                 (Workspace: need M*M + 2*M, prefer M*M + M*N + M)
-*
+!*
+!*                 Multiply right singular vectors of L in WORK(IR) by Q
+!*                 in A, storing result in WORK(IU) and copying to A
+!*                 (Workspace: need M*M + 2*M, prefer M*M + M*N + M)
+!*
                   DO 30 I = 1, N, CHUNK
                      BLK = MIN( N-I+1, CHUNK )
-                     CALL DGEMM( 'N', 'N', M, BLK, M, ONE, WORK( IR ),
-     $                           LDWRKR, A( 1, I ), LDA, ZERO,
-     $                           WORK( IU ), LDWRKU )
-                     CALL DLACPY( 'F', M, BLK, WORK( IU ), LDWRKU,
-     $                            A( 1, I ), LDA )
+                     CALL DGEMM( 'N', 'N', M, BLK, M, ONE, WORK( IR ), &
+                                LDWRKR, A( 1, I ), LDA, ZERO, &
+                                WORK( IU ), LDWRKU )
+                     CALL DLACPY( 'F', M, BLK, WORK( IU ), LDWRKU, &
+                                 A( 1, I ), LDA )
    30             CONTINUE
-*
+!*
                ELSE
-*
-*                 Insufficient workspace for a fast algorithm
-*
+!*
+!*                 Insufficient workspace for a fast algorithm
+!*
                   IE = 1
                   ITAUQ = IE + M
                   ITAUP = ITAUQ + M
                   IWORK = ITAUP + M
-*
-*                 Bidiagonalize A
-*                 (Workspace: need 3*M + N, prefer 3*M + (M + N)*NB)
-*
-                  CALL DGEBRD( M, N, A, LDA, S, WORK( IE ),
-     $                         WORK( ITAUQ ), WORK( ITAUP ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                 Generate right vectors bidiagonalizing A
-*                 (Workspace: need 4*M, prefer 3*M + M*NB)
-*
-                  CALL DORGBR( 'P', M, N, M, A, LDA, WORK( ITAUP ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                  CALL DGEBRD( M, N, A, LDA, S, WORK( IE ), &
+                              WORK( ITAUQ ), WORK( ITAUP ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                  CALL DORGBR( 'P', M, N, M, A, LDA, WORK( ITAUP ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
                   IWORK = IE + M
-*
-*                 Perform bidiagonal QR iteration, computing right
-*                 singular vectors of A in A
-*                 (Workspace: need BDSPAC)
-*
-                  CALL DBDSQR( 'L', M, N, 0, 0, S, WORK( IE ), A, LDA,
-     $                         DUM, 1, DUM, 1, WORK( IWORK ), INFO )
-*
+
+                  CALL DBDSQR( 'L', M, N, 0, 0, S, WORK( IE ), A, LDA, &
+                              DUM, 1, DUM, 1, WORK( IWORK ), INFO )
+
                END IF
-*
+
             ELSE IF( WNTVO .AND. WNTUAS ) THEN
-*
-*              Path 3t(N much larger than M, JOBU='S' or 'A', JOBVT='O')
-*              M right singular vectors to be overwritten on A and
-*              M left singular vectors to be computed in U
-*
+
                IF( LWORK.GE.M*M+MAX( 4*M, BDSPAC ) ) THEN
-*
-*                 Sufficient workspace for a fast algorithm
-*
+
                   IR = 1
                   IF( LWORK.GE.MAX( WRKBL, LDA*N + M ) + LDA*M ) THEN
-*
-*                    WORK(IU) is LDA by N and WORK(IR) is LDA by M
-*
+
                      LDWRKU = LDA
                      CHUNK = N
                      LDWRKR = LDA
                   ELSE IF( LWORK.GE.MAX( WRKBL, LDA*N + M ) + M*M ) THEN
-*
-*                    WORK(IU) is LDA by N and WORK(IR) is M by M
-*
+
                      LDWRKU = LDA
                      CHUNK = N
                      LDWRKR = M
                   ELSE
-*
-*                    WORK(IU) is M by CHUNK and WORK(IR) is M by M
-*
+
                      LDWRKU = M
                      CHUNK = ( LWORK-M*M-M ) / M
                      LDWRKR = M
                   END IF
                   ITAU = IR + LDWRKR*M
                   IWORK = ITAU + M
-*
-*                 Compute A=L*Q
-*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                  CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                 Copy L to U, zeroing about above it
-*
-                  CALL DLACPY( 'L', M, M, A, LDA, U, LDU )
+
+                  CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                  CALL DLACPY( 'L', M, M, A, LDA, U, LDU ) &
                   CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, U( 1, 2 ),
-     $                         LDU )
-*
-*                 Generate Q in A
-*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                  CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
+                              LDU )
+!*
+!*                 Generate Q in A
+!*                 (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
+!*
+                  CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
                   IE = ITAU
                   ITAUQ = IE + M
                   ITAUP = ITAUQ + M
                   IWORK = ITAUP + M
-*
-*                 Bidiagonalize L in U, copying result to WORK(IR)
-*                 (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
-*
-                  CALL DGEBRD( M, M, U, LDU, S, WORK( IE ),
-     $                         WORK( ITAUQ ), WORK( ITAUP ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                 Bidiagonalize L in U, copying result to WORK(IR)
+!*                 (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
+!*
+                  CALL DGEBRD( M, M, U, LDU, S, WORK( IE ), &
+                              WORK( ITAUQ ), WORK( ITAUP ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR ) 
                   CALL DLACPY( 'U', M, M, U, LDU, WORK( IR ), LDWRKR )
-*
-*                 Generate right vectors bidiagonalizing L in WORK(IR)
-*                 (Workspace: need M*M + 4*M-1, prefer M*M + 3*M + (M-1)*NB)
-*
+!*
+!*                 Generate right vectors bidiagonalizing L in WORK(IR)
+!*                 (Workspace: need M*M + 4*M-1, prefer M*M + 3*M + (M-1)*NB)
+!*
                   CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR, &
                               WORK( ITAUP ), WORK( IWORK ), &
                               LWORK-IWORK+1, IERR )
@@ -4901,70 +4656,70 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
                   IWORK = IE + M
 !*
 !*                 Perform bidiagonal QR iteration, computing left
-*                 singular vectors of L in U, and computing right
-*                 singular vectors of L in WORK(IR)
-*                 (Workspace: need M*M + BDSPAC)
-*
+!*                 singular vectors of L in U, and computing right
+!*                 singular vectors of L in WORK(IR)
+!*                 (Workspace: need M*M + BDSPAC)
+!*
                   CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ), &
                               WORK( IR ), LDWRKR, U, LDU, DUM, 1, &
                              WORK( IWORK ), INFO )
                   IU = IE + M
-*
-*                 Multiply right singular vectors of L in WORK(IR) by Q
-*                 in A, storing result in WORK(IU) and copying to A
-*                 (Workspace: need M*M + 2*M, prefer M*M + M*N + M))
-*
+!*
+!*                 Multiply right singular vectors of L in WORK(IR) by Q
+!*                 in A, storing result in WORK(IU) and copying to A
+!*                 (Workspace: need M*M + 2*M, prefer M*M + M*N + M))
+!*
                   DO 40 I = 1, N, CHUNK
                      BLK = MIN( N-I+1, CHUNK )
-                     CALL DGEMM( 'N', 'N', M, BLK, M, ONE, WORK( IR ),
-     $                           LDWRKR, A( 1, I ), LDA, ZERO,
-     $                           WORK( IU ), LDWRKU )
-                     CALL DLACPY( 'F', M, BLK, WORK( IU ), LDWRKU,
-     $                            A( 1, I ), LDA )
+                     CALL DGEMM( 'N', 'N', M, BLK, M, ONE, WORK( IR ), &
+                                LDWRKR, A( 1, I ), LDA, ZERO, &
+                                WORK( IU ), LDWRKU )
+                     CALL DLACPY( 'F', M, BLK, WORK( IU ), LDWRKU, &
+                                 A( 1, I ), LDA )
    40             CONTINUE
-*
+!*
                ELSE
-*
-*                 Insufficient workspace for a fast algorithm
-*
+!*
+!*                 Insufficient workspace for a fast algorithm
+!*
                   ITAU = 1
                   IWORK = ITAU + M
-*
-*                 Compute A=L*Q
-*                 (Workspace: need 2*M, prefer M + M*NB)
-*
-                  CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                 Copy L to U, zeroing out above it
-*
+!*
+!*                 Compute A=L*Q
+!*                 (Workspace: need 2*M, prefer M + M*NB)
+!*
+                  CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                 Copy L to U, zeroing out above it
+!*
                   CALL DLACPY( 'L', M, M, A, LDA, U, LDU )
-                  CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, U( 1, 2 ),
-     $                         LDU )
-*
-*                 Generate Q in A
-*                 (Workspace: need 2*M, prefer M + M*NB)
-*
-                  CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
+                  CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, U( 1, 2 ), &
+                              LDU )
+!*
+!*                 Generate Q in A
+!*                 (Workspace: need 2*M, prefer M + M*NB)
+!*
+                  CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
                   IE = ITAU
                   ITAUQ = IE + M
                   ITAUP = ITAUQ + M
                   IWORK = ITAUP + M
-*
-*                 Bidiagonalize L in U
-*                 (Workspace: need 4*M, prefer 3*M + 2*M*NB)
-*
-                  CALL DGEBRD( M, M, U, LDU, S, WORK( IE ),
-     $                         WORK( ITAUQ ), WORK( ITAUP ),
-     $                         WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                 Multiply right vectors bidiagonalizing L by Q in A
-*                 (Workspace: need 3*M + N, prefer 3*M + N*NB)
-*
-                  CALL DORMBR( 'P', 'L', 'T', M, N, M, U, LDU,
-     $                         WORK( ITAUP ), A, LDA, WORK( IWORK ),
-     $                         LWORK-IWORK+1, IERR )
+!*
+!*                 Bidiagonalize L in U
+!*                 (Workspace: need 4*M, prefer 3*M + 2*M*NB)
+!*
+                  CALL DGEBRD( M, M, U, LDU, S, WORK( IE ), &
+                              WORK( ITAUQ ), WORK( ITAUP ), &
+                              WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                 Multiply right vectors bidiagonalizing L by Q in A
+!*                 (Workspace: need 3*M + N, prefer 3*M + N*NB)
+!*
+                  CALL DORMBR( 'P', 'L', 'T', M, N, M, U, LDU, &
+                              WORK( ITAUP ), A, LDA, WORK( IWORK ), &
+                              LWORK-IWORK+1, IERR )
 !*
 !*                 Generate left vectors bidiagonalizing L in U
 !*                 (Workspace: need 4*M, prefer 3*M + M*NB)
@@ -5036,34 +4791,34 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Bidiagonalize L in WORK(IR)
 !*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
 !*
-                     CALL DGEBRD( M, M, WORK( IR ), LDWRKR, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+                     CALL DGEBRD( M, M, WORK( IR ), LDWRKR, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
 !*
 !*                    Generate right vectors bidiagonalizing L in
 !*                    WORK(IR)
 !*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + (M-1)*NB)
 !*
-                     CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+                     CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + M
 !*
 !*                    Perform bidiagonal QR iteration, computing right
 !*                    singular vectors of L in WORK(IR)
 !*                    (Workspace: need M*M + BDSPAC)
 !*
-                     CALL DBDSQR( 'U', M, M, 0, 0, S, WORK( IE ),
-     $                            WORK( IR ), LDWRKR, DUM, 1, DUM, 1,
-     $                            WORK( IWORK ), INFO )
+                     CALL DBDSQR( 'U', M, M, 0, 0, S, WORK( IE ), &
+                                 WORK( IR ), LDWRKR, DUM, 1, DUM, 1, &
+                                 WORK( IWORK ), INFO )
 !*
 !*                    Multiply right singular vectors of L in WORK(IR) by
 !*                    Q in A, storing result in VT
 !*                    (Workspace: need M*M)
 !*
-                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IR ),
-     $                           LDWRKR, A, LDA, ZERO, VT, LDVT )
+                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IR ), &
+                                LDWRKR, A, LDA, ZERO, VT, LDVT )
 !*
                   ELSE
 !*
@@ -5075,8 +4830,8 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Compute A=L*Q
 !*                    (Workspace: need 2*M, prefer M + M*NB)
 !*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
 !*
 !*                    Copy result to VT
 !*
@@ -5085,8 +4840,8 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Generate Q in VT
 !*                    (Workspace: need 2*M, prefer M + M*NB)
 !*
-                     CALL DORGLQ( M, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORGLQ( M, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
@@ -5094,31 +4849,31 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*
 !*                    Zero out above L in A
 !*
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ),
-     $                            LDA )
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ), &
+                                 LDA )
 !*
 !*                    Bidiagonalize L in A
 !*                    (Workspace: need 4*M, prefer 3*M + 2*M*NB)
 !*
-                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
 !*
 !*                    Multiply right vectors bidiagonalizing L by Q in VT
 !*                    (Workspace: need 3*M + N, prefer 3*M + N*NB)
 !*
-                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA,
-     $                            WORK( ITAUP ), VT, LDVT,
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA, &
+                                 WORK( ITAUP ), VT, LDVT, &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
 !*
 !*                    Perform bidiagonal QR iteration, computing right
 !*                    singular vectors of A in VT
 !*                    (Workspace: need BDSPAC)
 !*
-                     CALL DBDSQR( 'U', M, N, 0, 0, S, WORK( IE ), VT,
-     $                            LDVT, DUM, 1, DUM, 1, WORK( IWORK ),
-     $                            INFO )
+                     CALL DBDSQR( 'U', M, N, 0, 0, S, WORK( IE ), VT, &
+                                 LDVT, DUM, 1, DUM, 1, WORK( IWORK ), &
+                                 INFO )
 !*
                   END IF
 !*
@@ -5161,21 +4916,21 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Compute A=L*Q
 !*                    (Workspace: need 2*M*M + 2*M, prefer 2*M*M + M + M*NB)
 !*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
 !*
 !*                    Copy L to WORK(IU), zeroing out below it
 !*
-                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ),
-     $                            LDWRKU )
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO,
-     $                            WORK( IU+LDWRKU ), LDWRKU )
+                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ), &
+                                 LDWRKU )
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, &
+                                 WORK( IU+LDWRKU ), LDWRKU )
 !*
 !*                    Generate Q in A
 !*                    (Workspace: need 2*M*M + 2*M, prefer 2*M*M + M + M*NB)
 !*
-                     CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
@@ -5186,27 +4941,27 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    (Workspace: need 2*M*M + 4*M,
 !*                                prefer 2*M*M+3*M+2*M*NB)
 !*
-                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU,
-     $                            WORK( IR ), LDWRKR )
+                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU, &
+                                 WORK( IR ), LDWRKR )
 !*
 !*                    Generate right bidiagonalizing vectors in WORK(IU)
 !*                    (Workspace: need 2*M*M + 4*M-1,
 !*                                prefer 2*M*M+3*M+(M-1)*NB)
 !*
-                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
 !*
 !*                    Generate left bidiagonalizing vectors in WORK(IR)
 !*                    (Workspace: need 2*M*M + 4*M, prefer 2*M*M + 3*M + M*NB)
 !*
-                     CALL DORGBR( 'Q', M, M, M, WORK( IR ), LDWRKR,
-     $                            WORK( ITAUQ ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+                     CALL DORGBR( 'Q', M, M, M, WORK( IR ), LDWRKR, &
+                                 WORK( ITAUQ ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + M
 !*
 !*                    Perform bidiagonal QR iteration, computing left
@@ -5214,22 +4969,22 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    right singular vectors of L in WORK(IU)
 !*                    (Workspace: need 2*M*M + BDSPAC)
 !*
-                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ),
-     $                            WORK( IU ), LDWRKU, WORK( IR ),
-     $                            LDWRKR, DUM, 1, WORK( IWORK ), INFO )
+                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ), &
+                                 WORK( IU ), LDWRKU, WORK( IR ), &
+                                 LDWRKR, DUM, 1, WORK( IWORK ), INFO )
 !*
 !*                    Multiply right singular vectors of L in WORK(IU) by
 !*                    Q in A, storing result in VT
 !*                    (Workspace: need M*M)
 !*
-                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ),
-     $                           LDWRKU, A, LDA, ZERO, VT, LDVT )
+                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ), &
+                                LDWRKU, A, LDA, ZERO, VT, LDVT )
 !*
 !*                    Copy left singular vectors of L to A
 !*                    (Workspace: need M*M)
 !*
-                     CALL DLACPY( 'F', M, M, WORK( IR ), LDWRKR, A,
-     $                            LDA )
+                     CALL DLACPY( 'F', M, M, WORK( IR ), LDWRKR, A, &
+                                 LDA )
 !*
                   ELSE
 !*
@@ -5241,351 +4996,212 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Compute A=L*Q, copying result to VT
 !*                    (Workspace: need 2*M, prefer M + M*NB)
 !*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
-*
-*                    Generate Q in VT
-*                    (Workspace: need 2*M, prefer M + M*NB)
-*
-                     CALL DORGLQ( M, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORGLQ( M, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Zero out above L in A
-*
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ),
-     $                            LDA )
-*
-*                    Bidiagonalize L in A
-*                    (Workspace: need 4*M, prefer 3*M + 2*M*NB)
-*
-                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply right vectors bidiagonalizing L by Q in VT
-*                    (Workspace: need 3*M + N, prefer 3*M + N*NB)
-*
-                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA,
-     $                            WORK( ITAUP ), VT, LDVT,
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Generate left bidiagonalizing vectors of L in A
-*                    (Workspace: need 4*M, prefer 3*M + M*NB)
-*
-                     CALL DORGBR( 'Q', M, M, M, A, LDA, WORK( ITAUQ ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ), &
+                                 LDA )
+
+                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA, &
+                                 WORK( ITAUP ), VT, LDVT, &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'Q', M, M, M, A, LDA, WORK( ITAUQ ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
-*
-*                    Perform bidiagonal QR iteration, compute left
-*                    singular vectors of A in A and compute right
-*                    singular vectors of A in VT
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', M, N, M, 0, S, WORK( IE ), VT,
-     $                            LDVT, A, LDA, DUM, 1, WORK( IWORK ),
-     $                            INFO )
-*
+
+                     CALL DBDSQR( 'U', M, N, M, 0, S, WORK( IE ), VT, &
+                                 LDVT, A, LDA, DUM, 1, WORK( IWORK ), &
+                                INFO )
+
                   END IF
-*
+
                ELSE IF( WNTUAS ) THEN
-*
-*                 Path 6t(N much larger than M, JOBU='S' or 'A',
-*                         JOBVT='S')
-*                 M right singular vectors to be computed in VT and
-*                 M left singular vectors to be computed in U
-*
+
                   IF( LWORK.GE.M*M+MAX( 4*M, BDSPAC ) ) THEN
-*
-*                    Sufficient workspace for a fast algorithm
-*
+
                      IU = 1
                      IF( LWORK.GE.WRKBL+LDA*M ) THEN
-*
-*                       WORK(IU) is LDA by N
-*
+
                         LDWRKU = LDA
                      ELSE
-*
-*                       WORK(IU) is LDA by M
-*
+
                         LDWRKU = M
                      END IF
                      ITAU = IU + LDWRKU*M
                      IWORK = ITAU + M
-*
-*                    Compute A=L*Q
-*                    (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy L to WORK(IU), zeroing out above it
-*
-                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ),
-     $                            LDWRKU )
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO,
-     $                            WORK( IU+LDWRKU ), LDWRKU )
-*
-*                    Generate Q in A
-*                    (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                     CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ), &
+                                 LDWRKU )
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, &
+                                 WORK( IU+LDWRKU ), LDWRKU )
+
+                     CALL DORGLQ( M, N, M, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Bidiagonalize L in WORK(IU), copying result to U
-*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
-*
-                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU, U,
-     $                            LDU )
-*
-*                    Generate right bidiagonalizing vectors in WORK(IU)
-*                    (Workspace: need M*M + 4*M-1,
-*                                prefer M*M+3*M+(M-1)*NB)
-*
-                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate left bidiagonalizing vectors in U
-*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + M*NB)
-*
-                     CALL DORGBR( 'Q', M, M, M, U, LDU, WORK( ITAUQ ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU, U, &
+                                 LDU )
+
+                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'Q', M, M, M, U, LDU, WORK( ITAUQ ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of L in U and computing right
-*                    singular vectors of L in WORK(IU)
-*                    (Workspace: need M*M + BDSPAC)
-*
-                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ),
-     $                            WORK( IU ), LDWRKU, U, LDU, DUM, 1,
-     $                            WORK( IWORK ), INFO )
-*
-*                    Multiply right singular vectors of L in WORK(IU) by
-*                    Q in A, storing result in VT
-*                    (Workspace: need M*M)
-*
-                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ),
-     $                           LDWRKU, A, LDA, ZERO, VT, LDVT )
-*
+
+                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ), &
+                                 WORK( IU ), LDWRKU, U, LDU, DUM, 1, &
+                                 WORK( IWORK ), INFO )
+
+                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ), &
+                                LDWRKU, A, LDA, ZERO, VT, LDVT )
+
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+
                      ITAU = 1
                      IWORK = ITAU + M
-*
-*                    Compute A=L*Q, copying result to VT
-*                    (Workspace: need 2*M, prefer M + M*NB)
-*
+
                      CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
-*
-*                    Generate Q in VT
-*                    (Workspace: need 2*M, prefer M + M*NB)
-*
+
                      CALL DORGLQ( M, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy L to U, zeroing out above it
-*
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
                      CALL DLACPY( 'L', M, M, A, LDA, U, LDU )
                      CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, U( 1, 2 ),
-     $                            LDU )
+                                 LDU )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Bidiagonalize L in U
-*                    (Workspace: need 4*M, prefer 3*M + 2*M*NB)
-*
+
                      CALL DGEBRD( M, M, U, LDU, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply right bidiagonalizing vectors in U by Q
-*                    in VT
-*                    (Workspace: need 3*M + N, prefer 3*M + N*NB)
-*
-                     CALL DORMBR( 'P', 'L', 'T', M, N, M, U, LDU,
-     $                            WORK( ITAUP ), VT, LDVT,
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Generate left bidiagonalizing vectors in U
-*                    (Workspace: need 4*M, prefer 3*M + M*NB)
-*
-                     CALL DORGBR( 'Q', M, M, M, U, LDU, WORK( ITAUQ ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                                 WORK( ITAUQ ), WORK( ITAUP ),
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORMBR( 'P', 'L', 'T', M, N, M, U, LDU, &
+                                 WORK( ITAUP ), VT, LDVT, &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'Q', M, M, M, U, LDU, WORK( ITAUQ ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of A in U and computing right
-*                    singular vectors of A in VT
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', M, N, M, 0, S, WORK( IE ), VT,
-     $                            LDVT, U, LDU, DUM, 1, WORK( IWORK ),
-     $                            INFO )
-*
+
+                     CALL DBDSQR( 'U', M, N, M, 0, S, WORK( IE ), VT, &
+                                 LDVT, U, LDU, DUM, 1, WORK( IWORK ), &
+                                 INFO )
+
                   END IF
-*
+
                END IF
-*
+
             ELSE IF( WNTVA ) THEN
-*
+
                IF( WNTUN ) THEN
-*
-*                 Path 7t(N much larger than M, JOBU='N', JOBVT='A')
-*                 N right singular vectors to be computed in VT and
-*                 no left singular vectors to be computed
-*
+
                   IF( LWORK.GE.M*M+MAX( N + M, 4*M, BDSPAC ) ) THEN
-*
-*                    Sufficient workspace for a fast algorithm
-*
+
                      IR = 1
                      IF( LWORK.GE.WRKBL+LDA*M ) THEN
-*
-*                       WORK(IR) is LDA by M
-*
+
                         LDWRKR = LDA
                      ELSE
-*
-*                       WORK(IR) is M by M
-*
+
                         LDWRKR = M
                      END IF
                      ITAU = IR + LDWRKR*M
                      IWORK = ITAU + M
-*
-*                    Compute A=L*Q, copying result to VT
-*                    (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
-*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
-*
-*                    Copy L to WORK(IR), zeroing out above it
-*
-                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IR ),
-     $                            LDWRKR )
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO,
-     $                            WORK( IR+LDWRKR ), LDWRKR )
-*
-*                    Generate Q in VT
-*                    (Workspace: need M*M + M + N, prefer M*M + M + N*NB)
-*
-                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IR ), &
+                                 LDWRKR )
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, &
+                                 WORK( IR+LDWRKR ), LDWRKR )
+
+                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Bidiagonalize L in WORK(IR)
-*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
-*
-                     CALL DGEBRD( M, M, WORK( IR ), LDWRKR, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate right bidiagonalizing vectors in WORK(IR)
-*                    (Workspace: need M*M + 4*M-1,
-*                                prefer M*M+3*M+(M-1)*NB)
-*
-                     CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+
+                     CALL DGEBRD( M, M, WORK( IR ), LDWRKR, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+
+                     CALL DORGBR( 'P', M, M, M, WORK( IR ), LDWRKR, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + M
-*
-*                    Perform bidiagonal QR iteration, computing right
-*                    singular vectors of L in WORK(IR)
-*                    (Workspace: need M*M + BDSPAC)
-*
-                     CALL DBDSQR( 'U', M, M, 0, 0, S, WORK( IE ),
-     $                            WORK( IR ), LDWRKR, DUM, 1, DUM, 1,
-     $                            WORK( IWORK ), INFO )
-*
-*                    Multiply right singular vectors of L in WORK(IR) by
-*                    Q in VT, storing result in A
-*                    (Workspace: need M*M)
-*
-                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IR ),
-     $                           LDWRKR, VT, LDVT, ZERO, A, LDA )
-*
-*                    Copy right singular vectors of A from A to VT
-*
+
+                     CALL DBDSQR( 'U', M, M, 0, 0, S, WORK( IE ), &
+                                 WORK( IR ), LDWRKR, DUM, 1, DUM, 1, &
+                                 WORK( IWORK ), INFO )
+
+                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IR ), &
+                                LDWRKR, VT, LDVT, ZERO, A, LDA )
+
                      CALL DLACPY( 'F', M, N, A, LDA, VT, LDVT )
-*
+
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+
                      ITAU = 1
                      IWORK = ITAU + M
-*
-*                    Compute A=L*Q, copying result to VT
-*                    (Workspace: need 2*M, prefer M + M*NB)
-*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
-*
-*                    Generate Q in VT
-*                    (Workspace: need M + N, prefer M + N*NB)
-*
-                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Zero out above L in A
-*
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ),
-     $                            LDA )
-*
-*                    Bidiagonalize L in A
-*                    (Workspace: need 4*M, prefer 3*M + 2*M*NB)
-*
-                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply right bidiagonalizing vectors in A by Q
-*                    in VT
-*                    (Workspace: need 3*M + N, prefer 3*M + N*NB)
-*
-                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA,
-     $                            WORK( ITAUP ), VT, LDVT,
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ), &
+                                 LDA )
+
+                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+
+                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA, &
+                                 WORK( ITAUP ), VT, LDVT, &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
-*
-*                    Perform bidiagonal QR iteration, computing right
-*                    singular vectors of A in VT
-*                    (Workspace: need BDSPAC)
-*
-                     CALL DBDSQR( 'U', M, N, 0, 0, S, WORK( IE ), VT,
-     $                            LDVT, DUM, 1, DUM, 1, WORK( IWORK ),
-     $                            INFO )
+
+                     CALL DBDSQR( 'U', M, N, 0, 0, S, WORK( IE ), VT, &
+                                 LDVT, DUM, 1, DUM, 1, WORK( IWORK ), &
+                                 INFO )
 !*
                   END IF
 !*
@@ -5624,133 +5240,133 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
                      END IF
                      ITAU = IR + LDWRKR*M
                      IWORK = ITAU + M
-*
-*                    Compute A=L*Q, copying result to VT
-*                    (Workspace: need 2*M*M + 2*M, prefer 2*M*M + M + M*NB)
-*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Compute A=L*Q, copying result to VT
+!*                    (Workspace: need 2*M*M + 2*M, prefer 2*M*M + M + M*NB)
+!*
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
-*
-*                    Generate Q in VT
-*                    (Workspace: need 2*M*M + M + N, prefer 2*M*M + M + N*NB)
-*
-                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Copy L to WORK(IU), zeroing out above it
-*
-                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ),
-     $                            LDWRKU )
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO,
-     $                            WORK( IU+LDWRKU ), LDWRKU )
+!*
+!*                    Generate Q in VT
+!*                    (Workspace: need 2*M*M + M + N, prefer 2*M*M + M + N*NB)
+!*
+                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Copy L to WORK(IU), zeroing out above it
+!*
+                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ), &
+                                 LDWRKU )
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, &
+                                 WORK( IU+LDWRKU ), LDWRKU )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Bidiagonalize L in WORK(IU), copying result to
-*                    WORK(IR)
-*                    (Workspace: need 2*M*M + 4*M,
-*                                prefer 2*M*M+3*M+2*M*NB)
-*
-                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU,
-     $                            WORK( IR ), LDWRKR )
-*
-*                    Generate right bidiagonalizing vectors in WORK(IU)
-*                    (Workspace: need 2*M*M + 4*M-1,
-*                                prefer 2*M*M+3*M+(M-1)*NB)
-*
-                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-*
-*                    Generate left bidiagonalizing vectors in WORK(IR)
-*                    (Workspace: need 2*M*M + 4*M, prefer 2*M*M + 3*M + M*NB)
-*
-                     CALL DORGBR( 'Q', M, M, M, WORK( IR ), LDWRKR,
-     $                            WORK( ITAUQ ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+!*
+!*                    Bidiagonalize L in WORK(IU), copying result to
+!*                    WORK(IR)
+!*                    (Workspace: need 2*M*M + 4*M,
+!*                                prefer 2*M*M+3*M+2*M*NB)
+!*
+                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU, &
+                                 WORK( IR ), LDWRKR )
+!*
+!*                    Generate right bidiagonalizing vectors in WORK(IU)
+!*                    (Workspace: need 2*M*M + 4*M-1,
+!*                                prefer 2*M*M+3*M+(M-1)*NB)
+!*
+                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+!*
+!*                    Generate left bidiagonalizing vectors in WORK(IR)
+!*                    (Workspace: need 2*M*M + 4*M, prefer 2*M*M + 3*M + M*NB)
+!*
+                     CALL DORGBR( 'Q', M, M, M, WORK( IR ), LDWRKR, &
+                                 WORK( ITAUQ ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
                      IWORK = IE + M
-*
-*                    Perform bidiagonal QR iteration, computing left
-*                    singular vectors of L in WORK(IR) and computing
-*                    right singular vectors of L in WORK(IU)
-*                    (Workspace: need 2*M*M + BDSPAC)
-*
-                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ),
-     $                            WORK( IU ), LDWRKU, WORK( IR ),
-     $                            LDWRKR, DUM, 1, WORK( IWORK ), INFO )
-*
-*                    Multiply right singular vectors of L in WORK(IU) by
-*                    Q in VT, storing result in A
-*                    (Workspace: need M*M)
-*
-                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ),
-     $                           LDWRKU, VT, LDVT, ZERO, A, LDA )
-*
-*                    Copy right singular vectors of A from A to VT
-*
+!*
+!*                    Perform bidiagonal QR iteration, computing left
+!*                    singular vectors of L in WORK(IR) and computing
+!*                    right singular vectors of L in WORK(IU)
+!*                    (Workspace: need 2*M*M + BDSPAC)
+!*
+                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ), &
+                                 WORK( IU ), LDWRKU, WORK( IR ), &
+                                 LDWRKR, DUM, 1, WORK( IWORK ), INFO )
+!*
+!*!                    Multiply right singular vectors of L in WORK(IU) by
+!*                    Q in VT, storing result in A
+!*                    (Workspace: need M*M)
+!*
+                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ), &
+                                LDWRKU, VT, LDVT, ZERO, A, LDA )
+!*
+!*                    Copy right singular vectors of A from A to VT
+!*
                      CALL DLACPY( 'F', M, N, A, LDA, VT, LDVT )
-*
-*                    Copy left singular vectors of A from WORK(IR) to A
-*
-                     CALL DLACPY( 'F', M, M, WORK( IR ), LDWRKR, A,
-     $                            LDA )
-*
+!*
+!*                    Copy left singular vectors of A from WORK(IR) to A
+!*
+                     CALL DLACPY( 'F', M, M, WORK( IR ), LDWRKR, A, &
+                                 LDA )
+!*
                   ELSE
-*
-*                    Insufficient workspace for a fast algorithm
-*
+!*
+!*                    Insufficient workspace for a fast algorithm
+!*
                      ITAU = 1
                      IWORK = ITAU + M
-*
-*                    Compute A=L*Q, copying result to VT
-*                    (Workspace: need 2*M, prefer M + M*NB)
-*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Compute A=L*Q, copying result to VT
+!*                    (Workspace: need 2*M, prefer M + M*NB)
+!*
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
-*
-*                    Generate Q in VT
-*                    (Workspace: need M + N, prefer M + N*NB)
-*
-                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Generate Q in VT
+!*                    (Workspace: need M + N, prefer M + N*NB)
+!*
+                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
                      IWORK = ITAUP + M
-*
-*                    Zero out above L in A
-*
-                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ),
-     $                            LDA )
-*
-*                    Bidiagonalize L in A
-*                    (Workspace: need 4*M, prefer 3*M + 2*M*NB)
-*
-                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ),
-     $                            WORK( ITAUQ ), WORK( ITAUP ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
-*
-*                    Multiply right bidiagonalizing vectors in A by Q
-*                    in VT
-*                    (Workspace: need 3*M + N, prefer 3*M + N*NB)
-*
-                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA,
-     $                            WORK( ITAUP ), VT, LDVT,
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Zero out above L in A
+!*
+                     CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, A( 1, 2 ), &
+                                 LDA )
+!*
+!*                    Bidiagonalize L in A
+!*                    (Workspace: need 4*M, prefer 3*M + 2*M*NB)
+!*
+                     CALL DGEBRD( M, M, A, LDA, S, WORK( IE ), &
+                                 WORK( ITAUQ ), WORK( ITAUP ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
+!*
+!*                    Multiply right bidiagonalizing vectors in A by Q
+!*                    in VT
+!*                    (Workspace: need 3*M + N, prefer 3*M + N*NB)
+!*
+                     CALL DORMBR( 'P', 'L', 'T', M, N, M, A, LDA, &
+                                 WORK( ITAUP ), VT, LDVT, &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
 !*
 !*                    Generate left bidiagonalizing vectors in A
 !*                    (Workspace: need 4*M, prefer 3*M + M*NB)
 !*
-                     CALL DORGBR( 'Q', M, M, M, A, LDA, WORK( ITAUQ ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORGBR( 'Q', M, M, M, A, LDA, WORK( ITAUQ ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
 !*
 !!*                    Perform bidiagonal QR iteration, computing left
@@ -5758,9 +5374,9 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    singular vectors of A in VT
 !*                    (Workspace: need BDSPAC)
 !*
-                     CALL DBDSQR( 'U', M, N, M, 0, S, WORK( IE ), VT,
-     $                            LDVT, A, LDA, DUM, 1, WORK( IWORK ),
-     $                            INFO )
+                     CALL DBDSQR( 'U', M, N, M, 0, S, WORK( IE ), VT, &
+                                 LDVT, A, LDA, DUM, 1, WORK( IWORK ), &
+                                 INFO )
 !*
                   END IF
 !*
@@ -5793,22 +5409,22 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Compute A=L*Q, copying result to VT
 !*                    (Workspace: need M*M + 2*M, prefer M*M + M + M*NB)
 !*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
 !*
 !*                    Generate Q in VT
 !*                    (Workspace: need M*M + M + N, prefer M*M + M + N*NB)
 !*
-                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
 !*
 !*                    Copy L to WORK(IU), zeroing out above it
 !*
-                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ),
-     $                            LDWRKU )
+                     CALL DLACPY( 'L', M, M, A, LDA, WORK( IU ), &
+                                 LDWRKU )
                      CALL DLASET( 'U', M-1, M-1, ZERO, ZERO,
-     $                            WORK( IU+LDWRKU ), LDWRKU )
+                                 WORK( IU+LDWRKU ), LDWRKU )
                      IE = ITAU
                      ITAUQ = IE + M
                      ITAUP = ITAUQ + M
@@ -5817,25 +5433,25 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Bidiagonalize L in WORK(IU), copying result to U
 !*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + 2*M*NB)
 !*
-                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S,
-     $                            WORK( IE ), WORK( ITAUQ ),
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
-                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU, U,
-     $                            LDU )
+                     CALL DGEBRD( M, M, WORK( IU ), LDWRKU, S, &
+                                 WORK( IE ), WORK( ITAUQ ), &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
+                     CALL DLACPY( 'L', M, M, WORK( IU ), LDWRKU, U, &
+                                 LDU )
 !*
 !*                    Generate right bidiagonalizing vectors in WORK(IU)
 !*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + (M-1)*NB)
 !*
-                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU,
-     $                            WORK( ITAUP ), WORK( IWORK ),
-     $                            LWORK-IWORK+1, IERR )
+                     CALL DORGBR( 'P', M, M, M, WORK( IU ), LDWRKU, &
+                                 WORK( ITAUP ), WORK( IWORK ), &
+                                 LWORK-IWORK+1, IERR )
 !*
 !*                    Generate left bidiagonalizing vectors in U
 !*                    (Workspace: need M*M + 4*M, prefer M*M + 3*M + M*NB)
 !*
-                     CALL DORGBR( 'Q', M, M, M, U, LDU, WORK( ITAUQ ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORGBR( 'Q', M, M, M, U, LDU, WORK( ITAUQ ), &
+                                WORK( IWORK ), LWORK-IWORK+1, IERR )
                      IWORK = IE + M
 !*
 !*                    Perform bidiagonal QR iteration, computing left
@@ -5843,16 +5459,16 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    singular vectors of L in WORK(IU)
 !*                    (Workspace: need M*M + BDSPAC)
 !*
-                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ),
-     $                            WORK( IU ), LDWRKU, U, LDU, DUM, 1,
-     $                            WORK( IWORK ), INFO )
+                     CALL DBDSQR( 'U', M, M, M, 0, S, WORK( IE ), &
+                                 WORK( IU ), LDWRKU, U, LDU, DUM, 1, &
+                                 WORK( IWORK ), INFO )
 !*
 !*                    Multiply right singular vectors of L in WORK(IU) by
 !*                    Q in VT, storing result in A
 !*                    (Workspace: need M*M)
 !*
-                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ),
-     $                           LDWRKU, VT, LDVT, ZERO, A, LDA )
+                     CALL DGEMM( 'N', 'N', M, N, M, ONE, WORK( IU ), &
+                                LDWRKU, VT, LDVT, ZERO, A, LDA )
 !*
 !*                    Copy right singular vectors of A from A to VT
 !*
@@ -5868,15 +5484,15 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 !*                    Compute A=L*Q, copying result to VT
 !*                    (Workspace: need 2*M, prefer M + M*NB)
 !*
-                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DGELQF( M, N, A, LDA, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
                      CALL DLACPY( 'U', M, N, A, LDA, VT, LDVT )
 !*
 !*                    Generate Q in VT
 !*                    (Workspace: need M + N, prefer M + N*NB)
 !*
-                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ),
-     $                            WORK( IWORK ), LWORK-IWORK+1, IERR )
+                     CALL DORGLQ( N, N, M, VT, LDVT, WORK( ITAU ), &
+                                 WORK( IWORK ), LWORK-IWORK+1, IERR )
 !*
 !*                    Copy L to U, zeroing out above it
 !*
@@ -6066,3 +5682,669 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
 
 
 END SUBROUTINE
+
+#if 0
+*  ===========
+*>
+*> \verbatim
+*>  Bug report from Cezary Dendek.
+*>  On March 23rd 2017, the INTEGER variable MAXIT = MAXITR*N**2 is
+*>  removed since it can overflow pretty easily (for N larger or equal
+*>  than 18,919). We instead use MAXITDIVN = MAXITR*N.
+*> \endverbatim
+*
+*  Authors:
+*  ========
+*
+*> \author Univ. of Tennessee
+*> \author Univ. of California Berkeley
+*> \author Univ. of Colorado Denver
+*> \author NAG Ltd.
+*
+*> \date June 2017
+*
+*> \ingroup auxOTHERcomputational
+*
+*  =====================================================================
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DBDSQR( UPLO, N, NCVT, NRU, NCC, D, E, VT, LDVT, U, &
+     LDU, C, LDC, WORK, INFO ) !GCC$ ATTRIBUTES hot :: DBDSQR !GCC$ ATTRIBUTES aligned(32) :: DBDSQR
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DBDSQR( UPLO, N, NCVT, NRU, NCC, D, E, VT, LDVT, U, &
+     LDU, C, LDC, WORK, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DBDSQR
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DBDQSR
+#endif
+       implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDC, LDU, LDVT, N, NCC, NCVT, NRU
+!*     ..
+!*  !   .. Array Arguments ..
+    !  DOUBLE PRECISION   C( LDC, * ), D( * ), E( * ), U( LDU, * ),
+      ! $                   VT( LDVT, * ), WORK( * )
+      DOUBLE PRECISION, DIMENSION(:,:),   ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),     ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:),     ALLOCATABLE :: E
+      DOUBLE PRECISION, DIMENSION(:,:),   ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:),   ALLOCATABLE :: VT
+      DOUBLE PRECISION, DIMENSION(:),     ALLOCATABLE :: WORK
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO
+      PARAMETER          ( ZERO = 0.0D0 )
+      DOUBLE PRECISION   ONE
+      PARAMETER          ( ONE = 1.0D0 )
+      DOUBLE PRECISION   NEGONE
+      PARAMETER          ( NEGONE = -1.0D0 )
+      DOUBLE PRECISION   HNDRTH
+      PARAMETER          ( HNDRTH = 0.01D0 )
+      DOUBLE PRECISION   TEN
+      PARAMETER          ( TEN = 10.0D0 )
+      DOUBLE PRECISION   HNDRD
+      PARAMETER          ( HNDRD = 100.0D0 )
+      DOUBLE PRECISION   MEIGTH
+      PARAMETER          ( MEIGTH = -0.125D0 )
+      INTEGER            MAXITR
+      PARAMETER          ( MAXITR = 6 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            LOWER, ROTATE
+      INTEGER            I, IDIR, ISUB, ITER, ITERDIVN, J, LL, LLL, M, &
+                        MAXITDIVN, NM1, NM12, NM13, OLDLL, OLDM
+      DOUBLE PRECISION   ABSE, ABSS, COSL, COSR, CS, EPS, F, G, H, MU, &
+                        OLDCS, OLDSN, R, SHIFT, SIGMN, SIGMX, SINL, &
+                        SINR, SLL, SMAX, SMIN, SMINL, SMINOA, &
+                        SN, THRESH, TOL, TOLMUL, UNFL
+!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           LSAME, DLAMCH
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DROT,DSCAL,DSWAP
+                       
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, DBLE, MAX, MIN, SIGN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+      LOWER = LSAME( UPLO, 'L' )
+      IF( .NOT.LSAME( UPLO, 'U' ) .AND. .NOT.LOWER ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( NCVT.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( NRU.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( NCC.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( ( NCVT.EQ.0 .AND. LDVT.LT.1 ) .OR. &
+              ( NCVT.GT.0 .AND. LDVT.LT.MAX( 1, N ) ) ) THEN
+         INFO = -9
+      ELSE IF( LDU.LT.MAX( 1, NRU ) ) THEN
+         INFO = -11
+      ELSE IF( ( NCC.EQ.0 .AND. LDC.LT.1 ) .OR. &
+              ( NCC.GT.0 .AND. LDC.LT.MAX( 1, N ) ) ) THEN
+         INFO = -13
+      END IF
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DBDSQR', -INFO )
+         RETURN
+      END IF
+      IF( N.EQ.0 ) &
+        RETURN
+      IF( N.EQ.1 ) &
+        GO TO 160
+!*
+!*     ROTATE is true if any singular vectors desired, false otherwise
+!*
+      ROTATE = ( NCVT.GT.0 ) .OR. ( NRU.GT.0 ) .OR. ( NCC.GT.0 )
+!*
+!*     If no singular vectors desired, use qd algorithm
+!*
+      IF( .NOT.ROTATE ) THEN
+         CALL DLASQ1( N, D, E, WORK, INFO )
+!*
+!*     If INFO equals 2, dqds didn't finish, try to finish
+!*
+         IF( INFO .NE. 2 ) RETURN
+         INFO = 0
+      END IF
+!*
+      NM1 = N - 1
+      NM12 = NM1 + NM1
+      NM13 = NM12 + NM1
+      IDIR = 0
+!*
+!*     Get machine constants
+!*
+      EPS = DLAMCH( 'Epsilon' )
+      UNFL = DLAMCH( 'Safe minimum' )
+!*
+!*     If matrix lower bidiagonal, rotate to be upper bidiagonal
+!*     by applying Givens rotations on the left
+!*
+      IF( LOWER ) THEN
+         DO 10 I = 1, N - 1
+            CALL DLARTG( D( I ), E( I ), CS, SN, R )
+            D( I ) = R
+            E( I ) = SN*D( I+1 )
+            D( I+1 ) = CS*D( I+1 )
+            WORK( I ) = CS
+            WORK( NM1+I ) = SN
+   10    CONTINUE
+!*
+!*        Update singular vectors if desired
+!*
+         IF( NRU.GT.0 ) &
+           CALL DLASR( 'R', 'V', 'F', NRU, N, WORK( 1 ), WORK( N ), U, &
+                       LDU )
+         IF( NCC.GT.0 ) &
+           CALL DLASR( 'L', 'V', 'F', N, NCC, WORK( 1 ), WORK( N ), C, &
+                       LDC )
+      END IF
+!*
+!*     Compute singular values to relative accuracy TOL
+!*     (By setting TOL to be negative, algorithm will compute
+!*!     singular values to absolute accuracy ABS(TOL)*norm(input matrix))
+!*
+      TOLMUL = MAX( TEN, MIN( HNDRD, EPS**MEIGTH ) )
+      TOL = TOLMUL*EPS
+!*
+!*     Compute approximate maximum, minimum singular values
+!*
+      SMAX = ZERO
+      DO 20 I = 1, N
+         SMAX = MAX( SMAX, ABS( D( I ) ) )
+   20 CONTINUE
+      DO 30 I = 1, N - 1
+         SMAX = MAX( SMAX, ABS( E( I ) ) )
+   30 CONTINUE
+      SMINL = ZERO
+      IF( TOL.GE.ZERO ) THEN
+!*
+!*        Relative accuracy desired
+!*
+         SMINOA = ABS( D( 1 ) )
+         IF( SMINOA.EQ.ZERO ) &
+           GO TO 50
+         MU = SMINOA
+         DO 40 I = 2, N
+            MU = ABS( D( I ) )*( MU / ( MU+ABS( E( I-1 ) ) ) )
+            SMINOA = MIN( SMINOA, MU )
+            IF( SMINOA.EQ.ZERO ) &
+              GO TO 50
+   40    CONTINUE
+   50    CONTINUE
+         SMINOA = SMINOA / SQRT( DBLE( N ) )
+         THRESH = MAX( TOL*SMINOA, MAXITR*(N*(N*UNFL)) )
+      ELSE
+!*
+!*        Absolute accuracy desired
+!*
+         THRESH = MAX( ABS( TOL )*SMAX, MAXITR*(N*(N*UNFL)) )
+      END IF
+!*
+!*     Prepare for main iteration loop for the singular values
+!*     (MAXIT is the maximum number of passes through the inner
+!*     loop permitted before nonconvergence signalled.)
+!*
+      MAXITDIVN = MAXITR*N
+      ITERDIVN = 0
+      ITER = -1
+      OLDLL = -1
+      OLDM = -1
+!*
+!*     M points to last element of unconverged part of matrix
+!*
+      M = N
+!*
+!*     Begin main iteration loop
+!*
+   60 CONTINUE
+!*
+!*     Check for convergence or exceeding iteration count
+!*
+      IF( M.LE.1 ) &
+         GO TO 160
+!*
+      IF( ITER.GE.N ) THEN
+         ITER = ITER - N
+         ITERDIVN = ITERDIVN + 1
+         IF( ITERDIVN.GE.MAXITDIVN ) &
+           GO TO 200
+      END IF
+!!*
+!*     Find diagonal block of matrix to work on
+!*
+      IF( TOL.LT.ZERO .AND. ABS( D( M ) ).LE.THRESH ) &
+        D( M ) = ZERO
+      SMAX = ABS( D( M ) )
+      SMIN = SMAX
+      DO 70 LLL = 1, M - 1
+         LL = M - LLL
+         ABSS = ABS( D( LL ) )
+         ABSE = ABS( E( LL ) )
+         IF( TOL.LT.ZERO .AND. ABSS.LE.THRESH ) &
+           D( LL ) = ZERO
+         IF( ABSE.LE.THRESH ) &
+           GO TO 80
+         SMIN = MIN( SMIN, ABSS )
+         SMAX = MAX( SMAX, ABSS, ABSE )
+   70 CONTINUE
+      LL = 0
+      GO TO 90
+   80 CONTINUE
+      E( LL ) = ZERO
+!*
+!*     Matrix splits since E(LL) = 0
+!*
+      IF( LL.EQ.M-1 ) THEN
+!*
+!*        Convergence of bottom singular value, return to top of loop
+!*
+         M = M - 1
+         GO TO 60
+      END IF
+   90 CONTINUE
+      LL = LL + 1
+!*
+!*     E(LL) through E(M-1) are nonzero, E(LL-1) is zero
+!*
+      IF( LL.EQ.M-1 ) THEN
+!*
+!*        2 by 2 block, handle separately
+!*
+         CALL DLASV2( D( M-1 ), E( M-1 ), D( M ), SIGMN, SIGMX, SINR, &
+                      COSR, SINL, COSL )
+         D( M-1 ) = SIGMX
+         E( M-1 ) = ZERO
+         D( M ) = SIGMN
+!*
+!*        Compute singular vectors, if desired
+!*
+         IF( NCVT.GT.0 ) &
+           CALL DROT( NCVT, VT( M-1, 1 ), LDVT, VT( M, 1 ), LDVT, COSR, &
+                      SINR )
+         IF( NRU.GT.0 ) &
+           CALL DROT( NRU, U( 1, M-1 ), 1, U( 1, M ), 1, COSL, SINL )
+         IF( NCC.GT.0 ) &
+           CALL DROT( NCC, C( M-1, 1 ), LDC, C( M, 1 ), LDC, COSL, &
+                      SINL )
+         M = M - 2
+         GO TO 60
+      END IF
+!*
+!*     If working on new submatrix, choose shift direction
+!*     (from larger end diagonal element towards smaller)
+!*
+      IF( LL.GT.OLDM .OR. M.LT.OLDLL ) THEN
+         IF( ABS( D( LL ) ).GE.ABS( D( M ) ) ) THEN
+!*
+!*           Chase bulge from top (big end) to bottom (small end)
+!*
+            IDIR = 1
+         ELSE
+!*
+!*           Chase bulge from bottom (big end) to top (small end)
+!*
+            IDIR = 2
+         END IF
+      END IF
+!*
+!*     Apply convergence tests
+!*
+      IF( IDIR.EQ.1 ) THEN
+!*
+!*        Run convergence test in forward direction
+!*        First apply standard test to bottom of matrix
+!*
+         IF( ABS( E( M-1 ) ).LE.ABS( TOL )*ABS( D( M ) ) .OR. &
+            ( TOL.LT.ZERO .AND. ABS( E( M-1 ) ).LE.THRESH ) ) THEN
+            E( M-1 ) = ZERO
+            GO TO 60
+         END IF
+
+         IF( TOL.GE.ZERO ) THEN
+!*
+!*           If relative accuracy desired,
+!*           apply convergence criterion forward
+!*
+            MU = ABS( D( LL ) )
+            SMINL = MU
+            DO 100 LLL = LL, M - 1
+               IF( ABS( E( LLL ) ).LE.TOL*MU ) THEN
+                  E( LLL ) = ZERO
+                  GO TO 60
+               END IF
+               MU = ABS( D( LLL+1 ) )*( MU / ( MU+ABS( E( LLL ) ) ) )
+               SMINL = MIN( SMINL, MU )
+  100       CONTINUE
+         END IF
+
+      ELSE
+!*
+!*        Run convergence test in backward direction
+!*        First apply standard test to top of matrix
+!*
+         IF( ABS( E( LL ) ).LE.ABS( TOL )*ABS( D( LL ) ) .OR. &
+            ( TOL.LT.ZERO .AND. ABS( E( LL ) ).LE.THRESH ) ) THEN
+            E( LL ) = ZERO
+            GO TO 60
+         END IF
+
+         IF( TOL.GE.ZERO ) THEN
+!*
+!*           If relative accuracy desired,
+!*           apply convergence criterion backward
+!*
+            MU = ABS( D( M ) )
+            SMINL = MU
+            DO 110 LLL = M - 1, LL, -1
+               IF( ABS( E( LLL ) ).LE.TOL*MU ) THEN
+                  E( LLL ) = ZERO
+                  GO TO 60
+               END IF
+               MU = ABS( D( LLL ) )*( MU / ( MU+ABS( E( LLL ) ) ) )
+               SMINL = MIN( SMINL, MU )
+  110       CONTINUE
+         END IF
+      END IF
+      OLDLL = LL
+      OLDM = M
+!*
+!*     Compute shift.  First, test if shifting would ruin relative
+!*     accuracy, and if so set the shift to zero.
+!*
+      IF( TOL.GE.ZERO .AND. N*TOL*( SMINL / SMAX ).LE. &
+         MAX( EPS, HNDRTH*TOL ) ) THEN
+!*
+!*        Use a zero shift to avoid loss of relative accuracy
+!*
+         SHIFT = ZERO
+      ELSE
+!*
+!*        Compute the shift from 2-by-2 block at end of matrix
+!*
+         IF( IDIR.EQ.1 ) THEN
+            SLL = ABS( D( LL ) )
+            CALL DLAS2( D( M-1 ), E( M-1 ), D( M ), SHIFT, R )
+         ELSE
+            SLL = ABS( D( M ) )
+            CALL DLAS2( D( LL ), E( LL ), D( LL+1 ), SHIFT, R )
+         END IF
+!*
+!*        Test if shift negligible, and if so set to zero
+!*
+         IF( SLL.GT.ZERO ) THEN
+            IF( ( SHIFT / SLL )**2.LT.EPS ) &
+              SHIFT = ZERO
+         END IF
+      END IF
+!*
+!*     Increment iteration count
+!*
+      ITER = ITER + M - LL
+!*
+!*     If SHIFT = 0, do simplified QR iteration
+!*
+      IF( SHIFT.EQ.ZERO ) THEN
+         IF( IDIR.EQ.1 ) THEN
+!*
+!*           Chase bulge from top to bottom
+!*           Save cosines and sines for later singular vector updates
+!*
+            CS = ONE
+            OLDCS = ONE
+            DO 120 I = LL, M - 1
+               CALL DLARTG( D( I )*CS, E( I ), CS, SN, R )
+               IF( I.GT.LL ) &
+                  E( I-1 ) = OLDSN*R
+               CALL DLARTG( OLDCS*R, D( I+1 )*SN, OLDCS, OLDSN, D( I ) )
+               WORK( I-LL+1 ) = CS
+               WORK( I-LL+1+NM1 ) = SN
+               WORK( I-LL+1+NM12 ) = OLDCS
+               WORK( I-LL+1+NM13 ) = OLDSN
+  120       CONTINUE
+            H = D( M )*CS
+            D( M ) = H*OLDCS
+            E( M-1 ) = H*OLDSN
+!*
+!*           Update singular vectors
+!*
+            IF( NCVT.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'F', M-LL+1, NCVT, WORK( 1 ), &
+                          WORK( N ), VT( LL, 1 ), LDVT )
+            IF( NRU.GT.0 ) &
+              CALL DLASR( 'R', 'V', 'F', NRU, M-LL+1, WORK( NM12+1 ), &
+                          WORK( NM13+1 ), U( 1, LL ), LDU )
+            IF( NCC.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'F', M-LL+1, NCC, WORK( NM12+1 ), &
+                          WORK( NM13+1 ), C( LL, 1 ), LDC )
+!*
+!*           Test convergence
+!*
+            IF( ABS( E( M-1 ) ).LE.THRESH ) &
+              E( M-1 ) = ZERO
+!*
+         ELSE
+!*
+!*           Chase bulge from bottom to top
+!*           Save cosines and sines for later singular vector updates
+!*
+            CS = ONE
+            OLDCS = ONE
+            DO 130 I = M, LL + 1, -1
+               CALL DLARTG( D( I )*CS, E( I-1 ), CS, SN, R )
+               IF( I.LT.M ) &
+                  E( I ) = OLDSN*R
+               CALL DLARTG( OLDCS*R, D( I-1 )*SN, OLDCS, OLDSN, D( I ) )
+               WORK( I-LL ) = CS
+               WORK( I-LL+NM1 ) = -SN
+               WORK( I-LL+NM12 ) = OLDCS
+               WORK( I-LL+NM13 ) = -OLDSN
+  130       CONTINUE
+            H = D( LL )*CS
+            D( LL ) = H*OLDCS
+            E( LL ) = H*OLDSN
+!*
+!*           Update singular vectors
+!*
+            IF( NCVT.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'B', M-LL+1, NCVT, WORK( NM12+1 ), &
+                          WORK( NM13+1 ), VT( LL, 1 ), LDVT )
+            IF( NRU.GT.0 ) &
+              CALL DLASR( 'R', 'V', 'B', NRU, M-LL+1, WORK( 1 ), &
+                          WORK( N ), U( 1, LL ), LDU )
+            IF( NCC.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'B', M-LL+1, NCC, WORK( 1 ), &
+                          WORK( N ), C( LL, 1 ), LDC )
+!*
+!*           Test convergence
+!*
+            IF( ABS( E( LL ) ).LE.THRESH ) &
+              E( LL ) = ZERO
+         END IF
+      ELSE
+!*
+!*        Use nonzero shift
+!*
+         IF( IDIR.EQ.1 ) THEN
+!*
+!*           Chase bulge from top to bottom
+!*           Save cosines and sines for later singular vector updates
+!*
+            F = ( ABS( D( LL ) )-SHIFT )* &
+               ( SIGN( ONE, D( LL ) )+SHIFT / D( LL ) )
+            G = E( LL )
+            DO 140 I = LL, M - 1
+               CALL DLARTG( F, G, COSR, SINR, R )
+               IF( I.GT.LL ) &
+                 E( I-1 ) = R
+               F = COSR*D( I ) + SINR*E( I )
+               E( I ) = COSR*E( I ) - SINR*D( I )
+               G = SINR*D( I+1 )
+               D( I+1 ) = COSR*D( I+1 )
+               CALL DLARTG( F, G, COSL, SINL, R )
+               D( I ) = R
+               F = COSL*E( I ) + SINL*D( I+1 )
+               D( I+1 ) = COSL*D( I+1 ) - SINL*E( I )
+               IF( I.LT.M-1 ) THEN
+                  G = SINL*E( I+1 )
+                  E( I+1 ) = COSL*E( I+1 )
+               END IF
+               WORK( I-LL+1 ) = COSR
+               WORK( I-LL+1+NM1 ) = SINR
+               WORK( I-LL+1+NM12 ) = COSL
+               WORK( I-LL+1+NM13 ) = SINL
+  140       CONTINUE
+            E( M-1 ) = F
+!*
+!*           Update singular vectors
+!*
+            IF( NCVT.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'F', M-LL+1, NCVT, WORK( 1 ), &
+                          WORK( N ), VT( LL, 1 ), LDVT )
+            IF( NRU.GT.0 ) &
+              CALL DLASR( 'R', 'V', 'F', NRU, M-LL+1, WORK( NM12+1 ), &
+                          WORK( NM13+1 ), U( 1, LL ), LDU )
+            IF( NCC.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'F', M-LL+1, NCC, WORK( NM12+1 ), &
+                          WORK( NM13+1 ), C( LL, 1 ), LDC )
+!*
+!*           Test convergence
+!*
+            IF( ABS( E( M-1 ) ).LE.THRESH ) &
+              E( M-1 ) = ZERO
+!*
+         ELSE
+!*
+!*           Chase bulge from bottom to top
+!*           Save cosines and sines for later singular vector updates
+!*
+            F = ( ABS( D( M ) )-SHIFT )*( SIGN( ONE, D( M ) )+SHIFT / &
+               D( M ) )
+            G = E( M-1 )
+            DO 150 I = M, LL + 1, -1
+               CALL DLARTG( F, G, COSR, SINR, R )
+               IF( I.LT.M ) &
+                  E( I ) = R
+               F = COSR*D( I ) + SINR*E( I-1 )
+               E( I-1 ) = COSR*E( I-1 ) - SINR*D( I )
+               G = SINR*D( I-1 )
+               D( I-1 ) = COSR*D( I-1 )
+               CALL DLARTG( F, G, COSL, SINL, R )
+               D( I ) = R
+               F = COSL*E( I-1 ) + SINL*D( I-1 )
+               D( I-1 ) = COSL*D( I-1 ) - SINL*E( I-1 )
+               IF( I.GT.LL+1 ) THEN
+                  G = SINL*E( I-2 )
+                  E( I-2 ) = COSL*E( I-2 )
+               END IF
+               WORK( I-LL ) = COSR
+               WORK( I-LL+NM1 ) = -SINR
+               WORK( I-LL+NM12 ) = COSL
+               WORK( I-LL+NM13 ) = -SINL
+  150       CONTINUE
+            E( LL ) = F
+!*
+!*           Test convergence
+!*
+            IF( ABS( E( LL ) ).LE.THRESH ) &
+              E( LL ) = ZERO
+!*
+!*           Update singular vectors if desired
+!*
+            IF( NCVT.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'B', M-LL+1, NCVT, WORK( NM12+1 ), &
+                          WORK( NM13+1 ), VT( LL, 1 ), LDVT )
+            IF( NRU.GT.0 ) &
+             CALL DLASR( 'R', 'V', 'B', NRU, M-LL+1, WORK( 1 ), &
+                          WORK( N ), U( 1, LL ), LDU )
+            IF( NCC.GT.0 ) &
+              CALL DLASR( 'L', 'V', 'B', M-LL+1, NCC, WORK( 1 ), &
+                          WORK( N ), C( LL, 1 ), LDC )
+         END IF
+      END IF
+!*
+!*     QR iteration finished, go back and check convergence
+!*
+      GO TO 60
+!*
+!*     All singular values converged, so make them positive
+!*
+  160 CONTINUE
+      DO 170 I = 1, N
+         IF( D( I ).LT.ZERO ) THEN
+            D( I ) = -D( I )
+!*
+!*           Change sign of singular vectors, if desired
+!*
+            IF( NCVT.GT.0 ) &
+              CALL DSCAL( NCVT, NEGONE, VT( I, 1 ), LDVT )
+         END IF
+  170 CONTINUE
+!*
+!*     Sort the singular values into decreasing order (insertion sort on
+!*     singular values, but only one transposition per singular vector)
+!*
+      DO 190 I = 1, N - 1
+!*
+!*        Scan for smallest D(I)
+!*
+         ISUB = 1
+         SMIN = D( 1 )
+         DO 180 J = 2, N + 1 - I
+            IF( D( J ).LE.SMIN ) THEN
+               ISUB = J
+               SMIN = D( J )
+            END IF
+  180    CONTINUE
+         IF( ISUB.NE.N+1-I ) THEN
+!*
+!*           Swap singular values and vectors
+!*
+            D( ISUB ) = D( N+1-I )
+            D( N+1-I ) = SMIN
+            IF( NCVT.GT.0 ) &
+              CALL DSWAP( NCVT, VT( ISUB, 1 ), LDVT, VT( N+1-I, 1 ), &
+                          LDVT )
+            IF( NRU.GT.0 ) &
+              CALL DSWAP( NRU, U( 1, ISUB ), 1, U( 1, N+1-I ), 1 )
+            IF( NCC.GT.0 ) &
+              CALL DSWAP( NCC, C( ISUB, 1 ), LDC, C( N+1-I, 1 ), LDC )
+         END IF
+  190 CONTINUE
+      GO TO 220
+!*
+!*     Maximum number of iterations exceeded, failure to converge
+!*
+  200 CONTINUE
+      INFO = 0
+      DO 210 I = 1, N - 1
+         IF( E( I ).NE.ZERO ) &
+           INFO = INFO + 1
+  210 CONTINUE
+  220 CONTINUE
+  
+END SUBROUTINE
+
+       
