@@ -2813,7 +2813,7 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
       DOUBLE PRECISION   DUM( 1 )
 !*     ..
 !*     .. External Subroutines ..
-      EXTERNAL           DBDSQR,DGEMM,DLACPY, &
+      EXTERNAL           DGEMM,DLACPY, &
                          DLASCL, DLASET
                         
 !*     ..
@@ -6347,4 +6347,2260 @@ SUBROUTINE DBDSQR( UPLO, N, NCVT, NRU, NCC, D, E, VT, LDVT, U, &
   
 END SUBROUTINE
 
-       
+#if
+*  Authors:
+*  ========
+*
+*> \author Univ. of Tennessee
+*> \author Univ. of California Berkeley
+*> \author Univ. of Colorado Denver
+*> \author NAG Ltd.
+*
+*> \date December 2016
+*
+*> \ingroup OTHERauxiliary
+*
+*  =====================================================================
+#endif
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLARTG( F, G, CS, SN, R ) !GCC$ ATTRIBUTES inline :: DLARTG !GCC$ ATTRIBUTES aligned(32) :: DLARTG
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLARTG( F, G, CS, SN, R )
+    !DIR$ ATTRIBUTES FORCEINLINE :: DLARTG
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLARTG
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLARTG
+#endif
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      DOUBLE PRECISION   CS, F, G, R, SN
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO
+      PARAMETER          ( ZERO = 0.0D0 )
+      DOUBLE PRECISION   ONE
+      PARAMETER          ( ONE = 1.0D0 )
+      DOUBLE PRECISION   TWO
+      PARAMETER          ( TWO = 2.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+!*     LOGICAL            FIRST
+      INTEGER            COUNT, I
+      DOUBLE PRECISION   EPS, F1, G1, SAFMIN, SAFMN2, SAFMX2, SCALE
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, INT, LOG, MAX, SQRT
+!*     ..
+!*     .. Save statement ..
+*     SAVE               FIRST, SAFMX2, SAFMIN, SAFMN2
+!*     ..
+!*     .. Data statements ..
+!*     DATA               FIRST / .TRUE. /
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     IF( FIRST ) THEN
+         SAFMIN = DLAMCH( 'S' )
+         EPS = DLAMCH( 'E' )
+         SAFMN2 = DLAMCH( 'B' )**INT( LOG( SAFMIN / EPS ) / &
+                  LOG( DLAMCH( 'B' ) ) / TWO )
+         SAFMX2 = ONE / SAFMN2
+!*        FIRST = .FALSE.
+!*     END IF
+      IF( G.EQ.ZERO ) THEN
+         CS = ONE
+         SN = ZERO
+         R = F
+      ELSE IF( F.EQ.ZERO ) THEN
+         CS = ZERO
+         SN = ONE
+         R = G
+      ELSE
+         F1 = F
+         G1 = G
+         SCALE = MAX( ABS( F1 ), ABS( G1 ) )
+         IF( SCALE.GE.SAFMX2 ) THEN
+            COUNT = 0
+   10       CONTINUE
+            COUNT = COUNT + 1
+            F1 = F1*SAFMN2
+            G1 = G1*SAFMN2
+            SCALE = MAX( ABS( F1 ), ABS( G1 ) )
+            IF( SCALE.GE.SAFMX2 ) &
+              GO TO 10
+            R = SQRT( F1**2+G1**2 )
+            CS = F1 / R
+            SN = G1 / R
+            DO 20 I = 1, COUNT
+               R = R*SAFMX2
+   20       CONTINUE
+         ELSE IF( SCALE.LE.SAFMN2 ) THEN
+            COUNT = 0
+   30       CONTINUE
+            COUNT = COUNT + 1
+            F1 = F1*SAFMX2
+            G1 = G1*SAFMX2
+            SCALE = MAX( ABS( F1 ), ABS( G1 ) )
+            IF( SCALE.LE.SAFMN2 ) &
+              GO TO 30
+            R = SQRT( F1**2+G1**2 )
+            CS = F1 / R
+            SN = G1 / R
+            DO 40 I = 1, COUNT
+               R = R*SAFMN2
+   40       CONTINUE
+         ELSE
+            R = SQRT( F1**2+G1**2 )
+            CS = F1 / R
+            SN = G1 / R
+         END IF
+         IF( ABS( F ).GT.ABS( G ) .AND. CS.LT.ZERO ) THEN
+            CS = -CS
+            SN = -SN
+            R = -R
+         END IF
+      END IF
+     
+END SUBROUTINE
+
+
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLAS2( F, G, H, SSMIN, SSMAX ) !GCC$ ATTRIBUTES inline :: DLAS2 !GCC$ ATTRIBUTES aligned(32) :: DLAS2
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLAS2( F, G, H, SSMIN, SSMAX )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DLAS2
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLAS2
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLAS2
+#endif
+       implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      DOUBLE PRECISION   F, G, H, SSMAX, SSMIN
+!*     ..
+!*
+!*  ====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO
+      PARAMETER          ( ZERO = 0.0D0 )
+      DOUBLE PRECISION   ONE
+      PARAMETER          ( ONE = 1.0D0 )
+      DOUBLE PRECISION   TWO
+      PARAMETER          ( TWO = 2.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      DOUBLE PRECISION   AS, AT, AU, C, FA, FHMN, FHMX, GA, HA
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, MIN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+      FA = ABS( F )
+      GA = ABS( G )
+      HA = ABS( H )
+      FHMN = MIN( FA, HA )
+      FHMX = MAX( FA, HA )
+      IF( FHMN.EQ.ZERO ) THEN
+         SSMIN = ZERO
+         IF( FHMX.EQ.ZERO ) THEN
+            SSMAX = GA
+         ELSE
+            SSMAX = MAX( FHMX, GA )*SQRT( ONE+ &
+                   ( MIN( FHMX, GA ) / MAX( FHMX, GA ) )**2 )
+         END IF
+      ELSE
+         IF( GA.LT.FHMX ) THEN
+            AS = ONE + FHMN / FHMX
+            AT = ( FHMX-FHMN ) / FHMX
+            AU = ( GA / FHMX )**2
+            C = TWO / ( SQRT( AS*AS+AU )+SQRT( AT*AT+AU ) )
+            SSMIN = FHMN*C
+            SSMAX = FHMX / C
+         ELSE
+            AU = FHMX / GA
+            IF( AU.EQ.ZERO ) THEN
+!*
+!*              Avoid possible harmful underflow if exponent range
+!*              asymmetric (true SSMIN may not underflow even if
+!*              AU underflows)
+!*
+               SSMIN = ( FHMN*FHMX ) / GA
+               SSMAX = GA
+            ELSE
+               AS = ONE + FHMN / FHMX
+               AT = ( FHMX-FHMN ) / FHMX
+               C = ONE / ( SQRT( ONE+( AS*AU )**2 )+ &
+                  SQRT( ONE+( AT*AU )**2 ) )
+               SSMIN = ( FHMN*C )*AU
+               SSMIN = SSMIN + SSMIN
+               SSMAX = GA / ( C+C )
+            END IF
+         END IF
+      END IF
+  
+END SUBROUTINE
+
+
+
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASQ1( N, D, E, WORK, INFO ) !GCC$ ATTRIBUTES hot :: DLASQ1 !GCC$ ATTRIBUTES aligned(32) :: DLASQ1
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLASQ1( N, D, E, WORK, INFO )
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASQ1
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASQ1
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, N
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   D( * ), E( * ), WORK( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: E
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO
+      PARAMETER          ( ZERO = 0.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, IINFO
+      DOUBLE PRECISION   EPS, SCALE, SAFMIN, SIGMN, SIGMX, TMP0
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY, DLASCL, DLASQ2, DLASRT
+
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+      INFO = 0
+      IF( N.LT.0 ) THEN
+         INFO = -1
+         !CALL XERBLA( 'DLASQ1', -INFO )
+         RETURN
+      ELSE IF( N.EQ.0 ) THEN
+         RETURN
+      ELSE IF( N.EQ.1 ) THEN
+         D( 1 ) = ABS( D( 1 ) )
+         RETURN
+      ELSE IF( N.EQ.2 ) THEN
+         CALL DLAS2( D( 1 ), E( 1 ), D( 2 ), SIGMN, SIGMX )
+         D( 1 ) = SIGMX
+         D( 2 ) = SIGMN
+         RETURN
+      END IF
+!*
+!*     Estimate the largest singular value.
+!*
+      SIGMX = ZERO
+      DO 10 I = 1, N - 1
+         D( I ) = ABS( D( I ) )
+         SIGMX = MAX( SIGMX, ABS( E( I ) ) )
+   10 CONTINUE
+      D( N ) = ABS( D( N ) )
+!*
+!*     Early return if SIGMX is zero (matrix is already diagonal).
+!*
+      IF( SIGMX.EQ.ZERO ) THEN
+         CALL DLASRT( 'D', N, D, IINFO )
+         RETURN
+      END IF
+!*
+      DO 20 I = 1, N
+         SIGMX = MAX( SIGMX, D( I ) )
+   20 CONTINUE
+!*
+!*     Copy D and E into WORK (in the Z format) and scale (squaring the
+!*     input data makes scaling by a power of the radix pointless).
+!*
+      EPS = DLAMCH( 'Precision' )
+      SAFMIN = DLAMCH( 'Safe minimum' )
+      SCALE = SQRT( EPS / SAFMIN )
+      CALL DCOPY( N, D, 1, WORK( 1 ), 2 )
+      CALL DCOPY( N-1, E, 1, WORK( 2 ), 2 )
+      CALL DLASCL( 'G', 0, 0, SIGMX, SCALE, 2*N-1, 1, WORK, 2*N-1, &
+                   IINFO )
+!*
+!*     Compute the q's and e's.
+!*
+      DO 30 I = 1, 2*N - 1
+         TMP = WORK(I)
+         WORK( I ) = TMP*TMP
+   30 CONTINUE
+      WORK( 2*N ) = ZERO
+
+      CALL DLASQ2( N, WORK, INFO )
+
+      IF( INFO.EQ.0 ) THEN
+         DO 40 I = 1, N
+            D( I ) = SQRT( WORK( I ) )
+   40    CONTINUE
+         CALL DLASCL( 'G', 0, 0, SCALE, SIGMX, N, 1, D, N, IINFO )
+      ELSE IF( INFO.EQ.2 ) THEN
+!*
+!*     Maximum number of iterations exceeded.  Move data from WORK
+!*     into D and E so the calling subroutine can try to finish
+!*
+         DO I = 1, N
+            D( I ) = SQRT( WORK( 2*I-1 ) )
+            E( I ) = SQRT( WORK( 2*I ) )
+         END DO
+         CALL DLASCL( 'G', 0, 0, SCALE, SIGMX, N, 1, D, N, IINFO )
+         CALL DLASCL( 'G', 0, 0, SCALE, SIGMX, N, 1, E, N, IINFO )
+      END IF
+
+END SUBROUTINE
+
+#if 0
+*> \author Univ. of Tennessee
+*> \author Univ. of California Berkeley
+*> \author Univ. of Colorado Denver
+*> \author NAG Ltd.
+*
+*> \date June 2016
+*
+*> \ingroup OTHERauxiliary
+*
+*  =====================================================================
+#endif
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASCL( TYPE, KL, KU, CFROM, CTO, M, N, A, LDA, INFO ) !GCC$ ATTRIBUTES hot :: DLASCL !GCC$ ATTRIBUTES aligned(32) :: DLASCL
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLASCL( TYPE, KL, KU, CFROM, CTO, M, N, A, LDA, INFO )
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASCL
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLASCL
+#endif
+       use omp_lib
+       implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          TYPE
+      INTEGER            INFO, KL, KU, LDA, M, N
+      DOUBLE PRECISION   CFROM, CTO
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   A( LDA, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            DONE
+      INTEGER            I, ITYPE, J, K1, K2, K3, K4
+      DOUBLE PRECISION   BIGNUM, CFROM1, CFROMC, CTO1, CTOC, MUL, SMLNUM
+!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME, DISNAN
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           LSAME, DLAMCH, DISNAN
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, MIN
+!*     ..
+!*     .. External Subroutines ..
+    !  EXTERNAL           XERBLA
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input arguments
+!*
+      INFO = 0
+!*
+      IF( LSAME( TYPE, 'G' ) ) THEN
+         ITYPE = 0
+      ELSE IF( LSAME( TYPE, 'L' ) ) THEN
+         ITYPE = 1
+      ELSE IF( LSAME( TYPE, 'U' ) ) THEN
+         ITYPE = 2
+      ELSE IF( LSAME( TYPE, 'H' ) ) THEN
+         ITYPE = 3
+      ELSE IF( LSAME( TYPE, 'B' ) ) THEN
+         ITYPE = 4
+      ELSE IF( LSAME( TYPE, 'Q' ) ) THEN
+         ITYPE = 5
+      ELSE IF( LSAME( TYPE, 'Z' ) ) THEN
+         ITYPE = 6
+      ELSE
+         ITYPE = -1
+      END IF
+
+      IF( ITYPE.EQ.-1 ) THEN
+         INFO = -1
+      ELSE IF( CFROM.EQ.ZERO .OR. DISNAN(CFROM) ) THEN
+         INFO = -4
+      ELSE IF( DISNAN(CTO) ) THEN
+         INFO = -5
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( N.LT.0 .OR. ( ITYPE.EQ.4 .AND. N.NE.M ) .OR. &
+              ( ITYPE.EQ.5 .AND. N.NE.M ) ) THEN
+         INFO = -7
+      ELSE IF( ITYPE.LE.3 .AND. LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -9
+      ELSE IF( ITYPE.GE.4 ) THEN
+         IF( KL.LT.0 .OR. KL.GT.MAX( M-1, 0 ) ) THEN
+            INFO = -2
+         ELSE IF( KU.LT.0 .OR. KU.GT.MAX( N-1, 0 ) .OR. &
+                 ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. KL.NE.KU ) ) &
+                  THEN
+            INFO = -3
+         ELSE IF( ( ITYPE.EQ.4 .AND. LDA.LT.KL+1 ) .OR. &
+                 ( ITYPE.EQ.5 .AND. LDA.LT.KU+1 ) .OR. &
+                 ( ITYPE.EQ.6 .AND. LDA.LT.2*KL+KU+1 ) ) THEN
+            INFO = -9
+         END IF
+      END IF
+
+      IF( INFO.NE.0 ) THEN
+        ! CALL XERBLA( 'DLASCL', -INFO )
+         RETURN
+      END IF
+!*
+!*     Quick return if possible
+!*
+      IF( N.EQ.0 .OR. M.EQ.0 ) &
+        RETURN
+!*
+!*     Get machine parameters
+!*
+      SMLNUM = DLAMCH( 'S' )
+      BIGNUM = ONE / SMLNUM
+!*
+      CFROMC = CFROM
+      CTOC = CTO
+!*
+   10 CONTINUE
+      CFROM1 = CFROMC*SMLNUM
+      IF( CFROM1.EQ.CFROMC ) THEN
+!        CFROMC is an inf.  Multiply by a correctly signed zero for
+!        finite CTOC, or a NaN if CTOC is infinite.
+         MUL = CTOC / CFROMC
+         DONE = .TRUE.
+         CTO1 = CTOC
+      ELSE
+         CTO1 = CTOC / BIGNUM
+         IF( CTO1.EQ.CTOC ) THEN
+!           CTOC is either 0 or an inf.  In both cases, CTOC itself
+!           serves as the correct multiplication factor.
+            MUL = CTOC
+            DONE = .TRUE.
+            CFROMC = ONE
+         ELSE IF( ABS( CFROM1 ).GT.ABS( CTOC ) .AND. CTOC.NE.ZERO ) THEN
+            MUL = SMLNUM
+            DONE = .FALSE.
+            CFROMC = CFROM1
+         ELSE IF( ABS( CTO1 ).GT.ABS( CFROMC ) ) THEN
+            MUL = BIGNUM
+            DONE = .FALSE.
+            CTOC = CTO1
+         ELSE
+            MUL = CTOC / CFROMC
+            DONE = .TRUE.
+         END IF
+      END IF
+
+      IF( ITYPE.EQ.0 ) THEN
+!*
+!*        Full matrix
+         !*
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) COLLAPSE(2) PRIVATE(J,I) SHARED(A)
+         DO 30 J = 1, N
+            !$OMP SIMD LINEAR(I:1) UNROLL PARTIAL(6)
+            DO 20 I = 1, M
+               A( I, J ) = A( I, J )*MUL
+   20       CONTINUE
+   30    CONTINUE
+
+      ELSE IF( ITYPE.EQ.1 ) THEN
+!*
+!*        Lower triangular matrix
+         !*
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  PRIVATE(J,I) SHARED(A)
+         DO 50 J = 1, N
+             !$OMP SIMD LINEAR(I:1)
+            DO 40 I = J, M
+               A( I, J ) = A( I, J )*MUL
+   40       CONTINUE
+   50    CONTINUE
+
+      ELSE IF( ITYPE.EQ.2 ) THEN
+!*
+!*        Upper triangular matrix
+         !*
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  PRIVATE(J,I) SHARED(A)
+         DO 70 J = 1, N
+             !$OMP SIMD 
+            DO 60 I = 1, MIN( J, M )
+               A( I, J ) = A( I, J )*MUL
+   60       CONTINUE
+   70    CONTINUE
+
+      ELSE IF( ITYPE.EQ.3 ) THEN
+!*
+!*        Upper Hessenberg matrix
+         !*
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  PRIVATE(J,I) SHARED(A)
+         DO 90 J = 1, N
+            DO 80 I = 1, MIN( J+1, M )
+               A( I, J ) = A( I, J )*MUL
+   80       CONTINUE
+   90    CONTINUE
+
+      ELSE IF( ITYPE.EQ.4 ) THEN
+!*
+!*        Lower half of a symmetric band matrix
+!*
+         K3 = KL + 1
+         K4 = N + 1
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  PRIVATE(J,I) SHARED(A)
+         DO 110 J = 1, N
+            DO 100 I = 1, MIN( K3, K4-J )
+               A( I, J ) = A( I, J )*MUL
+  100       CONTINUE
+  110    CONTINUE
+
+      ELSE IF( ITYPE.EQ.5 ) THEN
+!*
+!*        Upper half of a symmetric band matrix
+!*
+         K1 = KU + 2
+         K3 = KU + 1
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  PRIVATE(J,I) SHARED(A)
+         DO 130 J = 1, N
+            DO 120 I = MAX( K1-J, 1 ), K3
+               A( I, J ) = A( I, J )*MUL
+  120       CONTINUE
+  130    CONTINUE
+
+      ELSE IF( ITYPE.EQ.6 ) THEN
+!*
+!*        Band matrix
+!*
+         K1 = KL + KU + 2
+         K2 = KL + 1
+         K3 = 2*KL + KU + 1
+         K4 = KL + KU + 1 + M
+           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  PRIVATE(J,I) SHARED(A)
+         DO 150 J = 1, N
+            DO 140 I = MAX( K1-J, K2 ), MIN( K3, K4-J )
+               A( I, J ) = A( I, J )*MUL
+  140       CONTINUE
+  150    CONTINUE
+
+      END IF
+
+      IF( .NOT.DONE ) &
+        GO TO 10
+
+END SUBROUTINE
+
+
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASQ2( N, Z, INFO ) !GCC$ ATTRIBUTES hot :: DLASQ2 !GCC$ ATTRIBUTES aligned(32) :: DLASQ2
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLASQ2( N, Z, INFO )
+       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASQ2
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASQ2
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, N
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   Z( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   CBIAS
+      PARAMETER          ( CBIAS = 1.50D0 )
+      DOUBLE PRECISION   ZERO, HALF, ONE, TWO, FOUR, HUNDRD
+      PARAMETER          ( ZERO = 0.0D0, HALF = 0.5D0, ONE = 1.0D0, &
+                           TWO = 2.0D0, FOUR = 4.0D0, HUNDRD = 100.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            IEEE
+      INTEGER            I0, I1, I4, IINFO, IPN4, ITER, IWHILA, IWHILB, &
+                        K, KMIN, N0, N1, NBIG, NDIV, NFAIL, PP, SPLT, &
+                        TTYPE
+      DOUBLE PRECISION   D, DEE, DEEMIN, DESIG, DMIN, DMIN1, DMIN2, DN, &
+                        DN1, DN2, E, EMAX, EMIN, EPS, G, OLDEMN, QMAX, &
+                        QMIN, S, SAFMIN, SIGMA, T, TAU, TEMP, TOL, &
+                        TOL2, TRACE, ZMAX, TEMPE, TEMPQ
+!*     ..
+!*     .. External Subroutines ..
+   !   EXTERNAL           DLASQ3, DLASRT
+!*     ..
+!*     .. External Functions ..
+      INTEGER            ILAENV
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH, ILAENV
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, DBLE, MAX, MIN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input arguments.
+!*     (in case DLASQ2 is not called by DLASQ1)
+!*
+      INFO = 0
+      EPS = DLAMCH( 'Precision' )
+      SAFMIN = DLAMCH( 'Safe minimum' )
+      TOL = EPS*HUNDRD
+      TOL2 = TOL**2
+
+      IF( N.LT.0 ) THEN
+         INFO = -1
+         !CALL XERBLA( 'DLASQ2', 1 )
+         RETURN
+      ELSE IF( N.EQ.0 ) THEN
+         RETURN
+      ELSE IF( N.EQ.1 ) THEN
+!*
+!*        1-by-1 case.
+!*
+         IF( Z( 1 ).LT.ZERO ) THEN
+            INFO = -201
+            !CALL XERBLA( 'DLASQ2', 2 )
+         END IF
+         RETURN
+      ELSE IF( N.EQ.2 ) THEN
+!*
+!*        2-by-2 case.
+!*
+         IF( Z( 2 ).LT.ZERO .OR. Z( 3 ).LT.ZERO ) THEN
+            INFO = -2
+            !CALL XERBLA( 'DLASQ2', 2 )
+            RETURN
+         ELSE IF( Z( 3 ).GT.Z( 1 ) ) THEN
+            D = Z( 3 )
+            Z( 3 ) = Z( 1 )
+            Z( 1 ) = D
+         END IF
+         Z( 5 ) = Z( 1 ) + Z( 2 ) + Z( 3 )
+         IF( Z( 2 ).GT.Z( 3 )*TOL2 ) THEN
+            T = HALF*( ( Z( 1 )-Z( 3 ) )+Z( 2 ) )
+            S = Z( 3 )*( Z( 2 ) / T )
+            IF( S.LE.T ) THEN
+               S = Z( 3 )*( Z( 2 ) / ( T*( ONE+SQRT( ONE+S / T ) ) ) )
+            ELSE
+               S = Z( 3 )*( Z( 2 ) / ( T+SQRT( T )*SQRT( T+S ) ) )
+            END IF
+            T = Z( 1 ) + ( S+Z( 2 ) )
+            Z( 3 ) = Z( 3 )*( Z( 1 ) / T )
+            Z( 1 ) = T
+         END IF
+         Z( 2 ) = Z( 3 )
+         Z( 6 ) = Z( 2 ) + Z( 1 )
+         RETURN
+      END IF
+!*
+!*     Check for negative data and compute sums of q's and e's.
+!*
+      Z( 2*N ) = ZERO
+      EMIN = Z( 2 )
+      QMAX = ZERO
+      ZMAX = ZERO
+      D = ZERO
+      E = ZERO
+!*
+      DO 10 K = 1, 2*( N-1 ), 2
+         IF( Z( K ).LT.ZERO ) THEN
+            INFO = -( 200+K )
+            !CALL XERBLA( 'DLASQ2', 2 )
+            RETURN
+         ELSE IF( Z( K+1 ).LT.ZERO ) THEN
+            INFO = -( 200+K+1 )
+            !CALL XERBLA( 'DLASQ2', 2 )
+            RETURN
+         END IF
+         D = D + Z( K )
+         E = E + Z( K+1 )
+         QMAX = MAX( QMAX, Z( K ) )
+         EMIN = MIN( EMIN, Z( K+1 ) )
+         ZMAX = MAX( QMAX, ZMAX, Z( K+1 ) )
+   10 CONTINUE
+      IF( Z( 2*N-1 ).LT.ZERO ) THEN
+         INFO = -( 200+2*N-1 )
+         !CALL XERBLA( 'DLASQ2', 2 )
+         RETURN
+      END IF
+      D = D + Z( 2*N-1 )
+      QMAX = MAX( QMAX, Z( 2*N-1 ) )
+      ZMAX = MAX( QMAX, ZMAX )
+!*
+!*     Check for diagonality.
+!*
+      IF( E.EQ.ZERO ) THEN
+         DO 20 K = 2, N
+            Z( K ) = Z( 2*K-1 )
+   20    CONTINUE
+         CALL DLASRT( 'D', N, Z, IINFO )
+         Z( 2*N-1 ) = D
+         RETURN
+      END IF
+!*
+      TRACE = D + E
+!*
+!*     Check for zero data.
+!*
+      IF( TRACE.EQ.ZERO ) THEN
+         Z( 2*N-1 ) = ZERO
+         RETURN
+      END IF
+!*
+!*     Check whether the machine is IEEE conformable.
+!*
+      IEEE = ILAENV( 10, 'DLASQ2', 'N', 1, 2, 3, 4 ).EQ.1 .AND. &
+             ILAENV( 11, 'DLASQ2', 'N', 1, 2, 3, 4 ).EQ.1
+!*
+!*     Rearrange data for locality: Z=(q1,qq1,e1,ee1,q2,qq2,e2,ee2,...).
+!*
+      DO 30 K = 2*N, 2, -2
+         Z( 2*K ) = ZERO
+         Z( 2*K-1 ) = Z( K )
+         Z( 2*K-2 ) = ZERO
+         Z( 2*K-3 ) = Z( K-1 )
+   30 CONTINUE
+!*
+      I0 = 1
+      N0 = N
+!*
+!*     Reverse the qd-array, if warranted.
+!*
+      IF( CBIAS*Z( 4*I0-3 ).LT.Z( 4*N0-3 ) ) THEN
+         IPN4 = 4*( I0+N0 )
+         DO 40 I4 = 4*I0, 2*( I0+N0-1 ), 4
+            TEMP = Z( I4-3 )
+            Z( I4-3 ) = Z( IPN4-I4-3 )
+            Z( IPN4-I4-3 ) = TEMP
+            TEMP = Z( I4-1 )
+            Z( I4-1 ) = Z( IPN4-I4-5 )
+            Z( IPN4-I4-5 ) = TEMP
+   40    CONTINUE
+      END IF
+!*
+!*     Initial split checking via dqd and Li's test.
+!*
+      PP = 0
+!*
+      DO 80 K = 1, 2
+!*
+         D = Z( 4*N0+PP-3 )
+         DO 50 I4 = 4*( N0-1 ) + PP, 4*I0 + PP, -4
+            IF( Z( I4-1 ).LE.TOL2*D ) THEN
+               Z( I4-1 ) = -ZERO
+               D = Z( I4-3 )
+            ELSE
+               D = Z( I4-3 )*( D / ( D+Z( I4-1 ) ) )
+            END IF
+   50    CONTINUE
+!*
+!*        dqd maps Z to ZZ plus Li's test.
+!*
+         EMIN = Z( 4*I0+PP+1 )
+         D = Z( 4*I0+PP-3 )
+         DO 60 I4 = 4*I0 + PP, 4*( N0-1 ) + PP, 4
+            Z( I4-2*PP-2 ) = D + Z( I4-1 )
+            IF( Z( I4-1 ).LE.TOL2*D ) THEN
+               Z( I4-1 ) = -ZERO
+               Z( I4-2*PP-2 ) = D
+               Z( I4-2*PP ) = ZERO
+               D = Z( I4+1 )
+            ELSE IF( SAFMIN*Z( I4+1 ).LT.Z( I4-2*PP-2 ) .AND. &
+                    SAFMIN*Z( I4-2*PP-2 ).LT.Z( I4+1 ) ) THEN
+               TEMP = Z( I4+1 ) / Z( I4-2*PP-2 )
+               Z( I4-2*PP ) = Z( I4-1 )*TEMP
+               D = D*TEMP
+            ELSE
+               Z( I4-2*PP ) = Z( I4+1 )*( Z( I4-1 ) / Z( I4-2*PP-2 ) )
+               D = Z( I4+1 )*( D / Z( I4-2*PP-2 ) )
+            END IF
+            EMIN = MIN( EMIN, Z( I4-2*PP ) )
+   60    CONTINUE
+         Z( 4*N0-PP-2 ) = D
+!*
+!*        Now find qmax.
+!*
+         QMAX = Z( 4*I0-PP-2 )
+         DO 70 I4 = 4*I0 - PP + 2, 4*N0 - PP - 2, 4
+            QMAX = MAX( QMAX, Z( I4 ) )
+   70    CONTINUE
+!*
+!*        Prepare for the next iteration on K.
+!*
+         PP = 1 - PP
+   80 CONTINUE
+!*
+!*     Initialise variables to pass to DLASQ3.
+!*
+      TTYPE = 0
+      DMIN1 = ZERO
+      DMIN2 = ZERO
+      DN    = ZERO
+      DN1   = ZERO
+      DN2   = ZERO
+      G     = ZERO
+      TAU   = ZERO
+!*
+      ITER = 2
+      NFAIL = 0
+      NDIV = 2*( N0-I0 )
+!*
+      DO 160 IWHILA = 1, N + 1
+         IF( N0.LT.1 ) &
+           GO TO 170
+!*
+!*        While array unfinished do
+!*
+!*        E(N0) holds the value of SIGMA when submatrix in I0:N0
+!*        splits from the rest of the array, but is negated.
+!*
+         DESIG = ZERO
+         IF( N0.EQ.N ) THEN
+            SIGMA = ZERO
+         ELSE
+            SIGMA = -Z( 4*N0-1 )
+         END IF
+         IF( SIGMA.LT.ZERO ) THEN
+            INFO = 1
+            RETURN
+         END IF
+!*
+!*        Find last unreduced submatrix's top index I0, find QMAX and
+!*        EMIN. Find Gershgorin-type bound if Q's much greater than E's.
+!*
+         EMAX = ZERO
+         IF( N0.GT.I0 ) THEN
+            EMIN = ABS( Z( 4*N0-5 ) )
+         ELSE
+            EMIN = ZERO
+         END IF
+         QMIN = Z( 4*N0-3 )
+         QMAX = QMIN
+         DO 90 I4 = 4*N0, 8, -4
+            IF( Z( I4-5 ).LE.ZERO ) &
+              GO TO 100
+            IF( QMIN.GE.FOUR*EMAX ) THEN
+               QMIN = MIN( QMIN, Z( I4-3 ) )
+               EMAX = MAX( EMAX, Z( I4-5 ) )
+            END IF
+            QMAX = MAX( QMAX, Z( I4-7 )+Z( I4-5 ) )
+            EMIN = MIN( EMIN, Z( I4-5 ) )
+   90    CONTINUE
+         I4 = 4
+
+  100    CONTINUE
+         I0 = I4 / 4
+         PP = 0
+
+         IF( N0-I0.GT.1 ) THEN
+            DEE = Z( 4*I0-3 )
+            DEEMIN = DEE
+            KMIN = I0
+            DO 110 I4 = 4*I0+1, 4*N0-3, 4
+               DEE = Z( I4 )*( DEE /( DEE+Z( I4-2 ) ) )
+               IF( DEE.LE.DEEMIN ) THEN
+                  DEEMIN = DEE
+                  KMIN = ( I4+3 )/4
+               END IF
+  110       CONTINUE
+            IF( (KMIN-I0)*2.LT.N0-KMIN .AND. &
+               DEEMIN.LE.HALF*Z(4*N0-3) ) THEN
+               IPN4 = 4*( I0+N0 )
+               PP = 2
+               DO 120 I4 = 4*I0, 2*( I0+N0-1 ), 4
+                  TEMP = Z( I4-3 )
+                  Z( I4-3 ) = Z( IPN4-I4-3 )
+                  Z( IPN4-I4-3 ) = TEMP
+                  TEMP = Z( I4-2 )
+                  Z( I4-2 ) = Z( IPN4-I4-2 )
+                  Z( IPN4-I4-2 ) = TEMP
+                  TEMP = Z( I4-1 )
+                  Z( I4-1 ) = Z( IPN4-I4-5 )
+                  Z( IPN4-I4-5 ) = TEMP
+                  TEMP = Z( I4 )
+                  Z( I4 ) = Z( IPN4-I4-4 )
+                  Z( IPN4-I4-4 ) = TEMP
+  120          CONTINUE
+            END IF
+         END IF
+!*
+!*        Put -(initial shift) into DMIN.
+!*
+         DMIN = -MAX( ZERO, QMIN-TWO*SQRT( QMIN )*SQRT( EMAX ) )
+!*
+!*        Now I0:N0 is unreduced.
+!*        PP = 0 for ping, PP = 1 for pong.
+!*        PP = 2 indicates that flipping was applied to the Z array and
+!*               and that the tests for deflation upon entry in DLASQ3
+!*               should not be performed.
+!*
+         NBIG = 100*( N0-I0+1 )
+         DO 140 IWHILB = 1, NBIG
+            IF( I0.GT.N0 ) &
+              GO TO 150
+!*
+!*           While submatrix unfinished take a good dqds step.
+!*
+            CALL DLASQ3( I0, N0, Z, PP, DMIN, SIGMA, DESIG, QMAX, NFAIL, &
+                        ITER, NDIV, IEEE, TTYPE, DMIN1, DMIN2, DN, DN1, &
+                        DN2, G, TAU )
+!*
+            PP = 1 - PP
+!*
+!*           When EMIN is very small check for splits.
+!*
+            IF( PP.EQ.0 .AND. N0-I0.GE.3 ) THEN
+               IF( Z( 4*N0 ).LE.TOL2*QMAX .OR. &
+                  Z( 4*N0-1 ).LE.TOL2*SIGMA ) THEN
+                  SPLT = I0 - 1
+                  QMAX = Z( 4*I0-3 )
+                  EMIN = Z( 4*I0-1 )
+                  OLDEMN = Z( 4*I0 )
+                  DO 130 I4 = 4*I0, 4*( N0-3 ), 4
+                     IF( Z( I4 ).LE.TOL2*Z( I4-3 ) .OR. &
+                        Z( I4-1 ).LE.TOL2*SIGMA ) THEN
+                        Z( I4-1 ) = -SIGMA
+                        SPLT = I4 / 4
+                        QMAX = ZERO
+                        EMIN = Z( I4+3 )
+                        OLDEMN = Z( I4+4 )
+                     ELSE
+                        QMAX = MAX( QMAX, Z( I4+1 ) )
+                        EMIN = MIN( EMIN, Z( I4-1 ) )
+                        OLDEMN = MIN( OLDEMN, Z( I4 ) )
+                     END IF
+  130             CONTINUE
+                  Z( 4*N0-1 ) = EMIN
+                  Z( 4*N0 ) = OLDEMN
+                  I0 = SPLT + 1
+               END IF
+            END IF
+!*
+  140    CONTINUE
+!*
+         INFO = 2
+!!*
+!*        Maximum number of iterations exceeded, restore the shift
+!*        SIGMA and place the new d's and e's in a qd array.
+!*        This might need to be done for several blocks
+!*
+         I1 = I0
+         N1 = N0
+ 145     CONTINUE
+         TEMPQ = Z( 4*I0-3 )
+         Z( 4*I0-3 ) = Z( 4*I0-3 ) + SIGMA
+         DO K = I0+1, N0
+            TEMPE = Z( 4*K-5 )
+            Z( 4*K-5 ) = Z( 4*K-5 ) * (TEMPQ / Z( 4*K-7 ))
+            TEMPQ = Z( 4*K-3 )
+            Z( 4*K-3 ) = Z( 4*K-3 ) + SIGMA + TEMPE - Z( 4*K-5 )
+         END DO
+!*
+!*        Prepare to do this on the previous block if there is one
+!*
+         IF( I1.GT.1 ) THEN
+            N1 = I1-1
+            DO WHILE( ( I1.GE.2 ) .AND. ( Z(4*I1-5).GE.ZERO ) )
+               I1 = I1 - 1
+            END DO
+            SIGMA = -Z(4*N1-1)
+            GO TO 145
+         END IF
+
+         DO K = 1, N
+            Z( 2*K-1 ) = Z( 4*K-3 )
+!*
+!*        Only the block 1..N0 is unfinished.  The rest of the e's
+!*        must be essentially zero, although sometimes other data
+!*        has been stored in them.
+!*
+            IF( K.LT.N0 ) THEN
+               Z( 2*K ) = Z( 4*K-1 )
+            ELSE
+               Z( 2*K ) = 0
+            END IF
+         END DO
+         RETURN
+!*
+!*        end IWHILB
+!*
+  150    CONTINUE
+!*
+  160 CONTINUE
+!*
+      INFO = 3
+      RETURN
+!*
+!*     end IWHILA
+!*
+  170 CONTINUE
+!*
+!*     Move q's to the front.
+!*
+      DO 180 K = 2, N
+         Z( K ) = Z( 4*K-3 )
+  180 CONTINUE
+!*
+!*     Sort and compute sum of eigenvalues.
+!*
+      CALL DLASRT( 'D', N, Z, IINFO )
+!*
+      E = ZERO
+      DO 190 K = N, 1, -1
+         E = E + Z( K )
+  190 CONTINUE
+!*
+!*     Store trace, sum(eigenvalues) and information on performance.
+!*
+      Z( 2*N+1 ) = TRACE
+      Z( 2*N+2 ) = E
+      Z( 2*N+3 ) = DBLE( ITER )
+      Z( 2*N+4 ) = DBLE( NDIV ) / DBLE( N**2 )
+      Z( 2*N+5 ) = HUNDRD*NFAIL / DBLE( ITER )
+     
+END SUBROUTINE
+
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASQ3( I0, N0, Z, PP, DMIN, SIGMA, DESIG, QMAX, NFAIL, &
+ITER, NDIV, IEEE, TTYPE, DMIN1, DMIN2, DN, DN1, &
+DN2, G, TAU ) !GCC$ ATTRIBUTES hot :: DLASQ3 !GCC$ ATTRIBUTES aligned(32) :: DLASQ3
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DLASQ3( I0, N0, Z, PP, DMIN, SIGMA, DESIG, QMAX, NFAIL, &
+ITER, NDIV, IEEE, TTYPE, DMIN1, DMIN2, DN, DN1, &
+DN2, G, TAU )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASQ3
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASQ3
+#endif
+      implicit none
+
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      LOGICAL            IEEE
+      INTEGER            I0, ITER, N0, NDIV, NFAIL, PP
+      DOUBLE PRECISION   DESIG, DMIN, DMIN1, DMIN2, DN, DN1, DN2, G, &
+                         QMAX, SIGMA, TAU
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   Z( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   CBIAS
+      PARAMETER          ( CBIAS = 1.50D0 )
+      DOUBLE PRECISION   ZERO, QURTR, HALF, ONE, TWO, HUNDRD
+      PARAMETER          ( ZERO = 0.0D0, QURTR = 0.250D0, HALF = 0.5D0, &
+                           ONE = 1.0D0, TWO = 2.0D0, HUNDRD = 100.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            IPN4, J4, N0IN, NN, TTYPE
+      DOUBLE PRECISION   EPS, S, T, TEMP, TOL, TOL2
+!*     ..
+!*     .. External Subroutines ..
+      !EXTERNAL           DLASQ4, DLASQ5, DLASQ6
+!*     ..
+!*     .. External Function ..
+      DOUBLE PRECISION   DLAMCH
+      LOGICAL            DISNAN
+      EXTERNAL           DISNAN, DLAMCH
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, MIN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+      N0IN = N0
+      EPS = DLAMCH( 'Precision' )
+      TOL = EPS*HUNDRD
+      TOL2 = TOL**2
+!*
+!*     Check for deflation.
+!*
+   10 CONTINUE
+!*
+      IF( N0.LT.I0 ) &
+         RETURN
+      IF( N0.EQ.I0 ) &
+        GO TO 20
+      NN = 4*N0 + PP
+      IF( N0.EQ.( I0+1 ) ) &
+        GO TO 40
+!*
+!*     Check whether E(N0-1) is negligible, 1 eigenvalue.
+!*
+      IF( Z( NN-5 ).GT.TOL2*( SIGMA+Z( NN-3 ) ) .AND. &
+         Z( NN-2*PP-4 ).GT.TOL2*Z( NN-7 ) ) &
+        GO TO 30
+
+   20 CONTINUE
+
+      Z( 4*N0-3 ) = Z( 4*N0+PP-3 ) + SIGMA
+      N0 = N0 - 1
+      GO TO 10
+
+!*     Check  whether E(N0-2) is negligible, 2 eigenvalues.
+!*
+   30 CONTINUE
+!*
+      IF( Z( NN-9 ).GT.TOL2*SIGMA .AND. &
+         Z( NN-2*PP-8 ).GT.TOL2*Z( NN-11 ) ) &
+        GO TO 50
+!*
+   40 CONTINUE
+!*
+      IF( Z( NN-3 ).GT.Z( NN-7 ) ) THEN
+         S = Z( NN-3 )
+         Z( NN-3 ) = Z( NN-7 )
+         Z( NN-7 ) = S
+      END IF
+      T = HALF*( ( Z( NN-7 )-Z( NN-3 ) )+Z( NN-5 ) )
+      IF( Z( NN-5 ).GT.Z( NN-3 )*TOL2.AND.T.NE.ZERO ) THEN
+         S = Z( NN-3 )*( Z( NN-5 ) / T )
+         IF( S.LE.T ) THEN
+            S = Z( NN-3 )*( Z( NN-5 ) /
+               ( T*( ONE+SQRT( ONE+S / T ) ) ) ) &
+         ELSE
+            S = Z( NN-3 )*( Z( NN-5 ) / ( T+SQRT( T )*SQRT( T+S ) ) )
+         END IF
+         T = Z( NN-7 ) + ( S+Z( NN-5 ) )
+         Z( NN-3 ) = Z( NN-3 )*( Z( NN-7 ) / T )
+         Z( NN-7 ) = T
+      END IF
+      Z( 4*N0-7 ) = Z( NN-7 ) + SIGMA
+      Z( 4*N0-3 ) = Z( NN-3 ) + SIGMA
+      N0 = N0 - 2
+      GO TO 10
+
+   50 CONTINUE
+      IF( PP.EQ.2 ) &
+        PP = 0
+!*
+!*     Reverse the qd-array, if warranted.
+!*
+      IF( DMIN.LE.ZERO .OR. N0.LT.N0IN ) THEN
+         IF( CBIAS*Z( 4*I0+PP-3 ).LT.Z( 4*N0+PP-3 ) ) THEN
+            IPN4 = 4*( I0+N0 )
+            DO 60 J4 = 4*I0, 2*( I0+N0-1 ), 4
+               TEMP = Z( J4-3 )
+               Z( J4-3 ) = Z( IPN4-J4-3 )
+               Z( IPN4-J4-3 ) = TEMP
+               TEMP = Z( J4-2 )
+               Z( J4-2 ) = Z( IPN4-J4-2 )
+               Z( IPN4-J4-2 ) = TEMP
+               TEMP = Z( J4-1 )
+               Z( J4-1 ) = Z( IPN4-J4-5 )
+               Z( IPN4-J4-5 ) = TEMP
+               TEMP = Z( J4 )
+               Z( J4 ) = Z( IPN4-J4-4 )
+               Z( IPN4-J4-4 ) = TEMP
+   60       CONTINUE
+            IF( N0-I0.LE.4 ) THEN
+               Z( 4*N0+PP-1 ) = Z( 4*I0+PP-1 )
+               Z( 4*N0-PP ) = Z( 4*I0-PP )
+            END IF
+            DMIN2 = MIN( DMIN2, Z( 4*N0+PP-1 ) )
+            Z( 4*N0+PP-1 ) = MIN( Z( 4*N0+PP-1 ), Z( 4*I0+PP-1 ), &
+                                 Z( 4*I0+PP+3 ) )
+            Z( 4*N0-PP ) = MIN( Z( 4*N0-PP ), Z( 4*I0-PP ), &
+                               Z( 4*I0-PP+4 ) )
+            QMAX = MAX( QMAX, Z( 4*I0+PP-3 ), Z( 4*I0+PP+1 ) )
+            DMIN = -ZERO
+         END IF
+      END IF
+!*
+!*     Choose a shift.
+!*
+      CALL DLASQ4( I0, N0, Z, PP, N0IN, DMIN, DMIN1, DMIN2, DN, DN1, &
+                  DN2, TAU, TTYPE, G )
+!*
+!*     Call dqds until DMIN > 0.
+!*
+   70 CONTINUE
+!*
+      CALL DLASQ5( I0, N0, Z, PP, TAU, SIGMA, DMIN, DMIN1, DMIN2, DN, &
+                  DN1, DN2, IEEE, EPS )
+!*
+      NDIV = NDIV + ( N0-I0+2 )
+      ITER = ITER + 1
+!*
+!*     Check status.
+!*
+      IF( DMIN.GE.ZERO .AND. DMIN1.GE.ZERO ) THEN
+!*
+!*        Success.
+!*
+         GO TO 90
+!*
+      ELSE IF( DMIN.LT.ZERO .AND. DMIN1.GT.ZERO .AND. &
+              Z( 4*( N0-1 )-PP ).LT.TOL*( SIGMA+DN1 ) .AND. &
+              ABS( DN ).LT.TOL*SIGMA ) THEN
+!*
+!*        Convergence hidden by negative DN.
+!*
+         Z( 4*( N0-1 )-PP+2 ) = ZERO
+         DMIN = ZERO
+         GO TO 90
+      ELSE IF( DMIN.LT.ZERO ) THEN
+!*
+!*        TAU too big. Select new TAU and try again.
+!*
+         NFAIL = NFAIL + 1
+         IF( TTYPE.LT.-22 ) THEN
+!*
+!*           Failed twice. Play it safe.
+!*
+            TAU = ZERO
+         ELSE IF( DMIN1.GT.ZERO ) THEN
+!*
+!*           Late failure. Gives excellent shift.
+!*
+            TAU = ( TAU+DMIN )*( ONE-TWO*EPS )
+            TTYPE = TTYPE - 11
+         ELSE
+!*
+!*           Early failure. Divide by 4.
+!*
+            TAU = QURTR*TAU
+            TTYPE = TTYPE - 12
+         END IF
+         GO TO 70
+      ELSE IF( DISNAN( DMIN ) ) THEN
+!*
+!*        NaN.
+!*
+         IF( TAU.EQ.ZERO ) THEN
+            GO TO 80
+         ELSE
+            TAU = ZERO
+            GO TO 70
+         END IF
+      ELSE
+!*
+!*        Possible underflow. Play it safe.
+!*
+         GO TO 80
+      END IF
+!*
+!*     Risk of underflow.
+!*
+   80 CONTINUE
+      CALL DLASQ6( I0, N0, Z, PP, DMIN, DMIN1, DMIN2, DN, DN1, DN2 )
+      NDIV = NDIV + ( N0-I0+2 )
+      ITER = ITER + 1
+      TAU = ZERO
+!*
+   90 CONTINUE
+      IF( TAU.LT.SIGMA ) THEN
+         DESIG = DESIG + TAU
+         T = SIGMA + DESIG
+         DESIG = DESIG - ( T-SIGMA )
+      ELSE
+         T = SIGMA + TAU
+         DESIG = SIGMA - ( T-TAU ) + DESIG
+      END IF
+      SIGMA = T
+
+END SUBROUTINE
+
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASQ4( I0, N0, Z, PP, N0IN, DMIN, DMIN1, DMIN2, DN, &
+     DN1, DN2, TAU, TTYPE, G ) !!GCC$ ATTRIBUTES hot :: DLASQ4 !GCC$ ATTRIBUTES aligned(32) :: DLASQ4
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DLASQ4( I0, N0, Z, PP, N0IN, DMIN, DMIN1, DMIN2, DN, &
+     DN1, DN2, TAU, TTYPE, G )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASQ4
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASQ4
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            I0, N0, N0IN, PP, TTYPE
+      DOUBLE PRECISION   DMIN, DMIN1, DMIN2, DN, DN1, DN2, G, TAU
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   Z( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   CNST1, CNST2, CNST3
+      PARAMETER          ( CNST1 = 0.5630D0, CNST2 = 1.010D0, &
+                         CNST3 = 1.050D0 )
+      DOUBLE PRECISION   QURTR, THIRD, HALF, ZERO, ONE, TWO, HUNDRD
+      PARAMETER          ( QURTR = 0.250D0, THIRD = 0.3330D0, &
+                        HALF = 0.50D0, ZERO = 0.0D0, ONE = 1.0D0, &
+                        TWO = 2.0D0, HUNDRD = 100.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I4, NN, NP
+      DOUBLE PRECISION   A2, B1, B2, GAM, GAP1, GAP2, S
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MAX, MIN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     A negative DMIN forces the shift to take that absolute value
+!*     TTYPE records the type of shift.
+!*
+      IF( DMIN.LE.ZERO ) THEN
+         TAU = -DMIN
+         TTYPE = -1
+         RETURN
+      END IF
+!*
+      NN = 4*N0 + PP
+      IF( N0IN.EQ.N0 ) THEN
+!*!
+!*        No eigenvalues deflated.
+!*
+         IF( DMIN.EQ.DN .OR. DMIN.EQ.DN1 ) THEN
+!*
+            B1 = SQRT( Z( NN-3 ) )*SQRT( Z( NN-5 ) )
+            B2 = SQRT( Z( NN-7 ) )*SQRT( Z( NN-9 ) )
+            A2 = Z( NN-7 ) + Z( NN-5 )
+!*
+!*           Cases 2 and 3.
+!*
+            IF( DMIN.EQ.DN .AND. DMIN1.EQ.DN1 ) THEN
+               GAP2 = DMIN2 - A2 - DMIN2*QURTR
+               IF( GAP2.GT.ZERO .AND. GAP2.GT.B2 ) THEN
+                  GAP1 = A2 - DN - ( B2 / GAP2 )*B2
+               ELSE
+                  GAP1 = A2 - DN - ( B1+B2 )
+               END IF
+               IF( GAP1.GT.ZERO .AND. GAP1.GT.B1 ) THEN
+                  S = MAX( DN-( B1 / GAP1 )*B1, HALF*DMIN )
+                  TTYPE = -2
+               ELSE
+                  S = ZERO
+                  IF( DN.GT.B1 ) &
+                    S = DN - B1
+                  IF( A2.GT.( B1+B2 ) ) &
+                    S = MIN( S, A2-( B1+B2 ) )
+                  S = MAX( S, THIRD*DMIN )
+                  TTYPE = -3
+               END IF
+            ELSE
+!*
+!*              Case 4.
+!*
+               TTYPE = -4
+               S = QURTR*DMIN
+               IF( DMIN.EQ.DN ) THEN
+                  GAM = DN
+                  A2 = ZERO
+                  IF( Z( NN-5 ) .GT. Z( NN-7 ) ) &
+                    RETURN
+                  B2 = Z( NN-5 ) / Z( NN-7 )
+                  NP = NN - 9
+               ELSE
+                  NP = NN - 2*PP
+                  GAM = DN1
+                  IF( Z( NP-4 ) .GT. Z( NP-2 ) ) &
+                    RETURN
+                  A2 = Z( NP-4 ) / Z( NP-2 )
+                  IF( Z( NN-9 ) .GT. Z( NN-11 ) ) &
+                    RETURN
+                  B2 = Z( NN-9 ) / Z( NN-11 )
+                  NP = NN - 13
+               END IF
+!*
+!*              Approximate contribution to norm squared from I < NN-1.
+!*
+               A2 = A2 + B2
+               DO 10 I4 = NP, 4*I0 - 1 + PP, -4
+                  IF( B2.EQ.ZERO ) &
+                    GO TO 20
+                  B1 = B2
+                  IF( Z( I4 ) .GT. Z( I4-2 ) ) &
+                    RETURN
+                  B2 = B2*( Z( I4 ) / Z( I4-2 ) )
+                  A2 = A2 + B2
+                  IF( HUNDRD*MAX( B2, B1 ).LT.A2 .OR. CNST1.LT.A2 ) &
+                    GO TO 20
+   10          CONTINUE
+   20          CONTINUE
+               A2 = CNST3*A2
+!*
+!*              Rayleigh quotient residual bound.
+!*
+               IF( A2.LT.CNST1 ) &
+                 S = GAM*( ONE-SQRT( A2 ) ) / ( ONE+A2 )
+            END IF
+         ELSE IF( DMIN.EQ.DN2 ) THEN
+!*
+!*           Case 5.
+!*
+            TTYPE = -5
+            S = QURTR*DMIN
+!*
+!*           Compute contribution to norm squared from I > NN-2.
+!*
+            NP = NN - 2*PP
+            B1 = Z( NP-2 )
+            B2 = Z( NP-6 )
+            GAM = DN2
+            IF( Z( NP-8 ).GT.B2 .OR. Z( NP-4 ).GT.B1 ) &
+              RETURN
+            A2 = ( Z( NP-8 ) / B2 )*( ONE+Z( NP-4 ) / B1 )
+!*
+!*           Approximate contribution to norm squared from I < NN-2.
+!*
+            IF( N0-I0.GT.2 ) THEN
+               B2 = Z( NN-13 ) / Z( NN-15 )
+               A2 = A2 + B2
+               DO 30 I4 = NN - 17, 4*I0 - 1 + PP, -4
+                  IF( B2.EQ.ZERO ) &
+                    GO TO 40
+                  B1 = B2
+                  IF( Z( I4 ) .GT. Z( I4-2 ) ) &
+                    RETURN
+                  B2 = B2*( Z( I4 ) / Z( I4-2 ) )
+                  A2 = A2 + B2
+                  IF( HUNDRD*MAX( B2, B1 ).LT.A2 .OR. CNST1.LT.A2 ) &
+                    GO TO 40
+   30          CONTINUE
+   40          CONTINUE
+               A2 = CNST3*A2
+            END IF
+
+            IF( A2.LT.CNST1 ) &
+              S = GAM*( ONE-SQRT( A2 ) ) / ( ONE+A2 )
+         ELSE
+!*
+!*           Case 6, no information to guide us.
+!*
+            IF( TTYPE.EQ.-6 ) THEN
+               G = G + THIRD*( ONE-G )
+            ELSE IF( TTYPE.EQ.-18 ) THEN
+               G = QURTR*THIRD
+            ELSE
+               G = QURTR
+            END IF
+            S = G*DMIN
+            TTYPE = -6
+         END IF
+!*
+      ELSE IF( N0IN.EQ.( N0+1 ) ) THEN
+!*
+!*        One eigenvalue just deflated. Use DMIN1, DN1 for DMIN and DN.
+!*
+         IF( DMIN1.EQ.DN1 .AND. DMIN2.EQ.DN2 ) THEN
+!*
+!*           Cases 7 and 8.
+!*
+            TTYPE = -7
+            S = THIRD*DMIN1
+            IF( Z( NN-5 ).GT.Z( NN-7 ) ) &
+              RETURN
+            B1 = Z( NN-5 ) / Z( NN-7 )
+            B2 = B1
+            IF( B2.EQ.ZERO ) &
+              GO TO 60
+            DO 50 I4 = 4*N0 - 9 + PP, 4*I0 - 1 + PP, -4
+               A2 = B1
+               IF( Z( I4 ).GT.Z( I4-2 ) ) &
+                 RETURN
+               B1 = B1*( Z( I4 ) / Z( I4-2 ) )
+               B2 = B2 + B1
+               IF( HUNDRD*MAX( B1, A2 ).LT.B2 ) &
+                 GO TO 60
+   50       CONTINUE
+   60       CONTINUE
+            B2 = SQRT( CNST3*B2 )
+            A2 = DMIN1 / ( ONE+B2**2 )
+            GAP2 = HALF*DMIN2 - A2
+            IF( GAP2.GT.ZERO .AND. GAP2.GT.B2*A2 ) THEN
+               S = MAX( S, A2*( ONE-CNST2*A2*( B2 / GAP2 )*B2 ) )
+            ELSE
+               S = MAX( S, A2*( ONE-CNST2*B2 ) )
+               TTYPE = -8
+            END IF
+         ELSE
+!*
+!*           Case 9.
+!*
+            S = QURTR*DMIN1
+            IF( DMIN1.EQ.DN1 ) &
+             S = HALF*DMIN1
+            TTYPE = -9
+         END IF
+!*
+      ELSE IF( N0IN.EQ.( N0+2 ) ) THEN
+!*
+!*        Two eigenvalues deflated. Use DMIN2, DN2 for DMIN and DN.
+!*
+!*        Cases 10 and 11.
+!*
+         IF( DMIN2.EQ.DN2 .AND. TWO*Z( NN-5 ).LT.Z( NN-7 ) ) THEN
+            TTYPE = -10
+            S = THIRD*DMIN2
+            IF( Z( NN-5 ).GT.Z( NN-7 ) ) &
+              RETURN
+            B1 = Z( NN-5 ) / Z( NN-7 )
+            B2 = B1
+            IF( B2.EQ.ZERO ) &
+              GO TO 80
+            DO 70 I4 = 4*N0 - 9 + PP, 4*I0 - 1 + PP, -4
+               IF( Z( I4 ).GT.Z( I4-2 ) ) &
+                 RETURN
+               B1 = B1*( Z( I4 ) / Z( I4-2 ) )
+               B2 = B2 + B1
+               IF( HUNDRD*B1.LT.B2 ) &
+                 GO TO 80
+   70       CONTINUE
+   80       CONTINUE
+            B2 = SQRT( CNST3*B2 )
+            A2 = DMIN2 / ( ONE+B2**2 )
+            GAP2 = Z( NN-7 ) + Z( NN-9 ) - &
+                  SQRT( Z( NN-11 ) )*SQRT( Z( NN-9 ) ) - A2
+            IF( GAP2.GT.ZERO .AND. GAP2.GT.B2*A2 ) THEN
+               S = MAX( S, A2*( ONE-CNST2*A2*( B2 / GAP2 )*B2 ) )
+            ELSE
+               S = MAX( S, A2*( ONE-CNST2*B2 ) )
+            END IF
+         ELSE
+            S = QURTR*DMIN2
+            TTYPE = -11
+         END IF
+      ELSE IF( N0IN.GT.( N0+2 ) ) THEN
+!*
+!*        Case 12, more than two eigenvalues deflated. No information.
+!*
+         S = ZERO
+         TTYPE = -12
+      END IF
+
+      TAU = S
+   
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASQ5( I0, N0, Z, PP, TAU, SIGMA, DMIN, DMIN1, DMIN2, &
+     DN, DNM1, DNM2, IEEE, EPS ) !GCC$ ATTRIBUTES hot :: DLASQ5 !GCC$ ATTRIBUTES aligned(32) :: DLASQ5
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DLASQ5( I0, N0, Z, PP, TAU, SIGMA, DMIN, DMIN1, DMIN2, &
+     DN, DNM1, DNM2, IEEE, EPS )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASQ5
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASQ5
+#endif
+      implicit none
+
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      LOGICAL            IEEE
+      INTEGER            I0, N0, PP
+      DOUBLE PRECISION   DMIN, DMIN1, DMIN2, DN, DNM1, DNM2, TAU, &
+                        SIGMA, EPS
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   Z( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameter ..
+      DOUBLE PRECISION   ZERO, HALF
+      PARAMETER          ( ZERO = 0.0D0, HALF = 0.5 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            J4, J4P2
+      DOUBLE PRECISION   D, EMIN, TEMP, DTHRESH
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MIN
+!*     ..
+*!     .. Executable Statements ..
+!*
+      IF( ( N0-I0-1 ).LE.0 ) &
+        RETURN
+!*
+      DTHRESH = EPS*(SIGMA+TAU)
+      IF( TAU.LT.DTHRESH*HALF ) TAU = ZERO
+      IF( TAU.NE.ZERO ) THEN
+      J4 = 4*I0 + PP - 3
+      EMIN = Z( J4+4 )
+      D = Z( J4 ) - TAU
+      DMIN = D
+      DMIN1 = -Z( J4 )
+
+      IF( IEEE ) THEN
+!*
+!*        Code for IEEE arithmetic.
+!*
+         IF( PP.EQ.0 ) THEN
+            DO 10 J4 = 4*I0, 4*( N0-3 ), 4
+               Z( J4-2 ) = D + Z( J4-1 )
+               TEMP = Z( J4+1 ) / Z( J4-2 )
+               D = D*TEMP - TAU
+               DMIN = MIN( DMIN, D )
+               Z( J4 ) = Z( J4-1 )*TEMP
+               EMIN = MIN( Z( J4 ), EMIN )
+   10       CONTINUE
+         ELSE
+            DO 20 J4 = 4*I0, 4*( N0-3 ), 4
+               Z( J4-3 ) = D + Z( J4 )
+               TEMP = Z( J4+2 ) / Z( J4-3 )
+               D = D*TEMP - TAU
+               DMIN = MIN( DMIN, D )
+               Z( J4-1 ) = Z( J4 )*TEMP
+               EMIN = MIN( Z( J4-1 ), EMIN )
+   20       CONTINUE
+         END IF
+!*
+!*        Unroll last two steps.
+!*
+         DNM2 = D
+         DMIN2 = DMIN
+         J4 = 4*( N0-2 ) - PP
+         J4P2 = J4 + 2*PP - 1
+         Z( J4-2 ) = DNM2 + Z( J4P2 )
+         Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+         DNM1 = Z( J4P2+2 )*( DNM2 / Z( J4-2 ) ) - TAU
+         DMIN = MIN( DMIN, DNM1 )
+!*
+         DMIN1 = DMIN
+         J4 = J4 + 4
+         J4P2 = J4 + 2*PP - 1
+         Z( J4-2 ) = DNM1 + Z( J4P2 )
+         Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+         DN = Z( J4P2+2 )*( DNM1 / Z( J4-2 ) ) - TAU
+         DMIN = MIN( DMIN, DN )
+!*
+      ELSE
+!*
+!*        Code for non IEEE arithmetic.
+!*
+         IF( PP.EQ.0 ) THEN
+            DO 30 J4 = 4*I0, 4*( N0-3 ), 4
+               Z( J4-2 ) = D + Z( J4-1 )
+               IF( D.LT.ZERO ) THEN
+                  RETURN
+               ELSE
+                  Z( J4 ) = Z( J4+1 )*( Z( J4-1 ) / Z( J4-2 ) )
+                  D = Z( J4+1 )*( D / Z( J4-2 ) ) - TAU
+               END IF
+               DMIN = MIN( DMIN, D )
+               EMIN = MIN( EMIN, Z( J4 ) )
+   30       CONTINUE
+         ELSE
+            DO 40 J4 = 4*I0, 4*( N0-3 ), 4
+               Z( J4-3 ) = D + Z( J4 )
+               IF( D.LT.ZERO ) THEN
+                  RETURN
+               ELSE
+                  Z( J4-1 ) = Z( J4+2 )*( Z( J4 ) / Z( J4-3 ) )
+                  D = Z( J4+2 )*( D / Z( J4-3 ) ) - TAU
+               END IF
+               DMIN = MIN( DMIN, D )
+               EMIN = MIN( EMIN, Z( J4-1 ) )
+   40       CONTINUE
+         END IF
+!*
+!*        Unroll last two steps.
+!*
+         DNM2 = D
+         DMIN2 = DMIN
+         J4 = 4*( N0-2 ) - PP
+         J4P2 = J4 + 2*PP - 1
+         Z( J4-2 ) = DNM2 + Z( J4P2 )
+         IF( DNM2.LT.ZERO ) THEN
+            RETURN
+         ELSE
+            Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+            DNM1 = Z( J4P2+2 )*( DNM2 / Z( J4-2 ) ) - TAU
+         END IF
+         DMIN = MIN( DMIN, DNM1 )
+!*
+         DMIN1 = DMIN
+         J4 = J4 + 4
+         J4P2 = J4 + 2*PP - 1
+         Z( J4-2 ) = DNM1 + Z( J4P2 )
+         IF( DNM1.LT.ZERO ) THEN
+            RETURN
+         ELSE
+            Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+            DN = Z( J4P2+2 )*( DNM1 / Z( J4-2 ) ) - TAU
+         END IF
+         DMIN = MIN( DMIN, DN )
+!*
+      END IF
+      ELSE
+!*     This is the version that sets d's to zero if they are small enough
+         J4 = 4*I0 + PP - 3
+         EMIN = Z( J4+4 )
+         D = Z( J4 ) - TAU
+         DMIN = D
+         DMIN1 = -Z( J4 )
+         IF( IEEE ) THEN
+!*
+!*     Code for IEEE arithmetic.
+!*
+            IF( PP.EQ.0 ) THEN
+               DO 50 J4 = 4*I0, 4*( N0-3 ), 4
+                  Z( J4-2 ) = D + Z( J4-1 )
+                  TEMP = Z( J4+1 ) / Z( J4-2 )
+                  D = D*TEMP - TAU
+                  IF( D.LT.DTHRESH ) D = ZERO
+                  DMIN = MIN( DMIN, D )
+                  Z( J4 ) = Z( J4-1 )*TEMP
+                  EMIN = MIN( Z( J4 ), EMIN )
+ 50            CONTINUE
+            ELSE
+               DO 60 J4 = 4*I0, 4*( N0-3 ), 4
+                  Z( J4-3 ) = D + Z( J4 )
+                  TEMP = Z( J4+2 ) / Z( J4-3 )
+                  D = D*TEMP - TAU
+                  IF( D.LT.DTHRESH ) D = ZERO
+                  DMIN = MIN( DMIN, D )
+                  Z( J4-1 ) = Z( J4 )*TEMP
+                  EMIN = MIN( Z( J4-1 ), EMIN )
+ 60            CONTINUE
+            END IF
+!*
+!*     Unroll last two steps.
+!*
+            DNM2 = D
+            DMIN2 = DMIN
+            J4 = 4*( N0-2 ) - PP
+            J4P2 = J4 + 2*PP - 1
+            Z( J4-2 ) = DNM2 + Z( J4P2 )
+            Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+            DNM1 = Z( J4P2+2 )*( DNM2 / Z( J4-2 ) ) - TAU
+            DMIN = MIN( DMIN, DNM1 )
+!*
+            DMIN1 = DMIN
+            J4 = J4 + 4
+            J4P2 = J4 + 2*PP - 1
+            Z( J4-2 ) = DNM1 + Z( J4P2 )
+            Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+            DN = Z( J4P2+2 )*( DNM1 / Z( J4-2 ) ) - TAU
+            DMIN = MIN( DMIN, DN )
+!*
+         ELSE
+!*
+!*     Code for non IEEE arithmetic.
+!*
+            IF( PP.EQ.0 ) THEN
+               DO 70 J4 = 4*I0, 4*( N0-3 ), 4
+                  Z( J4-2 ) = D + Z( J4-1 )
+                  IF( D.LT.ZERO ) THEN
+                     RETURN
+                  ELSE
+                     Z( J4 ) = Z( J4+1 )*( Z( J4-1 ) / Z( J4-2 ) )
+                     D = Z( J4+1 )*( D / Z( J4-2 ) ) - TAU
+                  END IF
+                  IF( D.LT.DTHRESH) D = ZERO
+                  DMIN = MIN( DMIN, D )
+                  EMIN = MIN( EMIN, Z( J4 ) )
+ 70            CONTINUE
+            ELSE
+               DO 80 J4 = 4*I0, 4*( N0-3 ), 4
+                  Z( J4-3 ) = D + Z( J4 )
+                  IF( D.LT.ZERO ) THEN
+                     RETURN
+                  ELSE
+                     Z( J4-1 ) = Z( J4+2 )*( Z( J4 ) / Z( J4-3 ) )
+                     D = Z( J4+2 )*( D / Z( J4-3 ) ) - TAU
+                  END IF
+                  IF( D.LT.DTHRESH) D = ZERO
+                  DMIN = MIN( DMIN, D )
+                  EMIN = MIN( EMIN, Z( J4-1 ) )
+ 80            CONTINUE
+            END IF
+!*
+!*     Unroll last two steps.
+!*
+            DNM2 = D
+            DMIN2 = DMIN
+            J4 = 4*( N0-2 ) - PP
+            J4P2 = J4 + 2*PP - 1
+            Z( J4-2 ) = DNM2 + Z( J4P2 )
+            IF( DNM2.LT.ZERO ) THEN
+               RETURN
+            ELSE
+               Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+               DNM1 = Z( J4P2+2 )*( DNM2 / Z( J4-2 ) ) - TAU
+            END IF
+            DMIN = MIN( DMIN, DNM1 )
+!*
+            DMIN1 = DMIN
+            J4 = J4 + 4
+            J4P2 = J4 + 2*PP - 1
+            Z( J4-2 ) = DNM1 + Z( J4P2 )
+            IF( DNM1.LT.ZERO ) THEN
+               RETURN
+            ELSE
+               Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+               DN = Z( J4P2+2 )*( DNM1 / Z( J4-2 ) ) - TAU
+            END IF
+            DMIN = MIN( DMIN, DN )
+!*
+         END IF
+      END IF
+!*
+      Z( J4+2 ) = DN
+      Z( 4*N0-PP ) = EMIN
+   
+END SUBROUTINE
+
+    
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      SUBROUTINE DLASQ6( I0, N0, Z, PP, DMIN, DMIN1, DMIN2, DN, &
+           DNM1, DNM2 ) !GCC$ ATTRIBUTES hot :: DLASQ6 !GCC$ ATTRIBUTES aligned(32) :: DLASQ6
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+ SUBROUTINE DLASQ6( I0, N0, Z, PP, DMIN, DMIN1, DMIN2, DN, &
+      DNM1, DNM2 )
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASQ6
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASQ6
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            I0, N0, PP
+      DOUBLE PRECISION   DMIN, DMIN1, DMIN2, DN, DNM1, DNM2
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   Z( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameter ..
+      DOUBLE PRECISION   ZERO
+      PARAMETER          ( ZERO = 0.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            J4, J4P2
+      DOUBLE PRECISION   D, EMIN, SAFMIN, TEMP
+!*     ..
+!*     .. External Function ..
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MIN
+!*     ..
+!*     .. Executable Statements ..
+!*
+      IF( ( N0-I0-1 ).LE.0 ) RETURN
+      
+
+      SAFMIN = DLAMCH( 'Safe minimum' )
+      J4 = 4*I0 + PP - 3
+      EMIN = Z( J4+4 )
+      D = Z( J4 )
+      DMIN = D
+
+      IF( PP.EQ.0 ) THEN
+         DO 10 J4 = 4*I0, 4*( N0-3 ), 4
+            Z( J4-2 ) = D + Z( J4-1 )
+            IF( Z( J4-2 ).EQ.ZERO ) THEN
+               Z( J4 ) = ZERO
+               D = Z( J4+1 )
+               DMIN = D
+               EMIN = ZERO
+            ELSE IF( SAFMIN*Z( J4+1 ).LT.Z( J4-2 ) .AND. &
+                    SAFMIN*Z( J4-2 ).LT.Z( J4+1 ) ) THEN
+               TEMP = Z( J4+1 ) / Z( J4-2 )
+               Z( J4 ) = Z( J4-1 )*TEMP
+               D = D*TEMP
+            ELSE
+               Z( J4 ) = Z( J4+1 )*( Z( J4-1 ) / Z( J4-2 ) )
+               D = Z( J4+1 )*( D / Z( J4-2 ) )
+            END IF
+            DMIN = MIN( DMIN, D )
+            EMIN = MIN( EMIN, Z( J4 ) )
+   10    CONTINUE
+      ELSE
+         DO 20 J4 = 4*I0, 4*( N0-3 ), 4
+            Z( J4-3 ) = D + Z( J4 )
+            IF( Z( J4-3 ).EQ.ZERO ) THEN
+               Z( J4-1 ) = ZERO
+               D = Z( J4+2 )
+               DMIN = D
+               EMIN = ZERO
+            ELSE IF( SAFMIN*Z( J4+2 ).LT.Z( J4-3 ) .AND. &
+                    SAFMIN*Z( J4-3 ).LT.Z( J4+2 ) ) THEN
+               TEMP = Z( J4+2 ) / Z( J4-3 )
+               Z( J4-1 ) = Z( J4 )*TEMP
+               D = D*TEMP
+            ELSE
+               Z( J4-1 ) = Z( J4+2 )*( Z( J4 ) / Z( J4-3 ) )
+               D = Z( J4+2 )*( D / Z( J4-3 ) )
+            END IF
+            DMIN = MIN( DMIN, D )
+            EMIN = MIN( EMIN, Z( J4-1 ) )
+   20    CONTINUE
+      END IF
+!*
+!*     Unroll last two steps.
+!*
+      DNM2 = D
+      DMIN2 = DMIN
+      J4 = 4*( N0-2 ) - PP
+      J4P2 = J4 + 2*PP - 1
+      Z( J4-2 ) = DNM2 + Z( J4P2 )
+      IF( Z( J4-2 ).EQ.ZERO ) THEN
+         Z( J4 ) = ZERO
+         DNM1 = Z( J4P2+2 )
+         DMIN = DNM1
+         EMIN = ZERO
+      ELSE IF( SAFMIN*Z( J4P2+2 ).LT.Z( J4-2 ) .AND. &
+              SAFMIN*Z( J4-2 ).LT.Z( J4P2+2 ) ) THEN
+         TEMP = Z( J4P2+2 ) / Z( J4-2 )
+         Z( J4 ) = Z( J4P2 )*TEMP
+         DNM1 = DNM2*TEMP
+      ELSE
+         Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+         DNM1 = Z( J4P2+2 )*( DNM2 / Z( J4-2 ) )
+      END IF
+      DMIN = MIN( DMIN, DNM1 )
+
+      DMIN1 = DMIN
+      J4 = J4 + 4
+      J4P2 = J4 + 2*PP - 1
+      Z( J4-2 ) = DNM1 + Z( J4P2 )
+      IF( Z( J4-2 ).EQ.ZERO ) THEN
+         Z( J4 ) = ZERO
+         DN = Z( J4P2+2 )
+         DMIN = DN
+         EMIN = ZERO
+      ELSE IF( SAFMIN*Z( J4P2+2 ).LT.Z( J4-2 ) .AND. &
+              SAFMIN*Z( J4-2 ).LT.Z( J4P2+2 ) ) THEN
+         TEMP = Z( J4P2+2 ) / Z( J4-2 )
+         Z( J4 ) = Z( J4P2 )*TEMP
+         DN = DNM1*TEMP
+      ELSE
+         Z( J4 ) = Z( J4P2+2 )*( Z( J4P2 ) / Z( J4-2 ) )
+         DN = Z( J4P2+2 )*( DNM1 / Z( J4-2 ) )
+      END IF
+      DMIN = MIN( DMIN, DN )
+
+      Z( J4+2 ) = DN
+      Z( 4*N0-PP ) = EMIN
+ 
+END SUBROUTINE
+
+    
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DLASRT( ID, N, D, INFO ) !GCC$ ATTRIBUTES hot :: DLASRT !GCC$ ATTRIBUTES aligned(32) :: DLASRT
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLASRT( ID, N, D, INFO )
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASRT
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASRT
+#endif
+       implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          ID
+      INTEGER            INFO, N
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   D( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      INTEGER            SELECT
+      PARAMETER          ( SELECT = 20 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            DIR, ENDD, I, J, START, STKPNT
+      DOUBLE PRECISION   D1, D2, D3, DMNMX, TMP
+!*     ..
+!*     .. Local Arrays ..
+      INTEGER            STACK( 2, 32 )
+!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+!*     ..
+!*     .. External Subroutines ..
+!      EXTERNAL           XERBLA
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+      DIR = -1
+      IF( LSAME( ID, 'D' ) ) THEN
+         DIR = 0
+      ELSE IF( LSAME( ID, 'I' ) ) THEN
+         DIR = 1
+      END IF
+      IF( DIR.EQ.-1 ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      END IF
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DLASRT', -INFO )
+         RETURN
+      END IF
+!*
+!*     Quick return if possible
+!*
+      !IF( N.LE.1 ) 
+    
+!*
+      STKPNT = 1
+      STACK( 1, 1 ) = 1
+      STACK( 2, 1 ) = N
+   10 CONTINUE
+      START = STACK( 1, STKPNT )
+      ENDD = STACK( 2, STKPNT )
+      STKPNT = STKPNT - 1
+      IF( ENDD-START.LE.SELECT .AND. ENDD-START.GT.0 ) THEN
+!*
+!*        Do Insertion sort on D( START:ENDD )
+!*
+         IF( DIR.EQ.0 ) THEN
+!*
+!*           Sort into decreasing order
+!*
+            DO 30 I = START + 1, ENDD
+               DO 20 J = I, START + 1, -1
+                  IF( D( J ).GT.D( J-1 ) ) THEN
+                     DMNMX = D( J )
+                     D( J ) = D( J-1 )
+                     D( J-1 ) = DMNMX
+                  ELSE
+                     GO TO 30
+                  END IF
+   20          CONTINUE
+   30       CONTINUE
+!*
+         ELSE
+!*
+!*           Sort into increasing order
+!*
+            DO 50 I = START + 1, ENDD
+               DO 40 J = I, START + 1, -1
+                  IF( D( J ).LT.D( J-1 ) ) THEN
+                     DMNMX = D( J )
+                     D( J ) = D( J-1 )
+                     D( J-1 ) = DMNMX
+                  ELSE
+                     GO TO 50
+                  END IF
+   40          CONTINUE
+   50       CONTINUE
+!*
+         END IF
+!*
+      ELSE IF( ENDD-START.GT.SELECT ) THEN
+!*
+!*        Partition D( START:ENDD ) and stack parts, largest one first
+!*
+!*        Choose partition entry as median of 3
+!*
+         D1 = D( START )
+         D2 = D( ENDD )
+         I = ( START+ENDD ) / 2
+         D3 = D( I )
+         IF( D1.LT.D2 ) THEN
+            IF( D3.LT.D1 ) THEN
+               DMNMX = D1
+            ELSE IF( D3.LT.D2 ) THEN
+               DMNMX = D3
+            ELSE
+               DMNMX = D2
+            END IF
+         ELSE
+            IF( D3.LT.D2 ) THEN
+               DMNMX = D2
+            ELSE IF( D3.LT.D1 ) THEN
+               DMNMX = D3
+            ELSE
+               DMNMX = D1
+            END IF
+         END IF
+!*
+         IF( DIR.EQ.0 ) THEN
+!*
+!*           Sort into decreasing order
+!*
+            I = START - 1
+            J = ENDD + 1
+   60       CONTINUE
+   70       CONTINUE
+            J = J - 1
+            IF( D( J ).LT.DMNMX ) &
+               GO TO 70
+   80       CONTINUE
+            I = I + 1
+            IF( D( I ).GT.DMNMX ) &
+              GO TO 80
+            IF( I.LT.J ) THEN
+               TMP = D( I )
+               D( I ) = D( J )
+               D( J ) = TMP
+               GO TO 60
+            END IF
+            IF( J-START.GT.ENDD-J-1 ) THEN
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = START
+               STACK( 2, STKPNT ) = J
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = J + 1
+               STACK( 2, STKPNT ) = ENDD
+            ELSE
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = J + 1
+               STACK( 2, STKPNT ) = ENDD
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = START
+               STACK( 2, STKPNT ) = J
+            END IF
+         ELSE
+!*
+!*           Sort into increasing order
+!*
+            I = START - 1
+            J = ENDD + 1
+   90       CONTINUE
+  100       CONTINUE
+            J = J - 1
+            IF( D( J ).GT.DMNMX ) &
+              GO TO 100
+  110       CONTINUE
+            I = I + 1
+            IF( D( I ).LT.DMNMX ) &
+              GO TO 110
+            IF( I.LT.J ) THEN
+               TMP = D( I )
+               D( I ) = D( J )
+               D( J ) = TMP
+               GO TO 90
+            END IF
+            IF( J-START.GT.ENDD-J-1 ) THEN
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = START
+               STACK( 2, STKPNT ) = J
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = J + 1
+               STACK( 2, STKPNT ) = ENDD
+            ELSE
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = J + 1
+               STACK( 2, STKPNT ) = ENDD
+               STKPNT = STKPNT + 1
+               STACK( 1, STKPNT ) = START
+               STACK( 2, STKPNT ) = J
+            END IF
+         END IF
+      END IF
+      IF( STKPNT.GT.0 ) &
+         GO TO 10
+    
+END SUBROUTINE
