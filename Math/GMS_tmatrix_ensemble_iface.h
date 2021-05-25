@@ -30,8 +30,7 @@ extern "C" {
 
      // Fortran version
 
-    /* subroutine tmatrix_mps_driver(analysis_type,pmc_loop744,pmc_loop965,pmc_loop1097,pmc_loop1179, &
-                                    pmc_loop1778,pmc_loop1828,pmc_loop2039,pmc_loop2092,pmc_loop2323, &
+    /* subroutine tmatrix_mps_driver(&
                                     idMie,small,MXINT,NADD,idscmt,sang,w,irat, &
                                     nL,idshp,shp,r0,cext,cabs,csca,assym,cextv,cabsv, &
                                     cscav,cbakv,cprv,cexts,cabss,cscas,cbaks,cprs, &
@@ -40,10 +39,7 @@ extern "C" {
     
 !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: tmatrix_mps_driver
           include 'tmatrix_mps_np.inc'
-          integer(kind=int4)                   :: analysis_type
-          integer(kind=int4)                   :: pmc_loop744,pmc_loop965,pmc_loop1097,pmc_loop1179, &
-                                                  pmc_loop1778,pmc_loop1828,pmc_loop2039,pmc_loop2092, &
-                                                  pmc_loop2323
+          
           integer(kind=int4)                   :: idMie
           real(kind=dp)                        :: small
           integer(kind=int4)                   :: MXINT,NADD,idscmt
@@ -59,16 +55,7 @@ extern "C" {
           real(kind=dp),    dimension(nLp)     :: cexti,cabsi,cscai,assymi,cpri
           real(kind=dp),    dimension(4,4,NANGMAX) :: mue */
 
-     void  mod_tmatrix_mps_mp_tmatrix_mps_driver_(int *,
-                                                  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
+     void  mod_tmatrix_mps_mp_tmatrix_mps_driver_(
 						  int *,
 						  double *,
 						  int *,
@@ -111,16 +98,7 @@ extern "C" {
 
 #elif defined __GNUC__  || defined __GFORTRAN__ && !defined __INTEL_COMPILER
 
-      __mod_tmatrix_mps_MOD_tmatrix_mps_driver(   int *,
-                                                  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
-						  int *,
+      __mod_tmatrix_mps_MOD_tmatrix_mps_driver(   
 						  int *,
 						  double *,
 						  int *,
