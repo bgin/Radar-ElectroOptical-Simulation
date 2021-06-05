@@ -19,6 +19,9 @@ namespace file_info {
 
 #include <math.h>
 #include <cstdint>
+#if defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#include <omp.h>
+#endif
 #include "GMS_config.h"
 #include "GMS_cephes.h" // to eliminate cmath.h implemented by GLIBC
                         // used only in scalar code.
