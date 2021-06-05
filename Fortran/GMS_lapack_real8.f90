@@ -2813,8 +2813,7 @@ SUBROUTINE DGESVD( JOBU, JOBVT, M, N, A, LDA, S, U, LDU, &
       DOUBLE PRECISION   DUM( 1 )
 !*     ..
 !*     .. External Subroutines ..
-      EXTERNAL           DGEMM,DLACPY, &
-                         DLASCL, DLASET
+      EXTERNAL           DGEMM
                         
 !*     ..
 !*     .. External Functions ..
@@ -6602,7 +6601,7 @@ SUBROUTINE DLASQ1( N, D, E, WORK, INFO ) !GCC$ ATTRIBUTES hot :: DLASQ1 !GCC$ AT
       DOUBLE PRECISION   EPS, SCALE, SAFMIN, SIGMN, SIGMX, TMP0
 !*     ..
 !*     .. External Subroutines ..
-      EXTERNAL           DCOPY, DLASCL, DLASQ2, DLASRT
+      EXTERNAL           DCOPY
 
 !*     ..
 !*     .. External Functions ..
@@ -11211,7 +11210,7 @@ SUBROUTINE DGESVXX( FACT, TRANS, N, NRHS, A, LDA, AF, LDAF, IPIV, &
       END IF
 
       IF( INFO.NE.0 ) THEN
-         CALL XERBLA( 'DGESVXX', -INFO )
+         !CALL XERBLA( 'DGESVXX', -INFO )
          RETURN
       END IF
 
@@ -11301,6 +11300,1569 @@ SUBROUTINE DGESVXX( FACT, TRANS, N, NRHS, A, LDA, AF, LDAF, IPIV, &
 
 END SUBROUTINE
 
+!*  Authors:
+!*  ========
+!*
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup doubleGEsolve
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DGELSS( M, N, NRHS, A, LDA, B, LDB, S, RCOND, RANK, &
+     WORK, LWORK, INFO ) !GCC$ ATTRIBUTES hot :: DGELSS !GCC$ ATTRIBUTES aligned(32) :: DGELSS
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DGELSS( M, N, NRHS, A, LDA, B, LDB, S, RCOND, RANK, &
+     WORK, LWORK, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DGELSS
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DGELSS
+#endif
+!*
+!*  -- LAPACK driver routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDB, LWORK, M, N, NRHS, RANK
+      DOUBLE PRECISION   RCOND
+!*     ..
+!*!     .. Array Arguments ..
+      ! DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), S( * ), WORK( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            LQUERY
+      INTEGER            BDSPAC, BL, CHUNK, I, IASCL, IBSCL, IE, IL, &
+                        ITAU, ITAUP, ITAUQ, IWORK, LDWORK, MAXMN, &
+                        MAXWRK, MINMN, MINWRK, MM, MNTHR
+      INTEGER            LWORK_DGEQRF, LWORK_DORMQR, LWORK_DGEBRD, &
+                        LWORK_DORMBR, LWORK_DORGBR, LWORK_DORMLQ, &
+                        LWORK_DGELQF
+      DOUBLE PRECISION   ANRM, BIGNUM, BNRM, EPS, SFMIN, SMLNUM, THR
+!*     ..
+!*     .. Local Arrays ..
+      DOUBLE PRECISION   DUM( 1 )
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL            DCOPY, DGEMM, DGEMV
+     !$                   DGEQRF, DLABAD, DLACPY, DLASCL, DLASET, DORGBR,
+     !$                   DORMBR, DORMLQ, DORMQR, DRSCL
+!*     ..
+!*     .. External Functions ..
+      INTEGER            ILAENV
+      DOUBLE PRECISION   DLAMCH, DLANGE
+      EXTERNAL           ILAENV, DLAMCH, DLANGE
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MAX, MIN
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input arguments
+!*
+      INFO = 0
+      MINMN = MIN( M, N )
+      MAXMN = MAX( M, N )
+      LQUERY = ( LWORK.EQ.-1 )
+      IF( M.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( NRHS.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -5
+      ELSE IF( LDB.LT.MAX( 1, MAXMN ) ) THEN
+         INFO = -7
+      END IF
+!*
+!*     Compute workspace
+!*      (Note: Comments in the code beginning "Workspace:" describe the
+!*       minimal amount of workspace needed at that point in the code,
+!*       as well as the preferred amount for good performance.
+!*       NB refers to the optimal block size for the immediately
+!*       following subroutine, as returned by ILAENV.)
+!*
+      IF( INFO.EQ.0 ) THEN
+         MINWRK = 1
+         MAXWRK = 1
+         IF( MINMN.GT.0 ) THEN
+            MM = M
+            MNTHR = ILAENV( 6, 'DGELSS', ' ', M, N, NRHS, -1 )
+            IF( M.GE.N .AND. M.GE.MNTHR ) THEN
+!*
+!*              Path 1a - overdetermined, with many more rows than
+!*                        columns
+!*
+!*              Compute space needed for DGEQRF
+               CALL DGEQRF( M, N, A, LDA, DUM(1), DUM(1), -1, INFO )
+               LWORK_DGEQRF=DUM(1)
+!*              Compute space needed for DORMQR
+               CALL DORMQR( 'L', 'T', M, NRHS, N, A, LDA, DUM(1), B, &
+                        LDB, DUM(1), -1, INFO )
+               LWORK_DORMQR=DUM(1)
+               MM = N
+               MAXWRK = MAX( MAXWRK, N + LWORK_DGEQRF )
+               MAXWRK = MAX( MAXWRK, N + LWORK_DORMQR )
+            END IF
+            IF( M.GE.N ) THEN
+!*
+!*              Path 1 - overdetermined or exactly determined
+!*
+!*              Compute workspace needed for DBDSQR
+!*
+               BDSPAC = MAX( 1, 5*N )
+!*              Compute space needed for DGEBRD
+               CALL DGEBRD( MM, N, A, LDA, S, DUM(1), DUM(1), &
+                           DUM(1), DUM(1), -1, INFO )
+               LWORK_DGEBRD=DUM(1)
+!*              Compute space needed for DORMBR
+               CALL DORMBR( 'Q', 'L', 'T', MM, NRHS, N, A, LDA, DUM(1), &
+                      B, LDB, DUM(1), -1, INFO )
+               LWORK_DORMBR=DUM(1)
+!*              Compute space needed for DORGBR
+               CALL DORGBR( 'P', N, N, N, A, LDA, DUM(1), &
+                        DUM(1), -1, INFO )
+               LWORK_DORGBR=DUM(1)
+!*              Compute total workspace needed
+               MAXWRK = MAX( MAXWRK, 3*N + LWORK_DGEBRD )
+               MAXWRK = MAX( MAXWRK, 3*N + LWORK_DORMBR )
+               MAXWRK = MAX( MAXWRK, 3*N + LWORK_DORGBR )
+               MAXWRK = MAX( MAXWRK, BDSPAC )
+               MAXWRK = MAX( MAXWRK, N*NRHS )
+               MINWRK = MAX( 3*N + MM, 3*N + NRHS, BDSPAC )
+               MAXWRK = MAX( MINWRK, MAXWRK )
+            END IF
+            IF( N.GT.M ) THEN
+!*
+!*              Compute workspace needed for DBDSQR
+!*
+               BDSPAC = MAX( 1, 5*M )
+               MINWRK = MAX( 3*M+NRHS, 3*M+N, BDSPAC )
+               IF( N.GE.MNTHR ) THEN
+!*
+!*                 Path 2a - underdetermined, with many more columns
+!*                 than rows
+!*
+!*                 Compute space needed for DGELQF
+                  CALL DGELQF( M, N, A, LDA, DUM(1), DUM(1), &
+                     -1, INFO )
+                  LWORK_DGELQF=DUM(1)
+                 Compute space needed for DGEBRD
+                  CALL DGEBRD( M, M, A, LDA, S, DUM(1), DUM(1), &
+                           DUM(1), DUM(1), -1, INFO )
+                  LWORK_DGEBRD=DUM(1)
+                 Compute space needed for DORMBR
+                  CALL DORMBR( 'Q', 'L', 'T', M, NRHS, N, A, LDA, &
+                     DUM(1), B, LDB, DUM(1), -1, INFO )
+                  LWORK_DORMBR=DUM(1)
+                 Compute space needed for DORGBR
+                  CALL DORGBR( 'P', M, M, M, A, LDA, DUM(1), &
+                        DUM(1), -1, INFO )
+                  LWORK_DORGBR=DUM(1)
+                 Compute space needed for DORMLQ
+                  CALL DORMLQ( 'L', 'T', N, NRHS, M, A, LDA, DUM(1), &
+                      B, LDB, DUM(1), -1, INFO )
+                  LWORK_DORMLQ=DUM(1)
+                 Compute total workspace needed
+                  MAXWRK = M + LWORK_DGELQF
+                  MAXWRK = MAX( MAXWRK, M*M + 4*M + LWORK_DGEBRD )
+                  MAXWRK = MAX( MAXWRK, M*M + 4*M + LWORK_DORMBR )
+                  MAXWRK = MAX( MAXWRK, M*M + 4*M + LWORK_DORGBR )
+                  MAXWRK = MAX( MAXWRK, M*M + M + BDSPAC )
+                  IF( NRHS.GT.1 ) THEN
+                     MAXWRK = MAX( MAXWRK, M*M + M + M*NRHS )
+                  ELSE
+                     MAXWRK = MAX( MAXWRK, M*M + 2*M )
+                  END IF
+                  MAXWRK = MAX( MAXWRK, M + LWORK_DORMLQ )
+               ELSE
+!*
+!*                 Path 2 - underdetermined
+!*
+!*                 Compute space needed for DGEBRD
+                  CALL DGEBRD( M, N, A, LDA, S, DUM(1), DUM(1), &
+                           DUM(1), DUM(1), -1, INFO )
+                  LWORK_DGEBRD=DUM(1)
+!*                 Compute space needed for DORMBR
+                  CALL DORMBR( 'Q', 'L', 'T', M, NRHS, M, A, LDA, &
+                     DUM(1), B, LDB, DUM(1), -1, INFO )
+                  LWORK_DORMBR=DUM(1)
+!*                 Compute space needed for DORGBR
+                  CALL DORGBR( 'P', M, N, M, A, LDA, DUM(1), &
+                        DUM(1), -1, INFO )
+                  LWORK_DORGBR=DUM(1)
+                  MAXWRK = 3*M + LWORK_DGEBRD
+                  MAXWRK = MAX( MAXWRK, 3*M + LWORK_DORMBR )
+                  MAXWRK = MAX( MAXWRK, 3*M + LWORK_DORGBR )
+                  MAXWRK = MAX( MAXWRK, BDSPAC )
+                  MAXWRK = MAX( MAXWRK, N*NRHS )
+               END IF
+            END IF
+            MAXWRK = MAX( MINWRK, MAXWRK )
+         END IF
+         WORK( 1 ) = MAXWRK
+!*
+         IF( LWORK.LT.MINWRK .AND. .NOT.LQUERY ) &
+           INFO = -12
+      END IF
+!*
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DGELSS', -INFO )
+         RETURN
+      ELSE IF( LQUERY ) THEN
+         RETURN
+      END IF
+!*
+!*     Quick return if possible
+!*
+      IF( M.EQ.0 .OR. N.EQ.0 ) THEN
+         RANK = 0
+         RETURN
+      END IF
+!*
+!*     Get machine parameters
+!*
+      EPS = DLAMCH( 'P' )
+      SFMIN = DLAMCH( 'S' )
+      SMLNUM = SFMIN / EPS
+      BIGNUM = ONE / SMLNUM
+      CALL DLABAD( SMLNUM, BIGNUM )
+!*
+!*     Scale A if max element outside range [SMLNUM,BIGNUM]
+!*
+      ANRM = DLANGE( 'M', M, N, A, LDA, WORK )
+      IASCL = 0
+      IF( ANRM.GT.ZERO .AND. ANRM.LT.SMLNUM ) THEN
+!*
+!*        Scale matrix norm up to SMLNUM
+!*
+         CALL DLASCL( 'G', 0, 0, ANRM, SMLNUM, M, N, A, LDA, INFO )
+         IASCL = 1
+      ELSE IF( ANRM.GT.BIGNUM ) THEN
+!*
+!*        Scale matrix norm down to BIGNUM
+!*
+         CALL DLASCL( 'G', 0, 0, ANRM, BIGNUM, M, N, A, LDA, INFO )
+         IASCL = 2
+      ELSE IF( ANRM.EQ.ZERO ) THEN
+!*
+!*        Matrix all zero. Return zero solution.
+!*
+         CALL DLASET( 'F', MAX( M, N ), NRHS, ZERO, ZERO, B, LDB )
+         CALL DLASET( 'F', MINMN, 1, ZERO, ZERO, S, MINMN )
+         RANK = 0
+         GO TO 70
+      END IF
+!*
+!*     Scale B if max element outside range [SMLNUM,BIGNUM]
+!*
+      BNRM = DLANGE( 'M', M, NRHS, B, LDB, WORK )
+      IBSCL = 0
+      IF( BNRM.GT.ZERO .AND. BNRM.LT.SMLNUM ) THEN
+!*
+!*        Scale matrix norm up to SMLNUM
+!*
+         CALL DLASCL( 'G', 0, 0, BNRM, SMLNUM, M, NRHS, B, LDB, INFO )
+         IBSCL = 1
+      ELSE IF( BNRM.GT.BIGNUM ) THEN
+!*
+!*        Scale matrix norm down to BIGNUM
+!*
+         CALL DLASCL( 'G', 0, 0, BNRM, BIGNUM, M, NRHS, B, LDB, INFO )
+         IBSCL = 2
+      END IF
+!*
+!*     Overdetermined case
+!*
+      IF( M.GE.N ) THEN
+!*
+!*        Path 1 - overdetermined or exactly determined
+!*
+         MM = M
+         IF( M.GE.MNTHR ) THEN
+!*
+!*           Path 1a - overdetermined, with many more rows than columns
+!*
+            MM = N
+            ITAU = 1
+            IWORK = ITAU + N
+!*
+!*           Compute A=Q*R
+!*           (Workspace: need 2*N, prefer N+N*NB)
+!*
+            CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), WORK( IWORK ), &
+                        LWORK-IWORK+1, INFO )
+!*
+!*           Multiply B by transpose(Q)
+!*           (Workspace: need N+NRHS, prefer N+NRHS*NB)
+!*
+            CALL DORMQR( 'L', 'T', M, NRHS, N, A, LDA, WORK( ITAU ), B, &
+                        LDB, WORK( IWORK ), LWORK-IWORK+1, INFO )
+!*
+!*           Zero out below R
+!*
+            IF( N.GT.1 ) &
+              CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, A( 2, 1 ), LDA )
+         END IF
+!*
+         IE = 1
+         ITAUQ = IE + N
+         ITAUP = ITAUQ + N
+         IWORK = ITAUP + N
+!*
+!*        Bidiagonalize R in A
+!*        (Workspace: need 3*N+MM, prefer 3*N+(MM+N)*NB)
+!*
+         CALL DGEBRD( MM, N, A, LDA, S, WORK( IE ), WORK( ITAUQ ), &
+                     WORK( ITAUP ), WORK( IWORK ), LWORK-IWORK+1, &
+                     INFO )
+!*
+!*        Multiply B by transpose of left bidiagonalizing vectors of R
+!*        (Workspace: need 3*N+NRHS, prefer 3*N+NRHS*NB)
+!*
+         CALL DORMBR( 'Q', 'L', 'T', MM, NRHS, N, A, LDA, WORK( ITAUQ ), &
+                     B, LDB, WORK( IWORK ), LWORK-IWORK+1, INFO )
+!*
+!*        Generate right bidiagonalizing vectors of R in A
+!*        (Workspace: need 4*N-1, prefer 3*N+(N-1)*NB)
+!*
+         CALL DORGBR( 'P', N, N, N, A, LDA, WORK( ITAUP ), &
+                     WORK( IWORK ), LWORK-IWORK+1, INFO )
+         IWORK = IE + N
+!*
+!*        Perform bidiagonal QR iteration
+!*          multiply B by transpose of left singular vectors
+!*          compute right singular vectors in A
+!*        (Workspace: need BDSPAC)
+!*
+         CALL DBDSQR( 'U', N, N, 0, NRHS, S, WORK( IE ), A, LDA, DUM, &
+                     1, B, LDB, WORK( IWORK ), INFO )
+         IF( INFO.NE.0 ) &
+           GO TO 70
+!*
+!*        Multiply B by reciprocals of singular values
+!*
+         THR = MAX( RCOND*S( 1 ), SFMIN )
+         IF( RCOND.LT.ZERO ) &
+           THR = MAX( EPS*S( 1 ), SFMIN )
+         RANK = 0
+         DO 10 I = 1, N
+            IF( S( I ).GT.THR ) THEN
+               CALL DRSCL( NRHS, S( I ), B( I, 1 ), LDB )
+               RANK = RANK + 1
+            ELSE
+               CALL DLASET( 'F', 1, NRHS, ZERO, ZERO, B( I, 1 ), LDB )
+            END IF
+   10    CONTINUE
+!*
+!*        Multiply B by right singular vectors
+!*        (Workspace: need N, prefer N*NRHS)
+!*
+         IF( LWORK.GE.LDB*NRHS .AND. NRHS.GT.1 ) THEN
+            CALL DGEMM( 'T', 'N', N, NRHS, N, ONE, A, LDA, B, LDB, ZERO, &
+                       WORK, LDB )
+            CALL DLACPY( 'G', N, NRHS, WORK, LDB, B, LDB )
+         ELSE IF( NRHS.GT.1 ) THEN
+            CHUNK = LWORK / N
+            DO 20 I = 1, NRHS, CHUNK
+               BL = MIN( NRHS-I+1, CHUNK )
+               CALL DGEMM( 'T', 'N', N, BL, N, ONE, A, LDA, B( 1, I ), &
+                          LDB, ZERO, WORK, N )
+               CALL DLACPY( 'G', N, BL, WORK, N, B( 1, I ), LDB )
+   20       CONTINUE
+         ELSE
+            CALL DGEMV( 'T', N, N, ONE, A, LDA, B, 1, ZERO, WORK, 1 )
+            CALL DCOPY( N, WORK, 1, B, 1 )
+         END IF
+
+      ELSE IF( N.GE.MNTHR .AND. LWORK.GE.4*M+M*M+ &
+              MAX( M, 2*M-4, NRHS, N-3*M ) ) THEN
+!*
+!*        Path 2a - underdetermined, with many more columns than rows
+!*        and sufficient workspace for an efficient algorithm
+!*
+         LDWORK = M
+         IF( LWORK.GE.MAX( 4*M+M*LDA+MAX( M, 2*M-4, NRHS, N-3*M ), &
+            M*LDA+M+M*NRHS ) )LDWORK = LDA
+         ITAU = 1
+         IWORK = M + 1
+!*
+!*        Compute A=L*Q
+!*        (Workspace: need 2*M, prefer M+M*NB)
+!*
+         CALL DGELQF( M, N, A, LDA, WORK( ITAU ), WORK( IWORK ), &
+                     LWORK-IWORK+1, INFO )
+         IL = IWORK
+!*
+!*        Copy L to WORK(IL), zeroing out above it
+!*
+         CALL DLACPY( 'L', M, M, A, LDA, WORK( IL ), LDWORK )
+         CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, WORK( IL+LDWORK ), &
+                     LDWORK )
+         IE = IL + LDWORK*M
+         ITAUQ = IE + M
+         ITAUP = ITAUQ + M
+         IWORK = ITAUP + M
+!*
+!*        Bidiagonalize L in WORK(IL)
+!*        (Workspace: need M*M+5*M, prefer M*M+4*M+2*M*NB)
+!*
+         CALL DGEBRD( M, M, WORK( IL ), LDWORK, S, WORK( IE ), &
+                     WORK( ITAUQ ), WORK( ITAUP ), WORK( IWORK ), &
+                     LWORK-IWORK+1, INFO )
+!*
+!*        Multiply B by transpose of left bidiagonalizing vectors of L
+!*        (Workspace: need M*M+4*M+NRHS, prefer M*M+4*M+NRHS*NB)
+!*
+         CALL DORMBR( 'Q', 'L', 'T', M, NRHS, M, WORK( IL ), LDWORK, &
+                     WORK( ITAUQ ), B, LDB, WORK( IWORK ), &
+                     LWORK-IWORK+1, INFO )
+!*
+!*        Generate right bidiagonalizing vectors of R in WORK(IL)
+!*        (Workspace: need M*M+5*M-1, prefer M*M+4*M+(M-1)*NB)
+!*
+         CALL DORGBR( 'P', M, M, M, WORK( IL ), LDWORK, WORK( ITAUP ), &
+                     WORK( IWORK ), LWORK-IWORK+1, INFO )
+         IWORK = IE + M
+!*
+!*        Perform bidiagonal QR iteration,
+!*           computing right singular vectors of L in WORK(IL) and
+!*           multiplying B by transpose of left singular vectors
+!*        (Workspace: need M*M+M+BDSPAC)
+!*
+         CALL DBDSQR( 'U', M, M, 0, NRHS, S, WORK( IE ), WORK( IL ), &
+                     LDWORK, A, LDA, B, LDB, WORK( IWORK ), INFO )
+         IF( INFO.NE.0 ) &
+           GO TO 70
+!*
+!*        Multiply B by reciprocals of singular values
+!*
+         THR = MAX( RCOND*S( 1 ), SFMIN )
+         IF( RCOND.LT.ZERO ) &
+           THR = MAX( EPS*S( 1 ), SFMIN )
+         RANK = 0
+         DO 30 I = 1, M
+            IF( S( I ).GT.THR ) THEN
+               CALL DRSCL( NRHS, S( I ), B( I, 1 ), LDB )
+               RANK = RANK + 1
+            ELSE
+               CALL DLASET( 'F', 1, NRHS, ZERO, ZERO, B( I, 1 ), LDB )
+            END IF
+   30    CONTINUE
+         IWORK = IE
+!*
+!*        Multiply B by right singular vectors of L in WORK(IL)
+!*        (Workspace: need M*M+2*M, prefer M*M+M+M*NRHS)
+!*
+         IF( LWORK.GE.LDB*NRHS+IWORK-1 .AND. NRHS.GT.1 ) THEN
+            CALL DGEMM( 'T', 'N', M, NRHS, M, ONE, WORK( IL ), LDWORK, &
+                       B, LDB, ZERO, WORK( IWORK ), LDB )
+            CALL DLACPY( 'G', M, NRHS, WORK( IWORK ), LDB, B, LDB )
+         ELSE IF( NRHS.GT.1 ) THEN
+            CHUNK = ( LWORK-IWORK+1 ) / M
+            DO 40 I = 1, NRHS, CHUNK
+               BL = MIN( NRHS-I+1, CHUNK )
+               CALL DGEMM( 'T', 'N', M, BL, M, ONE, WORK( IL ), LDWORK, &
+                          B( 1, I ), LDB, ZERO, WORK( IWORK ), M )
+               CALL DLACPY( 'G', M, BL, WORK( IWORK ), M, B( 1, I ), &
+                           LDB )
+   40       CONTINUE
+         ELSE
+            CALL DGEMV( 'T', M, M, ONE, WORK( IL ), LDWORK, B( 1, 1 ), &
+                       1, ZERO, WORK( IWORK ), 1 )
+            CALL DCOPY( M, WORK( IWORK ), 1, B( 1, 1 ), 1 )
+         END IF
+!*
+!*        Zero out below first M rows of B
+!*
+         CALL DLASET( 'F', N-M, NRHS, ZERO, ZERO, B( M+1, 1 ), LDB )
+         IWORK = ITAU + M
+!*
+!*        Multiply transpose(Q) by B
+!*        (Workspace: need M+NRHS, prefer M+NRHS*NB)
+!*
+         CALL DORMLQ( 'L', 'T', N, NRHS, M, A, LDA, WORK( ITAU ), B, &
+                     LDB, WORK( IWORK ), LWORK-IWORK+1, INFO )
+!*
+      ELSE
+!*
+!*        Path 2 - remaining underdetermined cases
+!*
+         IE = 1
+         ITAUQ = IE + M
+         ITAUP = ITAUQ + M
+         IWORK = ITAUP + M
+!*
+!*        Bidiagonalize A
+!*        (Workspace: need 3*M+N, prefer 3*M+(M+N)*NB)
+!*
+         CALL DGEBRD( M, N, A, LDA, S, WORK( IE ), WORK( ITAUQ ),  &
+                     WORK( ITAUP ), WORK( IWORK ), LWORK-IWORK+1, &
+                     INFO )
+!*
+!*        Multiply B by transpose of left bidiagonalizing vectors
+!*        (Workspace: need 3*M+NRHS, prefer 3*M+NRHS*NB)
+!*
+         CALL DORMBR( 'Q', 'L', 'T', M, NRHS, N, A, LDA, WORK( ITAUQ ), &
+                     B, LDB, WORK( IWORK ), LWORK-IWORK+1, INFO )
+!*
+!*        Generate right bidiagonalizing vectors in A
+!*        (Workspace: need 4*M, prefer 3*M+M*NB)
+!*
+         CALL DORGBR( 'P', M, N, M, A, LDA, WORK( ITAUP ), &
+                     WORK( IWORK ), LWORK-IWORK+1, INFO )
+         IWORK = IE + M
+!*
+!*        Perform bidiagonal QR iteration,
+!*           computing right singular vectors of A in A and
+!*           multiplying B by transpose of left singular vectors
+!*        (Workspace: need BDSPAC)
+!*
+         CALL DBDSQR( 'L', M, N, 0, NRHS, S, WORK( IE ), A, LDA, DUM, &
+                     1, B, LDB, WORK( IWORK ), INFO )
+         IF( INFO.NE.0 ) &
+           GO TO 70
+!*
+!*        Multiply B by reciprocals of singular values
+!*
+         THR = MAX( RCOND*S( 1 ), SFMIN )
+         IF( RCOND.LT.ZERO ) &
+          THR = MAX( EPS*S( 1 ), SFMIN )
+         RANK = 0
+         DO 50 I = 1, M
+            IF( S( I ).GT.THR ) THEN
+               CALL DRSCL( NRHS, S( I ), B( I, 1 ), LDB )
+               RANK = RANK + 1
+            ELSE
+               CALL DLASET( 'F', 1, NRHS, ZERO, ZERO, B( I, 1 ), LDB )
+            END IF
+   50    CONTINUE
+!*
+!*        Multiply B by right singular vectors of A
+!*        (Workspace: need N, prefer N*NRHS)
+!*
+         IF( LWORK.GE.LDB*NRHS .AND. NRHS.GT.1 ) THEN
+            CALL DGEMM( 'T', 'N', N, NRHS, M, ONE, A, LDA, B, LDB, ZERO, &
+                       WORK, LDB )
+            CALL DLACPY( 'F', N, NRHS, WORK, LDB, B, LDB )
+         ELSE IF( NRHS.GT.1 ) THEN
+            CHUNK = LWORK / N
+            DO 60 I = 1, NRHS, CHUNK
+               BL = MIN( NRHS-I+1, CHUNK )
+               CALL DGEMM( 'T', 'N', N, BL, M, ONE, A, LDA, B( 1, I ), &
+                          LDB, ZERO, WORK, N )
+               CALL DLACPY( 'F', N, BL, WORK, N, B( 1, I ), LDB )
+   60       CONTINUE
+         ELSE
+            CALL DGEMV( 'T', M, N, ONE, A, LDA, B, 1, ZERO, WORK, 1 )
+            CALL DCOPY( N, WORK, 1, B, 1 )
+         END IF
+      END IF
+!*
+!*     Undo scaling
+!*
+      IF( IASCL.EQ.1 ) THEN
+         CALL DLASCL( 'G', 0, 0, ANRM, SMLNUM, N, NRHS, B, LDB, INFO )
+         CALL DLASCL( 'G', 0, 0, SMLNUM, ANRM, MINMN, 1, S, MINMN, &
+                     INFO )
+      ELSE IF( IASCL.EQ.2 ) THEN
+         CALL DLASCL( 'G', 0, 0, ANRM, BIGNUM, N, NRHS, B, LDB, INFO )
+         CALL DLASCL( 'G', 0, 0, BIGNUM, ANRM, MINMN, 1, S, MINMN, &
+                     INFO )
+      END IF
+      IF( IBSCL.EQ.1 ) THEN
+         CALL DLASCL( 'G', 0, 0, SMLNUM, BNRM, N, NRHS, B, LDB, INFO )
+      ELSE IF( IBSCL.EQ.2 ) THEN
+         CALL DLASCL( 'G', 0, 0, BIGNUM, BNRM, N, NRHS, B, LDB, INFO )
+      END IF
+      
+   70 CONTINUE
+      WORK( 1 ) = MAXWRK
+  
+    END SUBROUTINE
+
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*!> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date June 2017
+!*
+!*> \ingroup doubleGEsolve
+!*
+!*> \par Contributors:
+!*  ==================
+!*>
+!*>     Ming Gu and Ren-Cang Li, Computer Science Division, University of
+!!*>       California at Berkeley, USA \n
+!*>     Osni Marques, LBNL/NERSC, USA \n
+!*
+    !*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+ SUBROUTINE DGELSD( M, N, NRHS, A, LDA, B, LDB, S, RCOND, RANK, &
+      WORK, LWORK, IWORK, INFO ) !GCC$ ATTRIBUTES hot :: DGELSD !GCC$ ATTRIBUTES aligned(32) :: DGELSD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+ SUBROUTINE DGELSD( M, N, NRHS, A, LDA, B, LDB, S, RCOND, RANK, &
+      WORK, LWORK, IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DGELSD
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DGELSD
+#endif
+   implicit none
+   
+!*
+!*  -- LAPACK driver routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDB, LWORK, M, N, NRHS, RANK
+      DOUBLE PRECISION   RCOND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            IWORK( * )
+      !DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), S( * ), WORK( * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WORK
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, TWO
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0, TWO = 2.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            LQUERY
+      INTEGER            IASCL, IBSCL, IE, IL, ITAU, ITAUP, ITAUQ, &
+                        LDWORK, LIWORK, MAXMN, MAXWRK, MINMN, MINWRK, &
+                       MM, MNTHR, NLVL, NWORK, SMLSIZ, WLALSD
+      DOUBLE PRECISION   ANRM, BIGNUM, BNRM, EPS, SFMIN, SMLNUM
+!*     ..
+!*     .. External Subroutines ..
+     ! EXTERNAL           DGEBRD, DGELQF, DGEQRF, DLABAD, DLACPY, DLALSD,
+     !$                   DLASCL, DLASET, DORMBR, DORMLQ, DORMQR, XERBLA
+!*     ..
+!*     .. External Functions ..
+      INTEGER            ILAENV
+      DOUBLE PRECISION   DLAMCH, DLANGE
+      EXTERNAL           ILAENV, DLAMCH, DLANGE
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          DBLE, INT, LOG, MAX, MIN
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input arguments.
+!*
+      INFO = 0
+      MINMN = MIN( M, N )
+      MAXMN = MAX( M, N )
+      MNTHR = ILAENV( 6, 'DGELSD', ' ', M, N, NRHS, -1 )
+      LQUERY = ( LWORK.EQ.-1 )
+      IF( M.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( NRHS.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -5
+      ELSE IF( LDB.LT.MAX( 1, MAXMN ) ) THEN
+         INFO = -7
+      END IF
+!*
+      SMLSIZ = ILAENV( 9, 'DGELSD', ' ', 0, 0, 0, 0 )
+!*
+!!*     Compute workspace.
+!*     (Note: Comments in the code beginning "Workspace:" describe the
+!*     minimal amount of workspace needed at that point in the code,
+!*     as well as the preferred amount for good performance.
+!*     NB refers to the optimal block size for the immediately
+!*     following subroutine, as returned by ILAENV.)
+!*
+      MINWRK = 1
+      LIWORK = 1
+      MINMN = MAX( 1, MINMN )
+      NLVL = MAX( INT( LOG( DBLE( MINMN ) / DBLE( SMLSIZ+1 ) ) / &
+            LOG( TWO ) ) + 1, 0 )
+
+      IF( INFO.EQ.0 ) THEN
+         MAXWRK = 0
+         LIWORK = 3*MINMN*NLVL + 11*MINMN
+         MM = M
+         IF( M.GE.N .AND. M.GE.MNTHR ) THEN
+!*
+!*           Path 1a - overdetermined, with many more rows than columns.
+!*
+            MM = N
+            MAXWRK = MAX( MAXWRK, N+N*ILAENV( 1, 'DGEQRF', ' ', M, N, &
+                    -1, -1 ) )
+            MAXWRK = MAX( MAXWRK, N+NRHS* &
+                    ILAENV( 1, 'DORMQR', 'LT', M, NRHS, N, -1 ) )
+         END IF
+         IF( M.GE.N ) THEN
+!*
+!*           Path 1 - overdetermined or exactly determined.
+!*
+            MAXWRK = MAX( MAXWRK, 3*N+( MM+N )* &
+                    ILAENV( 1, 'DGEBRD', ' ', MM, N, -1, -1 ) )
+            MAXWRK = MAX( MAXWRK, 3*N+NRHS* &
+                    ILAENV( 1, 'DORMBR', 'QLT', MM, NRHS, N, -1 ) )
+            MAXWRK = MAX( MAXWRK, 3*N+( N-1 )* &
+                    ILAENV( 1, 'DORMBR', 'PLN', N, NRHS, N, -1 ) )
+            WLALSD = 9*N+2*N*SMLSIZ+8*N*NLVL+N*NRHS+(SMLSIZ+1)**2
+            MAXWRK = MAX( MAXWRK, 3*N+WLALSD )
+            MINWRK = MAX( 3*N+MM, 3*N+NRHS, 3*N+WLALSD )
+         END IF
+         IF( N.GT.M ) THEN
+            WLALSD = 9*M+2*M*SMLSIZ+8*M*NLVL+M*NRHS+(SMLSIZ+1)**2
+            IF( N.GE.MNTHR ) THEN
+!*
+!*              Path 2a - underdetermined, with many more columns
+!*              than rows.
+!*
+               MAXWRK = M + M*ILAENV( 1, 'DGELQF', ' ', M, N, -1, -1 )
+               MAXWRK = MAX( MAXWRK, M*M+4*M+2*M* &
+                       ILAENV( 1, 'DGEBRD', ' ', M, M, -1, -1 ) )
+               MAXWRK = MAX( MAXWRK, M*M+4*M+NRHS* &
+                        ILAENV( 1, 'DORMBR', 'QLT', M, NRHS, M, -1 ) )
+               MAXWRK = MAX( MAXWRK, M*M+4*M+( M-1 )* &
+                       ILAENV( 1, 'DORMBR', 'PLN', M, NRHS, M, -1 ) )
+               IF( NRHS.GT.1 ) THEN
+                  MAXWRK = MAX( MAXWRK, M*M+M+M*NRHS )
+               ELSE
+                  MAXWRK = MAX( MAXWRK, M*M+2*M )
+               END IF
+               MAXWRK = MAX( MAXWRK, M+NRHS* &
+                       ILAENV( 1, 'DORMLQ', 'LT', N, NRHS, M, -1 ) )
+               MAXWRK = MAX( MAXWRK, M*M+4*M+WLALSD )
+!     XXX: Ensure the Path 2a case below is triggered.  The workspace
+!     calculation should use queries for all routines eventually.
+               MAXWRK = MAX( MAXWRK, &
+                   4*M+M*M+MAX( M, 2*M-4, NRHS, N-3*M ) )
+            ELSE
+!*
+!*              Path 2 - remaining underdetermined cases.
+!*
+               MAXWRK = 3*M + ( N+M )*ILAENV( 1, 'DGEBRD', ' ', M, N, &
+                       -1, -1 )
+               MAXWRK = MAX( MAXWRK, 3*M+NRHS* &
+                       ILAENV( 1, 'DORMBR', 'QLT', M, NRHS, N, -1 ) )
+               MAXWRK = MAX( MAXWRK, 3*M+M* &
+                       ILAENV( 1, 'DORMBR', 'PLN', N, NRHS, M, -1 ) )
+               MAXWRK = MAX( MAXWRK, 3*M+WLALSD )
+            END IF
+            MINWRK = MAX( 3*M+NRHS, 3*M+M, 3*M+WLALSD )
+         END IF
+         MINWRK = MIN( MINWRK, MAXWRK )
+         WORK( 1 ) = MAXWRK
+         IWORK( 1 ) = LIWORK
+
+         IF( LWORK.LT.MINWRK .AND. .NOT.LQUERY ) THEN
+            INFO = -12
+         END IF
+      END IF
+
+      IF( INFO.NE.0 ) THEN
+         CALL XERBLA( 'DGELSD', -INFO )
+         RETURN
+      ELSE IF( LQUERY ) THEN
+         GO TO 10
+      END IF
+!*
+!*     Quick return if possible.
+!*
+      IF( M.EQ.0 .OR. N.EQ.0 ) THEN
+         RANK = 0
+         RETURN
+      END IF
+!*
+!*     Get machine parameters.
+!*
+      EPS = DLAMCH( 'P' )
+      SFMIN = DLAMCH( 'S' )
+      SMLNUM = SFMIN / EPS
+      BIGNUM = ONE / SMLNUM
+      CALL DLABAD( SMLNUM, BIGNUM )
+!*
+!*     Scale A if max entry outside range [SMLNUM,BIGNUM].
+!*
+      ANRM = DLANGE( 'M', M, N, A, LDA, WORK )
+      IASCL = 0
+      IF( ANRM.GT.ZERO .AND. ANRM.LT.SMLNUM ) THEN
+!*
+!*        Scale matrix norm up to SMLNUM.
+!*
+         CALL DLASCL( 'G', 0, 0, ANRM, SMLNUM, M, N, A, LDA, INFO )
+         IASCL = 1
+      ELSE IF( ANRM.GT.BIGNUM ) THEN
+!*
+!*        Scale matrix norm down to BIGNUM.
+!*
+         CALL DLASCL( 'G', 0, 0, ANRM, BIGNUM, M, N, A, LDA, INFO )
+         IASCL = 2
+      ELSE IF( ANRM.EQ.ZERO ) THEN
+!*
+!*        Matrix all zero. Return zero solution.
+!*
+         CALL DLASET( 'F', MAX( M, N ), NRHS, ZERO, ZERO, B, LDB )
+         CALL DLASET( 'F', MINMN, 1, ZERO, ZERO, S, 1 )
+         RANK = 0
+         GO TO 10
+      END IF
+!*
+!*     Scale B if max entry outside range [SMLNUM,BIGNUM].
+!*
+      BNRM = DLANGE( 'M', M, NRHS, B, LDB, WORK )
+      IBSCL = 0
+      IF( BNRM.GT.ZERO .AND. BNRM.LT.SMLNUM ) THEN
+!*
+!*        Scale matrix norm up to SMLNUM.
+!*
+         CALL DLASCL( 'G', 0, 0, BNRM, SMLNUM, M, NRHS, B, LDB, INFO )
+         IBSCL = 1
+      ELSE IF( BNRM.GT.BIGNUM ) THEN
+!*
+!*        Scale matrix norm down to BIGNUM.
+!*
+         CALL DLASCL( 'G', 0, 0, BNRM, BIGNUM, M, NRHS, B, LDB, INFO )
+         IBSCL = 2
+      END IF
+!*
+!*     If M < N make sure certain entries of B are zero.
+!*
+      IF( M.LT.N ) &
+        CALL DLASET( 'F', N-M, NRHS, ZERO, ZERO, B( M+1, 1 ), LDB )
+!*
+!*     Overdetermined case.
+!*
+      IF( M.GE.N ) THEN
+!*
+!*        Path 1 - overdetermined or exactly determined.
+!*
+         MM = M
+         IF( M.GE.MNTHR ) THEN
+!*
+!*           Path 1a - overdetermined, with many more rows than columns.
+!*
+            MM = N
+            ITAU = 1
+            NWORK = ITAU + N
+!*
+!*           Compute A=Q*R.
+!*           (Workspace: need 2*N, prefer N+N*NB)
+!*
+            CALL DGEQRF( M, N, A, LDA, WORK( ITAU ), WORK( NWORK ), &
+                        LWORK-NWORK+1, INFO )
+!*
+!*           Multiply B by transpose(Q).
+!*           (Workspace: need N+NRHS, prefer N+NRHS*NB)
+!*
+            CALL DORMQR( 'L', 'T', M, NRHS, N, A, LDA, WORK( ITAU ), B, &
+                        LDB, WORK( NWORK ), LWORK-NWORK+1, INFO )
+!*
+!*           Zero out below R.
+!*
+            IF( N.GT.1 ) THEN
+               CALL DLASET( 'L', N-1, N-1, ZERO, ZERO, A( 2, 1 ), LDA )
+            END IF
+         END IF
+!*
+         IE = 1
+         ITAUQ = IE + N
+         ITAUP = ITAUQ + N
+         NWORK = ITAUP + N
+!*
+!*        Bidiagonalize R in A.
+!*        (Workspace: need 3*N+MM, prefer 3*N+(MM+N)*NB)
+!*
+         CALL DGEBRD( MM, N, A, LDA, S, WORK( IE ), WORK( ITAUQ ), &
+                     WORK( ITAUP ), WORK( NWORK ), LWORK-NWORK+1, &
+                     INFO )
+!*!
+!*        Multiply B by transpose of left bidiagonalizing vectors of R.
+!*        (Workspace: need 3*N+NRHS, prefer 3*N+NRHS*NB)
+!*
+         CALL DORMBR( 'Q', 'L', 'T', MM, NRHS, N, A, LDA, WORK( ITAUQ ), &
+                     B, LDB, WORK( NWORK ), LWORK-NWORK+1, INFO )
+!*
+!*        Solve the bidiagonal least squares problem.
+!*
+         CALL DLALSD( 'U', SMLSIZ, N, NRHS, S, WORK( IE ), B, LDB, &
+                     RCOND, RANK, WORK( NWORK ), IWORK, INFO )
+         IF( INFO.NE.0 ) THEN
+            GO TO 10
+         END IF
+!*
+!*        Multiply B by right bidiagonalizing vectors of R.
+!*
+         CALL DORMBR( 'P', 'L', 'N', N, NRHS, N, A, LDA, WORK( ITAUP ), &
+                     B, LDB, WORK( NWORK ), LWORK-NWORK+1, INFO )
+!*
+      ELSE IF( N.GE.MNTHR .AND. LWORK.GE.4*M+M*M+ &
+              MAX( M, 2*M-4, NRHS, N-3*M, WLALSD ) ) THEN
+!*
+!*        Path 2a - underdetermined, with many more columns than rows
+!*        and sufficient workspace for an efficient algorithm.
+!*
+         LDWORK = M
+         IF( LWORK.GE.MAX( 4*M+M*LDA+MAX( M, 2*M-4, NRHS, N-3*M ), &
+            M*LDA+M+M*NRHS, 4*M+M*LDA+WLALSD ) )LDWORK = LDA
+         ITAU = 1
+         NWORK = M + 1
+!*
+!*        Compute A=L*Q.
+!*        (Workspace: need 2*M, prefer M+M*NB)
+!*
+         CALL DGELQF( M, N, A, LDA, WORK( ITAU ), WORK( NWORK ), &
+                     LWORK-NWORK+1, INFO )
+         IL = NWORK
+!*
+!*        Copy L to WORK(IL), zeroing out above its diagonal.
+!*
+         CALL DLACPY( 'L', M, M, A, LDA, WORK( IL ), LDWORK )
+         CALL DLASET( 'U', M-1, M-1, ZERO, ZERO, WORK( IL+LDWORK ), &
+                     LDWORK )
+         IE = IL + LDWORK*M
+         ITAUQ = IE + M
+         ITAUP = ITAUQ + M
+         NWORK = ITAUP + M
+!*
+!*        Bidiagonalize L in WORK(IL).
+!*        (Workspace: need M*M+5*M, prefer M*M+4*M+2*M*NB)
+!*
+         CALL DGEBRD( M, M, WORK( IL ), LDWORK, S, WORK( IE ),&
+                     WORK( ITAUQ ), WORK( ITAUP ), WORK( NWORK ), &
+                     LWORK-NWORK+1, INFO )
+!*
+!*        Multiply B by transpose of left bidiagonalizing vectors of L.
+!*        (Workspace: need M*M+4*M+NRHS, prefer M*M+4*M+NRHS*NB)
+!*
+         CALL DORMBR( 'Q', 'L', 'T', M, NRHS, M, WORK( IL ), LDWORK, &
+                     WORK( ITAUQ ), B, LDB, WORK( NWORK ), &
+                     LWORK-NWORK+1, INFO )
+!*
+!*        Solve the bidiagonal least squares problem.
+!*
+         CALL DLALSD( 'U', SMLSIZ, M, NRHS, S, WORK( IE ), B, LDB, &
+                     RCOND, RANK, WORK( NWORK ), IWORK, INFO )
+         IF( INFO.NE.0 ) THEN
+            GO TO 10
+         END IF
+!*
+!*        Multiply B by right bidiagonalizing vectors of L.
+!*
+         CALL DORMBR( 'P', 'L', 'N', M, NRHS, M, WORK( IL ), LDWORK, &
+                     WORK( ITAUP ), B, LDB, WORK( NWORK ), &
+                     LWORK-NWORK+1, INFO )
+!*
+!*        Zero out below first M rows of B.
+!*
+         CALL DLASET( 'F', N-M, NRHS, ZERO, ZERO, B( M+1, 1 ), LDB )
+         NWORK = ITAU + M
+!*
+!*        Multiply transpose(Q) by B.
+!*        (Workspace: need M+NRHS, prefer M+NRHS*NB)
+!*
+         CALL DORMLQ( 'L', 'T', N, NRHS, M, A, LDA, WORK( ITAU ), B, &
+                     LDB, WORK( NWORK ), LWORK-NWORK+1, INFO )
+!*
+      ELSE
+!*
+!*        Path 2 - remaining underdetermined cases.
+!*
+         IE = 1
+         ITAUQ = IE + M
+         ITAUP = ITAUQ + M
+         NWORK = ITAUP + M
+!*
+!*        Bidiagonalize A.
+!*        (Workspace: need 3*M+N, prefer 3*M+(M+N)*NB)
+!*
+         CALL DGEBRD( M, N, A, LDA, S, WORK( IE ), WORK( ITAUQ ), &
+                     WORK( ITAUP ), WORK( NWORK ), LWORK-NWORK+1, &
+                     INFO )
+!*
+!*        Multiply B by transpose of left bidiagonalizing vectors.
+!*        (Workspace: need 3*M+NRHS, prefer 3*M+NRHS*NB)
+!*
+         CALL DORMBR( 'Q', 'L', 'T', M, NRHS, N, A, LDA, WORK( ITAUQ ), &
+                     B, LDB, WORK( NWORK ), LWORK-NWORK+1, INFO )
+!*
+!*        Solve the bidiagonal least squares problem.
+!*
+         CALL DLALSD( 'L', SMLSIZ, M, NRHS, S, WORK( IE ), B, LDB, &
+                     RCOND, RANK, WORK( NWORK ), IWORK, INFO )
+         IF( INFO.NE.0 ) THEN
+            GO TO 10
+         END IF
+!*
+!*        Multiply B by right bidiagonalizing vectors of A.
+!*
+         CALL DORMBR( 'P', 'L', 'N', N, NRHS, M, A, LDA, WORK( ITAUP ), &
+                     B, LDB, WORK( NWORK ), LWORK-NWORK+1, INFO )
+!*
+      END IF
+!*
+!!*     Undo scaling.
+!*
+      IF( IASCL.EQ.1 ) THEN
+         CALL DLASCL( 'G', 0, 0, ANRM, SMLNUM, N, NRHS, B, LDB, INFO )
+         CALL DLASCL( 'G', 0, 0, SMLNUM, ANRM, MINMN, 1, S, MINMN, &
+                     INFO )
+      ELSE IF( IASCL.EQ.2 ) THEN
+         CALL DLASCL( 'G', 0, 0, ANRM, BIGNUM, N, NRHS, B, LDB, INFO )
+         CALL DLASCL( 'G', 0, 0, BIGNUM, ANRM, MINMN, 1, S, MINMN, &
+                     INFO )
+      END IF
+      IF( IBSCL.EQ.1 ) THEN
+         CALL DLASCL( 'G', 0, 0, SMLNUM, BNRM, N, NRHS, B, LDB, INFO )
+      ELSE IF( IBSCL.EQ.2 ) THEN
+         CALL DLASCL( 'G', 0, 0, BIGNUM, BNRM, N, NRHS, B, LDB, INFO )
+      END IF
+
+   10 CONTINUE
+      WORK( 1 ) = MAXWRK
+      IWORK( 1 ) = LIWORK
+     
+END SUBROUTINE 
+
+    
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup doubleOTHERcomputational
+!*
+!*> \par Contributors:
+!*  ==================
+!*>
+!*>     Ming Gu and Ren-Cang Li, Computer Science Division, University of
+!*>       California at Berkeley, USA \n
+!*>     Osni Marques, LBNL/NERSC, USA \n
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+      SUBROUTINE DLALSD( UPLO, SMLSIZ, N, NRHS, D, E, B, LDB, RCOND, &
+           RANK, WORK, IWORK, INFO ) !GCC$ ATTRIBUTES hot :: DLALSD !GCC$ ATTRIBUTES hot :: DLALSD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+      SUBROUTINE DLALSD( UPLO, SMLSIZ, N, NRHS, D, E, B, LDB, RCOND, &
+           RANK, WORK, IWORK, INFO )
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLALSD
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLALSD
+#endif
+        implicit none
+        
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDB, N, NRHS, RANK, SMLSIZ
+      DOUBLE PRECISION   RCOND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            IWORK( * )
+      !DOUBLE PRECISION   B( LDB, * ), D( * ), E( * ), WORK( * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: E
+       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+!*     ..
+!*
+!*  =====================================================================
+!!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, TWO
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0, TWO = 2.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            BX, BXST, C, DIFL, DIFR, GIVCOL, GIVNUM, &
+                        GIVPTR, I, ICMPQ1, ICMPQ2, IWK, J, K, NLVL, &
+                        NM1, NSIZE, NSUB, NWORK, PERM, POLES, S, SIZEI, &
+                        SMLSZP, SQRE, ST, ST1, U, VT, Z
+      DOUBLE PRECISION   CS, EPS, ORGNRM, R, RCND, SN, TOL
+!*     ..
+!*     .. External Functions ..
+      INTEGER            IDAMAX
+      DOUBLE PRECISION   DLAMCH, DLANST
+      EXTERNAL           IDAMAX, DLAMCH, DLANST
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY, DGEMM, DLACPY, DLALSA, DLARTG, DLASCL, &
+                       DLASDA, DLASDQ, DLASET, DLASRT, DROT
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, DBLE, INT, LOG, SIGN
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+!*
+      IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( NRHS.LT.1 ) THEN
+         INFO = -4
+      ELSE IF( ( LDB.LT.1 ) .OR. ( LDB.LT.N ) ) THEN
+         INFO = -8
+      END IF
+      IF( INFO.NE.0 ) THEN
+         CALL XERBLA( 'DLALSD', -INFO )
+         RETURN
+      END IF
+!*
+      EPS = DLAMCH( 'Epsilon' )
+!*
+!*     Set up the tolerance.
+!*
+      IF( ( RCOND.LE.ZERO ) .OR. ( RCOND.GE.ONE ) ) THEN
+         RCND = EPS
+      ELSE
+         RCND = RCOND
+      END IF
+
+      RANK = 0
+!*
+!*     Quick return if possible.
+!*
+      IF( N.EQ.0 ) THEN
+         RETURN
+      ELSE IF( N.EQ.1 ) THEN
+         IF( D( 1 ).EQ.ZERO ) THEN
+            CALL DLASET( 'A', 1, NRHS, ZERO, ZERO, B, LDB )
+         ELSE
+            RANK = 1
+            CALL DLASCL( 'G', 0, 0, D( 1 ), ONE, 1, NRHS, B, LDB, INFO )
+            D( 1 ) = ABS( D( 1 ) )
+         END IF
+         RETURN
+      END IF
+!*
+!*     Rotate the matrix if it is lower bidiagonal.
+!*
+      IF( UPLO.EQ.'L' ) THEN
+         DO 10 I = 1, N - 1
+            CALL DLARTG( D( I ), E( I ), CS, SN, R )
+            D( I ) = R
+            E( I ) = SN*D( I+1 )
+            D( I+1 ) = CS*D( I+1 )
+            IF( NRHS.EQ.1 ) THEN
+               CALL DROT( 1, B( I, 1 ), 1, B( I+1, 1 ), 1, CS, SN )
+            ELSE
+               WORK( I*2-1 ) = CS
+               WORK( I*2 ) = SN
+            END IF
+   10    CONTINUE
+         IF( NRHS.GT.1 ) THEN
+            DO 30 I = 1, NRHS
+               DO 20 J = 1, N - 1
+                  CS = WORK( J*2-1 )
+                  SN = WORK( J*2 )
+                  CALL DROT( 1, B( J, I ), 1, B( J+1, I ), 1, CS, SN )
+   20          CONTINUE
+   30       CONTINUE
+         END IF
+      END IF
+!*
+!*     Scale.
+!*
+      NM1 = N - 1
+      ORGNRM = DLANST( 'M', N, D, E )
+      IF( ORGNRM.EQ.ZERO ) THEN
+         CALL DLASET( 'A', N, NRHS, ZERO, ZERO, B, LDB )
+         RETURN
+      END IF
+!*
+      CALL DLASCL( 'G', 0, 0, ORGNRM, ONE, N, 1, D, N, INFO )
+      CALL DLASCL( 'G', 0, 0, ORGNRM, ONE, NM1, 1, E, NM1, INFO )
+!*
+!*     If N is smaller than the minimum divide size SMLSIZ, then solve
+!*     the problem with another solver.
+!*
+      IF( N.LE.SMLSIZ ) THEN
+         NWORK = 1 + N*N
+         CALL DLASET( 'A', N, N, ZERO, ONE, WORK, N )
+         CALL DLASDQ( 'U', 0, N, N, 0, NRHS, D, E, WORK, N, WORK, N, B, &
+                     LDB, WORK( NWORK ), INFO )
+         IF( INFO.NE.0 ) THEN
+            RETURN
+         END IF
+         TOL = RCND*ABS( D( IDAMAX( N, D, 1 ) ) )
+         DO 40 I = 1, N
+            IF( D( I ).LE.TOL ) THEN
+               CALL DLASET( 'A', 1, NRHS, ZERO, ZERO, B( I, 1 ), LDB )
+            ELSE
+               CALL DLASCL( 'G', 0, 0, D( I ), ONE, 1, NRHS, B( I, 1 ), &
+                           LDB, INFO )
+               RANK = RANK + 1
+            END IF
+   40    CONTINUE
+         CALL DGEMM( 'T', 'N', N, NRHS, N, ONE, WORK, N, B, LDB, ZERO, &
+                    WORK( NWORK ), N )
+         CALL DLACPY( 'A', N, NRHS, WORK( NWORK ), N, B, LDB )
+!*
+!*        Unscale.
+!*
+         CALL DLASCL( 'G', 0, 0, ONE, ORGNRM, N, 1, D, N, INFO )
+         CALL DLASRT( 'D', N, D, INFO )
+         CALL DLASCL( 'G', 0, 0, ORGNRM, ONE, N, NRHS, B, LDB, INFO )
+!*
+         RETURN
+      END IF
+!*
+!*     Book-keeping and setting up some constants.
+!*
+      NLVL = INT( LOG( DBLE( N ) / DBLE( SMLSIZ+1 ) ) / LOG( TWO ) ) + 1
+!*
+      SMLSZP = SMLSIZ + 1
+!*
+      U = 1
+      VT = 1 + SMLSIZ*N
+      DIFL = VT + SMLSZP*N
+      DIFR = DIFL + NLVL*N
+      Z = DIFR + NLVL*N*2
+      C = Z + NLVL*N
+      S = C + N
+      POLES = S + N
+      GIVNUM = POLES + 2*NLVL*N
+      BX = GIVNUM + 2*NLVL*N
+      NWORK = BX + N*NRHS
+!*
+      SIZEI = 1 + N
+      K = SIZEI + N
+      GIVPTR = K + N
+      PERM = GIVPTR + N
+      GIVCOL = PERM + NLVL*N
+      IWK = GIVCOL + NLVL*N*2
+!*
+      ST = 1
+      SQRE = 0
+      ICMPQ1 = 1
+      ICMPQ2 = 0
+      NSUB = 0
+!*
+      DO 50 I = 1, N
+         IF( ABS( D( I ) ).LT.EPS ) THEN
+            D( I ) = SIGN( EPS, D( I ) )
+         END IF
+   50 CONTINUE
+!*
+      DO 60 I = 1, NM1
+         IF( ( ABS( E( I ) ).LT.EPS ) .OR. ( I.EQ.NM1 ) ) THEN
+            NSUB = NSUB + 1
+            IWORK( NSUB ) = ST
+!*
+!*           Subproblem found. First determine its size and then
+!*           apply divide and conquer on it.
+!*
+            IF( I.LT.NM1 ) THEN
+!*
+!*              A subproblem with E(I) small for I < NM1.
+!*
+               NSIZE = I - ST + 1
+               IWORK( SIZEI+NSUB-1 ) = NSIZE
+            ELSE IF( ABS( E( I ) ).GE.EPS ) THEN
+!*
+!*              A subproblem with E(NM1) not too small but I = NM1.
+!*
+               NSIZE = N - ST + 1
+               IWORK( SIZEI+NSUB-1 ) = NSIZE
+            ELSE
+!*
+!*              A subproblem with E(NM1) small. This implies an
+!*              1-by-1 subproblem at D(N), which is not solved
+!*              explicitly.
+!*
+               NSIZE = I - ST + 1
+               IWORK( SIZEI+NSUB-1 ) = NSIZE
+               NSUB = NSUB + 1
+               IWORK( NSUB ) = N
+               IWORK( SIZEI+NSUB-1 ) = 1
+               CALL DCOPY( NRHS, B( N, 1 ), LDB, WORK( BX+NM1 ), N )
+            END IF
+            ST1 = ST - 1
+            IF( NSIZE.EQ.1 ) THEN
+!*
+!*              This is a 1-by-1 subproblem and is not solved
+!*              explicitly.
+!*
+               CALL DCOPY( NRHS, B( ST, 1 ), LDB, WORK( BX+ST1 ), N )
+            ELSE IF( NSIZE.LE.SMLSIZ ) THEN
+!*
+!*              This is a small subproblem and is solved by DLASDQ.
+!*
+               CALL DLASET( 'A', NSIZE, NSIZE, ZERO, ONE, &
+                           WORK( VT+ST1 ), N )
+               CALL DLASDQ( 'U', 0, NSIZE, NSIZE, 0, NRHS, D( ST ),  &
+                           E( ST ), WORK( VT+ST1 ), N, WORK( NWORK ), &
+                           N, B( ST, 1 ), LDB, WORK( NWORK ), INFO )
+               IF( INFO.NE.0 ) THEN
+                  RETURN
+               END IF
+               CALL DLACPY( 'A', NSIZE, NRHS, B( ST, 1 ), LDB, &
+                           WORK( BX+ST1 ), N )
+            ELSE
+!*
+!*              A large problem. Solve it using divide and conquer.
+!*
+               CALL DLASDA( ICMPQ1, SMLSIZ, NSIZE, SQRE, D( ST ),  &
+                           E( ST ), WORK( U+ST1 ), N, WORK( VT+ST1 ), &
+                           IWORK( K+ST1 ), WORK( DIFL+ST1 ), &
+                           WORK( DIFR+ST1 ), WORK( Z+ST1 ), &
+                           WORK( POLES+ST1 ), IWORK( GIVPTR+ST1 ), &
+                           IWORK( GIVCOL+ST1 ), N, IWORK( PERM+ST1 ), &
+                           WORK( GIVNUM+ST1 ), WORK( C+ST1 ), &
+                           WORK( S+ST1 ), WORK( NWORK ), IWORK( IWK ), &
+                           INFO )
+               IF( INFO.NE.0 ) THEN
+                  RETURN
+               END IF
+               BXST = BX + ST1
+               CALL DLALSA( ICMPQ2, SMLSIZ, NSIZE, NRHS, B( ST, 1 ), &
+                           LDB, WORK( BXST ), N, WORK( U+ST1 ), N, &
+                           WORK( VT+ST1 ), IWORK( K+ST1 ), &
+                           WORK( DIFL+ST1 ), WORK( DIFR+ST1 ), &
+                           WORK( Z+ST1 ), WORK( POLES+ST1 ), &
+                           IWORK( GIVPTR+ST1 ), IWORK( GIVCOL+ST1 ), N, &
+                           IWORK( PERM+ST1 ), WORK( GIVNUM+ST1 ), &
+                           WORK( C+ST1 ), WORK( S+ST1 ), WORK( NWORK ), &
+                           IWORK( IWK ), INFO )
+               IF( INFO.NE.0 ) THEN
+                  RETURN
+               END IF
+            END IF
+            ST = I + 1
+         END IF
+   60 CONTINUE
+!*
+!*     Apply the singular values and treat the tiny ones as zero.
+!*
+      TOL = RCND*ABS( D( IDAMAX( N, D, 1 ) ) )
+!*
+      DO 70 I = 1, N
+!*
+!*        Some of the elements in D can be negative because 1-by-1
+!*        subproblems were not solved explicitly.
+!*
+         IF( ABS( D( I ) ).LE.TOL ) THEN
+            CALL DLASET( 'A', 1, NRHS, ZERO, ZERO, WORK( BX+I-1 ), N )
+         ELSE
+            RANK = RANK + 1
+            CALL DLASCL( 'G', 0, 0, D( I ), ONE, 1, NRHS, &
+                        WORK( BX+I-1 ), N, INFO )
+         END IF
+         D( I ) = ABS( D( I ) )
+   70 CONTINUE
+!*
+!*     Now apply back the right singular vectors.
+!*
+      ICMPQ2 = 1
+      DO 80 I = 1, NSUB
+         ST = IWORK( I )
+         ST1 = ST - 1
+         NSIZE = IWORK( SIZEI+I-1 )
+         BXST = BX + ST1
+         IF( NSIZE.EQ.1 ) THEN
+            CALL DCOPY( NRHS, WORK( BXST ), N, B( ST, 1 ), LDB )
+         ELSE IF( NSIZE.LE.SMLSIZ ) THEN
+            CALL DGEMM( 'T', 'N', NSIZE, NRHS, NSIZE, ONE, &
+                       WORK( VT+ST1 ), N, WORK( BXST ), N, ZERO, &
+                       B( ST, 1 ), LDB )
+         ELSE
+            CALL DLALSA( ICMPQ2, SMLSIZ, NSIZE, NRHS, WORK( BXST ), N, &
+                        B( ST, 1 ), LDB, WORK( U+ST1 ), N, &
+                        WORK( VT+ST1 ), IWORK( K+ST1 ), &
+                        WORK( DIFL+ST1 ), WORK( DIFR+ST1 ), &
+                        WORK( Z+ST1 ), WORK( POLES+ST1 ), &
+                        IWORK( GIVPTR+ST1 ), IWORK( GIVCOL+ST1 ), N, &
+                        IWORK( PERM+ST1 ), WORK( GIVNUM+ST1 ), &
+                        WORK( C+ST1 ), WORK( S+ST1 ), WORK( NWORK ), &
+                        IWORK( IWK ), INFO )
+            IF( INFO.NE.0 ) THEN
+               RETURN
+            END IF
+         END IF
+   80 CONTINUE
+!*
+!*     Unscale and sort the singular values.
+!*
+      CALL DLASCL( 'G', 0, 0, ONE, ORGNRM, N, 1, D, N, INFO )
+      CALL DLASRT( 'D', N, D, INFO )
+      CALL DLASCL( 'G', 0, 0, ORGNRM, ONE, N, NRHS, B, LDB, INFO )
+
+END SUBROUTINE
+
+
+    !*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+    SUBROUTINE DLABAD( SMALL, LARGE ) !GCC$ ATTRIBUTES inline :: DLABAD !GCC$ ATTRIBUTES aligned(32) :: DLABAD
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+      SUBROUTINE DLABAD( SMALL, LARGE )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DLABAD
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLABAD
+    !DIR$ OPTIMIZE : 3
+   
+#endif
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      DOUBLE PRECISION   LARGE, SMALL
+!*     ..
+!*
+!!*  =====================================================================
+!*
+!*     .. Intrinsic Functions ..
+      INTRINSIC          LOG10, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     If it looks like we're on a Cray, take the square root of
+!*     SMALL and LARGE to avoid overflow and underflow problems.
+!*
+      IF( LOG10( LARGE ).GT.2000.D0 ) THEN
+         SMALL = SQRT( SMALL )
+         LARGE = SQRT( LARGE )
+      END IF
+!*
+    
+!*
+!*     End of DLABAD
+!*
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+SUBROUTINE DRSCL( N, SA, SX, INCX ) !GCC$ ATTRIBUTES inline :: DRSCL !GCC$ ATTRIBUTES aligned(32) :: DRSCL
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DRSCL( N, SA, SX, INCX )
+ !DIR$ ATTRIBUTES FORCEINLINE :: DRSCL
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DRSCL
+    !DIR$ OPTIMIZE : 3
+#endif
+!*
+!*  -- LAPACK auxiliary routine (version 3.8.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     November 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INCX, N
+      DOUBLE PRECISION   SA
+!*!     ..
+!*     .. Array Arguments ..
+      DOUBLE PRECISION   SX( * )
+!*     ..
+!*
+!* =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            DONE
+      DOUBLE PRECISION   BIGNUM, CDEN, CDEN1, CNUM, CNUM1, MUL, SMLNUM
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH
+!*     ..
+!*     !.. External Subroutines ..
+      !EXTERNAL           DSCAL, DLABAD
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Quick return if possible
+!*
+     ! IF( N.LE.0 )
+   
+!*
+!*     Get machine parameters
+!*
+      SMLNUM = DLAMCH( 'S' )
+      BIGNUM = ONE / SMLNUM
+      CALL DLABAD( SMLNUM, BIGNUM )
+!*
+!*     Initialize the denominator to SA and the numerator to 1.
+!*
+      CDEN = SA
+      CNUM = ONE
+!*
+   10 CONTINUE
+      CDEN1 = CDEN*SMLNUM
+      CNUM1 = CNUM / BIGNUM
+      IF( ABS( CDEN1 ).GT.ABS( CNUM ) .AND. CNUM.NE.ZERO ) THEN
+!*
+!*        Pre-multiply X by SMLNUM if CDEN is large compared to CNUM.
+!*
+         MUL = SMLNUM
+         DONE = .FALSE.
+         CDEN = CDEN1
+      ELSE IF( ABS( CNUM1 ).GT.ABS( CDEN ) ) THEN
+!*
+!*        Pre-multiply X by BIGNUM if CDEN is small compared to CNUM.
+!*
+         MUL = BIGNUM
+         DONE = .FALSE.
+         CNUM = CNUM1
+      ELSE
+!*!
+!*        Multiply X by CNUM / CDEN and return.
+!*
+         MUL = CNUM / CDEN
+         DONE = .TRUE.
+      END IF
+!*
+!*     Scale the vector X by MUL
+!*
+      CALL DSCAL( N, MUL, SX, INCX )
+!*
+      IF( .NOT.DONE ) &
+         GO TO 10
+END SUBROUTINE
+     
+
+     
 
 !*> \author Univ. of Tennessee
 !*> \author Univ. of California Berkeley
@@ -12865,4 +14427,7 @@ CHARACTER*1 FUNCTION CHLA_TRANSTYPE( TRANS ) !GCC$ ATTRIBUTES inline :: CHLA_TRA
          CHLA_TRANSTYPE = 'X'
       END IF
    
-END FUNCTION
+END FUNCTION 
+
+    
+
