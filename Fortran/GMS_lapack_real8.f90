@@ -12727,6 +12727,2615 @@ END SUBROUTINE
 END SUBROUTINE
 
 
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date June 2017
+!*
+!*> \ingroup doubleOTHERcomputational
+!*
+!*> \par Contributors:
+!*  ==================
+!*>
+!*>     Ming Gu and Ren-Cang Li, Computer Science Division, University of
+!*>       California at Berkeley, USA \n
+!*>     Osni Marques, LBNL/NERSC, USA \n
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+SUBROUTINE DLALSA( ICOMPQ, SMLSIZ, N, NRHS, B, LDB, BX, LDBX, U, &
+                        LDU, VT, K, DIFL, DIFR, Z, POLES, GIVPTR, &
+                        GIVCOL, LDGCOL, PERM, GIVNUM, C, S, WORK, &
+                        IWORK, INFO ) !GCC$ ATTRIBUTES hot :: DLALSA !GCC$ ATTRIBUTES aligned(32) :: DLALSA
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DLALSA( ICOMPQ, SMLSIZ, N, NRHS, B, LDB, BX, LDBX, U, &
+                        LDU, VT, K, DIFL, DIFR, Z, POLES, GIVPTR, &
+                        GIVCOL, LDGCOL, PERM, GIVNUM, C, S, WORK, &
+                        IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLALSA
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLALSA
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!1*     .. Scalar Arguments ..
+      INTEGER            ICOMPQ, INFO, LDB, LDBX, LDGCOL, LDU, N, NRHS, &
+                        SMLSIZ
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            GIVCOL( LDGCOL, * ), GIVPTR( * ), IWORK( * ),
+     !$                   K( * ), PERM( LDGCOL, * )
+     ! DOUBLE PRECISION   B( LDB, * ), BX( LDBX, * ), C( * ),
+    ! $                   DIFL( LDU, * ), DIFR( LDU, * ),
+    ! $                   GIVNUM( LDU, * ), POLES( LDU, * ), S( * ),
+    ! $                   U( LDU, * ), VT( LDU, * ), WORK( * ),
+      ! $                   Z( LDU, * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: GIVPTR
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      INTEGER, DIMENSION(:), ALLOCATABLE :: K
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BX
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: VT
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+      
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D0, ONE = 1.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, I1, IC, IM1, INODE, J, LF, LL, LVL, LVL2, &
+                        ND, NDB1, NDIML, NDIMR, NL, NLF, NLP1, NLVL, &
+                        NR, NRF, NRP1, SQRE
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY, DGEMM
+!*     ..
+!!*     .. Executable Statements ..
+!*
+!*!     Test the input parameters.
+!*
+      INFO = 0
+!*
+      IF( ( ICOMPQ.LT.0 ) .OR. ( ICOMPQ.GT.1 ) ) THEN
+         INFO = -1
+      ELSE IF( SMLSIZ.LT.3 ) THEN
+         INFO = -2
+      ELSE IF( N.LT.SMLSIZ ) THEN
+         INFO = -3
+      ELSE IF( NRHS.LT.1 ) THEN
+         INFO = -4
+      ELSE IF( LDB.LT.N ) THEN
+         INFO = -6
+      ELSE IF( LDBX.LT.N ) THEN
+         INFO = -8
+      ELSE IF( LDU.LT.N ) THEN
+         INFO = -10
+      ELSE IF( LDGCOL.LT.N ) THEN
+         INFO = -19
+      END IF
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DLALSA', -INFO )
+         RETURN
+      END IF
+!*
+!*!     Book-keeping and  setting up the computation tree.
+!*!
+      INODE = 1
+      NDIML = INODE + N
+      NDIMR = NDIML + N
+
+      CALL DLASDT( N, NLVL, ND, IWORK( INODE ), IWORK( NDIML ), &
+                  IWORK( NDIMR ), SMLSIZ )
+!*
+!*     The following code applies back the left singular vector factors.
+!*     For applying back the right singular vector factors, go to 50.
+!*
+      IF( ICOMPQ.EQ.1 ) THEN
+         GO TO 50
+      END IF
+!*
+!*     The nodes on the bottom level of the tree were solved
+!*     by DLASDQ. The corresponding left and right singular vector
+!*     matrices are in explicit form. First apply back the left
+!*     singular vector matrices.
+!*
+      NDB1 = ( ND+1 ) / 2
+      DO 10 I = NDB1, ND
+!*
+!*        IC : center row of each node
+!*        NL : number of rows of left  subproblem
+!*        NR : number of rows of right subproblem
+!*        NLF: starting row of the left   subproblem
+!*        NRF: starting row of the right  subproblem
+!*
+         I1 = I - 1
+         IC = IWORK( INODE+I1 )
+         NL = IWORK( NDIML+I1 )
+         NR = IWORK( NDIMR+I1 )
+         NLF = IC - NL
+         NRF = IC + 1
+         CALL DGEMM( 'T', 'N', NL, NRHS, NL, ONE, U( NLF, 1 ), LDU, &
+                    B( NLF, 1 ), LDB, ZERO, BX( NLF, 1 ), LDBX )
+         CALL DGEMM( 'T', 'N', NR, NRHS, NR, ONE, U( NRF, 1 ), LDU, &
+                    B( NRF, 1 ), LDB, ZERO, BX( NRF, 1 ), LDBX )
+   10 CONTINUE
+!*
+!*     Next copy the rows of B that correspond to unchanged rows
+!*     in the bidiagonal matrix to BX.
+!*
+      DO 20 I = 1, ND
+         IC = IWORK( INODE+I-1 )
+         CALL DCOPY( NRHS, B( IC, 1 ), LDB, BX( IC, 1 ), LDBX )
+   20 CONTINUE
+!*
+!*     Finally go through the left singular vector matrices of all
+!*     the other subproblems bottom-up on the tree.
+!*
+      J = 2**NLVL
+      SQRE = 0
+!*
+      DO 40 LVL = NLVL, 1, -1
+         LVL2 = 2*LVL - 1
+!*
+!*        find the first node LF and last node LL on
+!*        the current level LVL
+!*
+         IF( LVL.EQ.1 ) THEN
+            LF = 1
+            LL = 1
+         ELSE
+            LF = 2**( LVL-1 )
+            LL = 2*LF - 1
+         END IF
+         DO 30 I = LF, LL
+            IM1 = I - 1
+            IC = IWORK( INODE+IM1 )
+            NL = IWORK( NDIML+IM1 )
+            NR = IWORK( NDIMR+IM1 )
+            NLF = IC - NL
+            NRF = IC + 1
+            J = J - 1
+            CALL DLALS0( ICOMPQ, NL, NR, SQRE, NRHS, BX( NLF, 1 ), LDBX, &
+                        B( NLF, 1 ), LDB, PERM( NLF, LVL ), &
+                        GIVPTR( J ), GIVCOL( NLF, LVL2 ), LDGCOL, &
+                        GIVNUM( NLF, LVL2 ), LDU, POLES( NLF, LVL2 ), &
+                        DIFL( NLF, LVL ), DIFR( NLF, LVL2 ), &
+                        Z( NLF, LVL ), K( J ), C( J ), S( J ), WORK, &
+                       INFO )
+   30    CONTINUE
+   40 CONTINUE
+      GO TO 90
+!*
+!*     ICOMPQ = 1: applying back the right singular vector factors.
+!*
+   50 CONTINUE
+!*
+!*     First now go through the right singular vector matrices of all
+!!*     the tree nodes top-down.
+!*
+      J = 0
+      DO 70 LVL = 1, NLVL
+         LVL2 = 2*LVL - 1
+!*
+!*        Find the first node LF and last node LL on
+!*        the current level LVL.
+!*
+         IF( LVL.EQ.1 ) THEN
+            LF = 1
+            LL = 1
+         ELSE
+            LF = 2**( LVL-1 )
+            LL = 2*LF - 1
+         END IF
+         DO 60 I = LL, LF, -1
+            IM1 = I - 1
+            IC = IWORK( INODE+IM1 )
+            NL = IWORK( NDIML+IM1 )
+            NR = IWORK( NDIMR+IM1 )
+            NLF = IC - NL
+            NRF = IC + 1
+            IF( I.EQ.LL ) THEN
+               SQRE = 0
+            ELSE
+               SQRE = 1
+            END IF
+            J = J + 1
+            CALL DLALS0( ICOMPQ, NL, NR, SQRE, NRHS, B( NLF, 1 ), LDB, &
+                        BX( NLF, 1 ), LDBX, PERM( NLF, LVL ), &
+                        GIVPTR( J ), GIVCOL( NLF, LVL2 ), LDGCOL, &
+                        GIVNUM( NLF, LVL2 ), LDU, POLES( NLF, LVL2 ), &
+                        DIFL( NLF, LVL ), DIFR( NLF, LVL2 ), &
+                        Z( NLF, LVL ), K( J ), C( J ), S( J ), WORK, &
+                        INFO )
+   60    CONTINUE
+   70 CONTINUE
+!*
+!*     The nodes on the bottom level of the tree were solved
+!*     by DLASDQ. The corresponding right singular vector
+!*     matrices are in explicit form. Apply them back.
+!*
+      NDB1 = ( ND+1 ) / 2
+      DO 80 I = NDB1, ND
+         I1 = I - 1
+         IC = IWORK( INODE+I1 )
+         NL = IWORK( NDIML+I1 )
+         NR = IWORK( NDIMR+I1 )
+         NLP1 = NL + 1
+         IF( I.EQ.ND ) THEN
+            NRP1 = NR
+         ELSE
+            NRP1 = NR + 1
+         END IF
+         NLF = IC - NL
+         NRF = IC + 1
+         CALL DGEMM( 'T', 'N', NLP1, NRHS, NLP1, ONE, VT( NLF, 1 ), LDU, &
+                    B( NLF, 1 ), LDB, ZERO, BX( NLF, 1 ), LDBX )
+         CALL DGEMM( 'T', 'N', NRP1, NRHS, NRP1, ONE, VT( NRF, 1 ), LDU, &
+                    B( NRF, 1 ), LDB, ZERO, BX( NRF, 1 ), LDBX )
+   80 CONTINUE
+
+   90 CONTINUE
+
+    
+END SUBROUTINE
+
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date December 2016
+!*
+!*> \ingroup doubleOTHERcomputational
+!*
+!*> \par Contributors:
+!*  ==================
+!*>
+!*>     Ming Gu and Ren-Cang Li, Computer Science Division, University of
+!*>       California at Berkeley, USA \n
+!*>     Osni Marques, LBNL/NERSC, USA \n
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
+      SUBROUTINE DLALS0( ICOMPQ, NL, NR, SQRE, NRHS, B, LDB, BX, LDBX, &
+                        PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, LDGNUM, &
+                        POLES, DIFL, DIFR, Z, K, C, S, WORK, INFO ) !GCC$ ATTRIBUTES hot :: DLALS0 !GCC$ ATTRIBUTES aligned(32) :: DLALS0
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+    SUBROUTINE DLALS0( ICOMPQ, NL, NR, SQRE, NRHS, B, LDB, BX, LDBX, &
+                        PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, LDGNUM, &
+                        POLES, DIFL, DIFR, Z, K, C, S, WORK, INFO )                     
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLALS0
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLALS0
+#endif
+      use omp_lib
+      implicit none
+      
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            GIVPTR, ICOMPQ, INFO, K, LDB, LDBX, LDGCOL, &
+                        LDGNUM, NL, NR, NRHS, SQRE
+      DOUBLE PRECISION   C, S
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            GIVCOL( LDGCOL, * ), PERM( * )
+      !DOUBLE PRECISION   B( LDB, * ), BX( LDBX, * ), DIFL( * ),
+     !$                   DIFR( LDGNUM, * ), GIVNUM( LDGNUM, * ),
+      !$                   POLES( LDGNUM, * ), WORK( * ), Z( * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BX
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO, NEGONE
+      PARAMETER          ( ONE = 1.0D0, ZERO = 0.0D0, NEGONE = -1.0D0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, J, M, N, NLP1
+      DOUBLE PRECISION   DIFLJ, DIFRJ, DJ, DSIGJ, DSIGJP, TEMP
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY, DGEMV,DROT, DSCAL
+     
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DLAMC3, DNRM2
+      EXTERNAL           DLAMC3, DNRM2
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MAX
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+      N = NL + NR + 1
+!*
+      IF( ( ICOMPQ.LT.0 ) .OR. ( ICOMPQ.GT.1 ) ) THEN
+         INFO = -1
+      ELSE IF( NL.LT.1 ) THEN
+         INFO = -2
+      ELSE IF( NR.LT.1 ) THEN
+         INFO = -3
+      ELSE IF( ( SQRE.LT.0 ) .OR. ( SQRE.GT.1 ) ) THEN
+         INFO = -4
+      ELSE IF( NRHS.LT.1 ) THEN
+         INFO = -5
+      ELSE IF( LDB.LT.N ) THEN
+         INFO = -7
+      ELSE IF( LDBX.LT.N ) THEN
+         INFO = -9
+      ELSE IF( GIVPTR.LT.0 ) THEN
+         INFO = -11
+      ELSE IF( LDGCOL.LT.N ) THEN
+         INFO = -13
+      ELSE IF( LDGNUM.LT.N ) THEN
+         INFO = -15
+      ELSE IF( K.LT.1 ) THEN
+         INFO = -20
+      END IF
+      IF( INFO.NE.0 ) THEN
+        ! CALL XERBLA( 'DLALS0', -INFO )
+         RETURN
+      END IF
+!*
+      M = N + SQRE
+      NLP1 = NL + 1
+!*
+      IF( ICOMPQ.EQ.0 ) THEN
+!*
+!*        Apply back orthogonal transformations from the left.
+!*
+!*        Step (1L): apply back the Givens rotations performed.
+!1*
+         DO 10 I = 1, GIVPTR
+            CALL DROT( NRHS, B( GIVCOL( I, 2 ), 1 ), LDB, &
+                      B( GIVCOL( I, 1 ), 1 ), LDB, GIVNUM( I, 2 ), &
+                      GIVNUM( I, 1 ) )
+   10    CONTINUE
+!*
+!*        Step (2L): permute rows of B.
+!*
+         CALL DCOPY( NRHS, B( NLP1, 1 ), LDB, BX( 1, 1 ), LDBX )
+         DO 20 I = 2, N
+            CALL DCOPY( NRHS, B( PERM( I ), 1 ), LDB, BX( I, 1 ), LDBX )
+   20    CONTINUE
+!*
+!*        Step (3L): apply the inverse of the left singular vector
+!*        matrix to BX.
+!*
+         IF( K.EQ.1 ) THEN
+            CALL DCOPY( NRHS, BX, LDBX, B, LDB )
+            IF( Z( 1 ).LT.ZERO ) THEN
+               CALL DSCAL( NRHS, NEGONE, B, LDB )
+            END IF
+         ELSE
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DIFL,POLES,DIFR,WORK,Z) PRIVATE(J,DIFLJ,DJ,DSIGJ,DIFRJ,DSIGJP,I,TEMP)
+            DO 50 J = 1, K
+               DIFLJ = DIFL( J )
+               DJ = POLES( J, 1 )
+               DSIGJ = -POLES( J, 2 )
+               IF( J.LT.K ) THEN
+                  DIFRJ = -DIFR( J, 1 )
+                  DSIGJP = -POLES( J+1, 2 )
+               END IF
+               IF( ( Z( J ).EQ.ZERO ) .OR. ( POLES( J, 2 ).EQ.ZERO ) ) &
+                    THEN
+                  WORK( J ) = ZERO
+               ELSE
+                  WORK( J ) = -POLES( J, 2 )*Z( J ) / DIFLJ / &
+                             ( POLES( J, 2 )+DJ )
+               END IF
+               !$OMP SIMD ALIGNED(Z:64,POLES,WORK) LINEAR(I:1)
+               DO 30 I = 1, J - 1
+                  IF( ( Z( I ).EQ.ZERO ) .OR. &
+                     ( POLES( I, 2 ).EQ.ZERO ) ) THEN
+                     WORK( I ) = ZERO
+                  ELSE
+                     WORK( I ) = POLES( I, 2 )*Z( I ) / &
+                                ( DLAMC3( POLES( I, 2 ), DSIGJ )- &
+                                DIFLJ ) / ( POLES( I, 2 )+DJ )
+                  END IF
+    30         CONTINUE
+                 !$OMP SIMD ALIGNED(Z:64,POLES,WORK) LINEAR(I:1)  
+               DO 40 I = J + 1, K
+                  IF( ( Z( I ).EQ.ZERO ) .OR. &
+                      ( POLES( I, 2 ).EQ.ZERO ) ) THEN
+                     WORK( I ) = ZERO
+                  ELSE
+                     WORK( I ) = POLES( I, 2 )*Z( I ) / &
+                                ( DLAMC3( POLES( I, 2 ), DSIGJP )+ &
+                                DIFRJ ) / ( POLES( I, 2 )+DJ )
+                  END IF
+   40          CONTINUE
+               WORK( 1 ) = NEGONE
+               TEMP = DNRM2( K, WORK, 1 )
+               !$OMP SINGLE
+               CALL DGEMV( 'T', K, NRHS, ONE, BX, LDBX, WORK, 1, ZERO, &
+                    B( J, 1 ), LDB )
+               !$OMP END SINGLE NOWAIT
+               !$OMP SINGLE
+               CALL DLASCL( 'G', 0, 0, TEMP, ONE, 1, NRHS, B( J, 1 ), &
+                    LDB, INFO )
+               !$OMP END SINGLE NOWAIT
+    50      CONTINUE
+            !$OMP END PARALLEL DO   
+         END IF
+!*
+!*!        Move the deflated rows of BX to B also.
+!*
+         IF( K.LT.MAX( M, N ) ) &
+           CALL DLACPY( 'A', N-K, NRHS, BX( K+1, 1 ), LDBX, &
+                        B( K+1, 1 ), LDB )
+      ELSE
+!*
+!*        Apply back the right orthogonal transformations.
+!*
+!*!        Step (1R): apply back the new right singular vector matrix
+!*        to B.
+!*
+         IF( K.EQ.1 ) THEN
+            CALL DCOPY( NRHS, B, LDB, BX, LDBX )
+         ELSE
+            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(POLES,Z,WORK,DIFR,DIFL) PRIVATE(J,DSIGJ,I)
+            DO 80 J = 1, K
+               DSIGJ = POLES( J, 2 )
+               IF( Z( J ).EQ.ZERO ) THEN
+                  WORK( J ) = ZERO
+               ELSE
+                  WORK( J ) = -Z( J ) / DIFL( J ) / &
+                             ( DSIGJ+POLES( J, 1 ) ) / DIFR( J, 2 )
+               END IF
+               !$OMP SIMD ALIGNED(Z:64,WORK,POLES,DIFR) LINEAR(I:1)
+               DO 60 I = 1, J - 1
+                  IF( Z( J ).EQ.ZERO ) THEN
+                     WORK( I ) = ZERO
+                  ELSE
+                     WORK( I ) = Z( J ) / ( DLAMC3( DSIGJ, -POLES( I+1, &
+                                2 ) )-DIFR( I, 1 ) ) / &
+                                ( DSIGJ+POLES( I, 1 ) ) / DIFR( I, 2 )
+                  END IF
+60             CONTINUE
+                  !$OMP SIMD ALIGNED(Z:64,WORK,POLES,DIFR,DIFL) LINEAR(I:1) 
+               DO 70 I = J + 1, K
+                  IF( Z( J ).EQ.ZERO ) THEN
+                     WORK( I ) = ZERO
+                  ELSE
+                     WORK( I ) = Z( J ) / ( DLAMC3( DSIGJ, -POLES( I, &
+                                2 ) )-DIFL( I ) ) / &
+                                ( DSIGJ+POLES( I, 1 ) ) / DIFR( I, 2 )
+                  END IF
+70             CONTINUE
+                !$OMP SINGLE  
+               CALL DGEMV( 'T', K, NRHS, ONE, B, LDB, WORK, 1, ZERO, &
+                    BX( J, 1 ), LDBX )
+               !$OMP END SINGLE NOWAIT
+   80       CONTINUE
+         END IF
+!*
+!*        Step (2R): if SQRE = 1, apply back the rotation that is
+!*        related to the right null space of the subproblem.
+!*
+         IF( SQRE.EQ.1 ) THEN
+            CALL DCOPY( NRHS, B( M, 1 ), LDB, BX( M, 1 ), LDBX )
+            CALL DROT( NRHS, BX( 1, 1 ), LDBX, BX( M, 1 ), LDBX, C, S )
+         END IF
+         IF( K.LT.MAX( M, N ) ) &
+           CALL DLACPY( 'A', N-K, NRHS, B( K+1, 1 ), LDB, BX( K+1, 1 ), &
+                        LDBX )
+!*
+!*        Step (3R): permute rows of B.
+!*
+         CALL DCOPY( NRHS, BX( 1, 1 ), LDBX, B( NLP1, 1 ), LDB )
+         IF( SQRE.EQ.1 ) THEN
+            CALL DCOPY( NRHS, BX( M, 1 ), LDBX, B( M, 1 ), LDB )
+         END IF
+         DO 90 I = 2, N
+            CALL DCOPY( NRHS, BX( I, 1 ), LDBX, B( PERM( I ), 1 ), LDB )
+   90    CONTINUE
+!*
+!*        Step (4R): apply back the Givens rotations performed.
+!*
+         DO 100 I = GIVPTR, 1, -1
+            CALL DROT( NRHS, B( GIVCOL( I, 2 ), 1 ), LDB, &
+                      B( GIVCOL( I, 1 ), 1 ), LDB, GIVNUM( I, 2 ), &
+                      -GIVNUM( I, 1 ) )
+  100    CONTINUE
+      END IF
+
+END SUBROUTINE
+
+!*> \author Univ. of Tennessee
+!*> \author Univ. of California Berkeley
+!*> \author Univ. of Colorado Denver
+!*> \author NAG Ltd.
+!*
+!*> \date June 2017
+!*
+!*> \ingroup OTHERauxiliary
+!*
+!*> \par Contributors:
+!*  ==================
+!*>
+!*>     Ming Gu and Huan Ren, Computer Science Division, University of
+!*>     California at Berkeley, USA
+!*>
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      SUBROUTINE DLASDA( ICOMPQ, SMLSIZ, N, SQRE, D, E, U, LDU, VT, K, &
+                        DIFL, DIFR, Z, POLES, GIVPTR, GIVCOL, LDGCOL, &
+                        PERM, GIVNUM, C, S, WORK, IWORK, INFO ) !GCC$ ATTRIBUTES hot :: DLASDA !GCC$ ATTRIBUTES aligned(32) :: DLASDA
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+ SUBROUTINE DLASDA( ICOMPQ, SMLSIZ, N, SQRE, D, E, U, LDU, VT, K, &
+                        DIFL, DIFR, Z, POLES, GIVPTR, GIVCOL, LDGCOL, &
+                        PERM, GIVNUM, C, S, WORK, IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASDA
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASDA
+#endif
+   implicit none
+   
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            ICOMPQ, INFO, LDGCOL, LDU, N, SMLSIZ, SQRE
+!*     ..
+!*     .. Array Arguments ..
+     ! INTEGER            GIVCOL( LDGCOL, * ), GIVPTR( * ), IWORK( * ),
+     !$                   K( * ), PERM( LDGCOL, * )
+     ! DOUBLE PRECISION   C( * ), D( * ), DIFL( LDU, * ), DIFR( LDU, * ),
+     !$                   E( * ), GIVNUM( LDU, * ), POLES( LDU, * ),
+     !$                   S( * ), U( LDU, * ), VT( LDU, * ), WORK( * ),
+      !$                   Z( LDU, * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: GIVPTR
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      INTEGER, DIMENSION(:), ALLOCATABLE :: K
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: E
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: VT
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, I1, IC, IDXQ, IDXQI, IM1, INODE, ITEMP, IWK, &
+                       J, LF, LL, LVL, LVL2, M, NCC, ND, NDB1, NDIML, &
+                        NDIMR, NL, NLF, NLP1, NLVL, NR, NRF, NRP1, NRU, &
+                        NWORK1, NWORK2, SMLSZP, SQREI, VF, VFI, VL, VLI 
+      DOUBLE PRECISION   ALPHA, BETA
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+!*
+      IF( ( ICOMPQ.LT.0 ) .OR. ( ICOMPQ.GT.1 ) ) THEN
+         INFO = -1
+      ELSE IF( SMLSIZ.LT.3 ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( ( SQRE.LT.0 ) .OR. ( SQRE.GT.1 ) ) THEN
+         INFO = -4
+      ELSE IF( LDU.LT.( N+SQRE ) ) THEN
+         INFO = -8
+      ELSE IF( LDGCOL.LT.N ) THEN
+         INFO = -17
+      END IF
+      IF( INFO.NE.0 ) THEN
+        ! CALL XERBLA( 'DLASDA', -INFO )
+         RETURN
+      END IF
+!*
+      M = N + SQRE
+!*
+!*     If the input matrix is too small, call DLASDQ to find the SVD.
+!*
+      IF( N.LE.SMLSIZ ) THEN
+         IF( ICOMPQ.EQ.0 ) THEN
+            CALL DLASDQ( 'U', SQRE, N, 0, 0, 0, D, E, VT, LDU, U, LDU, &
+                        U, LDU, WORK, INFO )
+         ELSE
+            CALL DLASDQ( 'U', SQRE, N, M, N, 0, D, E, VT, LDU, U, LDU, &
+                        U, LDU, WORK, INFO )
+         END IF
+         RETURN
+      END IF
+!*
+!*     Book-keeping and  set up the computation tree.
+!*
+      INODE = 1
+      NDIML = INODE + N
+      NDIMR = NDIML + N
+      IDXQ = NDIMR + N
+      IWK = IDXQ + N
+!*
+      NCC = 0
+      NRU = 0
+!*
+      SMLSZP = SMLSIZ + 1
+      VF = 1
+      VL = VF + M
+      NWORK1 = VL + M
+      NWORK2 = NWORK1 + SMLSZP*SMLSZP
+!*
+      CALL DLASDT( N, NLVL, ND, IWORK( INODE ), IWORK( NDIML ), &
+                  IWORK( NDIMR ), SMLSIZ )
+!*
+!*     for the nodes on bottom level of the tree, solve
+!*     their subproblems by DLASDQ.
+!*
+      NDB1 = ( ND+1 ) / 2
+      DO 30 I = NDB1, ND
+!*
+!*        IC : center row of each node
+!*        NL : number of rows of left  subproblem
+!*        NR : number of rows of right subproblem
+!*        NLF: starting row of the left   subproblem
+!*        NRF: starting row of the right  subproblem
+!*
+         I1 = I - 1
+         IC = IWORK( INODE+I1 )
+         NL = IWORK( NDIML+I1 )
+         NLP1 = NL + 1
+         NR = IWORK( NDIMR+I1 )
+         NLF = IC - NL
+         NRF = IC + 1
+         IDXQI = IDXQ + NLF - 2
+         VFI = VF + NLF - 1
+         VLI = VL + NLF - 1
+         SQREI = 1
+         IF( ICOMPQ.EQ.0 ) THEN
+            CALL DLASET( 'A', NLP1, NLP1, ZERO, ONE, WORK( NWORK1 ), &
+                        SMLSZP )
+            CALL DLASDQ( 'U', SQREI, NL, NLP1, NRU, NCC, D( NLF ), &
+                        E( NLF ), WORK( NWORK1 ), SMLSZP, &
+                        WORK( NWORK2 ), NL, WORK( NWORK2 ), NL, &
+                        WORK( NWORK2 ), INFO )
+            ITEMP = NWORK1 + NL*SMLSZP
+            CALL DCOPY( NLP1, WORK( NWORK1 ), 1, WORK( VFI ), 1 )
+            CALL DCOPY( NLP1, WORK( ITEMP ), 1, WORK( VLI ), 1 )
+         ELSE
+            CALL DLASET( 'A', NL, NL, ZERO, ONE, U( NLF, 1 ), LDU )
+            CALL DLASET( 'A', NLP1, NLP1, ZERO, ONE, VT( NLF, 1 ), LDU )
+            CALL DLASDQ( 'U', SQREI, NL, NLP1, NL, NCC, D( NLF ), &
+                        E( NLF ), VT( NLF, 1 ), LDU, U( NLF, 1 ), LDU, &
+                        U( NLF, 1 ), LDU, WORK( NWORK1 ), INFO )
+            CALL DCOPY( NLP1, VT( NLF, 1 ), 1, WORK( VFI ), 1 )
+            CALL DCOPY( NLP1, VT( NLF, NLP1 ), 1, WORK( VLI ), 1 )
+         END IF
+         IF( INFO.NE.0 ) THEN
+            RETURN
+         END IF
+         DO 10 J = 1, NL
+            IWORK( IDXQI+J ) = J
+   10    CONTINUE
+         IF( ( I.EQ.ND ) .AND. ( SQRE.EQ.0 ) ) THEN
+            SQREI = 0
+         ELSE
+            SQREI = 1
+         END IF
+         IDXQI = IDXQI + NLP1
+         VFI = VFI + NLP1
+         VLI = VLI + NLP1
+         NRP1 = NR + SQREI
+         IF( ICOMPQ.EQ.0 ) THEN
+            CALL DLASET( 'A', NRP1, NRP1, ZERO, ONE, WORK( NWORK1 ), &
+                        SMLSZP )
+            CALL DLASDQ( 'U', SQREI, NR, NRP1, NRU, NCC, D( NRF ), &
+                        E( NRF ), WORK( NWORK1 ), SMLSZP, &
+                        WORK( NWORK2 ), NR, WORK( NWORK2 ), NR, &
+                        WORK( NWORK2 ), INFO )
+            ITEMP = NWORK1 + ( NRP1-1 )*SMLSZP
+            CALL DCOPY( NRP1, WORK( NWORK1 ), 1, WORK( VFI ), 1 )
+            CALL DCOPY( NRP1, WORK( ITEMP ), 1, WORK( VLI ), 1 )
+         ELSE
+            CALL DLASET( 'A', NR, NR, ZERO, ONE, U( NRF, 1 ), LDU )
+            CALL DLASET( 'A', NRP1, NRP1, ZERO, ONE, VT( NRF, 1 ), LDU )
+            CALL DLASDQ( 'U', SQREI, NR, NRP1, NR, NCC, D( NRF ), &
+                        E( NRF ), VT( NRF, 1 ), LDU, U( NRF, 1 ), LDU, &
+                       U( NRF, 1 ), LDU, WORK( NWORK1 ), INFO )
+            CALL DCOPY( NRP1, VT( NRF, 1 ), 1, WORK( VFI ), 1 )
+            CALL DCOPY( NRP1, VT( NRF, NRP1 ), 1, WORK( VLI ), 1 )
+         END IF
+         IF( INFO.NE.0 ) THEN
+            RETURN
+         END IF
+         DO 20 J = 1, NR
+            IWORK( IDXQI+J ) = J
+   20    CONTINUE
+   30 CONTINUE
+!*
+!*     Now conquer each subproblem bottom-up.
+!*
+      J = 2**NLVL
+      DO 50 LVL = NLVL, 1, -1
+         LVL2 = LVL*2 - 1
+!*
+!*        Find the first node LF and last node LL on
+!*        the current level LVL.
+!*
+         IF( LVL.EQ.1 ) THEN
+            LF = 1
+            LL = 1
+         ELSE
+            LF = 2**( LVL-1 )
+            LL = 2*LF - 1
+         END IF
+         DO 40 I = LF, LL
+            IM1 = I - 1
+            IC = IWORK( INODE+IM1 )
+            NL = IWORK( NDIML+IM1 )
+            NR = IWORK( NDIMR+IM1 )
+            NLF = IC - NL
+            NRF = IC + 1
+            IF( I.EQ.LL ) THEN
+               SQREI = SQRE
+            ELSE
+               SQREI = 1
+            END IF
+            VFI = VF + NLF - 1
+            VLI = VL + NLF - 1
+            IDXQI = IDXQ + NLF - 1
+            ALPHA = D( IC )
+            BETA = E( IC )
+            IF( ICOMPQ.EQ.0 ) THEN
+               CALL DLASD6( ICOMPQ, NL, NR, SQREI, D( NLF ), &
+                           WORK( VFI ), WORK( VLI ), ALPHA, BETA, &
+                           IWORK( IDXQI ), PERM, GIVPTR( 1 ), GIVCOL, &
+                           LDGCOL, GIVNUM, LDU, POLES, DIFL, DIFR, Z, &
+                           K( 1 ), C( 1 ), S( 1 ), WORK( NWORK1 ), &
+                           IWORK( IWK ), INFO )
+            ELSE
+               J = J - 1
+               CALL DLASD6( ICOMPQ, NL, NR, SQREI, D( NLF ), &
+                           WORK( VFI ), WORK( VLI ), ALPHA, BETA, &
+                           IWORK( IDXQI ), PERM( NLF, LVL ), &
+                           GIVPTR( J ), GIVCOL( NLF, LVL2 ), LDGCOL, &
+                           GIVNUM( NLF, LVL2 ), LDU, &
+                           POLES( NLF, LVL2 ), DIFL( NLF, LVL ), &
+                           DIFR( NLF, LVL2 ), Z( NLF, LVL ), K( J ), &
+                           C( J ), S( J ), WORK( NWORK1 ), &
+                           IWORK( IWK ), INFO )
+            END IF
+            IF( INFO.NE.0 ) THEN
+               RETURN
+            END IF
+   40    CONTINUE
+   50 CONTINUE
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      SUBROUTINE DLASD6( ICOMPQ, NL, NR, SQRE, D, VF, VL, ALPHA, BETA, &
+                        IDXQ, PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, &
+                        LDGNUM, POLES, DIFL, DIFR, Z, K, C, S, WORK, &
+                        IWORK, INFO ) !GCC$ ATTRIBUTES hot :: DLASD6 !GCC$ ATTRIBUTES aligned(32) :: DLASD6
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+ SUBROUTINE DLASD6( ICOMPQ, NL, NR, SQRE, D, VF, VL, ALPHA, BETA, &
+                        IDXQ, PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, &
+                        LDGNUM, POLES, DIFL, DIFR, Z, K, C, S, WORK, &
+                        IWORK, INFO )
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASD6
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASD6
+#endif
+       implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            GIVPTR, ICOMPQ, INFO, K, LDGCOL, LDGNUM, NL, &
+                         NR, SQRE
+      DOUBLE PRECISION   ALPHA, BETA, C, S
+!*     ..
+!*     .. Array Arguments ..
+     ! INTEGER            GIVCOL( LDGCOL, * ), IDXQ( * ), IWORK( * ),
+     !$                   PERM( * )
+     ! DOUBLE PRECISION   D( * ), DIFL( * ), DIFR( * ),
+     !$                   GIVNUM( LDGNUM, * ), POLES( LDGNUM, * ),
+      !$                   VF( * ), VL( * ), WORK( * ), Z( * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IDXQ
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      INTEGER, DIMENSION(:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VF
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VL
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, IDX, IDXC, IDXP, ISIGMA, IVFW, IVLW, IW, M, &
+                        N, N1, N2
+      DOUBLE PRECISION   ORGNRM
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX
+!*     ..
+!*     .. Executable Statements ..
+!1*!
+!*     Test the input parameters.
+!*
+      INFO = 0
+      N = NL + NR + 1
+      M = N + SQRE
+!*
+      IF( ( ICOMPQ.LT.0 ) .OR. ( ICOMPQ.GT.1 ) ) THEN
+         INFO = -1
+      ELSE IF( NL.LT.1 ) THEN
+         INFO = -2
+      ELSE IF( NR.LT.1 ) THEN
+         INFO = -3
+      ELSE IF( ( SQRE.LT.0 ) .OR. ( SQRE.GT.1 ) ) THEN
+         INFO = -4
+      ELSE IF( LDGCOL.LT.N ) THEN
+         INFO = -14
+      ELSE IF( LDGNUM.LT.N ) THEN
+         INFO = -16
+      END IF
+      IF( INFO.NE.0 ) THEN
+        ! CALL XERBLA( 'DLASD6', -INFO )
+         RETURN
+      END IF
+!*
+!*     The following values are for bookkeeping purposes only.  They are
+!*     integer pointers which indicate the portion of the workspace
+!*     used by a particular array in DLASD7 and DLASD8.
+!*
+      ISIGMA = 1
+      IW = ISIGMA + N
+      IVFW = IW + M
+      IVLW = IVFW + M
+!*
+      IDX = 1
+      IDXC = IDX + N
+      IDXP = IDXC + N
+!*
+!*     Scale.
+!*
+      ORGNRM = MAX( ABS( ALPHA ), ABS( BETA ) )
+      D( NL+1 ) = ZERO
+      DO 10 I = 1, N
+         IF( ABS( D( I ) ).GT.ORGNRM ) THEN
+            ORGNRM = ABS( D( I ) )
+         END IF
+   10 CONTINUE
+      CALL DLASCL( 'G', 0, 0, ORGNRM, ONE, N, 1, D, N, INFO )
+      ALPHA = ALPHA / ORGNRM
+      BETA = BETA / ORGNRM
+!*
+!*     Sort and Deflate singular values.
+!*
+      CALL DLASD7( ICOMPQ, NL, NR, SQRE, K, D, Z, WORK( IW ), VF, &
+                  WORK( IVFW ), VL, WORK( IVLW ), ALPHA, BETA, &
+                  WORK( ISIGMA ), IWORK( IDX ), IWORK( IDXP ), IDXQ, &
+                  PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, LDGNUM, C, S, &
+                  INFO )
+!*
+!*     Solve Secular Equation, compute DIFL, DIFR, and update VF, VL.
+!*
+      CALL DLASD8( ICOMPQ, K, D, Z, VF, VL, DIFL, DIFR, LDGNUM, &
+                  WORK( ISIGMA ), WORK( IW ), INFO )
+!*
+!*     Report the possible convergence failure.
+!*
+      IF( INFO.NE.0 ) THEN
+         RETURN
+      END IF
+!*
+!*     Save the poles if ICOMPQ = 1.
+!*
+      IF( ICOMPQ.EQ.1 ) THEN
+         CALL DCOPY( K, D, 1, POLES( 1, 1 ), 1 )
+         CALL DCOPY( K, WORK( ISIGMA ), 1, POLES( 1, 2 ), 1 )
+      END IF
+!*
+!*     Unscale.
+!*
+      CALL DLASCL( 'G', 0, 0, ONE, ORGNRM, N, 1, D, N, INFO )
+!*
+!*     Prepare the IDXQ sorting permutation.
+!*
+      N1 = K
+      N2 = N - K
+      CALL DLAMRG( N1, N2, D, 1, -1, IDXQ )
+
+    END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))       
+SUBROUTINE DLASD8( ICOMPQ, K, D, Z, VF, VL, DIFL, DIFR, LDDIFR, &
+     DSIGMA, WORK, INFO ) !GCC$ ATTRIBUTES hot :: DLASD8 !GCC$ ATTRIBUTES aligned(32) :: DLASD8
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+SUBROUTINE DLASD8( ICOMPQ, K, D, Z, VF, VL, DIFL, DIFR, LDDIFR, &
+     DSIGMA, WORK, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASD8
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLASD8
+#endif
+  use omp_lib
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            ICOMPQ, INFO, K, LDDIFR
+!*     ..
+!*     .. Array Arguments ..
+     ! DOUBLE PRECISION   D( * ), DIFL( * ), DIFR( LDDIFR, * ),
+     !$                   DSIGMA( * ), VF( * ), VL( * ), WORK( * ),
+      ! $                   Z( * )
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DSIGMA
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VF
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VL
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+      
+!*     ..
+!!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE
+      PARAMETER          ( ONE = 1.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, IWK1, IWK2, IWK2I, IWK3, IWK3I, J
+      DOUBLE PRECISION   DIFLJ, DIFRJ, DJ, DSIGJ, DSIGJP, RHO, TEMP
+!*     ..
+!*     .. External Subroutines ..
+     EXTERNAL           DCOPY
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DDOT, DLAMC3, DNRM2
+      EXTERNAL           DDOT, DLAMC3, DNRM2
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, SIGN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+!*
+      IF( ( ICOMPQ.LT.0 ) .OR. ( ICOMPQ.GT.1 ) ) THEN
+         INFO = -1
+      ELSE IF( K.LT.1 ) THEN
+         INFO = -2
+      ELSE IF( LDDIFR.LT.K ) THEN
+         INFO = -9
+      END IF
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DLASD8', -INFO )
+         RETURN
+      END IF
+!*
+!*     Quick return if possible
+!*
+      IF( K.EQ.1 ) THEN
+         D( 1 ) = ABS( Z( 1 ) )
+         DIFL( 1 ) = D( 1 )
+         IF( ICOMPQ.EQ.1 ) THEN
+            DIFL( 2 ) = ONE
+            DIFR( 1, 2 ) = ONE
+         END IF
+         RETURN
+      END IF
+#if 0
+*
+*     Modify values DSIGMA(i) to make sure all DSIGMA(i)-DSIGMA(j) can
+*     be computed with high relative accuracy (barring over/underflow).
+*     This is a problem on machines without a guard digit in
+*     add/subtract (Cray XMP, Cray YMP, Cray C 90 and Cray 2).
+*     The following code replaces DSIGMA(I) by 2*DSIGMA(I)-DSIGMA(I),
+*     which on any of these machines zeros out the bottommost
+*     bit of DSIGMA(I) if it is 1; this makes the subsequent
+*     subtractions DSIGMA(I)-DSIGMA(J) unproblematic when cancellation
+*     occurs. On binary machines with a guard digit (almost all
+*     machines) it does not change DSIGMA(I) at all. On hexadecimal
+*     and decimal machines with a guard digit, it slightly
+*     changes the bottommost bits of DSIGMA(I). It does not account
+*     for hexadecimal or decimal machines without guard digits
+*     (we know of none). We use a subroutine call to compute
+*     2*DLAMBDA(I) to prevent optimizing compilers from eliminating
+*     this code.
+*
+#endif
+      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DSIGMA) PRIVATE(I)
+      DO 10 I = 1, K
+         DSIGMA( I ) = DLAMC3( DSIGMA( I ), DSIGMA( I ) ) - DSIGMA( I )
+   10 CONTINUE
+!*
+!*     Book keeping.
+!*
+      IWK1 = 1
+      IWK2 = IWK1 + K
+      IWK3 = IWK2 + K
+      IWK2I = IWK2 - 1
+      IWK3I = IWK3 - 1
+!*
+!*     Normalize Z.
+!*
+      RHO = DNRM2( K, Z, 1 )
+      CALL DLASCL( 'G', 0, 0, RHO, ONE, K, 1, Z, K, INFO )
+      RHO = RHO*RHO
+!*
+!*     Initialize WORK(IWK3).
+!*
+      CALL DLASET( 'A', K, 1, ONE, ONE, WORK( IWK3 ), K )
+!*
+!*     Compute the updated singular values, the arrays DIFL, DIFR,
+!*     and the updated Z.
+!*
+      DO 40 J = 1, K
+         CALL DLASD4( K, J, DSIGMA, Z, WORK( IWK1 ), RHO, D( J ), &
+                     WORK( IWK2 ), INFO )
+!*
+!*        If the root finder fails, report the convergence failure.
+!*
+         IF( INFO.NE.0 ) THEN
+            RETURN
+         END IF
+         WORK( IWK3I+J ) = WORK( IWK3I+J )*WORK( J )*WORK( IWK2I+J )
+         DIFL( J ) = -WORK( J )
+         DIFR( J, 1 ) = -WORK( J+1 )
+         DO 20 I = 1, J - 1
+            WORK( IWK3I+I ) = WORK( IWK3I+I )*WORK( I )* &
+                             WORK( IWK2I+I ) / ( DSIGMA( I )- &
+                             DSIGMA( J ) ) / ( DSIGMA( I )+ &
+                             DSIGMA( J ) )
+   20    CONTINUE
+         DO 30 I = J + 1, K
+            WORK( IWK3I+I ) = WORK( IWK3I+I )*WORK( I )* &
+                             WORK( IWK2I+I ) / ( DSIGMA( I )- &
+                             DSIGMA( J ) ) / ( DSIGMA( I )+ &
+                             DSIGMA( J ) )
+   30    CONTINUE
+   40 CONTINUE
+!*
+!*     Compute updated Z.
+            !*
+     !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Z,WORK) PRIVATE(I)
+      DO 50 I = 1, K
+         Z( I ) = SIGN( SQRT( ABS( WORK( IWK3I+I ) ) ), Z( I ) )
+   50 CONTINUE
+!*
+!*     Update VF and VL.
+         !*
+      !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(DILF,D,DSIGMA,DIFR,WORK,Z) PRIVATE(J,DIFLJ,DJ,DSIGJ,DIFRJ,DSIGJP,I,TEMP)
+      DO 80 J = 1, K
+         DIFLJ = DIFL( J )
+         DJ = D( J )
+         DSIGJ = -DSIGMA( J )
+         IF( J.LT.K ) THEN
+            DIFRJ = -DIFR( J, 1 )
+            DSIGJP = -DSIGMA( J+1 )
+         END IF
+         WORK( J ) = -Z( J ) / DIFLJ / ( DSIGMA( J )+DJ )
+         !$OMP SIMD ALIGNED(WORK:64,Z,DSIGMA)
+         DO 60 I = 1, J - 1
+            WORK( I ) = Z( I ) / ( DLAMC3( DSIGMA( I ), DSIGJ )-DIFLJ ) &
+                         / ( DSIGMA( I )+DJ )
+60       CONTINUE
+             !$OMP SIMD ALIGNED(WORK:64,Z,DSIGMA)
+         DO 70 I = J + 1, K
+            WORK( I ) = Z( I ) / ( DLAMC3( DSIGMA( I ), DSIGJP )+DIFRJ ) &
+                        / ( DSIGMA( I )+DJ )
+   70    CONTINUE
+         TEMP = DNRM2( K, WORK, 1 )
+         WORK( IWK2I+J ) = DDOT( K, WORK, 1, VF, 1 ) / TEMP
+         WORK( IWK3I+J ) = DDOT( K, WORK, 1, VL, 1 ) / TEMP
+         IF( ICOMPQ.EQ.1 ) THEN
+            DIFR( J, 2 ) = TEMP
+         END IF
+   80 CONTINUE
+!$OMP END PARALLEL DO
+      CALL DCOPY( K, WORK( IWK2 ), 1, VF, 1 )
+      CALL DCOPY( K, WORK( IWK3 ), 1, VL, 1 )
+
+END SUBROUTINE
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+SUBROUTINE DLASD4( N, I, D, Z, DELTA, RHO, SIGMA, WORK, INFO ) !GCC$ ATTRIBUTES Hot :: DLASD4 !GCC$ ATTRIBUTES aligned(32) :: DLASD4
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLASD4( N, I, D, Z, DELTA, RHO, SIGMA, WORK, INFO )
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASD4
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLASD4
+#endif
+    use omp_lib
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            I, INFO, N
+      DOUBLE PRECISION   RHO, SIGMA
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   D( * ), DELTA( * ), WORK( * ), Z( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: D, DELTA, WORK, Z
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      INTEGER            MAXIT
+      PARAMETER          ( MAXIT = 400 )
+      DOUBLE PRECISION   ZERO, ONE, TWO, THREE, FOUR, EIGHT, TEN
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0, TWO = 2.0D+0, &
+                        THREE = 3.0D+0, FOUR = 4.0D+0, EIGHT = 8.0D+0, &
+                        TEN = 10.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            ORGATI, SWTCH, SWTCH3, GEOMAVG
+      INTEGER            II, IIM1, IIP1, IP1, ITER, J, NITER
+      DOUBLE PRECISION   A, B, C, DELSQ, DELSQ2, SQ2, DPHI, DPSI, DTIIM, &
+                        DTIIP, DTIPSQ, DTISQ, DTNSQ, DTNSQ1, DW, EPS, &
+                        ERRETM, ETA, PHI, PREW, PSI, RHOINV, SGLB, &
+                        SGUB, TAU, TAU2, TEMP, TEMP1, TEMP2, W
+!*     ..
+!*     .. Local Arrays ..
+      DOUBLE PRECISION   DD( 3 ), ZZ( 3 )
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DLAED6, DLASD5
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DLAMCH
+      EXTERNAL           DLAMCH
+!!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX, MIN, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Since this routine is called in an inner loop, we do no argument
+!*     checking.
+!*
+!*     Quick return for N=1 and 2.
+!*
+      INFO = 0
+      IF( N.EQ.1 ) THEN
+!*
+!*        Presumably, I=1 upon entry
+!*
+         SIGMA = SQRT( D( 1 )*D( 1 )+RHO*Z( 1 )*Z( 1 ) )
+         DELTA( 1 ) = ONE
+         WORK( 1 ) = ONE
+         RETURN
+      END IF
+      IF( N.EQ.2 ) THEN
+         CALL DLASD5( I, D, Z, DELTA, RHO, SIGMA, WORK )
+         RETURN
+      END IF
+!*
+!*     Compute machine epsilon
+!*
+      EPS = DLAMCH( 'Epsilon' )
+      RHOINV = ONE / RHO
+      TAU2= ZERO
+!*
+!!*     The case I = N
+!*
+      IF( I.EQ.N ) THEN
+!*
+!*        Initialize some basic variables
+!*
+         II = N - 1
+         NITER = 1
+!*
+!*        Calculate initial guess
+!*
+         TEMP = RHO / TWO
+!*
+!*        If ||Z||_2 is not one, then TEMP should be set to
+!*        RHO * ||Z||_2^2 / TWO
+!*
+         TEMP1 = TEMP / ( D( N )+SQRT( D( N )*D( N )+TEMP ) )
+         !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA,D) PRIVATE(J)
+         DO 10 J = 1, N
+            WORK( J ) = D( J ) + D( N ) + TEMP1
+            DELTA( J ) = ( D( J )-D( N ) ) - TEMP1
+   10    CONTINUE
+!*
+            PSI = ZERO
+         !OMP PARALLEL DO REDUCTION(+:PSI) SHARED(Z,DELTA,WORK) PRIVATE(J)   
+         DO 20 J = 1, N - 2
+            PSI = PSI + Z( J )*Z( J ) / ( DELTA( J )*WORK( J ) )
+   20    CONTINUE
+
+         C = RHOINV + PSI
+         W = C + Z( II )*Z( II ) / ( DELTA( II )*WORK( II ) ) + &
+            Z( N )*Z( N ) / ( DELTA( N )*WORK( N ) )
+
+         IF( W.LE.ZERO ) THEN
+            TEMP1 = SQRT( D( N )*D( N )+RHO )
+            TEMP = Z( N-1 )*Z( N-1 ) / ( ( D( N-1 )+TEMP1 )* &
+                  ( D( N )-D( N-1 )+RHO / ( D( N )+TEMP1 ) ) ) + &
+                  Z( N )*Z( N ) / RHO
+!*
+!*           The following TAU2 is to approximate
+!*           SIGMA_n^2 - D( N )*D( N )
+!*
+            IF( C.LE.TEMP ) THEN
+               TAU = RHO
+            ELSE
+               DELSQ = ( D( N )-D( N-1 ) )*( D( N )+D( N-1 ) )
+               A = -C*DELSQ + Z( N-1 )*Z( N-1 ) + Z( N )*Z( N )
+               B = Z( N )*Z( N )*DELSQ
+               IF( A.LT.ZERO ) THEN
+                  TAU2 = TWO*B / ( SQRT( A*A+FOUR*B*C )-A )
+               ELSE
+                  TAU2 = ( A+SQRT( A*A+FOUR*B*C ) ) / ( TWO*C )
+               END IF
+               TAU = TAU2 / ( D( N )+SQRT( D( N )*D( N )+TAU2 ) )
+            END IF
+!*
+!*           It can be proved that
+!*               D(N)^2+RHO/2 <= SIGMA_n^2 < D(N)^2+TAU2 <= D(N)^2+RHO
+!*
+         ELSE
+            DELSQ = ( D( N )-D( N-1 ) )*( D( N )+D( N-1 ) )
+            A = -C*DELSQ + Z( N-1 )*Z( N-1 ) + Z( N )*Z( N )
+            B = Z( N )*Z( N )*DELSQ
+!*
+!*           The following TAU2 is to approximate
+!*           SIGMA_n^2 - D( N )*D( N )
+!*
+            IF( A.LT.ZERO ) THEN
+               TAU2 = TWO*B / ( SQRT( A*A+FOUR*B*C )-A )
+            ELSE
+               TAU2 = ( A+SQRT( A*A+FOUR*B*C ) ) / ( TWO*C )
+            END IF
+            TAU = TAU2 / ( D( N )+SQRT( D( N )*D( N )+TAU2 ) )
+
+!*
+!*           It can be proved that
+!*           D(N)^2 < D(N)^2+TAU2 < SIGMA(N)^2 < D(N)^2+RHO/2
+!*
+         END IF
+!*
+!*        The following TAU is to approximate SIGMA_n - D( N )
+!*
+!*         TAU = TAU2 / ( D( N )+SQRT( D( N )*D( N )+TAU2 ) )
+!*
+         SIGMA = D( N ) + TAU
+          !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA,D) PRIVATE(J)
+         DO 30 J = 1, N
+            DELTA( J ) = ( D( J )-D( N ) ) - TAU
+            WORK( J ) = D( J ) + D( N ) + TAU
+   30    CONTINUE
+!*
+!*        Evaluate PSI and the derivative DPSI
+!*
+         DPSI = ZERO
+         PSI = ZERO
+         ERRETM = ZERO
+         DO 40 J = 1, II
+            TEMP = Z( J ) / ( DELTA( J )*WORK( J ) )
+            PSI = PSI + Z( J )*TEMP
+            DPSI = DPSI + TEMP*TEMP
+            ERRETM = ERRETM + PSI
+   40    CONTINUE
+         ERRETM = ABS( ERRETM )
+!*
+!*        Evaluate PHI and the derivative DPHI
+!*
+         TEMP = Z( N ) / ( DELTA( N )*WORK( N ) )
+         PHI = Z( N )*TEMP
+         DPHI = TEMP*TEMP
+         ERRETM = EIGHT*( -PHI-PSI ) + ERRETM - PHI + RHOINV 
+!*    $          + ABS( TAU2 )*( DPSI+DPHI )
+!*
+         W = RHOINV + PHI + PSI
+!*
+!*        Test for convergence
+!*
+         IF( ABS( W ).LE.EPS*ERRETM ) THEN
+            GO TO 240
+         END IF
+!*
+!*        Calculate the new step
+!*
+         NITER = NITER + 1
+         DTNSQ1 = WORK( N-1 )*DELTA( N-1 )
+         DTNSQ = WORK( N )*DELTA( N )
+         C = W - DTNSQ1*DPSI - DTNSQ*DPHI
+         A = ( DTNSQ+DTNSQ1 )*W - DTNSQ*DTNSQ1*( DPSI+DPHI )
+         B = DTNSQ*DTNSQ1*W
+         IF( C.LT.ZERO ) &
+           C = ABS( C )
+         IF( C.EQ.ZERO ) THEN
+            ETA = RHO - SIGMA*SIGMA
+         ELSE IF( A.GE.ZERO ) THEN
+            ETA = ( A+SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+         ELSE
+            ETA = TWO*B / ( A-SQRT( ABS( A*A-FOUR*B*C ) ) )
+         END IF
+!*
+!*        Note, eta should be positive if w is negative, and
+!*        eta should be negative otherwise. However,
+!*        if for some reason caused by roundoff, eta*w > 0,
+!*        we simply use one Newton step instead. This way
+!*        will guarantee eta*w < 0.
+!*
+         IF( W*ETA.GT.ZERO ) &
+           ETA = -W / ( DPSI+DPHI )
+         TEMP = ETA - DTNSQ
+         IF( TEMP.GT.RHO ) &
+           ETA = RHO + DTNSQ
+
+         ETA = ETA / ( SIGMA+SQRT( ETA+SIGMA*SIGMA ) )
+         TAU = TAU + ETA
+         SIGMA = SIGMA + ETA
+
+         !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA) PRIVATE(J)
+         DO 50 J = 1, N
+            DELTA( J ) = DELTA( J ) - ETA
+            WORK( J ) = WORK( J ) + ETA
+   50    CONTINUE
+!*
+!*        Evaluate PSI and the derivative DPSI
+!*
+         DPSI = ZERO
+         PSI = ZERO
+         ERRETM = ZERO
+         DO 60 J = 1, II
+            TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+            PSI = PSI + Z( J )*TEMP
+            DPSI = DPSI + TEMP*TEMP
+            ERRETM = ERRETM + PSI
+   60    CONTINUE
+         ERRETM = ABS( ERRETM )
+!*
+!*        Evaluate PHI and the derivative DPHI
+!*
+         TAU2 = WORK( N )*DELTA( N )
+         TEMP = Z( N ) / TAU2
+         PHI = Z( N )*TEMP
+         DPHI = TEMP*TEMP
+         ERRETM = EIGHT*( -PHI-PSI ) + ERRETM - PHI + RHOINV
+!*    $          + ABS( TAU2 )*( DPSI+DPHI )
+!*
+         W = RHOINV + PHI + PSI
+!*
+!*        Main loop to update the values of the array   DELTA
+!*
+         ITER = NITER + 1
+!*
+         DO 90 NITER = ITER, MAXIT
+!*
+!*           Test for convergence
+!*
+            IF( ABS( W ).LE.EPS*ERRETM ) THEN
+               GO TO 240
+            END IF
+!*
+!*           Calculate the new step
+!*
+            DTNSQ1 = WORK( N-1 )*DELTA( N-1 )
+            DTNSQ = WORK( N )*DELTA( N )
+            C = W - DTNSQ1*DPSI - DTNSQ*DPHI
+            A = ( DTNSQ+DTNSQ1 )*W - DTNSQ1*DTNSQ*( DPSI+DPHI )
+            B = DTNSQ1*DTNSQ*W
+            IF( A.GE.ZERO ) THEN
+               ETA = ( A+SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+            ELSE
+               ETA = TWO*B / ( A-SQRT( ABS( A*A-FOUR*B*C ) ) )
+            END IF
+!*
+!*           Note, eta should be positive if w is negative, and
+!*           eta should be negative otherwise. However,
+!*           if for some reason caused by roundoff, eta*w > 0,
+!*           we simply use one Newton step instead. This way
+!*           will guarantee eta*w < 0.
+!*
+            IF( W*ETA.GT.ZERO ) &
+              ETA = -W / ( DPSI+DPHI )
+            TEMP = ETA - DTNSQ
+            IF( TEMP.LE.ZERO ) &
+     $         ETA = ETA / TWO
+!*
+            ETA = ETA / ( SIGMA+SQRT( ETA+SIGMA*SIGMA ) )
+            TAU = TAU + ETA
+            SIGMA = SIGMA + ETA
+            !*
+             !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA) PRIVATE(J)
+            DO 70 J = 1, N
+               DELTA( J ) = DELTA( J ) - ETA
+               WORK( J ) = WORK( J ) + ETA
+   70       CONTINUE
+!*
+!*           Evaluate PSI and the derivative DPSI
+!*
+            DPSI = ZERO
+            PSI = ZERO
+            ERRETM = ZERO
+            DO 80 J = 1, II
+               TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+               PSI = PSI + Z( J )*TEMP
+               DPSI = DPSI + TEMP*TEMP
+               ERRETM = ERRETM + PSI
+   80       CONTINUE
+            ERRETM = ABS( ERRETM )
+!*
+!*           Evaluate PHI and the derivative DPHI
+!*
+            TAU2 = WORK( N )*DELTA( N )
+            TEMP = Z( N ) / TAU2
+            PHI = Z( N )*TEMP
+            DPHI = TEMP*TEMP
+            ERRETM = EIGHT*( -PHI-PSI ) + ERRETM - PHI + RHOINV
+!*!    $             + ABS( TAU2 )*( DPSI+DPHI )
+!*
+            W = RHOINV + PHI + PSI
+   90    CONTINUE
+!*
+!*        Return with INFO = 1, NITER = MAXIT and not converged
+!*
+         INFO = 1
+         GO TO 240
+!*
+!*        End for the case I = N
+!*
+      ELSE
+!*
+!*        The case for I < N
+!*
+         NITER = 1
+         IP1 = I + 1
+!*
+!*        Calculate initial guess
+!*
+         DELSQ = ( D( IP1 )-D( I ) )*( D( IP1 )+D( I ) )
+         DELSQ2 = DELSQ / TWO
+         SQ2=SQRT( ( D( I )*D( I )+D( IP1 )*D( IP1 ) ) / TWO )
+         TEMP = DELSQ2 / ( D( I )+SQ2 )
+          !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA,D) PRIVATE(J)
+         DO 100 J = 1, N
+            WORK( J ) = D( J ) + D( I ) + TEMP
+            DELTA( J ) = ( D( J )-D( I ) ) - TEMP
+  100    CONTINUE
+
+            PSI = ZERO
+             !OMP PARALLEL DO REDUCTION(+:PSI) SHARED(Z,DELTA,WORK) PRIVATE(J)   
+         DO 110 J = 1, I - 1
+            PSI = PSI + Z( J )*Z( J ) / ( WORK( J )*DELTA( J ) )
+  110    CONTINUE
+
+            PHI = ZERO
+             !OMP PARALLEL DO REDUCTION(+:PHI) SHARED(Z,DELTA,WORK) PRIVATE(J)   
+         DO 120 J = N, I + 2, -1
+            PHI = PHI + Z( J )*Z( J ) / ( WORK( J )*DELTA( J ) )
+  120    CONTINUE
+         C = RHOINV + PSI + PHI
+         W = C + Z( I )*Z( I ) / ( WORK( I )*DELTA( I ) ) + &
+            Z( IP1 )*Z( IP1 ) / ( WORK( IP1 )*DELTA( IP1 ) )
+
+         GEOMAVG = .FALSE.
+         IF( W.GT.ZERO ) THEN
+!*
+!*           d(i)^2 < the ith sigma^2 < (d(i)^2+d(i+1)^2)/2
+!*
+!*           We choose d(i) as origin.
+!*
+            ORGATI = .TRUE.
+            II = I
+            SGLB = ZERO
+            SGUB = DELSQ2  / ( D( I )+SQ2 )
+            A = C*DELSQ + Z( I )*Z( I ) + Z( IP1 )*Z( IP1 )
+            B = Z( I )*Z( I )*DELSQ
+            IF( A.GT.ZERO ) THEN
+               TAU2 = TWO*B / ( A+SQRT( ABS( A*A-FOUR*B*C ) ) )
+            ELSE
+               TAU2 = ( A-SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+            END IF
+!*
+!*           TAU2 now is an estimation of SIGMA^2 - D( I )^2. The
+!*           following, however, is the corresponding estimation of
+!*           SIGMA - D( I ).
+!*
+            TAU = TAU2 / ( D( I )+SQRT( D( I )*D( I )+TAU2 ) )
+            TEMP = SQRT(EPS)
+            IF( (D(I).LE.TEMP*D(IP1)).AND.(ABS(Z(I)).LE.TEMP) &
+                                    .AND.(D(I).GT.ZERO) ) THEN
+               TAU = MIN( TEN*D(I), SGUB )
+               GEOMAVG = .TRUE.
+            END IF
+         ELSE
+!*
+!*           (d(i)^2+d(i+1)^2)/2 <= the ith sigma^2 < d(i+1)^2/2
+!*
+!*           We choose d(i+1) as origin.
+!*
+            ORGATI = .FALSE.
+            II = IP1
+            SGLB = -DELSQ2  / ( D( II )+SQ2 )
+            SGUB = ZERO
+            A = C*DELSQ - Z( I )*Z( I ) - Z( IP1 )*Z( IP1 )
+            B = Z( IP1 )*Z( IP1 )*DELSQ
+            IF( A.LT.ZERO ) THEN
+               TAU2 = TWO*B / ( A-SQRT( ABS( A*A+FOUR*B*C ) ) )
+            ELSE
+               TAU2 = -( A+SQRT( ABS( A*A+FOUR*B*C ) ) ) / ( TWO*C )
+            END IF
+!*
+!*           TAU2 now is an estimation of SIGMA^2 - D( IP1 )^2. The
+!*           following, however, is the corresponding estimation of
+!*           SIGMA - D( IP1 ).
+!*
+            TAU = TAU2 / ( D( IP1 )+SQRT( ABS( D( IP1 )*D( IP1 )+ &
+                 TAU2 ) ) )
+         END IF
+
+         SIGMA = D( II ) + TAU
+           !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA,D) PRIVATE(J)
+         DO 130 J = 1, N
+            WORK( J ) = D( J ) + D( II ) + TAU
+            DELTA( J ) = ( D( J )-D( II ) ) - TAU
+  130    CONTINUE
+         IIM1 = II - 1
+         IIP1 = II + 1
+!*
+!*        Evaluate PSI and the derivative DPSI
+!*
+         DPSI = ZERO
+         PSI = ZERO
+         ERRETM = ZERO
+         DO 150 J = 1, IIM1
+            TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+            PSI = PSI + Z( J )*TEMP
+            DPSI = DPSI + TEMP*TEMP
+            ERRETM = ERRETM + PSI
+  150    CONTINUE
+         ERRETM = ABS( ERRETM )
+!*
+!*        Evaluate PHI and the derivative DPHI
+!*
+         DPHI = ZERO
+         PHI = ZERO
+         DO 160 J = N, IIP1, -1
+            TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+            PHI = PHI + Z( J )*TEMP
+            DPHI = DPHI + TEMP*TEMP
+            ERRETM = ERRETM + PHI
+  160    CONTINUE
+!*
+         W = RHOINV + PHI + PSI
+!*
+!*        W is the value of the secular function with
+!*        its ii-th element removed.
+!*
+         SWTCH3 = .FALSE.
+         IF( ORGATI ) THEN
+            IF( W.LT.ZERO ) &
+              SWTCH3 = .TRUE.
+         ELSE
+            IF( W.GT.ZERO ) &
+              SWTCH3 = .TRUE.
+         END IF
+         IF( II.EQ.1 .OR. II.EQ.N ) &
+           SWTCH3 = .FALSE.
+
+         TEMP = Z( II ) / ( WORK( II )*DELTA( II ) )
+         DW = DPSI + DPHI + TEMP*TEMP
+         TEMP = Z( II )*TEMP
+         W = W + TEMP
+         ERRETM = EIGHT*( PHI-PSI ) + ERRETM + TWO*RHOINV &
+               + THREE*ABS( TEMP ) &
+!*              + ABS( TAU2 )*DW
+!*
+!*        Test for convergence
+!*
+         IF( ABS( W ).LE.EPS*ERRETM ) THEN
+            GO TO 240
+         END IF
+!*
+         IF( W.LE.ZERO ) THEN
+            SGLB = MAX( SGLB, TAU )
+         ELSE
+            SGUB = MIN( SGUB, TAU )
+         END IF
+!*
+!*        Calculate the new step
+!*
+         NITER = NITER + 1
+         IF( .NOT.SWTCH3 ) THEN
+            DTIPSQ = WORK( IP1 )*DELTA( IP1 )
+            DTISQ = WORK( I )*DELTA( I )
+            IF( ORGATI ) THEN
+               C = W - DTIPSQ*DW + DELSQ*( Z( I ) / DTISQ )**2
+            ELSE
+               C = W - DTISQ*DW - DELSQ*( Z( IP1 ) / DTIPSQ )**2
+            END IF
+            A = ( DTIPSQ+DTISQ )*W - DTIPSQ*DTISQ*DW
+            B = DTIPSQ*DTISQ*W
+            IF( C.EQ.ZERO ) THEN
+               IF( A.EQ.ZERO ) THEN
+                  IF( ORGATI ) THEN
+                     A = Z( I )*Z( I ) + DTIPSQ*DTIPSQ*( DPSI+DPHI )
+                  ELSE
+                     A = Z( IP1 )*Z( IP1 ) + DTISQ*DTISQ*( DPSI+DPHI )
+                  END IF
+               END IF
+               ETA = B / A
+            ELSE IF( A.LE.ZERO ) THEN
+               ETA = ( A-SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+            ELSE
+               ETA = TWO*B / ( A+SQRT( ABS( A*A-FOUR*B*C ) ) )
+            END IF
+         ELSE
+!*
+!*           Interpolation using THREE most relevant poles
+!*
+            DTIIM = WORK( IIM1 )*DELTA( IIM1 )
+            DTIIP = WORK( IIP1 )*DELTA( IIP1 )
+            TEMP = RHOINV + PSI + PHI
+            IF( ORGATI ) THEN
+               TEMP1 = Z( IIM1 ) / DTIIM
+               TEMP1 = TEMP1*TEMP1
+               C = ( TEMP - DTIIP*( DPSI+DPHI ) ) - &
+                  ( D( IIM1 )-D( IIP1 ) )*( D( IIM1 )+D( IIP1 ) )*TEMP1
+               ZZ( 1 ) = Z( IIM1 )*Z( IIM1 )
+               IF( DPSI.LT.TEMP1 ) THEN
+                  ZZ( 3 ) = DTIIP*DTIIP*DPHI
+               ELSE
+                  ZZ( 3 ) = DTIIP*DTIIP*( ( DPSI-TEMP1 )+DPHI )
+               END IF
+            ELSE
+               TEMP1 = Z( IIP1 ) / DTIIP
+               TEMP1 = TEMP1*TEMP1
+               C = ( TEMP - DTIIM*( DPSI+DPHI ) ) - &
+                  ( D( IIP1 )-D( IIM1 ) )*( D( IIM1 )+D( IIP1 ) )*TEMP1
+               IF( DPHI.LT.TEMP1 ) THEN
+                  ZZ( 1 ) = DTIIM*DTIIM*DPSI
+               ELSE
+                  ZZ( 1 ) = DTIIM*DTIIM*( DPSI+( DPHI-TEMP1 ) )
+               END IF
+               ZZ( 3 ) = Z( IIP1 )*Z( IIP1 )
+            END IF
+            ZZ( 2 ) = Z( II )*Z( II )
+            DD( 1 ) = DTIIM
+            DD( 2 ) = DELTA( II )*WORK( II )
+            DD( 3 ) = DTIIP
+            CALL DLAED6( NITER, ORGATI, C, DD, ZZ, W, ETA, INFO )
+
+            IF( INFO.NE.0 ) THEN
+!*
+!*              If INFO is not 0, i.e., DLAED6 failed, switch back
+!*              to 2 pole interpolation.
+!*
+               SWTCH3 = .FALSE.
+               INFO = 0
+               DTIPSQ = WORK( IP1 )*DELTA( IP1 )
+               DTISQ = WORK( I )*DELTA( I )
+               IF( ORGATI ) THEN
+                  C = W - DTIPSQ*DW + DELSQ*( Z( I ) / DTISQ )**2
+               ELSE
+                  C = W - DTISQ*DW - DELSQ*( Z( IP1 ) / DTIPSQ )**2
+               END IF
+               A = ( DTIPSQ+DTISQ )*W - DTIPSQ*DTISQ*DW
+               B = DTIPSQ*DTISQ*W
+               IF( C.EQ.ZERO ) THEN
+                  IF( A.EQ.ZERO ) THEN
+                     IF( ORGATI ) THEN
+                        A = Z( I )*Z( I ) + DTIPSQ*DTIPSQ*( DPSI+DPHI )
+                     ELSE
+                        A = Z( IP1 )*Z( IP1 ) + DTISQ*DTISQ*( DPSI+DPHI)
+                     END IF
+                  END IF
+                  ETA = B / A
+               ELSE IF( A.LE.ZERO ) THEN
+                  ETA = ( A-SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+               ELSE
+                  ETA = TWO*B / ( A+SQRT( ABS( A*A-FOUR*B*C ) ) )
+               END IF
+            END IF
+         END IF
+!*
+!*        Note, eta should be positive if w is negative, and
+!*        eta should be negative otherwise. However,
+!*        if for some reason caused by roundoff, eta*w > 0,
+!*        we simply use one Newton step instead. This way
+!*        will guarantee eta*w < 0.
+!*
+         IF( W*ETA.GE.ZERO ) &
+           ETA = -W / DW
+
+         ETA = ETA / ( SIGMA+SQRT( SIGMA*SIGMA+ETA ) )
+         TEMP = TAU + ETA
+         IF( TEMP.GT.SGUB .OR. TEMP.LT.SGLB ) THEN
+            IF( W.LT.ZERO ) THEN
+               ETA = ( SGUB-TAU ) / TWO
+            ELSE
+               ETA = ( SGLB-TAU ) / TWO
+            END IF
+            IF( GEOMAVG ) THEN
+               IF( W .LT. ZERO ) THEN
+                  IF( TAU .GT. ZERO ) THEN
+                     ETA = SQRT(SGUB*TAU)-TAU
+                  END IF
+               ELSE
+                  IF( SGLB .GT. ZERO ) THEN
+                     ETA = SQRT(SGLB*TAU)-TAU
+                  END IF
+               END IF
+            END IF
+         END IF
+
+         PREW = W
+
+         TAU = TAU + ETA
+         SIGMA = SIGMA + ETA
+       !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA) PRIVATE(J)
+         DO 170 J = 1, N
+            WORK( J ) = WORK( J ) + ETA
+            DELTA( J ) = DELTA( J ) - ETA
+  170    CONTINUE
+!*
+!*        Evaluate PSI and the derivative DPSI
+!*
+         DPSI = ZERO
+         PSI = ZERO
+         ERRETM = ZERO
+         DO 180 J = 1, IIM1
+            TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+            PSI = PSI + Z( J )*TEMP
+            DPSI = DPSI + TEMP*TEMP
+            ERRETM = ERRETM + PSI
+  180    CONTINUE
+         ERRETM = ABS( ERRETM )
+!*
+!*        Evaluate PHI and the derivative DPHI
+!*
+         DPHI = ZERO
+         PHI = ZERO
+         DO 190 J = N, IIP1, -1
+            TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+            PHI = PHI + Z( J )*TEMP
+            DPHI = DPHI + TEMP*TEMP
+            ERRETM = ERRETM + PHI
+  190    CONTINUE
+!*
+         TAU2 = WORK( II )*DELTA( II )
+         TEMP = Z( II ) / TAU2
+         DW = DPSI + DPHI + TEMP*TEMP
+         TEMP = Z( II )*TEMP
+         W = RHOINV + PHI + PSI + TEMP
+         ERRETM = EIGHT*( PHI-PSI ) + ERRETM + TWO*RHOINV &
+               + THREE*ABS( TEMP )
+!*    $          + ABS( TAU2 )*DW
+!*
+         SWTCH = .FALSE.
+         IF( ORGATI ) THEN
+            IF( -W.GT.ABS( PREW ) / TEN ) &
+              SWTCH = .TRUE.
+         ELSE
+            IF( W.GT.ABS( PREW ) / TEN ) &
+              SWTCH = .TRUE.
+         END IF
+!*
+!*        Main loop to update the values of the array   DELTA and WORK
+!*
+         ITER = NITER + 1
+!*
+         DO 230 NITER = ITER, MAXIT
+!*
+!*           Test for convergence
+!*
+            IF( ABS( W ).LE.EPS*ERRETM ) THEN 
+!*     $          .OR. (SGUB-SGLB).LE.EIGHT*ABS(SGUB+SGLB) ) THEN
+               GO TO 240
+            END IF
+!*
+            IF( W.LE.ZERO ) THEN
+               SGLB = MAX( SGLB, TAU )
+            ELSE
+               SGUB = MIN( SGUB, TAU )
+            END IF
+!*
+!*           Calculate the new step
+!*
+            IF( .NOT.SWTCH3 ) THEN
+               DTIPSQ = WORK( IP1 )*DELTA( IP1 )
+               DTISQ = WORK( I )*DELTA( I )
+               IF( .NOT.SWTCH ) THEN
+                  IF( ORGATI ) THEN
+                     C = W - DTIPSQ*DW + DELSQ*( Z( I ) / DTISQ )**2
+                  ELSE
+                     C = W - DTISQ*DW - DELSQ*( Z( IP1 ) / DTIPSQ )**2
+                  END IF
+               ELSE
+                  TEMP = Z( II ) / ( WORK( II )*DELTA( II ) )
+                  IF( ORGATI ) THEN
+                     DPSI = DPSI + TEMP*TEMP
+                  ELSE
+                     DPHI = DPHI + TEMP*TEMP
+                  END IF
+                  C = W - DTISQ*DPSI - DTIPSQ*DPHI
+               END IF
+               A = ( DTIPSQ+DTISQ )*W - DTIPSQ*DTISQ*DW
+               B = DTIPSQ*DTISQ*W
+               IF( C.EQ.ZERO ) THEN
+                  IF( A.EQ.ZERO ) THEN
+                     IF( .NOT.SWTCH ) THEN
+                        IF( ORGATI ) THEN &
+                           A = Z( I )*Z( I ) + DTIPSQ*DTIPSQ*
+                              ( DPSI+DPHI )
+                        ELSE
+                           A = Z( IP1 )*Z( IP1 ) + &
+                              DTISQ*DTISQ*( DPSI+DPHI )
+                        END IF
+                     ELSE
+                        A = DTISQ*DTISQ*DPSI + DTIPSQ*DTIPSQ*DPHI
+                     END IF
+                  END IF
+                  ETA = B / A
+               ELSE IF( A.LE.ZERO ) THEN
+                  ETA = ( A-SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+               ELSE
+                  ETA = TWO*B / ( A+SQRT( ABS( A*A-FOUR*B*C ) ) )
+               END IF
+            ELSE
+!*
+!*              Interpolation using THREE most relevant poles
+!*
+               DTIIM = WORK( IIM1 )*DELTA( IIM1 )
+               DTIIP = WORK( IIP1 )*DELTA( IIP1 )
+               TEMP = RHOINV + PSI + PHI
+               IF( SWTCH ) THEN
+                  C = TEMP - DTIIM*DPSI - DTIIP*DPHI
+                  ZZ( 1 ) = DTIIM*DTIIM*DPSI
+                  ZZ( 3 ) = DTIIP*DTIIP*DPHI
+               ELSE
+                  IF( ORGATI ) THEN
+                     TEMP1 = Z( IIM1 ) / DTIIM
+                     TEMP1 = TEMP1*TEMP1
+                     TEMP2 = ( D( IIM1 )-D( IIP1 ) )* &
+                            ( D( IIM1 )+D( IIP1 ) )*TEMP1
+                     C = TEMP - DTIIP*( DPSI+DPHI ) - TEMP2
+                     ZZ( 1 ) = Z( IIM1 )*Z( IIM1 )
+                     IF( DPSI.LT.TEMP1 ) THEN
+                        ZZ( 3 ) = DTIIP*DTIIP*DPHI
+                     ELSE
+                        ZZ( 3 ) = DTIIP*DTIIP*( ( DPSI-TEMP1 )+DPHI )
+                     END IF
+                  ELSE
+                     TEMP1 = Z( IIP1 ) / DTIIP
+                     TEMP1 = TEMP1*TEMP1
+                     TEMP2 = ( D( IIP1 )-D( IIM1 ) )* &
+                            ( D( IIM1 )+D( IIP1 ) )*TEMP1
+                     C = TEMP - DTIIM*( DPSI+DPHI ) - TEMP2
+                     IF( DPHI.LT.TEMP1 ) THEN
+                        ZZ( 1 ) = DTIIM*DTIIM*DPSI
+                     ELSE
+                        ZZ( 1 ) = DTIIM*DTIIM*( DPSI+( DPHI-TEMP1 ) )
+                     END IF
+                     ZZ( 3 ) = Z( IIP1 )*Z( IIP1 )
+                  END IF
+               END IF
+               DD( 1 ) = DTIIM
+               DD( 2 ) = DELTA( II )*WORK( II )
+               DD( 3 ) = DTIIP
+               CALL DLAED6( NITER, ORGATI, C, DD, ZZ, W, ETA, INFO )
+
+               IF( INFO.NE.0 ) THEN
+!*
+!*                 If INFO is not 0, i.e., DLAED6 failed, switch
+!*                 back to two pole interpolation
+!*
+                  SWTCH3 = .FALSE.
+                  INFO = 0
+                  DTIPSQ = WORK( IP1 )*DELTA( IP1 )
+                  DTISQ = WORK( I )*DELTA( I )
+                  IF( .NOT.SWTCH ) THEN
+                     IF( ORGATI ) THEN
+                        C = W - DTIPSQ*DW + DELSQ*( Z( I )/DTISQ )**2
+                     ELSE
+                        C = W - DTISQ*DW - DELSQ*( Z( IP1 )/DTIPSQ )**2
+                     END IF
+                  ELSE
+                     TEMP = Z( II ) / ( WORK( II )*DELTA( II ) )
+                     IF( ORGATI ) THEN
+                        DPSI = DPSI + TEMP*TEMP
+                     ELSE
+                        DPHI = DPHI + TEMP*TEMP
+                     END IF
+                     C = W - DTISQ*DPSI - DTIPSQ*DPHI
+                  END IF
+                  A = ( DTIPSQ+DTISQ )*W - DTIPSQ*DTISQ*DW
+                  B = DTIPSQ*DTISQ*W
+                  IF( C.EQ.ZERO ) THEN
+                     IF( A.EQ.ZERO ) THEN
+                        IF( .NOT.SWTCH ) THEN
+                           IF( ORGATI ) THEN
+                              A = Z( I )*Z( I ) + DTIPSQ*DTIPSQ* &
+                                 ( DPSI+DPHI )
+                           ELSE
+                              A = Z( IP1 )*Z( IP1 ) + &
+                                 DTISQ*DTISQ*( DPSI+DPHI )
+                           END IF
+                        ELSE
+                           A = DTISQ*DTISQ*DPSI + DTIPSQ*DTIPSQ*DPHI
+                        END IF
+                     END IF
+                     ETA = B / A
+                  ELSE IF( A.LE.ZERO ) THEN
+                     ETA = ( A-SQRT( ABS( A*A-FOUR*B*C ) ) ) / ( TWO*C )
+                  ELSE
+                     ETA = TWO*B / ( A+SQRT( ABS( A*A-FOUR*B*C ) ) )
+                  END IF
+               END IF
+            END IF
+#if 0
+*
+*           Note, eta should be positive if w is negative, and
+*           eta should be negative otherwise. However,
+*           if for some reason caused by roundoff, eta*w > 0,
+*           we simply use one Newton step instead. This way
+*           will guarantee eta*w < 0.
+*
+#endif
+            IF( W*ETA.GE.ZERO ) &
+              ETA = -W / DW
+
+            ETA = ETA / ( SIGMA+SQRT( SIGMA*SIGMA+ETA ) )
+            TEMP=TAU+ETA
+            IF( TEMP.GT.SGUB .OR. TEMP.LT.SGLB ) THEN
+               IF( W.LT.ZERO ) THEN
+                  ETA = ( SGUB-TAU ) / TWO
+               ELSE
+                  ETA = ( SGLB-TAU ) / TWO
+               END IF
+               IF( GEOMAVG ) THEN
+                  IF( W .LT. ZERO ) THEN
+                     IF( TAU .GT. ZERO ) THEN
+                        ETA = SQRT(SGUB*TAU)-TAU
+                     END IF
+                  ELSE
+                     IF( SGLB .GT. ZERO ) THEN
+                        ETA = SQRT(SGLB*TAU)-TAU
+                     END IF
+                  END IF
+               END IF
+            END IF
+
+            PREW = W
+
+            TAU = TAU + ETA
+            SIGMA = SIGMA + ETA
+            !$OMP PARALLEL DO SCHEDULE(STATIC,2) DEFAULT(NONE) SHARED(WORK,DELTA) PRIVATE(J)
+            DO 200 J = 1, N
+               WORK( J ) = WORK( J ) + ETA
+               DELTA( J ) = DELTA( J ) - ETA
+  200       CONTINUE
+!*
+!*           Evaluate PSI and the derivative DPSI
+!*
+            DPSI = ZERO
+            PSI = ZERO
+            ERRETM = ZERO
+            DO 210 J = 1, IIM1
+               TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+               PSI = PSI + Z( J )*TEMP
+               DPSI = DPSI + TEMP*TEMP
+               ERRETM = ERRETM + PSI
+  210       CONTINUE
+            ERRETM = ABS( ERRETM )
+!*
+!*           Evaluate PHI and the derivative DPHI
+!*
+            DPHI = ZERO
+            PHI = ZERO
+            DO 220 J = N, IIP1, -1
+               TEMP = Z( J ) / ( WORK( J )*DELTA( J ) )
+               PHI = PHI + Z( J )*TEMP
+               DPHI = DPHI + TEMP*TEMP
+               ERRETM = ERRETM + PHI
+  220       CONTINUE
+
+            TAU2 = WORK( II )*DELTA( II )
+            TEMP = Z( II ) / TAU2
+            DW = DPSI + DPHI + TEMP*TEMP
+            TEMP = Z( II )*TEMP
+            W = RHOINV + PHI + PSI + TEMP
+            ERRETM = EIGHT*( PHI-PSI ) + ERRETM + TWO*RHOINV &
+                  + THREE*ABS( TEMP )
+!*    $             + ABS( TAU2 )*DW
+!*
+            IF( W*PREW.GT.ZERO .AND. ABS( W ).GT.ABS( PREW ) / TEN ) &
+              SWTCH = .NOT.SWTCH
+
+  230    CONTINUE
+!*
+!*        Return with INFO = 1, NITER = MAXIT and not converged
+!*
+         INFO = 1
+!*
+      END IF
+!*
+  240 CONTINUE
+     
+END SUBROUTINE
+
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))   
+      SUBROUTINE DLASD7( ICOMPQ, NL, NR, SQRE, K, D, Z, ZW, VF, VFW, VL, &
+                        VLW, ALPHA, BETA, DSIGMA, IDX, IDXP, IDXQ, &
+                       PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, LDGNUM, &
+                       C, S, INFO ) !GCC$ ATTRIBUTES hot :: DLASD7 !GCC$ ATTRIBUTES aligned(32) :: DLASD7
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+ SUBROUTINE DLASD7( ICOMPQ, NL, NR, SQRE, K, D, Z, ZW, VF, VFW, VL, &
+                        VLW, ALPHA, BETA, DSIGMA, IDX, IDXP, IDXQ, &
+                       PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, LDGNUM, &
+                       C, S, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASD7
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLASD7
+#endif
+      use omp_lib
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            GIVPTR, ICOMPQ, INFO, K, LDGCOL, LDGNUM, NL, &
+                        NR, SQRE
+      DOUBLE PRECISION   ALPHA, BETA, C, S
+!*     ..
+!*     .. Array Arguments ..
+     ! INTEGER            GIVCOL( LDGCOL, * ), IDX( * ), IDXP( * ),
+    ! $                   IDXQ( * ), PERM( * )
+    !  DOUBLE PRECISION   D( * ), DSIGMA( * ), GIVNUM( LDGNUM, * ),
+    ! $                   VF( * ), VFW( * ), VL( * ), VLW( * ), Z( * ),
+      ! $                   ZW( * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:),   ALLOCATABLE :: IDX
+      INTEGER, DIMENSION(:),   ALLOCATABLE :: IDXP
+      INTEGER, DIMENSION(:),   ALLOCATABLE :: IDXQ
+      INTEGER, DIMENSION(:),   ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DSIGMA
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VF
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VFW
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VL
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VLW
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZW
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ZERO, ONE, TWO, EIGHT
+      PARAMETER          ( ZERO = 0.0D+0, ONE = 1.0D+0, TWO = 2.0D+0, &
+                        EIGHT = 8.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+!*
+      INTEGER            I, IDXI, IDXJ, IDXJP, J, JP, JPREV, K2, M, N, &
+                        NLP1, NLP2
+      DOUBLE PRECISION   EPS, HLFTOL, TAU, TOL, Z1
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DCOPY, DROT
+!*     ..
+!*     .. External Functions ..
+      DOUBLE PRECISION   DLAMCH, DLAPY2
+      EXTERNAL           DLAMCH, DLAPY2
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          ABS, MAX
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+      N = NL + NR + 1
+      M = N + SQRE
+!*
+      IF( ( ICOMPQ.LT.0 ) .OR. ( ICOMPQ.GT.1 ) ) THEN
+         INFO = -1
+      ELSE IF( NL.LT.1 ) THEN
+         INFO = -2
+      ELSE IF( NR.LT.1 ) THEN
+         INFO = -3
+      ELSE IF( ( SQRE.LT.0 ) .OR. ( SQRE.GT.1 ) ) THEN
+         INFO = -4
+      ELSE IF( LDGCOL.LT.N ) THEN
+         INFO = -22
+      ELSE IF( LDGNUM.LT.N ) THEN
+         INFO = -24
+      END IF
+      IF( INFO.NE.0 ) THEN
+         CALL XERBLA( 'DLASD7', -INFO )
+         RETURN
+      END IF
+!*
+      NLP1 = NL + 1
+      NLP2 = NL + 2
+      IF( ICOMPQ.EQ.1 ) THEN
+         GIVPTR = 0
+      END IF
+!*
+!*     Generate the first part of the vector Z and move the singular
+!*     values in the first part of D one position backward.
+!*
+      Z1 = ALPHA*VL( NLP1 )
+      VL( NLP1 ) = ZERO
+      TAU = VF( NLP1 )
+      !$OMP SIMD ALIGNED(Z:64,VL,VF,D,IDXQ)
+      DO 10 I = NL, 1, -1
+         Z( I+1 ) = ALPHA*VL( I )
+         VL( I ) = ZERO
+         VF( I+1 ) = VF( I )
+         D( I+1 ) = D( I )
+         IDXQ( I+1 ) = IDXQ( I ) + 1
+   10 CONTINUE
+      VF( 1 ) = TAU
+!*
+!*     Generate the second part of the vector Z.
+      !*
+      !$OMP SIMD ALIGNED(Z:64,VF)
+      DO 20 I = NLP2, M
+         Z( I ) = BETA*VF( I )
+         VF( I ) = ZERO
+   20 CONTINUE
+!*
+!*     Sort the singular values into increasing order
+         !*
+        !$OMP SIMD ALIGNED(IDXQ:64)   
+      DO 30 I = NLP2, N
+         IDXQ( I ) = IDXQ( I ) + NLP1
+   30 CONTINUE
+!*
+!*     DSIGMA, IDXC, IDXC, and ZW are used as storage space.
+         !*
+     
+      DO 40 I = 2, N
+         DSIGMA( I ) = D( IDXQ( I ) )
+         ZW( I ) = Z( IDXQ( I ) )
+         VFW( I ) = VF( IDXQ( I ) )
+         VLW( I ) = VL( IDXQ( I ) )
+   40 CONTINUE
+
+      CALL DLAMRG( NL, NR, DSIGMA( 2 ), 1, 1, IDX( 2 ) )
+
+      DO 50 I = 2, N
+         IDXI = 1 + IDX( I )
+         D( I ) = DSIGMA( IDXI )
+         Z( I ) = ZW( IDXI )
+         VF( I ) = VFW( IDXI )
+         VL( I ) = VLW( IDXI )
+   50 CONTINUE
+!*
+!*     Calculate the allowable deflation tolerance
+!*
+      EPS = DLAMCH( 'Epsilon' )
+      TOL = MAX( ABS( ALPHA ), ABS( BETA ) )
+      TOL = EIGHT*EIGHT*EPS*MAX( ABS( D( N ) ), TOL )
+#if 0
+*
+*     There are 2 kinds of deflation -- first a value in the z-vector
+*     is small, second two (or more) singular values are very close
+*     together (their difference is small).
+*
+*     If the value in the z-vector is small, we simply permute the
+*     array so that the corresponding singular value is moved to the
+*     end.
+*
+*     If two values in the D-vector are close, we perform a two-sided
+*     rotation designed to make one of the corresponding z-vector
+*     entries zero, and then permute the array so that the deflated
+*     singular value is moved to the end.
+*
+*     If there are multiple singular values then the problem deflates.
+*     Here the number of equal singular values are found.  As each equal
+*     singular value is found, an elementary reflector is computed to
+*     rotate the corresponding singular subspace so that the
+*     corresponding components of Z are zero in this new basis.
+*
+#endif
+      K = 1
+      K2 = N + 1
+      DO 60 J = 2, N
+         IF( ABS( Z( J ) ).LE.TOL ) THEN
+!*
+!*           Deflate due to small z component.
+!*
+            K2 = K2 - 1
+            IDXP( K2 ) = J
+            IF( J.EQ.N ) &
+               GO TO 100
+         ELSE
+            JPREV = J
+            GO TO 70
+         END IF
+   60 CONTINUE
+   70 CONTINUE
+      J = JPREV
+   80 CONTINUE
+      J = J + 1
+      IF( J.GT.N ) &
+        GO TO 90
+      IF( ABS( Z( J ) ).LE.TOL ) THEN
+!*
+!*        Deflate due to small z component.
+!*
+         K2 = K2 - 1
+         IDXP( K2 ) = J
+      ELSE
+!*
+!*        Check if singular values are close enough to allow deflation.
+!*
+         IF( ABS( D( J )-D( JPREV ) ).LE.TOL ) THEN
+!*
+!*           Deflation is possible.
+!*
+            S = Z( JPREV )
+            C = Z( J )
+!*
+!!*           Find sqrt(a**2+b**2) without overflow or
+!*           destructive underflow.
+!*
+            TAU = DLAPY2( C, S )
+            Z( J ) = TAU
+            Z( JPREV ) = ZERO
+            C = C / TAU
+            S = -S / TAU
+!*
+!*           Record the appropriate Givens rotation
+!*
+            IF( ICOMPQ.EQ.1 ) THEN
+               GIVPTR = GIVPTR + 1
+               IDXJP = IDXQ( IDX( JPREV )+1 )
+               IDXJ = IDXQ( IDX( J )+1 )
+               IF( IDXJP.LE.NLP1 ) THEN
+                  IDXJP = IDXJP - 1
+               END IF
+               IF( IDXJ.LE.NLP1 ) THEN
+                  IDXJ = IDXJ - 1
+               END IF
+               GIVCOL( GIVPTR, 2 ) = IDXJP
+               GIVCOL( GIVPTR, 1 ) = IDXJ
+               GIVNUM( GIVPTR, 2 ) = C
+               GIVNUM( GIVPTR, 1 ) = S
+            END IF
+            CALL DROT( 1, VF( JPREV ), 1, VF( J ), 1, C, S )
+            CALL DROT( 1, VL( JPREV ), 1, VL( J ), 1, C, S )
+            K2 = K2 - 1
+            IDXP( K2 ) = JPREV
+            JPREV = J
+         ELSE
+            K = K + 1
+            ZW( K ) = Z( JPREV )
+            DSIGMA( K ) = D( JPREV )
+            IDXP( K ) = JPREV
+            JPREV = J
+         END IF
+      END IF
+      GO TO 80
+   90 CONTINUE
+!*
+!!*     Record the last singular value.
+!*
+      K = K + 1
+      ZW( K ) = Z( JPREV )
+      DSIGMA( K ) = D( JPREV )
+      IDXP( K ) = JPREV
+!*
+  100 CONTINUE
+!*
+!*     Sort the singular values into DSIGMA. The singular values which
+!*     were not deflated go into the first K slots of DSIGMA, except
+!*     that DSIGMA(1) is treated separately.
+      !*
+      
+      DO 110 J = 2, N
+         JP = IDXP( J )
+         DSIGMA( J ) = D( JP )
+         VFW( J ) = VF( JP )
+         VLW( J ) = VL( JP )
+  110 CONTINUE
+      IF( ICOMPQ.EQ.1 ) THEN
+         DO 120 J = 2, N
+            JP = IDXP( J )
+            PERM( J ) = IDXQ( IDX( JP )+1 )
+            IF( PERM( J ).LE.NLP1 ) THEN
+               PERM( J ) = PERM( J ) - 1
+            END IF
+  120    CONTINUE
+      END IF
+!*
+!*     The deflated singular values go back into the last N - K slots of
+!*     D.
+!*
+      CALL DCOPY( N-K, DSIGMA( K+1 ), 1, D( K+1 ), 1 )
+!*
+!*     Determine DSIGMA(1), DSIGMA(2), Z(1), VF(1), VL(1), VF(M), and
+!*     VL(M).
+!*
+      DSIGMA( 1 ) = ZERO
+      HLFTOL = TOL / TWO
+      IF( ABS( DSIGMA( 2 ) ).LE.HLFTOL ) &
+        DSIGMA( 2 ) = HLFTOL
+      IF( M.GT.N ) THEN
+         Z( 1 ) = DLAPY2( Z1, Z( M ) )
+         IF( Z( 1 ).LE.TOL ) THEN
+            C = ONE
+            S = ZERO
+            Z( 1 ) = TOL
+         ELSE
+            C = Z1 / Z( 1 )
+            S = -Z( M ) / Z( 1 )
+         END IF
+         CALL DROT( 1, VF( M ), 1, VF( 1 ), 1, C, S )
+         CALL DROT( 1, VL( M ), 1, VL( 1 ), 1, C, S )
+      ELSE
+         IF( ABS( Z1 ).LE.TOL ) THEN
+            Z( 1 ) = TOL
+         ELSE
+            Z( 1 ) = Z1
+         END IF
+      END IF
+!*
+!*     Restore Z, VF, and VL.
+!*
+      CALL DCOPY( K-1, ZW( 2 ), 1, Z( 2 ), 1 )
+      CALL DCOPY( N-1, VFW( 2 ), 1, VF( 2 ), 1 )
+      CALL DCOPY( N-1, VLW( 2 ), 1, VL( 2 ), 1 )
+
+END SUBROUTINE
+
+    
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER)) 
+SUBROUTINE DLAMRG( N1, N2, A, DTRD1, DTRD2, INDEX ) !GCC$ ATTRIBUTES inline :: DLAMRG !GCC$ ATTRIBUTES aligned(32) :: DLAMRG
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLAMRG( N1, N2, A, DTRD1, DTRD2, INDEX )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DLAMRG
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLAMRG
+    !DIR$ OPTIMIZE : 3
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            DTRD1, DTRD2, N1, N2
+!*     ..
+!*     .. Array Arguments ..
+      INTEGER            INDEX( * )
+      !DOUBLE PRECISION   A( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Local Scalars ..
+      INTEGER            I, IND1, IND2, N1SV, N2SV
+!*     ..
+!*     .. Executable Statements ..
+!*
+      N1SV = N1
+      N2SV = N2
+      IF( DTRD1.GT.0 ) THEN
+         IND1 = 1
+      ELSE
+         IND1 = N1
+      END IF
+      IF( DTRD2.GT.0 ) THEN
+         IND2 = 1 + N1
+      ELSE
+         IND2 = N1 + N2
+      END IF
+      I = 1
+!*     while ( (N1SV > 0) & (N2SV > 0) )
+   10 CONTINUE
+      IF( N1SV.GT.0 .AND. N2SV.GT.0 ) THEN
+         IF( A( IND1 ).LE.A( IND2 ) ) THEN
+            INDEX( I ) = IND1
+            I = I + 1
+            IND1 = IND1 + DTRD1
+            N1SV = N1SV - 1
+         ELSE
+            INDEX( I ) = IND2
+            I = I + 1
+            IND2 = IND2 + DTRD2
+            N2SV = N2SV - 1
+         END IF
+         GO TO 10
+      END IF
+!*     end while
+      IF( N1SV.EQ.0 ) THEN
+         DO 20 N1SV = 1, N2SV
+            INDEX( I ) = IND2
+            I = I + 1
+            IND2 = IND2 + DTRD2
+   20    CONTINUE
+      ELSE
+!*     N2SV .EQ. 0
+         DO 30 N2SV = 1, N1SV
+            INDEX( I ) = IND1
+            I = I + 1
+            IND1 = IND1 + DTRD1
+   30    CONTINUE
+      END IF
+
+END SUBROUTINE
+
+
+
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))     
+SUBROUTINE DLASDT( N, LVL, ND, INODE, NDIML, NDIMR, MSUB ) !GCC$ ATTRIBUTES inline :: DLASDT
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DLASDT( N, LVL, ND, INODE, NDIML, NDIMR, MSUB )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DLASDT
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASDT
+    !DIR$ OPTIMIZE : 3
+#endif
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            LVL, MSUB, N, ND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            INODE( * ), NDIML( * ), NDIMR( * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: INODE,NDIML,NDIMR
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   TWO
+      PARAMETER          ( TWO = 2.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      INTEGER            I, IL, IR, LLST, MAXN, NCRNT, NLVL
+      DOUBLE PRECISION   TEMP
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          DBLE, INT, LOG, MAX
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Find the number of levels on the tree.
+!*
+      MAXN = MAX( 1, N )
+      TEMP = LOG( DBLE( MAXN ) / DBLE( MSUB+1 ) ) / LOG( TWO )
+      LVL = INT( TEMP ) + 1
+!*
+      I = N / 2
+      INODE( 1 ) = I + 1
+      NDIML( 1 ) = I
+      NDIMR( 1 ) = N - I - 1
+      IL = 0
+      IR = 1
+      LLST = 1
+      DO 20 NLVL = 1, LVL - 1
+!*
+!*        Constructing the tree at (NLVL+1)-st level. The number of
+!*        nodes created on this level is LLST * 2.
+!*
+         DO 10 I = 0, LLST - 1
+            IL = IL + 2
+            IR = IR + 2
+            NCRNT = LLST + I
+            NDIML( IL ) = NDIML( NCRNT ) / 2
+            NDIMR( IL ) = NDIML( NCRNT ) - NDIML( IL ) - 1
+            INODE( IL ) = INODE( NCRNT ) - NDIMR( IL ) - 1
+            NDIML( IR ) = NDIMR( NCRNT ) / 2
+            NDIMR( IR ) = NDIMR( NCRNT ) - NDIML( IR ) - 1
+            INODE( IR ) = INODE( NCRNT ) + NDIML( IR ) + 1
+   10    CONTINUE
+         LLST = LLST*2
+   20 CONTINUE
+      ND = LLST*2 - 1
+    END SUBROUTINE
+
+
+    
+
     !*  =====================================================================
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))    
     SUBROUTINE DLABAD( SMALL, LARGE ) !GCC$ ATTRIBUTES inline :: DLABAD !GCC$ ATTRIBUTES aligned(32) :: DLABAD
