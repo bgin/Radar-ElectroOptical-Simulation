@@ -125,7 +125,7 @@ as reported by reading __cplusplus macro def.*/
 #define GMS_COMPILED_BY_ICC 1
 #else
 #define GMS_COMPILED_BY_ICC 0
-#define GMS_COMPILED_BY_MSVC 1
+#define GMS_COMPILED_BY_GCC 1
 #endif
 
 
@@ -202,12 +202,8 @@ Using OpenMP.
 #define USE_OPENMP 1
 #endif
 
-#if USE_OPENMP == 1 && defined (GMS_COMPILED_BY_ICC)
+#if USE_OPENMP == 1 
 #include <omp.h>
-#elif defined (GMS_COMPILED_BY_MSVC)
-#include <omp.h>
-#else
-#error "COMPILE_TIME_ERROR: Unsupported Compiler version!"
 #endif
 
 #if USE_OPENMP == 1 && __INTEL_COMPILER >= 1500
@@ -335,10 +331,7 @@ Include all headers - master header file.
     #define USE_CODE_ALIGNMENT 0
 #endif
 #if defined USE_CODE_ALIGNMENT
-    #if !defined (CODE_ALIGN_WIN)
-        #define CODE_ALIGN_WIN(n)   __declspec(code_align((n)))
-    #endif
-    #if !defined (CODE_ALIGN_LINUX)
+       #if !defined (CODE_ALIGN_LINUX)
         #define CODE_ALIGN_LINUX(n) __attribute__((code_align((n))))
     #endif
 #endif
@@ -399,9 +392,7 @@ constexpr unsigned int L3_MAX_DOUBLES{786432};
 #define CRUDE_PERF_TIMING 1
 #endif
 
-#if !defined (USE_PERF_PROFILER)
-    #define USE_PERF_PROFILER 1
-#endif
+
 
 #if !defined (USE_MSR_TOOLS)
     #define USE_MSR_TOOLS 0
@@ -496,15 +487,6 @@ constexpr int padding64B{64};
 2) max.
 */
 
-#if defined _MSC_VER
-#if defined (_WINDEF_) && defined (min) && defined (max)
-#undef min
-#undef max
-#endif
-#if !defined NOMINMAX
-#define NOMINMAX
-#endif
-#endif
 
 #if !defined (C_WRAPPER_ODEPACK_FPTR_WORKAROUND)
 #define C_WRAPPER_ODEPACK_FPTR_WORKAROUND 1
@@ -630,10 +612,6 @@ constexpr int padding64B{64};
 #define CHECK_FP_EXCEPTIONS 1
 #if (GMS_COMPILED_BY_ICC) == 1
 #include <fenv.h>
-#else
-#if defined (_WIN64) && defined (_WIN32)
-#include <../../../Microsoft Visual Studio 12.0/VC/include/fenv.h>
-#endif
 #endif
 #endif
 
