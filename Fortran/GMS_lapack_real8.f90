@@ -7447,7 +7447,7 @@ DN2, G, TAU )
 !*
 !*     .. Scalar Arguments ..
       LOGICAL            IEEE
-      INTEGER            I0, ITER, N0, NDIV, NFAIL, PP
+      INTEGER            I0, ITER, N0, NDIV, NFAIL, PP, TTYPE
       DOUBLE PRECISION   DESIG, DMIN, DMIN1, DMIN2, DN, DN1, DN2, G, &
                          QMAX, SIGMA, TAU
 !*     ..
@@ -7466,7 +7466,7 @@ DN2, G, TAU )
                            ONE = 1.0D0, TWO = 2.0D0, HUNDRD = 100.0D0 )
 !*     ..
 !*     .. Local Scalars ..
-      INTEGER            IPN4, J4, N0IN, NN, TTYPE
+      INTEGER            IPN4, J4, N0IN, NN
       DOUBLE PRECISION   EPS, S, T, TEMP, TOL, TOL2
 !*     ..
 !*     .. External Subroutines ..
@@ -17039,4 +17039,297 @@ CHARACTER*1 FUNCTION CHLA_TRANSTYPE( TRANS ) !GCC$ ATTRIBUTES inline :: CHLA_TRA
 END FUNCTION 
 
     
+!*  Authors:
+!*  ========
+!*
+!C> \author Univ. of Tennessee
+!C> \author Univ. of California Berkeley
+!C> \author Univ. of Colorado Denver
+!C> \author NAG Ltd.
+!*
+!C> \date December 2016
+!*
+!C> \ingroup variantsPOcomputational
+!*
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DPOTRF ( UPLO, N, A, LDA, INFO ) !GCC$ ATTRIBUTES hot :: DPOTRF !GCC$ ATTRIBUTES aligned(32) :: DPOTRF
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DPOTRF ( UPLO, N, A, LDA, INFO )
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DPOTRF
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DPOTRF
+#emdif
+       implicit none
+!*
+!*  -- LAPACK computational routine (version 3.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDA, N
+!*     ..
+!*     .. Array Arguments ..
+      DOUBLE PRECISION   A( LDA, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE
+      PARAMETER          ( ONE = 1.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            UPPER
+      INTEGER            J, JB, NB
+!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME
+      INTEGER            ILAENV
+      EXTERNAL           LSAME, ILAENV
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DGEMM, DSYRK, DTRSM
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MAX, MIN
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+      UPPER = LSAME( UPLO, 'U' )
+      IF( .NOT.UPPER .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -4
+      END IF
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DPOTRF', -INFO )
+         RETURN
+      END IF
+!*
+!*     Quick return if possible
+!*
+    !  IF( N.EQ.0 )
+     !$   RETURN
+!*
+!*     Determine the block size for this environment.
+!*
+      NB = ILAENV( 1, 'DPOTRF', UPLO, N, -1, -1, -1 )
+      IF( NB.LE.1 .OR. NB.GE.N ) THEN
+!*
+!*        Use unblocked code.
+!*
+         CALL DPOTF2( UPLO, N, A, LDA, INFO )
+      ELSE
+!*
+!*        Use blocked code.
+!*
+         IF( UPPER ) THEN
+!*
+!*           Compute the Cholesky factorization A = U'*U.
+!*
+            DO 10 J = 1, N, NB
+!*
+!*              Update and factorize the current diagonal block and test
+!*              for non-positive-definiteness.
+!*
+               JB = MIN( NB, N-J+1 )
+
+               CALL DPOTF2( 'Upper', JB, A( J, J ), LDA, INFO )
+
+               IF( INFO.NE.0 ) &
+                 GO TO 30
+
+               IF( J+JB.LE.N ) THEN
+!*
+!*                 Updating the trailing submatrix.
+!*
+                  CALL DTRSM( 'Left', 'Upper', 'Transpose', 'Non-unit', &
+                             JB, N-J-JB+1, ONE, A( J, J ), LDA, &
+                             A( J, J+JB ), LDA )
+                  CALL DSYRK( 'Upper', 'Transpose', N-J-JB+1, JB, -ONE, &
+                             A( J, J+JB ), LDA, &
+                             ONE, A( J+JB, J+JB ), LDA )
+               END IF
+   10       CONTINUE
+
+         ELSE
+!*
+!*           Compute the Cholesky factorization A = L*L'.
+!*
+            DO 20 J = 1, N, NB
+!*
+!*              Update and factorize the current diagonal block and test
+!*              for non-positive-definiteness.
+!*
+               JB = MIN( NB, N-J+1 )
+
+               CALL DPOTF2( 'Lower', JB, A( J, J ), LDA, INFO )
+
+               IF( INFO.NE.0 ) &
+                 GO TO 30
+
+               IF( J+JB.LE.N ) THEN
+!!*
+!*                Updating the trailing submatrix.
+!*
+                 CALL DTRSM( 'Right', 'Lower', 'Transpose', 'Non-unit', &
+                            N-J-JB+1, JB, ONE, A( J, J ), LDA, &
+                            A( J+JB, J ), LDA )
+
+                 CALL DSYRK( 'Lower', 'No Transpose', N-J-JB+1, JB, &
+                            -ONE, A( J+JB, J ), LDA, &
+                            ONE, A( J+JB, J+JB ), LDA )
+               END IF
+   20       CONTINUE
+         END IF
+      END IF
+      GO TO 40
+
+   30 CONTINUE
+      INFO = INFO + J - 1
+
+   40 CONTINUE
+     
+END SUBROUTINE
+
+
+!*  =====================================================================
+#if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
+SUBROUTINE DPOTF2( UPLO, N, A, LDA, INFO ) !GCC$ ATTRIBUTES inline :: DPOTF2 !GCC$ ATTRIBUTES aligned(32) :: DPOTF2
+#elif defined(__INTEL_COMPILER) || defined(__ICC)
+  SUBROUTINE DPOTF2( UPLO, N, A, LDA, INFO )
+    !DIR$ ATTRIBUTES FORCEINLINE :: DPOTF2
+      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DPOTF2
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DPOTF2
+#endif
+       implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDA, N
+!*     ..
+!*     .. Array Arguments ..
+      DOUBLE PRECISION   A( LDA, * )
+!*     ..
+!*
+!*  =====================================================================
+!*
+!*     .. Parameters ..
+      DOUBLE PRECISION   ONE, ZERO
+      PARAMETER          ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+!*     ..
+!*     .. Local Scalars ..
+      LOGICAL            UPPER
+      INTEGER            J
+      DOUBLE PRECISION   AJJ
+!!*     ..
+!*     .. External Functions ..
+      LOGICAL            LSAME, DISNAN
+      DOUBLE PRECISION   DDOT
+      EXTERNAL           LSAME, DDOT, DISNAN
+!*     ..
+!*     .. External Subroutines ..
+      EXTERNAL           DGEMV, DSCAL
+!*     ..
+!*     .. Intrinsic Functions ..
+      INTRINSIC          MAX, SQRT
+!*     ..
+!*     .. Executable Statements ..
+!*
+!*     Test the input parameters.
+!*
+      INFO = 0
+      UPPER = LSAME( UPLO, 'U' )
+      IF( .NOT.UPPER .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -4
+      END IF
+      IF( INFO.NE.0 ) THEN
+         !CALL XERBLA( 'DPOTF2', -INFO )
+         RETURN
+      END IF
+!*
+!*     Quick return if possible
+!*
+     ! IF( N.EQ.0 )
+     !$   RETURN
+!*
+      IF( UPPER ) THEN
+!*
+!*        Compute the Cholesky factorization A = U**T *U.
+!*
+         DO 10 J = 1, N
+!*
+!*           Compute U(J,J) and test for non-positive-definiteness.
+!*
+            AJJ = A( J, J ) - DDOT( J-1, A( 1, J ), 1, A( 1, J ), 1 )
+            IF( AJJ.LE.ZERO.OR.DISNAN( AJJ ) ) THEN
+               A( J, J ) = AJJ
+               GO TO 30
+            END IF
+            AJJ = SQRT( AJJ )
+            A( J, J ) = AJJ
+!*
+!*           Compute elements J+1:N of row J.
+!*
+            IF( J.LT.N ) THEN
+               CALL DGEMV( 'Transpose', J-1, N-J, -ONE, A( 1, J+1 ), &
+                          LDA, A( 1, J ), 1, ONE, A( J, J+1 ), LDA )
+               CALL DSCAL( N-J, ONE / AJJ, A( J, J+1 ), LDA )
+            END IF
+   10    CONTINUE
+      ELSE
+!*
+!*        Compute the Cholesky factorization A = L*L**T.
+!*
+         DO 20 J = 1, N
+!*
+!*           Compute L(J,J) and test for non-positive-definiteness.
+!*
+            AJJ = A( J, J ) - DDOT( J-1, A( J, 1 ), LDA, A( J, 1 ), &
+                 LDA )
+            IF( AJJ.LE.ZERO.OR.DISNAN( AJJ ) ) THEN
+               A( J, J ) = AJJ
+               GO TO 30
+            END IF
+            AJJ = SQRT( AJJ )
+            A( J, J ) = AJJ
+!*
+!*           Compute elements J+1:N of column J.
+!*
+            IF( J.LT.N ) THEN
+               CALL DGEMV( 'No transpose', N-J, J-1, -ONE, A( J+1, 1 ), &
+                          LDA, A( J, 1 ), LDA, ONE, A( J+1, J ), 1 )
+               CALL DSCAL( N-J, ONE / AJJ, A( J+1, J ), 1 )
+            END IF
+   20    CONTINUE
+      END IF
+      GO TO 40
+
+   30 CONTINUE
+      INFO = J
+
+   40 CONTINUE
+   
+END SUBROUTINE
+
+
 
