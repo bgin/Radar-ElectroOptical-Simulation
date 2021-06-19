@@ -954,7 +954,518 @@ void DGESVXX(const char *, const char *, int *, int *, double __restrict *,
 	     int *, double __restrict *, double __restrict *, int __restrict *,
 	     int *);
 
-	    
+/*
+ SUBROUTINE DGELSD( M, N, NRHS, A, LDA, B, LDB, S, RCOND, RANK, &
+      WORK, LWORK, IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DGELSD
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DGELSD
+#endif
+   implicit none
+   
+!*
+!*  -- LAPACK driver routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDB, LWORK, M, N, NRHS, RANK
+      DOUBLE PRECISION   RCOND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            IWORK( * )
+      !DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), S( * ), WORK( * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WORK
+*/
+void DGELSD(int *, int *, int *, double __restrict *, int *,
+            double __restrict *, int *, double __restrict *,
+	    double *, int *, double __restrict *, int *,
+	    int __restrict *, int *);
+
+/*
+    SUBROUTINE DLALSD( UPLO, SMLSIZ, N, NRHS, D, E, B, LDB, RCOND, &
+           RANK, WORK, IWORK, INFO )
+        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLALSD
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLALSD
+#endif
+        implicit none
+        
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDB, N, NRHS, RANK, SMLSIZ
+      DOUBLE PRECISION   RCOND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            IWORK( * )
+      !DOUBLE PRECISION   B( LDB, * ), D( * ), E( * ), WORK( * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: E
+       DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+*/
+void DLALSD(const char *, int *, int *, int *, double __restrict *,
+            double __restrict *, double __restrict *, int *, double *,
+	    int *, double __restrict *, int __restrict *, int *);
+
+/*
+SUBROUTINE DLALSA( ICOMPQ, SMLSIZ, N, NRHS, B, LDB, BX, LDBX, U, &
+                        LDU, VT, K, DIFL, DIFR, Z, POLES, GIVPTR, &
+                        GIVCOL, LDGCOL, PERM, GIVNUM, C, S, WORK, &
+                        IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLALSA
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLALSA
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!1*     .. Scalar Arguments ..
+      INTEGER            ICOMPQ, INFO, LDB, LDBX, LDGCOL, LDU, N, NRHS, &
+                        SMLSIZ
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            GIVCOL( LDGCOL, * ), GIVPTR( * ), IWORK( * ),
+     !$                   K( * ), PERM( LDGCOL, * )
+     ! DOUBLE PRECISION   B( LDB, * ), BX( LDBX, * ), C( * ),
+    ! $                   DIFL( LDU, * ), DIFR( LDU, * ),
+    ! $                   GIVNUM( LDU, * ), POLES( LDU, * ), S( * ),
+    ! $                   U( LDU, * ), VT( LDU, * ), WORK( * ),
+      ! $                   Z( LDU, * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: GIVPTR
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      INTEGER, DIMENSION(:), ALLOCATABLE :: K
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BX
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: VT
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+*/
+void DLALSA(int *, int *, int *, int *, double __restrict *, int *,
+            double __restrict *, int *, double __restrict *, int *,
+	    double __restrict *, int __restrict *, double __restrict *,
+	    double __restrict *, double __restrict *, double __restrict *,
+	    int __restrict *, int __restrict *, int *, int __restrict *,
+	    double __restrict *, double __restrict *, double __restrict *,
+	    double __restrict *, int __restrict *, int *);
+
+/*
+  SUBROUTINE DLALS0( ICOMPQ, NL, NR, SQRE, NRHS, B, LDB, BX, LDBX, &
+                        PERM, GIVPTR, GIVCOL, LDGCOL, GIVNUM, LDGNUM, &
+                        POLES, DIFL, DIFR, Z, K, C, S, WORK, INFO )                     
+ !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLALS0
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLALS0
+#endif
+      use omp_lib
+      implicit none
+      
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            GIVPTR, ICOMPQ, INFO, K, LDB, LDBX, LDGCOL, &
+                        LDGNUM, NL, NR, NRHS, SQRE
+      DOUBLE PRECISION   C, S
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            GIVCOL( LDGCOL, * ), PERM( * )
+      !DOUBLE PRECISION   B( LDB, * ), BX( LDBX, * ), DIFL( * ),
+     !$                   DIFR( LDGNUM, * ), GIVNUM( LDGNUM, * ),
+      !$                   POLES( LDGNUM, * ), WORK( * ), Z( * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BX
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Z
+*/
+void DLALS0(int *, int *, int *, int *, int *, double __restrict *,
+            int *, double __restrict *, int *, int __restrict *,
+	    int *, int __restrict *, int *, double __restrict *,
+	    int *, double __restrict *, double __restrict *,
+	    double __restrict *, double __restrict *, int *,
+	    double *, double *, double __restrict *, int *);
+
+/*
+ SUBROUTINE DLASDA( ICOMPQ, SMLSIZ, N, SQRE, D, E, U, LDU, VT, K, &
+                        DIFL, DIFR, Z, POLES, GIVPTR, GIVCOL, LDGCOL, &
+                        PERM, GIVNUM, C, S, WORK, IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASDA
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLASDA
+#endif
+   implicit none
+   
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            ICOMPQ, INFO, LDGCOL, LDU, N, SMLSIZ, SQRE
+!*     ..
+!*     .. Array Arguments ..
+     ! INTEGER            GIVCOL( LDGCOL, * ), GIVPTR( * ), IWORK( * ),
+     !$                   K( * ), PERM( LDGCOL, * )
+     ! DOUBLE PRECISION   C( * ), D( * ), DIFL( LDU, * ), DIFR( LDU, * ),
+     !$                   E( * ), GIVNUM( LDU, * ), POLES( LDU, * ),
+     !$                   S( * ), U( LDU, * ), VT( LDU, * ), WORK( * ),
+      !$                   Z( LDU, * )
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: GIVCOL
+      INTEGER, DIMENSION(:), ALLOCATABLE :: GIVPTR
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      INTEGER, DIMENSION(:), ALLOCATABLE :: K
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: PERM
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFL
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DIFR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: E
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GIVNUM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: POLES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: VT
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+*/
+void DLASDA(int *, int *, int *, int *, double __restrict *,
+            double __restrict *, double __restrict *, int *,
+	    double __restrict *, int __restrict *,
+	    double __restrict *, double __restrict *,
+	    double __restrict *, double __restrict *,
+	    int __restrict *, int __restrict *, int *,
+	    int __restrict *, double __restrict *,
+	    double __restrict *, double __restrict *,
+	    double __restrict *, int __restrict *, int *);
+
+/*
+ SUBROUTINE DLAMRG( N1, N2, A, DTRD1, DTRD2, INDEX )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DLAMRG
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLAMRG
+    !DIR$ OPTIMIZE : 3
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            DTRD1, DTRD2, N1, N2
+!*     ..
+!*     .. Array Arguments ..
+      INTEGER            INDEX( * )
+      !DOUBLE PRECISION   A( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+*/
+void DLAMRG(int *, int *, double __restrict *, int *,
+            int *, int*);
+
+/*
+ SUBROUTINE DLASDT( N, LVL, ND, INODE, NDIML, NDIMR, MSUB )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DLASDT
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLASDT
+    !DIR$ OPTIMIZE : 3
+#endif
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            LVL, MSUB, N, ND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            INODE( * ), NDIML( * ), NDIMR( * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: INODE,NDIML,NDIMR
+*/
+void DLASDT(int *, int *, int *, int __restrict *,
+            int __restrict *, int __restrict *, int *);
+
+/*
+SUBROUTINE DGEEQUB( M, N, A, LDA, R, C, ROWCND, COLCND, AMAX, &
+     INFO )
+   !DIR$ ATTRIBUTES FORCEINLINE :: DGEEQUB
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DGEEQUB
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DGEEQUB
+#endif
+  use omp_lib
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, M, N
+      DOUBLE PRECISION   AMAX, COLCND, ROWCND
+!*     ..
+!*     .. Array Arguments ..
+      ! DOUBLE PRECISION   A( LDA, * ), C( * ), R( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: R
+*/
+void DGEEQUB(int *, int *, double __restrict *, int *,
+             double __restrict *, double __restrict *,
+	     double *, double *, double *, int *);
+
+/*
+ SUBROUTINE DGETRS( TRANS, N, NRHS, A, LDA, IPIV, B, LDB, INFO )
+     !DIR$ ATTRIBUTES FORCEINLINE :: DGETRS
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DGETRS
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DGETRS
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          TRANS
+      INTEGER            INFO, LDA, LDB, N, NRHS
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            IPIV( * )
+      !DOUBLE PRECISION   A( LDA, * ), B( LDB, * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+*/
+void DGETRS(const char *, int *, int *, double __restrict *,
+            int *, int __restrict *, double __restrict *,
+	    int *, int *);
+
+/*
+SUBROUTINE DLAQGE( M, N, A, LDA, R, C, ROWCND, COLCND, AMAX, &
+     EQUED )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLAQGE
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLAQGE
+#endif
+  use omp_lib
+      implicit none
+!*
+!*  -- LAPACK auxiliary routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          EQUED
+      INTEGER            LDA, M, N
+      DOUBLE PRECISION   AMAX, COLCND, ROWCND
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   A( LDA, * ), C( * ), R( * )
+       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: R
+*/
+void DLAQGE(int *, int *, double __restrict *, int *,
+            double __restrict *, double __restrict *,
+	    double *, double *, double *, const char *);
+
+/*
+ SUBROUTINE DGERFSX( TRANS, EQUED, N, NRHS, A, LDA, AF, LDAF, IPIV, &
+                         R, C, B, LDB, X, LDX, RCOND, BERR, N_ERR_BNDS, &
+                         ERR_BNDS_NORM, ERR_BNDS_COMP, NPARAMS, PARAMS, &
+                         WORK, IWORK, INFO )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DGERFSX
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DGERFSX
+#endif
+       implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.0) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          TRANS, EQUED
+      INTEGER            INFO, LDA, LDAF, LDB, LDX, N, NRHS, NPARAMS, &
+                         N_ERR_BNDS
+      DOUBLE PRECISION   RCOND
+!*     ..
+!*     .. Array Arguments ..
+     ! INTEGER            IPIV( * ), IWORK( * )
+     ! DOUBLE PRECISION   A( LDA, * ), AF( LDAF, * ), B( LDB, * ),
+     !$                   X( LDX , * ), WORK( * )
+     ! DOUBLE PRECISION   R( * ), C( * ), PARAMS( * ), BERR( * ),
+     !$                   ERR_BNDS_NORM( NRHS, * ),
+      !$                   ERR_BNDS_COMP( NRHS, * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV, IWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AF
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: PARAMS
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: BERR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: ERR_BNDS_NORM
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: ERR_BNDS_COMP
+*/
+void DGERFSX(const char *, const char *, int *, int *, double __restrict *,
+             int *, double __restrict *,  int *, int __restrict *,
+	     double __restrict *, double __restrict *, double __restrict *,
+	     int *, double __restrict *, int *, double *, double __restrict *,
+	     int *, double __restrict *, double __restrict *,  int *,
+	     double __restrict *, double __restrict *, double __restrict *,
+	     int __restrict *, int *);
+
+/*
+SUBROUTINE DLA_GERFSX_EXTENDED( PREC_TYPE, TRANS_TYPE, N, NRHS, A, &
+                                     LDA, AF, LDAF, IPIV, COLEQU, C, B, &
+                                     LDB, Y, LDY, BERR_OUT, N_NORMS, &
+                                     ERRS_N, ERRS_C, RES, AYB, DY, &
+                                     Y_TAIL, RCOND, ITHRESH, RTHRESH, &
+                                     DZ_UB, IGNORE_CWISE, INFO )
+   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLA_DGERFSX_EXTENDED
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DLA_DGERFSX_EXTENDED
+#endif
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDAF, LDB, LDY, N, NRHS, PREC_TYPE, &
+                        TRANS_TYPE, N_NORMS, ITHRESH
+      LOGICAL            COLEQU, IGNORE_CWISE
+      DOUBLE PRECISION   RTHRESH, DZ_UB, RCOND
+!*     ..
+!*     .. Array Arguments ..
+      !INTEGER            IPIV( * )
+      !DOUBLE PRECISION   A( LDA, * ), AF( LDAF, * ), B( LDB, * ),
+     !$                   Y( LDY, * ), RES( * ), DY( * ), Y_TAIL( * )
+      !DOUBLE PRECISION   C( * ), AYB( * ), RCOND, BERR_OUT( * ),
+      !$                   ERRS_N( NRHS, * ), ERRS_C( NRHS, * )
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IPIV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AF
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Y
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: RES
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DY
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: Y_TAIL
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: AYB
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: BERR_OUT
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: ERRS_N
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: ERRS_C
+*/
+void DLA_GERFSX_EXTENDED(int *, int *, int *, int *, double __restrict *,
+                         int *, double __restrict *, int *, int __restrict *,
+			 int *, double __restrict *, double __restrict *,
+			 int *, double __restrict , int *, double __restrict *,
+			 int *, double __restrict *, double __restrict *,
+			 double __restrict *, double __restrict *,
+			 double __restrict *, double __restrict *, double *,
+			 int *, double *, double *, int *, int *);
+
+/*
+SUBROUTINE DLA_GEAMV ( TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA, &
+      Y, INCY )
+    !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DLA_GEAMV
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=skylake_avx512 :: DLA_GEAMV
+#endif
+   use omp_lib
+      implicit none
+!*
+!*  -- LAPACK computational routine (version 3.7.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     June 2017
+!*
+!*     .. Scalar Arguments ..
+      DOUBLE PRECISION   ALPHA, BETA
+      INTEGER            INCX, INCY, LDA, M, N, TRANS
+!*     ..
+!*     .. Array Arguments ..
+      !DOUBLE PRECISION   A( LDA, * ), X( * ), Y( * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: X
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: Y
+*/
+void DLA_GEAMV(int *, int *, int *, double *, double __restrict *,
+               int *, double __restrict *, int *, double *,
+	       double __restrict *, int *);
+
+/*
+ SUBROUTINE DPOTRF ( UPLO, N, A, LDA, INFO )
+     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DPOTRF
+    !DIR$ OPTIMIZE : 3
+    !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: DPOTRF
+#emdif
+       implicit none
+!*
+!*  -- LAPACK computational routine (version 3.1) --
+!*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
+!*  -- Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd..--
+!*     December 2016
+!*
+!*     .. Scalar Arguments ..
+      CHARACTER          UPLO
+      INTEGER            INFO, LDA, N
+!*     ..
+!*     .. Array Arguments ..
+      DOUBLE PRECISION   A( LDA, * )
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+*/
+void DPOTRF(const char *, int *, double __restrict *, int *, int *);
+
+
+
 }
 
 
