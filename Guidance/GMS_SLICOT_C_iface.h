@@ -246,22 +246,601 @@ void FB01VD(int *,
 	    int *,
 	    int *);
 
+/*
+ SUBROUTINE MB02OD( SIDE, UPLO, TRANS, DIAG, NORM, M, N, ALPHA, A,
+   LDA, B, LDB, RCOND, TOL, IWORK, DWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER          DIAG, NORM, SIDE, TRANS, UPLO
+      INTEGER            INFO, LDA, LDB, M, N
+      DOUBLE PRECISION   ALPHA, RCOND, TOL
+!C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IWORK(*)
+#else
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), DWORK(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+#endif
+*/
+void MB02OD(const char *,
+            const char *,
+	    const char *,
+            const char *,
+            const char *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *);
+
+/*
+ SUBROUTINE FB01TD( JOBX, MULTRC, N, M, P, SINV, LDSINV, AINV, &
+        LDAINV, AINVB, LDAINB, RINV, LDRINV, C, LDC,          &
+        QINV, LDQINV, X, RINVY, Z, E, TOL, IWORK,             &
+        DWORK, LDWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         JOBX, MULTRC
+      INTEGER           INFO, LDAINB, LDAINV, LDC, LDQINV, LDRINV, &
+                        LDSINV, LDWORK, M, N, P
+      DOUBLE PRECISION  TOL
+!C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           IWORK(*)
+#else
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  AINV(LDAINV,*), AINVB(LDAINB,*), C(LDC,*), &
+                       DWORK(*), E(*), QINV(LDQINV,*), RINV(LDRINV,*), &
+                       RINVY(*), SINV(LDSINV,*), X(*), Z(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AINVB
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: E
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: QINV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: RINV
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: RINVY
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: SINV
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: X
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: Z
+#endif
+*/
+void FB01TD(const char *,
+            const char *,
+	    int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+
+
+/*
+SUBROUTINE MB04KD( UPLO, N, M, P, R, LDR, A, LDA, B, LDB, C, LDC, &
+     TAU, DWORK )
+!C     .. Scalar Arguments ..
+      CHARACTER         UPLO
+      INTEGER           LDA, LDB, LDC, LDR, M, N, P
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           R(LDR,*), TAU(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: R
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+#endif
+*/
+
+void MB04KD(const char *,
+            int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *);
+
+/*
+ SUBROUTINE MB04ID(N, M, P, L, A, LDA, B, LDB, TAU, DWORK, LDWORK,INFO)
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, L, LDA, LDB, LDWORK, M, N, P
+!C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), DWORK(*), TAU(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+#endif
+*/
+void MB04ID(int *,
+            int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE MB04LD( UPLO, N, M, P, L, LDL, A, LDA, B, LDB, C, LDC &
+                  TAU, DWORK )
+!C     .. Scalar Arguments ..
+      CHARACTER         UPLO
+      INTEGER           LDA, LDB, LDC, LDL, M, N, P
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), &
+           L(LDL,*), TAU(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: L
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: TAU
+#endif
+*/
+void MB04LD(const char *,
+            int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *);
+
+/*
+SUBROUTINE SB01BD( DICO, N, M, NP, ALPHA, A, LDA, B, LDB, WR, WI, &
+   NFP, NAP, NUP, F, LDF, Z, LDZ, TOL, DWORK, &
+   LDWORK, IWARN, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER        DICO
+      INTEGER          INFO, IWARN, LDA, LDB, LDF, LDWORK, LDZ, M, N, &
+                       NAP, NFP, NP, NUP
+      DOUBLE PRECISION ALPHA, TOL
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+     DOUBLE PRECISION A(LDA,*), B(LDB,*), DWORK(*), F(LDF,*), &
+          WI(*), WR(*), Z(LDZ,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: F
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WI
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+#endif
+*/
+void SB01BD(const char *,
+            int *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    int *,
+	    int *);
+
+/*
+ SUBROUTINE SB01BX(REIG,N,XR,XI,WR,WI,S,P)
+ !C     .. Scalar Arguments ..
+      LOGICAL          REIG
+      INTEGER          N
+      DOUBLE PRECISION P, S, XI ,XR
+      !C     .. Array Arguments ..
+
+      DOUBLE PRECISION WI(*), WR(*)
+*/
+void SB01BD(int *,
+            int *,
+	    double *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    double *,
+	    double *);
+
+/*
+ SUBROUTINE SB01BY(N,M,S,P,A B,F,TOL,DWORK,INFO)
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, M, N
+      DOUBLE PRECISION  P, S, TOL
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      !DOUBLE PRECISION  A(N,*), B(N,*), DWORK(*), F(M,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: F
+#endif
+*/
+void SB01BY(int *,
+            int *,
+	    double *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double *,
+	    double __restrict *,
+	    int *);
+
+/*
+  SUBROUTINE MB03QD( DICO, STDOM, JOBU, N, NLOW, NSUP, ALPHA, &
+       A, LDA, U, LDU, NDIM, DWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER        DICO, JOBU, STDOM
+      INTEGER          INFO, LDA, LDU, N, NDIM, NLOW, NSUP
+      DOUBLE PRECISION ALPHA
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION A(LDA,*), DWORK(*), U(LDU,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+#endif
+*/
+void MB03QD(const char *,
+            const char *,
+	    const char *,
+	    int *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *);
+
+/*
+ SUBROUTINE MB03QY(N,L,A,LDA,U,LDU,E1,E2,INFO)
+!C     .. Scalar Arguments ..
+      INTEGER          INFO, L, LDA, LDU, N
+      DOUBLE PRECISION E1, E2
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION A(LDA,*), U(LDU,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+#endif      
+*/
+void MB03QY(int *,
+            int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double *,
+	    int *);
+
+/*
+SUBROUTINE TB04CD( JOBD, EQUIL, N, M, P, NPZ, A, LDA, B, LDB, C,  &
+LDC, D, LDD, NZ, LDNZ, NP, LDNP, ZEROSR,                          &
+ZEROSI, POLESR, POLESI, GAINS, LDGAIN, TOL,                       &
+IWORK, DWORK, LDWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER          EQUIL, JOBD
+      DOUBLE PRECISION   TOL
+      INTEGER            INFO, LDA, LDB, LDC, LDD, LDGAIN, LDNP, LDNZ, &
+                         LDWORK, M, N, NPZ, P
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A(LDA,*), B(LDB,*), C(LDC,*), D(LDD,*), &
+                         DWORK(*), GAINS(LDGAIN,*), POLESI(*),   &
+                         POLESR(*), ZEROSI(*), ZEROSR(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: GAINS
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: POLESI
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: POLESR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZEROSI
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: ZEROSR
+#endif    
+*/
+void TB04CD(const char *,
+            const char *,
+	    int *,
+	    int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int __restrict *,
+	    int *,
+	    int __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+ SUBROUTINE TB01ID( JOB, N, M, P, MAXRED, A, LDA, B, LDB, C, LDC,  &
+      SCALE, INFO)
+!C     .. Scalar Arguments ..
+      CHARACTER          JOB
+      INTEGER            INFO, LDA, LDB, LDC, M, N, P
+      DOUBLE PRECISION   MAXRED
+!C     ..
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+           SCALE( * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: SCALE
+#endif
+*/
+void TB01ID(const char *,
+            int *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *);
+
+/*
+SUBROUTINE TB01ZD( JOBZ, N, P, A, LDA, B, C, LDC, NCONT, Z, LDZ,
+    TAU, TOL, DWORK, LDWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         JOBZ
+      INTEGER           INFO, LDA, LDC, LDWORK, LDZ, N, NCONT, P
+      DOUBLE PRECISION  TOL
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(*), C(LDC,*), DWORK(*), TAU(*), &
+           Z(LDZ,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: TAU
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Z
+#endif      
+*/
+void TB01ZD(const char *,
+            int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+ SUBROUTINE MB01PD( SCUN, TYPE, M, N, KL, KU, ANRM, NBL, NROWS, A, &
+   LDA, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER          SCUN, TYPE
+      INTEGER            INFO, KL, KU, LDA, M, MN, N, NBL
+      DOUBLE PRECISION   ANRM
+      !C     .. Array Arguments ..
+   
+      INTEGER            NROWS ( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+#endif
+*/
+void MB01PD(const char *,
+            const char *,
+	    int *,
+	    int *,
+	    int *,
+	    int *,
+	    double *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int * );
+
+/*
+ SUBROUTINE MB01QD( TYPE, M, N, KL, KU, CFROM, CTO, NBL, NROWS, A,
+   LDA, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER          TYPE
+      INTEGER            INFO, KL, KU, LDA, M, N, NBL
+      DOUBLE PRECISION   CFROM, CTO
+!C     ..
+      !C     .. Array Arguments ..
+
+      INTEGER            NROWS ( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      DOUBLE PRECISION   A( LDA, * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+#endif
+*/
+void MB01QD(const char *,
+            int *,
+	    int *,
+	    int *,
+	    int *,
+	    double *,
+	    double *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE TB05AD( BALEIG, INITA, N, M, P, FREQ, A, LDA, B, LDB, &
+  C, LDC, RCOND, G, LDG, EVRE, EVIM, HINVB,                      &
+  LDHINV, IWORK, DWORK, LDWORK, ZWORK, LZWORK,INFO)
+!C     .. Scalar Arguments ..
+      CHARACTER         BALEIG, INITA
+      INTEGER           INFO, LDA, LDB, LDC, LDG, LDHINV, LDWORK, &
+                        LZWORK, M, N, P
+      DOUBLE PRECISION  RCOND
+      COMPLEX*16        FREQ
+      !C     .. Array Arguments ..
+
+      INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), EVIM(*), &
+           EVRE(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVIM
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: EVRE
+#endif
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      COMPLEX*16        ZWORK(*), G(LDG,*), HINVB(LDHINV,*)
+#else
+      COMPLEX(16), DIMENSION(:), ALLOCATABLE :: ZWORK
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: G
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: HINVB
+#endif
+*/
+void TB05AD(const char *,
+            const char *,
+	    int *,
+	    int *,
+	    int *,
+	    std::complex<double> *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    std::complex<double> __restrict *,
+	    int *,
+	    double __restrict *,
+	    double __restrict *,
+	    std::complex<double> __restrict *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    std::complex<double> __restrict *,
+	    int *,
+	    int *);
+
+
+
+
 
 
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
 
 #endif
 
