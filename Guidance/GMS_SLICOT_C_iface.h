@@ -832,10 +832,119 @@ void TB05AD(const char *,
 	    int *,
 	    int *);
 
+/*
+SUBROUTINE MB02RZ(TRANS,N,NRHS,H,LDH,IPIV,B,LDB,INFO)
+!C     .. Scalar Arguments ..
+      CHARACTER          TRANS
+      INTEGER            INFO, LDB, LDH, N, NRHS
+!C     ..
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IPIV( * )
+      COMPLEX*16         B( LDB, * ), H( LDH, * )
+#else
+      INTEGER,     DIMENSION(:), ALLOCATABLE :: IPIV
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: B,H
+#endif
+*/
+void MB02RZ(const char *,
+            int *,
+	    int *,
+	    std::complex<double> __restrict *,
+	    int *,
+	    int __restrict *,
+	    std::complex<double> __restrict *,
+	    int *,
+	    int *);
 
+/*
+SUBROUTINE SB02MD( DICO, HINV, UPLO, SCAL, SORT, N, A, LDA, G, &
+    LDG, Q, LDQ, RCOND, WR, WI, S, LDS, U, LDU,                &
+    IWORK, DWORK, LDWORK, BWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         DICO, HINV, SCAL, SORT, UPLO
+      INTEGER           INFO, LDA, LDG, LDQ, LDS, LDU, LDWORK, N
+      DOUBLE PRECISION  RCOND
+      !C     .. Array Arguments ..
 
+      LOGICAL           BWORK(*)
+      INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*), U(LDU,*), WR(*), WI(*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: WR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: WI
+#endif
 
+*/
+void SB02MD(const char *,
+            const char *,
+	    const char *,
+	    const char *,
+	    const char *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    int *);
 
+/*
+SUBROUTINE SB02MU(DICO, HINV, UPLO, N, A, LDA, G, LDG, Q, LDQ, S, &
+      LDS, IWORK, DWORK, LDWORK, INFO)
+!C     .. Scalar Arguments ..
+      CHARACTER         DICO, HINV, UPLO
+      INTEGER           INFO, LDA, LDG, LDQ, LDS, LDWORK, N
+      !C     .. Array Arguments ..
+ 
+      INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1      
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*), &
+           S(LDS,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+#endif
+*/
+void SB02MU(const char *,
+            const char *,
+	    const char *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
 
 
 
