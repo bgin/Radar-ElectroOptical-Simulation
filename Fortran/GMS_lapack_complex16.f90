@@ -142,14 +142,17 @@ DOUBLE PRECISION FUNCTION ZLANGE(NORM, M, N, A, LDA, WORK) !GCC$ ATTRIBUTES HOT 
 !*
          VALUE = ZERO
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,VALUE,SUM)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,N,M) REDUCTION(+:SUM) FIRSTPRIVATE(VALUE) PRIVATE(J,I) COLLAPSE(2)
          DO 40 J = 1, N
+            !$OMP SINGLE
             SUM = ZERO
-            !$OMP SIMD REDUCTION(+:SUM) ALIGNED(A:64) LINEAR(I:1)
+            !$OMP END SINGLE
             DO 30 I = 1, M
                SUM = SUM + ABS( A( I, J ) )
-   30       CONTINUE
-            IF( VALUE.LT.SUM .OR. DISNAN( SUM ) ) VALUE = SUM
+        30  CONTINUE
+           !$OMP CRITICAL    
+               IF( VALUE.LT.SUM .OR. DISNAN( SUM ) ) VALUE = SUM
+           !$OMP END CRITICAL
    40    CONTINUE
       ELSE IF( LSAME( NORM, 'I' ) ) THEN
 !*
@@ -161,9 +164,9 @@ DOUBLE PRECISION FUNCTION ZLANGE(NORM, M, N, A, LDA, WORK) !GCC$ ATTRIBUTES HOT 
             WORK( I ) = ZERO
 50       CONTINUE
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(WORK,A) PRIVATE(J,I)            
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(WORK,A,N,M) PRIVATE(J,I)            
          DO 70 J = 1, N
-            !$OMP SIMD REDUCTION(+:WORK) ALIGNED(WORK:64,A)
+            !$OMP SIMD  ALIGNED(WORK:64,A) LINEAR(I:1)
             DO 60 I = 1, M
                WORK( I ) = WORK( I ) + ABS( A( I, J ) )
    60       CONTINUE
@@ -360,6 +363,7 @@ SUBROUTINE DCOMBSSQ( V1, V2 ) !GCC$ ATTRIBUTES INLINE :: DCOMBSSQ !GCC$ ATTRIBUT
     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: DCOMBSSQ
     !DIR$ OPTIMIZE : 3
 #endif
+     implicit none
 !*
 !*  -- LAPACK auxiliary routine (version 3.7.0) --
 !*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
@@ -510,7 +514,7 @@ SUBROUTINE ZLACPY(UPLO, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES hot :: ZLACPY !GC
 !*
       IF( LSAME( UPLO, 'U' ) ) THEN
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 20 J = 1, N
             !$OMP SIMD ALIGNED(B:64,A:64) LINEAR(I:1)
             DO 10 I = 1, MIN( J, M )
@@ -519,9 +523,8 @@ SUBROUTINE ZLACPY(UPLO, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES hot :: ZLACPY !GC
    20    CONTINUE
 !*
         ELSE IF( LSAME( UPLO, 'L' ) ) THEN
-#if (__GMS_LAPACK_USE_OMP__) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif               
+
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 40 J = 1, N
             !$OMP SIMD ALIGNED(B:64,A:64) LINEAR(I:1)
             DO 30 I = J, M
@@ -530,9 +533,8 @@ SUBROUTINE ZLACPY(UPLO, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES hot :: ZLACPY !GC
    40    CONTINUE
 !*
         ELSE
-#if (__GMS_LAPACK_USE_OMP__) == 1
-         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J)
-#endif                 
+
+         !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 60 J = 1, N
             !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)
            DO 50 I = 1, M
@@ -1052,7 +1054,7 @@ SUBROUTINE ZLASET(UPLO, M, N, ALPHA, BETA, A, LDA) !GCC$ ATTRIBUTES hot :: ZLASE
 !*        part of the array to ALPHA.
          !*
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(A,ALPHA,N,M) PRIVATE(J,I)
          DO 20 J = 2, N
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
             DO 10 I = 1, MIN( J-1, M )
@@ -1069,7 +1071,7 @@ SUBROUTINE ZLASET(UPLO, M, N, ALPHA, BETA, A, LDA) !GCC$ ATTRIBUTES hot :: ZLASE
 !*        part of the array to ALPHA.
          !*
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(A,ALPHA,M,N) PRIVATE(J,I)
          DO 50 J = 1, MIN( M, N )
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
             DO 40 I = J + 1, M
@@ -1086,7 +1088,7 @@ SUBROUTINE ZLASET(UPLO, M, N, ALPHA, BETA, A, LDA) !GCC$ ATTRIBUTES hot :: ZLASE
 !*        offdiagonal.
          !*
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,ALPHA,N,M) PRIVATE(J,I)
          DO 80 J = 1, N
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
             DO 70 I = 1, M
@@ -1561,25 +1563,25 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
 !*
 !*     Test the input parameters.
 !*
-!      INFO = 0
-!      IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
-!     +    .NOT.LSAME(TRANS,'C')) THEN
-!          INFO = 1
-!      ELSE IF (M.LT.0) THEN
-!          INFO = 2
-!      ELSE IF (N.LT.0) THEN
-!          INFO = 3
-!      ELSE IF (LDA.LT.MAX(1,M)) THEN
-!          INFO = 6
-!      ELSE IF (INCX.EQ.0) THEN
-!          INFO = 8
-!      ELSE IF (INCY.EQ.0) THEN
-!          INFO = 11
-!      END IF
-!      IF (INFO.NE.0) THEN
+      INFO = 0
+      IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND. &
+         .NOT.LSAME(TRANS,'C')) THEN
+          INFO = 1
+      ELSE IF (M.LT.0) THEN
+          INFO = 2
+      ELSE IF (N.LT.0) THEN
+          INFO = 3
+      ELSE IF (LDA.LT.MAX(1,M)) THEN
+          INFO = 6
+      ELSE IF (INCX.EQ.0) THEN
+          INFO = 8
+      ELSE IF (INCY.EQ.0) THEN
+          INFO = 11
+      END IF
+      IF (INFO.NE.0) THEN
 !!          CALL XERBLA('ZGEMV ',INFO)
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !*
 !*     Quick return if possible.
 !*
@@ -1654,7 +1656,7 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
           JX = KX
           IF (INCY.EQ.1) THEN
 
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A) PRIVATE(J,TEMP,I,JX)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,N,M,ALPHA,N,M) FIRSTPRIVATE(JX) PRIVATE(J,TEMP,I)
               DO 60 J = 1,N
                  TEMP = ALPHA*X(JX)
                   !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
@@ -1665,10 +1667,12 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
    60         CONTINUE
           ELSE
 
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A) PRIVATE(J,TEMP,IY,I,JX)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,Y,A,ALPHA,N,M) FIRSTPRIVATE(JX) PRIVATE(J,TEMP,IY,I)
              DO 80 J = 1,N
-                  TEMP = ALPHA*X(JX)
-                  IY = KY
+                TEMP = ALPHA*X(JX)
+                
+                   IY = KY
+               
                   !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 70 I = 1,M
                       Y(IY) = Y(IY) + TEMP*A(I,J)
@@ -1684,16 +1688,18 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
           JY = KY
           IF (INCX.EQ.1) THEN
 
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,X,Y) PRIVATE(J,TEMP,I,JY)
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,X,Y,N,M,NOCONJ,ALPHA,INCY) REDUCTION(+:TEMP) FIRSTPRIVATE(JY) PRIVATE(J,I)
              DO 110 J = 1,N
-                  TEMP = ZERO
+                  !$OMP SINGLE
+                    TEMP = ZERO
+                  !$OMP END SINGLE
                   IF (NOCONJ) THEN
-                      !$OMP SIMD ALIGNED(Y:64,A) REDUCTION(+:TEMP) UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(Y:64,A) UNROLL PARTIAL(10)
                       DO 90 I = 1,M
                           TEMP = TEMP + A(I,J)*X(I)
    90                 CONTINUE
                   ELSE
-                      !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1) REDUCTION(+:TEMP)  UNROLL PARTIAL(10)    
+                      !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1)   UNROLL PARTIAL(10)    
                       DO 100 I = 1,M
                           TEMP = TEMP + DCONJG(A(I,J))*X(I)
   100                 CONTINUE
@@ -1703,18 +1709,20 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
   110         CONTINUE
            ELSE
 
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,X,Y) PRIVATE(J,TEMP,JY,IX,I,JY)
-             DO 140 J = 1,N
+             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,X,Y,NOCONJ,N,M,ALPHA) REDUCTION(+:TEMP) FIRSTPRIVATE(JY) PRIVATE(J,IX,I,JY)
+              DO 140 J = 1,N
+                
                   TEMP = ZERO
                   IX = KX
+               
                   IF (NOCONJ) THEN
-                       !$OMP SIMD ALIGNED(Y:64,A) REDUCTION(+:TEMP) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(Y:64,A)  UNROLL PARTIAL(10)
                       DO 120 I = 1,M
                           TEMP = TEMP + A(I,J)*X(IX)
                           IX = IX + INCX
   120                 CONTINUE
                   ELSE
-                      !$OMP SIMD ALIGNED(Y:64,A) REDUCTION(+:TEMP) UNROLL PARTIAL(10)    
+                      !$OMP SIMD ALIGNED(Y:64,A)  UNROLL PARTIAL(10)    
                       DO 130 I = 1,M
                           TEMP = TEMP + DCONJG(A(I,J))*X(IX)
                           IX = IX + INCX
@@ -1803,22 +1811,22 @@ SUBROUTINE ZGERC(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES hot :: ZGERC !G
 !*
 !*     Test the input parameters.
 !*
-!      INFO = 0
-!!      IF (M.LT.0) THEN
-!          INFO = 1
-!      ELSE IF (N.LT.0) THEN
-!          INFO = 2
-!      ELSE IF (INCX.EQ.0) THEN
-!          INFO = 5
-!      ELSE IF (INCY.EQ.0) THEN
-!          INFO = 7
-!      ELSE IF (LDA.LT.MAX(1,M)) THEN
-!          INFO = 9
-!      END IF
-!      IF (INFO.NE.0) THEN
+      INFO = 0
+      IF (M.LT.0) THEN
+          INFO = 1
+      ELSE IF (N.LT.0) THEN
+          INFO = 2
+      ELSE IF (INCX.EQ.0) THEN
+          INFO = 5
+      ELSE IF (INCY.EQ.0) THEN
+          INFO = 7
+      ELSE IF (LDA.LT.MAX(1,M)) THEN
+          INFO = 9
+       END IF
+       IF (INFO.NE.0) THEN
 !          CALL XERBLA('ZGERC ',INFO)
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !*
 !*     Quick return if possible. 
 !*
@@ -1834,7 +1842,7 @@ SUBROUTINE ZGERC(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES hot :: ZGERC !G
       END IF
       IF (INCX.EQ.1) THEN
 
-         !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(Y,A,X)  PRIVATE(J,TEMP,I,JY)
+         !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(Y,A,X,N,M,ALPHA,INCY)  FIRSTPRIVATE(JY) PRIVATE(J,TEMP,I)
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*DCONJG(Y(JY))
@@ -1852,7 +1860,7 @@ SUBROUTINE ZGERC(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES hot :: ZGERC !G
               KX = 1 - (M-1)*INCX
           END IF
 
-         !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(Y,A,X) PRIVATE(J,TEMP,JY,I,IX)
+         !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(Y,A,X,N,M,ALPHA,KX) FIRSTPRIVATE(JY) PRIVATE(J,TEMP,I,IX)
          DO 40 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                   TEMP = ALPHA*DCONJG(Y(JY))
@@ -1944,22 +1952,22 @@ SUBROUTINE ZGERU(M,N,ALPHA,X,INCX,Y,INCY,A,LDA)
 !*
 !*     Test the input parameters.
 !*
-!      INFO = 0
-!      IF (M.LT.0) THEN
-!          INFO = 1
-!      ELSE IF (N.LT.0) THEN
-!          INFO = 2
-!      ELSE IF (INCX.EQ.0) THEN
-!          INFO = 5
-!      ELSE IF (INCY.EQ.0) THEN
-!          INFO = 7
-!      ELSE IF (LDA.LT.MAX(1,M)) THEN
-!          INFO = 9
-!      END IF
-!      IF (INFO.NE.0) THEN
+      INFO = 0
+      IF (M.LT.0) THEN
+          INFO = 1
+      ELSE IF (N.LT.0) THEN
+          INFO = 2
+      ELSE IF (INCX.EQ.0) THEN
+          INFO = 5
+      ELSE IF (INCY.EQ.0) THEN
+          INFO = 7
+      ELSE IF (LDA.LT.MAX(1,M)) THEN
+          INFO = 9
+      END IF
+      IF (INFO.NE.0) THEN
 !!          CALL XERBLA('ZGERU ',INFO)
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !*
 !*     Quick return if possible.
 !*
@@ -1975,7 +1983,7 @@ SUBROUTINE ZGERU(M,N,ALPHA,X,INCX,Y,INCY,A,LDA)
       END IF
       IF (INCX.EQ.1) THEN
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,X)  PRIVATE(J,TEMP,I,JY)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,X,N,M,ALPHA,INCY) FIRSTPRIVATE(JY) PRIVATE(J,TEMP,I)
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*Y(JY)
@@ -1993,12 +2001,12 @@ SUBROUTINE ZGERU(M,N,ALPHA,X,INCX,Y,INCY,A,LDA)
               KX = 1 - (M-1)*INCX
           END IF
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,X) PRIVATE(J,TEMP,JY,I,IX)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(Y,A,X,N,M,ALPHA,INCX,KX) FIRSTPRIVATE(JY) PRIVATE(J,TEMP,I,IX)
          DO 40 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
-                  TEMP = ALPHA*Y(JY)
+                 TEMP = ALPHA*Y(JY)
                   IX = KX
-                   !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 30 I = 1,M
                       A(I,J) = A(I,J) + X(IX)*TEMP
                       IX = IX + INCX
@@ -2096,6 +2104,7 @@ SUBROUTINE ZUNMQR(SIDE, TRANS, M, N, K, A, LDA, TAU, C, LDC, &
     !DIR$ OPTIMIZE : 3
     !DIR$ ATTRIBUTES OPTIMIZATION_PARAMETER: TARGET_ARCH=Haswell :: ZUNMQR
 #endif
+       implicit none
 !*
 !*  -- LAPACK computational routine (version 3.7.0) --
 !*  -- LAPACK is a software package provided by Univ. of Tennessee,    --
@@ -2155,25 +2164,25 @@ SUBROUTINE ZUNMQR(SIDE, TRANS, M, N, K, A, LDA, TAU, C, LDC, &
          NQ = N
          NW = M
       END IF
-!      IF( .NOT.LEFT .AND. .NOT.LSAME( SIDE, 'R' ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'C' ) ) THEN
-!         INFO = -2
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( K.LT.0 .OR. K.GT.NQ ) THEN
-!         INFO = -5
-!      ELSE IF( LDA.LT.MAX( 1, NQ ) ) THEN
-!         INFO = -7
-!      ELSE IF( LDC.LT.MAX( 1, M ) ) THEN
-!         INFO = -10
-!      ELSE IF( LWORK.LT.MAX( 1, NW ) .AND. .NOT.LQUERY ) THEN
-!         INFO = -12
-!      END IF
+      IF( .NOT.LEFT .AND. .NOT.LSAME( SIDE, 'R' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'C' ) ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( K.LT.0 .OR. K.GT.NQ ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, NQ ) ) THEN
+         INFO = -7
+      ELSE IF( LDC.LT.MAX( 1, M ) ) THEN
+         INFO = -10
+      ELSE IF( LWORK.LT.MAX( 1, NW ) .AND. .NOT.LQUERY ) THEN
+         INFO = -12
+      END IF
 !*
-!      IF( INFO.EQ.0 ) THEN
+      IF( INFO.EQ.0 ) THEN
 !*
 !*        Compute the workspace requirements
 !*
@@ -2181,11 +2190,11 @@ SUBROUTINE ZUNMQR(SIDE, TRANS, M, N, K, A, LDA, TAU, C, LDC, &
               -1 ) )
          LWKOPT = MAX( 1, NW )*NB + TSIZE
          WORK( 1 ) = LWKOPT
-!      END IF
+      END IF
 !*
-!      IF( INFO.NE.0 ) THEN
+      IF( INFO.NE.0 ) THEN
 !         CALL XERBLA( 'ZUNMQR', -INFO )
-!!         RETURN
+         RETURN
       IF( LQUERY ) THEN
          RETURN
       END IF
@@ -2435,9 +2444,9 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C1 := C1 - W**H
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,N) PRIVATE(J,I) COLLAPSE(2)
                DO 30 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1)
+                 
                   DO 20 I = 1, N
                      C( J, I ) = C( J, I ) - DCONJG( WORK( I, J ) )
    20             CONTINUE
@@ -2492,7 +2501,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C1 := C1 - W
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) COLLAPSE(2) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) COLLAPSE(2) PRIVATE(J,I)
             DO 60 J = 1, K
                   !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 50 I = 1, M
@@ -2559,9 +2568,9 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C2 := C2 - W**H
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) PRIVATE(J,I) COLLAPSE(2)
               DO 90 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1)
+                 
                   DO 80 I = 1, N
                      C( M-K+J, I ) = C( M-K+J, I ) -   &
                                      DCONJG( WORK( I, J ) )
@@ -2617,7 +2626,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C2 := C2 - W
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) PRIVATE(J,I) COLLAPSE(2)
                DO 120 J = 1, K
                   !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 110 I = 1, M
@@ -2687,7 +2696,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C1 := C1 - W**H
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) PRIVATE(J,I) COLLAPSE(2)
                DO 150 J = 1, K
                   DO 140 I = 1, N
                      C( J, I ) = C( J, I ) - DCONJG( WORK( I, J ) )
@@ -2743,7 +2752,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C1 := C1 - W
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) COLLAPSE(2) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) COLLAPSE(2) PRIVATE(J,I)
                DO 180 J = 1, K
                   !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 170 I = 1, M
@@ -2810,7 +2819,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C2 := C2 - W**H
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) PRIVATE(J,I) COLLAPSE(2)
                DO 210 J = 1, K
                  DO 200 I = 1, N
                      C( M-K+J, I ) = C( M-K+J, I ) -   &
@@ -2867,7 +2876,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
 !*              C1 := C1 - W
                !*
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,WORK,K,M) PRIVATE(J,I) COLLAPSE(2)
                DO 240 J = 1, K
                   !$OMP SIMD ALIGNED(C:64,WORK)
                   DO 230 I = 1, M
@@ -2973,30 +2982,30 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
       NOUNIT = LSAME(DIAG,'N')
       UPPER = LSAME(UPLO,'U')
 !*
-!      INFO = 0
-!      IF ((.NOT.LSIDE) .AND. (.NOT.LSAME(SIDE,'R'))) THEN
-!          INFO = 1
-!      ELSE IF ((.NOT.UPPER) .AND. (.NOT.LSAME(UPLO,'L'))) THEN
-!          INFO = 2
-!      ELSE IF ((.NOT.LSAME(TRANSA,'N')) .AND.
-!     +         (.NOT.LSAME(TRANSA,'T')) .AND.
-!     +         (.NOT.LSAME(TRANSA,'C'))) THEN
-!          INFO = 3
-!      ELSE IF ((.NOT.LSAME(DIAG,'U')) .AND. (.NOT.LSAME(DIAG,'N'))) THEN
-!          INFO = 4
-!      ELSE IF (M.LT.0) THEN
-!          INFO = 5
- !     ELSE IF (N.LT.0) THEN
-!          INFO = 6
-!      ELSE IF (LDA.LT.MAX(1,NROWA)) THEN
-!          INFO = 9
-!      ELSE IF (LDB.LT.MAX(1,M)) THEN
-!          INFO = 11
-!      END IF
-!      IF (INFO.NE.0) THEN
+      INFO = 0
+      IF ((.NOT.LSIDE) .AND. (.NOT.LSAME(SIDE,'R'))) THEN
+          INFO = 1
+      ELSE IF ((.NOT.UPPER) .AND. (.NOT.LSAME(UPLO,'L'))) THEN
+          INFO = 2
+      ELSE IF ((.NOT.LSAME(TRANSA,'N')) .AND. &
+              (.NOT.LSAME(TRANSA,'T')) .AND. &
+              (.NOT.LSAME(TRANSA,'C'))) THEN
+          INFO = 3
+      ELSE IF ((.NOT.LSAME(DIAG,'U')) .AND. (.NOT.LSAME(DIAG,'N'))) THEN
+          INFO = 4
+      ELSE IF (M.LT.0) THEN
+          INFO = 5
+      ELSE IF (N.LT.0) THEN
+          INFO = 6
+      ELSE IF (LDA.LT.MAX(1,NROWA)) THEN
+          INFO = 9
+      ELSE IF (LDB.LT.MAX(1,M)) THEN
+          INFO = 11
+      END IF
+      IF (INFO.NE.0) THEN
 !          CALL XERBLA('ZTRMM ',INFO)
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !*
 !*     Quick return if possible.
 !*
@@ -3023,7 +3032,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
 !*
              IF (UPPER) THEN
 
-                !$OMP PARALLEL DO COLLAPSE(2) SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,K,I,TEMP)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(B,A,N,M,NOUNIT,ALPHA) PRIVATE(J,K,I,TEMP)
                   DO 50 J = 1,N
                       DO 40 K = 1,M
                           IF (B(K,J).NE.ZERO) THEN
@@ -3039,7 +3048,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
    50             CONTINUE
               ELSE
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SCHEDULE(B,A) PRIVATE(J,K,I,TEMP)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(B,A,ALPHA,NOUNIT,N,M) PRIVATE(J,K,I,TEMP)
                 DO 80 J = 1,N
                       DO 70 K = M,1,-1
                           IF (B(K,J).NE.ZERO) THEN
@@ -3060,7 +3069,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
 !*
              IF (UPPER) THEN
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,K,I,TEMP)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A,N,M,NOCONJ,NOUNIT,ALPHA) PRIVATE(J,K,I,TEMP)
                 DO 120 J = 1,N
                       DO 110 I = M,1,-1
                           TEMP = B(I,J)
@@ -3082,7 +3091,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
   120             CONTINUE
              ELSE
 
-                !$OMP PARALLEL DO COLLAPSE(2) SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,K,I,TEMP)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(B,A,N,M,NOCONJ,NOUNIT) PRIVATE(J,K,I,TEMP)
                 DO 160 J = 1,N
                       DO 150 I = 1,M
                           TEMP = B(I,J)
@@ -3111,7 +3120,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
 !*
              IF (UPPER) THEN
 
-                !$OMP PARALLEL DO  SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,B)  PRIVATE(J,TEMP,I,K)
+                !$OMP PARALLEL DO  SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B,N,M,ALPHA)  PRIVATE(J,TEMP,I,K)
                 DO 200 J = N,1,-1
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
@@ -3131,7 +3140,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
   200             CONTINUE
                ELSE
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,B) PRIVATE(J,I,TEMP,K)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(A,B,N,ALPHA,NOUNIT) PRIVATE(J,I,TEMP,K)
                 DO 240 J = 1,N
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
@@ -3156,7 +3165,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
 !*
              IF (UPPER) THEN
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE)  SHARED(A,B) PRIVATE(K,J,TEMP,I)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE)  SHARED(A,B,N,M,NOCONJ,ALPHA,NOUNIT) PRIVATE(K,J,TEMP,I)
                   DO 280 K = 1,N
                       DO 260 J = 1,K - 1
                           IF (A(J,K).NE.ZERO) THEN
@@ -3826,30 +3835,30 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*     Test the input parameters.
 !*
-!      INFO = 0
-!      IF ((.NOT.NOTA) .AND. (.NOT.CONJA) .AND.
-!     +    (.NOT.LSAME(TRANSA,'T'))) THEN
-!          INFO = 1
-!      ELSE IF ((.NOT.NOTB) .AND. (.NOT.CONJB) .AND.
-!     +         (.NOT.LSAME(TRANSB,'T'))) THEN
- !         INFO = 2
-!      ELSE IF (M.LT.0) THEN
-!          INFO = 3
-!      ELSE IF (N.LT.0) THEN
-!          INFO = 4
-!      ELSE IF (K.LT.0) THEN
- !         INFO = 5
-!      ELSE IF (LDA.LT.MAX(1,NROWA)) THEN
-!          INFO = 8
-!      ELSE IF (LDB.LT.MAX(1,NROWB)) THEN
-!          INFO = 10
-!      ELSE IF (LDC.LT.MAX(1,M)) THEN
-!          INFO = 13
-!      END IF
-!      IF (INFO.NE.0) THEN
+      INFO = 0
+      IF ((.NOT.NOTA) .AND. (.NOT.CONJA) .AND. &
+         (.NOT.LSAME(TRANSA,'T'))) THEN
+          INFO = 1
+      ELSE IF ((.NOT.NOTB) .AND. (.NOT.CONJB) .AND. &
+              (.NOT.LSAME(TRANSB,'T'))) THEN
+          INFO = 2
+      ELSE IF (M.LT.0) THEN
+          INFO = 3
+      ELSE IF (N.LT.0) THEN
+          INFO = 4
+      ELSE IF (K.LT.0) THEN
+          INFO = 5
+      ELSE IF (LDA.LT.MAX(1,NROWA)) THEN
+          INFO = 8
+      ELSE IF (LDB.LT.MAX(1,NROWB)) THEN
+          INFO = 10
+      ELSE IF (LDC.LT.MAX(1,M)) THEN
+          INFO = 13
+      END IF
+      IF (INFO.NE.0) THEN
 !          CALL XERBLA('ZGEMM ',INFO)
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !*
 !*     Quick return if possible.
 !*
@@ -3859,29 +3868,24 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*     And when  alpha.eq.zero.
 !*
       IF (ALPHA.EQ.ZERO) THEN
-     !    IF (BETA.EQ.ZERO) THEN
-     !       DO 20 J = 1,N
-!
-      !         !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
-     !             
-     !             DO 10 I = 1,M
-    !                  C(I,J) = ZERO
-   !10             CONTINUE
-  ! 20         CONTINUE
-       !   ELSE
-!#if (__GMS_LAPACK_USE_OMP__) == 1
-!             !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(STATIC) PRIVATE(J)
-!#endif
- !            DO 40 J = 1,N
-  !                !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(6)
-   !               DO 30 I = 1,M
-    !                  C(I,J) = BETA*C(I,J)
-  ! 30             CONTINUE
-  ! 40        CONTINUE
-!#if (__GMS_LAPACK_USE_OMP__) == 1
-!            !$OMP END PARALLEL DO
-!#endif
-!          END IF
+         IF (BETA.EQ.ZERO) THEN
+            DO 20 J = 1,N
+
+               !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
+                DO 10 I = 1,M
+                     C(I,J) = ZERO
+   10             CONTINUE
+  20         CONTINUE
+         ELSE
+
+        DO 40 J = 1,N
+           !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(6)
+          DO 30 I = 1,M
+               C(I,J) = BETA*C(I,J)
+   30      CONTINUE
+   40   CONTINUE
+
+        END IF
           RETURN
       END IF
 !*
@@ -3892,7 +3896,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*
 !*           Form  C := alpha*A*B + beta*C.
              !*
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(C,A) PRIVATE(J,I,L) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(C,A,N,BETA,M,K,ALPHA) PRIVATE(J,I,L,TEMP) 
               DO 90 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                       !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -3920,7 +3924,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A**H*B + beta*C.
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C) PRIVATE(J,I,TEMP,L)
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C,N,M,K,BETA,ALPHA) PRIVATE(J,I,TEMP,L)
               DO 120 J = 1,N
                   DO 110 I = 1,M
                      TEMP = ZERO
@@ -3944,7 +3948,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A**T*B + beta*C
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C) PRIVATE(J,I,TEMP,L) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C,N,M,K,BETA,ALPHA) PRIVATE(J,I,TEMP,L) 
               DO 150 J = 1,N
                   DO 140 I = 1,M
                      TEMP = ZERO
@@ -3970,7 +3974,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A*B**H + beta*C.
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(C,B,A) PRIVATE(J,I,L,TEMP) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(C,B,A,BETA,ALPHA,N,M,K) PRIVATE(J,I,L,TEMP) 
              DO 200 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                        !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)    
@@ -3998,7 +4002,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A*B**T + beta*C
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(C,B,A) PRIVATE(J,I,L,TEMP) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(C,B,A,N,M,ALPHA,BETA) PRIVATE(J,I,L,TEMP) 
               DO 250 J = 1,N
                  IF (BETA.EQ.ZERO) THEN
                       !$OMP SIMD ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(8)    
@@ -4028,11 +4032,12 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A**H*B**H + beta*C.
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C) PRIVATE(J,I,TEMP,L) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C,N,M,K,BETA,ZERO,ALPHA)
+             !$OMP PRIVATE(J,I,L) REDUCTION(+:TEMP) COLLAPSE(2)
              DO 280 J = 1,N
                   DO 270 I = 1,M
                      TEMP = ZERO
-                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) REDUCTION(+:TEMP)
+                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
                       DO 260 L = 1,K
                           TEMP = TEMP + DCONJG(A(L,I))*DCONJG(B(J,L))
   260                 CONTINUE
@@ -4053,11 +4058,12 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A**H*B**T + beta*C
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C) PRIVATE(J,I,TEMP,L) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C,N,M,K,BETA,ZERO)
+             !$OMP PRIVATE(J,I,L) REDUCTION(+:TEMP) COLLAPSE(2)
              DO 310 J = 1,N
                   DO 300 I = 1,M
                      TEMP = ZERO
-                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) REDUCTION(+:TEMP)
+                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
                       DO 290 L = 1,K
                           TEMP = TEMP + DCONJG(A(L,I))*B(J,L)
   290                 CONTINUE
@@ -4079,11 +4085,12 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A**T*B**H + beta*C
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C) PRIVATE(J,I,TEMP,L) 
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C,N,M,K,BETA,ZERO) REDUCTION(+:TEMP)
+             !$OMP PRIVATE(J,I,L) COLLAPSE(2)
              DO 340 J = 1,N
                   DO 330 I = 1,M
                      TEMP = ZERO
-                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) REDUCTION(+:TEMP)
+                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
                       DO 320 L = 1,K
                           TEMP = TEMP + A(L,I)*DCONJG(B(J,L))
   320                 CONTINUE
@@ -4103,12 +4110,12 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
 !*           Form  C := alpha*A**T*B**T + beta*C
              !*
 
-             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,4) SHARED(A,B,C) PRIVATE(J,I,TEMP,L)
-               
-              DO 370 J = 1,N
+             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(GUIDED,1) SHARED(A,B,C,N,M,K,BETA,ZERO) PRIVATE(J,I,L)
+             !$OMP REDUCTION(+:TEMP) COLLAPSE(2)
+             DO 370 J = 1,N
                   DO 360 I = 1,M
                      TEMP = ZERO
-                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) REDUCTION(+:TEMP)
+                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1)
                       DO 350 L = 1,K
                           TEMP = TEMP + A(L,I)*B(J,L)
   350                 CONTINUE
@@ -4207,25 +4214,25 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
 !*
 !*     Test the input parameters.
 !*
-!      INFO = 0
-!      IF (.NOT.LSAME(UPLO,'U') .AND. .NOT.LSAME(UPLO,'L')) THEN
-!          INFO = 1
-!      ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
-!     +         .NOT.LSAME(TRANS,'C')) THEN
-!          INFO = 2
-!      ELSE IF (.NOT.LSAME(DIAG,'U') .AND. .NOT.LSAME(DIAG,'N')) THEN
-!1          INFO = 3
-!      ELSE IF (N.LT.0) THEN
-!          INFO = 4
-!      ELSE IF (LDA.LT.MAX(1,N)) THEN
-!          INFO = 6
-!      ELSE IF (INCX.EQ.0) THEN
-!          INFO = 8
-!      END IF
-!      IF (INFO.NE.0) THEN
+      INFO = 0
+      IF (.NOT.LSAME(UPLO,'U') .AND. .NOT.LSAME(UPLO,'L')) THEN
+          INFO = 1
+      ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
+     +         .NOT.LSAME(TRANS,'C')) THEN
+          INFO = 2
+      ELSE IF (.NOT.LSAME(DIAG,'U') .AND. .NOT.LSAME(DIAG,'N')) THEN
+          INFO = 3
+      ELSE IF (N.LT.0) THEN
+          INFO = 4
+      ELSE IF (LDA.LT.MAX(1,N)) THEN
+          INFO = 6
+      ELSE IF (INCX.EQ.0) THEN
+          INFO = 8
+      END IF
+      IF (INFO.NE.0) THEN
 !          CALL XERBLA('ZTRMV ',INFO)
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !*
 !*     Quick return if possible.
 !*
@@ -4269,7 +4276,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
               ELSE
                  JX = KX
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(X,A,INCX,N) FIRSTPRIVATE(JX) PRIVATE(J,TEMP,IX,I)
                 DO 40 J = 1,N
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -4289,7 +4296,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
           ELSE
              IF (INCX.EQ.1) THEN
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I)
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A,NOUNIT) PRIVATE(J,TEMP,I)
                 DO 60 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
@@ -4306,7 +4313,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                   KX = KX + (N-1)*INCX
                   JX = KX
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,X) PRIVATE(J,TEMP,IX,I,JX) 
+                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,X,N,NOUNIT,KX) FIRSTPRIVATE(JX) PRIVATE(J,TEMP,IX,I) 
                 DO 80 J = N,1,-1
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
@@ -4331,18 +4338,18 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
           IF (LSAME(UPLO,'U')) THEN
              IF (INCX.EQ.1) THEN
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  SHARED(X,A) PRIVATE(J,TEMP,I) 
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE)  SHARED(X,A,N,NOCONJ,NOUNIT) PRIVATE(J,I) REDUCTION(+:TEMP)
                 DO 110 J = N,1,-1
                       TEMP = X(J)
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                          !$OMP SIMD ALIGNED(A:64,X) REDUCTION(+:TEMP)
+                          !$OMP SIMD ALIGNED(A:64,X) 
                           DO 90 I = J - 1,1,-1
                               TEMP = TEMP + A(I,J)*X(I)
    90                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                            !$OMP SIMD ALIGNED(A:64,X) REDUCTION(+:TEMP) 
+                            !$OMP SIMD ALIGNED(A:64,X) 
                           DO 100 I = J - 1,1,-1
                               TEMP = TEMP + DCONJG(A(I,J))*X(I)
   100                     CONTINUE
@@ -4354,20 +4361,20 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
               ELSE
                  JX = KX + (N-1)*INCX
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,IX,I,JX) 
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(X,A,N,NOCONJ,NOUNIT) FIRSTPRIVATE(JX) PRIVATE(J,IX,I) REDUCTION(+:TEMP) 
                 DO 140 J = N,1,-1
                       TEMP = X(JX)
                       IX = JX
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                          !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) REDUCTION(+:TEMP)
+                          !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1)
                           DO 120 I = J - 1,1,-1
                               IX = IX - INCX
                               TEMP = TEMP + A(I,J)*X(IX)
   120                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                           !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) REDUCTION(+:TEMP)
+                           !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1)
                           DO 130 I = J - 1,1,-1
                               IX = IX - INCX
                               TEMP = TEMP + DCONJG(A(I,J))*X(IX)
@@ -4382,18 +4389,18 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
           ELSE
              IF (INCX.EQ.1) THEN
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,TEMP,I) 
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) SHARED(X,A,N) PRIVATE(J,I) REDUCTION(+:TEMP)
                 DO 170 J = 1,N
                       TEMP = X(J)
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) REDUCTION(+:TEMP)
+                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) 
                           DO 150 I = J + 1,N
                               TEMP = TEMP + A(I,J)*X(I)
   150                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) REDUCTION(+:TEMP)
+                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) 
                           DO 160 I = J + 1,N
                               TEMP = TEMP + DCONJG(A(I,J))*X(I)
   160                     CONTINUE
@@ -4405,20 +4412,20 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
               ELSE
                  JX = KX
 
-                !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,A) PRIVATE(J,JX,IX,I,TEMP)
+                !$OMP PARALLEL DO SCHEDULE(GUIDED,1) DEFAULT(NONE) REDUCTION(+:TEMP)  SHARED(X,A,N) FIRSTPRIVATE(JX) PRIVATE(J,IX,I)
                 DO 200 J = 1,N
                       TEMP = X(JX)
                       IX = JX
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                           !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) REDUCTION(+:TEMP)
+                           !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1)
                           DO 180 I = J + 1,N
                               IX = IX + INCX
                               TEMP = TEMP + A(I,J)*X(IX)
   180                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) REDUCTION(+:TEMP)
+                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) 
                           DO 190 I = J + 1,N
                               IX = IX + INCX
                               TEMP = TEMP + DCONJG(A(I,J))*X(IX)
