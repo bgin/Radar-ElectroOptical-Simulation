@@ -219,47 +219,47 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( .NOT.LEQUIL .AND. .NOT.LSAME( EQUIL, 'N' ) ) THEN
-!         INFO = -1
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-!         INFO = -6
-!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-!         INFO = -8
-!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-!         INFO = -10
-!      ELSE IF( LDD.LT.MAX( 1, P ) ) THEN
-!         INFO = -12
-!      ELSE
+      IF( .NOT.LEQUIL .AND. .NOT.LSAME( EQUIL, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+        INFO = -3
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -6
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -10
+      ELSE IF( LDD.LT.MAX( 1, P ) ) THEN
+         INFO = -12
+      ELSE
          KW = WRKOPT + MAX( MIN( P, M ) + MAX( 3*M-1, N ), 1, &
                            MIN( P, N ) + MAX( 3*P-1, NP, NM ) )
-        ! IF( LQUERY ) THEN
-        !    SVLMAX = ZERO
-        !    NINFZ  = 0
-        !    CALL AB8NXZ( N, M, P, P, 0, SVLMAX, ZWORK, MAX( 1, NP ), &
-        !                NINFZ, IWORK, IWORK, MU, NU, NKROL, TOL, IWORK, &
-        !                DWORK, ZWORK, -1, INFO )
-        !    WRKOPT = MAX( KW, WRKOPT + INT( ZWORK(1) ) )
-        ! ELSE IF( LZWORK.LT.KW ) THEN
-        !    INFO = -17
-       !  END IF
-!      END IF
+         IF( LQUERY ) THEN
+            SVLMAX = ZERO
+            NINFZ  = 0
+            CALL AB8NXZ( N, M, P, P, 0, SVLMAX, ZWORK, MAX( 1, NP ), &
+                        NINFZ, IWORK, IWORK, MU, NU, NKROL, TOL, IWORK, &
+                        DWORK, ZWORK, -1, INFO )
+            WRKOPT = MAX( KW, WRKOPT + INT( ZWORK(1) ) )
+         ELSE IF( LZWORK.LT.KW ) THEN
+            INFO = -17
+         END IF
+      END IF
 !C
-     ! IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
         ! CALL XERBLA( 'AB08MZ', -INFO ) // removing call to xerbla (no need to issue stop)
-     !    RETURN
-    !  ELSE IF( LQUERY ) THEN
-     !    ZWORK(1) = WRKOPT
-     !    RETURN
-    !  END IF
+         RETURN
+      ELSE IF( LQUERY ) THEN
+         ZWORK(1) = WRKOPT
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -560,56 +560,56 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( N.LT.0 ) THEN
-!         INFO = -1
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( RO.NE.P .AND. RO.NE.MAX( P-M, 0 ) ) THEN
-!         INFO = -4
-!      ELSE IF( SIGMA.NE.0 .AND. SIGMA.NE.M ) THEN
-!         INFO = -5
-!      ELSE IF( SVLMAX.LT.DZERO ) THEN
-!         INFO = -6
-!      ELSE IF( LDABCD.LT.MAX( 1, NP ) ) THEN
-!         INFO = -8
-!      ELSE IF( NINFZ.LT.0 ) THEN
-!!         INFO = -9
-!      ELSE
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( RO.NE.P .AND. RO.NE.MAX( P-M, 0 ) ) THEN
+         INFO = -4
+      ELSE IF( SIGMA.NE.0 .AND. SIGMA.NE.M ) THEN
+         INFO = -5
+      ELSE IF( SVLMAX.LT.DZERO ) THEN
+         INFO = -6
+      ELSE IF( LDABCD.LT.MAX( 1, NP ) ) THEN
+         INFO = -8
+      ELSE IF( NINFZ.LT.0 ) THEN
+        INFO = -9
+      ELSE
          JWORK = MAX( 1,      MPM + MAX( 3*M - 1, N ), &
                      MIN( P, N ) + MAX( 3*P - 1, NP, N+M ) )
-      !   IF( LQUERY ) THEN
-       !     IF( M.GT.0 ) THEN
-       !        CALL ZUNMQR( 'Left', 'Conjugate', P, N, MPM, ABCD, &
-       !                    LDABCD, ZWORK, ABCD, LDABCD, ZWORK, -1, &
-        !                   INFO )
-         !      WRKOPT = MAX( JWORK, MPM + INT( ZWORK(1) ) )
-        !    ELSE
-       !        WRKOPT = JWORK
-       !     END IF
-       !     CALL ZUNMRQ( 'Right', 'ConjTranspose', NP, N, MIN( P, N ), &
-      !                  ABCD, LDABCD, ZWORK, ABCD, LDABCD, ZWORK, -1,  &
-       !                 INFO )
-      !      WRKOPT = MAX( WRKOPT, MIN( P, N ) + INT( ZWORK(1) ) )
-      !      CALL ZUNMRQ( 'Left', 'NoTranspose', N, M+N, MIN( P, N ),  &
-      !                  ABCD, LDABCD, ZWORK, ABCD, LDABCD, ZWORK, -1, &
-      !                  INFO )
-      !      WRKOPT = MAX( WRKOPT, MIN( P, N ) + INT( ZWORK(1) ) )
-      !   ELSE IF( LZWORK.LT.JWORK ) THEN
-      !      INFO = -19
-      !   END IF
-!      END IF
+         IF( LQUERY ) THEN
+            IF( M.GT.0 ) THEN
+               CALL ZUNMQR( 'Left', 'Conjugate', P, N, MPM, ABCD, &
+                           LDABCD, ZWORK, ABCD, LDABCD, ZWORK, -1, &
+                           INFO )
+               WRKOPT = MAX( JWORK, MPM + INT( ZWORK(1) ) )
+            ELSE
+               WRKOPT = JWORK
+            END IF
+            CALL ZUNMRQ( 'Right', 'ConjTranspose', NP, N, MIN( P, N ), &
+                        ABCD, LDABCD, ZWORK, ABCD, LDABCD, ZWORK, -1,  &
+                        INFO )
+            WRKOPT = MAX( WRKOPT, MIN( P, N ) + INT( ZWORK(1) ) )
+            CALL ZUNMRQ( 'Left', 'NoTranspose', N, M+N, MIN( P, N ),  &
+                        ABCD, LDABCD, ZWORK, ABCD, LDABCD, ZWORK, -1, &
+                        INFO )
+            WRKOPT = MAX( WRKOPT, MIN( P, N ) + INT( ZWORK(1) ) )
+         ELSE IF( LZWORK.LT.JWORK ) THEN
+            INFO = -19
+         END IF
+      END IF
 !C
-    !  IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-     !     RETURN
-    !  ELSE IF( LQUERY ) THEN
-    !     ZWORK(1) = WRKOPT
-    !     RETURN
-    !  END IF
+          RETURN
+      ELSE IF( LQUERY ) THEN
+         ZWORK(1) = WRKOPT
+         RETURN
+      END IF
 !C
       MU = P
       NU = N
@@ -1042,21 +1042,21 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-!      IF( M.LT.0 ) THEN
-!         INFO = -1
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
-!         INFO = -4
-!      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
-!         INFO = -5
-!      ELSE IF( SVLMAX.LT.ZERO ) THEN
-!         INFO = -6
-!      END IF
+      IF( M.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -4
+      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
+         INFO = -5
+      ELSE IF( SVLMAX.LT.ZERO ) THEN
+         INFO = -6
+      END IF
 !C
-!      IF( INFO.NE.0 ) THEN
-!!          RETURN
-!      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -1163,7 +1163,7 @@ C
 !C
 !C                 Update partial column norms.
                   !C
-!$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,A)  PRIVATE(J,TEMP,TEMP2)
+
                   DO 30 J = I + 1, N
                      IF( DWORK( J ).NE.ZERO ) THEN
                         TEMP = ABS( A( I, J ) ) / DWORK( J )
@@ -1182,7 +1182,7 @@ C
                         END IF
                      END IF
 30                   CONTINUE
-!$OMP END PARALLEL DO
+
 
                   DO 40 I = 1, RANK
                      ZWORK( ISMIN+I-1 ) = S1*ZWORK( ISMIN+I-1 )
@@ -1220,10 +1220,10 @@ C
 END SUBROUTINE MB3OYZ
 
 #if defined(__GFORTRAN__) && (!defined(__ICC) || !defined(__INTEL_COMPILER))
-SUBROUTINE MB3PYZ( M, N, A, LDA, RCOND, SVLMAX, RANK, SVAL, JPVT,
+SUBROUTINE MB3PYZ( M, N, A, LDA, RCOND, SVLMAX, RANK, SVAL, JPVT, &
   TAU, DWORK, ZWORK, INFO ) !GCC$ ATTRIBUTES hot :: MB3PYZ !GCC$ ATTRIBUTES aligned(32) :: MB3PYZ !GCC$ ATTRIBUTES no_stack_protector :: MB3PYZ
 #elif defined(__ICC) || defined(__INTEL_COMPILER))
-SUBROUTINE MB3PYZ( M, N, A, LDA, RCOND, SVLMAX, RANK, SVAL, JPVT,
+SUBROUTINE MB3PYZ( M, N, A, LDA, RCOND, SVLMAX, RANK, SVAL, JPVT, &
   TAU, DWORK, ZWORK, INFO )
   !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: MB3PYZ
   !DIR$ OPTIMIZE : 3
@@ -1457,21 +1457,21 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-!      IF( M.LT.0 ) THEN
-!         INFO = -1
-!      ELSE IF( N.LT.0 ) THEN
-!!         INFO = -2
-!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
-!         INFO = -4
-!      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
-!         INFO = -5
-!      ELSE IF( SVLMAX.LT.ZERO ) THEN
-!         INFO = -6
-!      END IF
+      IF( M.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -4
+      ELSE IF( RCOND.LT.ZERO .OR. RCOND.GT.ONE ) THEN
+         INFO = -5
+      ELSE IF( SVLMAX.LT.ZERO ) THEN
+         INFO = -6
+      END IF
 !C
-!      IF( INFO.NE.0 ) THEN
-!          RETURN
-!      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -1581,7 +1581,7 @@ C
 !C
 !C                    Update partial row norms.
 !C
-!$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,A) PRIVATE(J,TEMP,TEMP2)
+
                      DO 30 J = 1, MKI - 1
                         IF( DWORK( J ).NE.ZERO ) THEN
                            TEMP = ABS( A( J, NKI ) ) / DWORK( J )
@@ -1597,7 +1597,7 @@ C
                            END IF
                         END IF
    30                CONTINUE
-!$OMP END PARALLEL DO
+
 
                   END IF
 
@@ -1976,55 +1976,55 @@ C     CONTRIBUTORS
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( .NOT.LJOBK .AND. .NOT.LSAME( JOBK, 'N' ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT.LMULTB .AND. .NOT.LSAME( MULTBQ, 'N' ) ) THEN
-!         INFO = -2
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -5
-!      ELSE IF( LDS.LT.N1 ) THEN
-!         INFO = -7
-!      ELSE IF( LDA.LT.N1 ) THEN
-!         INFO = -9
-!      ELSE IF( LDB.LT.N1 ) THEN
-!         INFO = -11
-!      ELSE IF( LDQ.LT.1 .OR. ( .NOT.LMULTB .AND. LDQ.LT.M ) ) THEN
-!         INFO = -13
-!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-!         INFO = -15
-!      ELSE IF( LDR.LT.MAX( 1, P ) ) THEN
-!         INFO = -17
-!      ELSE IF( LDK.LT.N1 ) THEN
-!         INFO = -19
-!      ELSE IF( ( LJOBK .AND. LDWORK.LT.MAX( 2, PN*N + 2*P,  &
-!                                           N*(N + M + 2), 3*P ) ) .OR. &
-!           ( .NOT.LJOBK .AND. LDWORK.LT.MAX( 1, PN*N + 2*P, &
-! !                                          N*(N + M + 2) ) ) ) THEN
-!         INFO = -23
-!      END IF
+      IF( .NOT.LJOBK .AND. .NOT.LSAME( JOBK, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LMULTB .AND. .NOT.LSAME( MULTBQ, 'N' ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDS.LT.N1 ) THEN
+         INFO = -7
+      ELSE IF( LDA.LT.N1 ) THEN
+         INFO = -9
+      ELSE IF( LDB.LT.N1 ) THEN
+         INFO = -11
+      ELSE IF( LDQ.LT.1 .OR. ( .NOT.LMULTB .AND. LDQ.LT.M ) ) THEN
+         INFO = -13
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -15
+      ELSE IF( LDR.LT.MAX( 1, P ) ) THEN
+         INFO = -17
+      ELSE IF( LDK.LT.N1 ) THEN
+         INFO = -19
+      ELSE IF( ( LJOBK .AND. LDWORK.LT.MAX( 2, PN*N + 2*P,  &
+                                           N*(N + M + 2), 3*P ) ) .OR. &
+           ( .NOT.LJOBK .AND. LDWORK.LT.MAX( 1, PN*N + 2*P, &
+                                          N*(N + M + 2) ) ) ) THEN
+         INFO = -23
+      END IF
 !C
       IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!         RETURN
-!      END IF
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
-     ! IF ( N.EQ.0 ) THEN
-     !    IF ( LJOBK ) THEN
-      !      DWORK(1) = TWO
-      !      DWORK(2) = ONE
-     !    ELSE
-      !      DWORK(1) = ONE
-      !!   END IF
+      IF ( N.EQ.0 ) THEN
+         IF ( LJOBK ) THEN
+            DWORK(1) = TWO
+            DWORK(2) = ONE
+         ELSE
+            DWORK(1) = ONE
+        END IF
          RETURN
-     ! END IF
+      END IF
 !C
 !C     Construction of the needed part of the pre-array in DWORK.
 !C     To save workspace, only the blocks (1,2), (2,2), and (2,3) will be
@@ -2455,7 +2455,7 @@ C     ******************************************************************
 C
 #endif
 
-      use omp_lib
+      !use omp_lib
       implicit none
 
 !C     .. Parameters ..
@@ -2516,44 +2516,44 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT.LMULTA .AND. .NOT.LSAME( MULTAB, 'N' ) ) THEN
-!!         INFO = -2
-!      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
-!         INFO = -3
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -5
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -6
-!      ELSE IF( LDSINV.LT.N1 ) THEN
-!         INFO = -8
-!      ELSE IF( LDAINV.LT.N1 ) THEN
-!         INFO = -10
-!      ELSE IF( LDB.LT.N1 ) THEN
-!         INFO = -12
-!      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
-!         INFO = -14
-!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
- !        INFO = -16
-!      ELSE IF( LDQINV.LT.M1 ) THEN
-!         INFO = -18
-!      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(N + 2*M) + 3*M,  &
-!                                           NP*(N + 1) + 2*N, 3*N ) ) &
-!                                                                  .OR. &
-!          ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(N + 2*M) + 3*M,  &
-!                                            NP*(N + 1) + 2*N ) ) ) THEN &
-!         INFO = -26
-!      END IF
+      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LMULTA .AND. .NOT.LSAME( MULTAB, 'N' ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LDSINV.LT.N1 ) THEN
+         INFO = -8
+      ELSE IF( LDAINV.LT.N1 ) THEN
+         INFO = -10
+      ELSE IF( LDB.LT.N1 ) THEN
+         INFO = -12
+      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
+         INFO = -14
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -16
+      ELSE IF( LDQINV.LT.M1 ) THEN
+         INFO = -18
+     ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(N + 2*M) + 3*M,  &
+!                                          NP*(N + 1) + 2*N, 3*N ) ) &
+                                                                  .OR. &
+          ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(N + 2*M) + 3*M,  &
+                                            NP*(N + 1) + 2*N ) ) ) THEN &
+         INFO = -26
+      END IF
 
-!      IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -2638,14 +2638,14 @@ C
       IJ = I21
 !C
 
-      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFULT(NONE) SHARED(DWORK) PRIVATE(I)
+    
       DO 10 I = 1, M
          CALL DAXPY( N, -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
                     DDOT( N, DWORK(IJ), 1, X, 1 ) ), &
                               DWORK(IJ), 1, X, 1 )
          IJ = IJ + N
 10       CONTINUE
-      !$OMP END PARALLEL DO
+    
 
 !C
 !C     Now, the workspace for SINV x AINV x B, as well as for the updated
@@ -3002,36 +3002,36 @@ C
 !C
       INFO = 0
       N1 = MAX( 1, N )
-!      IF( N.LT.0 ) THEN
-!         INFO = -1
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( L.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( LDP.LT.N1 ) THEN
-!         INFO = -5
-!      ELSE IF( LDA.LT.N1 ) THEN
-!         INFO = -7
-!      ELSE IF( LDB.LT.N1 ) THEN
-!         INFO = -9
-!      ELSE IF( LDC.LT.MAX( 1, L ) ) THEN
-!         INFO = -11
-!      ELSE IF( LDQ.LT.MAX( 1, M ) ) THEN
-!         INFO = -13
-!      ELSE IF( LDR.LT.MAX( 1, L ) ) THEN
-!         INFO = -15
-!      ELSE IF( LDK.LT.N1 ) THEN
-!         INFO = -17
-!      ELSE IF( LDWORK.LT.MAX( 1, L*N + 3*L, N*N, N*M ) ) THEN
-!         INFO = -21
-!      END IF
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( L.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDP.LT.N1 ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.N1 ) THEN
+         INFO = -7
+      ELSE IF( LDB.LT.N1 ) THEN
+         INFO = -9
+      ELSE IF( LDC.LT.MAX( 1, L ) ) THEN
+         INFO = -11
+      ELSE IF( LDQ.LT.MAX( 1, M ) ) THEN
+         INFO = -13
+      ELSE IF( LDR.LT.MAX( 1, L ) ) THEN
+         INFO = -15
+      ELSE IF( LDK.LT.N1 ) THEN
+         INFO = -17
+      ELSE IF( LDWORK.LT.MAX( 1, L*N + 3*L, N*N, N*M ) ) THEN
+         INFO = -21
+      END IF
 !C
-!      IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!         RETURN
-!      END IF
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3052,7 +3052,7 @@ C
                    LDC, P, LDP, DWORK, LDWORK, INFO )
       LDW = MAX( 1, L )
 
-      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,K) PRIVATE(J)
+      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(DWORK,K,L) PRIVATE(J)
       DO 10 J = 1, L
          CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
    10 CONTINUE
@@ -3063,7 +3063,7 @@ C
                   P, LDP, DWORK, LDW )
       CALL DSCAL( N, TWO, P, LDP+1 )
 
-      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(K,DWORK)  PRIVATE(J)
+      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(K,DWORK,L,N,ONE,LDW)  PRIVATE(J)
       DO 20 J = 1, L
          CALL DAXPY( N, ONE, K(1,J), 1, DWORK(J), LDW )
          CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
@@ -3368,33 +3368,33 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-!      IF( ( .NOT.LSIDE ).AND.( .NOT.LSAME( SIDE, 'R' ) ) )THEN
-!         INFO = -1
-!      ELSE IF( ( .NOT.LSAME( UPLO,  'U' ) ).AND.  &
-!               ( .NOT.LSAME( UPLO,  'L' ) )      )THEN
-!         INFO = -2
-!      ELSE IF( ( .NOT.LSAME( TRANS, 'N' ) ).AND. &
-!               ( .NOT.LSAME( TRANS, 'T' ) ).AND.
-!               ( .NOT.LSAME( TRANS, 'C' ) )      )THEN &
-!         INFO = -3
-!      ELSE IF( ( .NOT.LSAME( DIAG,  'U' ) ).AND.  &
-!              ( .NOT.LSAME( DIAG,  'N' ) )      )THEN
-!         INFO = -4
-!      ELSE IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
-!         INFO = -5
-!      ELSE IF( M.LT.0 )THEN
-!         INFO = -6
-!      ELSE IF( N.LT.0 )THEN
-!         INFO = -7
-!      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
-!         INFO = -10
-!      ELSE IF( LDB.LT.MAX( 1, M ) )THEN
-!         INFO = -12
-!      END IF
+      IF( ( .NOT.LSIDE ).AND.( .NOT.LSAME( SIDE, 'R' ) ) )THEN
+         INFO = -1
+      ELSE IF( ( .NOT.LSAME( UPLO,  'U' ) ).AND.  &
+               ( .NOT.LSAME( UPLO,  'L' ) )      )THEN
+         INFO = -2
+      ELSE IF( ( .NOT.LSAME( TRANS, 'N' ) ).AND. &
+               ( .NOT.LSAME( TRANS, 'T' ) ).AND. &
+               ( .NOT.LSAME( TRANS, 'C' ) )      )THEN 
+         INFO = -3
+      ELSE IF( ( .NOT.LSAME( DIAG,  'U' ) ).AND.  &
+              ( .NOT.LSAME( DIAG,  'N' ) )      )THEN
+         INFO = -4
+      ELSE IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
+         INFO = -5
+      ELSE IF( M.LT.0 )THEN
+         INFO = -6
+      ELSE IF( N.LT.0 )THEN
+         INFO = -7
+      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+         INFO = -10
+      ELSE IF( LDB.LT.MAX( 1, M ) )THEN
+         INFO = -12
+      END IF
 !C
-!      IF( INFO.NE.0 ) THEN
-!          RETURN
-!      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3777,7 +3777,7 @@ C     ******************************************************************
 C
 #endif
 
-       use omp_lib
+     
        implicit none
 !C     .. Parameters ..
       DOUBLE PRECISION  ONE, TWO
@@ -3838,44 +3838,44 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
-!         INFO = -2
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -5
-!      ELSE IF( LDSINV.LT.N1 ) THEN
-!         INFO = -7
-!      ELSE IF( LDAINV.LT.N1 ) THEN
-!         INFO = -9
-!      ELSE IF( LDAINB.LT.N1 ) THEN
- !        INFO = -11
-!      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
-!         INFO = -13
-!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-!         INFO = -15
-!      ELSE IF( LDQINV.LT.M1 ) THEN
-!         INFO = -17
-!      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(NM + M) + 3*M, &
-!                                           NP*(N + 1) + N + &
-!                                           MAX( N - 1, MP1 ), 3*N ) ) &
-!                                                                  .OR. &
-!         ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(NM + M) + 3*M, &
-!                                           NP*(N + 1) + N + &
-!                                           MAX( N - 1, MP1 ) ) ) ) THEN &
-!         INFO = -25
-!      END IF
+      IF( .NOT.LJOBX .AND. .NOT.LSAME( JOBX, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LMULTR .AND. .NOT.LSAME( MULTRC, 'N' ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDSINV.LT.N1 ) THEN
+         INFO = -7
+      ELSE IF( LDAINV.LT.N1 ) THEN
+         INFO = -9
+      ELSE IF( LDAINB.LT.N1 ) THEN
+         INFO = -11
+      ELSE IF( LDRINV.LT.1 .OR. ( .NOT.LMULTR .AND. LDRINV.LT.P ) ) THEN
+         INFO = -13
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -15
+      ELSE IF( LDQINV.LT.M1 ) THEN
+         INFO = -17
+      ELSE IF( ( LJOBX .AND. LDWORK.LT.MAX( 2, N*(NM + M) + 3*M, &
+                                           NP*(N + 1) + N + &
+                                           MAX( N - 1, MP1 ), 3*N ) ) &
+                                                                  .OR. &
+         ( .NOT.LJOBX .AND. LDWORK.LT.MAX( 1, N*(NM + M) + 3*M, &
+                                           NP*(N + 1) + N + &
+                                           MAX( N - 1, MP1 ) ) ) ) THEN &
+         INFO = -25
+      END IF
 !
-      !IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!         RETURN
-!      END IF
+        RETURN
+     END IF
 !C
 !C     Quick return if possible.
 !C
@@ -3992,14 +3992,14 @@ C
       IJ = 1
       !C
 
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK) PRIVATE(I,IJ)
+
       DO 20 I = 1, M
          CALL DAXPY( MIN( I, N ), -DWORK(ITAU+I-1)*( DWORK(I13+I-1) + &
                     DDOT( MIN( I, N ), DWORK(IJ), 1, X, 1 ) ), &
                                        DWORK(IJ), 1, X, 1 )
          IJ = IJ + N
 20    CONTINUE
-!$OMP PARALLEL DO END
+
 
 !C
 !C     Now, the workspace for SINV x AINVB, as well as for the updated
@@ -4018,13 +4018,13 @@ C
                       LDW )
       LDW = MAX( 1, NP )
 
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK) PRIVATE(I,IJ)
+
       DO 40 I = N, 1, -1
          DO 30 IJ = MIN( N, I+M ), 1, -1
             DWORK(NP*(I-1)+P+IJ) = DWORK(N*(I-1)+IJ)
    30    CONTINUE
    40 CONTINUE
-   !$OMP PARALLEL DO END
+  
             
 !C     Copy of RINV x C in the (1,1) block of DWORK.
 !C
@@ -4474,19 +4474,19 @@ C
 !C
       INFO = 0
       LQUERY = LDWORK.EQ.-1
-!      IF( N.LT.0 ) THEN
-!         INFO = -1
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( L.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-!         INFO = -6
-!      ELSE IF( LDB.LT.1 .OR. ( L.GT.0 .AND. LDB.LT.N ) ) THEN
-!         INFO = -8
-!      ELSE
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( L.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -6
+      ELSE IF( LDB.LT.1 .OR. ( L.GT.0 .AND. LDB.LT.N ) ) THEN
+         INFO = -8
+      ELSE
          I = MAX( 1, M - 1, M - P, L )
          IF( LQUERY ) THEN
             IF( M.GT.P ) THEN
@@ -5112,30 +5112,30 @@ C
 !C
 !C     Check the scalar input parameters.
 !C
-!      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
-!         INFO = -1
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( NP.LT.0 ) THEN
- !        INFO = -4
-!      ELSE IF( DISCR .AND. ( ALPHA.LT.ZERO ) ) THEN
-!         INFO = -5
-!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-!         INFO = -7
-!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-!         INFO = -9
-!      ELSE IF( LDF.LT.MAX( 1, M ) ) THEN
-!         INFO = -16
-!      ELSE IF( LDZ.LT.MAX( 1, N ) ) THEN
-!         INFO = -18
-!      ELSE IF( LDWORK.LT.MAX( 1, 5*M, 5*N, 2*N + 4*M ) ) THEN
-!         INFO = -21
-!      END IF
-!      IF( INFO.NE.0 )THEN
-!           RETURN
-!      END IF
+      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( NP.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( DISCR .AND. ( ALPHA.LT.ZERO ) ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -7
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -9
+      ELSE IF( LDF.LT.MAX( 1, M ) ) THEN
+         INFO = -16
+      ELSE IF( LDZ.LT.MAX( 1, N ) ) THEN
+         INFO = -18
+      ELSE IF( LDWORK.LT.MAX( 1, 5*M, 5*N, 2*N + 4*M ) ) THEN
+         INFO = -21
+      END IF
+      IF( INFO.NE.0 )THEN
+           RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -6294,33 +6294,33 @@ C
 !C
 !C     Check input scalar arguments.
 !C
-!      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT. ( LSTDOM .OR. LSAME( STDOM, 'U' ) ) ) THEN
-!         INFO = -2
-!      ELSE IF( .NOT. ( LSAME( JOBU, 'I' ) .OR.  &
-!                      LSAME( JOBU, 'U' ) ) ) THEN
-!         INFO = -3
-!      ELSE IF( N.LT.1 ) THEN
-!         INFO = -4
-!      ELSE IF( NLOW.LT.1 ) THEN
-!         INFO = -5
-!      ELSE IF( NLOW.GT.NSUP .OR. NSUP.GT.N ) THEN
-!         INFO = -6
-!      ELSE IF( DISCR .AND. ALPHA.LT.ZERO ) THEN
-!         INFO = -7
-!      ELSE IF( LDA.LT.N ) THEN
-!         INFO = -9
-!      ELSE IF( LDU.LT.N ) THEN
-!         INFO = -11
-!      END IF
+      IF( .NOT. ( LSAME( DICO, 'C' ) .OR. DISCR ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT. ( LSTDOM .OR. LSAME( STDOM, 'U' ) ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT. ( LSAME( JOBU, 'I' ) .OR.  &
+                      LSAME( JOBU, 'U' ) ) ) THEN
+         INFO = -3
+      ELSE IF( N.LT.1 ) THEN
+         INFO = -4
+      ELSE IF( NLOW.LT.1 ) THEN
+         INFO = -5
+      ELSE IF( NLOW.GT.NSUP .OR. NSUP.GT.N ) THEN
+         INFO = -6
+      ELSE IF( DISCR .AND. ALPHA.LT.ZERO ) THEN
+         INFO = -7
+      ELSE IF( LDA.LT.N ) THEN
+         INFO = -9
+      ELSE IF( LDU.LT.N ) THEN
+         INFO = -11
+      END IF
 !C
-!      IF( INFO.NE.0 ) THEN
+      IF( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 
       IF( NLOW.GT.1 ) THEN
          IF( A(NLOW,NLOW-1).NE.ZERO ) INFO = 1
@@ -6521,22 +6521,22 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( N.LT.2 ) THEN
-!         INFO = -1
-!      ELSE IF( L.LT.1 .OR. L.GE.N ) THEN
-!         INFO = -2
-!      ELSE IF( LDA.LT.N ) THEN
-!         INFO = -4
-!!      ELSE IF( LDU.LT.N ) THEN
-!         INFO = -6
-!      END IF
+      IF( N.LT.2 ) THEN
+         INFO = -1
+      ELSE IF( L.LT.1 .OR. L.GE.N ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.N ) THEN
+         INFO = -4
+      ELSE IF( LDU.LT.N ) THEN
+         INFO = -6
+      END IF
 
-!      IF( INFO.NE.0 ) THEN
+      IF( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !C
 !C     Compute the eigenvalues and the elements of the Givens
 !C     transformation.
@@ -6874,44 +6874,44 @@ C
 !C
       INFO  = 0
       WITHD = LSAME( JOBD, 'D' )
-!      IF( .NOT.WITHD .AND. .NOT.LSAME( JOBD, 'Z' ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT. ( LSAME( EQUIL, 'S' ) .OR.     &
-!                      LSAME( EQUIL, 'N' ) ) ) THEN
-!         INFO = -2
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( P.LT.0 ) THEN
-!         INFO = -5
-!      ELSE IF( NPZ.LT.0 ) THEN
-!         INFO = -6
-!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-!         INFO = -8
-!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-!         INFO = -10
-!      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-!         INFO = -12
-!      ELSE IF( LDD.LT.1 .OR. ( WITHD .AND. LDD.LT.P ) ) THEN
-!         INFO = -14
-!      ELSE IF( LDNZ.LT.MAX( 1, P ) ) THEN
-!         INFO = -16
-!      ELSE IF( LDNP.LT.MAX( 1, P ) ) THEN
-!         INFO = -18
-!      ELSE IF( LDGAIN.LT.MAX( 1, P ) ) THEN
-!         INFO = -24
-!      ELSE IF( LDWORK.LT.MAX( 1, N*( N + P ) +
-!                  MAX( N + MAX( N, P ), N*( 2*N + 3 ) ) ) ) THEN
-!                  INFO = -28
-!      END IF
+      IF( .NOT.WITHD .AND. .NOT.LSAME( JOBD, 'Z' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT. ( LSAME( EQUIL, 'S' ) .OR.     &
+                      LSAME( EQUIL, 'N' ) ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( NPZ.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -12
+      ELSE IF( LDD.LT.1 .OR. ( WITHD .AND. LDD.LT.P ) ) THEN
+         INFO = -14
+      ELSE IF( LDNZ.LT.MAX( 1, P ) ) THEN
+         INFO = -16
+      ELSE IF( LDNP.LT.MAX( 1, P ) ) THEN
+         INFO = -18
+      ELSE IF( LDGAIN.LT.MAX( 1, P ) ) THEN
+         INFO = -24
+      ELSE IF( LDWORK.LT.MAX( 1, N*( N + P ) +
+                  MAX( N + MAX( N, P ), N*( 2*N + 3 ) ) ) ) THEN
+                  INFO = -28
+      END IF
 !C
-!      IF ( INFO.NE.0 ) THEN
+     IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!          RETURN
-!      END IF
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -7366,30 +7366,30 @@ C
       WITHB = LSAME( JOB, 'A' ) .OR. LSAME( JOB, 'B' )
       WITHC = LSAME( JOB, 'A' ) .OR. LSAME( JOB, 'C' )
 !C
-!      IF( .NOT.WITHB .AND. .NOT.WITHC .AND. .NOT.LSAME( JOB, 'N' ) ) &
-!         THEN
-!         INFO = -1
-!!      ELSE IF( N.LT.0 ) THEN
- !        INFO = -2
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -3
- !     ELSE IF( P.LT.0 ) THEN
- !        INFO = -4
- !     ELSE IF( MAXRED.GT.ZERO .AND. MAXRED.LT.ONE ) THEN
- !        INFO = -5
- !     ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
- !        INFO = -7
- !     ELSE IF( ( M.GT.0 .AND. LDB.LT.MAX( 1, N ) ) .OR. &
- !              ( M.EQ.0 .AND. LDB.LT.1 ) ) THEN
- !!        INFO = -9
- !     ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-!         INFO = -11
- !!     END IF
- !     IF( INFO.NE.0 ) THEN
- !         RETURN
- !     END IF
+      IF( .NOT.WITHB .AND. .NOT.WITHC .AND. .NOT.LSAME( JOB, 'N' ) ) &
+         THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( MAXRED.GT.ZERO .AND. MAXRED.LT.ONE ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -7
+      ELSE IF( ( M.GT.0 .AND. LDB.LT.MAX( 1, N ) ) .OR. &
+ !             ( M.EQ.0 .AND. LDB.LT.1 ) ) THEN
+         INFO = -9
+    ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -11
+      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
- !     IF( N.EQ.0 ) RETURN
+      IF( N.EQ.0 ) RETURN
       
 !C
 !C     Compute the 1-norm of the required part of matrix S and exit if
@@ -7800,23 +7800,23 @@ C     ******************************************************************
 !C
 !C     Test the input scalar arguments.
 !C
-!      IF( .NOT.LJOBZ .AND. .NOT.LSAME( JOBZ, 'N' ) ) THEN
- !        INFO = -1
- !     ELSE IF( N.LT.0 ) THEN
-  !       INFO = -2
-  !    ELSE IF( P.LT.0 ) THEN
- !        INFO = -3
- !     ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
- !        INFO = -5
- !     ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
- !        INFO = -8
- !     ELSE IF( LDZ.LT.1 .OR. ( LJOBZ .AND. LDZ.LT.N ) ) THEN
- !        INFO = -11
- !     ELSE IF( LDWORK.LT.MAX( 1, N, P ) ) THEN
- !        INFO = -15
- !     END IF
+      IF( .NOT.LJOBZ .AND. .NOT.LSAME( JOBZ, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -8
+      ELSE IF( LDZ.LT.1 .OR. ( LJOBZ .AND. LDZ.LT.N ) ) THEN
+         INFO = -11
+      ELSE IF( LDWORK.LT.MAX( 1, N, P ) ) THEN
+         INFO = -15
+      END IF
 !C
- !     IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
@@ -8154,8 +8154,8 @@ C
       DOUBLE PRECISION   DLAMCH
       EXTERNAL           DLAMCH, LSAME
 !C     ..
-C     .. External Subroutines ..
-      EXTERNAL           DLABAD, MB01QD, XERBLA
+!C     .. External Subroutines ..
+      EXTERNAL           DLABAD
 !C     .. Intrinsic Functions ..
       INTRINSIC          MAX, MIN
 !C     .. Save statement ..
@@ -8198,40 +8198,40 @@ C     .. External Subroutines ..
  10      CONTINUE
       END IF
 !C
-   !   IF( .NOT.LSCALE .AND. .NOT.LSAME( SCUN, 'U' ) ) THEN
-   !      INFO = -1
-   !   ELSE IF( ITYPE.EQ.-1 ) THEN
-    !     INFO = -2
-   !   ELSE IF( M.LT.0 ) THEN
-   !      INFO = -3
-   !   ELSE IF( N.LT.0 .OR. &
-   !           ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. N.NE.M ) ) THEN
-   !      INFO = -4
-   !   ELSE IF( ANRM.LT.ZERO ) THEN
-    !     INFO = -7
-    !  ELSE IF( NBL.LT.0 ) THEN
-    !     INFO = -8
-    !  ELSE IF( NBL.GT.0 .AND. ISUM.NE.MN ) THEN
-     !    INFO = -9
-     ! ELSE IF( ITYPE.LE.3 .AND. LDA.LT.MAX( 1, M ) ) THEN
-    !     INFO = -11
-    !  ELSE IF( ITYPE.GE.4 ) THEN
-    !     IF( KL.LT.0 .OR. KL.GT.MAX( M-1, 0 ) ) THEN
-    !        INFO = -5
-    !     ELSE IF( KU.LT.0 .OR. KU.GT.MAX( N-1, 0 ) .OR. &
-    !             ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. KL.NE.KU ) )
-    !              THEN
-    !        INFO = -6
-    !     ELSE IF( ( ITYPE.EQ.4 .AND. LDA.LT.KL+1 ) .OR.  &
-     !            ( ITYPE.EQ.5 .AND. LDA.LT.KU+1 ) .OR.   &
-     !           ( ITYPE.EQ.6 .AND. LDA.LT.2*KL+KU+1 ) ) THEN
-     !       INFO = -11
-    !     END IF
-     ! END IF
+      IF( .NOT.LSCALE .AND. .NOT.LSAME( SCUN, 'U' ) ) THEN
+         INFO = -1
+      ELSE IF( ITYPE.EQ.-1 ) THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 .OR. &
+              ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. N.NE.M ) ) THEN
+         INFO = -4
+      ELSE IF( ANRM.LT.ZERO ) THEN
+         INFO = -7
+      ELSE IF( NBL.LT.0 ) THEN
+         INFO = -8
+      ELSE IF( NBL.GT.0 .AND. ISUM.NE.MN ) THEN
+         INFO = -9
+      ELSE IF( ITYPE.LE.3 .AND. LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -11
+      ELSE IF( ITYPE.GE.4 ) THEN
+         IF( KL.LT.0 .OR. KL.GT.MAX( M-1, 0 ) ) THEN
+            INFO = -5
+         ELSE IF( KU.LT.0 .OR. KU.GT.MAX( N-1, 0 ) .OR. &
+                 ( ( ITYPE.EQ.4 .OR. ITYPE.EQ.5 ) .AND. KL.NE.KU ) )
+                  THEN
+            INFO = -6
+         ELSE IF( ( ITYPE.EQ.4 .AND. LDA.LT.KL+1 ) .OR.  &
+                 ( ITYPE.EQ.5 .AND. LDA.LT.KU+1 ) .OR.   &
+                ( ITYPE.EQ.6 .AND. LDA.LT.2*KL+KU+1 ) ) THEN
+            INFO = -11
+         END IF
+      END IF
 !C
-    !  IF( INFO.NE.0 ) THEN
-    !      RETURN
-    !  END IF
+     IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -8477,7 +8477,8 @@ C
 !C
 !C        Full matrix
          !C
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+         !$OMP& SHARED(A,N,M,MUL) PRIVATE(J,I,TMP) COLLAPSE(2)
          DO 30 J = 1, N
 
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(6)
@@ -8493,7 +8494,8 @@ C
 !C
 !C           Lower triangular matrix
             !C
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(A,N,M,MUL) PRIVATE(J,I,TMP)
             DO 50 J = 1, N
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
                DO 40 I = J, M
@@ -8507,7 +8509,9 @@ C
 !C           Block lower triangular matrix
 !C
             JFIN = 0
-             !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,NROWS) PRIVATE(K,JINI,JFIN,J,I,TMP)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(A,NROWS,NBL,M,MUL)
+            !$OMP& FIRSTPRIVATE(JFIN) PRIVATE(K,JINI,J,I,TMP)
             DO 80 K = 1, NBL
                JINI = JFIN + 1
                JFIN = JFIN + NROWS( K )
@@ -8528,7 +8532,8 @@ C
 !C
 !C           Upper triangular matrix
             !C
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(A,N,M,MUL) PRIVATE(J,I,TMP)
             DO 100 J = 1, N
             !$OMP SIMD ALIGNED(A:64) LINEAR(I:1)
                DO 90 I = 1, MIN( J, M )
@@ -8542,7 +8547,9 @@ C
 !C           Block upper triangular matrix
 !C
             JFIN = 0
-             !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,NROWS) PRIVATE(K,JINI,JFIN,J,I,TMP)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(A,NROWS,NBL,M,MUL,N)
+            !$OMP& FIRSTPRIVATE(JFIN) PRIVATE(K,JINI,J,I,TMP)
             DO 130 K = 1, NBL
                JINI = JFIN + 1
                JFIN = JFIN + NROWS( K )
@@ -8562,7 +8569,8 @@ C
 !¬C
 !C           Upper Hessenberg matrix
             !C
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(A,N,M,MUL) PRIVATE(J,I,TMP)
             DO 150 J = 1, N
             !$OMP SIMD ALIGNED(A:64) UNROLL PARTIAL(6)
             DO 140 I = 1, MIN( J+1, M )
@@ -8576,7 +8584,9 @@ C
 !C           Block upper Hessenberg matrix
 !C
             JFIN = 0
-             !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(A,NROWS) PRIVATE(K,JINI,JFIN,IFIN,J,I,TMP)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(A,NROWS,NBL,N,MUL)
+            !$OMP& FIRSTPRIVATE(JFIN) PRIVATE(K,JINI,IFIN,J,I,TMP)
             DO 180 K = 1, NBL
                JINI = JFIN + 1
                JFIN = JFIN + NROWS( K )
@@ -8605,7 +8615,9 @@ C
 !C
          K3 = KL + 1
          K4 = N + 1
-           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+         !$OMP& SHARED(A,N,MUL)
+         !$OMP& FIRSTPRIVATE(K3,K4) PRIVATE(J,I,TMP)
          DO 200 J = 1, N
 
             !$OMP SIMD ALIGNED(A:64)
@@ -8621,7 +8633,9 @@ C
 !C
          K1 = KU + 2
          K3 = KU + 1
-           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A) PRIVATE(J,I,TMP)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+         !$OMP& SHARED(A,N,MUL)
+         !$OMP& FIRSTPRIVATE(K1,K3) PRIVATE(J,I,TMP)
          DO 220 J = 1, N
 
             !$OMP SIMD ALIGNED(A:64)
@@ -8639,6 +8653,8 @@ C
          K2 = KL + 1
          K3 = 2*KL + KU + 1
          K4 = KL + KU + 1 + M
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) SHARED(N,A,MUL)
+         !$OMP& FIRSTPRIVATE(K1,K2,K3,K4) PRIVATE(J,I)
          DO 240 J = 1, N
             
             DO 230 I = MAX( K1-J, K2 ), MIN( K3, K4-J )
@@ -8946,50 +8962,51 @@ C
 !C
 !C     Test the input scalar arguments.
       !C
-    !  STAT1 = .false.
-    !  STAT2 = .false.
-     ! STAT3 = .false.
-     ! STAT1 = ( LINITA .AND. .NOT.LBALEC .AND. .NOT.LBALEA .AND. &
-     !          LDWORK.LT.N - 1 + MAX( N, M, P ) )
-    !  STAT2 =  ( LINITA .AND. ( LBALEC .OR. LBALEA ) .AND.  &
-    !           LDWORK.LT.N + MAX( N, M-1, P-1 ) )
-    !  STAT3 =  ( .NOT.LINITA .AND. ( LBALEC .OR. LBALEA ) .AND. &
-    !           LDWORK.LT.2*N )
+      STAT1 = .false.
+      STAT2 = .false.
+      STAT3 = .false.
+      STAT1 = ( LINITA .AND. .NOT.LBALEC .AND. .NOT.LBALEA .AND. &
+               LDWORK.LT.N - 1 + MAX( N, M, P ) )
+      STAT2 =  ( LINITA .AND. ( LBALEC .OR. LBALEA ) .AND.  &
+               LDWORK.LT.N + MAX( N, M-1, P-1 ) )
+
+      STAT3 =  ( .NOT.LINITA .AND. ( LBALEC .OR. LBALEA ) .AND. &
+               LDWORK.LT.2*N )
       
-    !  IF( .NOT.LBALEC .AND. .NOT.LBALBA .AND. &
-     !     .NOT.LSAME( BALEIG, 'N' ) ) THEN
-    !     INFO = -1
-     ! ELSE IF( .NOT.LINITA .AND. .NOT.LSAME( INITA, 'H' ) ) THEN
-     !    INFO = -2
-     ! ELSE IF( N.LT.0 ) THEN
-     !    INFO = -3
-     ! ELSE IF( M.LT.0 ) THEN
-     !    INFO = -4
-     ! ELSE IF( P.LT.0 ) THEN
-     !    INFO = -5
-     ! ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-     !    INFO = -8
-     ! ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-      !   INFO = -10
-     ! ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
-     !    INFO = -12
-     ! ELSE IF( LDG.LT.MAX( 1, P ) ) THEN
-     !    INFO = -15
-     ! ELSE IF( LDHINV.LT.MAX( 1, N ) ) THEN
-     !    INFO = -19
-    !  ELSE IF( STAT1 .OR. STAT2 .OR. STAT3 .OR. LDWORK.LT.1)
-     !    INFO = -22
-     ! ELSE IF( ( ( LBALEC .OR. LBALEA ) .AND. LZWORK.LT.N*( N + 2 ) ) &
-      !     .OR. ( LZWORK.LT.MAX( 1, N*N ) ) ) THEN
-      !   INFO = -24
-     ! END IF
+      IF( .NOT.LBALEC .AND. .NOT.LBALBA .AND. &
+          .NOT.LSAME( BALEIG, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LINITA .AND. .NOT.LSAME( INITA, 'H' ) ) THEN
+         INFO = -2
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( P.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDC.LT.MAX( 1, P ) ) THEN
+         INFO = -12
+      ELSE IF( LDG.LT.MAX( 1, P ) ) THEN
+         INFO = -15
+      ELSE IF( LDHINV.LT.MAX( 1, N ) ) THEN
+         INFO = -19
+      ELSE IF( STAT1 .OR. STAT2 .OR. STAT3 .OR. LDWORK.LT.1)
+         INFO = -22
+      ELSE IF( ( ( LBALEC .OR. LBALEA ) .AND. LZWORK.LT.N*( N + 2 ) ) &
+           .OR. ( LZWORK.LT.MAX( 1, N*N ) ) ) THEN
+         INFO = -24
+      END IF
 !C
-     ! IF ( INFO.NE.0 ) THEN
+     IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return
 !C
-    !     RETURN
-    !  END IF
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -9023,7 +9040,7 @@ C
 !C           defined in the subroutine DGEBAL.
             !C
 
-            !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,B,C) PRIVATE(J,JJ,JP)
+           
             DO 10 J = 1, N
                JJ = J
                IF ( JJ.LT.LOW .OR. JJ.GT.IGH ) THEN
@@ -9043,13 +9060,14 @@ C
                   END IF
                END IF
 10             CONTINUE
-               !$OMP END PARALLEL DO
+              
 
 !C
             IF ( IGH.NE.LOW ) THEN
                !C
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,B,C) PRIVATE(J,T)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+               !$OMP& SHARED(DWORK,B,C,IGH,M,P) PRIVATE(J,T)
                DO 20 J = LOW, IGH
                   T = DWORK(J)
 !C
@@ -9097,7 +9115,9 @@ C
 !C           Temporarily store Hessenberg form of A in array ZWORK.
 !C
             IJ = 0
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(ZWORK,A) PRIVATE(J,I,IJ)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(ZWORK,A,N,ZERO)
+            !$OMP& FIRSTPRIVATE(IJ) PRIVATE(J,I) COLLAPSE(2)
             DO 40 J = 1, N
                !C
 
@@ -9118,7 +9138,9 @@ C
 !C           Restore upper Hessenberg form of A.
 !C
             IJ = 0
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(ZWORK,A) PRIVATE(J,I,IJ)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(ZWORK,A,N)
+            !$OMP& FIRSTPRIVATE(IJ) PRIVATE(J,I) COLLAPSE(2)
             DO 60 J = 1, N
                !C
 
@@ -9203,7 +9225,8 @@ C
 !C
 !C     Compute  (H-INVERSE)*B.
       !C
-       !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(HINVB,B) PRIVATE(J,I)
+      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+      !$OMP& SHARED(HINVB,B,ZERO,M,N) PRIVATE(J,I) COLLAPSE(2)
       DO 110 J = 1, M
 
           !$OMP SIMD ALIGNED(HINVB:64,B)  LINEAR(I:1) UNROLL PARTIAL(8)
@@ -9218,7 +9241,9 @@ C
 !C
 !C     Compute  C*(H-INVERSE)*B.
       !C
-       !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(G,C,HINVB) PRIVATE(J,I,K)
+      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+      !$OMP& SHARED(C,HINVB,M,P,N) PRIVATE(J,I,K)
+      !$OMP& REDUCTION(+:G)
       DO 150 J = 1, M
          !C
 
@@ -9378,21 +9403,21 @@ C
 !C
       INFO = 0
       NOTRAN = LSAME( TRANS, 'N' )
-    !  IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'T' ) .AND. .NOT. &
-    !      LSAME( TRANS, 'C' ) ) THEN
-    !     INFO = -1
-   !   ELSE IF( N.LT.0 ) THEN
-   !      INFO = -2
-   !   ELSE IF( NRHS.LT.0 ) THEN
-   !      INFO = -3
-   !   ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
-   !      INFO = -5
-  !    ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-  !!       INFO = -8
-  !    END IF
-  !    IF( INFO.NE.0 ) THEN
-  !        RETURN
-  !    END IF
+      IF( .NOT.NOTRAN .AND. .NOT.LSAME( TRANS, 'T' ) .AND. .NOT. &
+          LSAME( TRANS, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( NRHS.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      END IF
+      IF( INFO.NE.0 ) THEN
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -9797,18 +9822,18 @@ C
 !C
       INFO = 0
       ONENRM = NORM.EQ.'1' .OR. LSAME( NORM, 'O' )
-    !  IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
-    !     INFO = -1
-    !  ELSE IF( N.LT.0 ) THEN
-    !     INFO = -2
-    !  ELSE IF( HNORM.LT.ZERO ) THEN
-    !     INFO = -3
-   ! !  ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
-   !      INFO = -5
-   !   END IF
-  !    IF( INFO.NE.0 ) THEN
-  !        RETURN
-  !    END IF
+      IF( .NOT.ONENRM .AND. .NOT.LSAME( NORM, 'I' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( HNORM.LT.ZERO ) THEN
+         INFO = -3
+     ELSE IF( LDH.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -10269,41 +10294,41 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-   !   IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-   !      INFO = -1
-   !   ELSE IF( DISCR ) THEN
-   !      IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
-   !         INFO = -2
-   !   END IF
-  !    IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-   !      INFO = -3
-   !   ELSE IF( .NOT.LSCAL .AND. .NOT.LSAME( SCAL, 'N' ) ) THEN
-   !      INFO = -4
-   !   ELSE IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
-  !       INFO = -5
-   !   ELSE IF( N.LT.0 ) THEN
-   !      INFO = -6
-  !    ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-   !      INFO = -8
-   !   ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
-   !      INFO = -10
-   !   ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
-   !      INFO = -12
-   !   ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
-    !     INFO = -17
-    !  ELSE IF( LDU.LT.MAX( 1, N2 ) ) THEN
-    !     INFO = -19
-    !  ELSE IF( ( .NOT.DISCR .AND. LDWORK.LT.MAX( 2, 6*N ) ) .OR. &
-    !           (      DISCR .AND. LDWORK.LT.MAX( 3, 6*N ) ) ) THEN
-    !     INFO = -22
-    !  END IF
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( DISCR ) THEN
+         IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
+            INFO = -2
+      END IF
+     IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.LSCAL .AND. .NOT.LSAME( SCAL, 'N' ) ) THEN
+         INFO = -4
+      ELSE IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
+        INFO = -5
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -6
+     ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
+         INFO = -12
+      ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
+         INFO = -17
+      ELSE IF( LDU.LT.MAX( 1, N2 ) ) THEN
+         INFO = -19
+      ELSE IF( ( .NOT.DISCR .AND. LDWORK.LT.MAX( 2, 6*N ) ) .OR. &
+               (      DISCR .AND. LDWORK.LT.MAX( 3, 6*N ) ) ) THEN
+         INFO = -22
+      END IF
 !C
-   !   IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-   !      RETURN
-   !   END IF
+        RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -10695,25 +10720,25 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-    !  IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-   !      INFO = -1
-   !   ELSE IF( DISCR ) THEN
-   !      IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
-   !         INFO = -2
-   !   END IF
-   !   IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-   !      INFO = -3
-  !    ELSE IF( N.LT.0 ) THEN
-   !      INFO = -4
-   !   ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-   !      INFO = -6
-  !    ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
-   !      INFO = -8
-   !   ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
-   !      INFO = -10
-   !   ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
-   !      INFO = -12
-   !   ELSE 
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( DISCR ) THEN
+         IF( .NOT.LHINV .AND. .NOT.LSAME( HINV, 'I' ) ) &
+            INFO = -2
+      END IF
+      IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -6
+      ELSE IF( LDG.LT.MAX( 1, N ) ) THEN
+         INFO = -8
+      ELSE IF( LDQ.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDS.LT.MAX( 1, N2 ) ) THEN
+         INFO = -12
+      ELSE 
          MINWRK = MAX( 2, 4*N )
          LQUERY = LDWORK.EQ.-1
          IF( ( LDWORK.LT.1 .OR. ( DISCR .AND. LDWORK.LT.MINWRK ) ) .AND. &
@@ -10764,7 +10789,9 @@ C
 !C        Construct full Q in S(N+1:2*N,1:N) and change the sign, and
 !C        construct full G in S(1:N,N+1:2*N) and change the sign.
          !C
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  SHARED(S,Q,G) PRIVATE(J,NJ,I)         
+         
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+         !$OMP& SHARED(S,Q,G,NLUPLO) PRIVATE(J,NJ,I)         
          DO 200 J = 1, N
             NJ = N + J
             IF ( LUPLO ) THEN
@@ -10812,7 +10839,8 @@ C
 
          IF ( .NOT.DISCR ) THEN
             !C
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)  SHARED(S,A) PRIVATE(J,NJ,I)      
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(S,A,N) PRIVATE(J,NJ,I) COLLAPSE(2)     
             DO 240 J = 1, N
                NJ = N + J
 !C
@@ -10838,7 +10866,7 @@ C
 !C           Put  A'  in  S(N+1:2*N,N+1:2*N).
             !C
 
-            !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) shared(a,s) PRIVATE(I) IF(N>=100)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(A,S,N,LDA) PRIVATE(I) 
             DO 260 I = 1, N
                CALL DCOPY( N, A(I, 1), LDA, S(NP1,N+I), 1 )
   260       CONTINUE
@@ -10980,7 +11008,7 @@ C
 !C                  -T
 !C           Copy  A    in  S(N+1:2N,N+1:2N).
             !C
-
+             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(A,S,N,LDA) PRIVATE(I) 
             DO 360 J = 1, N
                CALL DCOPY( N, A(J,1), LDA, S(NP1,N+J), 1 )
   360       CONTINUE
@@ -11904,38 +11932,38 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-     ! IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-     !    INFO = -1
-    !  ELSE IF( ( LNFACT .AND. .NOT.LSAME( FACT, 'N' ) ) .OR. &
-     !         ( DISCR  .AND. LFACTU ) ) THEN
-     !    INFO = -2
-    !  ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-    !     INFO = -3
-    !  ELSE IF( .NOT.WITHL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
-    !     INFO = -4
-    !  ELSE IF( N.LT.0 ) THEN
-    !     INFO = -5
-    !  ELSE IF( M.LT.0 ) THEN
-    !     INFO = -6
-   !   ELSE IF( LFACTD .AND. ( P.LT.0 .OR. ( .NOT.DISCR .AND. P.LT.M ) ) &
-   !!          ) THEN
-   !      INFO = -7
-    !  ELSE IF( LDA.LT.1 .OR. ( DISCR .AND. LDA.LT.N ) ) THEN
-    !     INFO = -9
-    !  ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-   !      INFO = -11 
-    !  ELSE IF( LDR.LT.MAX( 1, M ) .OR. ( LFACTD .AND.  &
-    !           LDR.LT.MAX( 1, P ) ) ) THEN
-    !     INFO = -13
-    !  ELSE IF( LDL.LT.1 .OR. ( WITHL .AND. LDL.LT.N ) ) THEN
-    !     INFO = -16
-    !  ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
-    !     INFO = -18
-    !  ELSE IF( LFACTU ) THEN
-    !     IF( RNORM.LT.ZERO ) &
-    !       INFO = -19
-   !   END IF
-   !   IF ( INFO.EQ.0 ) THEN
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( ( LNFACT .AND. .NOT.LSAME( FACT, 'N' ) ) .OR. &
+              ( DISCR  .AND. LFACTU ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.WITHL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
+         INFO = -4
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LFACTD .AND. ( P.LT.0 .OR. ( .NOT.DISCR .AND. P.LT.M ) ) &
+             ) THEN
+        INFO = -7
+      ELSE IF( LDA.LT.1 .OR. ( DISCR .AND. LDA.LT.N ) ) THEN
+         INFO = -9
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+        INFO = -11 
+      ELSE IF( LDR.LT.MAX( 1, M ) .OR. ( LFACTD .AND.  &
+               LDR.LT.MAX( 1, P ) ) ) THEN
+         INFO = -13
+      ELSE IF( LDL.LT.1 .OR. ( WITHL .AND. LDL.LT.N ) ) THEN
+         INFO = -16
+      ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
+         INFO = -18
+      ELSE IF( LFACTU ) THEN
+         IF( RNORM.LT.ZERO ) &
+           INFO = -19
+     END IF
+     IF ( INFO.EQ.0 ) THEN
          IF( LDF.LT.MAX( 1, M ) ) THEN
             INFO = -21
          ELSE
@@ -11980,7 +12008,7 @@ C
                RETURN
             END IF
          END IF
-     ! END IF
+      END IF
 !C
       IF ( INFO.NE.0 ) THEN
 !C
@@ -12454,7 +12482,8 @@ C     .. Scalar Arguments ..
 !C     .. Executable Statements ..
 !C
       IF( LSAME( JOB, 'U' ) ) THEN
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+         !$OMP& SHARED(B,A,N,M) PRIVATE(J,I)
          DO 20 J = 1, N
             !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
             DO 10 I = 1, MIN( J, M )
@@ -12462,7 +12491,8 @@ C     .. Scalar Arguments ..
    10       CONTINUE
    20    CONTINUE
       ELSE IF( LSAME( JOB, 'L' ) ) THEN
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)     
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+         !$OMP& SHARED(B,A,N,M) PRIVATE(J,I)     
          DO 40 J = 1, N
             !$OMP SIMD ALIGNED(B:64,A) UNROLL PARTIAL(8)
             DO 30 I = J, M
@@ -12470,7 +12500,8 @@ C     .. Scalar Arguments ..
    30       CONTINUE
    40    CONTINUE
       ELSE
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,A) PRIVATE(J,I)     
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+         !$OMP& SHARED(B,A,N,M) PRIVATE(J,I) COLLAPSE(2)
          DO 60 J = 1, N
             !$OMP SIMD ALIGNED(B:64,A) UNROLL PARTIAL(8)
             DO 50 I = 1, M
@@ -12916,31 +12947,31 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
-     ! IF(      .NOT.LJOBG  .AND. .NOT.LSAME( JOBG, 'N' ) ) THEN
-     !    INFO = -1
-     ! ELSE IF( .NOT.LJOBL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
-     !    INFO = -2
-     ! ELSE IF(     LNFACT  .AND. .NOT.LSAME( FACT, 'N' ) ) THEN
-     !    INFO = -3
-     ! ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
-     !    INFO = -4
-     ! ELSE IF( N.LT.0 ) THEN
-    !     INFO = -5
-    !  ELSE IF( M.LT.0 ) THEN
-    !     INFO = -6
-    !  ELSE IF( LDA.LT.1 .OR. ( LJOBL .AND. LDA.LT.N ) ) THEN
-    !     INFO = -8
-    !  ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-    !     INFO = -10
-   !   ELSE IF( LDQ.LT.1 .OR. ( LJOBL .AND. LDQ.LT.N ) ) THEN
-    !     INFO = -12
-    !  ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-    !     INFO = -14
-    !  ELSE IF( LDL.LT.1 .OR. ( LJOBL .AND. LDL.LT.N ) ) THEN
-    !     INFO = -16
-    !  ELSE IF( LDG.LT.1 .OR. ( LJOBG .AND. LDG.LT.N ) ) THEN
-   !      INFO = -20
-   !   ELSE
+      IF(      .NOT.LJOBG  .AND. .NOT.LSAME( JOBG, 'N' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LJOBL  .AND. .NOT.LSAME( JOBL, 'Z' ) ) THEN
+         INFO = -2
+      ELSE IF(     LNFACT  .AND. .NOT.LSAME( FACT, 'N' ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.LUPLOU .AND. .NOT.LSAME( UPLO, 'L' ) ) THEN
+         INFO = -4
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( LDA.LT.1 .OR. ( LJOBL .AND. LDA.LT.N ) ) THEN
+         INFO = -8
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -10
+      ELSE IF( LDQ.LT.1 .OR. ( LJOBL .AND. LDQ.LT.N ) ) THEN
+         INFO = -12
+      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+         INFO = -14
+      ELSE IF( LDL.LT.1 .OR. ( LJOBL .AND. LDL.LT.N ) ) THEN
+         INFO = -16
+      ELSE IF( LDG.LT.1 .OR. ( LJOBG .AND. LDG.LT.N ) ) THEN
+         INFO = -20
+      ELSE
          IF( LFACTC ) THEN
             WRKMIN = 1
          ELSE IF( LFACTU ) THEN
@@ -13393,41 +13424,41 @@ C
       LUPLO  = LSAME( UPLO,  'U' )
       LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
 !C
-    !  IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
-    !     INFO = -1
-    !  ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
-    !     INFO = -2
-    !  ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
-    !     INFO = -3
-   !   ELSE IF( M.LT.0 ) THEN
-   !      INFO = -4
-   !   ELSE IF( N.LT.0 ) THEN
-   !      INFO = -5
-   !   ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-   !      INFO = -9
-   !   ELSE IF( LDA.LT.1 .OR. &
-   !      ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
-   !         ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
-   !     ( ( (      LSIDE .AND.      LTRANS ) .OR. &
-   !         ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
-   !      INFO = -11
-   !   ELSE IF( LDB.LT.1 .OR.  &
-   !         (      LSIDE .AND. LDB.LT.N ) .OR.  &
-   !         ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
-   !      INFO = -13
-   !   END IF
+      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+         INFO = -1
+      ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
+         INFO = -2
+      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+         INFO = -9
+      ELSE IF( LDA.LT.1 .OR. &
+         ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
+            ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
+        ( ( (      LSIDE .AND.      LTRANS ) .OR. &
+            ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
+         INFO = -11
+      ELSE IF( LDB.LT.1 .OR.  &
+            (      LSIDE .AND. LDB.LT.N ) .OR.  &
+            ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
+         INFO = -13
+      END IF
 !C
-   !   IF (INFO.NE.0 .OR. M.EQ.0) THEN
+      IF (INFO.NE.0 .OR. M.EQ.0) THEN
 !C
 !C        Error return.
 !C
-    !      RETURN
-   !   END IF
+          RETURN
+     END IF
 !C
 !C     Quick return if possible.
 !C
-!      IF ( M.EQ.0 )
-!     $   RETURN
+      IF ( M.EQ.0 ) &
+        RETURN
 !C
       IF ( BETA.EQ.ZERO .OR. N.EQ.0 ) THEN
          IF ( ALPHA.EQ.ZERO ) THEN
@@ -13845,41 +13876,41 @@ C
       LUPLO  = LSAME( UPLO,  'U' )
       LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
 
-     ! IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
-    !     INFO = -1
-    !  ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
-    !     INFO = -2
-     ! ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
-     !    INFO = -3
-     ! ELSE IF( M.LT.0 ) THEN
-     !    INFO = -4
-     ! ELSE IF( N.LT.0 ) THEN
-    !     INFO = -5
-    !  ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-    !     INFO = -9
-    !  ELSE IF( LDA.LT.1 .OR.  &
-    !    ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
-    !        ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
-    !!    ( ( (      LSIDE .AND.      LTRANS ) .OR. &
-    !        ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
-    !     INFO = -11
-    !  ELSE IF( LDB.LT.1 .OR.  &
-   !         (      LSIDE .AND. LDB.LT.N ) .OR.  &
-   !         ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
-    !     INFO = -13
-   !   END IF
+      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+        INFO = -1
+      ELSE IF( ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
+         INFO = -2
+      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+         INFO = -3
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -5
+      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+         INFO = -9
+      ELSE IF( LDA.LT.1 .OR.  &
+        ( ( (      LSIDE .AND. .NOT.LTRANS ) .OR. &
+            ( .NOT.LSIDE .AND.      LTRANS ) ) .AND. LDA.LT.M ) .OR. &
+        ( ( (      LSIDE .AND.      LTRANS ) .OR. &
+            ( .NOT.LSIDE .AND. .NOT.LTRANS ) ) .AND. LDA.LT.N ) ) THEN
+         INFO = -11
+      ELSE IF( LDB.LT.1 .OR.  &
+            (      LSIDE .AND. LDB.LT.N ) .OR.  &
+            ( .NOT.LSIDE .AND. LDB.LT.M ) ) THEN
+         INFO = -13
+      END IF
 
-   !   IF (INFO.NE.0 .OR. M.EQ.0) THEN
+      IF (INFO.NE.0 .OR. M.EQ.0) THEN
 !C
 !C        Error return.
 !C
-   !       RETURN
-   !   END IF
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
-!      IF ( M.EQ.0 )
-!     $   RETURN
+      IF ( M.EQ.0 ) &
+        RETURN
 !C
       IF ( BETA.EQ.ZERO .OR. N.EQ.0 ) THEN
          IF ( ALPHA.EQ.ZERO ) THEN
@@ -14226,33 +14257,33 @@ C
 !C     Decode and Test input parameters.
 !C
       INFO = 0
-    !  IF( N.LT.0 ) THEN
-    !     INFO = -1
-    !  ELSE IF( M.LT.0 ) THEN
-    !     INFO = -2
-    !  ELSE IF( NP.LT.0 ) THEN
-     !    INFO = -3
-     ! ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-     !    INFO = -5
-    !  ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-      !   INFO = -7
-    !  ELSE IF( LDC.LT.MAX( 1, NP ) ) THEN
-    !     INFO = -9
-    !  ELSE IF( LDD.LT.MAX( 1, NP ) ) THEN
-    !     INFO = -11
-    !  ELSE IF( FACTOR.LT.ONE ) THEN
-    !     INFO = -12
-    !  ELSE IF( LDAK.LT.MAX( 1, N ) ) THEN
-   !      INFO = -14
-    !  ELSE IF( LDBK.LT.MAX( 1, N ) ) THEN
-     !    INFO = -16
-     ! ELSE IF( LDCK.LT.MAX( 1, M ) ) THEN
-    !     INFO = -18
-     ! ELSE IF( LDDK.LT.MAX( 1, M ) ) THEN
-     !    INFO = -20
-     ! ELSE IF( TOL.GE.ONE ) THEN
-     !    INFO = -22
-     ! END IF
+      IF( N.LT.0 ) THEN
+         INFO = -1
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( NP.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -5
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+        INFO = -7
+      ELSE IF( LDC.LT.MAX( 1, NP ) ) THEN
+         INFO = -9
+      ELSE IF( LDD.LT.MAX( 1, NP ) ) THEN
+         INFO = -11
+      ELSE IF( FACTOR.LT.ONE ) THEN
+         INFO = -12
+      ELSE IF( LDAK.LT.MAX( 1, N ) ) THEN
+         INFO = -14
+      ELSE IF( LDBK.LT.MAX( 1, N ) ) THEN
+         INFO = -16
+      ELSE IF( LDCK.LT.MAX( 1, M ) ) THEN
+         INFO = -18
+      ELSE IF( LDDK.LT.MAX( 1, M ) ) THEN
+         INFO = -20
+      ELSE IF( TOL.GE.ONE ) THEN
+         INFO = -22
+      END IF
 !C
 !C     Compute workspace.
 !C
@@ -15388,83 +15419,83 @@ C
 !C
 !C     Test the input scalar arguments.
 !C
- !     IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
- !        INFO = -1
- !     ELSE IF( .NOT.LJOBB .AND. .NOT.LSAME( JOBB, 'G' ) ) THEN
- !        INFO = -2
- !     ELSE IF( .NOT.LFACQ .AND. .NOT.LFACR .AND. .NOT.LFACB &
- !                                          .AND. .NOT.LFACN ) THEN
- !        INFO = -3
- !     ELSE IF( .NOT.LJOBB .OR. LFACN ) THEN
- !        IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) &
- !           INFO = -4
-!      END IF
- !     IF( INFO.EQ.0 .AND. LJOBB ) THEN
- !        IF( .NOT.LJOBL .AND. .NOT.LJOBLN ) &
-!            INFO = -5
-!      END IF
- !     IF( INFO.EQ.0 ) THEN
- !        IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
- !           INFO = -6
- !        ELSE IF( N.LT.0 ) THEN
- !           INFO = -7
- !        ELSE IF( LJOBB ) THEN
- !           IF( M.LT.0 ) &
- !             INFO = -8
- !        END IF
- !     END IF
- !     IF( INFO.EQ.0 .AND. .NOT.LFACN ) THEN
- !        IF( P.LT.0 ) &
- !         INFO = -9
- !     END IF
- !     IF( INFO.EQ.0 ) THEN
- !        IF( LDA.LT.MAX( 1, N ) ) THEN
- !           INFO = -11
- !        ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
- !           INFO = -13
- !        ELSE IF( ( ( LFACN.OR.LFACR ) .AND. LDQ.LT.MAX( 1, N ) ) .OR.  &
- !                ( ( LFACQ.OR.LFACB ) .AND. LDQ.LT.MAX( 1, P ) ) ) THEN
- !           INFO = -15
- !        ELSE IF( LDR.LT.1 ) THEN
- !           INFO = -17
- !        ELSE IF( LDL.LT.1 ) THEN
- !           INFO = -19
- !        ELSE IF( LJOBB ) THEN
- !           IF ( ( LFACN.OR.LFACQ ) .AND. LDR.LT.M .OR.   &
- !                ( LFACR.OR.LFACB ) .AND. LDR.LT.P ) THEN
- !              INFO = -17
- !           ELSE IF( LJOBLN .AND. LDL.LT.N ) THEN
-!               INFO = -19
-!            END IF
- !        END IF
- !     END IF
- !     IF( INFO.EQ.0 ) THEN
- !        IF( LDX.LT.MAX( 1, N ) ) THEN
- !           INFO = -22
- !        ELSE IF( LDS.LT.MAX( 1, NNM ) ) THEN
- !           INFO = -27
- !        ELSE IF( LDT.LT.1 ) THEN
- !           INFO = -29
- !        ELSE IF( LDU.LT.MAX( 1, NN ) ) THEN
- !           INFO = -31
- !        ELSE IF( LDWORK.LT.MAX( 3, 6*N ) ) THEN
- !           INFO = -35
- !        ELSE IF( DISCR .OR. LJOBB ) THEN
- !           IF( LDT.LT.NNM ) THEN
- !              INFO = -29
- !           ELSE IF( LDWORK.LT.MAX( 14*N + 23, 16*N, LDW ) ) THEN
- !              INFO = -35
- !           END IF
- !        END IF
- !     END IF
+      IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.LJOBB .AND. .NOT.LSAME( JOBB, 'G' ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.LFACQ .AND. .NOT.LFACR .AND. .NOT.LFACB &
+                                           .AND. .NOT.LFACN ) THEN
+         INFO = -3
+      ELSE IF( .NOT.LJOBB .OR. LFACN ) THEN
+         IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) &
+            INFO = -4
+      END IF
+      IF( INFO.EQ.0 .AND. LJOBB ) THEN
+         IF( .NOT.LJOBL .AND. .NOT.LJOBLN ) &
+            INFO = -5
+      END IF
+      IF( INFO.EQ.0 ) THEN
+         IF( .NOT.LSORT .AND. .NOT.LSAME( SORT, 'U' ) ) THEN
+            INFO = -6
+         ELSE IF( N.LT.0 ) THEN
+            INFO = -7
+         ELSE IF( LJOBB ) THEN
+            IF( M.LT.0 ) &
+              INFO = -8
+         END IF
+      END IF
+      IF( INFO.EQ.0 .AND. .NOT.LFACN ) THEN
+         IF( P.LT.0 ) &
+          INFO = -9
+      END IF
+      IF( INFO.EQ.0 ) THEN
+         IF( LDA.LT.MAX( 1, N ) ) THEN
+            INFO = -11
+         ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+            INFO = -13
+         ELSE IF( ( ( LFACN.OR.LFACR ) .AND. LDQ.LT.MAX( 1, N ) ) .OR.  &
+                 ( ( LFACQ.OR.LFACB ) .AND. LDQ.LT.MAX( 1, P ) ) ) THEN
+            INFO = -15
+         ELSE IF( LDR.LT.1 ) THEN
+            INFO = -17
+         ELSE IF( LDL.LT.1 ) THEN
+            INFO = -19
+         ELSE IF( LJOBB ) THEN
+            IF ( ( LFACN.OR.LFACQ ) .AND. LDR.LT.M .OR.   &
+                 ( LFACR.OR.LFACB ) .AND. LDR.LT.P ) THEN
+               INFO = -17
+            ELSE IF( LJOBLN .AND. LDL.LT.N ) THEN
+               INFO = -19
+            END IF
+        END IF
+      END IF
+      IF( INFO.EQ.0 ) THEN
+         IF( LDX.LT.MAX( 1, N ) ) THEN
+            INFO = -22
+         ELSE IF( LDS.LT.MAX( 1, NNM ) ) THEN
+            INFO = -27
+         ELSE IF( LDT.LT.1 ) THEN
+            INFO = -29
+         ELSE IF( LDU.LT.MAX( 1, NN ) ) THEN
+            INFO = -31
+         ELSE IF( LDWORK.LT.MAX( 3, 6*N ) ) THEN
+            INFO = -35
+        ELSE IF( DISCR .OR. LJOBB ) THEN
+            IF( LDT.LT.NNM ) THEN
+               INFO = -29
+          ELSE IF( LDWORK.LT.MAX( 14*N + 23, 16*N, LDW ) ) THEN
+              INFO = -35
+            END IF
+         END IF
+      END IF
 !C
- !     IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
 !         CALL XERBLA( 'SB02OD', -INFO )
-!1         RETURN
-!      END IF
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -16153,77 +16184,74 @@ C
       NP1  = N + 1
       N2P1 = N2 + 1
 !C
-      !C     Test the input scalar arguments.
-      !TODO:
-      !C     BG -- This excessive and long chain of branches shall be removed, or moved maybe
-      ! to higher caller site
-!      IF( .NOT.OPTC .AND. .NOT.LSAME( TYPE, 'S' ) ) THEN
-!         INFO = -1
-!      ELSE IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
-!         INFO = -2
-!      ELSE IF( .NOT.LJOBB .AND. .NOT.LSAME( JOBB, 'G' ) ) THEN
-!         INFO = -3
-!      ELSE IF( .NOT.LFACQ .AND. .NOT.LFACR .AND. .NOT.LFACB  &
-!                                           .AND. .NOT.LFACN ) THEN
-!         INFO = -4
-!      ELSE IF( .NOT.LJOBB .OR. LFACN ) THEN
-!         IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) &
-!           INFO = -5
-!      ELSE IF( LJOBB ) THEN
-!         IF( .NOT.LJOBL .AND. .NOT.LSAME( JOBL, 'N' ) ) &
-!           INFO = -6
-!      ELSE IF( .NOT.LJOBE .AND. .NOT.LSAME( JOBE, 'N' ) ) THEN
-!         INFO = -7
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -8
-!      ELSE IF( LJOBB ) THEN
-!         IF( M.LT.0 )  &
-!            INFO = -9
-!      ELSE IF( .NOT.LFACN .OR. .NOT.OPTC ) THEN
-!         IF( P.LT.0 ) THEN
-!            INFO = -10
-!         ELSE IF( LJOBB ) THEN
-!            IF( .NOT.OPTC .AND. P.NE.M ) &
-!               INFO = -10
-!         END IF
-!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-!         INFO = -12
-!      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
-!         INFO = -14
-!      ELSE IF( ( ( LFACN.OR.LFACR ) .AND. LDQ.LT.MAX( 1, N ) ) .OR.  &
-!               ( ( LFACQ.OR.LFACB ) .AND. LDQ.LT.MAX( 1, P ) ) ) THEN
-!         INFO = -16
-!      ELSE IF( LDR.LT.1 ) THEN
-!         INFO = -18
-!      ELSE IF( LJOBB ) THEN
-!         IF ( ( LFACN.OR.LFACQ ) .AND. LDR.LT.M .OR.  &
-!              ( LFACR.OR.LFACB ) .AND. LDR.LT.P ) THEN
-!            INFO = -18
-!         ELSE IF( ( .NOT.LJOBL .AND. LDL.LT.MAX( 1, N ) ) .OR. &
-!                  (      LJOBL .AND. LDL.LT.1 ) ) THEN
-!            INFO = -20
-!         END IF
-!      END IF
-!      IF( ( .NOT.LJOBE .AND. LDE.LT.MAX( 1, N ) ) .OR. &
-!         (      LJOBE .AND. LDE.LT.1 ) ) THEN
-!         INFO = -22
-!      ELSE IF( LDAF.LT.MAX( 1, NNM ) ) THEN
-!         INFO = -24
-!      ELSE IF( ( ( LJOBB .OR. DISCR .OR. .NOT.LJOBE ) .AND. &
-!                 LDBF.LT.NNM ) .OR. ( LDBF.LT.1 ) ) THEN
-!         INFO = -26
-!      ELSE IF( ( LJOBB .AND. LDWORK.LT.MAX( NNM, 3*M ) ) .OR. &
-!                             LDWORK.LT.1 ) THEN
-!         INFO = -30
-!      END IF
+     
+      IF( .NOT.OPTC .AND. .NOT.LSAME( TYPE, 'S' ) ) THEN
+        INFO = -1
+      ELSE IF( .NOT.DISCR .AND. .NOT.LSAME( DICO, 'C' ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.LJOBB .AND. .NOT.LSAME( JOBB, 'G' ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.LFACQ .AND. .NOT.LFACR .AND. .NOT.LFACB  &
+                                           .AND. .NOT.LFACN ) THEN
+         INFO = -4
+      ELSE IF( .NOT.LJOBB .OR. LFACN ) THEN
+        IF( .NOT.LUPLO .AND. .NOT.LSAME( UPLO, 'L' ) ) &
+           INFO = -5
+     ELSE IF( LJOBB ) THEN
+         IF( .NOT.LJOBL .AND. .NOT.LSAME( JOBL, 'N' ) ) &
+           INFO = -6
+      ELSE IF( .NOT.LJOBE .AND. .NOT.LSAME( JOBE, 'N' ) ) THEN
+         INFO = -7
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -8
+      ELSE IF( LJOBB ) THEN
+         IF( M.LT.0 )  &
+            INFO = -9
+      ELSE IF( .NOT.LFACN .OR. .NOT.OPTC ) THEN
+         IF( P.LT.0 ) THEN
+            INFO = -10
+         ELSE IF( LJOBB ) THEN
+           IF( .NOT.OPTC .AND. P.NE.M ) &
+             INFO = -10
+         END IF
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -12
+      ELSE IF( LDB.LT.MAX( 1, N ) ) THEN
+         INFO = -14
+      ELSE IF( ( ( LFACN.OR.LFACR ) .AND. LDQ.LT.MAX( 1, N ) ) .OR.  &
+              ( ( LFACQ.OR.LFACB ) .AND. LDQ.LT.MAX( 1, P ) ) ) THEN
+         INFO = -16
+      ELSE IF( LDR.LT.1 ) THEN
+         INFO = -18
+      ELSE IF( LJOBB ) THEN
+         IF ( ( LFACN.OR.LFACQ ) .AND. LDR.LT.M .OR.  &
+             ( LFACR.OR.LFACB ) .AND. LDR.LT.P ) THEN
+            INFO = -18
+         ELSE IF( ( .NOT.LJOBL .AND. LDL.LT.MAX( 1, N ) ) .OR. &
+                  (      LJOBL .AND. LDL.LT.1 ) ) THEN
+            INFO = -20
+         END IF
+      END IF
+      IF( ( .NOT.LJOBE .AND. LDE.LT.MAX( 1, N ) ) .OR. &
+         (      LJOBE .AND. LDE.LT.1 ) ) THEN
+        INFO = -22
+     ELSE IF( LDAF.LT.MAX( 1, NNM ) ) THEN
+         INFO = -24
+      ELSE IF( ( ( LJOBB .OR. DISCR .OR. .NOT.LJOBE ) .AND. &
+                 LDBF.LT.NNM ) .OR. ( LDBF.LT.1 ) ) THEN
+         INFO = -26
+      ELSE IF( ( LJOBB .AND. LDWORK.LT.MAX( NNM, 3*M ) ) .OR. &
+                             LDWORK.LT.1 ) THEN
+         INFO = -30
+      END IF
 !C
-!      IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
-!        
-!!         RETURN
-!      END IF
+        
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -16241,7 +16269,8 @@ C
 !C
 !C           Construct the lower triangle of Q.
             !C
-            
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP SHARED(AF,LDQ,N,Q) PRIVATE(J)
             DO 20 J = 1, N - 1
                CALL DCOPY( N-J, Q(J,J+1), LDQ, AF(NP1+J,J), 1 )
    20       CONTINUE
@@ -16249,7 +16278,9 @@ C
          ELSE
 !C
 !C           Construct the upper triangle of Q.
-!C
+            !C
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP SHARED(AF,LDQ,N,Q) PRIVATE(J)
             DO 40 J = 2, N
                CALL DCOPY( J-1, Q(J,1), LDQ, AF(NP1,J), 1 )
    40       CONTINUE
@@ -16269,7 +16300,8 @@ C
          IF ( LJOBL ) THEN
             CALL DLASET( 'Full', M, N, ZERO, ZERO, AF(N2P1,1), LDAF )
          ELSE
-
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP SHARED(AF,LDQ,N,L) PRIVATE(I)
             DO 80 I = 1, N
                CALL DCOPY( M, L(I,1), LDL, AF(N2P1,I), 1 )
    80       CONTINUE
@@ -16284,7 +16316,8 @@ C
 !C
 !C           Construct (1,2) block of AF using the upper triangle of G.
             !C
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,B) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(AF,B,N) PRIVATE(J,I)
             DO 140 J = 1, N
                !C
                !$OMP SIMD ALIGNED(AF:64,B) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -16302,7 +16335,8 @@ C
 !C
 !C           Construct (1,2) block of AF using the lower triangle of G.
             !C
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,B) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(AF,B,N) PRIVATE(J,I)
             DO 200 J = 1, N
 
                DO 160 I = 1, J - 1
@@ -16322,7 +16356,8 @@ C
          IF ( LJOBE ) THEN
             CALL DLASET( 'Full', NM, N, ZERO, -ONE, AF(NP1,NP1), LDAF )
          ELSE
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,E) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(AF,E,N) PRIVATE(J,I) COLLAPSE(2)
             DO 240 J = 1, N
 
                DO 220 I = 1, N
@@ -16336,7 +16371,8 @@ C
                            LDAF )
          END IF
       ELSE
-           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+         !$OMP& SHARED(AF,A,N) PRIVATE(J,I) COLLAPSE(2)
          DO 280 J = 1, N
 
             DO 260 I = 1, N
@@ -16347,7 +16383,8 @@ C
 
          IF ( LJOBB ) THEN
             IF ( OPTC ) THEN
-                 !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(AF,B) PRIVATE(J)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+               !$OMP& SHARED(AF,B,N,M,LDB) PRIVATE(J)
                DO 300 J = 1, N
                   CALL DCOPY ( M, B(J,1), LDB, AF(N2P1,N+J), 1 )
   300          CONTINUE
@@ -16363,7 +16400,8 @@ C
          IF ( OPTC ) THEN
             CALL DLACPY( 'Full', N, M, B, LDB, AF(1,N2P1), LDAF )
          ELSE
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,Q) PRIVATE(J)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(AF,Q,P,N,LDQ) PRIVATE(I)
             DO 320 I = 1, P
                CALL DCOPY( N, Q(I,1), LDQ, AF(1,N2+I), 1 )
   320       CONTINUE
@@ -16381,7 +16419,9 @@ C
             IF ( LUPLO ) THEN
 !C
 !C              Construct the lower triangle of R.
-!C
+               !C
+                !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+                !$OMP& SHARED(M,R,LDR,AF) PRIVATE(J)
                DO 340 J = 1, M - 1
                   CALL DCOPY( M-J, R(J,J+1), LDR, AF(N2P1+J,N2+J), 1 )
   340          CONTINUE
@@ -16389,7 +16429,9 @@ C
             ELSE
 !C
 !C              Construct the upper triangle of R.
-!C
+               !C
+                !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+                !$OMP& SHARED(M,R,LDR,AF) PRIVATE(J)
                DO 360 J = 2, M
                   CALL DCOPY( J-1, R(J,1), LDR, AF(N2P1,N2+J), 1 )
   360          CONTINUE
@@ -16398,14 +16440,16 @@ C
          ELSE IF ( OPTC ) THEN
             CALL DSYRK( 'Upper', 'Transpose', M, P, ONE, R, LDR, ZERO, &
                        AF(N2P1,N2P1), LDAF )
-!C
+            !C
+            
             DO 380 J = 2, M
                CALL DCOPY( J-1, AF(N2P1,N2+J), 1, AF(N2+J,N2P1), LDAF )
   380       CONTINUE
 !C
          ELSE
             !C
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(AF,R) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(AF,R,M,P) PRIVATE(J,I) COLLAPSE(2)
             DO 420 J = 1, M
 !C
                DO 400 I = 1, P
@@ -16436,7 +16480,8 @@ C
 !C
 !C           Construct (1,2) block of BF using the upper triangle of G.
             !C
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,B) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(BF,B,N) PRIVATE(J,I)
             DO 480 J = 1, N
                !C
                !$OMP SIMD ALIGNED(BF:64,B) LINEAR(I:1)
@@ -16454,7 +16499,8 @@ C
 !C
 !C           Construct (1,2) block of BF using the lower triangle of G.
             !C
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,B) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(BF,B,N) PRIVATE(J,I)
             DO 540 J = 1, N
                !C
                
@@ -16474,7 +16520,8 @@ C
 !C
       IF ( DISCR ) THEN
          !C
-           !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,A) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+         !$OMP& SHARED(BF,A,N) PRIVATE(J,I) COLLAPSE(2)
          DO 580 J = 1, N
 !C
             DO 560 I = 1, N
@@ -16487,7 +16534,8 @@ C
 !C
             IF ( OPTC ) THEN
                !C
-                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,B) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+               !$OMP& SHARED(BF,B,N,M) PRIVATE(J,I) COLLAPSE(2)
                DO 620 J = 1, N
 !C
                   DO 600 I = 1, M
@@ -16498,7 +16546,8 @@ C
 !C
             ELSE
                !C
-                 !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,Q) PRIVATE(J,I)
+               !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+               !$OMP& SHARED(BF,Q,N,P) PRIVATE(J,I) COLLAPSE(2)
                DO 660 J = 1, N
                   !C
                !$OMP SIMD ALIGNED(BF:64,Q) LINEAR(I:1) UNROLL PARTIAL(8)
@@ -16515,7 +16564,8 @@ C
          IF ( LJOBE ) THEN
             CALL DLASET( 'Full', NM, N, ZERO, -ONE, BF(NP1,NP1), LDBF )
          ELSE
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(BF,E) PRIVATE(J,I)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(BF,E,N) PRIVATE(J,I) COLLAPSE(2)
             DO 700 J = 1, N
 
                DO 680 I = 1, N
@@ -16991,41 +17041,41 @@ C
 !C     Test the scalar input parameters.
 !C
       INFO = 0
-   !   IF( .NOT.( JOBX .OR. JOBS .OR. JOBC .OR. JOBE .OR. JOBA ) ) THEN
-   !      INFO = -1
-   !   ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT,   'F' ) ) ) THEN
-   !      INFO = -2
-   !   ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR. &
-   !                               LSAME( TRANA,  'C' ) ) ) THEN
-   !      INFO = -3
-   !   ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
-   !      INFO = -4
-   !   ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
-   !      INFO = -5
-   !   ELSE IF( N.LT.0 ) THEN
-   !      INFO = -6
-   !   ELSE IF( ( JOBC .OR. JOBE ) .AND. &
-   !            ( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) )THEN
-   !      INFO = -7
-   !   ELSE IF( LDA.LT.1 .OR. &
-   !         ( LDA.LT.N .AND. ( ( UPDATE .AND. .NOT.JOBX ) .OR. &
-   !                              NOFACT ) ) ) THEN
-   !      INFO = -9
-   !   ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
-   !      INFO = -11
-   !   ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
-   !      INFO = -13
-   !   ELSE IF( LDC.LT.1 .OR. ( .NOT.JOBS .AND. LDC.LT.N ) ) THEN
-   !      INFO = -15
-   !   ELSE IF( LDX.LT.1 .OR. ( .NOT.JOBS .AND. LDX.LT.N ) ) THEN
-   !      INFO = -17
-   !   ELSE IF( LDWORK.LT.1 .OR. ( LDWORK.LT.LDW ) ) THEN
-   !!      INFO = -25
-   !   END IF
+      IF( .NOT.( JOBX .OR. JOBS .OR. JOBC .OR. JOBE .OR. JOBA ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT,   'F' ) ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR. &
+                                  LSAME( TRANA,  'C' ) ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
+         INFO = -4
+      ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
+         INFO = -5
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( ( JOBC .OR. JOBE ) .AND. &
+               ( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) )THEN
+         INFO = -7
+      ELSE IF( LDA.LT.1 .OR. &
+            ( LDA.LT.N .AND. ( ( UPDATE .AND. .NOT.JOBX ) .OR. &
+                                 NOFACT ) ) ) THEN
+         INFO = -9
+      ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
+         INFO = -11
+      ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
+         INFO = -13
+      ELSE IF( LDC.LT.1 .OR. ( .NOT.JOBS .AND. LDC.LT.N ) ) THEN
+         INFO = -15
+      ELSE IF( LDX.LT.1 .OR. ( .NOT.JOBS .AND. LDX.LT.N ) ) THEN
+         INFO = -17
+      ELSE IF( LDWORK.LT.1 .OR. ( LDWORK.LT.LDW ) ) THEN
+         INFO = -25
+      END IF
 
-   !   IF( INFO.NE.0 ) THEN
-    !      RETURN
-    !  END IF
+      IF( INFO.NE.0 ) THEN
+          RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
@@ -17339,41 +17389,41 @@ C
 !C     Test the input scalar arguments.
 !C
       INFO = 0
-     ! LUPLO  = LSAME( UPLO,  'U' )
+      LUPLO  = LSAME( UPLO,  'U' )
       LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
 
-     ! IF(      ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
-    !     INFO = -1
-    !  ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
-    !     INFO = -2
-    !  ELSE IF( M.LT.0 ) THEN
-     !    INFO = -3
-    !  ELSE IF( N.LT.0 ) THEN
-    !     INFO = -4
-    !  ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
-    !     INFO = -8
-    !  ELSE IF( LDA.LT.1 .OR. ( LTRANS .AND. LDA.LT.N ) .OR.
-    ! $                  ( .NOT.LTRANS .AND. LDA.LT.M ) ) THEN
-   !      INFO = -10
-   !   ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
-   !      INFO = -12
-   !!   ELSE IF( ( BETA.NE.ZERO .AND. LDWORK.LT.M*N )
-   !  $     .OR.( BETA.EQ.ZERO .AND. LDWORK.LT.0 ) ) THEN
-   !      INFO = -14
-   !   END IF
+     IF(      ( .NOT.LUPLO  ).AND.( .NOT.LSAME( UPLO,  'L' ) ) )THEN
+        INFO = -1
+      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDR.LT.MAX( 1, M ) ) THEN
+         INFO = -8
+      ELSE IF( LDA.LT.1 .OR. ( LTRANS .AND. LDA.LT.N ) .OR. &
+                      ( .NOT.LTRANS .AND. LDA.LT.M ) ) THEN
+        INFO = -10
+      ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
+         INFO = -12
+      ELSE IF( ( BETA.NE.ZERO .AND. LDWORK.LT.M*N ) &
+        .OR.( BETA.EQ.ZERO .AND. LDWORK.LT.0 ) ) THEN
+         INFO = -14
+      END IF
 !C
-!!      IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
 !         CALL XERBLA( 'MB01RU', -INFO )
-!         RETURN
-!      END IF
+         RETURN
+      END IF
 !C
 !C     Quick return if possible.
 !C
-!      IF ( M.EQ.0 )
-!     $   RETURN
+      IF ( M.EQ.0 ) &
+        RETURN
 !C
       IF ( BETA.EQ.ZERO .OR. N.EQ.0 ) THEN
          IF ( ALPHA.EQ.ZERO ) THEN
@@ -17577,28 +17627,28 @@ C
       LUPPER = .TRUE.
 !C
       INFO = 0
-!      IF( .NOT.NOTRNA .AND. .NOT.LSAME( TRANA, 'T' ) .AND.
-!     $                      .NOT.LSAME( TRANA, 'C' ) ) THEN
-!         INFO = -1
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -2
-!      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
-!         INFO = -4
-!      ELSE IF( LDC.LT.MAX( 1, N ) ) THEN
-!!         INFO = -6
-!      END IF
+      IF( .NOT.NOTRNA .AND. .NOT.LSAME( TRANA, 'T' ) .AND. &
+                           .NOT.LSAME( TRANA, 'C' ) ) THEN
+         INFO = -1
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -2
+      ELSE IF( LDA.LT.MAX( 1, N ) ) THEN
+         INFO = -4
+     ELSE IF( LDC.LT.MAX( 1, N ) ) THEN
+        INFO = -6
+     END IF
 !C
-!      IF( INFO.NE.0 ) THEN
+      IF( INFO.NE.0 ) THEN
 !         CALL XERBLA( 'SB03MY', -INFO )
-!!         RETURN
-!      END IF
+         RETURN
+      END IF
 !C
       SCALE = ONE
 !C
 !C     Quick return if possible.
 !C
-!      IF( N.EQ.0 )
-!     $   RETURN
+      IF( N.EQ.0 ) &
+       RETURN
 !C
 !C     Set constants to control overflow.
 !C
@@ -18666,33 +18716,33 @@ C
           LDW = LDW + N - 1
 
       INFO = 0
-    !  IF( .NOT.( JOBB .OR. JOBC .OR. JOBE ) ) THEN
-    !     INFO = -1
-    !  ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT, 'F' ) ) ) THEN
-    !     INFO = -2
-    !  ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR.
-    ! $                            LSAME( TRANA,  'C' ) ) ) THEN
-    !     INFO = -3
-    !  ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
-    !     INFO = -4
-    !  ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
-    !     INFO = -5
-    !  ELSE IF( N.LT.0 ) THEN
-    !     INFO = -6
-    !  ELSE IF( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) THEN
-    !     INFO = -7
-    !  ELSE IF( LDA.LT.1 .OR.
-   !  $       ( LDA.LT.N .AND. ( UPDATE .OR. NOFACT ) ) ) THEN
-    !     INFO = -9
-    !  ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
-   !      INFO = -11
-    !  ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
-   !      INFO = -13
-   !   ELSE IF( LDC.LT.MAX( 1, N ) ) THEN
-   !      INFO = -15
-   !   ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
-   !      INFO = -17
-   !   ELSE
+      IF( .NOT.( JOBB .OR. JOBC .OR. JOBE ) ) THEN
+         INFO = -1
+      ELSE IF( .NOT.( NOFACT .OR. LSAME( FACT, 'F' ) ) ) THEN
+         INFO = -2
+      ELSE IF( .NOT.( NOTRNA .OR. LSAME( TRANA,  'T' ) .OR. &
+                                LSAME( TRANA,  'C' ) ) ) THEN
+         INFO = -3
+      ELSE IF( .NOT.( LOWER  .OR. LSAME( UPLO,   'U' ) ) ) THEN
+         INFO = -4
+      ELSE IF( .NOT.( UPDATE .OR. LSAME( LYAPUN, 'R' ) ) ) THEN
+         INFO = -5
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -6
+      ELSE IF( SCALE.LT.ZERO .OR. SCALE.GT.ONE ) THEN
+         INFO = -7
+      ELSE IF( LDA.LT.1 .OR. &
+          ( LDA.LT.N .AND. ( UPDATE .OR. NOFACT ) ) ) THEN
+         INFO = -9
+      ELSE IF( LDT.LT.MAX( 1, N ) ) THEN
+         INFO = -11
+      ELSE IF( LDU.LT.1 .OR. ( LDU.LT.N .AND. UPDATE ) ) THEN
+   !     INFO = -13
+      ELSE IF( LDC.LT.MAX( 1, N ) ) THEN
+         INFO = -15
+      ELSE IF( LDX.LT.MAX( 1, N ) ) THEN
+         INFO = -17
+      ELSE
          IF( NOFACT ) THEN
             IWRK = MAX( LDW, 5*N )
          ELSE
@@ -18716,13 +18766,13 @@ C
             IF( .NOT.UPDATE ) &
                WRKOPT = MAX( WRKOPT, 4*N*N )
          END IF
-         !IF( LDWORK.LT.IWRK .AND. .NOT. LQUERY ) &
-         !    INFO = -23
-      !END IF
+         IF( LDWORK.LT.IWRK .AND. .NOT. LQUERY ) &
+             INFO = -23
+      END IF
 !C
-      !IF( INFO.NE.0 ) THEN
+      IF( INFO.NE.0 ) THEN
       !   CALL XERBLA( 'SB03QD', -INFO )
-      !   RETURN
+         RETURN
       IF( LQUERY ) THEN
          DWORK( 1 ) = WRKOPT
          RETURN
@@ -18793,14 +18843,16 @@ C
 !C
                IF( LOWER ) THEN
 
-                
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+                  !$OMP& SHARED(N,SCALE,TWO,C,DWORK) PRIVATE(J)
                   DO 10 J = 1, N
                      CALL DAXPY( N-J+1, -SCALE/TWO, C( J, J ), 1, &
                                  DWORK( (J-1)*N+J ), 1 )
    10             CONTINUE
                ELSE
 
-               
+                  !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+                  !$OMP& SHARED(N,SCALE,TWO,C,DWORK) PRIVATE(J)
                   DO 20 J = 1, N
                      CALL DAXPY( J, -SCALE/TWO, C( 1, J ), 1, &
                                  DWORK( (J-1)*N+1 ), 1 )
@@ -18919,7 +18971,7 @@ C
             JJ = IRES + 1
             IF( LOWER ) THEN
 
-                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,C) PRIVATE(J,JJ)
+                 
                DO 30 J = 1, N
                   CALL DAXPY( N-J+1, ONE, DWORK( JJ ), N, DWORK( JJ ),1)
                   CALL DAXPY( N-J+1, -SCALE, C( J, J ), 1, DWORK( JJ ),1)
@@ -18927,7 +18979,7 @@ C
    30          CONTINUE
              ELSE
 
-                  !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK,C) PRIVATE(J,JJ)
+                 
                DO 40 J = 1, N
                   CALL DAXPY( J, ONE, DWORK( IRES+J ), N, DWORK( JJ ),1)
                   CALL DAXPY( J, -SCALE, C( 1, J ), 1, DWORK( JJ ), 1 )
@@ -18952,7 +19004,8 @@ C
 !C                    (n+3)*(abs(op(T))'*abs(X) + abs(X)*abs(op(T)))),
 !C        where EPS is the machine precision.
          !C
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)SHARED(DWORK,X) PRIVATE(J,I)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+         !$OMP& SHARED(N,DWORK,X,IXBS) PRIVATE(J,I) COLLAPSE(2)
          DO 60 J = 1, N
             !$OMP SIMD ALIGNED(DWORK:64,X) LINEAR(I:1)
             DO 50 I = 1, N
@@ -18961,18 +19014,20 @@ C
    60    CONTINUE
 
          IF( LOWER ) THEN
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)SHARED(DWORK,C) PRIVATE(J,I)                  
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(DWORK,C,N,IRES) PRIVATE(J,I)                  
             DO 80 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
+               !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1) 
                DO 70 I = J, N
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
    70          CONTINUE
    80       CONTINUE
          ELSE
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE)SHARED(DWORK,X) PRIVATE(J,I)                       
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(DWORK,X,N,IRES) PRIVATE(J,I)                       
             DO 100 J = 1, N
-              !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
+              !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1)
                DO 90 I = 1, J
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
@@ -18984,7 +19039,8 @@ C
 !C
 !C           Workspace 3*N*N.
             !C
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,A) PRIVATE(J,I)                  
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(DWORK,A,N,IABS) PRIVATE(J,I) COLLAPSE(2)                 
             DO 120 J = 1, N
                !$OMP SIMD ALIGNED(DWORK:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 110 I = 1, N
@@ -18998,7 +19054,8 @@ C
 !C
 !C           Workspace 3*N*N + N - 1.
             !C
-!$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(DWORK,T) PRIVATE(J,I)                
+            !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
+            !$OMP& SHARED(DWORK,T,N,IABS) PRIVATE(J,I)                
             DO 140 J = 1, N
                !$OMP SIMD ALIGNED(DWORK:64,T) UNROLL PARTIAL(8)
                DO 130 I = 1, MIN( J+1, N )
@@ -19013,7 +19070,7 @@ C
             JX = IXBS + 1
             IF( LOWER ) THEN
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK) PRIVATE(J,JJ,JX)
+             
                DO 150 J = 1, N
                   CALL DAXPY( N-J+1, ONE, DWORK( JX ), N, DWORK( JX ),1)
                   CALL DAXPY( N-J+1, ONE, DWORK( JX ), 1, DWORK( JJ ),1)
@@ -19022,7 +19079,7 @@ C
   150          CONTINUE
             ELSE
 
-               !$OMP PARALLEL DO SCHEDULE(STATIC,1) DEFAULT(NONE) SHARED(DWORK) PRIVATE(J,JJ,JX)
+               
               DO 160 J = 1, N
                   CALL DAXPY( J, ONE, DWORK( IXBS+J ), N, DWORK( JX ),1)
                   CALL DAXPY( J, ONE, DWORK( JX ), 1, DWORK( JJ ), 1 )
@@ -19202,30 +19259,30 @@ C
       LSIDE  = LSAME( SIDE,  'L' )
       LTRANS = LSAME( TRANS, 'T' ) .OR. LSAME( TRANS, 'C' )
 !C
-!      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
-!!         INFO = -1
-!      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
-!         INFO = -2
-!      ELSE IF( M.LT.0 ) THEN
-!         INFO = -3
-!      ELSE IF( N.LT.0 ) THEN
-!         INFO = -4
-!      ELSE IF( LDH.LT.1 .OR. ( LSIDE .AND. LDH.LT.M ) .OR.
-!     $                  ( .NOT.LSIDE .AND. LDH.LT.N ) ) THEN
-!         INFO = -7
-!      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
-!         INFO = -9
-!      ELSE IF( LDB.LT.MAX( 1, M ) ) THEN
-!         INFO = -11
-!      END IF
+      IF(      ( .NOT.LSIDE  ).AND.( .NOT.LSAME( SIDE,  'R' ) ) )THEN
+         INFO = -1
+      ELSE IF( ( .NOT.LTRANS ).AND.( .NOT.LSAME( TRANS, 'N' ) ) )THEN
+         INFO = -2
+      ELSE IF( M.LT.0 ) THEN
+         INFO = -3
+      ELSE IF( N.LT.0 ) THEN
+         INFO = -4
+      ELSE IF( LDH.LT.1 .OR. ( LSIDE .AND. LDH.LT.M ) .OR. &
+                       ( .NOT.LSIDE .AND. LDH.LT.N ) ) THEN
+         INFO = -7
+      ELSE IF( LDA.LT.MAX( 1, M ) ) THEN
+         INFO = -9
+      ELSE IF( LDB.LT.MAX( 1, M ) ) THEN
+         INFO = -11
+      END IF
 !C
-!      IF ( INFO.NE.0 ) THEN
+      IF ( INFO.NE.0 ) THEN
 !C
 !C        Error return.
 !C
 !         CALL XERBLA( 'MB01UD', -INFO )
-!         RETURN
-!      END IF
+         RETURN
+      END IF
 !C
 !C     Quick return, if possible.
 !C
@@ -19258,16 +19315,18 @@ C
          IF( M.GT.2 ) &
             CALL DSWAP( M-2, H( 3, 2 ), LDH+1, H( 3, 1 ), 1 )
          IF( LTRANS ) THEN
-            !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,H,A) PRIVATE(J,I,T0)
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(B,H,A,N,M) PRIVATE(J,I,T0)
             DO 20 J = 1, N
-               !$OMP SIMD ALIGNED(B:64,H,A) LINEAR(I:1) UNROLL PARTIAL(10)
+               !$OMP SIMD ALIGNED(B:64,H,A,ALPHA) LINEAR(I:1) UNROLL PARTIAL(10)
                DO 10 I = 1, M - 1
                   T0 = B(I,J)
                   B( I, J ) = T0 + ALPHA*H( I+1, 1 )*A( I+1, J )
    10          CONTINUE
    20       CONTINUE
           ELSE
-             !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(B,H,A) PRIVATE(J,I,T0)   
+             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+             !$OMP& SHARED(B,H,A,N,M,ALPHA) PRIVATE(J,I,T0)   
             DO 40 J = 1, N
                !$OMP SIMD ALIGNED(B:64,H,A) LINEAR(I:1) UNROLL PARTIAL(10)
                DO 30 I = 2, M
@@ -19282,12 +19341,16 @@ C
       ELSE
 !C
          IF( LTRANS ) THEN
+            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(N,ZERO,ALPHA,M,H,A,B) PRIVATE(J)
             DO 50 J = 1, N - 1
                IF ( H( J+1, J ).NE.ZERO ) &
                   CALL DAXPY( M, ALPHA*H( J+1, J ), A( 1, J ), 1, &
                               B( 1, J+1 ), 1 )
    50       CONTINUE
-         ELSE
+          ELSE
+              !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+            !$OMP& SHARED(N,ZERO,ALPHA,M,H,A,B) PRIVATE(J)  
             DO 60 J = 1, N - 1
                IF ( H( J+1, J ).NE.ZERO ) &
                  CALL DAXPY( M, ALPHA*H( J+1, J ), A( 1, J+1 ), 1, &
