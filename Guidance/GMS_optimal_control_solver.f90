@@ -1005,7 +1005,7 @@ C  SUM UP TOTAL NUMBER N OF SPLINE-BREAKPOINTS
 !C  STORE CONTROLS
 
          J = 1
-         !$OMP PARALLEL DO SCHEDULE(DYNAMIC) DEFAULT(NONE) PRIVATE(I,E,J) SHARED(NU,IV,X,G)
+         !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) PRIVATE(I,E,J) SHARED(NU,IV,X,G,N1,N2,N3,N4,N5,T)
       DO 570 I=1,NU
          E = SPLINT (IV(NU+I), IV(I), X(N1+J), X(J), &
             X(N2+J), X(N3+J), X(N4+J), X(N5+J), T)
@@ -1353,7 +1353,7 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
 
           !C**  LINEAR SPLINE COEFFICIENTS  **
           
-      !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,Y,X) PRIVATE(I) IF(N>=1000)
+      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(A,Y,X) PRIVATE(I,N)
    60 DO 70 I=1,N-1
    70     A(I) = (Y(I+1)-Y(I))/(X(I+1)-X(I))
                           GOTO 220
@@ -1363,16 +1363,19 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
 !C**  COMPUTATION OF THE ELEMENTS OF THE TRIDIAGONAL SYSTEM  **
 
       80 V = ZERO
-          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,X,Y,B) PRIVATE(I,U,V)  IF(N>=1000)           
+     
+      !$OMP PARALLEL  DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(C,X,Y,B,N) PRIVATE(I,U,V)         
       DO 90 I = 1,N-1
           C(I) = X(I+1)-X(I)
           U = (Y(I+1)-Y(I))/C(I)
           B(I) = U-V
-   90     V = U
+     90   V = U
+       
       U = ZERO
       V = U
       B(1) = V
-     
+    
+      
       DO 100 I = 2,N-1
           B(I) = B(I)+U*B(I-1)
           A(I) = TWO*(X(I-1)-X(I+1))-U*V
@@ -1388,7 +1391,7 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
       DO 110 I = 2,N-1
           IBACK = N+1-I
 110       B(IBACK) = (C(IBACK)*B(IBACK+1)-B(IBACK))/A(IBACK)
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,B,A,Y) PRIVATE(I,U,V) IF(N>=1000)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(C,B,A,Y,N) PRIVATE(I,U,V) 
       DO 120 I = 1,N-1
           V = C(I)
           U = B(I+1)-B(I)
@@ -1401,13 +1404,17 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
 
                           !C**  A PRIORI COMPUTATION OF THE TENSION PARAMETERS  **
                           
-        !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(C,X) PRIVATE(I)  
+  !$OMP PARALLEL
+  !$OMP DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(C,X,N) PRIVATE(I)  
   130 DO 132 I = 1,N-1
-  132       C(I) = X(I+1)-X(I)
-              !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,Y,X) PRIVATE(I)  IF(N>=1000)               
+     132     C(I) = X(I+1)-X(I)
+  !$OMP END DO                           
+  !$OMP DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(A,Y,X,N) PRIVATE(I)               
       DO 134 I = 2,N-1
-134      B(I) = (Y(I+1)-Y(I))/C(I)-(Y(I)-Y(I-1))/C(I-1)
-          !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,B,Y,C) PRIVATE(I,H) IF(N>=1000)
+      134   B(I) = (Y(I+1)-Y(I))/C(I)-(Y(I)-Y(I-1))/C(I-1)
+      !$OMP END DO   
+      !$OMP DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+      !$OMP SHARED(A,B,Y,C,N,ZERO,UMAX,THREE,ZERO) PRIVATE(I,H) 
       DO 135 I = 2,N-2
           IF (B(I)*B(I+1) .EQ. ZERO) THEN
 !C             ABNORMAL CASE
@@ -1426,7 +1433,9 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
           END IF
           A(I) = MIN(UMAX,A(I))
           IF (A(I) .LT. THREE) A(I) = ZERO
-  135 CONTINUE
+135     CONTINUE
+          !$OMP END DO
+          !$OMP END PARALLEL
       A(1) = A(2)
       A(N-1) = A(N-2)
        !$OMP SIMD ALIGNED(P:64,A,C) LINEAR(I:1)    
@@ -1436,7 +1445,8 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
 !C**  COMPUTATION OF THE ELEMENTS OF THE TRIDIAGONAL SYSTEM  **
 
 138      U = Y(1)
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(A,Y,X,C) PRIVATE(I,V,H,U,HP,D1,D2,W,C1,C2) IF(N>=1000)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
+         !$OMP SHARED(A,Y,X,C,N) PRIVATE(I,V,H,U,HP,D1,D2,W,C1,C2) 
       DO 140 I = 2,N
           V = Y(I)
           H = X(I)-X(I-1)
@@ -1501,7 +1511,7 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
                           GOTO 220
 
 !C**  AKIMA SPLINE COEFFICIENTS  **
-       !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(P,Y,X) PRIVATE(I)
+       !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(P,Y,X,N) PRIVATE(I)
   180 DO 190 I=1,N-1
   190     P(I) = (Y(I+1)-Y(I))/(X(I+1)-X(I))
 
@@ -1589,7 +1599,7 @@ SUBROUTINE SPLINE (MODE, N, X, Y, P, A, B, C) !GCC$ ATTRIBUTES hot :: SPLINE !GC
           V = ABS(P(N-1)-P(N-2))
           A(N) = (U*P(N-1)+V*D1)/(U+V)
       ENDIF
-         !$OMP PARALLEL DO SCHEDULE(STATIC,4) DEFAULT(NONE) SHARED(X,B,P,A,C) PRIVATE(I,H) IF(N>=1000)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(X,B,P,A,C,N) PRIVATE(I,H)
       DO 210 I=1,N-1
           H = X(I+1)-X(I)
           B(I) = (P(I)+P(I)+P(I)-A(I)-A(I)-A(I+1))/H
@@ -3548,7 +3558,8 @@ SUBROUTINE PD87(F, N, Y, T, H, F1, F2, F3, F4, F5, &
   100 E(I) = Y(I)+T1*F1(I)+T2*F2(I)+T3*F3(I)+T4*F4(I)+T5*F5(I)+T6*F6(I)+ &
              T7*F7(I)+T8*F8(I)
       CALL F (T+(1201146811.0D0/1299019798.0D0)*H, E, F9, W, IW)
-      T1 = 0.2588609164382642820305D0*H   
+      T1 = 0.2588609164382642820305D0*H
+      T2 = 
       !T1 = (   185892177.0D0
      !.     /   718116043.0D0) * H
       !T2 = ( -3185094517.0D0
@@ -3633,8 +3644,8 @@ C   LOCALLY EXTRAPOLATED SOLUTION & ERROR
      .   + (           2.0D0
      .     /          45.0D0) * F10(I))
   130 S(I) = Y(I)+H*S(I)
-      RETURN
-      END
+     
+END SUBROUTINE
 
 
 !************************************************************************
