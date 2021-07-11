@@ -1554,6 +1554,633 @@ void SB03QX(const char *,
 	    int *,
 	    int *);
 
+/*
+SUBROUTINE SB03QY( JOB, TRANA, LYAPUN, N, T, LDT, U, LDU, X, LDX, &
+     SEP, THNORM, IWORK, DWORK, LDWORK, INFO)
+!C     .. Scalar Arguments ..
+      CHARACTER          JOB, LYAPUN, TRANA
+      INTEGER            INFO, LDT, LDU, LDWORK, LDX, N
+      DOUBLE PRECISION   SEP, THNORM
+!C     ..
+      !C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION   DWORK( * ), T( LDT, * ), U( LDU, * ), &
+           X( LDX, * )
+#else
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: U
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+#endif
+*/
+void SB03QY(const char *,
+            const char *,
+	    const char *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE FD01AD( JP, L, LAMBDA, XIN, YIN, EFOR, XF, EPSBCK, &
+CTETA, STETA, YQ, EPOS, EOUT, SALPH, IWARN, &
+INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         JP
+      INTEGER           INFO, IWARN, L
+      DOUBLE PRECISION  EFOR, EOUT, EPOS, LAMBDA, XIN, YIN
+!C     .. Array Arguments ..
+      !DOUBLE PRECISION  CTETA(*), EPSBCK(*), SALPH(*), STETA(*), XF(*), &
+      !                  YQ(*)
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: CTETA
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: EPSBCK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: SALPH
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: STETA
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: XF
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: YQ
+
+*/
+void FD01AD(const char *,
+            int *,
+	    double *,
+	    double *,
+	    double *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE TD05AD( UNITF, OUTPUT, NP1, MP1, W, A, B, VALR, VALI, &
+     INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         OUTPUT, UNITF
+      INTEGER           INFO, MP1, NP1
+      DOUBLE PRECISION  VALI, VALR, W
+!C     .. Array Arguments ..
+      !DOUBLE PRECISION  A(*), B(*)
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: B
+*/
+void TD05AD(const char *,
+            const char *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    double *,
+	    double *,
+	    int *);
+
+/*
+SUBROUTINE TF01QD( NC, NB, N, IORD, AR, MA, H, LDH, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, LDH, N, NB, NC
+!C     .. Array Arguments ..
+      INTEGER           IORD(*)
+      DOUBLE PRECISION  AR(*), H(LDH,*), MA(*)
+*/
+void TF01QD(int *,
+            int *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE TF01RD( NA, NB, NC, N, A, LDA, B, LDB, C, LDC, H, LDH, &
+     DWORK, LDWORK, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER           INFO, LDA, LDB, LDC, LDH, LDWORK, N, NA, NB, NC
+!C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), B(LDB,*), C(LDC,*), DWORK(*), H(LDH,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: H
+#endif  
+*/
+void TF01RD(int *,
+            int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE TC05AD( LERI, M, P, SVAL, INDEX, PCOEFF, LDPCO1, &
+LDPCO2, QCOEFF, LDQCO1, LDQCO2, RCOND, CFREQR,&
+LDCFRE, IWORK, DWORK, ZWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         LERI
+      INTEGER           INFO, LDCFRE, LDPCO1, LDPCO2, LDQCO1, LDQCO2, M, P
+    
+      DOUBLE PRECISION  RCOND
+      COMPLEX*16        SVAL
+!C     .. Array Arguments ..
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      INTEGER           INDEX(*), IWORK(*)
+      DOUBLE PRECISION  DWORK(*), PCOEFF(LDPCO1,LDPCO2,*), &
+                        QCOEFF(LDQCO1,LDQCO2,*)
+      COMPLEX*16        CFREQR(LDCFRE,*), ZWORK(*)
+#else
+      INTEGER, DIMENSION(:), ALLOCATABLE :: INDEX, IWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:,:), ALLOCATABLE :: PCOEFF
+      DOUBLE PRECISION, DIMENSION(:,:,:), ALLOCATABLE :: QCOEFF
+      COMPLEX(16), DIMENSION(:,:), ALLOCATABLE :: CFREQR
+      COMPLEX(16), DIMENSION(:), ALLOCATABLE :: ZWORK
+#endif
+*/
+void TC05AD(const char *,
+            int *,
+	    int *,
+	    std::complex<double> *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int *,
+	    double *,
+	    std::complex<double> __restrict *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    std::complex<double> __restrict *,
+	    int *);
+
+/*
+SUBROUTINE SB10KD( N, M, NP, A, LDA, B, LDB, C, LDC, FACTOR, &
+AK, LDAK, BK, LDBK, CK, LDCK, DK, LDDK, RCOND, &
+IWORK, DWORK, LDWORK, BWORK, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDAK, LDB, LDBK, LDC, LDCK, LDDK, &
+                         LDWORK, M, N, NP
+      DOUBLE PRECISION   FACTOR
+!C     ..
+!C     .. Array Arguments ..
+       DOUBLE PRECISION, DIMENSION(4) :: RCOND
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+     INTEGER            IWORK( * )
+     LOGICAL            BWORK( * )
+      DOUBLE PRECISION   A( LDA, * ), AK( LDAK, * ), B( LDB, * ), &
+                       BK( LDBK, * ), C( LDC, * ), CK( LDCK, * ), &
+                         DK( LDDK, * ), DWORK( * )
+#else
+      INTEGER, DIMENSION(:), ALLOCATABLE :: IWORK
+      LOGICAL, DIMENSION(:), ALLOCATABLE :: BWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+#endif     
+*/
+void SB10KD(int *,
+            int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    int *);
+
+/*
+SUBROUTINE SB10AD( JOB, N, M, NP, NCON, NMEAS, GAMMA, A, LDA, &
+B, LDB, C, LDC, D, LDD, AK, LDAK, BK, LDBK, CK, &
+LDCK, DK, LDDK, AC, LDAC, BC, LDBC, CC, LDCC, &
+DC, LDDC, RCOND, GTOL, ACTOL, IWORK, LIWORK, &
+DWORK, LDWORK, BWORK, LBWORK, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER            INFO, JOB, LBWORK, LDA, LDAC, LDAK, LDB, LDBC, &
+                         LDBK, LDC, LDCC, LDCK, LDD, LDDC, LDDK, LDWORK, &
+                         LIWORK, M, N, NCON, NMEAS, NP
+      DOUBLE PRECISION   ACTOL, GAMMA, GTOL
+!C     ..
+!C     .. Array Arguments ..
+      LOGICAL            BWORK( * )
+      INTEGER            IWORK( * )
+      DOUBLE PRECISION, DIMENSION(4) :: RCOND
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * ), AC( LDAC, * ), AK( LDAK, * ), &
+                        B( LDB, * ), BC( LDBC, * ), BK( LDBK, * ), &
+                        C( LDC, * ), CC( LDCC, * ), CK( LDCK, * ), &
+                        D( LDD, * ), DC( LDDC, * ), DK( LDDK, * ), &
+                        DWORK( * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+#endif
+*/
+void SB10AD(int *,
+            int *,
+	    int *,
+	    int *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+            double __restrict *,
+	    double *,
+	    double *,
+	    int __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+            int *,
+	    int *);
+	    
+/*
+SUBROUTINE SB10LD( N, M, NP, NCON, NMEAS, A, LDA, B, LDB, C, LDC, &
+D, LDD, AK, LDAK, BK, LDBK, CK, LDCK, DK, LDDK, &
+AC, LDAC, BC, LDBC, CC, LDCC, DC, LDDC, IWORK, &
+DWORK, LDWORK, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDAC, LDAK, LDB, LDBC, LDBK, LDC, &
+                        LDCC, LDCK, LDD, LDDC, LDDK, LDWORK, M, N, &
+                        NCON, NMEAS, NP
+!C     ..
+!C     .. Array Arguments ..
+      INTEGER            IWORK( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION   A( LDA, * ), AC( LDAC, * ), AK( LDAK, * ),
+                      B( LDB, * ), BC( LDBC, * ), BK( LDBK, * ),
+                      C( LDC, * ), CC( LDCC, * ), CK( LDCK, * ),
+                      D( LDD, * ), DC( LDDC, * ), DK( LDDK, * ),
+                      DWORK( * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: BK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DC
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: DK
+      DOUBLE PRECISION, DIMENSION(:),   ALLOCATABLE :: DWORK
+#endif
+*/
+void SB10LD(int *,
+            int *,
+	    int *,
+	    int *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+            int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE SB10PD( N, M, NP, NCON, NMEAS, A, LDA, B, LDB, C, LDC, &
+D, LDD, TU, LDTU, TY, LDTY, RCOND, TOL, DWORK, &
+LDWORK, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDB, LDC, LDD, LDTU, LDTY, LDWORK, &
+                         M, N, NCON, NMEAS, NP
+      DOUBLE PRECISION   TOL
+!C     ..
+!C     .. Array Arguments ..
+       DOUBLE PRECISION, DIMENSION(2)  :: RCOND
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+       DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+                       D( LDD, * ), DWORK( * ), &
+                        TU( LDTU, * ), TY( LDTY, * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: D
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: TU
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: TY
+#endif      
+*/
+void SB10PD(int *,
+            int *,
+	    int *,
+	    int *,
+	    int *,
+	    int *,
+            double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    int *);
+
+/*
+SUBROUTINE SB10QD( N, M, NP, NCON, NMEAS, GAMMA, A, LDA, B, LDB,
+C, LDC, D, LDD, F, LDF, H, LDH, X, LDX, Y, LDY,
+XYCOND, IWORK, DWORK, LDWORK, BWORK, INFO )
+!C     .. Scalar Arguments ..
+      INTEGER            INFO, LDA, LDB, LDC, LDD, LDF, LDH, LDWORK, &
+                         LDX, LDY, M, N, NCON, NMEAS, NP
+      DOUBLE PRECISION   GAMMA
+!C     ..
+!C     .. Array Arguments ..
+      INTEGER            IWORK( * )
+      LOGICAL            BWORK( * )
+      DOUBLE PRECISION,DIMENSION(2) :: XYCOND
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+     DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * ), &
+                        D( LDD, * ), DWORK( * ),  F( LDF, * ), &
+                        H( LDH, * ), X( LDX, * ), &
+                        Y( LDY, * )
+#else     
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: C
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: D
+      DOUBLE PRECISION,DIMENSION(:),   ALLOCATABLE :: DWORK
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: F
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: H
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: X
+      DOUBLE PRECISION,DIMENSION(:,:), ALLOCATABLE :: Y
+#endif
+*/
+void SB10QD((int *,
+            int *,
+	    int *,
+	    int *,
+	    int *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+            double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    int *);
+
+/*
+
+SUBROUTINE SB02RD( JOB, DICO, HINV, TRANA, UPLO, SCAL, SORT, FACT, &
+LYAPUN, N, A, LDA, T, LDT, V, LDV, G, LDG, Q, &
+LDQ, X, LDX, SEP, RCOND, FERR, WR, WI, S, LDS, &
+IWORK, DWORK, LDWORK, BWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         DICO, FACT, HINV, JOB, LYAPUN, SCAL, SORT, &
+                        TRANA, UPLO
+      INTEGER           INFO, LDA, LDG, LDQ, LDS, LDT, LDV, LDWORK, LDX, &
+                       N
+      DOUBLE PRECISION  FERR, RCOND, SEP
+!C     .. Array Arguments ..
+      LOGICAL           BWORK(*)
+      INTEGER           IWORK(*)
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A(LDA,*), DWORK(*), G(LDG,*), Q(LDQ,*),
+                      S(LDS,*), T(LDT,*), V(LDV,*), WI(*), WR(*),
+                       X(LDX,*)
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: G
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: Q
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: S
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: T
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: V
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WI
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: WR
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+#endif   
+*/
+void SB02RD(const char *,
+            const char *,
+	    const char *,
+	    const char *,
+	    const char *,
+	    const char *,
+	    const char *,
+	    const char *,
+	    const char *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    int *);
+
+/*
+SUBROUTINE MB02PD( FACT, TRANS, N, NRHS, A, LDA, AF, LDAF, IPIV, &
+EQUED, R, C, B, LDB, X, LDX, RCOND, FERR, BERR, &
+IWORK, DWORK, INFO )
+!C     .. Scalar Arguments ..
+      CHARACTER         EQUED, FACT, TRANS
+      INTEGER           INFO, LDA, LDAF, LDB, LDX, N, NRHS
+      DOUBLE PRECISION  RCOND
+!C     ..
+!C     .. Array Arguments ..
+      INTEGER           IPIV( * ), IWORK( * )
+#if (GMS_SLICOT_USE_MKL_LAPACK) == 1
+      DOUBLE PRECISION  A( LDA, * ), AF( LDAF, * ), B( LDB, * ), &
+                      BERR( * ), C( * ), DWORK( * ), FERR( * ), &
+                        R( * ), X( LDX, * )
+#else
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: A
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: AF
+      DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: B
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: BERR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: C
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: DWORK
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: FERR
+      DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: R
+       DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: X
+#endif
+*/
+void MB02PD(const char *,
+            const char *,
+	    int *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    int __restrict *,
+	    const char *,
+	    double __restrict *,
+	    double __restrict *,
+	    double __restrict *,
+	    int *,
+	    double __restrict *,
+	    int *,
+	    double *,
+	    double __restrict *,
+	    double __restrict *,
+	    int __restrict *,
+	    double __restrict *,
+	    int *);
+
+/*
+*/
+
+
 
 }
 
