@@ -49,60 +49,60 @@ namespace gms {
     }
 
     static inline
-    float skx_recovery_cycles( const uint64_t int_misc_recovery_cycles_any,
+    double skx_recovery_cycles( const uint64_t int_misc_recovery_cycles_any,
                                   const uint64_t int_misc_recovery_cycles,
 				  const bool is_ht_enabled) {
-          return (is_ht_enabled ? (float)int_misc_recovery_cycles_any/2ULL :
-	                          (float)int_misc_recovery_cycles);
+          return (is_ht_enabled ? (double)int_misc_recovery_cycles_any/2ULL :
+	                          (double)int_misc_recovery_cycles);
     }
 
     static inline
-    float  skx_executed_cycles( const uint64_t uops_executed_core_cycles_ge_1,
+    double  skx_executed_cycles( const uint64_t uops_executed_core_cycles_ge_1,
                                   const bool is_ht_enabled) {
-          return (is_ht_enabled ? (float)uops_executed_core_cycles_ge_1/2ULL :
-	                          (float)uops_executed_core_cycles_ge_1);
+          return (is_ht_enabled ? (double)uops_executed_core_cycles_ge_1/2ULL :
+	                          (double)uops_executed_core_cycles_ge_1);
     }
 
     static inline
-    float skx_sq_full_cycles( const uint64_t offcore_requests_buffer_sq_full,
+    double skx_sq_full_cycles( const uint64_t offcore_requests_buffer_sq_full,
                               const bool is_ht_enabled) {
-          return (is_ht_enabled ? (float)offcore_requests_buffer_sq_full/2ULL :
-	                          (float)offcore_requests_buffer_sq_full);
+          return (is_ht_enabled ? (double)offcore_requests_buffer_sq_full/2ULL :
+	                          (double)offcore_requests_buffer_sq_full);
     }
 
     static inline
-    float skx_cycles_0_ports_utilized( const uint64_t uops_executed_core_cycles_none,
+    double skx_cycles_0_ports_utilized( const uint64_t uops_executed_core_cycles_none,
                                        const uint64_t exe_activity_exe_bound_0_ports,
 				       const bool is_ht_enabled) {
-          return (is_ht_enabled ? (float)uops_executed_core_cycles_none/2ULL :
-	                          (float)exe_activity_exe_bound_0_ports);
+          return (is_ht_enabled ? (double)uops_executed_core_cycles_none/2ULL :
+	                          (double)exe_activity_exe_bound_0_ports);
     }
 
     static inline
-    float skx_cycles_1_ports_utilized( const uint64_t uops_executed_core_cycles_ge_1,
+    double skx_cycles_1_ports_utilized( const uint64_t uops_executed_core_cycles_ge_1,
                                        const uint64_t uops_executed_core_cycles_ge_2,
 				       const uint64_t exe_activity_ports_util,
 				       const bool is_ht_enabled) {
-          return (is_ht_enabled ? (float) (uops_executed_core_cycles_ge_1-
+          return (is_ht_enabled ? (double) (uops_executed_core_cycles_ge_1-
 	                                   uops_executed_core_cycles_ge_2)/2ULL :
-				  (float) exe_activity_ports_util);
+				  (double) exe_activity_ports_util);
     }
 
     static inline
-    float skx_cycles_2_ports_utilized( const uint64_t uops_executed_core_cycles_ge_2,
+    double skx_cycles_2_ports_utilized( const uint64_t uops_executed_core_cycles_ge_2,
                                        const uint64_t uops_executed_core_cycles_ge_3,
 				       const uint64_t exe_activity_ports_util,
 				       const bool is_ht_enabled) {
-          return (is_ht_enabled ? (float) (uops_executed_core_cycles_ge_2-
+          return (is_ht_enabled ? (double) (uops_executed_core_cycles_ge_2-
 	                                   uops_executed_core_cycles_ge_3)/2ULL :
-				   (float)exe_activity_ports_util);
+				   (double)exe_activity_ports_util);
     }
 
     static inline
-    float skx_cycles_3m_ports_utilized( const uint64_t uops_executed_core_cycles_ge_3,
+    double skx_cycles_3m_ports_utilized( const uint64_t uops_executed_core_cycles_ge_3,
                                         const bool is_ht_enabled) {
-           return (is_ht_enabled ? (float)uops_executed_core_cycles_ge_3/2ULL :
-	                           (float)uops_executed_core_cycles_ge_3);
+           return (is_ht_enabled ? (double)uops_executed_core_cycles_ge_3/2ULL :
+	                           (double)uops_executed_core_cycles_ge_3);
     }
 
 #include <algorithm>
@@ -129,48 +129,48 @@ namespace gms {
     }
 
     static inline
-    float skx_store_l2_hit_cycles( const uint64_t l2_rqsts_rfo_hit,
+    double skx_store_l2_hit_cycles( const uint64_t l2_rqsts_rfo_hit,
                                    const float mem_lock_st_fraction) {
-           return ((float)l2_rqsts_rfo_hit*Mem_L2_Store_Cost*
-	                          (1.0f-mem_lock_st_fraction));
+           return ((double)l2_rqsts_rfo_hit*Mem_L2_Store_Cost*
+	                          (1.0-mem_lock_st_fraction));
     }
 
     static inline
-    float skx_load_l2_hit(const uint64_t mem_load_retired_l2_hit,
+    double skx_load_l2_hit(const uint64_t mem_load_retired_l2_hit,
                           const uint64_t mem_load_retired_fb_hit,
 			  const uint64_t mem_load_retired_l1_miss) {
-           return ((float)mem_load_retired_l2_hit*
+           return ((double)mem_load_retired_l2_hit*
 	                    (1ULL+mem_load_retired_fb_hit)/
 			             mem_load_retired_l1_miss);
     }
 
     static inline
-    float skx_load_l3_hit(const uint64_t mem_load_retired_l3_hit,
+    double skx_load_l3_hit(const uint64_t mem_load_retired_l3_hit,
                           const uint64_t mem_load_retired_fb_hit,
 			  const uint64_t mem_load_retired_l1_miss) {
-           return ((float)mem_load_retired_l3_hit*
+           return ((double)mem_load_retired_l3_hit*
 	                    (1ULL+mem_load_retired_fb_hit)/
 			             mem_load_retired_l1_miss);
     }
 
     static inline
-    float skx_load_xsnp_hit(const uint64_t mem_load_l3_hit_retired_xsnp_hit,
+    double skx_load_xsnp_hit(const uint64_t mem_load_l3_hit_retired_xsnp_hit,
                             const uint64_t mem_load_l3_hit_retired_xsnp_hitm,
 			    const uint64_t mem_load_retired_fb_hit,
 			    const uint64_t mem_load_retired_l1_miss) {
-           return ((float)(mem_load_l3_hit_retired_xsnp_hit+
+           return ((double)(mem_load_l3_hit_retired_xsnp_hit+
 	                       mem_load_l3_hit_retired_xsnp_hitm *
-			          (1.0f-true_xsnp_hitm_fraction))*
+			          (1.0-true_xsnp_hitm_fraction))*
 			             (1ULL+mem_load_retired_fb_hit)/
 			                     mem_load_retired_l1_miss);
     }
 
     static inline
-    float skx_load_xsnp_hitm( const uint64_t mem_load_l3_hit_retired_xsnp_hitm,
+    double skx_load_xsnp_hitm( const uint64_t mem_load_l3_hit_retired_xsnp_hitm,
                               const uint64_t mem_load_retired_fb_hit,
 			      const uint64_t mem_load_retired_l1_miss,
 			      const float true_xsnp_hit_fraction) {
-            return ((float)mem_load_l3_hit_retired_xsnp_hitm*
+            return ((double)mem_load_l3_hit_retired_xsnp_hitm*
 	                          ((1ULL+mem_load_retired_fb_hit)/
 			                    mem_load_retired_l1_miss)*
 					          true_xsnp_hit_fraction);
