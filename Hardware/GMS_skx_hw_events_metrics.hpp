@@ -978,6 +978,547 @@ double skx_HA_reads_vs_all_req(const double UNC_CHA_REQUESTS_READS,
 }
 
 
+/*
+     HA - Writes vs. all requests
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_HA_writes_vs_all_req(const double UNC_CHA_REQUESTS_READS,
+                                const double UNC_CHA_REQUESTS_WRITES) {
+
+       return (UNC_CHA_REQUESTS_WRITES/
+              (UNC_CHA_REQUESTS_READS+UNC_CHA_REQUESTS_WRITES));
+}
+
+
+/*
+     HA percentage of all reads that are local.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_HA_all_reads_local(const double UNC_CHA_REQUESTS_READS_LOCAL,
+			      const double UNC_CHA_REQUESTS_READS) {
+
+       return (100.0*UNC_CHA_REQUESTS_READS_LOCAL/
+                       UNC_CHA_REQUESTS_READS);
+}
+
+
+/*
+     HA percentage of all writes that are local.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_HA_all_writes_local(const double UNC_CHA_REQUESTS_WRITES_LOCAL,
+			      const double UNC_CHA_REQUESTS_WRITES) {
+
+       return (100.0*UNC_CHA_REQUESTS_WRITES_LOCAL/
+                       UNC_CHA_REQUESTS_WRITES);
+}
+
+
+/*
+    HA conflict responses per instruction.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_HA_conflict_resp(const double UNC_CHA_SNOOP_RESP_RSPCNFLCTS,
+                            const double INST_RETIRED_ANY) {
+
+       return (UNC_CHA_SNOOP_RESP_RSPCNFLCTS/
+                                  INST_RETIRED_ANY);
+}
+
+
+/*
+    HA directory lookups that spawned a snoop (per instruction)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_HA_dir_lookup_snoop(const double UNC_CHA_DIR_LOOKUP_SNP,
+                               const double INST_RETIRED_ANY) {
+
+       return (UNC_CHA_DIR_LOOKUP_SNP/
+                          INST_RETIRED_ANY);
+}
+
+
+/*
+    HA directory lookups that did not spawn a snoop (per instruction).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_HA_dir_lookup_no_snoop(const double UNC_CHA_DIR_LOOKUP_NO_SNP,
+                               const double INST_RETIRED_ANY) {
+
+       return (UNC_CHA_DIR_LOOKUP_NO_SNP/
+                          INST_RETIRED_ANY);
+}
+
+
+/*
+   M2M directory updates (per instruction). 
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_M2M_dir_updates(const double UNC_CHA_DIR_UPDATE_HA,
+                           const double UNC_CHA_DIR_UPDATE_TOR,
+			   const double UNC_M2M_DIRECTORY_UPDATE_ANY,
+			   const double INST_RETIRED_ANY) {
+
+        const double term1 =  UNC_CHA_DIR_UPDATE_HA+
+	                      UNC_CHA_DIR_UPDATE_TOR+
+			      UNC_M2M_DIRECTORY_UPDATE_ANY;
+        return (term1/INST_RETIRED_ANY);
+}
+
+
+/*
+    M2M extra reads from XPT-UPI prefetches (per instruction).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_M2M_reads_XPT_UPI_prefetch(const double UNC_M2M_PREFCAM_INSERTS,
+                                      const double UNC_M2M_PREFCAM_DEMAND_PROMOTIONS,
+				      const double INST_RETIRED_ANY) {
+
+       return (UNC_M2M_PREFCAM_INSERTS-
+                 UNC_M2M_PREFCAM_DEMAND_PROMOTIONS/
+		                       INST_RETIRED_ANY);
+}
+
+
+/*
+    DDR data rate (MT/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_DDR_data_rate(const double UNC_M_CLOCKTICKS,
+                         const double TIME_INTERVAL_SECONDS) {
+
+       return(2.0*UNC_M_CLOCKTICKS/1000000.0/
+                           TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    Memory bandwidth read (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_memory_read_bw(const double UNC_M_CAS_COUNT_RD,
+                          const double TIME_INTERVAL_SECONDS) {
+
+       return (64.0*UNC_M_CAS_COUNT_RD/1000000.0/
+                            TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    Memory bandwidth write  (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_memory_write_bw(const double UNC_M_CAS_COUNT_WR,
+                          const double TIME_INTERVAL_SECONDS) {
+
+       return (64.0*UNC_M_CAS_COUNT_WR/1000000.0/
+                            TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    Memory bandwidth total (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_memory_bw_total(const double UNC_M_CAS_COUNT_RD,
+                           const double UNC_M_CAS_COUNT_WR,
+			   const double TIME_INTERVAL_SECONDS) {
+
+        const double term1 = UNC_M_CAS_COUNT_RD+
+	                     UNC_M_CAS_COUNT_WR;
+	return (term1*64.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+   Memory extra read b/w due to XPT prefetches (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_bw_xpt_prefetch(const double UNC_M2M_PREFCAM_INSERTS,
+                               const double UNC_M2M_PREFCAM_DEMAND_PROMOTIONS,
+			       const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = UNC_M2M_PREFCAM_INSERTS-
+                            UNC_M2M_PREFCAM_DEMAND_PROMOTIONS;
+       return (term1*64.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+     Memory extra write b/w due to directory updates (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_bw_dir_update(const double UNC_CHA_DIR_UPDATE_HA,
+                             const double UNC_CHA_DIR_UPDATE_TOR,
+			     const double UNC_M2M_DIRECTORY_UPDATE_ANY,
+			     const double TIME_INTERVAL_SECONDS) {
+
+        const double term1 = UNC_CHA_DIR_UPDATE_HA+
+	                     UNC_CHA_DIR_UPDATE_TOR+
+			     UNC_M2M_DIRECTORY_UPDATE_ANY;
+	return (term1*64.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+   DRAM RPQ read latency (ns).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_DRAM_rpq_read_latency_ns(const double UNC_M_CLOCKTICKS,
+                                    const double UNC_M_RPQ_INSERTS,
+				    const double UNC_M_RPQ_OCCUPANCY,
+				    const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = (UNC_M_RPQ_OCCUPANCY/UNC_M_RPQ_INSERTS)/
+                                                   UNC_M_CLOCKTICKS;
+       return (term1*TIME_INTERVAL_SECONDS*1000000000.0);			 
+}
+
+
+/*
+     DRAM WPQ write latency (ns)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_DRAM_rpq_write_latency_ns(const double UNC_M_CLOCKTICKS,
+                                    const double UNC_M_WPQ_INSERTS,
+				    const double UNC_M_WPQ_OCCUPANCY,
+				    const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = (UNC_M_WPQ_OCCUPANCY/UNC_M_WPQ_INSERTS)/
+                                                   UNC_M_CLOCKTICKS;
+       return (term1*TIME_INTERVAL_SECONDS*1000000000.0);			 
+}
+
+
+/*
+    Memory average number of entries in each read Q (RPQ)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_avg_rpq_read(const double UNC_M_CLOCKTICKS,
+                            const double UNC_M_RPQ_OCCUPANCY) {
+
+       return (UNC_M_RPQ_OCCUPANCY/UNC_M_CLOCKTICKS);
+}
+
+
+/*
+   memory average number of entries in each write Q (WPQ).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_avg_rpq_write(const double UNC_M_CLOCKTICKS,
+                            const double UNC_M_WPQ_OCCUPANCY) {
+
+       return (UNC_M_WPQ_OCCUPANCY/UNC_M_CLOCKTICKS);
+}
+
+
+/*
+    I/O bandwidth disk or network writes (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_IO_disk_or_net_bw_writes(const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART0,
+				    const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART1,
+				    const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART2,
+				    const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART3,
+				    const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART0+
+                            UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART1+
+			    UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART2+
+			    UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART3;
+       return (term1*4.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+     I/O bandwidth disk or network reads (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_IO_disk_or_net_bw_reads(const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART0,
+				    const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART1,
+				    const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART2,
+				    const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART3,
+				    const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART0+
+                            UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART1+
+			    UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART2+
+			    UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART3;
+       return (term1*4.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    I/O bandwidth disk or network (MB/sec)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_IO_bw_disk_net_total(const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART0,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART1,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART2,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART3,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART0,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART1,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART2,
+				const double UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART3,
+				const double TIME_INTERVAL_SECONDS) {
+
+        const double term1 = UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART0+
+                             UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART1+
+			     UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART2+
+			     UNC_IIO_DATA_REQ_OF_CPU_MEM_WRITE_PART3;
+	const double term2 = UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART0+
+                             UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART1+
+			     UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART2+
+			     UNC_IIO_DATA_REQ_OF_CPU_MEM_READ_PART3;
+	return ((term1+term2)*4.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+     I/O number of partial PCI writes per second.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_PCI_part_writes_sec(const double UNC_CHA_TOR_INSERTS_IO_HIT_filter1_0x40033,
+                               const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x40033,
+			       const double TIME_INTERVAL_SECONDS) {
+
+        return ((UNC_CHA_TOR_INSERTS_IO_HIT_filter1_0x40033+
+	        UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x40033)/
+		TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    I/O write cache miss(disk/network reads) bandwidth (MB/sec)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_IO_write_cache_miss_bw(const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x49033,
+                                  const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x40033,
+				  const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x49033+
+                            UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x40033;
+       return (term1*64.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+   I/O read cache miss(disk/network writes) bandwidth (MB/sec).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_IO_read_cache_miss_bw(const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x43c33,
+                                 const double TIME_INTERVAL_SECONDS) {
+
+       return (UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x43c33*64.0/
+               1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    IO cache miss(disk/network) bandwidth (MB/sec)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_IO_cache_miss_total_bw(const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x49033,
+                                  const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x40033,
+				  const double UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x43c33,
+				  const double TIME_INTERVAL_SECONDS) {
+
+       const double term1 = UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x49033+
+                            UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x40033+
+			    UNC_CHA_TOR_INSERTS_IO_MISS_filter1_0x43c33;
+       return (term1*64.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+     MMIO reads per second.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_MMIO_reads_sec(const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40040e33,
+                          const double TIME_INTERVAL_SECONDS) {
+
+       return (UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40040e33/
+                TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+     MMIO writes  per second.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_MMIO_reads_sec(const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40041e33,
+                          const double TIME_INTERVAL_SECONDS) {
+
+       return (UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40041e33/
+                TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    Memory Page Empty vs. all requests
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_page_empty_all_reqs(const double UNC_M_PRE_COUNT_RD_u0xc,
+                                   const double UNC_M_PRE_COUNT_PAGE_MISS,
+				   const double UNC_M_CAS_COUNT_RD,
+				   const double UNC_M_CAS_COUNT_WR) {
+
+       const double term1 = UNC_M_PRE_COUNT_RD_u0xc-
+                             UNC_M_PRE_COUNT_PAGE_MISS;
+       const double term2 = UNC_M_CAS_COUNT_RD+
+                            UNC_M_CAS_COUNT_WR;
+       return (term1/term2);
+}
+
+
+/*
+    Memory Page Misses vs. all requests
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_page_misses_all_req( const double UNC_M_PRE_COUNT_PAGE_MISS,
+				    const double UNC_M_CAS_COUNT_RD,
+				    const double UNC_M_CAS_COUNT_WR) {
+
+       return ( UNC_M_PRE_COUNT_PAGE_MISS/(UNC_M_CAS_COUNT_RD+
+                                           UNC_M_CAS_COUNT_WR));
+}
+
+
+/*
+   Memory Page Hits vs. all requests
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_mem_page_hits_all_req(const double UNC_M_PRE_COUNT_RD_u0xc,
+                                 const double UNC_M_CAS_COUNT_RD,
+				 const double UNC_M_CAS_COUNT_WR) {
+
+       const double term1 = UNC_M_PRE_COUNT_RD_u0xc/
+                            ( UNC_M_CAS_COUNT_RD+UNC_M_CAS_COUNT_WR);
+       return (1.0-term1);
+}
+
+
+
 
 
 #endif /*__GMS_SKX_HW_EVENTS_METRICS_HPP__*/
