@@ -2179,4 +2179,540 @@ double skx_no_smt_frontend_bw(const double CPU_CLK_UNHALTED_THREAD_ANY,
 }
 
 
+/*
+    Bad Speculation (SMT enabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_bad_speculation(const double UOPS_ISSUED_ANY,
+			   const double UOPS_RETIRED_RETIRED_SLOTS,
+			   const double INT_MISC_RECOVERY_CYCLES_ANY,
+			   const double CPU_CLK_UNHALTED_THREAD_ANY,
+			   const double HW_THREAD_COUNT) {
+
+       const double term1 = (UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRED_SLOTS)+
+                            4.0*INT_MISC_RECOVERY_CYCLES_ANY/HW_THREAD_COUNT;
+       const double term2 = 4.0*CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT;
+       return (100.0*term1/term2);
+}
+
+
+/*
+    Bad Speculation (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_bad_speculation(const double UOPS_ISSUED_ANY,
+			          const double UOPS_RETIRED_RETIRED_SLOTS,
+			          const double INT_MISC_RECOVERY_CYCLES_ANY,
+			          const double CPU_CLK_UNHALTED_THREAD) {
+
+        const double term1 = (UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRED_SLOTS)+
+                             4.0*INT_MISC_RECOVERY_CYCLES_ANY;
+	const double term2 = 4.0*CPU_CLK_UNHALTED_THREAD;
+	return (100.0*term1/term2);
+}
+
+
+/*
+    Branch Mispredicts (STM enabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_branch_mispredicts(const double UOPS_ISSUED_ANY,
+			          const double UOPS_RETIRED_RETIRED_SLOTS,
+			          const double INT_MISC_RECOVERY_CYCLES_ANY,
+			          const double CPU_CLK_UNHALTED_THREAD_ANY,
+				  const double BR_MISP_RETIRED_ALL_BRANCHES,
+				  const double MACHINE_CLEARS_COUNT,
+				  const double HW_THREAD_COUNT) {
+
+        const double term1 =  BR_MISP_RETIRED_ALL_BRANCHES/(BR_MISP_RETIRED_ALL_BRANCHES+
+	                                                    MACHINE_CLEARS_COUNT);
+	const double term2 =  (UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRED_SLOTS)+
+                               4.0*INT_MISC_RECOVERY_CYCLES_ANY/HW_THREAD_COUNT;
+	const double term3 =  4.0*CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT;
+	return (term1*100.0*term2/term3);
+}
+
+
+/*
+   Branch Misprediction (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_branch_misprediction(const double UOPS_ISSUED_ANY,
+			          const double UOPS_RETIRED_RETIRED_SLOTS,
+			          const double INT_MISC_RECOVERY_CYCLES_ANY,
+			          const double CPU_CLK_UNHALTED_THREAD,
+				  const double BR_MISP_RETIRED_ALL_BRANCHES,
+				  const double MACHINE_CLEARS_COUNT) {
+
+        const double term1 =  BR_MISP_RETIRED_ALL_BRANCHES/(BR_MISP_RETIRED_ALL_BRANCHES+
+	                                                    MACHINE_CLEARS_COUNT);
+	const double term2 =  (UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRED_SLOTS)+
+                               4.0*INT_MISC_RECOVERY_CYCLES_ANY;
+	const double term3 =  4.0*CPU_CLK_UNHALTED_THREAD;
+	return (term1*100.0*term2/term3);  
+}
+
+
+/*
+    Machine Clears (SMT enabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_machine_clears(const double UOPS_ISSUED_ANY,
+			      const double UOPS_RETIRED_RETIRED_SLOTS,
+			      const double INT_MISC_RECOVERY_CYCLES_ANY,
+			      const double CPU_CLK_UNHALTED_THREAD_ANY,
+			      const double BR_MISP_RETIRED_ALL_BRANCHES,
+			      const double MACHINE_CLEARS_COUNT,
+			      const double HW_THREAD_COUNT) {
+
+        const double term1 =  MACHINE_CLEARS_COUNT/(BR_MISP_RETIRED_ALL_BRANCHES+
+	                                                    MACHINE_CLEARS_COUNT);
+	const double term2 =  (UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRED_SLOTS)+
+                               4.0*INT_MISC_RECOVERY_CYCLES_ANY/HW_THREAD_COUNT;
+	const double term3 =  4.0*CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT;
+	return (term1*100.0*term2/term3);
+}
+
+
+/*
+    Machine Clears (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_machine_clears(const double UOPS_ISSUED_ANY,
+			          const double UOPS_RETIRED_RETIRED_SLOTS,
+			          const double INT_MISC_RECOVERY_CYCLES_ANY,
+			          const double CPU_CLK_UNHALTED_THREAD,
+				  const double BR_MISP_RETIRED_ALL_BRANCHES,
+				  const double MACHINE_CLEARS_COUNT) {
+
+        const double term1 =  MACHINE_CLEARS_COUNT/(BR_MISP_RETIRED_ALL_BRANCHES+
+	                                                    MACHINE_CLEARS_COUNT);
+	const double term2 =  (UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRED_SLOTS)+
+                               4.0*INT_MISC_RECOVERY_CYCLES_ANY;
+	const double term3 =  4.0*CPU_CLK_UNHALTED_THREAD;
+	return (term1*100.0*term2/term3);
+}
+
+
+/*
+   Backend Bound (SMT enabled)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_backend_bound(const double IDQ_UOPS_NOT_DELIVERED_CORE,
+                             const double UOPS_ISSUED_ANY,
+			     const double INT_MISC_RECOVERY_CYCLES_ANY,
+			     const double CPU_CLK_UNHALTED_THREAD_ANY,
+			     const double UOPS_RETIRED_RETIRE_SLOTS,
+			     const double HW_THREAD_COUNT) {
+
+        const double term1 = UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRE_SLOTS+4.0*
+	                     (INT_MISC_RECOVERY_CYCLES_ANY/HW_THREAD_COUNT);
+	const double term2 = IDQ_UOPS_NOT_DELIVERED_CORE+UOPS_RETIRED_RETIRE_SLOTS;
+	const double term3 = 4.0*CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT;
+	return (100.0-(100.0*(term1+term2)/term3));
+}
+
+
+/*
+    Backend Boud (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_backend_bound(const double IDQ_UOPS_NOT_DELIVERED_CORE,
+                                const double UOPS_ISSUED_ANY,
+			        const double INT_MISC_RECOVERY_CYCLES_ANY,
+			        const double CPU_CLK_UNHALTED_THREAD,
+			        const double UOPS_RETIRED_RETIRE_SLOTS) {
+
+        const double term1 = UOPS_ISSUED_ANY-UOPS_RETIRED_RETIRE_SLOTS+4.0*
+	                     INT_MISC_RECOVERY_CYCLES_ANY;
+	const double term2 = IDQ_UOPS_NOT_DELIVERED_CORE+UOPS_RETIRED_RETIRE_SLOTS;
+	const double term3 = 4.0*CPU_CLK_UNHALTED_THREAD;
+	return (100.0-(100.0*(term1+term2)/term3));  
+}
+
+
+/*
+    L1 Bound
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L1D_bound(const double CYCLE_ACTIVITY_STALLS_MEM_ANY,
+                    const double CYCLE_ACTIVITY_STALLS_L1D_MISS,
+		    const double CPU_CLK_UNHALTED_THREAD) {
+
+        return (100.0*(CYCLE_ACTIVITY_STALLS_MEM_ANY-
+	               CYCLE_ACTIVITY_STALLS_L1D_MISS)/
+		       CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+   DTLB Load
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_DTLB_load(const double DTLB_LOAD_MISSES_STLB_HIT,
+                     const double DTLB_LOAD_MISSES_WALK_ACTIVE,
+		     const double CPU_CLK_UNHALTED_THREAD) {
+
+       const double term1 = 7.0*DTLB_LOAD_MISSES_STLB_HIT+
+                            DTLB_LOAD_MISSES_WALK_ACTIVE;
+       return (100.0*term1/CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+    Stores forward blocked.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_stores_fwd_blocked(const double LD_BLOCKS_STORE_FORWARD,
+                              const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*(13.0*LD_BLOCKS_STORE_FORWARD)/
+                      CPU_CLK_UNHALTED_THREAD);
+}
+
+#include <algorithm>
+
+
+/*
+    Lock latency.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_lock_latency(const double MEM_INST_RETIRED_LOCK_LOADS,
+                        const double CPU_CLK_UNHALTED_THREAD,
+			const double MEM_INST_RETIRED_ALL_STORES,
+			const double OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO) {
+
+        const double term1 = MEM_INST_RETIRED_LOCK_LOADS/
+	                     MEM_INST_RETIRED_ALL_STORES;
+	const double term2 = std::min(CPU_CLK_UNHALTED_THREAD,
+	                              OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO);
+	return (100.0*(term1*term2)/CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+   L2 Bounds
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L2_bounds(const double CYCLE_ACTIVITY_STALLS_L1D_MISS,
+                     const double CYCLE_ACTIVITY_STALLS_L2_MISS,
+		     const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*(CYCLE_ACTIVITY_STALLS_L1D_MISS-
+                      CYCLE_ACTIVITY_STALLS_L2_MISS)/
+		      CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+   L3 Bounds.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L3_bounds(const double CYCLE_ACTIVITY_STALLS_L2_MISS,
+                     const double CYCLE_ACTIVITY_STALLS_L3_MISS,
+		     const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*(CYCLE_ACTIVITY_STALLS_L2_MISS-
+                      CYCLE_ACTIVITY_STALLS_L3_MISS)/
+		      CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+    Contested Accesses
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_contested_accesses(const double MEM_LOAD_L3_HIT_RETIRED_XSNP_HITM,
+                              const double CPU_CLK_UNHALTED_THREAD,
+			      const double MEM_LOAD_L3_HIT_RETIRED_XSNP_MISS) {
+
+       const double term1 =  MEM_LOAD_L3_HIT_RETIRED_XSNP_HITM+
+                              MEM_LOAD_L3_HIT_RETIRED_XSNP_MISS;
+       return (100.0*(60.0*term1/CPU_CLK_UNHALTED_THREAD));
+}
+
+
+/*
+    Data Sharing
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_data_sharing(const double MEM_LOAD_L3_HIT_RETIRED_XSNP_HIT,
+                        const double CPU_CLK_UNHALTED_THREAD) {
+
+       const double term1 = 43.0*MEM_LOAD_L3_HIT_RETIRED_XSNP_HIT/
+                            CPU_CLK_UNHALTED_THREAD;
+       return (100.0*term1);
+}
+
+
+/*
+   L3 latency.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L3_latency(const double OFFCORE_REQUESTS_OUTSTANDING_DEMAND_DATA_RD_GE_6,
+                      const double OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+		      const double CPU_CLK_UNHALTED_THREAD,
+		      const double OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_DATA_RD,
+		      const double OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_L3_MISS_DEMAND_DATA_RD) {
+
+        const double term1 = (std::min(OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_DATA_RD,
+	                              CPU_CLK_UNHALTED_THREAD)-std::min(OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_L3_MISS_DEMAND_DATA_RD,
+				      CPU_CLK_UNHALTED_THREAD))/CPU_CLK_UNHALTED_THREAD;
+	const double term2 = (std::min(OFFCORE_REQUESTS_OUTSTANDING_DEMAND_DATA_RD_GE_6,
+	                               CPU_CLK_UNHALTED_THREAD)-std::min(OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+				       CPU_CLK_UNHALTED_THREAD))/CPU_CLK_UNHALTED_THREAD;
+	return (100*(term1-term2));
+}
+
+
+/*
+   L3 Bandwidth
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L3_bandwidth(const double OFFCORE_REQUESTS_OUTSTANDING_DEMAND_DATA_RD_GE_6,
+                        const double OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+			const double CPU_CLK_UNHALTED_THREAD) {
+
+       const double term1 = (std::min(OFFCORE_REQUESTS_OUTSTANDING_DEMAND_DATA_RD_GE_6,
+                                      CPU_CLK_UNHALTED_THREAD)-std::min(OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+				      CPU_CLK_UNHALTED_THREAD))/CPU_CLK_UNHALTED_THREAD;
+       return (100.0*term1);
+}
+
+
+/*
+    SuperQueue Full (SMT enabled)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_SQ_full(const double CPU_CLK_UNHALTED_THREAD_ANY,
+                       const double OFFCORE_REQUESTS_BUFFER_SQ_FULL,
+		       const double HW_THREAD_COUNT) {
+
+       const double term1 = OFFCORE_REQUESTS_BUFFER_SQ_FULL/
+                            HW_THREAD_COUNT;
+       const double term2 = CPU_CLK_UNHALTED_THREAD_ANY/
+                            HW_THREAD_COUNT;
+       return (100.0*term1/term2);
+}
+
+
+/*
+    SuperQueue Full (SMT disabled)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_SQ_full(const double CPU_CLK_UNHALTED_THREAD,
+                       const double OFFCORE_REQUESTS_BUFFER_SQ_FULL){
+	 
+       return (100.0*OFFCORE_REQUESTS_BUFFER_SQ_FULL/
+                           CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+     Memory bound.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_memory_bound(const double CYCLE_ACTIVITY_STALLS_L3_MISS,
+                        const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*CYCLE_ACTIVITY_STALLS_L3_MISS/
+                      CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+    Memory bandwidth.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_memory_bandwidth(const double OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+                            const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*std::min(OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+                              CPU_CLK_UNHALTED_THREAD)/CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+   Memory latency
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_memory_latency(const double OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+                          const double OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_L3_MISS_DEMAND_DATA_RD,
+			  const double CPU_CLK_UNHALTED_THREAD) {
+
+       const double term1 = (std::min(OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_L3_MISS_DEMAND_DATA_RD,
+                                      CPU_CLK_UNHALTED_THREAD)-std::min(OFFCORE_REQUESTS_OUTSTANDING_L3_MISS_DEMAND_DATA_RD_GE_6,
+				      CPU_CLK_UNHALTED_THREAD))/CPU_CLK_UNHALTED_THREAD;
+       return (100.0*term1);
+}
+
+
+/*
+   Stores bound.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_stores_bound(const double EXE_ACTIVITY_BOUND_ON_STORES,
+                        const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*( EXE_ACTIVITY_BOUND_ON_STORES/
+                       CPU_CLK_UNHALTED_THREAD));
+}
+
+
+/*
+   DTLB stores (SMT enabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_DTLB_stores(const double DTLB_STORE_MISSES_STLB_HIT,
+                       const double DTLB_STORE_MISSES_WALK_ACTIVE,
+		       const double CPU_CLK_UNHALTED_THREAD_ANY,
+		       const double HW_THREAD_COUNT) {
+
+       const double term1 = 7.0*DTLB_STORE_MISSES_STLB_HIT+
+                             DTLB_STORE_MISSES_WALK_ACTIVE;
+       const double term2 = CPU_CLK_UNHALTED_THREAD_ANY/
+                            HW_THREAD_COUNT;
+       return (100.0*term1/term2);
+}
+
+
+/*
+    DTLB stores (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_DTLB_stores(const double DTLB_STORE_MISSES_STLB_HIT,
+                       const double DTLB_STORE_MISSES_WALK_ACTIVE,
+		       const double CPU_CLK_UNHALTED_THREAD){
+		    
+
+       const double term1 = 7.0*DTLB_STORE_MISSES_STLB_HIT+
+                             DTLB_STORE_MISSES_WALK_ACTIVE;
+       return (100.0*term1/CPU_CLK_UNHALTED_THREAD);
+}
+
+
+/*
+    Divider.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_Divider(const double ARITH_DIVIDER_ACTIVE,
+                   const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*ARITH_DIVIDER_ACTIVE/
+                     CPU_CLK_UNHALTED_THREAD);
+}
+
+
+
+
+
+
 #endif /*__GMS_SKX_HW_EVENTS_METRICS_HPP__*/
