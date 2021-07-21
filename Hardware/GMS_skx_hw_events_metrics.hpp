@@ -2711,8 +2711,373 @@ double skx_Divider(const double ARITH_DIVIDER_ACTIVE,
 }
 
 
+/*
+   Ports Utilization
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_Ports_utilization(const double EXE_ACTIVITY_EXE_BOUND_0_PORTS,
+                             const double EXE_ACTIVITY_1_PORTS_UTIL,
+			     const double CYCLE_ACTIVITY_STALLS_MEM_ANY,
+			     const double EXE_ACTIVITY_BOUND_ON_STORES,
+			     const double EXE_ACTIVITY_2_PORTS_UTIL,
+			     const double CPU_CLK_UNHALTED_THREAD,
+			     const double INST_RETIRED_ANY) {
+
+       double term1 = 0.0;
+       if(INST_RETIRED_ANY/
+          CPU_CLK_UNHALTED_THREAD > 1.8) {
+          term1 = EXE_ACTIVITY_2_PORTS_UTIL;
+       }
+       const double term2 = EXE_ACTIVITY_EXE_BOUND_0_PORTS+
+                            EXE_ACTIVITY_1_PORTS_UTIL+
+			    term1+CYCLE_ACTIVITY_STALLS_MEM_ANY+
+			    EXE_ACTIVITY_BOUND_ON_STORES;
+       const double term3 = CYCLE_ACTIVITY_STALLS_MEM_ANY-
+                            EXE_ACTIVITY_BOUND_ON_STORES;
+       return (100.0*(term2-term3/CPU_CLK_UNHALTED_THREAD));
+}
 
 
+/*
+     Port_0 Utilized.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_Port_0_utilized(const double UOPS_EXECUTED_CORE_CYCLES_NONE,
+                               const double CPU_CLK_UNHALTED_THREAD_ANY,
+			       const double EXE_ACTIVITY_EXE_BOUND_0_PORTS,
+			       const double HW_THREAD_COUNT) {
 
+        double term1 = 0.0;
+	HW_THREAD_COUNT > 1.0 ? term1 = UOPS_EXECUTED_CORE_CYCLES_NONE/2.0 :
+	                                term1 = EXE_ACTIVITY_EXE_BOUND_0_PORTS;
+        return (100.0*(term1/(CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT)));
+}
+
+
+/*
+   Port_1 Utilized
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_Port_1_utilized(const double UOPS_EXECUTED_CORE_CYCLES_GE_1,
+                           const double CPU_CLK_UNHALTED_THREAD_ANY,
+			   const double UOPS_EXECUTED_CORE_CYCLES_GE_2,
+			   const double EXE_ACTIVITY_1_PORTS_UTIL,
+			   const double HW_THREAD_COUNT) {
+
+       double term1 = 0.0;
+       HW_THREAD_COUNT > 1.0 ? term1 = (UOPS_EXECUTED_CORE_CYCLES_GE_1-
+                                        UOPS_EXECUTED_CORE_CYCLES_GE_2)/2.0 :
+					              term1 =  EXE_ACTIVITY_1_PORTS_UTIL;
+       return (100.0*(term1/(CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT)));
+}
+
+
+/*
+   Port_2 Utilized.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_Port_2_utilized(const double UOPS_EXECUTED_CORE_CYCLES_GE_2,
+                           const double CPU_CLK_UNHALTED_THREAD_ANY,
+			   const double UOPS_EXECUTED_CORE_CYCLES_GE_3,
+			   const double EXE_ACTIVITY_2_PORTS_UTIL,
+			   const double HW_THREAD_COUNT) {
+
+       double term1 = 0.0;
+       HW_THREAD_COUNT > 1.0 ? term1 = (UOPS_EXECUTED_CORE_CYCLES_GE_2-
+                                        UOPS_EXECUTED_CORE_CYCLES_GE_3)/2.0 :
+					              term1 =  EXE_ACTIVITY_2_PORTS_UTIL;
+       return (100.0*(term1/(CPU_CLK_UNHALTED_THREAD_ANY/HW_THREAD_COUNT)));
+}
+
+
+/*
+   Port_3m Utilized.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_Port_3m_utilized(const double UOPS_EXECUTED_CORE_CYCLES_GE_3,
+                            const double CPU_CLK_UNHALTED_THREAD_ANY,
+			    const double HW_THREAD_COUNT) {
+
+       const double term1 = UOPS_EXECUTED_CORE_CYCLES_GE_3/
+                            HW_THREAD_COUNT;
+       const double term2 = CPU_CLK_UNHALTED_THREAD_ANY/
+                            HW_THREAD_COUNT;
+       return (100.0*(term1/term2));
+}
+
+
+/*
+   Retiring (SMT enabled)
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_retiring(const double CPU_CLK_UNHALTED_THREAD_ANY,
+                        const double UOPS_RETIRED_RETIRE_SLOTS,
+			const double HW_THREAD_COUNT) {
+
+       const double term1 = 4.0*(CPU_CLK_UNHALTED_THREAD_ANY/
+                                            HW_THREAD_COUNT);
+       return (100.0*(UOPS_RETIRED_RETIRE_SLOTS/term1));
+}
+
+
+/*
+   Retiring (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_retiring(const double CPU_CLK_UNHALTED_THREAD,
+                           const double UOPS_RETIRED_RETIRE_SLOTS) {
+
+       const double term1 = 4.0*CPU_CLK_UNHALTED_THREAD;
+       return (100.0*(UOPS_RETIRED_RETIRE_SLOTS/term1));
+}
+
+
+/*
+    Basic activit (SMT enabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_base_activity(const double CPU_CLK_UNHALTED_THREAD_ANY,
+                             const double UOPS_RETIRED_RETIRE_SLOTS,
+			     const double IDQ_MS_UOPS,
+			     const double UOPS_ISSUED_ANY,
+			     const double HW_THREAD_COUNT) {
+
+        const double term1 = 4.0*(CPU_CLK_UNHALTED_THREAD_ANY/
+	                                   HW_THREAD_COUNT);
+	const double term2 = UOPS_RETIRED_RETIRE_SLOTS/UOPS_ISSUED_ANY;
+	return (100.0*(UOPS_RETIRED_RETIRE_SLOTS/term1)-(term2*IDQ_MS_UOPS/term1));
+}
+
+
+/*
+    Basic activit (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_base_activity(const double CPU_CLK_UNHALTED_THREAD,
+                             const double UOPS_RETIRED_RETIRE_SLOTS,
+			     const double IDQ_MS_UOPS,
+			     const double UOPS_ISSUED_ANY) {
+			    
+
+        const double term1 = 4.0*CPU_CLK_UNHALTED_THREAD;
+	const double term2 = UOPS_RETIRED_RETIRE_SLOTS/UOPS_ISSUED_ANY;
+	return (100.0*(UOPS_RETIRED_RETIRE_SLOTS/term1)-(term2*IDQ_MS_UOPS/term1));
+}
+
+
+/*
+    FP scalar retiring fraction.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_fp_scalar_fraction(const double UOPS_RETIRED_RETIRE_SLOTS,
+                              const double FP_ARITH_INST_RETIRED_SCALAR_SINGLE,
+			      const double FP_ARITH_INST_RETIRED_SCALAR_DOUBLE) {
+
+       return (100.0*(FP_ARITH_INST_RETIRED_SCALAR_SINGLE+
+                      FP_ARITH_INST_RETIRED_SCALAR_DOUBLE)/
+		       UOPS_RETIRED_RETIRE_SLOTS);
+}
+
+
+/*
+    FP vector retiring fraction.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_fp_vector_fraction(const double UOPS_RETIRED_RETIRE_SLOTS,
+                              const double FP_ARITH_INST_RETIRED_128B_PACKED_DOUBLE,
+			      const double FP_ARITH_INST_RETIRED_128B_PACKED_SINGLE,
+			      const double FP_ARITH_INST_RETIRED_256B_PACKED_DOUBLE,
+			      const double FP_ARITH_INST_RETIRED_256B_PACKED_SINGLE,
+			      const double FP_ARITH_INST_RETIRED_512B_PACKED_DOUBLE,
+			      const double FP_ARITH_INST_RETIRED_512B_PACKED_SINGLE) {
+
+        const double term1 = FP_ARITH_INST_RETIRED_128B_PACKED_DOUBLE+
+	                     FP_ARITH_INST_RETIRED_128B_PACKED_SINGLE+
+			     FP_ARITH_INST_RETIRED_256B_PACKED_DOUBLE;
+	const double term2 = FP_ARITH_INST_RETIRED_256B_PACKED_SINGLE+
+	                     FP_ARITH_INST_RETIRED_512B_PACKED_DOUBLE+
+			     FP_ARITH_INST_RETIRED_512B_PACKED_SINGLE;
+	return (100.0*(term1+term2)/UOPS_RETIRED_RETIRE_SLOTS);
+}
+
+
+/*
+     Microcode Sequencer (SMT enabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_smt_MS(const double CPU_CLK_UNHALTED_THREAD_ANY,
+                  const double UOPS_RETIRED_RETIRE_SLOTS,
+		  const double IDQ_MS_UOPS,
+		  const double UOPS_ISSUED_ANY,
+		  const double HW_THREAD_COUNT) {
+
+       const double term1 = IDQ_MS_UOPS/(4.0*(CPU_CLK_UNHALTED_THREAD_ANY/
+                                              HW_THREAD_COUNT));
+       return (100.0*(UOPS_RETIRED_RETIRE_SLOTS/UOPS_ISSUED_ANY)*term1);
+}
+
+
+/*
+     Microcode Sequencer (SMT disabled).
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_no_smt_MS(const double CPU_CLK_UNHALTED_THREAD,
+                  const double UOPS_RETIRED_RETIRE_SLOTS,
+		  const double IDQ_MS_UOPS,
+		  const double UOPS_ISSUED_ANY) {
+	
+
+       const double term1 = IDQ_MS_UOPS/(4.0*CPU_CLK_UNHALTED_THREAD);
+                                             
+       return (100.0*(UOPS_RETIRED_RETIRE_SLOTS/UOPS_ISSUED_ANY)*term1);
+}
+
+
+/*
+    LLC Local code/data reads hitting in S state in snoop filter per instruction.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L3_code_data_read_S_hit(const double UNC_CHA_LLC_LOOKUP_DATA_READ_state_0x2,
+                                   const double INST_RETIRED_ANY) {
+
+       return (UNC_CHA_LLC_LOOKUP_DATA_READ_state_0x2/
+                                    INST_RETIRED_ANY);
+}
+
+
+/*
+     LLC Local code/data reads hitting in E state in snoop filter per instruction.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L3_code_data_read_E_hit(const double UNC_CHA_LLC_LOOKUP_DATA_READ_state_0x4,
+                                   const double INST_RETIRED_ANY) {
+
+        return (UNC_CHA_LLC_LOOKUP_DATA_READ_state_0x4/
+	                           INST_RETIRED_ANY);
+}
+
+
+/*
+     LLC Local code/data reads hitting in M/E/F states in LLC per instruction.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_L3_code_data_read_MEF_hit(const double UNC_CHA_LLC_LOOKUP_DATA_READ_state_0xE0,
+                                     const double INST_RETIRED_ANY) {
+
+        return (UNC_CHA_LLC_LOOKUP_DATA_READ_state_0xE0/
+	                                INST_RETIRED_ANY);
+}
+
+
+/*
+     INT_MISC.RECOVERY_CYCLES ratio
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_int_misc_recovery_cycles_ratio(const double INT_MISC_RECOVERY_CYCLES,
+                                          const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*( INT_MISC_RECOVERY_CYCLES/
+                           CPU_CLK_UNHALTED_THREAD));
+}
+
+
+/*
+   INT_MISC.CLEAR_RESTEER_CYCLES ratio
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_int_misc_clear_resteers_cycles_ratio(const double  INT_MISC_CLEAR_RESTEER_CYCLES,
+                                                const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*( INT_MISC_CLEAR_RESTEER_CYCLES/
+                           CPU_CLK_UNHALTED_THREAD));
+}
+
+
+/*
+   RS_EVENTS.EMPTY_CYCLES ratio
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_rs_events_empty_cycles_ratio(const double RS_EVENTS_EMPTY_CYCLES,
+                                        const double CPU_CLK_UNHALTED_THREAD) {
+
+       return (100.0*(RS_EVENTS_EMPTY_CYCLES/
+                      CPU_CLK_UNHALTED_THREAD));
+}
 
 #endif /*__GMS_SKX_HW_EVENTS_METRICS_HPP__*/
