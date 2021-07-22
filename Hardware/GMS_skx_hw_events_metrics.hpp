@@ -456,7 +456,7 @@ __attribute__((pure))
 __attribute__((aligned(32)))
 #pragma omp declare simd
 static inline
-double skx_L3_rf_references_per_instr(const double UNC_CHA_TOR_INSERTS_IA_filter1_0x40033,
+double skx_L3_rfo_references_per_instr(const double UNC_CHA_TOR_INSERTS_IA_filter1_0x40033,
                                       const double INST_RETIRED_ANY) {
 
         return (UNC_CHA_TOR_INSERTS_IA_filter1_0x40033/
@@ -472,7 +472,7 @@ __attribute__((pure))
 __attribute__((aligned(32)))
 #pragma omp declare simd
 static inline
-double skx_all_mpi(const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x12D40433,
+double skx_L3_all_mpi(const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x12D40433,
                    const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x12CC0233,
                    const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x12C40033,
                    const double INST_RETIRED_ANY) {
@@ -540,7 +540,7 @@ __attribute__((pure))
 __attribute__((aligned(32)))
 #pragma omp declare simd
 static inline
-double skx_L3total_hitm_per_instr(const double OFFCORE_RESPONSE_request_ALL_READS_response_L3_MISS_REMOTE_HITM,
+double skx_L3_total_hitm_per_instr(const double OFFCORE_RESPONSE_request_ALL_READS_response_L3_MISS_REMOTE_HITM,
                                 const double INST_RETIRED_ANY) {
 
        return (OFFCORE_RESPONSE_request_ALL_READS_response_L3_MISS_REMOTE_HITM/
@@ -626,7 +626,7 @@ __attribute__((pure))
 __attribute__((aligned(32)))
 #pragma omp declare simd
 static inline
-double skx_L3_avg_data_read_rem_req_ns(const double UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40431,
+double skx_L3_avg_data_read_rem_ns(const double UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40431,
                                        const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40431,
 				       const double UNC_CHA_CLOCKTICKS,
 			               const double TIME_INTERVAL_SEC) {
@@ -645,7 +645,7 @@ __attribute__((pure))
 __attribute__((aligned(32)))
 #pragma omp declare simd
 static inline
-double skx_L3_avg_data_read_loc_req_unc_clk(const double UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40432,
+double skx_L3_avg_data_read_loc_unc_clk(const double UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40432,
                                             const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40432) {
 
        return ( UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40432/
@@ -661,7 +661,7 @@ __attribute__((pure))
 __attribute__((aligned(32)))
 #pragma omp declare simd
 static inline
-double skx_L3_data_read_rem_req_unc_clk(const double UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40432,
+double skx_L3_avg_data_read_rem_unc_clk(const double UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40432,
                                         const double UNC_CHA_TOR_INSERTS_IA_MISS_filter1_0x40432) {
 
        return (UNC_CHA_TOR_OCCUPANCY_IA_MISS_filter1_0x40432/
@@ -3079,5 +3079,41 @@ double skx_rs_events_empty_cycles_ratio(const double RS_EVENTS_EMPTY_CYCLES,
        return (100.0*(RS_EVENTS_EMPTY_CYCLES/
                       CPU_CLK_UNHALTED_THREAD));
 }
+
+
+/*
+    BR_INST_RETIRED.ALL_BRANCHES ratio
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_br_inst_retired_all_branches_ratio(const double  BR_INST_RETIRED_ALL_BRANCHES,
+                                              const double  INST_RETIRED_ANY) {
+
+       return (100.0*(BR_INST_RETIRED_ALL_BRANCHES/
+                      INST_RETIRED_ANY));
+}
+
+
+/*
+    BR_INST_RETIRED.CONDITIONAL
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_br_inst_retired_conditional_ratio(const double BR_INST_RETIRED_CONDITIONAL,
+                                             const double BR_INST_RETIRED_ALL_BRANCHES) {
+
+       return (100.0*(BR_INST_RETIRED_CONDITIONAL/
+                      BR_INST_RETIRED_ALL_BRANCHES));
+}
+
+
+/*
+*/
 
 #endif /*__GMS_SKX_HW_EVENTS_METRICS_HPP__*/
