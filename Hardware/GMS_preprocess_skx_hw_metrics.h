@@ -738,4 +738,436 @@ skx_M2M_dir_updates_samples(const double * __restrict,
 	                    const int32_t)  __attribute__((hot))
                                                __attribute__((aligned(32)));
 
+
+/*
+    M2M extra reads from XPT-UPI prefetches (per instruction).
+*/
+void
+skx_M2M_reads_XPT_UPI_prefetch_samples(const double * __restrict,
+                                       const double * __restrict,
+			               const double * __restrict,
+			               double * __restrict,
+	                               const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+     DDR data rate (MT/sec).
+*/
+void
+skx_DDR_date_rate_samples(const double * __restrict,
+                          const double * __restrict,
+	                  double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                          __attribute__((aligned(32)));
+
+
+/*
+    Memory bandwidth read (MB/sec).
+*/
+void
+skx_memory_read_bw_samples(const double * __restrict,
+                          const double * __restrict,
+	                  double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                          __attribute__((aligned(32)));
+
+
+/*
+    Load instructions per memory bandwidth.
+*/
+void
+skx_load_mem_inst_mem_bw_samples(const double * __restrict,
+                                 const double * __restrict,
+			         const double * __restrict,
+			         double * __restrict,
+	                         const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+    Memory bandwidth write  (MB/sec).
+*/
+void
+skx_memory_write_bw_samples(const double * __restrict,
+                          const double * __restrict,
+	                  double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                          __attribute__((aligned(32)));
+
+
+/*
+    Store instructions per memory bandwidth.
+*/
+void
+skx_store_mem_inst_mem_bw_samples(const double * __restrict,
+                                 const double * __restrict,
+			         const double * __restrict,
+			         double * __restrict,
+	                         const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+    Memory bandwidth total (MB/sec).
+*/
+void
+skx_mem_bw_total_samples(const double * __restrict,
+                         const double * __restrict,
+			 const double * __restrict,
+			 double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+     Load and store instructions per total memory bandwidth.
+*/
+void
+skx_total_mem_inst_mem_bw_samples(const double * __restrict,
+                         const double * __restrict,
+			 const double * __restrict,
+			 const double * __restrict,
+			 const double * __restrict,
+			 double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+    Memory extra read b/w due to XPT prefetches (MB/sec).
+*/
+void
+skx_XPT_mem_bw_prefetch_samples(const double * __restrict,
+                         const double * __restrict,
+			 const double * __restrict,
+			 double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+    Memory extra write b/w due to directory updates (MB/sec).
+*/
+void
+skx_mem_bw_dir_update_samples(const double * __restrict,
+                         const double * __restrict,
+			 const double * __restrict,
+			 const double * __restrict,
+			 double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+      DRAM RPQ read latency (ns).
+*/
+void
+skx_DRAM_RPQ_read_latency_samples(const double * __restrict,
+                         const double * __restrict,
+			 const double * __restrict,
+			 const double * __restrict,
+			 double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+     DRAM RPQ write latency (ns).
+*/
+void
+skx_DRAM_RPQ_write_latency_samples(const double * __restrict,
+                         const double * __restrict,
+			 const double * __restrict,
+			 const double * __restrict,
+			 double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                               __attribute__((aligned(32)));
+
+
+/*
+    Memory average number of entries in each read Q (RPQ)
+*/
+void
+skx_RPQ_mem_avg_writes_samples(const double * __restrict,
+                          const double * __restrict,
+	                  double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                          __attribute__((aligned(32)));
+
+
+/*
+    memory average number of entries in each write Q (WPQ).
+*/
+void
+skx_RPQ_mem_avg_reads_samples(const double * __restrict,
+                          const double * __restrict,
+	                  double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                          __attribute__((aligned(32)));
+
+
+/*
+     I/O bandwidth disk or network writes (MB/sec).
+*/
+void
+skx_IO_disk_or_net_writes_bw_samples(const double * __restrict,
+                                     const double * __restrict,
+			             const double * __restrict,
+			             const double * __restrict,
+			             const double * __restrict,
+			             double * __restrict,
+	                             const int32_t)  __attribute__((hot))
+                                                     __attribute__((aligned(32)));
+
+
+/*
+     I/O bandwidth disk or network reads (MB/sec).
+*/
+void
+skx_IO_disk_or_net_writes_bw_samples(const double * __restrict,
+                                     const double * __restrict,
+			             const double * __restrict,
+			             const double * __restrict,
+			             const double * __restrict,
+			             double * __restrict,
+	                             const int32_t)  __attribute__((hot))
+                                                     __attribute__((aligned(32)));
+
+
+/*
+   I/O bandwidth disk or network (MB/sec)
+*/
+void
+skx_IO_total_bw_samples(const double * __restrict,
+                        const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			double * __restrict,
+	                const int32_t)  __attribute__((hot))
+                                        __attribute__((aligned(32)));
+
+
+/*
+   I/O number of partial PCI writes per second.
+*/
+void
+skx_PCI_part_writes_sec_samples(const double * __restrict,
+			         const double * __restrict,
+			        const double * __restrict,
+			        double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+/*
+    I/O write cache miss(disk/network reads) bandwidth (MB/sec)
+*/
+void
+skx_IO_writes_cache_miss_samples(const double * __restrict,
+			         const double * __restrict,
+			         const double * __restrict,
+			         double * __restrict,
+	                         const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+/*
+    I/O write cache miss(disk/network writes) bandwidth (MB/sec)
+*/
+void
+skx_IO_reads_cache_miss_samples(const double * __restrict,
+			        const double * __restrict,
+			       	double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+/*
+     IO cache miss(disk/network) bandwidth (MB/sec)
+*/
+void
+skx_IO_cache_miss_total_bw_samples(const double * __restrict,
+			           const double * __restrict,
+				   const double * __restrict,
+				   const double * __restrict,
+			       	   double * __restrict,
+	                           const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+/*
+    MMIO reads per second.
+*/
+void
+skx_MMIO_reads_sec_samples(const double * __restrict,
+			   const double * __restrict,
+			   double * __restrict,
+	                   const int32_t)  __attribute__((hot))
+                                           __attribute__((aligned(32)));
+
+
+/*
+    MMIO writes per second.
+*/
+void
+skx_MMIO_writes_sec_samples(const double * __restrict,
+			    const double * __restrict,
+			    double * __restrict,
+	                    const int32_t)  __attribute__((hot))
+                                           __attribute__((aligned(32)));
+
+
+/*
+    Memory Page Empty vs. all requests
+*/
+void
+skx_mem_page_empty_all_reqs_samples(const double * __restrict,
+			           const double * __restrict,
+				   const double * __restrict,
+				   const double * __restrict,
+			       	   double * __restrict,
+	                           const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+
+/*
+    Memory Page Misses vs. all requests
+*/
+void
+skx_mem_page_misses_all_req_samples( const double * __restrict,
+				     const double * __restrict,
+				     const double * __restrict,
+			       	     double * __restrict,
+	                             const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+/*
+     Memory Page Hits vs. all requests
+*/
+void
+skx_mem_page_hits_all_req_samples( const double * __restrict,
+				     const double * __restrict,
+				     const double * __restrict,
+			       	     double * __restrict,
+	                             const int32_t)  __attribute__((hot))
+                                                __attribute__((aligned(32)));
+
+
+/*
+    Memory percentage  Cycles where all DRAM ranks are in PPD mode.
+*/
+void
+skx_PPD_DRAM_cycles_samples( const double * __restrict,
+			     const double * __restrict,
+			     double * __restrict,
+	                     const int32_t)  __attribute__((hot))
+                                             __attribute__((aligned(32)));
+
+
+/*
+     Memory percentage Cycles all ranks in critical thermal throttle.
+*/
+void
+skx_mem_cycles_thermal_throttle_samples(const double * __restrict,
+			     const double * __restrict,
+			     double * __restrict,
+	                     const int32_t)  __attribute__((hot))
+                                             __attribute__((aligned(32)));
+
+
+/*
+    Memory  Cycles Memory is in self refresh power mode
+*/
+void
+skx_mem_cycles_self_refresh_samples(const double * __restrict,
+			            const double * __restrict,
+			            double * __restrict,
+	                            const int32_t)  __attribute__((hot))
+                                             __attribute__((aligned(32)));
+
+
+/*
+   Uops delivered from decoded Icache (DSB).
+*/
+void
+skx_DSB_uops_samples(const double * __restrict,
+		     const double * __restrict,
+		     const double * __restrict,
+		     const double * __restrict,
+		     double * __restrict,
+	             const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+
+/*
+   Uops delivered from MITE.
+*/
+void
+skx_MITE_uops_samples(const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      double * __restrict,
+	              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Uops delivered from MS.
+*/
+void
+skx_MS_uops_samples(  const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      double * __restrict,
+	              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Uops delivered from LSD.
+*/
+void
+skx_LSD_uops_samples(const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      double * __restrict,
+	              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     FP scalar single-precision FP instructions retired per instruction.
+*/
+void
+skx_fp32_scalar_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     FP scalar double-precision FP instructions retired per instruction.
+*/
+void
+skx_fp64_scalar_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+	   
+
 #endif /*__GMS_PREPROCESS_SKX_HW_METRICS_H__*/
