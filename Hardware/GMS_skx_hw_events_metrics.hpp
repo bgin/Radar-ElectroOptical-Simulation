@@ -1145,6 +1145,24 @@ double skx_memory_read_bw(const double UNC_M_CAS_COUNT_RD,
 
 
 /*
+   Load instructions per memory bandwidth.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_load_mem_instr_mem_bw(const double UNC_M_CAS_COUNT_RD,
+				 const double MEM_INST_RETIRED_ALL_LOADS,
+                                 const double TIME_INTERVAL_SECONDS) {
+
+       const double mem_read_bw = skx_memory_read_bw(UNC_M_CAS_COUNT_RD,
+                                                     TIME_INTERVAL_SECONDS);
+       return (MEM_INST_RETIRED_ALL_LOADS/mem_read_bw);
+}
+
+
+/*
     Memory bandwidth write  (MB/sec).
 */
 __attribute__((always_inline))
@@ -1157,6 +1175,24 @@ double skx_memory_write_bw(const double UNC_M_CAS_COUNT_WR,
 
        return (64.0*UNC_M_CAS_COUNT_WR/1000000.0/
                             TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    Store instructions per memory bandwidth.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_store_mem_instr_mem_bw(const double UNC_M_CAS_COUNT_WR,
+				 const double MEM_INST_RETIRED_ALL_STORES,
+                                 const double TIME_INTERVAL_SECONDS) {
+
+       const double mem_write_bw = skx_memory_write_bw(UNC_M_CAS_COUNT_WR,
+                                                       TIME_INTERVAL_SECONDS);
+       return (MEM_INST_RETIRED_ALL_STORES/mem_write_bw);
 }
 
 
@@ -1175,6 +1211,29 @@ double skx_memory_bw_total(const double UNC_M_CAS_COUNT_RD,
         const double term1 = UNC_M_CAS_COUNT_RD+
 	                     UNC_M_CAS_COUNT_WR;
 	return (term1*64.0/1000000.0/TIME_INTERVAL_SECONDS);
+}
+
+
+/*
+    Load and store instructions per total memory bandwidth.
+*/
+__attribute__((always_inline))
+__attribute__((pure))
+__attribute__((aligned(32)))
+#pragma omp declare simd
+static inline
+double skx_total_mem_instr_mem_bw(const double UNC_M_CAS_COUNT_WR,
+				  const double MEM_INST_RETIRED_ALL_STORES,
+				  const double UNC_M_CAS_COUNT_RD,
+				  const double MEM_INST_RETIRED_ALL_LOADS,
+                                  const double TIME_INTERVAL_SECONDS) {
+
+        const double mem_write_bw = skx_memory_write_bw(UNC_M_CAS_COUNT_WR,
+                                                       TIME_INTERVAL_SECONDS);
+	const double mem_read_bw =  skx_memory_read_bw(UNC_M_CAS_COUNT_RD,
+                                                     TIME_INTERVAL_SECONDS);
+	return ((MEM_INST_RETIRED_ALL_STORES/mem_write_bw)+
+	        (MEM_INST_RETIRED_ALL_LOADS/mem_read_be));
 }
 
 
