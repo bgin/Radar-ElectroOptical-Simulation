@@ -1168,6 +1168,872 @@ skx_fp64_scalar_retired_samples(const double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
 
-	   
+
+/*
+   FP 128-bit packed single-precision FP instructions retired per instruction.
+*/
+void
+skx_fp32_vec128b_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    FP 128-bit packed double-precision FP instructions retired per instruction.
+*/
+void
+skx_fp64_vec128b_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     FP 256-bit packed single-precision FP instructions retired per instruction.
+*/
+void
+skx_fp32_vec256b_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     FP 256-bit packed double-precision FP instructions retired per instruction.
+*/
+void
+skx_fp64_vec256b_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   FP 512-bit packed single-precision FP instructions retired per instruction.
+*/
+void
+skx_fp32_vec512b_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   FP 512-bit packed double-precision FP instructions retired per instruction.
+*/
+void
+skx_fp64_vec512b_retired_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    FP instruction density (percentage).
+*/
+void
+skx_fp_instr_density_samples(const double * __restrict,
+		             const double * __restrict,
+			     const double * __restrict,
+			     const double * __restrict,
+			     const double * __restrict,
+			     const double * __restrict,
+			     const double * __restrict,
+			     const double * __restrict,
+			     const double * __restrict,
+		             double * __restrict,
+	                     const int32_t)  __attribute__((hot))
+                                             __attribute__((aligned(32)));
+
+
+/*
+   Branch instructions density.
+*/
+void
+skx_branch_instr_ratio_samples(const double * __restrict,
+		                const double * __restrict
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    DRAM power (watts).
+*/
+void
+skx_DRAM_power_samples(const double * __restrict,
+		       const double * __restrict
+		       double * __restrict,
+	               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+				      
+/*
+   Package power (watts)
+*/
+void
+skx_Package_power_samples(const double * __restrict,
+		       const double * __restrict
+		       double * __restrict,
+	               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Core c3 residency
+*/
+void
+skx_Core_C3_residency_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Core C6 residency
+*/
+void
+skx_Core_C6_residency_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Package C2 residency
+*/
+void
+skx_Package_C2_residency_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Package C3 residency
+*/
+void
+skx_Package_C3_residency_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Package C6 residency
+*/
+void
+skx_Package_C6_residency_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     core SW prefetch NTA per instruction.
+*/
+void
+skx_NTA_sw_prefetches_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Core cycles power throttled
+*/
+void
+skx_Core_power_throttled_samples(const double * __restrict,
+		              const double * __restrict
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Core IPC
+*/
+void
+skx_Core_IPC_samples(const double * __restrict,
+		     const double * __restrict,
+		     const double * __restrict,
+		     double * __restrict,
+	             const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Info Memory Level Parallelism
+*/
+void
+skx_mem_lvl_parallelism_samples(const double * __restrict,
+		                const double * __restrict,
+		                const double * __restrict,
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Info cycles both threads active
+*/
+void
+skx_SMT_activity_samples(const double * __restrict,
+		         const double * __restrict,
+		         const double * __restrict,
+		         double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Frontend bound
+*/
+void
+skx_FrontEnd_bound_samples(const double * __restrict,
+		         const double * __restrict,
+		         double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Frontend latency
+*/
+void
+skx_FrontEnd_latency_samples(const double * __restrict,
+		             const double * __restrict,
+		             double * __restrict,
+	                     const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   ICache misses
+*/
+void
+skx_ICache_misses_samples(const double * __restrict,
+		          const double * __restrict,
+			  const double * __restrict,
+		          double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   ITLB misses
+*/
+void
+skx_ITLB_misses_samples(const double * __restrict,
+		        const double * __restrict,
+			const double * __restrict,
+		        double * __restrict,
+	                const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Branch resteers
+*/
+void
+skx_branch_resteers_samples(const double * __restrict,
+		            const double * __restrict,
+			    const double * __restrict,
+			    const double * __restrict,
+			    const double * __restrict,
+			    const double * __restrict,
+			    const double * __restrict,
+		            double * __restrict,
+	                    const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   DSB switches
+*/
+void
+skx_DSB_switches_samples( const double * __restrict,
+			  const double * __restrict,
+		          double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    MS switches
+*/
+void
+skx_MS_switches_samples(const double * __restrict,
+			const double * __restrict,
+		        double * __restrict,
+	                const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Frontend bandwidth (SMT enabled).
+*/
+void
+skx_FrontEnd_smt_bw_samples(const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+			const double * __restrict,
+		        double * __restrict,
+	                const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Frontend bandwidth (SMT disabled).
+*/
+void
+skx_FrontEnd_no_smt_bw_samples(const double * __restrict,
+			    const double * __restrict,
+			    const double * __restrict,
+		            double * __restrict,
+	                    const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Bad Speculation (SMT enabled).
+*/
+void
+skx_smt_bad_speculate_samples(const double * __restrict,
+			        const double * __restrict,
+			        const double * __restrict,
+			        const double * __restrict,
+				const double * __restrict,
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     Bad Speculation (SMT disabled).
+*/
+void
+skx_no_smt_bad_speculate_samples(const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Branch Mispredicts (STM enabled).
+*/
+void
+skx_smt_branch_mispredicts_sample(const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+			          double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     Branch Misprediction (SMT disabled).
+*/
+void
+skx_no_smt_branch_mispredicts_sample(const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+				  double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Machine Clears (SMT enabled).
+*/
+void
+skx_smt_machine_clears_samples(   const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+			          double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Machine clears (SMT disabled).
+*/
+void
+skx_no_smt_machine_clears_samples(   const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+				  double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Backend Bound (SMT enabled)
+*/
+void
+skx_smt_BackEnd_bound_samples(    const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+				  const double * __restrict,
+				  const double * __restrict,
+				  double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     Backend Boud (SMT disabled).
+*/
+void
+skx_no_smt_BackEnd_bound_samples( const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+			          const double * __restrict,
+				  const double * __restrict,
+				  double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   L1D bound
+*/
+void
+skx_L1D_bound_samples(const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      double * __restrict,
+	              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   DTLB Load
+*/
+void
+skx_DTLB_load_samples(const double * __restrict,
+		      const double * __restrict,
+		      const double * __restrict,
+		      double * __restrict,
+	              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Stores forward blocked
+*/
+void
+skx_stores_fwd_block_samples( const double * __restrict,
+		              const double * __restrict,
+		              double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Lock latency
+*/
+void
+skx_lock_latency_samples(const double * __restrict,
+		         const double * __restrict,
+		         const double * __restrict,
+			 const double * __restrict,
+		         double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   L2 bound
+*/
+void
+skx_L2_bound_samples(    const double * __restrict,
+		         const double * __restrict,
+			 const double * __restrict,
+		         double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    L3 bound.
+*/
+void
+skx_L3_bound_samples(    const double * __restrict,
+		         const double * __restrict,
+			 const double * __restrict,
+		         double * __restrict,
+	                 const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Contested accessses
+*/
+void
+skx_contested_accesses_samples( const double * __restrict,
+		                const double * __restrict,
+			        const double * __restrict,
+		                double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Data sharing
+*/
+void
+skx_data_sharing_samples( const double * __restrict,
+			  const double * __restrict,
+		          double * __restrict,
+	                  const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    L3 latency
+*/
+void
+skx_L3_latency_samples(const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       double * __restrict,
+	               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+  L3 bandwidth
+*/
+void
+skx_L3_bw_samples(     const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       double * __restrict,
+	               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   SuperQueue (SMT enabled)
+*/
+void
+skx_smt_SQ_full_samples(const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       double * __restrict,
+	               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    SuperQueue (SMT disabled)
+*/
+void
+skx_no_smt_SQ_full_samples(const double * __restrict,
+		           const double * __restrict,
+		       	   double * __restrict,
+	                   const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Memory bound.
+*/
+void
+skx_memory_bound_samples(  const double * __restrict,
+		           const double * __restrict,
+		       	   double * __restrict,
+	                   const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Memory BW
+*/
+void
+skx_memory_bw_samples(     const double * __restrict,
+		           const double * __restrict,
+		       	   double * __restrict,
+	                   const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Memory latency
+*/
+void
+skx_memory_latency_samples(const double * __restrict,
+		           const double * __restrict,
+			   const double * __restrict,
+		       	   double * __restrict,
+	                   const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Stores bound
+*/
+void
+skx_stores_bound_samples(  const double * __restrict,
+			   const double * __restrict,
+		       	   double * __restrict,
+	                   const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   DTLB stores (SMT enabled)
+*/
+void
+skx_smt_DTLB_stores_samples(const double * __restrict,
+		            const double * __restrict,
+			    const double * __restrict,
+			    const double * __restrict,
+		       	    double * __restrict,
+	                    const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     DTLB stores (SMT disabled)
+*/
+void
+skx_no_smt_DTLB_stores_samples(const double * __restrict,
+		            const double * __restrict,
+			    const double * __restrict,
+			    double * __restrict,
+	                    const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Divider
+*/
+void
+skx_divider_samples(const double * __restrict,
+		    const double * __restrict,
+		    double * __restrict,
+	            const int32_t)  __attribute__((hot))
+                                   __attribute__((aligned(32)));
+
+
+/*
+   Ports Utilization
+*/
+void
+skx_Ports_utilization_samples(const double * __restrict,
+		              const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Port_0 Utilized.
+*/
+void
+skx_Port_0_utlized_samples(   const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Port_1 utlized
+*/
+void
+skx_Port_1_utlized_samples(   const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Port_2 utilized
+*/
+void
+skx_Port_2_utlized_samples(   const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Port_3m utilized
+*/
+void
+skx_Port_3m_utlized_samples(  const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+   Retiring (SMT enabled)
+*/
+void
+skx_smt_retiring_samples(     const double * __restrict,
+			      const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     Retiring (SMT disabled).
+*/
+void
+skx_no_smt_retiring_samples(  const double * __restrict,
+			      const double * __restrict,
+			      double * __restrict,
+	                      const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Basic activity (SMT enabled).
+*/
+void
+skx_smt_basic_activity_samples( const double * __restrict,
+			        const double * __restrict,
+			        const double * __restrict,
+				const double * __restrict,
+				const double * __restrict,
+			        double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    Basic activit (SMT disabled).
+*/
+void
+skx_no_smt_basic_activity_samples( const double * __restrict,
+			           const double * __restrict,
+			           const double * __restrict,
+				   const double * __restrict,
+			           double * __restrict,
+	                           const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+      FP scalar retiring fraction.
+*/
+void
+skx_fp_scalar_fract_samples(  const double * __restrict,
+			               const double * __restrict,
+				       const double * __restrict,
+			               double * __restrict,
+	                               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     FP vector retiring fraction.
+*/
+void
+skx_fp_vector_fract_samples(    const double * __restrict,
+			        const double * __restrict,
+			        const double * __restrict,
+				const double * __restrict,
+				const double * __restrict,
+				const double * __restrict,
+				const double * __restrict,
+			        double * __restrict,
+	                        const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     Microcode Sequencer (SMT enabled).
+*/
+void
+skx_smt_MS_samples(const double * __restrict,
+		   const double * __restrict,
+		   const double * __restrict,
+		   const double * __restrict,
+		   const double * __restrict,
+		   double * __restrict,
+	           const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     Microcode Sequencer (SMT disabled).
+*/
+void
+skx_no_smt_MS_samples( const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       const double * __restrict,
+		       double * __restrict,
+	               const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     LLC Local code/data reads hitting in S state in snoop filter per instruction.
+*/
+void
+skx_L3_code_data_read_S_hit_samples(  const double * __restrict,
+		                      const double * __restrict,
+		                      double * __restrict,
+	                              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
 
 #endif /*__GMS_PREPROCESS_SKX_HW_METRICS_H__*/
