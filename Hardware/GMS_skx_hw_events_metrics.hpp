@@ -21,7 +21,7 @@ double skx_cpu_operating_freq(const double CPU_CLK_UNHALTED_THREAD,
 
   return ((CPU_CLK_UNHALTED_THREAD/
                            CPU_CLK_UNHALTED_REF_TSC*TSC_FREQUENCY)/
-                                                      1000000000ULL);
+                                                      1000000000.0);
 }
 
 /*
@@ -3061,7 +3061,7 @@ double skx_L3_code_data_read_S_hit(const double UNC_CHA_LLC_LOOKUP_DATA_READ_sta
 
 
 /*
-     LLC Local code/data reads hitting in E state in snoop filter per instruction.
+     LLC Local code/data reads hitting in E state in snoop filter per instruction.  
 */
 __attribute__((always_inline))
 __attribute__((pure))
