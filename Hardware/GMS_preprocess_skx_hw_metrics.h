@@ -2036,4 +2036,84 @@ skx_L3_code_data_read_S_hit_samples(  const double * __restrict,
 	                              const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
 
+
+/*
+     LLC Local code/data reads hitting in E state in snoop filter per instruction.
+*/
+void
+skx_L3_code_data_read_E_hit_samples(  const double * __restrict,
+		                      const double * __restrict,
+		                      double * __restrict,
+	                              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     LLC Local code/data reads hitting in M/E/F states in LLC per instruction.
+*/
+void
+skx_L3_code_data_read_MEF_hit_samples(  const double * __restrict,
+		                      const double * __restrict,
+		                      double * __restrict,
+	                              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+     INT_MISC.RECOVERY_CYCLES ratio
+*/
+void
+skx_int_misc_recovery_cycles_samples( const double * __restrict,
+		                      const double * __restrict,
+		                      double * __restrict,
+	                              const int32_t)  __attribute__((hot))
+                                      __attribute__((aligned(32)));
+
+
+/*
+    INT_MISC.CLEAR_RESTEER_CYCLES ratio
+*/
+void
+skx_int_misc_clear_resteer_cycles_samples(const double * __restrict,
+		                          const double * __restrict,
+		                          double * __restrict,
+	                                  const int32_t)  __attribute__((hot))
+                                                          __attribute__((aligned(32)));
+
+
+/*
+   RS_EVENTS.EMPTY_CYCLES ratio
+*/
+void
+skx_rs_events_empty_cycles_samples(const double * __restrict,
+		                   const double * __restrict,
+		                   double * __restrict,
+	                           const int32_t)  __attribute__((hot))
+                                                          __attribute__((aligned(32)));
+
+
+/*
+    BR_INST_RETIRED.ALL_BRANCHES ratio
+*/
+void
+skx_br_inst_retired_all_branches_samples(const double * __restrict,
+		                         const double * __restrict,
+		                         double * __restrict,
+	                                 const int32_t)  __attribute__((hot))
+                                                          __attribute__((aligned(32)));
+
+
+/*
+     BR_INST_RETIRED.CONDITIONAL
+*/
+void
+skx_br_inst_retired_cond_samples( const double * __restrict,
+		                  const double * __restrict,
+		                  double * __restrict,
+	                          const int32_t)  __attribute__((hot))
+                                                  __attribute__((aligned(32)));
+
+
+						  
+
 #endif /*__GMS_PREPROCESS_SKX_HW_METRICS_H__*/
