@@ -199,7 +199,7 @@ skx_L1I_read_misses_instr_samples(const double * __restrict,
 
 
 /*
-     L2D Demand data read hits per instruction.
+     L2 Demand data read hits per instruction.
 */
 void
 skx_L2_data_read_misses_instr_samples(const double * __restrict,
@@ -284,7 +284,7 @@ skx_L2_evict_L3_alloc_samples(const double * __restrict,
       L2 percentage of L2 evictions that are NOT allocated into L3$.
 */
 void
-skx_L2_evict_L3_no_alloc_data(const double * __restrict,
+skx_L2_evict_L3_no_alloc_samples(const double * __restrict,
                               const double * __restrict,
 			      double * __restrict,
 			      const int32_t)  __attribute__((hot))
@@ -295,7 +295,7 @@ skx_L2_evict_L3_no_alloc_data(const double * __restrict,
      LLC code references per instruction (L3 prefetch excluded).
 */
 void
-skx_L3_code_references_instr_data(const double * __restrict,
+skx_L3_code_references_instr_samples(const double * __restrict,
                                   const double * __restrict,
 			          double * __restrict,
 			          const int32_t)  __attribute__((hot))
@@ -306,7 +306,7 @@ skx_L3_code_references_instr_data(const double * __restrict,
     LLC data read references per instruction (L3 prefetch excluded).
 */
 void
-skx_L3_data_references_instr_data(const double * __restrict,
+skx_L3_data_references_instr_samples(const double * __restrict,
                                   const double * __restrict,
 			          double * __restrict,
 			          const int32_t)  __attribute__((hot))
@@ -317,7 +317,7 @@ skx_L3_data_references_instr_data(const double * __restrict,
       LLC RFO references per instrctions (L3 prefetch excluded).
 */
 void
-skx_L3_rfo_references_instr_data(const double * __restrict,
+skx_L3_rfo_references_instr_samples(const double * __restrict,
                                   const double * __restrict,
 			          double * __restrict,
 			          const int32_t)  __attribute__((hot))
@@ -328,7 +328,7 @@ skx_L3_rfo_references_instr_data(const double * __restrict,
      LLC Misses Per Instruction (includes code and data and rfo with prefetches).
 */
 void
-skx_L3_all_mpi(const double * __restrict,
+skx_L3_all_mpi_samples(const double * __restrict,
                const double * __restrict,
 	       const double * __restrict,
                const double * __restrict,
@@ -341,7 +341,7 @@ skx_L3_all_mpi(const double * __restrict,
      LLC data read Misses Per Instruction (demand and prefetch).
 */
 void
-skx_L3_data_read_mpi_data(const double * __restrict,
+skx_L3_data_read_mpi_samples(const double * __restrict,
                           const double * __restrict,
 			  double * __restrict,
 			  const int32_t)  __attribute__((hot))
@@ -352,7 +352,7 @@ skx_L3_data_read_mpi_data(const double * __restrict,
       LLC RFO read Misses Per Instruction (demand and prefetch).  
 */
 void
-skx_L3_rfo_read_mpi_data(const double * __restrict,
+skx_L3_rfo_read_mpi_samples(const double * __restrict,
                           const double * __restrict,
 			  double * __restrict,
 			  const int32_t)  __attribute__((hot))
@@ -363,7 +363,7 @@ skx_L3_rfo_read_mpi_data(const double * __restrict,
      LLC code read MPI (demand and prefetch).
 */
 void
-skx_L3_total_hitm_instr_data(const double * __restrict,
+skx_L3_total_hitm_instr_samples(const double * __restrict,
                              const double * __restrict,
 			     double * __restrict,
 			     const int32_t)  __attribute__((hot))
@@ -374,7 +374,7 @@ skx_L3_total_hitm_instr_data(const double * __restrict,
      LLC total HIT clean line forwards (per instr) (excludes LLC prefetches)
 */
 void
-skx_L3_total_hitm_clean_lines_instr_data(const double * __restrict,
+skx_L3_total_hitm_clean_lines_instr_samples(const double * __restrict,
                                          const double * __restrict,
 			                 double * __restrict,
 			                 const int32_t)  __attribute__((hot))
@@ -385,7 +385,7 @@ skx_L3_total_hitm_clean_lines_instr_data(const double * __restrict,
     Average LLC data read (demand+prefetch) miss latency (in ns).  
 */
 void
-skx_L3_avg_data_read_ns_data(const double * __restrict,
+skx_L3_avg_data_read_ns_samples(const double * __restrict,
                              const double * __restrict,
 			     const double * __restrict,
                              const double * __restrict,
@@ -398,7 +398,7 @@ skx_L3_avg_data_read_ns_data(const double * __restrict,
       Average LLC data read (demand and prefetch) miss latency (in UNCORE clk).
 */
 void
-skx_L3_avg_data_read_unc_clk_data(const double * __restrict,
+skx_L3_avg_data_read_unc_clk_samples(const double * __restrict,
                                   const double * __restrict,
 			          double * __restrict,
 			          const int32_t)  __attribute__((hot))
@@ -409,7 +409,7 @@ skx_L3_avg_data_read_unc_clk_data(const double * __restrict,
       Average LLC data read (demand+prefetch) miss latency for LOCAL requests (in ns)
 */
 void
-skx_L3_avg_data_read_loc_ns_data(const double * __restrict,
+skx_L3_avg_data_read_loc_ns_samples(const double * __restrict,
                                  const double * __restrict,
 			         const double * __restrict,
                                  const double * __restrict,
@@ -422,7 +422,7 @@ skx_L3_avg_data_read_loc_ns_data(const double * __restrict,
     Average LLC data read (demand+prefetch) miss latency for REMOTE requests (in ns).
 */
 void
-skx_L3_avg_data_read_rem_ns_data(const double * __restrict,
+skx_L3_avg_data_read_rem_ns_samples(const double * __restrict,
                                  const double * __restrict,
 			         const double * __restrict,
                                  const double * __restrict,
@@ -435,7 +435,7 @@ skx_L3_avg_data_read_rem_ns_data(const double * __restrict,
       Average LLC data read (demand+prefetch) miss latency  for LOCAL requests (in UNCORE clk)
 */
 void
-skx_L3_avg_data_read_loc_unc_clk_data(const double * __restrict,
+skx_L3_avg_data_read_loc_unc_clk_samples(const double * __restrict,
                                   const double * __restrict,
 			          double * __restrict,
 			          const int32_t)  __attribute__((hot))
@@ -446,7 +446,7 @@ skx_L3_avg_data_read_loc_unc_clk_data(const double * __restrict,
      Average LLC data read (demand+prefetch) miss latency  for REMOTE requests (in UNCORE clk)
 */
 void
-skx_L3_avg_data_read_rem_unc_clk(const double * __restrict,
+skx_L3_avg_data_read_rem_unc_clk_samples(const double * __restrict,
                                   const double * __restrict,
 			          double * __restrict,
 			          const int32_t)  __attribute__((hot))
@@ -457,7 +457,7 @@ skx_L3_avg_data_read_rem_unc_clk(const double * __restrict,
     ITLB MPI
 */
 void
-skx_ITLB_mpi_data(const double * __restrict,
+skx_ITLB_mpi_data_samples(const double * __restrict,
                   const double * __restrict,
 		  double * __restrict,
 		  const int32_t)  __attribute__((hot))
@@ -468,7 +468,7 @@ skx_ITLB_mpi_data(const double * __restrict,
    ITLB large page MPI
 */
 void
-skx_ITLB_2M4M_mpi_data(const double * __restrict,
+skx_ITLB_2M4M_mpi_samples(const double * __restrict,
                   const double * __restrict,
 		  double * __restrict,
 		  const int32_t)  __attribute__((hot))
@@ -479,7 +479,7 @@ skx_ITLB_2M4M_mpi_data(const double * __restrict,
      DTLB load MPI.
 */
 void
-skx_DTLB_load_mpi_data(const double * __restrict,
+skx_DTLB_load_mpi_samples(const double * __restrict,
                   const double * __restrict,
 		  double * __restrict,
 		  const int32_t)  __attribute__((hot))
@@ -490,7 +490,7 @@ skx_DTLB_load_mpi_data(const double * __restrict,
     DTLB large page load MPI.
 */
 void
-skx_DTLB_2M4M_mpi_data(const double * __restrict,
+skx_DTLB_2M4M_mpi_samples(const double * __restrict,
                   const double * __restrict,
 		  double * __restrict,
 		  const int32_t)  __attribute__((hot))
@@ -501,7 +501,7 @@ skx_DTLB_2M4M_mpi_data(const double * __restrict,
    DTLB store MPI.
 */
 void
-skx_DTLB_store_mpi_data(const double * __restrict,
+skx_DTLB_store_mpi_samples(const double * __restrict,
                   const double * __restrict,
 		  double * __restrict,
 		  const int32_t)  __attribute__((hot))
@@ -512,7 +512,7 @@ skx_DTLB_store_mpi_data(const double * __restrict,
     DTLB load miss latency (in core clks)
 */
 void
-skx_DTLB_load_miss_clks_data(const double * __restrict,
+skx_DTLB_load_miss_clks_samples(const double * __restrict,
                              const double * __restrict,
 		             double * __restrict,
 		             const int32_t)  __attribute__((hot))
@@ -523,7 +523,7 @@ skx_DTLB_load_miss_clks_data(const double * __restrict,
      DTLB store miss latency (in core clks).
 */
 void
-skx_DTLB_store_miss_clks_data(const double * __restrict,
+skx_DTLB_store_miss_clks_samples(const double * __restrict,
                              const double * __restrict,
 		             double * __restrict,
 		             const int32_t)  __attribute__((hot))
@@ -534,7 +534,7 @@ skx_DTLB_store_miss_clks_data(const double * __restrict,
       ITLB miss latency (in core clks).
 */
 void
-skx_ITLB_miss_latency_clks_data(const double * __restrict,
+skx_ITLB_miss_latency_clks_samples(const double * __restrict,
                              const double * __restrict,
 		             double * __restrict,
 		             const int32_t)  __attribute__((hot))
