@@ -169,68 +169,68 @@ void perf_test_ComputeGrassParamEq_zmm16r4_call_scope_looped100x10000_non_instr_
      c = (1UL<<30)+1; // Fixed counter.
      // Measurement Bias calculation (ahead of any test execution phase)
        // First a dry run.
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc1_hi),"=r" (cyc1_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
-     __asm__ __volatile__ ("cpuid" : \
-	              "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) );
-     __asm__ __volatile__ ("rdpmc" : "=a" (a), "=d" (d) : "c" (c) );
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc2_hi),"=r" (cyc2_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
+    // __asm__ __volatile__ (
+     //            "CPUID\n\t"
+     //            "RDTSC\n\t"
+     //            "mov %%edx, %0\n\t"
+     //            "mov %%eax, %1\n\t" : "=r" (cyc1_hi),"=r" (cyc1_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+     //            );
+    // __asm__ __volatile__ ("cpuid" : \
+	//              "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) );
+    //// __asm__ __volatile__ ("rdpmc" : "=a" (a), "=d" (d) : "c" (c) );
+    // __asm__ __volatile__ (
+    //             "CPUID\n\t"
+     //            "RDTSC\n\t"
+    //             "mov %%edx, %0\n\t"
+     ////            "mov %%eax, %1\n\t" : "=r" (cyc2_hi),"=r" (cyc2_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+     //            );
     // Second run is less prone to random noise (IF and ID stages)
     // THis is still prone to random variation unfortunately
     // more accurate analysis may introduce unwanted cache polution
     // and prolonged execution serialization.
     
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc1_hi),"=r" (cyc1_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
-     __asm__ __volatile__ ("cpuid" : \
-	              "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) );
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc2_hi),"=r" (cyc2_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
+     //__asm__ __volatile__ (
+     //            "CPUID\n\t"
+     //            "RDTSC\n\t"
+     //            "mov %%edx, %0\n\t"
+     //            "mov %%eax, %1\n\t" : "=r" (cyc1_hi),"=r" (cyc1_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+     //            );
+     //__asm__ __volatile__ ("cpuid" : \
+	///              "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) );
+    // __asm__ __volatile__ (
+     //            "CPUID\n\t"
+     //            "RDTSC\n\t"
+     //            "mov %%edx, %0\n\t"
+     //            "mov %%eax, %1\n\t" : "=r" (cyc2_hi),"=r" (cyc2_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+     //            );
       // First a "dry run"
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc3_hi),"=r" (cyc3_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
-     __asm__ __volatile__ ("rdpmc" : "=a" (a), "=d" (d) : "c" (c) );
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc4_hi),"=r" (cyc4_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
+    // __asm__ __volatile__ (
+     //            "CPUID\n\t"
+     //            "RDTSC\n\t"
+     //            "mov %%edx, %0\n\t"
+     //            "mov %%eax, %1\n\t" : "=r" (cyc3_hi),"=r" (cyc3_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+     //            );
+    // __asm__ __volatile__ ("rdpmc" : "=a" (a), "=d" (d) : "c" (c) );
+    // __asm__ __volatile__ (
+     //            "CPUID\n\t"
+     //            "RDTSC\n\t"
+     //            "mov %%edx, %0\n\t"
+     //            "mov %%eax, %1\n\t" : "=r" (cyc4_hi),"=r" (cyc4_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+      //           );
       // Second run is less prone to random noise (IF and ID stages)
-    __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc3_hi),"=r" (cyc3_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
-     __asm__ __volatile__ ("rdpmc" : "=a" (a), "=d" (d) : "c" (c) );
-     __asm__ __volatile__ (
-                 "CPUID\n\t"
-                 "RDTSC\n\t"
-                 "mov %%edx, %0\n\t"
-                 "mov %%eax, %1\n\t" : "=r" (cyc4_hi),"=r" (cyc4_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
-                 );
+    //__asm__ __volatile__ (
+     //            "CPUID\n\t"
+    //             "RDTSC\n\t"
+     //            "mov %%edx, %0\n\t"
+     //            "mov %%eax, %1\n\t" : "=r" (cyc3_hi),"=r" (cyc3_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+     //            );
+    // __asm__ __volatile__ ("rdpmc" : "=a" (a), "=d" (d) : "c" (c) );
+     //__asm__ __volatile__ (
+     //            "CPUID\n\t"
+     //            "RDTSC\n\t"
+      //           "mov %%edx, %0\n\t"
+      //           "mov %%eax, %1\n\t" : "=r" (cyc4_hi),"=r" (cyc4_lo) :: "%rax" "%rbx" "%rcx" "%rdx" 
+      //           );
       lat_cpuid_start =   (((uint64_t)cyc1_high << 32) | cyc1_low );
       lat_cpuid_end   =   (((uint64_t)cyc2_high << 32) | cyc2_low );
       cpuid_bias = lat_cpuid_end-lat_cpuid_start;
