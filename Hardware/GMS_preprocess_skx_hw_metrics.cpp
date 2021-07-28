@@ -1232,3 +1232,958 @@ skx_UPI_tx_total_bw_samples(const double * __restrict __attribute__((aligned(64)
 					
           }
 }
+
+
+/*
+     UPI Transmit utilization percentage (includes control).
+   Percentage of time the processor is communicating with sibling processors.
+*/
+void
+skx_UPI_tx_utlization_samples(const double * __restrict __attribute__((aligned(64))) a,
+                              const double * __restrict __attribute__((aligned(64))) b,
+			      const double * __restrict __attribute__((aligned(64))) c,
+			      const double * __restrict __attribute__((aligned(64))) d,
+			      const double * __restrict __attribute__((aligned(64))) e,
+			      const double * __restrict __attribute__((aligned(64))) f,
+	                      double * __restrict __attribute__((aligned(64))) g,
+	                      const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,,d,e,f,g,data_len) private(i) \ 
+        aligned(a:64,b,c,d,e,f,g) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               g[i] = skx_UPI_transmit_utilization(a[i],
+	                                           b[i],
+				                   c[i],
+				                   d[i],
+						   e[i],
+						   f[i]);
+					
+          }
+}
+
+
+/*
+   UPI percentage of  cycles transmit link is half-width (L0p) 
+*/
+void
+skx_UPI_half_width_link_tx_cycles_samples( const double * __restrict __attribute__((aligned(64))) a,
+			                   const double * __restrict __attribute__((aligned(64))) b,
+			                   const double * __restrict __attribute__((aligned(64))) c,
+	                                   double * __restrict __attribute__((aligned(64))) d,
+	                                   const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_half_width_link_tx_cycles(a[i],
+	                                            b[i],
+					            c[i]);
+					
+          }
+}
+
+
+/*
+    UPI percentage of  cycles receive link is half-width (L0p)
+*/
+void
+skx_UPI_half_width_link_rx_cycles_samples( const double * __restrict __attribute__((aligned(64))) a,
+			                   const double * __restrict __attribute__((aligned(64))) b,
+			                   const double * __restrict __attribute__((aligned(64))) c,
+	                                   double * __restrict __attribute__((aligned(64))) d,
+	                                   const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_half_width_link_rx_cycles(a[i],
+	                                            b[i],
+					            c[i]);
+					
+          }
+}
+
+
+/*
+    HA - Reads vs. all requests
+*/
+void
+skx_HA_reads_vs_all_reqs_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                 const double * __restrict __attribute__((aligned(64))) b,
+	                         double * __restrict __attribute__((aligned(64))) c,
+	                         const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_reads_vs_all_reqs(a[i],
+	                                       b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    HA - Writes vs. all requests
+*/
+void
+skx_HA_writes_vs_all_reqs_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                 const double * __restrict __attribute__((aligned(64))) b,
+	                         double * __restrict __attribute__((aligned(64))) c,
+	                         const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_writes_vs_all_reqs(a[i],
+	                                       b[i]);
+					       
+					
+          }
+}
+
+
+/*
+      HA percentage of all reads that are local.
+*/
+void
+skx_HA_all_reads_local_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                               const double * __restrict  __attribute__((aligned(64))) b,
+	                       double * __restrict  __attribute__((aligned(64))) c,
+	                       const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_all_reads_local(a[i],
+	                                       b[i]);
+					       
+					
+          }
+}
+
+
+/*
+     HA percentage of all writes that are local.
+*/
+void
+skx_HA_all_writes_local_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                               const double * __restrict  __attribute__((aligned(64))) b,
+	                       double * __restrict  __attribute__((aligned(64))) c,
+	                       const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_all_writes_local(a[i],
+	                                       b[i]);
+					       
+					
+          }
+}
+
+
+/*
+     HA conflict responses per instruction.
+*/
+void
+skx_HA_conflict_resp_samples(const double * __restrict __attribute__((aligned(64))) a,
+                             const double * __restrict __attribute__((aligned(64))) b,
+	                     double * __restrict __attribute__((aligned(64))) c,
+	                     const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_conflict_resp(a[i],
+	                                   b[i])
+					       
+					
+          }
+}
+
+
+/*
+    HA directory lookups that spawned a snoop (per instruction)
+*/
+void
+skx_HA_dir_lookup_snoop_samples(const double * __restrict __attribute__((aligned(64))) a,
+                               const double * __restrict __attribute__((aligned(64))) b,
+	                       double * __restrict __attribute__((aligned(64))) c,
+	                       const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_dir_lookup_snoop(a[i],
+	                                     b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    HA directory lookups that did not spawn a snoop (per instruction).
+*/
+void
+skx_HA_dir_lookup_no_snoop_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                   const double * __restrict __attribute__((aligned(64))) b,
+	                           double * __restrict __attribute__((aligned(64))) c,
+	                           const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_HA_dir_lookup_no_snoop(a[i],
+	                                     b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    M2M directory updates (per instruction). 
+*/
+void
+skx_M2M_dir_updates_samples(const double * __restrict __attribute__((aligned(64))) a,
+                            const double * __restrict __attribute__((aligned(64))) b,
+			    const double * __restrict __attribute__((aligned(64))) c,
+			    const double * __restrict __attribute__((aligned(64))) d,
+	                    double * __restrict __attribute__((aligned(64))) e,
+	                    const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_M2M_dir_update(a[i],
+	                                 b[i],
+					 c[i],
+					 d[i]);
+					
+          }
+}
+
+
+/*
+    M2M extra reads from XPT-UPI prefetches (per instruction).
+*/
+void
+skx_M2M_reads_XPT_UPI_prefetch_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                       const double * __restrict __attribute__((aligned(64))) b,
+			               const double * __restrict __attribute__((aligned(64))) c,
+			               double * __restrict __attribute__((aligned(64))) d,
+	                               const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_M2M_reads_XPT_UPI_prefetch(a[i],
+	                                             b[i],
+					             c[i]);
+				
+					
+          }
+}
+
+
+/*
+     DDR data rate (MT/sec).
+*/
+void
+skx_DDR_date_rate_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                          const double * __restrict  __attribute__((aligned(64))) b,
+	                  double * __restrict  __attribute__((aligned(64))) c,
+	                  const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_DDR_data_rate(a[i],
+	                                b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    Memory bandwidth read (MB/sec).
+*/
+void
+skx_memory_read_bw_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                           const double * __restrict  __attribute__((aligned(64))) b,
+	                   double * __restrict  __attribute__((aligned(64))) c,
+	                  const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_memory_read_bw(a[i],
+	                                b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    Load instructions per memory bandwidth.
+*/
+void
+skx_load_mem_inst_mem_bw_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                 const double * __restrict  __attribute__((aligned(64))) b,
+			         const double * __restrict  __attribute__((aligned(64))) c,
+			         double * __restrict  __attribute__((aligned(64))) d,
+	                         const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_load_mem_instr_mem_bw(a[i],
+	                                        b[i],
+					        c[i]);
+				
+					
+          }
+}
+
+
+/*
+    Memory bandwidth write  (MB/sec).
+*/
+void
+skx_memory_write_bw_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                            const double * __restrict __attribute__((aligned(64))) b,
+	                    double * __restrict __attribute__((aligned(64))) c,
+	                    const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_memory_write_bw(a[i],
+	                                b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    Store instructions per memory bandwidth.
+*/
+void
+skx_load_mem_inst_mem_bw_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                 const double * __restrict  __attribute__((aligned(64))) b,
+			         const double * __restrict  __attribute__((aligned(64))) c,
+			         double * __restrict  __attribute__((aligned(64))) d,
+	                         const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_load_mem_instr_mem_bw(a[i],
+	                                        b[i],
+					        c[i]);
+				
+					
+          }
+}
+
+
+/*
+    Memory bandwidth total (MB/sec).
+*/
+void
+skx_mem_bw_total_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                         const double * __restrict  __attribute__((aligned(64))) b,
+			 const double * __restrict  __attribute__((aligned(64))) c,
+			 double * __restrict  __attribute__((aligned(64))) d,
+	                 const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_memory_bw_total(a[i],
+	                                  b[i],
+					  c[i]);
+				
+					
+          }
+}
+
+
+/*
+     Load and store instructions per total memory bandwidth.
+*/
+void
+skx_total_mem_inst_mem_bw_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                  const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+			          const double * __restrict __attribute__((aligned(64))) e,
+			          double * __restrict __attribute__((aligned(64))) f,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(i)					\
+        aligned(a:64,b,c,d,e,f) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               f[i] = skx_total_mem_instr_mem_bw(a[i],
+	                                 b[i],
+					 c[i],
+					 d[i],
+					 e[i]);
+					
+          }
+}
+
+
+/*
+    Memory extra read b/w due to XPT prefetches (MB/sec).
+*/
+void
+skx_XPT_mem_bw_prefetch_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                const double * __restrict __attribute__((aligned(64))) b,
+			        const double * __restrict __attribute__((aligned(64))) c,
+			        double * __restrict __attribute__((aligned(64))) d,
+	                        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_mem_bw_xpt_prefetch(a[i],
+	                                  b[i],
+					  c[i]);
+				
+					
+          }
+}
+
+
+/*
+    Memory extra write b/w due to directory updates (MB/sec).
+*/
+void
+skx_mem_bw_dir_update_samples(const double * __restrict   __attribute__((aligned(64))) a,
+                              const double * __restrict   __attribute__((aligned(64))) b,
+			      const double * __restrict   __attribute__((aligned(64))) c,
+			      const double * __restrict   __attribute__((aligned(64))) d,
+			      double * __restrict  __attribute__((aligned(64))) e,
+	                      const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_mem_bw_dir_update(a[i],
+	                                  b[i],
+					  c[i],
+					  d[i]);
+				
+					
+          }
+}
+
+
+/*
+      DRAM RPQ read latency (ns).
+*/
+void
+skx_DRAM_RPQ_read_latency_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                                  const double * __restrict  __attribute__((aligned(64))) b,
+			          const double * __restrict  __attribute__((aligned(64))) c,
+			          const double * __restrict  __attribute__((aligned(64))) d,
+			          double * __restrict  __attribute__((aligned(64))) e,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_DRAM_rpq_read_latency_ns(a[i],
+	                                           b[i],
+					           c[i],
+					           d[i]);
+				
+					
+          }
+}
+
+
+/*
+     DRAM RPQ write latency (ns).
+*/
+void
+skx_DRAM_RPQ_write_latency_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                                  const double * __restrict  __attribute__((aligned(64))) b,
+			          const double * __restrict  __attribute__((aligned(64))) c,
+			          const double * __restrict  __attribute__((aligned(64))) d,
+			          double * __restrict  __attribute__((aligned(64))) e,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_DRAM_rpq_write_latency_ns(a[i],
+	                                           b[i],
+					           c[i],
+					           d[i]);
+				
+					
+          }
+}
+
+
+/*
+    Memory average number of entries in each read Q (RPQ)
+*/
+void
+skx_RPQ_mem_avg_writes_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                               const double * __restrict  __attribute__((aligned(64))) b,
+	                       double * __restrict  __attribute__((aligned(64))) c,
+	                       const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_mem_avg_rpq_read(a[i],
+	                                b[i]);
+					       
+					
+          }
+}
+
+
+/*
+    memory average number of entries in each write Q (WPQ).
+*/
+void
+skx_RPQ_mem_avg_reads_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                               const double * __restrict  __attribute__((aligned(64))) b,
+	                       double * __restrict  __attribute__((aligned(64))) c,
+	                       const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_mem_avg_rpq_write(a[i],
+	                                b[i]);
+					       
+					
+          }
+}
+
+
+/*
+     I/O bandwidth disk or network writes (MB/sec).
+*/
+void
+skx_IO_disk_or_net_writes_bw_samples(const double * __restrict __attribute__((aligned(64))) a,
+                                     const double * __restrict __attribute__((aligned(64))) b,
+			             const double * __restrict __attribute__((aligned(64))) c,
+			             const double * __restrict __attribute__((aligned(64))) d,
+			             const double * __restrict __attribute__((aligned(64))) e,
+			             double * __restrict __attribute__((aligned(64))) f,
+	                             const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(i)					\
+        aligned(a:64,b,c,d,e,f) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               f[i] = skx_IO_disk_or_net_bw_writes(a[i],
+	                                           b[i],
+					           c[i],
+					           d[i],
+					           e[i]);
+					
+          }
+}
+
+
+/*
+     I/O bandwidth disk or network reads (MB/sec).
+*/
+void
+skx_IO_disk_or_net_reads_bw_samples( const double * __restrict __attribute__((aligned(64))) a,
+                                     const double * __restrict __attribute__((aligned(64))) b,
+			             const double * __restrict __attribute__((aligned(64))) c,
+			             const double * __restrict __attribute__((aligned(64))) d,
+			             const double * __restrict __attribute__((aligned(64))) e,
+			             double * __restrict __attribute__((aligned(64))) f,
+	                             const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(i)					\
+        aligned(a:64,b,c,d,e,f) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               f[i] = skx_IO_disk_or_net_bw_reads(a[i],
+	                                           b[i],
+					           c[i],
+					           d[i],
+					           e[i]);
+					
+          }
+}
+
+
+/*
+   I/O bandwidth disk or network (MB/sec)
+*/
+void
+skx_IO_total_bw_samples(const double * __restrict  __attribute__((aligned(64))) a,
+                        const double * __restrict  __attribute__((aligned(64))) b,
+			const double * __restrict  __attribute__((aligned(64))) c,
+			const double * __restrict  __attribute__((aligned(64))) d,
+			const double * __restrict  __attribute__((aligned(64))) e,
+			const double * __restrict  __attribute__((aligned(64))) f,
+			const double * __restrict  __attribute__((aligned(64))) g,
+			const double * __restrict  __attribute__((aligned(64))) h,
+			const double * __restrict  __attribute__((aligned(64))) i,
+			double * __restrict  __attribute__((aligned(64))) j,
+	                const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,h,i,j,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g,h,i,j) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               j[idx] = skx_IO_disk__net_total(a[idx],
+	                                     b[idx],
+					     c[idx],
+					     d[idx],
+					     e[idx],
+					     g[idx],
+					     h[idx],
+					     i[idx]);
+					
+          }
+}
+
+
+/*
+   I/O number of partial PCI writes per second.
+*/
+void
+skx_PCI_part_writes_sec_samples(const double * __restrict __attribute__((aligned(64))) a,
+			        const double * __restrict __attribute__((aligned(64))) b,
+			        const double * __restrict __attribute__((aligned(64))) c,
+			        double * __restrict __attribute__((aligned(64))) d,
+	                        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_PCI_part_writes_sec(a[i],
+	                                      b[i],
+					      c[i]);
+					       
+				
+					
+          }
+}
+
+
+/*
+    I/O write cache miss(disk/network reads) bandwidth (MB/sec)
+*/
+void
+skx_IO_writes_cache_miss_samples(const double * __restrict __attribute__((aligned(64))) a,
+			         const double * __restrict __attribute__((aligned(64))) b,
+			         const double * __restrict __attribute__((aligned(64))) c,
+			         double * __restrict __attribute__((aligned(64))) d,
+	                         const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_IO_write_cache_miss_bw(a[i],
+	                                      b[i],
+					      c[i]);
+					       
+				
+					
+          }				 
+}
+
+
+/*
+    I/O write cache miss(disk/network writes) bandwidth (MB/sec)
+*/
+void
+skx_IO_reads_cache_miss_samples(const double * __restrict __attribute__((aligned(64))) a,
+			         const double * __restrict __attribute__((aligned(64))) b,
+			         const double * __restrict __attribute__((aligned(64))) c,
+			         double * __restrict __attribute__((aligned(64))) d,
+	                         const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_IO_read_cache_miss_bw(a[i],
+	                                      b[i],
+					      c[i]);
+					       
+				
+					
+          }				 
+}
+
+
+/*
+     IO cache miss(disk/network) bandwidth (MB/sec)
+*/
+void
+skx_IO_cache_miss_total_bw_samples(const double * __restrict __attribute__((aligned(64))) a,
+			           const double * __restrict __attribute__((aligned(64))) b,
+				   const double * __restrict __attribute__((aligned(64))) c,
+				   const double * __restrict __attribute__((aligned(64))) d,
+			       	   double * __restrict __attribute__((aligned(64))) e,
+	                           const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_IO_cache_miss_total_bw(a[i],
+	                                      b[i],
+					      c[i],
+					      d[i]);
+					       
+				
+					
+          }
+}
+
+
+/*
+    MMIO reads per second.
+*/
+void
+skx_MMIO_reads_sec_samples(const double * __restrict  __attribute__((aligned(64))) a,
+			   const double * __restrict  __attribute__((aligned(64))) b,
+			   double * __restrict  __attribute__((aligned(64))) c,
+	                   const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_MMIO_reads_sec(a[i],
+	                                 b[i]);
+					    
+					       
+				
+					
+          }
+}
+
+
+/*
+    MMIO writes per second.
+*/
+void
+skx_MMIO_writes_sec_samples(const double * __restrict  __attribute__((aligned(64))) a,
+			   const double * __restrict  __attribute__((aligned(64))) b,
+			   double * __restrict  __attribute__((aligned(64))) c,
+	                   const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_MMIO_writes_sec(a[i],
+	                                 b[i]);
+					    
+					       
+				
+					
+          }
+}
+
+
+/*
+    Memory Page Empty vs. all requests
+*/
+void
+skx_mem_page_empty_all_reqs_samples(const double * __restrict __attribute__((aligned(64))) a,
+			            const double * __restrict __attribute__((aligned(64))) b,
+				    const double * __restrict __attribute__((aligned(64))) c,
+				    const double * __restrict __attribute__((aligned(64))) d,
+			       	    double * __restrict __attribute__((aligned(64))) e,
+	                            const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_mem_page_empty_all_reqs(a[i],
+	                                      b[i],
+					      c[i],
+					      d[i]);
+					       
+				
+					
+          }
+}
+
+
+/*
+    Memory Page Misses vs. all requests
+*/
+void
+skx_mem_page_misses_all_req_samples( const double * __restrict __attribute__((aligned(64))) a,
+				     const double * __restrict __attribute__((aligned(64))) b,
+				     const double * __restrict __attribute__((aligned(64))) c,
+			       	     double * __restrict __attribute__((aligned(64))) d,
+	                             const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_mem_page_misses_all_reqs(a[i],
+	                                      b[i],
+					      c[i]);
+					    
+	}				       
+				
+}					
+          
+
+
+
