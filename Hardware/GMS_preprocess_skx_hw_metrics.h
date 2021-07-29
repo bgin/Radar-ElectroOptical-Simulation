@@ -1057,7 +1057,7 @@ skx_mem_page_hits_all_req_samples( const double * __restrict,
 				     const double * __restrict,
 				     const double * __restrict,
 			       	     double * __restrict,
-	                             const int32_t)  __attribute__((hot))
+	                             const int32_t) chyba, że Ty do analizy __attribute__((hot))
                                                 __attribute__((aligned(32)));
 
 
@@ -1152,7 +1152,7 @@ skx_LSD_uops_samples(const double * __restrict,
 */
 void
 skx_fp32_scalar_retired_samples(const double * __restrict,
-		                const double * __restrict
+		                const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1163,7 +1163,7 @@ skx_fp32_scalar_retired_samples(const double * __restrict,
 */
 void
 skx_fp64_scalar_retired_samples(const double * __restrict,
-		                const double * __restrict
+		                const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1174,7 +1174,7 @@ skx_fp64_scalar_retired_samples(const double * __restrict,
 */
 void
 skx_fp32_vec128b_retired_samples(const double * __restrict,
-		                const double * __restrict
+				 const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1185,7 +1185,7 @@ skx_fp32_vec128b_retired_samples(const double * __restrict,
 */
 void
 skx_fp64_vec128b_retired_samples(const double * __restrict,
-		                const double * __restrict
+				 const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1196,7 +1196,7 @@ skx_fp64_vec128b_retired_samples(const double * __restrict,
 */
 void
 skx_fp32_vec256b_retired_samples(const double * __restrict,
-		                const double * __restrict
+				 const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1207,7 +1207,7 @@ skx_fp32_vec256b_retired_samples(const double * __restrict,
 */
 void
 skx_fp64_vec256b_retired_samples(const double * __restrict,
-		                const double * __restrict
+				 const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1218,7 +1218,7 @@ skx_fp64_vec256b_retired_samples(const double * __restrict,
 */
 void
 skx_fp32_vec512b_retired_samples(const double * __restrict,
-		                const double * __restrict
+				 const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1229,7 +1229,7 @@ skx_fp32_vec512b_retired_samples(const double * __restrict,
 */
 void
 skx_fp64_vec512b_retired_samples(const double * __restrict,
-		                const double * __restrict
+				 const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1258,7 +1258,7 @@ skx_fp_instr_density_samples(const double * __restrict,
 */
 void
 skx_branch_instr_ratio_samples(const double * __restrict,
-		                const double * __restrict
+			       const double * __restrict,
 		                double * __restrict,
 	                        const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1269,7 +1269,7 @@ skx_branch_instr_ratio_samples(const double * __restrict,
 */
 void
 skx_DRAM_power_samples(const double * __restrict,
-		       const double * __restrict
+		       const double * __restrict,
 		       double * __restrict,
 	               const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1281,7 +1281,7 @@ skx_DRAM_power_samples(const double * __restrict,
 */
 void
 skx_Package_power_samples(const double * __restrict,
-		       const double * __restrict
+			  const double * __restrict,
 		       double * __restrict,
 	               const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1292,7 +1292,7 @@ skx_Package_power_samples(const double * __restrict,
 */
 void
 skx_Core_C3_residency_samples(const double * __restrict,
-		              const double * __restrict
+		              const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1303,7 +1303,7 @@ skx_Core_C3_residency_samples(const double * __restrict,
 */
 void
 skx_Core_C6_residency_samples(const double * __restrict,
-		              const double * __restrict
+		              const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1314,7 +1314,7 @@ skx_Core_C6_residency_samples(const double * __restrict,
 */
 void
 skx_Package_C2_residency_samples(const double * __restrict,
-		              const double * __restrict
+				 const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1325,7 +1325,7 @@ skx_Package_C2_residency_samples(const double * __restrict,
 */
 void
 skx_Package_C3_residency_samples(const double * __restrict,
-		              const double * __restrict
+				 const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1336,7 +1336,7 @@ skx_Package_C3_residency_samples(const double * __restrict,
 */
 void
 skx_Package_C6_residency_samples(const double * __restrict,
-		              const double * __restrict
+				 const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1347,7 +1347,7 @@ skx_Package_C6_residency_samples(const double * __restrict,
 */
 void
 skx_NTA_sw_prefetches_samples(const double * __restrict,
-		              const double * __restrict
+		              const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
@@ -1358,7 +1358,7 @@ skx_NTA_sw_prefetches_samples(const double * __restrict,
 */
 void
 skx_Core_power_throttled_samples(const double * __restrict,
-		              const double * __restrict
+				 const double * __restrict,
 		              double * __restrict,
 	                      const int32_t)  __attribute__((hot))
                                       __attribute__((aligned(32)));
