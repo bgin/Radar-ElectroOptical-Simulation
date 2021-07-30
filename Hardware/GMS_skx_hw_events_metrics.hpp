@@ -2087,7 +2087,7 @@ double skx_frontend_bound(const double CPU_CLK_UNHALTED_THREAD,
                           const double IDQ_UOPS_NOT_DELIVERED_CORE){
 			
 
-        const double term1 = 4.0*CPU_CLK_UNHALTED_THREAD_ANY;
+        const double term1 = 4.0*CPU_CLK_UNHALTED_THREAD;
 	return (100.0*IDQ_UOPS_NOT_DELIVERED_CORE/term1);
 }
 
