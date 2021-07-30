@@ -9,11 +9,11 @@ namespace file_info {
     #include "GMS_version.h"
 #endif
 
-	const unsigned int gGMS_AVX512C8F64_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
+	const unsigned int gGMS_AVX512C8F64_MAJOR = 1U;
 
-	const unsigned int gGMS_AVX512C8F64_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVX512C8F64_MINOR = 0U;
 
-	const unsigned int gLAM_AVX512C8F64_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gLAM_AVX512C8F64_MICRO = 0U;
 
 	const unsigned int gGMS_AVX512C8F64_FULLVER = 
 		1000U*gGMS_AVX512C8F64_MAJOR+100U*gGMS_AVX3C8F64_MINOR+10U*gGMS_AVX3C8F64_MICRO;
@@ -31,35 +31,31 @@ namespace file_info {
 #include <iostream>
 #include <immintrin.h>
 #include <complex> // for comparison operators
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+#include "GMS_config.h"
+
 
 namespace gms {
 	namespace math {
 
 
-#if defined _WIN64
-		__declspec(align(64)) struct AVX512c8Payload {
-#elif defined __linux
+
+		
+
 	        struct AVX512c8Payload {
-#endif
+
 			double re0,re1,re2,re3,re4,re5,re6,re7;
 			double im0,im1,im2,im3,im4,im5,im6,im7;
-		};
-#if defined __linux
-		  __attribute__((aligned(64)))
-#endif
+		} __attribute__((aligned(64)));
+
+		
+
 
 		//static AVX3C8f64 CZERO{ _mm512_setzero_pd(),
 		//						_mm512_setzero_pd() };
-#if defined _WIN64
-		__declspec(align(64)) struct AVX512c8f64 {
-#elif defined __linux
+
+
 	        struct AVX512c8f64 {
-#endif
+
 				__m512d m_re;
 				
 				__m512d m_im;
@@ -217,10 +213,10 @@ namespace gms {
 				AVX512c8f64 & operator=(const AVX3C8f64);
 
 				
-		};
-#if defined __linux
-		  __attribute__((aligned(64)))
-#endif
+		} __attribute__((aligned(64)));
+
+		
+
 
 		static inline AVX512c8f64
 		        conj(const AVX512c8f64);
