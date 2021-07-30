@@ -3064,6 +3064,7 @@ skx_branch_resteers_samples(const double * __restrict __attribute__((aligned(64)
 					    c[idx],
 					    d[idx],
 					    e[idx],
+					    f[idx],
 					    g[idx]);
 					         
 					
@@ -3119,6 +3120,665 @@ skx_MS_switches_samples( const double * __restrict  __attribute__((aligned(64)))
 					    
 	}
 }
+
+
+/*
+   Frontend bandwidth (SMT enabled)
+*/
+void
+skx_FrontEnd_smt_bw_samples(const double * __restrict  __attribute__((aligned(64))) a,
+			    const double * __restrict  __attribute__((aligned(64))) b,
+			    const double * __restrict  __attribute__((aligned(64))) c,
+			    const double * __restrict  __attribute__((aligned(64))) d,
+		            double * __restrict  __attribute__((aligned(64))) e,
+	                    const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_smt_frontend_bw(a[i],
+	                                    b[i],
+					    c[i],
+					    d[i]);
+					     
+					    
+	}
+}
+
+
+/*
+    Frontend bandwidth (SMT disabled).
+*/
+void
+skx_FrontEnd_n_smt_bw_samples(const double * __restrict  __attribute__((aligned(64))) a,
+			      const double * __restrict  __attribute__((aligned(64))) b,
+			      const double * __restrict  __attribute__((aligned(64))) c,
+		              double * __restrict  __attribute__((aligned(64))) d,
+	                      const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_smt_frontend_bw(a[i],
+	                                    b[i],
+					    c[i]);
+					   
+					     
+					    
+	}
+}
+
+
+/*
+    Bad Speculation (SMT enabled).
+*/
+void
+skx_smt_bad_speculate_samples(  const double * __restrict __attribute__((aligned(64))) a,
+			        const double * __restrict __attribute__((aligned(64))) b,
+			        const double * __restrict __attribute__((aligned(64))) c,
+			        const double * __restrict __attribute__((aligned(64))) d,
+				const double * __restrict __attribute__((aligned(64))) e,
+		                double * __restrict __attribute__((aligned(64))) f,
+	                        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(i)					\
+        aligned(a:64,b,c,d,e,f) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               f[i] = skx_smt_bad_speculation(a[i],
+	                                        b[i],
+					        c[i],
+					        d[i],
+					        e[i]);
+					  
+					         
+					
+          }
+}
+
+
+/*
+    Bad Speculation (SMT disabled).
+*/
+void
+skx_no_smt_bad_speculate_samples(  const double * __restrict __attribute__((aligned(64))) a,
+			           const double * __restrict __attribute__((aligned(64))) b,
+			           const double * __restrict __attribute__((aligned(64))) c,
+			           const double * __restrict __attribute__((aligned(64))) d,
+				   double * __restrict __attribute__((aligned(64))) e,
+	                           const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(i)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               e[i] = skx_no_smt_bad_speculation(a[i],
+	                                        b[i],
+					        c[i],
+					        d[i]);
+					    
+					  
+					         
+					
+          }
+}
+
+
+/*
+    Branch Mispredicts (STM enabled).
+*/
+void
+skx_smt_branch_mispredicts_sample(const double * __restrict __attribute__((aligned(64))) a,
+			          const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+				  const double * __restrict __attribute__((aligned(64))) e,
+				  const double * __restrict __attribute__((aligned(64))) f,
+				  const double * __restrict __attribute__((aligned(64))) g,
+			          double * __restrict __attribute__((aligned(64))) h,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,h,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g,h) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               h[idx] = skx_smt_branch_mispredicts(a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx],
+					           g[idx]);
+					         
+					
+          }
+}
+
+
+/*
+     Branch Misprediction (SMT disabled).
+*/
+void
+skx_no_smt_branch_mispredicts_sample(const double * __restrict  a,
+			          const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+				  const double * __restrict __attribute__((aligned(64))) e,
+				  const double * __restrict __attribute__((aligned(64))) f,
+				  double * __restrict __attribute__((aligned(64))) g,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               g[idx] = skx_no_smt_branch_mispredicts(a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx]);
+					         
+					         
+					
+          }
+}
+
+
+/*
+    Machine Clears (SMT enabled).
+*/
+void
+skx_smt_machine_clears_samples(   const double * __restrict __attribute__((aligned(64))) a,
+			          const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+				  const double * __restrict __attribute__((aligned(64))) e,
+				  const double * __restrict __attribute__((aligned(64))) f,
+				  const double * __restrict __attribute__((aligned(64))) g,
+			          double * __restrict __attribute__((aligned(64))) h,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,h,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g,h) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               h[idx] = skx_smt_machine_clears(    a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx],
+					           g[idx]);
+					         
+					
+          }
+}
+
+
+/*
+    Machine clears (SMT disabled).
+*/
+void
+skx_smt_machine_clears_samples(   const double * __restrict __attribute__((aligned(64))) a,
+			          const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+				  const double * __restrict __attribute__((aligned(64))) e,
+				  const double * __restrict __attribute__((aligned(64))) f,
+				  const double * __restrict __attribute__((aligned(64))) g,
+			          double * __restrict __attribute__((aligned(64))) h,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,h,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g,h) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               h[idx] = skx_smt_machine_clears(    a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx],
+					           g[idx]);
+					         
+					
+          }
+}
+
+
+/*
+    Machine clears (SMT disabled).
+*/
+void
+skx_smt_machine_clears_samples(   const double * __restrict __attribute__((aligned(64))) a,
+			          const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+				  const double * __restrict __attribute__((aligned(64))) e,
+				  const double * __restrict __attribute__((aligned(64))) f,
+				  const double * __restrict __attribute__((aligned(64))) g,
+			          double * __restrict __attribute__((aligned(64))) h,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,h,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g,h) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               h[idx] = skx_smt_machine_clears(    a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx],
+					           g[idx]);
+					         
+					
+          }
+}
+
+
+/*
+    Machine clears (SMT disabled).
+*/
+void
+skx_no_smt_machine_clears_samples(   const double * __restrict __attribute__((aligned(64))) a,
+			          const double * __restrict __attribute__((aligned(64))) b,
+			          const double * __restrict __attribute__((aligned(64))) c,
+			          const double * __restrict __attribute__((aligned(64))) d,
+				  const double * __restrict __attribute__((aligned(64))) e,
+				  const double * __restrict __attribute__((aligned(64))) f,
+				  double * __restrict __attribute__((aligned(64))) g,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               g[idx] = skx_no_smt_machine_clears(    a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx]);
+					         
+					         
+					
+          }
+}
+
+
+/*
+    Backend Bound (SMT enabled)
+*/
+void
+skx_smt_BackEnd_bound_samples(    const double * __restrict  __attribute__((aligned(64))) a,
+			          const double * __restrict  __attribute__((aligned(64))) b,
+			          const double * __restrict  __attribute__((aligned(64))) c,
+			          const double * __restrict  __attribute__((aligned(64))) d,
+				  const double * __restrict  __attribute__((aligned(64))) e,
+				  const double * __restrict  __attribute__((aligned(64))) f,
+				  double * __restrict  __attribute__((aligned(64))) g,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               g[idx] = skx_smt_backend_bound(     a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx],
+					           f[idx]);
+					         
+					         
+					
+          }
+}
+
+
+/*
+     Backend Boud (SMT disabled).
+*/
+void
+skx_smt_BackEnd_bound_samples(    const double * __restrict  __attribute__((aligned(64))) a,
+			          const double * __restrict  __attribute__((aligned(64))) b,
+			          const double * __restrict  __attribute__((aligned(64))) c,
+			          const double * __restrict  __attribute__((aligned(64))) d,
+				  const double * __restrict  __attribute__((aligned(64))) e,
+				  double * __restrict  __attribute__((aligned(64))) f,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               f[idx] = skx_smt_backend_bound(     a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+					           e[idx]);
+					        
+					         
+					         
+					
+          }
+}
+
+
+/*
+   L1D bound
+*/
+void
+skx_L1D_bound_samples(const double * __restrict  __attribute__((aligned(64))) a,
+		      const double * __restrict  __attribute__((aligned(64))) b,
+		      const double * __restrict  __attribute__((aligned(64))) c,
+		      double * __restrict  __attribute__((aligned(64))) d,
+	              const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_L1D_bound(a[i],
+	                            b[i],
+				    c[i]);
+					   
+					     
+					    
+	}
+}
+
+
+/*
+   DTLB Load
+*/
+void
+skx_DTLB_load_samples(const double * __restrict __attribute__((aligned(64))) a,
+		      const double * __restrict __attribute__((aligned(64))) b,
+		      const double * __restrict __attribute__((aligned(64))) c,
+		      double * __restrict __attribute__((aligned(64))) d,
+	              const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(i)					\
+        aligned(a:64,b,c,d) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               d[i] = skx_DTLB_load(a[i],
+	                            b[i],
+				    c[i]);
+					   
+					     
+					    
+	}
+}
+
+
+/*
+   Stores forward blocked
+*/
+void
+skx_stores_fwd_block_samples( const double * __restrict __attribute__((aligned(64))) a,
+		              const double * __restrict __attribute__((aligned(64))) b,
+		              double * __restrict __attribute__((aligned(64))) c,
+	                      const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(i)					\
+        aligned(a:64,b,c) linear(i:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t i = 0; i != data_len; ++i) {
+               c[i] = skx_stores_fwd_blocked(a[i],
+	                                     b[i]);
+				 
+	 }				   
+					     
+
+}
+
+
+/*
+   Lock latency
+*/
+void
+skx_lock_latency_samples(const double * __restrict __attribute__((aligned(64))) a,
+		         const double * __restrict __attribute__((aligned(64))) b,
+		         const double * __restrict __attribute__((aligned(64))) c,
+			 const double * __restrict __attribute__((aligned(64))) d,
+		         double * __restrict __attribute__((aligned(64))) e,
+	                 const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               e[idx] = skx_lock_latency(          a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx]);
+					        
+					        
+	}				         
+					         
+}
+
+
+/*
+   L2 bound
+*/
+void
+skx_L2_bound_samples(    const double * __restrict __attribute__((aligned(64))) a,
+		         const double * __restrict __attribute__((aligned(64))) b,
+			 const double * __restrict __attribute__((aligned(64))) c,
+		         double * __restrict __attribute__((aligned(64))) d,
+	                 const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               d[idx] = skx_L2_bound(  a[idx],
+	                               b[idx],
+				       c[idx]);
+					       
+					        
+					        
+	}	
+}
+
+
+/*
+    L3 bound.
+*/
+void
+skx_L3_bound_samples(    const double * __restrict __attribute__((aligned(64))) a,
+		         const double * __restrict __attribute__((aligned(64))) b,
+			 const double * __restrict __attribute__((aligned(64))) c,
+		         double * __restrict __attribute__((aligned(64))) d,
+	                 const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               d[idx] = skx_L3_bound(  a[idx],
+	                               b[idx],
+				       c[idx]);
+					       
+					        
+					        
+	}
+}
+
+
+/*
+    Contested accessses
+*/
+void
+skx_contested_accesses_samples( const double * __restrict __attribute__((aligned(64))) a,
+		                const double * __restrict __attribute__((aligned(64))) b,
+			        const double * __restrict __attribute__((aligned(64))) c,
+		                double * __restrict __attribute__((aligned(64))) d,
+	                        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               d[idx] = skx_contested_accesses(  a[idx],
+	                                         b[idx],
+				                 c[idx]);
+					       
+					        
+					        
+	}
+}
+
+
+/*
+    Data sharing
+*/
+void
+skx_data_sharing_samples( const double * __restrict  __attribute__((aligned(64))) a,
+			  const double * __restrict  __attribute__((aligned(64))) b,
+		          double * __restrict  __attribute__((aligned(64))) c,
+	                  const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_data_sharing(  a[idx],
+	                                   b[idx]);
+				               
+	}				       
+					        
+}
+
+
+/*
+    L3 latency
+*/
+void
+skx_L3_latency_samples(const double * __restrict __attribute__((aligned(64))) a,
+		       const double * __restrict __attribute__((aligned(64))) b,
+		       const double * __restrict __attribute__((aligned(64))) c,
+		       const double * __restrict __attribute__((aligned(64))) d,
+		       const double * __restrict __attribute__((aligned(64))) e,
+		       double * __restrict __attribute__((aligned(64))) f,
+	               const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               f[idx] = skx_L3_latency(           a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+						   e[idx]);
+					        
+					        
+	}
+}
+
+
+/*
+  L3 bandwidth
+*/
+void
+skx_L3_bw_samples(     const double * __restrict  __attribute__((aligned(64))) a,
+		       const double * __restrict  __attribute__((aligned(64))) b,
+		       const double * __restrict  __attribute__((aligned(64))) c,
+		       double * __restrict  __attribute__((aligned(64))) d,
+	               const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               d[idx] = skx_L3_bandwidth(  a[idx],
+	                                   b[idx],
+				           c[idx]);
+					       
+					        
+					        
+	}
+}
+	
+
+          
+
+
+
 
 
 
