@@ -161,23 +161,53 @@ namespace gms {
 			  m_size = size;
                           const std::size_t ullsize = static_cast<m_size>;
 #if (USE_MMAP_2MiB) == 1
+#pragma omp parallel sections
+{
+                    #pragma omp section
+		    {
                         m_x = gms_edmmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
 					      -1,0,lockm);
+		    }
+		    #pragma omp section
+		    {
 			m_y = gms_edmmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
 					      -1,0,lockm);
+		    }
+		    #pragma omp section
+		    {
 			m_z = gms_edmmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
 					      -1,0,lockm);
+		    }
+		    #pragma omp section
+		    {
 			m_w = gms_edmmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
 					      -1,0,lockm);
+		    }
+}
 #else
+#pragma omp parallel sections
+{
+                  #pragma omp section
+		  {
                         m_x = gms_dmalloca(ullsize,align32B);
+		  }
+		  #pragma omp section
+		  {
 			m_y = gms_dmalloca(ullsize,align32B);
+		  }
+		  #pragma omp section
+		  {
 			m_z = gms_dmalloca(ullsize,align32B);
+		  }
+		  #pragma omp section
+		  {
 			m_w = gms_dmalloca(ullsize,align32B);
+		  }
+}
 #endif
 #if (USE_AVXQUATERNION_ARRAY1D_NT_STORES) == 1
                         avx256_uncached_memmove(&m_x[0],&x[0],m_size);
@@ -262,86 +292,76 @@ namespace gms {
 	                                const AVXQuatArray1D &b,
 					const AVXQuatArray1D &a) {
 		      if(b.m_size != a.m_size) { return;}
-                      int32_t i;
+                      int32_t i,last_i;
 #if defined (__ICC) || defined (__INTEL_COMPILER)
 #pragma code_align(32)
-#endif		      
-                      for(i = 0; i != ROUND_TO_FOUR(c.m_size,4); i += 16) {
-		      
-                          const __m256d ymm0(_mm256_load_pd(&b.m_x[i+0]));
-			  const __m256d ymm1(_mm256_load_pd(&a.m_x[i+0]));
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i) \
+                      lastprivate(last_i) shared(c.m_x,x.m_y,x.m_z,c.m_w, \
+		            b.m_x,b.m_y,b.m_z,b.m_w, \
+			    a.m_x,a.m_y,a.m_z,a.m_w, \
+			    c.m_size) if(c.m_size >= 5000)
+                    for(i = 0; i != ROUND_TO_FOUR(c.m_size,4); i += 16) {
+
+		          last_t = i;
 			  _mm256_store_pd(&c.m_x[i+0],
-			                  _mm256_add_pd(ymm0,ymm1));
-			  const __m256d ymm2(_mm256_load_pd(&b.m_y[i+0]));
-			  const __m256d ymm3(_mm256_load_pd(&a.m_y[i+0]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_x[i+0]),
+					                  _mm256_load_pd(&a.m_x[i+0])));
 			  _mm256_store_pd(&c.m_y[i+0],
-			                  _mm256_add_pd(ymm2,ymm3));
-			  const __m256d ymm4(_mm256_load_pd(&b.m_z[i+0]));
-			  const __m256d ymm5(_mm256_load_pd(&a.m_z[i+0]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_y[i+0]),
+					                 _mm256_load_pd(&a.m_y[i+0])));
 			  _mm256_store_pd(&c.m_z[i+0],
-			                  _mm256_add_pd(ymm4,ymm5));
-			  const __m256d ymm6(_mm256_load_pd(&b.m_w[i+0]));
-			  const __m256d ymm7(_mm256_load_pd(&a.m_w[i+0]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_z[i+0]),
+					                 _mm256_load_pd(&a.m_z[i+0]) ));
 			  _mm256_store_pd(&c.m_w[i+0],
-			                  _mm256_add_pd(ymm6,ymm7));
-			  const __m256d ymm8(_mm256_load_pd(&b.m_x[i+4]));
-			  const __m256d ymm9(_mm256_load_pd(&a.m_x[i+4]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_w[i+0]),
+					                _mm256_load_pd(&a.m_w[i+0])));
 			  _mm256_store_pd(&c.m_x[i+4],
-			                  _mm256_add_pd(ymm8,ymm9));
-			  const __m256d ymm10(_mm256_load_pd(&b.m_y[i+4]));
-			  const __m256d ymm11(_mm256_load_pd(&a.m_y[i+4]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_x[i+4]),
+					                 _mm256_load_pd(&a.m_x[i+4])));
 			  _mm256_store_pd(&c.m_y[i+4],
-			                  _mm256_add_pd(ymm10,ymm11));
-			  const __m256d ymm12(_mm256_load_pd(&b.m_z[i+4]));
-			  const __m256d ymm13(_mm256_load_pd(&a.m_z[i+4]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_y[i+4]),
+					                  _mm256_load_pd(&a.m_y[i+4])));
 			  _mm256_store_pd(&c.m_z[i+4],
-			                  _mm256_add_pd(ymm12,ymm13));
-			  const __m256d ymm14(_mm256_load_pd(&b.m_w[i+4]));
-			  const __m256d ymm15(_mm256_load_pd(&a.m_w[i+4]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_z[i+4]),
+					                 _mm256_load_pd(&a.m_z[i+4])));
 			  _mm256_store_pd(&c.m_w[i+4],
-			                  _mm256_add_pd(ymm14,ymm15));
-			  const __m256d ymm16(_mm256_load_pd(&b.m_x[i+8]));
-			  const __m256d ymm17(_mm256_load_pd(&a.m_x[i+8]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_w[i+4]),
+					                 _mm256_load_pd(&a.m_w[i+4])));
 			  _mm256_store_pd(&c.m_x[i+8],
-			                  _mm256_add_pd(ymm16,ymm17));
-			  const __m256d ymm18(_mm256_load_pd(&b.m_y[i+8]));
-			  const __m256d ymm19(_mm256_load_pd(&a.m_y[i+8]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_x[i+8]),
+					                _mm256_load_pd(&a.m_x[i+8]) ));
 			  _mm256_store_pd(&c.m_y[i+8],
-			                  _mm256_add_pd(ymm18,ymm19));
-			  const __m256d ymm20(_mm256_load_pd(&b.m_z[i+8]));
-			  const __m256d ymm21(_mm256_load_pd(&a.m_z[i+8]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_y[i+8]),
+					                _mm256_load_pd(&a.m_y[i+8])));
 			  _mm256_store_pd(&c.m_z[i+8],
-			                  _mm256_add_pd(ymm20,ymm21));
-			  const __m256d ymm22(_mm256_load_pd(&b.m_w[i+8]));
-			  const __m256d ymm23(_mm256_load_pd(&a.m_w[i+8]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_z[i+8]),
+					                _mm256_load_pd(&a.m_z[i+8])));
 			  _mm256_store_pd(&c.m_w[i+8],
-			                  _mm256_add_pd(ymm22,ymm23));
-			  const __m256d ymm24(_mm256_load_pd(&b.m_x[i+12]));
-			  const __m256d ymm25(_mm256_load_pd(&a.m_x[i+12]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_w[i+8]),
+					                 _mm256_load_pd(&a.m_w[i+8])));
 			  _mm256_store_pd(&c.m_x[i+12],
-			                  _mm256_add_pd(ymm24,ymm25));
-			  const __m256d ymm26(_mm256_load_pd(&b.m_y[i+12]));
-			  const __m256d ymm27(_mm256_load_pd(&a.m_y[i+12]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_x[i+12]),
+					                _mm256_load_pd(&a.m_x[i+12])));
 			  _mm256_store_pd(&c.m_y[i+12],
-			                  _mm256_add_pd(ymm26,ymm27));
-			  const __m256d ymm28(_mm256_load_pd(&b.m_z[i+12]));
-			  const __m256d ymm29(_mm256_load_pd(&a.m_z[i+12]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_y[i+12]),
+					                _mm256_load_pd(&a.m_y[i+12])));
 			  _mm256_store_pd(&c.m_z[i+12],
-			                  _mm256_add_pd(ymm28,ymm29));
-			  const __m256d ymm30(_mm256_load_pd(&b.m_w[i+12]));
-			  const __m256d ymm31(_mm256_load_pd(&a.m_w[i+12]));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_z[i+12]),
+					                 _mm256_load_pd(&a.m_z[i+12])));
 			  _mm256_store_pd(&c.m_w[i+12],
-			                  _mm256_add_pd(ymm30,ymm31));
+			                  _mm256_add_pd(_mm256_load_pd(&b.m_w[i+12]),
+					                _mm256_load_pd(&a.m_w[i+12])));
 			  
 		      }
 #if defined (__ICC) || defined (__INTEL_COMPILER)
 #pragma loop_count min(1),avg(2),max(3)
 #endif
-                      for(; i != c.m_size; ++i) {
-                           c.m_x[i] = b.m_x[i]+a.m_x[i];
-			   c.m_y[i] = b.m_y[i]+a.m_y[i];
-			   c.m_z[i] = b.m_z[i]+a.m_z[i];
-			   c.m_w[i] = b.m_w[i]+a.m_w[i];
+                      for(; last_i != c.m_size; ++last_i) {
+                           c.m_x[last_i] = b.m_x[last_i]+a.m_x[last_i];
+			   c.m_y[last_i] = b.m_y[last_i]+a.m_y[last_i];
+			   c.m_z[last_i] = b.m_z[last_i]+a.m_z[last_i];
+			   c.m_w[last_i] = b.m_w[last_i]+a.m_w[last_i];
 		      }
 	       }
 	      
