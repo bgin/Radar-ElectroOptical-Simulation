@@ -293,6 +293,7 @@ namespace gms {
 					const AVXQuatArray1D &a) {
 		      if(b.m_size != a.m_size) { return;}
                       int32_t i,last_i;
+		      last_i = 0;
 #if defined (__ICC) || defined (__INTEL_COMPILER)
 #pragma code_align(32)
 #endif
