@@ -4157,7 +4157,7 @@ skx_Port_3m_utlized_samples(  const double * __restrict __attribute__((aligned(6
 #endif
 #pragma omp parallel for simd schedule(static,8) default(none) \
         shared(a,b,c,d,data_len) private(idx)					\
-        aligned(a:64,b,c,d,) linear(idx:1) unroll partial(10) if(data_len>=10000)
+        aligned(a:64,b,c,d) linear(idx:1) unroll partial(10) if(data_len>=10000)
 	  for(int32_t idx = 0; idx != data_len; ++idx) {
                d[idx] = skx_Port_3m_utilized(       a[idx],
 	                                           b[idx],
@@ -4168,6 +4168,442 @@ skx_Port_3m_utlized_samples(  const double * __restrict __attribute__((aligned(6
 					        
 	}
 }
+
+
+/*
+   Retiring (SMT enabled)
+*/
+void
+skx_smt_retiring_samples(     const double * __restrict __attribute__((aligned(64))) a,
+			      const double * __restrict __attribute__((aligned(64))) b,
+			      const double * __restrict __attribute__((aligned(64))) c,
+			      double * __restrict __attribute__((aligned(64))) d,
+	                      const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(idx)					\
+        aligned(a:64,b,c,d) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               d[idx] = skx_smt_retiring(          a[idx],
+	                                           b[idx],
+					           c[idx]);
+					        
+						 
+					        
+					        
+	}
+}
+
+
+/*
+   Retiring (SMT disabled)
+*/
+void
+skx_no_smt_retiring_samples(  const double * __restrict __attribute__((aligned(64))) a,
+			      const double * __restrict __attribute__((aligned(64))) b,
+			      double * __restrict __attribute__((aligned(64))) c,
+			      const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_no_smt_retiring(          a[idx],
+	                                           b[idx]);
+					          
+					        
+						 
+					        
+					        
+	}
+}
+
+
+/*
+    Basic activity (SMT enabled).
+*/
+void
+skx_smt_basic_activity_samples( const double * __restrict  __attribute__((aligned(64))) a,
+			        const double * __restrict  __attribute__((aligned(64))) b,
+			        const double * __restrict  __attribute__((aligned(64))) c,
+				const double * __restrict  __attribute__((aligned(64))) d,
+				const double * __restrict  __attribute__((aligned(64))) f,
+			        double * __restrict  __attribute__((aligned(64))) g,
+	                        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               g[idx] = skx_smt_base_activity(     a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+						   e[idx],
+						   f[idx]);
+						 
+					        
+	     
+	}
+}
+
+
+/*
+    Basic activity (SMT disabled).
+*/
+void
+skx_smt_basic_activity_samples( const double * __restrict  __attribute__((aligned(64))) a,
+			        const double * __restrict  __attribute__((aligned(64))) b,
+			        const double * __restrict  __attribute__((aligned(64))) c,
+				const double * __restrict  __attribute__((aligned(64))) d,
+				const double * __restrict  __attribute__((aligned(64))) e,
+				double * __restrict __attribute__((aligned(64))) f,
+			        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               f[idx] = skx_smt_base_activity(     a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+						   e[idx]);
+						 
+						 
+					        
+	     
+	}
+}
+
+
+/*
+      FP scalar retiring fraction.
+*/
+void
+skx_fp_scalar_fract_samples(           const double * __restrict  __attribute__((aligned(64))) a,
+			               const double * __restrict  __attribute__((aligned(64))) b,
+				       const double * __restrict  __attribute__((aligned(64))) c,
+			               double * __restrict __attribute__((aligned(64))) d,
+	                               const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,data_len) private(idx)					\
+        aligned(a:64,b,c,d) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               d[idx] = skx_fp_scalar_fraction(    a[idx],
+	                                           b[idx],
+					           c[idx]);
+					        
+						 
+					        
+					        
+	}
+}
+
+
+/*
+     FP vector retiring fraction.
+*/
+void
+skx_fp_vector_fract_samples(    const double * __restrict __attribute__((aligned(64))) a,
+			        const double * __restrict __attribute__((aligned(64))) b,
+			        const double * __restrict __attribute__((aligned(64))) c,
+				const double * __restrict __attribute__((aligned(64))) d,
+				const double * __restrict __attribute__((aligned(64))) e,
+				const double * __restrict __attribute__((aligned(64))) f,
+				const double * __restrict __attribute__((aligned(64))) g,
+			        double * __restrict __attribute__((aligned(64))) h,
+	                        const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,g,h,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f,g,h) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               h[idx] = skx_fp_vector_fraction(     a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+						   e[idx],
+						   f[idx],
+						   g[idx]);
+						 
+						 
+					        
+	     
+	}
+}
+
+
+/*
+     Microcode Sequencer (SMT enabled).
+*/
+void
+skx_smt_MS_samples(const double * __restrict  __attribute__((aligned(64))) a,
+		   const double * __restrict  __attribute__((aligned(64))) b,
+		   const double * __restrict  __attribute__((aligned(64))) c,
+		   const double * __restrict  __attribute__((aligned(64))) d,
+		   const double * __restrict  __attribute__((aligned(64))) e,
+		   double * __restrict  __attribute__((aligned(64))) f,
+	           const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,f,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e,f) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               f[idx] = skx_smt_MS(                a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx],
+						   e[idx]);
+						 
+						 
+					        
+	     
+	}
+}
+
+
+/*
+     Microcode Sequencer (SMT disabled).
+*/
+void
+skx_smt_MS_samples(const double * __restrict  __attribute__((aligned(64))) a,
+		   const double * __restrict  __attribute__((aligned(64))) b,
+		   const double * __restrict  __attribute__((aligned(64))) c,
+		   const double * __restrict  __attribute__((aligned(64))) d,
+		   double * __restrict  __attribute__((aligned(64))) e,
+	           const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,d,e,data_len) private(idx)					\
+        aligned(a:64,b,c,d,e) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               e[idx] = skx_smt_MS(                a[idx],
+	                                           b[idx],
+					           c[idx],
+					           d[idx]);
+					
+						 
+						 
+					        
+	     
+	}
+}
+
+
+/*
+     LLC Local code/data reads hitting in S state in snoop filter per instruction.
+*/
+void
+skx_L3_code_data_read_S_hit_samples(  const double * __restrict __attribute__((aligned(64))) a,
+		                      const double * __restrict __attribute__((aligned(64))) b,
+		                      double * __restrict __attribute__((aligned(64))) c,
+	                              const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_L3_code_data_read_S_hit( a[idx],
+	                                             b[idx]);
+	}				          
+					        
+}
+
+
+/*
+     LLC Local code/data reads hitting in E state in snoop filter per instruction.
+*/
+void
+skx_L3_code_data_read_E_hit_samples(  const double * __restrict __attribute__((aligned(64))) a,
+		                      const double * __restrict __attribute__((aligned(64))) b,
+		                      double * __restrict __attribute__((aligned(64))) c,
+	                              const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_L3_code_data_read_E_hit( a[idx],
+	                                             b[idx]);
+	}				          
+					        
+}
+
+
+/*
+     LLC Local code/data reads hitting in M/E/F state in snoop filter per instruction.
+*/
+void
+skx_L3_code_data_read_MEF_hit_samples(const double * __restrict __attribute__((aligned(64))) a,
+		                      const double * __restrict __attribute__((aligned(64))) b,
+		                      double * __restrict __attribute__((aligned(64))) c,
+	                              const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_L3_code_data_read_MEF_hit( a[idx],
+	                                             b[idx]);
+	}				          
+					        
+}
+
+
+/*
+     INT_MISC.RECOVERY_CYCLES ratio
+*/
+void
+skx_int_misc_recovery_cycles_samples( const double * __restrict  __attribute__((aligned(64))) a,
+		                      const double * __restrict  __attribute__((aligned(64))) b,
+		                      double * __restrict  __attribute__((aligned(64))) c,
+	                              const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_int_misc_recovery_cycles_ratio( a[idx],
+	                                             b[idx]);
+	}
+}
+
+
+/*
+    INT_MISC.CLEAR_RESTEER_CYCLES ratio
+*/
+void
+skx_int_misc_clear_resteer_cycles_samples(const double * __restrict __attribute__((aligned(64))) a,
+		                          const double * __restrict __attribute__((aligned(64))) b,
+		                          double * __restrict __attribute__((aligned(64))) c,
+	                                  const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_int_misc_clear_resteers_cycles_ratio( a[idx],
+	                                                          b[idx]);
+	}
+}
+
+
+/*
+   RS_EVENTS.EMPTY_CYCLES ratio
+*/
+void
+skx_rs_events_empty_cycles_samples(const double * __restrict __attribute__((aligned(64))) a,
+		                   const double * __restrict __attribute__((aligned(64))) b,
+		                   double * __restrict __attribute__((aligned(64))) c,
+	                           const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_rs_events_empty_cycles_ratio( a[idx],
+	                                                  b[idx]);
+	}
+}
+
+
+/*
+    BR_INST_RETIRED.ALL_BRANCHES ratio
+*/
+void
+skx_br_inst_retired_all_branches_samples(const double * __restrict __attribute__((aligned(64))) a,
+		                         const double * __restrict __attribute__((aligned(64))) b,
+		                         double * __restrict __attribute__((aligned(64))) c,
+	                                 const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_br_inst_retired_all_branches_ratio( a[idx],
+	                                                        b[idx]);
+	}
+}
+
+
+/*
+     BR_INST_RETIRED.CONDITIONAL
+*/
+void
+skx_br_inst_retired_cond_samples( const double * __restrict __attribute__((aligned(64))) a,
+		                  const double * __restrict __attribute__((aligned(64))) b,
+		                  double * __restrict __attribute__((aligned(64))) c,
+	                          const int32_t data_len) {
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for simd schedule(static,8) default(none) \
+        shared(a,b,c,data_len) private(idx)					\
+        aligned(a:64,b,c) linear(idx:1) unroll partial(10) if(data_len>=10000)
+	  for(int32_t idx = 0; idx != data_len; ++idx) {
+               c[idx] = skx_br_inst_retired_conditional_ratio( a[idx],
+	                                                        b[idx]);
+	}
+}
+
+
+					        
+              
+	
+
+
+
+
+
+
 
 
 
