@@ -304,7 +304,7 @@ namespace gms {
 			    c.m_size) if(c.m_size >= 5000)
                     for(i = 0; i != ROUND_TO_FOUR(c.m_size,4); i += 16) {
 
-		          last_t = i;
+		          last_i = i;
 			  _mm256_store_pd(&c.m_x[i+0],
 			                  _mm256_add_pd(_mm256_load_pd(&b.m_x[i+0]),
 					                  _mm256_load_pd(&a.m_x[i+0])));
