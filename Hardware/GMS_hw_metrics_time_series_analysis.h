@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <omp.h>
 #include "Timsac_iface.h"
-#include "descriptive_statistics.hpp"
+#include "GMS_descriptive_statistics.hpp"
 #include "convert_numeric_data_types.hpp"
 
 
