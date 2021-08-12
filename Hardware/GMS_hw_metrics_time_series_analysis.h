@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <omp.h>
 #include "Timsac_iface.h"
-#include "GMS_descriptive_statistics.hpp"
+#include "descriptive_statistics.hpp"
 #include "convert_numeric_data_types.hpp"
 
 
@@ -210,12 +210,43 @@ hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) da
     specific subroutine i.e. "MULCOR".
     No descriptive statistics computations for this function.
 */
+#include <string>
+
+__attribute__((hot))
+__attribute__((aligned(32)))
+template<int32_t ndim, int32_t ldim>
 bool
-hw_perf_metrics_mulcor(const double * __restrict, //multidimensional data
-                       const char   * __restrict,
-		       const int32_t, // Number of dimensions
-		       const int32_t) __attribute__((hot))
-				                __attribute__((aligned(32)));
+hw_perf_metrics_mulcor(const double * __restrict mvdata, //multivariable data
+                       const char   * __restrict fname,
+		       const std::string metrics[11]){
+		      
+      static_assert(ndim > 11,     "Number of dimensions can not exceed 11!!");
+      static_assert(ldim > 100000, "Number of elements per dimension can not exceed 100000!!");
+      const int32_t lagh = (int32_t)(2.0f*std::sqrt((float)ldim));
+      const int32_t totlen = ndim*ldim;
+      const std::size_t mvd_len = (std::size_t)(lagh*ndim*mdim);
+      __attribute__((aligned(64))) double xmean[ndim+6];
+      double * __restrict xcov = NULL;
+      double * __restrict xcor = NULL;
+      FILE * fp = NULL;
+      xcov = reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+      if(NULL==xcov) {MALLOC_FAILED}
+      xcor = reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+      if(NULL==xcor) {MALLOC_FAILED}
+      // Call TIMSAC MULCORF subroutine
+      mulcorf_(&mvdata[0],&totlen,&ndim,&lagh,&xmean[0],&xcov[0],&xcor[0]);
+      if(fopen(&fp,fname,"a+") != 0) {
+         printf("File open error: %s\n",fname);
+	 std::exit(EXIT_FAILURE);
+      }
+      for(int32_t i = 0; i != ndim; ++i) {fprintf(fp,"HW Metrics: %s\n",metrics[i].c_str());
+      fprintf(fp,"  HW Metrics multivariate mean\n");
+      for(int32_t i = 0; i != n_dim; ++i) { fprintf(fp,"%.16f\n",xmean[i]);}
+      fprintf(fp1," HW Metrics Multivariate Correlation and Covariance\n");
+      for(int32_t i = 0; i != lagh*n_dim*n_dim; ++i) {fprintf(fp,"%.16f %.16f\n",xcor[i],xcov[i]);}
+      fclose(fp1);
+      _mm_free(xcor); _mm_free(xcov);
+}
 
 
 /*
