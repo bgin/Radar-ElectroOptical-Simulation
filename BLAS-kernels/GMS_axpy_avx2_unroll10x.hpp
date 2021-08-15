@@ -77,9 +77,9 @@ namespace gms {
 					    const int32_t incy) {
                    if(0==n || alpha==0.0f) { return;}
 		   
-		   __ATTR_ALIGN__(64) __m256 xv[10];
-		   __ATTR_ALIGN__(64) __m256 yv[10];
-		   __ATTR_ALIGN__(64) __m256 zv[10];
+		   __ATTR_ALIGN__(32) __m256 xv[10];
+		   __ATTR_ALIGN__(32) __m256 yv[10];
+		   __ATTR_ALIGN__(32) __m256 zv[10];
                    __m256 valpha;
 		   float * __restrict x0 = NULL;
 		   float * __restrict y0 = NULL;
@@ -93,106 +93,107 @@ namespace gms {
 		      // Unrolled 10 times in order exploit the ratio
 		      // between the FMA latency to its throughput.
 		      for(i = 0; (i+79) < n; i += 80) {
-                          xv[0] = _mm256_loadu_ps(x0[i+0]);
-			  yv[0] = _mm256_loadu_ps(y0[i+0]);
+		          _mm_prefetch((const char*)&x[i+80],_MM_HINT_T0);
+                          xv[0] = _mm256_loadu_ps(&x0[i+0]);
+			  yv[0] = _mm256_loadu_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_storeu_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_loadu_ps(x0[i+8]);
-			  yv[1] = _mm256_loadu_ps(y0[i+8]);
+			  _mm256_storeu_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_loadu_ps(&x0[i+8]);
+			  yv[1] = _mm256_loadu_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_storeu_ps(y[i+8],zv[1]);
-			  xv[2] = _mm256_loadu_ps(x0[i+16]);
-			  yv[2] = _mm256_loadu_ps(y0[i+16]);
+			  _mm256_storeu_ps(&y[i+8],zv[1]);
+			  xv[2] = _mm256_loadu_ps(&x0[i+16]);
+			  yv[2] = _mm256_loadu_ps(&y0[i+16]);
 			  zv[2] = _mm256_fmadd_ps(xv[2],valpha,yv[2]);
-			  _mm256_storeu_ps(y[i+16],zv[2]);
-			  xv[3] = _mm256_loadu_ps(x0[i+24]);
-			  yv[3] = _mm256_loadu_ps(y0[i+24]);
+			  _mm256_storeu_ps(&y[i+16],zv[2]);
+			  xv[3] = _mm256_loadu_ps(&x0[i+24]);
+			  yv[3] = _mm256_loadu_ps(&y0[i+24]);
 			  zv[3] = _mm256_fmadd_ps(xv[3],valpha,yv[3]);
-			  _mm256_storeu_ps(y[i+24],zv[3]);
-			  xv[4] = _mm256_loadu_ps(x0[i+32]);
-			  yv[4] = _mm256_loadu_ps(y0[i+32]);
+			  _mm256_storeu_ps(&y[i+24],zv[3]);
+			   xv[4] = _mm256_loadu_ps(&x0[i+32]);
+			  yv[4] = _mm256_loadu_ps(&y0[i+32]);
 			  zv[4] = _mm256_fmadd_ps(xv[4],valpha,yv[4]);
-			  _mm256_storeu_ps(y[i+32],zv[4]);
-			  xv[5] = _mm256_loadu_ps(x0[i+40]);
-			  yv[5] = _mm256_loadu_ps(y0[i+40]);
+			  _mm256_storeu_ps(&y[i+32],zv[4]);
+			  xv[5] = _mm256_loadu_ps(&x0[i+40]);
+			  yv[5] = _mm256_loadu_ps(&y0[i+40]);
 			  zv[5] = _mm256_fmadd_ps(xv[5],valpha,yv[5]);
-			  _mm256_storeu_ps(y[i+40],zv[5]);
-			  xv[6] = _mm256_loadu_ps(x0[i+48]);
-			  yv[6] = _mm256_loadu_ps(y0[i+48]);
+			  _mm256_storeu_ps(&y[i+40],zv[5]);
+			  xv[6] = _mm256_loadu_ps(&x0[i+48]);
+			  yv[6] = _mm256_loadu_ps(&y0[i+48]);
 			  zv[6] = _mm256_fmadd_ps(xv[6],valpha,yv[6]);
-			  _mm256_storeu_ps(y[i+48],zv[6]);
-			  xv[7] = _mm256_loadu_ps(x0[i+56]);
-			  yv[7] = _mm256_loadu_ps(y0[i+56]);
+			  _mm256_storeu_ps(&y[i+48],zv[6]);
+			  xv[7] = _mm256_loadu_ps(&x0[i+56]);
+			  yv[7] = _mm256_loadu_ps(&y0[i+56]);
 			  zv[7] = _mm256_fmadd_ps(xv[7],valpha,yv[7]);
-			  _mm256_storeu_ps(y[i+56],zv[7]);
-			  xv[8] = _mm256_loadu_ps(x0[i+64]);
-			  yv[8] = _mm256_loadu_ps(y0[i+64]);
+			  _mm256_storeu_ps(&y[i+56],zv[7]);
+			  xv[8] = _mm256_loadu_ps(&x0[i+64]);
+			  yv[8] = _mm256_loadu_ps(&y0[i+64]);
 			  zv[8] = _mm256_fmadd_ps(xv[8],valpha,yv[8]);
-			  _mm256_storeu_ps(y[i+64],zv[8]);
-			  xv[9] = _mm256_loadu_ps(x0[i+72]);
-			  yv[9] = _mm256_loadu_ps(y0[i+72]);
+			  _mm256_storeu_ps(&y[i+64],zv[8]);
+			  xv[9] = _mm256_loadu_ps(&x0[i+72]);
+			  yv[9] = _mm256_loadu_ps(&y0[i+72]);
 			  zv[9] = _mm256_fmadd_ps(xv[9],valpha,yv[9]);
-			  _mm256_storeu_ps(y[i+72],zv[9]);
+			  _mm256_storeu_ps(&y[i+72],zv[9]);
 		      }
 		      for(; (i+39) < n; i += 40) {
 
-		          xv[0] = _mm256_loadu_ps(x0[i+0]);
-			  yv[0] = _mm256_loadu_ps(y0[i+0]);
+		          xv[0] = _mm256_loadu_ps(&x0[i+0]);
+			  yv[0] = _mm256_loadu_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_storeu_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_loadu_ps(x0[i+8]);
-			  yv[1] = _mm256_loadu_ps(y0[i+8]);
+			  _mm256_storeu_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_loadu_ps(&x0[i+8]);
+			  yv[1] = _mm256_loadu_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_storeu_ps(y[i+8],zv[1]);
-			  xv[2] = _mm256_loadu_ps(x0[i+16]);
-			  yv[2] = _mm256_loadu_ps(y0[i+16]);
+			  _mm256_storeu_ps(&y[i+8],zv[1]);
+			  xv[2] = _mm256_loadu_ps(&x0[i+16]);
+			  yv[2] = _mm256_loadu_ps(&y0[i+16]);
 			  zv[2] = _mm256_fmadd_ps(xv[2],valpha,yv[2]);
-			  _mm256_storeu_ps(y[i+16],zv[2]);
-			  xv[3] = _mm256_loadu_ps(x0[i+24]);
-			  yv[3] = _mm256_loadu_ps(y0[i+24]);
+			  _mm256_storeu_ps(&y[i+16],zv[2]);
+			  xv[3] = _mm256_loadu_ps(&x0[i+24]);
+			  yv[3] = _mm256_loadu_ps(&y0[i+24]);
 			  zv[3] = _mm256_fmadd_ps(xv[3],valpha,yv[3]);
-			  _mm256_storeu_ps(y[i+24],zv[3]);
-			  xv[4] = _mm256_loadu_ps(x0[i+32]);
-			  yv[4] = _mm256_loadu_ps(y0[i+32]);
+			  _mm256_storeu_ps(&y[i+24],zv[3]);
+			  xv[4] = _mm256_loadu_ps(&x0[i+32]);
+			  yv[4] = _mm256_loadu_ps(&y0[i+32]);
 			  zv[4] = _mm256_fmadd_ps(xv[4],valpha,yv[4]);
-			  _mm256_storeu_ps(y[i+32],zv[4]);
+			  _mm256_storeu_ps(&y[i+32],zv[4]);
 		      }
 		      for(; (i+31) < n; i += 32) {
 
-		          xv[0] = _mm256_loadu_ps(x0[i+0]);
-			  yv[0] = _mm256_loadu_ps(y0[i+0]);
+		          xv[0] = _mm256_loadu_ps(&x0[i+0]);
+			  yv[0] = _mm256_loadu_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_storeu_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_loadu_ps(x0[i+8]);
-			  yv[1] = _mm256_loadu_ps(y0[i+8]);
+			  _mm256_storeu_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_loadu_ps(&x0[i+8]);
+			  yv[1] = _mm256_loadu_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_storeu_ps(y[i+8],zv[1]);
-			  xv[2] = _mm256_loadu_ps(x0[i+16]);
-			  yv[2] = _mm256_loadu_ps(y0[i+16]);
+			  _mm256_storeu_ps(&y[i+8],zv[1]);
+			  xv[2] = _mm256_loadu_ps(&x0[i+16]);
+			  yv[2] = _mm256_loadu_ps(&y0[i+16]);
 			  zv[2] = _mm256_fmadd_ps(xv[2],valpha,yv[2]);
-			  _mm256_storeu_ps(y[i+16],zv[2]);
-			  xv[3] = _mm256_loadu_ps(x0[i+24]);
-			  yv[3] = _mm256_loadu_ps(y0[i+24]);
+			  _mm256_storeu_ps(&y[i+16],zv[2]);
+			  xv[3] = _mm256_loadu_ps(&x0[i+24]);
+			  yv[3] = _mm256_loadu_ps(&y0[i+24]);
 			  zv[3] = _mm256_fmadd_ps(xv[3],valpha,yv[3]);
-			  _mm256_storeu_ps(y[i+24],zv[3]);
+			  _mm256_storeu_ps(&y[i+24],zv[3]);
 		      }
 		      for(; (i+15) < n; i += 16) {
 
-		          xv[0] = _mm256_loadu_ps(x0[i+0]);
-			  yv[0] = _mm256_loadu_ps(y0[i+0]);
+		          xv[0] = _mm256_loadu_ps(&x0[i+0]);
+			  yv[0] = _mm256_loadu_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_storeu_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_loadu_ps(x0[i+8]);
-			  yv[1] = _mm256_loadu_ps(y0[i+8]);
+			  _mm256_storeu_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_loadu_ps(&x0[i+8]);
+			  yv[1] = _mm256_loadu_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_storeu_ps(y[i+8],zv[1]);
+			  _mm256_storeu_ps(&y[i+8],zv[1]);
 		      }
 		      for(; (i+7) < n; i += 8) {
 
-		          xv[0] = _mm256_loadu_ps(x0[i+0]);
-			  yv[0] = _mm256_loadu_ps(y0[i+0]);
+		          xv[0] = _mm256_loadu_ps(&x0[i+0]);
+			  yv[0] = _mm256_loadu_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_storeu_ps(y[i+0],zv[0]);
+			  _mm256_storeu_ps(&y[i+0],zv[0]);
 		      }
 		      _mm256_vzeroupper();
 		      for(; (i+0) < n; i += 1) {
@@ -225,9 +226,9 @@ namespace gms {
 					    const int32_t incy) {
                    if(0==n || alpha==0.0f) { return;}
 		   
-		   __ATTR_ALIGN__(64) __m256 xv[10];
-		   __ATTR_ALIGN__(64) __m256 yv[10];
-		   __ATTR_ALIGN__(64) __m256 zv[10];
+		   __ATTR_ALIGN__(32) __m256 xv[10];
+		   __ATTR_ALIGN__(32) __m256 yv[10];
+		   __ATTR_ALIGN__(32) __m256 zv[10];
                    __m256 valpha;
 		   float * __restrict x0 = NULL;
 		   float * __restrict y0 = NULL;
@@ -237,116 +238,122 @@ namespace gms {
 
 		   if(incx==1 && incy==1) {
 #if defined(INTEL_COMPILER) || defined(__ICC)
-                      __assume_aligned(x,64);
-		      __assume_aligned(y,64);
+                      __assume_aligned(x,32);
+		      __assume_aligned(y,32);
+		      __assume_aligned(x0,32);
+		      __assume_aligned(y0,32);
+#pragma code_align(32)
 #elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC)
-                      x = (float*)__builtin_assume_aligned(x,64);
-		      y = (float*)__builtin_assume_aligned(y,64);
+                      x  = (float*)__builtin_assume_aligned(x,32);
+		      y  = (float*)__builtin_assume_aligned(y,32);
+		      x0 = (float*)__builtin_assume_aligned(x0,32);
+		      y0 = (float*)__builtin_assume_aligned(y0,32);
 #endif
                       valpha = _mm256_broadcast_ss(alpha);
 		      // Unrolled 10 times in order exploit the ratio
 		      // between the FMA latency to its throughput.
 		      for(i = 0; (i+79) < n; i += 80) {
-                          xv[0] = _mm256_load_ps(x0[i+0]);
-			  yv[0] = _mm256_load_ps(y0[i+0]);
+		          _mm_prefetch((const char*)&x[i+80],_MM_HINT_T0);
+                          xv[0] = _mm256_load_ps(&x0[i+0]);
+			  yv[0] = _mm256_load_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_store_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_load_ps(x0[i+8]);
-			  yv[1] = _mm256_load_ps(y0[i+8]);
+			  _mm256_store_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_load_ps(&x0[i+8]);
+			  yv[1] = _mm256_load_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_store_ps(y[i+8],zv[1]);
-			  xv[2] = _mm256_load_ps(x0[i+16]);
-			  yv[2] = _mm256_load_ps(y0[i+16]);
+			  _mm256_store_ps(&y[i+8],zv[1]);
+			  xv[2] = _mm256_load_ps(&x0[i+16]);
+			  yv[2] = _mm256_load_ps(&y0[i+16]);
 			  zv[2] = _mm256_fmadd_ps(xv[2],valpha,yv[2]);
-			  _mm256_store_ps(y[i+16],zv[2]);
-			  xv[3] = _mm256_load_ps(x0[i+24]);
-			  yv[3] = _mm256_load_ps(y0[i+24]);
+			  _mm256_store_ps(&y[i+16],zv[2]);
+			  xv[3] = _mm256_load_ps(&x0[i+24]);
+			  yv[3] = _mm256_load_ps(&y0[i+24]);
 			  zv[3] = _mm256_fmadd_ps(xv[3],valpha,yv[3]);
-			  _mm256_store_ps(y[i+24],zv[3]);
-			  xv[4] = _mm256_load_ps(x0[i+32]);
-			  yv[4] = _mm256_load_ps(y0[i+32]);
+			  _mm256_store_ps(&y[i+24],zv[3]);
+			  xv[4] = _mm256_load_ps(&x0[i+32]);
+			  yv[4] = _mm256_load_ps(&y0[i+32]);
 			  zv[4] = _mm256_fmadd_ps(xv[4],valpha,yv[4]);
-			  _mm256_store_ps(y[i+32],zv[4]);
-			  xv[5] = _mm256_load_ps(x0[i+40]);
-			  yv[5] = _mm256_load_ps(y0[i+40]);
+			  _mm256_store_ps(&y[i+32],zv[4]);
+			  xv[5] = _mm256_load_ps(&x0[i+40]);
+			  yv[5] = _mm256_load_ps(&y0[i+40]);
 			  zv[5] = _mm256_fmadd_ps(xv[5],valpha,yv[5]);
-			  _mm256_store_ps(y[i+40],zv[5]);
-			  xv[6] = _mm256_load_ps(x0[i+48]);
-			  yv[6] = _mm256_load_ps(y0[i+48]);
+			  _mm256_store_ps(&y[i+40],zv[5]);
+			  xv[6] = _mm256_load_ps(&x0[i+48]);
+			  yv[6] = _mm256_load_ps(&y0[i+48]);
 			  zv[6] = _mm256_fmadd_ps(xv[6],valpha,yv[6]);
-			  _mm256_store_ps(y[i+48],zv[6]);
-			  xv[7] = _mm256_load_ps(x0[i+56]);
-			  yv[7] = _mm256_load_ps(y0[i+56]);
+			  _mm256_store_ps(&y[i+48],zv[6]);
+			  xv[7] = _mm256_load_ps(&x0[i+56]);
+			  yv[7] = _mm256_load_ps(&y0[i+56]);
 			  zv[7] = _mm256_fmadd_ps(xv[7],valpha,yv[7]);
-			  _mm256_store_ps(y[i+56],zv[7]);
-			  xv[8] = _mm256_load_ps(x0[i+64]);
-			  yv[8] = _mm256_load_ps(y0[i+64]);
+			  _mm256_store_ps(&y[i+56],zv[7]);
+			  xv[8] = _mm256_load_ps(&x0[i+64]);
+			  yv[8] = _mm256_load_ps(&y0[i+64]);
 			  zv[8] = _mm256_fmadd_ps(xv[8],valpha,yv[8]);
-			  _mm256_store_ps(y[i+64],zv[8]);
-			  xv[9] = _mm256_load_ps(x0[i+72]);
-			  yv[9] = _mm256_load_ps(y0[i+72]);
+			  _mm256_store_ps(&y[i+64],zv[8]);
+			  xv[9] = _mm256_load_ps(&x0[i+72]);
+			  yv[9] = _mm256_load_ps(&y0[i+72]);
 			  zv[9] = _mm256_fmadd_ps(xv[9],valpha,yv[9]);
-			  _mm256_store_ps(y[i+72],zv[9]);
+			  _mm256_store_ps(&y[i+72],zv[9]);
 		      }
 		      for(; (i+39) < n; i += 40) {
 
-		          xv[0] = _mm256_load_ps(x0[i+0]);
-			  yv[0] = _mm256_load_ps(y0[i+0]);
+		          xv[0] = _mm256_load_ps(&x0[i+0]);
+			  yv[0] = _mm256_load_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_store_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_load_ps(x0[i+8]);
-			  yv[1] = _mm256_load_ps(y0[i+8]);
+			  _mm256_store_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_load_ps(&x0[i+8]);
+			  yv[1] = _mm256_load_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_store_ps(y[i+8],zv[1]);
-			  xv[2] = _mm256_load_ps(x0[i+16]);
-			  yv[2] = _mm256_load_ps(y0[i+16]);
+			  _mm256_store_ps(&y[i+8],zv[1]);
+			  xv[2] = _mm256_load_ps(&x0[i+16]);
+			  yv[2] = _mm256_load_ps(&y0[i+16]);
 			  zv[2] = _mm256_fmad_ps(xv[2],valpha,yv[2]);
-			  _mm256_store_ps(y[i+16],zv[2]);
-			  xv[3] = _mm256_load_ps(x0[i+24]);
-			  yv[3] = _mm256_load_ps(y0[i+24]);
+			  _mm256_store_ps(&y[i+16],zv[2]);
+			  xv[3] = _mm256_load_ps(&x0[i+24]);
+			  yv[3] = _mm256_load_ps(&y0[i+24]);
 			  zv[3] = _mm256_fmadd_ps(xv[3],valpha,yv[3]);
-			  _mm256_store_ps(y[i+24],zv[3]);
-			  xv[4] = _mm256_load_ps(x0[i+32]);
-			  yv[4] = _mm256_load_ps(y0[i+32]);
+			  _mm256_store_ps(&y[i+24],zv[3]);
+			  xv[4] = _mm256_load_ps(&x0[i+32]);
+			  yv[4] = _mm256_load_ps(&y0[i+32]);
 			  zv[4] = _mm256_fmadd_ps(xv[4],valpha,yv[4]);
-			  _mm256_store_ps(y[i+32],zv[4]);
+			  _mm256_store_ps(&y[i+32],zv[4]);
 		      }
 		      for(; (i+31) < n; i += 32) {
 
-		          xv[0] = _mm256_load_ps(x0[i+0]);
-			  yv[0] = _mm256_load_ps(y0[i+0]);
+		          xv[0] = _mm256_load_ps(&x0[i+0]);
+			  yv[0] = _mm256_load_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_store_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_load_ps(x0[i+8]);
-			  yv[1] = _mm256_load_ps(y0[i+8]);
+			  _mm256_store_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_load_ps(&x0[i+8]);
+			  yv[1] = _mm256_load_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_store_ps(y[i+8],zv[1]);
-			  xv[2] = _mm256_load_ps(x0[i+16]);
-			  yv[2] = _mm256_load_ps(y0[i+16]);
+			  _mm256_store_ps(&y[i+8],zv[1]);
+			  xv[2] = _mm256_load_ps(&x0[i+16]);
+			  yv[2] = _mm256_load_ps(&y0[i+16]);
 			  zv[2] = _mm256_fmadd_ps(xv[2],valpha,yv[2]);
-			  _mm256_store_ps(y[i+16],zv[2]);
-			  xv[3] = _mm256_load_ps(x0[i+24]);
-			  yv[3] = _mm256_load_ps(y0[i+24]);
+			  _mm256_store_ps(&y[i+16],zv[2]);
+			  xv[3] = _mm256_load_ps(&x0[i+24]);
+			  yv[3] = _mm256_load_ps(&y0[i+24]);
 			  zv[3] = _mm256_fmadd_ps(xv[3],valpha,yv[3]);
-			  _mm256_store_ps(y[i+24],zv[3]);
+			  _mm256_store_ps(&y[i+24],zv[3]);
 		      }
 		      for(; (i+15) < n; i += 16) {
 
-		          xv[0] = _mm256_load_ps(x0[i+0]);
-			  yv[0] = _mm256_load_ps(y0[i+0]);
+		          xv[0] = _mm256_load_ps(&x0[i+0]);
+			  yv[0] = _mm256_load_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_store_ps(y[i+0],zv[0]);
-			  xv[1] = _mm256_load_ps(x0[i+8]);
-			  yv[1] = _mm256_load_ps(y0[i+8]);
+			  _mm256_store_ps(&y[i+0],zv[0]);
+			  xv[1] = _mm256_load_ps(&x0[i+8]);
+			  yv[1] = _mm256_load_ps(&y0[i+8]);
 			  zv[1] = _mm256_fmadd_ps(xv[1],valpha,yv[1]);
-			  _mm256_store_ps(y[i+8],zv[1]);
+			  _mm256_store_ps(&y[i+8],zv[1]);
 		      }
 		      for(; (i+7) < n; i += 8) {
 
-		          xv[0] = _mm256_load_ps(x0[i+0]);
-			  yv[0] = _mm256_load_ps(y0[i+0]);
+		          xv[0] = _mm256_load_ps(&x0[i+0]);
+			  yv[0] = _mm256_load_ps(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_ps(xv[0],valpha,yv[0]);
-			  _mm256_store_ps(y[i+0],zv[0]);
+			  _mm256_store_ps(&y[i+0],zv[0]);
 		      }
 		      _mm256_vzeroupper();
 		      for(; (i+0) < n; i += 1) {
@@ -367,7 +374,7 @@ namespace gms {
 	     /*
                  SAXPY kernel OpenMP parallelized (aligned version only)
               */
-                 __ATTR_ALWAYS_INLINE__
+             __ATTR_ALWAYS_INLINE__
 	     __ATTR_HOT__
 	     __ATTR_ALIGN__(32)
 	     static inline
@@ -390,11 +397,16 @@ namespace gms {
 
 		   if(incx==1 && incy==1) {
 #if defined(INTEL_COMPILER) || defined(__ICC)
-                      __assume_aligned(x,64);
-		      __assume_aligned(y,64);
+                      __assume_aligned(x,32);
+		      __assume_aligned(y,32);
+		      __assume_aligned(x0,32);
+		      __assume_aligned(y0,32)
+#pragma code_align(32)
 #elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC)
-                      x = (float*)__builtin_assume_aligned(x,64);
-		      y = (float*)__builtin_assume_aligned(y,64);
+                      x  = (float*)__builtin_assume_aligned(x,32);
+		      y  = (float*)__builtin_assume_aligned(y,32);
+		      x0 = (float*)__builtin_assume_aligned(x0,32);
+		      y0 = (float*)__builtin_assume_aligned(y0,32);
 #endif
                       valpha = _mm256_broadcast_ss(alpha);
 		      // Unrolled 10 times in order exploit the ratio
@@ -403,103 +415,104 @@ namespace gms {
                       lastprivate(last_i) private(i) shared(valpha,n,x0,y0)
 		      for(i = 0; (i+79) < n; i += 80) {
 		          last_i = i;
-			  _mm256_store_ps(y[i+0],
+			  _mm_prefetch((const char*)&x[i+80],_MM_HINT_T0);
+			  _mm256_store_ps(&y[i+0],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+0]),valpha,
-				                                _mm256_load_ps(y0[i+0])));
-			  _mm256_store_ps(y[i+8],
+				           _mm256_load_ps(&x0[i+0]),valpha,
+				                                _mm256_load_ps(&y0[i+0])));
+			  _mm256_store_ps(&y[i+8],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+8]),valpha,
-				                                _mm256_load_ps(y0[i+8])));
-			  _mm256_store_ps(y[i+16],
+				           _mm256_load_ps(&x0[i+8]),valpha,
+				                                _mm256_load_ps(&y0[i+8])));
+			  _mm256_store_ps(&y[i+16],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+16]),valpha,
-				                                _mm256_load_ps(y0[i+16])));
-			  _mm256_store_ps(y[i+24],
+				           _mm256_load_ps(&x0[i+16]),valpha,
+				                                _mm256_load_ps(&y0[i+16])));
+			  _mm256_store_ps(&y[i+24],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+24]),valpha,
-				                                _mm256_load_ps(y0[i+24])));
-			  _mm256_store_ps(y[i+32],
+				           _mm256_load_ps(&x0[i+24]),valpha,
+				                                _mm256_load_ps(&y0[i+24])));
+			  _mm256_store_ps(&y[i+32],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+32]),valpha,
-				                                _mm256_load_ps(y0[i+32])));
-			  _mm256_store_ps(y[i+40],
+				           _mm256_load_ps(&x0[i+32]),valpha,
+				                                _mm256_load_ps(&y0[i+32])));
+			  _mm256_store_ps(&y[i+40],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+40]),valpha,
-				                                _mm256_load_ps(y0[i+40])));
-			  _mm256_store_ps(y[i+48],
+				           _mm256_load_ps(&x0[i+40]),valpha,
+				                                _mm256_load_ps(&y0[i+40])));
+			  _mm256_store_ps(&y[i+48],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+48]),valpha,
-				                                _mm256_load_ps(y0[i+48])));
-			  _mm256_store_ps(y[i+56],
+				           _mm256_load_ps(&x0[i+48]),valpha,
+				                                _mm256_load_ps(&y0[i+48])));
+			  _mm256_store_ps(&y[i+56],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+56]),valpha,
-				                                _mm256_load_ps(y0[i+56])));
-			  _mm256_store_ps(y[i+64],
+				           _mm256_load_ps(&x0[i+56]),valpha,
+				                                _mm256_load_ps(&y0[i+56])));
+			  _mm256_store_ps(&y[i+64],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+64]),valpha,
-				                                _mm256_load_ps(y0[i+64])));
-			  _mm256_store_ps(y[i+72],
+				           _mm256_load_ps(&x0[i+64]),valpha,
+				                                _mm256_load_ps(&y0[i+64])));
+			  _mm256_store_ps(&y[i+72],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[i+72]),valpha,
-				                                _mm256_load_ps(y0[i+72])));	
+				           _mm256_load_ps(&x0[i+72]),valpha,
+				                                _mm256_load_ps(&y0[i+72])));	
                         
 		      }
 		      
 		      for(; (last_i+39) < n; last_i += 40) {
 
-		          _mm256_store_ps(y[last_i+0],
+		          _mm256_store_ps(&y[last_i+0],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+0]),valpha,
-				                                _mm256_load_ps(y0[last_i+0])));
-			  _mm256_store_ps(y[last_i+8],
+				           _mm256_load_ps(&x0[last_i+0]),valpha,
+				                                _mm256_load_ps(&y0[last_i+0])));
+			  _mm256_store_ps(&y[last_i+8],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+8]),valpha,
-				                                _mm256_load_ps(y0[last_i+8])));
-			  _mm256_store_ps(y[last_i+16],
+				           _mm256_load_ps(&x0[last_i+8]),valpha,
+				                                _mm256_load_ps(&y0[last_i+8])));
+			  _mm256_store_ps(&y[last_i+16],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+16]),valpha,
-				                                _mm256_load_ps(y0[last_i+16])));
-			  _mm256_store_ps(y[last_i+24],
+				           _mm256_load_ps(&x0[last_i+16]),valpha,
+				                                _mm256_load_ps(&y0[last_i+16])));
+			  _mm256_store_ps(&y[last_i+24],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+24]),valpha,
-				                                _mm256_load_ps(y0[last_i+24])));
-			  _mm256_store_ps(y[last_i+32],
+				           _mm256_load_ps(&x0[last_i+24]),valpha,
+				                                _mm256_load_ps(&y0[last_i+24])));
+			  _mm256_store_ps(&y[last_i+32],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+32]),valpha,
-				                                _mm256_load_ps(y0[last_i+32])));
+				           _mm256_load_ps(&x0[last_i+32]),valpha,
+				                                _mm256_load_ps(&y0[last_i+32])));
 			
 		       
 		      }
 		      for(; (last_i+31) < n; last_i += 32) {
 
-		           _mm256_store_ps(y[last_i+0],
+		           _mm256_store_ps(&y[last_i+0],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+0]),valpha,
-				                                _mm256_load_ps(y0[last_i+0])));
-			  _mm256_store_ps(y[last_i+8],
+				           _mm256_load_ps(&x0[last_i+0]),valpha,
+				                                _mm256_load_ps(&y0[last_i+0])));
+			  _mm256_store_ps(&y[last_i+8],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+8]),valpha,
-				                                _mm256_load_ps(y0[last_i+8])));
-			  _mm256_store_ps(y[last_i+16],
+				           _mm256_load_ps(&x0[last_i+8]),valpha,
+				                                _mm256_load_ps(&y0[last_i+8])));
+			  _mm256_store_ps(&y[last_i+16],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+16]),valpha,
-				                                _mm256_load_ps(y0[last_i+16])));
-			  _mm256_store_ps(y[last_i+24],
+				           _mm256_load_ps(&x0[last_i+16]),valpha,
+				                                _mm256_load_ps(&y0[last_i+16])));
+			  _mm256_store_ps(&y[last_i+24],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+24]),valpha,
-				                                _mm256_load_ps(y0[last_i+24])));
+				           _mm256_load_ps(&x0[last_i+24]),valpha,
+				                                _mm256_load_ps(&y0[last_i+24])));
 		       
 		      }
 		      for(; (last_i+15) < n; last_i += 16) {
-                          _mm256_store_ps(y[last_i+0],
+                          _mm256_store_ps(&y[last_i+0],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+0]),valpha,
-				                                _mm256_load_ps(y0[last_i+0])));
-			  _mm256_store_ps(y[last_i+8],
+				           _mm256_load_ps(&x0[last_i+0]),valpha,
+				                                _mm256_load_ps(&y0[last_i+0])));
+			  _mm256_store_ps(&y[last_i+8],
 			         _mm256_fmadd_ps(
-				           _mm256_load_ps(x0[last_i+8]),valpha,
-				                                _mm256_load_ps(y0[last_i+8])));
+				           _mm256_load_ps(&x0[last_i+8]),valpha,
+				                                _mm256_load_ps(&y0[last_i+8])));
 		       
 		      }
 		      for(; (last_i+7) < n; last_i += 8) {
@@ -541,9 +554,9 @@ namespace gms {
 					    const int32_t incy) {
                    if(0==n || alpha==0.0) { return;}
 		   
-		   __ATTR_ALIGN__(64) __m256d xv[10];
-		   __ATTR_ALIGN__(64) __m256d yv[10];
-		   __ATTR_ALIGN__(64) __m256d zv[10];
+		   __ATTR_ALIGN__(32) __m256d xv[10];
+		   __ATTR_ALIGN__(32) __m256d yv[10];
+		   __ATTR_ALIGN__(32) __m256d zv[10];
                    __m256d valpha;
 		   double * __restrict x0 = NULL;
 		   double * __restrict y0 = NULL;
@@ -690,9 +703,9 @@ namespace gms {
 					    const int32_t incy) {
                    if(0==n || alpha==0.0) { return;}
 		   
-		   __ATTR_ALIGN__(64) __m256d xv[10];
-		   __ATTR_ALIGN__(64) __m256d yv[10];
-		   __ATTR_ALIGN__(64) __m256d zv[10];
+		   __ATTR_ALIGN__(32) __m256d xv[10];
+		   __ATTR_ALIGN__(32) __m256d yv[10];
+		   __ATTR_ALIGN__(32) __m256d zv[10];
                    __m256d valpha;
 		   double * __restrict x0 = NULL;
 		   double * __restrict y0 = NULL;
@@ -702,16 +715,23 @@ namespace gms {
 
 		   if(incx==1 && incy==1) {
 #if defined(INTEL_COMPILER) || defined(__ICC)
-                      __assume_aligned(x,64);
-		      __assume_aligned(y,64);
+                      __assume_aligned(x,32);
+		      __assume_aligned(y,32);
+		      __assume_aligned(x0,32);
+		      __assume_aligned(y0,32);
+#pragma code_align(64)
+
 #elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC)
-                      x = (double*)__builtin_assume_aligned(x,64);
-		      y = (double*)__builtin_assume_aligned(y,64);
+                      x  = (double*)__builtin_assume_aligned(x,32);
+		      y  = (double*)__builtin_assume_aligned(y,32);
+		      x0 = (double*)__builtin_assume_aligned(x0,32);
+		      y0 = (double*)__builtin_assume_aligned(y0,32);
 #endif
                       valpha = _mm256_broadcast_sd(alpha);
 		      // Unrolled 10 times in order exploit the ratio
 		      // between the FMA latency to its throughput.
 		      for(i = 0; (i+39) < n; i += 40) {
+		          _mm_prefetch((const char*)&x[i+40],_MM_HINT_T0);
                           xv[0] = _mm256_load_pd(&x0[i+0]);
 			  yv[0] = _mm256_load_pd(&y0[i+0]);
 			  zv[0] = _mm256_fmadd_pd(xv[0],valpha,yv[0]);
@@ -846,9 +866,9 @@ namespace gms {
 					        const int32_t incy) {
                    if(0==n || alpha==0.0) { return;}
 		   
-		   __ATTR_ALIGN__(64) __m256d xv[10];
-		   __ATTR_ALIGN__(64) __m256d yv[10];
-		   __ATTR_ALIGN__(64) __m256d zv[10];
+		   __ATTR_ALIGN__(32) __m256d xv[10];
+		   __ATTR_ALIGN__(32) __m256d yv[10];
+		   __ATTR_ALIGN__(32) __m256d zv[10];
                    __m256d valpha;
 		   double * __restrict x0 = NULL;
 		   double * __restrict y0 = NULL;
@@ -859,11 +879,16 @@ namespace gms {
 
 		   if(incx==1 && incy==1) {
 #if defined(INTEL_COMPILER) || defined(__ICC)
-                      __assume_aligned(x,64);
-		      __assume_aligned(y,64);
+                      __assume_aligned(x,32);
+		      __assume_aligned(y,32);
+		      __assume_aligned(x0,32);
+		      __assume_aligned(y0,32);
+#pragma code_align(32)
 #elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC)
-                      x = (double*)__builtin_assume_aligned(x,64);
-		      y = (double*)__builtin_assume_aligned(y,64);
+                      x = (double*)__builtin_assume_aligned(x,32);
+		      y = (double*)__builtin_assume_aligned(y,32);
+		      x0 = (double*)__builtin_assume_aligned(x0,32);
+		      y0 = (double*)__builtin_assume_aligned(y0,32);
 #endif
                       valpha = _mm256_broadcast_sd(alpha);
 		      // Unrolled 10 times in order exploit the ratio
