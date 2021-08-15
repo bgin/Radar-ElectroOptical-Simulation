@@ -75,7 +75,8 @@ namespace gms {
 					    const int32_t incx,
 					    float * __restrict  y,
 					    const int32_t incy) {
-                   if(0==n || alpha==0.0f) { return;}
+                   if(__builtin_expect(0==n,0) ||
+		      __builtin_expect(alpha==0.0f,0)) { return;}
 		   
 		   __ATTR_ALIGN__(32) __m256 xv[10];
 		   __ATTR_ALIGN__(32) __m256 yv[10];
@@ -87,7 +88,8 @@ namespace gms {
 		   x0 = x;
 		   y0 = y;
 
-		   if(incx==1 && incy==1) {
+		   if(__builtin_expect(incx==1,1) &&
+		      __builtin_expect(incy==1,1) {
 
                       valpha = _mm256_broadcast_ss(alpha);
 		      // Unrolled 10 times in order exploit the ratio
@@ -224,7 +226,8 @@ namespace gms {
 					    const int32_t incx,
 					    float * __restrict  __ATTR_ALIGN__(32) y,
 					    const int32_t incy) {
-                   if(0==n || alpha==0.0f) { return;}
+                   if(__builtin_expect(0==n,0) || 
+		      __builtin_expect(alpha==0.0f,0)) { return;}
 		   
 		   __ATTR_ALIGN__(32) __m256 xv[10];
 		   __ATTR_ALIGN__(32) __m256 yv[10];
@@ -236,7 +239,8 @@ namespace gms {
 		   x0 = x;
 		   y0 = y;
 
-		   if(incx==1 && incy==1) {
+		   if(__builtin_expect(incx==1,1) &&
+		      __builtin_expect(incy==1,1)) {
 #if defined(INTEL_COMPILER) || defined(__ICC)
                       __assume_aligned(x,32);
 		      __assume_aligned(y,32);
@@ -384,7 +388,8 @@ namespace gms {
 					       const int32_t incx,
 					       float * __restrict  __ATTR_ALIGN__(32) y,
 					       const int32_t incy) {
-                   if(0==n || alpha==0.0f) { return;}
+                   if(__builtin_expect(0==n,0) ||
+		      __builtin_expect(alpha==0.0f,0)) { return;}
 		   
 		  
                    __m256 valpha;
@@ -395,7 +400,9 @@ namespace gms {
 		   x0 = x;
 		   y0 = y;
 
-		   if(incx==1 && incy==1) {
+		   if(__builtin_expect(incx==1,1) &&
+		      __builtin_expect(incy==1,1)) {
+		        valpha = _mm256_broadcast_ss(alpha);
 #if defined(INTEL_COMPILER) || defined(__ICC)
                       __assume_aligned(x,32);
 		      __assume_aligned(y,32);
@@ -408,7 +415,7 @@ namespace gms {
 		      x0 = (float*)__builtin_assume_aligned(x0,32);
 		      y0 = (float*)__builtin_assume_aligned(y0,32);
 #endif
-                      valpha = _mm256_broadcast_ss(alpha);
+                    
 		      // Unrolled 10 times in order exploit the ratio
 		      // between the FMA latency to its throughput.
 #pragma omp parallel for schedule(static,80) default(none) \
@@ -539,9 +546,9 @@ namespace gms {
 	     }
 
 
-	   /*
+	      /*
                 DAXPY kernel unaligned
-            */
+              */
 	      __ATTR_ALWAYS_INLINE__
 	      __ATTR_HOT__
 	      __ATTR_ALIGN__(32)
@@ -552,7 +559,8 @@ namespace gms {
 					    const int32_t incx,
 					    double * __restrict  y,
 					    const int32_t incy) {
-                   if(0==n || alpha==0.0) { return;}
+                   if(__builtin_expect(0==n,0) ||
+		      __builtin_expect(alpha==0.0,0)) { return;}
 		   
 		   __ATTR_ALIGN__(32) __m256d xv[10];
 		   __ATTR_ALIGN__(32) __m256d yv[10];
@@ -564,7 +572,8 @@ namespace gms {
 		   x0 = x;
 		   y0 = y;
 
-		   if(incx==1 && incy==1) {
+		   if(__builtin_expect(incx==1,1) &&
+		      __builtin_expec(incy==1,1)) {
 
                       valpha = _mm256_broadcast_sd(alpha);
 		      // Unrolled 10 times in order exploit the ratio
@@ -701,7 +710,8 @@ namespace gms {
 					    const int32_t incx,
 					    double * __restrict  __ATTR_ALIGN__(32) y,
 					    const int32_t incy) {
-                   if(0==n || alpha==0.0) { return;}
+                   if(__builtin_expect(0==n,0) ||
+		      __builtin_expect(alpha==0.0,0)) { return;}
 		   
 		   __ATTR_ALIGN__(32) __m256d xv[10];
 		   __ATTR_ALIGN__(32) __m256d yv[10];
@@ -713,7 +723,9 @@ namespace gms {
 		   x0 = x;
 		   y0 = y;
 
-		   if(incx==1 && incy==1) {
+		   if(__builtin_expect(incx==1,1) &&
+		      __builtin_expect(incy==1,1)) {
+		      valpha = _mm256_broadcast_sd(alpha);
 #if defined(INTEL_COMPILER) || defined(__ICC)
                       __assume_aligned(x,32);
 		      __assume_aligned(y,32);
@@ -727,7 +739,7 @@ namespace gms {
 		      x0 = (double*)__builtin_assume_aligned(x0,32);
 		      y0 = (double*)__builtin_assume_aligned(y0,32);
 #endif
-                      valpha = _mm256_broadcast_sd(alpha);
+                      
 		      // Unrolled 10 times in order exploit the ratio
 		      // between the FMA latency to its throughput.
 		      for(i = 0; (i+39) < n; i += 40) {
@@ -864,7 +876,8 @@ namespace gms {
 					        const int32_t incx,
 					        double * __restrict  __ATTR_ALIGN__(32) y,
 					        const int32_t incy) {
-                   if(0==n || alpha==0.0) { return;}
+                   if(__builtin_expect(0==n,0) ||
+		      __builtin_expect(alpha==0.0)) { return;}
 		   
 		   __ATTR_ALIGN__(32) __m256d xv[10];
 		   __ATTR_ALIGN__(32) __m256d yv[10];
@@ -877,7 +890,9 @@ namespace gms {
 		   x0 = x;
 		   y0 = y;
 
-		   if(incx==1 && incy==1) {
+		   if(__builtin_expect(incx==1,1) &&
+		      __builtin_expect(incy==1,1)) {
+		       valpha = _mm256_broadcast_sd(alpha);
 #if defined(INTEL_COMPILER) || defined(__ICC)
                       __assume_aligned(x,32);
 		      __assume_aligned(y,32);
