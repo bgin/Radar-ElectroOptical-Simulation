@@ -51,7 +51,7 @@ namespace file_version {
     const char * const pgGMS_AXPY_AVX512_UNROLL10X_CREATION_DATE = "15-08-2021 11:25 AM +00200 (SUN 15 AUG 2021 GMT+2)";
     const char * const pgGMS_AXPY_AVX512_UNROLL10X_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const pgGMS_AXPY_AVX512_UNROLL10X_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const pgGMS_AXPY_AVX512_UNROLL10X_DESCRIPTION   = "AVX12 optimized AXPY kernels."
+    const char * const pgGMS_AXPY_AVX512_UNROLL10X_DESCRIPTION   = "AVX512 optimized AXPY kernels."
 
 }
 
