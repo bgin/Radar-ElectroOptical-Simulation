@@ -10,7 +10,7 @@
 #include <omp.h>
 #include "Timsac_iface.h"
 #include "GMS_descriptive_statistics.hpp"
-#include "convert_numeric_data_types.hpp"
+#include "GMS_convert_numeric_data_types.hpp"
 
 
 
@@ -28,7 +28,7 @@
 __attribute__((hot))
 __attribute__((aligned(32)))
 template<int32_t len>
-bool
+void
 hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) data,
                        const char   * __restrict fname,
 		       const char   * __restrict metric_name) {
@@ -89,6 +89,9 @@ hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) da
     
     const bool init = false; // swilk init argument.
     // OpenMP multithreaded calls to _mm_malloc (using parallel sections)
+    // Multithreaded allocation for large dynamic arrays.
+    if(len > 10000) {
+    
 #pragma omp parallel sections
     {
             #pragma section
@@ -129,12 +132,33 @@ hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) da
                df32 = reinterpret_cast<float*>(_mm_malloc((std::size_t)n*sizeof(float),64));
 	    }
     }
+      // Single thread checks the returned pointers!!
+        const bool isnull =      (NULL==a)    || (NULL==xdic) || (NULL==xndt) ||
+	                         (NULL==xchi) || (NULL==xRs)  || (NULL==xz)   ||
+				 (NULL==xw)   || (NULL==df32);
+	if(isnull) {MALLOC_FAILED}
+  }
+  else { // for if: len < 10000
 
-       // Single thread checks the returned pointers!!
-        const bool is_ptr_null = NULL==a    || NULL==xdic || NULL==xndt ||
-	                         NULL==xchi || NULL==xRs  || NULL==xz   ||
-				 NULL==xw   || NULL==df32;
-	if(is_ptr_null) {MALLOC_FAILED}
+           xw = reinterpret_cast<double*>(_mm_malloc(lag3len*sizeof(double),64));
+	   if(NULL==xw) {MALLOC_FAILED}
+	   xz = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
+	   if(NULL==xz) {MALLOC_FAILED}
+	   xRs = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
+	   if(NULL==xRs) {MALLOC_FAILED}
+	   xchi = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
+	   if(NULL==xchi) {MALLOC_FAILED}
+	   xndt = reinterpret_cast<int32_t*>(_mm_malloc(lag2len*sizeof(int32_t),64));
+	   if(NULL==xndt) {MALLOC_FAILED}
+	   xdic = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
+	   if(NULL==xdic) {MALLOC_FAILED}
+	   a    = reinterpret_cast<float*>(_mm_malloc((std::size_t)n2*sizeof(float),64));
+	   if(NULL==a) {MALLOC_FAILED}
+	   df32 = reinterpret_cast<float*>(_mm_malloc((std::size_t)n*sizeof(float),64));
+	   if(NULL==df32) {MALLOC_FAILED}
+    }
+
+      
 	
 	printf("Calling: AUTCORF TIMSAC subroutine!!\n");
 	autcorf_(&data[0],&len,&acov[0],&acor[0],&lagh,&xmean);
@@ -215,16 +239,16 @@ hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) da
 __attribute__((hot))
 __attribute__((aligned(32)))
 template<int32_t ndim, int32_t ldim>
-bool
-hw_perf_metrics_mulcor(const double * __restrict mvdata, //multivariable data
+void
+hw_perf_metrics_mulcor(const double * __restrict __attribute__((aligned(64))) mvdata, //multivariable data
                        const char   * __restrict fname,
-		       const std::string metrics[11]){
+		       const std::string * __restrict metrics){
 		      
       static_assert(ndim > 11,     "Number of dimensions can not exceed 11!!");
       static_assert(ldim > 100000, "Number of elements per dimension can not exceed 100000!!");
       const int32_t lagh = (int32_t)(2.0f*std::sqrt((float)ldim));
       const int32_t totlen = ndim*ldim;
-      const std::size_t mvd_len = (std::size_t)(lagh*ndim*mdim);
+      const std::size_t mvd_len = (std::size_t)(lagh*ndim*ndim);
       __attribute__((aligned(64))) double xmean[ndim+6];
       double * __restrict xcov = NULL;
       double * __restrict xcor = NULL;
@@ -255,12 +279,101 @@ hw_perf_metrics_mulcor(const double * __restrict mvdata, //multivariable data
     specific subroutine i.e. "MULSPE".
     No descriptive statistics computations for this function.
 */
-bool
-hw_perf_metrics_mulspe(const double * __restrict, // Multidimensional data
-                                 const char   * __restrict,
-				 const int32_t,  // Number of dimensions
-				 const int32_t) __attribute__((hot))
-				                __attribute__((aligned(32)));
+__attribute__((hot))
+__attribute__((aligned(32)))
+template<int32_t ndim, int32_t ldim>
+void
+hw_perf_metrics_mulspe(const double * __restrict __attribute__((aligned(64))) mvdata, // Multidimensional data
+                       const char   * __restrict fname,
+		       const std::string * __restrict metrics) {
+       
+      static_assert(ndim <= 11,     "Number of dimensions can not exceed 11!!");
+      static_assert(ldim <= 100000, "Number of elements per dimension can not exceed 100000!!");
+      const int32_t lagh = (int32_t)(2.0f*std::sqrt((float)ldim));
+      const std::size_t mvd_len = (std::size_t)(lagh*ndim*mdim);
+      const int32_t totlen = ndim*ldim;
+      __attribute__((aligned(64))) double xmean[ndim+6];
+      __attribute__((aligned(64))) double xstat[ndim];
+      // MULCOR data
+      double * __restrict xcov = NULL;
+      double * __restrict xcor = NULL;
+      // MULSPE data
+      double * __restrict xspec1 = NULL;
+      double * __restrict xspec2 = NULL;
+      double * __restrict xcoh1  = NULL;
+      double * __restrict xcoh2  = NULL;
+      FILE * fp = NULL;
+      if(mvd_len > 11000ULL) {
+#pragma omp parallel sections
+         {
+             #pragma omp section
+	        {
+                   xcov =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+		}
+	     #pragma omp section
+	        {
+                   xcor =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+		}
+	     #pragma omp section
+	        {
+                   xspec1 =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+		}
+	     #pragma omp section
+	        {
+                   xspec2 =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+		}
+	     #pragma omp section
+	        {
+                   xcoh1  =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+		}
+	     #pragma omp section
+	        {
+                   xcoh2  =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64)); 
+	        }
+	 }
+
+	 //Single thread (main) checks for null pointers.
+	 const bool isnull = (NULL==xcov)   || (NULL==xcor)  || (NULL==xspec1) ||
+	                     (NULL==xspec2) || (NULL==xcoh1) || (NULL==xcoh2);
+	 if(isnull) {MALLOC_FAILED}
+      }
+      else {
+
+            xcov =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+	    if(NULL==xcov) {MALLOC_FAILED}
+	    xcor =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+	    if(NULL==xcor) {MALLOC_FAILED}
+	    xspec1 =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+	    if(NULL==xspec1) {MALLOC_FAILED}
+	    xspec2 =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+	    if(NULL==xspec2) {MALLOC_FAILED}
+	    xcoh1  =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+	    if(NULL==xcoh1)  {MALLOC_FAILED}
+	    xcoh2  =  reinterpret_cast<double*>(_mm_malloc(mvd_len*sizeof(double),64));
+	    if(NULL==xcoh2)  {MALLOC_FAILED}
+      }
+      // Call MULCORF subroutine
+      mulcorf_(&mvd_data[0],&totlen,&ndim,&lagh,&xmean[0],&xcov[0],&xcor[0]);
+      // Call MULSPE subroutine
+      mulspef_(&tot_len,&ndim,&lagh,&lagh,&xcov[0],&xspec1[0],&xspec2[0],
+               &xstat[0],&xcoh1[0],&xcoh2[0]);
+      if(fopen(&fp,fname,"a+") != 0) {
+         printf("File open error: %s\n",fname);
+	 std::exit(EXIT_FAILURE);
+      }
+      for(int32_t i = 0; i != ndim; ++i) {fprintf(fp,"HW Metrics: %s\n",metrics[i].c_str());
+      fprintf(fp, "Spectrum real part, imaginary part\n");
+      for(int32_t i = 0; i != (int32_t)(mvd_len); ++i) { fprintf(fp,"%.16f : %.16f\n",xspec1[i],xspec2[i]);}
+      fprintf(fp, "Test Statistics\n");
+      for(int32_t i = 0; i != ndim; ++i) { fprintf(fp, "%.16f\n", xstat[i]);}
+      fprintf(fp, "Simple coherence1, coherence2 \n");
+      for(int32_t i = 0; i != (int32_t)(mvd_len); ++i) {fprintf(fp,"%.16f ,  %.16f\n",xcoh1[i],xcoh2[i]);}
+      fclose(fp);
+      _mm_free(xcoh2);   _mm_free(xcoh1);
+      _mm_free(xspec2);  _mm_free(xspec1);
+      _mm_free(xcor);    _mm_free(xcov);
+}
+			 
 
 
 /*
@@ -270,12 +383,41 @@ hw_perf_metrics_mulspe(const double * __restrict, // Multidimensional data
     Attempt to calculate the descritpive statistics if result
     of Wilk-Shapiro normality test allows it. 
 */
-bool
-hw_perf_metrics_unimar(const double * __restrict,
-                                 const char   * __restrict,
-				 const int32_t,
-				 const bool)    __attribute__((hot))
-				                __attribute__((aligned(32)));
+__attribute__((hot))
+__attribute__((aligned(32)))
+template<int32_t len, int32_t lagh>
+void
+hw_perf_metrics_unimar(const double * __restrict __attribute__((aligned(64))) data,
+                       const char   * __restrict fname,
+		       const char   * __restrict metric_name) {
+      static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
+      __attribute__((aligned(64))) double xv[lagh+1];
+      __attribute__((aligned(64))) double xaic[lagh+1];
+      __attribute__((aligned(64))) double xdaic[lagh+1];
+      __attribute__((aligned(64))) double xa[lagh];
+      double xmean = 0.0;
+      double xvar  = 0.0;
+      double xaicm = 0.0;
+      double xvm   = 0.0;
+      int32_t xm   = 0;
+      FILE * fp = NULL;
+      unimarf_(&data[0],&len,&lagh,&xmean,&xvar,&xv[0],&xaic[0],&xdaic[0],
+               &xm,&xaicm,&xvm,&xa[0]);
+      if(fopen(&fp,fname,"a+") != 0) {
+           printf("File open error: %s\n",fname);
+	   std::exit(EXIT_FAILURE);
+      }
+      fprintf(fp,"Metric: %s, Method: Univariate Autoregressive AR Model Fitting\n",metric_name);
+      fprintf(fp,"\nmean=%.16f,var=%.16f,aicm=%.16f,vm=%.16f,xm=%d\n", xmean,
+              xvar,xaicm,xvm,xm);
+     fprintf(fp," V, AIC, DAIC\n");
+     for(int32_t i = 0; i != lagh+1; ++i) {fprintf(fp," %.16f %.16f %.16f %.16f\n",xv[i],xaic[i],xdaic[i]);}
+     fprintf(fp, "A\n");
+     for(int32_t i = 0; i != order; ++i) {fprintf(fp1," %.16f\n",xa[i]);}
+     fclose(fp);
+}
+				
+			
 
 
 
@@ -284,13 +426,53 @@ hw_perf_metrics_unimar(const double * __restrict,
     The data itself is invariant from the point of view of
     specific subroutine i.e. "UNIBAR".
    
-*/					  
-bool
-hw_perf_metrics_unibar(const double * __restrict,
-                                 const char   * __restrict,
-				 const int32_t,
-				 const bool)    __attribute__((hot))
-				                __attribute__((aligned(32)));
+*/
+__attribute__((hot))
+__attribute__((aligned(32)))
+template<int32_t len,int32_t lagh>
+void
+hw_perf_metrics_unibar(const double * __restrict  __attribute__((aligned(64))) data,
+                       const char   * __restrict fname,
+		       const char   * __restrict metric_name) {
+
+      static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
+      __attribute__((aligned(64))) double xv[lagh+1];
+      __attribute__((aligned(64))) double xaic[lagh+1];
+      __attribute__((aligned(64))) double xdaic[lagh+1];
+      __attribute__((aligned(64))) double xpa[lagh];
+      __attribute__((aligned(64))) double xbw[lagh+1];
+      __attribute__((aligned(64))) double xsbw[lagh];
+      __attribute__((aligned(64))) double xpab[lagh];
+      __attribute__((aligned(64))) double xa[lagh];
+      __attribute__((aligned(64))) double xpxx[128];
+      double xmean = 0.0;
+      double xvar  = 0.0;
+      double xaicm = 0.0;
+      double xvm   = 0.0;
+      double xaicb = 0.0;
+      double xvb   = 0.0;
+      double xpn   = 0.0;
+      int32_t xm   = 0;
+      FILE * fp = NULL;
+      unibarf_(&data[0],&len,&lagh,&xmean,&xvar,&xv[0],&xaic[0],&xdaic[0],
+               &xm,&xaicm,&xvm,&xpa[0],&xbw[0],&xsbw[0],&xpab[0],&xaicb,
+	       &xvb,&xpn,&xa[0],&xpxx[0]);
+      if(fopen(&fp,fname,"a+") != 0) {
+        printf("File open error: %s\n",fname2);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp," Metric: %s, Method: Univariate Bayesian Method of AR Model Fitting\n");
+     fprintf(fp,"\nxmean=%.16f,xvar=%.16f,xaicm=%.16f,xvm=%.16f,xaicb=%.16f,xvb=%.16f,xpn=%.16f,xm=%d\n",xmean,
+             xvar,xaicm,xvm,xaicb,xvb,xpn,xm);
+     fprintf(fp," V, AIC, DAIC, BW\n");
+     for(int32_t i = 0; i != (lagh+1); ++i) {fprintf(fp," %.16f %.16f %.16f %.16f\n",xv[i],xaic[i],xdaic[i],xbw[i]);}
+     fprintf(fp, " PA, SBW, PAB, A\n");
+     for(int32_t i = 0; i != lagh; ++i) {fprintf(fp," %.16f %.16f %.16f %.16f\n", xpa[i],xsbw[i],xpab[i],xa[i]);}
+     fprintf(fp, " PXX\n");
+     for(int32_t i = 0; i != 128; ++i) {fprintf(fp, "%.16f\n",pxx[i]);}
+     fclose(fp);
+}
+				
 
 
 /*
@@ -299,12 +481,43 @@ hw_perf_metrics_unibar(const double * __restrict,
     specific subroutine i.e. "EXSAR".
    
 */
-bool
-hw_perf_metrics_exsar( const double * __restrict,
-                                 const char   * __restrict,
-				 const int32_t,
-				 const bool)    __attribute__((hot))
-				                __attribute__((aligned(32)));
+__attribute__((hot))
+__attribute__((aligned(32)));
+template<int32_t len,int32_t lagh>
+void
+hw_perf_metrics_exsar( const double * __restrict  __attribute__((aligned(64))) data,
+                       const char   * __restrict fname,
+		       const char   * __restrict metric_name) {
+        static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
+        __attribute__((aligned(64))) double xv[lagh+1];
+	__attribute__((aligned(64))) double xaic[lagh+1];
+	__attribute__((aligned(64))) double xdaic[lagh+1];
+	__attribute__((aligned(64))) double xa1[lagh];
+	__attribute__((aligned(64))) double xa2[lagh];
+	double xmean = 0.0;
+        double xvar  = 0.0;
+        double xaicm = 0.0;
+        double xsdm1 = 0.0;
+        double xsdm2 = 0.0;
+        int32_t xier = 0;
+        int32_t xm   = 0;
+	FILE * fp = NULL;
+	exsarf_(&data[0],&len,&lagh,&xmean,&xvar,&xv[0],&xaic[0],&xdaic[0],
+                &xm,&xaicm,&xsdm1,&xa1[0],&xsdm2,&xa2[0],&xier);
+	if(fopen(&fp,fname,"a+") != 0) {
+            printf("File open error: %s\n",fname);
+	    std::exit(EXIT_FAILURE);
+        }
+	 fprintf(fp,"HW Metric: %s, Maximum Likelihood Estimation\n", metric_name);
+         fprintf(fp,"xmean=%.16f,xvar=%.16f,xaicm=%.16f,xsdm1=%.16f,xsdm2=%.16f,xier=%d,xm=%d\n",
+                 xmean,xvar,xaicm,xsdm1,xsdm2,xier,xm);
+         fprintf(fp,"V, AIC, DAIC \n");
+         for(int32_t i = 0; i != lagh1; ++i) {fprintf(fp," %.16f %.16f %.16f\n", xv[i],xaic[i],xdaic[i]);}
+         fprintf(fp," A1, A2 \n");
+         for(int32_t i = 0; i != lagh; ++i) {fprintf(fp, " %.16f %.16f\n", xa1[i],xa2[i]);}
+         fclose(fp);
+}
+			
 
 /*
     Apply Time-Series analysis (Timsac) subroutine "BISPEC".
@@ -312,12 +525,85 @@ hw_perf_metrics_exsar( const double * __restrict,
     specific subroutine i.e. "BISPEC".
   
 */
-bool
-hw_perf_metrics_bispec(const double * __restrict,
-                                 const char   * __restrict,
-				 const int32_t,
-				 const bool)    __attribute__((hot))
-				                __attribute__((aligned(32)));
+__attribute__((hot))
+__attribute__((aligned(32)));
+template<int32_t len,int32_t lagh>
+void
+hw_perf_metrics_bispec(const double * __restrict __attribute__((aligned(64))) data,
+                       const char   * __restrict fname,
+		       const char   * __restrict metric_name) {
+       static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
+       const int32_t lg12x = lagh*lagh+7;
+       const std::size_t lagh_len = static_cast<std::size_t>(lg12x);
+       __attribute__((aligned(64))) double acor[lagh+7];
+       __attribute__((aligned(64))) double acov[lagh+7];
+       __attribute__((aligned(64))) double pspec1[lagh+7];
+       __attribute__((aligned(64))) double psepc2[lagh+7];
+       __attribute__((aligned(64))) double sig[lagh+7];
+       double * __restrict mnt    = NULL;
+       double * __restrict ch     = NULL;
+       double * __restrict br     = NULL;
+       double * __restrict bi     = NULL;
+       FILE * fp = NULL;
+       double xmean = 0.0;
+       double xrat = 0.0; // BISPECF result
+       if(lg12x >= 100000) {
+#pragma omp parallel section
+        {
+
+       #pragma omp section
+            {
+              mnt = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+
+	    }
+       #pragma omp section
+            {
+              ch  = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    }
+       #pragma omp section
+            {
+              br  = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    }
+       #pragma omp section
+            {
+              bi  = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    }
+
+	}
+	const bool isnull = (NULL==mnt) || (NULL==ch) ||
+	                    (NULL==ch)  || (NULL==br) ||
+			    (NULL==bi);
+	if(isnull) {MALLOC_FAILED}
+
+      }
+      else {
+
+            mnt = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    if(NULL==mnt) {MALLOC_FAILED}
+	    ch  = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    if(NULL==ch)  {MALLOC_FAILED}
+	    br  = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    if(NULL==br)  {MALLOC_FAILED}
+	    bi  = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+	    if(NULL==bi)  {MALLOC_FAILED}
+      }
+     thirmof_(&len,&lagh,&data[0],&xmean,&acov[0],&acor[0],&mnt[0]);
+     bispecf_(&len,&lagh,&data[0],&mnt[0],&pspec1[0],&pspec2[0],
+              &sig[0],&br[0],&bi[0],&xrat);
+     if(fopen(&fp,fname,"a+") != 0) {
+        printf("File open error: %s\n",fname);
+	std::exit(EXIT_FAILURE);
+     }
+     fprintf(fp,"HW Metric: %s, Bi-Spectrum Decomposition\n",metric_name);
+     fprintf(fp,"xrat=%.16f\n",xrat);
+     fprintf(fp," %s -- Smoothed Power Spectrum-1, Power Spectrum-2 and Significance\n", metric_name);
+     for(int32_t i = 0; i != lagh; ++i) { fprintf(fp, "%.16f %.16f %.16f\n", psepc1[i],pspec2[i],sig[i]);}
+     fprintf(fp, " %S -- Coherence, Real part, Imaginary part\n");
+     for(int32_t i = 0; i != lg12x; ++i) { fprintf(fp, "%.16f %.16f %.16f\n",ch[i],br[i],bi[i]);}
+     fclose(fp1);
+     _mm_free(bi); _mm_free(br);
+     _mm_free(ch); _mm_free(mnt);
+}
 
 
 /*
@@ -326,12 +612,38 @@ hw_perf_metrics_bispec(const double * __restrict,
     specific subroutine i.e. "THIRMO".
    
 */
-bool
-hw_perf_metrics_thirmo(const double * __restrict,
-                                 const char   * __restrict,
-				 const int32_t,
-				 const bool)    __attribute__((hot))
-				                __attribute__((aligned(32)));
+__attribute__((hot))
+__attribute__((aligned(32)));
+template<int32_t len,int32_t lagh>
+void
+hw_perf_metrics_thirmo(const double * __restrict __attribute__((aligned(64))) data,
+                       const char   * __restrict fname,
+		       const char   * __restrict metric_name) {
+       static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
+       const int32_t lg12x = lagh*lagh+7;
+       const std::size_t lagh_len = static_cast<std::size_t>(lg12x);
+       __attribute__((aligned(64))) double acor[lagh+7];
+       __attribute__((aligned(64))) double acov[lagh+7];
+       double * __restrict mnt = NULL
+       FILE * fp = NULL;
+       double xmean = 0.0;
+       mnt = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
+       if(NULL==mnt) {MALLOC_FAILED}
+       thirmof_(&len,&lagh,&data[0],&xmean,&acov[0],&acor[0],&mnt[0]);
+       if(fopen(&fp,fname,"a+") != 0) {
+           printf("File open error: %s\n",fname);
+	   std::exit(EXIT_FAILURE);
+       }
+        fprintf(fp,"HW Metric: %s Third Moments\n",metric_name);
+        fprintf(fp,"xmean=%.16f\n",xmean);
+        fprintf(fp,"ACOV, ACOR\n");
+        for(int32_t i = 0; i != lagh; ++i) { fprintf(fp, "%.16f %.16f\n", acov[i],acor[i]);}
+        fprintf(fp," %S -- Third Moment\n",metric_name);
+        for(int32_t i = 0; i != lg12x; ++i) { fprintf(fp, "%.16f\n",mnt[i]);}
+        fclose(fp);
+	_mm_free(mnt);
+}
+				
 
 
 /*
@@ -340,11 +652,29 @@ hw_perf_metrics_thirmo(const double * __restrict,
     specific subroutine i.e. "AUTOCOR".
    
 */
-bool
-hw_perf_metrics_autocor(const double * __restrict,
-                                  const char   * __restrict,
-				  const int32_t,
-				  const bool)    __attribute__((hot))
-				                __attribute__((aligned(32)));
+__attribute__((hot))
+__attribute__((aligned(32)));
+template<int32_t len,int32_t lagh>
+void
+hw_perf_metrics_autocor(const double * __restrict __attribute__((aligned(64))) data,
+                        const char   * __restrict fname,
+			const char   * __restrict metric_name) {
+       static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!"); 
+       __attribute__((aligned(64))) double acor[lagh+8];
+       __attribute__((aligned(64))) double acov[lagh+8];
+       double xmean = 0.0;
+       FILE * fp = NULL;
+       autocorf_(&data,&len,&acov[0],&acor[0],&lagh,&xmean);
+       if(fopen(&fp,fname,"a+") != 0) {
+           printf("File open error: %s\n",fname);
+	   std::exit(EXIT_FAILURE);
+       }
+       fprintf(fp,"HW Metric: %s\n",metric_name);
+       fprintf(fp,"xmean=%.16f\n",xmean);
+       fprintf(fp," Series Autocorrelation and Autocovariance.\n");
+       for(int32_t i = 0; i != lagh; ++i) {fprintf(fp,"%.16f %.16f\n",acor[i],acov[i]);}
+       fclose(fp);
+}
+				  
 
 #endif /*__GMS_HW_METRICS_TIME_SERIES_ANALYSIS_H__*/
