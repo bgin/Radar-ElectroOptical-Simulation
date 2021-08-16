@@ -33,7 +33,7 @@ hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) da
                        const char   * __restrict fname,
 		       const char   * __restrict metric_name) {
 		       
-    static_assert(len > 100000, "Input data length can not exceed -- **100000** elements!!");
+    static_assert(len < 100000, "Input data length can not exceed -- **100000** elements!!");
     const int32_t lagh = (int32_t)(std::sqrtf((int32_t)len));
     const int32_t n2   = len/2; // shapiro-wilk 'a' array length.
     const std::size_t  lag2len = (std::size_t)(lagh*lagh);
@@ -244,8 +244,8 @@ hw_perf_metrics_mulcor(const double * __restrict __attribute__((aligned(64))) mv
                        const char   * __restrict fname,
 		       const std::string * __restrict metrics){
 		      
-      static_assert(ndim > 11,     "Number of dimensions can not exceed 11!!");
-      static_assert(ldim > 100000, "Number of elements per dimension can not exceed 100000!!");
+      static_assert(ndim <= 11,     "Number of dimensions can not exceed 11!!");
+      static_assert(ldim <= 100000, "Number of elements per dimension can not exceed 100000!!");
       const int32_t lagh = (int32_t)(2.0f*std::sqrt((float)ldim));
       const int32_t totlen = ndim*ldim;
       const std::size_t mvd_len = (std::size_t)(lagh*ndim*ndim);
@@ -573,7 +573,7 @@ hw_perf_metrics_bispec(const double * __restrict __attribute__((aligned(64))) da
 	const bool isnull = (NULL==mnt) || (NULL==ch) ||
 	                    (NULL==ch)  || (NULL==br) ||
 			    (NULL==bi);
-	if(isnull) {MALLOC_FAILED}
+	if(__builtin_except(isnull,0)) {MALLOC_FAILED}
 
       }
       else {
@@ -628,7 +628,7 @@ hw_perf_metrics_thirmo(const double * __restrict __attribute__((aligned(64))) da
        FILE * fp = NULL;
        double xmean = 0.0;
        mnt = reinterpret_cast<double*>(_mm_malloc(lagh_len*sizeof(double),64));
-       if(NULL==mnt) {MALLOC_FAILED}
+       if(__builtin_except(NULL==mnt,0)) {MALLOC_FAILED}
        thirmof_(&len,&lagh,&data[0],&xmean,&acov[0],&acor[0],&mnt[0]);
        if(fopen(&fp,fname,"a+") != 0) {
            printf("File open error: %s\n",fname);
