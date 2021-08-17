@@ -141,21 +141,21 @@ hw_perf_metrics_canarm(const double * __restrict __attribute__((aligned(64))) da
   else { // for if: len < 10000
 
            xw = reinterpret_cast<double*>(_mm_malloc(lag3len*sizeof(double),64));
-	   if(NULL==xw) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==xw,0)) {MALLOC_FAILED}
 	   xz = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
-	   if(NULL==xz) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==xz,0)) {MALLOC_FAILED}
 	   xRs = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
-	   if(NULL==xRs) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==xRs,0)) {MALLOC_FAILED}
 	   xchi = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
-	   if(NULL==xchi) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==xchi,0)) {MALLOC_FAILED}
 	   xndt = reinterpret_cast<int32_t*>(_mm_malloc(lag2len*sizeof(int32_t),64));
-	   if(NULL==xndt) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==xndt,0)) {MALLOC_FAILED}
 	   xdic = reinterpret_cast<double*>(_mm_malloc(lag2len*sizeof(double),64));
-	   if(NULL==xdic) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==xdic,0)) {MALLOC_FAILED}
 	   a    = reinterpret_cast<float*>(_mm_malloc((std::size_t)len2*sizeof(float),64));
-	   if(NULL==a) {MALLOC_FAILED}
+	   if(__built_except(NULL==a,0)) {MALLOC_FAILED}
 	   df32 = reinterpret_cast<float*>(_mm_malloc((std::size_t)len*sizeof(float),64));
-	   if(NULL==df32) {MALLOC_FAILED}
+	   if(__builtin_except(NULL==df32,0)) {MALLOC_FAILED}
     }
 
       
