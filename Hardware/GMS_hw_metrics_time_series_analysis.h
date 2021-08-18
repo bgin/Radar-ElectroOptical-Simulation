@@ -14,7 +14,13 @@
 
 
 
-
+#if !defined(MALLOC_FAILED)
+#define MALLOC_FAILED                                                                     \
+     do {                                                                                 \
+        printf(" %s -- _mm_malloc failed to allocate memory!!\n", __PRETTY_FUNCTION__);   \
+        exit(EXIT_FAILURE);                                                               \
+    } while(0);
+#endif
 
 
 
