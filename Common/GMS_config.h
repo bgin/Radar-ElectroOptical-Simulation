@@ -99,6 +99,14 @@ namespace file_info {
 #define CONJ 
 #define XCONJ
 
+#if !defined(MALLOC_FAILED)
+#define MALLOC_FAILED                                                                     \
+     do {                                                                                 \
+        printf(" %s -- _mm_malloc failed to allocate memory!!\n", __PRETTY_FUNCTION__);   \
+        exit(EXIT_FAILURE);                                                               \
+    } while(0);
+#endif
+
 /* Start of Compiler specific declarations.* /
 
 /* Compiler supported CPP version
