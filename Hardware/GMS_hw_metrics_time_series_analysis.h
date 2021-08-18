@@ -8,19 +8,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
+#include <algorithm>
+#include "GMS_config.h"
 #include "Timsac_iface.h"
 #include "GMS_descriptive_statistics.hpp"
 #include "GMS_convert_numeric_data_types.hpp"
 
 
 
-#if !defined(MALLOC_FAILED)
-#define MALLOC_FAILED                                                                     \
-     do {                                                                                 \
-        printf(" %s -- _mm_malloc failed to allocate memory!!\n", __PRETTY_FUNCTION__);   \
-        exit(EXIT_FAILURE);                                                               \
-    } while(0);
-#endif
+
 
 
 
