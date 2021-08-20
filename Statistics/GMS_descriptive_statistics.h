@@ -6,7 +6,7 @@
 namespace file_info {
 
      const unsigned int gGMS_DESCRIPTIVE_STATISTICS_MAJOR = 1U;
-     const unsigned int gGMS_DESCRIPTIVE_STATISTICS_MINOR = 0U;
+     const unsigned int gGMS_DESCRIPTIVE_STATISTICS_MINOR = 1U;
      const unsigned int gGMS_DESCRIPTIVE_STATISTICS_MICRO = 0U;
      const unsigned int gGMS_DESCRIPTIVE_STATISTICS_FULLVER =
            1000U*gGMS_DESCRIPTIVE_STATISTICS_MAJOR+
@@ -19,9 +19,7 @@ namespace file_info {
 
 #include <math.h>
 #include <cstdint>
-#if defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
 #include <omp.h>
-#endif
 #include "GMS_config.h"
 #include "GMS_cephes.h" // to eliminate cmath.h implemented by GLIBC
                         // used only in scalar code.
@@ -98,7 +96,7 @@ C   * INDICATES PARAMETERS REQUIRING INPUT VALUES
 C-----------------------------------------------------------------------
 C
         */
-              __ATTR_ALWAYS_INLINE__
+           /*   __ATTR_ALWAYS_INLINE__
 	      __ATTR_HOT__
               __ATTR_ALIGN__(32)
 	      static inline
@@ -110,7 +108,7 @@ C
 			  float &varp,
 			  float &dfp,
 			  int32_t &iflag) {
-                if(n < 3) {
+                if(__builtin_expect(n < 3,0)) {
                    iflag = 3;
 		   return;
 		}
@@ -137,11 +135,8 @@ C
                var = (float*)__builtin_assume_aligned(var,64);
 	       df  = (float*)__builtin_assume_aligned(df,64);
 #endif
-#if defined __ICC || defined __INTEL_COMPILER
-#pragma simd reduction(+:a,varp,c,ch2), vecremainder
-#elif defined __GNUC__ || !defined __INTEL_COMPILER
-#pragma omp simd reduction(+: a,varp,c,ch2)
-#endif
+#pragma omp simd reduction(+: a,varp,c,ch2) aligned(df:64,varp,var) \
+               linear(i:1) unroll partial(8)
                for(int32_t i = 0; i != n; ++i) {
                    a = a + df[i];
 		   varp = varp + df[i] * varp[i];
@@ -156,7 +151,7 @@ C
 	       alpha = 0.5f*(float)n-1;
 	       eps   = 0.0000001f;
 	       // call cdfgam here
-        }
+        }*/
 
       /*
            C
@@ -233,12 +228,14 @@ C
 	       bc2 =   q <= uflo;
 	       bc3 = eps <= uflo;
 	       // CHECK FOR VALIDITY OF ARGUMENTS P, Q, AND EPS
-	       if(bc1 || bc2 || bc3) {
+	       if(__builtin_expect(bc1,0) ||
+	          __builtin_expect(bc2,0) ||
+		  __builtin_expect(bc3,0)) {
                   iflag = 1;
 		  return;
 	       }
 	       iflag = 0;
-	       if(x <= 0.0f) {
+	       if(__builtin_expect(x <= 0.0f,0)) {
 	          return;
 	       }
 	       ll = false;
@@ -403,20 +400,24 @@ C
 			  float &cdfx) {
                using namespace gms::common;
 	       // CHECK VALIDITY OF ARGUMENTS
-	       if(alamb1<0.0f || alamb2<0.0f) {
+	       if(__builtin_expect(alamb1<0.0f,0) ||
+	          __builtin_expect(alamb2<0.0f,0)) {
 	          iflag = 3;
 		  return;
 	       }
-	       if(df1<=0.0f || df2<=0.0f) {
+	       if(__builtin_expect(df1<=0.0f,0) ||
+	          __builtin_expect(df2<=0.0f,0)) {
                   iflag = 4;
 		  return;
 	       }
-	       if(eps>1.0f || eps<1.0e-10f) {
+	       if(__builtin_expect(eps>1.0f,0) ||
+	          __builtin_expect(eps<1.0e-10f,0)) {
                   iflag = 5;
 		  return;
 	       }
 	       iflag = 0;
                constexpr int32_t nx = 1008;
+
 #if defined __AVX512F__
 	       __attribute__((aligned(64))) float bfi[nx];
 	       __attribute__((aligned(64))) float bfj[nx];
@@ -446,53 +447,59 @@ C
 		  return;
 	       }
 	       // COMPUTE POISSON PROBABILITIES IN VECTORS POI AND POJ
-#if defined __AVX512F__
+#if (GMS_INIT_ARRAYS) == 1
+    #if defined __AVX512F__
                avx512_init_unroll4x_ps(&poi[0],nx,0.0f);
-#else
+    #else
                avx256_init_unroll4x_ps(&poi[0],nx,0.0f);
+    #endif
 #endif
                poissf(fa,eps,imin,ni,poi,nx,iflag);
-	       if(iflag != 0) {
+	       if(__builtin_expect(iflag != 0,0)) {
                   return;
 	       }
 	       fc = fb+(float)imin;
-#if defined __AVX512F__
+#if (GMS_INIT_ARRAYS) == 1
+    #if defined __AVX512F__
                avx512_init_unroll4x_ps(&poj[0],nx,0.0f);
-#else
+    #else
                avx256_init_unroll4x_ps(&poj[0],nx,0.0f);
+    #endif
 #endif
 	       poissf(ga,eps,jmin,nj,poj,nx,iflag);
-	       if(iflag != 0) {
+	       if(__builtin_expect(iflag != 0,0)) {
                   return;
 	       }
 	       gc = gb+(float)jmin;
 	       // COMPUTE BETA C.D.F. BY RECURRENCE WHEN I=IMIN AND J=JMIN TO JMAX
-#if defined __AVX512F__
+#if (GMS_INIT_ARRAYS) == 1
+    #if defined __AVX512F__
                avx512_init_unroll4x_ps(&bfj[0],nx,0.0f);
-#else
+    #else
                avx256_init_unroll4x_ps(&bfj[0],nx,0.0f);
+    #endif
 #endif
 	       edgef(nj,gc,fc,yy,xx,bfj,cdfx,poj,poi,eps3,iflag,1);
-	       if(ni<=1 || iflag != 0) {
+	       if(__builtin_expect(ni<=1,0) ||
+	          __builtin_expect(iflag != 0,0)) {
                   return;
 	       }
 	       //COMPUTE BETA C.D.F. BY RECURRENCE WHEN J=JMIN AND I=IMIN TO IMAX
-#if defined __AVX512F__
+#if (GMS_INIT_ARRAYS) == 1
+    #if defined __AVX512F__
                avx512_init_unroll4x_ps(&bfi[0],nx,0.0f);
-#else
+    #else
                avx256_init_unroll4x_ps(&bfi[0],nx,0.0f);
+    #endif
 #endif
 	       bfi[0] = bfj[0];
 	       edgef(ni,fc,gc,xx,yy,bfi,cdfx,poi,poj,eps3,iflag,2);
-	       if(nj<=1 || iflag != 0) {
+	       if(__builtin_expect(nj<=1,0) ||
+	          __builtin_expect(iflag != 0,0)) {
                   return;
 	       }
 	       // COMPUTE BETA C.D.F. BY RECURRENCE WHEN I>IMIN AND J>JMIN
-#if defined __ICC || defined __INTEL_COMPILER
-#pragma simd reduction(+:cdfx)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:cdfx)
-#endif
+
 	       for(int32_t i = 1; i != ni; ++i) {
                    bfj[0] = bfi[i];
 		   float tmp = poi[i];
@@ -629,11 +636,10 @@ C             SAMPLE AUTOCORRELATION COEFFICIENT.
                     x = (float*)__builtin_assume_aligned(x,64);
 #endif
 #if defined __ICC || defined __INTEL_COMPILER
-#pragma loop_count min(2),avg(1000),max(5000)
-#pragma simd reduction(+:xbar)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:xbar)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:xbar) aligned(x:64) linear(i:1) \
+                    unroll partial(6)
                     for(int32_t i = 0; i != n; ++i) {
                         xbar = xbar+x[i];
 		    }
@@ -646,11 +652,12 @@ C             SAMPLE AUTOCORRELATION COEFFICIENT.
 		    xbar2 = xbar2/(an-1.0f);
 		    nm1 = n-1;
 #if defined __ICC || defined __INTEL_COMPILER
-#pragma loop_count min(2),avg(1000),max(5000)
-#pragma simd reduction(+:sum1,sum2,sum3)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:sum1,sum2,sum3)
+
+#pragma code_align(32)
 #endif
+
+#pragma omp simd reduction(+:sum1,sum2,sum3) private(tx1,tip1) \
+                    aligned(x:64) linear(i:1) unroll partial(8)
                     for(int32_t i = 0; i != nm1; ++i) {
 		        ip1 = i+1;
                         register float txi  = x[i];
@@ -694,24 +701,20 @@ C              REFERRED TO AS THE SAMPLE COEFFICIENT OF VARIATION.
                    x = (float*)__builtin_assume_aligned(x,64);
 #endif
 #if defined __INTEL_COMPILER
-#pragma loop_count(5000)
-#pragma vector always 
-#pragma simd reduction(+:sum)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:sum)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:sum) aligned(x:64) linear(i:1) \
+                   unroll partial(6)
                    for(int32_t i = 0; i != n; ++i) {
                        sum = sum+x[i];
                    }
                    xmean = sum/an;
                    sum = 0.0f;
 #if defined __INTEL_COMPILER
-#pragma loop_count(5000)
-#pragma vector always 
-#pragma simd reduction(+:sum)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:sum)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:sum) private(t) aligned(x:64) linear(i:1) \
+                   unroll partial(6)
                   for(int32_t i = 0; i != n; ++i) {
                       register float t = (x[i]-xmean)*(x[i]-xmean);
                       sum = sum + t;
@@ -747,29 +750,26 @@ C              SQUARED DEVIATIONS ABOUT THE SAMPLE MEAN)/(N-1).
                     x = (float*)__builtin_assume_aligned(x,64);
 #endif
 #if defined _INTEL_COMPILER
-#pragma loop_count(5000)
-#pragma vector always
-#pragma simd reduction(+:sum)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:sum)
+#pragma code_align(32)
 #endif
-                   for(int32_t i = 0; i != n; ++i) {
+#pragma omp simd reduction(+:sum) aligned(x:64) linear(i:1) \
+                unroll partial(6)
+                for(int32_t i = 0; i != n; ++i) {
                       sum = sum+x[i];
-                   }
-                   xmean = sum/an;
-                   sum = 0.0f;
+                }
+                 xmean = sum/an;
+                 sum = 0.0f;
 #if defined __INTEL_COMPILER		   
-#pragma loop_count(5000)
-#pragma vector always
-#pragma simd reduction(+:sum)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:sum)
-#endif
-                  for(int31_t i = 0; i != n; ++i) {
+#pragma code_align(32)
+
+
+#pragma omp simd reduction(+:sum) private(xi) aligned(x:64) linear(i:1) \
+                unroll partial(6)
+                for(int31_t i = 0; i != n; ++i) {
                       //register float t = (x[i]-xmean)*(x[i]-xmean);
 		      register float xi = x[i];
                       sum = sum+(xi-xmean)*(xi-xmean);
-                  }
+                }
                   xvar = sum/(an-1.0f);
                   return (xvar);
             }
@@ -817,11 +817,10 @@ C   SUBPROGRAMS CALLED: -NONE-
                       else {
                           s = 0.0f;
 #if defined __INTEL_COMPILER
-#pragma vector_always
-#pragma simd reduction(+:s)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:s), aligned(x:64), linear(x:1)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:s) aligned(x:64) linear(x:1) \
+                      unroll partial(8)
                       for(int32_t i = nlo; i != nhi; ++i) {
                           s = s+y[i];
                       }
@@ -934,9 +933,7 @@ label_10:
                     }
                     l = (nadj+1)/2;
                     rmin = y[n]-y[0];
-#if defined __INTEL_COMPILER
-#pragma loop_count min(15),avg(1000),max(5000)
-#endif
+
                     for(int32_t i = 1; i != (n-l); ++i) {
                         r = y[i+l]-y[i];
                         if(r<=rmin) {
@@ -969,22 +966,20 @@ label_40:
         // COMPUTE MEAN AND STANDARD DEVIATION OF NON-REJECTED VALUES
                        smean = 0.0f;
 #if defined __INTEL_COMPILER
-#pragma loop_count min(15),avg(1000),max(5000)
-#pragma simd reduction(+:s)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:smean), aligned(y:64), linear(y:1)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:smean) aligned(y:64) linear(y:1) \
+                         unroll partial(6)
                          for(int32_t i = nlo; i != nhi; ++i) {
                              smean = smean+y[i];
                          }   
                          smean = smean/(float)ngood;
                          ssd = 0.0f;
 #if defined __INTEL_COMPILER
-#pragma loop_count min(15),avg(1000),max(5000)
-#pragma simd reduction(+:ssd)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:ssd), aligned(y:64), linear(y:1)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:ssd) aligned(y:64) linear(y:1) \
+                         unroll partial(6)
                          for(int32_t i = nlo; i != nhi; ++i){
 			     register float yi = y[i];
                              ssd = ssd+(yi-smean)*(yi-smean);
@@ -1044,7 +1039,7 @@ C--- THE N/2 LARGEST DEVIATION, A SLIGHT OVERESTIMATE.
                 mhi = nhi;
                 k = (mhi-mlo)/2;
 #if defined __INTEL_COMPILER		
-#pragma loop_count min(15),avg(1000),max(5000)
+#pragma code_align(32)
 #endif
                for(int32_t  i = 0; i != k; ++i) {
                    if(x[mhi]+x[mlo]>2.0*c) goto label_10;
@@ -1087,10 +1082,10 @@ C              (INCLUSIVELY).
 		x = (float*)__builtin_assume_aligned(x,64);
 #endif
 #if defined __INTEL_COMPILER
-#pragma loop_count min(2),avg(1000),max(5000)
-#pragma simd reduction(+:xbar)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:xbar), aligned(x:64)
+#pragma code_align(32)
+#endif
+#pragma omp simd reduction(+:xbar) aligned(x:64) linear(i:1) \
+                unroll partial(6)
                 for(int32_t i = 0; i != n; ++i) {
                     xbar = xbar+x[i];
                 }
@@ -1103,11 +1098,10 @@ C              (INCLUSIVELY).
                 sum3 = 0.0f;
                 nm1 = n-1;
 #if defined __INTEL_COMPILER
-#pragma loop_count min(2),avg(1000),max(5000)
-#pragma simd reduction(+:sum1,sum2,sum3)
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-#pragma omp simd reduction(+:sum1,sum2,sum3), aligned(x:64)
+#pragma code_align(32)
 #endif
+#pragma omp simd reduction(+:sum1,sum2,sum3) private(tip1,tx) aligned(x:64) \
+               linear(i:1) unroll partial(8)
                for(int32_t i = 0; i != nm1; ++i) {
                    ip1 += 1;
                    register float tip1 = x[ip1];
