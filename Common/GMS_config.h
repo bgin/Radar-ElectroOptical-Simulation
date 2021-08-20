@@ -107,6 +107,10 @@ namespace file_info {
     } while(0);
 #endif
 
+#if !defined(GMS_INIT_ARRAYS)
+    #define GMS_INIT_ARRAYS 0
+#endif
+
 /* Start of Compiler specific declarations.* /
 
 /* Compiler supported CPP version
