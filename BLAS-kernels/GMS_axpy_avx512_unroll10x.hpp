@@ -210,7 +210,7 @@ namespace gms {
 			 for(; (i+0) < n; i += 1) {
                                 y0[i] += alpha * x0[i];
 		         }
-			 y = y0;
+		
 		      }
 		      else {
 
@@ -220,7 +220,7 @@ namespace gms {
 			     x0 += incx;
 			     y0 += incy;
 		           }
-			   y = y0;
+			 
 		      }
 		}
 
@@ -381,7 +381,7 @@ namespace gms {
 			 for(; (i+0) < n; i += 1) {
                                 y0[i] += alpha * x0[i];
 		         }
-			 y = y0;
+			
 		      }
 		      else {
 
@@ -391,7 +391,7 @@ namespace gms {
 			     x0 += incx;
 			     y0 += incy;
 		           }
-			   y = y0;
+			  
 		      }
 		}
 
@@ -561,7 +561,7 @@ namespace gms {
 			 for(; (last_i+0) < n; last_i += 1) {
                                 y0[last_i] += alpha * x0[last_i];
 		         }
-			 y = y0;
+			
 		      }
 		      else {
 
@@ -571,7 +571,7 @@ namespace gms {
 			     x0 += incx;
 			     y0 += incy;
 		           }
-			   y = y0;
+			  
 		      }
 		}
 
@@ -726,7 +726,7 @@ namespace gms {
 		      for(; (i+0) < n; i += 1) {
                           y0[i] += alpha * x0[i];
 		      }
-		      y = y0;
+		     
 		   }
 		   else {
 
@@ -736,7 +736,7 @@ namespace gms {
 			   x0 += incx;
 			   y0 += incy;
 		       }
-		       y = y0;
+		      
 		   }
 	     }
 
@@ -900,7 +900,7 @@ namespace gms {
 		      for(; (i+0) < n; i += 1) {
                           y0[i] += alpha * x0[i];
 		      }
-		      y = y0;
+		     
 		   }
 		   else {
 
@@ -910,7 +910,7 @@ namespace gms {
 			   x0 += incx;
 			   y0 += incy;
 		       }
-		       y = y0;
+		      
 		   }
 	     }
 
@@ -1080,7 +1080,7 @@ namespace gms {
                           y0[i] += alpha * x0[i];
 		      }
 		   }
-		   y = y0;
+		  
 		   else {
 
                        for(i = 0; i != n; ++i) {
@@ -1089,7 +1089,7 @@ namespace gms {
 			   x0 += incx;
 			   y0 += incy;
 		       }
-		       y = y0;
+		     
 		   }
 	     }
 
