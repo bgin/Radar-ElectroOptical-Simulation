@@ -3,7 +3,6 @@
 #define __GMS_CONFIG_H__
 
 
-
 namespace file_info {
 
      const unsigned int  gGMS_CONFIG_MAJOR = 1;
@@ -109,6 +108,10 @@ namespace file_info {
 
 #if !defined(GMS_INIT_ARRAYS)
     #define GMS_INIT_ARRAYS 0
+#endif
+
+#if !defined(GMS_INTERLEAVE_SIMD_OPS_SCHEDULE)
+    #define GMS_INTERLEAVE_SIMD_OPS_SCHEDULE 1
 #endif
 
 /* Start of Compiler specific declarations.* /
@@ -444,11 +447,7 @@ constexpr unsigned long long align64B{ 64 };
 #define ADD_PADDING_64B_LOOP_PEEL 1
 #endif
 
-#if (USE_PERF_PROFILER) == 1
-       #if !defined (PERF_PROFILE_FUNCTIONS)
-           #define PERF_PROFILE_FUNCTIONS 1
-       #endif
-#endif
+
 // Rely on John D. McCalpin low overhead counters.
 #if (USE_DIRECTLY_RDPMC) == 1
        #if !defined (RDPMC_MEASURE_SUITABLE_BLOCK)
@@ -521,7 +520,7 @@ constexpr int padding64B{64};
 
 	
 
-#define PRINT_MESSAGE_VALUE(msg,val) std::cerr << (msg) << (val) << "\n";
+/*#define PRINT_MESSAGE_VALUE(msg,val) std::cerr << (msg) << (val) << "\n";
 
 #define PRINT_MESSAGE_VALUE_2ARGS(msg,arg1,arg2) \
 	std::cout << (msg) << std::dec <<  \
@@ -613,7 +612,7 @@ constexpr int padding64B{64};
 			  "value 3: " << (arg3) << \
 			  "value 4: " << (arg4) << \
 			  "value 5: " << (arg5) << "\n";
-	
+*/	
 
 
 #if !defined (CHECK_FOR_NAN_GLOBALLY)
