@@ -1037,6 +1037,140 @@ namespace gms {
 
 
 
+	                /* COPY kernel double-precision aligned */
+		   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void dcopy_a_ymm4r8_unroll16x_omp(const int32_t n,
+		                                     double * __restrict __ATTR_ALIGN__(32) x,
+						     const int32_t incx,
+						     double * __restrict __ATTR_ALIGN__(32) y,
+						     const int32_t incy) {
+                         if(__builtin_expect(0==n,0)) { return;}
+
+			 __ATTR_ALIGN__(32) __m256d xv[16];
+                       
+			 int32_t i;
+			 int32_t last_i;
+			 last_i = 0;
+
+			 if(__builtin_expect(1==incx,1) &&
+			    __builtin_expect(1==incy,1)) {
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+                             __assume_aligned(x,32);
+			     __assume_aligned(y,32);
+#pragma code_align(32)
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+                             x = (double*)__builtin_assume_aligned(x,32);
+			     y = (double*)__builtin_assume_aligned(y,32);
+#endif
+#pragma omp parallel for schedule(static,128) default(none) \
+                             lastprivate(last_i) private(i) shared(n,x,y)
+                              for(i = 0; (i+63) < n; i += 64) {
+                                  last_i = i;
+                                  _mm_prefetch((const char*)&x[i+16],_MM_HINT_T0);
+				  _mm256_store_pd(&y[i+0],
+						  _mm256_load_pd(&x[i+0]));
+				  _mm256_store_pd(&y[i+4],
+						  _mm256_load_pd(&x[i+4]));
+				  _mm256_store_pd(&y[i+8],
+						  _mm256_load_pd(&x[i+8]));
+				  _mm256_store_pd(&y[i+12],
+						  _mm256_load_pd(&x[i+12]));
+				  _mm256_store_pd(&y[i+16],
+						  _mm256_load_pd(&x[i+16]));		  
+				  _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
+				  _mm256_store_pd(&y[i+20],
+						  _mm256_load_pd(&x[i+20]));
+				  _mm256_store_pd(&y[i+24],
+						  _mm256_load_pd(&x[i+24]));
+				  _mm256_store_pd(&y[i+28],
+						  _mm256_load_pd(&x[i+28]));
+				  _mm256_store_pd(&y[i+32],
+						  _mm256_load_pd(&x[i+32]));		  
+				  _mm_prefetch((const char*)&x[i+48],_MM_HINT_T0);
+				  _mm256_store_pd(&y[i+36],
+						  _mm256_load_pd(&x[i+36]));
+				  _mm256_store_pd(&y[i+40],
+						  _mm256_load_pd(&x[i+40]));
+				  _mm256_store_pd(&y[i+44],
+						  _mm256_load_pd(&x[i+44]));
+				  _mm256_store_pd(&y[i+48],
+						  _mm256_load_pd(&x[i+48]));		  
+				  _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
+				  _mm256_store_pd(&y[i+52],
+						  _mm256_load_pd(&x[i+52]));
+				  _mm256_store_pd(&y[i+56],
+						  _mm256_load_pd(&x[i+56]));
+				  _mm256_store_pd(&y[i+60],
+					          _mm256_load_pd(&x[i+60]));		  
+
+			      }
+
+			      for(; (last_i+31) < n; last_i += 32) {
+                                  _mm256_store_pd(&y[last_i+0],
+						  _mm256_load_pd(&x[last_i+0]));
+				  _mm256_store_pd(&y[last_i+4],
+						  _mm256_load_pd(&x[last_i+4]));
+				  _mm256_store_pd(&y[last_i+8],
+						  _mm256_load_pd(&x[last_i+8]));
+				  _mm256_store_pd(&y[last_i+12],
+						  _mm256_load_pd(&x[last_i+12]));
+				  _mm256_store_pd(&y[last_i+16],
+						  _mm256_load_pd(&x[last_i+16]));		  
+				   _mm256_store_pd(&y[last_i+20],
+						  _mm256_load_pd(&x[last_i+20]));
+				  _mm256_store_pd(&y[last_i+24],
+						  _mm256_load_pd(&x[last_i+24]));
+				  _mm256_store_pd(&y[last_i+28],
+						  _mm256_load_pd(&x[last_i+28]));
+			      }
+
+			      for(; (last_i+15) < n; last_i += 16) {
+			          _mm256_store_pd(&y[last_i+0],
+						  _mm256_load_pd(&x[last_i+0]));
+				  _mm256_store_pd(&y[last_i+4],
+						  _mm256_load_pd(&x[last_i+4]));
+				  _mm256_store_pd(&y[last_i+8],
+						  _mm256_load_pd(&x[last_i+8]));
+				  _mm256_store_pd(&y[last_i+12],
+						  _mm256_load_pd(&x[last_i+12]));
+
+			      }
+
+			      for(; (last_i+7) < n; last_i += 8) {
+			          _mm256_store_pd(&y[last_i+0],
+						  _mm256_load_pd(&x[last_i+0]));
+				  _mm256_store_pd(&y[last_i+4],
+						  _mm256_load_pd(&x[last_i+4]));
+
+			      }
+
+			      for(; (last_i+3) < n; last_i += 4) {
+			             _mm256_store_pd(&y[last_i+0],
+						  _mm256_load_pd(&x[last_i+0]));
+
+			      }
+
+			      for(; (last_i+0) < n; last_i += 1) {
+                                    y[last_i] = x[last_i];
+			      }
+			 }
+			 else {
+                                for(i = 0; i != n; ++i) {
+                                    *y = *x;
+				    x += incx;
+				    y += incy;
+				}
+			 }
+
+		   }
+
+
+
+
+
 		  
 
     } // math
