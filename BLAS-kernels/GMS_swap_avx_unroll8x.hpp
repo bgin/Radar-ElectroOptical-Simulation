@@ -70,7 +70,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
-		   swap_u_ymm8r4_unroll8x(const int32_t n,
+		   void sswap_u_ymm8r4_unroll8x(const int32_t n,
 		                          float * __restrict x,
 					  const int32_t incx,
 					  float * __restrict y,
@@ -286,7 +286,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
-		   swap_a_ymm8r4_unroll8x(const int32_t n,
+		   void sswap_a_ymm8r4_unroll8x(const int32_t n,
 		                          float * __restrict __ATTR_ALIGN__(32) x,
 					  const int32_t incx,
 					  float * __restrict __ATTR_ALIGN__(32) y,
@@ -507,7 +507,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
-		   swap_a_ymm8r4_unroll8x_omp(const int32_t n,
+		   void sswap_a_ymm8r4_unroll8x_omp(const int32_t n,
 		                              float * __restrict __ATTR_ALIGN__(32) x,
 					      const int32_t incx,
 					      float * __restrict __ATTR_ALIGN__(32) y,
