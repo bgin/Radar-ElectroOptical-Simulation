@@ -903,7 +903,10 @@ namespace  gms {
 #endif
 				}
 
-				   	rhov[0].v += rhov[4].v;
+				//	rhov[0].v += rhov[4].v;
+				         rhov[0].v += rhov[2].v;
+				         rhov[1].v += rhov[3].v;
+				         rhov[0].v += rhov[4].v;
 
 				for(; (i+15) < n; i += 16) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
@@ -975,7 +978,7 @@ namespace  gms {
 				 }
 
 				 for(; (i+0) < n; i += 1) {
-                                       rho0 += x[i] + y[i];
+                                       rho0 += x[i] * y[i];
 				 }
 
 				 	rho0 += rhov[0].d[0] + rhov[0].d[1] + rhov[0].d[2] + rhov[0].d[3];
