@@ -320,7 +320,7 @@ Error:
 
 #if !defined (FREE_CPU_MEMORY)
 #define FREE_CPU_MEMORY               \
-         _mm_free(h_r8c);            \
+     _aligned_free(h_r8c);            \
 	 _mm_free(h_r8b);			\
 	 _mm_free(h_r8a);		    \
 	 _mm_free(h_r4c);			\
@@ -355,22 +355,22 @@ Error:
 
 
 __global__ void kvec_add_int32(int32_t * __restrict c,
-						     const int32_t * __restrict b,
-							 const int32_t * __restrict a) {
+			       const int32_t * __restrict b,
+			       const int32_t * __restrict a) {
 	int i = threadIdx.x;
 	c[i] = b[i] + a[i];
 }
 
-__global__ void kvec_add_real4(float* __restrict c,
-				const float * __restrict b,
-				const float * __restrict a) {
+__global__ void kvec_add_real4(float * __restrict c,
+			       const float * __restrict b,
+			       const float * __restrict a) {
 	int i = threadIdx.x;
 	c[i] = b[i] + a[i];
 }
 
 __global__ void kvec_add_real8(double * __restrict c,
-			       const double * __restrict b,
-			       const double * __restrict a) {
+			        const double * __restrict b,
+				const double * __restrict a) {
 	int i = threadIdx.x;
 	c[i] = b[i] + a[i];
 }
@@ -410,59 +410,59 @@ cudaError_t gpu_vec_add_tests(const int dev_num) {
 		return;
 	}
 	
-	alloc1D_int32_gpu(&dev_i32a[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_int32_gpu failed allocating: dev_i32a")
+	alloc_int32_gpu(&dev_i32a[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_int32_gpu failed allocating: dev_i32a")
 
-	alloc1D_int32_gpu(&dev_i32b[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_int32_gpu failed allocating: dev_i32b")
+	alloc_int32_gpu(&dev_i32b[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_int32_gpu failed allocating: dev_i32b")
 
-	alloc1D_int32_gpu(&dev_i32c[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_int32_gpu failed allocating: dev_i32c")
+	alloc_int32_gpu(&dev_i32c[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_int32_gpu failed allocating: dev_i32c")
 
-	alloc1D_real4_gpu(&dev_r4a[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_real4_gpu failed allocating: dev_r4a")
+	alloc_float_gpu(&dev_r4a[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_float_gpu failed allocating: dev_r4a")
 
-	alloc1D_real4_gpu(&dev_r4b[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_real4_gpu failed allocating: dev_r4b")
+	alloc_float_gpu(&dev_r4b[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_float_gpu failed allocating: dev_r4b")
 
-	alloc1D_real4_gpu(&dev_r4c[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_real4_gpu failed allocating: dev_r4c")
+	alloc_float_gpu(&dev_r4c[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_float_gpu failed allocating: dev_r4c")
 
-	alloc1D_real8_gpu(&dev_r8a[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_real8_gpu failed allocating: dev_r8a")
+	alloc_double_gpu(&dev_r8a[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_double_gpu failed allocating: dev_r8a")
 
-	alloc1D_real8_gpu(&dev_r8b[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_real8_gpu failed allocating: dev_r8b")
+	alloc_double_gpu(&dev_r8b[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_double_gpu failed allocating: dev_r8b")
 
-	alloc1D_real8_gpu(&dev_r8c[0],len,&ierr);
-	CHECK_FAILURE_GENERATOR(ierr,"alloc1D_real8_gpu failed allocating: dev_r8c")
+	alloc_double_gpu(&dev_r8c[0],len,&ierr);
+	CHECK_FAILURE_GENERATOR(ierr,"alloc_double_gpu failed allocating: dev_r8c")
 
     // Allocate host arrays.
-	h_i32a = (int32_t*)_aligned_malloc(((size_t)len) * sizeof(int32_t),HOST_ALIGN64);
-	MALLOC_FAILED_GENERATOR(h_i32a,"_aligned_malloc failed to allocate: h_i32a")
+	h_i32a = (int32_t*)_mm_malloc(((size_t)len) * sizeof(int32_t),HOST_ALIGN64);
+	MALLOC_FAILED_GENERATOR(h_i32a,"_mm_malloc failed to allocate: h_i32a")
 
-	h_i32b = (int32_t*)_aligned_malloc(((size_t)len) * sizeof(int32_t),HOST_ALIGN64);
+	h_i32b = (int32_t*)_mm_malloc(((size_t)len) * sizeof(int32_t),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_i32b,"_aligned_malloc failed to allocate: h_i32b")
 
-	h_i32c = (int32_t*)_aligned_malloc(((size_t)len) * sizeof(int32_t),HOST_ALIGN64);
+	h_i32c = (int32_t*)_mm_malloc(((size_t)len) * sizeof(int32_t),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_i32c,"_aligned_malloc failed to allocate: h_i32c")
 
-	h_r4a = (REAL4*)_aligned_malloc(((size_t)len) * sizeof(REAL4),HOST_ALIGN64);
+	h_r4a = (float*)_mm_malloc(((size_t)len) * sizeof(float),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_r4a,"_aligned_malloc failed to allocate: h_r4a")
 
-	h_r4b = (REAL4*)_aligned_malloc(((size_t)len) *sizeof(REAL4),HOST_ALIGN64);
+	h_r4b = (float*)_mm_malloc(((size_t)len) *sizeof(float),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_r4b,"_aligned_malloc failed to allocate: h_r4b")
 
-	h_r4c = (REAL4*)_aligned_malloc(((size_t)len) * sizeof(REAL4),HOST_ALIGN64);
+	h_r4c = (float*)_mm_malloc(((size_t)len) * sizeof(float),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_r4c,"_aligned_malloc failed to allocate: h_r4c")
 
-	h_r8a = (REAL8*)_aligned_malloc(((size_t)len) * sizeof(REAL8),HOST_ALIGN64);
+	h_r8a = (double*)_mm_malloc(((size_t)len) * sizeof(double),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_r8a,"_aligned_malloc failed to allocate: h_r8a")
 
-	h_r8b = (REAL8*)_aligned_malloc(((size_t)len) * sizeof(REAL8),HOST_ALIGN64);
+	h_r8b = (double*)_mm_malloc(((size_t)len) * sizeof(double),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_r8b,"_aligned_malloc failed to allocate: h_r8b")
 
-	h_r8c = (REAL8*)_aligned_malloc(((size_t)len) * sizeof(REAL8),HOST_ALIGN64);
+	h_r8c = (double*)_mm_malloc(((size_t)len) * sizeof(double),HOST_ALIGN64);
 	MALLOC_FAILED_GENERATOR(h_r8c,"_aligned_malloc failed to allocate: h_r8c")
 
 	INIT_RAND_VECI4_GENERATOR
@@ -471,15 +471,15 @@ cudaError_t gpu_vec_add_tests(const int dev_num) {
 
 	// Copy host arrays to device arrays
 	// Do not check for minor errors (non-critical)
-	copy1D_int32_cpu_to_gpu(&dev_i32a[0],&h_i32a[0],len,&ierr);
-	copy1D_int32_cpu_to_gpu(&dev_i32b[0],&h_i32b[0],len,&ierr);
-	copy1D_int32_cpu_to_gpu(&dev_i32c[0],&h_i32c[0],len,&ierr);
-	copy1D_real4_cpu_to_gpu(&dev_r4a[0],&h_r4a[0],len,&ierr);
-	copy1D_real4_cpu_to_gpu(&dev_r4b[0],&h_r4b[0],len,&ierr);
-	copy1D_real4_cpu_to_gpu(&dev_r4c[0],&h_r4c[0],len,&ierr);
-	copy1D_real8_cpu_to_gpu(&dev_r8a[0],&h_r8a[0],len,&ierr);
-	copy1D_real8_cpu_to_gpu(&dev_r8b[0],&h_r8b[0],len,&ierr);
-	copy1D_real8_cpu_to_gpu(&dev_r8c[0],&h_r8c[0],len,&ierr);
+	copy_int32_cpu_to_gpu(&dev_i32a[0],&h_i32a[0],len,&ierr);
+	copy_int32_cpu_to_gpu(&dev_i32b[0],&h_i32b[0],len,&ierr);
+	copy_int32_cpu_to_gpu(&dev_i32c[0],&h_i32c[0],len,&ierr);
+	copy_float_cpu_to_gpu(&dev_r4a[0],&h_r4a[0],len,&ierr);
+	copy_float_cpu_to_gpu(&dev_r4b[0],&h_r4b[0],len,&ierr);
+	copy_float_cpu_to_gpu(&dev_r4c[0],&h_r4c[0],len,&ierr);
+	copy_double_cpu_to_gpu(&dev_r8a[0],&h_r8a[0],len,&ierr);
+	copy_double_cpu_to_gpu(&dev_r8b[0],&h_r8b[0],len,&ierr);
+	copy_double_cpu_to_gpu(&dev_r8c[0],&h_r8c[0],len,&ierr);
 
 	//
 	// Launch simple kernels with single thread
@@ -490,16 +490,16 @@ cudaError_t gpu_vec_add_tests(const int dev_num) {
 	kvec_add_real4<<<1,len>>>(&dev_r4c[0],&dev_r4b[0],&dev_r4a[0]);
 	kvec_add_real8<<<1,len>>>(&dev_r8c[0],&dev_r8b[0],&dev_r8a[0]);
 	
-	CuWRF_DEBUG_CHECK(cudaGetLastError());
-    CuWRF_DEBUG_CHECK(cudaDeviceSynchronize());
+	GMS_CUDA_DEBUG_CHECK(cudaGetLastError());
+        GMS_CUDA_DEBUG_CHECK(cudaDeviceSynchronize());
 
 	//
 	// Copy rresulting device arrays to host memory.
 	//Do not check for minor errors (non-critical)
 	//
-	copy1D_int32_gpu_to_cpu(&dev_i32c[0],&h_i32c[0],len,&ierr);
-	copy1D_real4_gpu_to_cpu(&dev_r4c[0],&h_r4c[0],len,&ierr);
-	copy1D_real8_gpu_to_cpu(&dev_r8c[0],&h_r8c[0],len,&ierr);
+	copy_int32_gpu_to_cpu(&dev_i32c[0],&h_i32c[0],len,&ierr);
+	copy_float_gpu_to_cpu(&dev_r4c[0],&h_r4c[0],len,&ierr);
+	copy_double_gpu_to_cpu(&dev_r8c[0],&h_r8c[0],len,&ierr);
 
 	
 
@@ -507,7 +507,7 @@ cudaError_t gpu_vec_add_tests(const int dev_num) {
 	PRINT_VECR4
 	PRINT_VECR8
 
-	CuWRF_DEBUG_CHECK(cudaDeviceReset());
+	GMS_CUDA_DEBUG_CHECK(cudaDeviceReset());
 	
 	FREE_CPU_MEMORY
 Error:
