@@ -124,13 +124,13 @@ do { if(!(predicate)) {fprintf(stderr, "Asserion failed: %s at line %d in file %
 
 void exit_fatal(const char * msg,const char * fname) {
 
-	_ASSERT(NULL != msg && NULL != fname);
+	assert(NULL != msg && NULL != fname);
 	printf("***FATAL-ERROR***\n");
 	printf(" %s\n",msg);
 
 	FILE * fp = NULL;
 	fp = fopen(fname,"a+");
-	if(NULL != fp) {
+	if(NULL == fp) {
 		fprintf(fp, "FATAL ERROR: %s\n",msg);
 		fclose(fp);
 	}
@@ -144,11 +144,12 @@ void exit_fatal(const char * msg,const char * fname) {
 void fatal_gpu_error(const char *msg, 
                      cudaError cuerr,
                      const char * fname) {
-	_ASSERT(NULL != msg);
+	assert(NULL != msg);
 	printf("***CUDA-RUNTIME***: FATAL-ERROR\n");
 	printf("%s\n",msg);
 	FILE* fp = NULL;
-        if(fopen(fp,fname,"a+") != 0) {
+        fp = fopen(fname,"a+");
+        if(fp) {
 		cudaDeviceProp dp;
 		cudaError stat1,stat2;
 		int dev = -1;
