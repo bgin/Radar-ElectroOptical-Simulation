@@ -320,7 +320,7 @@ Error:
 
 #if !defined (FREE_CPU_MEMORY)
 #define FREE_CPU_MEMORY               \
-     _aligned_free(h_r8c);            \
+         _mm_free(h_r8c);            \
 	 _mm_free(h_r8b);			\
 	 _mm_free(h_r8a);		    \
 	 _mm_free(h_r4c);			\
@@ -361,16 +361,16 @@ __global__ void kvec_add_int32(int32_t * __restrict c,
 	c[i] = b[i] + a[i];
 }
 
-__global__ void kvec_add_real4(REAL4 * __restrict c,
-						    const REAL4 * __restrict b,
-							const REAL4 * __restrict a) {
+__global__ void kvec_add_real4(float* __restrict c,
+				const float * __restrict b,
+				const float * __restrict a) {
 	int i = threadIdx.x;
 	c[i] = b[i] + a[i];
 }
 
-__global__ void kvec_add_real8(REAL8 * __restrict c,
-							const REAL8 * __restrict b,
-							const REAL8 * __restrict a) {
+__global__ void kvec_add_real8(double * __restrict c,
+			       const double * __restrict b,
+			       const double * __restrict a) {
 	int i = threadIdx.x;
 	c[i] = b[i] + a[i];
 }
