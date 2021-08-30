@@ -120,7 +120,7 @@ namespace  gms {
 				for(i = 0; (i+159) < n; i += 160) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                      _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+32],_MM_HINT_T0);
 				     xv[0]     = _mm512_loadu_ps(&x[i+0]);
 				     yv[0]     = _mm512_loadu_ps(&y[i+0]);
 				     rhov[0].v = _mm512_fmadd_ps(xv[0],yv[0],rhov[0].v);
@@ -128,7 +128,7 @@ namespace  gms {
 				     yv[1]     = _mm512_loadu_ps(&y[i+16]);
 				     rhov[1].v = _mm512_fmadd_ps(xv[1],yv[1],rhov[1].v);
 				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+64],_MM_HINT_T0);
 				     xv[2]     = _mm512_loadu_ps(&x[i+32]);
 				     yv[2]     = _mm512_loadu_ps(&y[i+32]);
 				     rhov[2].v = _mm512_fmadd_ps(xv[2],yv[2],rhov[2].v);
@@ -136,7 +136,7 @@ namespace  gms {
 				     yv[3]     = _mm512_loadu_ps(&y[i+48]);
 				     rhov[3].v = _mm512_fmadd_ps(xv[3],yv[3],rhov[3].v);
 				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+96],_MM_HINT_T0);
 				     xv[4]     = _mm512_loadu_ps(&x[i+64]);
 				     yv[4]     = _mm512_loadu_ps(&y[i+64]);
 				     rhov[4].v = _mm512_fmadd_ps(xv[4],yv[4],rhov[4].v);
@@ -144,7 +144,7 @@ namespace  gms {
 				     yv[5]     = _mm512_loadu_ps(&y[i+80]);
 				     rhov[5].v = _mm512_fmadd_ps(xv[5],yv[5],rhov[5].v);
 				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+128],_MM_HINT_T0);
 				     xv[6]     = _mm512_loadu_ps(&x[i+96]);
 				     yv[6]     = _mm512_loadu_ps(&y[i+96]);
 				     rhov[6].v = _mm512_fmadd_ps(xv[6],yv[6],rhov[6].v);
@@ -152,7 +152,7 @@ namespace  gms {
 				     yv[7]     = _mm512_loadu_ps(&y[i+112]);
 				     rhov[7].v = _mm512_fmadd_ps(xv[7],yv[7],rhov[7].v);
 				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+160],_MM_HINT_T0);
 				     xv[8]     = _mm512_loadu_ps(&x[i+128]);
 				     yv[8]     = _mm512_loadu_ps(&y[i+128]);
 				     rhov[8].v = _mm512_fmadd_ps(xv[8],yv[8],rhov[8].v);
@@ -162,15 +162,15 @@ namespace  gms {
 				     
 #else
                                      _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+32],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+64],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+96],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+128],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+160],_MM_HINT_T0);
 				     xv[0]     = _mm512_loadu_ps(&x[i+0]);
 				     xv[1]     = _mm512_loadu_ps(&x[i+16]);
 				     xv[2]     = _mm512_loadu_ps(&x[i+32]);
@@ -356,7 +356,7 @@ namespace  gms {
 				for(i = 0; (i+159) < n; i += 160) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                      _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+32],_MM_HINT_T0);
 				     xv[0]     = _mm512_load_ps(&x[i+0]);
 				     yv[0]     = _mm512_load_ps(&y[i+0]);
 				     rhov[0].v = _mm512_fmadd_ps(xv[0],yv[0],rhov[0].v);
@@ -364,7 +364,7 @@ namespace  gms {
 				     yv[1]     = _mm512_load_ps(&y[i+16]);
 				     rhov[1].v = _mm512_fmadd_ps(xv[1],yv[1],rhov[1].v);
 				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+64],_MM_HINT_T0);
 				     xv[2]     = _mm512_load_ps(&x[i+32]);
 				     yv[2]     = _mm512_load_ps(&y[i+32]);
 				     rhov[2].v = _mm512_fmadd_ps(xv[2],yv[2],rhov[2].v);
@@ -372,7 +372,7 @@ namespace  gms {
 				     yv[3]     = _mm512_load_ps(&y[i+48]);
 				     rhov[3].v = _mm512_fmadd_ps(xv[3],yv[3],rhov[3].v);
 				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+96],_MM_HINT_T0);
 				     xv[4]     = _mm512_load_ps(&x[i+64]);
 				     yv[4]     = _mm512_load_ps(&y[i+64]);
 				     rhov[4].v = _mm512_fmadd_ps(xv[4],yv[4],rhov[4].v);
@@ -380,7 +380,7 @@ namespace  gms {
 				     yv[5]     = _mm512_load_ps(&y[i+80]);
 				     rhov[5].v = _mm512_fmadd_ps(xv[5],yv[5],rhov[5].v);
 				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+128],_MM_HINT_T0);
 				     xv[6]     = _mm512_load_ps(&x[i+96]);
 				     yv[6]     = _mm512_load_ps(&y[i+96]);
 				     rhov[6].v = _mm512_fmadd_ps(xv[6],yv[6],rhov[6].v);
@@ -388,7 +388,7 @@ namespace  gms {
 				     yv[7]     = _mm512_load_ps(&y[i+112]);
 				     rhov[7].v = _mm512_fmadd_ps(xv[7],yv[7],rhov[7].v);
 				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+160],_MM_HINT_T0);
 				     xv[8]     = _mm512_load_ps(&x[i+128]);
 				     yv[8]     = _mm512_load_ps(&y[i+128]);
 				     rhov[8].v = _mm512_fmadd_ps(xv[8],yv[8],rhov[8].v);
@@ -398,15 +398,15 @@ namespace  gms {
 				     
 #else
                                      _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+32],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+64],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+96],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+128],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+160],_MM_HINT_T0);
 				     xv[0]     = _mm512_load_ps(&x[i+0]);
 				     xv[1]     = _mm512_load_ps(&x[i+16]);
 				     xv[2]     = _mm512_load_ps(&x[i+32]);
@@ -607,7 +607,7 @@ namespace  gms {
 				for(i = 0; (i+159) < n; i += 160) {
                                       ii = i;
                                      _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+32],_MM_HINT_T0);
 				     xv[0]     = _mm512_load_ps(&x[i+0]);
 				     yv[0]     = _mm512_load_ps(&y[i+0]);
 				     rhov0.v = _mm512_fmadd_ps(xv[0],yv[0],rhov0.v);
@@ -615,7 +615,7 @@ namespace  gms {
 				     yv[1]     = _mm512_load_ps(&y[i+16]);
 				     rhov1.v = _mm512_fmadd_ps(xv[1],yv[1],rhov1.v);
 				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+64],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+64],_MM_HINT_T0);
 				     xv[2]     = _mm512_load_ps(&x[i+32]);
 				     yv[2]     = _mm512_load_ps(&y[i+32]);
 				     rhov2.v = _mm512_fmadd_ps(xv[2],yv[2],rhov2.v);
@@ -623,7 +623,7 @@ namespace  gms {
 				     yv[3]     = _mm512_load_ps(&y[i+48]);
 				     rhov3.v = _mm512_fmadd_ps(xv[3],yv[3],rhov3.v);
 				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+96],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+96],_MM_HINT_T0);
 				     xv[4]     = _mm512_load_ps(&x[i+64]);
 				     yv[4]     = _mm512_load_ps(&y[i+64]);
 				     rhov4.v = _mm512_fmadd_ps(xv[4],yv[4],rhov4.v);
@@ -631,7 +631,7 @@ namespace  gms {
 				     yv[5]     = _mm512_load_ps(&y[i+80]);
 				     rhov5.v = _mm512_fmadd_ps(xv[5],yv[5],rhov5.v);
 				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+128],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+128],_MM_HINT_T0);
 				     xv[6]     = _mm512_load_ps(&x[i+96]);
 				     yv[6]     = _mm512_load_ps(&y[i+96]);
 				     rhov6.v = _mm512_fmadd_ps(xv[6],yv[6],rhov6.v);
@@ -639,7 +639,7 @@ namespace  gms {
 				     yv[7]     = _mm512_load_ps(&y[i+112]);
 				     rhov7.v = _mm512_fmadd_ps(xv[7],yv[7],rhov7.v);
 				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
-				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
+				     _mm_prefetch((const char*)&y[i+160],_MM_HINT_T0);
 				     xv[8]     = _mm512_load_ps(&x[i+128]);
 				     yv[8]     = _mm512_load_ps(&y[i+128]);
 				     rhov8.v = _mm512_fmadd_ps(xv[8],yv[8],rhov8.v);
