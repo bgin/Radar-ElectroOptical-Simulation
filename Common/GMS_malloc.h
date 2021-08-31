@@ -67,6 +67,29 @@ namespace gms {
                Modified: 11-10-2020 11:14AM +00200
                Modified: 30-08-2021 09:44AM +00200
             */
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_ALIGN__(32)
+	    std::size_t
+	    add_cacheline_pad_float(const std::size_t len) {
+                constexpr std::size_t misalign = 0ULL;
+		std::size_t pad = 0ULL;
+		misalign = len % 16;
+		pad = len + (misalign == 0 ? 0 : 16 - misalign);
+		return (pad);
+	    }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_ALIGN__(32)
+	    std::size_t
+	    add_cacheline_pad_double(const std::size_t len) {
+                constexpr std::size_t misalign = 0ULL;
+		std::size_t pad = 0ULL;
+		misalign = len % 8;
+		pad = len + (misalign == 0 ? 0 : 8 - misalign);
+		return (pad);
+   	    }
 		
 	
 	      __ATTR_COLD__
@@ -78,11 +101,7 @@ namespace gms {
 	                           const std::size_t alignment) {
 
 		     void * __restrict ptr = NULL;
-#if (ADD_PADDING_64B_LOOP_PEEL) == 1
-	             ptr = _mm_malloc(len+padding64B,alignment));
-#else
 	             ptr = _mm_malloc(len, alignment));
-#endif
                      if (NULL == ptr && len != 0ULL) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                 std::cerr << " Not implemented yet!!";
