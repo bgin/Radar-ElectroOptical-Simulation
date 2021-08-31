@@ -85,8 +85,7 @@ namespace gms {
 			float   Tav;
 		        //  Complex dielectric constant per each cylinder
 		        std::complex<float> epsilon;
-		        // bool: use mlock() function
-			bool    mem_lock;
+		        
 #if (USE_STRUCT_PADDING) == 1
 		      PAD_TO_ALIGNED(4,0,16)
 #endif
@@ -159,8 +158,8 @@ namespace gms {
 					     const float,
 					     const float,
 					     const float,
-					     const std::complex<float>,
-					     const bool )__ATTR_COLD__ __ATTR_ALIGN__(32);
+					     const std::complex<float>)
+					     __ATTR_COLD__ __ATTR_ALIGN__(32);
 
 			GrassScattererAVX512(const GrassScattererAVX512 &) = delete;
 
