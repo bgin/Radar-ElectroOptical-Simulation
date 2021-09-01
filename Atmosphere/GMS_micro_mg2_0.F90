@@ -270,436 +270,436 @@
             INTEGER, intent(in) :: mgncol ! number of microphysics columns
             INTEGER, intent(in) :: nlev ! number of layers
             REAL(KIND=r8), intent(in) :: deltatin ! time step (s)
-            REAL(KIND=r8), intent(in) :: t(:,:) ! input temperature (K)
+            REAL(KIND=r8), contiguous, intent(in) :: t(:,:) ! input temperature (K)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED t:64
 #endif
-            REAL(KIND=r8), intent(in) :: q(:,:) ! input h20 vapor mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: q(:,:) ! input h20 vapor mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED q:64
 #endif            
             ! note: all input cloud variables are grid-averaged
-            REAL(KIND=r8), intent(in) :: qcn(:,:) ! cloud water mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: qcn(:,:) ! cloud water mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qcn:64
 #endif              
-            REAL(KIND=r8), intent(in) :: qin(:,:) ! cloud ice mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: qin(:,:) ! cloud ice mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qin:64
 #endif              
-            REAL(KIND=r8), intent(in) :: ncn(:,:) ! cloud water number conc (1/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: ncn(:,:) ! cloud water number conc (1/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED ncn:64
 #endif  
-            REAL(KIND=r8), intent(in) :: nin(:,:) ! cloud ice number conc (1/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: nin(:,:) ! cloud ice number conc (1/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nin:64
 #endif              
-            REAL(KIND=r8), intent(in) :: qrn(:,:) ! rain mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: qrn(:,:) ! rain mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qrn:64
 #endif  
-            REAL(KIND=r8), intent(in) :: qsn(:,:) ! snow mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: qsn(:,:) ! snow mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qsn:64
 #endif  
-            REAL(KIND=r8), intent(in) :: nrn(:,:) ! rain number conc (1/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: nrn(:,:) ! rain number conc (1/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nrn:64
 #endif  
-            REAL(KIND=r8), intent(in) :: nsn(:,:) ! snow number conc (1/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: nsn(:,:) ! snow number conc (1/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED q:64
 #endif  
-            REAL(KIND=r8), intent(in) :: relvar(:,:) ! cloud water relative variance (-)
+            REAL(KIND=r8), contiguous, intent(in) :: relvar(:,:) ! cloud water relative variance (-)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED relvar:64
 #endif              
-            REAL(KIND=r8), intent(in) :: accre_enhan(:,:) ! optional accretion
+            REAL(KIND=r8), contiguous, intent(in) :: accre_enhan(:,:) ! optional accretion
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED accre_enhan:64
 #endif  
             ! enhancement factor (-)
-            REAL(KIND=r8), intent(in) :: p(:,:) ! air pressure (pa)
+            REAL(KIND=r8), contiguous, intent(in) :: p(:,:) ! air pressure (pa)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED p:64
 #endif  
-            REAL(KIND=r8), intent(in) :: pdel(:,:) ! pressure difference across level (pa)
+            REAL(KIND=r8), contiguous, intent(in) :: pdel(:,:) ! pressure difference across level (pa)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED pdel:64
 #endif  
-            REAL(KIND=r8), intent(in) :: cldn(:,:) ! cloud fraction (no units)
+            REAL(KIND=r8), contiguous, intent(in) :: cldn(:,:) ! cloud fraction (no units)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED cldn:64
 #endif  
-            REAL(KIND=r8), intent(in) :: liqcldf(:,:) ! liquid cloud fraction (no units)
+            REAL(KIND=r8), contiguous, intent(in) :: liqcldf(:,:) ! liquid cloud fraction (no units)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED licldfq:64
 #endif              
-            REAL(KIND=r8), intent(in) :: icecldf(:,:) ! ice cloud fraction (no units)
+            REAL(KIND=r8), contiguous, intent(in) :: icecldf(:,:) ! ice cloud fraction (no units)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED icecldf:64
 #endif  
             ! used for scavenging
             ! Inputs for aerosol activation
-            REAL(KIND=r8), intent(in) :: naai(:,:) ! ice nucleation number (from microp_aero_ts) (1/kg)
+            REAL(KIND=r8), contiguous, intent(in) :: naai(:,:) ! ice nucleation number (from microp_aero_ts) (1/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED naai:64
 #endif  
-            REAL(KIND=r8), intent(in) :: npccn(:,:) ! ccn activated number tendency (from microp_aero_ts) (1/kg*s)
+            REAL(KIND=r8), contiguous, intent(in) :: npccn(:,:) ! ccn activated number tendency (from microp_aero_ts) (1/kg*s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED npccn:64
 #endif  
             ! Note that for these variables, the dust bin is assumed to be the last index.
             ! (For example, in 1, the last dimension is always size 4.)
-            REAL(KIND=r8), intent(in) :: rndst(:,:,:) ! radius of each dust bin, for contact freezing (from microp_aero_ts) (m)
+            REAL(KIND=r8), contiguous, intent(in) :: rndst(:,:,:) ! radius of each dust bin, for contact freezing (from microp_aero_ts) (m)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED rndst:64
 #endif  
-            REAL(KIND=r8), intent(in) :: nacon(:,:,:) ! number in each dust bin, for contact freezing  (from microp_aero_ts) (1/m^3)
+            REAL(KIND=r8), contiguous, intent(in) :: nacon(:,:,:) ! number in each dust bin, for contact freezing  (from microp_aero_ts) (1/m^3)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nacon:64
 #endif  
             ! output arguments
-            REAL(KIND=r8), intent(out) :: qcsinksum_rate1ord(:,:) ! 1st order rate for
+            REAL(KIND=r8), contiguous, intent(out) :: qcsinksum_rate1ord(:,:) ! 1st order rate for
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qcsinksum_rate1ord:64
 #endif  
             ! direct cw to precip conversion
-            REAL(KIND=r8), intent(out) :: tlat(:,:) ! latent heating rate       (W/kg)
+            REAL(KIND=r8), contiguous, intent(out) :: tlat(:,:) ! latent heating rate       (W/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED tlat:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qvlat(:,:) ! microphysical tendency qv (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qvlat(:,:) ! microphysical tendency qv (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qvlat:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qctend(:,:) ! microphysical tendency qc (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qctend(:,:) ! microphysical tendency qc (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qctend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qitend(:,:) ! microphysical tendency qi (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qitend(:,:) ! microphysical tendency qi (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qitend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nctend(:,:) ! microphysical tendency nc (1/(kg*s))
+            REAL(KIND=r8), contiguous, intent(out) :: nctend(:,:) ! microphysical tendency nc (1/(kg*s))
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nctend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nitend(:,:) ! microphysical tendency ni (1/(kg*s))
+            REAL(KIND=r8), contiguous, intent(out) :: nitend(:,:) ! microphysical tendency ni (1/(kg*s))
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nitend:64
 #endif              
-            REAL(KIND=r8), intent(out) :: qrtend(:,:) ! microphysical tendency qr (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qrtend(:,:) ! microphysical tendency qr (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qrtend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qstend(:,:) ! microphysical tendency qs (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qstend(:,:) ! microphysical tendency qs (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qstend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nrtend(:,:) ! microphysical tendency nr (1/(kg*s))
+            REAL(KIND=r8), contiguous, intent(out) :: nrtend(:,:) ! microphysical tendency nr (1/(kg*s))
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nrtend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nstend(:,:) ! microphysical tendency ns (1/(kg*s))
+            REAL(KIND=r8), contiguous, intent(out) :: nstend(:,:) ! microphysical tendency ns (1/(kg*s))
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nstend:64
 #endif  
-            REAL(KIND=r8), intent(out) :: effc(:,:) ! droplet effective radius (micron)
+            REAL(KIND=r8), contiguous, intent(out) :: effc(:,:) ! droplet effective radius (micron)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED effc:64
 #endif  
-            REAL(KIND=r8), intent(out) :: effc_fn(:,:) ! droplet effective radius, assuming nc = 1.e8 kg-1
+            REAL(KIND=r8), contiguous, intent(out) :: effc_fn(:,:) ! droplet effective radius, assuming nc = 1.e8 kg-1
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED effc_fn:64
 #endif  
-            REAL(KIND=r8), intent(out) :: effi(:,:) ! cloud ice effective radius (micron)
+            REAL(KIND=r8), contiguous, intent(out) :: effi(:,:) ! cloud ice effective radius (micron)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED effi:64
 #endif  
-            REAL(KIND=r8), intent(out) :: prect(:) ! surface precip rate (m/s)
+            REAL(KIND=r8), contiguous, intent(out) :: prect(:) ! surface precip rate (m/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED prect:64
 #endif  
-            REAL(KIND=r8), intent(out) :: preci(:) ! cloud ice/snow precip rate (m/s)
+            REAL(KIND=r8), contiguous, intent(out) :: preci(:) ! cloud ice/snow precip rate (m/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED preci:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nevapr(:,:) ! evaporation rate of rain + snow (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: nevapr(:,:) ! evaporation rate of rain + snow (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nevapr:64
 #endif  
-            REAL(KIND=r8), intent(out) :: evapsnow(:,:) ! sublimation rate of snow (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: evapsnow(:,:) ! sublimation rate of snow (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED evapsnow:64
 #endif  
-            REAL(KIND=r8), intent(out) :: prain(:,:) ! production of rain + snow (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: prain(:,:) ! production of rain + snow (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED prain:64
 #endif  
-            REAL(KIND=r8), intent(out) :: prodsnow(:,:) ! production of snow (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: prodsnow(:,:) ! production of snow (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED prodsnow:64
 #endif  
-            REAL(KIND=r8), intent(out) :: cmeout(:,:) ! evap/sub of cloud (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: cmeout(:,:) ! evap/sub of cloud (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED cmeout:64
 #endif  
-            REAL(KIND=r8), intent(out) :: deffi(:,:) ! ice effective diameter for optics (radiation) (micron)
+            REAL(KIND=r8), contiguous, intent(out) :: deffi(:,:) ! ice effective diameter for optics (radiation) (micron)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED :deffi64
 #endif  
-            REAL(KIND=r8), intent(out) :: pgamrad(:,:) ! ice gamma parameter for optics (radiation) (no units)
+            REAL(KIND=r8), contiguous, intent(out) :: pgamrad(:,:) ! ice gamma parameter for optics (radiation) (no units)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED pgamrad:64
 #endif  
-            REAL(KIND=r8), intent(out) :: lamcrad(:,:) ! slope of droplet distribution for optics (radiation) (1/m)
+            REAL(KIND=r8), contiguous, intent(out) :: lamcrad(:,:) ! slope of droplet distribution for optics (radiation) (1/m)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED lamcrad:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qsout(:,:) ! snow mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(out) :: qsout(:,:) ! snow mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qsout:64
 #endif  
-            REAL(KIND=r8), intent(out) :: dsout(:,:) ! snow diameter (m)
+            REAL(KIND=r8), contiguous, intent(out) :: dsout(:,:) ! snow diameter (m)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED dsout:64
 #endif  
-            REAL(KIND=r8), intent(out) :: rflx(:,:) ! grid-box average rain flux (kg m^-2 s^-1)
+            REAL(KIND=r8), contiguous, intent(out) :: rflx(:,:) ! grid-box average rain flux (kg m^-2 s^-1)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED rflx:64
 #endif  
-            REAL(KIND=r8), intent(out) :: sflx(:,:) ! grid-box average snow flux (kg m^-2 s^-1)
+            REAL(KIND=r8), contiguous, intent(out) :: sflx(:,:) ! grid-box average snow flux (kg m^-2 s^-1)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED sflx:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qrout(:,:) ! grid-box average rain mixing ratio (kg/kg)
+            REAL(KIND=r8), contiguous, intent(out) :: qrout(:,:) ! grid-box average rain mixing ratio (kg/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qrout:64
 #endif  
-            REAL(KIND=r8), intent(out) :: reff_rain(:,:) ! rain effective radius (micron)
+            REAL(KIND=r8), contiguous, intent(out) :: reff_rain(:,:) ! rain effective radius (micron)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED reff_rain:64
 #endif  
-            REAL(KIND=r8), intent(out) :: reff_snow(:,:) ! snow effective radius (micron)
+            REAL(KIND=r8), contiguous, intent(out) :: reff_snow(:,:) ! snow effective radius (micron)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED reff_snow:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qcsevap(:,:) ! cloud water evaporation due to sedimentation (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qcsevap(:,:) ! cloud water evaporation due to sedimentation (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qcsevap:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qisevap(:,:) ! cloud ice sublimation due to sublimation (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qisevap(:,:) ! cloud ice sublimation due to sublimation (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qisevap:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qvres(:,:) ! residual condensation term to ensure RH < 100% (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qvres(:,:) ! residual condensation term to ensure RH < 100% (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qvres:64
 #endif  
-            REAL(KIND=r8), intent(out) :: cmeitot(:,:) ! grid-mean cloud ice sub/dep (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: cmeitot(:,:) ! grid-mean cloud ice sub/dep (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED cmeitot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: vtrmc(:,:) ! mass-weighted cloud water fallspeed (m/s)
+            REAL(KIND=r8), contiguous, intent(out) :: vtrmc(:,:) ! mass-weighted cloud water fallspeed (m/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED vtrmc:64
 #endif  
-            REAL(KIND=r8), intent(out) :: vtrmi(:,:) ! mass-weighted cloud ice fallspeed (m/s)
+            REAL(KIND=r8), contiguous, intent(out) :: vtrmi(:,:) ! mass-weighted cloud ice fallspeed (m/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED vtrmi:64
 #endif  
-            REAL(KIND=r8), intent(out) :: umr(:,:) ! mass weighted rain fallspeed (m/s)
+            REAL(KIND=r8), contiguous, intent(out) :: umr(:,:) ! mass weighted rain fallspeed (m/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED umr:64
 #endif  
-            REAL(KIND=r8), intent(out) :: ums(:,:) ! mass weighted snow fallspeed (m/s)
+            REAL(KIND=r8), contiguous, intent(out) :: ums(:,:) ! mass weighted snow fallspeed (m/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED ums:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qcsedten(:,:) ! qc sedimentation tendency (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qcsedten(:,:) ! qc sedimentation tendency (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qcsedten:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qisedten(:,:) ! qi sedimentation tendency (1/s)
+            REAL(KIND=r8), contiguous ,intent(out) :: qisedten(:,:) ! qi sedimentation tendency (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qisedten:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qrsedten(:,:) ! qr sedimentation tendency (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qrsedten(:,:) ! qr sedimentation tendency (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qrsedten:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qssedten(:,:) ! qs sedimentation tendency (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: qssedten(:,:) ! qs sedimentation tendency (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qsedten:64
 #endif  
             ! microphysical process rates for output (mixing ratio tendencies) (all have units of 1/s)
-            REAL(KIND=r8), intent(out) :: pratot(:,:) ! accretion of cloud by rain
+            REAL(KIND=r8), contiguous, intent(out) :: pratot(:,:) ! accretion of cloud by rain
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED pratot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: prctot(:,:) ! autoconversion of cloud to rain
+            REAL(KIND=r8), contiguous, intent(out) :: prctot(:,:) ! autoconversion of cloud to rain
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED prctot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: mnuccctot(:,:) ! mixing ratio tend due to immersion freezing
+            REAL(KIND=r8), contiguous, intent(out) :: mnuccctot(:,:) ! mixing ratio tend due to immersion freezing
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED mnuccctot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: mnuccttot(:,:) ! mixing ratio tend due to contact freezing
+            REAL(KIND=r8), contiguous, intent(out) :: mnuccttot(:,:) ! mixing ratio tend due to contact freezing
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED mnuccttot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: msacwitot(:,:) ! mixing ratio tend due to H-M splintering
+            REAL(KIND=r8), contiguous, intent(out) :: msacwitot(:,:) ! mixing ratio tend due to H-M splintering
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED msacwitot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: psacwstot(:,:) ! collection of cloud water by snow
+            REAL(KIND=r8), contiguous, intent(out) :: psacwstot(:,:) ! collection of cloud water by snow
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED psacwstot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: bergstot(:,:) ! bergeron process on snow
+            REAL(KIND=r8), contiguous, intent(out) :: bergstot(:,:) ! bergeron process on snow
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED bergstot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: bergtot(:,:) ! bergeron process on cloud ice
+            REAL(KIND=r8), contiguous, intent(out) :: bergtot(:,:) ! bergeron process on cloud ice
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED bergtot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: melttot(:,:) ! melting of cloud ice
+            REAL(KIND=r8), contiguous, intent(out) :: melttot(:,:) ! melting of cloud ice
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED melttot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: homotot(:,:) ! homogeneous freezing cloud water
+            REAL(KIND=r8), contiguous, intent(out) :: homotot(:,:) ! homogeneous freezing cloud water
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED homotot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qcrestot(:,:) ! residual cloud condensation due to removal of excess supersat
+            REAL(KIND=r8), contiguous, intent(out) :: qcrestot(:,:) ! residual cloud condensation due to removal of excess supersat
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qcrestot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: prcitot(:,:) ! autoconversion of cloud ice to snow
+            REAL(KIND=r8), contiguous, intent(out) :: prcitot(:,:) ! autoconversion of cloud ice to snow
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED prcitot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: praitot(:,:) ! accretion of cloud ice by snow
+            REAL(KIND=r8), contiguous, intent(out) :: praitot(:,:) ! accretion of cloud ice by snow
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED praitot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qirestot(:,:) ! residual ice deposition due to removal of excess supersat
+            REAL(KIND=r8), contiguous, intent(out) :: qirestot(:,:) ! residual ice deposition due to removal of excess supersat
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qirestot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: mnuccrtot(:,:) ! mixing ratio tendency due to heterogeneous freezing of rain to snow (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: mnuccrtot(:,:) ! mixing ratio tendency due to heterogeneous freezing of rain to snow (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED mnucrtot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: pracstot(:,:) ! mixing ratio tendency due to accretion of rain by snow (1/s)
+            REAL(KIND=r8), contiguous, intent(out) :: pracstot(:,:) ! mixing ratio tendency due to accretion of rain by snow (1/s)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED pracstot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: meltsdttot(:,:) ! latent heating rate due to melting of snow  (W/kg)
+            REAL(KIND=r8), contiguous, intent(out) :: meltsdttot(:,:) ! latent heating rate due to melting of snow  (W/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED meltsdttot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: frzrdttot(:,:) ! latent heating rate due to homogeneous freezing of rain (W/kg)
+            REAL(KIND=r8), contiguous, intent(out) :: frzrdttot(:,:) ! latent heating rate due to homogeneous freezing of rain (W/kg)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED frzdttot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: mnuccdtot(:,:) ! mass tendency from ice nucleation
+            REAL(KIND=r8), contiguous, intent(out) :: mnuccdtot(:,:) ! mass tendency from ice nucleation
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED mnuccdtot:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nrout(:,:) ! rain number concentration (1/m3)
+            REAL(KIND=r8), contiguous, intent(out) :: nrout(:,:) ! rain number concentration (1/m3)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nrout:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nsout(:,:) ! snow number concentration (1/m3)
+            REAL(KIND=r8), contiguous, intent(out) :: nsout(:,:) ! snow number concentration (1/m3)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nsout:64
 #endif  
-            REAL(KIND=r8), intent(out) :: refl(:,:) ! analytic radar reflectivity
+            REAL(KIND=r8), contiguous, intent(out) :: refl(:,:) ! analytic radar reflectivity
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED refl:64
 #endif  
-            REAL(KIND=r8), intent(out) :: arefl(:,:) ! average reflectivity will zero points outside valid range
+            REAL(KIND=r8), contiguous, intent(out) :: arefl(:,:) ! average reflectivity will zero points outside valid range
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED arefl:64
 #endif  
-            REAL(KIND=r8), intent(out) :: areflz(:,:) ! average reflectivity in z.
+            REAL(KIND=r8), contiguous, intent(out) :: areflz(:,:) ! average reflectivity in z.
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED areflz:64
 #endif  
-            REAL(KIND=r8), intent(out) :: frefl(:,:) ! fractional occurrence of radar reflectivity
+            REAL(KIND=r8), contiguous, intent(out) :: frefl(:,:) ! fractional occurrence of radar reflectivity
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED frefl:64
 #endif  
-            REAL(KIND=r8), intent(out) :: csrfl(:,:) ! cloudsat reflectivity
+            REAL(KIND=r8), contiguous, intent(out) :: csrfl(:,:) ! cloudsat reflectivity
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED csrfl:64
 #endif  
-            REAL(KIND=r8), intent(out) :: acsrfl(:,:) ! cloudsat average
+            REAL(KIND=r8), contiguous, intent(out) :: acsrfl(:,:) ! cloudsat average
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED acsrfl:64
 #endif  
-            REAL(KIND=r8), intent(out) :: fcsrfl(:,:) ! cloudsat fractional occurrence of radar reflectivity
+            REAL(KIND=r8), contiguous, intent(out) :: fcsrfl(:,:) ! cloudsat fractional occurrence of radar reflectivity
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED fcsrfl:64
 #endif  
-            REAL(KIND=r8), intent(out) :: rercld(:,:) ! effective radius calculation for rain + cloud
+            REAL(KIND=r8), contiguous, intent(out) :: rercld(:,:) ! effective radius calculation for rain + cloud
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED rercld:64
 #endif  
-            REAL(KIND=r8), intent(out) :: ncai(:,:) ! output number conc of ice nuclei available (1/m3)
+            REAL(KIND=r8), contiguous, intent(out) :: ncai(:,:) ! output number conc of ice nuclei available (1/m3)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED ncai:64
 #endif  
-            REAL(KIND=r8), intent(out) :: ncal(:,:) ! output number conc of CCN (1/m3)
+            REAL(KIND=r8), contiguous, intent(out) :: ncal(:,:) ! output number conc of CCN (1/m3)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED ncal:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qrout2(:,:) ! copy of qrout as used to compute drout2
+            REAL(KIND=r8), contiguous, intent(out) :: qrout2(:,:) ! copy of qrout as used to compute drout2
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qrout2:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qsout2(:,:) ! copy of qsout as used to compute dsout2
+            REAL(KIND=r8), contiguous, intent(out) :: qsout2(:,:) ! copy of qsout as used to compute dsout2
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qsout2:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nrout2(:,:) ! copy of nrout as used to compute drout2
+            REAL(KIND=r8), contiguous, intent(out) :: nrout2(:,:) ! copy of nrout as used to compute drout2
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nrout2:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nsout2(:,:) ! copy of nsout as used to compute dsout2
+            REAL(KIND=r8), contiguous, intent(out) :: nsout2(:,:) ! copy of nsout as used to compute dsout2
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nsout2:64
 #endif  
-            REAL(KIND=r8), intent(out) :: drout2(:,:) ! mean rain particle diameter (m)
+            REAL(KIND=r8), contiguous, intent(out) :: drout2(:,:) ! mean rain particle diameter (m)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED drout2:64
 #endif  
-            REAL(KIND=r8), intent(out) :: dsout2(:,:) ! mean snow particle diameter (m)
+            REAL(KIND=r8), contiguous, intent(out) :: dsout2(:,:) ! mean snow particle diameter (m)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED dsout2:64
 #endif  
-            REAL(KIND=r8), intent(out) :: freqs(:,:) ! fractional occurrence of snow
+            REAL(KIND=r8), contiguous, intent(out) :: freqs(:,:) ! fractional occurrence of snow
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED freqs:64
 #endif  
-            REAL(KIND=r8), intent(out) :: freqr(:,:) ! fractional occurrence of rain
+            REAL(KIND=r8), contiguous, intent(out) :: freqr(:,:) ! fractional occurrence of rain
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED freqr:64
 #endif  
-            REAL(KIND=r8), intent(out) :: nfice(:,:) ! fractional occurrence of ice
+            REAL(KIND=r8), contiguous, intent(out) :: nfice(:,:) ! fractional occurrence of ice
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED nfice:64
 #endif  
-            REAL(KIND=r8), intent(out) :: qcrat(:,:) ! limiter for qc process rates (1=no limit --> 0. no qc)
+            REAL(KIND=r8), contiguous, intent(out) :: qcrat(:,:) ! limiter for qc process rates (1=no limit --> 0. no qc)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED qcrat:64
 #endif  
-            REAL(KIND=r8), intent(out) :: prer_evap(:,:)
+            REAL(KIND=r8), contiguous, intent(out) :: prer_evap(:,:)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
             !DIR$ ASSUME_ALIGNED prer_evap:64
 #endif  
@@ -726,6 +726,16 @@
             REAL(KIND=r8) :: qs(mgncol,nlev) ! snow mixing ratio (kg/kg)
             REAL(KIND=r8) :: nr(mgncol,nlev) ! rain number concentration (1/kg)
             REAL(KIND=r8) :: ns(mgncol,nlev) ! snow number concentration (1/kg)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qi
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: ni
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qs
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: ns
+#endif
             ! general purpose variables
             REAL(KIND=r8) :: deltat ! sub-time step (s)
             REAL(KIND=r8) :: mtime ! the assumed ice nucleation timescale
@@ -735,125 +745,287 @@
             REAL(KIND=r8) :: mu(mgncol,nlev) ! viscosity
             REAL(KIND=r8) :: sc(mgncol,nlev) ! schmidt number
             REAL(KIND=r8) :: rhof(mgncol,nlev) ! density correction factor for fallspeed
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: rho
+            !DIR$ ATTRIBUTES ALIGN : 64 :: dv
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mu
+            !DIR$ ATTRIBUTES ALIGN : 64 :: sc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: rhof
+#endif
             ! cloud fractions
             REAL(KIND=r8) :: precip_frac(mgncol,nlev) ! precip fraction assuming maximum overlap
             REAL(KIND=r8) :: cldm(mgncol,nlev) ! cloud fraction
             REAL(KIND=r8) :: icldm(mgncol,nlev) ! ice cloud fraction
             REAL(KIND=r8) :: lcldm(mgncol,nlev) ! liq cloud fraction
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: precip_frac
+            !DIR$ ATTRIBUTES ALIGN : 64 :: cldm
+            !DIR$ ATTRIBUTES ALIGN : 64 :: icldm
+            !DIR$ ATTRIBUTES ALIGN : 64 :: lcldm
+#endif
             ! mass mixing ratios
             REAL(KIND=r8) :: qcic(mgncol,nlev) ! in-cloud cloud liquid
             REAL(KIND=r8) :: qiic(mgncol,nlev) ! in-cloud cloud ice
             REAL(KIND=r8) :: qsic(mgncol,nlev) ! in-precip snow
             REAL(KIND=r8) :: qric(mgncol,nlev) ! in-precip rain
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qcic
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qiic
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qsic
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qric
+#endif
             ! number concentrations
             REAL(KIND=r8) :: ncic(mgncol,nlev) ! in-cloud droplet
             REAL(KIND=r8) :: niic(mgncol,nlev) ! in-cloud cloud ice
             REAL(KIND=r8) :: nsic(mgncol,nlev) ! in-precip snow
             REAL(KIND=r8) :: nric(mgncol,nlev) ! in-precip rain
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: ncic
+            !DIR$ ATTRIBUTES ALIGN : 64 :: niic
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsic
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nric
+#endif
             ! maximum allowed ni value
             REAL(KIND=r8) :: nimax(mgncol,nlev)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nimax
+#endif
             ! Size distribution parameters for:
             ! cloud ice
             REAL(KIND=r8) :: lami(mgncol,nlev) ! slope
             REAL(KIND=r8) :: n0i(mgncol,nlev) ! intercept
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: lami
+            !DIR$ ATTRIBUTES ALIGN : 64 :: n0i
+#endif
             ! cloud liquid
             REAL(KIND=r8) :: lamc(mgncol,nlev) ! slope
             REAL(KIND=r8) :: pgam(mgncol,nlev) ! spectral width parameter
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: lamc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: pgam
+#endif
             ! snow
             REAL(KIND=r8) :: lams(mgncol,nlev) ! slope
             REAL(KIND=r8) :: n0s(mgncol,nlev) ! intercept
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: lams
+            !DIR$ ATTRIBUTES ALIGN : 64 :: n0s
+#endif
             ! rain
             REAL(KIND=r8) :: lamr(mgncol,nlev) ! slope
             REAL(KIND=r8) :: n0r(mgncol,nlev) ! intercept
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: lamr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: n0r
+#endif
             ! Rates/tendencies due to:
             ! Instantaneous snow melting
             REAL(KIND=r8) :: minstsm(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: ninstsm(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: minstsm
+            !DIR$ ATTRIBUTES ALIGN : 64 :: ninstsm
+#endif
             ! Instantaneous rain freezing
             REAL(KIND=r8) :: minstrf(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: ninstrf(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: minstrf
+            !DIR$ ATTRIBUTES ALIGN : 64 :: ninstrf
+#endif
             ! deposition of cloud ice
             REAL(KIND=r8) :: vap_dep(mgncol,nlev) ! deposition from vapor to ice PMC 12/3/12
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: vap_dep
+#endif
             ! sublimation of cloud ice
             REAL(KIND=r8) :: ice_sublim(mgncol,nlev) ! sublimation from ice to vapor PMC 12/3/12
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+             !DIR$ ATTRIBUTES ALIGN : 64 :: ice_sublim
+#endif
             ! ice nucleation
             REAL(KIND=r8) :: nnuccd(mgncol,nlev) ! number rate from deposition/cond.-freezing
             REAL(KIND=r8) :: mnuccd(mgncol,nlev) ! mass mixing ratio
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nnuccd
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mnuccd
+#endif
             ! freezing of cloud water
             REAL(KIND=r8) :: mnuccc(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nnuccc(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mnuccc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nnuccc
+#endif
             ! contact freezing of cloud water
             REAL(KIND=r8) :: mnucct(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nnucct(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mnucct
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nnucct
+#endif
             ! deposition nucleation in mixed-phase clouds (from external scheme)
             REAL(KIND=r8) :: mnudep(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nnudep(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mnudep
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nnudep
+#endif
             ! ice multiplication
             REAL(KIND=r8) :: msacwi(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nsacwi(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: msacwi
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsacwi
+#endif
             ! autoconversion of cloud droplets
             REAL(KIND=r8) :: prc(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nprc(mgncol,nlev) ! number concentration (rain)
             REAL(KIND=r8) :: nprc1(mgncol,nlev) ! number concentration (cloud droplets)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: prc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nprc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nprc1
+#endif
             ! self-aggregation of snow
             REAL(KIND=r8) :: nsagg(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsagg
+#endif
             ! self-collection of rain
             REAL(KIND=r8) :: nragg(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nragg
+#endif
             ! collection of droplets by snow
             REAL(KIND=r8) :: psacws(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: npsacws(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: psacws
+            !DIR$ ATTRIBUTES ALIGN : 64 :: npsacws
+#endif            
             ! collection of rain by snow
             REAL(KIND=r8) :: pracs(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: npracs(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: pracs
+            !DIR$ ATTRIBUTES ALIGN : 64 :: npracs
+#endif
             ! freezing of rain
             REAL(KIND=r8) :: mnuccr(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nnuccr(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mnuccr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nnuccr
+#endif
             ! freezing of rain to form ice (mg add 4/26/13)
             REAL(KIND=r8) :: mnuccri(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nnuccri(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mnuccri
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nnuccri
+#endif
             ! accretion of droplets by rain
             REAL(KIND=r8) :: pra(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: npra(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: pra
+            !DIR$ ATTRIBUTES ALIGN : 64 :: npra
+#endif
             ! autoconversion of cloud ice to snow
             REAL(KIND=r8) :: prci(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nprci(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: prci
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nprci
+#endif
             ! accretion of cloud ice by snow
             REAL(KIND=r8) :: prai(mgncol,nlev) ! mass mixing ratio
             REAL(KIND=r8) :: nprai(mgncol,nlev) ! number concentration
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: prai
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nprai
+#endif
             ! evaporation of rain
             REAL(KIND=r8) :: pre(mgncol,nlev) ! mass mixing ratio
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: pre
+#endif
             ! sublimation of snow
             REAL(KIND=r8) :: prds(mgncol,nlev) ! mass mixing ratio
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: prds
+#endif
             ! number evaporation
             REAL(KIND=r8) :: nsubi(mgncol,nlev) ! cloud ice
             REAL(KIND=r8) :: nsubc(mgncol,nlev) ! droplet
             REAL(KIND=r8) :: nsubs(mgncol,nlev) ! snow
             REAL(KIND=r8) :: nsubr(mgncol,nlev) ! rain
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsubi
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsubc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsubs
+            !DIR$ ATTRIBUTES ALIGN : 64 :: nsubr
+#endif
             ! bergeron process
             REAL(KIND=r8) :: berg(mgncol,nlev) ! mass mixing ratio (cloud ice)
             REAL(KIND=r8) :: bergs(mgncol,nlev) ! mass mixing ratio (snow)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: berg
+            !DIR$ ATTRIBUTES ALIGN : 64 :: bergs
+#endif
             ! fallspeeds
             ! number-weighted
             REAL(KIND=r8) :: uns(mgncol,nlev) ! snow
             REAL(KIND=r8) :: unr(mgncol,nlev) ! rain
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: uns
+            !DIR$ ATTRIBUTES ALIGN : 64 :: unr
+#endif
             ! air density corrected fallspeed parameters
             REAL(KIND=r8) :: arn(mgncol,nlev) ! rain
             REAL(KIND=r8) :: asn(mgncol,nlev) ! snow
             REAL(KIND=r8) :: acn(mgncol,nlev) ! cloud droplet
             REAL(KIND=r8) :: ain(mgncol,nlev) ! cloud ice
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: acn
+            !DIR$ ATTRIBUTES ALIGN : 64 :: asn
+            !DIR$ ATTRIBUTES ALIGN : 64 :: acn
+            !DIR$ ATTRIBUTES ALIGN : 64 :: ain
+#endif
             ! Mass of liquid droplets used with external heterogeneous freezing.
             REAL(KIND=r8) :: mi0l(mgncol)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: mi0l
+#endif
             ! saturation vapor pressures
             REAL(KIND=r8) :: esl(mgncol,nlev) ! liquid
             REAL(KIND=r8) :: esi(mgncol,nlev) ! ice
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: esl
+            !DIR$ ATTRIBUTES ALIGN : 64 :: esi
+#endif
             REAL(KIND=r8) :: esn ! checking for RH after rain evap
             ! saturation vapor mixing ratios
             REAL(KIND=r8) :: qvl(mgncol,nlev) ! liquid
             REAL(KIND=r8) :: qvi(mgncol,nlev) ! ice
-            REAL(KIND=r8) :: qvn ! checking for RH after rain evap
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qvl
+            !DIR$ ATTRIBUTES ALIGN : 64 :: qvi
+#endif
+           
             ! relative humidity
+            
             REAL(KIND=r8) :: relhum(mgncol,nlev)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: relhum
+#endif
+            REAL(KIND=r8) :: qvn ! checking for RH after rain evap
             ! parameters for cloud water and cloud ice sedimentation calculations
+            !REAL(KIND=r8) :: rainrt(mgncol,nlev) ! rain rate for reflectivity calculation
+            ! rainrt is not used before the rain relectivity computation and is commented
+            ! Bernard Gingold 01/09/2021
             REAL(KIND=r8) :: fc(nlev)
             REAL(KIND=r8) :: fnc(nlev)
             REAL(KIND=r8) :: fi(nlev)
@@ -870,6 +1042,24 @@
             REAL(KIND=r8) :: faloutnr(nlev)
             REAL(KIND=r8) :: falouts(nlev)
             REAL(KIND=r8) :: faloutns(nlev)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fnc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fi
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fni
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fnr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fs
+            !DIR$ ATTRIBUTES ALIGN : 64 :: fns
+            !DIR$ ATTRIBUTES ALIGN : 64 :: faloutc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: faloutnc
+            !DIR$ ATTRIBUTES ALIGN : 64 :: falouti
+            !DIR$ ATTRIBUTES ALIGN : 64 :: faloutni
+            !DIR$ ATTRIBUTES ALIGN : 64 :: faloutr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: faloutnr
+            !DIR$ ATTRIBUTES ALIGN : 64 :: falouts
+            !DIR$ ATTRIBUTES ALIGN : 64 :: faloutns
+#endif
             REAL(KIND=r8) :: faltndc
             REAL(KIND=r8) :: faltndnc
             REAL(KIND=r8) :: faltndi
@@ -880,7 +1070,7 @@
             REAL(KIND=r8) :: faltndnr
             REAL(KIND=r8) :: faltnds
             REAL(KIND=r8) :: faltndns
-            REAL(KIND=r8) :: rainrt(mgncol,nlev) ! rain rate for reflectivity calculation
+            
             ! dummy variables
             REAL(KIND=r8) :: dum
             REAL(KIND=r8) :: dum1
@@ -910,6 +1100,9 @@
             INTEGER :: n
             ! number of sub-steps for loops over "n" (for sedimentation)
             INTEGER :: nstep
+            INTEGER :: ii
+            INTEGER :: kk
+            ! Added (Bernard Gingold) first memory touch initialization.
             !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
             ! default return error message
             errstring = ' '
@@ -989,115 +1182,136 @@
             ! set mtime here to avoid answer-changing
             mtime = deltat
             ! initialize microphysics output
-            qcsevap = 0._r8
-            qisevap = 0._r8
-            qvres = 0._r8
-            cmeitot = 0._r8
-            vtrmc = 0._r8
-            vtrmi = 0._r8
-            qcsedten = 0._r8
-            qisedten = 0._r8
-            qrsedten = 0._r8
-            qssedten = 0._r8
-            pratot = 0._r8
-            prctot = 0._r8
-            mnuccctot = 0._r8
-            mnuccttot = 0._r8
-            msacwitot = 0._r8
-            psacwstot = 0._r8
-            bergstot = 0._r8
-            bergtot = 0._r8
-            melttot = 0._r8
-            homotot = 0._r8
-            qcrestot = 0._r8
-            prcitot = 0._r8
-            praitot = 0._r8
-            qirestot = 0._r8
-            mnuccrtot = 0._r8
-            pracstot = 0._r8
-            meltsdttot = 0._r8
-            frzrdttot = 0._r8
-            mnuccdtot = 0._r8
-            rflx = 0._r8
-            sflx = 0._r8
-            ! initialize precip output
-            qrout = 0._r8
-            qsout = 0._r8
-            nrout = 0._r8
-            nsout = 0._r8
-            ! for refl calc
-            rainrt = 0._r8
-            ! initialize rain size
-            rercld = 0._r8
-            qcsinksum_rate1ord = 0._r8
-            ! initialize variables for trop_mozart
-            nevapr = 0._r8
-            prer_evap = 0._r8
-            evapsnow = 0._r8
-            prain = 0._r8
-            prodsnow = 0._r8
-            cmeout = 0._r8
-            precip_frac = mincld
-            lamc = 0._r8
-            ! initialize microphysical tendencies
-            tlat = 0._r8
-            qvlat = 0._r8
-            qctend = 0._r8
-            qitend = 0._r8
-            qstend = 0._r8
-            qrtend = 0._r8
-            nctend = 0._r8
-            nitend = 0._r8
-            nrtend = 0._r8
-            nstend = 0._r8
-            ! initialize in-cloud and in-precip quantities to zero
-            qcic = 0._r8
-            qiic = 0._r8
-            qsic = 0._r8
-            qric = 0._r8
-            ncic = 0._r8
-            niic = 0._r8
-            nsic = 0._r8
-            nric = 0._r8
-            ! initialize precip at surface
-            prect = 0._r8
-            preci = 0._r8
-            ! initialize precip fallspeeds to zero
-            ums = 0._r8
-            uns = 0._r8
-            umr = 0._r8
-            unr = 0._r8
-            ! initialize limiter for output
-            qcrat = 1._r8
-            ! Many outputs have to be initialized here at the top to work around
-            ! ifort problems, even if they are always overwritten later.
-            effc = 10._r8
-            lamcrad = 0._r8
-            pgamrad = 0._r8
-            effc_fn = 10._r8
-            effi = 25._r8
-            deffi = 50._r8
-            qrout2 = 0._r8
-            nrout2 = 0._r8
-            drout2 = 0._r8
-            qsout2 = 0._r8
-            nsout2 = 0._r8
-            dsout = 0._r8
-            dsout2 = 0._r8
-            freqr = 0._r8
-            freqs = 0._r8
-            reff_rain = 0._r8
-            reff_snow = 0._r8
-            refl = -9999._r8
-            arefl = 0._r8
-            areflz = 0._r8
-            frefl = 0._r8
-            csrfl = 0._r8
-            acsrfl = 0._r8
-            fcsrfl = 0._r8
-            ncal = 0._r8
-            ncai = 0._r8
-            nfice = 0._r8
+            
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) PRIVATE(kk,ii) &
+!$OMP             SHARED(nlev,mgncol,qcsevap,qisevap,qvres,cmeitot,vtrmc,vtrmi,qcsedten,        &
+!$OMP&                   qisedten,qrsedten,qssedten,pratot,prctot,mnuccctot,mnuccttot,          &
+!$OMP&                   msacwitot,psacwstot,bergstot,bergtot,melttot,homotot,qcrestot,         &
+!$OMP&                   prcitot,praitot,qirestot,mnuccrtot,pracstot,meltsdttot,frzrdttot,      &
+!$OMP&                   mnuccdtot,rflx,sflx,qrout,qsout,nrout,nsout,rercld,qcsinksum_rate1ord, &
+!$OMP&                   nevapr,prer_evap,evapsnow,prain,prodsnow,cmeout,precip_frac,lamc,tlat, &
+!$OMP&                   qvlat,qctend,qitend,qstend,qrtend,nctend,nitend,nrtend,nstend,qcic,    &
+!$OMP&                   qiic,qsic,qric,ncic,niic,nsic,nric,preci,prect,ums,uns,umr,unr,qcrat,  &
+!$OMP&                   effc,lamcrad,pgamrad,effc_fn,effi,deffi,qrout2,nrout2,drout2,qsout2,   &
+!$OMP&                   nsout2,dsout,dsout2,freqr,freqs,reff_rain,reff_snow,refl,arefl,areflz, &
+!$OMP&                   frefl,csrfl,acsrfl.ncal,ncai,nfice)
+            pre_vert_loop: DO kk=1,nlev
+                                 preci(kk) = 0._r8
+                                 prect(kk) = 0._r8
+!$OMP SIMD  UNROLL PARTIAL(8) LINEAR(kk:1,ii)
+                pre_col_loop: DO ii=1,mgncol
+                                    qcsevap(ii,kk) = 0._r8
+                                    qisevap(ii,kk) = 0._r8
+                                    qvres(ii,kk)   = 0._r8
+                                    cmeitot(ii,kk)   = 0._r8
+                                    vtrmc(ii,kk)     = 0._r8
+                                    vtrmi(ii,kk)     = 0._r8
+                                    qcsedten(ii,kk)  = 0._r8
+                                    qisedten(ii,kk)  = 0._r8
+                                    qrsedten(ii,kk)  = 0._r8
+                                    qssedten(ii,kk)  = 0._r8
+                                    pratot(ii,kk)    = 0._r8
+                                    prctot(ii,kk)    = 0._r8
+                                    mnuccctot(ii,kk) = 0._r8
+                                    mnuccttot(ii,kk) = 0._r8
+                                    msacwitot(ii,kk) = 0._r8
+                                    psacwstot(ii,kk) = 0._r8
+                                    bergstot(ii,kk) = 0._r8
+                                    bergtot(ii,kk) = 0._r8
+                                    melttot = 0._r8
+                                    homotot = 0._r8
+                                    qcrestot = 0._r8
+                                    prcitot = 0._r8
+                                   praitot = 0._r8
+                                   qirestot = 0._r8
+                                   mnuccrtot = 0._r8
+                                   pracstot = 0._r8
+                                   meltsdttot = 0._r8
+                                   frzrdttot = 0._r8
+                                   mnuccdtot = 0._r8
+                                   rflx = 0._r8
+                                   sflx = 0._r8
+                                   ! initialize precip output
+                                   qrout = 0._r8
+                                   qsout = 0._r8
+                                   nrout = 0._r8
+                                   nsout = 0._r8
+                                   ! for refl calc
+                                   !rainrt = 0._r8 -- commented out by Bernard Gingold 01/09/2021 (variable not used)
+                                   ! initialize rain size
+                                   rercld = 0._r8
+                                   qcsinksum_rate1ord = 0._r8
+                                   ! initialize variables for trop_mozart
+                                   nevapr = 0._r8
+                                   prer_evap = 0._r8
+                                   evapsnow = 0._r8
+                                   prain = 0._r8
+                                   prodsnow = 0._r8
+                                   cmeout = 0._r8
+                                   precip_frac = mincld
+                                   lamc = 0._r8
+                                   ! initialize microphysical tendencies
+                                   tlat = 0._r8
+                                   qvlat = 0._r8
+                                   qctend = 0._r8
+                                   qitend = 0._r8
+                                   qstend = 0._r8
+                                   qrtend = 0._r8
+                                   nctend = 0._r8
+                                   nitend = 0._r8
+                                   nrtend = 0._r8
+                                   nstend = 0._r8
+                                   ! initialize in-cloud and in-precip quantities to zero
+                                   qcic = 0._r8
+                                   qiic = 0._r8
+                                   qsic = 0._r8
+                                   qric = 0._r8
+                                   ncic = 0._r8
+                                   niic = 0._r8
+                                   nsic = 0._r8
+                                   nric = 0._r8
+                                   ! initialize precip at surface
+                                   prect = 0._r8
+                                   preci = 0._r8
+                                   ! initialize precip fallspeeds to zero
+                                   ums = 0._r8
+                                   uns = 0._r8
+                                   umr = 0._r8
+                                   unr = 0._r8
+                                   ! initialize limiter for output
+                                   qcrat = 1._r8
+                                   ! Many outputs have to be initialized here at the top to work around
+                                   ! ifort problems, even if they are always overwritten later.
+                                   effc = 10._r8
+                                   lamcrad = 0._r8
+                                   pgamrad = 0._r8
+                                   effc_fn = 10._r8
+                                   effi = 25._r8
+                                   deffi = 50._r8
+                                   qrout2 = 0._r8
+                                   nrout2 = 0._r8
+                                   drout2 = 0._r8
+                                   qsout2 = 0._r8
+                                   nsout2 = 0._r8
+                                   dsout = 0._r8
+                                   dsout2 = 0._r8
+                                   freqr = 0._r8
+                                   freqs = 0._r8
+                                   reff_rain = 0._r8
+                                   reff_snow = 0._r8
+                                   refl = -9999._r8
+                                   arefl = 0._r8
+                                   areflz = 0._r8
+                                   frefl = 0._r8
+                                   csrfl = 0._r8
+                                   acsrfl = 0._r8
+                                   fcsrfl = 0._r8
+                                   ncal = 0._r8
+                                   ncai = 0._r8
+                                   nfice = 0._r8
+                                END DO pre_col_loop
+                             END DO pre_vert_loop
+                             
             !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
             ! droplet activation
             ! get provisional droplet number after activation. This is used for
