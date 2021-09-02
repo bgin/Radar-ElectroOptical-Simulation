@@ -1198,120 +1198,123 @@
             pre_vert_loop: DO kk=1,nlev
                                  preci(kk) = 0._r8
                                  prect(kk) = 0._r8
-!$OMP SIMD  UNROLL PARTIAL(8) LINEAR(kk:1,ii)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ UNROLL(8)
+#endif                                
+!$OMP SIMD  LINEAR(kk:1,ii:1)
                 pre_col_loop: DO ii=1,mgncol
-                                    qcsevap(ii,kk) = 0._r8
-                                    qisevap(ii,kk) = 0._r8
-                                    qvres(ii,kk)   = 0._r8
-                                    cmeitot(ii,kk)   = 0._r8
-                                    vtrmc(ii,kk)     = 0._r8
-                                    vtrmi(ii,kk)     = 0._r8
-                                    qcsedten(ii,kk)  = 0._r8
-                                    qisedten(ii,kk)  = 0._r8
-                                    qrsedten(ii,kk)  = 0._r8
-                                    qssedten(ii,kk)  = 0._r8
-                                    pratot(ii,kk)    = 0._r8
-                                    prctot(ii,kk)    = 0._r8
-                                    mnuccctot(ii,kk) = 0._r8
-                                    mnuccttot(ii,kk) = 0._r8
-                                    msacwitot(ii,kk) = 0._r8
-                                    psacwstot(ii,kk) = 0._r8
-                                    bergstot(ii,kk) = 0._r8
-                                    bergtot(ii,kk) = 0._r8
-                                    melttot = 0._r8
-                                    homotot = 0._r8
-                                    qcrestot = 0._r8
-                                    prcitot = 0._r8
-                                   praitot = 0._r8
-                                   qirestot = 0._r8
-                                   mnuccrtot = 0._r8
-                                   pracstot = 0._r8
-                                   meltsdttot = 0._r8
-                                   frzrdttot = 0._r8
-                                   mnuccdtot = 0._r8
-                                   rflx = 0._r8
-                                   sflx = 0._r8
+                                    qcsevap(ii,kk)            = 0._r8
+                                    qisevap(ii,kk)            = 0._r8
+                                    qvres(ii,kk)              = 0._r8
+                                    cmeitot(ii,kk)            = 0._r8
+                                    vtrmc(ii,kk)              = 0._r8
+                                    vtrmi(ii,kk)              = 0._r8
+                                    qcsedten(ii,kk)           = 0._r8
+                                    qisedten(ii,kk)           = 0._r8
+                                    qrsedten(ii,kk)           = 0._r8
+                                    qssedten(ii,kk)           = 0._r8
+                                    pratot(ii,kk)             = 0._r8
+                                    prctot(ii,kk)             = 0._r8
+                                    mnuccctot(ii,kk)          = 0._r8
+                                    mnuccttot(ii,kk)          = 0._r8
+                                    msacwitot(ii,kk)          = 0._r8
+                                    psacwstot(ii,kk)          = 0._r8
+                                    bergstot(ii,kk)           = 0._r8
+                                    bergtot(ii,kk)            = 0._r8
+                                    melttot(ii,kk)            = 0._r8
+                                    homotot(ii,kk)            = 0._r8
+                                    qcrestot(ii,kk)           = 0._r8
+                                    prcitot(ii,kk)            = 0._r8
+                                    praitot(ii,kk)            = 0._r8
+                                    qirestot(ii,kk)           = 0._r8
+                                    mnuccrtot(ii,kk)          = 0._r8
+                                    pracstot(ii,kk)           = 0._r8
+                                    meltsdttot(ii,kk)         = 0._r8
+                                    frzrdttot(ii,kk)          = 0._r8
+                                    mnuccdtot(ii,kk)          = 0._r8
+                                    rflx(ii,kk)               = 0._r8
+                                    sflx(ii,kk)               = 0._r8
                                    ! initialize precip output
-                                   qrout = 0._r8
-                                   qsout = 0._r8
-                                   nrout = 0._r8
-                                   nsout = 0._r8
+                                    qrout(ii,kk)              = 0._r8
+                                    qsout(ii,kk)              = 0._r8
+                                    nrout(ii,kk)              = 0._r8
+                                    nsout(ii,kk)              = 0._r8
                                    ! for refl calc
                                    !rainrt = 0._r8 -- commented out by Bernard Gingold 01/09/2021 (variable not used)
                                    ! initialize rain size
-                                   rercld = 0._r8
-                                   qcsinksum_rate1ord = 0._r8
+                                    rercld(ii,kk)             = 0._r8
+                                    qcsinksum_rate1ord(ii,kk) = 0._r8
                                    ! initialize variables for trop_mozart
-                                   nevapr = 0._r8
-                                   prer_evap = 0._r8
-                                   evapsnow = 0._r8
-                                   prain = 0._r8
-                                   prodsnow = 0._r8
-                                   cmeout = 0._r8
-                                   precip_frac = mincld
-                                   lamc = 0._r8
+                                    nevapr(ii,kk)             = 0._r8
+                                    prer_evap(ii,kk)          = 0._r8
+                                    evapsnow(ii,kk)           = 0._r8
+                                    prain(ii,kk)              = 0._r8
+                                    prodsnow(ii,kk)           = 0._r8
+                                    cmeout(ii,kk)             = 0._r8
+                                    precip_frac(ii,kk)        = mincld
+                                    lamc(ii,kk)               = 0._r8
                                    ! initialize microphysical tendencies
-                                   tlat = 0._r8
-                                   qvlat = 0._r8
-                                   qctend = 0._r8
-                                   qitend = 0._r8
-                                   qstend = 0._r8
-                                   qrtend = 0._r8
-                                   nctend = 0._r8
-                                   nitend = 0._r8
-                                   nrtend = 0._r8
-                                   nstend = 0._r8
+                                    tlat(ii,kk)               = 0._r8
+                                    qvlat(ii,kk)              = 0._r8
+                                    qctend(ii,kk)             = 0._r8
+                                    qitend(ii,kk)             = 0._r8
+                                    qstend(ii,kk)             = 0._r8
+                                    qrtend(ii,kk)             = 0._r8
+                                    nctend(ii,kk)             = 0._r8
+                                    nitend(ii,kk)             = 0._r8
+                                    nrtend(ii,kk)             = 0._r8
+                                    nstend(ii,kk)             = 0._r8
                                    ! initialize in-cloud and in-precip quantities to zero
-                                   qcic = 0._r8
-                                   qiic = 0._r8
-                                   qsic = 0._r8
-                                   qric = 0._r8
-                                   ncic = 0._r8
-                                   niic = 0._r8
-                                   nsic = 0._r8
-                                   nric = 0._r8
+                                    qcic(ii,kk)               = 0._r8
+                                    qiic(ii,kk)               = 0._r8
+                                    qsic(ii,kk)               = 0._r8
+                                    qric(ii,kk)               = 0._r8
+                                    ncic(ii,kk)               = 0._r8
+                                    niic(ii,kk)               = 0._r8
+                                    nsic(ii,kk)               = 0._r8
+                                    nric(ii,kk)               = 0._r8
                                    ! initialize precip at surface
-                                   prect = 0._r8
-                                   preci = 0._r8
+                                    prect(ii,kk)              = 0._r8
+                                    preci(ii,kk)              = 0._r8
                                    ! initialize precip fallspeeds to zero
-                                   ums = 0._r8
-                                   uns = 0._r8
-                                   umr = 0._r8
-                                   unr = 0._r8
+                                    ums(ii,kk)                = 0._r8
+                                    uns(ii,kk)                = 0._r8
+                                    umr(ii,kk)                = 0._r8
+                                    unr(ii,kk)                = 0._r8
                                    ! initialize limiter for output
-                                   qcrat = 1._r8
+                                    qcrat(ii,kk)              = 1._r8
                                    ! Many outputs have to be initialized here at the top to work around
                                    ! ifort problems, even if they are always overwritten later.
-                                   effc = 10._r8
-                                   lamcrad = 0._r8
-                                   pgamrad = 0._r8
-                                   effc_fn = 10._r8
-                                   effi = 25._r8
-                                   deffi = 50._r8
-                                   qrout2 = 0._r8
-                                   nrout2 = 0._r8
-                                   drout2 = 0._r8
-                                   qsout2 = 0._r8
-                                   nsout2 = 0._r8
-                                   dsout = 0._r8
-                                   dsout2 = 0._r8
-                                   freqr = 0._r8
-                                   freqs = 0._r8
-                                   reff_rain = 0._r8
-                                   reff_snow = 0._r8
-                                   refl = -9999._r8
-                                   arefl = 0._r8
-                                   areflz = 0._r8
-                                   frefl = 0._r8
-                                   csrfl = 0._r8
-                                   acsrfl = 0._r8
-                                   fcsrfl = 0._r8
-                                   ncal = 0._r8
-                                   ncai = 0._r8
-                                   nfice = 0._r8
-                                END DO pre_col_loop
-                             END DO pre_vert_loop
-                             
+                                    effc(ii,kk)               = 10._r8
+                                    lamcrad(ii,kk)            = 0._r8
+                                    pgamrad(ii,kk)            = 0._r8
+                                    effc_fn(ii,kk)            = 10._r8
+                                    effi(ii,kk)               = 25._r8
+                                    deffi(ii,kk)              = 50._r8
+                                    qrout2(ii,kk)             = 0._r8
+                                    nrout2(ii,kk)             = 0._r8
+                                    drout2(ii,kk)             = 0._r8
+                                    qsout2(ii,kk)             = 0._r8
+                                    nsout2(ii,kk)             = 0._r8
+                                    dsout(ii,kk)              = 0._r8
+                                    dsout2(ii,kk)             = 0._r8
+                                    freqr(ii,kk)              = 0._r8
+                                    freqs(ii,kk)              = 0._r8
+                                    reff_rain(ii,kk)          = 0._r8
+                                    reff_snow(ii,kk)          = 0._r8
+                                    refl(ii,kk)               = -9999._r8
+                                    arefl(ii,kk)              = 0._r8
+                                    areflz(ii,kk)             = 0._r8
+                                    frefl(ii,kk)              = 0._r8
+                                    csrfl(ii,kk)              = 0._r8
+                                    acsrfl(ii,kk)             = 0._r8
+                                    fcsrfl(ii,kk)             = 0._r8
+                                    ncal(ii,kk)               = 0._r8
+                                    ncai(ii,kk)               = 0._r8
+                                    nfice(ii,kk)              = 0._r8
+                              END DO pre_col_loop
+                           END DO pre_vert_loop
+!$OMP END PARALLEL DO                             
             !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
             ! droplet activation
             ! get provisional droplet number after activation. This is used for
@@ -1352,7 +1355,13 @@
                 END WHERE 
             END IF 
             !=============================================================================
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) PRIVATE(k,i,dum,dum1)    &
+!$OMP&      SHARED(nlev,mgcol,t,qs,snowmelt,xlf,cpp,minstsm,ninstsm,ns,     &
+!$OMP&             deltat,tlat,meltsdttot,qr,nr,rainfrze,minstrf,ninstrf,   &
+!$OMP&             frzrdttot,qc,qsmall,qcic,lcldm,nc,nccons,ncnst,rho,ncic, &
+!$OMP&             qi,qiic,niic,ni)
             pre_vert_loop: DO k=1,nlev
+!$OMP SIMD LINEAR(k:1,i:1)               
                 pre_col_loop: DO i=1,mgncol
                     ! calculate instantaneous precip processes (melting and homogeneous freezing)
                     ! melting of snow at +2 C
@@ -1433,7 +1442,8 @@
                         niic(i,k) = 0._r8
                     END IF 
                 END DO pre_col_loop
-            END DO pre_vert_loop
+             END DO pre_vert_loop
+!$OMP END PARALLEL DO
             !========================================================================
             ! for sub-columns cldm has already been set to 1 if cloud
             ! water or ice is present, so precip_frac will be correctly set below
@@ -1631,6 +1641,33 @@
                     nsubc(:,k) = 0._r8
                 END IF  !do_cldice
                 !---PMC 12/3/12
+                
+!$OMP PARALLEL  DEFAULT(SHARED) PRIVATE(i,k,dum,ratio,dum1,tmpfrz,ttmp) &
+!$OMP DO SIMD SCHEDULE(STATIC,64)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ UNROLL(8)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH prc:0:4
+!DIR$ PREFETCH prc:1:16
+!DIR$ PREFETCH pra:0:4
+!DIR$ PREFETCH pra:1:16
+!DIR$ PREFETCH mnuccc:0:4
+!DIR$ PREFETCH mnuccc:1:16
+!DIR$ PREFETCH mnucct:0:4
+!DIR$ PREFETCH mnucct:1:16
+!DIR$ PREFETCH msacwi:0:4
+!DIR$ PREFETCH msacwi:1:16
+!DIR$ PREFETCH psacws:0:4
+!DIR$ PREFETCH psacws:1:16
+!DIR$ PREFETCH bergs:0:4
+!DIR$ PREFETCH bergs:1:16
+!DIR$ PREFETCH lcldm:0:4
+!DIR$ PREFETCH lcldm:1:16
+!DIR$ PREFETCH berg:0:4
+!DIR$ PREFETCH berg:1:16
+!DIR$ PREFETCH qc:0:4
+!DIR$ PREFETCH qc:1:16                
+#endif
                 DO i=1,mgncol
                     ! conservation to ensure no negative values of cloud water/precipitation
                     ! in case microphysical process rates are large
@@ -1662,7 +1699,15 @@
                     IF (qc(i,k) >= qsmall) THEN
                         vap_dep(i,k) = vap_dep(i,k)*(1._r8-qcrat(i,k))
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ UNROLL(8)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH vap_dep:0:4
+                
+#endif                
+!$OMP DO SIMD SCHEDULE(STATIC,64)                  
                 DO i=1,mgncol
                     !=================================================================
                     ! apply limiter to ensure that ice/snow sublimation and rain evap
@@ -1686,7 +1731,9 @@
                             vap_dep(i,k) = dum - mnuccd(i,k)
                         END IF 
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO
+!$OMP DO SIMD SCHEDULE(STATIC,8)                      
                 DO i=1,mgncol
                     !===================================================================
                     ! conservation of nc
@@ -1713,7 +1760,9 @@
                             nnuccr(i,k) = 0._r8
                         END IF 
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO
+!$OMP DO SIMD SCHEDULE(STATIC,8)                   
                 DO i=1,mgncol
                     ! conservation of rain mixing ratio
                     !-------------------------------------------------------------------
@@ -1728,7 +1777,9 @@
                         mnuccr(i,k) = mnuccr(i,k)*ratio
                         mnuccri(i,k) = mnuccri(i,k)*ratio
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO
+!$OMP DO SIMD SCHEDULE(STATIC,8)                   
                 DO i=1,mgncol
                     ! conservation of rain number
                     !-------------------------------------------------------------------
@@ -1740,7 +1791,9 @@
                         ELSE
                         nsubr(i,k) = 0._r8
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO
+!$OMP DO SIMD SCHEDULE(STATIC,8)                  
                 DO i=1,mgncol
                     dum = ((-nsubr(i,k)+npracs(i,k)+nnuccr(i,k)+nnuccri(i,k)-nragg(i,k))*precip_frac(i,k)-              nprc(i,k)&
                     *lcldm(i,k))*deltat
