@@ -1361,6 +1361,42 @@
 !$OMP&             frzrdttot,qc,qsmall,qcic,lcldm,nc,nccons,ncnst,rho,ncic, &
 !$OMP&             qi,qiic,niic,ni)
             pre_vert_loop: DO k=1,nlev
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH t:0:4
+!DIR$ PREFETCH t:1:16
+!DIR$ PREFETCH qs:0:4
+!DIR$ PREFETCH qs:1:16
+!DIR$ PREFETCH minstsm:0:4
+!DIR$ PREFETCH minstsm:1:16
+!DIR$ PREFETCH tlat:0:4
+!DIR$ PREFETCH tlat:1:16
+!DIR$ PREFETCH qs:0:4
+!DIR$ PREFETCH qs:1:16
+!DIR$ PREFETCH ns:0:4
+!DIR$ PREFETCH ns:1:16
+!DIR$ PREFETCH qr:0:4
+!DIR$ PREFETCH qr:1:16
+!DIR$ PREFETCH nr:0:4
+!DIR$ PREFETCH nr:1:16
+!DIR$ PREFETCH minstrf:0:4
+!DIR$ PREFETCH minstrf:1:16
+!DIR$ PREFETCH ninstrf:0:4
+!DIR$ PREFETCH ninstrf:1:16
+!DIR$ PREFETCH frzrdttot:0:4
+!DIR$ PREFETCH frzrdttot:1:16
+!DIR$ PREFETCH qc:0:4
+!DIR$ PREFETCH qc:1:16
+!DIR$ PREFETCH lcldm:0:4
+!DIR$ PREFETCH lcldm:1:16
+!DIR$ PREFETCH qi:0:4
+!DIR$ PREFETCH qi:1:16
+!DIR$ PREFETCH rho:0:4
+!DIR$ PREFETCH rho:1:16
+!DIR$ PREFETCH ni:0:4
+!DIR$ PREFETCH ni:1:16
+               
+#endif
 !$OMP SIMD LINEAR(k:1,i:1)               
                 pre_col_loop: DO i=1,mgncol
                     ! calculate instantaneous precip processes (melting and homogeneous freezing)
@@ -1643,9 +1679,9 @@
                 !---PMC 12/3/12
                 
 !$OMP PARALLEL  DEFAULT(SHARED) PRIVATE(i,k,dum,ratio,dum1,tmpfrz,ttmp) &
-!$OMP DO SIMD SCHEDULE(STATIC,64)
+!$OMP DO SIMD SCHEDULE(STATIC,8)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
-!DIR$ UNROLL(8)
+
 !DIR$ CODE_ALIGN(32)
 !DIR$ PREFETCH prc:0:4
 !DIR$ PREFETCH prc:1:16
@@ -1702,12 +1738,20 @@
                 END DO
 !$OMP END DO
 #if  defined(__INTEL_COMPILER) || defined(__ICC)
-!DIR$ UNROLL(8)
+
 !DIR$ CODE_ALIGN(32)
 !DIR$ PREFETCH vap_dep:0:4
-                
+!DIR$ PREFETCH vap_dep:1:16
+!DIR$ PREFETCH q:0:4
+!DIR$ PREFETCH q:1:16
+!DIR$ PREFETCH qvi:0:4
+!DIR$ PREFETCH qvi:1:16
+!DIR$ PREFETCH t:0:4
+!DIR$ PREFETCH t:1:16
+!DIR$ PREFETCH mnuccd:0:4
+!DIR$ PREFETCH mnuccd:1:16                
 #endif                
-!$OMP DO SIMD SCHEDULE(STATIC,64)                  
+!$OMP DO SIMD SCHEDULE(STATIC,8)                  
                 DO i=1,mgncol
                     !=================================================================
                     ! apply limiter to ensure that ice/snow sublimation and rain evap
@@ -1732,7 +1776,27 @@
                         END IF 
                     END IF 
                 END DO
-!$OMP END DO
+!$OMP END DO 
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH nprc1:0:4
+!DIR$ PREFETCH nprc1:1:16
+!DIR$ PREFETCH npra:0:4
+!DIR$ PREFETCH npra:1:16
+!DIR$ PREFETCH nnuccc:0:4           
+!DIR$ PREFETCH nnuccc:1:16
+!DIR$ PREFETCH nnucct:0:4
+!DIR$ PREFETCH nnucct:1:16
+!DIR$ PREFETCH npsacws:0:4
+!DIR$ PREFETCH npsacws:1:16
+!DIR$ PREFETCH nsubc:0:4
+!DIR$ PREFETCH nsubc:1:16
+!DIR$ PREFETCH lamr:0:4
+!DIR$ PREFETCH lamr:1:16
+!DIR$ PREFETCH mnuccr:0:4
+!DIR$ PREFETCH mnuccr:1:16
+                
+#endif
 !$OMP DO SIMD SCHEDULE(STATIC,8)                      
                 DO i=1,mgncol
                     !===================================================================
@@ -1762,6 +1826,24 @@
                     END IF 
                 END DO
 !$OMP END DO
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH pre:0:4
+!DIR$ PREFETCH pre:1:16
+!DIR$ PREFETCH pracs:0:4
+!DIR$ PREFETCH pracs:1:16
+!DIR$ PREFETCH mnuccr:0:4
+!DIR$ PREFETCH mnuccr:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH pra:0:4
+!DIR$ PREFETCH pra:1:16
+!DIR$ PREFETCH prc:0:4
+!DIR$ PREFETCH prc:1:16
+!DIR$ PREFETCH lcldm:0:4                
+!DIR$ PREFETCH lcldm:1:16
+          
+#endif
 !$OMP DO SIMD SCHEDULE(STATIC,8)                   
                 DO i=1,mgncol
                     ! conservation of rain mixing ratio
@@ -1779,6 +1861,16 @@
                     END IF 
                 END DO
 !$OMP END DO
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH pre:0:4
+!DIR$ PREFETCH pre:1:16
+!DIR$ PREFETCH qr:0:4
+!DIR$ PREFETCH qr:1:16                
+!DIR$ PREFETCH nr:0:4
+!DIR$ PREFETCH nr:1:16
+            
+#endif
 !$OMP DO SIMD SCHEDULE(STATIC,8)                   
                 DO i=1,mgncol
                     ! conservation of rain number
