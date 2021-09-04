@@ -1678,7 +1678,7 @@
                 END IF  !do_cldice
                 !---PMC 12/3/12
                 
-!$OMP PARALLEL  DEFAULT(SHARED) PRIVATE(i,k,dum,ratio,dum1,tmpfrz,ttmp) &
+!$OMP PARALLEL  DEFAULT(SHARED) PRIVATE(i,k,dum,ratio,dum1,tmpfrz,ttmp,qtmp) &
 !$OMP DO SIMD SCHEDULE(STATIC,8)
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 
@@ -2001,7 +2001,9 @@
 !DIR$ PREFETCH nnuccd:1:16                   
 !DIR$ PREFETCH ni:0:4
 !DIR$ PREFETCH ni:1:16
-                   
+!DIR$ PREFETCH nprci:0:4
+!DIR$ PREFETCH nprci:1:16
+                  
 #endif
 !$OMP DO SIMD SCHEDULE(STATIC,8)
                     DO i=1,mgncol
@@ -2025,7 +2027,31 @@
                    END DO
 !$OMP END DO
                 END IF
-!$OMP DO SIMD SCHEDULE(STATIC,8)
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH prds:0:4
+!DIR$ PREFETCH prds:1:16
+!DIR$ PREFETCH pracs:0:4
+!DIR$ PREFETCH pracs:1:16
+!DIR$ PREFETCH mnuccr:0:4
+!DIR$ PREFETCH mnuccr:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH prai:0:4
+!DIR$ PREFETCH prai:1:16
+!DIR$ PREFETCH prci:0:4
+!DIR$ PREFETCH prci:1:16
+!DIR$ PREFETCH icldm:0:4
+!DIR$ PREFETCH icldm:1:16
+!DIR$ PREFETCH bergs:0:4
+!DIR$ PREFETCH bergs:1:4
+!DIR$ PREFETCH psacws:0:4
+!DIR$ PREFETCH psacws:1:16
+!DIR$ PREFETCH qs:0:4
+!DIR$ PREFETCH qs:1:16
+               
+#endif
+!$OMP DO SIMD SCHEDULE(STATIC,8) LINEAR(i:1) PRIVATE(dum,ratio)
                 DO i=1,mgncol
                     ! conservation of snow mixing ratio
                     !-------------------------------------------------------------------
@@ -2038,6 +2064,25 @@
                     END IF 
                  END DO
 !$OMP END DO
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH nsagg:0:4
+!DIR$ PREFETCH nsagg:1:16
+!DIR$ PREFETCH nsubs:0:4
+!DIR$ PREFETCH nsubs:1:16
+!DIR$ PREFETCH nnuccr:0:4
+!DIR$ PREFETCH nnuccr:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH nprci:0:4
+!DIR$ PREFETCH nprci:1:16
+!DIR$ PREFETCH icldm:0:4
+!DIR$ PREFETCH icldm:1:16
+!DIR$ PREFETCH ns:0:4
+!DIR$ PREFETCH ns:1:16
+                 
+#endif
+!$OMP DO SIMD SCHEDULE(STATIC,8) LINEAR(i:1) PRIVATE(dum,ratio)                 
                DO i=1,mgncol
                     ! conservation of snow number
                     !-------------------------------------------------------------------
@@ -2051,7 +2096,31 @@
                         nsubs(i,k) = nsubs(i,k)*ratio
                         nsagg(i,k) = nsagg(i,k)*ratio
                     END IF 
-                END DO 
+               END DO
+!$OMP END DO
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH pre:0:4
+!DIR$ PREFETCH pre:1:16
+!DIR$ PREFETCH prds:0:4
+!DIR$ PREFETCH prds:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH ice_sublim:0:4
+!DIR$ PREFETCH ice_sublim:1:16
+!DIR$ PREFETCH q:0:4
+!DIR$ PREFETCH q:1:16
+!DIR$ PREFETCH vap_dep:0:4
+!DIR$ PREFETCH vap_dep:1:16
+!DIR$ PREFETCH mnuccd:0:4
+!DIR$ PREFETCH mnuccd:1:16
+!DIR$ PREFETCH t:0:4
+!DIR$ PREFETCH t:1:16
+!DIR$ PREFETCH p:0:4
+!DIR$ PREFETCH p:1:16
+              
+#endif               
+!$OMP DO SCHEDULE(STATIC,8)               
                 DO i=1,mgncol
                     ! next limit ice and snow sublimation and rain evaporation
                     ! get estimate of q and t at end of time step
@@ -2171,11 +2240,23 @@
 !DIR$ PREFETCH nnuccd:1:16
 !DIR$ PREFETCH nnudep:0:4
 !DIR$ PREFETCH nnudep:1:16
-
-                
+!DIR$ PREFETCH nprai:0:4
+!DIR$ PREFETCH nprai:1:16
+!DIR$ PREFETCH nnuccri:0:4
+!DIR$ PREFETCH nnuccri:1:16
+             
 !DIR$ PREFETCH nstend:0:4                
 !DIR$ PREFETCH nstend:1:16
-!DIR$ PREFETCH 
+!DIR$ PREFETCH nsagg:0:4
+!DIR$ PREFETCH nsagg:1:16
+!DIR$ PREFETCH npracs:0:4
+!DIR$ PREFETCH npras:1:16
+!DIR$ PREFETCH nragg:0:4
+!DIR$ PREFETCH nragg:1:16
+!DIR$ PREFETCH ni:0:4
+!DIR$ PREFETCH ni:1:16
+!DIR$ PREFETCH nimax:0:4
+!DIR$ PREFETCH nimax:1:16
 #endif
 !$OMP DO SIMD SCHEDULE(STATIC,8)
                 DO i=1,mgncol
@@ -2902,35 +2983,42 @@
             ! formulas from Matthew Shupe, NOAA/CERES
             ! *****note: radar reflectivity is local (in-precip average)
             ! units of mm^6/m^3
+            
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) &
+!$OMP PRIVATE(i,k,dum,dum1) SHARED(mgncol,nlev,qc,lcldm,qsmall,rho,nc, &
+!$OMP&                             nctend,deltat,precip_frac,qi,qsout, &
+!$OMP&                             refl,areflz,minrefl,mindbz,frefl,   &
+!$OMP&                             csrfl,acsrfl,csmin,fcsrefl)            
             DO i = 1,mgncol
+!$OMP SIMD LINEAR(i:1) PRIVATE(dum,dum1)
                 DO k=1,nlev
                     IF (qc(i,k).ge.qsmall) THEN
                         dum = (qc(i,k)/lcldm(i,k)*rho(i,k)*1000._r8)**2                 /(0.109_r8*(nc(i,k)+nctend(i,k)*deltat)&
-                        /lcldm(i,k)*rho(i,k)/1.e6_r8)*lcldm(i,k)/precip_frac(i,k)
+                        /lcldm(i,k)*rho(i,k)*0.000001_r8)*lcldm(i,k)/precip_frac(i,k)
                         ELSE
                         dum = 0._r8
                     END IF 
                     IF (qi(i,k).ge.qsmall) THEN
-                        dum1 = (qi(i,k)*rho(i,k)/icldm(i,k)*1000._r8/0.1_r8)**(1._r8/0.63_r8)*icldm(i,k)/precip_frac(i,k)
+                        dum1 = (qi(i,k)*rho(i,k)/icldm(i,k)*1000._r8/0.1_r8)**1.5873015873015873015873_r8*icldm(i,k)/precip_frac(i,k)
                         ELSE
                         dum1 = 0._r8
                     END IF 
                     IF (qsout(i,k).ge.qsmall) THEN
-                        dum1 = dum1+(qsout(i,k)*rho(i,k)*1000._r8/0.1_r8)**(1._r8/0.63_r8)
+                        dum1 = dum1+(qsout(i,k)*rho(i,k)*1000._r8/0.1_r8)**1.5873015873015873015873_r8
                     END IF 
                     refl(i,k) = dum+dum1
                     ! add rain rate, but for 37 GHz formulation instead of 94 GHz
                     ! formula approximated from data of Matrasov (2007)
                     ! rainrt is the rain rate in mm/hr
                     ! reflectivity (dum) is in DBz
-                    IF (rainrt(i,k).ge.0.001_r8) THEN
-                        dum = log10(rainrt(i,k)**6._r8)+16._r8
-                        ! convert from DBz to mm^6/m^3
-                        dum = 10._r8**(dum/10._r8)
-                        ELSE
-                        ! don't include rain rate in R calculation for values less than 0.001 mm/hr
-                        dum = 0._r8
-                    END IF 
+                    !IF (rainrt(i,k).ge.0.001_r8) THEN <----------------- Added by Bernard Gingold 'rainrt' is not used.
+                    !    dum = log10(rainrt(i,k)**6._r8)+16._r8
+                    !    ! convert from DBz to mm^6/m^3
+                    !    dum = 10._r8**(dum/10._r8)
+                    !    ELSE
+                    !    ! don't include rain rate in R calculation for values less than 0.001 mm/hr
+                    !    dum = 0._r8
+                    !END IF 
                     ! add to refl
                     refl(i,k) = refl(i,k)+dum
                     !output reflectivity in Z.
@@ -2961,7 +3049,8 @@
                         fcsrfl(i,k) = 0._r8
                     END IF 
                 END DO 
-            END DO 
+            END DO
+!$OMP END PARALLEL DO             
             !redefine fice here....
             dum_2d = qsout + qrout + qc + qi
             dumi = qsout + qi
@@ -2976,6 +3065,7 @@
         !========================================================================
 
         elemental SUBROUTINE calc_rercld(lamr, n0r, lamc, pgam, qric, qcic, ncic, rercld)
+
             REAL(KIND=r8), intent(in) :: lamr ! rain size parameter (slope)
             REAL(KIND=r8), intent(in) :: n0r ! rain size parameter (intercept)
             REAL(KIND=r8), intent(in) :: lamc ! size distribution parameter (slope)
