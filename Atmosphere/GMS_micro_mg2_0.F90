@@ -1885,6 +1885,30 @@
                     END IF 
                 END DO
 !$OMP END DO
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH nsubr:0:4
+!DIR$ PREFETCH nsubr:1:16
+!DIR$ PREFETCH npracs:0:4
+!DIR$ PREFETCH npracs:1:16
+!DIR$ PREFETCH nnuccr:0:4
+!DIR$ PREFETCH nnuccr:1:16
+!DIR$ PREFETCH nnuccri:0:4
+!DIR$ PREFETCH nnuccri:1:16                
+!DIR$ PREFETCH nragg:0:4
+!DIR$ PREFETCH nragg:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH nprc:0:4
+!DIR$ PREFETCH nprc:1:16
+!DIR$ PREFETCH lcldm:0:4
+!DIR$ PREFETCH lcldm:1:16
+!DIR$ PREFETCH nr:0:4
+!DIR$ PREFETCH nr:1:16
+!DIR$ PREFETCH 
+               
+       
+#endif
 !$OMP DO SIMD SCHEDULE(STATIC,8)                  
                 DO i=1,mgncol
                     dum = ((-nsubr(i,k)+npracs(i,k)+nnuccr(i,k)+nnuccri(i,k)-nragg(i,k))*precip_frac(i,k)-              nprc(i,k)&
@@ -1898,8 +1922,43 @@
                         nsubr(i,k) = nsubr(i,k)*ratio
                         nnuccri(i,k) = nnuccri(i,k)*ratio
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO                 
                 IF (do_cldice) THEN
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH mnuccc:0:4
+!DIR$ PREFETCH mnuccc:1:16
+!DIR$ PREFETCH mnucct:0:4
+!DIR$ PREFETCH mnucct:1:16
+!DIR$ PREFETCH mnudep:0:4
+!DIR$ PREFETCH mnudep:1:16
+!DIR$ PREFETCH msacwi:0:4
+!DIR$ PREFETCH msacwi:1:16
+!DIR$ PREFETCH lcldm:0:4
+!DIR$ PREFETCH lcldm:1:16                   
+!DIR$ PREFETCH prci:0:4
+!DIR$ PREFETCH prci:1:16
+!DIR$ PREFETCH prai:0:4                   
+!DIR$ PREFETCH prai:1:16
+!DIR$ PREFETCH icldm:0:4
+!DIR$ PREFETCH icldm:1:16
+!DIR$ PREFETCH mnuccri:0:4
+!DIR$ PREFETCH mnuccri:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH ice_sublim:0:4
+!DIR$ PREFETCH ice_sublim:1:16
+!DIR$ PREFETCH vap_dep:0:4
+!DIR$ PREFETCH vap_dep:1:16
+!DIR$ PREFETCH berg:0:4
+!DIR$ PREFETCH berg:1:16
+!DIR$ PREFETCH mnuccd:0:4
+!DIR$ PREFETCH mnuccd:1:16
+!DIR$ PREFETCH qi:0:4                   
+!DIR$ PREFETCH qi:1:16                   
+#endif
+!$OMP DO SIMD SCHEDULE(STATIC,8)                   
                     DO i=1,mgncol
                         ! conservation of qi
                         !-------------------------------------------------------------------
@@ -1914,9 +1973,37 @@
                             prai(i,k) = prai(i,k)*ratio
                             ice_sublim(i,k) = ice_sublim(i,k)*ratio
                         END IF 
-                    END DO 
+                    END DO
+!$OMP END DO                     
                 END IF 
                 IF (do_cldice) THEN
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH nnuccc:0:4
+!DIR$ PREFETCH nnuccc:1:16
+!DIR$ PREFETCH nnucct:0:4
+!DIR$ PREFETCH nnucct:1:16
+!DIR$ PREFETCH nnudep:0:4
+!DIR$ PREFETCH nnudep:1:16
+!DIR$ PREFETCH nsacwi:0:4
+!DIR$ PREFETCH nsacwi:1:16                   
+!DIR$ PREFETCH lcldm:0:4
+!DIR$ PREFETCH lcldm:1:16
+!DIR$ PREFETCH nprai:0:4
+!DIR$ PREFETCH nprai:1:16
+!DIR$ PREFETCH nsubi:0:4
+!DIR$ PREFETCH nsubi:1:16
+!DIR$ PREFETCH nnuccri:0:4                   
+!DIR$ PREFETCH nnuccri:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH nnuccd:0:4
+!DIR$ PREFETCH nnuccd:1:16                   
+!DIR$ PREFETCH ni:0:4
+!DIR$ PREFETCH ni:1:16
+                   
+#endif
+!$OMP DO SIMD SCHEDULE(STATIC,8)
                     DO i=1,mgncol
                         ! conservation of ni
                         !-------------------------------------------------------------------
@@ -1935,8 +2022,10 @@
                             nprai(i,k) = nprai(i,k)*ratio
                             nsubi(i,k) = nsubi(i,k)*ratio
                         END IF 
-                    END DO 
-                END IF 
+                   END DO
+!$OMP END DO
+                END IF
+!$OMP DO SIMD SCHEDULE(STATIC,8)
                 DO i=1,mgncol
                     ! conservation of snow mixing ratio
                     !-------------------------------------------------------------------
@@ -1947,8 +2036,9 @@
                         i,k)+(pracs(i,k)+mnuccr(i,k))*precip_frac(i,k))/                 precip_frac(i,k)/(-prds(i,k))*omsm
                         prds(i,k) = prds(i,k)*ratio
                     END IF 
-                END DO 
-                DO i=1,mgncol
+                 END DO
+!$OMP END DO
+               DO i=1,mgncol
                     ! conservation of snow number
                     !-------------------------------------------------------------------
                     ! calculate loss of number due to sublimation
@@ -2001,6 +2091,93 @@
                 END DO 
                 ! Big "administration" loop enforces conservation, updates variables
                 ! that accumulate over substeps, and sets output variables.
+#if  defined(__INTEL_COMPILER) || defined(__ICC)
+!DIR$ CODE_ALIGN(32)
+!DIR$ PREFETCH qvlat:0:4
+!DIR$ PREFETCH qvlat:1:16
+!DIR$ PREFETCH prds:0:4
+!DIR$ PREFETCH prds:1:16
+!DIR$ PREFETCH precip_frac:0:4
+!DIR$ PREFETCH precip_frac:1:16
+!DIR$ PREFETCH vap_dep:0:4
+!DIR$ PREFETCH vap_dep:1:16
+!DIR$ PREFETCH ice_sublim:0:4
+!DIR$ PREFETCH ice_sublim:1:16
+!DIR$ PREFETCH mnuccd:0:4
+!DIR$ PREFETCH mnuccd:1:16
+!DIR$ PREFETCH mnudep:0:4
+!DIR$ PREFETCH mnudep:1:16                
+!DIR$ PREFETCH lcldm:0:4
+!DIR$ PREFETCH lcldm:1:16
+!DIR$ PREFETCH tlat:0:4
+!DIR$ PREFETCH tlat:1:16
+!DIR$ PREFETCH bergs:0:4
+!DIR$ PREFETCH bergs:1:16
+!DIR$ PREFETCH psacws:0:4
+!DIR$ PREFETCH psacws:1:16
+!DIR$ PREFETCH mnuccc:0:4
+!DIR$ PREFETCH mnuccc:1:16
+!DIR$ PREFETCH mnucct:0:4
+!DIR$ PREFETCH mnucct:1:16
+!DIR$ PREFETCH msacwi:0:4
+!DIR$ PREFETCH msacwi:1:16
+!DIR$ PREFETCH mnuccr:0:4
+!DIR$ PREFETCH mnuccr:1:16
+!DIR$ PREFETCH pracs:0:4
+!DIR$ PREFETCH pracs:1:16
+!DIR$ PREFETCH mnuccri:0:4                
+!DIR$ PREFETCH mnuccri:1:16
+!DIR$ PREFETCH berg:0:4
+!DIR$ PREFETCH berg:1:16
+!DIR$ PREFETCH qrtend:0:4
+!DIR$ PREFETCH qrtend:1:16
+!DIR$ PREFETCH pra:0:4
+!DIR$ PREFETCH pra:1:16
+!DIR$ PREFETCH prc:0:4
+!DIR$ PREFETCH prc:1:16
+!DIR$ PREFETCH qstend:0:4
+!DIR$ PREFETCH qstend:1:16
+!DIR$ PREFETCH prai:0:4                
+!DIR$ PREFETCH prai:1:16
+!DIR$ PREFETCH prci:0:4
+!DIR$ PREFETCH prci:1:16
+!DIR$ PREFETCH icldm:0:4
+!DIR$ PREFETCH icldm:1:16
+!DIR$ PREFETCH pre:0:4
+!DIR$ PREFETCH pre:1:16
+!DIR$ PREFETCH qcsinksum_rate1ord:0:4
+!DIR$ PREFETCH qcsinksum_rate1ord:1:16
+!DIR$ PREFETCH nnuccc:0:4
+!DIR$ PREFETCH nnuccc:1:16
+!DIR$ PREFETCH nnucct:0:4
+!DIR$ PREFETCH nnucct:1:16
+!DIR$ PREFETCH nsapcws:0:4
+!DIR$ PREFETCH nsapcws:1:16
+!DIR$ PREFETCH nsubc:0:4
+!DIR$ PREFETCH nsubc:1:16
+!DIR$ PREFETCH npra:0:4
+!DIR$ PREFETCH npra:1:16
+!DIR$ PREFETCH nprc1:0:4
+!DIR$ PREFETCH nprc1:1:16
+!DIR$ PREFETCH nsubi:0:4
+!DIR$ PREFETCH nsubi:1:16
+!DIR$ PREFETCH nsubs:0:4
+!DIR$ PREFETCH nsubs:1:16
+!DIR$ PREFETCH nctend:0:4
+!DIR$ PREFETCH nctend:1:16
+!DIR$ PREFETCH nitend:0:4
+!DIR$ PREFETCH nitend:1:16
+!DIR$ PREFETCH nnuccd:0:4
+!DIR$ PREFETCH nnuccd:1:16
+!DIR$ PREFETCH nnudep:0:4
+!DIR$ PREFETCH nnudep:1:16
+
+                
+!DIR$ PREFETCH nstend:0:4                
+!DIR$ PREFETCH nstend:1:16
+!DIR$ PREFETCH 
+#endif
+!$OMP DO SIMD SCHEDULE(STATIC,8)
                 DO i=1,mgncol
                     ! get tendencies due to microphysical conversion processes
                     !==========================================================
@@ -2087,9 +2264,12 @@
                     IF (do_cldice .and. nitend(i,k).gt.0._r8.and.ni(i,k)+nitend(i,k)*deltat.gt.nimax(i,k)) THEN
                         nitend(i,k) = max(0._r8,(nimax(i,k)-ni(i,k))/deltat)
                     END IF 
-                END DO 
+                END DO
+!$OMP END DO           
+!$OMP END PARALLEL                 
                 ! End of "administration" loop
             END DO micro_vert_loop ! end k loop
+           
             !-----------------------------------------------------
             ! convert rain/snow q and N for output to history, note,
             ! output is for gridbox average
