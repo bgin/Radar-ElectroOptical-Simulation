@@ -174,7 +174,7 @@ SUBROUTINE DAXPY(N,DA,DX,INCX,DY,INCY)
          END IF
          IF (N.LT.4) RETURN
          MP1 = M + 1
-         !$OMP SIMD ALIGNED(DY,DX) LINEAR(I:4) 
+         !$OMP SIMD ALIGNED(DY:64) ALIGNED(DX:64) LINEAR(I:4) 
          DO I = MP1,N,4
             DY(I) = DY(I) + DA*DX(I)
             DY(I+1) = DY(I+1) + DA*DX(I+1)
@@ -313,7 +313,7 @@ SUBROUTINE DCOPY(N,DX,INCX,DY,INCY) !GCC$ ATTRIBUTES inline :: DCOPY !GCC$ ATTRI
             IF (N.LT.7) RETURN
          END IF
          MP1 = M + 1
-         !$OMP SIMD ALIGNED(DY:64,DX) LINEAR(I:7)
+         !$OMP SIMD ALIGNED(DY:64) ALIGNED(DX:64) LINEAR(I:7)
          DO I = MP1,N,7
             DY(I) = DX(I)
             DY(I+1) = DX(I+1)
@@ -332,7 +332,7 @@ SUBROUTINE DCOPY(N,DX,INCX,DY,INCY) !GCC$ ATTRIBUTES inline :: DCOPY !GCC$ ATTRI
          IY = 1
          IF (INCX.LT.0) IX = (-N+1)*INCX + 1
          IF (INCY.LT.0) IY = (-N+1)*INCY + 1
-         !$OMP SIMD ALIGNED(DY:64,DX) UNROLL PARTIAL(8)
+         !$OMP SIMD ALIGNED(DY:64) ALIGNED(DX:64) UNROLL PARTIAL(8)
          DO I = 1,N
             DY(IY) = DX(IX)
             IX = IX + INCX
@@ -420,7 +420,7 @@ DOUBLE PRECISION FUNCTION DDOT(N,DX,INCX,DY,INCY) !GCC$ ATTRIBUTES inline :: DDO
             END IF
          END IF
          MP1 = M + 1
-         !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:5) REDUCTION(+:DTEMP)
+         !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:5) REDUCTION(+:DTEMP)
          DO I = MP1,N,5
           DTEMP = DTEMP + DX(I)*DY(I) + DX(I+1)*DY(I+1) + &
                   DX(I+2)*DY(I+2) + DX(I+3)*DY(I+3) + DX(I+4)*DY(I+4)
@@ -434,7 +434,7 @@ DOUBLE PRECISION FUNCTION DDOT(N,DX,INCX,DY,INCY) !GCC$ ATTRIBUTES inline :: DDO
          IY = 1
          IF (INCX.LT.0) IX = (-N+1)*INCX + 1
          IF (INCY.LT.0) IY = (-N+1)*INCY + 1
-          !$OMP SIMD ALIGNED(DX:64,DY) REDUCTION(+:DTEMP) UNROLL PARTIAL(6)
+          !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) REDUCTION(+:DTEMP) UNROLL PARTIAL(6)
          DO I = 1,N
             DTEMP = DTEMP + DX(IX)*DY(IY)
             IX = IX + INCX
@@ -919,7 +919,7 @@ SUBROUTINE DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
                   END IF
                   DO 160 L = 1,K
                      TEMP = ALPHA*B(J,L)
-                         !$OMP SIMD ALIGNED(C:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)   
+                         !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(10)   
                       DO 150 I = 1,M
                           C(I,J) = C(I,J) + TEMP*A(I,L)
   150                 CONTINUE
@@ -1303,7 +1303,7 @@ SUBROUTINE DGER(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES inline :: DGER !
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*Y(JY)
-                 !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                 !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 10 I = 1,M
                       A(I,J) = A(I,J) + X(I)*TEMP
    10             CONTINUE
@@ -1324,7 +1324,7 @@ SUBROUTINE DGER(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES inline :: DGER !
               IF (Y(JY).NE.ZERO) THEN
                   TEMP = ALPHA*Y(JY)
                   IX = KX
-                      !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 30 I = 1,M
                       A(I,J) = A(I,J) + X(IX)*TEMP
                       IX = IX + INCX
@@ -1482,7 +1482,7 @@ SUBROUTINE DROT(N,DX,INCX,DY,INCY,C,S) !GCC$ ATTRIBUTES inline :: DROT !GCC$ ATT
 !*
 !*       code for both increments equal to 1
          !*
-         !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:1) UNROLL(10)
+         !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:1) UNROLL(10)
          DO I = 1,N
             DTEMP = C*DX(I) + S*DY(I)
             DY(I) = C*DY(I) - S*DX(I)
@@ -1497,7 +1497,7 @@ SUBROUTINE DROT(N,DX,INCX,DY,INCY,C,S) !GCC$ ATTRIBUTES inline :: DROT !GCC$ ATT
          IY = 1
          IF (INCX.LT.0) IX = (-N+1)*INCX + 1
          IF (INCY.LT.0) IY = (-N+1)*INCY + 1
-         !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:1) UNROLL(10)
+         !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:1) UNROLL(10)
          DO I = 1,N
             DTEMP = C*DX(IX) + S*DY(IY)
             DY(IY) = C*DY(IY) - S*DX(IX)
@@ -1637,7 +1637,7 @@ SUBROUTINE DROTM(N,DX,INCX,DY,INCY,DPARAM) !GCC$ ATTRIBUTES inline :: DROTM !GCC
             DH12 = DPARAM(4)
             DH21 = DPARAM(3)
             DH22 = DPARAM(5)
-            !$OMP SIMD ALIGNED(DX:64,DY) UNROLL PARTIAL(6)
+            !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) UNROLL PARTIAL(6)
             DO I = 1,NSTEPS,INCX
                W = DX(I)
                Z = DY(I)
@@ -1657,7 +1657,7 @@ SUBROUTINE DROTM(N,DX,INCX,DY,INCY,DPARAM) !GCC$ ATTRIBUTES inline :: DROTM !GCC
          ELSE
             DH11 = DPARAM(2)
             DH22 = DPARAM(5)
-            !$OMP SIMD ALIGNED(DX:64,DY) UNROLL PARTIAL(6)
+            !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) UNROLL PARTIAL(6)
             DO I = 1,NSTEPS,INCX
                W = DX(I)
                Z = DY(I)
@@ -1676,7 +1676,7 @@ SUBROUTINE DROTM(N,DX,INCX,DY,INCY,DPARAM) !GCC$ ATTRIBUTES inline :: DROTM !GCC
             DH12 = DPARAM(4)
             DH21 = DPARAM(3)
             DH22 = DPARAM(5)
-            !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:1) UNROLL PARTIAL(6)
+            !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:1) UNROLL PARTIAL(6)
             DO I = 1,N
                W = DX(KX)
                Z = DY(KY)
@@ -1688,7 +1688,7 @@ SUBROUTINE DROTM(N,DX,INCX,DY,INCY,DPARAM) !GCC$ ATTRIBUTES inline :: DROTM !GCC
          ELSE IF (DFLAG.EQ.ZERO) THEN
             DH12 = DPARAM(4)
             DH21 = DPARAM(3)
-            !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:1) UNROLL PARTIAL(6)
+            !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:1) UNROLL PARTIAL(6)
             DO I = 1,N
                W = DX(KX)
                Z = DY(KY)
@@ -1700,7 +1700,7 @@ SUBROUTINE DROTM(N,DX,INCX,DY,INCY,DPARAM) !GCC$ ATTRIBUTES inline :: DROTM !GCC
          ELSE
              DH11 = DPARAM(2)
              DH22 = DPARAM(5)
-             !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:1) UNROLL PARTIAL(6)
+             !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:1) UNROLL PARTIAL(6)
              DO I = 1,N
                 W = DX(KX)
                 Z = DY(KY)
@@ -2301,7 +2301,7 @@ DOUBLE PRECISION FUNCTION DSDOT(N,SX,INCX,SY,INCY) !GCC$ ATTRIBUTES inline :: DS
 !*     Code for equal, positive, non-unit increments.
 !*
          NS = N*INCX
-         !$OMP SIMD ALIGNED(SX:64,SY) REDUCTION(+:DSDOT) UNROLL PARTIAL(10)
+         !$OMP SIMD ALIGNED(SX:64)  ALIGNED(SY:64) REDUCTION(+:DSDOT) UNROLL PARTIAL(10)
          DO I = 1,NS,INCX
             DSDOT = DSDOT + DBLE(SX(I))*DBLE(SY(I))
          END DO
@@ -2313,7 +2313,7 @@ DOUBLE PRECISION FUNCTION DSDOT(N,SX,INCX,SY,INCY) !GCC$ ATTRIBUTES inline :: DS
          KY = 1
          IF (INCX.LT.0) KX = 1 + (1-N)*INCX
          IF (INCY.LT.0) KY = 1 + (1-N)*INCY
-          !$OMP SIMD ALIGNED(SX:64,SY) REDUCTION(+:DSDOT) UNROLL PARTIAL(10)
+          !$OMP SIMD ALIGNED(SX:64) ALIGNED(SY:64) REDUCTION(+:DSDOT) UNROLL PARTIAL(10)
          DO I = 1,N
             DSDOT = DSDOT + DBLE(SX(KX))*DBLE(SY(KY))
             KX = KX + INCX
@@ -2478,7 +2478,8 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
                   TEMP1 = ALPHA*X(J)
                   TEMP2 = ZERO
                   K = KK
-                  !$OMP SIMD ALIGNED(Y:64,X,AP) LINEAR(I:1)  UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(Y:64) ALIGNED(X:64) ALIGNED(AP:64)
+                  !$OMP& LINEAR(I:1)  UNROLL PARTIAL(10)
                   DO 50 I = 1,J - 1
                       Y(I) = Y(I) + TEMP1*AP(K)
                       TEMP2 = TEMP2 + AP(K)*X(I)
@@ -2526,7 +2527,8 @@ SUBROUTINE DSPMV(UPLO,N,ALPHA,AP,X,INCX,BETA,Y,INCY) !GCC$ ATTRIBUTES hot :: DSP
                   TEMP2 = ZERO
                   Y(J) = Y(J) + TEMP1*AP(KK)
                   K = KK + 1
-                   !$OMP SIMD ALIGNED(Y:64,X,AP) LINEAR(I:1)  UNROLL PARTIAL(10)
+                   !$OMP SIMD ALIGNED(Y:64) ALIGNED(X:64) ALIGNED(AP:64)
+                   !$OMP& LINEAR(I:1)  UNROLL PARTIAL(10)
                   DO 90 I = J + 1,N
                       Y(I) = Y(I) + TEMP1*AP(K)
                       TEMP2 = TEMP2 + AP(K)*X(I)
@@ -2679,7 +2681,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
                   IF (X(J).NE.ZERO) THEN
                       TEMP = ALPHA*X(J)
                       K = KK
-                      !$OMP SIMD ALIGNED(AP:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 10 I = 1,J
                           AP(K) = AP(K) + X(I)*TEMP
                           K = K + 1
@@ -2697,7 +2699,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
                       IX = KX
-                       !$OMP SIMD ALIGNED(AP:64,X) 
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                       DO 30 K = KK,KK + J - 1
                           AP(K) = AP(K) + X(IX)*TEMP
                           IX = IX + INCX
@@ -2719,7 +2721,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
                   IF (X(J).NE.ZERO) THEN
                       TEMP = ALPHA*X(J)
                       K = KK
-                       !$OMP SIMD ALIGNED(AP:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 50 I = J,N
                           AP(K) = AP(K) + X(I)*TEMP
                           K = K + 1
@@ -2736,7 +2738,7 @@ SUBROUTINE DSPR(UPLO,N,ALPHA,X,INCX,AP) !GCC$ ATTRIBUTES hot :: DSPR !GCC$ ATTRI
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
                       IX = JX
-                      !$OMP SIMD ALIGNED(AP:64,X) 
+                      !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                       DO 70 K = KK,KK + N - J
                           AP(K) = AP(K) + X(IX)*TEMP
                           IX = IX + INCX
@@ -2878,7 +2880,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
                       TEMP1 = ALPHA*Y(J)
                       TEMP2 = ALPHA*X(J)
                       K = KK
-                      !$OMP SIMD ALIGNED(AP:64,X,Y) LINEAR(I:1) 
+                      !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64) ALIGNED(Y:64) LINEAR(I:1) 
                       DO 10 I = 1,J
                           AP(K) = AP(K) + X(I)*TEMP1 + Y(I)*TEMP2
                           K = K + 1
@@ -2898,7 +2900,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
                       TEMP2 = ALPHA*X(JX)
                       IX = KX
                       IY = KY
-                       !$OMP SIMD ALIGNED(AP:64,X,Y)
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64) ALIGNED(Y:64)
                       DO 30 K = KK,KK + J - 1
                           AP(K) = AP(K) + X(IX)*TEMP1 + Y(IY)*TEMP2
                           IX = IX + INCX
@@ -2925,7 +2927,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
                       TEMP1 = ALPHA*Y(J)
                       TEMP2 = ALPHA*X(J)
                       K = KK
-                        !$OMP SIMD ALIGNED(AP:64,X,Y) LINEAR(I:1) UNROLL PARTIAL(10)
+                        !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64) ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 50 I = J,N
                           AP(K) = AP(K) + X(I)*TEMP1 + Y(I)*TEMP2
                           K = K + 1
@@ -2944,7 +2946,7 @@ SUBROUTINE DSPR2(UPLO,N,ALPHA,X,INCX,Y,INCY,AP) !GCC$ ATTRIBUTES hot :: DSPR2 !G
                       TEMP2 = ALPHA*X(JX)
                       IX = JX
                       IY = JY
-                        !$OMP SIMD ALIGNED(AP:64,X,Y) 
+                        !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64) ALIGNED(Y:64)
                       DO 70 K = KK,KK + N - J
                           AP(K) = AP(K) + X(IX)*TEMP1 + Y(IY)*TEMP2
                           IX = IX + INCX
@@ -3036,7 +3038,7 @@ SUBROUTINE DSWAP(N,DX,INCX,DY,INCY) !GCC$ ATTRIBUTES inline :: DSWAP !GCC$ ATTRI
             IF (N.LT.3) RETURN
          END IF
          MP1 = M + 1
-         !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:3)
+         !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:3)
          DO I = MP1,N,3
             DTEMP = DX(I)
             DX(I) = DY(I)
@@ -3057,7 +3059,7 @@ SUBROUTINE DSWAP(N,DX,INCX,DY,INCY) !GCC$ ATTRIBUTES inline :: DSWAP !GCC$ ATTRI
          IY = 1
          IF (INCX.LT.0) IX = (-N+1)*INCX + 1
          IF (INCY.LT.0) IY = (-N+1)*INCY + 1
-           !$OMP SIMD ALIGNED(DX:64,DY) LINEAR(I:1)
+           !$OMP SIMD ALIGNED(DX:64) ALIGNED(DY:64) LINEAR(I:1)
          DO I = 1,N
             DTEMP = DX(IX)
             DX(IX) = DY(IY)
@@ -3215,7 +3217,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
                   DO 60 I = 1,M
                       TEMP1 = ALPHA*B(I,J)
                       TEMP2 = ZERO
-                      !$OMP SIMD ALIGNED(C:64,B,A)  UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(C:64) ALIGNED(B:64) ALIGNED(A:64) UNROLL PARTIAL(10)
                       DO 50 K = 1,I - 1
                           C(K,J) = C(K,J) + TEMP1*A(K,I)
                           TEMP2 = TEMP2 + B(K,J)*A(K,I)
@@ -3238,7 +3240,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
                   DO 90 I = M,1,-1
                       TEMP1 = ALPHA*B(I,J)
                       TEMP2 = ZERO
-                       !$OMP SIMD ALIGNED(C:64,B,A) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(C:64) ALIGNED(B:64) ALIGNED(A:64) UNROLL PARTIAL(10)
                       DO 80 K = I + 1,M
                           C(K,J) = C(K,J) + TEMP1*A(K,I)
                           TEMP2 = TEMP2 + B(K,J)*A(K,I)
@@ -3262,12 +3264,12 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
           DO 170 J = 1,N
               TEMP1 = ALPHA*A(J,J)
               IF (BETA.EQ.ZERO) THEN
-                   !$OMP SIMD ALIGNED(C:64,B,A) LINEAR(I:1) UNROLL PARTIAL(6)
+                   !$OMP SIMD ALIGNED(C:64) ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 110 I = 1,M
                       C(I,J) = TEMP1*B(I,J)
   110             CONTINUE
               ELSE
-                     !$OMP SIMD ALIGNED(C:64,B,A) LINEAR(I:1) UNROLL PARTIAL(6)  
+                     !$OMP SIMD ALIGNED(C:64) ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(6)  
                   DO 120 I = 1,M
                       C(I,J) = BETA*C(I,J) + TEMP1*B(I,J)
   120             CONTINUE
@@ -3278,7 +3280,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
                   ELSE
                       TEMP1 = ALPHA*A(J,K)
                   END IF
-                    !$OMP SIMD ALIGNED(C:64,B,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                    !$OMP SIMD ALIGNED(C:64) ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 130 I = 1,M
                       C(I,J) = C(I,J) + TEMP1*B(I,K)
   130             CONTINUE
@@ -3289,7 +3291,7 @@ SUBROUTINE DSYMM(SIDE,UPLO,M,N,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES ho
                   ELSE
                       TEMP1 = ALPHA*A(K,J)
                   END IF
-                    !$OMP SIMD ALIGNED(C:64,B,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                    !$OMP SIMD ALIGNED(C:64) ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 150 I = 1,M
                       C(I,J) = C(I,J) + TEMP1*B(I,K)
   150             CONTINUE
@@ -3663,7 +3665,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
               DO 20 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                      TEMP = ALPHA*X(J)
-                      !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 10 I = 1,J
                           A(I,J) = A(I,J) + X(I)*TEMP
    10                 CONTINUE
@@ -3680,7 +3682,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
                       IX = KX
-                        !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                        !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 30 I = 1,J
                           A(I,J) = A(I,J) + X(IX)*TEMP
                           IX = IX + INCX
@@ -3701,7 +3703,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
               DO 60 J = 1,N
                   IF (X(J).NE.ZERO) THEN
                      TEMP = ALPHA*X(J)
-                       !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 50 I = J,N
                           A(I,J) = A(I,J) + X(I)*TEMP
    50                 CONTINUE
@@ -3717,7 +3719,7 @@ SUBROUTINE DSYR(UPLO,N,ALPHA,X,INCX,A,LDA) !GCC$ ATTRIBUTES inline :: DSYR !GCC$
                   IF (X(JX).NE.ZERO) THEN
                       TEMP = ALPHA*X(JX)
                       IX = JX
-                        !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                        !$OMP SIMD ALIGNED(A:64,X) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 70 I = J,N
                           A(I,J) = A(I,J) + X(IX)*TEMP
                           IX = IX + INCX
@@ -3864,7 +3866,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
                       TEMP2 = ALPHA*X(J)
-                      !$OMP SIMD ALIGNED(A:64,X,Y) LINEAR(I:1) UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 10 I = 1,J
                           A(I,J) = A(I,J) + X(I)*TEMP1 + Y(I)*TEMP2
    10                 CONTINUE
@@ -3882,7 +3884,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
                       TEMP2 = ALPHA*X(JX)
                       IX = KX
                       IY = KY
-                       !$OMP SIMD ALIGNED(A:64,X,Y) LINEAR(I:1) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 30 I = 1,J
                           A(I,J) = A(I,J) + X(IX)*TEMP1 + Y(IY)*TEMP2
                           IX = IX + INCX
@@ -3906,7 +3908,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
                   IF ((X(J).NE.ZERO) .OR. (Y(J).NE.ZERO)) THEN
                       TEMP1 = ALPHA*Y(J)
                       TEMP2 = ALPHA*X(J)
-                       !$OMP SIMD ALIGNED(A:64,X,Y) LINEAR(I:1) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 50 I = J,N
                           A(I,J) = A(I,J) + X(I)*TEMP1 + Y(I)*TEMP2
    50                 CONTINUE
@@ -3923,7 +3925,7 @@ SUBROUTINE DSYR2(UPLO,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTTRIBUTES inline :: D
                       TEMP2 = ALPHA*X(JX)
                       IX = JX
                       IY = JY
-                       !$OMP SIMD ALIGNED(A:64,X,Y) LINEAR(I:1) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) ALIGNED(Y:64) LINEAR(I:1) UNROLL PARTIAL(10)
                       DO 70 I = J,N
                           A(I,J) = A(I,J) + X(IX)*TEMP1 + Y(IY)*TEMP2
                           IX = IX + INCX
@@ -4115,7 +4117,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
                       IF ((A(J,L).NE.ZERO) .OR. (B(J,L).NE.ZERO)) THEN
                           TEMP1 = ALPHA*B(J,L)
                           TEMP2 = ALPHA*A(J,L)
-                          !$OMP SIMD ALIGNED(C:64,A,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                          !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 110 I = 1,J
                               C(I,J) = C(I,J) + A(I,L)*TEMP1 + &
                                        B(I,L)*TEMP2
@@ -4143,7 +4145,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
                       IF ((A(J,L).NE.ZERO) .OR. (B(J,L).NE.ZERO)) THEN
                           TEMP1 = ALPHA*B(J,L)
                           TEMP2 = ALPHA*A(J,L)
-                            !$OMP SIMD ALIGNED(C:64,A,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                            !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 160 I = J,N
                               C(I,J) = C(I,J) + A(I,L)*TEMP1 + &
                                        B(I,L)*TEMP2
@@ -4165,7 +4167,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
                   DO 200 I = 1,J
                       TEMP1 = ZERO
                       TEMP2 = ZERO
-                       !$OMP SIMD ALIGNED(C:64,A,B) LINEAR(I:1)  UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1)  UNROLL PARTIAL(10)
                       DO 190 L = 1,K
                           TEMP1 = TEMP1 + A(L,I)*B(L,J)
                           TEMP2 = TEMP2 + B(L,I)*A(L,J)
@@ -4187,7 +4189,7 @@ SUBROUTINE DSYR2K(UPLO,TRANS,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBUTES 
                   DO 230 I = J,N
                       TEMP1 = ZERO
                       TEMP2 = ZERO
-                        !$OMP SIMD ALIGNED(C:64,A,B) LINEAR(I:1) REDUCTION(+:TEMP1,TEMP2) UNROLL PARTIAL(10)
+                        !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) REDUCTION(+:TEMP1,TEMP2) UNROLL PARTIAL(10)
                       DO 220 L = 1,K
                           TEMP1 = TEMP1 + A(L,I)*B(L,J)
                           TEMP2 = TEMP2 + B(L,I)*A(L,J)
@@ -5146,7 +5148,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       IF (X(J).NE.ZERO) THEN
                           TEMP = X(J)
                           K = KK
-                          !$OMP SIMD ALIGNED(X:64,AP) LINEAR(I:1) 
+                          !$OMP SIMD ALIGNED(X:64) ALIGNED(AP:64) LINEAR(I:1) 
                           DO 10 I = 1,J - 1
                               X(I) = X(I) + TEMP*AP(K)
                               K = K + 1
@@ -5166,7 +5168,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
                           IX = KX
-                            !$OMP SIMD ALIGNED(X:64,AP) LINEAR(I:1) UNROLL PARTIAL(10)
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(AP:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 30 K = KK,KK + J - 2
                               X(IX) = X(IX) + TEMP*AP(K)
                               IX = IX + INCX
@@ -5189,7 +5191,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       IF (X(J).NE.ZERO) THEN
                           TEMP = X(J)
                           K = KK
-                            !$OMP SIMD ALIGNED(X:64,AP) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(AP:64) LINEAR(I:1) 
                           DO 50 I = N,J + 1,-1
                               X(I) = X(I) + TEMP*AP(K)
                               K = K - 1
@@ -5209,7 +5211,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
                           IX = KX
-                           !$OMP SIMD ALIGNED(X:64,AP)  
+                           !$OMP SIMD ALIGNED(X:64) ALIGNED(AP:64) 
                           DO 70 K = KK,KK - (N- (J+1)),-1
                               X(IX) = X(IX) + TEMP*AP(K)
                               IX = IX - INCX
@@ -5237,7 +5239,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*AP(KK)
                       K = KK - 1
-                       !$OMP SIMD ALIGNED(X:64,AP) 
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(AP:64)
                       DO 90 I = J - 1,1,-1
                           TEMP = TEMP + AP(K)*X(I)
                           K = K - 1
@@ -5256,7 +5258,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       TEMP = X(JX)
                       IX = JX
                       IF (NOUNIT) TEMP = TEMP*AP(KK)
-                       !$OMP SIMD ALIGNED(X:64,AP)  
+                       !$OMP SIMD ALIGNED(X:64)  ALIGNED(AP:64)
                       DO 110 K = KK - 1,KK - J + 1,-1
                           IX = IX - INCX
                           TEMP = TEMP + AP(K)*X(IX)
@@ -5278,7 +5280,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*AP(KK)
                       K = KK + 1
-                       !$OMP SIMD ALIGNED(X:64,AP)  
+                       !$OMP SIMD ALIGNED(X:64)  ALIGNED(AP:64)
                       DO 130 I = J + 1,N
                           TEMP = TEMP + AP(K)*X(I)
                           K = K + 1
@@ -5297,7 +5299,7 @@ SUBROUTINE DTPMV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPMV !GCC
                       TEMP = X(JX)
                       IX = JX
                       IF (NOUNIT) TEMP = TEMP*AP(KK)
-                       !$OMP SIMD ALIGNED(X:64,AP)  
+                       !$OMP SIMD ALIGNED(X:64)  ALIGNED(AP:64)
                       DO 150 K = KK + 1,KK + N - J
                           IX = IX + INCX
                           TEMP = TEMP + AP(K)*X(IX)
@@ -5439,7 +5441,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                           IF (NOUNIT) X(J) = X(J)/AP(KK)
                           TEMP = X(J)
                           K = KK - 1
-                          !$OMP SIMD ALIGNED(AP:64,X)
+                          !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                           DO 10 I = J - 1,1,-1
                               X(I) = X(I) - TEMP*AP(K)
                               K = K - 1
@@ -5459,7 +5461,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                           IF (NOUNIT) X(JX) = X(JX)/AP(KK)
                           TEMP = X(JX)
                           IX = JX
-                          !$OMP SIMD ALIGNED(AP:64,X)
+                          !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                           DO 30 K = KK - 1,KK - J + 1,-1
                               IX = IX - INCX
                               X(IX) = X(IX) - TEMP*AP(K)
@@ -5482,7 +5484,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                           IF (NOUNIT) X(J) = X(J)/AP(KK)
                           TEMP = X(J)
                           K = KK + 1
-                           !$OMP SIMD ALIGNED(AP:64,X)
+                           !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                           DO 50 I = J + 1,N
                               X(I) = X(I) - TEMP*AP(K)
                               K = K + 1
@@ -5502,7 +5504,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                           IF (NOUNIT) X(JX) = X(JX)/AP(KK)
                           TEMP = X(JX)
                           IX = JX
-                           !$OMP SIMD ALIGNED(AP:64,X) 
+                           !$OMP SIMD ALIGNED(AP:64)  ALIGNED(X:64)
                           DO 70 K = KK + 1,KK + N - J
                               IX = IX + INCX
                               X(IX) = X(IX) - TEMP*AP(K)
@@ -5528,7 +5530,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                   DO 100 J = 1,N
                       TEMP = X(J)
                       K = KK
-                       !$OMP SIMD ALIGNED(AP:64,X) 
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                       DO 90 I = 1,J - 1
                           TEMP = TEMP - AP(K)*X(I)
                           K = K + 1
@@ -5547,7 +5549,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                   DO 120 J = 1,N
                       TEMP = X(JX)
                       IX = KX
-                       !$OMP SIMD ALIGNED(AP:64,X) 
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                       DO 110 K = KK,KK + J - 2
                           TEMP = TEMP - AP(K)*X(IX)
                           IX = IX + INCX
@@ -5568,7 +5570,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                   DO 140 J = N,1,-1
                       TEMP = X(J)
                       K = KK
-                       !$OMP SIMD ALIGNED(AP:64,X) 
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                       DO 130 I = N,J + 1,-1
                           TEMP = TEMP - AP(K)*X(I)
                           K = K - 1
@@ -5588,7 +5590,7 @@ SUBROUTINE DTPSV(UPLO,TRANS,DIAG,N,AP,X,INCX) !GCC$ ATTRIBUTES hot :: DTPSV !GCC
                   DO 160 J = N,1,-1
                       TEMP = X(JX)
                       IX = KX
-                       !$OMP SIMD ALIGNED(AP:64,X)
+                       !$OMP SIMD ALIGNED(AP:64) ALIGNED(X:64)
                       DO 150 K = KK,KK - (N- (J+1)),-1
                           TEMP = TEMP - AP(K)*X(IX)
                           IX = IX - INCX
@@ -5746,7 +5748,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 40 K = 1,M
                           IF (B(K,J).NE.ZERO) THEN
                              TEMP = ALPHA*B(K,J)
-                             !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                             !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                               DO 30 I = 1,K - 1
                                   B(I,J) = B(I,J) + TEMP*A(I,K)
    30                         CONTINUE
@@ -5765,7 +5767,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                           IF (B(K,J).NE.ZERO) THEN
                               TEMP = ALPHA*B(K,J)
                               B(K,J) = TEMP
-                               !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                               !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                               IF (NOUNIT) B(K,J) = B(K,J)*A(K,K)
                               DO 60 I = K + 1,M
                                   B(I,J) = B(I,J) + TEMP*A(I,K)
@@ -5787,7 +5789,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 100 I = M,1,-1
                           TEMP = B(I,J)
                           IF (NOUNIT) TEMP = TEMP*A(I,I)
-                             !$OMP SIMD ALIGNED(A:64,B) LINEAR(K:1)
+                             !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(K:1)
                           DO 90 K = 1,I - 1
                               TEMP = TEMP + A(K,I)*B(K,J)
    90                     CONTINUE
@@ -5803,7 +5805,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 130 I = 1,M
                           TEMP = B(I,J)
                           IF (NOUNIT) TEMP = TEMP*A(I,I)
-                              !$OMP SIMD ALIGNED(A:64,B) LINEAR(K:1) 
+                              !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(K:1) 
                           DO 120 K = I + 1,M
                               TEMP = TEMP + A(K,I)*B(K,J)
   120                     CONTINUE
@@ -5824,14 +5826,14 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                   DO 180 J = N,1,-1
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
-                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(6)
+                        !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
                       DO 150 I = 1,M
                           B(I,J) = TEMP*B(I,J)
   150                 CONTINUE
                       DO 170 K = 1,J - 1
                           IF (A(K,J).NE.ZERO) THEN
                              TEMP = ALPHA*A(K,J)
-                               !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                               !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                               DO 160 I = 1,M
                                   B(I,J) = B(I,J) + TEMP*B(I,K)
   160                         CONTINUE
@@ -5845,14 +5847,14 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                   DO 220 J = 1,N
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
-                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(6)
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
                       DO 190 I = 1,M
                           B(I,J) = TEMP*B(I,J)
   190                 CONTINUE
                       DO 210 K = J + 1,N
                           IF (A(K,J).NE.ZERO) THEN
                              TEMP = ALPHA*A(K,J)
-                               !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                               !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                               DO 200 I = 1,M
                                   B(I,J) = B(I,J) + TEMP*B(I,K)
   200                         CONTINUE
@@ -5872,7 +5874,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 240 J = 1,K - 1
                           IF (A(J,K).NE.ZERO) THEN
                              TEMP = ALPHA*A(J,K)
-                                !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                                !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                               DO 230 I = 1,M
                                   B(I,J) = B(I,J) + TEMP*B(I,K)
   230                         CONTINUE
@@ -5881,7 +5883,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(K,K)
                       IF (TEMP.NE.ONE) THEN
-                           !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                           !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 250 I = 1,M
                               B(I,K) = TEMP*B(I,K)
   250                     CONTINUE
@@ -5895,7 +5897,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 280 J = K + 1,N
                           IF (A(J,K).NE.ZERO) THEN
                              TEMP = ALPHA*A(J,K)
-                                  !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(10)
+                                  !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(10)
                               DO 270 I = 1,M
                                   B(I,J) = B(I,J) + TEMP*B(I,K)
   270                         CONTINUE
@@ -5904,7 +5906,7 @@ SUBROUTINE DTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       TEMP = ALPHA
                       IF (NOUNIT) TEMP = TEMP*A(K,K)
                       IF (TEMP.NE.ONE) THEN
-                              !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(6)
+                              !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(6)
                           DO 290 I = 1,M
                               B(I,K) = TEMP*B(I,K)
   290                     CONTINUE
@@ -6045,7 +6047,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                   DO 20 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
-                         !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                         !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                           DO 10 I = 1,J - 1
                               X(I) = X(I) + TEMP*A(I,J)
    10                     CONTINUE
@@ -6063,7 +6065,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
                           IX = KX
-                           !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                           !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 30 I = 1,J - 1
                               X(IX) = X(IX) + TEMP*A(I,J)
                               IX = IX + INCX
@@ -6082,7 +6084,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                   DO 60 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
-                             !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1)
+                             !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1)
                           DO 50 I = N,J + 1,-1
                               X(I) = X(I) + TEMP*A(I,J)
    50                     CONTINUE
@@ -6101,7 +6103,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
                           IX = KX
-                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1)
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1)
                           DO 70 I = N,J + 1,-1
                               X(IX) = X(IX) + TEMP*A(I,J)
                               IX = IX - INCX
@@ -6125,7 +6127,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                   DO 100 J = N,1,-1
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
-                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(10)
                       DO 90 I = J - 1,1,-1
                           TEMP = TEMP + A(I,J)*X(I)
    90                 CONTINUE
@@ -6141,7 +6143,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                       TEMP = X(JX)
                       IX = JX
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
-                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) REDUCTION(+:TEMP) UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) REDUCTION(+:TEMP) UNROLL PARTIAL(10)
                       DO 110 I = J - 1,1,-1
                           IX = IX - INCX
                           TEMP = TEMP + A(I,J)*X(IX)
@@ -6159,7 +6161,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                   DO 140 J = 1,N
                       TEMP = X(J)
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
-                          !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                          !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                       DO 130 I = J + 1,N
                           TEMP = TEMP + A(I,J)*X(I)
   130                 CONTINUE
@@ -6176,7 +6178,7 @@ SUBROUTINE DTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRMV !
                       TEMP = X(JX)
                       IX = JX
                       IF (NOUNIT) TEMP = TEMP*A(J,J)
-                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                       DO 150 I = J + 1,N
                           IX = IX + INCX
                           TEMP = TEMP + A(I,J)*X(IX)
@@ -6342,7 +6344,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 50 K = M,1,-1
                           IF (B(K,J).NE.ZERO) THEN
                              IF (NOUNIT) B(K,J) = B(K,J)/A(K,K)
-                              !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(6)
+                              !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(6)
                               DO 40 I = 1,K - 1
                                   B(I,J) = B(I,J) - B(K,J)*A(I,K)
    40                         CONTINUE
@@ -6364,7 +6366,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 90 K = 1,M
                           IF (B(K,J).NE.ZERO) THEN
                              IF (NOUNIT) B(K,J) = B(K,J)/A(K,K)
-                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) 
+                               !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64)  LINEAR(I:1) 
                               DO 80 I = K + 1,M
                                   B(I,J) = B(I,J) - B(K,J)*A(I,K)
    80                         CONTINUE
@@ -6384,7 +6386,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                   DO 130 J = 1,N
                       DO 120 I = 1,M
                          TEMP = ALPHA*B(I,J)
-                           !$OMP SIMD ALIGNED(B:64,A) LINEAR(K:1)
+                           !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(K:1)
                           DO 110 K = 1,I - 1
                               TEMP = TEMP - A(K,I)*B(K,J)
   110                     CONTINUE
@@ -6400,7 +6402,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                   DO 160 J = 1,N
                       DO 150 I = M,1,-1
                          TEMP = ALPHA*B(I,J)
-                           !$OMP SIMD ALIGNED(B:64,A) LINEAR(K:1) 
+                           !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(K:1) 
                           DO 140 K = I + 1,M
                               TEMP = TEMP - A(K,I)*B(K,J)
   140                     CONTINUE
@@ -6428,7 +6430,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       END IF
                       DO 190 K = 1,J - 1
                          IF (A(K,J).NE.ZERO) THEN
-                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                               !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(10)
                               DO 180 I = 1,M
                                   B(I,J) = B(I,J) - A(K,J)*B(I,K)
   180                         CONTINUE
@@ -6455,7 +6457,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       END IF
                       DO 240 K = J + 1,N
                          IF (A(K,J).NE.ZERO) THEN
-                                !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                                !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(10)
                               DO 230 I = 1,M
                                   B(I,J) = B(I,J) - A(K,J)*B(I,K)
   230                         CONTINUE
@@ -6481,7 +6483,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                   DO 310 K = N,1,-1
                       IF (NOUNIT) THEN
                          TEMP = ONE/A(K,K)
-                           !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(6)
+                           !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(6)
                           DO 270 I = 1,M
                               B(I,K) = TEMP*B(I,K)
   270                     CONTINUE
@@ -6489,7 +6491,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 290 J = 1,K - 1
                           IF (A(J,K).NE.ZERO) THEN
                              TEMP = A(J,K)
-                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                               !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(10)
                               DO 280 I = 1,M
                                   B(I,J) = B(I,J) - TEMP*B(I,K)
   280                         CONTINUE
@@ -6517,7 +6519,7 @@ SUBROUTINE DTRSM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB) !GCC$ ATTRIBUTES h
                       DO 340 J = K + 1,N
                           IF (A(J,K).NE.ZERO) THEN
                              TEMP = A(J,K)
-                                 !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)  UNROLL PARTIAL(10)
+                                 !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)  UNROLL PARTIAL(10)
                               DO 330 I = 1,M
                                   B(I,J) = B(I,J) - TEMP*B(I,K)
   330                         CONTINUE
@@ -6653,7 +6655,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                       IF (X(J).NE.ZERO) THEN
                           IF (NOUNIT) X(J) = X(J)/A(J,J)
                           TEMP = X(J)
-                          !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                          !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                           DO 10 I = J - 1,1,-1
                               X(I) = X(I) - TEMP*A(I,J)
    10                     CONTINUE
@@ -6671,7 +6673,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                           IF (NOUNIT) X(JX) = X(JX)/A(J,J)
                           TEMP = X(JX)
                           IX = JX
-                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                           DO 30 I = J - 1,1,-1
                               IX = IX - INCX
                               X(IX) = X(IX) - TEMP*A(I,J)
@@ -6690,7 +6692,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                       IF (X(J).NE.ZERO) THEN
                           IF (NOUNIT) X(J) = X(J)/A(J,J)
                           TEMP = X(J)
-                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                           DO 50 I = J + 1,N
                               X(I) = X(I) - TEMP*A(I,J)
    50                     CONTINUE
@@ -6707,7 +6709,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                           IF (NOUNIT) X(JX) = X(JX)/A(J,J)
                           TEMP = X(JX)
                           IX = JX
-                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                           DO 70 I = J + 1,N
                               IX = IX + INCX
                               X(IX) = X(IX) - TEMP*A(I,J)
@@ -6729,7 +6731,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                 !$OMP& REDUCTION(-:TEMP)
                   DO 100 J = 1,N
                      TEMP = X(J)
-                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                       DO 90 I = 1,J - 1
                           TEMP = TEMP - A(I,J)*X(I)
    90                 CONTINUE
@@ -6746,7 +6748,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                   DO 120 J = 1,N
                       TEMP = X(JX)
                       IX = KX
-                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1)
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1)
                       DO 110 I = 1,J - 1
                           TEMP = TEMP - A(I,J)*X(IX)
                           IX = IX + INCX
@@ -6764,7 +6766,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                 !$OMP& REDUCTION(-:TEMP)
                   DO 140 J = N,1,-1
                      TEMP = X(J)
-                       !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                       !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) 
                       DO 130 I = N,J + 1,-1
                           TEMP = TEMP - A(I,J)*X(I)
   130                 CONTINUE
@@ -6782,7 +6784,7 @@ SUBROUTINE DTRSV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: DTRSV !
                   DO 160 J = N,1,-1
                       TEMP = X(JX)
                       IX = KX
-                        !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) 
+                        !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64)  LINEAR(I:1) 
                       DO 150 I = N,J + 1,-1
                           TEMP = TEMP - A(I,J)*X(IX)
                           IX = IX - INCX
