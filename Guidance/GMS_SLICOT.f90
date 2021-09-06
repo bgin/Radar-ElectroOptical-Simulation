@@ -1078,7 +1078,7 @@ C
       !C
 
      
-!$OMP SIMD ALIGNED(DWORK:64,JPVT) LINEAR(I:1)
+!$OMP SIMD ALIGNED(DWORK:64) ALIGNED(JPVT:64) LINEAR(I:1)
       DO 10 I = 1, N
          DWORK( I ) = DZNRM2( M, A( 1, I ), 1 )
          DWORK( N+I ) = DWORK( I )
@@ -1492,7 +1492,7 @@ C
 !C     Initialize partial row norms and pivoting vector. The first m
 !C     elements of DWORK store the exact row norms.
 !C
-!$OMP SIMD ALIGNED(DWORK:64,JPVT) LINEAR(I:1)
+!$OMP SIMD ALIGNED(DWORK:64) ALIGNED(JPVT:64) LINEAR(I:1)
       DO 10 I = 1, M
          DWORK( I ) = DZNRM2( N, A( I, 1 ), LDA )
          DWORK( M+I ) = DWORK( I )
@@ -3052,7 +3052,7 @@ C
                    LDC, P, LDP, DWORK, LDWORK, INFO )
       LDW = MAX( 1, L )
 
-      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(DWORK,K,L) PRIVATE(J)
+      !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(DWORK,K,L,N,LDW) PRIVATE(J)
       DO 10 J = 1, L
          CALL DCOPY( N, DWORK(J), LDW, K(1,J), 1 )
    10 CONTINUE
@@ -7398,7 +7398,7 @@ C
       SNORM = ZERO
       !C
 
-      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64,A,C)
+      !$OMP SIMD REDUCTION(+:CO) ALIGNED(SCALE:64) ALIGNED(A:64) ALIGNED(C:64)
       DO 10 J = 1, N
          SCALE( J ) = ONE
          CO = DASUM( N, A( 1, J ), 1 )
@@ -9121,7 +9121,7 @@ C
             DO 40 J = 1, N
                !C
 
-               !$OMP SIMD ALIGNED(ZWORK:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(ZWORK:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 30 I = 1, N
                   IJ = IJ + 1
                   ZWORK(IJ) = DCMPLX( A(I,J), ZERO )
@@ -9144,7 +9144,7 @@ C
             DO 60 J = 1, N
                !C
 
-               !$OMP SIMD ALIGNED(ZWORK:64,A)  LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(ZWORK:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 50 I = 1, N
                   IJ = IJ + 1
                   A(I,J) = DBLE( ZWORK(IJ) )
@@ -9169,7 +9169,7 @@ C
       DO 80 J = 1, N
          !C
 
-         !$OMP SIMD ALIGNED(ZWORK:64,A)  LINEAR(I:1) UNROLL PARTIAL(8)
+         !$OMP SIMD ALIGNED(ZWORK:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(8)
          DO 70 I = 1, N
             IJ = IJ + 1
             ZWORK(IJ) = -DCMPLX( A(I,J), ZERO )
@@ -9229,7 +9229,7 @@ C
       !$OMP& SHARED(HINVB,B,ZERO,M,N) PRIVATE(J,I) COLLAPSE(2)
       DO 110 J = 1, M
 
-          !$OMP SIMD ALIGNED(HINVB:64,B)  LINEAR(I:1) UNROLL PARTIAL(8)
+          !$OMP SIMD ALIGNED(HINVB:64) ALIGNED(B:64)  LINEAR(I:1) UNROLL PARTIAL(8)
           DO 100 I = 1, N
             HINVB(I,J) = DCMPLX( B(I,J), ZERO )
   100    CONTINUE
@@ -9255,7 +9255,7 @@ C
          DO 140 K = 1, N
             !C
 
-            !$OMP SIMD ALIGNED(G:64,C,HINVB) UNROLL PARTIAL(10)
+            !$OMP SIMD ALIGNED(G:64,C,HINVB) ALIGNED(C:64) ALIGNED(HINVB:64) UNROLL PARTIAL(10)
             DO 130 I = 1, P
                G(I,J) = G(I,J) + DCMPLX( C(I,K), ZERO )*HINVB(K,J)
   130       CONTINUE
@@ -10795,7 +10795,7 @@ C
          DO 200 J = 1, N
             NJ = N + J
             IF ( LUPLO ) THEN
-             !$OMP SIMD ALIGNED(S:64,Q) LINEAR(I:1) UNROLL PARTIAL(8)
+             !$OMP SIMD ALIGNED(S:64) ALIGNED(Q:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 20 I = 1, J
                   S(N+I,J) = -Q(I,J)
    20          CONTINUE
@@ -10804,7 +10804,7 @@ C
                   S(N+I,J) = -Q(J,I)
    40          CONTINUE
                 
-               !$OMP SIMD ALIGNED(S:64,Q)  LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(S:64) ALIGNED(Q:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 60 I = 1, J
                   S(I,NJ) = -G(I,J)
    60          CONTINUE
@@ -10819,7 +10819,7 @@ C
                   S(N+I,J) = -Q(J,I)
   100          CONTINUE
                 
-               !$OMP SIMD ALIGNED(S:64,Q)  LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(S:64) ALIGNED(Q:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 120 I = J, N
                   S(N+I,J) = -Q(I,J)
   120          CONTINUE
@@ -10829,7 +10829,7 @@ C
                   S(I,NJ) = -G(J,I)
   140          CONTINUE
            
-               !$OMP SIMD ALIGNED(S:64,Q)  LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(S:64) ALIGNED(Q:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 180 I = J, N
                   S(I,NJ) = -G(I,J)
   180          CONTINUE
@@ -12485,7 +12485,7 @@ C     .. Scalar Arguments ..
          !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
          !$OMP& SHARED(B,A,N,M) PRIVATE(J,I)
          DO 20 J = 1, N
-            !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
+            !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(8)
             DO 10 I = 1, MIN( J, M )
                B(J,I) = A(I,J)
    10       CONTINUE
@@ -12494,7 +12494,7 @@ C     .. Scalar Arguments ..
          !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
          !$OMP& SHARED(B,A,N,M) PRIVATE(J,I)     
          DO 40 J = 1, N
-            !$OMP SIMD ALIGNED(B:64,A) UNROLL PARTIAL(8)
+            !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) UNROLL PARTIAL(8)
             DO 30 I = J, M
                B(J,I) = A(I,J)
    30       CONTINUE
@@ -12503,7 +12503,7 @@ C     .. Scalar Arguments ..
          !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
          !$OMP& SHARED(B,A,N,M) PRIVATE(J,I) COLLAPSE(2)
          DO 60 J = 1, N
-            !$OMP SIMD ALIGNED(B:64,A) UNROLL PARTIAL(8)
+            !$OMP SIMD ALIGNED(B:64)ALIGNED(A:64) UNROLL PARTIAL(8)
             DO 50 I = 1, M
                B(J,I) = A(I,J)
    50       CONTINUE
@@ -16329,7 +16329,7 @@ C
             !$OMP& SHARED(AF,B,N) PRIVATE(J,I)
             DO 140 J = 1, N
                !C
-               !$OMP SIMD ALIGNED(AF:64,B) LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(AF:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 100 I = 1, J
                   AF(I,N+J)= -B(I,J)
   100          CONTINUE
@@ -16493,7 +16493,7 @@ C
             !$OMP& SHARED(BF,B,N) PRIVATE(J,I)
             DO 480 J = 1, N
                !C
-               !$OMP SIMD ALIGNED(BF:64,B) LINEAR(I:1)
+               !$OMP SIMD ALIGNED(BF:64) ALIGNED(B:64) LINEAR(I:1)
                DO 440 I = 1, J
                   BF(I,N+J)= B(I,J)
   440          CONTINUE
@@ -16517,7 +16517,7 @@ C
                   BF(I,N+J)= B(J,I)
   500          CONTINUE
                   !C
-                 !$OMP SIMD ALIGNED(BF:64,B) LINEAR(I:1)   
+                 !$OMP SIMD ALIGNED(BF:64) ALIGNED(B:64) LINEAR(I:1)   
                DO 520 I = J, N
                   BF(I,N+J)= B(I,J)
   520          CONTINUE
@@ -16559,7 +16559,7 @@ C
                !$OMP& SHARED(BF,Q,N,P) PRIVATE(J,I) COLLAPSE(2)
                DO 660 J = 1, N
                   !C
-               !$OMP SIMD ALIGNED(BF:64,Q) LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(BF:64) ALIGNED(Q:64) LINEAR(I:1) UNROLL PARTIAL(8)
                   DO 640 I = 1, P
                      BF(N2+I,N+J) = -Q(I,J)
   640             CONTINUE
@@ -19016,7 +19016,7 @@ C
          !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
          !$OMP& SHARED(N,DWORK,X,IXBS) PRIVATE(J,I) COLLAPSE(2)
          DO 60 J = 1, N
-            !$OMP SIMD ALIGNED(DWORK:64,X) LINEAR(I:1)
+            !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(X:64) LINEAR(I:1)
             DO 50 I = 1, N
                DWORK( IXBS+(J-1)*N+I ) = ABS( X( I, J ) )
    50       CONTINUE
@@ -19026,7 +19026,7 @@ C
             !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
             !$OMP& SHARED(DWORK,C,N,IRES) PRIVATE(J,I)                  
             DO 80 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1) 
+               !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(C:64) LINEAR(I:1) 
                DO 70 I = J, N
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
@@ -19036,7 +19036,7 @@ C
             !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
             !$OMP& SHARED(DWORK,X,N,IRES) PRIVATE(J,I)                       
             DO 100 J = 1, N
-              !$OMP SIMD ALIGNED(DWORK:64,C) LINEAR(I:1)
+              !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(C:64) LINEAR(I:1)
                DO 90 I = 1, J
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( C( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
@@ -19051,7 +19051,7 @@ C
             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
             !$OMP& SHARED(DWORK,A,N,IABS) PRIVATE(J,I) COLLAPSE(2)                 
             DO 120 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(8)
                DO 110 I = 1, N
                   DWORK( IABS+(J-1)*N+I ) = ABS( A( I, J ) )
   110          CONTINUE
@@ -19066,7 +19066,7 @@ C
             !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE)
             !$OMP& SHARED(DWORK,T,N,IABS) PRIVATE(J,I)                
             DO 140 J = 1, N
-               !$OMP SIMD ALIGNED(DWORK:64,T) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(T:64) UNROLL PARTIAL(8)
                DO 130 I = 1, MIN( J+1, N )
                   DWORK( IABS+(J-1)*N+I ) = ABS( T( I, J ) )
   130          CONTINUE
@@ -19327,7 +19327,10 @@ C
             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
             !$OMP& SHARED(B,H,A,N,M) PRIVATE(J,I,T0)
             DO 20 J = 1, N
-               !$OMP SIMD ALIGNED(B:64,H,A,ALPHA) LINEAR(I:1) UNROLL PARTIAL(10)
+               !$OMP SIMD ALIGNED(B:64) 
+               !$OMP&     ALIGNED(H:64) ALIGNED(A:64) 
+               !$OMP&     ALIGNED(ALPHA:64) 
+               !$OMP& UNROLL PARTIAL(10) LINEAR(I:1) 
                DO 10 I = 1, M - 1
                   T0 = B(I,J)
                   B( I, J ) = T0 + ALPHA*H( I+1, 1 )*A( I+1, J )
@@ -19337,7 +19340,8 @@ C
              !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE)
              !$OMP& SHARED(B,H,A,N,M,ALPHA) PRIVATE(J,I,T0)   
             DO 40 J = 1, N
-               !$OMP SIMD ALIGNED(B:64,H,A) LINEAR(I:1) UNROLL PARTIAL(10)
+               !$OMP SIMD ALIGNED(B:64) ALIGNED(H:64) ALIGNED(A:64)
+               !$OMP& LINEAR(I:1) UNROLL PARTIAL(10)
                DO 30 I = 2, M
                   T0 = B(I,J)
                   B( I, J ) = T0 + ALPHA*H( I, 1 )*A( I-1, J )
@@ -19612,7 +19616,8 @@ C
                !$OMP& FIRSTPRIVATE(JW) PRIVATE(J,I) COLLAPSE(2)
                DO 20 J = 1, N
                   JW = JW + 1
-                  !$OMP SIMD ALIGNED(A:64,H,DWORK) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(H:64) ALIGNED(DWORK:64)
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 10 I = 1, M - 1
                      A( I, J ) = A( I, J ) + &
                                  ALPHA*H( I+1, 1 )*DWORK( JW )
@@ -19626,7 +19631,8 @@ C
                 !$OMP& FIRSTPRIVATE(JW) PRIVATE(J,I) COLLAPSE(2)
                DO 40 J = 1, N
                   JW = JW + 1
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(H:64) ALIGNED(DWORK:64)
+                  !$OMP LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 30 I = 2, M
                      A( I, J ) = A( I, J ) + &
                                  ALPHA*H( I, 1 )*DWORK( JW )
@@ -19674,7 +19680,8 @@ C
 !C                 the j-th column of the product.
                   !C
 
-                  !$OMP SIMD ALIGNED(A:64,H,DWORK)  LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(H:64) ALIGNED(DWORK:64)  
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 70 I = 1, M - 1
                      DWORK( I ) = H( I+1, 1 )*A( I+1, J )
    70             CONTINUE
@@ -19698,7 +19705,8 @@ C
 !C                 the j-th column of the product.
                   !C
 
-                  !$OMP SIMD ALIGNED(A:64,H,DWORK)   LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(H:64) ALIGNED(DWORK:64)    
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 90 I = 1, M - 1
                      DWORK( I ) = H( I+1, 1 )*A( I, J )
    90             CONTINUE
@@ -19731,7 +19739,8 @@ C
 !C                 the i-th row of the product.
                   !C
 
-                  !$OMP SIMD ALIGNED(A:64,H:64,DWORK:64)  LINEAR(J:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(H:64) ALIGNED(DWORK:64)   
+                  !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                   DO 110 J = 1, N - 1
                      DWORK( J ) = A( I, J )*H( J+1, 1 )
   110             CONTINUE
@@ -19755,7 +19764,8 @@ C
 !C                 the i-th row of the product.
                   !C
 
-                  !$OMP SIMD ALIGNED(A:64,H,DWORK)   LINEAR(J:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(H:64) ALIGNED(DWORK:64)    
+                  !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                   DO 130 J = 1, N - 1
                      DWORK( J ) = A( I, J+1 )*H( J+1, 1 )
   130             CONTINUE
@@ -20085,7 +20095,8 @@ C
                !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) 
                !$OMP& SHARED(DWORK,R,N) PRIVATE(J,I,IJ)
                DO 30 J = 1, N
-                  !$OMP SIMD ALIGNED(DWORK:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(R:64) 
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 20 I = J, N
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
@@ -20100,7 +20111,8 @@ C
                !C
                  !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) SHARED(DWORK,R,N) PRIVATE(J,I,IJ)
                DO 50 J = 1, N
-                  !$OMP SIMD ALIGNED(DWORK:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(R:64) 
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                    DO 40 I = 1, J
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
@@ -20155,7 +20167,8 @@ C
                !C
                 !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) SHARED(DWORK,R,N) PRIVATE(J,I,IJ)
                DO 70 J = 1, N
-                  !$OMP SIMD ALIGNED(DWORK:64,R)  LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(R:64)  
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 60 I = J, N
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
@@ -20170,7 +20183,8 @@ C
                !C
                 !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) SHARED(DWORK,R,N) PRIVATE(J,I,IJ)
                DO 90 J = 1, N
-                  !$OMP SIMD ALIGNED(DWORK:64,R)  LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(DWORK:64)  ALIGNED(R:64) 
+                  !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 80 I = 1, J
                      IJ = IJ + 1
                      DWORK( IJ ) = DWORK( IJ )*R( I, J )
@@ -20961,7 +20975,8 @@ C
 !C
       FNODE = XIN
       !C
-        !$OMP SIMD ALIGNED(XF:64,STETA,CTETA) LINEAR(I:1) UNROLL PARTIAL(10)
+        !$OMP SIMD ALIGNED(XF:64) ALIGNED(STETA:64) ALIGNED(CTETA:64)
+        !$OMP& LINEAR(I:1) UNROLL PARTIAL(10)
       DO 10  I = 1, L
          XFI   = XF(I) * LAMBDA
          XF(I) = STETA(I) * FNODE + CTETA(I) * XFI
@@ -21014,7 +21029,8 @@ C
       IF ( BOTH) THEN
          FNODE = YIN
          !C
-         !$OMP SIMD ALIGNED(YQ:64,STETA,CTETA) LINEAR(I:1) UNROLL PARTIAL(10)
+         !$OMP SIMD ALIGNED(YQ:64) ALIGNED(STETA:64) ALIGNED(CTETA:64)
+         !$OMP& LINEAR(I:1) UNROLL PARTIAL(10)
          DO 40  I = 1, L
             YQI   = YQ(I) * LAMBDA
             YQ(I) = STETA(I) * FNODE + CTETA(I) * YQI
@@ -26773,7 +26789,8 @@ C
          !$OMP& COLLAPSE(2) SHARED(A,C,N,M) PRIVATE(J,CJ,I)
          DO 20 J = 1, N
             CJ = C(J)
-            !$OMP SIMD ALIGNED(A:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
+            !$OMP SIMD ALIGNED(A:64,C) ALIGNED(C:64)
+            !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
             DO 10 I = 1, M
                A(I,J) = CJ*A(I,J)
    10       CONTINUE
@@ -26785,7 +26802,8 @@ C
           !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
           !$OMP& COLLAPSE(2) SHARED(A,R,N,M) PRIVATE(J,I)
          DO 40 J = 1, N
-             !$OMP SIMD ALIGNED(A:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
+             !$OMP SIMD ALIGNED(A:64) ALIGNED(R:64)
+             !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
             DO 30 I = 1, M
                A(I,J) = R(I)*A(I,J)
    30       CONTINUE
@@ -26798,7 +26816,8 @@ C
           !$OMP& COLLAPSE(2) SHARED(A,R,C,N,M) PRIVATE(J,CJ,I)
          DO 60 J = 1, N
             CJ = C(J)
-              !$OMP SIMD ALIGNED(A:64,R,C) LINEAR(I:1) UNROLL PARTIAL(6)
+              !$OMP SIMD ALIGNED(A:64) ALIGNED(R:64) ALIGNED(C:64)
+              !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
             DO 50 I = 1, M
                A(I,J) = CJ*R(I)*A(I,J)
    50       CONTINUE
@@ -27264,7 +27283,8 @@ C
             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
             !$OMP& COLLAPSE(2) SHARED(B,R,NRHS,N) PRIVATE(J,I)
             DO 40 J = 1, NRHS
-               !$OMP SIMD ALIGNED(B:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
+               !$OMP SIMD ALIGNED(B:64) ALIGNED(R:64)
+               !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                DO 30 I = 1, N
                   B( I, J ) = R( I )*B( I, J )
    30          CONTINUE
@@ -27274,7 +27294,8 @@ C
             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
             !$OMP& COLLAPSE(2) SHARED(B,C,NRHS,N) PRIVATE(J,I)
          DO 60 J = 1, NRHS
-              !$OMP SIMD ALIGNED(B:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
+              !$OMP SIMD ALIGNED(B:64) ALIGNED(C:64)
+              LINEAR(I:1) UNROLL PARTIAL(6)
             DO 50 I = 1, N
                B( I, J ) = C( I )*B( I, J )
    50       CONTINUE
@@ -27358,7 +27379,8 @@ C
              !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
              !$OMP& COLLAPSE(2) SHARED(X,C,NRHS,N) PRIVATE(J,I)
             DO 80 J = 1, NRHS
-                !$OMP SIMD ALIGNED(X:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
+                !$OMP SIMD ALIGNED(X:64) ALIGNED(C:64) 
+                !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
                DO 70 I = 1, N
                   X( I, J ) = C( I )*X( I, J )
    70          CONTINUE
@@ -27371,7 +27393,8 @@ C
           !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
           !$OMP& COLLAPSE(2) SHARED(X,R,NRHS,N) PRIVATE(J,I)
          DO 110 J = 1, NRHS
-             !$OMP SIMD ALIGNED(X:64,R) LINEAR(I:1) UNROLL PARTIAL(6)
+             !$OMP SIMD ALIGNED(X:64) ALIGNED(R:64)
+             !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
             DO 100 I = 1, N
                X( I, J ) = R( I )*X( I, J )
   100       CONTINUE
@@ -28118,7 +28141,8 @@ C
          !$OMP PARALLEL DO DEFUALT(NONE) SCHEDULE(STATIC,8) SHARED(N,DWORK,IXBS,X)
          !$OMP& PRIVATE(J,I) COLLAPSE(2)
          DO 50 J = 1, N
-            !$OMP SIMD ALIGNED(DWORK:64,X) LINEAR(I:1) UNROLL PARTIAL(8)
+            !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(X:64)
+            !$OMP& LINEAR(I:1) UNROLL PARTIAL(8)
             DO 40 I = 1, N
                DWORK( IXBS+(J-1)*N+I ) = ABS( X( I, J ) )
    40       CONTINUE
@@ -28128,7 +28152,8 @@ C
            !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(GUIDED,8) SHARED(N,DWORK,IRES,TEMP,Q)
            !$OMP& PRIVATE(J,I)
             DO 70 J = 1, N
-                !$OMP SIMD ALIGNED(DWORK:64,X,Q) LINEAR(I:1) 
+                !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(X:64) ALIGNED(Q:64)
+                !$OMP& LINEAR(I:1) 
                DO 60 I = J, N
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( Q( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
@@ -28138,7 +28163,8 @@ C
             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(GUIDED,8)
             !$OMP& SHARED(N,DWORK,ORES,TEMP,Q) PRIVATE(J,I)
             DO 90 J = 1, N
-                !$OMP SIMD ALIGNED(DWORK:64,X,Q) LINEAR(I:1) 
+                !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(X:64) ALIGNED(Q:64)
+                !$OMP& LINEAR(I:1) 
                DO 80 I = 1, J
                   DWORK( IRES+(J-1)*N+I ) = TEMP*ABS( Q( I, J ) ) + &
                          ABS( DWORK( IRES+(J-1)*N+I ) )
@@ -28162,7 +28188,8 @@ C
             !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(GUIDED,8)
             !$OMP& SHARED(N,DWORK,IABS,T) PRIVATE(J,I)
             DO 130 J = 1, N
-                !$OMP SIMD ALIGNED(DWORK:64,T) LINEAR(I:1) 
+                !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(T:64) 
+                !$OMP& LINEAR(I:1) 
                DO 120 I = 1, MIN( J+1, N )
                   DWORK( IABS+(J-1)*N+I ) = ABS( T( I, J ) )
   120          CONTINUE
@@ -28196,7 +28223,8 @@ C
           !$OMP PARALLEL DO DEFAULT(NONE) SHEDULE(STATIC,8)
           !$OMP& SHARED(N,DWORK,IABS,G) PRIVATE(I,J) COLLAPSE(2)
             DO 170 J = 1, N
-                !$OMP SIMD ALIGNED(DWORK:64,G) LINEAR(I:1)
+                !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(G:64)
+                !$OMP& LINEAR(I:1)
                DO 160 I = J, N
                   DWORK( IABS+(J-1)*N+I ) = ABS( G( I, J ) )
   160          CONTINUE
@@ -28205,7 +28233,8 @@ C
            !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC,8)
            !$OMP& SHARED(N,DWORK,IABS,G) PRIVATE(I,J) COLLAPSE(2)
             DO 190 J = 1, N
-                !$OMP SIMD ALIGNED(DWORK:64,G) LINEAR(I:1) 
+                !$OMP SIMD ALIGNED(DWORK:64) ALIGNED(G:64)
+                !$OMP& LINEAR(I:1) 
                DO 180 I = 1, J
                   DWORK( IABS+(J-1)*N+I ) = ABS( G( I, J ) )
   180          CONTINUE
@@ -28564,7 +28593,8 @@ C
             NJ = N + J
             IF ( LUPLO ) THEN
                !C
-               !$OMP SIMD ALIGNED(S:64,G) LINEAR(I:1) UNROLL PARTIAL(8)
+               !$OMP SIMD ALIGNED(S:64) ALIGNED(G:64)
+               !$OMP& LINEAR(I:1) UNROLL PARTIAL(8)
                DO 120 I = 1, J
                   S(I,NJ) = -G(I,J)
   120          CONTINUE
@@ -28580,7 +28610,8 @@ C
                   S(I,NJ) = -G(J,I)
   160          CONTINUE
                   
-                 !$OMP SIMD ALIGNED(S:64,G) LINEAR(I:1) UNROLL PARTIAL(8)  
+                 !$OMP SIMD ALIGNED(S:64) ALIGNED(G:64)
+                 !$OMP& LINEAR(I:1) UNROLL PARTIAL(8)  
                DO 180 I = J, N
                   S(I,NJ) = -G(I,J)
   180          CONTINUE
@@ -28594,7 +28625,8 @@ C
   200          CONTINUE
 
             ELSE
-                !$OMP SIMD ALIGNED(S:64,A) LINEAR(I:1) UNROLL PARTIAL(8)
+                !$OMP SIMD ALIGNED(S:64) ALIGNED(A:64)
+                !$OMP& LINEAR(I:1) UNROLL PARTIAL(8)
                DO 220 I = 1, N
                   S(N+I,NJ) = -A(I,J)
   220          CONTINUE
