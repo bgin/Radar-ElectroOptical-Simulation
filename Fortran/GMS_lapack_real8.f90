@@ -467,7 +467,7 @@ SUBROUTINE DLACPY( UPLO, M, N, A, LDA, B, LDB )  !GCC$ ATTRIBUTES hot :: DLACPY 
       IF( LSAME( UPLO, 'U' ) ) THEN
          !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 20 J = 1, N
-            !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(8)
+            !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(8)
             DO 10 I = 1, MIN( J, M )
                B( I, J ) = A( I, J )
    10       CONTINUE
@@ -476,7 +476,7 @@ SUBROUTINE DLACPY( UPLO, M, N, A, LDA, B, LDB )  !GCC$ ATTRIBUTES hot :: DLACPY 
      ELSE IF( LSAME( UPLO, 'L' ) ) THEN
             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(B,A,N,M) COLLAPSE(2) PRIVATE(J,I)    
         DO 40 J = 1, N
-              !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(8)
+              !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(8)
             DO 30 I = J, M
                B( I, J ) = A( I, J )
    30       CONTINUE
@@ -485,7 +485,7 @@ SUBROUTINE DLACPY( UPLO, M, N, A, LDA, B, LDB )  !GCC$ ATTRIBUTES hot :: DLACPY 
      ELSE
            !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(B,A,N,M) COLLAPSE(2) PRIVATE(J,I)       
         DO 60 J = 1, N
-             !$OMP SIMD ALIGNED(A:64,B) LINEAR(I:1) UNROLL PARTIAL(8)
+             !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(I:1) UNROLL PARTIAL(8)
             DO 50 I = 1, M
                B( I, J ) = A( I, J )
    50       CONTINUE
@@ -1139,7 +1139,7 @@ T, LDT, C, LDC, WORK, LDWORK )  !GCC$ ATTRIBUTES hot :: DLARFB !GCC$ ATTRIBUTES 
                  !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                  !$OMP& SHARED(WORK,K,M) REDUCTION(-:C) PRIVATE(J,I) COLLAPSE(2) 
                DO 60 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 50 I = 1, M
                      C( I, J ) = C( I, J ) - WORK( I, J )
    50             CONTINUE
@@ -1259,7 +1259,7 @@ T, LDT, C, LDC, WORK, LDWORK )  !GCC$ ATTRIBUTES hot :: DLARFB !GCC$ ATTRIBUTES 
                 !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                 !$OMP& SHARED(WORK,K,M) PRIVATE(J,I)  REDUCTION(-:C) COLLAPSE(2)
                DO 120 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 110 I = 1, M
                      C( I, N-K+J ) = C( I, N-K+J ) - WORK( I, J )
   110             CONTINUE
@@ -1384,7 +1384,7 @@ T, LDT, C, LDC, WORK, LDWORK )  !GCC$ ATTRIBUTES hot :: DLARFB !GCC$ ATTRIBUTES 
                 !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                 !$OMP& SHARED(WORK,K,M) PRIVATE(J,I)  REDUCTION(-:C) COLLAPSE(2)
                DO 180 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 170 I = 1, M
                      C( I, J ) = C( I, J ) - WORK( I, J )
   170             CONTINUE
@@ -1503,7 +1503,7 @@ T, LDT, C, LDC, WORK, LDWORK )  !GCC$ ATTRIBUTES hot :: DLARFB !GCC$ ATTRIBUTES 
                 !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                 !$OMP& SHARED(WORK,K,M) PRIVATE(J,I) REDUCTION(-:C) COLLAPSE(2) 
                DO 240 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64)LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 230 I = 1, M
                      C( I, N-K+J ) = C( I, N-K+J ) - WORK( I, J )
   230             CONTINUE
@@ -1767,7 +1767,8 @@ SUBROUTINE DLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT )  !GCC$ ATTRIBUTES
                   DO LASTV = N, I+1, -1
                      IF( V( I, LASTV ).NE.ZERO ) EXIT
                   END DO
-                   !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                   !$OMP SIMD ALIGNED(T:64) ALIGNED(TAU:64) ALIGNED(V:64)
+                   !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                   DO J = 1, I-1
                      T( J, I ) = -TAU( I ) * V( J , I )
                   END DO
@@ -1813,7 +1814,8 @@ SUBROUTINE DLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT )  !GCC$ ATTRIBUTES
                      DO LASTV = 1, I-1
                         IF( V( LASTV, I ).NE.ZERO ) EXIT
                      END DO
-                      !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                      !$OMP SIMD ALIGNED(T:64) ALIGNED(TAU:64) ALIGNED(V:64)
+                      !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                      DO J = I+1, K
                         T( J, I ) = -TAU( I ) * V( N-K+I , J )
                      END DO
@@ -1829,7 +1831,8 @@ SUBROUTINE DLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT )  !GCC$ ATTRIBUTES
                      DO LASTV = 1, I-1
                         IF( V( I, LASTV ).NE.ZERO ) EXIT
                      END DO
-                      !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                      !$OMP SIMD ALIGNED(T:64) ALIGNED(TAU:64) ALIGNED(V:64) 
+                       !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                      DO J = I+1, K
                         T( J, I ) = -TAU( I ) * V( J, N-K+I )
                      END DO
@@ -13210,7 +13213,7 @@ END SUBROUTINE
                   WORK( J ) = -POLES( J, 2 )*Z( J ) / DIFLJ / &
                              ( POLES( J, 2 )+DJ )
                END IF
-               !$OMP SIMD ALIGNED(Z:64,POLES,WORK) LINEAR(I:1)
+               !$OMP SIMD ALIGNED(Z:64) ALIGNED(POLES:64) ALIGNED(WORK:64) LINEAR(I:1)
                DO 30 I = 1, J - 1
                   IF( ( Z( I ).EQ.ZERO ) .OR. &
                      ( POLES( I, 2 ).EQ.ZERO ) ) THEN
@@ -13221,7 +13224,7 @@ END SUBROUTINE
                                 DIFLJ ) / ( POLES( I, 2 )+DJ )
                   END IF
     30         CONTINUE
-                 !$OMP SIMD ALIGNED(Z:64,POLES,WORK) LINEAR(I:1)  
+                 !$OMP SIMD ALIGNED(Z:64) ALIGNED(POLES:64) ALIGNED(WORK:64) LINEAR(I:1)  
                DO 40 I = J + 1, K
                   IF( ( Z( I ).EQ.ZERO ) .OR. &
                       ( POLES( I, 2 ).EQ.ZERO ) ) THEN
@@ -13273,7 +13276,7 @@ END SUBROUTINE
                   WORK( J ) = -Z( J ) / DIFL( J ) / &
                              ( DSIGJ+POLES( J, 1 ) ) / DIFR( J, 2 )
                END IF
-               !$OMP SIMD ALIGNED(Z:64,WORK,POLES,DIFR) LINEAR(I:1)
+               !$OMP SIMD ALIGNED(Z:64) ALIGNED(POLES:64) ALIGNED(WORK:64) ALIGNED(DIFR:64) LINEAR(I:1)
                DO 60 I = 1, J - 1
                   IF( Z( J ).EQ.ZERO ) THEN
                      WORK( I ) = ZERO
@@ -13283,7 +13286,9 @@ END SUBROUTINE
                                 ( DSIGJ+POLES( I, 1 ) ) / DIFR( I, 2 )
                   END IF
 60             CONTINUE
-                  !$OMP SIMD ALIGNED(Z:64,WORK,POLES,DIFR,DIFL) LINEAR(I:1) 
+                  !$OMP SIMD ALIGNED(Z:64,WORK,POLES,DIFR,DIFL) ALIGNED(POLES:64) ALIGNED(WORK:64) 
+                  !$OMP& ALIGNED(DIFR:64) ALIGNED(DIFL:64)
+                  !$OMP& LINEAR(I:1) 
                DO 70 I = J + 1, K
                   IF( Z( J ).EQ.ZERO ) THEN
                      WORK( I ) = ZERO
@@ -13947,12 +13952,12 @@ SUBROUTINE DLASD8( ICOMPQ, K, D, Z, VF, VL, DIFL, DIFR, LDDIFR, &
             DSIGJP = -DSIGMA( J+1 )
          END IF
          WORK( J ) = -Z( J ) / DIFLJ / ( DSIGMA( J )+DJ )
-         !$OMP SIMD ALIGNED(WORK:64,Z,DSIGMA)
+         !$OMP SIMD ALIGNED(WORK:64) ALIGNED(Z:64) ALIGNED(DSIGMA:64)
          DO 60 I = 1, J - 1
             WORK( I ) = Z( I ) / ( DLAMC3( DSIGMA( I ), DSIGJ )-DIFLJ ) &
                          / ( DSIGMA( I )+DJ )
 60       CONTINUE
-             !$OMP SIMD ALIGNED(WORK:64,Z,DSIGMA)
+             !$OMP SIMD ALIGNED(WORK:64) ALIGNED(Z:64) ALIGNED(DSIGMA:64)
          DO 70 I = J + 1, K
             WORK( I ) = Z( I ) / ( DLAMC3( DSIGMA( I ), DSIGJP )+DIFRJ ) &
                         / ( DSIGMA( I )+DJ )
@@ -15020,7 +15025,8 @@ END SUBROUTINE
       Z1 = ALPHA*VL( NLP1 )
       VL( NLP1 ) = ZERO
       TAU = VF( NLP1 )
-      !$OMP SIMD ALIGNED(Z:64,VL,VF,D,IDXQ)
+      !$OMP SIMD ALIGNED(Z:64) 
+      !$OMP& ALIGNED(VL:64) ALIGNED(VF:64) ALIGNED(D:64) ALIGNED(IDXQ:64)
       DO 10 I = NL, 1, -1
          Z( I+1 ) = ALPHA*VL( I )
          VL( I ) = ZERO
@@ -15032,7 +15038,7 @@ END SUBROUTINE
 !*
 !*     Generate the second part of the vector Z.
       !*
-      !$OMP SIMD ALIGNED(Z:64,VF)
+      !$OMP SIMD ALIGNED(Z:64) ALIGNED(VF:64)
       DO 20 I = NLP2, M
          Z( I ) = BETA*VF( I )
          VF( I ) = ZERO
@@ -15938,7 +15944,7 @@ SUBROUTINE DLAQGE( M, N, A, LDA, R, C, ROWCND, COLCND, AMAX, &
             !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(C,A,N,M) PRIVATE(J,CJ,I)
             DO 20 J = 1, N
                CJ = C( J )
-               !$OMP SIMD ALIGNED(A:64,C) LINEAR(I:1) UNROLL PARTIAL(6)
+               !$OMP SIMD ALIGNED(A:64) ALIGNED(C:64) LINEAR(I:1) UNROLL PARTIAL(6)
                DO 10 I = 1, M
                   A( I, J ) = CJ*A( I, J )
    10          CONTINUE
@@ -15951,7 +15957,8 @@ SUBROUTINE DLAQGE( M, N, A, LDA, R, C, ROWCND, COLCND, AMAX, &
          !*
           !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(C,A,R,N,M) PRIVATE(J,I)
          DO 40 J = 1, N
-              !$OMP SIMD ALIGNED(A:64,C,R) LINEAR(I:1) UNROLL PARTIAL(6)
+              !$OMP SIMD ALIGNED(A:64) ALIGNED(C:64) ALIGNED(R:64)
+              !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
             DO 30 I = 1, M
                A( I, J ) = R( I )*A( I, J )
    30       CONTINUE
@@ -15964,7 +15971,7 @@ SUBROUTINE DLAQGE( M, N, A, LDA, R, C, ROWCND, COLCND, AMAX, &
           !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(C,A,R,N,M) PRIVATE(J,CJ,I)
          DO 60 J = 1, N
             CJ = C( J )
-            !$OMP SIMD ALIGNED(A:64,C,R) LINEAR(I:1) UNROLL PARTIAL(6)
+            !$OMP SIMD ALIGNED(A:64) ALIGNED(C:64) ALIGNED(R:64) LINEAR(I:1) UNROLL PARTIAL(6)
             DO 50 I = 1, M
                A( I, J ) = CJ*R( I )*A( I, J )
    50       CONTINUE
@@ -16009,7 +16016,7 @@ SUBROUTINE DLASCL2 ( M, N, D, X, LDX ) !GCC$ ATTRIBUTES inline :: DLASCL2 !GCC$ 
 !*     .. Executable Statements ..
 !*
       DO J = 1, N
-         !$OMP SIMD ALIGNED(X:64,D) LINEAR(I:1) UNROLL PARTIAL(6)
+         !$OMP SIMD ALIGNED(X:64,D) ALIGNED(D:64) LINEAR(I:1) UNROLL PARTIAL(6)
          DO I = 1, M
             X( I, J ) = X( I, J ) * D( I )
          END DO
@@ -16845,7 +16852,7 @@ END SUBROUTINE
                   Y( IY ) = BETA * ABS( Y( IY ) )
                END IF
                IF ( ALPHA .NE. ZERO ) THEN
-                  !$OMP SIMD ALIGNED(X:64,Y) LINEAR(J:1)
+                  !$OMP SIMD ALIGNED(X:64) ALIGNED(Y:64) LINEAR(J:1)
                   DO J = 1, LENX
                      TEMP = ABS( A( I, J ) )
                      SYMB_ZERO = SYMB_ZERO .AND. &
@@ -16876,7 +16883,7 @@ END SUBROUTINE
                   Y( IY ) = BETA * ABS( Y( IY ) )
                END IF
                IF ( ALPHA .NE. ZERO ) THEN
-                    !$OMP SIMD ALIGNED(X:64,Y) LINEAR(J:1)
+                    !$OMP SIMD ALIGNED(X:64) ALIGNED(Y:64) LINEAR(J:1)
                   DO J = 1, LENX
                      TEMP = ABS( A( J, I ) )
                      SYMB_ZERO = SYMB_ZERO .AND. &
@@ -16909,7 +16916,7 @@ END SUBROUTINE
                END IF
                IF ( ALPHA .NE. ZERO ) THEN
                   JX = KX
-                     !$OMP SIMD ALIGNED(X:64,Y) LINEAR(J:1)
+                     !$OMP SIMD ALIGNED(X:64) ALIGNED(Y:64) LINEAR(J:1)
                   DO J = 1, LENX
                      TEMP = ABS( A( I, J ) )
                      SYMB_ZERO = SYMB_ZERO .AND. &
@@ -16941,7 +16948,7 @@ END SUBROUTINE
                END IF
                IF ( ALPHA .NE. ZERO ) THEN
                   JX = KX
-                   !$OMP SIMD ALIGNED(X:64,Y) LINEAR(J:1)
+                   !$OMP SIMD ALIGNED(X:64) ALIGNED(Y:64) LINEAR(J:1)
                   DO J = 1, LENX
                      TEMP = ABS( A( J, I ) )
                      SYMB_ZERO = SYMB_ZERO .AND. &
@@ -16997,7 +17004,8 @@ SUBROUTINE DLA_WWADDW( N, X, Y, W ) !GCC$ ATTRIBUTES inline :: DLA_WWADDW !GCC$ 
 !*     ..
 !*     .. Executable Statements ..
       !*
-      !$OMP SIMD ALIGNED(X:64,Y,W) LINEAR(I:1) UNROLL PARTIAL(6)
+      !$OMP SIMD ALIGNED(X:64) ALIGNED(Y:64) ALIGNED(W:64)
+      !$OMP& LINEAR(I:1) UNROLL PARTIAL(6)
       DO 10 I = 1, N
         S = X(I) + W(I)
         S = (S + S) - S
