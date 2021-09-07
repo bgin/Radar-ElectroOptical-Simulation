@@ -142,7 +142,8 @@ DOUBLE PRECISION FUNCTION ZLANGE(NORM, M, N, A, LDA, WORK) !GCC$ ATTRIBUTES HOT 
 !*
          VALUE = ZERO
 
-         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(A,N,M) REDUCTION(+:SUM) FIRSTPRIVATE(VALUE) PRIVATE(J,I) COLLAPSE(2)
+         !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(A,N,M) 
+         !$OMP& REDUCTION(+:SUM) FIRSTPRIVATE(VALUE) PRIVATE(J,I) COLLAPSE(2)
          DO 40 J = 1, N
             !$OMP SINGLE
             SUM = ZERO
@@ -166,7 +167,7 @@ DOUBLE PRECISION FUNCTION ZLANGE(NORM, M, N, A, LDA, WORK) !GCC$ ATTRIBUTES HOT 
 
          !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(WORK,A,N,M) PRIVATE(J,I)            
          DO 70 J = 1, N
-            !$OMP SIMD  ALIGNED(WORK:64,A) LINEAR(I:1)
+            !$OMP SIMD  ALIGNED(WORK:64) ALIGNED(A:64) LINEAR(I:1)
             DO 60 I = 1, M
                WORK( I ) = WORK( I ) + ABS( A( I, J ) )
    60       CONTINUE
@@ -516,7 +517,7 @@ SUBROUTINE ZLACPY(UPLO, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES hot :: ZLACPY !GC
 
          !$OMP PARALLEL DO SCHEDULE(GUIDED,8) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 20 J = 1, N
-            !$OMP SIMD ALIGNED(B:64,A:64) LINEAR(I:1)
+            !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64)LINEAR(I:1)
             DO 10 I = 1, MIN( J, M )
                B( I, J ) = A( I, J )
    10       CONTINUE
@@ -526,7 +527,7 @@ SUBROUTINE ZLACPY(UPLO, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES hot :: ZLACPY !GC
 
          !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 40 J = 1, N
-            !$OMP SIMD ALIGNED(B:64,A:64) LINEAR(I:1)
+            !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)
             DO 30 I = J, M
                B( I, J ) = A( I, J )
    30       CONTINUE
@@ -536,7 +537,7 @@ SUBROUTINE ZLACPY(UPLO, M, N, A, LDA, B, LDB) !GCC$ ATTRIBUTES hot :: ZLACPY !GC
 
          !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) SHARED(B,A,N,M) PRIVATE(J,I)
          DO 60 J = 1, N
-            !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1)
+            !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1)
            DO 50 I = 1, M
                B( I, J ) = A( I, J )
    50       CONTINUE
@@ -1341,7 +1342,7 @@ SUBROUTINE ZCOPY(N,ZX,INCX,ZY,INCY)
 !*
 !*        code for both increments equal to 1
          !*
-         !$OMP SIMD ALIGNED(ZY:64,ZX) LINEAR(I:1) UNROLL PARTIAL(8)
+         !$OMP SIMD ALIGNED(ZY:64) ALIGNED(ZX:64) LINEAR(I:1) UNROLL PARTIAL(8)
          DO I = 1,N
           ZY(I) = ZX(I)
          END DO
@@ -1354,7 +1355,7 @@ SUBROUTINE ZCOPY(N,ZX,INCX,ZY,INCY)
          IY = 1
          IF (INCX.LT.0) IX = (-N+1)*INCX + 1
          IF (INCY.LT.0) IY = (-N+1)*INCY + 1
-         !$OMP SIMD ALIGNED(ZY:64,ZY)  LINEAR(I:1)
+         !$OMP SIMD ALIGNED(ZY:64) ALIGNED(ZX:64) LINEAR(I:1)
          DO I = 1,N
             ZY(IY) = ZX(IX)
             IX = IX + INCX
@@ -1429,7 +1430,7 @@ SUBROUTINE ZAXPY(N,ZA,ZX,INCX,ZY,INCY) !GCC$ ATTRIBUTES INLINE :: ZAXPY !GCC$ AT
 !*
 !*        code for both increments equal to 1
          !*
-         !$OMP SIMD ALIGNED(ZY:64,ZX) LINEAR(I:1) UNROLL PARTIAL(10)
+         !$OMP SIMD ALIGNED(ZY:64) ALIGNED(ZX:64)LINEAR(I:1) UNROLL PARTIAL(10)
          DO I = 1,N
             ZY(I) = ZY(I) + ZA*ZX(I)
          END DO
@@ -1442,7 +1443,7 @@ SUBROUTINE ZAXPY(N,ZA,ZX,INCX,ZY,INCY) !GCC$ ATTRIBUTES INLINE :: ZAXPY !GCC$ AT
          IY = 1
          IF (INCX.LT.0) IX = (-N+1)*INCX + 1
          IF (INCY.LT.0) IY = (-N+1)*INCY + 1
-         !$OMP SIMD ALIGNED(ZY:64,ZX) LINEAR(I:1) UNROLL PARTIAL(10)
+         !$OMP SIMD ALIGNED(ZY:64) ALIGNED(ZX:64) LINEAR(I:1) UNROLL PARTIAL(10)
          DO I = 1,N
             ZY(IY) = ZY(IY) + ZA*ZX(IX)
             IX = IX + INCX
@@ -1660,7 +1661,7 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
              !$OMP& FIRSTPRIVATE(JX) PRIVATE(J,TEMP,I) REDUCTION(+:Y)
               DO 60 J = 1,N
                  TEMP = ALPHA*X(JX)
-                  !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(Y:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 50 I = 1,M
                       Y(I) = Y(I) + TEMP*A(I,J)
    50             CONTINUE
@@ -1675,7 +1676,7 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
                 
                    IY = KY
                
-                  !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(Y:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 70 I = 1,M
                       Y(IY) = Y(IY) + TEMP*A(I,J)
                       IY = IY + INCY
@@ -1697,12 +1698,12 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
                     TEMP = ZERO
                   !$OMP END SINGLE
                   IF (NOCONJ) THEN
-                      !$OMP SIMD ALIGNED(Y:64,A) UNROLL PARTIAL(10)
+                      !$OMP SIMD ALIGNED(Y:64) ALIGNED(A:64) UNROLL PARTIAL(10)
                       DO 90 I = 1,M
                           TEMP = TEMP + A(I,J)*X(I)
    90                 CONTINUE
                   ELSE
-                      !$OMP SIMD ALIGNED(Y:64,A) LINEAR(I:1)   UNROLL PARTIAL(10)    
+                      !$OMP SIMD ALIGNED(Y:64) ALIGNED(A:64) LINEAR(I:1)   UNROLL PARTIAL(10)    
                       DO 100 I = 1,M
                           TEMP = TEMP + DCONJG(A(I,J))*X(I)
   100                 CONTINUE
@@ -1720,13 +1721,13 @@ SUBROUTINE ZGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
                   IX = KX
                
                   IF (NOCONJ) THEN
-                       !$OMP SIMD ALIGNED(Y:64,A)  UNROLL PARTIAL(10)
+                       !$OMP SIMD ALIGNED(Y:64) ALIGNED(A:64) UNROLL PARTIAL(10)
                       DO 120 I = 1,M
                           TEMP = TEMP + A(I,J)*X(IX)
                           IX = IX + INCX
   120                 CONTINUE
                   ELSE
-                      !$OMP SIMD ALIGNED(Y:64,A)  UNROLL PARTIAL(10)    
+                      !$OMP SIMD ALIGNED(Y:64) ALIGNED(A:64) UNROLL PARTIAL(10)    
                       DO 130 I = 1,M
                           TEMP = TEMP + DCONJG(A(I,J))*X(IX)
                           IX = IX + INCX
@@ -1851,7 +1852,7 @@ SUBROUTINE ZGERC(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES hot :: ZGERC !G
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*DCONJG(Y(JY))
-                  !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 10 I = 1,M
                       A(I,J) = A(I,J) + X(I)*TEMP
    10             CONTINUE
@@ -1871,7 +1872,7 @@ SUBROUTINE ZGERC(M,N,ALPHA,X,INCX,Y,INCY,A,LDA) !GCC$ ATTRIBUTES hot :: ZGERC !G
               IF (Y(JY).NE.ZERO) THEN
                   TEMP = ALPHA*DCONJG(Y(JY))
                   IX = KX
-                  !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 30 I = 1,M
                       A(I,J) = A(I,J) + X(IX)*TEMP
                       IX = IX + INCX
@@ -1994,7 +1995,7 @@ SUBROUTINE ZGERU(M,N,ALPHA,X,INCX,Y,INCY,A,LDA)
           DO 20 J = 1,N
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*Y(JY)
-                  !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64,X) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 10 I = 1,M
                       A(I,J) = A(I,J) + X(I)*TEMP
    10             CONTINUE
@@ -2014,7 +2015,7 @@ SUBROUTINE ZGERU(M,N,ALPHA,X,INCX,Y,INCY,A,LDA)
               IF (Y(JY).NE.ZERO) THEN
                  TEMP = ALPHA*Y(JY)
                   IX = KX
-                  !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) UNROLL PARTIAL(10)
+                  !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) UNROLL PARTIAL(10)
                   DO 30 I = 1,M
                       A(I,J) = A(I,J) + X(IX)*TEMP
                       IX = IX + INCX
@@ -2512,7 +2513,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
                !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                !$OMP& SHARED(WORK,K,M) REDUCTION(-:C) COLLAPSE(2) PRIVATE(J,I)
             DO 60 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 50 I = 1, M
                      C( I, J ) = C( I, J ) - WORK( I, J )
    50             CONTINUE
@@ -2639,7 +2640,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
                !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                !$OMP& SHARED(WORK,K,M) REDUCTION(-:C) PRIVATE(J,I) COLLAPSE(2)
                DO 120 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 110 I = 1, M
                      C( I, N-K+J ) = C( I, N-K+J ) - WORK( I, J )
   110             CONTINUE
@@ -2767,7 +2768,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
                !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                !$OMP& REDUCTION(-:C) SHARED(WORK,K,M) COLLAPSE(2) PRIVATE(J,I)
                DO 180 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK) LINEAR(I:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64) LINEAR(I:1) UNROLL PARTIAL(6)
                   DO 170 I = 1, M
                      C( I, J ) = C( I, J ) - WORK( I, J )
   170             CONTINUE
@@ -2893,7 +2894,7 @@ SUBROUTINE ZLARFB(SIDE, TRANS, DIRECT, STOREV, M, N, K, V, LDV,
                !$OMP PARALLEL DO SCHEDULE(STATIC,8) DEFAULT(NONE) 
                !$OMP& REDUCTION(-:C) SHARED(WORK,K,M) PRIVATE(J,I) COLLAPSE(2)
                DO 240 J = 1, K
-                  !$OMP SIMD ALIGNED(C:64,WORK)
+                  !$OMP SIMD ALIGNED(C:64) ALIGNED(WORK:64)
                   DO 230 I = 1, M
                      C( I, N-K+J ) = C( I, N-K+J ) - WORK( I, J )
   230             CONTINUE
@@ -3053,7 +3054,7 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
                       DO 40 K = 1,M
                           IF (B(K,J).NE.ZERO) THEN
                              TEMP = ALPHA*B(K,J)
-                             !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                             !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                              DO 30 I = 1,K - 1
                                   B(I,J) = B(I,J) + TEMP*A(I,K)
    30                         CONTINUE
@@ -3092,13 +3093,13 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
                           TEMP = B(I,J)
                           IF (NOCONJ) THEN
                              IF (NOUNIT) TEMP = TEMP*A(I,I)
-                                !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) REDUCTION(+:TEMP)
+                                !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) REDUCTION(+:TEMP)
                               DO 90 K = 1,I - 1
                                   TEMP = TEMP + A(K,I)*B(K,J)
    90                         CONTINUE
                           ELSE
                              IF (NOUNIT) TEMP = TEMP*DCONJG(A(I,I))
-                              !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) REDUCTION(+:TEMP)
+                              !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) REDUCTION(+:TEMP)
                               DO 100 K = 1,I - 1
                                   TEMP = TEMP + DCONJG(A(K,I))*B(K,J)
   100                         CONTINUE
@@ -3114,13 +3115,13 @@ SUBROUTINE ZTRMM(SIDE,UPLO,TRANSA,DIAG,M,N,ALPHA,A,LDA,B,LDB)
                           TEMP = B(I,J)
                           IF (NOCONJ) THEN
                              IF (NOUNIT) TEMP = TEMP*A(I,I)
-                              !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) REDUCTION(+:TEMP)
+                              !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) REDUCTION(+:TEMP)
                               DO 130 K = I + 1,M
                                   TEMP = TEMP + A(K,I)*B(K,J)
   130                         CONTINUE
                           ELSE
                              IF (NOUNIT) TEMP = TEMP*DCONJG(A(I,I))
-                               !$OMP SIMD ALIGNED(B:64,A) LINEAR(I:1) REDUCTION(+:TEMP)
+                               !$OMP SIMD ALIGNED(B:64) ALIGNED(A:64) LINEAR(I:1) REDUCTION(+:TEMP)
                               DO 140 K = I + 1,M
                                   TEMP = TEMP + DCONJG(A(K,I))*B(K,J)
   140                         CONTINUE
@@ -3643,7 +3644,8 @@ SUBROUTINE ZLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT) !GCC$ ATTRIBUTES h
                   DO LASTV = N, I+1, -1
                      IF( V( LASTV, I ).NE.ZERO ) EXIT
                   END DO
-                  !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                  !$OMP SIMD ALIGNED(T:64) ALIGNED(TAU:64) ALIGNED(V:64)
+                  !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                   DO J = 1, I-1
                      T( J, I ) = -TAU( I ) * CONJG( V( I , J ) )
                   END DO
@@ -3659,7 +3661,7 @@ SUBROUTINE ZLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT) !GCC$ ATTRIBUTES h
                   DO LASTV = N, I+1, -1
                      IF( V( I, LASTV ).NE.ZERO ) EXIT
                   END DO
-                   !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                   !$OMP SIMD ALIGNED(T:64) ALIGNED(TAU:64) ALIGNED(V:64) LINEAR(J:1) UNROLL PARTIAL(6)
                   DO J = 1, I-1
                      T( J, I ) = -TAU( I ) * V( J , I )
                   END DO
@@ -3721,7 +3723,8 @@ SUBROUTINE ZLARFT( DIRECT, STOREV, N, K, V, LDV, TAU, T, LDT) !GCC$ ATTRIBUTES h
                      DO LASTV = 1, I-1
                         IF( V( I, LASTV ).NE.ZERO ) EXIT
                      END DO
-                     !$OMP SIMD ALIGNED(T:64,TAU,V) LINEAR(J:1) UNROLL PARTIAL(6)
+                     !$OMP SIMD ALIGNED(T:64) ALIGNED(TAU:64) ALIGNED(V:64)
+                     !$OMP& LINEAR(J:1) UNROLL PARTIAL(6)
                      DO J = I+1, K
                         T( J, I ) = -TAU( I ) * V( J, N-K+I )
                      END DO
@@ -3951,7 +3954,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
               DO 120 J = 1,N
                   DO 110 I = 1,M
                      TEMP = ZERO
-                      !$OMP SIMD ALIGNED(A:64,B)  LINEAR(L:1)
+                      !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(L:1)
                       DO 100 L = 1,K
                           TEMP = TEMP + DCONJG(A(L,I))*B(L,J)
   100                 CONTINUE
@@ -3976,7 +3979,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
               DO 150 J = 1,N
                   DO 140 I = 1,M
                      TEMP = ZERO
-                      !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
+                      !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(L:1) 
                       DO 130 L = 1,K
                           TEMP = TEMP + A(L,I)*B(L,J)
   130                 CONTINUE
@@ -4014,7 +4017,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
                   END IF
                   DO 190 L = 1,K
                      TEMP = ALPHA*DCONJG(B(J,L))
-                       !$OMP SIMD ALIGNED(C:64,A) LINEAR(I:1) UNROLL PARTIAL(10)    
+                       !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)    
                       DO 180 I = 1,M
                           C(I,J) = C(I,J) + TEMP*A(I,L)
   180                 CONTINUE
@@ -4043,7 +4046,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
                   END IF
                   DO 240 L = 1,K
                      TEMP = ALPHA*B(J,L)
-                        !$OMP SIMD ALIGNED(C:64,A) LINEAR(I:1) UNROLL PARTIAL(10)    
+                        !$OMP SIMD ALIGNED(C:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)    
                       DO 230 I = 1,M
                           C(I,J) = C(I,J) + TEMP*A(I,L)
   230                 CONTINUE
@@ -4063,7 +4066,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
              DO 280 J = 1,N
                   DO 270 I = 1,M
                      TEMP = ZERO
-                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(L:1) 
                       DO 260 L = 1,K
                           TEMP = TEMP + DCONJG(A(L,I))*DCONJG(B(J,L))
   260                 CONTINUE
@@ -4089,7 +4092,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
              DO 310 J = 1,N
                   DO 300 I = 1,M
                      TEMP = ZERO
-                       !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
+                       !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(L:1) 
                       DO 290 L = 1,K
                           TEMP = TEMP + DCONJG(A(L,I))*B(J,L)
   290                 CONTINUE
@@ -4116,7 +4119,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
              DO 340 J = 1,N
                   DO 330 I = 1,M
                      TEMP = ZERO
-                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1) 
+                        !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(L:1) 
                       DO 320 L = 1,K
                           TEMP = TEMP + A(L,I)*DCONJG(B(J,L))
   320                 CONTINUE
@@ -4141,7 +4144,7 @@ SUBROUTINE ZGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC) !GCC$ ATTRIBU
              DO 370 J = 1,N
                   DO 360 I = 1,M
                      TEMP = ZERO
-                        !$OMP SIMD ALIGNED(A:64,B) LINEAR(L:1)
+                        !$OMP SIMD ALIGNED(A:64) ALIGNED(B:64) LINEAR(L:1)
                       DO 350 L = 1,K
                           TEMP = TEMP + A(L,I)*B(J,L)
   350                 CONTINUE
@@ -4291,7 +4294,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                   DO 20 J = 1,N
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
-                          !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                          !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 10 I = 1,J - 1
                               X(I) = X(I) + TEMP*A(I,J)
    10                     CONTINUE
@@ -4309,7 +4312,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
                           IX = KX
-                           !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                           !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 30 I = 1,J - 1
                               X(IX) = X(IX) + TEMP*A(I,J)
                               IX = IX + INCX
@@ -4329,7 +4332,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                 DO 60 J = N,1,-1
                       IF (X(J).NE.ZERO) THEN
                          TEMP = X(J)
-                          !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                          !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 50 I = N,J + 1,-1
                               X(I) = X(I) + TEMP*A(I,J)
    50                     CONTINUE
@@ -4348,7 +4351,7 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                       IF (X(JX).NE.ZERO) THEN
                           TEMP = X(JX)
                           IX = KX
-                            !$OMP SIMD ALIGNED(X:64,A) LINEAR(I:1) UNROLL PARTIAL(10)
+                            !$OMP SIMD ALIGNED(X:64) ALIGNED(A:64) LINEAR(I:1) UNROLL PARTIAL(10)
                           DO 70 I = N,J + 1,-1
                               X(IX) = X(IX) + TEMP*A(I,J)
                               IX = IX - INCX
@@ -4373,13 +4376,13 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                       TEMP = X(J)
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                          !$OMP SIMD ALIGNED(A:64,X) 
+                          !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64)
                           DO 90 I = J - 1,1,-1
                               TEMP = TEMP + A(I,J)*X(I)
    90                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                            !$OMP SIMD ALIGNED(A:64,X) 
+                            !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64)
                           DO 100 I = J - 1,1,-1
                               TEMP = TEMP + DCONJG(A(I,J))*X(I)
   100                     CONTINUE
@@ -4397,14 +4400,14 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                       IX = JX
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                          !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1)
+                          !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1)
                           DO 120 I = J - 1,1,-1
                               IX = IX - INCX
                               TEMP = TEMP + A(I,J)*X(IX)
   120                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                           !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1)
+                           !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1)
                           DO 130 I = J - 1,1,-1
                               IX = IX - INCX
                               TEMP = TEMP + DCONJG(A(I,J))*X(IX)
@@ -4424,13 +4427,13 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                       TEMP = X(J)
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) 
                           DO 150 I = J + 1,N
                               TEMP = TEMP + A(I,J)*X(I)
   150                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) 
                           DO 160 I = J + 1,N
                               TEMP = TEMP + DCONJG(A(I,J))*X(I)
   160                     CONTINUE
@@ -4449,14 +4452,14 @@ SUBROUTINE ZTRMV(UPLO,TRANS,DIAG,N,A,LDA,X,INCX) !GCC$ ATTRIBUTES hot :: ZTRMV !
                       IX = JX
                       IF (NOCONJ) THEN
                          IF (NOUNIT) TEMP = TEMP*A(J,J)
-                           !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1)
+                           !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1)
                           DO 180 I = J + 1,N
                               IX = IX + INCX
                               TEMP = TEMP + A(I,J)*X(IX)
   180                     CONTINUE
                       ELSE
                          IF (NOUNIT) TEMP = TEMP*DCONJG(A(J,J))
-                            !$OMP SIMD ALIGNED(A:64,X) LINEAR(I:1) 
+                            !$OMP SIMD ALIGNED(A:64) ALIGNED(X:64) LINEAR(I:1) 
                           DO 190 I = J + 1,N
                               IX = IX + INCX
                               TEMP = TEMP + DCONJG(A(I,J))*X(IX)
