@@ -20,8 +20,8 @@ pmc_events_descriptive_stats(const double * __restrict  __attribute__((aligned(6
 			     const int32_t len,
 			     const char   * __restrict fname,
 			     const char   * __restrict event_name) {
-     FILE * fp = NULL;
-     if(__builtin_except(fopen(&fp,fname,"a+"),0) != 0) {
+      FILE * fp = fopen(fname,"a+");
+      if(__builtin_expect(NULL==fp,0)) {
          printf("File open error: %s\n",fname);
 	 std::exit(EXIT_FAILURE);
       }
