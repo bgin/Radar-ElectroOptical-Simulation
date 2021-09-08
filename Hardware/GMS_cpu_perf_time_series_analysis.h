@@ -60,8 +60,8 @@ cpu_perf_time_series_canarm(const double * __restrict __attribute__((aligned(64)
 				    const bool use_omp) {
 		       
     static_assert(len <= 100000, "Input data length can not exceed -- **100000** elements!!");
-    FILE * fptr = NULL;
-    if(__builtin_expect(fopen(&fptr,fname,"a+"),0) != 0) {
+     FILE * fptr = fopen(fname,"a+");
+     if(__builtin_expect(NULL==fptr,0)) {
          printf("File open error: %s\n",fname);
 	 std::exit(EXIT_FAILURE);
      }
@@ -250,8 +250,8 @@ cpu_perf_time_series_mulcor(const double * __restrict __attribute__((aligned(64)
 		      
       static_assert(ndim <= 11,     "Number of dimensions can not exceed 11!!");
       static_assert(ldim <= 100000, "Number of elements per dimension can not exceed 100000!!");
-      FILE * fp = NULL;
-      if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
+      FILE * fp = fopen(fname,"a+");
+      if(__builtin_expect(NULL==fp,0)) {
          printf("File open error: %s\n",fname);
 	 std::exit(EXIT_FAILURE);
       }
@@ -296,8 +296,8 @@ cpu_perf_time_series_mulspe(const double * __restrict __attribute__((aligned(64)
        
       static_assert(ndim <= 11,     "Number of dimensions can not exceed 11!!");
       static_assert(ldim <= 100000, "Number of elements per dimension can not exceed 100000!!");
-      FILE * fp = NULL;
-      if(__builtin_excpect(fopen(&fp,fname,"a+"),0) != 0) {
+      FILE * fp = fopen(fname,"a+");
+      if(__builtin_expect(NULL==fp,0)) {
          printf("File open error: %s\n",fname);
 	 std::exit(EXIT_FAILURE);
       }
@@ -400,10 +400,10 @@ cpu_perf_time_series_unimar(const double * __restrict __attribute__((aligned(64)
                            const char   * __restrict fname,
 		           const char   * __restrict data_type) {
       static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
-      FILE * fp = NULL;
-      if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
-           printf("File open error: %s\n",fname);
-	   std::exit(EXIT_FAILURE);
+      FILE * fp = fopen(fname,"a+");
+      if(__builtin_expect(NULL==fp,0)) {
+         printf("File open error: %s\n",fname);
+	 std::exit(EXIT_FAILURE);
       }
       const int32_t len2   = len/2; // shapiro-wilk 'a' array length.
       constexpr float w_limit = 0.05f;
@@ -487,10 +487,10 @@ cpu_perf_time_series_unibar(const double * __restrict  __attribute__((aligned(64
 		           const char   * __restrict data_type) {
 
       static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
-      FILE * fp = NULL;
-      if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
-        printf("File open error: %s\n",fname2);
-	std::exit(EXIT_FAILURE);
+      FILE * fp = fopen(fname,"a+");
+      if(__builtin_expect(NULL==fp,0)) {
+         printf("File open error: %s\n",fname);
+	 std::exit(EXIT_FAILURE);
       }
       const int32_t len2   = len/2; // shapiro-wilk 'a' array length.
       constexpr float w_limit = 0.05f;
@@ -584,11 +584,11 @@ cpu_perf_time_series_exsar( const double * __restrict  __attribute__((aligned(64
                           const char   * __restrict fname,
 		          const char   * __restrict data_type) {
         static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
-	FILE * fp = NULL;
-	if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
-            printf("File open error: %s\n",fname);
-	    std::exit(EXIT_FAILURE);
-        }
+	FILE * fp = fopen(fname,"a+");
+        if(__builtin_expect(NULL==fp,0)) {
+           printf("File open error: %s\n",fname);
+	   std::exit(EXIT_FAILURE);
+       }
 	const int32_t len2   = len/2; // shapiro-wilk 'a' array length.
         constexpr float w_limit = 0.05f;
         __attribute__((aligned(64))) double xv[lagh+1];
@@ -673,10 +673,10 @@ cpu_perf_time_series_bispec(const double * __restrict __attribute__((aligned(64)
 		       const char   * __restrict data_type,
 		       const bool use_omp) {
        static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
-       FILE * fp = NULL;
-       if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
-          printf("File open error: %s\n",fname);
-	  std::exit(EXIT_FAILURE);
+       FILE * fp = fopen(fname,"a+");
+        if(__builtin_expect(NULL==fp,0)) {
+           printf("File open error: %s\n",fname);
+	   std::exit(EXIT_FAILURE);
        }
        const int32_t lg12x = lagh*lagh+7;
        const std::size_t lagh_len = static_cast<std::size_t>(lg12x);\
@@ -810,10 +810,10 @@ cpu_perf_time_series_thirmo(const double * __restrict __attribute__((aligned(64)
                        const char   * __restrict fname,
 		       const char   * __restrict data_type) {
        static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
-       FILE * fp = NULL;
-       if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
-           printf("File open error: %s\n",fname);
-	   std::exit(EXIT_FAILURE);
+       FILE * fp = fopen(fname,"a+");
+       if(__builtin_expect(NULL==fp,0)) {
+         printf("File open error: %s\n",fname);
+	 std::exit(EXIT_FAILURE);
        }
        const int32_t lg12x = lagh*lagh+7;
        const std::size_t lagh_len = static_cast<std::size_t>(lg12x);
@@ -891,10 +891,10 @@ cpu_perf_time_series_autocor(const double * __restrict __attribute__((aligned(64
                              const char   * __restrict fname,
 			     const char   * __restrict data_type) {
        static_assert(len <= 1000000, "Input data can not exceed: 1000000 elements!!");
-       FILE * fp = NULL;
-       if(__builtin_expect(fopen(&fp,fname,"a+"),0) != 0) {
-           printf("File open error: %s\n",fname);
-	   std::exit(EXIT_FAILURE);
+       FILE * fp = fopen(fname,"a+");
+       if(__builtin_expect(NULL==fp,0)) {
+         printf("File open error: %s\n",fname);
+	 std::exit(EXIT_FAILURE);
        }
        const int32_t len2   = len/2; // shapiro-wilk 'a' array length.
        constexpr float w_limit = 0.05f;
