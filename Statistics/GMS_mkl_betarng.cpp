@@ -1,24 +1,10 @@
 
 #include "GMS_mkl_betarng.h"
-#if defined _WIN64
-    #include "../GMS_common.h"
-  #if (GMS_DEBUG_ON) == 1
-       #include "../GMS_debug.h"
-  #else
-       #include "../GMS_malloc.h"
-  #endif
-  #include "../GMS_error_macros.h"
-  #include "../Math/GMS_constants.h"
-#elif defined __linux
-      #include "GMS_common.h"
-   #if (GMS_DEBUG_ON) == 1
-      #include "GMS_debug.h"
-   #else
-      #include "GMS_malloc.h"
-   #endif
-   #include "GMS_error_macros.h"
-   #include "GMS_constants"
-#endif
+#include "GMS_common.h"
+#include "GMS_malloc.h"
+#include "GMS_error_macros.h"
+#include "GMS_constants"
+
 //
 //	Implementation
 //
@@ -53,20 +39,8 @@ MKLBetaRNG( const MKL_INT nvalues,
 	    const double a,
 	    const double beta) {
 	using namespace gms::common;
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	  datum.m_rvec = gms_edmalloca_dbg(static_cast<size_t>(nvalues), align64B, __FILE__,__LINE__);
-	
-    #else
-	  datum.m_rvec = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-	  datum.m_rvec = gms_edmalloca(static_cast<size_t>(nvalues),align64B);
-    #else
-	  datum.m_rvec = gms_edmalloca(static_cast<size_t>(nvalues),align64B);
-    #endif
-#endif
+ 	datum.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(nvalues),align64B);
+ 
 	datum.m_p    = p;
 	datum.m_q    = q;
 	datum.m_a    = a;
@@ -75,18 +49,18 @@ MKLBetaRNG( const MKL_INT nvalues,
 	datum.m_brng    = brng;
 	datum.m_seed    = seed;
 	datum.m_error   = 1;
+#if (GMS_INIT_ARRAYS) == 1	
 	avx256_init_unroll8x_pd(&datum.m_rvec[0], datum.m_nvalues, 0.0);
+#endif
 }
 
 gms::math::stat::
 MKLBetaRNG
 ::MKLBetaRNG(const MKLBetaRNG &x) {
 	using namespace gms::common;
-#if (GMS_DEBUG_ON) == 1
-	datum.m_rvec = lam_edmalloca_dbg(static_cast<size_t>(x.datum.m_nvalues), align64B, __FILE__,__LINE__);
-#else
-	datum.m_rvec    = lam_edmalloca(static_cast<size_t>(x.datum.m_nvalues), align64B);
-#endif
+
+        datum.m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(x.datum.m_nvalues), align64B);
+
 	datum.m_p       = x.datum.m_p;
 	datum.m_q       = x.datum.m_q;
 	datum.m_a       = x.datum.m_a;
@@ -123,15 +97,9 @@ MKLBetaRNG
 gms::math::stat::
 MKLBetaRNG
 ::~MKLBetaRNG() {
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	  if (NULL != datum.m_rvec) _aligned_free_dbg(datum.m_rvec); datum.m_rvec = NULL;
-    #else
-	  if (NULL != datum.m_rvec) _mm_free(datum.m_rvec); datum.m_rvec = NULL;
-    #endif
-#elif defined __linux
-	  if (NULL != datum.m_rvec) _mm_free(datum.m_rvec); datum.m_rvec = NULL;
-#endif
+
+   if (NULL != datum.m_rvec) gms_mm_free(datum.m_rvec); datum.m_rvec = NULL;
+
 }		
 		
 	
@@ -143,15 +111,9 @@ operator=(const MKLBetaRNG &x) {
 	using namespace gms::common;
 	if (this == &x) return (*this);
 	if (datum.m_nvalues != x.datum.m_nvalues){
-#if defined _WIN64
-     #if (GMS_DEBUG_ON) == 1
-	    _aligned_free_dbg(datum.m_rvec);
-     #else
- 	    _mm_free(datum.m_rvec);
-     #endif // Preserve an invariant.
-#elif defined __linux
-	    _mm_free(datum.m_rvec);
-#endif
+
+	   gms_mm_free(datum.m_rvec);
+
 	datum.m_p = 0.0;
 	datum.m_q = 0.0;
 	datum.m_a = 0.0;
@@ -160,20 +122,8 @@ operator=(const MKLBetaRNG &x) {
 	datum.m_brng = 0;
 	datum.m_seed = 0;
 	datum.m_error = 1;
-#if defined _WIN64	
-    #if (GMS_DEBUG_ON) == 1
-	   datum.m_rvec = lam_edmalloca_dbg(static_cast<size_t>(x.datum.m_nvalues),align64B,__FILE__,__LINE__);
-    #else
-	
-           datum.m_rvec =  lam_edmalloca(static_cast<size_t>(x.datum.m_nvalues), align64B);
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-	   datum.m_rvec = gms_edmalloca(static_cast<size_t>(x.datum.m_nvalues),align64B);
-    #else
-	   datum.m_rvec = gms_edmalloca(static_cast<size_t>(x.datum.m_nvalues),align64B);
-    #endif
-#endif
+  	 datum.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(x.datum.m_nvalues),align64B);
+   
    }
 	else {
 	datum.m_p = x.datum.m_a;
@@ -200,16 +150,8 @@ gms::math::stat::MKLBetaRNG &
 gms::math::stat::MKLBetaRNG::
 operator=(MKLBetaRNG &&x) {
 	if (this == &x) return (*this);
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	   _aligned_free_dbg(datum.m_rvec);
-    #else
-	   _mm_free(datum.m_rvec);
-    #endif
-#elif defined __linux
-           _mm_free(datum.m_rvec);
-#endif
-	     
+
+        gms_mm_free(datum.m_rvec);
 	datum.m_rvec      = &x.datum.m_rvec[0];
 	datum.m_p         =  x.datum.m_p;
 	datum.m_q         =  x.datum.m_q;
