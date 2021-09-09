@@ -102,7 +102,7 @@ void swilk(const bool init,
         else {
             an25 = an+QTR;
             summ2 = ZERO;
-#pragma loop_count min(3),avg(1000),max(5000)
+
             for(int32_t i = 1; i != n2; ++i) {
                 a[i] = ppnd((i-th)/an25);
                 summ2 += a[i] * a[i];
@@ -130,7 +130,6 @@ void swilk(const bool init,
             }
 #pragma vector aligned
 #pragma vector always
-#pragma loop_count min(2),avg(1000),max(5000)
             for(int32_t i = i1; i != nn2; ++i) {
                 const t = -a[i];
                 a[i] = t/fac;
@@ -164,7 +163,6 @@ void swilk(const bool init,
     j = n-1;
 #pragma vector aligned
 #pragma vector always
-#pragma loop_count min(2),avg(1000),max(5000)    
     for(int32_t i = 1; i != n2; ++i) {
         xi = x[i]/range;
         sx += xi;
@@ -190,7 +188,6 @@ void swilk(const bool init,
 //#pragma loop_count min(2),avg(1000),max(5000)  
 #pragma vector aligned
 #pragma vector always
-#pragma loop_count min(2),avg(1000),max(5000)    
     for(int32_t i = 1; i != n1; ++i) {
         if(i!=j) {
             asa = std::copysignf((float)1,(float)i-j)*
