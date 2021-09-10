@@ -2,17 +2,12 @@
 
 
 #include "GMS_mkl_cauchyrng.h"
-#if defined _WIN64
-    #include "../GMS_common.h"
-    #include "../GMS_malloc.h"
-    #include "../GMS_error_macros.h"
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_common.h"
-    #include "GMS_malloc.h"
-    #include "GMS_error_macros.h"
-    #include "GMS_constants.h"
-#endif
+
+#include "GMS_common.h"
+#include "GMS_malloc.h"
+#include "GMS_error_macros.h"
+#include "GMS_constants.h"
+
 //
 //	Implementation
 //
@@ -37,11 +32,10 @@ MKLCauchyRNG::MKLCauchyRNG(const MKL_INT nvalues,
 			   const double a,
 			   const double beta) {
 	using namespace gms::common;
-#if defined _WIN64
-	m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-#elif defined __linux
-	m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-#endif
+
+
+	m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
+
 	m_a       = a;
 	m_beta    = beta;
 	m_nvalues = nvalues;
@@ -59,11 +53,9 @@ MKLCauchyRNG::MKLCauchyRNG(const MKL_INT nvalues,
 gms::math::stat::
 MKLCauchyRNG::MKLCauchyRNG(const MKLCauchyRNG &x) {
 	using namespace gms::common;
-#if defined _WIN64
-	m_rvec    = gms_edmalloca(static_cast<size_t>(x.m_nvalues), align64B);
-#elif defined __linux
-	m_rvec    = gms_edmalloca(static_cast<size_t>(x.m_nvalues), align64B);
-#endif
+
+	m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(x.m_nvalues), align64B);
+
 	m_a       = x.m_a;
 	m_beta    = x.m_beta;
 	m_nvalues = x.m_nvalues;
@@ -102,7 +94,7 @@ MKLCauchyRNG::MKLCauchyRNG(MKLCauchyRNG &&x) {
 
 gms::math::stat::
 MKLCauchyRNG::~MKLCauchyRNG() {
-	if (NULL != m_rvec) _mm_free(m_rvec); m_rvec = NULL;
+	if (NULL != m_rvec) gms_mm_free(m_rvec); m_rvec = NULL;
 }		
 		
 	
@@ -120,13 +112,10 @@ gms::math::stat::MKLCauchyRNG
 	m_brng    = x.m_brng;
 	m_seed    = x.m_seed;
 	m_error   = x.m_error;
-#if defined _WIN64
-	double * __restrict
-		rvec{ gms_edmalloca(static_cast<size_t>(m_nvalues), align64B) };
-#elif defined __linux
-	double * __restrict
-	        rvec{gms_edmalloca(static_cast<size_t>(m_nvalues), align64B)};
-#endif
+
+	double * __restrict rvec =  (double*)gms_mm_malloc(static_cast<size_t>(m_nvalues), align64B)};
+	       
+
 #if defined __AVX512F__
     #if (USE_NT_STORES) == 1
 	avx512_memcpy8x_nt_pd(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
