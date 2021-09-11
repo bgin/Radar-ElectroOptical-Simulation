@@ -646,7 +646,7 @@ namespace  gms {
 				     rhov7.v =
 				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+112]),
 				                              _mm512_load_ps(&y[i+112]),
-							      rhov7.v);   
+ 							      rhov7.v);   
 				     _mm_prefetch((const char*)&x[i+160],_MM_HINT_T0);
 				     _mm_prefetch((const char*)&y[i+160],_MM_HINT_T0);
 				     rhov8.v =
@@ -666,28 +666,28 @@ namespace  gms {
 		                      rhov3.v += rhov8.v;
 		                      rhov4.v += rhov9.v;
 
-				for(; (i+79) < n; i += 80) {
+				for(; (ii+79) < n; ii += 80) {
 
                                      rhov0.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+0]),
-				                              _mm512_load_ps(&y[i+0]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+0]),
+				                              _mm512_load_ps(&y[ii+0]),
 							      rhov0.v);               
 				     rhov1.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+16]),
-				                              _mm512_load_ps(&y[i+16]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+16]),
+				                              _mm512_load_ps(&y[ii+16]),
 							      rhov1.v);   
 				    
 				     rhov2.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+32]),
-				                              _mm512_load_ps(&y[i+32]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+32]),
+				                              _mm512_load_ps(&y[ii+32]),
 							      rhov2.v);
 				     rhov3.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+48]),
-				                              _mm512_load_ps(&y[i+48]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+48]),
+				                              _mm512_load_ps(&y[ii+48]),
 							      rhov3.v);   
 				      rhov4.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+64]),
-				                              _mm512_load_ps(&y[i+64]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+64]),
+				                              _mm512_load_ps(&y[ii+64]),
 							      rhov4.v);
 				
                                      
@@ -697,32 +697,32 @@ namespace  gms {
 		                     rhov1.v += rhov3.v;
 		                     rhov0.v += rhov4.v;
 
-				for(; (i+31) < n; i += 32) {
+				for(; (ii+31) < n; ii += 32) {
 
                                      rhov0.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+0]),
-				                              _mm512_load_ps(&y[i+0]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+0]),
+				                              _mm512_load_ps(&y[ii+0]),
 							      rhov0.v);               
 				     rhov1.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+16]),
-				                              _mm512_load_ps(&y[i+16]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+16]),
+				                              _mm512_load_ps(&y[ii+16]),
 							      rhov1.v);   
 
 				}
 
 				    	rhov0.v += rhov1.v;
 
-			        for(; (i+15) < n; i += 16) {
+			        for(; (ii+15) < n; ii += 16) {
 
                                       rhov0.v =
-				              _mm512_fmadd_ps(_mm512_load_ps(&x[i+0]),
-				                              _mm512_load_ps(&y[i+0]),
+				              _mm512_fmadd_ps(_mm512_load_ps(&x[ii+0]),
+				                              _mm512_load_ps(&y[ii+0]),
 							      rhov0.v);   
 
 				}
 
-				for(; (i+0) < n; i += 1) {
-                                      rho0 += x[i] * y[i];
+				for(; (ii+0) < n; ii += 1) {
+                                      rho0 += x[ii] * y[ii];
 				}
 
 				rho0 += _mm512_reduce_add_ps(rhov0.v);
@@ -1403,26 +1403,26 @@ namespace  gms {
 
 			       for(; (ii+39) < n; ii += 40) {
                                       rhov0.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+0]),
-						                _mm512_load_pd(&y[i+0]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+0]),
+						                _mm512_load_pd(&y[ii+0]),
 								rhov0.v);
 				      rhov1.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+8]),
-						                _mm512_load_pd(&y[i+8]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+8]),
+						                _mm512_load_pd(&y[ii+8]),
 								rhov1.v);
 				    
 				      rhov2.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+16]),
-						                _mm512_load_pd(&y[i+16]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+16]),
+						                _mm512_load_pd(&y[ii+16]),
 								rhov2.v);
 				      rhov3.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+24]),
-						                _mm512_load_pd(&y[i+24]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+24]),
+						                _mm512_load_pd(&y[ii+24]),
 								rhov3.v);
 				    
 				      rhov4.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+32]),
-						                _mm512_load_pd(&y[i+32]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+32]),
+						                _mm512_load_pd(&y[ii+32]),
 								rhov4.v);
                                   
 
@@ -1435,21 +1435,21 @@ namespace  gms {
 				 for(; (ii+31) < n; ii += 32) {
 
 				      rhov0.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+0]),
-						                _mm512_load_pd(&y[i+0]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+0]),
+						                _mm512_load_pd(&y[ii+0]),
 								rhov0.v);
 				      rhov1.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+8]),
-						                _mm512_load_pd(&y[i+8]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+8]),
+						                _mm512_load_pd(&y[ii+8]),
 								rhov1.v);
 				    
 				      rhov2.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+16]),
-						                _mm512_load_pd(&y[i+16]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+16]),
+						                _mm512_load_pd(&y[ii+16]),
 								rhov2.v);
 				      rhov3.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+24]),
-						                _mm512_load_pd(&y[i+24]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+24]),
+						                _mm512_load_pd(&y[ii+24]),
 								rhov3.v);
                                        
 
@@ -1460,12 +1460,12 @@ namespace  gms {
 
 				 for(; (ii+15) < n; ii += 16) {
                                       rhov0.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+0]),
-						                _mm512_load_pd(&y[i+0]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+0]),
+						                _mm512_load_pd(&y[ii+0]),
 								rhov0.v);
 				      rhov1.v =
-				                _mm512_fmadd_pd(_mm512_load_pd(&x[i+8]),
-						                _mm512_load_pd(&y[i+8]),
+				                _mm512_fmadd_pd(_mm512_load_pd(&x[ii+8]),
+						                _mm512_load_pd(&y[ii+8]),
 								rhov1.v);
 				    
                                      
@@ -1478,8 +1478,8 @@ namespace  gms {
 			        for(; (ii+7) < n; ii += 8) {
 
                                     rhov0.v =
-				              _mm512_fmadd_pd(_mm512_load_pd(&x[i+0]),
-						                _mm512_load_pd(&y[i+0]),
+				              _mm512_fmadd_pd(_mm512_load_pd(&x[ii+0]),
+						                _mm512_load_pd(&y[ii+0]),
 								rhov0.v);
 
 				}
