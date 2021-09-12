@@ -578,31 +578,31 @@ namespace  gms {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                  _mm_prefetch((const char*)&x[i+8],_MM_HINT_T0);
 				 xv[0].v = _mm256_loadu_pd(&x[i+0]);
-				 xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				 xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				 _mm256_storeu_pd(&x[i+0],xv[0].v);
 				 xv[1].v = _mm256_loadu_pd(&x[i+4]);
-				 xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				 xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				 _mm256_storeu_pd(&x[i+4],xv[1].v);
 				 _mm_prefetch((const char*)&x[i+16],_MM_HINT_T0);
 				 xv[2].v = _mm256_loadu_pd(&x[i+8]);
-				 xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
+				 xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
 				 _mm256_storeu_pd(&x[i+8],xv[2].v);
 				 xv[3].v = _mm256_loadu_pd(&x[i+12]);
-				 xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
+				 xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
 				 _mm256_storeu_pd(&x[i+12],xv[3].v);
 				 _mm_prefetch((const char*)&x[i+24],_MM_HINT_T0);
 				 xv[4].v = _mm256_loadu_pd(&x[i+16]);
-				 xv[4].v = _mm256_mul_pd(alpha.v,xv[4].v);
+				 xv[4].v = _mm256_mul_pd(alphav.v,xv[4].v);
 				 _mm256_storeu_pd(&x[i+16],xv[4].v);
 				 xv[5].v = _mm256_loadu_pd(&x[i+20]);
-				 xv[5].v = _mm256_mul_pd(alpha.v,xv[5].v);
+				 xv[5].v = _mm256_mul_pd(alphav.v,xv[5].v);
 				 _mm256_storeu_pd(&x[i+20],xv[5].v);
 				 _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
 				 xv[6].v = _mm256_loadu_pd(&x[i+24]);
-				 xv[6].v = _mm256_mul_pd(alpha.v,xv[6].v);
+				 xv[6].v = _mm256_mul_pd(alphav.v,xv[6].v);
 				 _mm256_storeu_pd(&x[i+24],xv[6].v);
 				 xv[7].v = _mm256_loadu_pd(&x[i+28]);
-				 xv[7].v = _mm256_mul_pd(alpha.v,xv[7].v);
+				 xv[7].v = _mm256_mul_pd(alphav.v,xv[7].v);
 				 _mm256_storeu_pd(&x[i+28],xv[7].v);
 #else
                                   _mm_prefetch((const char*)&x[i+8],_MM_HINT_T0);
@@ -617,14 +617,14 @@ namespace  gms {
 				  xv[5].v = _mm256_loadu_pd(&x[i+20]);
 				  xv[6].v = _mm256_loadu_pd(&x[i+24]);
 				  xv[7].v = _mm256_loadu_pd(&x[i+28]);
-				  xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
-				  xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
-				  xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
-				  xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
-				  xv[4].v = _mm256_mul_pd(alpha.v,xv[4].v);
-				  xv[5].v = _mm256_mul_pd(alpha.v,xv[5].v);
-				  xv[6].v = _mm256_mul_pd(alpha.v,xv[6].v);
-				  xv[7].v = _mm256_mul_pd(alpha.v,xv[7].v);
+				  xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
+				  xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
+				  xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
+				  xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
+				  xv[4].v = _mm256_mul_pd(alphav.v,xv[4].v);
+				  xv[5].v = _mm256_mul_pd(alphav.v,xv[5].v);
+				  xv[6].v = _mm256_mul_pd(alphav.v,xv[6].v);
+				  xv[7].v = _mm256_mul_pd(alphav.v,xv[7].v);
 				  _mm256_storeu_pd(&x[i+0],xv[0].v);
 				  _mm256_storeu_pd(&x[i+4],xv[1].v);
 				  _mm256_storeu_pd(&x[i+8],xv[2].v);
@@ -640,27 +640,27 @@ namespace  gms {
 			      for(; (i+15) < n; i += 16) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                  xv[0].v = _mm256_loadu_pd(&x[i+0]);
-				 xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				 xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				 _mm256_storeu_pd(&x[i+0],xv[0].v);
 				 xv[1].v = _mm256_loadu_pd(&x[i+4]);
-				 xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				 xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				 _mm256_storeu_pd(&x[i+4],xv[1].v);
 				 //_mm_prefetch((const char*)&x[i+16],_MM_HINT_T0);
 				 xv[2].v = _mm256_loadu_pd(&x[i+8]);
-				 xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
+				 xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
 				 _mm256_storeu_pd(&x[i+8],xv[2].v);
 				 xv[3].v = _mm256_loadu_pd(&x[i+12]);
-				 xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
+				 xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
 				 _mm256_storeu_pd(&x[i+12],xv[3].v); 
 #else
                                   xv[0].v = _mm256_loadu_pd(&x[i+0]);
 				  xv[1].v = _mm256_loadu_pd(&x[i+4]);
 				  xv[2].v = _mm256_loadu_pd(&x[i+8]);
 				  xv[3].v = _mm256_loadu_pd(&x[i+12]);
-				  xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
-				  xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
-				  xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
-				  xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
+				  xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
+				  xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
+				  xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
+				  xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
 				  _mm256_storeu_pd(&x[i+0],xv[0].v);
 				  _mm256_storeu_pd(&x[i+4],xv[1].v);
 				  _mm256_storeu_pd(&x[i+8],xv[2].v);
@@ -671,16 +671,16 @@ namespace  gms {
 			      for(; (i+7) < n; i += 8) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                     xv[0].v = _mm256_loadu_pd(&x[i+0]);
-				    xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				    xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				    _mm256_storeu_pd(&x[i+0],xv[0].v);
 				    xv[1].v = _mm256_loadu_pd(&x[i+4]);
-				    xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				    xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				    _mm256_storeu_pd(&x[i+4],xv[1].v);
 #else
                                     xv[0].v = _mm256_loadu_pd(&x[i+0]);
 				    xv[1].v = _mm256_loadu_pd(&x[i+4]);
-				    xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
-				    xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				    xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
+				    xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				    _mm256_storeu_pd(&x[i+0],xv[0].v);
 				    _mm256_storeu_pd(&x[i+4],xv[1].v);
 #endif
@@ -689,11 +689,11 @@ namespace  gms {
 			      for(; (i+3) < n; i += 4) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                      xv[0].v = _mm256_loadu_pd(&x[i+0]);
-				    xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				    xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				    _mm256_storeu_pd(&x[i+0],xv[0].v);
 #else
                                      xv[0].v = _mm256_loadu_pd(&x[i+0]);
-				     xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				     xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				     _mm256_storeu_pd(&x[i+0],xv[0].v);
 #endif
 			      }
@@ -745,31 +745,31 @@ namespace  gms {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                  _mm_prefetch((const char*)&x[i+8],_MM_HINT_T0);
 				 xv[0].v = _mm256_load_pd(&x[i+0]);
-				 xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				 xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				 _mm256_store_pd(&x[i+0],xv[0].v);
 				 xv[1].v = _mm256_load_pd(&x[i+4]);
-				 xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				 xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				 _mm256_store_pd(&x[i+4],xv[1].v);
 				 _mm_prefetch((const char*)&x[i+16],_MM_HINT_T0);
 				 xv[2].v = _mm256_load_pd(&x[i+8]);
-				 xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
+				 xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
 				 _mm256_store_pd(&x[i+8],xv[2].v);
 				 xv[3].v = _mm256_load_pd(&x[i+12]);
-				 xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
+				 xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
 				 _mm256_store_pd(&x[i+12],xv[3].v);
 				 _mm_prefetch((const char*)&x[i+24],_MM_HINT_T0);
 				 xv[4].v = _mm256_load_pd(&x[i+16]);
-				 xv[4].v = _mm256_mul_pd(alpha.v,xv[4].v);
+				 xv[4].v = _mm256_mul_pd(alphav.v,xv[4].v);
 				 _mm256_store_pd(&x[i+16],xv[4].v);
 				 xv[5].v = _mm256_load_pd(&x[i+20]);
-				 xv[5].v = _mm256_mul_pd(alpha.v,xv[5].v);
+				 xv[5].v = _mm256_mul_pd(alphav.v,xv[5].v);
 				 _mm256_store_pd(&x[i+20],xv[5].v);
 				 _mm_prefetch((const char*)&x[i+32],_MM_HINT_T0);
 				 xv[6].v = _mm256_load_pd(&x[i+24]);
-				 xv[6].v = _mm256_mul_pd(alpha.v,xv[6].v);
+				 xv[6].v = _mm256_mul_pd(alphav.v,xv[6].v);
 				 _mm256_store_pd(&x[i+24],xv[6].v);
 				 xv[7].v = _mm256_load_pd(&x[i+28]);
-				 xv[7].v = _mm256_mul_pd(alpha.v,xv[7].v);
+				 xv[7].v = _mm256_mul_pd(alphav.v,xv[7].v);
 				 _mm256_store_pd(&x[i+28],xv[7].v);
 #else
                                   _mm_prefetch((const char*)&x[i+8],_MM_HINT_T0);
@@ -784,14 +784,14 @@ namespace  gms {
 				  xv[5].v = _mm256_load_pd(&x[i+20]);
 				  xv[6].v = _mm256_load_pd(&x[i+24]);
 				  xv[7].v = _mm256_load_pd(&x[i+28]);
-				  xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
-				  xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
-				  xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
-				  xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
-				  xv[4].v = _mm256_mul_pd(alpha.v,xv[4].v);
-				  xv[5].v = _mm256_mul_pd(alpha.v,xv[5].v);
-				  xv[6].v = _mm256_mul_pd(alpha.v,xv[6].v);
-				  xv[7].v = _mm256_mul_pd(alpha.v,xv[7].v);
+				  xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
+				  xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
+				  xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
+				  xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
+				  xv[4].v = _mm256_mul_pd(alphav.v,xv[4].v);
+				  xv[5].v = _mm256_mul_pd(alphav.v,xv[5].v);
+				  xv[6].v = _mm256_mul_pd(alphav.v,xv[6].v);
+				  xv[7].v = _mm256_mul_pd(alphav.v,xv[7].v);
 				  _mm256_store_pd(&x[i+0],xv[0].v);
 				  _mm256_store_pd(&x[i+4],xv[1].v);
 				  _mm256_store_pd(&x[i+8],xv[2].v);
@@ -807,27 +807,27 @@ namespace  gms {
 			      for(; (i+15) < n; i += 16) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                  xv[0].v = _mm256_load_pd(&x[i+0]);
-				 xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				 xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				 _mm256_store_pd(&x[i+0],xv[0].v);
 				 xv[1].v = _mm256_load_pd(&x[i+4]);
-				 xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				 xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				 _mm256_store_pd(&x[i+4],xv[1].v);
 				 //_mm_prefetch((const char*)&x[i+16],_MM_HINT_T0);
 				 xv[2].v = _mm256_load_pd(&x[i+8]);
-				 xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
+				 xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
 				 _mm256_store_pd(&x[i+8],xv[2].v);
 				 xv[3].v = _mm256_load_pd(&x[i+12]);
-				 xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
+				 xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
 				 _mm256_store_pd(&x[i+12],xv[3].v); 
 #else
                                   xv[0].v = _mm256_load_pd(&x[i+0]);
 				  xv[1].v = _mm256_load_pd(&x[i+4]);
 				  xv[2].v = _mm256_load_pd(&x[i+8]);
 				  xv[3].v = _mm256_load_pd(&x[i+12]);
-				  xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
-				  xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
-				  xv[2].v = _mm256_mul_pd(alpha.v,xv[2].v);
-				  xv[3].v = _mm256_mul_pd(alpha.v,xv[3].v);
+				  xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
+				  xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
+				  xv[2].v = _mm256_mul_pd(alphav.v,xv[2].v);
+				  xv[3].v = _mm256_mul_pd(alphav.v,xv[3].v);
 				  _mm256_store_pd(&x[i+0],xv[0].v);
 				  _mm256_store_pd(&x[i+4],xv[1].v);
 				  _mm256_store_pd(&x[i+8],xv[2].v);
@@ -838,16 +838,16 @@ namespace  gms {
 			      for(; (i+7) < n; i += 8) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                     xv[0].v = _mm256_load_pd(&x[i+0]);
-				    xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				    xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				    _mm256_store_pd(&x[i+0],xv[0].v);
 				    xv[1].v = _mm256_load_pd(&x[i+4]);
-				    xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				    xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				    _mm256_store_pd(&x[i+4],xv[1].v);
 #else
                                     xv[0].v = _mm256_load_pd(&x[i+0]);
 				    xv[1].v = _mm256_load_pd(&x[i+4]);
-				    xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
-				    xv[1].v = _mm256_mul_pd(alpha.v,xv[1].v);
+				    xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
+				    xv[1].v = _mm256_mul_pd(alphav.v,xv[1].v);
 				    _mm256_store_pd(&x[i+0],xv[0].v);
 				    _mm256_store_pd(&x[i+4],xv[1].v);
 #endif
@@ -856,11 +856,11 @@ namespace  gms {
 			      for(; (i+3) < n; i += 4) {
 #if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
                                      xv[0].v = _mm256_load_pd(&x[i+0]);
-				    xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				    xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				    _mm256_store_pd(&x[i+0],xv[0].v);
 #else
                                      xv[0].v = _mm256_load_pd(&x[i+0]);
-				     xv[0].v = _mm256_mul_pd(alpha.v,xv[0].v);
+				     xv[0].v = _mm256_mul_pd(alphav.v,xv[0].v);
 				     _mm256_store_pd(&x[i+0],xv[0].v);
 #endif
 			      }
