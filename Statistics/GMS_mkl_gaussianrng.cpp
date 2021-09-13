@@ -40,10 +40,12 @@ MKLGaussianRNG(	const MKL_INT nvalues,
 	m_brng    = brng;
 	m_seed    = seed;
 	m_error   = 1;
+#if (GMS_INIT_ARRAYS) == 1
 #if defined __AVX512F__
         avx512_init_unroll8x_pd(&m_rvec[0], static_cast<int64_t>(m_nvalues), 0.0);
 #else
 	avx256_init_unroll8x_pd(&m_rvec[0], static_cast<int64_t>(m_nvalues), 0.0);
+#endif
 #endif
 }
 
