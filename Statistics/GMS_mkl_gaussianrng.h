@@ -4,24 +4,20 @@
 
 namespace file_info {
 
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
 
-const unsigned int gGMS_MKL_GAUSSIANRNG_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-const unsigned int gGMS_MKL_GAUSSIANRNG_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+const unsigned int gGMS_MKL_GAUSSIANRNG_MAJOR = 1;
 
-const unsigned int gGMS_MKL_GAUSSIANRNG_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+const unsigned int gGMS_MKL_GAUSSIANRNG_MINOR = 1;
+
+const unsigned int gGMS_MKL_GAUSSIANRNG_MICRO = 0;
 
 const unsigned int gGMS_MKL_GAUSSIANRNG_FULLVER = 
 	1000U*gGMS_MKL_GAUSSIANRNG_MAJOR + 100U*gGMS_MKL_GAUSSIANRNG_MINOR + 10U*gGMS_MKL_GAUSSIANRNG_MICRO;
 
 const char * const pgGMS_MKL_GAUSSIANRNG_CREATE_DATE = "22-04-2018 12:16 +00200 (SUN 22 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_GAUSSIANRNG_BUILD_DATE = "00-00-0000 00:00";
+const char * const pgGMS_MKL_GAUSSIANRNG_BUILD_DATE = __DATE__ ":" __TIME__;
 
 const char * const pgGMS_MKL_GAUSSIANRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -31,13 +27,9 @@ const char * const pgGMS_MKL_GAUSSIANRNG_DESCRIPT = "C++ wrappers around Intel M
 
 
 #include <iostream>
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#else
-    #error Unsupported Operating System (Linux and Win64 -- only supported currently)
-#endif
+
+#include "GMS_config.h"
+
 #if (USE_MKL) == 1
 #include <mkl_vsl.h>
 #else
@@ -49,16 +41,11 @@ namespace gms {
 		namespace stat {
 			
 				// Wrapper around MKL vsrnggaussian( method, stream, n, r, a, sigma )
-#if defined _WIN64
-			__declspec(align(64))struct MKLGaussianRNG{
-#elif defined __linux
+
 			__attribute__((align(64))) struct MKLGaussianRNG{
-#endif
-#if defined _WIN64			  
-				    _Field_size_(m_nvalues) double * __restrict m_rvec;
-#elif defined __linux
+
 			                double * __restrict m_rvec;
-#endif
+
 					double m_a;
 
 					double m_sigma;
