@@ -95,7 +95,7 @@ MKLGaussianRNG(MKLGaussianRNG &&x) {
 gms::math::stat::
 MKLGaussianRNG::
 ~MKLGaussianRNG() {
-	if (NULL != m_rvec) _mm_free(m_rvec); m_rvec = NULL;
+	if (NULL != m_rvec) gms_mm_free(m_rvec); m_rvec = NULL;
 }		
 		
 	
