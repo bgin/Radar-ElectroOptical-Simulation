@@ -1,21 +1,7 @@
 
 #include "GMS_mkl_lognormalrng.h"
-#if defined _WIN64
-    #include "../GMS_common.h"
-    #if (GMS_DEBUG_ON) == 1
-        #include "../GMS_debug.h"
-    #else
-        #include "../GMS_malloc.h"
-    #endif
-#include "../GMS_error_macros.h"
-#include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_common.h"
-    #if (GMS_DEBUG_ON) == 1
-        #include "GMS_debug.h"
-    #else
-        #include "GMS_malloc.h"
-    #endif
+#include "GMS_common.h"
+#include "GMS_malloc.h"
 #include "GMS_error_macros.h"
 #include "GMS_constants.h"
 
@@ -49,19 +35,10 @@ MKLLognormalRNG(const MKL_INT nvalues,
 	        const double b,
 	        const double beta) {
 	using namespace gms::common;
-#if defined _WIN64
-   #if (GMS_DEBUG_ON) == 1
-	    data.m_rvec    = gms_edmalloca_dbg(static_cast<size_t>(nvalues),align64B,__FILE__,__LINE__);
-   #else
-	    data.m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-   #endif
-#elif defined __linux
-   #if (GMS_DEBUG_ON) == 1
-            data.m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-   #else
-            data.m_rvec    = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-   #endif
-#endif
+
+   
+       data.m_rvec     = (double*)gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
+ 
 	data.m_a       = a;
 	data.m_sigma   = sigma;
 	data.m_b       = b;
@@ -70,12 +47,12 @@ MKLLognormalRNG(const MKL_INT nvalues,
 	data.m_brng    = brng;
 	data.m_seed    = seed;
 	data.m_error   = 1;
+#if (GMS_INIT_ARRAYS) == 1
 #if defined __AVX512F__
         avx512_init_unroll8x_pd(&data.m_rvec[0], data.m_nvalues,0.0);
 #elif defined __AVX__ 
 	avx256_init_unroll8x_pd(&data.m_rvec[0], data.m_nvalues,0.0);
-#else
-#error Unsupported ISA SIMD
+#endif
 #endif
 
 }
@@ -85,19 +62,9 @@ gms::math::stat::
 MKLLognormalRNG::
 MKLLognormalRNG(const MKLLognormalRNG &x) {
 	using namespace gms::common;
-#if defined _WIN64
-   #if (GMS_DEBUG_ON) == 1
-	    data.m_rvec    = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nvalues),align64B,__FILE__,__LINE__);
-   #else
-	    data.m_rvec    = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-   #endif
-#elif defined __linux
-   #if (GMS_DEBUG_ON) == 1
-            data.m_rvec    = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-   #else
-            data.m_rvec    = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-   #endif
-#endif
+
+        data.m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
+  
 	data.m_a       = x.data.m_a;
 	data.m_sigma   = x.data.m_sigma;
 	data.m_b       = x.data.m_b;
@@ -142,15 +109,9 @@ MKLLognormalRNG(MKLLognormalRNG &&x) {
 gms::math::stat::
 MKLLognormalRNG::
 ~MKLLognormalRNG() {
-#if defined _WIN64
-   #if (GMS_DEBUG_ON) == 1
-	if (NULL != data.m_rvec) _aligned_free_dbg(data.m_rvec); data.m_rvec = NULL;
-   #else
-	if (NULL != data.m_rvec) _mm_free(data.m_rvec); 	data.m_rvec = NULL;
-   #endif
-#elif defined __linux
-        if (NULL != data.m_rvec) _mm_free(data.m_rvec); 	data.m_rvec = NULL;
-#endif
+
+        if (NULL != data.m_rvec) gms_mm_free(data.m_rvec); 	data.m_rvec = NULL;
+
 }		
 	
 	
@@ -162,35 +123,15 @@ operator=(const MKLLognormalRNG &x) {
 	using namespace gms::common;
 	if (this == &x) return (*this);
 	if (data.m_nvalues != x.data.m_nvalues) { // Handle size mismatch
-#if defined _WIN64   
-    #if (GMS_DEBUG_ON) == 1
-		_aligned_free_dbg(data.m_rvec);
-    #else
-		_mm_free(data.m_rvec);
-    #endif
-#elif defined __linux
-                _mm_free(data.m_rvec);
-#endif
-           
-    // Preserve an invariant
+                gms_mm_free(data.m_rvec);
+
+               // Preserve an invariant
 		data.m_a = 0.0; data.m_sigma = 0.0;
 		data.m_b = 0.0; data.m_beta = 0.0;
 		data.m_nvalues = 0; data.m_brng = 0;
 		data.m_seed = 0; data.m_error = 1;
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-		  data.m_rvec = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nvalues), align64B, __FILE__, __LINE__);
-    #else
-		  data.m_rvec = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-                  data.m_rvec = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-    #else
-                  data.m_rvec = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-    #endif
-#endif
-	}
+                data.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
+  	}
 	else {
 		// Copy state
 		data.m_a = x.data.m_a; data.m_sigma = x.data.m_sigma;
@@ -226,15 +167,9 @@ gms::math::stat::MKLLognormalRNG &
 gms::math::stat::MKLLognormalRNG::
 operator=(MKLLognormalRNG &&x) {
 	if (this == &x) return (*this);
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	  _aligned_free_dbg(data.m_rvec);
-    #else
-	_mm_free(data.m_rvec);
-    #endif
-#elif defined __linux
-        _mm_free(data.m_rvec);
-#endif
+
+        gms_mm_free(data.m_rvec);
+
 	data.m_rvec = &x.data.m_rvec[0];
 	data.m_a = x.data.m_a;
 	data.m_sigma = x.data.m_sigma;
