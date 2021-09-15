@@ -1,29 +1,8 @@
 
 #include "GMS_mkl_weibullrng.h"
-#if defined _WIN64
-    #include "../GMS_common.h"
-#elif defined __linux
-    #include "GMS_common.h"
-#endif
-#if defined _WIN64
-   #if (GMS_DEBUG_ON) == 1
-       #include "../GMS_debug.h"
-   #else
-       #include "../GMS_malloc.h"
-   #endif
-#elif defined __linux
-   #if (GMS_DEBUG_ON) == 1
-       #include "GMS_debug.h"
-   #else
-       #include "GMS_malloc.h"
-   #endif
-#endif
-#if defined _WIN64
-    #include "../GMS_error_macros.h"
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_error_macros.h"
-    #include "GMS_constants.h"
+#include "GMS_malloc.h"
+#include "GMS_error_macros.h"
+#include "GMS_constants.h"
 #endif
 //
 //	Implementation
@@ -53,20 +32,10 @@ MKLWeibullRNG(const MKL_INT nvalues,
 	      const double alpha,
 	      const double a,
 	      const double beta) {
-		using namespace gms::common;
-#if defined _WIN64
-      #if (GMS_DEBUG_ON) == 1
-		data.m_rvec = gms_edmalloca_dbg(static_cast<size_t>(nvalues),align64B,__FILE__,__LINE__);
-      #else
-	        data.m_rvec = gms_edmalloca(static_cast<size_t>(nvalues), align64B); // <-- Upon touching m_rvec load 64byte(whole object) to cache
-      #endif
-#elif defined __linux
-      #if (GMS_DEBUG_ON) == 1
-                data.m_rvec = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-      #else
-                data.m_rvec = gma_edmalloca(static_cast<size_t>(nvalues), align64B);
-      #endif
-#endif
+	      using namespace gms::common;
+
+              data.m_rvec = (double*)gma_mm_malloc(static_cast<size_t>(nvalues), align64B);
+   
 	data.m_alpha   = alpha;
 	data.m_a       = a;
 	data.m_beta    = beta;
@@ -74,12 +43,12 @@ MKLWeibullRNG(const MKL_INT nvalues,
 	data.m_brng    = brng;
 	data.m_seed    = seed;
 	data.m_error   = 0;
+#if (GMS_INIT_ARRAYS) == 1
 #if defined __AVX512F__
         avx512_init_unroll8x_pd(&data.m_rvec[0], static_cast<int64_t>(data.m_nvalues), 0.0);
 #elif defined __AVX__
 	avx256_init_unroll8x_pd(&data.m_rvec[0], static_cast<int64_t>(data.m_nvalues), 0.0); // m_rvec should be in cache
-#else
-#error Unsupported SIMD ISA
+#endif
 #endif
 }
 	
@@ -92,19 +61,9 @@ gms::math::stat::
 MKLWeibullRNG::
 MKLWeibullRNG(const MKLWeibullRNG &x) {
 	using namespace gms::common;
-#if defined _WIN64
-     #if (GMS_DEBUG_ON) == 1
-	    data.m_rvec = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nvalues),align64B,__FILE__,__LINE__);
-     #else
-	    data.m_rvec = gms_edmalloca(static_cast<size_t>(x.m_nvalues), align64B);
-     #endif
-#elif defined __linux
-     #if (GMS_DEBUG_ON) == 1
-            data.m_rvec = gms_edmalloca(static_cast<size_t>(x.m_nvalues), align64B);
-     #else
-            data.m_rvec = gms_edmalloca(static_cast<size_t>(x.m_nvalues), align64B);
-     #endif
-#endif
+
+        data.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(x.m_nvalues), align64B);
+   
 	data.m_alpha   = x.data.m_alpha;
 	data.m_a       = x.data.m_a;
 	data.m_beta    = x.data.m_beta;
@@ -154,14 +113,8 @@ MKLWeibullRNG(MKLWeibullRNG &&x){
 gms::math::stat::
 MKLWeibullRNG::
 ~MKLWeibullRNG() {
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	if (NULL != data.m_rvec) _aligned_free_dbg(data.m_rvec); data.m_rvec = NULL;
-    #else
-	if (NULL != data.m_rvec) _mm_free(data.m_rvec); data.m_rvec = NULL;
-    #endif
-#elif defined __linux
-        if (NULL != data.m_rvec) _mm_free(data.m_rvec); data.m_rvec = NULL;
+
+        if (NULL != data.m_rvec) gms_mm_free(data.m_rvec); data.m_rvec = NULL;
 #endif
 }		
 		
@@ -174,32 +127,14 @@ operator=(const MKLWeibullRNG &x){
     using namespace gms::common;
 	if (this == &x) return (*this);
 	if (data.m_nvalues != x.data.m_nvalues) { // Handle size mismatch
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	   _aligned_free_dbg(data.m_rvec);
-    #else
-	   _mm_free(data.m_rvec);
-    #endif
-#elif defined __linux
-           _mm_free(data.m_rvec);
-#endif
-	data.m_alpha = 0.0; data.m_a = 0.0;
-	data.m_beta = 0.0;  data.m_nvalues = 0;
-	data.m_brng = 0;    data.m_seed = 0;
-	data.m_error = 1;
-#if defined _WIN64
-      #if (GMS_DEBUG_ON) == 1
-	      data.m_rvec = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nvalues), align64B, __FILE__, __LINE__);
-      #else
-	      data.m_rvec = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-      #endif
-#elif defined __linux
-      #if (GMS_DEBUG_ON) == 1
-              data.m_rvec = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-      #else
-              data.m_rvec = gms_edmalloca(static_cast<size_t>(x.data.m_nvalues), align64B);
-      #endif
-#endif
+           gms_mm_free(data.m_rvec);
+  	   data.m_alpha = 0.0; data.m_a = 0.0;
+	   data.m_beta = 0.0;  data.m_nvalues = 0;
+	   data.m_brng = 0;    data.m_seed = 0;
+	   data.m_error = 1;
+
+           data.m_rvec = gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
+    
 	}
 	else {
 		// Copy state
@@ -238,15 +173,9 @@ gms::math::stat::MKLWeibullRNG &
 gms::math::stat::MKLWeibullRNG::
 operator=(MKLWeibullRNG &&x) {
 	if (this == &x) return (*this);
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	  _aligned_free_dbg(data.m_rvec);
-    #else
-	  _mm_free(data.m_rvec);
-    #endif
-#elif defined __linux
-          _mm_free(data.m_rvec);
-#endif
+
+         gms_mm_free(data.m_rvec);
+
 	data.m_rvec      = &x.data.m_rvec[0];
 	data.m_alpha     = x.data.m_alpha;
 	data.m_a         = x.data.m_a;
