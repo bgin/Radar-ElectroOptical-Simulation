@@ -3,24 +3,20 @@
 #define __GMS_MKL_WEIBULLRNG_H__
 
 namespace file_info {
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
+
   
-const unsigned int gGMS_MKL_WEIBULLRNG_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
+const unsigned int gGMS_MKL_WEIBULLRNG_MAJOR = 1;
 
-const unsigned int gGMS_MKL_WEIBULLRNG_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+const unsigned int gGMS_MKL_WEIBULLRNG_MINOR = 1;
 
-const unsigned int gGMS_MKL_WEIBULLRNG_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+const unsigned int gGMS_MKL_WEIBULLRNG_MICRO = 0;
 
 const unsigned int gGMS_MKL_WEIBULLRNG_FULLER = 
 	1000U*gGMS_MKL_WEIBULLRNG_MAJOR + 100U*gGMS_MKL_WEIBULLRNG_MINOR + 10U*gGMS_MKL_WEIBULLRNG_MICRO;
 
 const char * const pgGMS_MKL_WEIBULLRNG_CREATE_DATE = "26-04-2018 14:17 +00200 (THR 26 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_WEIBULLRNG_BUILD_DATE = "00-00-0000 00:00";
+const char * const pgGMS_MKL_WEIBULLRNG_BUILD_DATE = __DATE__ ":" __TIME__;
 
 const char * const pgGMS_MKL_WEIBULLRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -29,13 +25,9 @@ const char * const pgGMS_MKL_WEIBULLRNG_DESCRIPT = "C++ wrapper for Intel MKL vd
 }
 
 #include <iostream>
-#if defined _WIN64
-   #include "../GMS_config.h"
-#elif defined __linux
-   #include "GMS_config.h"
-#else
-   #error Unsupported Operating System (Linux and Win64 are currently supported)
-#endif
+
+ #include "GMS_config.h"
+
 #if (USE_MKL) == 1
     #include <mkl_vsl.h>
 #else
@@ -49,16 +41,12 @@ namespace gms {
 			//
 			//	C++ wrapper for Intel MKL vdRngWeibull procedure
 			//
-#if defined _WIN64
-			__declspec(align(64)) struct MKLWRNGData {
-#elif defined __linux
+
                         __attribute__(align((64))) struct MKLWRNGData {
-#endif
-#if defined _WIN64
-				_Field_size_(m_nvalues)double * __restrict m_rvec;
-#elif defined __linux
+
+
                                    double * __restrict m_rvec;
-#endif
+
 				   double m_alpha;
 				   double m_a;
 				   double m_beta;
@@ -86,11 +74,9 @@ namespace gms {
 
 				  
 					
-#if defined _WIN64
-			__declspec(align(64)) struct MKLWeibullRNG {
-#elif defined
+
                         __attribute__((align(64))) struct MKLWeibullRNG {
-#endif
+
 				MKLWRNGData data;
 					//
 					//	Constuction and destruction
