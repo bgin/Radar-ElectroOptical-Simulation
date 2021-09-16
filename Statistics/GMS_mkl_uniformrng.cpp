@@ -1,16 +1,10 @@
 
 #include "GMS_mkl_uniformrng.h"
-#if defined _WIN64
-    #include "../GMS_common.h"
-    #include "../GMS_malloc.h"
-    #include "../GMS_error_macros.h"
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_common.h"
-    #include "GMS_malloc.h"
-    #include "GMS_error_macros.h"
-    #include "GMS_constants.h"
-#endif
+#include "GMS_common.h"
+#include "GMS_malloc.h"
+#include "GMS_error_macros.h"
+#include "GMS_constants.h"
+
 //
 //	Implementation
 //
@@ -37,23 +31,21 @@ MKLUniformRNG(const MKL_INT nvalues,
 	      const double a,
               const double b) {
 	using namespace gms::common;
-#if defined _WIN64 
-	    m_rvec = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-#elif defined __linux
-	    m_rvec = gms_edmalloca(static_cast<size_t>(nvalues), align64B);
-#endif
+
+	 m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
+
 	m_a = a;
 	m_b = b;
 	m_nvalues = nvalues;
 	m_brng    = brng;
 	m_seed    = seed;
 	m_error   = 1;
+#if (GMS_INIT_ARRAYS) == 1
 #if defined __AVX512F__
         avx512_init_unroll8x_pd(&m_rvec[0], static_cast<size_t>(m_nvalues),0.0);
 #elif defined __AVX__
 	avx256_init_unroll8x_pd(&m_rvec[0], static_cast<size_t>(m_nvalues),0.0);
-#else
-#error Unsupported SIMD ISA
+#endif
 #endif
 }
 
@@ -62,11 +54,9 @@ gms::math::stat::
 MKLUniformRNG::
 MKLUniformRNG(const MKLUniformRNG &x) {
 	using namespace gms::common;
-#if defined _WIN64
-	m_rvec    = gms_edmalloca(static_cast<size_t>(x.m_nvalues),align64B);
-#elif defined __linux
-	m_rvec    = gms_edmalloca(static_cast<size_t>(x.m_nvalues),align64B);
-#endif
+
+	m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(x.m_nvalues),align64B);
+
 	m_a       = x.m_a;
 	m_b       = x.m_b;
 	m_nvalues = x.m_nvalues;
@@ -108,7 +98,7 @@ MKLUniformRNG(MKLUniformRNG &&x) {
 gms::math::stat::
 MKLUniformRNG::
 ~MKLUniformRNG() {
-	if (NULL != m_rvec) _mm_free(m_rvec); m_rvec = NULL;
+	if (NULL != m_rvec) gms_mm_free(m_rvec); m_rvec = NULL;
 }		
 	
 	
@@ -126,13 +116,9 @@ gms::math::stat::MKLUniformRNG
 	m_brng    = x.m_brng;
 	m_seed    = x.m_seed;
 	m_error   = x.m_error;
-#if defined _WIN64
-	_Field_size_(m_nvalues)double * __restrict rvec{
-		lam_edmalloca(static_cast<size_t>(m_nvalues), align64B) };
-#elif defined __linux
-	double * __restrict rvec{
-		lam_edmalloca(static_cast<size_t>(m_nvalues), align64B) };
-#endif
+
+	m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(m_nvalues), align64B) };
+
 #if defined __AVX512F__
      #if (USE_NT_STORES) == 1
 	    avx512_memcpy8x_nt_pd(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
