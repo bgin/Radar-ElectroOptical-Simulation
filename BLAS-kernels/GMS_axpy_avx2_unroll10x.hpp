@@ -1,6 +1,6 @@
 
 #ifndef __GMS_AXPY_AVX2_UNROLL_10X_HPP__
-#define __GMS_AXPY_AVX2_UNROLL_10X_HPP__
+#define __GMS_AXPY_AVX2_UNROLL_10X_HPP__ 1
 
 /*
      This version is based on BLIS framework original implementation.
