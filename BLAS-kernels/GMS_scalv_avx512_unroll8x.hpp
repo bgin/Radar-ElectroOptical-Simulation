@@ -558,10 +558,10 @@ namespace  gms {
 						 double * __restrict x,
 						 const int32_t incx) {
                         if(__builtin_expect(0==n,0) ||
-			   __builtin_expect(1.0f==alpha,0)) {
+			   __builtin_expect(1.0==alpha,0)) {
                            return;
 			}
-			if(__builtin_expect(0.0f==alpha,0)) {
+			if(__builtin_expect(0.0==alpha,0)) {
                            // call setv here!!
 			}
 			__ATTR_ALIGN__(64) zmm16r4_t xv[8];
@@ -718,10 +718,10 @@ namespace  gms {
 						 double * __restrict __ATTR_ALIGN__(64) x,
 						 const int32_t incx) {
                         if(__builtin_expect(0==n,0) ||
-			   __builtin_expect(1.0f==alpha,0)) {
+			   __builtin_expect(1.0==alpha,0)) {
                            return;
 			}
-			if(__builtin_expect(0.0f==alpha,0)) {
+			if(__builtin_expect(0.0==alpha,0)) {
                            // call setv here!!
 			}
 			__ATTR_ALIGN__(64) zmm16r4_t xv[8];
