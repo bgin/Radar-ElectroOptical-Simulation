@@ -59,7 +59,7 @@ namespace file_version {
 #include <immintrin.h>
 #include <omp.h>
 #include "GMS_config.h"
-
+#include "GMS_setv_avx_unroll16x.hpp"
 
 namespace  gms {
 
@@ -99,6 +99,11 @@ namespace  gms {
 			}
 			if(__builtin_expect(0.0f==alpha,0)) {
                            // call setv here!!
+			   ssetv_u_ymm8r4_unroll16x(n,
+						    alpha,
+						    x,
+						    incx);
+			   return;
 			}
 			  __ATTR_ALIGN__(32) ymm8r4_t xv[8];
 			  ymm8r4_t alphav;
@@ -260,6 +265,11 @@ namespace  gms {
 			}
 			if(__builtin_expect(0.0f==alpha,0)) {
                            // call setv here!!
+			     ssetv_a_ymm8r4_unroll16x(n,
+						    alpha,
+						    x,
+						    incx);
+			     return;
 			}
 			  __ATTR_ALIGN__(32) ymm8r4_t xv[8];
 			  ymm8r4_t alphav;
@@ -426,6 +436,11 @@ namespace  gms {
 			}
 			if(__builtin_expect(0.0f==alpha,0)) {
                            // call setv here!!
+			    ssetv_a_ymm8r4_unroll16x(n,
+						     alpha,
+						     x,
+						     incx);
+			    return;
 			}
 			  //__ATTR_ALIGN__(32) ymm8r4_t xv[8];
 			  ymm8r4_t xv0;
@@ -567,6 +582,11 @@ namespace  gms {
 			}
 			if(__builtin_expect(0.0==alpha,0)) {
                            // call setv here!!
+			   dsetv_u_ymm4r8_unroll16x(n,
+						    alpha,
+						    x,
+						    incx);
+			   return;
 			}
 			  __ATTR_ALIGN__(32) ymm4r8_t xv[8];
 			  ymm4r8_t alphav;
@@ -728,6 +748,11 @@ namespace  gms {
 			}
 			if(__builtin_expect(0.0==alpha,0)) {
                            // call setv here!!
+			    dsetv_a_ymm4r8_unroll16x(n,
+						    alpha,
+						    x,
+						    incx);
+			   return;
 			}
 			  __ATTR_ALIGN__(32) ymm4r8_t xv[8];
 			  ymm4r8_t alphav;
@@ -896,6 +921,11 @@ namespace  gms {
 			}
 			if(__builtin_expect(0.0==alpha,0)) {
                            // call setv here!!
+			     dsetv_a_ymm4r8_unroll16x(n,
+						      alpha,
+						      x,
+						      incx);
+			   return;
 			}
 			  //__ATTR_ALIGN__(32) ymm4r8_t xv[8];
 			  ymm4r8_t xv0;
