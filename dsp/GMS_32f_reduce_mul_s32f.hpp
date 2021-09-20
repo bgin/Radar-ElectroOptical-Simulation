@@ -61,6 +61,7 @@
 #pragma code_align(32)
 #endif
                for(; idx != len; ++idx) {
+		     _mm_prefetch((const char*)&data+16,_MM_HINT_T0);
                    ymm0  = _mm256_loadu_ps(data);
 		   accum = _mm256_mul_ps(accum,ymm0); // Potential single-precision overflow!!
 		   data += 8;
@@ -101,6 +102,7 @@
 #pragma code_align(32)
 #endif
               for(; idx != len; ++idx) {
+		     _mm_prefetch((const char*)&data+32,_MM_HINT_T0);
                    ymm0  = _mm256_load_ps(data);
 		   accum = _mm256_mul_ps(accum,ymm0); // Potential single-precision overflow!!
 		   data += 8;
