@@ -60,11 +60,13 @@
 #pragma code_align(32)
 #endif
 	       for(; idx != len; ++idx) {
+		   _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                    aVal = _mm256_loadu_ps(a);
 		   aVal1 = _mm256_extractf128_ps(aVal, 0);
 		   aDbl1 = _mm256_cvtps_pd(aVal1);
                    aVal2 = _mm256_extractf128_ps(aVal, 1);
 		   aDbl2 = _mm256_cvtps_pd(aVal2);
+		   _mm_prefetch((const char*)&b+32,_MM_HINT_T0);
 		   bVal1 = _mm256_loadu_pd(b);
 		   cVal1 = _mm256_add_pd(aDbl1, bVal1);
                    bVal2 = _mm256_loadu_pd(b+4);
@@ -106,11 +108,13 @@
 #pragma code_align(32)
 #endif
                for(; idx != len; ++idx) {
+		   _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                    aVal = _mm256_load_ps(a);
 		   aVal1 = _mm256_extractf128_ps(aVal,0);
 		   aDbl1 = _mm256_cvtps_pd(aVal1);
                    aVal2 = _mm256_extractf128_ps(aVal,1);
 		   aDbl2 = _mm256_cvtps_pd(aVal2);
+		   _mm_prefetch((const char*)&b+32,_MM_HINT_T0);
 		   bVal1 = _mm256_load_pd(b);
 		   cVal1 = _mm256_add_pd(aDbl1, bVal1);
                    bVal2 = _mm256_load_pd(b+4);
