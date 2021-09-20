@@ -71,6 +71,7 @@
 #pragma code_align(32)
 #endif
                for(; idx != len; ++idx) {
+		      _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                       aVal = _mm256_loadu_ps(a);
                       z = aVal;
                       condition = _mm256_cmp_ps(z, fzeroes, _CMP_LT_OQ);
@@ -139,6 +140,7 @@
 #pragma code_align(32)
 #endif
                for(; idx != len; ++idx) {
+		      _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                       aVal = _mm256_load_ps(a);
                       z = aVal;
                       condition = _mm256_cmp_ps(z, fzeroes, _CMP_LT_OQ);
