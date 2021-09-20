@@ -69,6 +69,7 @@
 #pragma code_align(32)
 #endif
               for(; idx != len; ++idx) {
+		  _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                   aVal = _mm256_loadu_ps(a);
                   aVal = _mm256_div_ps(aVal,
                            _mm256_sqrt_ps(_mm256_mul_ps(_mm256_add_ps(fones, aVal),
@@ -140,6 +141,7 @@
 #pragma code_align(32)
 #endif
               for(; idx != len; ++idx) {
+		  _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                   aVal = _mm256_load_ps(a);
                   aVal = _mm256_div_ps(aVal,
                            _mm256_sqrt_ps(_mm256_mul_ps(_mm256_add_ps(fones, aVal),
