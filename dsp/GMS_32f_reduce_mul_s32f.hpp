@@ -54,7 +54,7 @@
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
 	 static inline
-	 float dsp_32f_reduce_mul_s32f_u_avx(float * __restrict data,
+	 float dsp_32f_reduce_mul_s32f_u_avx_looped(float * __restrict data,
 	                                     const int32_t npoints) {
                DSP_32F_REDUCE_MUL_S32F_BLOCK
 #if defined __ICC || defined __INTEL_COMPILER
@@ -90,7 +90,7 @@
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
 	 static inline
-	 float dsp_32f_reduce_mul_s32f_a_avx(float * __restrict __ATTR_ALIGN__(32) data,
+	 float dsp_32f_reduce_mul_s32f_a_avx_looped(float * __restrict __ATTR_ALIGN__(32) data,
 	                                     const int32_t npoints) {
                DSP_32F_REDUCE_MUL_S32F_BLOCK
 #if defined __ICC || defined __INTEL_COMPILER
