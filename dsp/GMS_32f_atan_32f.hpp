@@ -63,7 +63,7 @@
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
 	 static inline
-	 void dsp_32f_atan_32f_u_avx(float * __restrict b,
+	 void dsp_32f_atan_32f_u_avx_looped(float * __restrict b,
 	                             float * __restrict a,
 				     const int32_t npoints) {
                DSP_32F_ATAN_32F_BLOCK
@@ -125,7 +125,7 @@
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
 	 static inline
-	 void dsp_32f_atan_32f_a_avx(float * __restrict b,
+	 void dsp_32f_atan_32f_a_avx_looped(float * __restrict b,
 	                             float * __restrict a,
 				     const int32_t npoints) {
                DSP_32F_ATAN_32F_BLOCK
