@@ -51,7 +51,7 @@
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
 	 static inline
-	 void dsp_32f_64f_add_64f_u_avx(double * __restrict  c,
+	 void dsp_32f_64f_add_64f_u_avx_looped(double * __restrict  c,
 					float * __restrict  b,
 					float * __restrict  a,
 					const int32_t npoints) {
@@ -90,7 +90,7 @@
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
 	 static inline
-	 void dsp_32f_64f_add_64f_a_avx(double * __restrict __ATTR_ALIGN__(32) c,
+	 void dsp_32f_64f_add_64f_a_avx_looped(double * __restrict __ATTR_ALIGN__(32) c,
 	                                float  * __restrict __ATTR_ALIGN__(32) b,
 					float  * __restrict __ATTR_ALIGN__(32) a,
 					const int32_t npoints) {
