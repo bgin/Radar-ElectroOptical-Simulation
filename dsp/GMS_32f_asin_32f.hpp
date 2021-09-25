@@ -62,14 +62,14 @@
           __ATTR_ALIGN__(32)
 	  static inline
 	  void dsp_32f_asin_32f_u_avx_looped(float * __restrict b,
-	                              float * __restrict a,
-				      const int32_t npoints) {
+	                                     float * __restrict a,
+				             const int32_t npoints) {
              DSP_32F_ASIN_32F_BLOCK
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
 #endif
               for(; idx != len; ++idx) {
-		  _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
+		   _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                   aVal = _mm256_loadu_ps(a);
                   aVal = _mm256_div_ps(aVal,
                            _mm256_sqrt_ps(_mm256_mul_ps(_mm256_add_ps(fones, aVal),
@@ -127,8 +127,8 @@
           __ATTR_ALIGN__(32)
 	  static inline
 	  void dsp_32f_asin_32f_a_avx_looped(float * __restrict b,
-	                              float * __restrict a,
-				      const int32_t npoints) {
+	                                     float * __restrict a,
+				             const int32_t npoints) {
              DSP_32F_ASIN_32F_BLOCK
 #if defined __ICC || defined __INTEL_COMPILER
               __assume_aligned(b,32);
@@ -141,7 +141,7 @@
 #pragma code_align(32)
 #endif
               for(; idx != len; ++idx) {
-		  _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
+		   _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                   aVal = _mm256_load_ps(a);
                   aVal = _mm256_div_ps(aVal,
                            _mm256_sqrt_ps(_mm256_mul_ps(_mm256_add_ps(fones, aVal),
@@ -193,6 +193,67 @@
 	           }	      
 	  }
 
+
+            
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_HOT__
+	  __ATTR_ALIGN__(32)
+	  __ATTR_VECTORCALL__
+	  __attribute__((regcall)) // GCC will skip over this attribute!!
+	  static inline
+	  __m256 dsp_32f_asin_32f_a_avx(const __m256 v) {
+
+                   register __m256 aVal, pio2, x, y, z, arcsine;                
+                   register __m256 fzeroes,condition;    
+                                         
+	           const __m256 pio2 = _mm256_set1_ps(1.5707963267948966192f);               
+	           const __m256 fones = _mm256_set1_ps(1.0f);                                
+                   const __m256 ftwos = _mm256_set1_ps(2.0f);                                
+                   const __m256 ffours  = _mm256_set1_ps(4.0f);                              
+                   const __m256 n_third = _mm256_set1_ps(-0.3333333333333333333333333f);     
+                   const __m256 p_third = _mm256_set1_ps(0.3333333333333333333333333f);           
+                   __m256 fzeroes = _mm256_setzero_ps();
+		   acrsine = fzeroes;
+		   aVal = v;
+		   aVal = _mm256_div_ps(aVal,
+                           _mm256_sqrt_ps(_mm256_mul_ps(_mm256_add_ps(fones, aVal),
+                                                          _mm256_sub_ps(fones, aVal))));
+                  z = aVal;
+                  condition = _mm256_cmp_ps(z, fzeroes, _CMP_LT_OQ);
+                  z = _mm256_sub_ps(z, _mm256_and_ps(_mm256_mul_ps(z, ftwos), condition));
+                  condition = _mm256_cmp_ps(z, fones, _CMP_LT_OQ);
+                  x = _mm256_add_ps(
+                           z, _mm256_and_ps(_mm256_sub_ps(_mm256_div_ps(fones, z), z), condition));
+		  // Original code contained here a 2-cycle loop
+		  /*
+                        for (i = 0; i < 2; i++) {
+                                x = _mm256_add_ps(x, _mm256_sqrt_ps(_mm256_fmadd_ps(x, x, fones)));
+                        }
+                  */
+		  x = _mm256_add_ps(x, _mm256_sqrt_ps(_mm256_fmadd_ps(x, x, fones)));
+		  x = _mm256_add_ps(x, _mm256_sqrt_ps(_mm256_fmadd_ps(x, x, fones)));
+		  x = _mm256_div_ps(fones, x);
+                  y = fzeroes;
+		   // Original code contained here a 2-cycle loop
+		   /*
+                          for (j = ASIN_TERMS - 1; j >= 0; j--) {
+                               y = _mm256_fmadd_ps(
+                               y, _mm256_mul_ps(x, x), _mm256_set1_ps(pow(-1, j) / (2 * j + 1)));
+                          }
+                    */
+		  y = _mm256_fmadd_ps(
+                         y, _mm256_mul_ps(x, x),n_third); // removing call to pow
+		  y = _mm256_fmadd_ps(
+                         y, _mm256_mul_ps(x, x), p_third);  // removed call to pow
+		  y = _mm256_mul_ps(y, _mm256_mul_ps(x, ffours));
+                      condition = _mm256_cmp_ps(z, fones, _CMP_GT_OQ);
+                  y = _mm256_add_ps(y, _mm256_and_ps(_mm256_fnmadd_ps(y, ftwos, pio2), condition));
+                  arcsine = y;
+                  condition = _mm256_cmp_ps(aVal, fzeroes, _CMP_LT_OQ);
+                  arcsine = _mm256_sub_ps(arcsine,
+                                _mm256_and_ps(_mm256_mul_ps(arcsine, ftwos), condition));
+		  return (arcsine);
+	  }
 
 
 
