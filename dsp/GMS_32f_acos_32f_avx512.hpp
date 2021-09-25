@@ -75,7 +75,7 @@
 #pragma code_align(32)
 #endif
                    for(; idx != len; ++idx) {
-                         _mm_prefetch((const char*)&a+64,_MM_HINT_T0);
+                         _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                          aVal = _mm512_loadu_ps(a);
 			 d    = aVal;
 			 aVal = _mm512_div_ps(_mm512_sqrt_ps(_mm512_mul_ps(
@@ -142,7 +142,7 @@
 #pragma code_align(32)
 #endif
                  for(; idx != len; ++idx) {
-                         _mm_prefetch((const char*)&a+64,_MM_HINT_T0);
+                         _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
                          aVal = _mm512_load_ps(a);
 			 d    = aVal;
 			 aVal = _mm512_div_ps(_mm512_sqrt_ps(_mm512_mul_ps(
