@@ -117,7 +117,7 @@
 		       b += 16;
 		                                 
 		 }
-                  idx = len*8;
+                  idx = len*16;
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma loop_count min(1),avg(4),max(7)
 #endif
@@ -191,7 +191,7 @@
 		       b += 16;
 		                                 
 		 }
-                  idx = len*8;
+                  idx = len*16;
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma loop_count min(1),avg(4),max(7)
 #endif
