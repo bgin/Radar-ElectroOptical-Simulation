@@ -1,6 +1,6 @@
 
 #ifndef __GMS_32F_ASIN_32F_HPP__
-#define __GMS_32F_ASIN_32F_HPP__ 241220201130a
+#define __GMS_32F_ASIN_32F_HPP__
 
 
 /*
@@ -126,8 +126,8 @@
           __ATTR_HOT__
           __ATTR_ALIGN__(32)
 	  static inline
-	  void dsp_32f_asin_32f_a_avx_looped(float * __restrict b,
-	                                     float * __restrict a,
+	  void dsp_32f_asin_32f_a_avx_looped(float * __restrict __ATTR_ALIGN__(32) b,
+					     float * __restrict __ATTR_ALIGN__(32) a,
 				             const int32_t npoints) {
              DSP_32F_ASIN_32F_BLOCK
 #if defined __ICC || defined __INTEL_COMPILER
