@@ -2,13 +2,10 @@
 #include <iostream>
 #include <iomanip>
 #include "GMS_rdtscp_timer.h"
-#if defined _WIN64
-    #include "../Math/GMS_constants.h"
-    #include "../GMS_indices.h"
-#elif defined __linux
-    #include "GMS_constants.h"
-    #include "GMS_indices.h"
-#endif
+
+#include "GMS_constants.h"
+#include "GMS_indices.h"
+
 gms::system
 ::RDTSCPTimer
 ::RDTSCPTimer(const std::size_t nruns,
