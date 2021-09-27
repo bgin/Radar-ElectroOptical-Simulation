@@ -42,7 +42,7 @@ namespace gms {
 
 			// Wrapper around Mkl_Api(int,vdRngCauchy,(const MKL_INT  , VSLStreamStatePtr  , const MKL_INT  , double [], const double  , const double  ))
 
-			     __attribute__((align(64))) MKLCauchyRNG {
+			     __attribute__((align(64))) struct MKLCauchyRNG {
 
 
 				double * __restrict m_rvec;
