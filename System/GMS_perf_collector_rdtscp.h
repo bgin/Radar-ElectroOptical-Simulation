@@ -15,7 +15,7 @@ namespace file_info {
 
       const char * const pgGMS_PERF_COLLECTOR_RDTSCP_CREATE_DATE = "05-10-2019 11:40 +00200 (SAT 05 OCT 2019 GMT+2)";
 
-      const char * const pgGMS_PERF_COLLECTOR_RDTSCP_BUILD_DATE = "00-00-0000 00:00";
+      const char * const pgGMS_PERF_COLLECTOR_RDTSCP_BUILD_DATE = __DATE__ ":"__TIME__;
 
       const char * const pgGMS_PERF_COLLECTOR_RDTSCP_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -27,7 +27,7 @@ namespace file_info {
 #include <string>
 #include <cstdint>
 #include "GMS_config.h"
-#endif
+
 #if (USE_MKL) == 1 && defined (GMS_COMPILED_BY_ICC)
 #include <mkl_dfti.h>
 #endif
