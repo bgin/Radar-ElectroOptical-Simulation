@@ -2,15 +2,12 @@
 #include <iostream>
 #include <iomanip>
 #include "GMS_chrono_timer.h"
-#if defined _WIN64
-    #include "../GMS_indices.h"
-    #include "../Math/GMS_constants.h"
-    #include "../GMS_common.h"
-#elif defined __linux
-    #include "GMS_indices.h"
-    #include "GMS_constants.h"
-    #include "GMS_common.h"
-#endif
+
+
+#include "GMS_indices.h"
+#include "GMS_constants.h"
+#include "GMS_common.h"
+
 
 gms::system
 ::HRCTimer
@@ -337,8 +334,8 @@ gms::system
 }
 
 
-#if !defined (LAM_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE)
-#define LAM_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres,set1,set2)              \
+#if !defined (GMS_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE)
+#define GMA_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres,set1,set2)              \
 	  do{								   \
           if ((vres).size() != (set1).m_delta_values.size() ||               \
 		      (set1).m_delta_values.size() != (set2).m_delta_values.size()){ \
@@ -354,7 +351,7 @@ gms::system::HRCTimer
 		  const HRCTimer &set2,
 		  const double eps) {
 		using namespace gms::common;
-	LAM_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres,set1,set2)
+	GMS_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres,set1,set2)
 	
 	std::size_t vlen{ set1.m_delta_values.size() };
 	for (std::size_t i = 0Ui64; i != vlen; ++i) {
@@ -376,7 +373,7 @@ gms::system::HRCTimer
 		    const HRCTimer &set2,
 		    const double eps) {
 	using namespace gms::common;
-	LAM_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres, set1, set2)
+	GMS_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres, set1, set2)
 	std::size_t vlen{ set1.m_delta_values.size() };
 	for (std::size_t i = 0Ui64; i != vlen; ++i) {
 		if (!approximately_equalf64(set1.m_delta_values[i],
@@ -397,7 +394,7 @@ gms::system::HRCTimer
 		  const HRCTimer &set2,
 		  const double eps) {
 	using namespace gms::common;
-	LAM_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres, set1, set2)
+	GMS_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres, set1, set2)
 	std::size_t vlen{ set1.m_delta_values.size() };
 	for (std::size_t i = 0Ui64; i != vlen; ++i) {
 		if (definitely_lessf64(set1.m_delta_values[i],
@@ -418,7 +415,7 @@ gms::system::HRCTimer
 		  const HRCTimer &set2,
 		  const double eps) {
 	using namespace gms::common;
-	LAM_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres, set1, set2)
+	GMS_CHRONO_TIMER_CHECK_ARGS_CONFORMANCE(vres, set1, set2)
 	std::size_t vlen{ set1.m_delta_values.size() };
 	for (std::size_t i = 0Ui64; i != vlen; ++i) {
 		if (definitely_greaterf64(set1.m_delta_values[i],
