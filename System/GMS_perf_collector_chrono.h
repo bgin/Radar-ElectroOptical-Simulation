@@ -25,11 +25,10 @@ namespace file_info {
 #include <string>
 #include <cstdint>
 #include <chrono>
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+
+
+#include "GMS_config.h"
+
 #if (USE_MKL) && defined (GMS_COMPILED_BY_ICC)
 #include <mkl_dfti.h>
 #endif
