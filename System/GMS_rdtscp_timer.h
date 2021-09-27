@@ -19,7 +19,7 @@ const unsigned int gGMS_RDTSCP_TIMER_FULLVER =
 const  char * const gpGMS_RDTSCP_TIMER_CREATE_DATE = "4-10-2019 17:47 +00200 (FRI 04 OCT  2019 GMT+2)";
 
 // File build date (should be set after successful build of this translation unit.
-const char * const gpGMS_RDTSCP_TIMER_BUILD_DATE = "00-00-0000 00:00";
+const char * const gpGMS_RDTSCP_TIMER_BUILD_DATE = __DATE__":"__TIME__;
 
 // File author
 const char * const gpGMS_RDTSCP_TIMER_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
@@ -30,11 +30,9 @@ const char * const gpGMS_RDTSCP_TIMER_SYNOPSIS = "RDTSCP based performance measu
 #include <vector>
 #include <string>
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+
+#include "GMS_config.h"
+
 #if (USE_ACCURATE_IEEE754_2008_FP) == 1
 #include <bfp754.h>   // IEEE754_2008 accurate floating-point aruthmetics.
 #endif
