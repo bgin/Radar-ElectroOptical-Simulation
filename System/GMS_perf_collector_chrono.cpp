@@ -5,7 +5,7 @@
 #include "GMS_malloc.h"
 #include "GMS_constants.h"
 
-#if (USE_MKL) == 1 && defined (LAM_COMPILED_BY_ICC)
+#if (USE_MKL) == 1 && defined (GMS_COMPILED_BY_ICC)
 
 #if !defined (PERF_COLLECTOR_CHRONO_DFTI_FAIL_CLEANUP)
 #define PERF_COLLECTOR_CHRONO_DFTI_FAIL_CLEANUP(status,data1,data2,desc)	\
@@ -361,13 +361,12 @@ gms::system
 	double t{}, invals{};
 	int32_t snvals{};
 	auto set_size = set1.m_delta_values.size();
-#if defined _WIN64
-	typedef double * __restrict __declspec(align_value(64)) aligned_r8ptr;
-#elif defined __linux
-	typedef double * __restrict __attribute__((align(64))) aligned_r8ptr;
-#endif
-	aligned_r8ptr dataset1 = gms::common::gms_edmalloca(set_size,align64B);
-	aligned_r8ptr dataset2 = gms::common::gms_edmalloca(set_size,align64B);
+
+
+	typedef double * __restrict __attribute__((aligned(64))) aligned_r8ptr;
+
+	aligned_r8ptr dataset1 = (double*)gms::common::gms_mm_malloc(set_size,align64B);
+	aligned_r8ptr dataset2 = (double*)gms::common::gms_mm_malloc(set_size,align64B);
 #if (USE_ACCURATE_IEEE754_2008_FP) == 1
 	auto bOk1 = set1.cvrt_to_double(&dataset1[0],set_size);
 	auto bOk2 = set2.cvrt_to_double(&dataset2[0],set_size);
@@ -376,8 +375,8 @@ gms::system
 	auto bOk2 = set2.cvrt_to_double(&dataset2[0],set_size);
 #endif
 	if (!bOk1 || !bOk2) {
-	        _mm_free(dataset1);
-		_mm_free(dataset2);
+	        gms_mm_free(dataset1);
+		gms_mm_free(dataset2);
 		return (false);
 	}
 	snvals = n << 1;
@@ -406,7 +405,7 @@ gms::system
 	status = DftiComputeBackward(ddh1, dataset1);
 	PERF_COLLECTOR_CHRONO_DFTI_FAIL_CLEANUP2(status, dataset1, dataset2, ddh1, ddh2)
 	memcpy(&correlated_set[0], &dataset1[0],set_size);
-	_mm_free(dataset1); _mm_free(dataset2);
+	gms_mm_free(dataset1); gms_mm_free(dataset2);
 	DftiFreeDescriptor(&ddh1); DftiFreeDescriptor(&ddh2);
 	return (true);
 #else
@@ -423,8 +422,8 @@ gms::system
 	rdft(n, -1, &dataset1[0], &ip[0], &w[0]);
 	memcpy(&correlated_set[0], &dataset1[0], set_size);
 
-	if (dataset1) _mm_free(dataset1);
-	if (dataset2) _mm_free(dataset2);
+	if (dataset1) gms_mm_free(dataset1);
+	if (dataset2) gms_mm_free(dataset2);
 	return (true);
 #endif
 
