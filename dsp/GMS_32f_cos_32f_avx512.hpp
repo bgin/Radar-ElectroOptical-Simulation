@@ -160,7 +160,7 @@
 #endif
                 for(; idx != len; ++idx) {
                      _mm_prefetch((const char*)&a+32,_MM_HINT_T0);
-		     aVal = _mm512_loadu_ps(a);
+		     aVal = _mm512_load_ps(a);
 		     s = (__m512)(_mm512_and_si512((__m512i)(aVal),
 		                             _mm512_set1_epi32(0x7fffffff)));
                      q = _mm512_cvtps_epi32(_mm512_floor_ps(_mm512_mul_ps(s, m4pi)));
@@ -194,7 +194,7 @@
                                            _mm512_and_si512(_mm512_add_epi32(q, twos), fours), zeros);
                      cosine = _mm512_mask_blend_ps(condition1, cosine, sine);
                      cosine = _mm512_mask_mul_ps(cosine, condition2, cosine, _mm512_set1_ps(-1.f));
-		     _mm512_storeu_ps(b,cosine);
+		     _mm512_store_ps(b,cosine);
 		     a += 16;
 		     b += 16;
 		}
