@@ -1,12 +1,12 @@
 
 #ifndef __GMS_DATA_COMPARATOR_HPP__
-#define __GMS_DATA_COMPARATOR_HPP__
+#define __GMS_DATA_COMPARATOR_HPP__ 131020191507
 
 // File version global constants
 
 const unsigned int gGMS_DATA_COMPARATOR_MAJOR = 1U;
 
-const unsigned int gGMS_DATA_COMPARATOR_MINOR = 0U;
+const unsigned int gGMS_DATA_COMPARATOR_MINOR = 1U;
 
 const unsigned int gGMS_DATA_COMPARATOR_MICRO = 0U;
 
@@ -15,7 +15,7 @@ const unsigned int gGMS_DATA_COMPARATOR_FULLVER =
 
 const char * const pgGMS_DATA_COMPARATOR_CREATE_DATE = "13-10-2019 15:07 +00200 (SUN 13 OCT 2019 GMT+2)";
 
-const char * const pgGMS_DATA_COMPARATOR_BUILD_DATE = "00-00-0000 00:00";
+const char * const pgGMS_DATA_COMPARATOR_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_DATA_COMPARATOR_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -29,11 +29,8 @@ const char * const pgGMS_DATA_COMPARATOR_SYNOPSIS = " Primitive types comparator
 #include <iomanip>
 #include <math.h>
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_indices.h"
-#elif defined __linux
-    #include "GMS_indices.h"
-#endif
+#include "GMS_indices.h"
+
 
 namespace gms {
 	namespace math {
@@ -219,7 +216,7 @@ namespace gms {
 				bool  compare_equality() {
 					using namespace std;
 					if (m_x != m_y) {
-						LAM_DATA_COMPARATOR_TEST_FAIL("FAIL: Equality test!!", "Values are not equal.")
+						GMS_DATA_COMPARATOR_TEST_FAIL("FAIL: Equality test!!", "Values are not equal.")
 						return (true);
 					}
 					else {
@@ -231,7 +228,7 @@ namespace gms {
 				bool compare_inequality() {
 					using namespace std;
 					if (m_x == m_y) {
-						LAM_DATA_COMPARATOR_TEST_FAIL("Fail: Inequality test!!", "Values are equal.")
+						GMS_DATA_COMPARATOR_TEST_FAIL("Fail: Inequality test!!", "Values are equal.")
 						return (true);
 					}
 					else {
@@ -243,7 +240,7 @@ namespace gms {
 				bool compare_lt() {
 					using namespace std;
 					if (m_x > m_y) {
-						LAM_DATA_COMPARATOR_TEST_FAIL("FAIL: Less than test!!", "x value is greater.")
+						GMS_DATA_COMPARATOR_TEST_FAIL("FAIL: Less than test!!", "x value is greater.")
 							return (true);
 					}
 					else {
@@ -255,7 +252,7 @@ namespace gms {
 				bool compare_gt() {
 					 using namespace std;
 					if (m_x < m_y) {
-						LAM_DATA_COMPARATOR_TEST_FAIL("FAIL: Greater than test!!", "x value is smaller.")
+						GMS_DATA_COMPARATOR_TEST_FAIL("FAIL: Greater than test!!", "x value is smaller.")
 							return (true);
 					}
 					else {
