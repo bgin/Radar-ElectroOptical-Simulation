@@ -1,25 +1,23 @@
 
 #ifndef __GMS_SIMD_MACROS_H__
-#define __GMS_SIMD_MACROS_H__
+#define __GMS_SIMD_MACROS_H__ 011020181441
 
 namespace file_info {
-#if defined _WIN64  
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
-	const unsigned int gGMS_SIMD_MACROS_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_SIMD_MACROS_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+  
 
-	const unsigned int gGMS_SIMD_MACROS_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_SIMD_MACROS_MAJOR = 1U;
+
+	const unsigned int gGMS_SIMD_MACROS_MINOR = 1U;
+
+	const unsigned int gGMS_SIMD_MACROS_MICRO = 0U;
 
 	const unsigned int gGMS_SIMD_MACROS_FULLVER = 
 	  1000U*gGMS_SIMD_MACROS_MAJOR+100U*gGMS_SIMD_MACROS_MINOR+10U*gGMS_SIMD_MACROS_MICRO;
 
 	const char * const pgGMS_SIMD_MACROS_CREATE_DATE = "01-10-2018 10:41 + 00200 (MON 01 OCT 2018 GMT + 2)";
 
-	const char * const pgGMS_SIMD_MACROS_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_SIMD_MACROS_BUILD_DATE = __DATE__ ":"__TIME__;
 
 	const char * const pgGMS_SIMD_MACROS_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
