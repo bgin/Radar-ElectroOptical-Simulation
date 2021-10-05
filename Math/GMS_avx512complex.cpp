@@ -78,27 +78,13 @@ gms::math
 ::AVX512VComplex1D::
 AVX512VComplex1D(const int32_t nsize) {
 	using namespace gms::common;
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B,__FILE__,__LINE__);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B,__FILE__,__LINE__);
-    #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-    #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-    #endif
-#endif
         data.m_nsize = nsize;
-	avx512_init_unroll8x_pd(&data.m_Re[0], data.m_nsize, 0.0); // <<---- Memory 'first touch' here
-	avx512_init_unroll8x_pd(&data.m_Im[0], data.m_nsize, 0.0); // <<---- Memory 'first touch' here
+	data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+	avx512_init_unroll8x_pd(&data.m_Re[0], data.m_nsize, 0.0);
+	data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+        avx512_init_unroll8x_pd(&data.m_Im[0], data.m_nsize, 0.0);
+      
+	
 }
 
 gms::math::
@@ -107,23 +93,10 @@ AVX512VComplex1D
 		   const double * __restrict Im,
 		   const int32_t nsize) {
 	using namespace gms::common;
-#if defined _WIN64	
-   #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize), align64B, __FILE__, __LINE__);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize), align64B, __FILE__, __LINE__);
-   #else 
-	data.m_Re = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(nsize), align64B);
-   #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-    #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-    #endif
-#endif
+
+	data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+	data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+  
     data.m_nsize = nsize;
 #if (USE_NT_STORES) == 1
 	avx512_uncached_memmove(&data.m_Re[0], &Re[0], data.m_nsize);
@@ -139,23 +112,10 @@ AVX512VComplex1D
 gms::math::AVX512VComplex1D::
 AVX512VComplex1D(const AVX512VComplex1D &x) {
 	using namespace gms::common;
-#if defined _WIN64
-   #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize), align64B, __FILE__, __LINE__);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize), align64B, __FILE__, __LINE__);
-   #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(x.m_data.m_nsize), align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(x.m_data.m_nsize), align64B);
-   #endif
-#elif defined __linux
-   #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-   #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-   #endif
-#endif
+
+	data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+	data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+  
 	data.m_nsize = x.data.m_nsize;
 #if (USE_AVX512COMPLEX_NT_STORES) == 1
 	avx512_uncached_memmove(&data.m_Re[0], &x.m_data.m_Re[0], data.m_nsize);
@@ -183,18 +143,10 @@ AVX512VComplex1D(AVX512VComplex1D &&x) {
 gms::math
 ::AVX512VComplex1D::
 ~AVX512VComplex1D() {
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	if (NULL  != data.m_Re) _aligned_free_dbg(data.m_Re); data.m_Re = NULL;
-	if (NULL  != data.m_Im) _aligned_free_dbg(data.m_Im); data.m_Im = NULL;
-    #else
-	if (NULL != data.m_Re) _mm_free(data.m_Re); data.m_Re = NULL;
-	if (NULL != data.m_Im) _mm_free(data.m_Im); data.m_Im = NULL;
-    #endif
-#elif defined __linux
-        if (NULL != data.m_Re) _mm_free(data.m_Re); data.m_Re = NULL;
-	if (NULL != data.m_Im) _mm_free(data.m_Im); data.m_Im = NULL;
-#endif
+
+        if (NULL != data.m_Re) gms_mm_free(data.m_Re); data.m_Re = NULL;
+	if (NULL != data.m_Im) gms_mm_free(data.m_Im); data.m_Im = NULL;
+
 }	
 	
 
@@ -204,39 +156,19 @@ gms::math::AVX512VComplex1D
 	using namespace gms::common;
 	if (this == &x) return (*this);
 	if (data.m_nsize != x.data.m_nsize) {
-#if defined _WIN64
-  #if (GMS_DEBUG_ON) == 1
-		_aligned_free_dbg(data.m_Re);
-		_aligned_free_dbg(data.m_Im);
-  #else
-		_mm_free(data.m_Re);
-		_mm_free(data.m_Im);
-  #endif
-#elif defined __linux
-		_mm_free(data.m_Re);
-		_mm_free(data.m_Im);
-#endif
+
+
+		gms_mm_free(data.m_Re);
+		gms_mm_free(data.m_Im);
+
 		
 		data.m_nsize = 0; // Preserve an invariant here!!
 		data.m_Re = NULL;
 		data.m_Im = NULL;
-#if defined _WIN64	
-   #if (GMS_DEBUG_ON) == 1
-		data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B,__FILE__,__LINE__);
-		data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B,__FILE__,__LINE__);
-   #else
-		data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize), align64B);
-		data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize), align64B);
-   #endif
-#elif defined __linux
-   #if (GMS_DEBUG_ON) == 1
-		data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-		data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-   #else
-		data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-		data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-   #endif
-#endif
+
+		data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+		data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+ 
    }
    else {
        
@@ -256,18 +188,10 @@ gms::math::AVX512VComplex1D &
 gms::math::AVX512VComplex1D
 ::operator=(AVX512VComplex1D &&x) {
 	if (this == &x) return (*this);
-#if defined _WIN64
-   #if (GMS_DEBUG_ON) == 1
-	_aligned_free_dbg(data.m_Re);
-	_aligned_free_dbg(data.m_Im);
-   #else		
-	_mm_free(data.m_Re);
-	_mm_free(data.m_Im);
-   #endif
-#elif defined __linux
-	_mm_free(data.m_Re);
-	_mm_free(data.m_Im);
-#endif
+
+	gms_mm_free(data.m_Re);
+	gms_mm_free(data.m_Im);
+
 	data.m_Re      = x.data.m_Re;
 	data.m_Im      = x.data.m_Im;
 	data.m_nsize   = x.data.m_nsize;
