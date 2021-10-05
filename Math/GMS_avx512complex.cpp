@@ -1,27 +1,10 @@
-
+#include <zmmintrin.h>
 #include "GMS_avx512complex.h"
-
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-        #include "../GMS_debug.h"
-    #else
-        #include "../GMS_malloc.h"
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-        #include "GMS_debug.h"
-    #else
-        #include "GMS_malloc.h"
-    #endif
-#endif
-#if defined _WIN64
-    #include "../GMS_error_macros.h"
-#elif defined __linux
-    #include "GMS_error_macros.h"
-#endif
+#include "GMS_malloc.h"   
+#include "GMS_error_macros.h"
 #include "GMS_avx512complex_common.h"
 
-#include <zmmintrin.h>
+
 
 //
 // Implementation
