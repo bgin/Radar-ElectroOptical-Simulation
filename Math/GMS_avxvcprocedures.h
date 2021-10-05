@@ -1,6 +1,6 @@
 
 #ifndef __GMS_AVXVCPROCEDURES_H__
-#define __GMS_AVXVCPROCEDURES_H__
+#define __GMS_AVXVCPROCEDURES_H__ 061020191545
 
 
 
@@ -8,24 +8,20 @@
 
 namespace file_info {
   
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
+
 	
-	const unsigned int gGMS_AVXCPROCEDURES_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
+	const unsigned int gGMS_AVXCPROCEDURES_MAJOR = 1;
 
-	const unsigned int gGMS_AVXCPROCEDURES_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVXCPROCEDURES_MINOR = 0;
 
-	const unsigned int gGMS_AVXCPROCEDURES_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVXCPROCEDURES_MICRO = 1;
 
 	const unsigned int gGMS_AVXCPROCEDURES_FULLVER = 
 		1000U*gLAM_AVXCOMPLEX_SMALLV_MAJOR+100U*gLAM_AVXCOMPLEX_SMALLV_MINOR+10U*gLAM_AVXCOMPLEX_SMALLV_MICRO;
 
 	const char * const pgGMS_AVXCPROCEDURES_CREATE_DATE = "06-10-2019 15:45 + 00200 (SUN 06 OCT 2019 GMT+2)";
 
-	const char * const pgGMS_AVXCPROCEDURES_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_AVXCPROCEDURES_BUILD_DATE = __DATE__ ":"__TIME__;
 
 	const char * const pgGMS_AVXCPROCEDURES_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
