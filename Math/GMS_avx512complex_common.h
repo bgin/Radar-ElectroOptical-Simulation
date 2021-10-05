@@ -1,26 +1,22 @@
 
 #ifndef __GMS_AVX512COMPLEX_COMMON_H__
-#define __GMS_AVX512COMPLEX_COMMON_H__
+#define __GMS_AVX512COMPLEX_COMMON_H__ 121020191751
 
 namespace file_info {
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
 
-	const unsigned int gGMS_AVX512COMPLEX_COMMON_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_AVX512COMPLEX_COMMON_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVX512COMPLEX_COMMON_MAJOR = 1;
 
-	const unsigned int gGMS_AVX512COMPLEX_COMMON_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVX512COMPLEX_COMMON_MINOR = 0;
+
+	const unsigned int gGMS_AVX512COMPLEX_COMMON_MICRO = 1;
 
 	const unsigned int gGMS_AVX512COMPLEX_COMMON_FULLVER = 
 		1000U*gGMS_AVX512COMPLEX_COMMON_MAJOR + 100U*gGMS_AVX512COMPLEX_COMMON_MINOR + 10U*gGMS_AVX512COMPLEX_COMMON_MICRO;
 
 	const char * const pgGMS_AVX512COMPLEX_COMMON_CREATE_DATE = "12-10-2019 17:51 +00200 (SAT 12 OCT 2019 GMT+2)";
 
-	const char * const pgGMS_AVX512COMPLEX_COMMON_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_AVX512COMPLEX_COMMON_BUILD_DATE = __DATE__":"__TIME__;
 
 	const char * const pgGMS_AVX512COMPLEX_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -33,11 +29,9 @@ namespace file_info {
 #include <type_traits>
 #include <immintrin.h>
 #include <complex>
-#if defined _WIN6
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+
+#include "GMS_config.h"
+
 namespace gms {
 	namespace math {
 
@@ -139,17 +133,12 @@ namespace gms {
 						   const AVX512VField1D &v1,
 						   const AVX512VField1D &v2) {
 					 if (v1.data.m_nsize != v2.data.m_nsize) { return;}
-				    #if defined _WIN64
-					 __declspec(align(64)) struct {
-						 double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
-						 int64_t i;
-					 } ca;
-				    #elif defined __linux
+				   
 					 __attribute__((align(64))) struct {
                                                  double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
 						 int64_t i;
 					 } ca;
-				    #endif
+				    
 					 for (ca.i = 0LL; ca.i != ROUND_TO_EIGHT(v1.data.m_nsize, 8LL); ca.i += 8LL) {
 						 
 						 const __m512d zmm0(_mm512_load_pd(&v1.data.m_Re[i]));
@@ -180,19 +169,13 @@ namespace gms {
 						    const AVX512VField1D &v1,
 						    const AVX512VField1D &v2) {
 				  if (v1.data.m_nsize != v2.data.m_nsize) { return;}
-			     #if defined _WIN64
-				  __declspec(align(64)) struct {
-					  double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 },
-					  t1{ 0.0 }, t2{0.0};
-					  int64_t i;
-				  }ca;
-			     #elif defined __linux
+			  
 				  __attribute__((align(64))) struct {
 					  double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 },
 					  t1{ 0.0 }, t2{0.0};
 					  int64_t i;
 				  }ca;
-			     #endif
+			    
 				  for (ca.i = 0LL; ca.i != ROUND_TO_EIGHT(v1.data.m_nsize, 8LL); ca.i += 8LL) {
 						
 						const __m512d zmm0(_mm512_load_pd(&v1.data.m_Re[i]));
@@ -347,12 +330,7 @@ namespace gms {
 							 const AVX512VField1D &v1,
 							 const AVX512VField1D &v2) {
 					   if (v1.data.m_nsize != v2.data.m_nsize) { return;}
-				      #if defined _WIN64
-					   __declspec(align(64)) struct {
-						   double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 };
-						   int64_t i;
-					   }ca;
-				      #elif defined __linux
+				      
 					   __attribute__((align(64))) struct {
                                                     double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 };
 						    int64_t i;
@@ -384,17 +362,12 @@ namespace gms {
 					 std::is_class<AVX512VField1D>::value,void>::type>
 					 avx512_arith_mean(std::complex<double> &mean,
 							   const AVX512VField1D &v) {
-			                  #if defined _WIN64
-						 __declspec(align(64)) struct {
-							 double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 };
-							 int64_t i;
-						 }ca;
-					  #elif defined __linux
+			                
 						 __attribute__((align(64))) struct {
                                                          double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 };
 							 int64_t i;
 						 }ca;
-					  #endif
+					
 						 for (ca.i = 0LL; ca.i != ROUND_TO_EIGHT(v.data.m_nsize, 8LL); ca.i += 8LL) {
 							 const __m512d re_part(_mm512_load_pd(&v.data.m_Re[i]));
 							 ca.sumre = _mm512_reduce_pd(re_part);
