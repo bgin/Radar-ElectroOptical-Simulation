@@ -1,25 +1,21 @@
 
 #ifndef __GMS_AVX512COMPLEX_H__
-#define __GMS_AVX512COMPLEX_H__
+#define __GMS_AVX512COMPLEX_H__ 101020191913
 
 namespace file_info {
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
-	const unsigned int gGMS_AVX512COMPLEX_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_AVX512COMPLEX_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVX512COMPLEX_MAJOR = 1;
 
-	const unsigned int gGMS_AVX512COMPLEX_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVX512COMPLEX_MINOR = 0;
+
+	const unsigned int gGMS_AVX512COMPLEX_MICRO = 0;
 
 	const unsigned int gGMS_AVX512COMPLEX_FULLVER = 
 	    1000U*gGMS_AVX512COMPLEX_MAJOR + 100U*gGMS_AVX512COMPLEX_MINOR + 10U*gGMS_AVX512COMPLEX_MICRO;
 
 	const  char * const  pgGMS_AVX512COMPLEX_CREATE_DATE = "10-10-2019 19:13 +00200 (FRI 10 OCT 2019 GMT+2)";
 
-	const  char * const  pgGMS_AVX512COMPLEX_BUILD_DATE = "00-00-0000 00:00";
+	const  char * const  pgGMS_AVX512COMPLEX_BUILD_DATE = __DATE__":"__TIME__;
 
 	const  char * const  pgGMS_AVX512COMPLEX_AUTHOR     = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -41,15 +37,11 @@ namespace file_info {
 #include <cstdint>
 #include <array>
 
-#if defined _WIN64
-    #include "../GMS_config.h"
-    #include "../GMS_common.h"
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
+
     #include "GMS_config.h"
     #include "GMS_common.h"
     #include "GMS_constants.h"
-#emdif
+
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
 #if !defined (USE_AVX512COMPLEX_NT_STORES)
@@ -60,26 +52,16 @@ namespace gms {
 	namespace math{
 
 
-#if defined _WIN64
-	  __declspec(align(64))
-		 struct AVX512VCData{
-#elif defined __linux
-	  __attribute__((align(64)))
+
+	  
 	         struct AVX512VCData{
-#endif
-#if defined _WIN64
-			// Real array
-			 _Field_size_(m_nsize)  __declspec(align(8)) double* __restrict m_Re;
 
-			// Imaginary array
-			_Field_size_(m_nsize)   __declspec(align(8)) double* __restrict m_Im;
 
-		                                __declspec(align(4))  int32_t           m_nsize;
-#elif defined __linux
+
 		         __attribute__((align(8))) double* __restrict m_Re;
 		         __attribute__((align(8))) double* __restrict m_Im;
 		         __attribute__((align(4))) int32_t __restrict m_nsize;
-#endif
+
 
 #if (USE_STRUCT_PADDING) == 1
 			 PAD_TO_ALIGNED(4,0,4)
@@ -91,11 +73,10 @@ namespace gms {
 		};
 
 		 
-#if defined _WIN64
-		 __declspec(align(64))     struct AVX512VComplex1D{
-#elif defined __linux
+
+
 		 __attribute__((align64))) struct AVX512VComplex1D{
-#endif
+
 
 
 		        AVX512VCData data;
