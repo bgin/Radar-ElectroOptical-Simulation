@@ -4,11 +4,9 @@
 //
 
 #include "GMS_avxvcprocedures.h"
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+
+ #include "GMS_config.h"
+
 
 #if !defined (AVXVCPROCEDURES_PREFETCH_FROM_OBJS)
 #define AVXVCPROCEDURES_PREFETCH_FROM_OBJS(obj1,obj2,idx,off,hint) \
