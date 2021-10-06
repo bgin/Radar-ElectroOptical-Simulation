@@ -1,33 +1,26 @@
 
 #ifndef __GMS_AVXC2F64_H__
-#define __GMS_AVXC2F64_H__
+#define __GMS_AVXC2F64_H__ 171120171113
 
 
 
 #include <iosfwd>
 #include <iomanip>
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_simd_defs.h"
-#elif defined __linux
-    #include "GMS_simd_defs.h"
-#endif
+#include "GMS_simd_defs.h"
+
 
 namespace file_info {
 
-#if defined _WIN64  
-  #include "../GMS_version.h"
-#elif defined __linux
-  #include "GMS_version.h"
-#endif
 
-     const unsigned int gGMS_AVXC2F64_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
-     const unsigned int gGMS_AVXC2F64_MINOR = gms::common::gVersionInfo.m_VersionMinor;
-     const unsigned int gGMS_AVXC2F64_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+
+     const unsigned int gGMS_AVXC2F64_MAJOR = 1;
+     const unsigned int gGMS_AVXC2F64_MINOR = 0;
+     const unsigned int gGMS_AVXC2F64_MICRO = 1;
      const unsigned int gGMS_AVXC2F64_FULLVER =
        1000U*gGMS_AVXC2F64_MAJOR+100U*gGMS_AVXC2F64_MINOR+10U*gGMS_AVXC2F64_MICRO;
      const char * const pgGMS_AVXC2F64_CREATE_DATE =  "17-11-2017 11:13 +00200 (FRI 17 NOV 2017 GMT+2)";
-     const char * const pgGMS_AVXC2F64_BUILD_DATE  =  "00-00-0000 00:00";
+     const char * const pgGMS_AVXC2F64_BUILD_DATE  =   __DATE__":"__TIME__;
      const char * const pgGMS_AVXC2F64_AUTHOR      =  "Programmer: Bernard Gingold e-mail: beniekg@gmail.com";
      const char * const pgGMS_AVXC2F64_SYNOPSIS    =  "Wrapper struct around  __m256d which represents 2 complex numbers packed.";
 }
@@ -36,11 +29,9 @@ namespace gms {
 	namespace math {
 
 		
-#if defined _WIN64
-	__declspec(align(64)) struct AVXC2f64 {
-#elif defined __linux
+
 	  __attribute__((align(64))) struct AVXC2f64 {
-#endif
+
 
 			//
 			// Constructors and Destructor (default)
