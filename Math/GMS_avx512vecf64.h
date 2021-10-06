@@ -1,40 +1,29 @@
 
 #ifndef __GMS_AVX512VECF64_H__
-#define __GMS_AVX512VECF64_H__
+#define __GMS_AVX512VECF64_H__ 131020191146
 
 
 
 
 
 
- /*
-    Bernard Gingold copyright notice:
-    This file is a part of Guided-Missile-Modeling-Simulation program.
-    Copyright(C) 2017 Bernard Gingold
-    License : GNU General Public Locense version 3 or later,
-    for additional information check file LICENSE.txt in
-    project directory.
-*/
+ 
 
 namespace file_info {
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
 
-  	const unsigned int gGMS_AVX512VECF64_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_AVX512VECF64_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+  	const unsigned int gGMS_AVX512VECF64_MAJOR = 1;
 
-	const unsigned int gGMS_AVX512VECF64_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVX512VECF64_MINOR = 0;
+
+	const unsigned int gGMS_AVX512VECF64_MICRO = 1;
 
 	const unsigned int gGMS_AVX512VECF64_FULLVER = 
 	    1000U*gGMS_AVX512VECF64_MAJOR + 100U*gGMS_AVX512VECF64_MINOR + 10U*gGMS_AVX512VECF64_MICRO;
 
 	const  char * const  pgGMS_AVX512VEC64_CREATE_DATE = "13-10-2019 11:46 +00200 (SUN 13 OCT 2019 GMT+2)";
 
-	const  char * const  pgGMS_AVX512VECG64_BUILD_DATE = "00-00-0000 00:00";
+	const  char * const  pgGMS_AVX512VECG64_BUILD_DATE = __DATE__":"__TIME__;
 
 	const  char * const  pgGMS_AVX512VECF64_AUTHOR     = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -50,11 +39,9 @@ namespace file_info {
 namespace gms {
 	namespace math {
 
-#if defined _WIN64	  
-		__declspec(align(64)) struct AVX512VecF64 {
-#elif defined __linux
+
 		__attribute__((align(64))) struct AVX512VecF64 {
-#endif
+
 		
 
 		   //
