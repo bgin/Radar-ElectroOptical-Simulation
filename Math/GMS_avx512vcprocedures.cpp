@@ -1,13 +1,9 @@
 
 #include "GMS_avx512complex.h"
 #include "GMS_avx512vcprocedures.h"
-#if defined _WIN64
-    #include "../GMS_common.h"
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_common.h"
-    #include "GMS_config.h"
-#endif
+#include "GMS_common.h"
+#include "GMS_config.h"
+
 //
 //	Implementation
 //
