@@ -1,55 +1,38 @@
 
 #ifndef __GMS_AVX512COMPLEX_SHORTVEC_H__
-#define __GMS_AVX512COMPLEX_SHORTVEC_H__
+#define __GMS_AVX512COMPLEX_SHORTVEC_H__ 121020191312
 
 namespace file_info {
-#if defined _WIN64 
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
 
-	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_MAJOR = 1;
 
-	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_MINOR = 0;
+
+	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_MICRO = 1;
 
 	const unsigned int gGMS_AVX512COMPLEX_SHORTVEC_FULLVER = 
 		1000U*gGMS_AVX512COMPLEX_SHORTVEC_MAJOR+100U*gGMS_AVX512COMPLEX_SHORTVEC_MINOR+10U*gGMS_AVX512COMPLEX_SHORTVEC_MICRO;
 
 	const char * const pgGMS_AVX512COMPLEX_SHORTVEC_CREATE_DATE = "12-10-2019 13:12 +00200 (SAT 12 OCT 2019 GMT+2)";
 
-	const char * const pgGMS_AVX512COMPLEX_SHORTVEC_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_AVX512COMPLEX_SHORTVEC_BUILD_DATE = __DATE__":"__TIME__;
 
 	const char * const pgGMS_AVX512COMPLEX_SHORTVEC_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
 	const char * const pgGMS_AVX512COMPLEX_SHORTVEC_SYNOPSIS = "AVX512 complex vector (1D) stack-allocated storage.";
 }
 
-//
-// Warning:
-//				Include these files if and only if you have 
-//				CPU and/or Accelarator i.e Xeon Phi which supports AVX512 ISA,
-//				otherwise remove these files from compilation.
-//
+
 
 #include <cstdint>
 #include <array>
 #include <iostream>
-#if defined _WIN64
-    #include "../GMS_config.h"
-    #include "../GMS_common.h"
-#elif defined __linux
-    #include "GMS_config.h"
-    #include "GMS_common.h"
-#endif
-#include "LAM_avx512complex_common.h"
-#if defined _WIN64
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_constants.h"
-#endif
+#include "GMS_config.h"
+#include "GMS_common.h"
+#include "GMS_avx512complex_common.h"
+#include "GMS_constants.h"
+
 
 #if !defined (USE_AVX512COMPLEX_SHORTV_NT_STORES) // Streaming stores defined per this struct (default set to 0)
 #define USE_AVX512COMPLEX_SHORTV_NT_STORES 0
@@ -65,36 +48,26 @@ namespace gms {
 	(reg3) = _mm512_load_pd(&(v1).data.m_Im[(idx)+(off)]);			   \
 	(reg4) = _mm512_load_pd(&(v2).data.m_Im[(idx)+(off)]);
 #endif
-#if defined _WIN64
-		template<int32_t N>
-		  __declspec(align(64))  struct AVX512SCVData {
-#elif defined
+
 		template<int32_t N>
 		__attribute__((align(64))) struct AVX512SCVData {
-#endif
+
 			static  constexpr int32_t MAX_SIZE = 4096;
 			int32_t m_nsize = N;
 			PAD_TO(1,4)
 			PAD_TO(2,4)
 			
 			static_assert(N <= MAX_SIZE, "Invalid size of AVX512SCVData -- passed!!");
-#if defined _WIN64
-			__declspec(align(64))	double m_Re[(N == 0) ? 8 : N]; // Smallest size 8 elements
 
-			__declspec(align(64))   double m_Im[(N == 0) ? 8 : N];
-#elif defined __linux
 		        __attribute__((align(64))) double m_Re[(N == 0) ? 8 : N];
 			__attribute__((align(64))) double m_Im[(N == 0) ? 8 : N];
-#endif
+
 		};
 
-#if defined _WIN64
-		template<int32_t N> 
-		struct  __declspec(align(64)) AVX512SmallCVec1D {
-#elif defined __linux
+
 		template<int32_t N>
 		__attribute__((align(64)))  struct AVX512SmallCVec1D {
-#endif
+
 		        AVX512SCVData<N> data;
 			
 			AVX512SmallCVec1D() noexcept(true) {
