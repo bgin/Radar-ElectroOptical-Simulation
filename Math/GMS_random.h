@@ -1,37 +1,31 @@
 
 #ifndef __GMS_RANDOM_H__
-#define __GMS_RANDOM_H__
+#define __GMS_RANDOM_H__ 061020191135
 
 
 #include <time.h>
 #include <random>
 #include <type_traits>
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_error_macros.h"
-#elif defined __linux
-    #include "GMS_error_macros.h"
-#endif
+
+#include "GMS_error_macros.h"
+
 
 namespace file_info {
-  #if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
+ 
 	
-	const unsigned int gGMS_RANDOM_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
+	const unsigned int gGMS_RANDOM_MAJOR = 1;
 
-	const unsigned int gGMS_RANDOM_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_RANDOM_MINOR = 0;
 
-	const unsigned int gGMS_RANDOM_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_RANDOM_MICRO = 1;
 
 	const unsigned int gGMS_RANDOM_FULLVER = 
 		1000U*gGMS_RANDOM_MAJOR+100U*gGMS_RANDOM_MINOR+10U*gGMS_RANDOM_MICRO;
 
 	const char * const pgGMS_RANDOM_CREATE_DATE = "06-10-2019 11:35 + 00200 (SUN 06 OCT 2019 GMT+2)";
 
-	const char * const pgGMS_RANDOM_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_RANDOM_DATE = __DATE__":"__TIME__;
 
 	const char * const pgGMS_RANDOM_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
