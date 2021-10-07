@@ -1,26 +1,20 @@
 
 #ifndef __GMS_AVXCOMPLEX_SHORTVEC_H__
-#define __GMS_AVXCOMPLEX_SHORTVEC_H__
+#define __GMS_AVXCOMPLEX_SHORTVEC_H__ 061020191135
 
 namespace file_info {
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
+
 	
-	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
-
-	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_MINOR = gms::common::gVersionInfo.m_VersionMinor;
-
-	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_MAJOR = 1;
+	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_MINOR = 0;
+	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_MICRO = 1;
 
 	const unsigned int gGMS_AVXCOMPLEX_SHORTVEC_FULLVER = 
-		1000U*gLAM_AVXCOMPLEX_SMALLV_MAJOR+100U*gLAM_AVXCOMPLEX_SMALLV_MINOR+10U*gLAM_AVXCOMPLEX_SMALLV_MICRO;
+		1000U*gGMS_AVXCOMPLEX_SHORTVECV_MAJOR+100U*gGMS_AVXCOMPLEX_SHORTVEC_MINOR+10U*gGMS_AVXCOMPLEX_SHORTVEC_MICRO;
 
 	const char * const pgGMS_AVXCOMPLEX_SHORTVEC_CREATE_DATE = "06-10-2019 11:35 + 00200 (SUN 06 OCT 2019 GMT+2)";
 
-	const char * const pgGMS_AVXCOMPLEX_SHORTVEC_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_AVXCOMPLEX_SHORTVEC_BUILD_DATE = __DATE__":"__TIME__;
 
 	const char * const pgGMS_AVXCOMPLEX_SHORTVEC_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -29,19 +23,11 @@ namespace file_info {
 
 #include <cstdint>
 #include <iostream>
-#if defined _WIN64
-    #include "../GMS_config.h"
-    #include "../GMS_common.h"
-#elif defined __linux
-    #include "GMS_config.h"
-    #include "GMS_common.h"
-#endif
+#include "GMS_config.h"
+#include "GMS_common.h"
 #include "GMS_avxcomplex_common.h"
-#if defined _WIN64
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_constants.h"
-#endif
+#include "GMS_constants.h"
+
 
 #if !defined (USE_AVXCOMPLEX_SHORTVEC_NT_STORES) // Streaming stores defined per this struct (default set to 0)
 #define USE_AVXCOMPLEX_SHORTVEC_NT_STORES 0
@@ -66,28 +52,20 @@ namespace gms {
 			PAD_TO(1,4)
 		        PAD_TO(2,4)
 			static_assert(N <= MAX_SIZE, "Invalid size of AVXSCVData -- has been passed!!");
-#if defined _WIN64
-			__declspec(align(64)) double m_Re[(N == 0) ? 4 : N];
 
-			__declspec(align(64)) double m_Im[(N == 0) ? 4 : N];
-#elif defined __linux
+
 		        __attribute__((align(64))) double m_Re[(N == 0) ? 4 : N];
 
 		        __attribute__((align(64))) double m_Im[(N == 0) ? 4 : N];
-#endif
+
 		};
-#if defined _WIN64
-		template<int32_t N>
-		struct __declspec(align(64)) AVXShortCVec1D {
-#elif defined __linux
+
 		template<int32_t N>
 		struct __attribute__((align(64))) AVXShortCVec1D {
-#endif
-#if defined _WIN64		
-			__declspec(align(64)) AVXSCVData<N> data;
-#elif defined __linux
+
+
 			__attribute__((align(64))) AVXSCVData<N> data;
-#endif
+
 			AVXShortCVec1D() noexcept(true) {
 				data.m_Re[N] = {};
 				data.m_Im[N] = {};
@@ -108,7 +86,7 @@ namespace gms {
 			AVXShortCVec1D(const AVXSmallCVec1D &x) {
 				using namespace gms::common;
 				data.m_nsize = x.data.m_nsize;
-#if (USE_AVXCOMPLEX_SMALLV_NT_STORES) == 1
+#if (USE_AVXCOMPLEX_SHORTVEC_NT_STORES) == 1
 				avx256_uncached_memmove(&data.m_Re[0], &x.data.m_Re[0], x.data.m_nsize);
 				avx256_uncached_memmove(&data.m_Im[0], &x.data.m_Im[0], x.data.m_nsize);
 #else
@@ -476,15 +454,11 @@ namespace gms {
 					 const AVXShortCVec1D<N> &y) {
 				if (x.data.m_nsize != y.data.m_nsize) { return (AVXShortCVec1D<N>{}); }
 				AVXShortCVec1D<N> ret_vec;
-#if defined _WIN64
-				__declspec(align(64)) struct {
-					__m256d ymm0,ymm1,ymm2,ymm3,ymm4,ymm5,ymm6,ymm7;
-				}ca;
-#elif defined __linux
+
+
 				__attribute__((align(64))) struct {
                                         __m256d ymm0,ymm1,ymm2,ymm3,ymm4,ymm5,ymm6,ymm7;
 				}ca;
-#endif
 				ca.ymm0 = _mm256_setzero_pd();
 				ca.ymm1 = _mm256_setzero_pd();
 				ca.ymm2 = _mm256_setzero_pd();
@@ -742,15 +716,11 @@ namespace gms {
 			using namespace gms::common;
 			using namespace gms::math::constants;
 			if (x.data.m_nsize != y.data.m_nsize) { return (AVXShortCVec1D<N>{}); }
-#if defined _WIN64
-			__declspec(align(64)) struct {
-				__m256d ymm0,ymm1,ymm2,ymm3,ymm4,ymm5,ymm6,ymm7;
-			}ca;
-#elif defined __linux
+
 			__attribute__((align(64))) struct {
                                 __m256d ymm0,ymm1,ymm2,ymm3,ymm4,ymm5,ymm6,ymm7;
 			}ca;
-#endif
+
 			ca.ymm0 = _mm256_setzero_pd(); 
 			ca.ymm1 = _mm256_setzero_pd();
 			ca.ymm2 = _mm256_setzero_pd();
@@ -835,15 +805,11 @@ namespace gms {
 			using namespace gms::common;
 			using namespace gms::math::constants;
 			if (x.data.m_nsize != y.data.m_nsize) { return (AVXShortCVec1D<N>{}); }
-#if defined _WIN64
-			__declspec(align(64)) struct {
-				__m256d ymm0, ymm1, ymm2, ymm3, ymm4, ymm5, ymm6, ymm7;
-			}ca;
-#elif defined __linux
+
 			__attribute__((align(64))) struct {
                                 __m256d ymm0, ymm1, ymm2, ymm3, ymm4, ymm5, ymm6, ymm7;
 			}ca;
-#endif
+
 			ca.ymm0 = _mm256_setzero_pd();
 			ca.ymm1 = _mm256_setzero_pd();
 			ca.ymm2 = _mm256_setzero_pd();
