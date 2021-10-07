@@ -1,6 +1,6 @@
 
 #ifndef __GMS_VECTOR3D_H__
-#define __GMS_VECTOR3D_H__
+#define __GMS_VECTOR3D_H__ 161220171941
 
 
 
@@ -10,19 +10,15 @@
 
 namespace file_info {
 
-#if defined _WIN64  
-  #include "../GMS_version.h"
-#elif defined __linux
-  #include "GMS_version.h"
-#endif
 
-    const unsigned int gGMS_VECTOR3D_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
-    const unsigned int gGMS_VECTOR3D_MINOR = gms::common::gVersionInfo.m_VersionMinor;
-    const unsigned int gGMS_VECTOR3D_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+
+    const unsigned int gGMS_VECTOR3D_MAJOR = 1;
+    const unsigned int gGMS_VECTOR3D_MINOR = 0;
+    const unsigned int gGMS_VECTOR3D_MICRO = 0;
     const unsigned int gGMS_VECTOR3D_FULLVER =
       1000U*gGMS_VECTOR3D_MAJOR+100U*gGMS_VECTOR3D_MINOR+10U*gGMS_VECTOR3D_MICRO;
     const char * const pgGMS_VECTOR3D_CREATE_DATE = "16-12-2017 09:41 +00200 (SAT 16 DEC 2017 GMT+2)";
-    const char * const pgGMS_VECTOR3D_BUILD_DATE  = "00-00-0000 00:00";
+    const char * const pgGMS_VECTOR3D_BUILD_DATE  = __DATE__":"__TIME__;
     const char * const pgGMS_VECTOR3D_AUTHOR      = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
     const char * const pgGMS_VECTOR3D_SYNOPSIS    =  "Implementation of Vector 3D (physical meaning).";
 }
