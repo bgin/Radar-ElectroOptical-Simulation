@@ -1,19 +1,15 @@
 
 #ifndef __GMS_AVXCOMPLEX_COMMON_H__
-#define __GMS_AVXCOMPLEX_COMMON_H__
+#define __GMS_AVXCOMPLEX_COMMON_H__ 061020191431
 
 namespace file_info {
-#if defined _WIN64  
-  #include "../GMS_version.h"
-#elif defined __linux
-  #include "GMS_version.h"
-#endif
 
-	const unsigned int gGMS_AVXCOMPLEX_COMMON_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_AVXCOMPLEX_COMMON_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVXCOMPLEX_COMMON_MAJOR = 1;
 
-	const unsigned int gGMS_AVXCOMPLEX_COMMON_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVXCOMPLEX_COMMON_MINOR = 0;
+
+	const unsigned int gGMS_AVXCOMPLEX_COMMON_MICRO = 1;
 
 	const unsigned int gGMS_AVXCOMPLEX_COMMON_FULLVER = 
 	 1000U*gGMS_AVXCOMPLEX_COMMON_MAJOR+100U*gGMS_AVXCOMPLEX_COMMON_MINOR+10U*gGMS_AVXCOMPLEX_COMMON_MICRO;
@@ -32,11 +28,8 @@ namespace file_info {
 #include <complex>
 #include <type_traits>
 #include <immintrin.h>
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+#include "GMS_config.h"
+
 
 namespace gms {
 	namespace math {
@@ -142,17 +135,13 @@ namespace gms {
 					  const AVXVField1D &v1,
 					  const AVXVField1D &v2) {
 				if (v1.data.m_nsize != v2.data.m_nsize) { return;}
-#if defined _WIN64
-				__declspec(align(64)) struct {
-					double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
-					int32_t i; char pad[4];
-				}ca;
-#elif defined __linux
+
+
 			    __attribute__((align(64))) struct {
                                        	double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
 					int32_t i; char pad[4];
 			    }ca;
-#endif
+
 				for (ca.i = 0; i != ROUND_TO_FOUR(v1.data.m_nsize, 4); ca.i += 4) {
 					const __m256d ymm0(_mm256_load_pd(&v1.data.m_Re[i]));
 					const __m256d ymm1(_mm256_load_pd(&v2.data.m_Re[i]));
@@ -184,21 +173,14 @@ namespace gms {
 					  const AVXVField1D &v1,
 					  const AVXVField1D &v2) {
 				if (v1.data.m_nsize != v2.data.m_nsize) { return;}
-#if defined _WIN64
-				__declspec(align(64)) struct {
-					double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 },
-					t1{ 0.0 }, t2{0.0};
-					int32_t i;
-					char pad[4];
-				}ca;
-#elif defined __linux
+
+
 				__attribute__(align(64))) struct {
                                         double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 },
 					t1{ 0.0 }, t2{0.0};
 					int32_t i;
 					char pad[4];
-				}ca;
-#endif
+				} ca;
 				for (ca.i = 0; i != ROUND_TO_FOUR(v1.data.m_nsize, 4); ca.i += 4) {
 					const __m256d ymm0(_mm256_load_pd(&v1.data.m_Re[i]));
 					const __m256d ymm1(_mm256_load_pd(&v2.data.m_Re[i]));
@@ -341,21 +323,15 @@ namespace gms {
 					      const AVXVField1D &v1,
 					      const AVXVField1D &v2) {
 				if (v1.data.m_nsize != v2.data.m_nsize) { return;}
-#if defined _WIN64
-				__declspec(align(64)) struct {
-					double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
-					
-					int32_t i;
-					char pad[4];
-				}ca;
-#elif defined __linux
+
+
 				__attribute__((align(64))) struct {
                                         double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
 					
 					int32_t i;
 					char pad[4];
 				}ca;
-#endif
+
 				__m256d re = _mm256_setzero_pd(), tmp1 = _mm256_setzero_pd();
 				__m256d im = _mm256_setzero_pd(), tmp2 = _mm256_setzero_pd();
 				for (ca.i = 0; i != ROUND_TO_FOUR(v1.data.m_nsize, 4); i += 4) {
@@ -381,16 +357,8 @@ namespace gms {
 			std::is_class<AVXVField1D>::value,void>::type>
 			avx256_arith_mean(std::complex<double> &mean,
 					  const AVXVField1D &v) {
-#if defined _WIN64
-				__declspec(align(64)) struct {
-					double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
-					int32_t i;
-					char pad[4];
-				}ca;
-				__declspec(align(64)) struct {
-					__m256d re_part,im_part,tmp1,tmp2;
-				}ca2;
-#elif defined __linux
+
+
 				__attribute__((align(64))) struct {
                                         double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
 					int32_t i;
@@ -399,7 +367,7 @@ namespace gms {
 				__attribute__((align(64))) struct {
                                         __m256d re_part,im_part,tmp1,tmp2;
 				}ca2;
-#endif
+
 				ca2.tmp1 = _mm256_setzero_pd();
 				ca2.tmp2 = _mm256_setzero_pd();
 				for (ca.i = 0; i != ROUND_TO_FOUR(v.data.m_nsize, 4); ca.i += 4) {
