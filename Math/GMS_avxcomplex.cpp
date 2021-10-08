@@ -3,26 +3,12 @@
 #include <complex>
 #include <immintrin.h>
 #include "GMS_avxcomplex.h"
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-        #include "../GMS_debug.h"
-    #else
-        #include "../GMS_malloc.h"
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-        #include "GMS_debug.h"
-    #else
-        #include "GMS_malloc.h"
-    #endif
-#endif
-#if defined _WIN64
-    #include "../GMS_common.h"
-    #include "../Math/GMS_constants.h"
-#elif defined __linux
-    #include "GMS_common.h"
-    #include "GMS_constants.h"
-#endif
+
+#include "GMS_malloc.h"
+  
+#include "GMS_common.h"
+#include "GMS_constants.h"
+
 //
 //	Implementation
 //
@@ -75,27 +61,12 @@ AVXVComplex1D(){
 gms::math::AVXVComplex1D::
 AVXVComplex1D(const int32_t nsize){
 	using namespace gms::common;
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B,__FILE__,__LINE__);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B,__FILE__,__LINE__);
-    #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-    #else
-	data.m_Re = gms_dmalloca(static_cast<size_t>(nsize),align64B);
-	data.m_Im = gms_dmalloca(static_cast<size_t>(nsize),align64B);
-    #endif
-#endif
-	data.m_nsize = nsize;
-	// Memory first touch.
+        data.m_nsize = nsize;
+	data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
 	avx256_init_unroll8x_pd(&data.m_Re[0],data.m_nsize,0.0); 
-	avx256_init_unroll8x_pd(&data.m_Im[0],data.m_nsize,0.0);
+	data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+        avx256_init_unroll8x_pd(&data.m_Im[0],data.m_nsize,0.0);
+
 }	
 	
 	
@@ -104,23 +75,10 @@ gms::math::AVXVComplex1D
 		const double * __restrict Im,
 		const int32_t nsize) {
 	using namespace gms::common;
-#if defined _WIN64
-     #if (GMS_DEBUG_ON) == 1
-	   data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B,__FILE__,__LINE__);
-	   data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B,__FILE__,__LINE__);
-     #else
-	   data.m_Re = gms_edmalloca(static_cast<size_t>(nsize), align64B);
-	   data.m_Im = gms_edmalloca(static_cast<size_t>(nsize), align64B);
-     #endif
-#elif defined __linux
-     #if (GMS_DEBUG_ON) == 1
-	   data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-	   data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(nsize),align64B);
-     #else
-	   data.m_Re = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-	   data.m_Im = gms_edmalloca(static_cast<size_t>(nsize),align64B);
-     #endif
-#endif
+
+	   data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+	   data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(nsize),align64B);
+    
         data.m_nsize = nsize;
 #if (USE_AVXCOMPLEX_NT_STORES) == 1
 	avx256_uncached_memmove(&data.m_Re[0], &Re[0],data.m_nsize);
@@ -140,23 +98,10 @@ gms::math::AVXVComplex1D
 gms::math::AVXVComplex1D::
 AVXVComplex1D(const AVXVComplex1D &x){
 	using namespace gms::common;
-#if defined _WIN64	
-    #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize), align64B, __FILE__, __LINE__);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize), align64B, __FILE__, __LINE__);
-    #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize), align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize), align64B);
-    #endif
-#elif defined __linux
-    #if (GMS_DEBUG_ON) == 1
-	data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-	data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-    #else
-	data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-	data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-    #endif
-#endif
+
+	data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+	data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+    
     data.m_nsize = x.data.m_nsize;
 #if (USE_AVXCOMPLEX_NT_STORES) == 1
 	avx256_uncached_memmove(&data.m_Re[0], &x.data.m_Re[0], x.data.m_nsize);
@@ -180,13 +125,10 @@ AVXVComplex1D(AVXVComplex1D &&x) {
 
 gms::math::AVXVComplex1D::
 		  ~AVXVComplex1D() {
-#if (GMS_DEBUG_ON) == 1
-	if (NULL != data.m_Re) _aligned_free_dbg(data.m_Re); data.m_Re = NULL;
-	if (NULL != data.m_Im) _aligned_free_dbg(data.m_Im); data.m_Im = NULL;
-#else
-	if (data.m_Re != NULL) _mm_free(data.m_Re); data.m_Re = NULL;
-	if (data.m_Im != NULL) _mm_free(data.m_Im); data.m_Im = NULL;
-#endif		  
+
+	if (data.m_Re != NULL) gms_mm_free(data.m_Re); data.m_Re = NULL;
+	if (data.m_Im != NULL) gms_mm_free(data.m_Im); data.m_Im = NULL;
+		  
 }
 		
 	
@@ -198,38 +140,17 @@ gms::math::AVXVComplex1D
     using namespace gms::common;
 	if (this == &x) return (*this);
 	if (data.m_nsize != x.data.m_nsize) {
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	_aligned_free_dbg(data.m_Re);
-	_aligned_free_dbg(data.m_Im);
-    #else
-	_mm_free(data.m_Re);
-	_mm_free(data.m_Im);
-    #endif
-#elif defined __linux
-	_mm_free(data.m_Re);
-	_mm_free(data.m_Im);
-#endif
+
+	gms_mm_free(data.m_Re);
+	gms_mm_free(data.m_Im);
+
 	data.m_Re = NULL;
 	data.m_Im = NULL;
 	data.m_nsize = 0;
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	  data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize), align64B, __FILE__, __LINE__);
-	  data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize), align64B, __FILE__, __LINE__);
-    #else
-	  data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize), align64B);
-	  data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize), align64B);
-    #endif
-#elif defined __linux
-     #if (GMS_DEBUG_ON) == 1
-	  data.m_Re = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-	  data.m_Im = gms_edmalloca_dbg(static_cast<size_t>(x.data.m_nsize),align64B);
-     #else
-	  data.m_Re = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-	  data.m_Im = gms_edmalloca(static_cast<size_t>(x.data.m_nsize),align64B);
-     #endif
-#endif
+
+	  data.m_Re = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+	  data.m_Im = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nsize),align64B);
+   
 	}
 	else {
 	
@@ -247,18 +168,10 @@ gms::math::AVXVComplex1D
 gms::math::AVXVComplex1D &
 gms::math::AVXVComplex1D::operator=(AVXVComplex1D &&x) {
 	if (this == &x) return (*this);
-#if defined _WIN64
-    #if (GMS_DEBUG_ON) == 1
-	_aligned_free_dbg(data.m_Re);
-	_aligned_free_dbg(data.m_Im);
-    #else
-	_mm_free(data.m_Re);
-	_mm_free(data.m_Im);
-    #endif
-#elif defined __linux
-	_mm_free(data.m_Re);
-	_mm_free(data.m_Im);
-#endif
+
+	gms_mm_free(data.m_Re);
+	gms_mm_free(data.m_Im);
+
 	data.m_Re    = &x.data.m_Re[0];
 	data.m_Im    = &x.data.m_Im[0];
 	data.m_nsize = x.data.m_nsize;
@@ -668,7 +581,7 @@ gms::math::operator!=(const AVXVComplex1D &x,
 }
 
 
-#include "LAM_avxcomplex_common.h"
+#include "GMS_avxcomplex_common.h"
 
 void
 gms::math
