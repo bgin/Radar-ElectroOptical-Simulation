@@ -1,28 +1,22 @@
 
 #ifndef __GMS_AVXCOMPLEX_H__
-#define __GMS_AVXCOMPLEX_H__
+#define __GMS_AVXCOMPLEX_H__ 081020191905
 
 namespace file_info{
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
-const unsigned int gGMS_AVXCOMPLEX_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-const unsigned int gGMS_AVXCOMPLEX_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+const unsigned int gGMS_AVXCOMPLEX_MAJOR = 1;
 
-const unsigned int gGMS_AVXCOMPLEX_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+const unsigned int gGMS_AVXCOMPLEX_MINOR = 0;
+
+const unsigned int gGMS_AVXCOMPLEX_MICRO = 1;
 
 const unsigned int gGMS_AVXCOMPLEX_FULLVER = 
 	1000U*gGMS_AVXCOMPLEX_MAJOR + 100U*gGMS_AVXCOMPLEX_MINOR + 10U*gGMS_AVXCOMPLEX_MICRO;
 
 const char * const pgGMS_AVXCOMPLEX_CREATE_DATE = "08-10-2019 19:05 +00200 (TUE 08 OCT 2019 GMT+2)";
 
-/*
-Set this value to latest build date/time
-*/
-const char * const pgGMS_AVXCOMPLEX_BUILD_DATE =  "00-00-0000 00:00";
+
+const char * const pgGMS_AVXCOMPLEX_BUILD_DATE =  __DATE__":"__TIME__;
 
 const char * const pgGMS_AVXCOMPLEX_AUTHOR  = "Programmer: Bernard Gingold e-mail: beniekg@gmail.com";
 
@@ -43,11 +37,9 @@ const char * const pgGMS_AVXCOMPLEX_DESCRIPT = "AVX manual vectorization of comp
 
 
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_config.h"
-#elif defined __linux
-    #include "GMS_config.h"
-#endif
+
+#include "GMS_config.h"
+
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
 #if !defined (USE_AVXCOMPLEX_NT_STORES)
@@ -59,17 +51,13 @@ namespace gms {
 
 		
 		struct AVXVCData{
-#if defined _WIN64			
-			// Real array
-			_Field_size_(m_nsize) __declspec(align(64)) double* __restrict m_Re;
-			// Imaginary array
-			_Field_size_(m_nsize) __declspec(align(64)) double* __restrict m_Im;
 
-			int32_t				                               m_nsize;
-#elif defined __linux
-		  __attribute__((align_value(64))) double* __restrict                  m_Re;
-		  __attribute__((align_value(64))) double* __restrict                  m_Im;
-#endif
+
+	         
+
+		  __attribute__((align_value(8))) double* __restrict                  m_Re;
+		  __attribute__((align_value(8))) double* __restrict                  m_Im;
+                  int32_t				                               m_nsize;
 
 #if (USE_STRUCT_PADDING) == 1
 			PAD_TO_ALIGNED(4,0,4)
@@ -78,13 +66,10 @@ namespace gms {
 		   PAD_TO_ALIGNED(8,1,8)
 #endif
 		};
-#if defined _WIN64
-		__declspec(align(64)) 
-				struct  AVXVComplex1D{ // Start of this struct at 64-byte offset.
-#elif defined __linux
+
 		__attribute__((align(64)))
 				struct AVXComplex1D{
-#endif			
+		
 				 AVXVCData data;
 
 				/*
