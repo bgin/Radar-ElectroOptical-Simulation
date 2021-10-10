@@ -21,7 +21,7 @@ namespace file_version {
 
 #include <immintrin.h>
 #include <limits>
-#include <cstdint>
+#include "GMS_config.h"
 
 
 
