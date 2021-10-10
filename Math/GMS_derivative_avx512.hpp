@@ -48,7 +48,7 @@ namespace  gms {
 			       const __m512d vn1_3 = _mm512_set1_pd(0.33333333333333333333333333);
 			       const __m512d vn4_3 = _mm512_set1_pd(1.33333333333333333333333);
 			       const __m512d vn2   = _mm512_set1_pd(2.0);
-			       const __m512d veps  = _mm512_set1_pd(std::numeric_limits<double>::eps());
+			       const __m512d veps  = _mm512_set1_pd(std::numeric_limits<double>::epsilon());
 			       __m512d vp1         = vn0;
 			       __m512d vp2         = vn0;
 			       __m512d vp1h        = vn0;
@@ -170,7 +170,7 @@ namespace  gms {
 				 const __m512d vn52_3 = _mm512_set1_pd(17.3333333333333333333333);
 				 const __m512d vn2    = _mm512_set1_pd(2.0);
 				 const __m512d vn4134 = _mm512_set1_pd(41.34);
-				 const __m512d veps  = _mm512_set1_pd(std::numeric_limits<double>::eps());
+				 const __m512d veps  = _mm512_set1_pd(std::numeric_limits<double>::epsilon());
 				 __m512d dydx = vn0;
 				 __m512d vp1  = vn0;
 				 __m512d vp2  = vn0;
