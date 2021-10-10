@@ -13,7 +13,7 @@ namespace file_version {
       100U*gGMS_DERIVATIVE_MINOR+
       10U*gGMS_DERIVATIVE_MICRO;
     const char * const pgGMS_DERIVATIVE_CREATION_DATE = "10-10-2021 09:44 AM +00200 (SUN 10 OCT 2021 GMT+2)";
-    const char * const pgGMS_SETV512_AVX_UNROLL16X_BUILD_DATE    = __DATE__ ":" __TIME__;
+    const char * const pgGMS_DERIVATIVE_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const pgGMS_DERIVATIVE_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
     const char * const pgGMS_DERIVATIVE_DESCRIPTION   = "Scalar i.e. not-vectorized derivative implementation."
 
