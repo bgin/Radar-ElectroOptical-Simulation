@@ -164,7 +164,7 @@ namespace  gms {
 			     t3 = std::max(std::fabs(t0/h),std::fabs(t1/h))*
 			          std::fabs(x/h)*std::numeric_limits<double>::eps();
 			     dydx = t1/h;
-			     err_tr = std::fabs(t2-t0/h);
+			     err_tr = std::fabs((t2-t0)/h);
 			     err_ro = std::fabs(t2/h)+t3;
 			     return (dydx);
 			}
