@@ -37,7 +37,7 @@ namespace  gms {
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
 	                static inline
-			__m512d stencil_5P_zmm8r8(__m512d (*f) (__m512d),
+			__m512d stencil_5P_central_zmm8r8(__m512d (*f) (__m512d),
 			                          __m512d vx,
 						  __m512d vh,
 						  __m512d &verr_ro,
@@ -94,7 +94,7 @@ namespace  gms {
 		       }
 
 
-		        __ATTR_ALWAYS_INLINE__
+		       /* __ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
 	                static inline
@@ -145,7 +145,7 @@ namespace  gms {
 			    }
 			    vabserr = verr;
 			    return (vx0);
-			}
+			}*/
 
 
 			  /*
@@ -156,11 +156,11 @@ namespace  gms {
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
 	                static inline
-			__m512d stencil_4P_zmm8r8(__m512d (*f)(__m512d),
-			                          __m512d vx,
-						  __m512d vh,
-						  __m512d &verr_ro,
-						  __m512d &verr_tr) {
+			__m512d stencil_4P_forward_zmm8r8(__m512d (*f)(__m512d),
+			                                  __m512d vx,
+						          __m512d vh,
+						          __m512d &verr_ro,
+						          __m512d &verr_tr) {
                                  const __m512d vn0   = _mm512_setzero_pd();
 				 const __m512d vn1_4  = _mm512_set1_pd(0.25);
 				 const __m512d vn1_2  = _mm512_set1_pd(0.5);
@@ -222,7 +222,7 @@ namespace  gms {
 
 
 			
-			__ATTR_ALWAYS_INLINE__
+			/*__ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
 	                static inline
@@ -271,7 +271,7 @@ namespace  gms {
 				}
 				vabserr = verr;
 				return (vx0);
-		        }
+		        }*/
 
 
 			  /*
@@ -283,12 +283,13 @@ namespace  gms {
                         __ATTR_ALIGN__(32)
 	                static inline
 			__m512d
-			stencil_4P_backward_zmm8r8_optim(__m512d (*f) (__m512d),
-			                                 __m512d vx,
-							 __m512d vh,
-							 __m512d &vabserr) {
+			stencil_4P_backward_zmm8r8(__m512d (*f) (__m512d),
+			                           __m512d vx,
+					           __m512d vh,
+						   __m512d &verr_ro,
+						   __m512d &verr_tr ) {
                               const __m512d vxhn = _mm512_sub_pd(_mm512_setzero_pd(),vh);
-			      return (stencil_4P_forward_zmm8r8_optim(f,vx,vxhn,vabserr));
+			      return (stencil_4P_forward_zmm8r8(f,vx,vxhn,verr_ro,verr_tr));
 			}
 
      }
