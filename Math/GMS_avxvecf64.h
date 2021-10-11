@@ -1,30 +1,26 @@
 
 #ifndef __GMS_AVXVECF64_H__
-#define __GMS_AVXVECF64_H__
+#define __GMS_AVXVECF64_H__ 141020191209
 
 
 
 
 
 namespace file_info {
-#if defined _WIN64  
-  #include "../GMS_version.h"
-#elif defined __linux
-  #include "GMS_version.h"
-#endif
 
-	const unsigned int gGMS_AVXVECF64_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
 
-	const unsigned int gGMS_AVXVECF64_MINOR = gms::common::gVersionInfo.m_VersionMinor;
+	const unsigned int gGMS_AVXVECF64_MAJOR = 1;
 
-	const unsigned int gGMS_AVXVECF64_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+	const unsigned int gGMS_AVXVECF64_MINOR = 0;
+
+	const unsigned int gGMS_AVXVECF64_MICRO = 1;
 
 	const unsigned int gGMS_AVXVECF64_FULLVER = 
 	 1000U*gGMS_AVXVECF64_MAJOR+100U*gGMS_AVXVECF64_MINOR+10U*gGMS_AVXVECF64_MICRO;
 
 	const char * const pgGMS_AVXVECF64_CREATE_DATE = "14-10-2019 12:09 +00200 (MON 14 OCT 2019 GMT+2)";
 
-	const char * const pgGMS_AVXVECF64_BUILD_DATE = "00-00-0000 00:00";
+	const char * const pgGMS_AVXVECF64_BUILD_DATE =  __DATE__":"__TIME__;
 
 	const char * const pgGMS_AVXVECF64_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
@@ -34,19 +30,15 @@ namespace file_info {
 #include <iostream>
 #include <iomanip>
 #include <cstdint>
-#if defined _WIN64
-    #include "../GMS_simd_defs.h"
-#elif defined __linux
-    #include "GMS_simd_defs.h"
-#endif
+
+#include "GMS_simd_defs.h"
+
 
 namespace gms {
 	namespace math {
-#if defined _WIN64
-		__declspec(align(64)) struct AVXVecF64 {
-#elif defined __linux
+
 		__attribute__((align(64))) struct AVXVecF64 {
-#endif
+
 
 		
 
