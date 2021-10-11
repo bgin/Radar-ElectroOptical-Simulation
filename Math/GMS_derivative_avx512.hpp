@@ -143,7 +143,7 @@ namespace  gms {
 				   verr = verr2;
 				}
 			    }
-			    vabserr = err;
+			    vabserr = verr;
 			    return (vx0);
 			}
 
