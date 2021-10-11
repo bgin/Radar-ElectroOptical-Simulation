@@ -1,23 +1,19 @@
 
 #ifndef __GMS_QUATERNION_H__
-#define __GMS_QUATERNION_H__
+#define __GMS_QUATERNION_H__ 061220170813
 
 
 
 namespace file_info {
-#if defined _WIN64
-    #include "../GMS_version.h"
-#elif defined __linux
-    #include "GMS_version.h"
-#endif
 
-    const unsigned int gGMS_QUATERNION_MAJOR = gms::common::gVersionInfo.m_VersionMajor;
-    const unsigned int gGMS_QUATERNION_MINOR = gms::common::gVersionInfo.m_VersionMinor;
-    const unsigned int gGMS_QUATERNION_MICRO = gms::common::gVersionInfo.m_VersionMicro;
+
+    const unsigned int gGMS_QUATERNION_MAJOR = 1;
+    const unsigned int gGMS_QUATERNION_MINOR = 0;
+    const unsigned int gGMS_QUATERNION_MICRO = 1;
     const unsigned int gGMS_QUATERNION_FULLVER =
       1000U*gGMS_QUATERNION_MAJOR+100U*gGMS_QUATERNION_MINOR+10U*gGMS_QUATERNION_MICRO;
     const char * const pgGMS_QUATERNION_CREATE_DATE = "06-12-2017 08:13 +00200 (WED 06 DEC 2017 GMT+2)";
-    const char * const pgGMS_QUATERNION_BUILD_DATE  = "00-00-0000 00:00";
+    const char * const pgGMS_QUATERNION_BUILD_DATE  =  __DATE__":"__TIME__;
     const char * const pgGMS_QUATERNION_AUTHOR      = "Programmer: Bernard Gingold contact: beniekg@gmail.com";
     const char * const pgGMS_QUATERNION_SYNOPSIS    = "Implementation of Quaternion class.";
 }
