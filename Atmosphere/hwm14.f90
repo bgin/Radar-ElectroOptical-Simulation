@@ -40,20 +40,30 @@
 
 
 module hwm
+    use mod_kinds, only : i4, sp, dp
+    integer(kind=i4)           :: nmaxhwm = 0        ! maximum degree hwmqt
+    integer(kind=i4)           :: omaxhwm = 0        ! maximum order hwmqt
+    integer(kind=i4)           :: nmaxdwm = 0        ! maximum degree hwmqt
+    integer(kind=i4)           :: mmaxdwm = 0        ! maximum order hwmqt
+    integer(kind=i4)           :: nmaxqdc = 0        ! maximum degree of coordinate coversion
+    integer(kind=i4)           :: mmaxqdc = 0        ! maximum order of coordinate coversion
+    integer(kind=i4)           :: nmaxgeo = 0        ! maximum of nmaxhwm, nmaxqd
+    integer(kind=i4)           :: mmaxgeo = 0        ! maximum of omaxhwm, nmaxqd
 
-    integer(4)           :: nmaxhwm = 0        ! maximum degree hwmqt
-    integer(4)           :: omaxhwm = 0        ! maximum order hwmqt
-    integer(4)           :: nmaxdwm = 0        ! maximum degree hwmqt
-    integer(4)           :: mmaxdwm = 0        ! maximum order hwmqt
-    integer(4)           :: nmaxqdc = 0        ! maximum degree of coordinate coversion
-    integer(4)           :: mmaxqdc = 0        ! maximum order of coordinate coversion
-    integer(4)           :: nmaxgeo = 0        ! maximum of nmaxhwm, nmaxqd
-    integer(4)           :: mmaxgeo = 0        ! maximum of omaxhwm, nmaxqd
+    real(kind=dp),allocatable  :: gpbar(:,:),gvbar(:,:),gwbar(:,:) ! alfs for geo coordinates
+    #if defined(__INTEL_COMPILER) || defined(__ICC)
+       !DIR$ ATTRIBUTES ALIGN : 64 :: gpbar
+       !DIR$ ATTRIBUTES ALIGN : 64 :: gvbar
+       !DIR$ ATTRIBUTES ALIGN : 64 :: gwbar
+    #endif
+    real(kind=dp),allocatable  :: spbar(:,:),svbar(:,:),swbar(:,:) ! alfs MLT calculation
+    #if defined(__INTEL_COMPILER) || defined(__ICC)
+       !DIR$ ATTRIBUTES ALIGN : 64 :: spbar
+       !DIR$ ATTRIBUTES ALIGN : 64 :: svbar
+       !DIR$ ATTRIBUTES ALIGN : 64 :: swbar
+    #endif
 
-    real(8),allocatable  :: gpbar(:,:),gvbar(:,:),gwbar(:,:) ! alfs for geo coordinates
-    real(8),allocatable  :: spbar(:,:),svbar(:,:),swbar(:,:) ! alfs MLT calculation
-
-    real(8)              :: glatalf = -1.d32
+    real(kind=dp)              :: glatalf = -1.32_dp
 
     character(240)       :: pathdefault = ''
 
@@ -66,15 +76,15 @@ subroutine hwm14(iyd,sec,alt,glat,glon,stl,f107a,f107,ap,path,w,rc)
     use hwm
     use ipe_error_module
     implicit none
-    integer(4),     intent(in)  :: iyd
-    real(4),        intent(in)  :: sec,alt,glat,glon,stl,f107a,f107
-    real(4),        intent(in)  :: ap(2)
-    real(4),        intent(out) :: w(2)
-    real(4)                     :: dw(2)
+    integer(kind=i4),     intent(in)  :: iyd
+    real(kind=sp),        intent(in)  :: sec,alt,glat,glon,stl,f107a,f107
+    real(kind=sp),        intent(in)  :: ap(2)
+    real(kind=sp),        intent(out) :: w(2)
+    real(kind=sp)                     :: dw(2)
     character(250), intent(in)  :: path
-    integer,        intent(out) :: rc
+    integer(kind=i4),        intent(out) :: rc
 
-    integer :: localrc
+    integer(kind=i4) :: localrc
 
     rc = IPE_SUCCESS
 
@@ -87,7 +97,7 @@ subroutine hwm14(iyd,sec,alt,glat,glon,stl,f107a,f107,ap,path,w,rc)
     call hwmqt(iyd,sec,alt,glat,glon,stl,f107a,f107,ap,w,localrc)
     if (ipe_error_check(localrc,msg="hwm14: call to hwmqt failed",rc=rc)) return
 
-    if (ap(2) .ge. 0.0) then
+    if (ap(2) .ge. 0.0_dp) then
         call dwm07(iyd,sec,alt,glat,glon,ap,dw,localrc)
         if (ipe_error_check(localrc,msg="hwm14: call to dwm07 failed",rc=rc)) return
         w = w + dw
@@ -102,17 +112,29 @@ end subroutine hwm14
 ! ##############################################################################
 
 module alf
-
+    use mod_kinds, only : i4,i8,dp
     implicit none
 
-    integer(4)              :: nmax0,mmax0
+    integer(kind=i4)              :: nmax0,mmax0
 
     ! static normalizational coeffiecents
 
-    real(8), allocatable    :: anm(:,:),bnm(:,:),dnm(:,:)
-    real(8), allocatable    :: cm(:),en(:)
-    real(8), allocatable    :: marr(:),narr(:)
-
+    real(kind=dp), allocatable    :: anm(:,:),bnm(:,:),dnm(:,:)
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+     !DIR$ ATTRIBUTES ALIGN : 64 :: anm
+     !DIR$ ATTRIBUTES ALIGN : 64 :: bnm
+     !DIR$ ATTRIBUTES ALIGN : 64 :: dnm
+#endif
+    real(kind=dp), allocatable    :: cm(:),en(:)
+ #if defined(__INTEL_COMPILER) || defined(__ICC)
+      !DIR$ ATTRIBUTES ALIGN : 64 :: cm
+      !DIR$ ATTRIBUTES ALIGN : 64 :: en
+ #endif
+    real(kind=dp), allocatable    :: marr(:),narr(:)
+  #if defined(__INTEL_COMPILER) || defined(__ICC)
+      !DIR$ ATTRIBUTES ALIGN : 64 :: marr
+      !DIR$ ATTRIBUTES ALIGN : 64 :: narr
+  #endif
 contains
 
     ! -------------------------------------------------------------
@@ -123,15 +145,19 @@ contains
 
         implicit none
 
-        integer(4), intent(in)  :: nmax, mmax
-        real(8), intent(in)     :: theta
-        real(8), intent(out)    :: P(0:nmax,0:mmax)
-        real(8), intent(out)    :: V(0:nmax,0:mmax)
-        real(8), intent(out)    :: W(0:nmax,0:mmax)
-
-        integer(8)              :: n, m
-        real(8)                 :: x, y
-        real(8), parameter      :: p00 = 0.70710678118654746d0
+        integer(kind=i4), intent(in)  :: nmax, mmax
+        real(kind=dp), intent(in)     :: theta
+        real(kind=dp), intent(out)    :: P(0:nmax,0:mmax)
+        real(kind=dp), intent(out)    :: V(0:nmax,0:mmax)
+        real(kind=dp), intent(out)    :: W(0:nmax,0:mmax)
+ #if defined(__INTEL_COMPILER) || defined(__ICC)
+        !DIR$ ASSUME_ALIGNED P:64
+        !DIR$ ASSUME_ALIGNED V:64
+        !DIR$ ASSUME_ALIGNED W:64
+ #endif
+        integer(kind=i8)              :: n, m
+        real(kind=dp)                 :: x, y
+        real(kind=dp), parameter      :: p00 = 0.70710678118654746_dp
 
         P(0,0) = p00
         x = dcos(theta)
