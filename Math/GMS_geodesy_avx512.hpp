@@ -157,7 +157,7 @@ namespace  gms {
 			    alt = _mm512_mul_pd(vu,vt12);
 			    lat = _mm512_atan2_pd(_mm512_fmadd_pd(
 			                          _mm512_mul_pd(vep,vep),vz0,pos_z),vr);
-			    lon = _mm512_atan_pd(pos_y,pos_x);
+			    lon = _mm512_atan2_pd(pos_y,pos_x);
 			}
 
 
