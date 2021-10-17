@@ -165,8 +165,7 @@ namespace  gms {
 			__ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
-			__ATTR_REGCALL__
-	                static inline
+			static inline
 			void
 			cart_to_geodetic_u_zmm8r8_looped(const double * __restrict pos_x,
 			                                 const double * __restrict pos_y,
@@ -199,12 +198,12 @@ namespace  gms {
 			              __m512d  ve2 = _mm512_sub_pd(_mm512_mul_pd(_2,vf),
 			                                           _mm512_mul_pd(vf,vf));
 			              __m512d  vbb = _mm512_mul_pd(vb,vb);
-				       _mm_prefetch((const char*)&pos_z[i+16],_MM_HINT_T0);
+				       _mm_prefetch((const char*)&pos_z[i+8],_MM_HINT_T0);
 				      const __m512d vz = _mm512_loadu_pd(&pos_z[i]);
 			              __m512d  vzz = _mm512_mul_pd(vz,vz);
 			              __m512d  ve2 = _mm512_sub_pd(aa,bb);
-				      _mm_prefetch((const char*)&pos_x[i+16],_MM_HINT_T0);
-				      _mm_prefetch((const char*)&pos_y[i+16],_MM_HINT_T0);
+				      _mm_prefetch((const char*)&pos_x[i+8],_MM_HINT_T0);
+				      _mm_prefetch((const char*)&pos_y[i+8],_MM_HINT_T0);
 				      const __m512d vx = _mm512_loadu_pd(&pos_x[i]);
 				      const __m512d vy = _mm512_loadu_pd(&pos_y[i]);
 			              __m512d vr  = _mm512_sqrt_pd(_mm512_mul_pd(vx,vx),
@@ -263,7 +262,7 @@ namespace  gms {
 				       __mm512_storeu_pd(&alt[i], _mm512_mul_pd(vu,vt12));
 			               __m512_storeu_pd(&lat[i],   _mm512_atan2_pd(_mm512_fmadd_pd(
 			                          _mm512_mul_pd(vep,vep),vz0,vz),vr));
-			               __m512_storeu_pd(&lon[i], _mm512_atan_pd(vy,vx));
+			               __m512_storeu_pd(&lon[i], _mm512_atan2_pd(vy,vx));
 				 }
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma loop_count min(1),avg(4),max(8)
@@ -304,7 +303,7 @@ namespace  gms {
 					  double z0 = b*b*z/t9;
 					  lat[i] = std::atan2((z+ep*ep*z0),r);
 					  alt[i] = u*(1.0-b2/t9);
-					  lon[i] = std::atan(y,x);
+					  lon[i] = std::atan2(y,x);
 				    }
 				 
 			}
@@ -314,8 +313,7 @@ namespace  gms {
 			__ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
-			__ATTR_REGCALL__
-	                static inline
+			static inline
 			void
 			cart_to_geodetic_a_zmm8r8_looped(double * __restrict __ATTR_ALIGN__(64) pos_x,
 			                                 double * __restrict __ATTR_ALIGN__(64) pos_y,
@@ -363,12 +361,12 @@ namespace  gms {
 			              __m512d  ve2 = _mm512_sub_pd(_mm512_mul_pd(_2,vf),
 			                                           _mm512_mul_pd(vf,vf));
 			              __m512d  vbb = _mm512_mul_pd(vb,vb);
-				       _mm_prefetch((const char*)&pos_z[i+16],_MM_HINT_T0);
+				       _mm_prefetch((const char*)&pos_z[i+8],_MM_HINT_T0);
 				      const __m512d vz = _mm512_loadu_pd(&pos_z[i]);
 			              __m512d  vzz = _mm512_mul_pd(vz,vz);
 			              __m512d  ve2 = _mm512_sub_pd(aa,bb);
-				      _mm_prefetch((const char*)&pos_x[i+16],_MM_HINT_T0);
-				      _mm_prefetch((const char*)&pos_y[i+16],_MM_HINT_T0);
+				      _mm_prefetch((const char*)&pos_x[i+8],_MM_HINT_T0);
+				      _mm_prefetch((const char*)&pos_y[i+8],_MM_HINT_T0);
 				      const __m512d vx = _mm512_loadu_pd(&pos_x[i]);
 				      const __m512d vy = _mm512_loadu_pd(&pos_y[i]);
 			              __m512d vr  = _mm512_sqrt_pd(_mm512_mul_pd(vx,vx),
@@ -427,7 +425,7 @@ namespace  gms {
 				       __mm512_storeu_pd(&alt[i], _mm512_mul_pd(vu,vt12));
 			               __m512_storeu_pd(&lat[i],   _mm512_atan2_pd(_mm512_fmadd_pd(
 			                          _mm512_mul_pd(vep,vep),vz0,vz),vr));
-			               __m512_storeu_pd(&lon[i], _mm512_atan_pd(vy,vx));
+			               __m512_storeu_pd(&lon[i], _mm512_atan2_pd(vy,vx));
 				 }
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma loop_count min(1),avg(4),max(8)
@@ -468,15 +466,248 @@ namespace  gms {
 					  double z0 = b*b*z/t9;
 					  lat[i] = std::atan2((z+ep*ep*z0),r);
 					  alt[i] = u*(1.0-b2/t9);
-					  lon[i] = std::atan(y,x);
+					  lon[i] = std::atan2(y,x);
 				    }
 				 
 			}
 
 
+                    	__ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_REGCALL__
+	                static inline
+			void geodetic_to_cart_zmm8r8(const __m512d a,
+			                             const __m512d b,
+						     const __m512d lat,
+						     const __m512d lon,
+						     const __m512d alt,
+						     __m512d &pos_x,
+						     __m512d &pos_y,
+						     __m512d &pos_z) {
+ 
+                              register const __m512d _0 = _mm512_setzero_pd();
+			      register const __m512d _1 = _mm512_set1_pd(1.0);
+			      register __m512d t0   = _0;
+			      register __m512d t1   = _0;
+			      register __m512d t2   = _0;
+			      register __m512d t3   = _0;
+			      register __m512d t4   = _0;
+			      register __m512d zmm0 = _0; //sin(lat)
+			      register __m512d zmm1 = _0; //cos(lat)
+			      register __m512d zmm2 = _0; //tan(lat)
+			      register __m512d zmm3 = _0; //sin(lon)
+			      register __m512d zmm4 = _0; //cos(lon)
+			      register __m512d ve2  = _0;
+			      register __m512d vom2 = _0;
+			      register __m512d vd   = _0;
+			      register __m512d vq   = _0;
+			      register __m512d vad  = _0;
+			      register __m512d vaa  = _0;
+			      register __m512d vbb  = _0;
+			      zmm0  = _mm512_sin_pd(lat);
+			      vaa   = _mm512_mul_pd(a,a);
+			      vbb   = _mm512_mul_pd(b,b);
+			      zmm1  = _mm512_cos_pd(lat);
+			      ve2   = _mm512_sub_pd(_1,_mm512_div_pd(vbb,vaa));
+			      vom2  = _mm512_sub_pd(_1,ve2);
+			      zmm2  = _mm512_tan_pd(lat);
+			      t0    = _mm512_mul_pd(zmm2,zmm2);
+			      vd    = _mm512_sqrt_pd(_mm512_fmadd_pd(vom2,t0,_1));
+			      t1    = _mm512_mul_pd(ve2,_mm512_mul_pd(zmm0,zmm0));
+			      vq    = _mm512_sqrt_pd(_mm512_sub_pd(_1,t1));
+			      zmm3  = _mm512_sin_pd(lon);
+			      vad   = _mm512_div_pd(a,vd);
+			      zmm4  = _mm512_cos_pd(lon);
+			      t2    = _mm512_mul_pd(zmm1,zmm4);
+			      pos_x = _mm512_fmadd_pd(alt,t2,_mm512_mul_pd(vad,zmm4));
+			      t3    = _mm512_mul_pd(zmm3,zmm1);
+			      pos_y = _mm512_fmadd_pd(alt,t3,_mm512_mul_pd(vad,zmm3));
+			      t4    = _mm512_div_pd(zmm0,vq);
+			      t3    = _mm512_mul_pd(a,_mm512_mul_pd(vom2,t4));
+			      pos_z = _mm512_fmadd_pd(alt,zmm0,t3);
+			      
+			}
 
 
+                    	__ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			static inline
+			void
+			geodetic_to_cart_u_zmm8r8_looped(const double a,
+			                                 const double b,
+							 const double * __restrict lat,
+							 const double * __restrict lon,
+							 const double * __restrict alt,
+							 double * __restrict pos_x,
+							 double * __restrict pos_y,
+							 double * __restrict pos_z,
+							 const int32_t n) {
 
+                              if(__builtin_expect(n<=0,0)) {return;}
+			         register const __m512d _0 = _mm512_setzero_pd();
+			         register const __m512d _1 = _mm512_set1_pd(1.0);
+				 register const __m512d va   = _mm512_set1_pd(a);
+				 register const __m512d vb   = _mm512_set1_pd(b);
+				 int32_t i;
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+                              for(i = 0; i != ROUND_TO_EIGHT(n,8); i += 8) {
+			            _mm_prefetch((const char*)&lat[i+8],_MM_HINT_T0);
+			            register const __m512d vlat = _mm512_loadu_pd(&lat[i]);
+                                    register __m512d zmm0  = _mm512_sin_pd(vlat);
+			            register __m512d vaa   = _mm512_mul_pd(va,va);
+			            register __m512d vbb   = _mm512_mul_pd(vb,vb);
+				    register __m512d zmm1  = _mm512_cos_pd(vlat);
+			            register __m512d ve2   = _mm512_sub_pd(_1,_mm512_div_pd(vbb,vaa));
+			            register __m512d vom2  = _mm512_sub_pd(_1,ve2);
+			            register __m512d zmm2  = _mm512_tan_pd(vlat);
+			            register __m512d t0    = _mm512_mul_pd(zmm2,zmm2);
+			            register __m512d vd    = _mm512_sqrt_pd(_mm512_fmadd_pd(vom2,t0,_1));
+			            register __m512d t1    = _mm512_mul_pd(ve2,_mm512_mul_pd(zmm0,zmm0));
+			            register __m512d vq    = _mm512_sqrt_pd(_mm512_sub_pd(_1,t1));
+			            _mm_prefetch((const char*)&lon[i+8],_MM_HINT_T0);
+				    register const __m512d vlon = _mm512_loadu_pd(&lon[i]);
+			            register __m512d zmm3  = _mm512_sin_pd(vlon);
+			            register __m512d vad   = _mm512_div_pd(va,vd);
+			            register __m512d zmm4  = _mm512_cos_pd(vlon);
+			            register __m512d t2    = _mm512_mul_pd(zmm1,zmm4);
+				    _mm_prefetch((const char*)&alt[i+8],_MM_HINT_T0);
+				    register const __m512d valt = _mm512_loadu_pd(&alt[i]);
+				    _mm512_storeu_pd(&pos_x[i],
+				                     _mm512_fmadd_pd(valt,t2,_mm512_mul_pd(vad,zmm4)));
+			            t3    = _mm512_mul_pd(zmm3,zmm1);
+			            _mm512_storeu_pd(&pos_y[i],
+				                     _mm512_fmadd_pd(valt,t3,_mm512_mul_pd(vad,zmm3)));
+			            t4    = _mm512_div_pd(zmm0,vq);
+			            t3    = _mm512_mul_pd(va,_mm512_mul_pd(vom2,t4));
+			            _mm512_storeu_pd(&pos_z[i],
+				                     _mm512_fmadd_pd(valt,zmm0,t3));
+			      }
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(4),max(8)
+#endif
+                                    for(; i != n; ++i) {
+				       
+                                        register const  double glat = lat[i];
+					register const double s0 = std::sin(glat);
+					register const  double glon = lon[i];
+					register const double s1 = std::cos(glat);
+					register double ee  = 1.0-(b*b)/(a*a);
+					register const double s3 = std::sin(glon);
+					register double om2 = 1.0-ee;
+					register double q  = std::sqrt(1.0-ee*s0*s0);
+					register const double salt = alt[i];
+					register const double s4 = std::cos(glon);
+					register const double s2 = std::tan(glat);
+					register double d = std::sqrt(1.0-ee*s2*s2);
+					register double ad = a/d;
+					pos_x[i] = ad*s4+salt*s3*s1;
+					pos_y[i] = ad*s3+salt*s4*1;
+					pos_z[i] = a*om2*s0/q+salt*s0;
+				    }
+		        }
+
+
+			__ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+		        static inline
+			void
+			geodetic_to_cart_a_zmm8r8_looped(const double a,
+			                                 const double b,
+							 double * __restrict __ATTR_ALIGN__(64) lat,
+							 double * __restrict __ATTR_ALIGN__(64) lon,
+							 double * __restrict __ATTR_ALIGN__(64) alt,
+							 double * __restrict __ATTR_ALIGN__(64) pos_x,
+							 double * __restrict __ATTR_ALIGN__(64) pos_y,
+							 double * __restrict __ATTR_ALIGN__(64) pos_z,
+							 const int32_t n) {
+
+                              if(__builtin_expect(n<=0,0)) {return;}
+			         register const __m512d _0 = _mm512_setzero_pd();
+			         register const __m512d _1 = _mm512_set1_pd(1.0);
+				 register const __m512d va   = _mm512_set1_pd(a);
+				 register const __m512d vb   = _mm512_set1_pd(b);
+				 int32_t i;
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+                                 __assume_aligned(pos_x,64);
+				 __assume_aligned(pos_y,64);
+				 __assume_aligned(pos_z,64);
+				 __assume_aligned(alt,64);
+				 __assume_aligned(lon,64);
+				 __assume_aligned(lat,64);
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+                                 pos_x = (double*)__builtin_assume_aligned(pos_x,64);
+				 pos_y = (double*)__builtin_assume_aligned(pos_y,64);
+				 pos_z = (double*)__builtin_assume_aligned(pos_z,64);
+				 alt   = (double*)__builtin_assume_aligned(alt,64);
+				 lon   = (double*)__builtin_assume_aligned(lon,64);
+				 lat   = (double*)__builtin_assume_aligned(lat,64);
+#endif				 
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+                              for(i = 0; i != ROUND_TO_EIGHT(n,8); i += 8) {
+			            _mm_prefetch((const char*)&lat[i+8],_MM_HINT_T0);
+			            register const __m512d vlat = _mm512_load_pd(&lat[i]);
+                                    register __m512d zmm0  = _mm512_sin_pd(vlat);
+			            register __m512d vaa   = _mm512_mul_pd(va,va);
+			            register __m512d vbb   = _mm512_mul_pd(vb,vb);
+				    register __m512d zmm1  = _mm512_cos_pd(vlat);
+			            register __m512d ve2   = _mm512_sub_pd(_1,_mm512_div_pd(vbb,vaa));
+			            register __m512d vom2  = _mm512_sub_pd(_1,ve2);
+			            register __m512d zmm2  = _mm512_tan_pd(vlat);
+			            register __m512d t0    = _mm512_mul_pd(zmm2,zmm2);
+			            register __m512d vd    = _mm512_sqrt_pd(_mm512_fmadd_pd(vom2,t0,_1));
+			            register __m512d t1    = _mm512_mul_pd(ve2,_mm512_mul_pd(zmm0,zmm0));
+			            register __m512d vq    = _mm512_sqrt_pd(_mm512_sub_pd(_1,t1));
+			            _mm_prefetch((const char*)&lon[i+8],_MM_HINT_T0);
+				    register const __m512d vlon = _mm512_load_pd(&lon[i]);
+			            register __m512d zmm3  = _mm512_sin_pd(vlon);
+			            register __m512d vad   = _mm512_div_pd(va,vd);
+			            register __m512d zmm4  = _mm512_cos_pd(vlon);
+			            register __m512d t2    = _mm512_mul_pd(zmm1,zmm4);
+				    _mm_prefetch((const char*)&alt[i+8],_MM_HINT_T0);
+				    register const __m512d valt = _mm512_load_pd(&alt[i]);
+				    _mm512_store_pd(&pos_x[i],
+				                     _mm512_fmadd_pd(valt,t2,_mm512_mul_pd(vad,zmm4)));
+			            t3    = _mm512_mul_pd(zmm3,zmm1);
+			            _mm512_store_pd(&pos_y[i],
+				                     _mm512_fmadd_pd(valt,t3,_mm512_mul_pd(vad,zmm3)));
+			            t4    = _mm512_div_pd(zmm0,vq);
+			            t3    = _mm512_mul_pd(va,_mm512_mul_pd(vom2,t4));
+			            _mm512_store_pd(&pos_z[i],
+				                     _mm512_fmadd_pd(valt,zmm0,t3));
+			      }
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(4),max(8)
+#endif
+                                    for(; i != n; ++i) {
+				       
+                                        register const  double glat = lat[i];
+					register const double s0 = std::sin(glat);
+					register const  double glon = lon[i];
+					register const double s1 = std::cos(glat);
+					register double ee  = 1.0-(b*b)/(a*a);
+					register const double s3 = std::sin(glon);
+					register double om2 = 1.0-ee;
+					register double q  = std::sqrt(1.0-ee*s0*s0);
+					register const double salt = alt[i];
+					register const double s4 = std::cos(glon);
+					register const double s2 = std::tan(glat);
+					register double d = std::sqrt(1.0-ee*s2*s2);
+					register double ad = a/d;
+					pos_x[i] = ad*s4+salt*s3*s1;
+					pos_y[i] = ad*s3+salt*s4*1;
+					pos_z[i] = a*om2*s0/q+salt*s0;
+				    }
+		        }
+
+
+			
 
 
 						     
