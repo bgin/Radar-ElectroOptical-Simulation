@@ -265,7 +265,7 @@ namespace gms {
 			               __m256_storeu_pd(&lon[i], _mm256_atan2_pd(vy,vx));
 				 }
 #if defined __ICC || defined __INTEL_COMPILER
-#pragma loop_count min(1),avg(4),max(8)
+#pragma loop_count min(1),avg(2),max(4)
 #endif
                                     for(; i != n; ++i) {
 
@@ -326,15 +326,15 @@ namespace gms {
 							 const int32_t n) {
 
 			      if(__builtin_expect(n<=0,0)) {return;}
-			         const __m256d _0   = _mm512_setzero_pd();
-			         const __m256d _1   = _mm512_set1_pd(1.0);
-			         const __m256d _2   = _mm512_set1_pd(1.0);
-			         const __m256d _54  = _mm512_set1_pd(54.0);
-			         const __m256d _3   = _mm512_set1_pd(3.0);
-			         const __m256d _0_5 = _mm512_set1_pd(0.5);
-			         const __m256d _0_3 = _mm512_set1_pd(0.3333333333333333333333333333333);
-				 const __m256d va   = _mm512_set1_pd(a);
-				 const __m256d vb   = _mm512_set1_pd(b);
+			         const __m256d _0   = _mm256_setzero_pd();
+			         const __m256d _1   = _mm256_set1_pd(1.0);
+			         const __m256d _2   = _mm256_set1_pd(1.0);
+			         const __m256d _54  = _mm256_set1_pd(54.0);
+			         const __m256d _3   = _mm256_set1_pd(3.0);
+			         const __m256d _0_5 = _mm256_set1_pd(0.5);
+			         const __m256d _0_3 = _mm256_set1_pd(0.3333333333333333333333333333333);
+				 const __m256d va   = _mm256_set1_pd(a);
+				 const __m256d vb   = _mm256_set1_pd(b);
 				 int32_t i;
 #if defined(__INTEL_COMPILER) || defined(__ICC)
                                  __assume_aligned(pos_x,32);
@@ -428,7 +428,7 @@ namespace gms {
 			               __m256_store_pd(&lon[i], _mm256_atan2_pd(vy,vx));
 				 }
 #if defined __ICC || defined __INTEL_COMPILER
-#pragma loop_count min(1),avg(4),max(8)
+#pragma loop_count min(1),avg(2),max(4)
 #endif
                                     for(; i != n; ++i) {
 
