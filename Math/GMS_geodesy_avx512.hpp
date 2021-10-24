@@ -1087,7 +1087,7 @@ namespace  gms {
                               for(i = 0; i != ROUND_TO_EIGHT(n,8); i += 8) {
                                    __m512d vr = _mm512_sub_pd(_1,vflat);
 				   _mm_prefetch((const char*)&plat1[i+8],_MM_HINT_T0);
-				   const __m512d vlat1 = _mm512_loadu_pd(&plat1[i]);
+				   const __m512d vlat1 = _mm512_load_pd(&plat1[i]);
 			           __m512d vtu = _mm512_mul_pd(vr,_mm512_div_pd(
 			                                          _mm512_sin_pd(vlat1),
 						                  _mm512_cos_pd(vlat1)));
@@ -1096,14 +1096,14 @@ namespace  gms {
 			            __m512d vbaz =  _mm512_maskz_mul_pd(neqz,
 			                                         _mm512_atan2_pd(vtu,vcf),_2));
 				   _mm_prefetch((const char*)&pfaz[i+8],_MM_HINT_T0);
-				   const __m512d vfaz = _mm512_loadu_pd(&pfaz[i]);
+				   const __m512d vfaz = _mm512_load_pd(&pfaz[i]);
 			           __m512d vsf = _mm512_sin_pd(vfaz);
 			           __m512d t0  = _mm512_fmadd_pd(vtu,vtu,_1);
 			           __m512d vcu = _mm512_div_pd(_1,
 			                          _mm512_sqrt_pd(t0));
 			           __m512d vsu = _mm512_mul_pd(vtu,vcu);
 				   _mm_prefetch((const char*)&pdst[i+8],_MM_HINT_T0);
-				   const __m512d dstv = _mm512_loadu_pd(&pdst[i]);
+				   const __m512d dstv = _mm512_load_pd(&pdst[i]);
 			           __m512d t2  = _mm512_div_pd(dstv,vr);
 			           __m512d vsa = _mm512_mul_pd(vcu,vsf);
 			           t0  = _mm512_sub_pd(_0,vsa);
@@ -1148,7 +1148,7 @@ namespace  gms {
 			                               _mm512_fmadd_pd(vsa,vsu,_mm512_mul_pd(vbaz,vbaz))));
 			       t0   = _mm512_mul_pd(vcu,_mm512_mul_pd(vsy,vcf));
 			       vd   = _mm512_fmadd_pd(vsu,vcy,t0);
-			       _mm512_storeu_pd(&plat2[i], _mm512_atan2_pd(vd,vc));
+			       _mm512_store_pd(&plat2[i], _mm512_atan2_pd(vd,vc));
 			       t0   = _mm512_mul_pd(vsu,_mm512_mul_pd(vsy,vcf));
 			       vc   = _mm512_fmsub_pd(vcu,vcy,t0);
 			       vx   = _mm512_atan2_pd(_mm512_mul_pd(vsy,vsf),vc);
@@ -1162,10 +1162,10 @@ namespace  gms {
 			       t2   = _mm512_mul_pd(_mm512_sub_pd(_1,vc),
 			                            _mm512_mul_pd(vd,flat));
 			       _mm_prefetch((const char*)&plon1[i+8],_MM_HINT_T0);
-			       const __m512d vlon1 = _mm512_loadu_pd(&plon1[i]);
-			       _mm512_storeu_pd(&plon2[i], _mm512_sub_pd(_mm512_add_pd(vlon1,vx),t2));
+			       const __m512d vlon1 = _mm512_load_pd(&plon1[i]);
+			       _mm512_store_pd(&plon2[i], _mm512_sub_pd(_mm512_add_pd(vlon1,vx),t2));
 			       vbaz = _mm512_add_pd(_mm512_atan2_pd(vsa,vbaz),_3_14);
-			       _mm512_storeu_pd(&pbaz[i],vbaz);
+			       _mm512_store_pd(&pbaz[i],vbaz);
 			      }
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma loop_count min(1),avg(4),max(8)
