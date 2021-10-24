@@ -31,7 +31,7 @@ namespace  gms {
 
           namespace math {
 
-
+                          
 	                 /*
                               Cartesian to geodetic conversion (kernel).
                               
@@ -707,8 +707,518 @@ namespace  gms {
 		        }
 
 
-			
+	              
 
+                        /*
+                                Reference: https://www.ngs.noaa.gov/PC_PROD/Inv_Fwd/
+                           */
+			__ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_REGCALL__
+	                static inline
+			void forward_metod_zmm8r8(const __m512d axis,      //ellipsoid semi-maxjor axis
+			                         const __m512d flat,      //elipsoid flattening [dimensionless]
+						 const __m512d vp1lat,    //vector of 8 starting-points latitude [rad]
+						 const __m512d vp1lon,    //vector of 8 starting-points longtitude [rad]
+						 const __m512d azvf,      //vector of 8 forward azimutes [rad]
+						 const __m512d dstv,      //vector of 8 distances vp1-to-vp2 [m]
+						 __m512d &vp2lat,         //vector of 8 endpoints latitude [rad]
+						 __m512d &vp2lon,         //vector of 8 endpoints longtitude [rad]
+						 __m512d &azvb) {        //backward facing vector of 8 azimutes vp2-to-vp1 [rad]
+
+                              const __m512d _3_14   = _mm512_set1_pd(3.1415926535897932384626);
+			      const __m512d _0      = _mm512_setzero_pd();
+			      const __m512d veps    = _mm512_set1_pd(0.5e-13);
+			      const __m512d _1      = _mm512_set1_pd(1.0);
+			      const __m512d _2      = _mm512_set1_pd(2.0);
+			      const __m512d _0_375  = _mm512_set1_pd(0.375);
+			      const __m512d _n3     = _mm512_set1_pd(-3.0);
+			      const __m512d _4      = _mm512_set1_pd(4.0);
+			      const __m512d _0_25   = _mm512_set1_pd(0.25);
+			      const __m512d _0_0625 = _mm512_set1_pd(0.0625);
+			      const __m512d _0_16   = _mm512_set1_pd(0.1666666666666666666667);
+			      register __m512d svy = _0;
+			      register __m512d cvy = _0;
+			      register __m512d cvz = _0;
+			      register __m512d ve  = _0;
+			      register __m512d vx  = _0;
+			      register __m512d vc  = _0;
+			      register __m512d vy  = _0;
+			      __m512d vr   = _0;
+			      __m512d vsf  = _0;
+			      __m512d vcf  = _0;
+			      __m512d vcu  = _0;
+			      __m512d vtu  = _0;
+			      __m512d vsu  = _0;
+			      __m512d vsa  = _0;
+			      __m512d vcsa = _0;
+			      __m512d vc2a = _0;
+			      __m512d vd   = _0;
+			      __m512d t0   = _0;
+			      __m512d t1   = _0;
+			      __m512d t2   = _0;
+			      __mmask8 neqz = 0x0;
+			      __mmask8 lteps =  0x0;
+
+			      vr = _mm512_sub_pd(_1,flat);
+			      vtu = _mm512_mul_pd(vr,_mm512_div_pd(
+			                             _mm512_sin_pd(vp1lat),
+						     _mm512_cos_pd(vp1lat)));
+			      vcf = _mm512_cos_pd(azvf);
+			      neqz = _mm512_cmp_pd_mask(vcf,_0,_CMP_NEQ_OQ);
+			      azvb = _mm512_maskz_mul_pd(neqz,
+			                         _mm512_atan2_pd(vtu,vcf),_2);
+			      vsf = _mm512_sin_pd(azvf);
+			      t0  = _mm512_fmadd_pd(vtu,vtu,_1);
+			      vcu = _mm512_div_pd(_1,
+			                          _mm512_sqrt_pd(t0));
+			      vsu = _mm512_mul_pd(vtu,vcu);
+			      t2  = _mm512_div_pd(dstv,vr);
+			      vsa = _mm512_mul_pd(vcu,vsf);
+			      t0  = _mm512_sub_pd(_0,vsa);
+			      vc2a = _mm512_fmadd_pd(t0,vsa,_1);
+			      t0 = _mm512_div_pd(_1,_mm512_mul_pd(vr,vr));
+			      t1 = _mm512_sub_pd(t0,_1);
+			      vx = _mm512_add_pd(_mm512_sqrt_pd(
+			                         _mm512_fmadd_pd(t1,vc2a,_1)),_1);
+			      vx = _mm512_div_pd(_mm512_sub_pd(vx,_2),vx);
+			      vc = _mm512_sub_pd(_1,vx);
+			      t1 = _mm512_mul_pd(vx,vx);
+			      vd = _mm512_mul_pd(_mm512_fmsub_pd(_0_375,t0,_1),vx);
+			      vc = _mm512_div_pd(_mm512_fmadd_pd(t1,_0_25,_1),vc);
+			      t0 = _mm512_div_pd(axis,vc);
+			      vtu = _mm512_div_pd(t2,t0);
+			      vy = vtu;
+	    
+			label_10:
+                                   vsy = _mm512_sin_pd(vy);
+				   vcy = _mm512_cos_pd(vy);
+				   vcz = _mm512_cos_pd(_mm512_add_pd(azvb,vy));
+				   ve  = _mm512_fmsub_pd(_mm512_mul_pd(vcz,vcz),_2,_1)
+				   vc  = vy;
+				   vx  = _mm512_mul_pd(ve,vcy);
+				   vy  = _mm512_sub_pd(_mm512_add_pd(ve,vec),_1);
+				   register const __m512d c0 = _mm512_fmsub_pd(_mm512_mul_pd(vsy,vsy),_4,_3);
+				   register const __m512d c1 = _mm512_fmadd_pd(_mm512_mul_pd(vy,vcz),
+				                                               _mm512_mul_pd(vd,_0_16),vx);
+				   register const __m512d c2 = _mm512_fmsub_pd(vd,_0_25,vcz);
+				   register const __m512d c3 = _mm512_fmadd_pd(vsy,vd,vtu);
+				   vy = _mm512_mul_pd(_mm512_mul_pd(c0,c1),
+				                      _mm512_mul_pd(c2,c3));
+				   lteps = _mm512_cmp_pd_mask(_mm512_sub_pd(vy,vc,_CMP_LE_OQ));
+				   if(1==lteps) goto label_20;
+				   goto label_10;
+				   
+			label_20:
+			      
+			       azvb = _mm512_fmsub_pd(_mm512_mul_pd(vcu,vcy),vcf,
+			                              _mm512_mul_pd(vsu,vsy));
+			       vc   = _mm512_mul_pd(vr,_mm512_sqrt_pd(
+			                               _mm512_fmadd_pd(vsa,vsu,_mm512_mul_pd(azvb,azvb))));
+			       t0   = _mm512_mul_pd(vcu,_mm512_mul_pd(vsy,vcf));
+			       vd   = _mm512_fmadd_pd(vsu,vcy,t0);
+			       vp2lat = _mm512_atan2_pd(vd,vc);
+			       t0   = _mm512_mul_pd(vsu,_mm512_mul_pd(vsy,vcf));
+			       vc   = _mm512_fmsub_pd(vcu,vcy,t0);
+			       vx   = _mm512_atan2_pd(_mm512_mul_pd(vsy,vsf),vc);
+			       t0   = _mm512_fmadd_pd(_n3,vc2a,_4);
+			       t1   = _mm512_fmadd_pd(t0,flat,_4);
+			       vc   = _mm512_mul_pd(t1,_mm512_mul_pd(vc2a,
+			                               _mm512_mul_pd(flat,_0_16)));
+			       t0   = _mm512_fmadd_pd(_mm512_mul_pd(ve,vcy),vc,vy);
+			       t1   = _mm512_fmadd_pd(_mm512_mul_pd(t0,vsy),vc,vy);
+			       vd   = _mm512_mul_pd(t1,vsa);
+			       t2   = _mm512_mul_pd(_mm512_sub_pd(_1,vc),
+			                            _mm512_mul_pd(vd,flat));
+			       vp2lon = _mm512_sub_pd(_mm512_add_pd(vp1lon,vx),t2);
+			       azvb = _mm512_add_pd(_mm512_atan2_pd(vsa,azvb),_3_14);
+		       }
+
+
+
+		       	__ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+		        static inline
+			void
+			forward_method_u_zmm8r8_looped(const double axis,
+			                               const double flat,
+						       const double * __restrict plat1,
+						       const double * __restrict plon1,
+						       const double * __restrict pfaz,
+						       const double * __restrict pdst,
+						       double * __restrict plat2,
+						       double * __restrict plon2,
+						       double * __restrict pbaz,
+						       const int32_t n) {
+
+                              if(__builtin_expect(n<=0,0)) { return;}
+			      
+			      const __m512d _3_14   = _mm512_set1_pd(3.1415926535897932384626);
+			      const __m512d _0      = _mm512_setzero_pd();
+			      const __m512d veps    = _mm512_set1_pd(0.5e-13);
+			      const __m512d _1      = _mm512_set1_pd(1.0);
+			      const __m512d _2      = _mm512_set1_pd(2.0);
+			      const __m512d _0_375  = _mm512_set1_pd(0.375);
+			      const __m512d _n3     = _mm512_set1_pd(-3.0);
+			      const __m512d _4      = _mm512_set1_pd(4.0);
+			      const __m512d _0_25   = _mm512_set1_pd(0.25);
+			      const __m512d _0_0625 = _mm512_set1_pd(0.0625);
+			      const __m512d _0_16   = _mm512_set1_pd(0.1666666666666666666667);
+			      const __m512d vaxis   = _mm512_set1_pd(axis);
+			      const __m512d vflat   = _mm512_set1_pd(flat);
+			      register __m512d vsy  = _0;
+			      register __m512d vcz  = _0;
+			      register __m512d vcy  = _0;
+			      register __m512d ve   = _0;
+			      double baz;
+			      double sy;
+			      double cz;
+			      double cy;
+			      double e;
+			      int32_t i;
+			      __mmask8 neqz = 0x0;
+			      __mmask8 lteps =  0x0;
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+                              for(i = 0; i != ROUND_TO_EIGHT(n,8); i += 8) {
+                                   __m512d vr = _mm512_sub_pd(_1,vflat);
+				   _mm_prefetch((const char*)&plat1[i+8],_MM_HINT_T0);
+				   const __m512d vlat1 = _mm512_loadu_pd(&plat1[i]);
+			           __m512d vtu = _mm512_mul_pd(vr,_mm512_div_pd(
+			                                          _mm512_sin_pd(vlat1),
+						                  _mm512_cos_pd(vlat1)));
+			           __m512d vcf = _mm512_cos_pd(pfaz);
+			           neqz = _mm512_cmp_pd_mask(vcf,_0,_CMP_NEQ_OQ);
+			            __m512d vbaz =  _mm512_maskz_mul_pd(neqz,
+			                                         _mm512_atan2_pd(vtu,vcf),_2));
+				   _mm_prefetch((const char*)&pfaz[i+8],_MM_HINT_T0);
+				   const __m512d vfaz = _mm512_loadu_pd(&pfaz[i]);
+			           __m512d vsf = _mm512_sin_pd(vfaz);
+			           __m512d t0  = _mm512_fmadd_pd(vtu,vtu,_1);
+			           __m512d vcu = _mm512_div_pd(_1,
+			                          _mm512_sqrt_pd(t0));
+			           __m512d vsu = _mm512_mul_pd(vtu,vcu);
+				   _mm_prefetch((const char*)&pdst[i+8],_MM_HINT_T0);
+				   const __m512d dstv = _mm512_loadu_pd(&pdst[i]);
+			           __m512d t2  = _mm512_div_pd(dstv,vr);
+			           __m512d vsa = _mm512_mul_pd(vcu,vsf);
+			           t0  = _mm512_sub_pd(_0,vsa);
+			           __m512d vc2a = _mm512_fmadd_pd(t0,vsa,_1);
+			           t0 = _mm512_div_pd(_1,_mm512_mul_pd(vr,vr));
+			           __m512d t1 = _mm512_sub_pd(t0,_1);
+			           __m512d vx = _mm512_add_pd(_mm512_sqrt_pd(
+			                         _mm512_fmadd_pd(t1,vc2a,_1)),_1);
+			           vx = _mm512_div_pd(_mm512_sub_pd(vx,_2),vx);
+			           __m512d vc = _mm512_sub_pd(_1,vx);
+			           t1 = _mm512_mul_pd(vx,vx);
+			           __m512d vd = _mm512_mul_pd(_mm512_fmsub_pd(_0_375,t0,_1),vx);
+			           vc = _mm512_div_pd(_mm512_fmadd_pd(t1,_0_25,_1),vc);
+			           t0 = _mm512_div_pd(axis,vc);
+			           vtu = _mm512_div_pd(t2,t0);
+			           __m512d vy = vtu;
+	    
+			label_10:
+                                   register  vsy = _mm512_sin_pd(vy);
+				   register  vcy = _mm512_cos_pd(vy);
+				   register  vcz = _mm512_cos_pd(_mm512_add_pd(vbaz,vy));
+				   register  ve  = _mm512_fmsub_pd(_mm512_mul_pd(vcz,vcz),_2,_1)
+				   vc  = vy;
+				   vx  = _mm512_mul_pd(ve,vcy);
+				   vy  = _mm512_sub_pd(_mm512_add_pd(ve,vec),_1);
+				   register const __m512d c0 = _mm512_fmsub_pd(_mm512_mul_pd(vsy,vsy),_4,_3);
+				   register const __m512d c1 = _mm512_fmadd_pd(_mm512_mul_pd(vy,vcz),
+				                                               _mm512_mul_pd(vd,_0_16),vx);
+				   register const __m512d c2 = _mm512_fmsub_pd(vd,_0_25,vcz);
+				   register const __m512d c3 = _mm512_fmadd_pd(vsy,vd,vtu);
+				   vy = _mm512_mul_pd(_mm512_mul_pd(c0,c1),
+				                      _mm512_mul_pd(c2,c3));
+				   lteps = _mm512_cmp_pd_mask(_mm512_sub_pd(vy,vc,_CMP_LE_OQ));
+				   if(1==lteps) goto label_20;
+				   goto label_10;
+				   
+			label_20:
+			      
+			       vbaz = _mm512_fmsub_pd(_mm512_mul_pd(vcu,vcy),vcf,
+			                              _mm512_mul_pd(vsu,vsy));
+			       vc   = _mm512_mul_pd(vr,_mm512_sqrt_pd(
+			                               _mm512_fmadd_pd(vsa,vsu,_mm512_mul_pd(vbaz,vbaz))));
+			       t0   = _mm512_mul_pd(vcu,_mm512_mul_pd(vsy,vcf));
+			       vd   = _mm512_fmadd_pd(vsu,vcy,t0);
+			       _mm512_storeu_pd(&plat2[i], _mm512_atan2_pd(vd,vc));
+			       t0   = _mm512_mul_pd(vsu,_mm512_mul_pd(vsy,vcf));
+			       vc   = _mm512_fmsub_pd(vcu,vcy,t0);
+			       vx   = _mm512_atan2_pd(_mm512_mul_pd(vsy,vsf),vc);
+			       t0   = _mm512_fmadd_pd(_n3,vc2a,_4);
+			       t1   = _mm512_fmadd_pd(t0,flat,_4);
+			       vc   = _mm512_mul_pd(t1,_mm512_mul_pd(vc2a,
+			                               _mm512_mul_pd(flat,_0_16)));
+			       t0   = _mm512_fmadd_pd(_mm512_mul_pd(ve,vcy),vc,vy);
+			       t1   = _mm512_fmadd_pd(_mm512_mul_pd(t0,vsy),vc,vy);
+			       vd   = _mm512_mul_pd(t1,vsa);
+			       t2   = _mm512_mul_pd(_mm512_sub_pd(_1,vc),
+			                            _mm512_mul_pd(vd,flat));
+			       _mm_prefetch((const char*)&plon1[i+8],_MM_HINT_T0);
+			       const __m512d vlon1 = _mm512_loadu_pd(&plon1[i]);
+			       _mm512_storeu_pd(&plon2[i], _mm512_sub_pd(_mm512_add_pd(vlon1,vx),t2));
+			       vbaz = _mm512_add_pd(_mm512_atan2_pd(vsa,vbaz),_3_14);
+			       _mm512_storeu_pd(&pbaz[i],vbaz);
+			      }
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(4),max(8)
+#endif
+                                    for(; i != n; ++i) {
+                                        const double r = 1.0-flat;
+					const double lat1 = plat1[i];
+					double tu = std::sin(lat1)/std::cos(lat1);
+					const double faz = pfaz[i];
+					double sf = std::sin(faz);
+					double cf = std::cos(faz);
+					if(cf != 0.0){
+                                           baz = std::atan2(tu,cf)*2.0;
+					}else {
+                                           baz = 0.0;
+					}
+					double cu  = 1.0/std::sqrt(tu*tu+1.0);
+					double su  = tu*cu;
+					double sa  = cu*sf;
+                                        double c2a = -sa*sa + 1.0;
+                                        double x   = std::sqrt((1.0/r/r-1.0)*c2a+1.0) + 1.0;
+                                        x   = (x-2.0)/x;
+                                        double c   = 1.0 - x;
+                                        c   = (x*x*0.25+1.0)/c;
+                                        double d   = (0.375*x*x-1.0)*x;
+					const double s = pdst[i];
+                                        tu  = s/r/a/c;
+                                        double y   = tu;
+				label_10:
+				          sy = std::sin(y);
+                                          cy = std::cos(y);
+                                          cz = std::cos(baz+y);
+                                          e  = cz*cz*2.0 - 1.0;
+                                          c  = y;
+                                          x  = e*cy;
+                                          y  = e + e - 1.0;
+                                          y  = (((sy*sy*4.0_wp-3.0_wp)*y*cz*d*0.1666666666666666666667+x)*d*0.25-cz)*sy*d + tu;
+					  if(std::abs(y-c)<=0.5e-13) goto label_20;
+					     goto label_10;
+				label_20:
+				         baz   = cu*cy*cf - su*sy;
+                                         c     = r*std::sqrt(sa*sa+baz*baz);
+                                         d     = su*cy + cu*sy*cf;
+					 plat2[i] = std::atan2(d,c);
+					 c     = cu*cy - su*sy*cf;
+                                         x     = std::atan2(sy*sf,c);
+                                         c     = ((-3.0*c2a+4.0)*f+4.0)*c2a*f*0.0625;
+                                         d     = ((e*cy*c+cz)*sy*c+y)*sa;
+					 plon2[i] = plon1[i]+x-(1.0-c)*d*flat
+					 baz = std::atan2(sa,baz)+3.1415926535897932384626;
+					 pbaz[i] = baz;
+				    }
+		      }
+
+
+
+		       	__ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+		        static inline
+			void
+			forward_method_a_zmm8r8_looped(const double axis,
+			                               const double flat,
+						       double * __restrict __ATTR_ALIGN__(64) plat1,
+						       double * __restrict __ATTR_ALIGN__(64) plon1,
+						       double * __restrict __ATTR_ALIGN__(64) pfaz,
+						       double * __restrict __ATTR_ALIGN__(64) pdst,
+						       double * __restrict __ATTR_ALIGN__(64) plat2,
+						       double * __restrict __ATTR_ALIGN__(64) plon2,
+						       double * __restrict __ATTR_ALIGN__(64) pbaz,
+						       const int32_t n) {
+
+                              if(__builtin_expect(n<=0,0)) { return;}
+			      
+			      const __m512d _3_14   = _mm512_set1_pd(3.1415926535897932384626);
+			      const __m512d _0      = _mm512_setzero_pd();
+			      const __m512d veps    = _mm512_set1_pd(0.5e-13);
+			      const __m512d _1      = _mm512_set1_pd(1.0);
+			      const __m512d _2      = _mm512_set1_pd(2.0);
+			      const __m512d _0_375  = _mm512_set1_pd(0.375);
+			      const __m512d _n3     = _mm512_set1_pd(-3.0);
+			      const __m512d _4      = _mm512_set1_pd(4.0);
+			      const __m512d _0_25   = _mm512_set1_pd(0.25);
+			      const __m512d _0_0625 = _mm512_set1_pd(0.0625);
+			      const __m512d _0_16   = _mm512_set1_pd(0.1666666666666666666667);
+			      const __m512d vaxis   = _mm512_set1_pd(axis);
+			      const __m512d vflat   = _mm512_set1_pd(flat);
+			      register __m512d vsy  = _0;
+			      register __m512d vcz  = _0;
+			      register __m512d vcy  = _0;
+			      register __m512d ve   = _0;
+			      double baz;
+			      double sy;
+			      double cz;
+			      double cy;
+			      double e;
+			      int32_t i;
+			      __mmask8 neqz = 0x0;
+			      __mmask8 lteps =  0x0;
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+                              __assume_aligned(plat1,64);
+			      __assume_aligned(plon1,64);
+			      __assume_aligned(pfaz,64);
+			      __assume_aligned(pdst,64);
+			      __assume_aligned(plat2,64);
+			      __assume_aligned(plon2,64);
+			      __assume_aligned(pbaz,64);
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+                              plat1 = (double*)__builtin_assume_aligned(plat1,64);
+			      plon1 = (double*)__builtin_assume_aligned(plon1,64);
+			      pfaz  = (double*)__builtin_assume_aligned(pfaz,64);
+			      pdst  = (double*)__builtin_assume_aligned(pdst,64);
+			      plat2 = (double*)__builtin_assume_aligned(plat2,64);
+			      plon2 = (double*)__builtin_assume_aligned(plon2,64);
+			      pbaz  = (double*)__builtin_assume_aligned(pbaz,64);
+#endif
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma code_align(32)
+#endif
+                              for(i = 0; i != ROUND_TO_EIGHT(n,8); i += 8) {
+                                   __m512d vr = _mm512_sub_pd(_1,vflat);
+				   _mm_prefetch((const char*)&plat1[i+8],_MM_HINT_T0);
+				   const __m512d vlat1 = _mm512_loadu_pd(&plat1[i]);
+			           __m512d vtu = _mm512_mul_pd(vr,_mm512_div_pd(
+			                                          _mm512_sin_pd(vlat1),
+						                  _mm512_cos_pd(vlat1)));
+			           __m512d vcf = _mm512_cos_pd(pfaz);
+			           neqz = _mm512_cmp_pd_mask(vcf,_0,_CMP_NEQ_OQ);
+			            __m512d vbaz =  _mm512_maskz_mul_pd(neqz,
+			                                         _mm512_atan2_pd(vtu,vcf),_2));
+				   _mm_prefetch((const char*)&pfaz[i+8],_MM_HINT_T0);
+				   const __m512d vfaz = _mm512_loadu_pd(&pfaz[i]);
+			           __m512d vsf = _mm512_sin_pd(vfaz);
+			           __m512d t0  = _mm512_fmadd_pd(vtu,vtu,_1);
+			           __m512d vcu = _mm512_div_pd(_1,
+			                          _mm512_sqrt_pd(t0));
+			           __m512d vsu = _mm512_mul_pd(vtu,vcu);
+				   _mm_prefetch((const char*)&pdst[i+8],_MM_HINT_T0);
+				   const __m512d dstv = _mm512_loadu_pd(&pdst[i]);
+			           __m512d t2  = _mm512_div_pd(dstv,vr);
+			           __m512d vsa = _mm512_mul_pd(vcu,vsf);
+			           t0  = _mm512_sub_pd(_0,vsa);
+			           __m512d vc2a = _mm512_fmadd_pd(t0,vsa,_1);
+			           t0 = _mm512_div_pd(_1,_mm512_mul_pd(vr,vr));
+			           __m512d t1 = _mm512_sub_pd(t0,_1);
+			           __m512d vx = _mm512_add_pd(_mm512_sqrt_pd(
+			                         _mm512_fmadd_pd(t1,vc2a,_1)),_1);
+			           vx = _mm512_div_pd(_mm512_sub_pd(vx,_2),vx);
+			           __m512d vc = _mm512_sub_pd(_1,vx);
+			           t1 = _mm512_mul_pd(vx,vx);
+			           __m512d vd = _mm512_mul_pd(_mm512_fmsub_pd(_0_375,t0,_1),vx);
+			           vc = _mm512_div_pd(_mm512_fmadd_pd(t1,_0_25,_1),vc);
+			           t0 = _mm512_div_pd(axis,vc);
+			           vtu = _mm512_div_pd(t2,t0);
+			           __m512d vy = vtu;
+	    
+			label_10:
+                                   register  vsy = _mm512_sin_pd(vy);
+				   register  vcy = _mm512_cos_pd(vy);
+				   register  vcz = _mm512_cos_pd(_mm512_add_pd(vbaz,vy));
+				   register  ve  = _mm512_fmsub_pd(_mm512_mul_pd(vcz,vcz),_2,_1)
+				   vc  = vy;
+				   vx  = _mm512_mul_pd(ve,vcy);
+				   vy  = _mm512_sub_pd(_mm512_add_pd(ve,vec),_1);
+				   register const __m512d c0 = _mm512_fmsub_pd(_mm512_mul_pd(vsy,vsy),_4,_3);
+				   register const __m512d c1 = _mm512_fmadd_pd(_mm512_mul_pd(vy,vcz),
+				                                               _mm512_mul_pd(vd,_0_16),vx);
+				   register const __m512d c2 = _mm512_fmsub_pd(vd,_0_25,vcz);
+				   register const __m512d c3 = _mm512_fmadd_pd(vsy,vd,vtu);
+				   vy = _mm512_mul_pd(_mm512_mul_pd(c0,c1),
+				                      _mm512_mul_pd(c2,c3));
+				   lteps = _mm512_cmp_pd_mask(_mm512_sub_pd(vy,vc,_CMP_LE_OQ));
+				   if(1==lteps) goto label_20;
+				   goto label_10;
+				   
+			label_20:
+			      
+			       vbaz = _mm512_fmsub_pd(_mm512_mul_pd(vcu,vcy),vcf,
+			                              _mm512_mul_pd(vsu,vsy));
+			       vc   = _mm512_mul_pd(vr,_mm512_sqrt_pd(
+			                               _mm512_fmadd_pd(vsa,vsu,_mm512_mul_pd(vbaz,vbaz))));
+			       t0   = _mm512_mul_pd(vcu,_mm512_mul_pd(vsy,vcf));
+			       vd   = _mm512_fmadd_pd(vsu,vcy,t0);
+			       _mm512_storeu_pd(&plat2[i], _mm512_atan2_pd(vd,vc));
+			       t0   = _mm512_mul_pd(vsu,_mm512_mul_pd(vsy,vcf));
+			       vc   = _mm512_fmsub_pd(vcu,vcy,t0);
+			       vx   = _mm512_atan2_pd(_mm512_mul_pd(vsy,vsf),vc);
+			       t0   = _mm512_fmadd_pd(_n3,vc2a,_4);
+			       t1   = _mm512_fmadd_pd(t0,flat,_4);
+			       vc   = _mm512_mul_pd(t1,_mm512_mul_pd(vc2a,
+			                               _mm512_mul_pd(flat,_0_16)));
+			       t0   = _mm512_fmadd_pd(_mm512_mul_pd(ve,vcy),vc,vy);
+			       t1   = _mm512_fmadd_pd(_mm512_mul_pd(t0,vsy),vc,vy);
+			       vd   = _mm512_mul_pd(t1,vsa);
+			       t2   = _mm512_mul_pd(_mm512_sub_pd(_1,vc),
+			                            _mm512_mul_pd(vd,flat));
+			       _mm_prefetch((const char*)&plon1[i+8],_MM_HINT_T0);
+			       const __m512d vlon1 = _mm512_loadu_pd(&plon1[i]);
+			       _mm512_storeu_pd(&plon2[i], _mm512_sub_pd(_mm512_add_pd(vlon1,vx),t2));
+			       vbaz = _mm512_add_pd(_mm512_atan2_pd(vsa,vbaz),_3_14);
+			       _mm512_storeu_pd(&pbaz[i],vbaz);
+			      }
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(4),max(8)
+#endif
+                                    for(; i != n; ++i) {
+                                        const double r = 1.0-flat;
+					const double lat1 = plat1[i];
+					double tu = std::sin(lat1)/std::cos(lat1);
+					const double faz = pfaz[i];
+					double sf = std::sin(faz);
+					double cf = std::cos(faz);
+					if(cf != 0.0){
+                                           baz = std::atan2(tu,cf)*2.0;
+					}else {
+                                           baz = 0.0;
+					}
+					double cu  = 1.0/std::sqrt(tu*tu+1.0);
+					double su  = tu*cu;
+					double sa  = cu*sf;
+                                        double c2a = -sa*sa + 1.0;
+                                        double x   = std::sqrt((1.0/r/r-1.0)*c2a+1.0) + 1.0;
+                                        x   = (x-2.0)/x;
+                                        double c   = 1.0 - x;
+                                        c   = (x*x*0.25+1.0)/c;
+                                        double d   = (0.375*x*x-1.0)*x;
+					const double s = pdst[i];
+                                        tu  = s/r/a/c;
+                                        double y   = tu;
+				label_10:
+				          sy = std::sin(y);
+                                          cy = std::cos(y);
+                                          cz = std::cos(baz+y);
+                                          e  = cz*cz*2.0 - 1.0;
+                                          c  = y;
+                                          x  = e*cy;
+                                          y  = e + e - 1.0;
+                                          y  = (((sy*sy*4.0_wp-3.0_wp)*y*cz*d*0.1666666666666666666667+x)*d*0.25-cz)*sy*d + tu;
+					  if(std::abs(y-c)<=0.5e-13) goto label_20;
+					     goto label_10;
+				label_20:
+				         baz   = cu*cy*cf - su*sy;
+                                         c     = r*std::sqrt(sa*sa+baz*baz);
+                                         d     = su*cy + cu*sy*cf;
+					 plat2[i] = std::atan2(d,c);
+					 c     = cu*cy - su*sy*cf;
+                                         x     = std::atan2(sy*sf,c);
+                                         c     = ((-3.0*c2a+4.0)*f+4.0)*c2a*f*0.0625;
+                                         d     = ((e*cy*c+cz)*sy*c+y)*sa;
+					 plon2[i] = plon1[i]+x-(1.0-c)*d*flat
+					 baz = std::atan2(sa,baz)+3.1415926535897932384626;
+					 pbaz[i] = baz;
+				    }
+		      }
 
 						     
      }
