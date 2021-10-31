@@ -1287,7 +1287,7 @@ namespace  gms {
 
                               if(__builtin_expect(n<=0,0)) {return;}
 			      register __m512d vr   = _mm512_set1_pd(r);
-
+                              int32_t i;
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma code_align(32)
 #endif
@@ -1360,6 +1360,7 @@ namespace  gms {
 
                               if(__builtin_expect(n<=0,0)) {return;}
 			      register __m512d vr   = _mm512_set1_pd(r);
+			      int32_t i;
 #if defined(__INTEL_COMPILER) || defined(__ICC)
                                 __assume_aligned(plon1,64);
 				__assume_aligned(plat1,64);
@@ -1485,6 +1486,7 @@ namespace  gms {
                                if(__builtin_expect(n<=0),0) {return;}
                                const __m512d _0 = _mm512_setzero_pd();
 			       const register __m512d va = _mm512_set1_pd(a);
+			       int32_t i;
 			       // Error checking code removed!!
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma code_align(32)
@@ -1539,6 +1541,7 @@ namespace  gms {
                                if(__builtin_expect(n<=0),0) {return;}
                                const __m512d _0 = _mm512_setzero_pd();
 			       const register __m512d va = _mm512_set1_pd(a);
+			       int32_t i;
 			       // Error checking code removed!!
 #if defined(__INTEL_COMPILER) || defined(__ICC)
                                __assume_aligned(pb,64);
