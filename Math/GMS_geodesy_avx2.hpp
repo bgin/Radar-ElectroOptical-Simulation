@@ -1530,8 +1530,8 @@ namespace gms {
                         __ATTR_ALIGN__(32)
                         void
 			geocentric_radius_a_ymm4r8_looped(const double a,
-			                                  const double * __restrict __ATTR_ALIGN__(32) pb,
-							  const double * __restrict __ATTR_ALIGN__(32) plat,
+			                                  double * __restrict __ATTR_ALIGN__(32) pb,
+							  double * __restrict __ATTR_ALIGN__(32) plat,
 							  double * __restrict __ATTR_ALIGN__(32) pr,
 							  const int32_t n) {
                                if(__builtin_expect(n<=0),0) {return;}
