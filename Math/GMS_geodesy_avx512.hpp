@@ -31,6 +31,28 @@ namespace  gms {
 
           namespace math {
 
+
+	                      namespace {
+
+                                    __ATTR_ALWAYS_INLINE__
+                                    __ATTR_HOT__
+                                    __ATTR_ALIGN__(32)
+			            __ATTR_REGCALL__
+	                            static inline
+				    __m512d
+				    zmm8r8_sign_zmm8r8(const __m512d va,
+				                       const __m512d vb) {
+				       const register _0 = _mm512_setzero_pd();
+				       register __m512d vret = _0;
+				       register __m512d t0   = _mm512_abs_pd(va);
+                                       __mmask8 gez = 0x0;
+				       gez  = _mm512_cmp_pd_mask(vb,_0,_CMP_GE_OQ); // Lat=3refc,Thr=1refc
+				       vret = _mm512_mask_blend_pd(gez,t0,_mm512_sub_pd(_0,t0)); //Lat=1refc,Thr=0.5refc,Lat=4refc,Thr=1refc
+				       return (vret);
+				                                       
+				    }
+			    }
+
                           
 	                 /*
                               Cartesian to geodetic conversion (kernel).
@@ -1453,11 +1475,11 @@ namespace  gms {
 			    register __m512d t0    = _0;
 			    register __m512d t1    = _0;
 			    register __m512d t2    = _0;
-                            __mmask8 aeq0 = 0x0;
-			    __mmask8 beq0 = 0x0;
-			    aeq0 = _mm512_cmp_pd_mask(va,_0,_CMP_EQ_OQ);
-			    beq0 = _mm512_cmp_pd_mask(vb,_0,_CMP_EQ_OQ);
-			    if(aeq0 && beq0) { return (vr);}
+                            //__mmask8 aeq0 = 0x0;
+			    //__mmask8 beq0 = 0x0;
+			    //aeq0 = _mm512_cmp_pd_mask(va,_0,_CMP_EQ_OQ);
+			    //beq0 = _mm512_cmp_pd_mask(vb,_0,_CMP_EQ_OQ);
+			    //if(aeq0 && beq0) { return (vr);}
 			    t0   = _mm512_cos_pd(vlat);
 			    vaa  = _mm512_mul_pd(va,va);
 			    vclat = _mm512_mul_pd(t0,t0);
@@ -1592,6 +1614,300 @@ namespace  gms {
 				    }
 			      
 			}
+
+                        /*
+                              Based on: http://www.ngs.noaa.gov/PC_PROD/Inv_Fwd/source/inverse.for
+                          */
+
+                        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_REGCALL__
+	                static inline
+			void inverse_method_zmm8r8(const __m512d va,    // Semi-major axis (equatorial)
+			                           const __m512d vrf,   // reciprocal flattening
+						   const __m512d vlat1, // Latitude of 8 points [rad, positive north]
+						   const __m512d vlon1, // longtitude of 8 points [rad,positive east]
+						   const __m512d vlat2, // Latitude of 8 points [rad, positive north]
+						   const __m512d vlon2, // Longtitude of 8 points [rad, positive east]
+						   __m512d &vfaz,       // Vector of 8 forward azimuths [rad]
+						   __m512d &vbaz,       // Vector of 8 backward azimuthes [rad]
+						   __m512d &vs,         // Ellipsoidal distance
+						   int32_t &icnt,     // iteration count
+						   __m512d &sig,       // Spherical distance (auxiliary sphere)
+						   __m512d &vld,        // Longtitude difference (auxiliary sphere)
+						   int32_t &kind) {       // solution flag: kind=1: long-line; kind=2: antipodal
+						   
+			      register const __m512d pi   = _mm512_set1_pd(3.1415926535897932384626);
+			      const __m512d          npi  = _mm512_set1_pd(-3.1415926535897932384626);
+			      register const __m512d _2pi = _mm512_set1_pd(6.2831853071795864769253);
+			      register const __m512d vtol = _mm512_set1_pd(1.0e-14);
+			      register const __m512d veps = _mm512_set1_pd(1.0e-15);
+			      const __m512d _1            = _mm512_set1_pd(1.0);
+			      const __m512d _n2           = _mm512_set1_pd(-2.0);
+			      const __m512d inv16         = _mm512_set1_pd(0.0625);
+			      const __m512d _n3           = _mm512_set1_pd(-3.0);
+			      const __m512d _4            = _mm512_set1_pd(4.0);
+			      const __m512d invrf         = _mm512_div_pd(_1,vrf);
+			      const __m512d _2            = _mm512_set1_pd(2.0);
+			      const __m512d _0            = _mm512_setzero_pd();
+			      const __m512d inv4         = _mm512_set1_pd(0.25);
+			      const __m512d _0_375        = _mm512_set1_pd(0.375);
+			      const __m512d _6            = _mm512_set1_pd(6.0);
+			      const __m512d boa           = _mm512_sub_pd(_1,invrf);
+			      register __m512d beta1      = _0;
+			      register __m512d sinu1      = _0;
+			      register __m512d cosu1      = _0;
+			      register __m512d beta2      = _0;
+			      register __m512d sinu2      = _0;
+			      register __m512d cosu2      = _0;
+			      register __m512d sinvld     = _0;
+			      register __m512d cosvld     = _0;
+			      register __m512d sinsig     = _0;
+			      register __m512d cossig     = _0;
+			      register __m512d sig        = _0;
+			      register __m512d sinal      = _0;
+			      register __m512d cosal2     = _0;
+			      register __m512d costm      = _0;
+			      register __m512d temp       = _0;
+			      register __m512d c          = _0;
+			      register __m512d d          = _0;
+			      __m512d prev                = _0;
+			      __m512d test                = _0;
+			      __m512d vlat                = _0;
+			      __m512d ep2                 = _0;
+			      __m512d bige                = _0;
+			      __m512d bigf                = _0;
+			      __m512d biga                = _0;
+			      __m512d z                   = _0;
+			      __m512d dsig                = _0;
+			      __mmask8 lgpi               = 0x0;
+			      __mmask8 llnpi              = 0x0;
+			      beta1 = _mm512_atan_pd(
+			                    _mm512_mul_pd(boa,_mm512_tan_pd(vlat1)));
+			      vlat  = _mm512_sub_pd(vlat2,vlat1);
+			      lgpi  = _mm512_cmp_pd_mask(vlat,pi,_CMP_GT_OQ);
+			      vlat  = _mm512_mask_sub_pd(vlat,lgpi,vlat,_2pi);
+			      sinu1 = _mm512_sin_pd(beta1);
+			      cosu1 = _mm512_cos_pd(beta1);
+			      llnpi = _mm512_cmp_pd_mask(vlat,_npi,_CMP_LT_OQ);
+			      vlat  = _mm512_mask_add_pd(vlat,llnpi,vlat,_2pi);
+			      beta2 = _mm512_atan_pd(
+			                    _mm512_mul_pd(boa,_mm512_tan_pd(vlat2)));
+			      prev  = vlat;
+			      test  = vlat;
+			      sinu2 = _mm512_sin_pd(beta2);
+			      icnt  = 0;
+			      vld   = vlat;
+			      kind  = 1;
+			      cosu2 = _mm512_cos_pd(beta2);
+
+		     longline:
+
+		              cosvld = _mm512_cos_pd(vld);
+			      temp   = _mm512_fmsub_pd(_mm512_mul_pd(cosu1,sinu2),
+			                           _mm512_mul_pd(sinu1,
+						   _mm512_mul_pd(cosu2,cosvld)));
+		              sinvld = _mm512_sin_pd(vld);
+			      __m512d t0 = _mm512_mul_pd(temp,temp);
+			      __m512d t1 = _mm512_mul_pd(cosu2,sinvld);
+			      sinsig = _mm512_sqrt_pd(_mm512_fmadd_pd(t1,t1,t0));
+			      __m512d t2 = _mm512_mul_pd(cosu1,
+			                             _mm512_mul_pd(cosu2,cosvld));
+			      cossig = _mm512_fmadd_pd(sinu1,sinu2,t2);
+			      sig    = _mm512_atan2_pd(sinsig,cossig);
+			      const __mmask8 mask1 = _mm512_cmp_pd_mask(
+			                                       _mm512_abs_pd(sinsig),veps,_CMP_LT_OQ);
+			      t0 = _mm512_mul_pd(cosu1,cosu2);
+			      t1 = _mm512_mul_pd(t0,_mm512_div_pd(sinvld,sinsig));
+			      t2 = _mm512_mul_pd(t0,_mm512_div_pd(sinvld,
+			                            zmm8r8_sign_zmm8r8(veps,sinsig)));
+			      sinal   = _mm512_mask_blend_pd(mask1,t2,t1);
+			      t0      = _mm512_mul_pd(sinal,sinal);
+			      cosal2  = _mm512_add_pd(_mm512_sub_pd(_0,t0),_1);
+			      const __mmask8 mask2 = _mm512_cmp_pd_mask(
+			                                       _mm512_abs_pd(cosal2),veps,_CMP_LT_OQ);
+			      t0 = _mm512_mul_pd(sinu1,
+			                     _mm512_div_pd(sinu2,
+					              zmm8r8_sign_zmm8r8(veps,cosal2)));
+			      t1 = _mm512_mul_pd(sinu1,
+			                     _mm512_div_pd(sinu2,cosal2));
+			      costm = _mm512_mask_blend_pd(mask2,
+			                           _mm512_fmadd_pd(_n2,t1,cossig),
+						   _mm512_fmadd_pd(_n2,t0,cossig));
+			      costm2 = _mm512_mul_pd(costm,costm);
+			      t0 = _mm512_fmadd_pd(_n3,cosal2,_n4);
+			      t1 = _mm512_fmadd_pd(t0,invrf,_n4);
+			      t2 = _mm512_mul_pd(cosal2,
+			                    _mm512_mul_pd(invrf,_inv16));
+			      c  = _mm512_mul_pd(t1,t2);
+
+			      antipodal :
+
+			          it += 1;
+				  __m512d t3 = _mm512_fmsub_pd(_2,costm2,_1);
+				  __m512d t4 = _mm512_fmadd_pd(cossig,c,costm);
+				  __m512d t5 = _mm512_fmadd_pd(sinsig,c,sig);
+				  __m512d t6 = _mm512_mul_pd(_mm512_sub_pd(_1,c),invrf);
+				  d = _mm512_mul_pd(_mm512_mul_pd(t3,t4),
+				                    _mm512_mul_pd(t5,t6));
+				  if(1==kind) {
+
+				     vld = _mm512_fmadd_pd(d,sinal,vlat);
+				     const __mmask8 mask3 = _mm512_cmp_pd_mask(
+				                                   _mm512_abs_pd(
+								            _mm512_sub_pd(vld,test)),vtol,_CMP_GE_OQ);
+				     if(mask3) {
+
+                                        const __mmask8 mask4 = _mm512_cmp_pd_mask(_mm512_abs_pd(vld),pi,_CMP_GT_OQ);
+					if(mask4) {
+                                           kind = 2;
+					   vld  = pi;
+					   const __mmask8 mask5 = _mm512_cmp_pd_mask(vlat,_0,_CMP_LT_OQ);
+					   vld    = _mm512_mask_blend_pd(mask5,vld,_mm512_sub_pd(_0,vld));
+					   sinal  = _0;
+					   cosal2 = _1;
+					   test   = _2;
+					   prev   = test;
+					   t3     = _mm512_atan_pd(_mm512_div_pd(sinu1,cosu1));
+					   t4     = _mm512_mul_pd(cosal2,_mm512_mul_pd(invrf,inv16));
+					   t5     = _mm512_atan_pd(_mm512_div_pd(sinu2,cosu2));
+					   c      = _mm512_mul_pd(_mm512_fmadd_pd(
+					                          _mm512_fmadd_pd(_n3,cosal2,_4),invrf,_4),t4);
+					   sig    = _mm512_sub_pd(pi,_mm512_add_pd(t3,t5));
+					   sinsig = _mm512_sin_pd(sig);
+					   cossig = _mm512_cos_pd(sig);
+					   const __mmask8 mask6 = _mm512_cmp_pd_mask(_mm512_abs_pd(
+					                                _mm512_sub_pd(sinal,prev),vtol,_CMP_LT_OQ));
+					   if(mask6) goto Exit;
+					   const __mmask8 mask7 = _mm512_cmp_pd_mask(_mm512_abs_pd(cosal2),veps,_CMP_LT_OQ);
+					   t3 = _mm512_mul_pd(sinu1,_mm512_div_pd(sinu2,zmm8r8_sign_zmm8r8(veps,cosal2)));
+					   t4 = _mm512_mul_pd(sinu1,_mm512_div_pd(sinu2,cosal2));
+					   costm = _mm512_mask_blend_pd(mask7,
+					                       _mm512_fmadd_pd(_n2,t4,cossig),
+							       _mm512_fmadd_pd(_n2,t3,cossig));
+					   costm2 = _mm512_mul_pd(costm,costm);
+					   goto antipodal;
+					}
+					t5 = _mm512_sub_pd(vld,test);
+					t6 = _mm512_sub_pd(test,prev);
+					const __mmask8 mask8 = _mm512_cmp_pd_mask(_mm512_mul_pd(t5,t6),_0,_CMP_LT_OQ);
+					if(it>5) {
+                                           vld = _mm512_mask_div_pd(vld,mask8,_mm512_fmadd_pd(
+					                              _mm512_fmadd_pd(_2,vld,_3),test,prev),_6);
+					}
+					prev = test;
+					test = vld;
+					goto longline;
+				     }
+
+				  } else {
+
+                                       sinal = _mm512_div_pd(_mm512_sub_pd(vld,l),d);
+				       t3    = _mm512_sub_pd(sinal,test);
+				       t4    = _mm512_sub_pd(test,prev);
+				       const __mmask8 mask9 = _mm512_cmp_pd_mask(_mm512_mul_pd(t3,t4),_0,_CMP_LT_OQ);
+				       if(it>5) {
+                                          sinal = _mm512_mask_div_pd(sinal,mask9,_mm512_fmadd_pd(
+					                              _mm512_fmadd_pd(_2,sinal,_3),test,prev),_6);
+				       }
+				       prev   = test;
+				       test   = sinal;
+				       cosal2 = _mm512_fmadd_pd(_mm512_sub_pd(_0,sinal),sinal,_1);
+				       sinvld = _mm512_mul_pd(sinal,_mm512_div_pd(sinsig,
+				                                              _mm512_mul_pd(cosu1,cosu2)));
+				       cosvld = _mm512_sub_pd(_0,
+				                      _mm512_sqrt_pd(
+						                _mm512_abs_pd(_mm512_fmadd_pd(
+								              _mm512_sub_pd(_0,sinvld),sinvld,_1))));
+				       vld    = _mm512_atan2_pd(sinvld,cosvld);
+				       t5     = _mm512_mul_pd(sinu1,_mm512_mul_pd(cosu2,cosvld));
+				       temp   = _mm512_fmasub_pd(cosu1,sinu2,t5);
+				       t3     = _mm512_mul_pd(temp,temp);
+				       t4     = _mm512_mul_pd(cosu2,sinvld);
+				       sinsing = _mm512_sqrt_pd(_mm512_fmadd_pd(t4,t4,t3));
+				       t5     = _mm512_mul_pd(cosu1,_mm512_mul_pd(cosu2,cosvld));
+				       cossig = _mm512_fmadd_pd(sinu1,sinu2,t5);
+				       sig    = _mm512_atan2_pd(sinsig,cossig);
+				       t6     = _mm512_mul_pd(cosal2,_mm512_mul_pd(invrf,inv16));
+				       c      = _mm512_mul_pd(_mm512_fmadd_pd(
+				                              _mm512_fmadd_pd(_n3,cosal2,_4),invrf,_4),t6);
+				       const __mmask8 mask10 = _mm512_cmp_pd_mask(
+				                                     _mm512_abs_pd(_mm512_sub_pd(sinal,prev)),vtol,_CMP_GE_OQ);
+				       if(mask10) {
+                                          const __mmask8 mask11 = _mm512_cmp_pd_mask(_mm512_abs_pd(cosal2),veps,_CMP_LT_OQ);
+					  t3 = _mm512_mul_pd(sinu1,_mm512_div_pd(sinu2,
+					                                      zmm8r8_sign_zmm8r8(veps,cosal2)));
+					  t4 = _mm512_mul_pd(sinu1,_mm512_div_pd(sinu2,cosal2));
+					  costm = _mm512_mask_blend_pd(mask11,t4,t3);
+					  costm2 = _mm512_mul_pd(costm,costm);
+					  goto antipodal;
+				       }
+				  }
+				  
+			      Exit:
+
+			          if(2==kind) {
+                                     vfaz = _mm512_div_pd(sinal,cosu1);
+				     t0   = _mm512_sub_pd(_0,vfaz);
+				     vbaz = _mm512_sqrt_pd(_mm512_fmadd_pd(t0,t0,_1));
+				     const __mask8 k0 = _mm512_cmp_pd_mask(temp,_0,_CMP_LT_OQ);
+				     vbaz = _mm512_mask_blend_pd(k0,vbaz,_mm512_sub_pd(_0,vbaz));
+				     vfaz = _mm512_atan2_pd(vfaz,vbaz);
+				     t1   = _mm512_sub_pd(_0,sinal);
+				     t0   = _mm512_mul_pd(cosu1,
+				                         _mm512_mul_pd(cossig,vbaz));
+				     t2   = _mm512_fmsub_pd(sinu1,sinsig,t0);
+				     vbaz = _mm512_atan2_pd(t1,t2);
+				  }
+				  else {
+                                     t0 = _mm512_mul_pd(cosu2,sinvld);
+				     t1 = _mm512_mul_pd(sinu1,
+				                    _mm512_mul_pd(cosu2,cosvld));
+				     t2 = _mm512_fmsub_pd(cosu1,sinu2,t1);
+				     vfaz = _mm512_atan2_pd(t0,t2);
+				     t0 = _mm512_mul_pd(_mm512_sub_pd(_0,cosu1),sinvld);
+				     t1 = _mm512_mul_pd(cosu1,
+				                   _mm512_mul_pd(sinu2,cosvld));
+				     t2 = _mm512_fmadd_pd(sinu1,cosu2,t1);
+				     vbaz = _mm512_atan2_pd(t0,t2);
+				  }
+				  const __mmask8 k1 = _mm512_cmp_mask_pd(vfaz,_0,_CMP_LT_OQ);
+				  vfaz = _mm512_mask_add_pd(k1,vfaz,vfaz,_2pi);
+				  const __mmask8 k2 = _mm512_cmp_mask_pd(vbaz,_0,_CMP_LT_OQ);
+				  vbaz = _mm512_mask_add_pd(k2,vbaz,vbaz,_2pi);
+				  // helmert 1880 from vincenty "geodetic inverse solution between antipodal points"
+				  ep2  = _mm512_sub_pd(_mm512_div_pd(_1,_mm512_mul_pd(boa,boa)),_1);
+				  bige = _mm512_sqrt_pd(_mm512_fmadd_pd(ep2,cosal2,_1));
+				  bigf = _mm512_div_pd(_mm512_sub_pd(bige,_1),
+				                       _mm512_add_pd(bige,_1));
+				  t0   = _mm512_sub_pd(_1,bigf);
+				  t1   = _mm512_mul_pd(_1,bigf);
+				  biga = _mm512_div_pd(_mm512_mul_pd(t1,
+				                       _mm512_mul_pd(bigf,inv4)),t0);
+				  t0   = _mm512_mul_pd(bigf,bigf);
+				  bigb = _mm512_mul_pd(bigf,
+				                     _mm512_mul_pd(_mm512_sub_pd(_1,_0_375),t0));
+				  t1   = _mm512_fmadd_pd(_4,costm2,_n3);
+				  t0   = _mm512_mul_pd(sinsig,sinsig);
+				  t2   = _mm512_fmadd_pd(_4,t0,_n3);
+				  t0   = _mm512_mul_pd(_mm512_div_pd(bigb,_6),costm);
+				  z    = _mm512_mul_pd(t0,_mm512_mul_pd(t2,t1));
+				  t0   = _mm512_fmsub_pd(cossig,_mm512_fmadd_pd(_2,costm2,_n1),z);
+				  t1   = _mm512_fmadd_pd(bigb,inv4,costm);
+				  t2   = _mm512_mul_pd(t1,t0);
+				  dsig = _mm512_mul_pd(bigb,_mm512_mul_pd(sinsig,t2));
+				  t0   = _mm512_mul_pd(boa,va);
+				  t1   = _mm512_sub_pd(sig,dsig);
+				  vs   = _mm512_mul_pd(t0,_mm512_mul_pd(biga,t1));
+						                   
+				  
+		       }                          
+
+
+
+
+
 						     
      }
 
