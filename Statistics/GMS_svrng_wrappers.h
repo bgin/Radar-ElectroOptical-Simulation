@@ -22,6 +22,7 @@ namespace file_info {
 }
 
 #include <cstdint>
+
 #include "GMS_config.h"
 #include "GMS_avxvecf32.h"
 #include "GMS_avx512c4f32.h"
