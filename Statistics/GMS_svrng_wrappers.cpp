@@ -1,4 +1,5 @@
 
+#include <svrng.h>
 #include "GMS_svrng_wrappers.h"
 
 #if !defined(GMS_SVRNG_WRAPPERS_MT19937_FUNC_BODY_CASE_NO_DISTR)
