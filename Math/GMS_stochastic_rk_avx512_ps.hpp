@@ -93,7 +93,7 @@ namespace  gms {
                                     __ATTR_ALIGN__(32)
 			            __ATTR_REGCALL__
 	                            static inline
-				    __m512d rk1_ti_step_zmm16r4(const __m512 x,
+				    __m512 rk1_ti_step_zmm16r4(const __m512 x,
 				                                const __m512 t,
 							        const __m512 h,
 							        const __m512 q,
@@ -153,7 +153,7 @@ namespace  gms {
                                     __ATTR_ALIGN__(32)
 			            __ATTR_REGCALL__
 	                            static inline
-				    __m512d rk2_ti_step_zmm16r4(const __m512 x,
+				    __m512 rk2_ti_step_zmm16r4(const __m512 x,
 				                                const __m512 t,
 							        const __m512 h,
 							        const __m512 q,
@@ -229,7 +229,7 @@ namespace  gms {
                                    __ATTR_ALIGN__(32)
 			           __ATTR_REGCALL__
 	                           static inline
-				   __m512d rk3_ti_step_zmm16r4(const __m512 x,
+				   __m512 rk3_ti_step_zmm16r4(const __m512 x,
 				                               const __m512 t,
 							       const __m512 h,
 							       const __m512 q,
@@ -324,7 +324,7 @@ namespace  gms {
                                    __ATTR_ALIGN__(32)
 			           __ATTR_REGCALL__
 	                           static inline
-				   __m512d rk4_ti_step_zmm16r4(const __m512 x,
+				   __m512 rk4_ti_step_zmm16r4(const __m512 x,
 				                               const __m512 t,
 							       const __m512 h,
 							       const __m512 q,
@@ -414,7 +414,7 @@ namespace  gms {
                                     __ATTR_ALIGN__(32)
 			            __ATTR_REGCALL__
 	                            static inline
-				    __m512d rk1_tv_step_zmm16r4(const __m512 x,
+				    __m512 rk1_tv_step_zmm16r4(const __m512 x,
 				                                const __m512 t,
 							        const __m512 h,
 							        const __m512 q,
@@ -450,7 +450,7 @@ namespace  gms {
                                     __ATTR_ALIGN__(32)
 			            __ATTR_REGCALL__
 	                            static inline
-				    __m512d rk2_tv_step_zmm16r4(const __m512 x,
+				    __m512 rk2_tv_step_zmm16r4(const __m512 x,
 				                                const __m512 t,
 							        const __m512 h,
 							        const __m512 q,
@@ -504,7 +504,7 @@ namespace  gms {
                                     __ATTR_ALIGN__(32)
 			            __ATTR_REGCALL__
 	                            static inline
-				    __m512d rk4_tv_step_zmm16r4(const __m512 x,
+				    __m512 rk4_tv_step_zmm16r4(const __m512 x,
 				                                const __m512 t,
 							        const __m512 h,
 							        const __m512 q,
