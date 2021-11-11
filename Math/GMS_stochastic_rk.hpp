@@ -96,8 +96,8 @@ namespace file_info {
                                             double w1            = 0.0;
                                             double step          = 0.0;
                                             w1 = rand  * std::sqrt(q1 * q / h);
-                                            k1 = h * fi( x1) + h * gi( x1) * w1;
-                                            step = x1 + a21 * k1;
+                                            k1 = h * fi(x) + h * gi(x) * w1;
+                                            step = x + a21 * k1;
 					    return (step);
 				   }
 
@@ -130,10 +130,10 @@ namespace file_info {
                                             double step = 0.0;
                                             w1 = rand1 * std::sqrt(q1 * qh);
                                             k1 = h * fi( x) + h * gi( x) * w1;
-                                            x2 = x1 + a21 * k1;
+                                            x2 = x + a21 * k1;
                                             w2 = rand2 * std::sqrt(q2 * qh);
                                             k2 = h * fi( x2) + h * gi( x2) * w2;
-                                            step = x1 + a31 * k1 + a32 * k2;
+                                            step = x + a31 * k1 + a32 * k2;
 					    return (step);
 				  }
 
@@ -174,13 +174,13 @@ namespace file_info {
                                          double step = 0.0;
                                          w1 = rand1 * std::sqrt(q1 * qh);
                                          k1 = h * fi(x) + h * gi(x) * w1;
-                                         x2 = x1 + a21 * k1;
+                                         x2 = x + a21 * k1;
                                          w2 = rand2 * std::sqrt(q2 * qh);
                                          k2 = h * fi( x2) + h * gi( x2) * w2;
-                                         x3 = x1 + a31 * k1 + a32 * k2;
+                                         x3 = x + a31 * k1 + a32 * k2;
                                          w3 = rand3 * std::sqrt(q3 * qh);
                                          k3 = h * fi( x3) + h * gi( x3) * w3;
-                                         step = x1 + a41 * k1 + a42 * k2 + a43 * k3;
+                                         step = x + a41 * k1 + a42 * k2 + a43 * k3;
                                          return (step);
 				 }
 
@@ -230,19 +230,164 @@ namespace file_info {
                                                double step;
                                                w1 = rand1 * std::sqrt(q1 * qh);
                                                k1 = h * fi(x) + h * gi(x) * w1;
-                                               x2 = x1 + a21 * k1;
+                                               x2 = x + a21 * k1;
                                                w2 = rand2 * std::sqrt(q2 * qh);
                                                k2 = h * fi(x2) + h * gi(x2) * w2;
-                                               x3 = x1 + a31 * k1 + a32 * k2;
+                                               x3 = x + a31 * k1 + a32 * k2;
                                                w3 = rand3 * std::sqrt(q3 * qh);
                                                k3 = h * fi(x3) + h * gi(x3) * w3;
-                                               x4 = x1 + a41 * k1 + a42 * k2;
+                                               x4 = x + a41 * k1 + a42 * k2;
                                                w4 = rand4 * std::sqrt(q4 * qh);
                                                k4 = h * fi(x4) + h * gi(x4) * w4;
-                                               step = x1 + a51 * k1 + a52 * k2 + a53 * k3 + a54 * k4;
+                                               step = x + a51 * k1 + a52 * k2 + a53 * k3 + a54 * k4;
 					       return (step);
 
 				 }
+
+
+
+                                    __ATTR_ALWAYS_INLINE__
+                                    __ATTR_HOT__
+                                    __ATTR_ALIGN__(32)
+			            static inline
+                                    double rk1_tv_step_scalar(const double x,
+				                              const double t,
+							      const double h,
+							      const double q,
+							      const double rand,
+							      double (*fv) (const double, const double),
+							      double (*gv) (const double, const double)) {
+
+				            constexpr double a21 = 1.0;
+                                            constexpr double k1  = a21;
+                                            double q1 = 0.0;
+                                            double w1 = 0.0;
+                                            double step = 0.0;
+                                            w1 = rand * std::sqrt(q1 * q / h);
+                                            k1 = h * fv(t,x) + h * gv(t,x) * w1;
+                                            step = x + a21 * k1;
+                                            return (step);
+				    }
+
+
+
+				    __ATTR_ALWAYS_INLINE__
+                                    __ATTR_HOT__
+                                    __ATTR_ALIGN__(32)
+			            static inline
+                                    double rk2_tv_step_scalar(const double x,
+				                              const double t,
+							      const double h,
+							      const double q,
+							      const double rand1,
+							      const double rand2,
+							      double (*fv) (const double, const double),
+							      double (*gv) (const double, const double)) {
+
+					    constexpr double a21 = 1.0;
+                                            constexpr double a31 = 0.5;
+                                            constexpr double a32 = a31;
+					    const double qh = q/h;
+                                            double k1 = 0.0;
+                                            double k2 = k1;
+                                            constexpr double q1 = 2.0;
+                                            constexpr double q2 = q1;
+                                            double t2 = 0.0;
+                                            double w1 = 0.0;
+                                            double w2 = 0.0;
+                                            double x2 = 0.0;
+                                            double step = 0.0;
+                                            w1 = rand1 * std::sqrt(q1 * qh);
+                                            k1 = h * fv(t,x1) + h * gv(t,x) * w1;
+                                            t2 = t + a21 * h;
+                                            x2 = x + a21 * k1;
+                                            w2 = rand2 * std::sqrt(q2 * qh);
+                                            k2 = h * fv(t2,x2) + h * gv(t2,x2) * w2;
+                                            step = x + a31 * k1 + a32 * k2;
+                                            return (step);
+ 
+
+                                  }
+
+
+				    __ATTR_ALWAYS_INLINE__
+                                    __ATTR_HOT__
+                                    __ATTR_ALIGN__(32)
+			            static inline
+                                    double rk4_tv_step_scalar(const double x,
+				                              const double t,
+							      const double h,
+							      const double q,
+							      const double rand1,
+							      const double rand2,
+							      const double rand3,
+							      const double rand4,
+							      double (*fv) (const double, const double),
+							      double (*gv) (const double, const double)) {
+
+                                             constexpr double a21 =  0.66667754298442;
+                                             constexpr double a31 =  0.63493935027993;
+                                             constexpr double a32 =  0.00342761715422;
+                                             constexpr double a41 = -2.32428921184321;
+                                             constexpr double a42 =  2.69723745129487;
+                                             constexpr double a43 =  0.29093673271592;
+                                             constexpr double a51 =  0.25001351164789;
+                                             constexpr double a52 =  0.67428574806272;
+                                             constexpr double a53 = -0.00831795169360; 
+                                             constexpr double a54 =  0.08401868181222;
+					     const double qh = q/h;
+                                             double k1 = 0.0;
+                                             double k2 = 0.0;
+                                             double k3 = 0.0;
+                                             double k4 = 0.0;
+                                             double q1 = 0.0;
+                                             double q2 = 0.0;
+                                             double q3 = 0.0;
+                                             double q4 = 0.0;
+                                             double t2 = 0.0;
+                                             double t3 = 0.0;
+                                             double t4 = 0.0;
+                                             double w1 = 0.0;
+                                             double w2 = 0.0;
+                                             double w3 = 0.0;
+                                             double w4 = 0.0;
+                                             double x2 = 0.0;
+                                             double x3 = 0.0;
+                                             double x4 = 0.0;
+                                             double step = 0.0;
+                                             w1 = rand1 * std::sqrt(q1 * qh);
+                                             k1 = h * fv(t,x) + h * gv(t,x) * w1;
+                                             t2 = t + a21 * h;
+                                             x2 = x + a21 * k1;
+                                             w2 = rand2 * std::sqrt(q2 * qh);
+                                             k2 = h * fv(t2,x2) + h * gv(t2,x2) * w2;
+                                             t3 = t + a31 * h  + a32 * h;
+                                             x3 = x + a31 * k1 + a32 * k2;
+                                             w3 = rand3 * std::sqrt(q3 * qh);
+                                             k3 = h * fv(t3, x3) + h * gv(t3, x3) * w3;
+                                             t4 = t + a41 * h  + a42 * h  + a43 * h;
+                                             x4 = x + a41 * k1 + a42 * k2 + a43 * k3;
+                                             w4 = rand4 * std::sqrt(q4 * qh);
+                                             k4 = h * fv(t4,x4) + h * gv(t4,x4) * w4;
+                                             step = x + a51 * k1 + a52 * k2 + a53 * k3 + a54 * k4;
+                                             return (step);
+ 
+				    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
