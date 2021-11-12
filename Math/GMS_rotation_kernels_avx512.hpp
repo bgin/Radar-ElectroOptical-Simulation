@@ -18,7 +18,7 @@ const char * const pgGMS_ROTATION_KERNELS_AVX512_AUTHOR        = "Programmer: Be
 const char * const pgGMS_ROTATION_KERNELS_AVX512_DESCRIPTION   = "AVX512 vectorized basic rotation operations.";
 }
 
-#include 
+
 #include <immintrin.h>
 #include "GMS_config.h"
 #include "GMS_dcm_avx512.hpp"
