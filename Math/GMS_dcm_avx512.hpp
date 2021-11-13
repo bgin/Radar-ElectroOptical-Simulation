@@ -19,7 +19,7 @@ const char * const pgGMS_DCM_AVX512_AUTHOR        = "Programmer: Bernard Gingold
 const char * const pgGMS_DCM_AVX512_DESCRIPTION   = "Earth to Body Axis Direction-Cosine Matrix [AVX512-based implementation]";
 }
 
-#include <cstdint>
+
 #include <immintrin.h>
 #include "GMS_config.h"
 
@@ -30,12 +30,12 @@ namespace gms {
 
 	    namespace {
 
-               const __m512   v16f32_0 = _mm512_setzero_ps();
-	       const __m512d  v8f64_0  = _mm512_setzero_pd();
+               const static __m512   v16f32_0 = _mm512_setzero_ps();
+	       const static __m512d  v8f64_0  = _mm512_setzero_pd();
 	    }
 
 
-	       struct DCMatZMM16r4 __ATTR_ALIGN__(64) {
+	       struct DCM9x16 __ATTR_ALIGN__(64) {
 
 	             /*
                             Each row represent the expanded element of the Direction Cosine Matrix i.e. A[ij]
@@ -58,7 +58,7 @@ namespace gms {
 		    __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM16r4() {
+		    DCM9x16() {
                        m_vRow1 = v16f32_0;
 		       m_vRow2 = v16f32_0;
 		       m_vRow3 = v16f32_0;
@@ -78,15 +78,15 @@ namespace gms {
                     __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM16r4(     const __m512 vRow1,
-		                      const __m512 vRow2,
-				      const __m512 vRow3,
-				      const __m512 vRow4,
-				      const __m512 vRow5,
-				      const __m512 vRow6,
-				      const __m512 vRow7,
-				      const __m512 vRow8,
-				      const __m512 vRow9) {
+		    DCM9x16( const __m512 vRow1,
+		             const __m512 vRow2,
+			     const __m512 vRow3,
+			     const __m512 vRow4,
+			     const __m512 vRow5,
+			     const __m512 vRow6,
+			     const __m512 vRow7,
+			     const __m512 vRow8,
+			     const __m512 vRow9) {
                         m_vRow1 = vRow1;
 			m_vRow2 = vRow2;
 			m_vRow3 = vRow3;
@@ -108,15 +108,15 @@ namespace gms {
                     __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM16r4(     const float * __restrict __ATTR_ALIGN__(64) vRow1,
-		                      const float * __restrict __ATTR_ALIGN__(64) vRow2,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow3,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow4,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow5,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow6,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow7,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow8,
-				      const float * __restrict __ATTR_ALIGN__(64) vRow9) {
+		    DCM9x16( const float * __restrict __ATTR_ALIGN__(64) vRow1,
+		             const float * __restrict __ATTR_ALIGN__(64) vRow2,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow3,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow4,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow5,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow6,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow7,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow8,
+			     const float * __restrict __ATTR_ALIGN__(64) vRow9) {
                          m_vRow1 = _mm512_load_ps(&vRow1[0]);
 			 m_vRow2 = _mm512_load_ps(&vRow2[0]);
 			 m_vRow3 = _mm512_load_ps(&vRow3[0]);
@@ -135,7 +135,7 @@ namespace gms {
 		    __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32) 
-		    DCMatZMM16r4(const DCMatZMM16r4 &x) {
+		    DCM9x16(const DCM9x16 &x) {
                         m_vRow1 = x.m_vRow1;
 			m_vRow2 = x.m_vRow2;
 			m_vRow3 = x.m_vRow3;
@@ -151,7 +151,7 @@ namespace gms {
                     __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM16r4 &
+		    DCM9x16 &
 		    DCM_compute_zmm16r4(   const __m512 vPhi,
 		                           const __m512 vTheta,
 				           const __m512 vPsi) {
@@ -182,7 +182,7 @@ namespace gms {
        }; // struct
 
 
-        struct DCMatZMM8r8 __ATTR_ALIGN__(64) {
+        struct DCM9x8 __ATTR_ALIGN__(64) {
 
 	             /*
                             Each row represent the expanded element of the Direction Cosine Matrix i.e. A[ij]
@@ -205,7 +205,7 @@ namespace gms {
 		    __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM8r8() {
+		    DCM9x8() {
                        m_vRow1 = v8f64_0;
 		       m_vRow2 = v8f64_0;
 		       m_vRow3 = v8f64_0;
@@ -225,15 +225,15 @@ namespace gms {
                     __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM8r8(      const __m512d vRow1,
-		                      const __m512d vRow2,
-				      const __m512d vRow3,
-				      const __m512d vRow4,
-				      const __m512d vRow5,
-				      const __m512d vRow6,
-				      const __m512d vRow7,
-				      const __m512d vRow8,
-				      const __m512d vRow9) {
+		    DCM9x8(      const __m512d vRow1,
+		                 const __m512d vRow2,
+				 const __m512d vRow3,
+				 const __m512d vRow4,
+				 const __m512d vRow5,
+				 const __m512d vRow6,
+				 const __m512d vRow7,
+				 const __m512d vRow8,
+				 const __m512d vRow9) {
                         m_vRow1 = vRow1;
 			m_vRow2 = vRow2;
 			m_vRow3 = vRow3;
@@ -255,15 +255,15 @@ namespace gms {
                     __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM8r8(      const double * __restrict __ATTR_ALIGN__(64) vRow1,
-		                      const double * __restrict __ATTR_ALIGN__(64) vRow2,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow3,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow4,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow5,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow6,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow7,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow8,
-				      const double * __restrict __ATTR_ALIGN__(64) vRow9) {
+		    DCM9x8(      const double * __restrict __ATTR_ALIGN__(64) vRow1,
+		                 const double * __restrict __ATTR_ALIGN__(64) vRow2,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow3,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow4,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow5,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow6,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow7,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow8,
+				 const double * __restrict __ATTR_ALIGN__(64) vRow9) {
                          m_vRow1 = _mm512_load_pd(&vRow1[0]);
 			 m_vRow2 = _mm512_load_pd(&vRow2[0]);
 			 m_vRow3 = _mm512_load_pd(&vRow3[0]);
@@ -282,7 +282,7 @@ namespace gms {
 		    __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32) 
-		    DCMatZMM8r8(const DCMatZMM8r8 &x) {
+		    DCM9x8(const DCM9x8 &x) {
                         m_vRow1 = x.m_vRow1;
 			m_vRow2 = x.m_vRow2;
 			m_vRow3 = x.m_vRow3;
@@ -298,7 +298,7 @@ namespace gms {
                     __ATTR_ALWAYS_INLINE__
 		    __ATTR_HOT__
 		    __ATTR_ALIGN__(32)
-		    DCMatZMM8r8 &
+		    DCM9x8 &
 		    DCM_compute_zmm8r8(const __m512d vPhi,
 		                           const __m512d vTheta,
 				           const __m512d vPsi) {
