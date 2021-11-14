@@ -1,6 +1,6 @@
 
 #ifndef __GMS_ROTATION_KERNELS_AVX512_HPP__
-#define __GMS_ROTATION_KERNELS_AVX512_HPP__
+#define __GMS_ROTATION_KERNELS_AVX512_HPP__ 090820210225
 
 
 namespace file_info {
@@ -28,17 +28,7 @@ namespace gms {
 
          namespace math {
 
-                       /*
-                                 This version is *loosely based on the Fortran 90 "rotation.f90" source code
-                                 implementation.
-                                 
-                                 *Many optimizations were applied (precomputation of common subexpression,
-                                 constants folding,  AVX512 vectorization.)
-                                 The original authors copyright statement
-                                 Copyright (c) 2013-2014, Marc De Graef/Carnegie Mellon University
-                                 Modified      2017-2020, Martin Diehl/Max-Planck-Institut für Eisenforschung GmbH
-                                 All rights reserved.
-                         */
+                     
 
 
 		  
