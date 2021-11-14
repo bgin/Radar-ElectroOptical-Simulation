@@ -462,6 +462,7 @@ namespace gms {
 			     ax_2 = v16_0;
 			     ax_3 = v16_1;
 			     ax_4 = v16_0;
+			     return;
 			  }
 			  k2 = _mm512_cmp_ps_mask(q_x,_v16_0,_CMP_NEQ_OQ);
 			  if(1==k2) {
@@ -513,6 +514,7 @@ namespace gms {
 			     ax_2 = v8_0;
 			     ax_3 = v8_1;
 			     ax_4 = v8_0;
+			     return;
 			  }
 			  k2 = _mm512_cmp_pd_mask(q_x,_v8_0,_CMP_NEQ_OQ);
 			  if(1==k2) {
