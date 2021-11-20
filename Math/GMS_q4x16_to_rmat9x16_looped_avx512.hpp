@@ -646,7 +646,10 @@ namespace gms {
 #endif
 
 				}
-
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(8),max(16)
+#pragma novector
+#endif
                                 for(; (i+0) < n; i += 1) {
                                         const double qx = q_x[i];
 					const double t0 = qx*qx;
@@ -1118,7 +1121,10 @@ namespace gms {
 #endif
 
 				}
-
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(8),max(16)
+#pragma novector
+#endif
                                 for(; (i+0) < n; i += 1) {
                                         const double qx = q_x[i];
 					const double t0 = qx*qx;
