@@ -127,6 +127,89 @@ namespace gms {
 		    }
 
 
+	          /*
+                       Random rotation matrix 3x3 of sphere.
+                       Based on Jim Arvo, 1991 implementation.
+                       Original Matrix 3x3 is represented as
+                       SIMD Matrix 9x16
+                   */
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    DCM9x16
+		    random_sphere_rm9x16_zmm16r4(const __m512 vr1,
+		                                 const __m512 vr2,
+                                                 const __m512 vr3) {
+
+                          DCM9x16 rm;
+		          const __m512 theta = _mm512_mul_ps(vr1,v16_2pi);
+			  const __m512 phi   = _mm512_mul_ps(vr2,v16_2pi);
+			  const __m512 z     = _mm512_add_ps(vr3,vr3);
+			  rm.m_vRow9         = _mm512_sub_ps(v16_1,z);
+			  const __m512 r     = _mm512_sqrt_ps(z);
+			  const __m512 vx    = _mm512_sin_ps(phi,r);
+			  const __m512 vy    = _mm512_cos_ps(phi,r);
+			  const __m512 vz    = _mm512_sqrt_ps(_mm512_sub_ps(v16_2,z));
+			  rm.m_vRow6         = _mm512_mul_ps(vy,vz);
+			  rm.m_vRow3         = _mm512_mul_ps(vx,vz);
+			  const __m512 st    = _mm512_sin_ps(theta);
+			  const __m512 ct    = _mm512_cos_ps(theta);
+			  const __m512 sx    = _mm512_fmsub_ps(vx,ct,_mm512_mul_ps(vy,st));
+			  rm.m_vRow7         = _mm512_mul_ps(vz,sx); 
+			  rm.m_vRow1         = _mm512_fmsub_ps(vx,sx,ct);
+			  const __m512 sy    = _mm512_fmadd_ps(vx,st,_mm512_mul_ps(vy,ct));
+			  rm.m_vRow8         = _mm512_mul_ps(vz,sy);
+			  rm.m_vRow2         = _mm512_fmsub_ps(vx,sy,st);
+			  rm.m_vRow4         = _mm512_fmadd_ps(vy,sx,st);
+			  rm.m_vRow5         = _mm512_fmsub_ps(vy,sy,ct);
+			  return (rm);
+		    }
+
+
+		      /*
+                       Random rotation matrix 3x3 of sphere.
+                       Based on Jim Arvo, 1991 implementation.
+                       Original Matrix 3x3 is represented as
+                       SIMD Matrix 9x16
+                   */
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    DCM9x8
+		    random_sphere_rm9x8_zmm8r8(  const __m512d vr1,
+		                                 const __m512d vr2,
+                                                 const __m512d vr3) {
+
+                          DCM9x8 rm;
+		          const __m512d theta = _mm512_mul_pd(vr1,v8_2pi);
+			  const __m512d phi   = _mm512_mul_pd(vr2,v8_2pi);
+			  const __m512d z     = _mm512_add_pd(vr3,vr3);
+			  rm.m_vRow9          = _mm512_sub_pd(v8_1,z);
+			  const __m512d r     = _mm512_sqrt_pd(z);
+			  const __m512d vx    = _mm512_sin_pd(phi,r);
+			  const __m512d vy    = _mm512_cos_pd(phi,r);
+			  const __m512d vz    = _mm512_sqrt_pd(_mm512_sub_pd(v8_2,z));
+			  rm.m_vRow6          = _mm512_mul_pd(vy,vz);
+			  rm.m_vRow3          = _mm512_mul_pd(vx,vz);
+			  const __m512d st    = _mm512_sin_pd(theta);
+			  const __m512d ct    = _mm512_cos_pd(theta);
+			  const __m512d sx    = _mm512_fmsub_pd(vx,ct,_mm512_mul_pd(vy,st));
+			  rm.m_vRow7          = _mm512_mul_pd(vz,sx); 
+			  rm.m_vRow1          = _mm512_fmsub_pd(vx,sx,ct);
+			  const __m512d sy    = _mm512_fmadd_pd(vx,st,_mm512_mul_pd(vy,ct));
+			  rm.m_vRow8          = _mm512_mul_pd(vz,sy);
+			  rm.m_vRow2          = _mm512_fmsub_pd(vx,sy,st);
+			  rm.m_vRow4          = _mm512_fmadd_pd(vy,sx,st);
+			  rm.m_vRow5          = _mm512_fmsub_pd(vy,sy,ct);
+			  return (rm);
+		    }
+
 		    /*
                             Convert unit quaternion to Euler angles
                       */
