@@ -7,7 +7,7 @@
 namespace file_info {
 
    const unsigned int gGMS_SIMD_MEMOPS_MAJOR = 1U;
-   const unsigned int gGMS_SIMD_MEMOPS_MINOR = 1U;
+   const unsigned int gGMS_SIMD_MEMOPS_MINOR = 0U;
    const unsigned int gGMS_SIMD_MEMOPS_MICRO = 0U;
    const unsigned int gGMS_SIMD_MEMOPS_FULLVER =
          1000U*gGMS_SIMD_MEMOPS_MAJOR+100U*gGMS_SIMD_MEMOPS_MINOR+10U*gGMS_SIMD_MEMOPS_MICRO;
@@ -993,6 +993,7 @@ namespace gms {
                      int32_t i;
 #if defined ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
+#endif
                     for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 16) {
 	                 _mm512_storeu_pd(&v[i+0], zmm0);
 	                 _mm512_storeu_pd(&v[i+8], zmm0);
@@ -1037,11 +1038,12 @@ namespace gms {
                   int32_t i;
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
+#endif
                   for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 32) {
 	                _mm512_storeu_ps(&v[i+0],  zmm0);
 	                _mm512_storeu_ps(&v[i+16], zmm0);
 	           }
-#pragma loop_count min(1),avg(8),max(1)
+#pragma loop_count min(1),avg(4),max(7)
                   for(; i != vlen; ++i) {
 	              v[i] = val;
                   }
@@ -1296,7 +1298,7 @@ namespace gms {
 #if defined __ICC || defined __INTEL_COMPILER
 	                              float * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                      float  __restrict __ATTR_ALIGN__(64) v,
+                                      float * __restrict __ATTR_ALIGN__(64) v,
 #endif
 			              const int32_t vlen,
 			              const float val) {
@@ -1519,7 +1521,7 @@ namespace gms {
 #if defined __ICC || defined __INTEL_COMPILER
 	                              float * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                      float  __restrict __ATTR_ALIGN__(32) v,
+                                      float * __restrict __ATTR_ALIGN__(32) v,
 #endif
 			              const int32_t vlen,
 			              const float val) {
