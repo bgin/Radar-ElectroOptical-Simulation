@@ -150,8 +150,8 @@ namespace gms {
 			  const __m512 z     = _mm512_add_ps(vr3,vr3);
 			  rm.m_vRow9         = _mm512_sub_ps(v16_1,z);
 			  const __m512 r     = _mm512_sqrt_ps(z);
-			  const __m512 vx    = _mm512_sin_ps(phi,r);
-			  const __m512 vy    = _mm512_cos_ps(phi,r);
+			  const __m512 vx    = _mm512_mul_ps(r,_mm512_sin_ps(phi));
+			  const __m512 vy    = _mm512_mul_ps(r,_mm512_cos_ps(phi));
 			  const __m512 vz    = _mm512_sqrt_ps(_mm512_sub_ps(v16_2,z));
 			  rm.m_vRow6         = _mm512_mul_ps(vy,vz);
 			  rm.m_vRow3         = _mm512_mul_ps(vx,vz);
