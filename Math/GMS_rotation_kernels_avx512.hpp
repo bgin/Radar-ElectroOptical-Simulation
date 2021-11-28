@@ -210,6 +210,46 @@ namespace gms {
 			  return (rm);
 		    }
 
+
+		    
+                            /*  This algorithm generates a gaussian deviate for each coordinate, so
+                                *  the total effect is to generate a symmetric 4-D gaussian distribution,
+                                *  by separability. Projecting onto the surface of the hypersphere gives
+                                *  a uniform distribution.
+                                Based on  Ken Shoemake, September 1991 implementation.
+                                Manually vectorized.
+                            */
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+	              void
+		      urand_q4x16_zmm16r4(const __m512 vrx,   // random gaussian vector uniformly distributed [0,1]
+		                          const __m512 vry,   // random gaussian vector uniformly distributed [0,1]
+					  const __m512 vrz,   // random gaussian vector uniformly distributed [0,1]
+					  const __m512 vrw,   // random gaussian vector uniformly distributed [0,1]
+		                          __m512 & q_x,
+					  __m512 & q_y,
+					  __m512 & q_z,
+					  __m512 & q_w) {
+
+		         const register __m512 s1    = _mm512_fmadd_ps(vrx,vrx,_mm512_mul_ps(vry,vry));
+			 const register __m512 num1  = _mm512_mul_ps(v16_n2,_mm512_log_ps(s1));
+			 const register __m512 s2    = _mm512_fmadd_ps(vrz,vrz,_mm512_mul_ps(vrw,vrw));
+			 const register __m512 num2  = _mm512_mul_ps(v16_n2,_mm512_log_ps(s2));
+			 const register __m512 r     = _mm512_add_ps(num1,num2);
+			 const register __m512 invr  = _mm512_div_ps(v16_1,r);
+			 const register __m512 root1 = _mm512_sqrt_ps(_mm512_mul_ps(invr,_mm512_div_ps(num1,s1)));
+			 q_x = _mm512_mul_ps(vrx,root1);
+			 q_y = _mm512_mul_ps(vry,root1);
+			 const register __m512 root2 = _mm512_sqrt_ps(_mm512_mul_ps(invr,_mm512_div_ps(num2,s2)));
+			 q_z = _mm512_mul_ps(vrz,root2);			
+			 q_w = _mm512_mul_ps(vrw,root2);
+		   }
+	   
+
 		    /*
                             Convert unit quaternion to Euler angles
                       */
