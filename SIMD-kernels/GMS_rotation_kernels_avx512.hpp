@@ -173,7 +173,7 @@ namespace gms {
                        Random rotation matrix 3x3 of sphere.
                        Based on Jim Arvo, 1991 implementation.
                        Original Matrix 3x3 is represented as
-                       SIMD Matrix 9x16
+                       SIMD Matrix 9x8
                    */
 
 		    __ATTR_REGCALL__
@@ -248,6 +248,37 @@ namespace gms {
 			 q_z = _mm512_mul_ps(vrz,root2);			
 			 q_w = _mm512_mul_ps(vrw,root2);
 		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+	              void
+		      urand_q4x8_zmm8r8(  const __m512d vrx,   // random gaussian vector uniformly distributed [0,1]
+		                          const __m512d vry,   // random gaussian vector uniformly distributed [0,1]
+					  const __m512d vrz,   // random gaussian vector uniformly distributed [0,1]
+					  const __m512d vrw,   // random gaussian vector uniformly distributed [0,1]
+		                          __m512d & q_x,
+					  __m512d & q_y,
+					  __m512d & q_z,
+					  __m512d & q_w) {
+
+		         const register __m512d s1    = _mm512_fmadd_pd(vrx,vrx,_mm512_mul_pd(vry,vry));
+			 const register __m512d num1  = _mm512_mul_pd(v8_n2,_mm512_log_pd(s1));
+			 const register __m512d s2    = _mm512_fmadd_pd(vrz,vrz,_mm512_mul_pd(vrw,vrw));
+			 const register __m512d num2  = _mm512_mul_pd(v8_n2,_mm512_log_pd(s2));
+			 const register __m512d r     = _mm512_add_pd(num1,num2);
+			 const register __m512d invr  = _mm512_div_pd(v8_1,r);
+			 const register __m512d root1 = _mm512_sqrt_pd(_mm512_mul_ps(invr,_mm512_div_pd(num1,s1)));
+			 q_x = _mm512_mul_pd(vrx,root1);
+			 q_y = _mm512_mul_pd(vry,root1);
+			 const register __m512d root2 = _mm512_sqrt_pd(_mm512_mul_pd(invr,_mm512_div_pd(num2,s2)));
+			 q_z = _mm512_mul_pd(vrz,root2);			
+			 q_w = _mm512_mul_pd(vrw,root2);
+		   }
+
 	   
 
 		    /*
@@ -320,6 +351,10 @@ namespace gms {
 		    }
 
 
+		  
+
+
+
 		      __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
 		      __ATTR_HOT__
@@ -367,7 +402,7 @@ namespace gms {
 			    alpha = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_n1)),
 			                            _mm512_mul_pd(chi,_mm512_mul_ps(c1,v8_n1)));
 			    beta  = _mm512_atan2_pd(_mm512_mul_pd(v8_2,chi),_mm512_sub_pd(qxw,qyz));
-			    const __m512 c2 = _mm512_fmadd_pd(q_x,_qy,t1);
+			    const __m512d c2 = _mm512_fmadd_pd(q_x,_qy,t1);
 			    gamma = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_1)),
 			                            _mm512_mul_pd(chi,_mm512_mul_pd(c2,v8_n1)));
 			 }
