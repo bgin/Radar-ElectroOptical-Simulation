@@ -7,7 +7,7 @@ namespace file_info {
 
 const unsigned int gGMS_ROTATION_KERNELS_AVX512_MAJOR = 1U;
 const unsigned int gGMS_ROTATION_KERNELS_AVX512_MINOR = 0U;
-const unsigned int gGMS_ROTATION_KERNELS_AVX512_MICRO = 0U;
+const unsigned int gGMS_ROTATION_KERNELS_AVX512_MICRO = 1U;
 const unsigned int gGMS_ROTATION_KERNELS_AVX512_FULLVER =
        1000U*gGMS_ROTATION_KERNELS_AVX512_MAJOR+
        100U*gGMS_ROTATION_KERNELS_AVX512_MINOR +
@@ -226,14 +226,14 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
-		      urand_q4x16_zmm16r4(const __m512 vrx,   // random gaussian vector uniformly distributed [0,1]
-		                          const __m512 vry,   // random gaussian vector uniformly distributed [0,1]
-					  const __m512 vrz,   // random gaussian vector uniformly distributed [0,1]
-					  const __m512 vrw,   // random gaussian vector uniformly distributed [0,1]
-		                          __m512 & q_x,
-					  __m512 & q_y,
-					  __m512 & q_z,
-					  __m512 & q_w) {
+		      urand_q4x16_a_zmm16r4(const __m512 vrx,   // random gaussian vector uniformly distributed [0,1]
+		                            const __m512 vry,   // random gaussian vector uniformly distributed [0,1]
+					    const __m512 vrz,   // random gaussian vector uniformly distributed [0,1]
+					    const __m512 vrw,   // random gaussian vector uniformly distributed [0,1]
+		                            float * __restrict __ATTR_ALIGN__(64) q_x,
+					    float * __restrict __ATTR_ALIGN__(64) q_y,
+					    float * __restrict __ATTR_ALIGN__(64) q_z,
+					    float * __restrict __ATTR_ALIGN__(64) q_w) {
 
 		         const register __m512 s1    = _mm512_fmadd_ps(vrx,vrx,_mm512_mul_ps(vry,vry));
 			 const register __m512 num1  = _mm512_mul_ps(v16_n2,_mm512_log_ps(s1));
@@ -242,12 +242,43 @@ namespace gms {
 			 const register __m512 r     = _mm512_add_ps(num1,num2);
 			 const register __m512 invr  = _mm512_div_ps(v16_1,r);
 			 const register __m512 root1 = _mm512_sqrt_ps(_mm512_mul_ps(invr,_mm512_div_ps(num1,s1)));
-			 q_x = _mm512_mul_ps(vrx,root1);
-			 q_y = _mm512_mul_ps(vry,root1);
+			 _mm512_store_ps(&q_x[0], _mm512_mul_ps(vrx,root1));
+			 _mm512_store_ps(&q_y[0], _mm512_mul_ps(vry,root1));
 			 const register __m512 root2 = _mm512_sqrt_ps(_mm512_mul_ps(invr,_mm512_div_ps(num2,s2)));
-			 q_z = _mm512_mul_ps(vrz,root2);			
-			 q_w = _mm512_mul_ps(vrw,root2);
+			 _mm512_store_ps(&q_z[0],  _mm512_mul_ps(vrz,root2));			
+			 _mm512_store_ps(&q_w[0],  _mm512_mul_ps(vrw,root2));
 		   }
+
+
+		     __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+	              void
+		      urand_q4x16_u_zmm16r4(const __m512 vrx,   // random gaussian vector uniformly distributed [0,1]
+		                            const __m512 vry,   // random gaussian vector uniformly distributed [0,1]
+					    const __m512 vrz,   // random gaussian vector uniformly distributed [0,1]
+					    const __m512 vrw,   // random gaussian vector uniformly distributed [0,1]
+		                            float * __restrict q_x,
+					    float * __restrict q_y,
+					    float * __restrict q_z,
+					    float * __restrict q_w) {
+
+		         const register __m512 s1    = _mm512_fmadd_ps(vrx,vrx,_mm512_mul_ps(vry,vry));
+			 const register __m512 num1  = _mm512_mul_ps(v16_n2,_mm512_log_ps(s1));
+			 const register __m512 s2    = _mm512_fmadd_ps(vrz,vrz,_mm512_mul_ps(vrw,vrw));
+			 const register __m512 num2  = _mm512_mul_ps(v16_n2,_mm512_log_ps(s2));
+			 const register __m512 r     = _mm512_add_ps(num1,num2);
+			 const register __m512 invr  = _mm512_div_ps(v16_1,r);
+			 const register __m512 root1 = _mm512_sqrt_ps(_mm512_mul_ps(invr,_mm512_div_ps(num1,s1)));
+			 _mm512_storeu_ps(&q_x[0], _mm512_mul_ps(vrx,root1));
+			 _mm512_storeu_ps(&q_y[0], _mm512_mul_ps(vry,root1));
+			 const register __m512 root2 = _mm512_sqrt_ps(_mm512_mul_ps(invr,_mm512_div_ps(num2,s2)));
+			 _mm512_storeu_ps(&q_z[0],  _mm512_mul_ps(vrz,root2));			
+			 _mm512_storeu_ps(&q_w[0],  _mm512_mul_ps(vrw,root2));
+		   }
+
 
 
 		      __ATTR_REGCALL__
@@ -256,14 +287,14 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
-		      urand_q4x8_zmm8r8(  const __m512d vrx,   // random gaussian vector uniformly distributed [0,1]
+		      urand_q4x8_a_zmm8r8(  const __m512d vrx,   // random gaussian vector uniformly distributed [0,1]
 		                          const __m512d vry,   // random gaussian vector uniformly distributed [0,1]
 					  const __m512d vrz,   // random gaussian vector uniformly distributed [0,1]
 					  const __m512d vrw,   // random gaussian vector uniformly distributed [0,1]
-		                          __m512d & q_x,
-					  __m512d & q_y,
-					  __m512d & q_z,
-					  __m512d & q_w) {
+		                          double * __restrict  __ATTR_ALIGN__(64) q_x,
+					  double * __restrict  __ATTR_ALIGN__(64) q_y,
+					  double * __restrict  __ATTR_ALIGN__(64) q_z,
+					  double * __restrict  __ATTR_ALIGN__(64) q_w) {
 
 		         const register __m512d s1    = _mm512_fmadd_pd(vrx,vrx,_mm512_mul_pd(vry,vry));
 			 const register __m512d num1  = _mm512_mul_pd(v8_n2,_mm512_log_pd(s1));
@@ -272,11 +303,41 @@ namespace gms {
 			 const register __m512d r     = _mm512_add_pd(num1,num2);
 			 const register __m512d invr  = _mm512_div_pd(v8_1,r);
 			 const register __m512d root1 = _mm512_sqrt_pd(_mm512_mul_ps(invr,_mm512_div_pd(num1,s1)));
-			 q_x = _mm512_mul_pd(vrx,root1);
-			 q_y = _mm512_mul_pd(vry,root1);
+			 _mm512_store_pd(&q_x[0], _mm512_mul_pd(vrx,root1));
+			 _mm512_store_pd(&q_y[0], _mm512_mul_pd(vry,root1));
 			 const register __m512d root2 = _mm512_sqrt_pd(_mm512_mul_pd(invr,_mm512_div_pd(num2,s2)));
-			 q_z = _mm512_mul_pd(vrz,root2);			
-			 q_w = _mm512_mul_pd(vrw,root2);
+			 _mm512_store_pd(&q_z[0],  _mm512_mul_pd(vrz,root2));			
+			 _mm512_store_pd(&q_w[0],  _mm512_mul_pd(vrw,root2));
+		   }
+
+
+		     __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+	              void
+		      urand_q4x8_u_zmm8r8(  const __m512d vrx,   // random gaussian vector uniformly distributed [0,1]
+		                          const __m512d vry,   // random gaussian vector uniformly distributed [0,1]
+					  const __m512d vrz,   // random gaussian vector uniformly distributed [0,1]
+					  const __m512d vrw,   // random gaussian vector uniformly distributed [0,1]
+		                          double * __restrict   q_x,
+					  double * __restrict   q_y,
+					  double * __restrict   q_z,
+					  double * __restrict   q_w) {
+
+		         const register __m512d s1    = _mm512_fmadd_pd(vrx,vrx,_mm512_mul_pd(vry,vry));
+			 const register __m512d num1  = _mm512_mul_pd(v8_n2,_mm512_log_pd(s1));
+			 const register __m512d s2    = _mm512_fmadd_pd(vrz,vrz,_mm512_mul_pd(vrw,vrw));
+			 const register __m512d num2  = _mm512_mul_pd(v8_n2,_mm512_log_pd(s2));
+			 const register __m512d r     = _mm512_add_pd(num1,num2);
+			 const register __m512d invr  = _mm512_div_pd(v8_1,r);
+			 const register __m512d root1 = _mm512_sqrt_pd(_mm512_mul_ps(invr,_mm512_div_pd(num1,s1)));
+			 _mm512_storeu_pd(&q_x[0], _mm512_mul_pd(vrx,root1));
+			 _mm512_storeu_pd(&q_y[0], _mm512_mul_pd(vry,root1));
+			 const register __m512d root2 = _mm512_sqrt_pd(_mm512_mul_pd(invr,_mm512_div_pd(num2,s2)));
+			 _mm512_storeu_pd(&q_z[0],  _mm512_mul_pd(vrz,root2));			
+			 _mm512_storeu_pd(&q_w[0],  _mm512_mul_pd(vrw,root2));
 		   }
 
 	   
@@ -291,13 +352,13 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
-		      q4x16_to_ea3x16_zmm16r4(const __m512 q_x,
+		      q4x16_to_ea3x16_a_zmm16r4(const __m512 q_x,
 		                              const __m512 q_y,
 					      const __m512 q_z,
 					      const __m512 q_w,
-					      __m512 & alpha,
-					      __m512 & beta,
-					      __m512 & gamma) {
+					      float * __restrict __ATTR_ALIGN__(64) alpha,
+					      float * __restrict __ATTR_ALIGN__(64) beta,
+					      float * __restrict __ATTR_ALIGN__(64) gamma) {
 
                          const __m512 qxw = _mm512_fmadd_ps(q_x,q_x,_mm512_mul_ps(q_w,q_w));
 			 const __m512 qyz = _mm512_fmadd_ps(q_y,q_y,_mm512_mul_ps(q_z,q_z));
@@ -305,23 +366,26 @@ namespace gms {
 			 __m512 alpha_c;
 			 __m512 beta_c;
 			 __m512 gamma_c;
+			 __m512 alp,bet,gam;
 			 __mmask16 qyz0 = 0x0;
 			 __mmask16 qxw0 = 0x0;
 			 __mmask16 k1   = 0x0;
 			 __mmask16 k2   = 0x0;
 			 __mmask16 k3   = 0x0;
-			 qyz0 = _mm512_cmp_ps_mask(qyz0,v16_0,_CMP_EQ_OQ);
-			 qxw0 = _mm512_cmp_ps_mask(qxw0,v16_0,_CMP_EQ_OQ);
+			 qyz0 = _mm512_cmp_ps_mask(qyz,v16_0,_CMP_EQ_OQ);
+			 qxw0 = _mm512_cmp_ps_mask(qxw,v16_0,_CMP_EQ_OQ);
 			 if(1==qyz0) {
-			    alpha = _mm512_atan2_ps(_mm512_mul_ps(v16_n2,_mm512_mul_ps(q_x,q_w)),
-			                              _mm512_fmsub_ps(q_x,q_x,_mm512_mul_ps(q_w,q_w)));
-			    beta  = v16_0;
-			    gamma = v16_0;
+			    _mm512_store_ps(&alpha[0], _mm512_atan2_ps(_mm512_mul_ps(v16_n2,_mm512_mul_ps(q_x,q_w)),
+			                              _mm512_fmsub_ps(q_x,q_x,_mm512_mul_ps(q_w,q_w))));
+			    _mm512_store_ps(&beta[0],   v16_0);
+			    _mm512_store_ps(&gamma[0],  v16_0);
+			   // return;
 			 } else if(1==qxw0) {
-                            alpha = _mm512_atan2_ps(_mm512_mul_ps(v16_2,_mm512_mul_ps(q_y,q_z)),
-			                              _mm512_fmsub_ps(q_y,q_y,_mm512_mul_ps(q_z,q_z)));
-			    beta = v16_pi;
-			    gamma = v16_0;
+                            _mm512_store_ps(&alpha[0], _mm512_atan2_ps(_mm512_mul_ps(v16_2,_mm512_mul_ps(q_y,q_z)),
+			                              _mm512_fmsub_ps(q_y,q_y,_mm512_mul_ps(q_z,q_z))));
+			    _mm512_store_ps(&beta[0], v16_pi);
+			    _mm512_store_ps(&gama[0], v16_0);
+			    //return;
 			 }
 			 else {
 			    const __m512 t0 = _mm512_mul_ps(q_y,q_w);
@@ -329,29 +393,97 @@ namespace gms {
 			    const __m512 t1 = _mm512_mul_ps(q_z,q_w);
 			    const __m512 c1 = _mm512_fmsub_ps(q_x,q_y,t1);
 			 
-			    alpha = _mm512_atan2_ps(_mm512_mul_ps(chi,_mm512_mul_ps(c0,v16_n1)),
+			    alp = _mm512_atan2_ps(_mm512_mul_ps(chi,_mm512_mul_ps(c0,v16_n1)),
 			                            _mm512_mul_ps(chi,_mm512_mul_ps(c1,v16_n1)));
-			    beta  = _mm512_atan2_ps(_mm512_mul_ps(v16_2,chi),_mm512_sub_ps(qxw,qyz));
+			    bet  = _mm512_atan2_ps(_mm512_mul_ps(v16_2,chi),_mm512_sub_ps(qxw,qyz));
 			    const __m512 c2 = _mm512_fmadd_ps(q_x,_qy,t1);
-			    gamma = _mm512_atan2_ps(_mm512_mul_ps(chi,_mm512_mul_ps(c0,v16_1)),
+			    gam = _mm512_atan2_ps(_mm512_mul_ps(chi,_mm512_mul_ps(c0,v16_1)),
 			                            _mm512_mul_ps(chi,_mm512_mul_ps(c2,v16_n1)));
 			 }
-			 alpha_c = alpha;
+			 alpha_c = alp;
 			 const __m512 tmp0 = _mm512_fmadd_ps(v16_2,v16_pi,alpha_c);
 			 k1 = _mm512_cmp_ps_mask(alpha_c,v16_0,_CMP_LT_OQ);
-			 alpha = _mm512_mask_mov_ps(alpha_c,k1,fmod_zmm16r4(tmp0,v16_2pi));
-			 beta_c = beta;
+			 _mm512_store_ps(&alpha[0],_mm512_mask_mov_ps(alpha_c,k1,fmod_zmm16r4(tmp0,v16_2pi)));
+			 beta_c = bet;
 			 const _mm512 tmp1 = _mm512_fmadd_ps(v16_2,v16_pi,beta_c);
 			 k2 = _mm512_cmp_ps_mask(beta_c,v16_0,k2,_CMP_LT_OQ);
-			 beta = _mm512_mask_mov_ps(beta_c,k2,fmod_zmm16r4(tmp1,v16_pi));
-			 gamma_c = gamma;
+			 _mm512_store_ps(&beta[0], _mm512_mask_mov_ps(beta_c,k2,fmod_zmm16r4(tmp1,v16_pi)));
+			 gamma_c = gam;
 			 const __m512 tmp2 = _mm512_fmadd_ps(v16_2,v16_pi,gamma_c);
 			 k3 = _mm512_cmp_ps_mask(gamma_c,v16_0,k3,_CMP_LT_OQ);
-			 gamma = _mm512_mask_mov_ps(gamma_c,k3,fmod_zmm16r4(tmp2,v16_2pi));
+			 _mm512_store_ps(&gamma[0], _mm512_mask_mov_ps(gamma_c,k3,fmod_zmm16r4(tmp2,v16_2pi)));
 		    }
 
 
 		  
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+	              void
+		      q4x16_to_ea3x16_u_zmm16r4(const __m512 q_x,
+		                                const __m512 q_y,
+					        const __m512 q_z,
+					        const __m512 q_w,
+					        float * __restrict  alpha,
+					        float * __restrict  beta,
+					        float * __restrict  gamma) {
+
+                         const __m512 qxw = _mm512_fmadd_ps(q_x,q_x,_mm512_mul_ps(q_w,q_w));
+			 const __m512 qyz = _mm512_fmadd_ps(q_y,q_y,_mm512_mul_ps(q_z,q_z));
+			 const __m512 chi = _mm512_sqrt_ps(_mm512_mul_ps(qxw,qyz));
+			 __m512 alpha_c;
+			 __m512 beta_c;
+			 __m512 gamma_c;
+			 __m512 alp,bet,gam;
+			 __mmask16 qyz0 = 0x0;
+			 __mmask16 qxw0 = 0x0;
+			 __mmask16 k1   = 0x0;
+			 __mmask16 k2   = 0x0;
+			 __mmask16 k3   = 0x0;
+			 qyz0 = _mm512_cmp_ps_mask(qyz,v16_0,_CMP_EQ_OQ);
+			 qxw0 = _mm512_cmp_ps_mask(qxw,v16_0,_CMP_EQ_OQ);
+			 if(1==qyz0) {
+			    _mm512_storeu_ps(&alpha[0], _mm512_atan2_ps(_mm512_mul_ps(v16_n2,_mm512_mul_ps(q_x,q_w)),
+			                              _mm512_fmsub_ps(q_x,q_x,_mm512_mul_ps(q_w,q_w))));
+			    _mm512_storeu_ps(&beta[0],   v16_0);
+			    _mm512_storeu_ps(&gamma[0],  v16_0);
+			   // return;
+			 } else if(1==qxw0) {
+                            _mm512_storeu_ps(&alpha[0], _mm512_atan2_ps(_mm512_mul_ps(v16_2,_mm512_mul_ps(q_y,q_z)),
+			                              _mm512_fmsub_ps(q_y,q_y,_mm512_mul_ps(q_z,q_z))));
+			    _mm512_storeu_ps(&beta[0], v16_pi);
+			    _mm512_storeu_ps(&gama[0], v16_0);
+			    //return;
+			 }
+			 else {
+			    const __m512 t0 = _mm512_mul_ps(q_y,q_w);
+			    const __m512 c0 = _mm512_fmadd_ps(q_x,q_z,t0);
+			    const __m512 t1 = _mm512_mul_ps(q_z,q_w);
+			    const __m512 c1 = _mm512_fmsub_ps(q_x,q_y,t1);
+			 
+			    alp = _mm512_atan2_ps(_mm512_mul_ps(chi,_mm512_mul_ps(c0,v16_n1)),
+			                            _mm512_mul_ps(chi,_mm512_mul_ps(c1,v16_n1)));
+			    bet  = _mm512_atan2_ps(_mm512_mul_ps(v16_2,chi),_mm512_sub_ps(qxw,qyz));
+			    const __m512 c2 = _mm512_fmadd_ps(q_x,_qy,t1);
+			    gam = _mm512_atan2_ps(_mm512_mul_ps(chi,_mm512_mul_ps(c0,v16_1)),
+			                            _mm512_mul_ps(chi,_mm512_mul_ps(c2,v16_n1)));
+			 }
+			 alpha_c = alp;
+			 const __m512 tmp0 = _mm512_fmadd_ps(v16_2,v16_pi,alpha_c);
+			 k1 = _mm512_cmp_ps_mask(alpha_c,v16_0,_CMP_LT_OQ);
+			 _mm512_storeu_ps(&alpha[0],_mm512_mask_mov_ps(alpha_c,k1,fmod_zmm16r4(tmp0,v16_2pi)));
+			 beta_c = bet;
+			 const _mm512 tmp1 = _mm512_fmadd_ps(v16_2,v16_pi,beta_c);
+			 k2 = _mm512_cmp_ps_mask(beta_c,v16_0,k2,_CMP_LT_OQ);
+			 _mm512_storeu_ps(&beta[0], _mm512_mask_mov_ps(beta_c,k2,fmod_zmm16r4(tmp1,v16_pi)));
+			 gamma_c = gam;
+			 const __m512 tmp2 = _mm512_fmadd_ps(v16_2,v16_pi,gamma_c);
+			 k3 = _mm512_cmp_ps_mask(gamma_c,v16_0,k3,_CMP_LT_OQ);
+			 _mm512_storeu_ps(&gamma[0], _mm512_mask_mov_ps(gamma_c,k3,fmod_zmm16r4(tmp2,v16_2pi)));
+		    }
+
 
 
 
@@ -361,13 +493,13 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
-		      q4x8_to_ea3x8_zmm8r8(   const __m512d q_x,
-		                              const __m512d q_y,
-					      const __m512d q_z,
-					      const __m512d q_w,
-					      __m512d & alpha,
-					      __m512d & beta,
-					      __m512d & gamma) {
+		      q4x8_to_ea3x8_a_zmm8r8(   const __m512d q_x,
+		                                const __m512d q_y,
+					        const __m512d q_z,
+					        const __m512d q_w,
+					        double * __restrict __ATTR_ALIGN__(64) alpha,
+					        double * __restrict __ATTR_ALIGN__(64) beta,
+					        double * __restrict __ATTR_ALIGN__(64) gamma) {
 
                          const __m512d qxw = _mm512_fmadd_pd(q_x,q_x,_mm512_mul_pd(q_w,q_w));
 			 const __m512d qyz = _mm512_fmadd_pd(q_y,q_y,_mm512_mul_pd(q_z,q_z));
@@ -375,23 +507,26 @@ namespace gms {
 			 __m512d alpha_c;
 			 __m512d beta_c;
 			 __m512d gamma_c;
+			 __m512d alp,bet,gam;
 			 __mmask8 qyz0 = 0x0;
 			 __mmask8 qxw0 = 0x0;
 			 __mmask8 k1   = 0x0;
 			 __mmask8 k2   = 0x0;
 			 __mmask8 k3   = 0x0;
-			 qyz0 = _mm512_cmp_pd_mask(qyz0,v8_0,_CMP_EQ_OQ);
-			 qxw0 = _mm512_cmp_pd_mask(qxw0,v8_0,_CMP_EQ_OQ);
+			 qyz0 = _mm512_cmp_pd_mask(qyz,v8_0,_CMP_EQ_OQ);
+			 qxw0 = _mm512_cmp_pd_mask(qxw,v8_0,_CMP_EQ_OQ);
 			 if(__builtin_expect(1==qyz0,0)) {
-			    alpha = _mm512_atan2_ps(_mm512_mul_pd(v8_n2,_mm512_mul_pd(q_x,q_w)),
-			                              _mm512_fmsub_pd(q_x,q_x,_mm512_mul_pd(q_w,q_w)));
-			    beta  = v8_0;
-			    gamma = v8_0;
+			    _mm512_store_pd(&alpha[0],  _mm512_atan2_ps(_mm512_mul_pd(v8_n2,_mm512_mul_pd(q_x,q_w)),
+			                              _mm512_fmsub_pd(q_x,q_x,_mm512_mul_pd(q_w,q_w))));
+			    _mm512_store_pd(&beta[0], v8_0);
+			    _mm512_store_pd(&gamma[0],v8_0);
+			    //return;
 			 } else if(__builtin_expect(1==qxw0,0)) {
-                            alpha = _mm512_atan2_pd(_mm512_mul_pd(v16_2,_mm512_mul_pd(q_y,q_z)),
-			                              _mm512_fmsub_pd(q_y,q_y,_mm512_mul_pd(q_z,q_z)));
-			    beta = v8_pi;
-			    gamma = v8_0;
+                            _mm512_store_pd(&alpha[0], _mm512_atan2_pd(_mm512_mul_pd(v16_2,_mm512_mul_pd(q_y,q_z)),
+			                              _mm512_fmsub_pd(q_y,q_y,_mm512_mul_pd(q_z,q_z))));
+			    _mm512_store_pd(&beta[0], v8_pi);
+			    _mm512_store_pd(&gamma[0],v8_0);
+			    //return;
 			 }
 			 else {
 			    const __m512d t0 = _mm512_mul_pd(q_y,q_w);
@@ -399,26 +534,96 @@ namespace gms {
 			    const __m512d t1 = _mm512_mul_pd(q_z,q_w);
 			    const __m512d c1 = _mm512_fmsub_pd(q_x,q_y,t1);
 			 
-			    alpha = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_n1)),
+			    alp = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_n1)),
 			                            _mm512_mul_pd(chi,_mm512_mul_ps(c1,v8_n1)));
-			    beta  = _mm512_atan2_pd(_mm512_mul_pd(v8_2,chi),_mm512_sub_pd(qxw,qyz));
+			    bet  = _mm512_atan2_pd(_mm512_mul_pd(v8_2,chi),_mm512_sub_pd(qxw,qyz));
 			    const __m512d c2 = _mm512_fmadd_pd(q_x,_qy,t1);
-			    gamma = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_1)),
+			    gam = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_1)),
 			                            _mm512_mul_pd(chi,_mm512_mul_pd(c2,v8_n1)));
 			 }
-			 alpha_c = alpha;
+			 alpha_c = alp;
 			 const __m512d tmp0 = _mm512_fmadd_pd(v8_2,v16_pi,alpha_c);
 			 k1 = _mm512_cmp_pd_mask(alpha_c,v8_0,_CMP_LT_OQ);
-			 alpha = _mm512_mask_mov_ps(alpha_c,k1,fmod_zmm8r8(tmp0,v8_2pi));
-			 beta_c = beta;
+			 _mm512_store_pd(&alpha[0], _mm512_mask_mov_ps(alpha_c,k1,fmod_zmm8r8(tmp0,v8_2pi)));
+			 beta_c = bet;
 			 const _mm512d tmp1 = _mm512_fmadd_ps(v8_2,v8_pi,beta_c);
 			 k2 = _mm512_cmp_pd_mask(beta_c,v8_0,k2,_CMP_LT_OQ);
-			 beta = _mm512_mask_mov_pd(beta_c,k2,fmod_zmm8r8(tmp1,v8_pi));
-			 gamma_c = gamma;
+			 _mm512_store_pd(&beta[0], _mm512_mask_mov_pd(beta_c,k2,fmod_zmm8r8(tmp1,v8_pi)));
+			 gamma_c = gam;
 			 const __m512d tmp2 = _mm512_fmadd_pd(v8_2,v8_pi,gamma_c);
 			 k3 = _mm512_cmp_pd_mask(gamma_c,v8_0,k3,_CMP_LT_OQ);
-			 gamma = _mm512_mask_mov_pd(gamma_c,k3,fmod_zmm8r8(tmp2,v8_2pi));
+			 _mm512_store_pd(&gamma[0], _mm512_mask_mov_pd(gamma_c,k3,fmod_zmm8r8(tmp2,v8_2pi)));
 		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+	              void
+		      q4x8_to_ea3x8_u_zmm8r8(   const __m512d q_x,
+		                                const __m512d q_y,
+					        const __m512d q_z,
+					        const __m512d q_w,
+					        double * __restrict  alpha,
+					        double * __restrict  beta,
+					        double * __restrict  gamma) {
+
+                         const __m512d qxw = _mm512_fmadd_pd(q_x,q_x,_mm512_mul_pd(q_w,q_w));
+			 const __m512d qyz = _mm512_fmadd_pd(q_y,q_y,_mm512_mul_pd(q_z,q_z));
+			 const __m512d chi = _mm512_sqrt_pd(_mm512_mul_pd(qxw,qyz));
+			 __m512d alpha_c;
+			 __m512d beta_c;
+			 __m512d gamma_c;
+			 __m512d alp,bet,gam;
+			 __mmask8 qyz0 = 0x0;
+			 __mmask8 qxw0 = 0x0;
+			 __mmask8 k1   = 0x0;
+			 __mmask8 k2   = 0x0;
+			 __mmask8 k3   = 0x0;
+			 qyz0 = _mm512_cmp_pd_mask(qyz,v8_0,_CMP_EQ_OQ);
+			 qxw0 = _mm512_cmp_pd_mask(qxw,v8_0,_CMP_EQ_OQ);
+			 if(__builtin_expect(1==qyz0,0)) {
+			    _mm512_storeu_ps(&alpha[0],  _mm512_atan2_ps(_mm512_mul_pd(v8_n2,_mm512_mul_pd(q_x,q_w)),
+			                              _mm512_fmsub_pd(q_x,q_x,_mm512_mul_pd(q_w,q_w))));
+			    _mm512_storeu_pd(&beta[0], v8_0);
+			    _mm512_storeu_pd(&gamma[0],v8_0);
+			    //return;
+			 } else if(__builtin_expect(1==qxw0,0)) {
+                            _mm512_storeu_pd(&alpha[0], _mm512_atan2_pd(_mm512_mul_pd(v16_2,_mm512_mul_pd(q_y,q_z)),
+			                              _mm512_fmsub_pd(q_y,q_y,_mm512_mul_pd(q_z,q_z))));
+			    _mm512_storeu_pd(&beta[0], v8_pi);
+			    _mm512_storeu_pd(&gamma[0],v8_0);
+			    //return;
+			 }
+			 else {
+			    const __m512d t0 = _mm512_mul_pd(q_y,q_w);
+			    const __m512d c0 = _mm512_fmadd_pd(q_x,q_z,t0);
+			    const __m512d t1 = _mm512_mul_pd(q_z,q_w);
+			    const __m512d c1 = _mm512_fmsub_pd(q_x,q_y,t1);
+			 
+			    alp = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_n1)),
+			                            _mm512_mul_pd(chi,_mm512_mul_ps(c1,v8_n1)));
+			    bet  = _mm512_atan2_pd(_mm512_mul_pd(v8_2,chi),_mm512_sub_pd(qxw,qyz));
+			    const __m512d c2 = _mm512_fmadd_pd(q_x,_qy,t1);
+			    gam = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_1)),
+			                            _mm512_mul_pd(chi,_mm512_mul_pd(c2,v8_n1)));
+			 }
+			 alpha_c = alp;
+			 const __m512d tmp0 = _mm512_fmadd_pd(v8_2,v16_pi,alpha_c);
+			 k1 = _mm512_cmp_pd_mask(alpha_c,v8_0,_CMP_LT_OQ);
+			 _mm512_storeu_pd(&alpha[0], _mm512_mask_mov_ps(alpha_c,k1,fmod_zmm8r8(tmp0,v8_2pi)));
+			 beta_c = bet;
+			 const _mm512d tmp1 = _mm512_fmadd_ps(v8_2,v8_pi,beta_c);
+			 k2 = _mm512_cmp_pd_mask(beta_c,v8_0,k2,_CMP_LT_OQ);
+			 _mm512_storeu_pd(&beta[0], _mm512_mask_mov_pd(beta_c,k2,fmod_zmm8r8(tmp1,v8_pi)));
+			 gamma_c = gam;
+			 const __m512d tmp2 = _mm512_fmadd_pd(v8_2,v8_pi,gamma_c);
+			 k3 = _mm512_cmp_pd_mask(gamma_c,v8_0,k3,_CMP_LT_OQ);
+			 _mm512_storeu_pd(&gamma[0], _mm512_mask_mov_pd(gamma_c,k3,fmod_zmm8r8(tmp2,v8_2pi)));
+		    }
+
 
 
 
@@ -433,14 +638,14 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
-		      q4x16_to_ax4x16_zmm16r4(const __m512 q_x,
-		                              const __m512 q_y,
-					      const __m512 q_z,
-					      const __m512 q_w,
-					      __m512 & ax_1,
-					      __m512 & ax_2,
-					      __m512 & ax_3,
-					      __m512 & ax_4) {
+		      q4x16_to_ax4x16_a_zmm16r4(const __m512 q_x,
+		                                const __m512 q_y,
+					        const __m512 q_z,
+					        const __m512 q_w,
+					        float * __restrict __ATTR_ALIGN__(64) ax_1,
+					        float * __restrict __ATTR_ALIGN__(64) ax_2,
+					        float * __restrict __ATTR_ALIGN__(64) ax_3,
+					        float * __restrict __ATTR_ALIGN__(64) ax_4) {
 
                           const register __m512 t0 = _mm512_mul_ps(q_y,q_y);
 			  const register __m512 t1 = _mm512_mul_ps(q_z,q_z);
@@ -452,10 +657,10 @@ namespace gms {
 			  __mmask16 k2 = 0x0;
 			  k1 = _mm512_cmp_ps_mask(v0,v16_0,_CMP_EQ_OQ);
 			  if(__builtin_expect(1==k1,0)) {
-                             ax_1 = v16_0;
-			     ax_2 = v16_0;
-			     ax_3 = v16_1;
-			     ax_4 = v16_0;
+                             _mm512_store_ps(&ax_1[0], v16_0);
+			     _mm512_store_ps(&ax_2[0], v16_0);
+			     _mm512_store_ps(&ax_3[0], v16_1);
+			     _mm512_store_ps(&ax_4[0], v16_0);
 			     return;
 			  }
 			  k2 = _mm512_cmp_ps_mask(q_x,_v16_0,_CMP_NEQ_OQ);
@@ -463,21 +668,78 @@ namespace gms {
                              const register __m512 s = _mm512_div_ps(
 			                          zmm16r4_sign_zmm16r4(v16_1,q_x),
 						  norm2_zmm16r4(q_y,q_z,q_w));
-			     ax_1 = _mm512_mul_ps(q_y,s);
-			     ax_2 = _mm512_mul_ps(q_z,s);
-			     ax_2 = _mm512_mul_ps(q_w,s);
+			     _mm512_store_ps(&ax_1[0], _mm512_mul_ps(q_y,s));
+			     _mm512_store_ps(&ax_2[0], _mm512_mul_ps(q_z,s));
+			     _mm512_store_ps(&ax_3[0],  _mm512_mul_ps(q_w,s));
 			     const register __m512 omega = _mm512_mul_ps(v16_2,
 			                              _mm512_acos_ps(clip_zmm16r4(q_x,v16_n1,v16_1)));
-			     ax_4 = omega;
+			     _mm512_store_ps(&ax_4[0] ,omega);
+			     return;
 			  }
 			  else {
-                             ax_1 = q_y;
-			     ax_2 = q_z;
-			     ax_3 = q_w;
-			     ax_4 = v16_pi;
-			     
+                             _mm512_store_ps(&ax_1[0], q_y);
+			     _mm512_store_ps(&ax_2[0], q_z);
+			     _mm512_store_ps(&ax_3[0], q_w);
+			     _mm512_store_ps(&ax_4[0], v16_pi);
+			     return;
 			  }
 		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void
+		      q4x16_to_ax4x16_u_zmm16r4(const __m512 q_x,
+		                                const __m512 q_y,
+					        const __m512 q_z,
+					        const __m512 q_w,
+					        float * __restrict  ax_1,
+					        float * __restrict  ax_2,
+					        float * __restrict  ax_3,
+					        float * __restrict  ax_4) {
+
+                          const register __m512 t0 = _mm512_mul_ps(q_y,q_y);
+			  const register __m512 t1 = _mm512_mul_ps(q_z,q_z);
+			  const register __m512 t2 = _mm512_mul_ps(q_w,q_w);
+			  const register __m512 v0 = _mm512_add_ps(t0,_mm512_add_ps(t1,t2));
+			  __m512 c0 = v16_0;
+			  __m512 c1 = v16_0;
+			  __mmask16 k1 = 0x0;
+			  __mmask16 k2 = 0x0;
+			  k1 = _mm512_cmp_ps_mask(v0,v16_0,_CMP_EQ_OQ);
+			  if(__builtin_expect(1==k1,0)) {
+                             _mm512_storeu_ps(&ax_1[0], v16_0);
+			     _mm512_storeu_ps(&ax_2[0], v16_0);
+			     _mm512_storeu_ps(&ax_3[0], v16_1);
+			     _mm512_storeu_ps(&ax_4[0], v16_0);
+			     return;
+			  }
+			  k2 = _mm512_cmp_ps_mask(q_x,_v16_0,_CMP_NEQ_OQ);
+			  if(1==k2) {
+                             const register __m512 s = _mm512_div_ps(
+			                          zmm16r4_sign_zmm16r4(v16_1,q_x),
+						  norm2_zmm16r4(q_y,q_z,q_w));
+			     _mm512_storeu_ps(&ax_1[0], _mm512_mul_ps(q_y,s));
+			     _mm512_storeu_ps(&ax_2[0], _mm512_mul_ps(q_z,s));
+			     _mm512_storeu_ps(&ax_3[0],  _mm512_mul_ps(q_w,s));
+			     const register __m512 omega = _mm512_mul_ps(v16_2,
+			                              _mm512_acos_ps(clip_zmm16r4(q_x,v16_n1,v16_1)));
+			     _mm512_store_ps(&ax_4[0] ,omega);
+			     return;
+			  }
+			  else {
+                             _mm512_storeu_ps(&ax_1[0], q_y);
+			     _mm512_storeu_ps(&ax_2[0], q_z);
+			     _mm512_storeu_ps(&ax_3[0], q_w);
+			     _mm512_storeu_ps(&ax_4[0], v16_pi);
+			     return;
+			  }
+		     }
+
+
 
 
 
@@ -487,14 +749,14 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
-		      q4x8_to_ax4x8_zmm8r8(   const __m512d q_x,
+		      q4x8_to_ax4x8_a_zmm8r8(   const __m512d q_x,
 		                              const __m512d q_y,
 					      const __m512d q_z,
 					      const __m512d q_w,
-					      __m512d & ax_1,
-					      __m512d & ax_2,
-					      __m512d & ax_3,
-					      __m512d & ax_4) {
+					      double * __restrict __ATTR_ALIGN__(64) ax_1,
+					      double * __restrict __ATTR_ALIGN__(64) ax_2,
+					      double * __restrict __ATTR_ALIGN__(64) ax_3,
+					      double * __restrict __ATTR_ALIGN__(64) ax_4) {
 
                           const register __m512d t0 = _mm512_mul_pd(q_y,q_y);
 			  const register __m512d t1 = _mm512_mul_pd(q_z,q_z);
@@ -504,10 +766,10 @@ namespace gms {
 			  __mmask8 k2 = 0x0;
 			  k1 = _mm512_cmp_pd_mask(v0,v8_0,_CMP_EQ_OQ);
 			  if(__builtin_expect(1==k1,0)) {
-                             ax_1 = v8_0;
-			     ax_2 = v8_0;
-			     ax_3 = v8_1;
-			     ax_4 = v8_0;
+                             _mm512_store_pd(&ax_1[0], v8_0);
+			     _mm512_store_pd(&ax_2[0], v8_0);
+			     _mm512_store_pd(&ax_3[0], v8_1);
+			     _mm512_store_pd(&ax_4[0], v8_0);
 			     return;
 			  }
 			  k2 = _mm512_cmp_pd_mask(q_x,_v8_0,_CMP_NEQ_OQ);
@@ -515,21 +777,75 @@ namespace gms {
                              const register __m512 s = _mm512_div_pd(
 			                          zmm8r8_sign_zmm8r8(v8_1,q_x),
 						  norm2_zmm8r8(q_y,q_z,q_w));
-			     ax_1 = _mm512_mul_pd(q_y,s);
-			     ax_2 = _mm512_mul_pd(q_z,s);
-			     ax_2 = _mm512_mul_pd(q_w,s);
+			     _mm512_store_pd(&ax_1[0], _mm512_mul_pd(q_y,s));
+			     _mm512_store_pd(&ax_2[0], _mm512_mul_pd(q_z,s));
+			     _mm512_store_pd(&ax_3[0], _mm512_mul_pd(q_w,s));
 			     const register __m512 omega = _mm512_mul_pd(v16_2,
 			                              _mm512_acos_pd(clip_zmm8r8(q_x,v8_n1,v8_1)));
-			     ax_4 = omega;
+			     _mm512_store_pd(&ax_4[0], omega);
+			     return;
 			  }
 			  else {
-                             ax_1 = q_y;
-			     ax_2 = q_z;
-			     ax_3 = q_w;
-			     ax_4 = v8_pi;
-			     
+                             _mm512_store_pd(&ax_1[0], q_y);
+			     _mm512_store_pd(&ax_2[0], q_z);
+			     _mm512_store_pd(&ax_3[0], q_w);
+			     _mm512_store_pd(&ax_4[0], v8_pi);
+			     return;
 			  }
 		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void
+		      q4x8_to_ax4x8_u_zmm8r8( const __m512d q_x,
+		                              const __m512d q_y,
+					      const __m512d q_z,
+					      const __m512d q_w,
+					      double * __restrict  ax_1,
+					      double * __restrict  ax_2,
+					      double * __restrict  ax_3,
+					      double * __restrict  ax_4) {
+
+                          const register __m512d t0 = _mm512_mul_pd(q_y,q_y);
+			  const register __m512d t1 = _mm512_mul_pd(q_z,q_z);
+			  const register __m512d t2 = _mm512_mul_pd(q_w,q_w);
+			  const register __m512d v0 = _mm512_add_pd(t0,_mm512_add_pd(t1,t2));
+			  __mmask8 k1 = 0x0;
+			  __mmask8 k2 = 0x0;
+			  k1 = _mm512_cmp_pd_mask(v0,v8_0,_CMP_EQ_OQ);
+			  if(__builtin_expect(1==k1,0)) {
+                             _mm512_storeu_pd(&ax_1[0], v8_0);
+			     _mm512_storeu_pd(&ax_2[0], v8_0);
+			     _mm512_storeu_pd(&ax_3[0], v8_1);
+			     _mm512_storeu_pd(&ax_4[0], v8_0);
+			     return;
+			  }
+			  k2 = _mm512_cmp_pd_mask(q_x,_v8_0,_CMP_NEQ_OQ);
+			  if(1==k2) {
+                             const register __m512 s = _mm512_div_pd(
+			                          zmm8r8_sign_zmm8r8(v8_1,q_x),
+						  norm2_zmm8r8(q_y,q_z,q_w));
+			     _mm512_storeu_pd(&ax_1[0], _mm512_mul_pd(q_y,s));
+			     _mm512_storeu_pd(&ax_2[0], _mm512_mul_pd(q_z,s));
+			     _mm512_storeu_pd(&ax_3[0], _mm512_mul_pd(q_w,s));
+			     const register __m512 omega = _mm512_mul_pd(v16_2,
+			                              _mm512_acos_pd(clip_zmm8r8(q_x,v8_n1,v8_1)));
+			     _mm512_storeu_pd(&ax_4[0], omega);
+			     return;
+			  }
+			  else {
+                             _mm512_storeu_pd(&ax_1[0], q_y);
+			     _mm512_storeu_pd(&ax_2[0], q_z);
+			     _mm512_storeu_pd(&ax_3[0], q_w);
+			     _mm512_storeu_pd(&ax_4[0], v8_pi);
+			     return;
+			  }
+		     }
+
 
 
 		    /*
@@ -543,14 +859,14 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
-		      q4x16_to_rv4x16_zmm16r4(const __m512 q_x,
+		      q4x16_to_rv4x16_a_zmm16r4(const __m512 q_x,
 		                              const __m512 q_y,
 					      const __m512 q_z,
 					      const __m512 q_w,
-					      __m512 & r_x,
-					      __m512 & r_y,
-					      __m512 & r_z,
-					      __m512 & r_w) {
+					      float * __restrict __ATTR_ALIGN__(64) r_x,
+					      float * __restrict __ATTR_ALIGN__(64) r_y,
+					      float * __restrict __ATTR_ALIGN__(64) r_z,
+					      float * __restrict __ATTR_ALIGN__(64) r_w) {
 
                           const register __m512 thr = _mm512_set1_ps(1.0e-8);
 			  const register __m512 inf = _mm512_set1_ps(std::numeric_limits<float>::infinity());
@@ -560,19 +876,59 @@ namespace gms {
 			  __mmask16 k2 = 0x0;
 			  k1 = _mm512_cmp_ps_mask(_mm512_abs_ps(q_x),thr,_CMP_LT_OQ);
 			  if(__builtin_expect(1==k1,0)) {
-                             r_x = q_y;
-			     r_y = q_z;
-			     r_z = q_w;
-			     r_w = inf;
+                             _mm512_store_ps(&r_x[0], q_y);
+			     _mm512_store_ps(&r_y[0], q_z);
+			     _mm512_store_ps(&r_z[0], q_w);
+			     _mm512_store_ps(&r_w[0], inf);
 			  }
 			  else {
                                s   = norm2_zmm16r4(q_y,q_z,q_w);
 			       k2  = _mm512_cmp_ps_mask(s,thr,_CMP_LT_OQ);
-			       r_x = _mm512_mask_blend_ps(k2,_mm512_div_ps(q_y,s),v16_0);
+			       _mm512_store_ps(&r_x[0],_mm512_mask_blend_ps(k2,_mm512_div_ps(q_y,s),v16_0));
 			       t0  = _mm512_acos_ps(clip_zmm16r4(q_x,v16_n1,v16_1));
-			       r_y = _mm512_mask_blend_ps(k2,_mm512_div_ps(q_z,s),v16_0);
-			       r_z = _mm512_mask_blend_ps(k2,_mm512_div_ps(q_w,s),v16_n1);
-			       r_w = _mm512_mask_blend_ps(k2,_mm512_tan_ps(t0),v16_0);
+			       _mm512_store_ps(&r_y[0], _mm512_mask_blend_ps(k2,_mm512_div_ps(q_z,s),v16_0));
+			       _mm512_store_ps(&r_z[0], _mm512_mask_blend_ps(k2,_mm512_div_ps(q_w,s),v16_n1));
+			       _mm512_store_ps(&r_w[0], _mm512_mask_blend_ps(k2,_mm512_tan_ps(t0),v16_0));
+			  }
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void
+		      q4x16_to_rv4x16_u_zmm16r4(const __m512 q_x,
+		                              const __m512 q_y,
+					      const __m512 q_z,
+					      const __m512 q_w,
+					      float * __restrict r_x,
+					      float * __restrict r_y,
+					      float * __restrict r_z,
+					      float * __restrict r_w) {
+
+                          const register __m512 thr = _mm512_set1_ps(1.0e-8);
+			  const register __m512 inf = _mm512_set1_ps(std::numeric_limits<float>::infinity());
+			  register __m512 t0 = v16_0;
+			  register __m512 s  = v16_0;
+			  __mmask16 k1 = 0x0;
+			  __mmask16 k2 = 0x0;
+			  k1 = _mm512_cmp_ps_mask(_mm512_abs_ps(q_x),thr,_CMP_LT_OQ);
+			  if(__builtin_expect(1==k1,0)) {
+                             _mm512_storeu_ps(&r_x[0], q_y);
+			     _mm512_storeu_ps(&r_y[0], q_z);
+			     _mm512_storeu_ps(&r_z[0], q_w);
+			     _mm512_storeu_ps(&r_w[0], inf);
+			  }
+			  else {
+                               s   = norm2_zmm16r4(q_y,q_z,q_w);
+			       k2  = _mm512_cmp_ps_mask(s,thr,_CMP_LT_OQ);
+			       _mm512_storeu_ps(&r_x[0],_mm512_mask_blend_ps(k2,_mm512_div_ps(q_y,s),v16_0));
+			       t0  = _mm512_acos_ps(clip_zmm16r4(q_x,v16_n1,v16_1));
+			       _mm512_storeu_ps(&r_y[0], _mm512_mask_blend_ps(k2,_mm512_div_ps(q_z,s),v16_0));
+			       _mm512_storeu_ps(&r_z[0], _mm512_mask_blend_ps(k2,_mm512_div_ps(q_w,s),v16_n1));
+			       _mm512_storeu_ps(&r_w[0], _mm512_mask_blend_ps(k2,_mm512_tan_ps(t0),v16_0));
 			  }
 		     }
 
@@ -584,14 +940,14 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
-		      q4x8_to_rv4x8_zmm8r8(   const __m512d q_x,
+		      q4x8_to_rv4x8_a_zmm8r8(   const __m512d q_x,
 		                              const __m512d q_y,
 					      const __m512d q_z,
 					      const __m512d q_w,
-					      __m512d & r_x,
-					      __m512d & r_y,
-					      __m512d & r_z,
-					      __m512d & r_w) {
+					      double * __restrict __ATTR_ALIGN__(64) r_x,
+					      double * __restrict __ATTR_ALIGN__(64) r_y,
+					      double * __restrict __ATTR_ALIGN__(64) r_z,
+					      double * __restrict __ATTR_ALIGN__(64) r_w) {
 
                           const register __m512d thr = _mm512_set1_pd(1.0e-8);
 			  const register __m512d inf = _mm512_set1_pd(std::numeric_limits<double>::infinity());
@@ -601,19 +957,58 @@ namespace gms {
 			  __mmask8 k2 = 0x0;
 			  k1 = _mm512_cmp_pd_mask(_mm512_abs_pd(q_x),thr,_CMP_LT_OQ);
 			  if(__builtin_expect(1==k1,0)) {
-                             r_x = q_y;
-			     r_y = q_z;
-			     r_z = q_w;
-			     r_w = inf;
+                             _mm512_store_pd(&r_x[0], q_y);
+			     _mm512_store_pd(&r_y[0], q_z);
+			     _mm512_store_pd(&r_z[0], q_w);
+			     _mm512_store_pd(&r_w[0], inf);
 			  }
 			  else {
                                s   = norm2_zmm8r8(q_y,q_z,q_w);
 			       k2  = _mm512_cmp_pd_mask(s,thr,_CMP_LT_OQ);
-			       r_x = _mm512_mask_blend_pd(k2,_mm512_div_pd(q_y,s),v8_0);
+			       _mm512_store_pd(&r_x[0], _mm512_mask_blend_pd(k2,_mm512_div_pd(q_y,s),v8_0));
 			       t0  = _mm512_acos_pd(clip_zmm8r8(q_x,v8_n1,v8_1));
-			       r_y = _mm512_mask_blend_pd(k2,_mm512_div_pd(q_z,s),v8_0);
-			       r_z = _mm512_mask_blend_pd(k2,_mm512_div_pd(q_w,s),v8_n1);
-			       r_w = _mm512_mask_blend_pd(k2,_mm512_tan_pd(t0),v8_0);
+			       _mm512_store_pd(&r_y[0], _mm512_mask_blend_pd(k2,_mm512_div_pd(q_z,s),v8_0));
+			       _mm512_store_pd(&r_z[0], _mm512_mask_blend_pd(k2,_mm512_div_pd(q_w,s),v8_n1));
+			       _mm512_store_pd(&r_w[0], _mm512_mask_blend_pd(k2,_mm512_tan_pd(t0),v8_0));
+			  }
+		     }
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void
+		      q4x8_to_rv4x8_u_zmm8r8(   const __m512d q_x,
+		                              const __m512d q_y,
+					      const __m512d q_z,
+					      const __m512d q_w,
+					      double * __restrict  r_x,
+					      double * __restrict  r_y,
+					      double * __restrict  r_z,
+					      double * __restrict  r_w) {
+
+                          const register __m512d thr = _mm512_set1_pd(1.0e-8);
+			  const register __m512d inf = _mm512_set1_pd(std::numeric_limits<double>::infinity());
+			  register __m512d t0 = v8_0;
+			  register __m512d s  = v8_0;
+			  __mmask8 k1 = 0x0;
+			  __mmask8 k2 = 0x0;
+			  k1 = _mm512_cmp_pd_mask(_mm512_abs_pd(q_x),thr,_CMP_LT_OQ);
+			  if(__builtin_expect(1==k1,0)) {
+                             _mm512_storeu_pd(&r_x[0], q_y);
+			     _mm512_storeu_pd(&r_y[0], q_z);
+			     _mm512_storeu_pd(&r_z[0], q_w);
+			     _mm512_storeu_pd(&r_w[0], inf);
+			  }
+			  else {
+                               s   = norm2_zmm8r8(q_y,q_z,q_w);
+			       k2  = _mm512_cmp_pd_mask(s,thr,_CMP_LT_OQ);
+			       _mm512_storeu_pd(&r_x[0], _mm512_mask_blend_pd(k2,_mm512_div_pd(q_y,s),v8_0));
+			       t0  = _mm512_acos_pd(clip_zmm8r8(q_x,v8_n1,v8_1));
+			       _mm512_storeu_pd(&r_y[0], _mm512_mask_blend_pd(k2,_mm512_div_pd(q_z,s),v8_0));
+			       _mm512_storeu_pd(&r_z[0], _mm512_mask_blend_pd(k2,_mm512_div_pd(q_w,s),v8_n1));
+			       _mm512_storeu_pd(&r_w[0], _mm512_mask_blend_pd(k2,_mm512_tan_pd(t0),v8_0));
 			  }
 		     }
 
@@ -629,10 +1024,10 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
-		      rmat9x16_to_ea3x16_zmm16r4(const DCM9x16 rm,
-		                                 __m512 & alpha,
-						 __m512 & beta,
-						 __m512 & gamma) {
+		      rmat9x16_to_ea3x16_a_zmm16r4(const DCM9x16 rm,
+		                                 float * __restrict __ATTR_ALIGN__(64) alpha,
+						 float * __restrict __ATTR_ALIGN__(64) beta,
+						 float * __restrict __ATTR_ALIGN__(64) gamma) {
 
                            const    __m512  thr  = _mm512_set1_ps(1.0e-8);
 			   register __m512  t0   = v16_0;
@@ -642,7 +1037,9 @@ namespace gms {
 			   register __m512  al_c = v16_0;
 			   register __m512  be_c = v16_0;
 			   register __m512  ga_c = v16_0;
-			   
+			   register __m512  alp  = v16_0;
+			   register __m512  bet  = v16_0;
+			   register __m512  gam  = v16_0;
 			   __mmask16 k1 = 0x0;
 			   __mmask16 k2 = 0x0;
 			   __mmask16 k3 = 0x0;
@@ -651,34 +1048,101 @@ namespace gms {
 			   t0 = _mm512_mul_ps(rm.m_vRow9,rm.m_vRow9);
 			   zeta = _mm512_div_ps(_mm512_sqrt_ps(_mm512_sub_ps(v16_1,t0)));
 			   t0 = _mm512_sub_ps(v16_0,rm.vRow8);
-			   alpha = _mm512_mask_blend_ps(k1,_mm512_atan2_ps(rm.vRow2,rm.vRow1),
+			   alp = _mm512_mask_blend_ps(k1,_mm512_atan2_ps(rm.vRow2,rm.vRow1),
 			                                   _mm512_atan2_ps(_mm512_mul_ps(rm.vRow7,zeta),
 			   				                   _mm512_mul_ps(t0,zeta)));
 			   t1    = _mm512_mul_ps(v16_1o2,_mm512_mul_ps(v16_pi,_mm512_sub_ps(v16_1,rm.vRow9)));
-			   beta  = _mm512_mask_blend_ps(k1,t1,_mm512_acos_ps(rm.vRow9));
-			   gamma = _mm512_mask_blend_ps(k1,v16_0,_mm512_atan_ps(_mm512_mul_ps(rm.vRow3,zeta),
+			   bet  = _mm512_mask_blend_ps(k1,t1,_mm512_acos_ps(rm.vRow9));
+			   gam = _mm512_mask_blend_ps(k1,v16_0,_mm512_atan_ps(_mm512_mul_ps(rm.vRow3,zeta),
 			                                                        _mm512_mul_ps(rm.vRow6,zeta)));
-			   al_c = alpha;
-			   be_c = beta;
-			   ga_c = gamma;
-			   k2 = _mm512_cmp_ps_mask(_mm512_abs_ps(alpha),thr,_CMP_LT_OQ);
-			   alpha = _mm512_mask_mov_ps(al_c,k2,v16_0);
-			   k3 = _mm512_cmp_ps_mask(_mm512_abs_ps(beta),thr,_CMP_LT_OQ);
-			   beta = _mm512_mask_mov_ps(be_c,k3,v16_0);
-			   k4 = _mm512_cmp_ps_mask(_mm512_abs_ps(gamma),thr,_CMP_LT_OQ);
-			   gamma = _mm512_mask_mov_ps(ga_c,k4,v16_0);
+			   al_c = alp;
+			   be_c = bet;
+			   ga_c = gam;
+			   k2 = _mm512_cmp_ps_mask(_mm512_abs_ps(alp),thr,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_ps(al_c,k2,v16_0);
+			   k3 = _mm512_cmp_ps_mask(_mm512_abs_ps(bet),thr,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_ps(be_c,k3,v16_0);
+			   k4 = _mm512_cmp_ps_mask(_mm512_abs_ps(gam),thr,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_ps(ga_c,k4,v16_0);
 			   //al_c = alpha;
-			   t0 = _mm512_add_ps(alpha,v16_2pi);
-			   k2 = _mm512_cmp_ps_mask(alpha,v16_0,_CMP_LT_OQ);
-			   alpha = _mm512_mask_mov_ps(al_c,k2,fmod_zmm16r4(t0,v16_2pi));
+			   t0 = _mm512_add_ps(alp,v16_2pi);
+			   k2 = _mm512_cmp_ps_mask(alp,v16_0,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_ps(al_c,k2,fmod_zmm16r4(t0,v16_2pi));
 			   //be_c = beta;
-			   t1 = _mm512_add_ps(beta,v16_2pi);
-			   k3 = _mm512_cmp_ps_mask(beta,v16_0,_CMP_LT_OQ);
-			   beta = _mm512_mask_mov_ps(be_c,k3,fmod_zmm16r4(t1,v16_pi));
+			   t1 = _mm512_add_ps(bet,v16_2pi);
+			   k3 = _mm512_cmp_ps_mask(bet,v16_0,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_ps(be_c,k3,fmod_zmm16r4(t1,v16_pi));
 			   //ga_c = gamma;
-			   t2 = _mm512_add_ps(gamma,v16_2pi);
-			   k4 = _mm512_cmp_ps_mask(gamma,v16_0,_CMP_LT_OQ);
-			   gamma = _mm512_mask_mov_ps(ga_c,k4,fmod_zmm16r4(t2,v16_2pi));
+			   t2 = _mm512_add_ps(gam,v16_2pi);
+			   k4 = _mm512_cmp_ps_mask(gam,v16_0,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_ps(ga_c,k4,fmod_zmm16r4(t2,v16_2pi));
+			   _mm512_store_ps(&alpha[0],alp);
+			   _mm512_store_ps(&beta[0], bet);
+			   _mm512_store_ps(&gamma[0],gam);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void
+		      rmat9x16_to_ea3x16_u_zmm16r4(const DCM9x16 rm,
+		                                 float * __restrict  alpha,
+						 float * __restrict  beta,
+						 float * __restrict  gamma) {
+
+                           const    __m512  thr  = _mm512_set1_ps(1.0e-8);
+			   register __m512  t0   = v16_0;
+			   register __m512  t1   = v16_0;
+			   register __m512  t2   = v16_0;
+			   register __m512  zeta = v16_0;
+			   register __m512  al_c = v16_0;
+			   register __m512  be_c = v16_0;
+			   register __m512  ga_c = v16_0;
+			   register __m512  alp  = v16_0;
+			   register __m512  bet  = v16_0;
+			   register __m512  gam  = v16_0;
+			   __mmask16 k1 = 0x0;
+			   __mmask16 k2 = 0x0;
+			   __mmask16 k3 = 0x0;
+			   __mmask16 k4 = 0x0;
+			   k1 = _mm512_cmp_ps_mask(rm.m_vRow9,v16_1,_CMP_NEQ_OQ);
+			   t0 = _mm512_mul_ps(rm.m_vRow9,rm.m_vRow9);
+			   zeta = _mm512_div_ps(_mm512_sqrt_ps(_mm512_sub_ps(v16_1,t0)));
+			   t0 = _mm512_sub_ps(v16_0,rm.vRow8);
+			   alp = _mm512_mask_blend_ps(k1,_mm512_atan2_ps(rm.vRow2,rm.vRow1),
+			                                   _mm512_atan2_ps(_mm512_mul_ps(rm.vRow7,zeta),
+			   				                   _mm512_mul_ps(t0,zeta)));
+			   t1    = _mm512_mul_ps(v16_1o2,_mm512_mul_ps(v16_pi,_mm512_sub_ps(v16_1,rm.vRow9)));
+			   bet  = _mm512_mask_blend_ps(k1,t1,_mm512_acos_ps(rm.vRow9));
+			   gam = _mm512_mask_blend_ps(k1,v16_0,_mm512_atan_ps(_mm512_mul_ps(rm.vRow3,zeta),
+			                                                        _mm512_mul_ps(rm.vRow6,zeta)));
+			   al_c = alp;
+			   be_c = bet;
+			   ga_c = gam;
+			   k2 = _mm512_cmp_ps_mask(_mm512_abs_ps(alp),thr,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_ps(al_c,k2,v16_0);
+			   k3 = _mm512_cmp_ps_mask(_mm512_abs_ps(bet),thr,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_ps(be_c,k3,v16_0);
+			   k4 = _mm512_cmp_ps_mask(_mm512_abs_ps(gam),thr,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_ps(ga_c,k4,v16_0);
+			   //al_c = alpha;
+			   t0 = _mm512_add_ps(alp,v16_2pi);
+			   k2 = _mm512_cmp_ps_mask(alp,v16_0,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_ps(al_c,k2,fmod_zmm16r4(t0,v16_2pi));
+			   //be_c = beta;
+			   t1 = _mm512_add_ps(bet,v16_2pi);
+			   k3 = _mm512_cmp_ps_mask(bet,v16_0,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_ps(be_c,k3,fmod_zmm16r4(t1,v16_pi));
+			   //ga_c = gamma;
+			   t2 = _mm512_add_ps(gam,v16_2pi);
+			   k4 = _mm512_cmp_ps_mask(gam,v16_0,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_ps(ga_c,k4,fmod_zmm16r4(t2,v16_2pi));
+			   _mm512_storeu_ps(&alpha[0],alp);
+			   _mm512_storeu_ps(&beta[0], bet);
+			   _mm512_storeu_ps(&gamma[0],gam);
 		     }
 
 
@@ -689,10 +1153,10 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
-		      rmat9x8_to_ea3x8_zmm8r8(const DCM9x8 rm,
-		                                 __m512d & alpha,
-						 __m512d & beta,
-						 __m512d & gamma) {
+		      rmat9x8_to_ea3x8_a_zmm8r8(const DCM9x8 rm,
+		                              double * __restrict __ATTR_ALIGN__(64) alpha,
+					      double * __restrict __ATTR_ALIGN__(64) beta,
+					      double * __restrict __ATTR_ALIGN__(64) gamma) {
 
                            const    __m512d  thr  = _mm512_set1_pd(1.0e-8);
 			   register __m512d  t0   = v8_0;
@@ -702,7 +1166,9 @@ namespace gms {
 			   register __m512d  al_c = v8_0;
 			   register __m512d  be_c = v8_0;
 			   register __m512d  ga_c = v8_0;
-			   
+			   register __m512d  alp  = v8_0;
+			   register __m512d  bet  = v8_0;
+			   register __m512d  gam  = v8_0;
 			   __mmask8 k1 = 0x0;
 			   __mmask8 k2 = 0x0;
 			   __mmask8 k3 = 0x0;
@@ -711,34 +1177,101 @@ namespace gms {
 			   t0 = _mm512_mul_pd(rm.m_vRow9,rm.m_vRow9);
 			   zeta = _mm512_div_pd(_mm512_sqrt_pd(_mm512_sub_pd(v8_1,t0)));
 			   t0 = _mm512_sub_pd(v8_0,rm.vRow8);
-			   alpha = _mm512_mask_blend_pd(k1,_mm512_atan2_pd(rm.vRow2,rm.vRow1),
+			   alp = _mm512_mask_blend_pd(k1,_mm512_atan2_pd(rm.vRow2,rm.vRow1),
 			                                   _mm512_atan2_pd(_mm512_mul_pd(rm.vRow7,zeta),
 			   				                   _mm512_mul_pd(t0,zeta)));
 			   t1    = _mm512_mul_pd(v8_1o2,_mm512_mul_pd(v8_pi,_mm512_sub_pd(v8_1,rm.vRow9)));
-			   beta  = _mm512_mask_blend_pd(k1,t1,_mm512_acos_pd(rm.vRow9));
-			   gamma = _mm512_mask_blend_pd(k1,v8_0,_mm512_atan_pd(_mm512_mul_pd(rm.vRow3,zeta),
+			   bet  = _mm512_mask_blend_pd(k1,t1,_mm512_acos_pd(rm.vRow9));
+			   gam = _mm512_mask_blend_pd(k1,v8_0,_mm512_atan_pd(_mm512_mul_pd(rm.vRow3,zeta),
 			                                                        _mm512_mul_pd(rm.vRow6,zeta)));
-			   al_c = alpha;
-			   be_c = beta;
-			   ga_c = gamma;
-			   k2 = _mm512_cmp_pd_mask(_mm512_abs_pd(alpha),thr,_CMP_LT_OQ);
-			   alpha = _mm512_mask_mov_pd(al_c,k2,v8_0);
-			   k3 = _mm512_cmp_pd_mask(_mm512_abs_pd(beta),thr,_CMP_LT_OQ);
-			   beta = _mm512_mask_mov_pd(be_c,k3,v8_0);
-			   k4 = _mm512_cmp_pd_mask(_mm512_abs_pd(gamma),thr,_CMP_LT_OQ);
-			   gamma = _mm512_mask_mov_pd(ga_c,k4,v8_0);
+			   al_c = alp;
+			   be_c = bet;
+			   ga_c = gam;
+			   k2 = _mm512_cmp_pd_mask(_mm512_abs_pd(alp),thr,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_pd(al_c,k2,v8_0);
+			   k3 = _mm512_cmp_pd_mask(_mm512_abs_pd(bet),thr,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_pd(be_c,k3,v8_0);
+			   k4 = _mm512_cmp_pd_mask(_mm512_abs_pd(gam),thr,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_pd(ga_c,k4,v8_0);
 			   //al_c = alpha;
-			   t0 = _mm512_add_pd(alpha,v8_2pi);
-			   k2 = _mm512_cmp_pd_mask(alpha,v8_0,_CMP_LT_OQ);
-			   alpha = _mm512_mask_mov_pd(al_c,k2,fmod_zmm8r8(t0,v8_2pi));
+			   t0 = _mm512_add_pd(alp,v8_2pi);
+			   k2 = _mm512_cmp_pd_mask(alp,v8_0,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_pd(al_c,k2,fmod_zmm8r8(t0,v8_2pi));
 			   //be_c = beta;
-			   t1 = _mm512_add_pd(beta,v8_2pi);
-			   k3 = _mm512_cmp_pd_mask(beta,v8_0,_CMP_LT_OQ);
-			   beta = _mm512_mask_mov_pd(be_c,k3,fmod_zmm8r8(t1,v8_pi));
+			   t1 = _mm512_add_pd(bet,v8_2pi);
+			   k3 = _mm512_cmp_pd_mask(bet,v8_0,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_pd(be_c,k3,fmod_zmm8r8(t1,v8_pi));
 			   //ga_c = gamma;
-			   t2 = _mm512_add_pd(gamma,v8_2pi);
-			   k4 = _mm512_cmp_pd_mask(gamma,v8_0,_CMP_LT_OQ);
-			   gamma = _mm512_mask_mov_pd(ga_c,k4,fmod_zmm8r8(t2,v8_2pi));
+			   t2 = _mm512_add_pd(gam,v8_2pi);
+			   k4 = _mm512_cmp_pd_mask(gam,v8_0,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_pd(ga_c,k4,fmod_zmm8r8(t2,v8_2pi));
+			   _mm512_store_pd(&alpha[0],alp);
+			   _mm512_store_pd(&beta[0], bet);
+			   _mm512_store_pd(&gamma[0],gam);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void
+		      rmat9x8_to_ea3x8_u_zmm8r8(const DCM9x8 rm,
+		                              double * __restrict  alpha,
+					      double * __restrict  beta,
+					      double * __restrict  gamma) {
+
+                           const    __m512d  thr  = _mm512_set1_pd(1.0e-8);
+			   register __m512d  t0   = v8_0;
+			   register __m512d  t1   = v8_0;
+			   register __m512d  t2   = v8_0;
+			   register __m512d  zeta = v8_0;
+			   register __m512d  al_c = v8_0;
+			   register __m512d  be_c = v8_0;
+			   register __m512d  ga_c = v8_0;
+			   register __m512d  alp  = v8_0;
+			   register __m512d  bet  = v8_0;
+			   register __m512d  gam  = v8_0;
+			   __mmask8 k1 = 0x0;
+			   __mmask8 k2 = 0x0;
+			   __mmask8 k3 = 0x0;
+			   __mmask8 k4 = 0x0;
+			   k1 = _mm512_cmp_pd_mask(rm.m_vRow9,v8_1,_CMP_NEQ_OQ);
+			   t0 = _mm512_mul_pd(rm.m_vRow9,rm.m_vRow9);
+			   zeta = _mm512_div_pd(_mm512_sqrt_pd(_mm512_sub_pd(v8_1,t0)));
+			   t0 = _mm512_sub_pd(v8_0,rm.vRow8);
+			   alp = _mm512_mask_blend_pd(k1,_mm512_atan2_pd(rm.vRow2,rm.vRow1),
+			                                   _mm512_atan2_pd(_mm512_mul_pd(rm.vRow7,zeta),
+			   				                   _mm512_mul_pd(t0,zeta)));
+			   t1    = _mm512_mul_pd(v8_1o2,_mm512_mul_pd(v8_pi,_mm512_sub_pd(v8_1,rm.vRow9)));
+			   bet  = _mm512_mask_blend_pd(k1,t1,_mm512_acos_pd(rm.vRow9));
+			   gam = _mm512_mask_blend_pd(k1,v8_0,_mm512_atan_pd(_mm512_mul_pd(rm.vRow3,zeta),
+			                                                        _mm512_mul_pd(rm.vRow6,zeta)));
+			   al_c = alp;
+			   be_c = bet;
+			   ga_c = gam;
+			   k2 = _mm512_cmp_pd_mask(_mm512_abs_pd(alp),thr,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_pd(al_c,k2,v8_0);
+			   k3 = _mm512_cmp_pd_mask(_mm512_abs_pd(bet),thr,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_pd(be_c,k3,v8_0);
+			   k4 = _mm512_cmp_pd_mask(_mm512_abs_pd(gam),thr,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_pd(ga_c,k4,v8_0);
+			   //al_c = alpha;
+			   t0 = _mm512_add_pd(alp,v8_2pi);
+			   k2 = _mm512_cmp_pd_mask(alp,v8_0,_CMP_LT_OQ);
+			   alp = _mm512_mask_mov_pd(al_c,k2,fmod_zmm8r8(t0,v8_2pi));
+			   //be_c = beta;
+			   t1 = _mm512_add_pd(bet,v8_2pi);
+			   k3 = _mm512_cmp_pd_mask(bet,v8_0,_CMP_LT_OQ);
+			   bet = _mm512_mask_mov_pd(be_c,k3,fmod_zmm8r8(t1,v8_pi));
+			   //ga_c = gamma;
+			   t2 = _mm512_add_pd(gam,v8_2pi);
+			   k4 = _mm512_cmp_pd_mask(gam,v8_0,_CMP_LT_OQ);
+			   gam = _mm512_mask_mov_pd(ga_c,k4,fmod_zmm8r8(t2,v8_2pi));
+			   _mm512_storeu_pd(&alpha[0],alp);
+			   _mm512_storeu_pd(&beta[0], bet);
+			   _mm512_storeu_pd(&gamma[0],gam);
 		     }
 					
 		      
