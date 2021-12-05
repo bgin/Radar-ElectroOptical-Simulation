@@ -606,7 +606,7 @@ namespace gms {
 			    alp = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_n1)),
 			                            _mm512_mul_pd(chi,_mm512_mul_ps(c1,v8_n1)));
 			    bet  = _mm512_atan2_pd(_mm512_mul_pd(v8_2,chi),_mm512_sub_pd(qxw,qyz));
-			    const __m512d c2 = _mm512_fmadd_pd(q_x,_qy,t1);
+			    const __m512d c2 = _mm512_fmadd_pd(q_x,q_y,t1);
 			    gam = _mm512_atan2_pd(_mm512_mul_pd(chi,_mm512_mul_pd(c0,v8_1)),
 			                            _mm512_mul_pd(chi,_mm512_mul_pd(c2,v8_n1)));
 			 }
