@@ -74,28 +74,34 @@ namespace gms {
 
 		namespace {
 		           // Cache-aligned const data.
-                           static const __m512 cl1[2] = {_mm512_set1_ps(50.0e3F),
+                           static const __attribute__((aligned(64))) 
+			                  __m512 cl1[2] = {_mm512_set1_ps(50.0e3F),
 			                               	 _mm512_set1_ps(0.8F)};
-			   static const __m512 cl2[6] = {_mm512_set1_ps(5.76),
+			   static const __attribute__((aligned(64))) 
+				         __m512 cl2[6] = {_mm512_set1_ps(5.76),
 						         _mm512_set1_ps(1.27F), 
                                                          _mm512_set1_ps(9.11F),
 			                                 _mm512_set1_ps(6.02F),
 							 _mm512_set1_ps(10.0F),
 							 _mm512_set1_ps(12.953)};
 			                         
-			   static const __m512 cl3[2] = {_mm512_set1_ps(0.0795775F),
+			   static const __attribute__((aligned(64))) 
+				           __m512 cl3[2] = {_mm512_set1_ps(0.0795775F),
 			                                  _mm512_set1_ps(47.7F)};
 
-			   static const __m512d dl1[2] = {_mm512_set1_pd(50.0e3F),
+			   static const __attribute__((aligned(64))) 
+				           __m512d dl1[2] = {_mm512_set1_pd(50.0e3F),
 			                               	 _mm512_set1_pd(0.8F)};
-			   static const __m512d dl2[6] = {_mm512_set1_pd(5.76),
+			   static const __attribute__((aligned(64))) 
+				           __m512d dl2[6] = {_mm512_set1_pd(5.76),
 						         _mm512_set1_pd(1.27F), 
                                                          _mm512_set1_pd(9.11F),
 			                                 _mm512_set1_pd(6.02F),
 							 _mm512_set1_pd(10.0F),
 							 _mm512_set1_pd(12.953)};
 			                         
-			   static const __m512d dl3[2] = {_mm512_set1_pd(0.0795775F),
+			   static const __attribute__((aligned(64))) 
+				             __m512d dl3[2] = {_mm512_set1_pd(0.0795775F),
 			                                  _mm512_set1_pd(47.7F)};
 
 		      __ATTR_REGCALL__
