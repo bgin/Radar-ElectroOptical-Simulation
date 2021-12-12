@@ -74,34 +74,28 @@ namespace gms {
 
 		namespace {
 		           // Cache-aligned const data.
-                           static const __attribute__((aligned(64))) 
-			                  __m512 cl1[2] = {_mm512_set1_ps(50.0e3F),
+                           static const __m512 cl1[2] = {_mm512_set1_ps(50.0e3F),
 			                               	 _mm512_set1_ps(0.8F)};
-			   static const __attribute__((aligned(64))) 
-				         __m512 cl2[6] = {_mm512_set1_ps(5.76),
+			   static const __m512 cl2[6] = {_mm512_set1_ps(5.76),
 						         _mm512_set1_ps(1.27F), 
                                                          _mm512_set1_ps(9.11F),
 			                                 _mm512_set1_ps(6.02F),
 							 _mm512_set1_ps(10.0F),
 							 _mm512_set1_ps(12.953)};
 			                         
-			   static const __attribute__((aligned(64))) 
-				           __m512 cl3[2] = {_mm512_set1_ps(0.0795775F),
+			   static const __m512 cl3[2] = {_mm512_set1_ps(0.0795775F),
 			                                  _mm512_set1_ps(47.7F)};
 
-			   static const __attribute__((aligned(64))) 
-				           __m512d dl1[2] = {_mm512_set1_pd(50.0e3F),
+			   static const __m512d dl1[2] = {_mm512_set1_pd(50.0e3F),
 			                               	 _mm512_set1_pd(0.8F)};
-			   static const __attribute__((aligned(64))) 
-				           __m512d dl2[6] = {_mm512_set1_pd(5.76),
+			   static const __m512d dl2[6] = {_mm512_set1_pd(5.76),
 						         _mm512_set1_pd(1.27F), 
                                                          _mm512_set1_pd(9.11F),
 			                                 _mm512_set1_pd(6.02F),
 							 _mm512_set1_pd(10.0F),
 							 _mm512_set1_pd(12.953)};
 			                         
-			   static const __attribute__((aligned(64))) 
-				             __m512d dl3[2] = {_mm512_set1_pd(0.0795775F),
+			   static const __m512d dl3[2] = {_mm512_set1_pd(0.0795775F),
 			                                  _mm512_set1_pd(47.7F)};
 
 		      __ATTR_REGCALL__
@@ -286,8 +280,10 @@ namespace gms {
 		                                           const __m512 f_mhz,
 							   const __m512 a_e_meter,
 							   const __m512 theta_los,
-							   const __m512 d_hzn_meter[2],
-							   const __m512 d_h_e_meter[2],
+							   const __m512 d_hzn_meter1,
+							   const __m512 d_hzn_meter2,
+							   const __m512 d_h_e_meter1,
+							   const __m512 d_h_e_meter2,
 							   const __m512 Z_g_re,
 							   const __m512 Z_g_im) {
                            
@@ -301,7 +297,7 @@ namespace gms {
 			    const  __m512 _0_5       = _mm512_set1_ps(0.5F);
 			    const  __m512 _0_75      = _mm512_set1_ps(0.75F);
 			    const  __m512 _0_3       = _mm512_set1_ps(0.333333333333333333333333333333F);
-			    const          __m512 t5         = _mm512_pow_ps(f_mhz,_0_3);
+			    const  __m512 t5         = _mm512_pow_ps(f_mhz,_0_3);
 			    const  __m512 _n0_3      = _mm512_set1_ps(-0.33333333333333333333333333333F);
 			    const  __m512 _1_607     = _mm512_set1_ps(1.607F);
 			    const  __m512 _0_017778  = _mm512_set1_ps(0.017778F);
@@ -311,13 +307,13 @@ namespace gms {
 			    const  __m512 _20        = _mm512_set1_ps(20.0F);
 			    const  __m512 a_0_meter  = _mm512_set1_ps(6370.0e3F);
 			    const  __m512 theta_nlos = _mm512_sub_ps(_mm512_div_ps(d_meter,a_e_meter),theta_los);
-			    const  __m512 d_ML_meter = _mm512_add_ps(d_hzn_meter[0],d_hzn_meter[1]);
-			    const  __m512 t0         = _mm512_mul_ps(d_hzn_meter[0],d_hzn_meter[0]);
-			    const  __m512 t1         = _mm512_mul_ps(d_hzn_meter[1],d_hzn_meter[1]);
+			    const  __m512 d_ML_meter = _mm512_add_ps(d_hzn_meter1,d_hzn_meter2);
+			    const  __m512 t0         = _mm512_mul_ps(d_hzn_meter1,d_hzn_meter1);
+			    const  __m512 t1         = _mm512_mul_ps(d_hzn_meter2,d_hzn_meter2);
 			    const  __m512 t2         = _mm512_div_ps(_mm512_pow_ps(f_mhz,_n0_3),
 								                cabs_zmm16r4(Z_g_re,Z_ge_im));
-			    const          __m512 t3         = _mm512_mul_ps(d_hzn_meter[0],_0_001);
-			    const          __m512 t4         = _mm512_mul_ps(d_hzn_meter[1],_0_001);
+			    const          __m512 t3         = _mm512_mul_ps(d_hzn_meter1,_0_001);
+			    const          __m512 t4         = _mm512_mul_ps(d_hzn_meter2,_0_001);
 			    
 			    // Compute 3 radii.
 			     // C_0 is the ratio of the 4/3 earth to effective earth (technically Vogler 1964 ratio is 4/3 to effective earth k value), all raised to the (1/3) power.
@@ -329,7 +325,7 @@ namespace gms {
                             B_0[0]     = _mm512_sub_ps(_1_607,K[0]);
 			    
 			    
-			    a_meter[1] = _mm512_mul_ps(_0_5,_mm512_div_ps(t0,h_e_meter[0]));
+			    a_meter[1] = _mm512_mul_ps(_0_5,_mm512_div_ps(t0,d_h_e_meter1));
 			    C_0[1]     = _mm512_pow_ps(_mm512_mul_ps(_0_75,
 			                                          _mm512_div_ps(a_0_meter,a_meter[1])),_0_3);
 			    K[1]       = _mm512_mul_ps(0_017778,_mm512_mul_ps(C_0[1],t2));
@@ -337,7 +333,7 @@ namespace gms {
 			    const __m512 c1 = _mm512_mul_ps(C_0[1],C_0[1]);
 			    x_km[1]    = _mm512_mul_ps(B_0[1],_mm512_mul_ps(c1,_mm512_mul_ps(t5,t3)));
 			    F_x_db[0]  = itm_height_function_zmm16r4(x_km[1],K[1]);
-			    a_meter[2] = _mm512_mul_ps(_0_5,_mm512_div_ps(t1,h_e_meter[1]));
+			    a_meter[2] = _mm512_mul_ps(_0_5,_mm512_div_ps(t1,d_h_e_meter2));
 			    C_0[2]     = _mm512_pow_ps(_mm512_mul_ps(_0_75,
 			                                          _mm512_div_ps(a_0_meter,a_meter[2])),_0_3);
 			    K[2]       = _mm512_mul_ps(0_017778,_mm512_mul_ps(C_0[2],t2));
@@ -509,8 +505,10 @@ namespace gms {
 		                                           const __m512d f_mhz,
 							   const __m512d a_e_meter,
 							   const __m512d theta_los,
-							   const __m512d d_hzn_meter[2],
-							   const __m512d d_h_e_meter[2],
+							   const __m512d d_hzn_meter1,
+							   const __m512d d_hzn_meter2,
+							   const __m512d d_h_e_meter1,
+							   const __m512d d_h_e_meter2,
 							   const __m512d Z_g_re,
 							   const __m512d Z_g_im) {
                            
@@ -534,13 +532,13 @@ namespace gms {
 			    const  __m512d _20        = _mm512_set1_pd(20.0);
 			    const  __m512d a_0_meter  = _mm512_set1_pd(6370.0e3);
 			    const  __m512d theta_nlos = _mm512_sub_pd(_mm512_div_pd(d_meter,a_e_meter),theta_los);
-			    const  __m512d d_ML_meter = _mm512_add_pd(d_hzn_meter[0],d_hzn_meter[1]);
-			    const  __m512d t0         = _mm512_mul_pd(d_hzn_meter[0],d_hzn_meter[0]);
-			    const  __m512d t1         = _mm512_mul_pd(d_hzn_meter[1],d_hzn_meter[1]);
+			    const  __m512d d_ML_meter = _mm512_add_pd(d_hzn_meter1,d_hzn_meter2);
+			    const  __m512d t0         = _mm512_mul_pd(d_hzn_meter1,d_hzn_meter1);
+			    const  __m512d t1         = _mm512_mul_pd(d_hzn_meter2,d_hzn_meter2);
 			    const  __m512d t2         = _mm512_div_pd(_mm512_pow_pd(f_mhz,_n0_3),
 								                cabs_zmm8r8(Z_g_re,Z_ge_im));
-			    const          __m512d t3         = _mm512_mul_pd(d_hzn_meter[0],_0_001);
-			    const          __m512d t4         = _mm512_mul_pd(d_hzn_meter[1],_0_001);
+			    const          __m512d t3         = _mm512_mul_pd(d_hzn_meter1,_0_001);
+			    const          __m512d t4         = _mm512_mul_pd(d_hzn_meter2,_0_001);
 			    
 			    // Compute 3 radii.
 			     // C_0 is the ratio of the 4/3 earth to effective earth (technically Vogler 1964 ratio is 4/3 to effective earth k value), all raised to the (1/3) power.
@@ -552,7 +550,7 @@ namespace gms {
                             B_0[0]     = _mm512_sub_pd(_1_607,K[0]);
 			    
 			    
-			    a_meter[1] = _mm512_mul_pd(_0_5,_mm512_div_pd(t0,h_e_meter[0]));
+			    a_meter[1] = _mm512_mul_pd(_0_5,_mm512_div_pd(t0,d_h_e_meter1));
 			    C_0[1]     = _mm512_pow_pd(_mm512_mul_ps(_0_75,
 			                                          _mm512_div_pd(a_0_meter,a_meter[1])),_0_3);
 			    K[1]       = _mm512_mul_pd(0_017778,_mm512_mul_pd(C_0[1],t2));
@@ -560,7 +558,7 @@ namespace gms {
 			    const __m512d c1 = _mm512_mul_pd(C_0[1],C_0[1]);
 			    x_km[1]    = _mm512_mul_pd(B_0[1],_mm512_mul_pd(c1,_mm512_mul_pd(t5,t3)));
 			    F_x_db[0]  = itm_height_function_zmm8r8(x_km[1],K[1]);
-			    a_meter[2] = _mm512_mul_pd(_0_5,_mm512_div_pd(t1,h_e_meter[1]));
+			    a_meter[2] = _mm512_mul_pd(_0_5,_mm512_div_pd(t1,d_h_e_meter2));
 			    C_0[2]     = _mm512_pow_pd(_mm512_mul_pd(_0_75,
 			                                          _mm512_div_pd(a_0_meter,a_meter[2])),_0_3);
 			    K[2]       = _mm512_mul_pd(0_017778,_mm512_mul_pd(C_0[2],t2));
