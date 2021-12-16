@@ -41,59 +41,76 @@ namespace gms {
 			   register __m512 y04,y05,y06,y07;
 			   register __m512 y08,y09,y10,y11;
 			   register __m512 y12,y13,y14,y15;
+                           register __m512 c00,c01,c02,c03;
+			   register __m512 c04,c05,c06,c07;
+			   register __m512 c08,c09,c10,c11;
+			   register __m512 c12,c13,c14,c15;
+			   c00 = x00;
+                           c01 = x01;
+			   y00 = _mm512_unpacklo_ps(c00,c01);
+			   y01 = _mm512_unpackhi_ps(*x00,*x01);
+			   c02 = x02;
+			   c03 = x03;
+			   y02 = _mm512_unpacklo_ps(c02,c03);
+			   y03 = _mm512_unpackhi_ps(c02,c03);
+			   c04 = x04;
+			   c05 = x05;
+			   y04 = _mm512_unpacklo_ps(c04,c05);
+			   y05 = _mm512_unpackhi_ps(c04,c05);
+			   c06 = x06;
+			   c07 = x07;
+			   y06 = _mm512_unpacklo_ps(c06,c07);
+			   y07 = _mm512_unpackhi_ps(c06,c07);
+			   c08 = x08;
+			   c09 = x09
+			   y08 = _mm512_unpacklo_ps(c08,c09);
+			   y09 = _mm512_unpackhi_ps(c08,c09);
+			   c10 = x10;
+			   c11 = x11;
+			   y10 = _mm512_unpacklo_ps(c10,c11);
+			   y11 = _mm512_unpackhi_ps(c10,c11);
+			   c12 = x12;
+			   c13 = x13;
+			   y12 = _mm512_unpacklo_ps(c12,c13);
+			   y13 = _mm512_unpackhi_ps(c12,c13);
+			   c14 = x14;
+			   c15 = x15;
+			   y14 = _mm512_unpacklo_ps(c14,c15);
+			   y15 = _mm512_unpackhi_ps(c14,c15);
 
+			   c00 = _mm512_shuffle_ps(y00,y02,_MM_SHUFFLE(1,0,1,0));
+			   c01 = _mm512_shuffle_ps(y00,y02,_MM_SHUFFLE(3,2,3,2));
+			   c02 = _mm512_shuffle_ps(y01,y03,_MM_SHUFFLE(1,0,1,0));
+			   c03 = _mm512_shuffle_ps(y01,y03,_MM_SHUFFLE(3,2,3,2));
+			   c04 = _mm512_shuffle_ps(y04,y06,_MM_SHUFFLE(1,0,1,0));
+			   c05 = _mm512_shuffle_ps(y04,y06,_MM_SHUFFLE(3,2,3,2));
+			   c06 = _mm512_shuffle_ps(y05,y07,_MM_SHUFFLE(1,0,1,0));
+			   c07 = _mm512_shuffle_ps(y05,y07,_MM_SHUFFLE(3,2,3,2));
+			   c08 = _mm512_shuffle_ps(y08,y10,_MM_SHUFFLE(1,0,1,0));
+			   c09 = _mm512_shuffle_ps(y08,y10,_MM_SHUFFLE(3,2,3,2));
+			   c10 = _mm512_shuffle_ps(y09,y11,_MM_SHUFFLE(1,0,1,0));
+			   c11 = _mm512_shuffle_ps(y09,y11,_MM_SHUFFLE(3,2,3,2));
+			   c12 = _mm512_shuffle_ps(y12,y14,_MM_SHUFFLE(1,0,1,0));
+			   c13 = _mm512_shuffle_ps(y12,y14,_MM_SHUFFLE(3,2,3,2));
+			   c14 = _mm512_shuffle_ps(y13,y15,_MM_SHUFFLE(1,0,1,0));
+			   c15 = _mm512_shuffle_ps(y13,y15,_MM_SHUFFLE(3,2,3,2));
 
-
-		           y00 = _mm512_unpacklo_ps(x00,x01);
-			   y01 = _mm512_unpackhi_ps(x00,x01);
-			   y02 = _mm512_unpacklo_ps(x02,x03);
-			   y03 = _mm512_unpackhi_ps(x02,x03);
-			   y04 = _mm512_unpacklo_ps(x04,x05);
-			   y05 = _mm512_unpackhi_ps(x04,x05);
-			   y06 = _mm512_unpacklo_ps(x06,x07);
-			   y07 = _mm512_unpackhi_ps(0x6,x07);
-			   y08 = _mm512_unpacklo_ps(x08,x09);
-			   y09 = _mm512_unpackhi_ps(x08,x09);
-			   y10 = _mm512_unpacklo_ps(x10,x11);
-			   y11 = _mm512_unpackhi_ps(x10,x11);
-			   y12 = _mm512_unpacklo_ps(x12,x13);
-			   y13 = _mm512_unpackhi_ps(x12,x13);
-			   y14 = _mm512_unpacklo_ps(x14,x15);
-			   y15 = _mm512_unpackhi_ps(x14,x15);
-
-			   x00 = _mm512_shuffle_ps(y00,y02,_MM_SHUFFLE(1,0,1,0));
-			   x01 = _mm512_shuffle_ps(y00,y02,_MM_SHUFFLE(3,2,3,2));
-			   x02 = _mm512_shuffle_ps(y01,y03,_MM_SHUFFLE(1,0,1,0));
-			   x03 = _mm512_shuffle_ps(y01,y03,_MM_SHUFFLE(3,2,3,2));
-			   x04 = _mm512_shuffle_ps(y04,y06,_MM_SHUFFLE(1,0,1,0));
-			   x05 = _mm512_shuffle_ps(y04,y06,_MM_SHUFFLE(3,2,3,2));
-			   x06 = _mm512_shuffle_ps(y05,y07,_MM_SHUFFLE(1,0,1,0));
-			   x07 = _mm512_shuffle_ps(y05,y07,_MM_SHUFFLE(3,2,3,2));
-			   x08 = _mm512_shuffle_ps(y08,y10,_MM_SHUFFLE(1,0,1,0));
-			   x09 = _mm512_shuffle_ps(y08,y10,_MM_SHUFFLE(3,2,3,2));
-			   x10 = _mm512_shuffle_ps(y09,y11,_MM_SHUFFLE(1,0,1,0));
-			   x11 = _mm512_shuffle_ps(y09,y11,_MM_SHUFFLE(3,2,3,2));
-			   x12 = _mm512_shuffle_ps(y12,y14,_MM_SHUFFLE(1,0,1,0));
-			   x13 = _mm512_shuffle_ps(y12,y14,_MM_SHUFFLE(3,2,3,2));
-			   x14 = _mm512_shuffle_ps(y13,y15,_MM_SHUFFLE(1,0,1,0));
-			   x15 = _mm512_shuffle_ps(y13,y15,_MM_SHUFFLE(3,2,3,2));
-
-			   y00 = _mm512_shuffle_f32x4(x00,x04,0x88);
-			   y01 = _mm512_shuffle_f32x4(x01,x05,0x88);
-			   y02 = _mm512_shuffle_f32x4(x02,x06,0x88);
-                           y03 = _mm512_shuffle_f32x4(x03,x07,0x88);
-			   y04 = _mm512_shuffle_f32x4(x00,x04,0xdd);
-			   y05 = _mm512_shuffle_f32x4(x01,x05,0xdd);
-			   y06 = _mm512_shuffle_f32x4(x02,x06,0xdd);
-			   y07 = _mm512_shuffle_f32x4(x03,x07,0xdd);
-			   y08 = _mm512_shuffle_f32x4(x08,x12,0x88);
-			   y09 = _mm512_shuffle_f32x4(x09,x13,0x88);
-			   y10 = _mm512_shuffle_f32x4(x10,x14,0x88);
-			   y11 = _mm512_shuffle_f32x4(x11,x15,0x88);
-			   y12 = _mm512_shuffle_f32x4(x08,x12,0xdd);
-			   y13 = _mm512_shuffle_f32x4(x09,x13,0xdd);
-			   y14 = _mm512_shuffle_f32x4(x10,x14,0xdd);
-			   y15 = _mm512_shuffle_f32x4(x11,x15,0xdd);
+			   y00 = _mm512_shuffle_f32x4(c00,c04,0x88);
+			   y01 = _mm512_shuffle_f32x4(c01,c05,0x88);
+			   y02 = _mm512_shuffle_f32x4(c02,c06,0x88);
+                           y03 = _mm512_shuffle_f32x4(c03,c07,0x88);
+			   y04 = _mm512_shuffle_f32x4(c00,c04,0xdd);
+			   y05 = _mm512_shuffle_f32x4(c01,c05,0xdd);
+			   y06 = _mm512_shuffle_f32x4(c02,c06,0xdd);
+			   y07 = _mm512_shuffle_f32x4(c03,c07,0xdd);
+			   y08 = _mm512_shuffle_f32x4(c08,c12,0x88);
+			   y09 = _mm512_shuffle_f32x4(c09,c13,0x88);
+			   y10 = _mm512_shuffle_f32x4(c10,c14,0x88);
+			   y11 = _mm512_shuffle_f32x4(c11,c15,0x88);
+			   y12 = _mm512_shuffle_f32x4(c08,c12,0xdd);
+			   y13 = _mm512_shuffle_f32x4(x09,c13,0xdd);
+			   y14 = _mm512_shuffle_f32x4(c10,c14,0xdd);
+			   y15 = _mm512_shuffle_f32x4(c11,c15,0xdd);
 
 			   x00 = _mm512_shuffle_f32x4(y00,y88,0x88);
 			   x01 = _mm512_shuffle_f32x4(y01,y09,0x88);
@@ -667,7 +684,7 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void transpose_u_zmm16r4_16x16(float * __restrict __ATTR_ALIGN__(64)  x,
+		      void transpose_a_zmm16r4_16x16(float * __restrict __ATTR_ALIGN__(64)  x,
 		                                     float * __restrict __ATTR_ALIGN__(64)  y){
 		                                       
                            register __m512 y00,y01,y02,y03;
