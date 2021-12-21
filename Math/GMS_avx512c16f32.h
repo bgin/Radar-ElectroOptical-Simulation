@@ -192,7 +192,7 @@ namespace gms {
 		  __ATTR_HOT__
 		  __ATTR_ALIGN__(16)
 		  __ATTR_VECTORCALL__
-		  ZMM16c4(const AVX512c16f32 x) {
+		  ZMM16c4(const ZMM16c4 x) {
                           m_re = x.m_re;
                           m_im = x.m_im;
 		  }
