@@ -277,7 +277,7 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void transpose_u_ymm8r4_8x8_ip(float * __restrict __ATTR_ALIGN__(32) x) {
+		      void transpose_a_ymm8r4_8x8_ip(float * __restrict __ATTR_ALIGN__(32) x) {
 
                           register __m256 y0;
 			  register __m256 y1;
