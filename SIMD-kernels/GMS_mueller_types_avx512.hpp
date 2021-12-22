@@ -21,7 +21,6 @@ namespace file_info {
 }
 
 #include <immintrin.h>
-#include <complex>
 #include "GMS_avx512c16f32.h"
 #include "GMS_avx512c8f64.h"
 #include "GMS_avx512vecf32.h"
@@ -36,7 +35,7 @@ namespace  gms {
                      /*
                            Jones Vector based on two 16-tuple SIMD complex types.
                        */
-                        typedef struct JVec2x16c16 __ATTR_ALIGN__(64) {
+                        typedef struct__ATTR_ALIGN__(64)  JVec2x16c16  {
 
 
                                   ZMM16c4 j0;
@@ -48,7 +47,7 @@ namespace  gms {
 		        /*
                            Jones Vector based on two 8-tuple SIMD complex types.
                        */
-		       typedef struct JVec2x8c8 __ATTR_ALIGN__(64) {
+		       typedef struct__ATTR_ALIGN__(64)  JVec2x8c8  {
                                  
                                   ZMM8c8 j0;
 				  ZMM8c8 j1;
@@ -58,7 +57,7 @@ namespace  gms {
 		        /*
                            Jones Matrix based on four 16-tuple SIMD complex types.
                        */
-		       typedef struct JMat4x16c16 __ATTR_ALIGN__(64) {
+		       typedef struct  __ATTR_ALIGN__(64) JMat4x16c16 {
 
                                   ZMM16c4 j0;
 				  ZMM16c4 j1;
@@ -69,7 +68,7 @@ namespace  gms {
 		       /*
                            Jones Matrix based on four 8-tuple SIMD complex types.
                        */
-                       typedef struct JMat4x8c8 __ATTR_ALIGN__(64) {
+                       typedef struct __ATTR_ALIGN__(64)  JMat4x8c8 {
 
                                   ZMM8c8 j0;
 				  ZMM8c8 j1;
@@ -81,7 +80,7 @@ namespace  gms {
 		        /*
                            Stokes Vector based on four 16-tuple SIMD real types.
                        */
-		       typedef struct SVec4x16v16 __ATTR_ALIGN__(64) {
+		       typedef struct  __ATTR_ALIGN__(64) SVec4x16v16 {
 
                                   AVX512Vec16 s0;
 				  AVX512Vec16 s1;
@@ -93,7 +92,7 @@ namespace  gms {
 		         /*
                            Stokes Vector based on four 8-tuple SIMD real types.
                        */
-		       typedef struct SVec4x8v8 __ATTR_ALIGN__(64) {
+		       typedef struct  __ATTR_ALIGN__(64) SVec4x8v8 {
 
                                   __m512d s0;
 				  __m512d s1;
@@ -105,7 +104,7 @@ namespace  gms {
 		        /*
                            Mueller Matrix based on 16 16-tuple SIMD real types.
                        */
-                       typedef struct MMat16x16v16 __ATTR_ALIGN__(64) {
+                       typedef struct __ATTR_ALIGN__(64)  MMat16x16v16 {
 
                                   AVX512Vec16 m0;
 				  AVX512Vec16 m1;
@@ -129,7 +128,7 @@ namespace  gms {
 		          /*
                            Mueller Matrix based on 16 8-tuple SIMD real types.
                        */
-		       typedef struct MMat16x8v8 __ATTR_ALIGN__(64) {
+		       typedef struct __ATTR_ALIGN__(64)  MMat16x8v8 {
 
                                    __m512d m0;
 				   __m512d m1;
