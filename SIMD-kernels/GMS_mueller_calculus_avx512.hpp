@@ -30,6 +30,10 @@ namespace gms {
 
         namespace  math {
 
+	               /*
+                                Jones-Vector components -- packed single-precision
+                                16-tuple vectors of complex numbers [deinterleaved]
+                           */
                       __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
 		      __ATTR_ALIGN__(32)
@@ -328,11 +332,322 @@ namespace gms {
 
                        return (_mm512_sub_ps(carg(x.s),carg(x.p)));
 		 }
-   }
+
+
+	        /*
+                                Jones-Vector components -- packed double-precision
+                                16-8 vectors of complex numbers [deinterleaved]
+                */
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      JVec2x8c8
+                      JVec2x8c8_set_1() {
+
+		           JVec2x8c8 v;
+			   v.p = ZMM8c8(); // 'p' wave component
+			   v.s = ZMM8c8(); // 's' wave component
+			   return (v);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      JVec2x8c8
+                      JVec2x8c8_set_2(const std::complex<double> c1,
+		                      const std::complex<double> c2) {
+
+                          JVec2x8c8 v;
+			  v.p = ZMM8c8(c1);
+			  v.s = ZMM8c8(c2);
+			  return (v);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      JVec2x8c9
+                      JVec2x8c8_set_3(  const double * __restrict __ATTR_ALIGN__(64) re1,
+		                        const double * __restrict __ATTR_ALIGN__(64) im1,
+					const double * __restrict __ATTR_ALIGN__(64) re2,
+					const double * __restrict __ATTR_ALIGN__(64) im2) {
+
+                          JVec2x8c8 v;
+			  v.p = ZMM8c8(re1,im1);
+			  v.s = ZMM8c8(re2,im2);
+			  return (v);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      JVec2x8c8
+                      JVec2x8c8_set_4(  const double re1,
+		                        const double im1,
+					const double re2,
+					const double im2) {
+
+                           JVec2x8c8 v;
+			   v.p = ZMM8c8(re1,im1);
+			   v.s = ZMM8c8(re2,im2);
+			   return (v);
+		   }
+
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    JVec2x8c8
+                    JVec2x8c8_set_5(  const __m512d re1,
+		                      const __m512d im1,
+				      const __m512d re2,
+				      const __m512d im2) {
+
+                           JVec2x8c8 v;
+			   v.p = ZMM8c8(re1,im1);
+			   v.s = ZMM8c8(re2,im2);
+			   return (v);
+		   }
+
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    JVec2x8c8
+                    JVec2x8c8_set_6(const JVec2x8c8 x) {
+
+                          JVec2x16c16 v;
+			  v.p = x.j0;
+			  v.s = x.j1;
+			  return (v);
+		   }
+
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    JVec2x16c16
+                    JVec2x16c16_set_7(const ZMM16c4 s,
+		                      const ZMM16c4 p) {
+
+                         JVec2x8c8 v;
+			 v.p = s;
+			 v.s = p;
+			 return (v);
+		   }
+
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    JVec2x8c8
+                    JVec2x8c8_mul_ZMM8c8(const JVec2x8c8 x
+		                         const ZMM8c8 y) {
+
+                         JVec2x8c8 v;
+			 v.p = x.p*y;
+			 v.s = x.s*y;
+			 return (v);
+		   }
+
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    void
+		    JVec2x8c8_mul_ZMM8c8(JVec2x8c8 & x,
+		                         const ZMM8c8 y) {
+
+                         x.p *= y;
+			 x.s *= y;
+		  }
+
+
+		    __ATTR_REGCALL__
+                    __ATTR_ALWAYS_INLINE__
+		    __ATTR_ALIGN__(32)
+		    static inline
+		    JVec2x8c8
+                    JVec2x8c8_div_ZMM8c8(const JVec2x8c8 x,
+		                            const ZMM8c8 y) {
+
+                         JVec2x8c8 v;
+			 v.p = x.p/y;
+			 v.s = x.s/y;
+			 return (v);
+		  }
+
+
+		   __ATTR_REGCALL__
+                   __ATTR_ALWAYS_INLINE__
+		   __ATTR_ALIGN__(32)
+		   static inline
+                   void
+		   JVec2x8c8_div_ZMM8c8(JVec2x8c8 & x,
+		                           const ZMM8c8 y) {
+
+                         x.p /= y;
+			 x.s /= y;
+		  }
+
+
+		   __ATTR_REGCALL__
+                   __ATTR_ALWAYS_INLINE__
+		   __ATTR_ALIGN__(32)
+		   static inline
+		   ZMM8c8
+		   JVec2x8c8_mul_JVec2x8c8(const JVec2x8c8 x,
+		                               const JVec2x8c8 y) {
+
+                         ZMM8c8 c;
+			 c = x.p*y.p+x.s*y.s;
+			 return (c);
+		  }
+
+
+		   __ATTR_REGCALL__
+                   __ATTR_ALWAYS_INLINE__
+		   __ATTR_ALIGN__(32)
+		   static inline
+		   JVec2x8c8
+		   JVec2x8c8_conj(const JVec2x8c8 x) {
+
+		          JVec2x8c8 v;
+			  v.p = conj(x.p);
+			  v.s = conj(x.s);
+			  return (v);
+		  }
+
+
+		   __ATTR_REGCALL__
+                   __ATTR_ALWAYS_INLINE__
+		   __ATTR_ALIGN__(32)
+		   static inline
+		   JVec2x8c8
+		   JVec2x8c8_add_JVec2x8c8(const JVec2x8c8 x,
+		                               const JVec2x8c8 y) {
+
+                          JVec2x8c8 v;
+			  v.p = x.p+y.p;
+			  v.s = x.s+y.s;
+			  return (v);
+		 }
+
+
+		  __ATTR_REGCALL__
+                  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  void
+		  JVec2x8c8_add_JVec2x8c8(JVec2x8c8 & x,
+		                              const JVec2x8c8 y) {
+
+                         x.p += y.p;
+			 x.s += y.s;
+		 }
+
+
+		  __ATTR_REGCALL__
+                  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  JVec2x8c8
+		  JVec2x8c8_sub_JVec2x8c8(const JVec2x8c8 x,
+		                               const JVec2x8c8 y) {
+
+                          JVec2x8c8 v;
+			  v.p = x.p-y.p;
+			  v.s = x.s-y.s;
+			  return (v);
+		 }
+
+
+		  __ATTR_REGCALL__
+                  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  void
+		  JVec2x8c8_sub_JVec2x8c8(JVec2x8c8 & x,
+		                          const JVec2x8c8 y) {
+
+                         x.p -= y.p;
+			 x.s -= y.s;
+		 }
+
+
+		 // An intensity (vector norm)
+		  __ATTR_REGCALL__
+                  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  __m512
+		  JVec2x8c8_norm(const JVec2x8c8 x) {
+ 
+                     __m512 t0 = _mm512_fmadd_ps(x.p,x.p,
+		                          _mm512_mul_ps(x.s,x.s));
+		     return (_mm512_sqrt_ps(t0));
+		 }
+
+
+		  __ATTR_REGCALL__
+		  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  JVec2x8c8
+		  JVec2x8c8_negative(const JVec2x8c8 x) {
+
+                       JVec2x8c8 v;
+		       v.p = ~x.p;
+		       v.s = ~x.s;
+		       return (v);
+		 }
+
+
+		  __ATTR_REGCALL__
+		  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  __m512
+		  JVec2x8c8_psi(const JVec2x8c8 x) {
+
+                      __m512 t0 = _mm512_div_ps(cabs(x.p),cabs(x.s));
+		      return (_mm512_atan_ps(t0));
+		 }
+
+
+		  __ATTR_REGCALL__
+		  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  __m512
+		  JVec2x8c8_delta(const JVec2x8c8 x) {
+
+                       return (_mm512_sub_ps(carg(x.s),carg(x.p)));
+		 }
 
 
 
-}
+
+			   
+    } // math
+
+
+
+} // gms
 
 
 
