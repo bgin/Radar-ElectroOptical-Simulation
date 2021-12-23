@@ -337,6 +337,7 @@ namespace gms {
 	        /*
                                 Jones-Vector components -- packed double-precision
                                 16-8 vectors of complex numbers [deinterleaved]
+                               
                 */
 
 
@@ -640,7 +641,233 @@ namespace gms {
 		 }
 
 
+		 /*
 
+                         Jones Matrix implementation based on SIMD 
+                         16-tuple complex vector [deinterleaved]
+                         single-precision.
+                         @Reference
+
+                           
+                                  typedef struct  __ATTR_ALIGN__(64) JMat4x16c16 {
+
+                                      ZMM16c4 pp;
+				      ZMM16c4 ss;
+				      ZMM16c4 ps;
+				      ZMM16c4 sp;
+		                 }JMat4x16c16;
+                                 typedef struct __ATTR_ALIGN__(64)  JMat4x8c8 {
+
+                                       ZMM8c8 pp;
+				       ZMM8c8 ss;
+				       ZMM8c8 ps;
+				       ZMM8c8 sp;
+		                }JMat4x8c8;
+                  */
+
+		   __ATTR_REGCALL__
+                   __ATTR_ALWAYS_INLINE__
+		   __ATTR_ALIGN__(32)
+		   static inline
+		   JMat4x16c16
+		   JMat4x16c16_set_1() {
+ 
+                      JMat4x16c16 v;
+		      v.pp = ZMM16c4(); // 'pp' component
+		      v.ss = ZMM16c4(); // 'ss' component
+		      v.ps = ZMM16c4(); // 'ps' component
+		      v.sp = ZMM16c4(); // 'sp' component
+		      return (v);
+		 }
+
+
+		  __ATTR_REGCALL__
+                  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  JMat4x16c16
+		  JMat4x16c16_set_2(const std::complex<float> pp,
+		                    const std::complex<float> ss,
+				    const std::complex<float> ps,
+				    const std::complex<float> sp) {
+
+                       JMat4x16c16 v;
+		       v.pp = ZMM16c4(pp);
+		       v.ss = ZMM16c4(ss);
+		       v.ps = ZMM16c4(ps);
+		       v.sp = ZMM16c4(sp);
+		       return (v);
+		}
+		
+
+		  __ATTR_REGCALL__
+                  __ATTR_ALWAYS_INLINE__
+		  __ATTR_ALIGN__(32)
+		  static inline
+		  JMat4x16c16
+		  JMat4x16c16_set_3(const float * __restrict __ATTR_ALIGN__(64) re1,
+		                    const float * __restrict __ATTR_ALIGN__(64) im1,
+				    const float * __restrict __ATTR_ALIGN__(64) re2,
+				    const float * __restrict __ATTR_ALIGN__(64) im2,
+				    const float * __restrict __ATTR_ALIGN__(64) re3,
+				    const float * __restrict __ATTR_ALIGN__(64) im3,
+				    const float * __restrict __ATTR_ALIGN__(64) re4,
+				    const float * __restrict __ATTR_ALIGN__(64) im4) {
+
+                       JMatrix4x16c16 v;
+		       v.pp = ZMM16c4(re1,im1);
+		       v.ss = ZMM16c4(re2,im2);
+		       v.ps = ZMM16c4(re3,im3);
+		       v.sp = ZMM16c4(re4,im4);
+		       return (v);
+		}
+
+
+		 __ATTR_REGCALL__
+                 __ATTR_ALWAYS_INLINE__
+		 __ATTR_ALIGN__(32)
+		 static inline
+		 JMat4x16c16
+		 JMat4x16c16_set_4(const float re1,
+		                   const float im1,
+				   const float re2,
+				   const float im2,
+				   const float re3,
+				   const float im3,
+				   const float re4,
+				   const float im4) {
+
+                       JMatrix4x16c16 v;
+		       v.pp = ZMM16c4(re1,im1);
+		       v.ss = ZMM16c4(re2,im2);
+		       v.ps = ZMM16c4(re3,im3);
+		       v.sp = ZMM16c4(re4,im4);
+		       return (v);  
+	        }
+
+
+		 __ATTR_REGCALL__
+                 __ATTR_ALWAYS_INLINE__
+		 __ATTR_ALIGN__(32)
+		 static inline
+		 JMat4x16c16
+		 JMat4x16c16_set_5(const __m512 re1,
+		                   const __m512 im1,
+				   const __m512 re2,
+				   const __m512 im2,
+				   const __m512 re3,
+				   const __m512 im3,
+				   const __m512 re4,
+				   const __m512 im4) {
+
+                       JMatrix4x16c16 v;
+		       v.pp = ZMM16c4(re1,im1);
+		       v.ss = ZMM16c4(re2,im2);
+		       v.ps = ZMM16c4(re3,im3);
+		       v.sp = ZMM16c4(re4,im4);
+		       return (v); 
+	       }
+
+
+	       	 __ATTR_REGCALL__
+                 __ATTR_ALWAYS_INLINE__
+		 __ATTR_ALIGN__(32)
+		 static inline
+		 JMat4x16c16
+		 JMat4x16c16_set_6(const JMat4x16c16 x) {
+
+                      JMat4x16c16 v;
+		      v.pp = x.pp;
+		      v.ss = x.ss;
+		      v.ps = x.ps;
+		      v.sp = x.sp;
+		      return (v);
+	       }
+
+
+	        __ATTR_REGCALL__
+                __ATTR_ALWAYS_INLINE__
+	        __ATTR_ALIGN__(32)
+		static inline
+		JMat4x16c16
+		JMat4x16c16_set_7(const ZMM16c4 pp,
+		                  const ZMM16c4 ss,
+				  const ZMM16c4 ps,
+				  const ZMM16c4 sp) {
+
+                     JMat4x16c16 v;
+		     v.pp = pp;
+		     v.ss = ss;
+		     v.ps = ps;
+		     v.sp = sp;
+		     return (v);
+	      }
+
+
+	      // Jones Matrix multiplication
+	      __ATTR_REGCALL__
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_ALIGN__(32)
+	      static inline
+	      JMat4x16c16
+	      JMat4x16c16_mul_JMat4x16c16(const JMat4x16c16 m1,
+	                                  const JMat4x16c16 m2) {
+
+                    JMat4x16c16 v;
+		    v.pp = m1.sp*m2.ps+m1.pp*m2.pp;
+		    v.ss = m1.ss*m2.ss+m1.ps*m2.sp;
+		    v.ps = m1.ss*m2.ps+m1.ps*m2.pp;
+		    v.sp = m1.sp*m2.ss+m1.pp*m2.sp;
+		    return (v);
+	    }
+
+
+	      __ATTR_REGCALL__
+              __ATTR_ALWAYS_INLINE__
+	      __ATTR_ALIGN__(32)
+	      static inline
+	      void
+	      JMat4x16c16_mul_JMat4x16c16(JMat4x16c16 &m1,
+	                                  const JMat4x16c16 m2) {
+
+                    m1.pp = m1.sp*m2.ps+m1.pp*m2.pp;
+		    m1.ss = m1.ss*m2.ss+m1.ps*m2.sp;
+		    m1.ps = m1.ss*m2.ps+m1.ps*m2.pp;
+		    m1.sp = m1.sp*m2.ss+m1.pp*m2.sp;
+	   }
+
+
+	   // Jones Matrix multiplied by constant
+	     __ATTR_REGCALL__
+             __ATTR_ALWAYS_INLINE__
+	     __ATTR_ALIGN__(32)
+	     static inline
+	     JMat4x16c16
+	     JMat4x16c16_mul_ZMM16c4(const JMat4x16c16 m
+	                             const ZMM16c4 x) {
+
+                   JMat4x16c16 v;
+		   v.pp = m.pp*x;
+		   v.ss = m.ss*x;
+		   v.ps = m.ps*x;
+		   v.sp = m.sp*x;
+		   return (v);
+	   }
+
+
+	    __ATTR_REGCALL__
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_ALIGN__(32)
+	    static inline
+            void
+	    JMat4x16c16_mul_JMat4x16c16(JMat4x6c16 &m,
+	                                const ZMM16c x) {
+
+                   m.pp = m.pp*x;
+		   m.ss = m.ss*x;
+		   m.ps = m.ps*x;
+		   m.sp = m.sp*x;
+	 }
 
 			   
     } // math
