@@ -38,8 +38,8 @@ namespace gms {
                       JVec2x16c16_set_1() {
 
 		           JVec2x16c16 v;
-			   v.j0 = ZMM16c4();
-			   v.j1 = ZMM16c4();
+			   v.p = ZMM16c4(); // 'p' wave component
+			   v.s = ZMM16c4(); // 's' wave component
 			   return (v);
 		     }
 
@@ -53,8 +53,8 @@ namespace gms {
 		                        const std::complex<float> c2) {
 
                           JVec2x16c16 v;
-			  v.j0 = ZMM16c4(c1);
-			  v.j1 = ZMM16c4(c2);
+			  v.p = ZMM16c4(c1);
+			  v.s = ZMM16c4(c2);
 			  return (v);
 		    }
 
@@ -70,8 +70,8 @@ namespace gms {
 					const float * __restrict __ATTR_ALIGN__(64) im2) {
 
                           JVec2x16c16 v;
-			  v.j0 = ZMM16c4(re1,im1);
-			  v.j1 = ZMM16c4(re2,im2);
+			  v.p = ZMM16c4(re1,im1);
+			  v.s = ZMM16c4(re2,im2);
 			  return (v);
 		    }
 
@@ -87,8 +87,8 @@ namespace gms {
 					const float im2) {
 
                            JVec2x16c16 v;
-			   v.j0 = ZMM16c4(re1,im1);
-			   v.j1 = ZMM16c4(re2,im2);
+			   v.p = ZMM16c4(re1,im1);
+			   v.s = ZMM16c4(re2,im2);
 			   return (v);
 		   }
 
@@ -104,8 +104,8 @@ namespace gms {
 				      const __m512 im2) {
 
                            JVec2x16c16 v;
-			   v.j0 = ZMM16c4(re1,im1);
-			   v.j1 = ZMM16c4(re2,im2);
+			   v.p = ZMM16c4(re1,im1);
+			   v.s = ZMM16c4(re2,im2);
 			   return (v);
 		   }
 
@@ -118,8 +118,8 @@ namespace gms {
                     JVec2x16c16_set_6(const JVec2x16c16 x) {
 
                           JVec2x16c16 v;
-			  v.j0 = x.j0;
-			  v.j1 = x.j1;
+			  v.p = x.j0;
+			  v.s = x.j1;
 			  return (v);
 		   }
 
@@ -133,8 +133,8 @@ namespace gms {
 		                      const ZMM16c4 p) {
 
                          JVec2x16c16 v;
-			 v.j0 = s;
-			 v.j1 = p;
+			 v.p = s;
+			 v.s = p;
 			 return (v);
 		   }
 
@@ -148,8 +148,8 @@ namespace gms {
 		                            const ZMM16c4 y) {
 
                          JVec2x16c16 v;
-			 v.j0 = x.j0*y;
-			 v.j1 = x.j1*y;
+			 v.p = x.p*y;
+			 v.s = x.s*y;
 			 return (v);
 		   }
 
@@ -162,8 +162,8 @@ namespace gms {
 		    JVec2x16c16_mul_ZMM16c4(JVec2x16c16 & x,
 		                            const ZMM16c4 y) {
 
-                         x.j0 *= y;
-			 x.j1 *= y;
+                         x.p *= y;
+			 x.s *= y;
 		  }
 
 
@@ -176,8 +176,8 @@ namespace gms {
 		                            const ZMM16c4 y) {
 
                          JVec2x16c16 v;
-			 v.j0 = x.j0/y;
-			 v.j1 = x.j1/y;
+			 v.p = x.p/y;
+			 v.s = x.s/y;
 			 return (v);
 		  }
 
@@ -190,8 +190,8 @@ namespace gms {
 		   JVec2x16c16_div_ZMM16c4(JVec2x16c16 & x,
 		                           const ZMM16c4 y) {
 
-                         x.j0 /= y;
-			 x.j1 /= y;
+                         x.p /= y;
+			 x.s /= y;
 		  }
 
 
@@ -204,7 +204,7 @@ namespace gms {
 		                               const JVec2x16c16 y) {
 
                          ZMM16c4 c;
-			 c = x.j0*y.j0+x.j1*y.j1;
+			 c = x.p*y.p+x.s*y.s;
 			 return (c);
 		  }
 
@@ -217,8 +217,8 @@ namespace gms {
 		   JVec2x16c16_conj(const JVec2x16c16 x) {
 
 		          JVec2x16c16 v;
-			  v.j0 = conj(x.j0);
-			  v.j1 = conj(x.j1);
+			  v.p = conj(x.p);
+			  v.s = conj(x.s);
 			  return (v);
 		  }
 
@@ -232,8 +232,8 @@ namespace gms {
 		                               const JVec2x16c16 y) {
 
                           JVec2x16c16 v;
-			  v.j0 = x.j0+y.j0;
-			  v.j1 = x.j1+y.j1;
+			  v.p = x.p+y.p;
+			  v.s = x.s+y.s;
 			  return (v);
 		 }
 
@@ -246,8 +246,8 @@ namespace gms {
 		  JVec2x16c16_add_JVec2x16c16(JVec2x16c16 & x,
 		                              const JVec2x16c16 y) {
 
-                         x.j0 += y.j0;
-			 x.j1 += y.j1;
+                         x.p += y.p;
+			 x.s += y.s;
 		 }
 
 
@@ -260,8 +260,8 @@ namespace gms {
 		                               const JVec2x16c16 y) {
 
                           JVec2x16c16 v;
-			  v.j0 = x.j0-y.j0;
-			  v.j1 = x.j1-y.j1;
+			  v.p = x.p-y.p;
+			  v.s = x.s-y.s;
 			  return (v);
 		 }
 
@@ -274,8 +274,8 @@ namespace gms {
 		  JVec2x16c16_sub_JVec2x16c16(JVec2x16c16 & x,
 		                              const JVec2x16c16 y) {
 
-                         x.j0 -= y.j0;
-			 x.j1 -= y.j1;
+                         x.p -= y.p;
+			 x.s -= y.s;
 		 }
 
 
@@ -287,8 +287,8 @@ namespace gms {
 		  __m512
 		  JVec2x16c16_norm(const JVec2x16c16 x) {
  
-                     __m512 t0 = _mm512_fmadd_ps(x.j0,x.j0,
-		                          _mm512_mul_ps(x.j1,x.j1));
+                     __m512 t0 = _mm512_fmadd_ps(x.p,x.p,
+		                          _mm512_mul_ps(x.s,x.s));
 		     return (_mm512_sqrt_ps(t0));
 		 }
 
@@ -301,8 +301,8 @@ namespace gms {
 		  JVec2x16c16_negative(const JVec2x16c16 x) {
 
                        JVec2x16c16 v;
-		       v.j0 = ~x.j0;
-		       v.j1 = ~x.j1;
+		       v.p = ~x.p;
+		       v.s = ~x.s;
 		       return (v);
 		 }
 
@@ -314,7 +314,7 @@ namespace gms {
 		  __m512
 		  JVec2x16c16_psi(const JVec2x16c16 x) {
 
-                      __m512 t0 = _mm512_div_ps(cabs(x.j0),cabs(x.j1));
+                      __m512 t0 = _mm512_div_ps(cabs(x.p),cabs(x.s));
 		      return (_mm512_atan_ps(t0));
 		 }
 
@@ -326,7 +326,7 @@ namespace gms {
 		  __m512
 		  JVec2x16c16_delta(const JVec2x16c16 x) {
 
-                       return (_mm512_sub_ps(carg(x.j1),carg(x.j0)));
+                       return (_mm512_sub_ps(carg(x.s),carg(x.p)));
 		 }
    }
 
