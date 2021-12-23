@@ -38,8 +38,8 @@ namespace  gms {
                         typedef struct__ATTR_ALIGN__(64)  JVec2x16c16  {
 
 
-                                  ZMM16c4 j0;
-				  ZMM16c4 j1;
+                                  ZMM16c4 p;
+				  ZMM16c4 s;
 
 		       }JVec2x16c16;
 
@@ -49,8 +49,8 @@ namespace  gms {
                        */
 		       typedef struct__ATTR_ALIGN__(64)  JVec2x8c8  {
                                  
-                                  ZMM8c8 j0;
-				  ZMM8c8 j1;
+                                  ZMM8c8 p;
+				  ZMM8c8 s;
 		       }JVec2x8c8;
 
 
