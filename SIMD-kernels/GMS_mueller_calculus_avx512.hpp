@@ -869,6 +869,47 @@ namespace gms {
 		   m.sp = m.sp*x;
 	 }
 
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_rotator(const __m512 theta) {
+
+              const __m512 vc  = _mm512_cos_ps(theta);
+	      const __m512 vs  = _mm512_sin_ps(theta);
+	      const __m512 nvs = _mm512_sub_ps(_mm512_setzero_ps(),vs);
+	      JMat4x16c16 v;
+	      v.pp.re = vc;
+	      v.ss.re = vc;
+	      v.ps.re = vs;
+	      v.sp.re = vns;
+	      return (v);
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_linear_retarder(const __m512 phase,
+	                              const __m512 angle) {
+
+             const ZMM16c4 j = ZMM16c4(__m512_setzero_ps(),
+	                               __m512_set1_ps(-1.0F));
+	     const __m512 hphase = _mm512_mul_ps(phase,
+	                               _mm512_set1_ps(0.5F));
+	     const ZMM16c4 phasor = cexp(j*hphase);
+	     JMat4x16c16 v;
+	     v.pp = phasor;
+	     v.ss = _mm512_set1_ps(1.0F)/phasor;
+	     v.ps = ZMM16c4();
+	     v.sp = v.ps;
+	     return (v);
+	}
+
 			   
     } // math
 
