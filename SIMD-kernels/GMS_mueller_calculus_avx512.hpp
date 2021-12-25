@@ -30,6 +30,10 @@ namespace gms {
 
         namespace  math {
 
+
+	                 // Based on: R.A. Chipman, "Polarimetry" chapter in Handbook of Optics Volume 2
+                         // (McGraw-Hill, New York, 1995).
+
 	               /*
                                 Jones-Vector components -- packed single-precision
                                 16-tuple vectors of complex numbers [deinterleaved]
@@ -874,6 +878,147 @@ namespace gms {
           __ATTR_ALWAYS_INLINE__
 	  __ATTR_ALIGN__(32)
 	  static inline
+	  JVec2x16c16
+	  JVec2x16c16_mul_JMat4x16c16(const JVec2x16c16 x,
+	                              const JMat4x16c16 y) {
+
+               JVec2x16c16 v;
+	       v.p = y.ss*x.p+y.sp*x.s;
+	       v.s = y.sp*x.p+y.pp*x.s;
+	       return (v);
+	  }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_div_ZMM16c4( const JMat4x16c16 m
+	                           const ZMM16c4 x) {
+
+               JMat4x16c16 v;
+	       v.pp = m.pp/x;
+	       v.ss = m.ss/x;
+	       v.ps = m.ps/x;
+	       v.sp = m.sp/x;
+	       return (v);
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  void
+	  JMat4x16c16_div_ZMM16c4(JMat4x16c16 &m,
+	                          const ZMM16c4 x) {
+
+               m.pp = m.pp/x;
+	       m.ss = m.ss/x;
+	       m.ps = m.ps/x;
+	       m.sp = m.sp/x;
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_add_JMat4x16c16(const JMat4x16c16 x,
+	                              const JMat4x16c16 y) {
+
+               JMat4x16c16 v;
+	       v.pp = x.pp+y.pp;
+	       v.ss = x.ss+y.ss;
+	       v.ps = x.ps+y.ps;
+	       v.sp = x.sp+y.sp;
+	       return (v);
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  void
+	  JMat4x16c16_add_JMat4x16c16(JMat4x16c16 &x,
+	                              const JMat4x16c16 y) {
+
+               x.pp += y.pp;
+	       x.ss += y.ss;
+	       x.ps += y.ps;
+	       x.sp += y.sp;
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_sub_JMat4x16c16(const JMat4x16c16 x,
+	                              const JMat4x16c16 y) {
+
+               JMat4x16c16 v;
+	       v.pp = x.pp-y.pp;
+	       v.ss = x.ss-y.ss;
+	       v.ps = x.ps-y.ps;
+	       v.sp = x.sp-y.sp;
+	       return (v);
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  void
+	  JMat4x16c16_sub_JMat4x16c16(JMat4x16c16 &x,
+	                              const JMat4x16c16 y) {
+
+                x.pp -= y.pp;
+		x.ss -= y.ss;
+		x.ps -= y.ps;
+		x.sp -= y.sp;
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_negate(const JMat4x16c16 x) {
+
+                JMat4x16c16 v;
+		v.pp = -x.pp;
+		v.ss = -x.ss;
+		v.ps = -x.ps;
+		v.sp = -x.sp;
+		return (v);
+	 }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
+	  JMat4x16c16
+	  JMat4x16c16_negate(JMat4x16c16 &x) {
+
+               x.pp = -x.pp;
+	       x.ss = -x.ss;
+	       x.ps = -x.ps;
+	       x.sp = -x.sp;
+	  }
+
+
+	  __ATTR_REGCALL__
+          __ATTR_ALWAYS_INLINE__
+	  __ATTR_ALIGN__(32)
+	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_rotator(const __m512 theta) {
 
@@ -881,10 +1026,14 @@ namespace gms {
 	      const __m512 vs  = _mm512_sin_ps(theta);
 	      const __m512 nvs = _mm512_sub_ps(_mm512_setzero_ps(),vs);
 	      JMat4x16c16 v;
-	      v.pp.re = vc;
-	      v.ss.re = vc;
-	      v.ps.re = vs;
-	      v.sp.re = vns;
+	      //v.pp.re = vc;
+	      //v.ss.re = vc;
+	      //v.ps.re = vs;
+	      //v.sp.re = vns;
+	      v.pp = ZMM16c4(vc);
+	      v.ss = ZMM16c4(vc);
+	      v.ps = ZMM16c4(vs);
+	      v.sp = ZMM16c4(nvs);
 	      return (v);
 	 }
 
@@ -894,21 +1043,360 @@ namespace gms {
 	  __ATTR_ALIGN__(32)
 	  static inline
 	  JMat4x16c16
-	  JMat4x16c16_linear_retarder(const __m512 phase,
-	                              const __m512 angle) {
+	  JMat4x16c16_linear_retarder(const __m512 phi,
+	                              const __m512 ang) {
 
-             const ZMM16c4 j = ZMM16c4(__m512_setzero_ps(),
-	                               __m512_set1_ps(-1.0F));
-	     const __m512 hphase = _mm512_mul_ps(phase,
-	                               _mm512_set1_ps(0.5F));
-	     const ZMM16c4 phasor = cexp(j*hphase);
+	     const __m512 _n1   = _mm512_set1_ps(-1.0F);
+	     const __m512 _0    = _mm512_setzero_ps();
+	     const __m512 _0_5  = _mm512_set1_ps(0.5F);
+	     const __m512 _1    = _mm512_set1_ps(1.0F);
+             const ZMM16c4 j    = ZMM16c4(_0,_n1);
+	     const __m512 h_phi = _mm512_mul_ps(phi,_0_5);
+	                     
+	     const ZMM16c4 phasor = cexp(j*h_phi);
 	     JMat4x16c16 v;
 	     v.pp = phasor;
-	     v.ss = _mm512_set1_ps(1.0F)/phasor;
+	     v.ss = _1/phasor;
 	     v.ps = ZMM16c4();
 	     v.sp = v.ps;
 	     return (v);
 	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 JMat4x16c16
+	 JMat4x16c16_circular_retarder(const __m512 phi) {
+
+	     const __m512 _0_5 = _mm512_set1_ps(0.5F);
+	     const __m512 h_phi = _mm512_mul_ps(_0_5,phi);
+             JMat4x16c16 v;
+	     v.pp = ZMM16c4(_mm512_cos_ps(h_phi));
+	     v.ss = v.pp;
+	     v.ps = ZMM16c4(_mm512_sin_ps(h_phi));
+	     v.sp = ZMM16c4(_mm512_sub_ps(_mm512_setzero_ps(),
+	                                  v.ps.re));
+	     return (v);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 JMat4x16c16
+	 JMat4x16c16_circular_polarizer(const __m512 attenuation) {
+
+             const __m512 _1   = _mm512_set1_ps(1.0F);
+	     const __m512 _0_5 = _mm512_set1_ps(0.5F);
+	     const __m512 _0   = _mm512_setzero_ps();
+	     const __m512 t0   = _mm512_div_ps(_mm512_sub_ps(attenuation,_1),
+	                                     _mm512_add_ps(attenuation,_1));
+	     const __m512 e    = _mm512_sqrt_ps(t0);
+	     const __m512 t2   = _mm512_mul_ps(_mm512_add_ps(_1,e),_0_5);
+	     const __m512 t1   = _mm512_mul_ps(_mm512_sub_ps(_1,e),_0_5);
+	     JMat4x16c16 v;
+	     v.pp = ZMM16c4(t2);
+	     v.ss = ZMM16c4(t2);
+	     v.ps = ZMM16c4(_0,t1);
+	     v.sp = ZMM16c4(_0,_mm512_sub_ps(_0,t1));
+	     return (v);
+	                    
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 JMat4x16c16
+	 JMat4x16c16_eigenvalues(const JVec2x16c16 a,
+	                         const JVec2x16c16 b,
+				 const ZMM16c4 ca,
+				 const ZMM16c4 cb) {
+
+               JMat4x16c16 v;
+	      //const ZMM16C4 t0 = a.p*b.s*cb-a.s*b.p*ca;
+	      const ZMM16c4 t0 = a.p*b.s;
+	      const ZMM16c4 t1 = a.s*b.p;
+	      
+	      v.pp = t0*cb-t1*ca;
+              v.ss = t0*ca-t1*cb;
+	      v.ps = a.p*b.p*(cb-ca);
+	      const ZMM16c4 det = a.p*b.s-a.s*b.p;
+	      v.sp = a.s*b.s*(ca-cb);
+	      return (v/det);
+        }
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 JMat4x16c16
+	 JMat4x16c16_transpose(const JMat4x16c16 x) {
+
+             JMat4x16c16 v;
+	     v.pp = x.pp;
+	     v.ss = x.ss;
+	     v.ps = x.sp;
+	     v.sp = x.ps;
+	     return (v);
+	}
+
+
+         __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 JMat4x16c16
+	 JMat4x16c16_hermitian(const JMat4x16c16 x) {
+
+              JMat4x16c16 v;
+	      v.pp = conj(x.pp);
+	      v.ss = conj(x.ss);
+	      v.ps = conj(x.sp);
+	      v.sp = conj(x.ps);
+	      return (v);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 JMat4x16c16
+	 JMat4x16c16_conjugate(const JMat4x16c16 x) {
+
+              JMat4x16c16 v;
+	      v.pp = conj(x.pp);
+	      v.ss = conj(x.ss);
+	      v.ps = conj(x.ps);
+	      v.sp = conj(x.sp);
+	      return (v);
+	}
+
+
+	  /*
+                           Mueller Matrix based on 16 16-tuple SIMD real types.
+                       */
+           /*            typedef struct __ATTR_ALIGN__(64)  MMat16x16v16 {
+
+                                  AVX512Vec16 m0;
+				  AVX512Vec16 m1;
+				  AVX512Vec16 m2;
+				  AVX512Vec16 m3;
+				  AVX512Vec16 m4;
+				  AVX512Vec16 m5;
+				  AVX512Vec16 m6;
+				  AVX512Vec16 m7;
+				  AVX512Vec16 m8;
+				  AVX512Vec16 m9;
+				  AVX512Vec16 m10;
+				  AVX512Vec16 m11;
+				  AVX512Vec16 m12;
+				  AVX512Vec16 m13;
+				  AVX512Vec16 m14;
+				  AVX512Vec16 m15;
+		       }MMat16x16v16;
+              */
+
+
+         //using Vec16 = AVX512Vec16;
+	 
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_1() {
+
+             MMat16x16v16 m;
+	     m.m0  = AVX512Vec16();
+	     m.m1  = AVX512Vec16();
+	     m.m2  = AVX512Vec16();
+	     m.m3  = AVX512Vec16();
+	     m.m4  = AVX512Vec16();
+	     m.m5  = AVX512Vec16();
+	     m.m6  = AVX512Vec16();
+	     m.m7  = AVX512Vec16();
+	     m.m8  = AVX512Vec16();
+	     m.m9  = AVX512Vec16();
+	     m.m10 = AVX512Vec16();
+	     m.m11 = AVX512Vec16();
+	     m.m12 = AVX512Vec16();
+	     m.m13 = AVX512Vec16();
+	     m.m14 = AVX512Vec16();
+	     m.m15 = AVX512Vec16();
+	     return (m);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 MMat16x16v16_set_1(MMat16x16v16 &m) {
+
+             m.m0  = AVX512Vec16();
+	     m.m1  = AVX512Vec16();
+	     m.m2  = AVX512Vec16();
+	     m.m3  = AVX512Vec16();
+	     m.m4  = AVX512Vec16();
+	     m.m5  = AVX512Vec16();
+	     m.m6  = AVX512Vec16();
+	     m.m7  = AVX512Vec16();
+	     m.m8  = AVX512Vec16();
+	     m.m9  = AVX512Vec16();
+	     m.m10 = AVX512Vec16();
+	     m.m11 = AVX512Vec16();
+	     m.m12 = AVX512Vec16();
+	     m.m13 = AVX512Vec16();
+	     m.m14 = AVX512Vec16();
+	     m.m15 = AVX512Vec16();
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_2(const AVX512Vec16 * __restrict m) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = m[0];
+	     mat.m1  = m[1];
+	     mat.m2  = m[2];
+	     mat.m3  = m[3];
+	     mat.m4  = m[4];
+	     mat.m5  = m[5];
+	     mat.m6  = m[6];
+	     mat.m7  = m[7];
+	     mat.m8  = m[8];
+	     mat.m9  = m[9];
+	     mat.m10 = m[10];
+	     mat.m11 = m[11];
+	     mat.m12 = m[12];
+	     mat.m13 = m[13];
+	     mat.m14 = m[14];
+	     mat.m15 = m[15];
+	     return (mat);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_2(const AVX512Vec16 * __restrict m,
+	                    MMat16x16v16 &mat) {
+
+             
+	     mat.m0  = m[0];
+	     mat.m1  = m[1];
+	     mat.m2  = m[2];
+	     mat.m3  = m[3];
+	     mat.m4  = m[4];
+	     mat.m5  = m[5];
+	     mat.m6  = m[6];
+	     mat.m7  = m[7];
+	     mat.m8  = m[8];
+	     mat.m9  = m[9];
+	     mat.m10 = m[10];
+	     mat.m11 = m[11];
+	     mat.m12 = m[12];
+	     mat.m13 = m[13];
+	     mat.m14 = m[14];
+	     mat.m15 = m[15];
+	     
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_3(const float * __restrict __ATTR_ALIGN__(64) m) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = AVX512Vec16(&m[0*16]);
+	     mat.m1  = AVX512Vec16(&m[1*16]);
+	     mat.m2  = AVX512Vec16(&m[2*16]);
+	     mat.m3  = AVX512Vec16(&m[3*16]);
+	     mat.m4  = AVX512Vec16(&m[4*16]);
+	     mat.m5  = AVX512Vec16(&m[5*16]);
+	     mat.m6  = AVX512Vec16(&m[6*16]);
+	     mat.m7  = AVX512Vec16(&m[7*16]);
+	     mat.m8  = AVX512Vec16(&m[8*16]);
+	     mat.m9  = AVX512Vec16(&m[9*16]);
+	     mat.m10 = AVX512Vec16(&m[10*16]);
+	     mat.m11 = AVX512Vec16(&m[11*16]);
+	     mat.m12 = AVX512Vec16(&m[12*16]);
+	     mat.m13 = AVX512Vec16(&m[13*16]);
+	     mat.m14 = AVX512Vec16(&m[14*16]);
+	     mat.m15 = AVX512Vec16(&m[15*16]);
+	     return (mat);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_3( MMat16x16v16 &mat
+	                     const float * __restrict __ATTR_ALIGN__(64) m) {
+
+             
+	     mat.m0  = AVX512Vec16(&m[0*16]);
+	     mat.m1  = AVX512Vec16(&m[1*16]);
+	     mat.m2  = AVX512Vec16(&m[2*16]);
+	     mat.m3  = AVX512Vec16(&m[3*16]);
+	     mat.m4  = AVX512Vec16(&m[4*16]);
+	     mat.m5  = AVX512Vec16(&m[5*16]);
+	     mat.m6  = AVX512Vec16(&m[6*16]);
+	     mat.m7  = AVX512Vec16(&m[7*16]);
+	     mat.m8  = AVX512Vec16(&m[8*16]);
+	     mat.m9  = AVX512Vec16(&m[9*16]);
+	     mat.m10 = AVX512Vec16(&m[10*16]);
+	     mat.m11 = AVX512Vec16(&m[11*16]);
+	     mat.m12 = AVX512Vec16(&m[12*16]);
+	     mat.m13 = AVX512Vec16(&m[13*16]);
+	     mat.m14 = AVX512Vec16(&m[14*16]);
+	     mat.m15 = AVX512Vec16(&m[15*16]);
+	     
+	}
+
+
+	
+
+
+	
+
+	
+
+
+	
+
+	
+
+
+	
+
+
+	
+
+
+	
+
+
+	
 
 			   
     } // math
