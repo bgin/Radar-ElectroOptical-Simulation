@@ -189,10 +189,20 @@ namespace gms {
 			  m_im = im;
                   }
 
+
+		   __ATTR_HOT__
+		   __ATTR_ALIGN__(16)
+		   __ATTR_VECTORCALL__
+		     ZMM16c4(const __m512 re) {
+		                
+                          m_re = re;
+			  m_im = _mm512_setzero_ps();
+                  }
+
 		  __ATTR_HOT__
 		  __ATTR_ALIGN__(16)
 		  __ATTR_VECTORCALL__
-		  ZMM16c4(const ZMM16c4 x) {
+		  ZMM16c4(const ZMM16c4 & x) {
                           m_re = x.m_re;
                           m_im = x.m_im;
 		  }
@@ -880,6 +890,16 @@ namespace gms {
                      const ZMM16c4 x) {
                   return (ZMM16c4{s} - x);
               }
+
+	     __ATTR_HOT__
+	    __ATTR_ALIGN__(16)
+	    __ATTR_VECTORCALL__
+            static inline ZMM16c4
+	    operator-(const ZMM16c4 x) {
+               const __m512 _0 = _mm512_setzero_ps();
+               return (ZMM16c4{_mm512_sub_ps(_0,x.re),
+	                       _mm512_sub_ps(_0,x.im)});
+	    }
 
 	    __ATTR_HOT__
 	    __ATTR_ALIGN__(16)
