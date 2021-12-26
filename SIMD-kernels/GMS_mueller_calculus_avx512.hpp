@@ -1374,6 +1374,839 @@ namespace gms {
 	}
 
 
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_4(const MMat16x16v16 m) {
+
+              MMat16x16v16 mat;
+	      mat.m0  = m.m0;
+	      mat.m1  = m.m1;
+	      mat.m2  = m.m2;
+	      mat.m3  = m.m3;
+	      mat.m4  = m.m4;
+	      mat.m5  = m.m5;
+	      mat.m6  = m.m6;
+	      mat.m7  = m.m7;
+	      mat.m8  = m.m8;
+	      mat.m9  = m.m9;
+	      mat.m10 = m.m10;
+	      mat.m11 = m.m11;
+	      mat.m12 = m.m12;
+	      mat.m13 = m.m13;
+	      mat.m14 = m.m14;
+	      mat.m15 = m.m15;
+	      return (mat);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         MMat16x16v16
+	 MMat16x16v16_set_4( MMat16x16v16 &mat
+	                     const MMat16x16v16 m) {
+
+              
+	      mat.m0  = m.m0;
+	      mat.m1  = m.m1;
+	      mat.m2  = m.m2;
+	      mat.m3  = m.m3;
+	      mat.m4  = m.m4;
+	      mat.m5  = m.m5;
+	      mat.m6  = m.m6;
+	      mat.m7  = m.m7;
+	      mat.m8  = m.m8;
+	      mat.m9  = m.m9;
+	      mat.m10 = m.m10;
+	      mat.m11 = m.m11;
+	      mat.m12 = m.m12;
+	      mat.m13 = m.m13;
+	      mat.m14 = m.m14;
+	      mat.m15 = m.m15;
+	      
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_max_transmision(const MMat16x16v16 mat) {
+
+              AVX512Vec16 mt;
+	      const AVX512Vec16 t0 = mat.m1*mat.m1;
+	      const AVX512Vec16 t1 = mat.m2*mat.m2;
+	      const AVX512Vec16 t2 = mat.m3*mat.m3;
+	      mt = mat.m0+sqrt(t0+t1+t2);
+	      return (mt);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_min_transmision(const MMat16x16v16 mat) {
+
+              AVX512Vec16 mt;
+	      const AVX512Vec16 t0 = mat.m1*mat.m1;
+	      const AVX512Vec16 t1 = mat.m2*mat.m2;
+	      const AVX512Vec16 t2 = mat.m3*mat.m3;
+	      mt = mat.m0-sqrt(t0+t1+t2);
+	      return (mt);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_diattenuation(const MMat16x16v16 mat) {
+
+              AVX512Vec16 mt;
+	      const AVX512Vec16 t0 = mat.m1*mat.m1;
+	      const AVX512Vec16 t1 = mat.m2*mat.m2;
+	      const AVX512Vec16 t2 = mat.m3*mat.m3;
+	      mt = sqrt(t0+t1+t2)/mat.m0;
+	      return (mt);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_linear_diattenuation(const MMat16x16v16 mat) {
+	
+              AVX512Vec16 mt;
+	      const AVX512Vec16 t0 = mat.m1*mat.m1;
+	      const AVX512Vec16 t1 = mat.m2*mat.m2;
+	      mt = sqrt(t0+t1)/mat.m0;
+	      return (mt);
+       }
+
+
+       	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_polarization_loss(const MMat16x16v16 mat) {
+
+	      const AVX512Vec16 invlog10(0.00000000000000000000000000000001F);
+	      const AVX512Vec16 _10(10.0F);
+              AVX512Vec16 mt;
+	      const AVX512Vec16 t0 = MMat16x16v16_max_transmission(mat)/
+	                             MMat16x16v16_min_transmission(mat);
+	      
+	      mt = _10*t0*invlog10;
+	      return (mt);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_polarizance(const MMat16x16v16 mat) {
+
+              AVX512Vec16 mt;
+	      const AVX512Vec16 t0 = mat.m5*mat.m5;
+	      const AVX512Vec16 t1 = mat.m9.mat.m9;
+	      const AVX512Vec16 t2 = mat.m13*mat.m13;
+	      mt = sqrt(t0+t1+t2)/mat.m0;
+	      return (mt);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 AVX512Vec16
+	 MMat16x16v16_extinct_ratio(const MMat16x16v16 mat) {
+
+            return (MMat16x16v16_max_transmission(mat)/
+	            MMat16x16v16_min_transmission(mat));
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_mul_AVX512Vec16(const MMat16x16v16 mat,
+	                              const AVX512Vec16 v) {
+
+              MMat16x16v16 res;
+	      res.m0 = mat.m0*v;
+	      res.m1 = mat.m1*v;
+	      res.m2 = mat.m2*v;
+	      res.m3 = mat.m3*v;
+	      res.m4 = mat.m4*v;
+	      res.m5 = mat.m5*v;
+	      res.m6 = mat.m6*v;
+	      res.m7 = mat.m7*v;
+	      res.m8 = mat.m8*v;
+	      res.m9 = mat.m9*v;
+	      res.m10 = mat.m10*v;
+	      res.m11 = mat.m11*v;
+	      res.m12 = mat.m12*v;
+	      res.m13 = mat.m13*v;
+	      res.m14 = mat.m14*v;
+	      res.m15 = mat.m15*v;
+	      return (res);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 MMat16x16v16_mul_AVX512Vec16(const MMat16x16v16 mat,
+	                              MMat16x16v16 &res,
+	                              const AVX512Vec16 v) {
+
+             
+	      res.m0 = mat.m0*v;
+	      res.m1 = mat.m1*v;
+	      res.m2 = mat.m2*v;
+	      res.m3 = mat.m3*v;
+	      res.m4 = mat.m4*v;
+	      res.m5 = mat.m5*v;
+	      res.m6 = mat.m6*v;
+	      res.m7 = mat.m7*v;
+	      res.m8 = mat.m8*v;
+	      res.m9 = mat.m9*v;
+	      res.m10 = mat.m10*v;
+	      res.m11 = mat.m11*v;
+	      res.m12 = mat.m12*v;
+	      res.m13 = mat.m13*v;
+	      res.m14 = mat.m14*v;
+	      res.m15 = mat.m15*v;
+	      
+	}
+        
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_mul_MMat16x16v16(const MMat16x16v16 mat1,
+	                               const MMat16x16v16 mat2) {
+
+              MMat16x16v16 out;
+	      AVX512Vec16 c0();
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      out.m0 = c0;
+	      AVX512Vec16 c1();
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      out.m1 = c1;
+	      AVX512Vec16 c2()
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      out.m2 = c2;
+	      AVX512Vec16 c3();
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      out.m3 = c3;
+	      AVX512Vec16 c4();
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      out.m4 = c4;
+	      AVX512Vec16 c5();
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      out.m5 = c5;
+	      AVX512Vec16 c6();
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      out.m6 = c6;
+	      AVX512Vec16 c7();
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      out.m7 = c7;
+	      AVX512Vec16 c8();
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      out.m = c8;
+	      AVX512Vec16 c9();
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      out.m9 = c9;
+	      AVX512Vec16 c10();
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      out.m10 = c10;
+	      AVX512Vec16 c11();
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      out.m11 = c11;
+	      AVX512Vec16 c12();
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      out.m12 = c12;
+	      AVX512Vec16 c13();
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      out.m13 = c13;
+	      AVX512Vec16 c14();
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      out.m14 = c14;
+	      AVX512Vec16 c15();
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      out.m15 = c15;
+	      return (out);
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 MMat16x16v16_mul_MMat16x16v16(const MMat16x16v16 mat1,
+	                               const MMat16x16v16 mat2,
+				       MMat16x16v16 &out) {
+
+              AVX512Vec16 c0();
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      c0.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m0.m_v16,c0.m_v16);
+	      out.m0 = c0;
+	      AVX512Vec16 c1();
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      c1.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m1.m_v16,c1.m_v16);
+	      out.m1 = c1;
+	      AVX512Vec16 c2()
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      c2.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m2.m_v16,c2.m_v16);
+	      out.m2 = c2;
+	      AVX512Vec16 c3();
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      c3.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m3.m_v16,c3.m_v16);
+	      out.m3 = c3;
+	      AVX512Vec16 c4();
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      c4.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m4.m_v16,c4.m_v16);
+	      out.m4 = c4;
+	      AVX512Vec16 c5();
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      c5.m_v16 = _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m5.m_v16,c5.m_v16);
+	      out.m5 = c5;
+	      AVX512Vec16 c6();
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      c6.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m6.m_v16,c6.m_v16);
+	      out.m6 = c6;
+	      AVX512Vec16 c7();
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      c7.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m7.m_v16,c7.m_v16);
+	      out.m7 = c7;
+	      AVX512Vec16 c8();
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      c8.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m8.m_v16,c8.m_v16);
+	      out.m = c8;
+	      AVX512Vec16 c9();
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      c9.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m9.m_v16,c9.m_v16);
+	      out.m9 = c9;
+	      AVX512Vec16 c10();
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      c10.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m10.m_v16,c10.m_v16);
+	      out.m10 = c10;
+	      AVX512Vec16 c11();
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      c11.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m11.m_v16,c11.m_v16);
+	      out.m11 = c11;
+	      AVX512Vec16 c12();
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      c12.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m12.m_v16,c12.m_v16);
+	      out.m12 = c12;
+	      AVX512Vec16 c13();
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      c13.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m13.m_v16,c13.m_v16);
+	      out.m13 = c13;
+	      AVX512Vec16 c14();
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      c14.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m14.m_v16,c14.m_v16);
+	      out.m14 = c14;
+	      AVX512Vec16 c15();
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m0.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m1.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m2.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m3.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m4.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m5.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m6.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m7.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m8.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m9.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m10.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m11.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m12.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m13.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m14.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m15.m_v16,c15.m_v16);
+	      out.m15 = c15;
+	}
+
+
+	
+	
+
+
 	
 
 
