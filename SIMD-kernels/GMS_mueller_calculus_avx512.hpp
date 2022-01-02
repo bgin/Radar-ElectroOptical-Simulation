@@ -1545,6 +1545,92 @@ namespace gms {
 	 __ATTR_ALIGN__(32)
 	 static inline
 	 MMat16x16v16
+	 MMat16x16v16_unit(const AVX512Vec16 transmittance) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = transmittance;
+	     mat.m5  = mat.m0;
+	     mat.m10 = mat.m0;
+	     mat.m15 = mat.m0;
+	     return (mat);
+	}
+
+
+	 __ATTR_REGCALL__
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_depolarization(const AVX512Vec16 transmittance,
+	                             const AVX512Vec16 depolarization) {
+
+             MMat16x16v16 mat;
+	     const AVX512Vec16 one(1.0F);
+	     mat.m0  = transmittance;
+	     mat.m5  = transmittance*(one-depolarization);
+	     mat.m10 = mat.m5;
+	     mat.m15 = mat.m5;
+	     return (mat);
+       }
+
+
+       	 __ATTR_REGCALL__
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_diagonal(const AVX512Vec16 diag1,
+	                       const AVX512Vec16 diag2,
+			       const AVX512Vec16 diag3,
+			       const AVX512Vec16 diag4) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = diag1;
+	     mat.m5  = diag2;
+	     mat.m10 = diag3;
+	     mat.m15 = diag4;
+	     return (mat);
+      }
+
+
+      	 __ATTR_REGCALL__
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_linear_polarizer(const AVX512Vec16 maxt,
+	                               const AVX512Vec16 mint,
+				       const AVX512Vec16 ang) {
+
+            MMat16x16v16 mat;
+	    const AVX512Vec16 _2ang = ang+ang;
+	    const AVX512Vec16 _0_5(0.5F);
+	    const AVX512Vec16 t0 = _0_5*(maxt+mint);
+	    mat.m0 = t0;
+	    const AVX512Vec16 t1 = _0_5*(maxt-mint);
+	    const AVX512Vec16 t2 = sqrt(maxt*mint);
+	    mat.m15 = t2;
+	    const AVX512Vec16 t3  = cos(_2ang);
+	    const AVX512Vec16 st3 = sqrt(t3);
+	    const AVX512Vec16 t4  = sin(_2ang);
+	    const AVX512Vec16 st4 = sqrt(t4);
+	    mat.m1  = t1*t3;
+	    mat.m2  = t1*t4;
+	    mat.m4  = mat.m1;
+	    mat.m5  = t0*st3+t2*st4;
+	    mat.m6  = (t0-t2)*t3*t4;
+	    mat.m8  = mat.m2;
+	    mat.m9  = mat.m6;
+	    mat.m10 = t2*st3+t0*st4;
+	    return (mat);
+      }
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
 	 MMat16x16v16_mul_AVX512Vec16(const MMat16x16v16 mat,
 	                              const AVX512Vec16 v) {
 
@@ -1597,7 +1683,239 @@ namespace gms {
 	      res.m15 = mat.m15*v;
 	      
 	}
-        
+
+	
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_div_AVX512Vec16(const MMat16x16v16 mat,
+	                              const AVX512Vec16 v) {
+
+            MMat16x16v16 res;
+	    res.m0  = mat.m0/v;
+	    res.m1  = mat.m1/v;
+	    res.m2  = mat.m2/v;
+	    res.m3  = mat.m3/v;
+	    res.m4  = mat.m4/v;
+	    res.m5  = mat.m5/v;
+	    res.m6  = mat.m6/v;
+	    res.m7  = mat.m7/v;
+	    res.m8  = mat.m8/v;
+	    res.m9  = mat.m9/v;
+	    res.m10 = mat.m10/v;
+	    res.m11 = mat.m11/v;
+	    res.m12 = mat.m12/v;
+	    res.m13 = mat.m13/v;
+	    res.m14 = mat.m14/v;
+	    res.m15 = mat.m15/v;
+	    return (res);
+       }
+
+
+       	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 MMat16x16v16_div_AVX512Vec16(const MMat16x16v16 mat
+	                              MMat16x16v16 &res,
+	                              const AVX512Vec16 v) {
+
+            res.m0  = mat.m0/v;
+	    res.m1  = mat.m1/v;
+	    res.m2  = mat.m2/v;
+	    res.m3  = mat.m3/v;
+	    res.m4  = mat.m4/v;
+	    res.m5  = mat.m5/v;
+	    res.m6  = mat.m6/v;
+	    res.m7  = mat.m7/v;
+	    res.m8  = mat.m8/v;
+	    res.m9  = mat.m9/v;
+	    res.m10 = mat.m10/v;
+	    res.m11 = mat.m11/v;
+	    res.m12 = mat.m12/v;
+	    res.m13 = mat.m13/v;
+	    res.m14 = mat.m14/v;
+	    res.m15 = mat.m15/v;
+       }
+
+
+       
+         __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_add_MMat16x16v16(const MMat16x16v16 mat1,
+	                               const MMat16x16v16 mat2) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = mat1.m0+mat2.m0;
+	     mat.m1  = mat1.m1+mat2.m1;
+	     mat.m2  = mat1.m2+mat2.m2;
+	     mat.m3  = mat1.m3+mat2.m3;
+	     mat.m4  = mat1.m4+mat2.m4;
+	     mat.m5  = mat1.m5+mat2.m5;
+	     mat.m6  = mat1.m6+mat2.m6;
+	     mat.m7  = mat1.m7+mat2.m7;
+	     mat.m8  = mat1.m8+mat2.m8;
+	     mat.m9  = mat1.m9+mat2.m9;
+	     mat.m10 = mat1.m10+mat2.m10;
+	     mat.m11 = mat1.m11+mat2.m11;
+	     mat.m12 = mat1.m12+mat2.m12;
+	     mat.m13 = mat1.m13+mat2.m13;
+	     mat.m14 = mat1.m14+mat2.m14;
+	     mat.m15 = mat1.m15+mat2.m15;
+	     return (mat);
+        }
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_add_AVX512Vec16(const MMat16x16v16 m,
+	                              const AVX512Vec16 v) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = m.m0+v;
+	     mat.m1  = m.m1+v;
+	     mat.m2  = m.m2+v;
+	     mat.m3  = m.m3+v;
+	     mat.m4  = m.m4+v;
+	     mat.m5  = m.m5+v;
+	     mat.m6  = m.m6+v;
+	     mat.m7  = m.m7+v;
+	     mat.m8  = m.m8+v;
+	     mat.m9  = m.m9+v;
+	     mat.m10 = m.m10+v;
+	     mat.m11 = m.m11+v;
+	     mat.m12 = m.m12+v;
+	     mat.m13 = m.m13+v;
+	     mat.m14 = m.m14+v;
+	     mat.m15 = m.m15+v;
+	     return (mat);
+        }
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 MMat16x16v16_add_MMat16x16v16(MMat16x16v16 &mat,
+	                               const MMat16x16v16 mat1,
+	                               const MMat16x16v16 mat2) {
+             mat.m0  = mat1.m0+mat2.m0;
+	     mat.m1  = mat1.m1+mat2.m1;
+	     mat.m2  = mat1.m2+mat2.m2;
+	     mat.m3  = mat1.m3+mat2.m3;
+	     mat.m4  = mat1.m4+mat2.m4;
+	     mat.m5  = mat1.m5+mat2.m5;
+	     mat.m6  = mat1.m6+mat2.m6;
+	     mat.m7  = mat1.m7+mat2.m7;
+	     mat.m8  = mat1.m8+mat2.m8;
+	     mat.m9  = mat1.m9+mat2.m9;
+	     mat.m10 = mat1.m10+mat2.m10;
+	     mat.m11 = mat1.m11+mat2.m11;
+	     mat.m12 = mat1.m12+mat2.m12;
+	     mat.m13 = mat1.m13+mat2.m13;
+	     mat.m14 = mat1.m14+mat2.m14;
+	     mat.m15 = mat1.m15+mat2.m15;
+	}
+
+
+	
+
+
+         __ATTR_REGCALL__
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_sub_MMat16x16v16(const MMat16x16v16 mat1,
+	                               const MMat16x16v16 mat2) {
+
+             MMat16x16v16 mat;
+	     mat.m0  = mat1.m0-mat2.m0;
+	     mat.m1  = mat1.m1-mat2.m1;
+	     mat.m2  = mat1.m2-mat2.m2;
+	     mat.m3  = mat1.m3-mat2.m3;
+	     mat.m4  = mat1.m4-mat2.m4;
+	     mat.m5  = mat1.m5-mat2.m5;
+	     mat.m6  = mat1.m6-mat2.m6;
+	     mat.m7  = mat1.m7-mat2.m7;
+	     mat.m8  = mat1.m8-mat2.m8;
+	     mat.m9  = mat1.m9-mat2.m9;
+	     mat.m10 = mat1.m10-mat2.m10;
+	     mat.m11 = mat1.m11-mat2.m11;
+	     mat.m12 = mat1.m12-mat2.m12;
+	     mat.m13 = mat1.m13-mat2.m13;
+	     mat.m14 = mat1.m14-mat2.m14;
+	     mat.m15 = mat1.m15-mat2.m15;
+	     return (mat);
+        }
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 MMat16x16v16_sub_MMat16x16v16(MMat16x16v16 &mat,
+	                               const MMat16x16v16 mat1,
+	                               const MMat16x16v16 mat2) {
+             mat.m0  = mat1.m0-mat2.m0;
+	     mat.m1  = mat1.m1-mat2.m1;
+	     mat.m2  = mat1.m2-mat2.m2;
+	     mat.m3  = mat1.m3-mat2.m3;
+	     mat.m4  = mat1.m4-mat2.m4;
+	     mat.m5  = mat1.m5-mat2.m5;
+	     mat.m6  = mat1.m6-mat2.m6;
+	     mat.m7  = mat1.m7-mat2.m7;
+	     mat.m8  = mat1.m8-mat2.m8;
+	     mat.m9  = mat1.m9-mat2.m9;
+	     mat.m10 = mat1.m10-mat2.m10;
+	     mat.m11 = mat1.m11-mat2.m11;
+	     mat.m12 = mat1.m12-mat2.m12;
+	     mat.m13 = mat1.m13-mat2.m13;
+	     mat.m14 = mat1.m14-mat2.m14;
+	     mat.m15 = mat1.m15-mat2.m15;
+	}
+
+
+	 __ATTR_REGCALL__
+	 __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 MMat16x16v16
+	 MMat16x16v16_negate(const MMat16x16v16 m) {
+
+              const AVX512Vec16 zero();
+	      MMat16x16v16 mat;
+	      mat.m0  = zero-m.m0;
+	      mat.m1  = zero-m.m1;
+	      mat.m2  = zero-m.m2;
+	      mat.m3  = zero-m.m3;
+	      mat.m4  = zero-m.m4;
+	      mat.m5  = zero-m.m5;
+	      mat.m6  = zero-m.m6;
+	      mat.m7  = zero-m.m7;
+	      mat.m8  = zero-m.m8;
+	      mat.m9  = zero-m.m9;
+	      mat.m10 = zero-m.m10;
+	      mat.m11 = zero-m.m11;
+	      mat.m12 = zero-m.m12;
+	      mat.m13 = zero-m.m13;
+	      mat.m14 = zero-m.m14;
+	      mat.m15 = zero-m.m15;
+	      return (mat);
+	}
+
+
 
 
 	 __ATTR_REGCALL__
@@ -2201,6 +2519,8 @@ namespace gms {
 	      c15.m_v16 =  _mm512_fmadd_ps(mat1.m15.m_v16,mat2.m15.m_v16,c15.m_v16);
 	      out.m15 = c15;
 	}
+
+
 
 
 	
