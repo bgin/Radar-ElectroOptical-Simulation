@@ -135,12 +135,12 @@ gms::math
 		      }
 		      stokes_matrix(&scat2x2m[0],
 		                    &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -150,14 +150,12 @@ gms::math
 			       l4x4phm_t1[k][l][0] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_1.c"
-#endif
+
                        scat2x2m[1] = -scat2x2m[1];
 		       scat2x2m[2] = -scat2x2m[2];
 		       stokes_matrix(&scat2x2m[0],
 		                     &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -172,9 +170,7 @@ gms::math
 			       l4x4phm_t1[k][l][0] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_1.c"
-#endif
+
                   // Case 2
 		  thinc =  3.141592653589793f-theta;
                   thsc  =  3.141592653589793f-theta;
@@ -193,7 +189,7 @@ gms::math
 		      }
 		    stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -208,14 +204,12 @@ gms::math
 			       l4x4phm_t1[k][l][1] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_1.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -230,9 +224,7 @@ gms::math
 			       l4x4phm_t1[k][l][1] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_1.c"
-#endif
+
                     // Case 3
 		    thinc = theta;
                     thsc  = theta;
@@ -251,7 +243,7 @@ gms::math
 		      }
 		    stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -266,14 +258,12 @@ gms::math
 			       l4x4phm_t1[k][l][2] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_2.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -288,9 +278,7 @@ gms::math
 			       l4x4phm_t1[k][l][2] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_2.c"
-#endif
+
                     // Case 4:
 		    thinc = 3.141592653589793f-theta;
                     thsc  = theta;
@@ -309,7 +297,7 @@ gms::math
 		      }
 		    stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -324,14 +312,12 @@ gms::math
 			       l4x4phm_t1[k][l][3] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_3.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -346,9 +332,7 @@ gms::math
 			       l4x4phm_t1[k][l][3] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t1_1_1_3.c"
-#endif
+
                     // Extinction matrix: case 1
 		    thinc = theta;
                     thsc  = thinc;
@@ -434,7 +418,7 @@ gms::math
 		      }
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -449,9 +433,7 @@ gms::math
 			       l4x4phm_t2[k][l][0] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_0.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
@@ -469,9 +451,7 @@ gms::math
 			       l4x4phm_t2[k][l][0] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_0.c"
-#endif
+
                      // Phase matrix: case 2
 		  thinc = 3.141592653589793f-theta;
                   thsc  = 3.141592653589793f-theta;
@@ -490,7 +470,7 @@ gms::math
 		      }
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -505,14 +485,12 @@ gms::math
 			       l4x4phm_t2[k][l][1] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_1.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -527,9 +505,7 @@ gms::math
 			       l4x4phm_t2[k][l][1] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_1.c"
-#endif
+
                     // Phase matrix: case 3
 		    thinc = theta;
                     thsc  = theta;
@@ -548,12 +524,12 @@ gms::math
 		      }
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -563,19 +539,17 @@ gms::math
 			       l4x4phm_t2[k][l][2] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_2.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -585,9 +559,7 @@ gms::math
 			       l4x4phm_t2[k][l][2] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_2.c"
-#endif
+
                     // Phase matrix: case 4
                     thinc =  3.141592653589793f-theta;
                     thsc  = theta;
@@ -606,12 +578,12 @@ gms::math
 		      }
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -621,9 +593,7 @@ gms::math
 			       l4x4phm_t2[k][l][3] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_3.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
@@ -633,7 +603,7 @@ gms::math
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -643,9 +613,7 @@ gms::math
 			       l4x4phm_t2[k][l][3] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t2_1_1_3.c"
-#endif
+
                      // Extinction matrix: case 1
 		    thinc = theta;
                     thsc  = thinc;
@@ -731,12 +699,12 @@ gms::math
 		     }
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -746,19 +714,17 @@ gms::math
 			       l4x4phm_t3[k][l][0] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_0.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -768,9 +734,7 @@ gms::math
 			       l4x4phm_t3[k][l][0] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_0.c"
-#endif
+
                      // Phase matrix: case 2
 		       thinc = 3.141592653589793f-theta;
                        thsc  = 3.141592653589793f-theta;
@@ -790,12 +754,12 @@ gms::math
 		       }
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -805,19 +769,17 @@ gms::math
 			       l4x4phm_t3[k][l][1] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_1.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -827,9 +789,7 @@ gms::math
 			       l4x4phm_t3[k][l][1] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_1.c"
-#endif
+
 		       // Phase matrix: case 3
 		        thinc = theta;
                         thsc  = theta;
@@ -849,12 +809,12 @@ gms::math
 		       }
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -864,9 +824,7 @@ gms::math
 			       l4x4phm_t3[k][l][2] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_2.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
@@ -876,7 +834,7 @@ gms::math
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -886,9 +844,7 @@ gms::math
 			       l4x4phm_t3[k][l][2] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_2.c"
-#endif
+
                      // Phase matrix: case 4
 		       thinc = 3.141592653589793f-theta;
                        thsc  = theta;
@@ -908,12 +864,12 @@ gms::math
 		       }
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -923,19 +879,17 @@ gms::math
 			       l4x4phm_t3[k][l][3] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_3.c"
-#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
-#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
         stokes4x4m = (float*)__builtin_assume_aligned(stokes4x4m,64);
 #pragma omp simd
@@ -945,9 +899,7 @@ gms::math
 			       l4x4phm_t3[k][l][3] = t1;
 			   }
 		       }
-#else
-#include "l4x4phm_t3_1_1_3.c"
-#endif
+
                      // Extinction matrix: case 1
 		       thinc = theta;
                        thsc  = thinc;
@@ -1004,7 +956,7 @@ gms::math
              for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
 #pragma omp simd
 #endif
@@ -1021,7 +973,7 @@ gms::math
 	for(k=0; k != 2; ++k) {
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma vector always
-#pragma code_align(64)
+#pragma code_align(32)
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
 #pragma omp simd
 #endif
