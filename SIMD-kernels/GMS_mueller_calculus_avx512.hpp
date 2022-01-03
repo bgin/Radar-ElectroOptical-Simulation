@@ -1178,6 +1178,692 @@ namespace gms {
 	      return (v);
 	}
 
+         __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 SVec4x16v16
+	 SVec4x16v16_set_1() {
+
+             SVec4x16v16 sv;
+	     sv.s0 = AVX512Vec16();
+	     sv.s1 = AVX512Vec16();
+	     sv.s2 = AVX512Vec16();
+	     sv.s3 = AVX512Vec16();
+	     return (sv);
+	}
+
+
+	
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 SVec4x16v16
+	 SVec4x16v16_set_2(const float s0,
+	                   const float s1,
+			   const float s2,
+			   const float s3) {
+
+             SVec4x16v16 sv;
+	     sv.s0 = AVX512Vec16(s0);
+	     sv.s1 = AVX512Vec16(s1);
+	     sv.s2 = AVX512Vec16(s2);
+	     sv.s3 = AVX512Vec16(s3);
+	     return (sv);
+	}
+	
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 SVec4x16v16_set_2(SVec4x16v16 &sv
+	                   const float s0,
+	                   const float s1,
+			   const float s2,
+			   const float s3) {
+
+             
+	     sv.s0 = AVX512Vec16(s0);
+	     sv.s1 = AVX512Vec16(s1);
+	     sv.s2 = AVX512Vec16(s2);
+	     sv.s3 = AVX512Vec16(s3);
+	   
+	}
+
+
+	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 SVec4x16v16
+	 SVec4x16v16_set_3(
+	                   const float * __restrict __ATTR_ALIGN__(64) s0,
+	                   const float * __restrict __ATTR_ALIGN__(64) s1,
+			   const float * __restrict __ATTR_ALIGN__(64) s2,
+			   const float * __restrict __ATTR_ALIGN__(64) s3) {
+
+             SVec4x16v16 sv;
+	     sv.s0 = AVX512Vec16(s0);
+	     sv.s1 = AVX512Vec16(s1);
+	     sv.s2 = AVX512Vec16(s2);
+	     sv.s3 = AVX512Vec16(s3);
+	     return (sv);
+       }
+
+
+         __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+         void
+	 SVec4x16v16_set_3(SVec4x16v16 &sv
+	                   const float * __restrict __ATTR_ALIGN__(64) s0,
+	                   const float * __restrict __ATTR_ALIGN__(64) s1,
+			   const float * __restrict __ATTR_ALIGN__(64) s2,
+			   const float * __restrict __ATTR_ALIGN__(64) s3) {
+
+             
+	     sv.s0 = AVX512Vec16(s0);
+	     sv.s1 = AVX512Vec16(s1);
+	     sv.s2 = AVX512Vec16(s2);
+	     sv.s3 = AVX512Vec16(s3);
+	   
+       }
+
+
+       	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 SVec4x16v16
+	 SVec4x16v16_set_4(const __m512 s0,
+	                   const __m512 s1,
+			   const __m512 s2,
+			   const __m512 s3) {
+
+             SVec4x16v16 sv;
+	     sv.s0 = AVX512Vec16(s0);
+	     sv.s1 = AVX512Vec16(s1);
+	     sv.s2 = AVX512Vec16(s2);
+	     sv.s3 = AVX512Vec16(s3);
+	     return (sv);
+      }
+
+
+      	 __ATTR_REGCALL__
+         __ATTR_ALWAYS_INLINE__
+	 __ATTR_ALIGN__(32)
+	 static inline
+	 void
+	 SVec4x16v16_set_4(SVec4x16v16 &sv,
+	                   const __m512 s0,
+	                   const __m512 s1,
+			   const __m512 s2,
+			   const __m512 s3) {
+
+             
+	     sv.s0 = AVX512Vec16(s0);
+	     sv.s1 = AVX512Vec16(s1);
+	     sv.s2 = AVX512Vec16(s2);
+	     sv.s3 = AVX512Vec16(s3);
+	     
+      }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_set_5(const SVec4x16v16 sv1) {
+
+            SVec4x16v16 sv;
+	    sv.s0 = sv1.s0;
+	    sv.s1 = sv1.s1;
+	    sv.s2 = sv1.s2;
+	    sv.s3 = sv1.s3;
+	    return (sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_set_5( SVec4x16v16 &sv
+	                   const SVec4x16v16 sv1) {
+
+            
+	    sv.s0 = sv1.s0;
+	    sv.s1 = sv1.s1;
+	    sv.s2 = sv1.s2;
+	    sv.s3 = sv1.s3;
+	    
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_from_JVec2x16c16(const JVec2x16c16 jv) {
+
+           SVec4x16c16 sv;
+	   const ZMM16c4 t0 = cnorm(jv.p);
+	   const ZMM16c4 t1 = cnorm(jv.s)
+	   const ZMM16c4 t2 = conjugate(jv.p)*jv.s;
+	   const __m512 _2  = _mm512_set1_ps(2.0F);
+	   sv.s0 = t0+t1;
+	   sv.s1 = t0-t1;
+	   sv.s2 = _mm512_mul_ps(_2,t2.m_re);
+	   sv.s3 = _mm512_mul_ps(_2,t2.m_im);
+	   return (sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_from_JVec2x16c16(SVec4x16v16 &sv
+	                             const JVec2x16c16 jv) {
+
+           
+	   const ZMM16c4 t0 = cnorm(jv.p);
+	   const ZMM16c4 t1 = cnorm(jv.s)
+	   const ZMM16c4 t2 = conjugate(jv.p)*jv.s;
+	   const __m512 _2  = _mm512_set1_ps(2.0F);
+	   sv.s0 = t0+t1;
+	   sv.s1 = t0-t1;
+	   sv.s2 = _mm512_mul_ps(_2,t2.m_re);
+	   sv.s3 = _mm512_mul_ps(_2,t2.m_im);
+	   
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_normalized_Q(const SVec4x16v16 jv) {
+
+	      return (jv.s1/jv.s0);
+        }
+
+
+	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_normalized_U(const SVec4x16v16 jv) {
+
+	      return (jv.s2/jv.s0);
+        }
+
+
+	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_normalized_V(const SVec4x16v16 jv) {
+
+	      return (jv.s3/jv.s0);
+        }
+
+
+	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_add_SVec4x16v16(const SVec4x16v16 sv1,
+	                            const SVec4x16v16 sv2) {
+
+            SVec4x16v16 sv;
+	    sv.s0 = sv1.s0+sv2.s0;
+	    sv.s1 = sv1.s1+sv2.s1;
+	    sv.s2 = sv1.s2+sv2.s2;
+	    sv.s3 = sv1.s3+sv2.s3;
+	    return (sv);
+       }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_add_SVec4x16v16(SVec4x16v16 &sv,
+	                            const SVec4x16v16 sv1,
+	                            const SVec4x16v16 sv2) {
+
+           
+	    sv.s0 = sv1.s0+sv2.s0;
+	    sv.s1 = sv1.s1+sv2.s1;
+	    sv.s2 = sv1.s2+sv2.s2;
+	    sv.s3 = sv1.s3+sv2.s3;
+	   
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_add_SVec4x16v16(SVec4x16v16 &sv,
+	                            const SVec4x16v16 sv1){
+	                            
+
+           
+	    sv.s0 += sv1.s0;
+	    sv.s1 += sv1.s1;
+	    sv.s2 += sv1.s2;
+	    sv.s3 += sv1.s3;
+	   
+       }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_sub_SVec4x16v16(const SVec4x16v16 sv1,
+	                            const SVec4x16v16 sv2) {
+
+            SVec4x16v16 sv;
+	    sv.s0 = sv1.s0-sv2.s0;
+	    sv.s1 = sv1.s1-sv2.s1;
+	    sv.s2 = sv1.s2-sv2.s2;
+	    sv.s3 = sv1.s3-sv2.s3;
+	    return (sv);
+       }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_sub_SVec4x16v16(SVec4x16v16 &sv,
+	                            const SVec4x16v16 sv1,
+	                            const SVec4x16v16 sv2) {
+
+           
+	    sv.s0 = sv1.s0-sv2.s0;
+	    sv.s1 = sv1.s1-sv2.s1;
+	    sv.s2 = sv1.s2-sv2.s2;
+	    sv.s3 = sv1.s3-sv2.s3;
+	   
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_sub_SVec4x16v16(SVec4x16v16 &sv,
+	                            const SVec4x16v16 sv1){
+	                            
+
+           
+	    sv.s0 -= sv1.s0;
+	    sv.s1 -= sv1.s1;
+	    sv.s2 -= sv1.s2;
+	    sv.s3 -= sv1.s3;
+	   
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_negate(const SVec4x16v16 sv1){
+	                           
+            SVec4x16v16 sv;
+	    const AVX512Vec16 _0 = AVX512Vec16(0.0F);
+	    sv.s0 = _0-sv1.s0;
+	    sv.s1 = _0-sv1.s1;
+	    sv.s2 = _0-sv1.s2;
+	    sv.s3 = _0-sv1.s3;
+	    return (sv);
+       }
+
+
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+	AVX512Vec16
+        SVec4x16v16_inner_prod(const SVec4x16v16 sv1,
+	                       const SVec4x16v16 sv2) {
+
+	   AVX512Vec16 t0,t1
+           t0 = sv1.s0*sv2.s0+sv1.s1*sv2.s1;
+	   t1 = sv1.s2*sv2.s2+sv1.s3*sv2.s3;
+	   return (t0+t1);
+      }
+
+
+      	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_mul_AVX512Vec16( const SVec4x16v16 sv1
+	                             const AVX512Vec16 v) {
+
+          SVec4x16v16 sv;
+	  sv.s0 = sv1.s0*v;
+	  sv.s1 = sv1.s1*v;
+	  sv.s2 = sv1.s2*v;
+	  sv.s3 = sv1.s3*v;
+	  return (sv);
+      }
+
+
+      	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_mul_AVX512Vec16( SVec4x16v16 &sv,
+	                             const SVec4x16v16 sv1
+	                             const AVX512Vec16 v) {
+
+         
+	  sv.s0 = sv1.s0*v;
+	  sv.s1 = sv1.s1*v;
+	  sv.s2 = sv1.s2*v;
+	  sv.s3 = sv1.s3*v;
+	 
+      }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_div_AVX512Vec16( const SVec4x16v16 sv1
+	                             const AVX512Vec16 v) {
+
+          SVec4x16v16 sv;
+	  sv.s0 = sv1.s0/v;
+	  sv.s1 = sv1.s1/v;
+	  sv.s2 = sv1.s2/v;
+	  sv.s3 = sv1.s3/v;
+	  return (sv);
+      }
+
+
+      	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_div_AVX512Vec16( SVec4x16v16 &sv,
+	                             const SVec4x16v16 sv1
+	                             const AVX512Vec16 v) {
+
+         
+	  sv.s0 = sv1.s0/v;
+	  sv.s1 = sv1.s1/v;
+	  sv.s2 = sv1.s2/v;
+	  sv.s3 = sv1.s3/v;
+	 
+      }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_eta_angle(const SVec4x16v16 sv1) {
+
+           AVX512Vec16 v;
+	   const AVX512Vec16 half = AVX512Vec16(0.5F);
+	   v = atan2(sv1.s2,sv1.s1)*halfl
+	   return (v);
+      }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_deg_linear_pol(const SVec4x16v16 sv1) {
+
+             AVX512Vec16 v;
+	     const AVX512Vec16 t = sv1.s2*sv1.s2+sv1.s1*sv1.s1;
+	     v = sqrt(t)/sv1.s0;
+	     return (v);
+      }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_deg_polarization(const SVec4x16v16 sv1) {
+
+             const AVX512Vec16 t0 = sv1.s2*sv1.s2;
+	     const AVX512Vec16 t1 = sv1.s1*sv1.s1;
+	     const AVX512Vec16 t2 = sv1.s3*sv1.s3;
+	     return ((t0+t1+t2)/sv1.s0);
+      }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_deg_circular_pol(const SVec4x16v16 sv1) {
+
+            return (sv1.s3/sv1.s0);
+      }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_ellipticity(const SVec4x16v16 sv1) {
+
+            const AVX512Vec16 t0 = sv1.s1*sv1.s1+sv1.s2*sv1.s2;
+	    return (sv1.s3/(sqrt(t0)));
+      }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        AVX512Vec16
+	SVec4x16v16_eccentricity(const SVec4x16v16 sv1) {
+
+            const AVX512Vec16 e = SVec4x16v16_ellipticity(sv1);
+	    const AVX512Vec16 one = AVX512Vec16(1.0F);
+	    return (sqrt(one-e*e));
+      }
+
+
+      	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_zero() {
+
+           SVec4x16v16 sv;
+	   sv.s0 = AVX512Vec16();
+	   sv.s1 = AVX512Vec16();
+	   sv.s2 = AVX512Vec16();
+	   sv.s3 = AVX512Vec16();
+	   return(sv);
+       }
+
+
+       	__ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_unit_unpolarized() {
+
+           SVec4x16v16 sv;
+	   sv.s0 = AVX512Vec16(1.0F);
+	   sv.s1 = AVX512Vec16();
+	   sv.s2 = AVX512Vec16();
+	   sv.s3 = AVX512Vec16();
+	   return(sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_unit_s_polarized() {
+
+           SVec4x16v16 sv;
+	   sv.s0 = AVX512Vec16(1.0F);
+	   sv.s1 = AVX512Vec16(1.0F);
+	   sv.s2 = AVX512Vec16();
+	   sv.s3 = AVX512Vec16();
+	   return(sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_unit_p_polarized() {
+
+           SVec4x16v16 sv;
+	   sv.s0 = AVX512Vec16(1.0F);
+	   sv.s1 = AVX512Vec16(-1.0F);
+	   sv.s2 = AVX512Vec16();
+	   sv.s3 = AVX512Vec16();
+	   return(sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_lin_polarized_eta(const AVX512Vec16 eta) {
+
+            SVec4x16v16 sv;
+	    const AVX512Vec16 _2eta = eta+eta;
+	    sv.s0 = AVX512Vec16(1.0F);
+	    sv.s1 = cos(_2eta);
+	    sv.s2 = sin(_2eta);
+	    sv.s3 = AVX512Vec16(0.0F);
+	    return (sv);
+       }
+
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_right_cir_polarized() {
+
+           SVec4x16v16 sv;
+	   sv.s0 = AVX512Vec16(1.0F);
+	   sv.s1 = AVX512Vec16();
+	   sv.s2 = AVX512Vec16();
+	   sv.s3 = AVX512Vec16(-1.0F);
+	   return(sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_left_cir_polarized() {
+
+           SVec4x16v16 sv;
+	   sv.s0 = AVX512Vec16(1.0F);
+	   sv.s1 = AVX512Vec16();
+	   sv.s2 = AVX512Vec16();
+	   sv.s3 = AVX512Vec16(1.0F);
+	   return(sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        SVec4x16v16
+	SVec4x16v16_unit_generalized(const AVX512Vec16 eta) {
+
+            SVec4x16v16 sv;
+	    const AVX512Vec16 _2eta = eta+eta;
+	    sv.s0 = AVX512Vec16(1.0F);
+	    sv.s1 = cos(_2eta);
+	    sv.s2 = sin(_2eta);
+	    sv.s3 = AVX512Vec16(0.0F);
+	    return (sv);
+       }
+
+
+        __ATTR_REGCALL__
+        __ATTR_ALWAYS_INLINE__
+	__ATTR_ALIGN__(32)
+	static inline
+        void
+	SVec4x16v16_unit_generalized( SVec4x16v16 &sv,
+	                              const AVX512Vec16 eta) {
+
+           
+	    const AVX512Vec16 _2eta = eta+eta;
+	    sv.s0 = AVX512Vec16(1.0F);
+	    sv.s1 = cos(_2eta);
+	    sv.s2 = sin(_2eta);
+	    sv.s3 = AVX512Vec16(0.0F);
+	   
+       }
+
+
+
+
+      
+
+       
 
 	  /*
                            Mueller Matrix based on 16 16-tuple SIMD real types.
@@ -1624,6 +2310,9 @@ namespace gms {
 	    mat.m10 = t2*st3+t0*st4;
 	    return (mat);
       }
+
+
+       
 
 
 	 __ATTR_REGCALL__
