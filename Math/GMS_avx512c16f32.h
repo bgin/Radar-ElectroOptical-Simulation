@@ -569,6 +569,19 @@ namespace gms {
                              _mm512_mul_ps(x.m_im,x.m_im);
                     return (_mm512_sqrt_ps(_mm512_add_ps(re_part,im_part)));
              }
+		 
+		 
+              __ATTR_HOT__
+	     __ATTR_ALIGN__(32)
+	     __ATTR_VECTORCALL__
+	     static inline
+	     ZMM16c4 cnorm(const ZMM16c4 x) {
+                    const __m512 re_part =
+                             _mm512_mul_ps(x.m_re,x.m_re);
+                    const __m512 im_part =
+                             _mm512_mul_ps(x.m_im,x.m_im);
+                    return (ZMM16c4{re_part,im_part});
+             }
 
 	     __ATTR_HOT__
 	     __ATTR_ALIGN__(32)
