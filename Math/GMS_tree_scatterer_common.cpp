@@ -135,7 +135,7 @@ gms::math
 		      }
 		      stokes_matrix(&scat2x2m[0],
 		                    &stokes4x4m[0]);
-
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1		      
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -150,12 +150,47 @@ gms::math
 			       l4x4phm_t1[k][l][0] = t1;
 			   }
 		       }
-
+#else
+                        t1 = l4x4phm_t1[0][0][0]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t1[0][0][0] = t1;
+                        t2 =  l4x4phm_t1[0][1][0]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t1[0][1][0] = t2;
+                        t3 =  l4x4phm_t1[0][2][0]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t1[0][2][0] = t3;
+                        t4 =  l4x4phm_t1[0][3][0]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t1[0][3][0] = t4;
+                        t5 =  l4x4phm_t1[1][0][0]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t1[1][0][0] = t5;
+                        t6 =  l4x4phm_t1[1][1][0]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t1[1][1][0] = t6;
+                        t7 =  l4x4phm_t1[1][2][0]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t1[1][2][0] = t7;
+                        t8 =  l4x4phm_t1[1][3][0]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t1[1][3][0] = t8;
+                        t9 =  l4x4phm_t1[2][0][0]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t1[2][0][0] = t9;
+                        t10 = l4x4phm_t1[2][1][0]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t1[2][1][0] = t10;
+                        t11 = l4x4phm_t1[2][2][0]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t1[2][2][0] = t11;
+                        t12 = l4x4phm_t1[2][3][0]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t1[2][3][0] = t12;
+                        t13 = l4x4phm_t1[3][0][0]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t1[3][0][0] = t13;
+                        t14 = l4x4phm_t1[3][1][0]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t1[3][1][0] = t14;
+                        t15 = l4x4phm_t1[3][2][0]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t1[3][2][0] = t15;
+                        t16 = l4x4phm_t1[3][3][0]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t1[3][3][0] = t16;
+                      
+#endif
                        scat2x2m[1] = -scat2x2m[1];
 		       scat2x2m[2] = -scat2x2m[2];
 		       stokes_matrix(&scat2x2m[0],
 		                     &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -170,6 +205,41 @@ gms::math
 			       l4x4phm_t1[k][l][0] = t1;
 			   }
 		       }
+#else
+                           t1 = l4x4phm_t1[0][0][0]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t1[0][0][0] = t1;
+                        t2 =  l4x4phm_t1[0][1][0]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t1[0][1][0] = t2;
+                        t3 =  l4x4phm_t1[0][2][0]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t1[0][2][0] = t3;
+                        t4 =  l4x4phm_t1[0][3][0]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t1[0][3][0] = t4;
+                        t5 =  l4x4phm_t1[1][0][0]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t1[1][0][0] = t5;
+                        t6 =  l4x4phm_t1[1][1][0]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t1[1][1][0] = t6;
+                        t7 =  l4x4phm_t1[1][2][0]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t1[1][2][0] = t7;
+                        t8 =  l4x4phm_t1[1][3][0]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t1[1][3][0] = t8;
+                        t9 =  l4x4phm_t1[2][0][0]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t1[2][0][0] = t9;
+                        t10 = l4x4phm_t1[2][1][0]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t1[2][1][0] = t10;
+                        t11 = l4x4phm_t1[2][2][0]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t1[2][2][0] = t11;
+                        t12 = l4x4phm_t1[2][3][0]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t1[2][3][0] = t12;
+                        t13 = l4x4phm_t1[3][0][0]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t1[3][0][0] = t13;
+                        t14 = l4x4phm_t1[3][1][0]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t1[3][1][0] = t14;
+                        t15 = l4x4phm_t1[3][2][0]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t1[3][2][0] = t15;
+                        t16 = l4x4phm_t1[3][3][0]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t1[3][3][0] = t16;
+
+#endif
 
                   // Case 2
 		  thinc =  3.141592653589793f-theta;
@@ -190,6 +260,7 @@ gms::math
 		    stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -204,12 +275,47 @@ gms::math
 			       l4x4phm_t1[k][l][1] = t1;
 			   }
 		       }
+#else
+                         t1 = l4x4phm_t1[0][0][1]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t1[0][0][1] = t1;
+                         t2 =  l4x4phm_t1[0][1][1]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t1[0][1][1] = t2;
+                         t3 =  l4x4phm_t1[0][2][1]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t1[0][2][1] = t3;
+                         t4 =  l4x4phm_t1[0][3][1]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t1[0][3][1] = t4;
+                         t5 =  l4x4phm_t1[1][0][1]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t1[1][0][1] = t5;
+                         t6 =  l4x4phm_t1[1][1][1]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t1[1][1][1] = t6;
+                         t7 =  l4x4phm_t1[1][2][1]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t1[1][2][1] = t7;
+                         t8 =  l4x4phm_t1[1][3][1]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t1[1][3][1] = t8;
+                         t9 =  l4x4phm_t1[2][0][1]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t1[2][0][1] = t9;
+                         t10 = l4x4phm_t1[2][1][1]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t1[2][1][1] = t10;
+                         t11 = l4x4phm_t1[2][2][1]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t1[2][2][1] = t11;
+                         t12 = l4x4phm_t1[2][3][1]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t1[2][3][1] = t12;
+                         t13 = l4x4phm_t1[3][0][1]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t1[3][0][1] = t13;
+                         t14 = l4x4phm_t1[3][1][1]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t1[3][1][1] = t14;
+                         t15 = l4x4phm_t1[3][2][1]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t1[3][2][1] = t15;
+                         t16 = l4x4phm_t1[3][3][1]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t1[3][3][1] = t16;
 
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -225,6 +331,41 @@ gms::math
 			   }
 		       }
 
+#else
+                        t1 = l4x4phm_t1[0][0][1]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t1[0][0][1] = t1;
+                         t2 =  l4x4phm_t1[0][1][1]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t1[0][1][1] = t2;
+                         t3 =  l4x4phm_t1[0][2][1]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t1[0][2][1] = t3;
+                         t4 =  l4x4phm_t1[0][3][1]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t1[0][3][1] = t4;
+                         t5 =  l4x4phm_t1[1][0][1]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t1[1][0][1] = t5;
+                         t6 =  l4x4phm_t1[1][1][1]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t1[1][1][1] = t6;
+                         t7 =  l4x4phm_t1[1][2][1]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t1[1][2][1] = t7;
+                         t8 =  l4x4phm_t1[1][3][1]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t1[1][3][1] = t8;
+                         t9 =  l4x4phm_t1[2][0][1]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t1[2][0][1] = t9;
+                         t10 = l4x4phm_t1[2][1][1]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t1[2][1][1] = t10;
+                         t11 = l4x4phm_t1[2][2][1]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t1[2][2][1] = t11;
+                         t12 = l4x4phm_t1[2][3][1]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t1[2][3][1] = t12;
+                         t13 = l4x4phm_t1[3][0][1]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t1[3][0][1] = t13;
+                         t14 = l4x4phm_t1[3][1][1]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t1[3][1][1] = t14;
+                         t15 = l4x4phm_t1[3][2][1]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t1[3][2][1] = t15;
+                         t16 = l4x4phm_t1[3][3][1]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t1[3][3][1] = t16;
+
+#endif
                     // Case 3
 		    thinc = theta;
                     thsc  = theta;
@@ -244,6 +385,7 @@ gms::math
 		    stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -258,12 +400,47 @@ gms::math
 			       l4x4phm_t1[k][l][2] = t1;
 			   }
 		       }
+#else
+                         t1 = l4x4phm_t1[0][0][2]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t1[0][0][2] = t1;
+                         t2 =  l4x4phm_t1[0][1][2]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t1[0][1][2] = t2;
+                         t3 =  l4x4phm_t1[0][2][2]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t1[0][2][2] = t3;
+                         t4 =  l4x4phm_t1[0][3][2]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t1[0][3][2] = t4;
+                         t5 =  l4x4phm_t1[1][0][2]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t1[1][0][2] = t5;
+                         t6 =  l4x4phm_t1[1][1][2]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t1[1][1][2] = t6;
+                         t7 =  l4x4phm_t1[1][2][2]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t1[1][2][2] = t7;
+                         t8 =  l4x4phm_t1[1][3][2]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t1[1][3][2] = t8;
+                         t9 =  l4x4phm_t1[2][0][2]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t1[2][0][2] = t9;
+                         t10 = l4x4phm_t1[2][1][2]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t1[2][1][2] = t10;
+                         t11 = l4x4phm_t1[2][2][2]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t1[2][2][2] = t11;
+                         t12 = l4x4phm_t1[2][3][2]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t1[2][3][2] = t12;
+                         t13 = l4x4phm_t1[3][0][2]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t1[3][0][2] = t13;
+                         t14 = l4x4phm_t1[3][1][2]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t1[3][1][2] = t14;
+                         t15 = l4x4phm_t1[3][2][2]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t1[3][2][2] = t15;
+                         t16 = l4x4phm_t1[3][3][2]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t1[3][3][2] = t16;
 
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -278,6 +455,40 @@ gms::math
 			       l4x4phm_t1[k][l][2] = t1;
 			   }
 		       }
+#else
+                       t1 = l4x4phm_t1[0][0][2]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t1[0][0][2] = t1;
+                         t2 =  l4x4phm_t1[0][1][2]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t1[0][1][2] = t2;
+                         t3 =  l4x4phm_t1[0][2][2]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t1[0][2][2] = t3;
+                         t4 =  l4x4phm_t1[0][3][2]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t1[0][3][2] = t4;
+                         t5 =  l4x4phm_t1[1][0][2]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t1[1][0][2] = t5;
+                         t6 =  l4x4phm_t1[1][1][2]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t1[1][1][2] = t6;
+                         t7 =  l4x4phm_t1[1][2][2]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t1[1][2][2] = t7;
+                         t8 =  l4x4phm_t1[1][3][2]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t1[1][3][2] = t8;
+                         t9 =  l4x4phm_t1[2][0][2]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t1[2][0][2] = t9;
+                         t10 = l4x4phm_t1[2][1][2]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t1[2][1][2] = t10;
+                         t11 = l4x4phm_t1[2][2][2]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t1[2][2][2] = t11;
+                         t12 = l4x4phm_t1[2][3][2]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t1[2][3][2] = t12;
+                         t13 = l4x4phm_t1[3][0][2]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t1[3][0][2] = t13;
+                         t14 = l4x4phm_t1[3][1][2]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t1[3][1][2] = t14;
+                         t15 = l4x4phm_t1[3][2][2]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t1[3][2][2] = t15;
+                         t16 = l4x4phm_t1[3][3][2]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t1[3][3][2] = t16;
+#endif
 
                     // Case 4:
 		    thinc = 3.141592653589793f-theta;
@@ -298,6 +509,7 @@ gms::math
 		    stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -312,12 +524,46 @@ gms::math
 			       l4x4phm_t1[k][l][3] = t1;
 			   }
 		       }
-
+#else
+                        t1 = l4x4phm_t1[0][0][3]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t1[0][0][3] = t1;
+                        t2 =  l4x4phm_t1[0][1][3]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t1[0][1][3] = t2;
+                        t3 =  l4x4phm_t1[0][2][3]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t1[0][2][3] = t3;
+                        t4 =  l4x4phm_t1[0][3][3]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t1[0][3][3] = t4;
+                        t5 =  l4x4phm_t1[1][0][3]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t1[1][0][3] = t5;
+                        t6 =  l4x4phm_t1[1][1][3]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t1[1][1][3] = t6;
+                        t7 =  l4x4phm_t1[1][2][3]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t1[1][2][3] = t7;
+                        t8 =  l4x4phm_t1[1][3][3]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t1[1][3][3] = t8;
+                        t9 =  l4x4phm_t1[2][0][3]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t1[2][0][3] = t9;
+                        t10 = l4x4phm_t1[2][1][3]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t1[2][1][3] = t10;
+                        t11 = l4x4phm_t1[2][2][3]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t1[2][2][3] = t11;
+                        t12 = l4x4phm_t1[2][3][3]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t1[2][3][3] = t12;
+                        t13 = l4x4phm_t1[3][0][3]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t1[3][0][3] = t13;
+                        t14 = l4x4phm_t1[3][1][3]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t1[3][1][3] = t14;
+                        t15 = l4x4phm_t1[3][2][3]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t1[3][2][3] = t15;
+                        t16 = l4x4phm_t1[3][3][3]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t1[3][3][3] = t16;
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -333,6 +579,41 @@ gms::math
 			   }
 		       }
 
+#else
+                        t1 = l4x4phm_t1[0][0][3]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t1[0][0][3] = t1;
+                        t2 =  l4x4phm_t1[0][1][3]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t1[0][1][3] = t2;
+                        t3 =  l4x4phm_t1[0][2][3]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t1[0][2][3] = t3;
+                        t4 =  l4x4phm_t1[0][3][3]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t1[0][3][3] = t4;
+                        t5 =  l4x4phm_t1[1][0][3]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t1[1][0][3] = t5;
+                        t6 =  l4x4phm_t1[1][1][3]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t1[1][1][3] = t6;
+                        t7 =  l4x4phm_t1[1][2][3]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t1[1][2][3] = t7;
+                        t8 =  l4x4phm_t1[1][3][3]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t1[1][3][3] = t8;
+                        t9 =  l4x4phm_t1[2][0][3]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t1[2][0][3] = t9;
+                        t10 = l4x4phm_t1[2][1][3]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t1[2][1][3] = t10;
+                        t11 = l4x4phm_t1[2][2][3]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t1[2][2][3] = t11;
+                        t12 = l4x4phm_t1[2][3][3]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t1[2][3][3] = t12;
+                        t13 = l4x4phm_t1[3][0][3]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t1[3][0][3] = t13;
+                        t14 = l4x4phm_t1[3][1][3]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t1[3][1][3] = t14;
+                        t15 = l4x4phm_t1[3][2][3]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t1[3][2][3] = t15;
+                        t16 = l4x4phm_t1[3][3][3]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t1[3][3][3] = t16;
+
+#endif
                     // Extinction matrix: case 1
 		    thinc = theta;
                     thsc  = thinc;
@@ -349,10 +630,62 @@ gms::math
 			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
 						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 		      }
-#include "sm2x2avg_t1_1_1_0.c"
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                          for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                               __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                               scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                  for(l=0; l != 2; ++l) {
+                                      t1 = sm2x2avg_t1[k][l][0]+orient_distr*scat2x2m[k][l];
+		                      sm2x2avg_t1[k][l][0] = t1;
+		                  }
+	                  }
+#else
+               t1 = sm2x2avg_t1[0][0][0]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t1[0][0][0] = t1;
+	       t2 = sm2x2avg_t1[0][1][0]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t1[0][1][0] = t1;
+	       t3 = sm2x2avg_t1[1][0][0]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t1[1][0][0] = t3;
+	       t4 = sm2x2avg_t1[1][1][0]+orient_distr*scat2x2m[1][1];
+               sm2x2avg_t1[1][1][0] = t4;
+#endif
+
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
-#include "sm2x2avg_t1_1_1_0.c"
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                          for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                               __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                               scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                  for(l=0; l != 2; ++l) {
+                                      t1 = sm2x2avg_t1[k][l][0]+orient_distr*scat2x2m[k][l];
+		                      sm2x2avg_t1[k][l][0] = t1;
+		                  }
+	                  }
+#else
+               t1 = sm2x2avg_t1[0][0][0]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t1[0][0][0] = t1;
+	       t2 = sm2x2avg_t1[0][1][0]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t1[0][1][0] = t1;
+	       t3 = sm2x2avg_t1[1][0][0]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t1[1][0][0] = t3;
+	       t4 = sm2x2avg_t1[1][1][0]+orient_distr*scat2x2m[1][1];
+               sm2x2avg_t1[1][1][0] = t4;
+#endif	     
+
                     // Extinction matrix: case 2
 		    thinc =   3.141592653589793f-theta;
                     thsc  =   3.141592653589793f-theta;
@@ -369,10 +702,62 @@ gms::math
 			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
 						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 		      }
-#include "sm2x2avg_t1_1_1_1.c"
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                               for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                     __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                   scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                      for(l=0; l != 2; ++l) {
+                                          t1 = sm2x2avg_t1[k][l][1]+orient_distr*scat2x2m[k][l];
+		                          sm2x2avg_t1[k][l][1] = t1;
+		                      }
+	                        }
+#else
+               t1 = sm2x2avg_t1[0][0][1]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t1[0][0][1] = t1;
+	       t2 = sm2x2avg_t1[0][1][1]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t1[0][1][1] = t1;
+	       t3 = sm2x2avg_t1[1][0][1]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t1[1][0][1] = t3;
+               t4 = sm2x2avg_t1[1][1][1]+orient_distr*scat2x2m[1][1];
+	       sm2x2avg_t1[1][1][1] = t4;
+#endif
+
                      scat2x2m[1] = -scat2x2m[1];
-		     scat2x2m[2] = -scat2x2m[2]; 
-#include "sm2x2avg_t1_1_1_1.c"		     
+		     scat2x2m[2] = -scat2x2m[2];
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                               for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                     __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                   scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                      for(l=0; l != 2; ++l) {
+                                          t1 = sm2x2avg_t1[k][l][1]+orient_distr*scat2x2m[k][l];
+		                          sm2x2avg_t1[k][l][1] = t1;
+		                      }
+	                        }
+#else
+               t1 = sm2x2avg_t1[0][0][1]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t1[0][0][1] = t1;
+	       t2 = sm2x2avg_t1[0][1][1]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t1[0][1][1] = t1;
+	       t3 = sm2x2avg_t1[1][0][1]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t1[1][0][1] = t3;
+               t4 = sm2x2avg_t1[1][1][1]+orient_distr*scat2x2m[1][1];
+	       sm2x2avg_t1[1][1][1] = t4;
+#endif		     
+	     
 		  } // end for(ii=0 loop
 	       } // end if(orient_distr block
 	   } // end for(jj=0 loop
@@ -419,6 +804,7 @@ gms::math
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				  
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -433,11 +819,47 @@ gms::math
 			       l4x4phm_t2[k][l][0] = t1;
 			   }
 		       }
-
+#else
+                         t1 = l4x4phm_t2[0][0][0]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t2[0][0][0] = t1;
+                         t2 =  l4x4phm_t2[0][1][0]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t2[0][1][0] = t2;
+                         t3 =  l4x4phm_t2[0][2][0]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t2[0][2][0] = t3;
+                         t4 =  l4x4phm_t2[0][3][0]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t2[0][3][0] = t4;
+                         t5 =  l4x4phm_t2[1][0][0]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t2[1][0][0] = t5;
+                         t6 =  l4x4phm_t2[1][1][0]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t2[1][1][0] = t6;
+                         t7 =  l4x4phm_t2[1][2][0]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t2[1][2][0] = t7;
+                         t8 =  l4x4phm_t2[1][3][0]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t2[1][3][0] = t8;
+                         t9 =  l4x4phm_t2[2][0][0]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t2[2][0][0] = t9;
+                         t10 = l4x4phm_t2[2][1][0]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t2[2][1][0] = t10;
+                         t11 = l4x4phm_t2[2][2][0]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t2[2][2][0] = t11;
+                         t12 = l4x4phm_t2[2][3][0]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t2[2][3][0] = t12;
+                         t13 = l4x4phm_t2[3][0][0]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t2[3][0][0] = t13;
+                         t14 = l4x4phm_t2[3][1][0]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t2[3][1][0] = t14;
+                         t15 = l4x4phm_t2[3][2][0]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t2[3][2][0] = t15;
+                         t16 = l4x4phm_t2[3][3][0]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t2[3][3][0] = t16;
+#endif
+		       
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
+
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				   
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
 #pragma vector always
@@ -452,6 +874,40 @@ gms::math
 			   }
 		       }
 
+#else
+                        t1 = l4x4phm_t2[0][0][0]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t2[0][0][0] = t1;
+                         t2 =  l4x4phm_t2[0][1][0]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t2[0][1][0] = t2;
+                         t3 =  l4x4phm_t2[0][2][0]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t2[0][2][0] = t3;
+                         t4 =  l4x4phm_t2[0][3][0]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t2[0][3][0] = t4;
+                         t5 =  l4x4phm_t2[1][0][0]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t2[1][0][0] = t5;
+                         t6 =  l4x4phm_t2[1][1][0]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t2[1][1][0] = t6;
+                         t7 =  l4x4phm_t2[1][2][0]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t2[1][2][0] = t7;
+                         t8 =  l4x4phm_t2[1][3][0]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t2[1][3][0] = t8;
+                         t9 =  l4x4phm_t2[2][0][0]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t2[2][0][0] = t9;
+                         t10 = l4x4phm_t2[2][1][0]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t2[2][1][0] = t10;
+                         t11 = l4x4phm_t2[2][2][0]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t2[2][2][0] = t11;
+                         t12 = l4x4phm_t2[2][3][0]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t2[2][3][0] = t12;
+                         t13 = l4x4phm_t2[3][0][0]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t2[3][0][0] = t13;
+                         t14 = l4x4phm_t2[3][1][0]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t2[3][1][0] = t14;
+                         t15 = l4x4phm_t2[3][2][0]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t2[3][2][0] = t15;
+                         t16 = l4x4phm_t2[3][3][0]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t2[3][3][0] = t16;
+#endif
                      // Phase matrix: case 2
 		  thinc = 3.141592653589793f-theta;
                   thsc  = 3.141592653589793f-theta;
@@ -471,6 +927,7 @@ gms::math
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1	
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -486,11 +943,46 @@ gms::math
 			   }
 		       }
 
+#else
+                        t1 = l4x4phm_t2[0][0][1]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t2[0][0][1] = t1;
+                        t2 =  l4x4phm_t2[0][1][1]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t2[0][1][1] = t2;
+                        t3 =  l4x4phm_t2[0][2][1]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t2[0][2][1] = t3;
+                        t4 =  l4x4phm_t2[0][3][1]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t2[0][3][1] = t4;
+                        t5 =  l4x4phm_t2[1][0][1]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t2[1][0][1] = t5;
+                        t6 =  l4x4phm_t2[1][1][1]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t2[1][1][1] = t6;
+                        t7 =  l4x4phm_t2[1][2][1]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t2[1][2][1] = t7;
+                        t8 =  l4x4phm_t2[1][3][1]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t2[1][3][1] = t8;
+                        t9 =  l4x4phm_t2[2][0][1]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t2[2][0][1] = t9;
+                        t10 = l4x4phm_t2[2][1][1]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t2[2][1][1] = t10;
+                        t11 = l4x4phm_t2[2][2][1]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t2[2][2][1] = t11;
+                        t12 = l4x4phm_t2[2][3][1]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t2[2][3][1] = t12;
+                        t13 = l4x4phm_t2[3][0][1]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t2[3][0][1] = t13;
+                        t14 = l4x4phm_t2[3][1][1]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t2[3][1][1] = t14;
+                        t15 = l4x4phm_t2[3][2][1]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t2[3][2][1] = t15;
+                        t16 = l4x4phm_t2[3][3][1]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t2[3][3][1] = t16;
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1					   
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -505,7 +997,42 @@ gms::math
 			       l4x4phm_t2[k][l][1] = t1;
 			   }
 		       }
+#else
+                         t1 = l4x4phm_t2[0][0][1]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t2[0][0][1] = t1;
+                        t2 =  l4x4phm_t2[0][1][1]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t2[0][1][1] = t2;
+                        t3 =  l4x4phm_t2[0][2][1]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t2[0][2][1] = t3;
+                        t4 =  l4x4phm_t2[0][3][1]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t2[0][3][1] = t4;
+                        t5 =  l4x4phm_t2[1][0][1]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t2[1][0][1] = t5;
+                        t6 =  l4x4phm_t2[1][1][1]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t2[1][1][1] = t6;
+                        t7 =  l4x4phm_t2[1][2][1]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t2[1][2][1] = t7;
+                        t8 =  l4x4phm_t2[1][3][1]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t2[1][3][1] = t8;
+                        t9 =  l4x4phm_t2[2][0][1]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t2[2][0][1] = t9;
+                        t10 = l4x4phm_t2[2][1][1]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t2[2][1][1] = t10;
+                        t11 = l4x4phm_t2[2][2][1]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t2[2][2][1] = t11;
+                        t12 = l4x4phm_t2[2][3][1]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t2[2][3][1] = t12;
+                        t13 = l4x4phm_t2[3][0][1]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t2[3][0][1] = t13;
+                        t14 = l4x4phm_t2[3][1][1]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t2[3][1][1] = t14;
+                        t15 = l4x4phm_t2[3][2][1]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t2[3][2][1] = t15;
+                        t16 = l4x4phm_t2[3][3][1]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t2[3][3][1] = t16;
 
+#endif
+		       
                     // Phase matrix: case 3
 		    thinc = theta;
                     thsc  = theta;
@@ -525,6 +1052,7 @@ gms::math
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1			      
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -539,12 +1067,47 @@ gms::math
 			       l4x4phm_t2[k][l][2] = t1;
 			   }
 		       }
-
+#else
+                        t1 = l4x4phm_t2[0][0][2]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t2[0][0][2] = t1;
+                        t2 =  l4x4phm_t2[0][1][2]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t2[0][1][2] = t2;
+                        t3 =  l4x4phm_t2[0][2][2]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t2[0][2][2] = t3;
+                        t4 =  l4x4phm_t2[0][3][2]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t2[0][3][2] = t4;
+                        t5 =  l4x4phm_t2[1][0][2]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t2[1][0][2] = t5;
+                        t6 =  l4x4phm_t2[1][1][2]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t2[1][1][2] = t6;
+                        t7 =  l4x4phm_t2[1][2][2]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t2[1][2][2] = t7;
+                        t8 =  l4x4phm_t2[1][3][2]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t2[1][3][2] = t8;
+                        t9 =  l4x4phm_t2[2][0][2]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t2[2][0][2] = t9;
+                        t10 = l4x4phm_t2[2][1][2]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t2[2][1][2] = t10;
+                        t11 = l4x4phm_t2[2][2][2]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t2[2][2][2] = t11;
+                        t12 = l4x4phm_t2[2][3][2]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t2[2][3][2] = t12;
+                        t13 = l4x4phm_t2[3][0][2]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t2[3][0][2] = t13;
+                        t14 = l4x4phm_t2[3][1][2]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t2[3][1][2] = t14;
+                        t15 = l4x4phm_t2[3][2][2]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t2[3][2][2] = t15;
+                        t16 = l4x4phm_t2[3][3][2]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t2[3][3][2] = t16;
+#endif
+		       
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -560,6 +1123,41 @@ gms::math
 			   }
 		       }
 
+#else
+                         t1 = l4x4phm_t2[0][0][2]+orient_distr*stokes4x4m[0][0];
+                        l4x4phm_t2[0][0][2] = t1;
+                        t2 =  l4x4phm_t2[0][1][2]+orient_distr*stokes4x4m[0][1];
+                        l4x4phm_t2[0][1][2] = t2;
+                        t3 =  l4x4phm_t2[0][2][2]+orient_distr*stokes4x4m[0][2];
+                        l4x4phm_t2[0][2][2] = t3;
+                        t4 =  l4x4phm_t2[0][3][2]+orient_distr*stokes4x4m[0][3];
+                        l4x4phm_t2[0][3][2] = t4;
+                        t5 =  l4x4phm_t2[1][0][2]+orient_distr*stokes4x4m[1][0];
+                        l4x4phm_t2[1][0][2] = t5;
+                        t6 =  l4x4phm_t2[1][1][2]+orient_distr*stokes4x4m[1][1];
+                        l4x4phm_t2[1][1][2] = t6;
+                        t7 =  l4x4phm_t2[1][2][2]+orient_distr*stokes4x4m[1][2];
+                        l4x4phm_t2[1][2][2] = t7;
+                        t8 =  l4x4phm_t2[1][3][2]+orient_distr*stokes4x4m[1][3];
+                        l4x4phm_t2[1][3][2] = t8;
+                        t9 =  l4x4phm_t2[2][0][2]+orient_distr*stokes4x4m[2][0];
+                        l4x4phm_t2[2][0][2] = t9;
+                        t10 = l4x4phm_t2[2][1][2]+orient_distr*stokes4x4m[2][1];
+                        l4x4phm_t2[2][1][2] = t10;
+                        t11 = l4x4phm_t2[2][2][2]+orient_distr*stokes4x4m[2][2];
+                        l4x4phm_t2[2][2][2] = t11;
+                        t12 = l4x4phm_t2[2][3][2]+orient_distr*stokes4x4m[2][3];
+                        l4x4phm_t2[2][3][2] = t12;
+                        t13 = l4x4phm_t2[3][0][2]+orient_distr*stokes4x4m[3][0];
+                        l4x4phm_t2[3][0][2] = t13;
+                        t14 = l4x4phm_t2[3][1][2]+orient_distr*stokes4x4m[3][1];
+                        l4x4phm_t2[3][1][2] = t14;
+                        t15 = l4x4phm_t2[3][2][2]+orient_distr*stokes4x4m[3][2];
+                        l4x4phm_t2[3][2][2] = t15;
+                        t16 = l4x4phm_t2[3][3][2]+orient_distr*stokes4x4m[3][3];
+                        l4x4phm_t2[3][3][2] = t16;
+
+#endif
                     // Phase matrix: case 4
                     thinc =  3.141592653589793f-theta;
                     thsc  = theta;
@@ -579,6 +1177,7 @@ gms::math
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -593,7 +1192,40 @@ gms::math
 			       l4x4phm_t2[k][l][3] = t1;
 			   }
 		       }
-
+#else
+                         t1 = l4x4phm_t2[0][0][3]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t2[0][0][3] = t1;
+                         t2 =  l4x4phm_t2[0][1][3]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t2[0][1][3] = t2;
+                         t3 =  l4x4phm_t2[0][2][3]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t2[0][2][3] = t3;
+                         t4 =  l4x4phm_t2[0][3][3]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t2[0][3][3] = t4;
+                         t5 =  l4x4phm_t2[1][0][3]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t2[1][0][3] = t5;
+                         t6 =  l4x4phm_t2[1][1][3]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t2[1][1][3] = t6;
+                         t7 =  l4x4phm_t2[1][2][3]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t2[1][2][3] = t7;
+                         t8 =  l4x4phm_t2[1][3][3]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t2[1][3][3] = t8;
+                         t9 =  l4x4phm_t2[2][0][3]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t2[2][0][3] = t9;
+                         t10 = l4x4phm_t2[2][1][3]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t2[2][1][3] = t10;
+                         t11 = l4x4phm_t2[2][2][3]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t2[2][2][3] = t11;
+                         t12 = l4x4phm_t2[2][3][3]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t2[2][3][3] = t12;
+                         t13 = l4x4phm_t2[3][0][3]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t2[3][0][3] = t13;
+                         t14 = l4x4phm_t2[3][1][3]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t2[3][1][3] = t14;
+                         t15 = l4x4phm_t2[3][2][3]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t2[3][2][3] = t15;
+                         t16 = l4x4phm_t2[3][3][3]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t2[3][3][3] = t16;
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
@@ -614,6 +1246,41 @@ gms::math
 			   }
 		       }
 
+#else
+                        t1 = l4x4phm_t2[0][0][3]+orient_distr*stokes4x4m[0][0];
+                         l4x4phm_t2[0][0][3] = t1;
+                         t2 =  l4x4phm_t2[0][1][3]+orient_distr*stokes4x4m[0][1];
+                         l4x4phm_t2[0][1][3] = t2;
+                         t3 =  l4x4phm_t2[0][2][3]+orient_distr*stokes4x4m[0][2];
+                         l4x4phm_t2[0][2][3] = t3;
+                         t4 =  l4x4phm_t2[0][3][3]+orient_distr*stokes4x4m[0][3];
+                         l4x4phm_t2[0][3][3] = t4;
+                         t5 =  l4x4phm_t2[1][0][3]+orient_distr*stokes4x4m[1][0];
+                         l4x4phm_t2[1][0][3] = t5;
+                         t6 =  l4x4phm_t2[1][1][3]+orient_distr*stokes4x4m[1][1];
+                         l4x4phm_t2[1][1][3] = t6;
+                         t7 =  l4x4phm_t2[1][2][3]+orient_distr*stokes4x4m[1][2];
+                         l4x4phm_t2[1][2][3] = t7;
+                         t8 =  l4x4phm_t2[1][3][3]+orient_distr*stokes4x4m[1][3];
+                         l4x4phm_t2[1][3][3] = t8;
+                         t9 =  l4x4phm_t2[2][0][3]+orient_distr*stokes4x4m[2][0];
+                         l4x4phm_t2[2][0][3] = t9;
+                         t10 = l4x4phm_t2[2][1][3]+orient_distr*stokes4x4m[2][1];
+                         l4x4phm_t2[2][1][3] = t10;
+                         t11 = l4x4phm_t2[2][2][3]+orient_distr*stokes4x4m[2][2];
+                         l4x4phm_t2[2][2][3] = t11;
+                         t12 = l4x4phm_t2[2][3][3]+orient_distr*stokes4x4m[2][3];
+                         l4x4phm_t2[2][3][3] = t12;
+                         t13 = l4x4phm_t2[3][0][3]+orient_distr*stokes4x4m[3][0];
+                         l4x4phm_t2[3][0][3] = t13;
+                         t14 = l4x4phm_t2[3][1][3]+orient_distr*stokes4x4m[3][1];
+                         l4x4phm_t2[3][1][3] = t14;
+                         t15 = l4x4phm_t2[3][2][3]+orient_distr*stokes4x4m[3][2];
+                         l4x4phm_t2[3][2][3] = t15;
+                         t16 = l4x4phm_t2[3][3][3]+orient_distr*stokes4x4m[3][3];
+                         l4x4phm_t2[3][3][3] = t16;
+
+#endif
                      // Extinction matrix: case 1
 		    thinc = theta;
                     thsc  = thinc;
@@ -630,10 +1297,63 @@ gms::math
 			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
 						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 		     }
-#include "sm2x2avg_t2_1_1_0.c"
+
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                  for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                        __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                       scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                       for(l=0; l != 2; ++l) {
+                                           t1 = sm2x2avg_t2[k][l][0]+orient_distr*scat2x2m[k][l];
+		                           sm2x2avg_t2[k][l][0] = t1;
+		                        }
+	                        }
+#else
+               t1 = sm2x2avg_t2[0][0][0]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t2[0][0][0] = t1;
+	       t2 = sm2x2avg_t2[0][1][0]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t2[0][1][0] = t1;
+	       t3 = sm2x2avg_t2[1][0][0]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t2[1][0][0] = t3;
+	       t4 = sm2x2avg_t2[1][1][0]+orient_distr*scat2x2m[1][1];
+               sm2x2avg_t2[1][1][0] = t4;
+#endif		     
+
                          scat2x2m[1] = -scat2x2m[1];
 		         scat2x2m[2] = -scat2x2m[2];
-#include "sm2x2avg_t2_1_1_0.c"
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                  for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                        __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                       scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                       for(l=0; l != 2; ++l) {
+                                           t1 = sm2x2avg_t2[k][l][0]+orient_distr*scat2x2m[k][l];
+		                           sm2x2avg_t2[k][l][0] = t1;
+		                        }
+	                        }
+#else
+               t1 = sm2x2avg_t2[0][0][0]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t2[0][0][0] = t1;
+	       t2 = sm2x2avg_t2[0][1][0]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t2[0][1][0] = t1;
+	       t3 = sm2x2avg_t2[1][0][0]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t2[1][0][0] = t3;
+	       t4 = sm2x2avg_t2[1][1][0]+orient_distr*scat2x2m[1][1];
+               sm2x2avg_t2[1][1][0] = t4;
+#endif				 
+
                       // Extinction matrix: case 2
 		        thinc = 3.141592653589793f-theta;
                         thsc  = 3.141592653589793f-theta;
@@ -650,10 +1370,64 @@ gms::math
 			                         rad_freq,rad_k0,rad_wv,lmg,lrho,
 						 ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 		     }
- #include "sm2x2avg_t2_1_1_1.c"
+
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                    for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                        __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                       scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                       for(l=0; l != 2; ++l) {
+                                           t1 = sm2x2avg_t2[k][l][1]+orient_distr*scat2x2m[k][l];
+		                           sm2x2avg_t2[k][l][1] = t1;
+		                       }
+	                        }
+#else
+               t1 = sm2x2avg_t2[0][0][1]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t2[0][0][1] = t1;
+	       t2 = sm2x2avg_t2[0][1][1]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t2[0][1][1] = t1;
+	       t3 = sm2x2avg_t2[1][0][1]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t2[1][0][1] = t3;
+               t4 = sm2x2avg_t2[1][1][1]+orient_distr*scat2x2m[1][1];
+	       sm2x2avg_t2[1][1][1] = t4;
+#endif		     
+ 
                          scat2x2m[1] = -scat2x2m[1];
 		         scat2x2m[2] = -scat2x2m[2];
-#include "sm2x2avg_t2_1_1_1.c"
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                    for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                        __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                       scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                       for(l=0; l != 2; ++l) {
+                                           t1 = sm2x2avg_t2[k][l][1]+orient_distr*scat2x2m[k][l];
+		                           sm2x2avg_t2[k][l][1] = t1;
+		                       }
+	                        }
+#else
+               t1 = sm2x2avg_t2[0][0][1]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t2[0][0][1] = t1;
+	       t2 = sm2x2avg_t2[0][1][1]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t2[0][1][1] = t1;
+	       t3 = sm2x2avg_t2[1][0][1]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t2[1][0][1] = t3;
+               t4 = sm2x2avg_t2[1][1][1]+orient_distr*scat2x2m[1][1];
+	       sm2x2avg_t2[1][1][1] = t4;
+#endif	
+			 
+
 		  } // end for (ii=0 loop
 	       } // if(orient_distr block
 	   } // end of for(jj=0 loop
@@ -700,6 +1474,7 @@ gms::math
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				  
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -715,11 +1490,47 @@ gms::math
 			   }
 		       }
 
+#else
+                         t1 = l4x4phm_t3[0][0][0]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][0] = t1;
+     t2 =  l4x4phm_t3[0][1][0]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][0] = t2;
+     t3 =  l4x4phm_t3[0][2][0]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][0] = t3;
+     t4 =  l4x4phm_t3[0][3][0]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][0] = t4;
+     t5 =  l4x4phm_t3[1][0][0]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][0] = t5;
+     t6 =  l4x4phm_t3[1][1][0]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][0] = t6;
+     t7 =  l4x4phm_t3[1][2][0]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][0] = t7;
+     t8 =  l4x4phm_t3[1][3][0]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][0] = t8;
+     t9 =  l4x4phm_t3[2][0][0]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][0] = t9;
+     t10 = l4x4phm_t3[2][1][0]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][0] = t10;
+     t11 = l4x4phm_t3[2][2][0]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][0] = t11;
+     t12 = l4x4phm_t3[2][3][0]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][0] = t12;
+     t13 = l4x4phm_t3[3][0][0]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][0] = t13;
+     t14 = l4x4phm_t3[3][1][0]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][0] = t14;
+     t15 = l4x4phm_t3[3][2][0]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][0] = t15;
+     t16 = l4x4phm_t3[3][3][0]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][0] = t16;
+
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1					   
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -735,6 +1546,41 @@ gms::math
 			   }
 		       }
 
+#else
+                                           t1 = l4x4phm_t3[0][0][0]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][0] = t1;
+     t2 =  l4x4phm_t3[0][1][0]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][0] = t2;
+     t3 =  l4x4phm_t3[0][2][0]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][0] = t3;
+     t4 =  l4x4phm_t3[0][3][0]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][0] = t4;
+     t5 =  l4x4phm_t3[1][0][0]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][0] = t5;
+     t6 =  l4x4phm_t3[1][1][0]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][0] = t6;
+     t7 =  l4x4phm_t3[1][2][0]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][0] = t7;
+     t8 =  l4x4phm_t3[1][3][0]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][0] = t8;
+     t9 =  l4x4phm_t3[2][0][0]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][0] = t9;
+     t10 = l4x4phm_t3[2][1][0]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][0] = t10;
+     t11 = l4x4phm_t3[2][2][0]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][0] = t11;
+     t12 = l4x4phm_t3[2][3][0]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][0] = t12;
+     t13 = l4x4phm_t3[3][0][0]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][0] = t13;
+     t14 = l4x4phm_t3[3][1][0]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][0] = t14;
+     t15 = l4x4phm_t3[3][2][0]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][0] = t15;
+     t16 = l4x4phm_t3[3][3][0]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][0] = t16;  
+
+#endif
                      // Phase matrix: case 2
 		       thinc = 3.141592653589793f-theta;
                        thsc  = 3.141592653589793f-theta;
@@ -755,6 +1601,7 @@ gms::math
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				  
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -770,11 +1617,47 @@ gms::math
 			   }
 		       }
 
+#else
+                        t1 = l4x4phm_t3[0][0][1]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][1] = t1;
+     t2 =  l4x4phm_t3[0][1][1]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][1] = t2;
+     t3 =  l4x4phm_t3[0][2][1]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][1] = t3;
+     t4 =  l4x4phm_t3[0][3][1]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][1] = t4;
+     t5 =  l4x4phm_t3[1][0][1]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][1] = t5;
+     t6 =  l4x4phm_t3[1][1][1]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][1] = t6;
+     t7 =  l4x4phm_t3[1][2][1]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][1] = t7;
+     t8 =  l4x4phm_t3[1][3][1]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][1] = t8;
+     t9 =  l4x4phm_t3[2][0][1]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][1] = t9;
+     t10 = l4x4phm_t3[2][1][1]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][1] = t10;
+     t11 = l4x4phm_t3[2][2][1]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][1] = t11;
+     t12 = l4x4phm_t3[2][3][1]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][1] = t12;
+     t13 = l4x4phm_t3[3][0][1]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][1] = t13;
+     t14 = l4x4phm_t3[3][1][1]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][1] = t14;
+     t15 = l4x4phm_t3[3][2][1]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][1] = t15;
+     t16 = l4x4phm_t3[3][3][1]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][1] = t16;
+
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				   
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -790,6 +1673,41 @@ gms::math
 			   }
 		       }
 
+#else
+
+                                            t1 = l4x4phm_t3[0][0][1]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][1] = t1;
+     t2 =  l4x4phm_t3[0][1][1]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][1] = t2;
+     t3 =  l4x4phm_t3[0][2][1]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][1] = t3;
+     t4 =  l4x4phm_t3[0][3][1]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][1] = t4;
+     t5 =  l4x4phm_t3[1][0][1]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][1] = t5;
+     t6 =  l4x4phm_t3[1][1][1]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][1] = t6;
+     t7 =  l4x4phm_t3[1][2][1]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][1] = t7;
+     t8 =  l4x4phm_t3[1][3][1]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][1] = t8;
+     t9 =  l4x4phm_t3[2][0][1]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][1] = t9;
+     t10 = l4x4phm_t3[2][1][1]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][1] = t10;
+     t11 = l4x4phm_t3[2][2][1]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][1] = t11;
+     t12 = l4x4phm_t3[2][3][1]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][1] = t12;
+     t13 = l4x4phm_t3[3][0][1]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][1] = t13;
+     t14 = l4x4phm_t3[3][1][1]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][1] = t14;
+     t15 = l4x4phm_t3[3][2][1]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][1] = t15;
+     t16 = l4x4phm_t3[3][3][1]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][1] = t16;
+#endif
 		       // Phase matrix: case 3
 		        thinc = theta;
                         thsc  = theta;
@@ -810,6 +1728,7 @@ gms::math
 		     stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1					  
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -825,6 +1744,41 @@ gms::math
 			   }
 		       }
 
+#else
+                         t1 = l4x4phm_t3[0][0][2]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][2] = t1;
+     t2 =  l4x4phm_t3[0][1][2]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][2] = t2;
+     t3 =  l4x4phm_t3[0][2][2]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][2] = t3;
+     t4 =  l4x4phm_t3[0][3][2]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][2] = t4;
+     t5 =  l4x4phm_t3[1][0][2]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][2] = t5;
+     t6 =  l4x4phm_t3[1][1][2]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][2] = t6;
+     t7 =  l4x4phm_t3[1][2][2]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][2] = t7;
+     t8 =  l4x4phm_t3[1][3][2]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][2] = t8;
+     t9 =  l4x4phm_t3[2][0][2]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][2] = t9;
+     t10 = l4x4phm_t3[2][1][2]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][2] = t10;
+     t11 = l4x4phm_t3[2][2][2]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][2] = t11;
+     t12 = l4x4phm_t3[2][3][2]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][2] = t12;
+     t13 = l4x4phm_t3[3][0][2]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][2] = t13;
+     t14 = l4x4phm_t3[3][1][2]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][2] = t14;
+     t15 = l4x4phm_t3[3][2][2]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][2] = t15;
+     t16 = l4x4phm_t3[3][3][2]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][2] = t16;
+
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
@@ -844,7 +1798,42 @@ gms::math
 			       l4x4phm_t3[k][l][2] = t1;
 			   }
 		       }
+#else
+                         t1 = l4x4phm_t3[0][0][2]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][2] = t1;
+     t2 =  l4x4phm_t3[0][1][2]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][2] = t2;
+     t3 =  l4x4phm_t3[0][2][2]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][2] = t3;
+     t4 =  l4x4phm_t3[0][3][2]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][2] = t4;
+     t5 =  l4x4phm_t3[1][0][2]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][2] = t5;
+     t6 =  l4x4phm_t3[1][1][2]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][2] = t6;
+     t7 =  l4x4phm_t3[1][2][2]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][2] = t7;
+     t8 =  l4x4phm_t3[1][3][2]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][2] = t8;
+     t9 =  l4x4phm_t3[2][0][2]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][2] = t9;
+     t10 = l4x4phm_t3[2][1][2]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][2] = t10;
+     t11 = l4x4phm_t3[2][2][2]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][2] = t11;
+     t12 = l4x4phm_t3[2][3][2]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][2] = t12;
+     t13 = l4x4phm_t3[3][0][2]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][2] = t13;
+     t14 = l4x4phm_t3[3][1][2]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][2] = t14;
+     t15 = l4x4phm_t3[3][2][2]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][2] = t15;
+     t16 = l4x4phm_t3[3][3][2]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][2] = t16;
 
+#endif
+		       
                      // Phase matrix: case 4
 		       thinc = 3.141592653589793f-theta;
                        thsc  = theta;
@@ -865,6 +1854,7 @@ gms::math
 		       stokes_matrix(&scat2x2m[0],
 		                  &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				  
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -880,11 +1870,47 @@ gms::math
 			   }
 		       }
 
+#else
+
+                       t1 = l4x4phm_t3[0][0][3]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][3] = t1;
+     t2 =  l4x4phm_t3[0][1][3]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][3] = t2;
+     t3 =  l4x4phm_t3[0][2][3]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][3] = t3;
+     t4 =  l4x4phm_t3[0][3][3]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][3] = t4;
+     t5 =  l4x4phm_t3[1][0][3]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][3] = t5;
+     t6 =  l4x4phm_t3[1][1][3]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][3] = t6;
+     t7 =  l4x4phm_t3[1][2][3]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][3] = t7;
+     t8 =  l4x4phm_t3[1][3][3]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][3] = t8;
+     t9 =  l4x4phm_t3[2][0][3]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][3] = t9;
+     t10 = l4x4phm_t3[2][1][3]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][3] = t10;
+     t11 = l4x4phm_t3[2][2][3]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][3] = t11;
+     t12 = l4x4phm_t3[2][3][3]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][3] = t12;
+     t13 = l4x4phm_t3[3][0][3]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][3] = t13;
+     t14 = l4x4phm_t3[3][1][3]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][3] = t14;
+     t15 = l4x4phm_t3[3][2][3]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][3] = t15;
+     t16 = l4x4phm_t3[3][3][3]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][3] = t16;
+#endif
                      scat2x2m[1] = -scat2x2m[1];
 		     scat2x2m[2] = -scat2x2m[2];
 		     stokes_matrix(&scat2x2m[0],
 		                   &stokes4x4m[0]);
 
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1				   
                        for(k=0; k != 4; ++k) {
 #if defined __INTEL_COMPILER
         __assume_aligned(stokes4x4m,64);
@@ -900,6 +1926,41 @@ gms::math
 			   }
 		       }
 
+#else
+
+                                         t1 = l4x4phm_t3[0][0][3]+orient_distr*stokes4x4m[0][0];
+     l4x4phm_t3[0][0][3] = t1;
+     t2 =  l4x4phm_t3[0][1][3]+orient_distr*stokes4x4m[0][1];
+     l4x4phm_t3[0][1][3] = t2;
+     t3 =  l4x4phm_t3[0][2][3]+orient_distr*stokes4x4m[0][2];
+     l4x4phm_t3[0][2][3] = t3;
+     t4 =  l4x4phm_t3[0][3][3]+orient_distr*stokes4x4m[0][3];
+     l4x4phm_t3[0][3][3] = t4;
+     t5 =  l4x4phm_t3[1][0][3]+orient_distr*stokes4x4m[1][0];
+     l4x4phm_t3[1][0][3] = t5;
+     t6 =  l4x4phm_t3[1][1][3]+orient_distr*stokes4x4m[1][1];
+     l4x4phm_t3[1][1][3] = t6;
+     t7 =  l4x4phm_t3[1][2][3]+orient_distr*stokes4x4m[1][2];
+     l4x4phm_t3[1][2][3] = t7;
+     t8 =  l4x4phm_t3[1][3][3]+orient_distr*stokes4x4m[1][3];
+     l4x4phm_t3[1][3][3] = t8;
+     t9 =  l4x4phm_t3[2][0][3]+orient_distr*stokes4x4m[2][0];
+     l4x4phm_t3[2][0][3] = t9;
+     t10 = l4x4phm_t3[2][1][3]+orient_distr*stokes4x4m[2][1];
+     l4x4phm_t3[2][1][3] = t10;
+     t11 = l4x4phm_t3[2][2][3]+orient_distr*stokes4x4m[2][2];
+     l4x4phm_t3[2][2][3] = t11;
+     t12 = l4x4phm_t3[2][3][3]+orient_distr*stokes4x4m[2][3];
+     l4x4phm_t3[2][3][3] = t12;
+     t13 = l4x4phm_t3[3][0][3]+orient_distr*stokes4x4m[3][0];
+     l4x4phm_t3[3][0][3] = t13;
+     t14 = l4x4phm_t3[3][1][3]+orient_distr*stokes4x4m[3][1];
+     l4x4phm_t3[3][1][3] = t14;
+     t15 = l4x4phm_t3[3][2][3]+orient_distr*stokes4x4m[3][2];
+     l4x4phm_t3[3][2][3] = t15;
+     t16 = l4x4phm_t3[3][3][3]+orient_distr*stokes4x4m[3][3];
+     l4x4phm_t3[3][3][3] = t16;
+#endif
                      // Extinction matrix: case 1
 		       thinc = theta;
                        thsc  = thinc;
@@ -917,10 +1978,64 @@ gms::math
 			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
 						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 		       }
-#include "sm2x2avg_t3_1_1_0.c"
+
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                          for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                               __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                               scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                                for(l=0; l != 2; ++l) {
+                                                     t1 = sm2x2avg_t3[k][l][0]+orient_distr*scat2x2m[k][l];
+		                                     sm2x2avg_t3[k][l][0] = t1;
+		                               }
+	                                }
+#else
+               t1 = sm2x2avg_t3[0][0][0]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t3[0][0][0] = t1;
+	       t2 = sm2x2avg_t3[0][1][0]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t3[0][1][0] = t1;
+	       t3 = sm2x2avg_t3[1][0][0]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t3[1][0][0] = t3;
+	       t4 = sm2x2avg_t3[1][1][0]+orient_distr*scat2x2m[1][1];
+               sm2x2avg_t3[1][1][0] = t4;
+#endif		       
+
                            scat2x2m[1] = -scat2x2m[1];
 		           scat2x2m[2] = -scat2x2m[2];
-#include "sm2x2avg_t3_1_1_0.c"
+
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                          for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                               __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                               scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                                for(l=0; l != 2; ++l) {
+                                                     t1 = sm2x2avg_t3[k][l][0]+orient_distr*scat2x2m[k][l];
+		                                     sm2x2avg_t3[k][l][0] = t1;
+		                               }
+	                                }
+#else
+               t1 = sm2x2avg_t3[0][0][0]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t3[0][0][0] = t1;
+	       t2 = sm2x2avg_t3[0][1][0]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t3[0][1][0] = t1;
+	       t3 = sm2x2avg_t3[1][0][0]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t3[1][0][0] = t3;
+	       t4 = sm2x2avg_t3[1][1][0]+orient_distr*scat2x2m[1][1];
+               sm2x2avg_t3[1][1][0] = t4;
+#endif				   
+
                       // Extinction matrix: case 2
 		        thinc =  3.141592653589793f-theta;
                         thsc  =  3.141592653589793f-theta;
@@ -938,10 +2053,65 @@ gms::math
 			                             rad_freq,rad_k0,rad_wv,lmg,lrho,
 						     ldens,ldiam,lthick,epsr,&scat2x2m[0]);
 		       }
-#include "sm2x2avg_t3_1_1_1.c"
+
+
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                  for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                      __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                          for(l=0; l != 2; ++l) {
+                                              t1 = sm2x2avg_t3[k][l][1]+orient_distr*scat2x2m[k][l];
+		                              sm2x2avg_t3[k][l][1] = t1;
+		                          }
+	                           }
+#else
+               t1 = sm2x2avg_t3[0][0][1]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t3[0][0][1] = t1;
+	       t2 = sm2x2avg_t3[0][1][1]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t3[0][1][1] = t1;
+	       t3 = sm2x2avg_t3[1][0][1]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t3[1][0][1] = t3;
+               t4 = sm2x2avg_t3[1][1][1]+orient_distr*scat2x2m[1][1];
+	       sm2x2avg_t3[1][1][1] = t4;
+#endif		       
+
                            scat2x2m[1] = -scat2x2m[1];
 		           scat2x2m[2] = -scat2x2m[2];
-#include "sm2x2avg_t3_1_1_1.c"
+#if (LEAF_PHASE_MATRICES_AUTOVECTORIZE) == 1
+
+                                  for(k=0; k != 2; ++k) {
+#if defined __INTEL_COMPILER
+                                      __assume_aligned(scat2x2m,64);
+#pragma vector always
+#pragma code_align(64)
+#elif defined __GNUC__ && !defined __INTEL_COMPILER
+                                      scat2x2m = (std::complex<float>*)__builtin_assume_aligned(scat2x2m,64);
+#pragma omp simd
+#endif
+                                          for(l=0; l != 2; ++l) {
+                                              t1 = sm2x2avg_t3[k][l][1]+orient_distr*scat2x2m[k][l];
+		                              sm2x2avg_t3[k][l][1] = t1;
+		                          }
+	                           }
+#else
+               t1 = sm2x2avg_t3[0][0][1]+orient_distr*scat2x2m[0][0];
+	       sm2x2avg_t3[0][0][1] = t1;
+	       t2 = sm2x2avg_t3[0][1][1]+orient_distr*scat2x2m[0][1];
+	       sm2x2avg_t3[0][1][1] = t1;
+	       t3 = sm2x2avg_t3[1][0][1]+orient_distr*scat2x2m[1][0];
+	       sm2x2avg_t3[1][0][1] = t3;
+               t4 = sm2x2avg_t3[1][1][1]+orient_distr*scat2x2m[1][1];
+	       sm2x2avg_t3[1][1][1] = t4;
+#endif	
+			   
+
 		  } // end of for(ii=0 loop
 	       } // if(orient_distr block
 	   } // end of for(jj=0 loop
