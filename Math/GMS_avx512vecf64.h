@@ -40,20 +40,20 @@ namespace gms {
 	namespace math {
 
 
-		__attribute__((align(64))) struct AVX512VecF64 {
+		__attribute__((align(64))) struct AVX512Vec8 {
 
 		
 
 		   //
 		   // Class Constructors and Destructor
 		   //
-		   AVX512VecF64();
+		   AVX512Vec8();
 
-		   AVX4512VecF64(const double[8]); // Unaligned load
+		   AVX4512Vec8(const double[8]); // Unaligned load
 
-		   AVX512VecF64(const double);
+		   AVX512Vec8(const double);
 
-		   AVX512VecF64(const double,
+		   AVX512Vec8(const double,
 				const double,
 				const double,
 				const double,
@@ -62,23 +62,23 @@ namespace gms {
 				const double,
 				const double);
 
-		   AVX512VecF64(const __m512d);
+		   AVX512Vec8(const __m512d);
 
-		   AVX512VecF64(const __m512i);
+		   AVX512Vec8(const __m512i);
 
-		   AVX512VecF64(const AVX512VecF64 &);
+		   AVX512Vec8(const AVX512Vec8 &);
 
-		   AVX512VecF64(const __m256d,
+		   AVX512Vec8(const __m256d,
 			        const __m256d);
 
-		   ~AVX512VecF64() = default;
+		   ~AVX512Vec8() = default;
 
 		   //
 		   // getters
 		   //
-		   const __m512d get_vf64() const;
+		   const __m512d get_v8() const;
 
-		   __m512d get_vf64();
+		   __m512d get_v8();
 
 		   __m256d lo_part() const;
 
@@ -89,9 +89,9 @@ namespace gms {
 		   //
 
 		   // Address argument should be aligned on 64-byte boundary
-		   AVX512VecF64 & load_a(const double* __restrict);
+		   AVX512Vec8 & load_a(const double* __restrict);
 
-		   AVX512VecF64 & load_u(const double* __restrict);
+		   AVX512Vec8 & load_u(const double* __restrict);
 
 		   // Address argument should be aligned on 64-byte boundary
 		   void store_a(double* __restrict) const;
@@ -106,7 +106,7 @@ namespace gms {
 		   // Few member and friend operators
 		   //
 
-		   AVX512VecF64 & operator=(const AVX3VecF64 &);
+		   AVX512Vec8 & operator=(const AVX512Vec8 &);
 
 		   // Type-cast operator
 		   operator __m512d () const;
@@ -114,7 +114,7 @@ namespace gms {
 		   double operator[](const uint32_t) const;
 
 		   friend std::ostream & operator<<(std::ostream &,
-						    const AVX512VecF64 &);
+						    const AVX512Vec8 &);
 
 
 		  
@@ -126,57 +126,57 @@ namespace gms {
 		// Global (namespace) static functions
 
 		// Extract __m256d part only
-		static inline __m256d extract(const AVX512VecF64 &,
+		static inline __m256d extract(const AVX512Vec8 &,
 					      const int32_t);
 
 		// Branchless conditional selection
-		static inline AVX512VecF64 select(const AVX512VecF64 &,
-						  const AVX512VecF64 &,
+		static inline AVX512Vec8 select(const AVX512Vec8 ,
+						  const AVX512Vec8 ,
 						  const __mmask8);
 		//
 		//	Arithmetic and mathematical operations
 		//
 
 		// SIMD max
-		static inline AVX512VecF64 simd_max(const AVX512VecF64 &,
-						    const AVX512VecF64 &);
+		static inline AVX512Vec8 simd_max(const AVX512Vec8 ,
+						    const AVX512Vec8 );
 
 		// SIMD min
-		static inline AVX512VecF64 simd_min(const AVX512VecF64 &,
-						    const AVX512VecF64 &);
+		static inline AVX512Vec8 simd_min(const AVX512Vec8 ,
+						    const AVX512Vec8 );
 
 	    // SIMD abs
-		static inline AVX512VecF64 abs(const AVX512VecF64 &);
+		static inline AVX512Vec8 abs(const AVX512Vec8 );
 
 	    // SIMD sqrt
-		static inline AVX512VecF64 sqrt(const AVX512VecF64 &); 
+		static inline AVX512Vec8 sqrt(const AVX512Vec8 ); 
 
 	    // SIMD rsqrt
-		static inline AVX512VecF64 rsqrt(const AVX512VecF64 &);
+		static inline AVX512Vec8 rsqrt(const AVX512Vec8);
 
 	    // SIMD cbrt
-		static inline AVX512VecF64 cbrt(const AVX512VecF64 &); 
+		static inline AVX512Vec8 cbrt(const AVX512Vec8); 
 
 	    // SIMD squared
-		static inline AVX512VecF64 sqr(const AVX512VecF64 &);
+		static inline AVX512Vec8 sqr(const AVX512Vec8);
 
 		// Horizontal reduction by addition
-		static inline double reduce_add(const AVX512VecF64 &);
+		static inline double reduce_add(const AVX512Vec8);
 		
 		// Horizontal reduction by multiplication
-		static inline double reduce_mul(const AVX512VecF64 &);
+		static inline double reduce_mul(const AVX512Vec8);
 
 		// Horizontal reduction by maximum
-		static inline double reduce_max(const AVX512VecF64 &);
+		static inline double reduce_max(const AVX512Vec8);
 
 		// Horizontal reduction by minimmum
-		static inline double reduce_min(const AVX512VecF64 &);
+		static inline double reduce_min(const AVX512Vec8);
 
 	    // SIMD ceil
-		static inline AVX512VecF64 ceil(const AVX512VecF64 &);
+		static inline AVX512Vec8 ceil(const AVX512Vec8);
 
 	    // SIMD floor
-		static inline AVX512VecF64 floor(const AVX512VecF64 &);
+		static inline AVX512Vec8 floor(const AVX512VecF64 &);
 
 	    // SIMD round
 		static inline AVX512VecF64 round(const AVX512VecF64 &,
@@ -390,7 +390,7 @@ namespace gms {
 		static inline AVX512VecF64 operator++(AVX512VecF64 &);
 
 		// A = A - 1.0
-		static inline AVX512VecF64 operator--(AVX512VecF64 &);
+		static inline AVX512Vec8 operator--(AVX512Vec8);
 
 
 #include "GMS_avx512vecf64.inl"
