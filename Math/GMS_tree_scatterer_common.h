@@ -1,14 +1,14 @@
 
 
 #ifndef __GMS_TREE_SCATTERER_COMMON_H__
-#define __GMS_TREE_SCATTERER_COMMON_H__
+#define __GMS_TREE_SCATTERER_COMMON_H__ 120720201012
 
 
 
 namespace file_info {
 
      const unsigned int gGMS_TREE_SCATTERER_COMMON_MAJOR = 1;
-     const unsigned int gGMS_TREE_SCATTERER_COMMON_MINOR = 0;
+     const unsigned int gGMS_TREE_SCATTERER_COMMON_MINOR = 1;
      const unsigned int gGMS_TREE_SCATTERER_COMMON_MICRO = 0;
      const unsigned int gGMS_TREE_SCATTERER_COMMON_FULLVER =
        1000U*gGMS_TREE_SCATTERER_COMMON_MAJOR+100U*gGMS_TREE_SCATTERER_COMMON_MINOR+
@@ -164,7 +164,7 @@ namespace gms {
 		     }
 
 		        __ATTR_HOT__
-			__ATTR_ALIGN__(64)
+			__ATTR_ALIGN__(32)
 			inline
 		        std::complex<float>
 			Veg_dielectric_2(const float mg,
@@ -199,7 +199,7 @@ namespace gms {
 		     }
 
 		        __ATTR_HOT__
-		        __ATTR_ALIGN__(64)
+		        __ATTR_ALIGN__(32)
 		        inline
 		        std::complex<float>
 		        Veg_dielectric_1(const float mg,
@@ -237,7 +237,7 @@ namespace gms {
 		                        const float) __ATTR_HOT__ __ATTR_ALIGN__(32);
 
 		       __ATTR_HOT__				
-                       __ATTR_ALIGN__(64)
+                       __ATTR_ALIGN__(32)
 		       inline
 		       float
 		       Leaf_ang_orientation(const float mu,
@@ -291,14 +291,14 @@ namespace gms {
 					     std::complex<float> * __restrict __ATTR_ALIGN__(32)) __ATTR_HOT__ __ATTR_ALIGN__(32);
 
 		    __ATTR_HOT__
-		    __ATTR_ALIGN__(64)
+		    __ATTR_ALIGN__(32)
 		    __ATTR_VECTORCALL__
 		    inline
 		    void
 		    vec1x3_smooth(float * __restrict __ATTR_ALIGN__(16) in,
 		                  float * __restrict __ATTR_ALIGN__(16) out) {
 			 __m128 tmp;
-                         float mag;
+                         float mag,t0;
 			 mag = 0.0f;
 #if defined __INTEL_COMPILER
                          __assume_aligned(in,16);
@@ -307,7 +307,8 @@ namespace gms {
                          in = (float*)__builtin_assume_aligned(in,16);
 			 out = (float*)__builtin_assume_aligned(out,16);
 #endif
-			 mag = sqrtf(in[0]*in[0]+in[1]*in[1]+in[2]*in[2]);
+			 t0 = in[0]*in[0]+in[1]*in[1]+in[2]*in[2];
+			 mag = sqrtf(t0);
 			 if(mag!=0.0f) {
 			    tmp = _mm_setzero_ps();
 			    tmp = _mm_load_ps(&in[0]);
@@ -323,7 +324,7 @@ namespace gms {
 		  }
 
 		 __ATTR_HOT__
-                 __ATTR_ALIGN__(64)
+                 __ATTR_ALIGN__(32)
 		 __ATTR_VECTORCALL__
 		 inline
 		 void
@@ -342,22 +343,14 @@ namespace gms {
 		 }
 
                  __ATTR_HOT__
-		 __ATTR_ALIGN__(64)
+		 __ATTR_ALIGN__(32)
 		 __ATTR_VECTORCALL__
 		 inline
 		 void
-		 cross_prod(float * __restrict __ATTR_ALIGN__(16) a,
-		            float * __restrict __ATTR_ALIGN__(16) b,
-			    float * __restrict __ATTR_ALIGN__(16) c) {
-#if defined __INTEL_COMPILER
-                         __assume_aligned(a,16);
-			 __assume_aligned(b,16);
-			 __assume_aligned(c,16);
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-                        a = (float*)__builtin_assume_aligned(a,16);
-			b = (float*)__builtin_assume_aligned(b,16);
-			c = (float*)__builtin_assume_aligned(c,16);
-#endif
+		 cross_prod(float * __restrict  a,
+		            float * __restrict  b,
+			    float * __restrict  c) {
+
                         c[0] = a[1]*b[2]-a[2]*b[1];
 			c[1] = a[2]*b[0]-a[0]*b[2];
 			c[2] = a[0]*b[1]-a[1]*b[0];
@@ -367,17 +360,9 @@ namespace gms {
 		__ATTR_ALIGN__(64)
 		__ATTR_VECTORCALL__
 		inline
-		float dot_prod(const float * __restrict __ATTR_ALIGN__(16) a,
-		               const float * __restrict __ATTR_ALIGN__(16) b) {
-#if defined __INTEL_COMPILER
-                         __assume_aligned(a,16);
-			 __assume_aligned(b,16);
-			
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-                        a = (const float*)__builtin_assume_aligned(a,16);
-			b = (const float*)__builtin_assume_aligned(b,16);
-		
-#endif
+		float dot_prod(const float * __restrict  a,
+		               const float * __restrict  b) {
+
                         float res;
 			res = 0.0f;
 			res = a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
@@ -389,19 +374,13 @@ namespace gms {
 		__ATTR_VECTORCALL__
 		inline
         	void
-		stokes_matrix(std::complex<float>* __restrict __ATTR_ALIGN__(32) scat_mat,
-		              float * __restrict __ATTR_ALIGN__(64) stokes_mat) {
+		stokes_matrix(std::complex<float>* __restrict  scat_mat,
+		              float * __restrict   stokes_mat) {
 
 		      std::complex<float> CW1121C,CW1122C,CW1112C,CW2122C,
                                           CW1221C,CW1222C,CW1,CW2;
 		      float  w1,w2,w3,w4;
-#if defined __INTEL_COMPILER
-                      __assume_aligned(scat_mat,32);
-		      __assume_aligned(stokes_mat,64);
-#elif defined __GNUC__ && !defined __INTEL_COMPILER
-                      scat_mat   = (std::complex<float>*)__builtin_assume_aligned(scat_mat,32);
-		      stokes_mat = (float*)__builtin_assume_aligned(stokes_mat,64);
-#endif
+
 		      w1 = std::abs(scat_mat[0]);
 		      stokes_mat[0] = w1*w1;
 		      CW1121C = scat_mat[0]*std::conj(scat_mat[2]);
