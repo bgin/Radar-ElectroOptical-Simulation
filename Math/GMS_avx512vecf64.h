@@ -126,7 +126,7 @@ namespace gms {
 		// Global (namespace) static functions
 
 		// Extract __m256d part only
-		static inline __m256d extract(const AVX512Vec8 &,
+		static inline __m256d extract(const AVX512Vec8 ,
 					      const int32_t);
 
 		// Branchless conditional selection
@@ -176,218 +176,218 @@ namespace gms {
 		static inline AVX512Vec8 ceil(const AVX512Vec8);
 
 	    // SIMD floor
-		static inline AVX512Vec8 floor(const AVX512VecF64 &);
+		static inline AVX512Vec8 floor(const AVX512Vec8 );
 
 	    // SIMD round
-		static inline AVX512VecF64 round(const AVX512VecF64 &,
+		static inline AVX512Vec8 round(const AVX512Vec8 ,
 						 const int32_t);
 
 	    // SVML sin
-		static inline AVX512VecF64 sin(const AVX512VecF64 &);
+		static inline AVX512Vec8 sin(const AVX512Vec8 );
 
 		// SVML sind (degree)
-		static inline AVX512VecF64 sind(const AVX512VecF64 &);
+		static inline AVX512Vec8 sind(const AVX512Vec8 );
 
 	    // SVML cos
-		static inline AVX512VecF64 cos(const AVX512VecF64 &);
+		static inline AVX512Vec8 cos(const AVX512Vec8 );
 
 		// SVML cosd (degree)
-		static inline AVX512VecF64 cosd(const AVX512VecF64 &);
+		static inline AVX512Vec8 cosd(const AVX512Vec8 );
 
 	    // SVML sinh
-		static inline AVX512VecF64 sinh(const AVX512VecF64 &);
+		static inline AVX512Vec8 sinh(const AVX512Vec8 );
 
 	    //  SVML cosh
-		static inline AVX512VecF64 cosh(const AVX512VecF64 &);
+		static inline AVX512Vec8 cosh(const AVX512Vec8 );
 
         // SVML tan
-		static inline AVX512VecF64 tan(const AVX512VecF64 &);
+		static inline AVX512Vec8 tan(const AVX512Vec8 );
 
 	    // SVML tanh
-		static inline AVX512VecF64 tanh(const AVX512VecF64 &);
+		static inline AVX512Vec8 tanh(const AVX512Vec8 );
 
 		// SVML asin
-		static inline AVX512VecF64 asin(const AVX512VecF64 &);
+		static inline AVX512Vec8 asin(const AVX512Vec8 );
 
 		// SVML asinh
-		static inline AVX512VecF64 asinh(const AVX512VecF64 &);
+		static inline AVX512Vec8 asinh(const AVX512Vec8 );
 
 		// SVML acos
-		static inline AVX512VecF64 acos(const AVX512VecF64 &);
+		static inline AVX512Vec8 acos(const AVX512Vec8 );
 
 		// SVML acosh
-		static inline AVX512VecF64 acosh(const AVX512VecF64 &);
+		static inline AVX512Vec8 acosh(const AVX512Vec8 );
 
 		// SVML atan
-		static inline AVX512VecF64 atan(const AVX512VecF64 &);
+		static inline AVX512Vec8 atan(const AVX512Vec8 );
 
 		// SVML atanh
-		static inline AVX512VecF64 atanh(const AVX512VecF64 &);
+		static inline AVX512Vec8 atanh(const AVX512Vec8 );
 
 		// SVML log
-		static inline AVX512VecF64 log(const AVX512VecF64 &);
+		static inline AVX512Vec8 log(const AVX512Vec8 );
 
 		// SVML exp
-		static inline AVX512VecF64 exp(const AVX512VecF64 &);
+		static inline AVX512Vec8 exp(const AVX512Vec8 );
 
 		// SVML atan2
-		static inline AVX512VecF64 atan2(const AVX512VecF64 &,
-						 const AVX512VecF64 &);
+		static inline AVX512Vec8 atan2(const AVX512Vec8 ,
+						 const AVX512Vec8 );
 
 		// SVML hypot
-		static inline AVX512VecF64 hypot(const AVX512VecF64 &,
-						 const AVX512VecF64 & );
+		static inline AVX512Vec8 hypot(const AVX512Vec8 ,
+						 const AVX512Vec8  );
 
 		// FMA functions
 
 		// fmadd
-		static inline AVX512VecF64 fmadd(const AVX512VecF64 &,
-						 const AVX512VecF64 &,
-						 const AVX512VecF64 &);
+		static inline AVX512Vec8 fmadd(const AVX512Vec8 ,
+						 const AVX512Vec8 ,
+						 const AVX512Vec8 );
 
 		// fmadsubb
-		static inline AVX512VecF64 fmadsubb(const AVX512VecF64 &,
-						    const AVX512VecF64 &,
-						    const AVX512VecF64 &);
+		static inline AVX512Vec8 fmadsubb(const AVX512Vec8 ,
+						    const AVX512Vec8 ,
+						    const AVX512Vec8 );
 
 		// fmsub
-		static inline AVX512VecF64 fmsub(const AVX512VecF64 &,
-						 const AVX512VecF64 &,
-						 const AVX512VecF64 &);
+		static inline AVX512Vec8 fmsub(const AVX512Vec8 ,
+						 const AVX512Vec8 ,
+						 const AVX512Vec8 );
 
 		// fmsubadd
-		static inline AVX512VecF64 fmsubadd(const AVX512VecF64 &,
-						    const AVX512VecF64 &,
-						    const AVX512VecF64 &);
+		static inline AVX512Vec8 fmsubadd(const AVX512Vec8 ,
+						    const AVX512Vec8 ,
+						    const AVX512Vec8 );
 
 		// fnmadd
-		static inline AVX512VecF64 fnmadd(const AVX512VecF64 &,
-						  const AVX512VecF64 &,
-						  const AVX512VecF64 &);
+		static inline AVX512Vec8 fnmadd(const AVX512Vec8 ,
+						  const AVX512Vec8 ,
+						  const AVX512Vec8 );
 
 		// fnmsub
-		static inline AVX512VecF64 fnmsub(const AVX512VecF64 &,
-						  const AVX512VecF64 &,
-						  const AVX512VecF64 &);
+		static inline AVX512Vec8 fnmsub(const AVX512Vec8 ,
+						  const AVX512Vec8 ,
+						  const AVX512Vec8 );
 
 		//
 		// Global (namespace) operators
 		//
 
 		// C = A+B, vector + vector
-		static inline AVX512VecF64 operator+(const AVX512VecF64 &,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator+(const AVX512Vec8 ,
+						     const AVX512Vec8 );
 
 		// C = A+B, vector + scalar
-		static inline AVX512VecF64 operator+(const AVX512VecF64 &,
+		static inline AVX512Vec8 operator+(const AVX512Vec8 ,
 						     const double);
 
 		// C = A+B, scalar + vector
-		static inline AVX512VecF64 operator+(const double,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator+(const double,
+						     const AVX512Vec8 );
 
 		// A = A+B (in-place)
-		static inline AVX512VecF64 operator+=(AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator+=(AVX512Vec8 ,
+						      const AVX512Vec8 );
 
 		// C = A-B, vector-vector
-		static inline AVX512VecF64 operator-(const AVX512VecF64 &,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator-(const AVX512Vec8 ,
+						     const AVX512Vec8 );
 
 		// C = A-B, vector - scalar
-		static inline AVX512VecF64 operator-(const AVX512VecF64 &,
+		static inline AVX512Vec8 operator-(const AVX512Vec8 ,
 						     const double);
 
 		// C = A-B, scalar - vector
-		static inline AVX512VecF64 operator-(const double,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator-(const double,
+						     const AVX512Vec8 );
 
 		// A = A-B (in-place)
-		static inline AVX512VecF64 operator-=(AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator-=(AVX512Vec8 ,
+						      const AVX512Vec8 );
 
 		// C = A*B, vector * vector
-		static inline AVX512VecF64 operator*(const AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator*(const AVX512Vec8 ,
+						      const AVX512Vec8 );
 
 		// C = A*B, vector * scalar
-		static inline AVX512VecF64 operator*(const AVX512VecF64 &,
+		static inline AVX512Vec8 operator*(const AVX512Vec8 ,
 						     const double);
 
 		// C = A*B, scalar * vector
-		static inline AVX512VecF64 operator*(const double,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator*(const double,
+						     const AVX512Vec8 );
 
 		// A = A*B (in-place)
-		static inline AVX512VecF64 operator*=(AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator*=(AVX512Vec8 ,
+						      const AVX512Vec8 );
 
 		// C = A/B, vector / vector
-		static inline AVX512VecF64 operator/(const AVX512VecF64 &,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator/(const AVX512Vec8 ,
+						     const AVX512Vec8 );
 
 		// C = A/B, vector / scalar
-		static inline AVX512VecF64 operator/(const AVX512VecF64 &,
+		static inline AVX512Vec8 operator/(const AVX512Vec8 ,
 						     const double);
 
 		// C = A/B, scalar / vector
-		static inline AVX512VecF64 operator/(const double,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator/(const double,
+						     const AVX512Vec8 );
 
 		// A = A/B (in-place)
-		static inline AVX512VecF64 operator/=(AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator/=(AVX512Vec8 ,
+						      const AVX512Vec8 ;
 
 		// C = A==B, C is of type __mmask8
-		static inline __mmask8 operator==(const AVX512VecF64 &,
-						  const AVX512VecF64 &);
+		static inline __mmask8 operator==(const AVX512Vec8 ,
+						  const AVX512Vec8 );
 
 		// C = A!=B, C is of type __mmask8
-		static inline __mmask8 operator!=(const AVX512VecF64 &,
-						  const AVX512VecF64 &);
+		static inline __mmask8 operator!=(const AVX512Vec8 ,
+						  const AVX512Vec8 );
 
 		// C = A>B, C is of type __mmask8
-		static inline __mmask8 operator>(const AVX512VecF64 &,
-						 const AVX512VecF64 &);
+		static inline __mmask8 operator>(const AVX512Vec8 ,
+						 const AVX512Vec8 );
 
 		// C = A<B, C is of type __mmask8
-		static inline __mmask8 operator<(const AVX512VecF64 &,
-						 const AVX512VecF64 &);
+		static inline __mmask8 operator<(const AVX512Vec8 ,
+						 const AVX512Vec8 );
 
 		// C = A>=B, C is of type __mmask8
-		static inline __mmask8 operator>=(const AVX512VecF64 &,
-						 const AVX512VecF64 &);
+		static inline __mmask8 operator>=(const AVX512Vec8 ,
+						 const AVX512Vec8 );
 
 		// C = A<=B, C is of type __mmask8
-		static inline __mmask8 operator<=(const AVX512VecF64 &,
-						  const AVX512VecF64 &);
+		static inline __mmask8 operator<=(const AVX512Vec8 ,
+						  const AVX512Vec8 );
 
 		// C = A&B
-		static inline AVX512VecF64 operator&(const AVX512VecF64 &,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator&(const AVX512Vec8 ,
+						     const AVX512Vec8 );
 
 		// A = A&B
-		static inline AVX512VecF64 operator&=(AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator&=(AVX512Vec8 ,
+						      const AVX512Vec8 );
 
 		// C = A|B
-		static inline AVX512VecF64 operator|(const AVX512VecF64 &,
-						     const AVX512VecF64 &);
+		static inline AVX512Vec8 operator|(const AVX512Vec8 ,
+						     const AVX512Vec8 );
 
 		// A = A|B
-		static inline AVX512VecF64 operator|=(AVX512VecF64 &,
-						       const AVX512VecF64 &);
+		static inline AVX512Vec8 operator|=(AVX512Vec8 ,
+						       const AVX512Vec8 );
 
 		// C = A^B
-		static inline AVX512VecF64 operator^(const AVX512VecF64 &,
-						    const AVX512VecF64 &);
+		static inline AVX512Vec8 operator^(const AVX512Vec8 ,
+						    const AVX512Vec8 );
 
 		// A = A^B
-		static inline AVX512VecF64 operator^=(AVX512VecF64 &,
-						      const AVX512VecF64 &);
+		static inline AVX512Vec8 operator^=(AVX512Vec8 ,
+						      const AVX512Vec8 );
 
 		// A = A + 1.0
-		static inline AVX512VecF64 operator++(AVX512VecF64 &);
+		static inline AVX512Vec8 operator++(AVX512Vec8 );
 
 		// A = A - 1.0
 		static inline AVX512Vec8 operator--(AVX512Vec8);
