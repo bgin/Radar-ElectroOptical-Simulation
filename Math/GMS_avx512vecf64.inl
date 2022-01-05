@@ -6,17 +6,17 @@
 gms::math::
 AVX512VecF64::AVX512VecF64()
 :
-m_vf64(_mm512_setzero_pd()) {}
+m_v8(_mm512_setzero_pd()) {}
 
 gms::math::
 AVX512VecF64::AVX512VecF64(const double v[8])
 :
-m_vf64(_mm512_loadu_pd(&v[0])) {}
+m_v8(_mm512_loadu_pd(&v[0])) {}
 
 gms::math::
 AVX512VecF64::AVX512VecF64(const double s)
 :
-m_vf64(_mm512_set1_pd(s)) {}
+m_v8(_mm512_set1_pd(s)) {}
 
 gms::math::
 AVX512VecF64::AVX512VecF64(const double s0,
@@ -28,22 +28,22 @@ AVX512VecF64::AVX512VecF64(const double s0,
 					 const double s6,
 					 const double s7)
 :
-m_vf64(_mm512_set_pd(s0, s1, s2, s3, s4, s5, s6, s7)) {}
+m_v8(_mm512_set_pd(s0, s1, s2, s3, s4, s5, s6, s7)) {}
 
 gms::math::
 AVX3VecF64::AVX512VecF64(const __m512d v)
 :
-m_vf64(v) {}
+m_v8(v) {}
 
 gms::math::
 AVX512VecF64::AVX512VecF64(_In_ const __m512i v)
 :
-m_vf64(_mm512_castsi512_pd(v)) {}
+m_v8(_mm512_castsi512_pd(v)) {}
 
 gms::math::
 AVX512VecF64::AVX512VecF64(const AVX512VecF64 &x)
 :
-m_vf64(x.m_vf64) {}
+m_v8(x.m_vf64) {}
 
 gms::math::
 AVX512VecF64::AVX512VecF64(const __m256d v0,
@@ -54,27 +54,27 @@ AVX512VecF64::AVX512VecF64(const __m256d v0,
 
 const __m512d
 gms::math::AVX512VecF64::get_vf64() const {
-	return (m_vf64);
+	return (m_v8);
 }
 
 __m512d
 gms::math::AVX512VecF64::get_vf64() {
-	return (m_vf64);
+	return (m_v8);
 }
 
 __m256d
 gms::math::AVX512VecF64::lo_part() const {
-	return (_mm512_extractf64x4_pd(m_vf64,0));
+	return (_mm512_extractf64x4_pd(m_v8,0));
 }
 
 __m256d
 gms::math::AVX512VecF64::hi_part() const {
-	return (_mm512_extractf64x4_pd(m_vf64,1));
+	return (_mm512_extractf64x4_pd(m_v8,1));
 }
 
 gms::math::AVX512VecF64 &
 gms::math::AVX512VecF64::load_a(const double* __restrict address) {
-	m_vf64 = _mm512_load_pd(address);
+	m_v8 = _mm512_load_pd(address);
 	return (*this);
 }
 
@@ -86,17 +86,17 @@ gms::math::AVX512VecF64::load_u(const double* __restrict address) {
 
 void 
 gms::math::AVX512VecF64::store_a(double* __restrict dest) const {
-	_mm512_store_pd(&dest[0],m_vf64);
+	_mm512_store_pd(&dest[0],m_v8);
 }
 
 void
 gms::math::AVX512VecF64::store_u(double* __restrict dest) const {
-	_mm512_storeu_pd(&dest[0],m_vf64);
+	_mm512_storeu_pd(&dest[0],m_v8);
 }
 
 void
 gms::math::AVX512VecF64::stream_store(double* __restrict dest) const {
-	_mm512_stream_pd(&dest[0],m_vf64);
+	_mm512_stream_pd(&dest[0],m_v8);
 }
 
 double
@@ -110,17 +110,17 @@ gms::math::AVX512VecF64 &
 gms::math::AVX512VecF64::operator=(const AVX512VecF64 &x) {
 	if (this == &x)
 		return (*this);
-	m_vf64 = x.m_vf64;
+	m_vf64 = x.m_v8;
 	return (*this);
 }
 
 gms::math::AVX512VecF64::operator __m512d () const {
-	return (m_vf64);
+	return (m_v8);
 }
 
 double
 gms::math::AVX512VecF64::operator[](const uint32_t idx) const {
-	return (reinterpret_cast<const double*>(&m_vf64)[idx]);
+	return (reinterpret_cast<const double*>(&m_v8)[idx]);
 }
 
 std::ostream &
