@@ -119,7 +119,7 @@ namespace gms {
 
 		  
 
-	                 __m512d m_vf64;
+	                 __m512d m_v8;
 
 		};
 
