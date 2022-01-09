@@ -74,7 +74,7 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 
 //
 
-#include "dd.h"
+#include "GMS_dd.h"
 
 //
 
