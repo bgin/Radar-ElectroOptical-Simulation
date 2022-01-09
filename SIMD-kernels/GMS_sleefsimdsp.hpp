@@ -48,15 +48,13 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 #endif*/
 
-#ifdef ENABLE_AVX2
+#if defined(ENABLE_AVX2)
 #define CONFIG 1
 #include "GMS_helperavx2.h"
 //#ifdef DORENAME
 //#include "renameavx2.h"
 //#endif
-#endif
-
-#ifdef ENABLE_AVX512F
+#elif defined(ENABLE_AVX512F)
 #define CONFIG 1
 #include "GMS_helperavx512f.h"
 //#ifdef DORENAME
