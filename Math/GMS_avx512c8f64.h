@@ -37,7 +37,7 @@ namespace gms {
 
 
 
-	        struct 	  __attribute__((aligned(64))) ZMM16c8Payload {
+	        struct 	  __attribute__((aligned(64))) ZMM8c8Payload {
 
 			double re0,re1,re2,re3,re4,re5,re6,re7;
 			double im0,im1,im2,im3,im4,im5,im6,im7;
@@ -50,26 +50,26 @@ namespace gms {
 		//						_mm512_setzero_pd() };
 
 
-	        struct 	  __attribute__((aligned(64))) ZMM16c8 {
+	        struct 	  __attribute__((aligned(64))) ZMM8c8 {
 
 				__m512d m_re;
 				
 				__m512d m_im;
 
-				static const ZMM16c8 CZERO;
+				static const ZMM8c8 CZERO;
 				
 				// Default Ctor (sets components to 0.0)
 				 __ATTR_ALWAYS_INLINE__
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 		                 __ATTR_VECTORCALL__
-				ZMM16c8();
+				ZMM8c8();
 					
 				 __ATTR_ALWAYS_INLINE__
                                  __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 		                 __ATTR_VECTORCALL__
-				 ZMM16c8(const ZMM16c8Payload);
+				 ZMM8c8(const ZMM8c8Payload);
 					
 				
 				// Arrays: Re and Im must be aligned on 64-bytes boundary, otherwise GP will be signalled.
@@ -77,7 +77,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 		                 __ATTR_VECTORCALL__
-				 ZMM16c8(const double * __restrict ,
+				 ZMM8c8(const double * __restrict ,
 					 const double * __restrict);
 					
 				
@@ -85,7 +85,7 @@ namespace gms {
 				  __ATTR_ALWAYS_INLINE__
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
-				 ZMM16c8(const double ,
+				 ZMM8c8(const double ,
 					 const double ); 
 					
 				
@@ -93,7 +93,7 @@ namespace gms {
 				  __ATTR_ALWAYS_INLINE__
 				  __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
-				explicit  ZMM16c8(const double ); 
+				explicit  ZMM8c8(const double ); 
 					
 				
 
@@ -102,7 +102,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				 __ATTR_VECTORCALL__  
-				 ZMM16c8(   const double ,
+				 ZMM8c8(   const double ,
 				            const double ,
 				            const double ,
 					    const double,
@@ -116,7 +116,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				 __ATTR_VECTORCALL__ 
-				 ZMM16c8(const __m512d,
+				 ZMM8c8(const __m512d,
 					 const __m512d);
 
 		               
@@ -125,11 +125,11 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				 __ATTR_VECTORCALL__ 
-				 ZMM16c8(const  ZMM16c8 &);
+				 ZMM8c8(const  ZMM8c8 &);
 					
 				
                                  
-				~ZMM16c8() noexcept(true) = default;
+				~ZMM8c8() noexcept(true) = default;
 
 				
 				// Load-store functions
@@ -138,7 +138,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				 __ATTR_VECTORCALL__ 
-				 ZMM16c8 & load_a(const double * __restrict ,
+				 ZMM8c8 & load_a(const double * __restrict ,
 						     const double * __restrict );
 					
 				
@@ -147,7 +147,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				 __ATTR_VECTORCALL__ 
-				 ZMM16c8 & load_u(const double * __restrict ,
+				 ZMM8c8 & load_u(const double * __restrict ,
 						     const double * __restrict );
 					
 				
@@ -193,13 +193,13 @@ namespace gms {
 				 __ATTR_ALWAYS_INLINE__
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
-				 ZMM16c8 & insert_1f64(const int32_t ,
+				 ZMM8c8 & insert_1f64(const int32_t ,
 						          const double );
 					
                                   __ATTR_ALWAYS_INLINE__
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
-				 ZMM16c8 & insert_2f64(const int32_t ,
+				 ZMM8c8 & insert_2f64(const int32_t ,
 						          const int32_t ,
 						          const double ,
 						          const double );
@@ -224,7 +224,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				  __ATTR_VECTORCALL__ 
-				 ZMM16c8 & partial_loadu(const double const * __restrict,
+				 ZMM8c8 & partial_loadu(const double const * __restrict,
 							    const int32_t,
 							    const double const * __restrict,
 							    const int32_t );
@@ -233,7 +233,7 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				  __ATTR_VECTORCALL__ 			    
-				 ZMM16c8 & partial_loada(const double const * __restrict,
+				 ZMM8c8 & partial_loada(const double const * __restrict,
 							    const int32_t,
 							    const double const * __restrict,
 							    const int32_t);
@@ -260,14 +260,14 @@ namespace gms {
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				  __ATTR_VECTORCALL__ 
-				 ZMM16c8 & expand(const  ZMM16c8,
+				 ZMM8c8 & expand(const  ZMM8c8,
 						     const __mmask8); 
 
 				 __ATTR_ALWAYS_INLINE__
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
 				  __ATTR_VECTORCALL__ 		     
-				 ZMM16c8 & expand_load(const  ZMM16c8,
+				 ZMM8c8 & expand_load(const  ZMM8c8,
 						          const __mmask8 ,
 						          const double * __restrict ,
 						          const double * __restrict );
@@ -276,7 +276,7 @@ namespace gms {
                                  __ATTR_ALWAYS_INLINE__
 				 __ATTR_HOT__
 		                 __ATTR_ALIGN__(32)
-				 ZMM16c8 & permute(const __mmask8 ,
+				 ZMM8c8 & permute(const __mmask8 ,
 						      const int32_t);
 					
                                  __ATTR_ALWAYS_INLINE__
@@ -302,7 +302,7 @@ namespace gms {
 
 				
 
-				 ZMM16c8 & operator=(const  ZMM16c8);
+				 ZMM8c8 & operator=(const  ZMM8c8);
 
 				
 		};
@@ -314,14 +314,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 
-		static inline  ZMM16c8
-		        conj(const  ZMM16c8);
+		static inline  ZMM8c8
+		        conj(const  ZMM8c8);
 
 	         __ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        polar(const __m512d,
 			      const __m512d);
 
@@ -330,7 +330,7 @@ namespace gms {
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 		      
 		static inline __m512d
-		        carg(const  ZMM16c8);
+		        carg(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -344,14 +344,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 
-		static inline  ZMM16c8 
-			csin(const  ZMM16c8);
+		static inline  ZMM8c8 
+			csin(const  ZMM8c8);
 
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        csin(const double,
 			     const double);
 
@@ -359,14 +359,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__     
-		static inline  ZMM16c8
-		        csinh(const  ZMM16c8);
+		static inline  ZMM8c8
+		        csinh(const  ZMM8c8);
 
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        csinh(const double,
 			      const double);
 
@@ -374,14 +374,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 	      
-		static inline  ZMM16c8
-			ccos(const  ZMM16c8);
+		static inline  ZMM8c8
+			ccos(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__ 	
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        ccos(const double,
 			     const double);
 
@@ -389,14 +389,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	     
-		static inline  ZMM16c8
-		        ccosh(const  ZMM16c8);
+		static inline  ZMM8c8
+		        ccosh(const  ZMM8c8);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        ccosh(const double,
 			      const double);
 
@@ -404,14 +404,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	      
-		static inline  ZMM16c8
-			cexp(const  ZMM16c8);
+		static inline  ZMM8c8
+			cexp(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        cexp(const double,
 			     const double);
 
@@ -420,7 +420,7 @@ namespace gms {
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		     
 		static inline __m512d
-			cabs(const  ZMM16c8);
+			cabs(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -434,22 +434,22 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		     
-		static inline  ZMM16c8
-		        cpowi(const ZMM16c8,
+		static inline  ZMM8c8
+		        cpowi(const ZMM8c8,
 			      const double );
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		      
-		static inline ZMM16c8
-		        clog(const  ZMM16c8);
+		static inline ZMM8c8
+		        clog(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        clog(const double,
 			     const double);
 
@@ -457,14 +457,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		     
-		static inline  ZMM16c8
-		        csqrt(const  ZMM16c8);
+		static inline  ZMM8c8
+		        csqrt(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        csqrt(const double,
 			      const double);
 
@@ -472,14 +472,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		      
-		static inline  ZMM16c8
-		        ctan(const  ZMM16c8);
+		static inline  ZMM8c8
+		        ctan(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        ctan(const double,
 			     const double);
 
@@ -487,14 +487,14 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		     
-		static inline  ZMM16c8
-		        ctanh(const  ZMM16c8);
+		static inline  ZMM8c8
+		        ctanh(const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		        ctanh(const double,
 			      const double);
 			      
@@ -502,320 +502,320 @@ namespace gms {
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	
-		static inline  ZMM16c8
-		select(const  ZMM16c8 ,
-		       const  ZMM16c8,
+		static inline  ZMM8c8
+		select(const  ZMM8c8 ,
+		       const  ZMM8c8,
 		       const __mmask8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	       
-		static inline  ZMM16c8
-		cdiv_smith(const ZMM16c8 ,
-			   const  ZMM16c8 );
+		static inline  ZMM8c8
+		cdiv_smith(const ZMM8c8 ,
+			   const  ZMM8c8 );
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		   
-		static inline  ZMM16c8
-		operator+(const  ZMM16c8,
-			  const  ZMM16c8);
+		static inline  ZMM8c8
+		operator+(const  ZMM8c8,
+			  const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		  
-		static inline  ZMM16c8
-		operator+(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator+(const  ZMM8c8,
 			  const __m512d);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator+(const __m512d,
-			  const  ZMM16c8);
+			  const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator+(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator+(const  ZMM8c8,
 		          const double );
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator+(const double ,
-		          const  ZMM16c8); 
+		          const  ZMM8c8); 
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator+=( ZMM16c8,
-		           const  ZMM16c8);
+		static inline  ZMM8c8
+		operator+=( ZMM8c8,
+		           const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator+=( ZMM16c8,
+		static inline  ZMM8c8
+		operator+=( ZMM8c8,
 			   const __m512d);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator+=(const __m512d,
-			    ZMM16c8);
+			    ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator+=( ZMM16c8 ,
+		static inline  ZMM8c8
+		operator+=( ZMM8c8 ,
 		          const double);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator+=(const double,
-			    ZMM16c8);
+			    ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-(const  ZMM16c8,
-			  const  ZMM16c8);
+		static inline  ZMM8c8
+		operator-(const  ZMM8c8,
+			  const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator-(const  ZMM8c8,
 			  const __m512d);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline ZMM16c8
+		static inline ZMM8c8
 		operator-(const __m512d,
-			  const  ZMM16c8);
+			  const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator-(const  ZMM8c8,
 			  const double );
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator-(const double ,
-			  const ZMM16c8);
+			  const ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-( ZMM16c8);
+		static inline  ZMM8c8
+		operator-( ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-=( ZMM16c8,
-			   const  ZMM16c8);
+		static inline  ZMM8c8
+		operator-=( ZMM8c8,
+			   const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-=( ZMM16c8,
+		static inline  ZMM8c8
+		operator-=( ZMM8c8,
 			   const __m512d);
 		  
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator-=(const __m512d,
-			    ZMM16c8);
+			    ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator-=( ZMM16c8,
+		static inline  ZMM8c8
+		operator-=( ZMM8c8,
 			   const double );
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator-=(const double,
-		            ZMM16c8);
+		            ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline ZMM16c8
-		operator*(const  ZMM16c8,
-			  const  ZMM16c8);
+		static inline ZMM8c8
+		operator*(const  ZMM8c8,
+			  const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator*(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator*(const  ZMM8c8,
 			  const __m512d);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator*(const __m512d,
-			  const  ZMM16c8);
+			  const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator*(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator*(const  ZMM8c8,
 		          const double);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		  
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator*(const double,
-		          const  ZMM16c8);
+		          const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		  
-		static inline  ZMM16c8
-		operator*=( ZMM16c8,
-			   const  ZMM16c8);
+		static inline  ZMM8c8
+		operator*=( ZMM8c8,
+			   const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		   
-		static inline  ZMM16c8
-		operator*=( ZMM16c8,
+		static inline  ZMM8c8
+		operator*=( ZMM8c8,
 			   const __m512d);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__		   
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator*=(const __m512d,
-			    ZMM16c8);
+			    ZMM8c8);
 
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__			    
-	        static inline  ZMM16c8
-		operator*=( ZMM16c8,
+	        static inline  ZMM8c8
+		operator*=( ZMM8c8,
 			   const double);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator*=(const double,
-		           ZMM16c8);
+		           ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator/(const  ZMM16c8,
-		          const  ZMM16c8);
+		static inline  ZMM8c8
+		operator/(const  ZMM8c8,
+		          const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator/(const ZMM16c8,
+		static inline  ZMM8c8
+		operator/(const ZMM8c8,
 			  const __m512d);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator/(const __m512d,
-			  const  ZMM16c8);
+			  const  ZMM8c8);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline  ZMM16c8
-		operator/(const  ZMM16c8,
+		static inline  ZMM8c8
+		operator/(const  ZMM8c8,
 			  const double);
 		__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__
-		static inline ZMM16c8
+		static inline ZMM8c8
 		operator/(const double,
-			  const  ZMM16c8);
+			  const  ZMM8c8);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	  
-		static inline  ZMM16c8
-		operator/=( ZMM16c8,
-			   const  ZMM16c8);
+		static inline  ZMM8c8
+		operator/=( ZMM8c8,
+			   const  ZMM8c8);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	   
-		static inline  ZMM16c8
-		operator/=( ZMM16c8,
+		static inline  ZMM8c8
+		operator/=( ZMM8c8,
 			   const __m512d);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	   
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator/=(const __m512d,
-			    ZMM16c8);
+			    ZMM8c8);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	    
-	        static inline  ZMM16c8
-		operator/=( ZMM16c8,
+	        static inline  ZMM8c8
+		operator/=( ZMM8c8,
 			   const double);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	   
-		static inline  ZMM16c8
+		static inline  ZMM8c8
 		operator/=(const double,
-		            ZMM16c8);
+		            ZMM8c8);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
 		__ATTR_ALIGN__(32)
 	        __ATTR_VECTORCALL__	    
-		static inline  ZMM16c8
-		operator~( ZMM16c8);
+		static inline  ZMM8c8
+		operator~( ZMM8c8);
 
 				__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -823,8 +823,8 @@ namespace gms {
 	        __ATTR_VECTORCALL__
 		static inline
 			std::pair<__mmask8, __mmask8>
-		operator==(const  ZMM16c8,
-			   const  ZMM16c8);
+		operator==(const  ZMM8c8,
+			   const  ZMM8c8);
 
 		
 
@@ -834,7 +834,7 @@ namespace gms {
 	        __ATTR_VECTORCALL__	   
 		static inline
 		        std::pair<__mmask8,__mmask8>
-		operator==(const  ZMM16c8,
+		operator==(const  ZMM8c8,
 		           std::complex<double>);
 
 			__ATTR_ALWAYS_INLINE__
@@ -844,7 +844,7 @@ namespace gms {
 		static inline
 		        std::pair<__mmask8,__mmask8>
 		operator==(const std::complex<double>,
-		           const  ZMM16c8)
+		           const  ZMM8c8)
 		           
 
 			   	__ATTR_ALWAYS_INLINE__
@@ -853,8 +853,8 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 
 		static inline 
 			std::pair<__mmask8, __mmask8>
-		operator!=(const  ZMM16c8,
-		           const  ZMM16c8);
+		operator!=(const  ZMM8c8,
+		           const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -862,7 +862,7 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 	   
 		static inline
 		        std::pair<__mmask8,__mmask8>
-		operator!=(const  ZMM16c8,
+		operator!=(const  ZMM8c8,
 		           const std::complex<double>);
 
 			__ATTR_ALWAYS_INLINE__
@@ -872,7 +872,7 @@ namespace gms {
 		static inline
 		        std::pair<__mmask8,__mmask8>
 		operator!=(const std::complex<double>,
-		           const  ZMM16c8);
+		           const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -880,8 +880,8 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 	   
 		static inline 
 			std::pair<__mmask8, __mmask8>
-		operator>(const  ZMM16c8,
-			  const  ZMM16c8);
+		operator>(const  ZMM8c8,
+			  const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -889,7 +889,7 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 	  
 		static inline
                         std::pair<__mmask8,__mmask8>
-		operator>(const  ZMM16c8,
+		operator>(const  ZMM8c8,
 		          const std::complex<double>);
 
 			__ATTR_ALWAYS_INLINE__
@@ -899,7 +899,7 @@ namespace gms {
 		static inline	  
 			std::pair<__mmask8,__mmask8>
 		operator>(const std::complex<double>,
-		          const  ZMM16c8);
+		          const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -907,8 +907,8 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 	  
 		static inline 
 			std::pair<__mmask8, __mmask8>
-		operator<(const  ZMM16c8,
-			  const  ZMM16c8);
+		operator<(const  ZMM8c8,
+			  const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -916,7 +916,7 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 	  
 		static inline	  
                         std::pair<__mmask8,__mmask8>
-		operator<(const  ZMM16c8,
+		operator<(const  ZMM8c8,
 		          std::complex<double>);
 
 			  	__ATTR_ALWAYS_INLINE__
@@ -926,7 +926,7 @@ namespace gms {
                 static inline
 		        std::pair<__mmask8,__mmask8>
 		operator<(const std::complex<double>,
-		          const  ZMM16c8);
+		          const  ZMM8c8);
 
 			  	__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -934,8 +934,8 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 
 		static inline 
 			std::pair<__mmask8, __mmask8>
-		operator>=(const  ZMM16c8,
-		           const  ZMM16c8);
+		operator>=(const  ZMM8c8,
+		           const  ZMM8c8);
 
 			   	__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -943,7 +943,7 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 
 		static inline
 		        std::pair<__mmask8,__mmask8>
-		operator>=(const  ZMM16c8,
+		operator>=(const  ZMM8c8,
 		           const std::complex<double>);
 
 			   	__ATTR_ALWAYS_INLINE__
@@ -953,7 +953,7 @@ namespace gms {
 		static inline
 		        std::pair<__mmask8,__mmask8>
 		operator>=(const std::complex<double>,
-		           const  ZMM16c8);
+		           const  ZMM8c8);
 
 			__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -961,8 +961,8 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 	   
 		static inline 
 			std::pair<__mmask8, __mmask8>
-	        operator<=(const  ZMM16c8,
-			   const  ZMM16c8);
+	        operator<=(const  ZMM8c8,
+			   const  ZMM8c8);
 
 			   	__ATTR_ALWAYS_INLINE__
 		__ATTR_HOT__
@@ -970,7 +970,7 @@ namespace gms {
 	        __ATTR_VECTORCALL__ 
 		static inline
 		        std::pair<__mmask8,__mmask8>
-		operator<=(const  ZMM16c8,
+		operator<=(const  ZMM8c8,
 		           const std::complex<double>);
 			   
                 __ATTR_ALWAYS_INLINE__
@@ -980,7 +980,7 @@ namespace gms {
 		static inline
 		        std::pair<__mmask8,__mmask8>
 		operator<=(const std::complex<double>,
-		           const  ZMM16c8);
+		           const  ZMM8c8);
 
 #include "GMS_avx512c8f64.inl"	
 
