@@ -74,7 +74,7 @@
 !*****************************************************************************************
 
     module dop853_module
-
+    use mod_kinds, only : i4,dp
     use dop853_constants
     use iso_fortran_env, only: output_unit,error_unit
 
@@ -85,54 +85,56 @@
         private
 
         !internal variables:
-        integer :: n      = 0   !! the dimension of the system
-        integer :: nfcn   = 0   !! number of function evaluations
-        integer :: nstep  = 0   !! number of computed steps
-        integer :: naccpt = 0   !! number of accepted steps
-        integer :: nrejct = 0   !! number of rejected steps (due to error test),
+        integer(i4) :: n      = 0   !! the dimension of the system
+        integer(i4) :: nfcn   = 0   !! number of function evaluations
+        integer(i4) :: nstep  = 0   !! number of computed steps
+        integer(i4) :: naccpt = 0   !! number of accepted steps
+        integer(i4) :: nrejct = 0   !! number of rejected steps (due to error test),
                                 !! (step rejections in the first step are not counted)
-        integer :: nrdens = 0   !! number of components, for which dense output
+        integer(i4) :: nrdens = 0   !! number of components, for which dense output
                                 !! is required. for `0 < nrdens < n` the components
                                 !! (for which dense output is required) have to be
                                 !! specified in `icomp(1),...,icomp(nrdens)`.
-        real(wp) :: h = 0.0_wp  !! predicted step size of the last accepted step
+        real(dp) :: h = 0.0_dp  !! predicted step size of the last accepted step
 
         !input paramters:
         !  these parameters allow
         !  to adapt the code to the problem and to the needs of
         !  the user. set them on class initialization.
 
-        integer :: iprint = output_unit   !! switch for printing error messages
+        integer(i4) :: iprint = output_unit   !! switch for printing error messages
                                           !! if `iprint==0` no messages are being printed
                                           !! if `iprint/=0` messages are printed with
                                           !! `write (iprint,*)` ...
 
-        integer :: nmax = 100000       !! the maximal number of allowed steps.
-        integer :: nstiff = 1000       !! test for stiffness is activated after step number
-                                       !! `j*nstiff` (`j` integer), provided `nstiff>0`.
+        integer(i4) :: nmax = 100000       !! the maximal number of allowed steps.
+        integer(i4) :: nstiff = 1000       !! test for stiffness is activated after step number
+                                       !! `j*nstiff` (`j` integer(i4)), provided `nstiff>0`.
                                        !! for negative `nstiff` the stiffness test is
                                        !! never activated.
-        real(wp) :: hinitial = 0.0_wp  !! initial step size, for `hinitial=0` an initial guess
+        real(dp) :: hinitial = 0.0_dp  !! initial step size, for `hinitial=0` an initial guess
                                        !! is computed with help of the function [[hinit]].
-        real(wp) :: hmax = 0.0_wp      !! maximal step size, defaults to `xend-x` if `hmax=0`.
-        real(wp) :: safe = 0.9_wp      !! safety factor in step size prediction
-        real(wp) :: fac1 = 0.333_wp    !! parameter for step size selection.
+        real(dp) :: hmax = 0.0_dp      !! maximal step size, defaults to `xend-x` if `hmax=0`.
+        real(dp) :: safe = 0.9_dp      !! safety factor in step size prediction
+        real(dp) :: fac1 = 0.333_dp    !! parameter for step size selection.
                                        !! the new step size is chosen subject to the restriction
                                        !! `fac1 <= hnew/hold <= fac2`
-        real(wp) :: fac2 = 6.0_wp      !! parameter for step size selection.
+        real(dp) :: fac2 = 6.0_dp      !! parameter for step size selection.
                                        !! the new step size is chosen subject to the restriction
                                        !! `fac1 <= hnew/hold <= fac2`
-        real(wp) :: beta = 0.0_wp      !! is the `beta` for stabilized step size control
+        real(dp) :: beta = 0.0_dp      !! is the `beta` for stabilized step size control
                                        !! (see section iv.2). positive values of beta ( <= 0.04 )
                                        !! make the step size control more stable.
 
-        integer,dimension(:),allocatable  :: icomp      !! `dimension(nrdens)`
+        integer(i4),dimension(:),allocatable  :: icomp      !! `dimension(nrdens)`
                                                         !! the components for which dense output is required
-        real(wp),dimension(:),allocatable :: cont       !! `dimension(8*nrdens)`
+        real(dp),dimension(:),allocatable :: cont       !! `dimension(8*nrdens)`
+        !dir$ attributes align : 64 :: icomp
+        !dir$ attributes align : 64 :: cont
 
         !formerly in the condo8 common block:
-        real(wp) :: xold = 0.0_wp
-        real(wp) :: hout = 0.0_wp
+        real(dp) :: xold = 0.0_dp
+        real(dp) :: hout = 0.0_dp
 
         !user-defined procedures:
         procedure(deriv_func),pointer  :: fcn    => null() !! subroutine computing the value of `f(x,y)`
@@ -159,30 +161,30 @@
 
         subroutine deriv_func(me,x,y,f)
             !! subroutine computing the value of \( dy/dx = f(x,y) \)
-            import :: wp,dop853_class
+            import :: dp,dop853_class
             implicit none
             class(dop853_class),intent(inout)   :: me
-            real(wp),intent(in)                 :: x    !! independent variable \(x\)
-            real(wp),dimension(:),intent(in)    :: y    !! state vector \( y(x) \) [size n]
-            real(wp),dimension(:),intent(out)   :: f    !! derivative vector \( f(x,y) = dy/dx \) [size n]
+            real(dp),intent(in)                 :: x    !! independent variable \(x\)
+            real(dp),dimension(:),intent(in)    :: y    !! state vector \( y(x) \) [size n]
+            real(dp),dimension(:),intent(out)   :: f    !! derivative vector \( f(x,y) = dy/dx \) [size n]
         end subroutine deriv_func
 
         subroutine solout_func(me,nr,xold,x,y,irtrn,xout)
             !! `solout` furnishes the solution `y` at the `nr`-th
             !! grid-point `x` (thereby the initial value is
             !! the first grid-point).
-            import :: wp,dop853_class
+            import :: dp,dop853_class
             implicit none
             class(dop853_class),intent(inout) :: me
-            integer,intent(in)                :: nr    !! grid point (0,1,...)
-            real(wp),intent(in)               :: xold  !! the preceding grid point
-            real(wp),intent(in)               :: x     !! current grid point
-            real(wp),dimension(:),intent(in)  :: y     !! state vector \( y(x) \) [size n]
-            integer,intent(inout)             :: irtrn !! serves to interrupt the integration. if
+            integer(i4),intent(in)                :: nr    !! grid point (0,1,...)
+            real(dp),intent(in)               :: xold  !! the preceding grid point
+            real(dp),intent(in)               :: x     !! current grid point
+            real(dp),dimension(:),intent(in)  :: y     !! state vector \( y(x) \) [size n]
+            integer(i4),intent(inout)             :: irtrn !! serves to interrupt the integration. if
                                                        !! `irtrn` is set `<0`, [[dop853]] will return to
                                                        !! the calling program. if the numerical solution
                                                        !! is altered in `solout`, set `irtrn = 2`.
-            real(wp),intent(out)              :: xout  !! `xout` can be used for efficient intermediate output
+            real(dp),intent(out)              :: xout  !! `xout` can be used for efficient intermediate output
                                                        !! if one puts `iout=3`. when `nr=1` define the first
                                                        !! output point `xout` in `solout`. the subroutine
                                                        !! `solout` will be called only when `xout` is in the
@@ -204,13 +206,13 @@
     implicit none
 
     class(dop853_class),intent(in) :: me
-    integer,intent(out),optional   :: n      !! dimension of the system
-    integer,intent(out),optional   :: nfcn   !! number of function evaluations
-    integer,intent(out),optional   :: nstep  !! number of computed steps
-    integer,intent(out),optional   :: naccpt !! number of accepted steps
-    integer,intent(out),optional   :: nrejct !! number of rejected steps (due to error test),
+    integer(i4),intent(out),optional   :: n      !! dimension of the system
+    integer(i4),intent(out),optional   :: nfcn   !! number of function evaluations
+    integer(i4),intent(out),optional   :: nstep  !! number of computed steps
+    integer(i4),intent(out),optional   :: naccpt !! number of accepted steps
+    integer(i4),intent(out),optional   :: nrejct !! number of rejected steps (due to error test),
                                              !! (step rejections in the first step are not counted)
-    real(wp),intent(out),optional  :: h      !! predicted step size of the last accepted step
+    real(dp),intent(out),optional  :: h      !! predicted step size of the last accepted step
 
     if (present(n     )) n      = me%n
     if (present(nfcn  )) nfcn   = me%nfcn
@@ -247,35 +249,36 @@
     implicit none
 
     class(dop853_class),intent(inout)        :: me
-    integer,intent(in)                       :: n         !! the dimension of the system (size of \(y\) and \(y'\) vectors)
+    integer(i4),intent(in)                       :: n         !! the dimension of the system (size of \(y\) and \(y'\) vectors)
     procedure(deriv_func)                    :: fcn       !! subroutine computing the value of \( y' = f(x,y) \)
     procedure(solout_func),optional          :: solout    !! subroutine providing the
                                                           !! numerical solution during integration.
                                                           !! if `iout>=1`, it is called during integration.
                                                           !! supply a dummy subroutine if `iout=0`.
-    integer,intent(in),optional              :: iprint    !! switch for printing error messages
+    integer(i4),intent(in),optional              :: iprint    !! switch for printing error messages
                                                           !! if `iprint==0` no messages are being printed
                                                           !! if `iprint/=0` messages are printed with
                                                           !! `write (iprint,*)` ...
-    integer,intent(in),optional              :: nstiff    !! test for stiffness is activated after step number
-                                                          !! `j*nstiff` (`j` integer), provided `nstiff>0`.
+    integer(i4),intent(in),optional              :: nstiff    !! test for stiffness is activated after step number
+                                                          !! `j*nstiff` (`j` integer(i4)), provided `nstiff>0`.
                                                           !! for negative `nstiff` the stiffness test is
                                                           !! never activated.
-    integer,intent(in),optional              :: nmax      !! the maximal number of allowed steps.
-    real(wp),intent(in),optional             :: hinitial  !! initial step size, for `hinitial=0` an initial guess
+    integer(i4),intent(in),optional              :: nmax      !! the maximal number of allowed steps.
+    real(dp),intent(in),optional             :: hinitial  !! initial step size, for `hinitial=0` an initial guess
                                                           !! is computed with help of the function [[hinit]].
-    real(wp),intent(in),optional             :: hmax      !! maximal step size, defaults to `xend-x` if `hmax=0`.
-    real(wp),intent(in),optional             :: safe      !! safety factor in step size prediction
-    real(wp),intent(in),optional             :: fac1      !! parameter for step size selection.
+    real(dp),intent(in),optional             :: hmax      !! maximal step size, defaults to `xend-x` if `hmax=0`.
+    real(dp),intent(in),optional             :: safe      !! safety factor in step size prediction
+    real(dp),intent(in),optional             :: fac1      !! parameter for step size selection.
                                                           !! the new step size is chosen subject to the restriction
                                                           !! `fac1 <= hnew/hold <= fac2`
-    real(wp),intent(in),optional             :: fac2      !! parameter for step size selection.
+    real(dp),intent(in),optional             :: fac2      !! parameter for step size selection.
                                                           !! the new step size is chosen subject to the restriction
                                                           !! `fac1 <= hnew/hold <= fac2`
-    real(wp),intent(in),optional             :: beta      !! is the `beta` for stabilized step size control
+    real(dp),intent(in),optional             :: beta      !! is the `beta` for stabilized step size control
                                                           !! (see section iv.2). positive values of `beta` ( <= 0.04 )
                                                           !! make the step size control more stable.
-    integer,dimension(:),intent(in),optional :: icomp     !! the components for which dense output is required (size from 0 to `n`).
+    integer(i4),dimension(:),intent(in),optional :: icomp     !! the components for which dense output is required (size from 0 to `n`).
+    !dir$ assume_aligned icomp:64
     logical,intent(out)                      :: status_ok !! will be false for invalid inputs.
 
     call me%destroy()
@@ -308,7 +311,7 @@
     end if
 
     if (present(safe)) then
-        if ( safe>=1.0_wp .or. safe<=1.0e-4_wp ) then
+        if ( safe>=1.0_dp .or. safe<=1.0e-4_dp ) then
             if ( me%iprint/=0 ) &
                 write (me%iprint,*) ' curious input for safety factor safe:', &
                                     safe
@@ -319,10 +322,10 @@
     end if
 
     if (present(beta)) then
-        if ( beta<=0.0_wp ) then
-           me%beta = 0.0_wp
+        if ( beta<=0.0_dp ) then
+           me%beta = 0.0_dp
         else
-           if ( beta>0.2_wp ) then
+           if ( beta>0.2_dp ) then
               if ( me%iprint/=0 ) write (me%iprint,*) &
                                     ' curious input for beta: ', beta
               status_ok = .false.
@@ -337,7 +340,7 @@
         !check validity of icomp array:
         if (size(icomp)<=me%n .and. all(icomp>0 .and. icomp<=me%n)) then
             allocate(me%icomp(me%nrdens));  me%icomp = icomp
-            allocate(me%cont(8*me%nrdens)); me%cont = 0.0_wp
+            allocate(me%cont(8*me%nrdens)); me%cont = 0.0_dp
         else
             if ( me%iprint/=0 ) write (me%iprint,*) &
                                   ' invalid icomp array: ',icomp
@@ -376,26 +379,28 @@
       implicit none
 
       class(dop853_class),intent(inout)       :: me
-      real(wp),intent(inout)                  :: x      !! *input:* initial value of independent variable.
+      real(dp),intent(inout)                  :: x      !! *input:* initial value of independent variable.
                                                         !! *output:* `x` for which the solution has been computed
                                                         !! (after successful return `x=xend`).
-      real(wp),dimension(:),intent(inout)     :: y      !! *input:* initial values for `y`. [size n]
-                                                        !!
+      real(dp),dimension(:),intent(inout)     :: y      !! *input:* initial values for `y`. [size n]
+      !dir$ assume_aligned y:64                                                  
                                                         !! *output:* numerical solution at `x`.
-      real(wp),intent(in)                     :: xend   !! final x-value (`xend`-`x` may be positive or negative)
-      real(wp),dimension(:),intent(in)        :: rtol   !! relative error tolerance. `rtol` and `atol`
+      real(dp),intent(in)                     :: xend   !! final x-value (`xend`-`x` may be positive or negative)
+      real(dp),dimension(:),intent(in)        :: rtol   !! relative error tolerance. `rtol` and `atol`
                                                         !! can be both scalars or else both vectors of length `n`.
-      real(wp),dimension(:),intent(in)        :: atol   !! absolute error tolerance. `rtol` and `atol`
+      !dir$ assume_aligned rtol:64
+      real(dp),dimension(:),intent(in)        :: atol   !! absolute error tolerance. `rtol` and `atol`
                                                         !! can be both scalars or else both vectors of length `n`.
                                                         !! `atol` should be strictly positive (possibly very small)
-      integer,intent(in)                      :: iout   !! switch for calling the subroutine `solout`:
+      !dir$ assume_aligned atol:64
+      integer(i4),intent(in)                      :: iout   !! switch for calling the subroutine `solout`:
                                                         !!
                                                         !! * `iout=0`: subroutine is never called
                                                         !! * `iout=1`: subroutine is called after every successful step
                                                         !! * `iout=2`: dense output is performed after every successful step
                                                         !! * `iout=3`: dense output is performed in steps defined by the user
                                                         !!          (see `xout` above)
-      integer,intent(out)                     :: idid   !! reports on successfulness upon return:
+      integer(i4),intent(out)                     :: idid   !! reports on successfulness upon return:
                                                         !!
                                                         !! * `idid=1`  computation successful,
                                                         !! * `idid=2`  comput. successful (interrupted by [[solout]]),
@@ -404,10 +409,10 @@
                                                         !! * `idid=-3` step size becomes too small.
                                                         !! * `idid=-4` problem is probably stiff (interrupted).
 
-      real(wp) :: beta,fac1,fac2,h,hmax,safe
-      integer  :: i,ieco,iprint,istore,nrdens,nstiff,nmax
+      real(dp) :: beta,fac1,fac2,h,hmax,safe
+      integer(i4)  :: i,ieco,iprint,istore,nrdens,nstiff,nmax
       logical  :: arret
-      integer  :: itol    !! switch for `rtol` and `atol`:
+      integer(i4)  :: itol    !! switch for `rtol` and `atol`:
                           !!
                           !! * `itol=0`: both `rtol` and `atol` are scalars.
                           !!    the code keeps, roughly, the local error of
@@ -485,7 +490,7 @@
       fac2 = me%fac2
       beta = me%beta
 
-      if ( me%hmax==0.0_wp ) then
+      if ( me%hmax==0.0_dp ) then
           hmax = xend - x
       else
           hmax = me%hmax
@@ -526,53 +531,56 @@
     implicit none
 
     class(dop853_class),intent(inout)   :: me
-    real(wp),intent(inout)              :: x
-    real(wp),dimension(:),intent(inout) :: y
-    real(wp),intent(in)                 :: xend
-    real(wp),intent(inout)              :: hmax
-    real(wp),intent(inout)              :: h
-    real(wp),dimension(:),intent(in)    :: rtol
-    real(wp),dimension(:),intent(in)    :: atol
-    integer,intent(in)                  :: itol
-    integer,intent(in)                  :: iprint
-    integer,intent(in)                  :: iout
-    integer,intent(out)                 :: idid
-    integer,intent(in)                  :: nmax
-    integer,intent(in)                  :: nstiff
-    real(wp),intent(in)                 :: safe
-    real(wp),intent(in)                 :: beta
-    real(wp),intent(in)                 :: fac1
-    real(wp),intent(in)                 :: fac2
-    integer,intent(inout)               :: nfcn
-    integer,intent(inout)               :: nstep
-    integer,intent(inout)               :: naccpt
-    integer,intent(inout)               :: nrejct
+    real(dp),intent(inout)              :: x
+    real(dp),dimension(:),intent(inout) :: y
+    !dir$ assume_aligned y:64
+    real(dp),intent(in)                 :: xend
+    real(dp),intent(inout)              :: hmax
+    real(dp),intent(inout)              :: h
+    real(dp),dimension(:),intent(in)    :: rtol
+    real(dp),dimension(:),intent(in)    :: atol
+    !dir$ assume_aligned rtol:64
+    !dir$ assume_aligned atol:64
+    integer(i4),intent(in)                  :: itol
+    integer(i4),intent(in)                  :: iprint
+    integer(i4),intent(in)                  :: iout
+    integer(i4),intent(out)                 :: idid
+    integer(i4),intent(in)                  :: nmax
+    integer(i4),intent(in)                  :: nstiff
+    real(dp),intent(in)                 :: safe
+    real(dp),intent(in)                 :: beta
+    real(dp),intent(in)                 :: fac1
+    real(dp),intent(in)                 :: fac2
+    integer(i4),intent(inout)               :: nfcn
+    integer(i4),intent(inout)               :: nstep
+    integer(i4),intent(inout)               :: naccpt
+    integer(i4),intent(inout)               :: nrejct
 
-    real(wp),dimension(me%n) :: y1,k1,k2,k3,k4,k5,k6,k7,k8,k9,k10
-    real(wp) :: atoli,bspl,deno,err,err2,erri,expo1,fac,fac11,&
+    real(dp),dimension(me%n) :: y1,k1,k2,k3,k4,k5,k6,k7,k8,k9,k10
+    real(dp) :: atoli,bspl,deno,err,err2,erri,expo1,fac,fac11,&
                 facc1,facc2,facold,hlamb,hnew,posneg,rtoli,&
                 sk,stden,stnum,xout,xph,ydiff
-    integer :: i,iasti,iord,irtrn,j,nonsti,nrd
+    integer(i4) :: i,iasti,iord,irtrn,j,nonsti,nrd
     logical :: reject,last,event,abort
 
     ! initialisations
     nrd = me%nrdens
-    facold = 1.0e-4_wp
-    expo1 = 1.0_wp/8.0_wp - beta*0.2_wp
-    facc1 = 1.0_wp/fac1
-    facc2 = 1.0_wp/fac2
-    posneg = sign(1.0_wp,xend-x)
+    facold = 1.0e-4_dp
+    expo1 = 1.0_dp/8.0_dp - beta*0.2_dp
+    facc1 = 1.0_dp/fac1
+    facc2 = 1.0_dp/fac2
+    posneg = sign(1.0_dp,xend-x)
 
     ! initial preparations
     atoli = atol(1)
     rtoli = rtol(1)
     last = .false.
-    hlamb = 0.0_wp
+    hlamb = 0.0_dp
     iasti = 0
     call me%fcn(x,y,k1)
     hmax = abs(hmax)
     iord = 8
-    if ( h==0.0_wp ) then
+    if ( h==0.0_dp ) then
         h = me%hinit(x,y,posneg,k1,iord,hmax,atol,rtol,itol)
     end if
     nfcn = nfcn + 2
@@ -580,7 +588,7 @@
     me%xold = x
     if ( iout/=0 ) then
         irtrn = 1
-        me%hout = 1.0_wp
+        me%hout = 1.0_dp
         call me%solout(naccpt+1,me%xold,x,y,irtrn,xout)
         abort = ( irtrn<0 )
     else
@@ -597,7 +605,7 @@
                         write (iprint,*) ' more than nmax =' , nmax , 'steps are needed'
                 idid = -2
                 return
-            elseif ( 0.1_wp*abs(h)<=abs(x)*uround ) then
+            elseif ( 0.1_dp*abs(h)<=abs(x)*uround ) then
                 if ( iprint/=0 ) &
                         write (iprint,'(A,E18.4)') ' exit of dop853 at x=', x
                 if ( iprint/=0 ) &
@@ -605,7 +613,7 @@
                 idid = -3
                 return
             else
-                if ( (x+1.01_wp*h-xend)*posneg>0.0_wp ) then
+                if ( (x+1.01_dp*h-xend)*posneg>0.0_dp ) then
                     h = xend - x
                     last = .true.
                 end if
@@ -642,8 +650,8 @@
                 k4 = b1*k1+b6*k6+b7*k7+b8*k8+b9*k9+b10*k10+b11*k2+b12*k3
                 k5 = y + h*k4
                 ! error estimation
-                err = 0.0_wp
-                err2 = 0.0_wp
+                err = 0.0_dp
+                err2 = 0.0_dp
                 if ( itol==0 ) then
                     do i = 1 , me%n
                         sk = atoli + rtoli*max(abs(y(i)),abs(k5(i)))
@@ -665,9 +673,9 @@
                         err = err + (erri/sk)**2
                     end do
                 end if
-                deno = err + 0.01_wp*err2
-                if ( deno<=0.0_wp ) deno = 1.0_wp
-                err = abs(h)*err*sqrt(1.0_wp/(me%n*deno))
+                deno = err + 0.01_dp*err2
+                if ( deno<=0.0_dp ) deno = 1.0_dp
+                err = abs(h)*err*sqrt(1.0_dp/(me%n*deno))
                 ! computation of hnew
                 fac11 = err**expo1
                 ! lund-stabilization
@@ -675,22 +683,22 @@
                 ! we require  fac1 <= hnew/h <= fac2
                 fac = max(facc2,min(facc1,fac/safe))
                 hnew = h/fac
-                if ( err<=1.0_wp ) then
+                if ( err<=1.0_dp ) then
                     ! step is accepted
-                    facold = max(err,1.0e-4_wp)
+                    facold = max(err,1.0e-4_dp)
                     naccpt = naccpt + 1
                     call me%fcn(xph,k5,k4)
                     nfcn = nfcn + 1
                     ! stiffness detection
                     if ( mod(naccpt,nstiff)==0 .or. iasti>0 ) then
-                        stnum = 0.0_wp
-                        stden = 0.0_wp
+                        stnum = 0.0_dp
+                        stden = 0.0_dp
                         do i = 1 , me%n
                             stnum = stnum + (k4(i)-k3(i))**2
                             stden = stden + (k5(i)-y1(i))**2
                         end do
-                        if ( stden>0.0_wp ) hlamb = abs(h)*sqrt(stnum/stden)
-                        if ( hlamb>6.1_wp ) then
+                        if ( stden>0.0_dp ) hlamb = abs(h)*sqrt(stnum/stden)
+                        if ( hlamb>6.1_dp ) then
                             nonsti = 0
                             iasti = iasti + 1
                             if ( iasti==15 ) then
@@ -797,49 +805,56 @@
 !  computation of an initial step size guess
 
     function hinit(me,x,y,posneg,f0,iord,hmax,atol,rtol,itol)
-
+    use omp_lib
     implicit none
 
     class(dop853_class),intent(inout) :: me
-    real(wp),intent(in)               :: x
-    real(wp),dimension(:),intent(in)  :: y       !! dimension(n)
-    real(wp),intent(in)               :: posneg
-    real(wp),dimension(:),intent(in)  :: f0      !! dimension(n)
-    integer,intent(in)                :: iord
-    real(wp),intent(in)               :: hmax
-    real(wp),dimension(:),intent(in)  :: atol
-    real(wp),dimension(:),intent(in)  :: rtol
-    integer,intent(in)                :: itol
+    real(dp),intent(in)               :: x
+    real(dp),dimension(:),intent(in)  :: y       !! dimension(n)
+    !dir$ assume_aligned y:64
+    real(dp),intent(in)               :: posneg
+    real(dp),dimension(:),intent(in)  :: f0      !! dimension(n)
+    !dir$ assume_aligned f0:64
+    integer(i4),intent(in)                :: iord
+    real(dp),intent(in)               :: hmax
+    real(dp),dimension(:),intent(in)  :: atol
+    real(dp),dimension(:),intent(in)  :: rtol
+    !dir$ assume_aligned atol:64
+    !dir$ assume_aligned rtol:64
+    integer(i4),intent(in)                :: itol
 
-    real(wp) :: atoli,der12,der2,dnf,dny,h,h1,hinit,rtoli,sk
-    integer :: i
-    real(wp),dimension(me%n)  :: f1,y1
+    real(dp) :: atoli,der12,der2,dnf,dny,h,h1,hinit,rtoli,sk
+    integer(i4) :: i,n
+    real(dp),dimension(me%n)  :: f1,y1
 
     ! compute a first guess for explicit euler as
     !   h = 0.01 * norm (y0) / norm (f0)
     ! the increment for explicit euler is small
     ! compared to the solution
-    dnf = 0.0_wp
-    dny = 0.0_wp
+    n=m%n
+    dnf = 0.0_dp
+    dny = 0.0_dp
     atoli = atol(1)
     rtoli = rtol(1)
     if ( itol==0 ) then
-        do i = 1 , me%n
+        !$omp simd reduction(+:dnf) reduction(+:dny) if(n>=16)
+        do i = 1 , n
             sk = atoli + rtoli*abs(y(i))
             dnf = dnf + (f0(i)/sk)**2
             dny = dny + (y(i)/sk)**2
         end do
     else
-        do i = 1 , me%n
+         !$omp simd reduction(+:dnf) reduction(+:dny) if(n>=16)
+        do i = 1 , n
             sk = atol(i) + rtol(i)*abs(y(i))
             dnf = dnf + (f0(i)/sk)**2
             dny = dny + (y(i)/sk)**2
         end do
     end if
-    if ( dnf<=1.0e-10_wp .or. dny<=1.0e-10_wp ) then
-        h = 1.0e-6_wp
+    if ( dnf<=1.0e-10_dp .or. dny<=1.0e-10_dp ) then
+        h = 1.0e-6_dp
     else
-        h = sqrt(dny/dnf)*0.01_wp
+        h = sqrt(dny/dnf)*0.01_dp
     end if
     h = min(h,hmax)
     h = sign(h,posneg)
@@ -849,14 +864,16 @@
     end do
     call me%fcn(x+h,y1,f1)
     ! estimate the second derivative of the solution
-    der2 = 0.0_wp
+    der2 = 0.0_dp
     if ( itol==0 ) then
-        do i = 1 , me%n
+         !$omp simd reduction(+:der2) if(n>=16)
+        do i = 1 , n
             sk = atoli + rtoli*abs(y(i))
             der2 = der2 + ((f1(i)-f0(i))/sk)**2
         end do
     else
-        do i = 1 , me%n
+        !$omp simd reduction(+:der2) if(n>=16)
+        do i = 1 , n
             sk = atol(i) + rtol(i)*abs(y(i))
             der2 = der2 + ((f1(i)-f0(i))/sk)**2
         end do
@@ -865,13 +882,13 @@
     ! step size is computed such that
     !  h**iord * max ( norm (f0), norm (der2)) = 0.01
     der12 = max(abs(der2),sqrt(dnf))
-    if ( der12<=1.0e-15_wp ) then
-        h1 = max(1.0e-6_wp,abs(h)*1.0e-3_wp)
+    if ( der12<=1.0e-15_dp ) then
+        h1 = max(1.0e-6_dp,abs(h)*1.0e-3_dp)
     else
-        h1 = (0.01_wp/der12)**(1.0_wp/iord)
+        h1 = (0.01_dp/der12)**(1.0_dp/iord)
     end if
 
-    h = min(100.0_wp*abs(h),h1,hmax)
+    h = min(100.0_dp*abs(h),h1,hmax)
     hinit = sign(h,posneg)
 
     end function hinit
@@ -888,12 +905,12 @@
     implicit none
 
     class(dop853_class),intent(in) :: me
-    integer,intent(in)             :: ii
-    real(wp),intent(in)            :: x
-    real(wp)                       :: y
+    integer(i4),intent(in)             :: ii
+    real(dp),intent(in)            :: x
+    real(dp)                       :: y
 
-    real(wp) :: conpar, s, s1
-    integer :: i,j,nd,ierr
+    real(dp) :: conpar, s, s1
+    integer(i4) :: i,j,nd,ierr
 
     ! compute place of ii-th component
     i = 0
@@ -909,11 +926,11 @@
         end if
         write (ierr,*) &
             ' Error in contd8: no dense output available for component:', ii
-        y = 0.0_wp
+        y = 0.0_dp
     else
         nd = me%nrdens
         s = (x-me%xold)/me%hout
-        s1 = 1.0_wp - s
+        s1 = 1.0_dp - s
         conpar = me%cont(i+nd*4) + &
                  s*(me%cont(i+nd*5)+ &
                  s1*(me%cont(i+nd*6)+s*me%cont(i+nd*7)))
