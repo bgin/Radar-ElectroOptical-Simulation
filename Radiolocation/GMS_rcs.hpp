@@ -82,7 +82,29 @@ namespace gms {
 			   return (K);
 		    }
 
-		                                              
+
+		    // Helper function wave-number calculation
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float wavenumber_r4_1(const float gamma) { //m,wavelength
+
+		            return (PI2r4/gamma);
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double wavenumber_r8_1(const double gamma) { //m,wavelength
+
+		            return (PI2r8/gamma);
+		    }
+
 
 		    /*
                         
@@ -268,7 +290,323 @@ namespace gms {
 		    }
 
 
-		    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float cone_ogive_rcs_r4_1(const float gamma, // m, wavelength
+		                        const float cha) {   // deg, cone half-angle, incidence nose-on
+                         // This model applies to infintely large cone, or ogive larger than incident wavelength
+			 float sig1           = 0.0f; 
+                         const float gamm2    = gamma*gamma;
+			 constexpr float PI16 = 50.2654824574366918154023f;
+			 const float ratio    = gamm2/PI16;
+			 //const float targ     = cephes_tanf(zr4*cha);
+			 const float targ     = zr4*cha;
+			 const float targ4    = targ*targ*targ*targ;
+			 const float tan4     = cephes_tanf(targ4);
+			 sig1                 = ratio*tan4;
+			 return (sig1);
+		    }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    double cone_ogive_rcs_r8_1(const double gamma, // m, wavelength
+		                               const double cha) {   // deg, cone half-angle, incidence nose-on
+                         // This model applies to infintely large cone, or ogive larger than incident wavelength
+			 double sig1           = 0.0; //rcs
+                         const double gamm2    = gamma*gamma;
+			 constexpr double PI16 = 50.2654824574366918154023;
+			 const double ratio    = gamm2/PI16;
+			 const double targ     = zr4*cha;
+			 const double targ4    = targ*targ*targ*targ;
+			 const double tan4     = std::tan(targ4);
+			 sig1                  = ratio*tan4;
+			 return (sig1);
+		    }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float cylinder_rcs_r4_1(const float Rcyl,  //m, radius of cylinder
+		                            const float Lcyl,  //m, length of cylinder
+					    const float gamm,  //m, wavelength
+                                            const float theta) { //deg, angle between cylinder axis and radar line-of-sight
+
+			   float sig        = 0.0f; //m^2, rcs
+			   const float t0   = PI4r4*Rcyl;
+			   const float sinz = cephes_sinf(zr4*theta);
+		           const float term = (t0*sinz)/gamm;
+			   if(term<1.0f) {
+                              return (-1.0f);
+			   }
+			   const float cosz  = cephes_cosf(zr4*theta);
+			   const float term1 = (Rcyl*gamm*sinz)/PI2r4;
+			   const float sarg1 = (PI2r4*Lcyl)/gamm;
+			   const float sarg2 = sarg1*cosz;
+			   const float term2 = cephes_sinf(sarg2/cosz);
+			   const float term22= term2*term2;
+			   sig               = term1*term22;
+			   return (sig);
+                   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    double cylinder_rcs_r8_1(const double Rcyl,  //m, radius of cylinder
+		                             const double Lcyl,  //m, length of cylinder
+					     const double gamm,  //m, wavelength
+                                             const double theta) { //deg, angle between cylinder axis and radar line-of-sight
+
+			   double sig        = 0.0; //m^2, rcs
+			   const double t0   = PI4r8*Rcyl;
+			   const double sinz = std::sin(zr8*theta);
+		           const double term = (t0*sinz)/gamm;
+			   if(term<1.0) {
+                              return (-1.0);
+			   }
+			   const double cosz  = std::cos(zr4*theta);
+			   const double term1 = (Rcyl*gamm*sinz)/PI2r8;
+			   const double sarg1 = (PI2r4*Lcyl)/gamm;
+			   const double sarg2 = sarg1*cosz;
+			   const double term2 = std::sin(sarg2/cosz);
+			   const double term22= term2*term2;
+			   sig                = term1*term22;
+			   return (sig);
+                   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float disk_rcs_r4_1(const float Rd,    //m^2, radius of disk
+		                        const float theta, //deg, angle relative to disk normal
+					const float gamm,  //m, wavelength
+					const int32_t type) { // disk type: 1=electrically large disk, 2=electrically small circular disk
+
+			   float sig         = 0.0f;
+			   if(type==1) {
+			      const float k     = wavenumber_r4_1(gamm);
+			      const float gamm2 = gamm*gamm;
+			      const float carg  = zr4*theta;
+			      const float coszt = cephes_cosf(carg*carg);
+                              const float t0    = PIr4*Rd*Rd;
+			      const float t1    = PI4r4*t0*t0;
+			      const float tleft = t1/gamm2;
+			      const float sinzt = cephes_sinf(zr4*theta);
+			      const float jarg  = 2.0f*k*Rd*sinzt;
+			      const float bj1   = cephes_j1f(jarg);
+			      const float term  = 2.0f*bj1/jarg;
+			      const float tright= term*term;
+			      sig               = tleft*tright*coszt;
+			      return (sig);
+			   }
+			   else if(type==2) {
+                              const float Rd2   = Rd*Rd;
+			      const float tleft = 3534.2917352885173932704738f*Rd2;
+			      const float ratio = Rd/gamm;
+			      const float ratio4= ratio*ratio*ratio*ratio;
+			      sig               = tleft*ratio4;
+			      return (sig);
+                               
+			   }
+			   
+                   }
+
+#include <math.h> // bessel function j1
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    double disk_rcs_r8_1(const double Rd,    //m^2, radius of disk
+		                         const double theta, //deg, angle relative to disk normal
+					 const double gamm,  //m, wavelength
+					 const int32_t type) { // disk type: 1=electrically large disk, 2=electrically small circular disk
+
+			   double sig         = 0.0;
+			   if(type==1) {
+			      const double k     = wavenumber_r8_1(gamm);
+			      const double gamm2 = gamm*gamm;
+			      const double carg  = zr8*theta;
+			      const double coszt = std::cos(carg*carg);
+                              const double t0    = PIr8*Rd*Rd;
+			      const double t1    = PI4r8*t0*t0;
+			      const double tleft = t1/gamm2;
+			      const double sinzt = std::sin(zr4*theta);
+			      const double jarg  = 2.0*k*Rd*sinzt;
+			      const double bj1   = j1(jarg);
+			      const double term  = 2.0*bj1/jarg;
+			      const double tright= term*term;
+			      sig               = tleft*tright*coszt;
+			      return (sig);
+			   }
+			   else if(type==2) {
+                              const double Rd2   = Rd*Rd;
+			      const double tleft = 3534.2917352885173932704738*Rd2;
+			      const double ratio = Rd/gamm;
+			      const double ratio4= ratio*ratio*ratio*ratio;
+			      sig                = tleft*ratio4;
+			      return (sig);
+                               
+			   }
+			   
+                   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float curved_edge_rcs_r4_1(const float Redg, //m, radius of edge contour, incidence edge-perpendicular
+		                               const float gamm) { //m, wavelength
+
+                           float sig   = 0.0f; //m^2, rcs
+			   sig         = 0.5f*(Redg*gamm);
+			   return (sig);
+		   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float curved_edge_rcs_r8_1(const double Redg, //m, radius of edge contour, incidence edge-perpendicular
+		                               const double gamm) { //m, wavelength
+
+                           double sig   = 0.0; //m^2, rcs
+			   sig         = 0.5*(Redg*gamm);
+			   return (sig);
+		   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float straight_edge_rcs_r4_1(const float Ledg) { //m, length of straight edge
+
+		            float sig   = 0.0f;
+			    sig         = (Ledg*Ledg)/PIr4;
+			    return (sig);
+                   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    double straight_edge_rcs_r8_1(const double Ledg) { //m, length of straight edge
+
+		            double sig   = 0.0;
+			    sig          = (Ledg*Ledg)/PIr8;
+			    return (sig);
+                   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float ellipsoid_rcs_r4_1(const float a, //m, semimajor axis
+		                             const float b) { //m, semiminor axis
+
+                            float sig      = 0.0f;
+			    const float b4 = b*b*b*b;
+			    const float a2 = a*a;
+			    sig            = (PIr4*b4)/a2;
+			    return (sig);
+		   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    double ellipsoid_rcs_r4_1(const double a, //m, semimajor axis, incidence along the major axis
+		                              const double b) { //m, semiminor axis
+
+                            double sig      = 0.0;
+			    const double b4 = b*b*b*b;
+			    const double a2 = a*a;
+			    sig             = (PIr8*b4)/a2;
+			    return (sig);
+		   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    float plate_rcs_r4_1(const float x, //m, plate length
+		                         const float y, //m, plate width
+					 const float theta, //deg, angle relative to plate normal
+					 const float phi,    //deg, angle between the plate normal and radar los
+					 const float gamm) { //m, wavelength
+
+			    float sig         = 0.0f;
+			    const float gamm2 = gamm*gamm;
+			    const float sinzt = cephes_sinf(zr4*theta);
+			    const float xy2   = PI4r4*(x*y*x*y);
+			    const float coszt = cephes_cosf(zr4*phi);
+			    const float zth2  = zr4*theta*zr4*theta;
+			    const float u     = wavenumber_r4_1(gamm)*x*sinzt*coszt;
+			    const float sinu  = cephes_sinf(u)/u;
+			    const float v     = wavenumber_r4_1(gamm)*y*sinzt*coszt;
+			    const float sinv  = cephes_sinf(v)/v;
+			    const float tleft = xy2/gamm2;
+			    const float tmid  = sinu*sinv*sinu*sinv;
+			    sig               = tleft*tmid*coszt;
+			    return (sig);
+		   }
+
+
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    double plate_rcs_r8_1(const double x, //m, plate length
+		                          const double y, //m, plate width
+					  const double theta, //deg, angle relative to plate normal
+					  const double phi,    //deg, angle between the plate normal and radar los
+					  const double gamm) { //m, wavelength
+
+			    double sig         = 0.0;
+			    const double gamm2 = gamm*gamm;
+			    const double sinzt = std::sin(zr8*theta);
+			    const double xy2   = PI4r8*(x*y*x*y);
+			    const double coszt = std::cos(zr8*phi);
+			    const double zth2  = zr8*theta*zr8*theta;
+			    const double u     = wavenumber_r8_1(gamm)*x*sinzt*coszt;
+			    const double sinu  = std::sin(u)/u;
+			    const double v     = wavenumber_r8_1(gamm)*y*sinzt*coszt;
+			    const double sinv  = std::sin(v)/v;
+			    const double tleft = xy2/gamm2;
+			    const double tmid  = sinu*sinv*sinu*sinv;
+			    sig                = tleft*tmid*coszt;
+			    return (sig);
+		   }
 
 
      }//radiolocation
