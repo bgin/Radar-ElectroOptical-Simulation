@@ -30,6 +30,24 @@ namespace gms {
        namespace  radiolocation {
 
 
+	           /*
+                          IEEE Standard 100, The Authoritative Dictionary of IEEE Standards Terms, 7th ed., New York:
+                          IEEE Press, 2000.
+                          [2] Barton, D. K., Radar System Analysis and Modeling, Norwood, MA: Artech House, 2005.
+                          [3] Blake, L. V., Radar Range-Performance Analysis, Lexington, MA: D. C. Heath, 1980; Dedham,
+                                            MA: Artech House, 1986.
+                          [4] Barton, D. K. and H. R. Ward, Handbook of Radar Measurement, Englewood Cliffs, NJ: Pren-
+                                            tice-Hall, 1968; Dedham, MA: Artech House, 1984.
+                          [5] Goldstein, H., “Sea Echo,” Section 6.6, and “Meteorological Echoes,” Chapter 7, in Propaga-
+                                            tion of Short Radio Waves, Vol. 13 in MIT Radiation Laboratory Series, New York: McGraw-
+                                            Hill, 1951. Reprinted (CD ROM edition), Artech House, 1999.
+                          [6] Doviak, R. J. and D. S. Zrnic, Doppler Radar and Weather Observations, 2nd ed., New York:
+                                            Academic Press, 1993.
+                          [7] Shrader, W. W. and V. Gregers-Hansen, “MTI Radar,” Chap. 2 in Radar Handbook, 3rd ed.,
+                                            (M. I. Skolnik, ed.), New York: McGraw-Hill, 2008.
+                          [8] Schleher, D. C., Introduction to Electronic Warfare, Dedham, MA: Artech House, 1986.
+                          [9] Schleher, D. C., Electronic Warfare in the Information Age, Norwood, MA: Artech House,
+                     */
                  
                    namespace {
                         // speed of light
