@@ -110,8 +110,91 @@ namespace gms {
 #endif			    
 		} JammerParamAoS_R8_1;
 
+#include <immintrin.h>
+                 
+                // SIMD types
+		typedef struct __ATTR_ALIGN__(64) RadarParamSIMD_R4_16 {
+                
+                           __m512 gamm; //m, wavelength
+			   __m512 tf;   //sec, coherent processing time
+			   __m512 rho;  //usec,pulsewidth
+			   __m512 w;    //m, apperture width
+                           __m512 Kth;  //beamwidth constant
+			   __m512 Ln;   //pattern constant
+			   __m512 Ts;   //K, system noise temperature
+			   __m512 Fp;   //polarization factor
+			   __m512 La;   //dB, troposepheric attenuation
+			   __m512 F;    //radar pattern propagation factor
+			   __m512 Pt;   //kW, transmitter power
+			   __m512 tr;   //usec, PRI
+			   __m512 Lt;   //dB, transmitt line loss
+			   __m512 h;    //m, apperture height
+			   __m512 ha;   //m, phase centre
+			   __m512 Frdr; //range dependent response
+			   __m512 Dx;   //dB, detectibility factor
+			   __m512 Bt;   //Mhz, tuneable bandwidth
+			   __m512 Flen; //dB, tropospheric attenuation  
+              } RadarParamSIMD_R4_16;
 
-		
+
+              typedef struct __ATTR_ALIGN__(64) RadarParamSIMD_R8_8 {
+                
+                           __m512d gamm; //m, wavelength
+			   __m512d tf;   //sec, coherent processing time
+			   __m512d rho;  //usec,pulsewidth
+			   __m512d w;    //m, apperture width
+                           __m512d Kth;  //beamwidth constant
+			   __m512d Ln;   //pattern constant
+			   __m512d Ts;   //K, system noise temperature
+			   __m512d Fp;   //polarization factor
+			   __m512d La;   //dB, troposepheric attenuation
+			   __m512d F;    //radar pattern propagation factor
+			   __m512d Pt;   //kW, transmitter power
+			   __m512d tr;   //usec, PRI
+			   __m512d Lt;   //dB, transmitt line loss
+			   __m512d h;    //m, apperture height
+			   __m512d ha;   //m, phase centre
+			   __m512d Frdr; //range dependent response
+			   __m512d Dx;   //dB, detectibility factor
+			   __m512d Bt;   //Mhz, tuneable bandwidth
+			   __m51d  Flen; //dB, tropospheric attenuation  
+              } RadarParamSIMD_R8_8;
+
+
+               // Jammer and target parameters
+
+              typedef struct __ATTR_ALIGN__(64) JammerParamSIMD_R4_16 {
+
+                            __m512 sig;  //m, RSC of target
+			    __m512 Pj;   //W, jammer power
+			    __m512 Gj;   //dB, jammer antenna gain
+			    __m512 Qj;   //dB, jammer noise quality
+			    __m512 Flenj;//dB, jammer lens factor
+			    __m512 Rj;   //km, jammer range
+			    __m512 Bj;   //Mhz,jammer noise BW
+			    __m512 Ltj;  //dB, jammer transmit loss
+			    __m512 Fpj;  //dB, jammer polarization
+			    __m512 Rmj;  //km, jammer screening range
+			    __m512 Fj;   //dB, jammer pattern factor of propagation
+			    __m512 Laj;  //dB, jammer troposhperic loss
+             } JammerParamSIMD_R4_16;
+
+
+              typedef struct __ATTR_ALIGN__(64) JammerParamSIMD_R8_8 {
+
+                            __m512d sig;  //m, RSC of target
+			    __m512d Pj;   //W, jammer power
+			    __m512d Gj;   //dB, jammer antenna gain
+			    __m512d Qj;   //dB, jammer noise quality
+			    __m512d Flenj;//dB, jammer lens factor
+			    __m512d Rj;   //km, jammer range
+			    __m512d Bj;   //Mhz,jammer noise BW
+			    __m512d Ltj;  //dB, jammer transmit loss
+			    __m512d Fpj;  //dB, jammer polarization
+			    __m512d Rmj;  //km, jammer screening range
+			    __m512d Fj;   //dB, jammer pattern factor of propagation
+			    __m512d Laj;  //dB, jammer troposhperic loss
+             } JammerParamSIMD_R8_8;
 
       }
 
