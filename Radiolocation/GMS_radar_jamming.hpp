@@ -439,7 +439,318 @@ namespace gms {
 			    ratio             = num/den;
 			    return (std::pow(ratio,0.25));
 		    }
-                     
+
+
+	             // Barrage Noise Jamming equations
+
+		     //Troposhperic power loss at specific range.
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float tropo_range_loss_r4_1(const RadarParamAoS_R4_1   &rp,
+		                                 const JammerParamsAoS_R4_1 &jp) {
+
+                             const float xLa = rp.La;
+			     const float xRmj= jp.Rmj;
+			     const float Rm  =  thermal_noise_RR_r4_1(rp,jp);
+			     return (xLa*(xRmj/Rm));
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double tropo_range_loss_r8_1(const RadarParamAoS_R8_1   &rp,
+		                                  const JammerParamsAoS_R8_1 &jp) {
+                             _mm_prefetch((const char*)&rp,0);
+			     _mm_prefetch((const char*)&jp,0);
+                             const double xLa = rp.La;
+			     const double xRmj= jp.Rmj;
+			     const double Rm  =  thermal_noise_RR_r8_1(rp,jp);
+			     return (xLa*(xRmj/Rm));
+		    }
+
+
+		    // Effective radiated power of Jammer (W)
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float jammer_erp_r4_1(const JammerParamAoS_R4_1 &jp) {
+
+                            const float xPj = jp.Pj;
+			    const float xGj = jp.Gj;
+			    const float xLtj= jp.Ltj;
+			    return ((xPj*xGj)/xLtj);
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double jammer_erp_r8_1(const JammerParamAoS_R8_1 &jp) {
+
+                            const double xPj = jp.Pj;
+			    const double xGj = jp.Gj;
+			    const double xLtj= jp.Ltj;
+			    return ((xPj*xGj)/xLtj);
+		    }
+
+
+		    // Effective radiated Jammer noise power (W)
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float jammer_ernp_r4_1(const JammerParamAoS_R4_1 &jp) {
+
+                            const float xQj = jp.Qj;
+			    const float xPj = jp.Pj;
+			    const float xGj = jp.Gj;
+			    const float xFpj= jp.Fpj;
+			    const float xLtj= jp.Ltj;
+			    const float xFpj2 = xFpj*xFpj;
+			    return ((xQj*xPj*xGj*xFpj2)/xLtj);
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double jammer_ernp_r8_1(const JammerParamAoS_R8_1 &jp) {
+
+                            const double xQj = jp.Qj;
+			    const double xPj = jp.Pj;
+			    const double xGj = jp.Gj;
+			    const double xFpj= jp.Fpj;
+			    const double xLtj= jp.Ltj;
+			    const double xFpj2 = xFpj*xFpj;
+			    return ((xQj*xPj*xGj*xFpj2)/xLtj);
+		    }
+
+
+		    // Jamming spectral density (W/Hz)
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float jammer_sd_r4_1(const JammerParamsAoS_R4_1 &jp,
+		                          const RadarParamsAoS_R4_1  &rp) {
+
+			   _mm_prefetch((const char*)&rp,0);
+			   _mm_prefetch((const char*)&jp,0);
+			   const float j0    = 0.0f;
+			   const float xKth  = rp.Kth; //1st cache miss for jp load
+			   const float xgam  = rp.gamm;
+			   const float xh    = rp.h;
+			   const float xw    = rp.w;
+			   const float xLn   = rp.Ln;
+			   const float g2    = rp.gamm*rp.gamm;
+			   const float xGr   = radar_ant_gain_r4_1(azimuth_bw_r4_1(xKth,xgam,xh),
+			                                   elevation_bw_r4_1(xKth,xgam,xw),xLn);
+			   const float xQj   = jp.Qj;// 1st cache miss for rp load	                     
+                           const float xPj   = jp.Pj;
+			   const float xGj   = jp.Gj;
+			   const float xFpj  = jp.Fpj;
+			   const float xFlnsj= jp.Flenj;
+			   const float xFj   = jp.Fj;
+			   const float xRj   = jp.Rj;
+			   const float xBj   = jp.Bj;
+			   const float xLtj  = jp.Ltj;
+			   const float xLaj  = jp.Laj;
+			   const float PI42  = 157.9136704174297379013522f;
+			   const float r0    = xRj*xBj*xLtj*xLaj;
+			   const float t0    = xQj*xPj*xGj*xGr;
+			   const float t1    = g2*xFpj*xFpj*xFlnsj*xFlnsj;
+			   const float t2    = t0*t1*xFj*xFj;
+			   j0                = t2/(PI42*r0);
+			   return (j0);
+		   }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double jammer_sd_r8_1(const JammerParamsAoS_R8_1 &jp,
+		                           const RadarParamsAoS_R8_1  &rp) {
+
+			   _mm_prefetch((const char*)&rp,0);
+			   _mm_prefetch((const char*)&jp,0);
+			   const double j0    = 0.0;
+			   const double xKth  = rp.Kth; //1st cache miss for jp load
+			   const double xgam  = rp.gamm;
+			   const double xh    = rp.h;
+			   const double xw    = rp.w;
+			   const double xLn   = rp.Ln;
+			   const double g2    = rp.gamm*rp.gamm;
+			   const double xGr   = radar_ant_gain_r8_1(azimuth_bw_r8_1(xKth,xgam,xh),
+			                                   elevation_bw_r8_1(xKth,xgam,xw),xLn);
+			   const double xQj   = jp.Qj;// 1st cache miss for rp load	                     
+                           const double xPj   = jp.Pj;
+			   const double xGj   = jp.Gj;
+			   const double xFpj  = jp.Fpj;
+			   const double xFlnsj= jp.Flenj;
+			   const double xFj   = jp.Fj;
+			   const double xRj   = jp.Rj;
+			   const double xBj   = jp.Bj;
+			   const double xLtj  = jp.Ltj;
+			   const double xLaj  = jp.Laj;
+			   const double PI42  = 157.9136704174297379013522;
+			   const double r0    = xRj*xBj*xLtj*xLaj;
+			   const double t0    = xQj*xPj*xGj*xGr;
+			   const double t1    = g2*xFpj*xFpj*xFlnsj*xFlnsj;
+			   const double t2    = t0*t1*xFj*xFj;
+			   j0                 = t2/(PI42*r0);
+			   return (j0);
+		   }
+
+
+		   // Available jamming temperature single jammer scenario.
+		   // Remark: the implementation is identical to function coded above.
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float jammer_t1_r4_1(const JammerParamsAoS_R4_1 &jp,
+		                          const RadarParamsAoS_R4_1  &rp) {
+
+			   _mm_prefetch((const char*)&rp,0);
+			   _mm_prefetch((const char*)&jp,0);
+			   const float jt1    = 0.0f;
+			   const float xKth  = rp.Kth; //1st cache miss for jp load
+			   const float xgam  = rp.gamm;
+			   const float xh    = rp.h;
+			   const float xw    = rp.w;
+			   const float xLn   = rp.Ln;
+			   const float g2    = rp.gamm*rp.gamm;
+			   const float xGr   = radar_ant_gain_r4_1(azimuth_bw_r4_1(xKth,xgam,xh),
+			                                   elevation_bw_r4_1(xKth,xgam,xw),xLn);
+			   const float xQj   = jp.Qj;// 1st cache miss for rp load	                     
+                           const float xPj   = jp.Pj;
+			   const float xGj   = jp.Gj;
+			   const float xFpj  = jp.Fpj;
+			   const float xFlnsj= jp.Flenj;
+			   const float xFj   = jp.Fj;
+			   const float xRj   = jp.Rj;
+			   const float xBj   = jp.Bj;
+			   const float xLtj  = jp.Ltj;
+			   const float xLaj  = jp.Laj;
+			   const float PI42  = 157.9136704174297379013522f;
+			   const float r0    = xRj*k_B4*xBj*xLtj*xLaj;
+			   const float t0    = xQj*xPj*xGj*xGr;
+			   const float t1    = g2*xFpj*xFpj*xFlnsj*xFlnsj;
+			   const float t2    = t0*t1*xFj*xFj;
+			   jt1               = t2/(PI42*r0);
+			   return (jt1);
+		   }
+
+		     
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double jammer_t1_r8_1(const JammerParamsAoS_R8_1 &jp,
+		                           const RadarParamsAoS_R8_1  &rp) {
+
+			   _mm_prefetch((const char*)&rp,0);
+			   _mm_prefetch((const char*)&jp,0);
+			   const double jt1    = 0.0;
+			   const double xKth  = rp.Kth; //1st cache miss for jp load
+			   const double xgam  = rp.gamm;
+			   const double xh    = rp.h;
+			   const double xw    = rp.w;
+			   const double xLn   = rp.Ln;
+			   const double g2    = rp.gamm*rp.gamm;
+			   const double xGr   = radar_ant_gain_r8_1(azimuth_bw_r8_1(xKth,xgam,xh),
+			                                   elevation_bw_r8_1(xKth,xgam,xw),xLn);
+			   const double xQj   = jp.Qj;// 1st cache miss for rp load	                     
+                           const double xPj   = jp.Pj;
+			   const double xGj   = jp.Gj;
+			   const double xFpj  = jp.Fpj;
+			   const double xFlnsj= jp.Flenj;
+			   const double xFj   = jp.Fj;
+			   const double xRj   = jp.Rj;
+			   const double xBj   = jp.Bj;
+			   const double xLtj  = jp.Ltj;
+			   const double xLaj  = jp.Laj;
+			   const double PI42  = 157.9136704174297379013522;
+			   const double r0    = xRj*k_B8*xBj*xLtj*xLaj;
+			   const double t0    = xQj*xPj*xGj*xGr;
+			   const double t1    = g2*xFpj*xFpj*xFlnsj*xFlnsj;
+			   const double t2    = t0*t1*xFj*xFj;
+			   jt1                = t2/(PI42*r0);
+			   return (jt1);
+		   }
+
+
+		   // Required signal jamming temperature.
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float jammer_treq_r4_1(const JammerParamsAoS_R4_1 &jp,
+		                            const RadarParamsAoS_R4_1  &rp) {
+
+                            _mm_prefetch((const char*)&rp,0);
+			    _mm_prefetch((const char*)&jp,0);
+			    float tj         = 0.0f;
+			    const float xTs  = rp.Ts;
+			    const float Rm   = thermal_noise_RR_r4_1(rp,jp);
+			    const float xRmj = jp.Rmj;
+			    const float xLa  = rp.La;
+			    const float xLa1 = tropo_range_loss_r4_1(rp,jp);
+			    const float xFlns= rp.Flen;
+			    const float xFln1= cephes_sqrtf(xFlns);
+			    const float lrat = xLa/xLa1;
+			    const float mrat = xFlns/xFln1;
+			    const float rrat = Rm/xRmj;
+			    const float rrat4= (rrat*rrat*rrat*rrat)-1.0f;
+			    tj               = xTs*lrat*(mrat*mrat)*rrat4;
+			    return (tj);
+		   }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double jammer_treq_r8_1(const JammerParamsAoS_R8_1 &jp,
+		                             const RadarParamsAoS_R8_1  &rp) {
+
+                            _mm_prefetch((const char*)&rp,0);
+			    _mm_prefetch((const char*)&jp,0);
+			    double tj         = 0.0;
+			    const double xTs  = rp.Ts;
+			    const double Rm   = thermal_noise_RR_r8_1(rp,jp);
+			    const double xRmj = jp.Rmj;
+			    const double xLa  = rp.La;
+			    const double xLa1 = tropo_range_loss_r8_1(rp,jp);
+			    const double xFlns= rp.Flen;
+			    const double xFln1= std::pow(xFlns);
+			    const double lrat = xLa/xLa1;
+			    const double mrat = xFlns/xFln1;
+			    const double rrat = Rm/xRmj;
+			    const double rrat4= (rrat*rrat*rrat*rrat)-1.0;
+			    tj               = xTs*lrat*(mrat*mrat)*rrat4;
+			    return (tj);
+		   }
 
     }
 
