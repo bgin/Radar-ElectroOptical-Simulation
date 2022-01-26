@@ -196,6 +196,97 @@ namespace gms {
 			    __m512d Laj;  //dB, jammer troposhperic loss
              } JammerParamSIMD_R8_8;
 
+             // Same data types definitions as above, but for __m256 and __m256d.
+             
+             typedef struct __ATTR_ALIGN__(32) RadarParamSIMD_R4_8 {
+                
+                           __m256 gamm; //m, wavelength
+			   __m256 tf;   //sec, coherent processing time
+			   __m256 rho;  //usec,pulsewidth
+			   __m256 w;    //m, apperture width
+                           __m256 Kth;  //beamwidth constant
+			   __m256 Ln;   //pattern constant
+			   __m256 Ts;   //K, system noise temperature
+			   __m256 Fp;   //polarization factor
+			   __m256 La;   //dB, troposepheric attenuation
+			   __m256 F;    //radar pattern propagation factor
+			   __m256 Pt;   //kW, transmitter power
+			   __m256 tr;   //usec, PRI
+			   __m256 Lt;   //dB, transmitt line loss
+			   __m256 h;    //m, apperture height
+			   __m256 ha;   //m, phase centre
+			   __m256 Frdr; //range dependent response
+			   __m256 Dx;   //dB, detectibility factor
+			   __m256 Bt;   //Mhz, tuneable bandwidth
+			   __m256 Flen; //dB, tropospheric attenuation  
+#if (USE_STRUCT_PADDING) == 1			   
+			   PAD_TO(1,32)
+#endif	
+              } RadarParamSIMD_R4_8;
+
+
+              typedef struct __ATTR_ALIGN__(32) RadarParamSIMD_R8_4 {
+                
+                           __m256d gamm; //m, wavelength
+			   __m256d tf;   //sec, coherent processing time
+			   __m256d rho;  //usec,pulsewidth
+			   __m256d w;    //m, apperture width
+                           __m256d Kth;  //beamwidth constant
+			   __m256d Ln;   //pattern constant
+			   __m256d Ts;   //K, system noise temperature
+			   __m256d Fp;   //polarization factor
+			   __m256d La;   //dB, troposepheric attenuation
+			   __m256d F;    //radar pattern propagation factor
+			   __m256d Pt;   //kW, transmitter power
+			   __m256d tr;   //usec, PRI
+			   __m256d Lt;   //dB, transmitt line loss
+			   __m256d h;    //m, apperture height
+			   __m256d ha;   //m, phase centre
+			   __m256d Frdr; //range dependent response
+			   __m256d Dx;   //dB, detectibility factor
+			   __m256d Bt;   //Mhz, tuneable bandwidth
+			   __m256d Flen; //dB, tropospheric attenuation   
+#if (USE_STRUCT_PADDING) == 1			   
+			   PAD_TO(1,32)
+#endif	
+              } RadarParamSIMD_R8_4;
+
+
+               // Jammer and target parameters
+
+              typedef struct __ATTR_ALIGN__(64) JammerParamSIMD_R4_8 {
+
+                            __m256 sig;  //m, RSC of target
+			    __m256 Pj;   //W, jammer power
+			    __m256 Gj;   //dB, jammer antenna gain
+			    __m256 Qj;   //dB, jammer noise quality
+			    __m256 Flenj;//dB, jammer lens factor
+			    __m256 Rj;   //km, jammer range
+			    __m256 Bj;   //Mhz,jammer noise BW
+			    __m256 Ltj;  //dB, jammer transmit loss
+			    __m256 Fpj;  //dB, jammer polarization
+			    __m256 Rmj;  //km, jammer screening range
+			    __m256 Fj;   //dB, jammer pattern factor of propagation
+			    __m256 Laj;  //dB, jammer troposhperic loss
+             } JammerParamSIMD_R4_8;
+
+
+              typedef struct __ATTR_ALIGN__(64) JammerParamSIMD_R8_4 {
+
+                            __m256d sig;  //m, RSC of target
+			    __m256d Pj;   //W, jammer power
+			    __m256d Gj;   //dB, jammer antenna gain
+			    __m256d Qj;   //dB, jammer noise quality
+			    __m256d Flenj;//dB, jammer lens factor
+			    __m256d Rj;   //km, jammer range
+			    __m256d Bj;   //Mhz,jammer noise BW
+			    __m256d Ltj;  //dB, jammer transmit loss
+			    __m256d Fpj;  //dB, jammer polarization
+			    __m256d Rmj;  //km, jammer screening range
+			    __m256d Fj;   //dB, jammer pattern factor of propagation
+			    __m256d Laj;  //dB, jammer troposhperic loss  
+             } JammerParamSIMD_R8_4;
+
       }
 
 }
