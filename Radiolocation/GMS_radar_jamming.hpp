@@ -122,6 +122,34 @@ namespace gms {
 		     }
 
 
+		     // Prefetch the data to L1D.
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+                     bool prefetch_data_r4_1(const RadarParamAoS_R4_1   &rp,
+		                             const JammerParamAoS_R4_1  &jp) {
+
+                           _mm_prefetch((const char*)&rp,0);
+			   _mm_prefetch((const char*)&jp,0);
+			   return (true); // can not fail at software visible way.
+		     }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+                     bool prefetch_data_r8_1(const RadarParamAoS_R8_1   &rp,
+		                             const JammerParamAoS_R8_1  &jp) {
+
+                           _mm_prefetch((const char*)&rp,0);
+			   _mm_prefetch((const char*)&jp,0);
+			   return (true); // can not fail at software visible way.
+		     }
+
 		     // Auxilliary formulae computations
 		     // Data type: RadarParamAoS_R4_1, RadarParamsAoS_R8_1
 		     
@@ -566,8 +594,8 @@ namespace gms {
 		     float jammer_sd_r4_1(const JammerParamsAoS_R4_1 &jp,
 		                          const RadarParamsAoS_R4_1  &rp) {
 
-			   _mm_prefetch((const char*)&rp,0);
-			   _mm_prefetch((const char*)&jp,0);
+			  // _mm_prefetch((const char*)&rp,0);
+			   //_mm_prefetch((const char*)&jp,0);
 			   const float j0    = 0.0f;
 			   const float xKth  = rp.Kth; //1st cache miss for jp load
 			   const float xgam  = rp.gamm;
@@ -605,8 +633,8 @@ namespace gms {
 		     double jammer_sd_r8_1(const JammerParamsAoS_R8_1 &jp,
 		                           const RadarParamsAoS_R8_1  &rp) {
 
-			   _mm_prefetch((const char*)&rp,0);
-			   _mm_prefetch((const char*)&jp,0);
+			   //_mm_prefetch((const char*)&rp,0);
+			   //_mm_prefetch((const char*)&jp,0);
 			   const double j0    = 0.0;
 			   const double xKth  = rp.Kth; //1st cache miss for jp load
 			   const double xgam  = rp.gamm;
@@ -646,8 +674,8 @@ namespace gms {
 		     float jammer_t1_r4_1(const JammerParamsAoS_R4_1 &jp,
 		                          const RadarParamsAoS_R4_1  &rp) {
 
-			   _mm_prefetch((const char*)&rp,0);
-			   _mm_prefetch((const char*)&jp,0);
+			   //_mm_prefetch((const char*)&rp,0);
+			   //_mm_prefetch((const char*)&jp,0);
 			   const float jt1    = 0.0f;
 			   const float xKth  = rp.Kth; //1st cache miss for jp load
 			   const float xgam  = rp.gamm;
@@ -685,8 +713,8 @@ namespace gms {
 		     double jammer_t1_r8_1(const JammerParamsAoS_R8_1 &jp,
 		                           const RadarParamsAoS_R8_1  &rp) {
 
-			   _mm_prefetch((const char*)&rp,0);
-			   _mm_prefetch((const char*)&jp,0);
+			   //_mm_prefetch((const char*)&rp,0);
+			   //_mm_prefetch((const char*)&jp,0);
 			   const double jt1    = 0.0;
 			   const double xKth  = rp.Kth; //1st cache miss for jp load
 			   const double xgam  = rp.gamm;
@@ -725,8 +753,8 @@ namespace gms {
 		     float jammer_treq_r4_1(const JammerParamsAoS_R4_1 &jp,
 		                            const RadarParamsAoS_R4_1  &rp) {
 
-                            _mm_prefetch((const char*)&rp,0);
-			    _mm_prefetch((const char*)&jp,0);
+                            //_mm_prefetch((const char*)&rp,0);
+			    //_mm_prefetch((const char*)&jp,0);
 			    float tj         = 0.0f;
 			    const float xTs  = rp.Ts;
 			    const float Rm   = thermal_noise_RR_r4_1(rp,jp);
@@ -752,8 +780,8 @@ namespace gms {
 		     double jammer_treq_r8_1(const JammerParamsAoS_R8_1 &jp,
 		                             const RadarParamsAoS_R8_1  &rp) {
 
-                            _mm_prefetch((const char*)&rp,0);
-			    _mm_prefetch((const char*)&jp,0);
+                           // _mm_prefetch((const char*)&rp,0);
+			   // _mm_prefetch((const char*)&jp,0);
 			    double tj         = 0.0;
 			    const double xTs  = rp.Ts;
 			    const double Rm   = thermal_noise_RR_r8_1(rp,jp);
@@ -769,6 +797,146 @@ namespace gms {
 			    tj               = xTs*lrat*(mrat*mrat)*rrat4;
 			    return (tj);
 		   }
+
+
+	             __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float n_jammers_req_r4_1(const JammerParamAoS_R4_1 &jp,
+		                              const RadarParamAoS_R4_1  &rp) {
+
+                            const float xTj  = jammer_treq_r4_1(jp,rp);
+			    const float xTj1 = jammer_t1_r4_1(rp,jp);
+			    return (std::ceilf(xTj/xTj1));
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double n_jammers_req_r8_1(const JammerParamAoS_R8_1 &jp,
+		                              const RadarParamAoS_R8_1  &rp) {
+
+                            const double xTj  = jammer_treq_r8_1(jp,rp);
+			    const double xTj1 = jammer_t1_r8_1(rp,jp);
+			    return (std::ceil(xTj/xTj1));
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float n_jammers_margin_r4_1(const JammerParamAoS_R4_1 &jp,
+		                                 const RadarParamAoS_R4_1  &rp,
+						 const float nj) { // number of jammers required
+
+                            const float xTj  = jammer_treq_r4_1(jp,rp);
+			    const float xTj1 = jammer_t1_r4_1(rp,jp);
+			    return ((nj*xTj1)/xTj);
+		   }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double n_jammers_margin_r8_1(const JammerParamAoS_R8_1 &jp,
+		                                  const RadarParamAoS_R8_1  &rp,
+						  const double nj) { // number of jammers required
+
+                            const double xTj  = jammer_treq_r8_1(jp,rp);
+			    const double xTj1 = jammer_t1_r8_1(rp,jp);
+			    return ((nj*xTj1)/xTj);
+		   }
+
+
+		   // Number of jammers range (km)
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float n_jammers_range_r4_1(const JammerParamAoS_R4_1 &jp,
+		                                const RadarParamAoS_R4_1  &rp) {
+
+			    const float xKth = rp.Kth;
+			    const float xgam = rp.gamm*rp.gamm;
+			    const float xh   = rp.h;
+			    const float xw   = rp.w;
+			    const float xLn  = rp.Ln;
+			    const float xrho = rp.rho;
+			    const float xtf  = rp.tf;
+			    const float xtr  = rp.tr;
+			    const float xPt  = rp.Pt;
+                            const float Gr   = radar_ant_gain_r4_1(azimuth_bw_r4_1(xKth,xgam,xh),
+			                                   elevation_bw_r4_1(xKth,xgam,xw),xLn);
+			    const float Gr2  = Gr*Gr;
+			    const float xFrd = rp.Frdr;
+			    const float xFp  = rp.Fp*rp.Fp;
+			    const float xF   = rp.F;
+			    const float xFlen= rp.Flen;
+			    const float xsig = jp.sig;
+			    const float xTs  = rp.Ts;
+			    const float xDx  = rp.Dx;
+			    const float xLt  = rp.Lt;
+			    const float xLa  = rp.La;
+			    const float dc   = duty_cycle_r4_1(xrho,xtr);
+			    const float pav  = radar_avg_power_r4_1(xPt,dc);                           
+                            const float xN0  = noise_density_r4_1(xTs);
+			    const float xF4  = xF*xF*xF*xF;
+			    const float num  = pav*xtf*Gr2*xgamm*xsig*xF4*xFp;
+			    const float den  = 1984.4017075391884912304842f*k_B4*xTs*xDx*xLt*xLa;
+			    const float ratio= num_den;
+			    return (cephes_powf(ratio,0.25f));             
+		   }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double n_jammers_range_r8_1(const JammerParamAoS_R8_1 &jp,
+		                                 const RadarParamAoS_R8_1  &rp) {
+
+			    const double xKth = rp.Kth;
+			    const double xgam = rp.gamm*rp.gamm;
+			    const double xh   = rp.h;
+			    const double xw   = rp.w;
+			    const double xLn  = rp.Ln;
+			    const double xrho = rp.rho;
+			    const double xtf  = rp.tf;
+			    const double xtr  = rp.tr;
+			    const double xPt  = rp.Pt;
+                            const double Gr   = radar_ant_gain_r8_1(azimuth_bw_r8_1(xKth,xgam,xh),
+			                                   elevation_bw_r8_1(xKth,xgam,xw),xLn);
+			    const double Gr2  = Gr*Gr;
+			    const double xFrd = rp.Frdr;
+			    const double xFp  = rp.Fp*rp.Fp;
+			    const double xF   = rp.F;
+			    const double xFlen= rp.Flen;
+			    const double xsig = jp.sig;
+			    const double xTs  = rp.Ts;
+			    const double xDx  = rp.Dx;
+			    const double xLt  = rp.Lt;
+			    const double xLa  = rp.La;
+			    const double dc   = duty_cycle_r8_1(xrho,xtr);
+			    const double pav  = radar_avg_power_r8_1(xPt,dc);                           
+                            const double xN0  = noise_density_r8_1(xTs);
+			    const double xF4  = xF*xF*xF*xF;
+			    const double num  = pav*xtf*Gr2*xgamm*xsig*xF4*xFp;
+			    const double den  = 1984.4017075391884912304842*k_B8*xTs*xDx*xLt*xLa;
+			    const double ratio= num_den;
+			    return (std::pow(ratio,0.25));             
+		   }
+
 
     }
 
