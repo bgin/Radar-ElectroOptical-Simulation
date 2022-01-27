@@ -287,6 +287,76 @@ namespace gms {
 			    __m256d Laj;  //dB, jammer troposhperic loss  
              } JammerParamSIMD_R8_4;
 
+
+
+	    // Platform dependent errors
+	    // Calculates the angle and range measurement errors cause
+	    // by the errors in position and orientation of radar platform
+	    typedef struct __ATTR_ALIGN__(64) PlatformErrAoS_R4_1 {
+
+                    float R;      //nm, target range
+		    float psi;    //deg,target azimuth
+		    float theta;  //deg,target elevation
+		    float da1;    //deg, platform error of yaw angle measurement
+		    float da2;    //deg, platform error of pitch angle measurement
+		    float da3;    //deg, platform error of roll angle measurement
+		    float dx1;    //m,   platform center of gravity error x1-axis
+		    float dx2;    //m,   platform center of gravity error x2-axis
+		    float dx3;    //m,   platform center of gravity erorr x3-axis
+#if (USE_STRUCT_PADDING) == 1			   
+			   PAD_TO(1,28)
+#endif			    
+	    } PlatformErrAoS_R4_1;
+
+
+	    typedef struct __ATTR_ALIGN__(64) PlatformErrAoS_R8_1 {
+
+                    double R;      //nm, target range
+		    double psi;    //deg,target azimuth
+		    double theta;  //deg,target elevation
+		    double da1;    //deg, platform error of yaw angle measurement
+		    double da2;    //deg, platform error of pitch angle measurement
+		    double da3;    //deg, platform error of roll angle measurement
+		    double dx1;    //m,   platform center of gravity error x1-axis
+		    double dx2;    //m,   platform center of gravity error x2-axis
+		    double dx3;    //m,   platform center of gravity erorr x3-axis
+#if (USE_STRUCT_PADDING) == 1			   
+			   PAD_TO(1,56)
+#endif			    
+	    } PlatformErrAoS_R8_1;
+
+
+	    // SIMD versions
+	    typedef struct __ATTR_ALIGN__(64) PlatformErrSIMD_R4_16 {
+
+                    __m512 R;      //nm, target range
+		    __m512 psi;    //deg,target azimuth
+		    __m512 theta;  //deg,target elevation
+		    __m512 da1;    //deg, platform error of yaw angle measurement
+		    __m512 da2;    //deg, platform error of pitch angle measurement
+		    __m512 da3;    //deg, platform error of roll angle measurement
+		    __m512 dx1;    //m,   platform center of gravity error x1-axis
+		    __m512 dx2;    //m,   platform center of gravity error x2-axis
+		    __m512 dx3;    //m,   platform center of gravity erorr x3-axis
+    
+	    } PlatformErrSIMD_R4_16;
+
+
+	    typedef struct __ATTR_ALIGN__(64) PlatformErrSIMD_R8_8 {
+
+                    __m512d R;      //nm, target range
+		    __m512d psi;    //deg,target azimuth
+		    __m512d theta;  //deg,target elevation
+		    __m512d da1;    //deg, platform error of yaw angle measurement
+		    __m512d da2;    //deg, platform error of pitch angle measurement
+		    __m512d da3;    //deg, platform error of roll angle measurement
+		    __m512d dx1;    //m,   platform center of gravity error x1-axis
+		    __m512d dx2;    //m,   platform center of gravity error x2-axis
+		    __m512d dx3;    //m,   platform center of gravity erorr x3-axis
+    
+	    } PlatformErrSIMD_R8_8;
+             
+
       }
 
 }
