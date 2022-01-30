@@ -48,21 +48,30 @@ typedef void(*PSOL)(int *, double *, double *, double *, double *, double *, dou
 
 
 
-void DLSODE(void(*F)(int *, double *, double *, double *),
-            int *    __restrict,
-	    double * __restrict,
-	    double * __restrict,
-	    int *    __restrict,
-	    double * __restrict,
-	    double * __restrict,
-	    int *    __restrict,
-	    int *    __restrict,
-	    int *    __restrict,
-	    double * __restrict,
-	    int *    __restrict,
-	    int *    __restrict,
-	    int *    __restrict,
-	    void(*JAC)(int *, double *, double *, int *, int *, double *, int *),
+void DLSODE_(void(*F)(int *    __restrict, 
+                      double * __restrict, 
+                      double * __restrict, 
+                      double * __restrict),
+            int *              __restrict,
+	    double *           __restrict,
+	    double *           __restrict,
+	    int *              __restrict,
+	    double *           __restrict,
+	    double *           __restrict,
+	    int *              __restrict,
+	    int *              __restrict,
+	    int *              __restrict,
+	    double *           __restrict,
+	    int *              __restrict,
+	    int *              __restrict,
+	    int *              __restrict,
+	    void(*JAC)(int *   __restrict , 
+                       double * __restrict, 
+                       double * __restrict, 
+                       int *    __restrict, 
+                       int *    __restrict, 
+                       double   __restrict*, 
+                       int *    __restrict),
 	    int *    __restrict);
 
 
@@ -76,7 +85,10 @@ void DLSODE(void(*F)(int *, double *, double *, double *),
 */
 
 
-void DLSODES(void(*F)(int *, double *, double *, double *),
+void DLSODES_(void(*F)(int *      __restrict, 
+                       double *   __restrict, 
+                       double *   __restrict, 
+                       double *   __restrict),
              int *      __restrict,
 	     double *   __restrict,
 	     double *   __restrict,
@@ -91,7 +103,13 @@ void DLSODES(void(*F)(int *, double *, double *, double *),
 	     int *      __restrict,
 	     int *      __restrict,
 	     int *      __restrict,
-	     void(*JAC)(int *, double *, double *, int *, int *, double *, int *),
+	     void(*JAC)(int *     __restrict, 
+                        double *  __restrict, 
+                        double *  __restrict, 
+                        int *     __restrict, 
+                        int *     __restrict, 
+                        double *  __restrict, 
+                        int *     __restrict),
 	     int *      __restrict);
 
 
@@ -106,7 +124,7 @@ void DLSODES(void(*F)(int *, double *, double *, double *),
 */
 
 
-void DLSODA( void(*F)(int *, double *, double *, double *),
+void DLSODA_( void(*F)(int * __restrict, double * __restrict, double * __restrict, double * __restrict),
              int *        __restrict,
 	     double *   __restrict,
 	     double *   __restrict,
@@ -121,7 +139,8 @@ void DLSODA( void(*F)(int *, double *, double *, double *),
 	     int *      __restrict,
 	     int *      __restrict,
 	     int *      __restrict,
-	     void(*JAC)(int *, double *, double *, int *, int *, double *, int *),
+	     void(*JAC)(int * __restrict, double * __restrict, double * __restrict, 
+                        int * __restrict, int * __restrict, double * __restrict, int * __restrict),
 	     int *      __restrict);
 
 
@@ -139,7 +158,8 @@ void DLSODA( void(*F)(int *, double *, double *, double *),
 */
 
 
-void DLSODAR( void(*F)(int *, double *, double *, double *),
+void DLSODAR_( void(*F)(int * __restrict, double * __restrict, 
+                        double * __restrict, double * __restrict),
              int *      __restrict,
 	     double *   __restrict,
 	     double *   __restrict,
@@ -154,9 +174,11 @@ void DLSODAR( void(*F)(int *, double *, double *, double *),
 	     int *      __restrict,
 	     int *      __restrict,
 	     int *      __restrict,
-	     void(*JAC)(int *, double *, double *, int *, int *, double *, int *),
+	     void(*JAC)(int *, double * __restrict, double * __restrict, int * __restrict, 
+                        int * __restrict, double * __restrict, int * __restrict),
 	     int *      __restrict,
-	     void(*G)(int *, double *, double *, int *, double *),
+	     void(*G)(int * __restrict, double * __restrict, double * __restrict, 
+                      int * __restrict, double * __restrict),
 	     int *      __restrict,
 	     int *      __restrict);
 
@@ -172,7 +194,7 @@ void DLSODAR( void(*F)(int *, double *, double *, double *),
 */
 
 
-void DLSODPK(void(*F)(int *, double *, double *, double *),
+void DLSODPK_(void(*F)(int * __restrict, double * __restrict, double * __restrict, double * __restrict),
              int *      __restrict,
 	     double *   __restrict,
 	     double *   __restrict,
@@ -187,8 +209,11 @@ void DLSODPK(void(*F)(int *, double *, double *, double *),
 	     int *      __restrict,
 	     int *      __restrict,
 	     int *      __restrict,
-	     void(*JAC)(int *, double *, double *, int *, int *, double *, int *),
-	     void(*PSOL)(int *, double *, double *, double *, double *, double *, double *, int *, double *, int *, int * ),
+	     void(*JAC)(int * __restrict, double * __restrict, double * __restrict, 
+                        int * __restrict, int * __restrict, double * __restrict, int * __restrict),
+	     void(*PSOL)(int * __restrict, double * __restrict, double * __restrict, double * __restrict, 
+                         double * __restrict, double * __restrict, double * __restrict, int * __restrict, 
+                         double * __restrict, int * __restrict, int * __restrict),
 	     int *      __restrict);
 
 
@@ -206,7 +231,7 @@ void DLSODPK(void(*F)(int *, double *, double *, double *),
 */
 
 
-void DLSODKR(void(*F)(int *, double *, double *, double *),
+void DLSODKR_(void(*F)(int * __restrict, double * __restrict, double * __restrict, double * __restrict),
              int *      __restrict,
 	     double *   __restrict,
 	     double *   __restrict,
@@ -221,10 +246,13 @@ void DLSODKR(void(*F)(int *, double *, double *, double *),
 	     int *      __restrict,
 	     int *      __restrict,
 	     int *      __restrict,
-	     void(*JAC)(int *, double *, double *, int *, int *, double *, int *),
-	     void(*PSOL)(int *, double *, double *, double *, double *, double *, double *, int *, double *, int *, int * ),
+	     void(*JAC)(int * __restrict, double * __restrict, double * __restrict, 
+                        int * __restrict, int * __restrict, double * __restrict, int * __restrict),
+	     void(*PSOL)(int * __restrict, double * __restrict, double * __restrict, double * __restrict, 
+                         double * __restrict, double * __restrict, double * __restrict, int * __restrict, 
+                         double * __restrict, int * __restrict, int * __restrict),
 	     int *      __restrict,
-	     void(*G)(int *, double *, double *, int *, double *),
+	     void(*G)(int * __restrict, double * __restrict, double * __restrict, int * __restrict, double * __restrict),
 	     int *      __restrict,
 	     int *      __restrict);
 
@@ -241,9 +269,12 @@ void DLSODKR(void(*F)(int *, double *, double *, double *),
 */
 
 
-void DLSODI(void(*RES)(int *, double *, double *, double *, double *, int *),
-            void(*ADDA)(int *, double *, double *, int *, int *, double *, int *),
-	    void(*JAC)(int *, double *, double *, double *, int *, int *, double *, int *),
+void DLSODI_(void(*RES)(int * __restrict, double * __restrict, double * __restrict, 
+                        double * __restrict, double * __restrict, int * __restrict),
+            void(*ADDA)(int * __restrict, double * __restrict, double * __restrict, 
+                        int * __restrict, int * __restrict, double * __restrict, int * __restrict),
+	    void(*JAC)(int * __restrict, double * __restrict, double * __restrict, 
+                       double * __restrict, int * __restrict, int * __restrict, double * __restrict, int * __restrict),
 	    int *     __restrict,
 	    double *  __restrict,
 	    double *  __restrict,
@@ -275,7 +306,7 @@ void DLSODI(void(*RES)(int *, double *, double *, double *, double *, int *),
 */
 
 
-void DLSOIBT(void(*RES)(int *, double *, double *, double *, double *, int *),
+void DLSOIBT_(void(*RES)(int *, double *, double *, double *, double *, int *),
              void(*ADDA)(int *, double *, double *, int *, int *, double *, double *, double *),
 	     void(*JAC)(int *, double *, double *, double *, int *, int *, double *, double *, double *),
 	     int *     __restrict,
@@ -310,7 +341,7 @@ void DLSOIBT(void(*RES)(int *, double *, double *, double *, double *, int *),
 */
 
 
-void DLSODIS(void(*RES)(int *, double *, double *, double *, double *, int *),
+void DLSODIS_(void(*RES)(int *, double *, double *, double *, double *, int *),
              void(*ADDA)(int *, double *, double *, int *, int *, int *, double *),
 	     void(*JAC)(int *, double *, double *, double *, int *, int *, int *, double *),
 	     int *     __restrict,
@@ -351,7 +382,7 @@ void DLSODIS(void(*RES)(int *, double *, double *, double *, double *, int *),
 */
 
 
-void SLSODE(void(*F)(int *, float *, float *, float *),
+void SLSODE_(void(*F)(int *, float *, float *, float *),
             int *   __restrict,
 	    float * __restrict,
 	    float * __restrict,
@@ -380,7 +411,7 @@ void SLSODE(void(*F)(int *, float *, float *, float *),
 */
 
 
-void SLSODES(void(*F)(int *, float *, float *, float *),
+void SLSODES_(void(*F)(int *, float *, float *, float *),
              int *     __restrict,
 	     float *   __restrict,
 	     float *   __restrict,
@@ -411,7 +442,7 @@ void SLSODES(void(*F)(int *, float *, float *, float *),
 */
 
 
-void SLSODA( void(*F)(int *, float *, float *, float *),
+void SLSODA_( void(*F)(int *, float *, float *, float *),
              int *     __restrict,
 	     float *   __restrict,
 	     float *   __restrict,
@@ -444,7 +475,7 @@ void SLSODA( void(*F)(int *, float *, float *, float *),
 */
 
 
-void SLSODAR( void(*F)(int *, float *, float *, float *),
+void SLSODAR_( void(*F)(int *, float *, float *, float *),
              int *     __restrict,
 	     float *   __restrict,
 	     float *   __restrict,
@@ -479,7 +510,7 @@ void SLSODAR( void(*F)(int *, float *, float *, float *),
 
 
 
-void SLSODPK(void(*F)(int *, float *, float *, float *),
+void SLSODPK_(void(*F)(int *, float *, float *, float *),
              int *     __restrict,
 	     float *   __restrict,
 	     float *   __restrict,
@@ -514,7 +545,7 @@ void SLSODPK(void(*F)(int *, float *, float *, float *),
 */
 
 
-void SLSODKR(void(*F)(int *, float *, float *, float *),
+void SLSODKR_(void(*F)(int *, float *, float *, float *),
              int *     __restrict,
 	     float *   __restrict,
 	     float *   __restrict,
@@ -549,7 +580,7 @@ void SLSODKR(void(*F)(int *, float *, float *, float *),
 */
 
 
-void SLSODI(void(*RES)(int *, float *, float *, float *, float *, int *),
+void SLSODI_(void(*RES)(int *, float *, float *, float *, float *, int *),
             void(*ADDA)(int *, float *, float *, int *, int *, float *, int *),
 	    void(*JAC)(int *, float *, float *, float *, int *, int *, float *, int *),
 	    int *    __restrict,
@@ -583,7 +614,7 @@ void SLSODI(void(*RES)(int *, float *, float *, float *, float *, int *),
 */
 
 
-void SLSOIBT(void(*RES)(int *, float *, float *, float *, float *, int *),
+void SLSOIBT_(void(*RES)(int *, float *, float *, float *, float *, int *),
              void(*ADDA)(int *, float *, float *, int *, int *, float *, float *, float *),
 	     void(*JAC)(int *, float *, float *, float *, int *, int *, float *, float *, float *),
 	     int *    __restrict,
@@ -618,7 +649,7 @@ void SLSOIBT(void(*RES)(int *, float *, float *, float *, float *, int *),
 
 
 
-void SLSODIS(void(*RES)(int *, float *, float *, float *, float *, int *),
+void SLSODIS_(void(*RES)(int *, float *, float *, float *, float *, int *),
              void(*ADDA)(int *, float *, float *, int *, int *, int *, float *),
 	     void(*JAC)(int *, float *, float *, float *, int *, int *, int *, float *),
 	     int *    __restrict,
@@ -638,6 +669,61 @@ void SLSODIS(void(*RES)(int *, float *, float *, float *, float *, int *),
 	     int *    __restrict,
 	     int *    __restrict);
 
+
+
+/*
+is a user-callable routine to save and restore
+C           the contents of the internal Common blocks.
+      CALL DSRCOM(RSAV,ISAV,JOB)  Saves and restores the contents of the
+C                               internal COMMON blocks used by DLSODE
+C                               (see Part 3 below).  RSAV must be a
+C                               real array of length 218 or more, and
+C                               ISAV must be an integer array of length
+C                               37 or more.  JOB = 1 means save COMMON
+C                               into RSAV/ISAV.  JOB = 2 means restore
+C                               COMMON from same.  DSRCOM is useful if
+C                               one is interrupting a run and restarting
+C                               later, or alternating between two or
+C                               more problems solved with DLSODE.
+*/
+void DSRCOM_(double * __restrict, int * __restrict, int * __restrict);
+
+/*
+   computes an interpolated value of the y vector at t = TOUT.
+
+   Detailed instructions for using DINTDY
+C     --------------------------------------
+C     The form of the CALL is:
+C
+C           CALL DINTDY (T, K, RWORK(21), NYH, DKY, IFLAG)
+C
+C     The input parameters are:
+C
+C     T          Value of independent variable where answers are
+C                desired (normally the same as the T last returned by
+C                DLSODE).  For valid results, T must lie between
+C                TCUR - HU and TCUR.  (See "Optional Outputs" above
+C                for TCUR and HU.)
+C     K          Integer order of the derivative desired.  K must
+C                satisfy 0 <= K <= NQCUR, where NQCUR is the current
+C                order (see "Optional Outputs").  The capability
+C                corresponding to K = 0, i.e., computing y(t), is
+C                already provided by DLSODE directly.  Since
+C                NQCUR >= 1, the first derivative dy/dt is always
+C                available with DINTDY.
+C     RWORK(21)  The base address of the history array YH.
+C     NYH        Column length of YH, equal to the initial value of NEQ.
+C
+C     The output parameters are:
+C
+C     DKY        Real array of length NEQ containing the computed value
+C                of the Kth derivative of y(t).
+C     IFLAG      Integer flag, returned as 0 if K and T were legal,
+C                -1 if K was illegal, and -2 if T was illegal.
+C                On an error return, a message is also written.
+*/
+void DINTDY_(double * __restrict, int * __restrict, double * __restrict,
+             int * __restrict, double * __restrict, int * __restrict);
 
   
 
