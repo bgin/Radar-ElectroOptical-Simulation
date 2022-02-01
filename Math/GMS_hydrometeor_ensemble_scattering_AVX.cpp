@@ -11,11 +11,7 @@
 #endif
 #include <math.h>
 #include "GMS_hydrometeor_ensemble_scattering_AVX.h"
-#if (SAMPLES_HW_PMC) == 1
-    #include "libpfc.h"
-    #include <string.h>
-    #include <syslog.h>
-#endif
+
 #include "GMS_malloc.h"
 #include "GMS_indices.h"
 #include "GMS_common.h"
