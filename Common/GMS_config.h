@@ -69,6 +69,12 @@ namespace file_info {
     #define  __ATTR_TARGET_AVX512F__ __attribute__ ((target ("avx512f")))
 #endif
 
+#if !defined(__ATTR_ALL_TARGET_CLONES)
+    #define __ATTR_ALL_TARGET_CLONES__  _attribute__((flatten,target_clones("default,sse4.2,avx,"\
+    "avx2,avx512f,arch=skylake,arch=tremont,arch=skylake-avx512,"\
+    "arch=cascadelake,arch=cooperlake,arch=tigerlake,arch=icelake-server")))
+#endif
+
 #if !defined(__ATTR_TARGET_CLDEMOTE__)
     #define __ATTR_TARGET_CLDEMOTE__ __attribute__ ((target ("cldemote")))
 #endif
