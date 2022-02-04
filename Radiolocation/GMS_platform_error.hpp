@@ -52,6 +52,68 @@ namespace gms {
 			    return (true);
 		     }
 
+
+	            // Initialize PlatformErrorAoS_R4_1 data type
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void initPlatformErrAoS_R4_1(const float xR,
+		                                  const float xpsi,
+						  const float xtheta,
+						  const float xda1,
+						  const float xda2,
+						  const float xda3,
+						  const float xdx1,
+						  const float xdx2,
+						  const float xdx3,
+						  PlatformErrAoS_R4_1 &pe) {
+
+                            pe.R    = xR;
+			    pe.psi  = xpsi;
+			    pe.theta= xtheta;
+			    pe.da1  = xda1;
+			    pe.da2  = xda2;
+			    pe.da3  = xda3;
+			    pe.dx1  = xdx1;
+			    pe.dx2  = xdx2;
+			    pe.dx3  = xdx3;
+		    }
+
+
+		     // Initialize PlatformErrorAoS_R8_1 data type
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void initPlatformErrAoS_R8_1(const double xR,
+		                                  const double xpsi,
+						  const double xtheta,
+						  const double xda1,
+						  const double xda2,
+						  const double xda3,
+						  const double xdx1,
+						  const double xdx2,
+						  const double xdx3,
+						  PlatformErrAoS_R8_1 &pe) {
+
+                            pe.R    = xR;
+			    pe.psi  = xpsi;
+			    pe.theta= xtheta;
+			    pe.da1  = xda1;
+			    pe.da2  = xda2;
+			    pe.da3  = xda3;
+			    pe.dx1  = xdx1;
+			    pe.dx2  = xdx2;
+			    pe.dx3  = xdx3;
+		    }
+
+
+
+		    
+
 		     
 	             // Compute Radar platform azimut and elevation
 		     // measurement errors
@@ -237,7 +299,7 @@ namespace gms {
 		    }
 
 
-		       __ATTR_ALWAYS_INLINE
+		     __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
 		     __ATTR_ALIGN__(32)
 		     static
@@ -298,6 +360,317 @@ namespace gms {
 			  
 		    }
 
+
+		    // Monopulse antenna pattern as a voltage sum pattern
+		    // of the angle from the (beamwidth) normalized axis pattern
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float v_sum_pattern_r4_1(const float u) {
+
+		             const float uu = u*u;
+                             return (cephes_expf(-1.3866f*uu));
+			     
+		     }
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double v_sum_pattern_r8_1(const double u) {
+
+		             const double uu = u*u;
+                             return (std::exp(-1.3866*uu));
+			     
+		     }
+
+
+		    // Monopulse antenna pattern as a voltage differential pattern
+		    // of the angle from the (beamwidth) normalized axis pattern
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float v_diff_pattern_r4_1(const float u) {
+
+                            return (2.354f*u*v_sum_pattern_r4_1(u));
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double v_diff_pattern_r8_1(const double u) {
+
+                            return (2.354*u*v_sum_pattern_r8_1(u));
+		    }
+
+                    // Calculation of the elevation multipath error.
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float elev_multipath_err_r4_1(const PropagationErrAoS_R4_1 &pe,
+		                                   float &Sigem) { // deg, elevation multipath error
+
+			    constexpr float ae   = 8493333.0f;
+			    constexpr float PI   = 3.1415926535897932384626f;
+			    constexpr float sqt2 = 1.4142135623730950488017f;
+			    const float   rad1 = 57.2957795130823208767982f;
+			    const float   ae2  = ae+ae;
+                            const float   xR   = pe.R;
+			    const float   xha  = pe.ha;
+			    const float   xht  = pe.ht;
+			    const float   xthm = pe.thmax;
+			    const float   xth3 = pe.th3;
+			    const float   xps0 = pe.psi0;
+			    const float   xpss = pe.psis;
+			    const float   xpsv = pe.psiv;
+			    const float   xkme = pe.kme;
+			    const float   RR   = xR*xR;
+			    const float   dp   = (4.0f*ae*(xha+xht)+RR)*0.3333333333333333333f;
+			    const float   p    = cephes_sqrtf(dp);
+			    const float   p3   = p*p*p;
+			    const float   dph  = (ae2*(xht-xha)*xR)/p3;
+			    const float   ph   = cephes_acosf(dph);
+			    const float   cph  = cephes_cosf((ph+PI)*0.3333333333333333333f);
+			    const float   d1   = xR*0.5f-p*cph;
+			    const float   H1   = xha-(d1*d1)/ae2;
+			    const float   H2   = ((xR-d1)*H1)/d1;
+			    const float   tht  = rad1*cephes_asinf((H2-H1)/xR));
+			    const float   ps0  = rad1*cephes_asinf((H2+H1)/xR));
+			    const float   thd  = -xthm+tht;
+			    const float   fs   = v_sum_pattern_r4_1(thd/xth3);
+			    const float   fs2  = fs*fs;
+			    const float   thr  = -xthm-ps0;
+			    const float   fd   = v_diff_pattern_r4_1(thr/xth3);
+			    const float   Fdel = fd*xps0*xpss*xpsv;
+			    const float   Fdel2= Fdel*Fdel;
+			    const float   Strm = th3/(sqt2*xkme);
+			    const float   S_es = Strm*cephes_sqrtf(Fdel2/fs2);
+			    const float   S_esm= th3*0.5f;
+			    Sigem              = (S_es<S_esm)?S_es:S_esm;
+			    
+		    }
+
+
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double elev_multipath_err_r8_1(const PropagationErrAoS_R8_1 &pe,
+		                                    double &Sigem) { // deg, elevation multipath error
+
+			    constexpr double ae   = 8493333.0;
+			    constexpr double PI   = 3.1415926535897932384626;
+			    constexpr double sqt2 = 1.4142135623730950488017;
+			    const double   rad1 = 57.2957795130823208767982;
+			    const double   ae2  = ae+ae;
+                            const double   xR   = pe.R;
+			    const double   xha  = pe.ha;
+			    const double   xht  = pe.ht;
+			    const double   xthm = pe.thmax;
+			    const double   xth3 = pe.th3;
+			    const double   xps0 = pe.psi0;
+			    const double   xpss = pe.psis;
+			    const double   xpsv = pe.psiv;
+			    const double   xkme = pe.kme;
+			    const double   RR   = xR*xR;
+			    const double   dp   = (4.0*ae*(xha+xht)+RR)*0.3333333333333333333;
+			    const double   p    = std::sqrt(dp);
+			    const double   p3   = p*p*p;
+			    const double   dph  = (ae2*(xht-xha)*xR)/p3;
+			    const double   ph   = std::acos(dph);
+			    const double   cph  = std::cos((ph+PI)*0.3333333333333333333);
+			    const double   d1   = xR*0.5f-p*cph;
+			    const double   H1   = xha-(d1*d1)/ae2;
+			    const double   H2   = ((xR-d1)*H1)/d1;
+			    const double   tht  = rad1*std::asin((H2-H1)/xR));
+			    const double   ps0  = rad1*std::asin((H2+H1)/xR));
+			    const double   thd  = -xthm+tht;
+			    const double   fs   = v_sum_pattern_r8_1(thd/xth3);
+			    const double   fs2  = fs*fs;
+			    const double   thr  = -xthm-ps0;
+			    const double   fd   = v_diff_pattern_r8_1(thr/xth3);
+			    const double   Fdel = fd*xps0*xpss*xpsv;
+			    const double   Fdel2= Fdel*Fdel;
+			    const double   Strm = th3/(sqt2*xkme);
+			    const double   S_es = Strm*std::sqrt(Fdel2/fs2);
+			    const double   S_esm= th3*0.5;
+			    Sigem              = (S_es<S_esm)?S_es:S_esm;
+			    
+		    }
+
+
+		    // Elevation error due to atmospheric refraction
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     float elev_refract_error_r4_1(const PropagationErrAoS_R4_1 &pe,
+		                                   float &Siger) {
+						   //deg, rms error of elevation measurement
+                            float C1             = 0.0f;
+			    float a              = 0.0f;
+			    float b              = 0.0f;
+			    float dth            = 0.0f;
+			    constexpr float ae   = 8493333.0f;
+			    constexpr float PI   = 3.1415926535897932384626f;
+			    constexpr float sqt2 = 1.4142135623730950488017f;
+			    const float   rad1 = 57.2957795130823208767982f;
+			    const float   ae2  = ae+ae;
+                            const float   xR   = pe.R;
+			    const float   xha  = pe.ha;
+			    const float   xht  = pe.ht;
+			    const float   xthm = pe.thmax;
+			    const float   xth3 = pe.th3;
+			    const float   xps0 = pe.psi0;
+			    const float   xpss = pe.psis;
+			    const float   xpsv = pe.psiv;
+			    const float   xkme = pe.kme;
+			    const float   xNs  = pe.Ns;
+			    const float   RR   = xR*xR;
+			    const float   dp   = (4.0f*ae*(xha+xht)+RR)*0.3333333333333333333f;
+			    switch(pe.flucts) {
+                                 case 1: C1=0.000001f;
+				 break;
+				 case 2: C1=2.0f*0.000001f;
+				 break;
+				 case 3: C1=4.0f*0.000001f;
+				 break;
+			    } 
+			    const float   p    = cephes_sqrtf(dp);
+			    const float   p3   = p*p*p;
+			    const float   dph  = (ae2*(xht-xha)*xR)/p3;
+			    const float   ph   = cephes_acosf(dph);
+			    const float   cph  = cephes_cosf((ph+PI)*0.3333333333333333333f);
+			    const float   d1   = xR*0.5f-p*cph;
+			    const float   H1   = xha-(d1*d1)/ae2;
+			    const float   H2   = ((xR-d1)*H1)/d1;
+			    const float   tht  = rad1*cephes_asinf((H2-H1)/xR));
+			    const float   ztht = rad1*tht;
+			    const float   thef = ztht+(0,00025f/(ztht+0.028f));
+			    const float   sthf = cephes_sinf(thef);
+			    const float   sig0 = C1/rad1*cephes_sqrtf(3/sthf);
+			    const float   cthf = cephes_cotf(tht);
+			    const float   lgth = cephes_logf(tht);
+			    if(tht<0.1f) {
+                               b = 0.0000001f*cthf*(14.5+4.5f*lgth);
+			    }
+			    else {
+                               b = 0.000001g*cthf;
+			    }
+			    if(tht<0.02f) {
+                               a = −0.00015f*cthf*(1+0.3*lgth);
+			    }
+			    else if(tht>=0.02f && tht<=0.2f) {
+                               a = 0.00005f*cthf*(1.0f+1.4f*lgth);
+			    }
+			    else if(thf>0.2f) {
+                               a = 0.0f;
+			    }
+			    const float rtrm = 1.0f+(0.001f/((0.01f+tht)*(0.01f+tht));
+			    if(tht>=0.0f && tht<=0.001f) {
+                               dth = 0.019f;
+			    }
+			    else {
+                               b*xNs+a*(xht/(11000.0+xht);
+			    }
+			    const float sig1 = dth/0.3490658503988659153847f*rtrm;
+			    const float sig12 = sig1*sig1;
+			    Siger = sig12+sig12;
+		    }
+
+
+		      // Elevation error due to atmospheric refraction
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     double elev_refract_error_r8_1(const PropagationErrAoS_R8_1 &pe,
+		                                    double &Siger) {
+						   //deg, rms error of elevation measurement
+                            double C1             = 0.0;
+			    double a              = 0.0;
+			    double b              = 0.0;
+			    double dth            = 0.0;
+			    constexpr double ae   = 8493333.0;
+			    constexpr double PI   = 3.1415926535897932384626;
+			    constexpr double sqt2 = 1.4142135623730950488017;
+			    const double   rad1 = 57.2957795130823208767982;
+			    const double   ae2  = ae+ae;
+                            const double   xR   = pe.R;
+			    const double   xha  = pe.ha;
+			    const double   xht  = pe.ht;
+			    const double   xthm = pe.thmax;
+			    const double   xth3 = pe.th3;
+			    const double   xps0 = pe.psi0;
+			    const double   xpss = pe.psis;
+			    const double   xpsv = pe.psiv;
+			    const double   xkme = pe.kme;
+			    const double   xNs  = pe.Ns;
+			    const double   RR   = xR*xR;
+			    const double   dp   = (4.0*ae*(xha+xht)+RR)*0.3333333333333333333;
+			    switch(pe.flucts) {
+                                 case 1: C1=0.000001;
+				 break;
+				 case 2: C1=2.0*0.000001;
+				 break;
+				 case 3: C1=4.0*0.000001;
+				 break;
+			    } 
+			    const double   p    = std::sqrt(dp);
+			    const double   p3   = p*p*p;
+			    const double   dph  = (ae2*(xht-xha)*xR)/p3;
+			    const double   ph   = std::acos(dph);
+			    const double   cph  = std::cos((ph+PI)*0.3333333333333333333);
+			    const double   d1   = xR*0.5-p*cph;
+			    const double   H1   = xha-(d1*d1)/ae2;
+			    const double   H2   = ((xR-d1)*H1)/d1;
+			    const double   tht  = rad1*std::asin((H2-H1)/xR));
+			    const double   ztht = rad1*tht;
+			    const double   thef = ztht+(0.00025/(ztht+0.028));
+			    const double   sthf = std::sin(thef);
+			    const double   sig0 = C1/rad1*std::sqrt(3/sthf);
+			    const double   cthf = std::cot(tht);
+			    const double   lgth = std::log(tht);
+			    if(tht<0.1) {
+                               b = 0.0000001*cthf*(14.5+4.5*lgth);
+			    }
+			    else {
+                               b = 0.000001g*cthf;
+			    }
+			    if(tht<0.02f) {
+                               a = −0.00015*cthf*(1+0.3*lgth);
+			    }
+			    else if(tht>=0.02 && tht<=0.2) {
+                               a = 0.00005*cthf*(1.0+1.4*lgth);
+			    }
+			    else if(thf>0.2) {
+                               a = 0.0;
+			    }
+			    const double rtrm = 1.0+(0.001/((0.01+tht)*(0.01+tht));
+			    if(tht>=0.0 && tht<=0.001) {
+                               dth = 0.019;
+			    }
+			    else {
+                               b*xNs+a*(xht/(11000.0+xht);
+			    }
+			    const double sig1 = dth/0.3490658503988659153847*rtrm;
+			    const double sig12 = sig1*sig1;
+			    Siger = sig12+sig12;
+		    }
+		    
 
     }
 
