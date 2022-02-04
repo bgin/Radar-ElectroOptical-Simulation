@@ -338,7 +338,180 @@ namespace gms {
 
                 
 		    
+	           // Initialize 'RadarParamsAoS_R4_1 data type
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void initRadarParamsAoS_R4_1(const float xgamm,
+		                                  const float xtf,
+						  const float xrho,
+						  const float xw,
+						  const float xKth,
+						  const float xLn,
+						  const float xTs,
+						  const float xFp,
+						  const float xLa,
+						  const float xF,
+						  const float xPt,
+						  const float xtr,
+						  const float xLt,
+						  const float xh,
+						  const float xha,
+						  const float xFrdr,
+						  const float xDx,
+						  const float xBt,
+						  const float xFlen,
+		                                  RadarParamsAoS_R4_1 &rp) {
 
+                            rp.gamm = xgamm;
+			    rp.xtf  = xtf;
+			    rp.rho  = xrho;
+			    rp.w    = xw;
+			    rp.Kth  = xKth;
+			    rp.Ln   = xLn;
+			    rp.Ts   = xTs;
+			    rp.Fp   = xFp;
+			    rp.La   = xLa;
+			    rp.F    = xF;
+			    rp.Pt   = xPt;
+			    rp.tr   = xtr;
+			    rp.Lt   = xLt;
+			    rp.h    = xh;
+			    rp.ha   = xha;
+			    rp.Frdr = xFrdr;
+			    rp.Dx   = xDx;
+			    rp.xBt  = xBt;
+			    rp.xFlen= xFlen;
+		     }
+
+
+		      // Initialize 'RadarParamsAoS_R8_1 data type
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void initRadarParamsAoS_R8_1(const double xgamm,
+		                                  const double xtf,
+						  const double xrho,
+						  const double xw,
+						  const double xKth,
+						  const double xLn,
+						  const double xTs,
+						  const double xFp,
+						  const double xLa,
+						  const double xF,
+						  const double xPt,
+						  const double xtr,
+						  const double xLt,
+						  const double xh,
+						  const double xha,
+						  const double xFrdr,
+						  const double xDx,
+						  const double xBt,
+						  const double xFlen,
+		                                  RadarParamsAoS_R8_1 &rp) {
+
+                            rp.gamm = xgamm;
+			    rp.xtf  = xtf;
+			    rp.rho  = xrho;
+			    rp.w    = xw;
+			    rp.Kth  = xKth;
+			    rp.Ln   = xLn;
+			    rp.Ts   = xTs;
+			    rp.Fp   = xFp;
+			    rp.La   = xLa;
+			    rp.F    = xF;
+			    rp.Pt   = xPt;
+			    rp.tr   = xtr;
+			    rp.Lt   = xLt;
+			    rp.h    = xh;
+			    rp.ha   = xha;
+			    rp.Frdr = xFrdr;
+			    rp.Dx   = xDx;
+			    rp.xBt  = xBt;
+			    rp.xFlen= xFlen;
+		     }
+
+
+		     // Initialize JammerParamAoS_R4_1 data type
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void initJammerParamsAoS_R4_1(const float xsig,
+		                                   const float xPj,
+						   const float xGj,
+						   const float xQj,
+						   const float xFlenj,
+						   const float xRj,
+						   const float xBj,
+						   const float xLtj,
+						   const float xFpj,
+						   const float xRmj,
+						   const float xFj,
+						   const float xLaj,
+						   JammerParamsAoS_R4_1 &jp) {
+
+                              jp.sig  = xsig;
+			      jp.Pj   = xPj;
+			      jp.Gj   = xGj;
+			      jp.Qj   = xQj;
+			      jp.Flenj= xFlenj;
+			      jp.Rj   = xRj;
+			      jp.Bj   = xBj;
+			      jp.Ltj  = xLtj;
+			      jp.Fpj  = xFpj;
+			      jp.Rmj  = xRmj;
+			      jp.Fj   = xFj;
+			      jp.Laj  = xLaj;
+		    }
+
+
+		    // Initialize JammerParamAoS_R8_1 data type
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void initJammerParamsAoS_R8_1(const double xsig,
+		                                   const double xPj,
+						   const double xGj,
+						   const double xQj,
+						   const double xFlenj,
+						   const double xRj,
+						   const double xBj,
+						   const double xLtj,
+						   const double xFpj,
+						   const double xRmj,
+						   const double xFj,
+						   const double xLaj,
+						   JammerParamsAoS_R8_1 &jp) {
+
+                              jp.sig  = xsig;
+			      jp.Pj   = xPj;
+			      jp.Gj   = xGj;
+			      jp.Qj   = xQj;
+			      jp.Flenj= xFlenj;
+			      jp.Rj   = xRj;
+			      jp.Bj   = xBj;
+			      jp.Ltj  = xLtj;
+			      jp.Fpj  = xFpj;
+			      jp.Rmj  = xRmj;
+			      jp.Fj   = xFj;
+			      jp.Laj  = xLaj;
+		    }
+
+
+
+
+		     
+
+
+		     
  
 
 		     
