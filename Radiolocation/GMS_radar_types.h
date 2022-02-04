@@ -326,6 +326,50 @@ namespace gms {
 	    } PlatformErrAoS_R8_1;
 
 
+	    // Propagation errors aggregating data type
+	    typedef struct __ATTR_ALIGN__(64) PropagationErrAoS_R4_1 {
+
+                    float R;             //nm, target range
+		    float ht;            //m,  target height above surface
+		    float ha;            //m,  antenna height above surface
+		    float psi0;          //    Fresnel reflection coefficient
+		    float psis;          //    specular scattering coefficient
+		    float psiv;          //    vegetation coefficient
+		    float beta;          //deg,surface slope
+		    float th3;           //deg,elevation beamwidth (half-power, i.e. 3db)
+		    float thmax;         //deg,beam axis elevation angle
+		    float kme;           //    tracking error slope in elevation channel
+		    float Ns;            //    refractivity at the radar site
+		    int32_t flucts;      //    fluctuations switch, 1==low fluctuations,2==average fluctuations,3==high fluctuations in the -
+		                         //    - refractive index
+#if (USE_STRUCT_PADDING) == 1			   
+			   PAD_TO(1,16)
+#endif						 
+	    } PropagationErrAoS_R4_1;
+
+
+	      // Propagation errors aggregating data type
+	    typedef struct __ATTR_ALIGN__(64) PropagationErrAoS_R8_1 {
+
+                    double R;             //nm, target range
+		    double ht;            //m,  target height above surface
+		    double ha;            //m,  antenna height above surface
+		    double psi0;          //    Fresnel reflection coefficient
+		    double psis;          //    specular scattering coefficient
+		    double psiv;          //    vegetation coefficient
+		    double beta;          //deg,surface slope
+		    double th3;           //deg,elevation beamwidth (half-power, i.e. 3db)
+		    double thmax;         //deg,beam axis elevation angle
+		    double kme;           //    tracking error slope in elevation channel
+		    double Ns;            //    refractivity at the radar site
+		    int32_t flucts;      //    fluctuations switch, 1==low fluctuations,2==average fluctuations,3==high fluctuations in the -
+		                         //    - refractive index
+#if (USE_STRUCT_PADDING) == 1			   
+			   PAD_TO(1,36)
+#endif						 
+	    } PropagationErrAoS_R8_1;
+
+
 	    // SIMD versions
 	    typedef struct __ATTR_ALIGN__(64) PlatformErrSIMD_R4_16 {
 
@@ -355,6 +399,48 @@ namespace gms {
 		    __m512d dx3;    //m,   platform center of gravity erorr x3-axis
     
 	    } PlatformErrSIMD_R8_8;
+
+
+	        // Propagation errors aggregating data type
+	    typedef struct __ATTR_ALIGN__(64) PropagationErrSIMD_R4_16 {
+
+	             // Part of SIMD variables will vector-expanded.
+                    __m512 R;             //nm, target range
+		    __m512 ht;            //m,  target height above surface
+		    __m512 ha;            //m,  antenna height above surface
+		    __m512 psi0;          //    Fresnel reflection coefficient
+		    __m512 psis;          //    specular scattering coefficient
+		    __m512 psiv;          //    vegetation coefficient
+		    __m512 beta;          //deg,surface slope
+		    __m512 th3;           //deg,elevation beamwidth (half-power, i.e. 3db)
+		    __m512 thmax;         //deg,beam axis elevation angle
+		    __m512 kme;           //    tracking error slope in elevation channel
+		    __m512 Ns;            //    refractivity at the radar site
+		    // int32_t flucts;      //    fluctuations switch, 1==low fluctuations,2==average fluctuations,3==high fluctuations in the -
+		                          //    - refractive index
+		    // Removed from the member list shall be passed as an function argument.			 
+	    } PropagationErrSIMD_R4_16;
+
+
+	          // Propagation errors aggregating data type
+	    typedef struct __ATTR_ALIGN__(64) PropagationErrSIMD_R8_8 {
+
+	            // Part of SIMD variables will vector-expanded.
+                    __m512d R;             //nm, target range
+		    __m512d ht;            //m,  target height above surface
+		    __m512d ha;            //m,  antenna height above surface
+		    __m512d psi0;          //    Fresnel reflection coefficient
+		    __m512d psis;          //    specular scattering coefficient
+		    __m512d psiv;          //    vegetation coefficient
+		    __m512d beta;          //deg,surface slope
+		    __m512d th3;           //deg,elevation beamwidth (half-power, i.e. 3db)
+		    __m512d thmax;         //deg,beam axis elevation angle
+		    __m512d kme;           //    tracking error slope in elevation channel
+		    __m512d Ns;            //    refractivity at the radar site
+		    // int32_t flucts;      //    fluctuations switch, 1==low fluctuations,2==average fluctuations,3==high fluctuations in the -
+		                          //    - refractive index
+		    // Removed from the member list shall be passed as an function argument.			 
+	    } PropagationErrSIMD_R8_8;
              
 
       }
