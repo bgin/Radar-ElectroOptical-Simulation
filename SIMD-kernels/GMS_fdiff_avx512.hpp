@@ -431,6 +431,142 @@ namespace gms {
 			     return (_mm512_div_pd(_mm512_fmadd_pd(_mm512_set1_pd(8.0),y1,y2)));
 			                                           
 		       }
+
+
+		        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m512
+			finite_diff_6_zmm16r4(__m512(*f)(__m512),
+			                      const __m512 x,
+					      __m512 &err,
+					      const bool cmperr) {
+
+			       const __m512  veps   = _mm512_set1_ps(std::numeric_limits<float>::epsilon());
+			         // Error bound ~eps^6/7
+                                 // Error: h^6f^(7)(x)/140 + 5|f(x)|eps/h
+			       const __m512  two    = _mm512_set1_ps(2.0f);
+			       const __m512  three  = _mm512_set1_ps(3.0f);
+			       const __m512  four   = _mm512_set1_ps(4.0f);
+			       const __m512  nine   = _mm512_set1_ps(9.0f);
+			       const __m512  frtfv  = _mm512_set1_ps(45.0f);
+			       const __m512  sixty  = _mm512_set1_ps(60.0f);
+			       const __m512  svnth  = _mm512_set1_ps(0.1428571428571428571429f);
+			       const __m512  epsr   = _mm512_div_ps(veps,_mm512_set1_ps(168.0f));
+			       __m512        h      = _mm512_pow_ps(epsr,svnth);
+			       h                    = correct_xh_zmm16r4(x,h);
+			      
+			       const __m512 h4      = _mm512_mul_ps(four,h);
+			       const __m512 yh      = f(_mm512_add_ps(x,h));
+			       const __m512 h2      = _mm512_mul_ps(two,h);
+			       const __m512 ymh     = f(_mm512_sub_ps(x,h));
+			       const __m512 h3      = _mm512_mul_ps(three,h);
+			       const __m512 y1      = _mm512_sub_ps(yh,ymh);
+			       const __m512 y2      = _mm512_sub_ps(f(_mm512_sub_ps(x,h2)),
+			                                            f(_mm512_add_ps(x,h2)));
+			       const __m512 y3      = _mm512_sub_ps(f(_mm512_add_ps(x,h3)),
+			                                            f(_mm512_sub_ps(x,h3)));
+			       if(cmperr) {
+
+                                   // Mathematica code to generate fd scheme for 7th derivative:
+                                   // Sum[(-1)^i*Binomial[7, i]*(f[x+(3-i)*h] + f[x+(4-i)*h])/2, {i, 0, 7}]
+                                   // Mathematica to demonstrate that this is a finite difference formula for 7th derivative:
+                                   // Series[(f[x+4*h]-f[x-4*h] + 6*(f[x-3*h] - f[x+3*h]) + 14*(f[x-h] - f[x+h] + f[x+2*h] - f[x-2*h]))/2, {h, 0, 15}]
+				   const __m512 half= _mm512_set1_ps(0.5f);
+				   
+				   const __m512 y4  = _mm512_sub_ps(f(_mm512_add_ps(x,h4)),
+				                                    f(_mm512_sub_ps(x,h4)));
+				   const __m512 t0  = _mm512_fmsub_ps(_mm512_set1_ps(6.0f),y3,
+				                                      _mm512_set1_ps(14.0f));
+				   const __m512 t1  = _mm512_fmsub_ps(t0,y1,_mm512_mul_ps(
+				                                            _mm512_set1_ps(14.0f),y2));
+				   const __m512 y7  = _mm512_mul_ps(half,_mm512_sub_ps(y4,t1));
+				   const __m512 t2  = _mm512_div_ps(_mm512_abs_ps(y7),
+				                                    _mm512_mul_ps(_mm512_set1_ps(140.0f),h));
+				   
+				   const __m512 t3  = _mm512_div_ps(_mm512_mul_ps(_mm512_set1_ps(5.0f),
+				                                    _mm512_mul_ps(_mm512_add_ps(
+								                  _mm512_abs_ps(yh),
+										  _mm512_abs_ps(yhm)),veps)),h);
+				   err              = _mm512_add_ps(t2,t3);
+				                                    
+			       }                
+
+			       const __m512 t0 = _mm512_mul_ps(sixty,h);
+			       const __m512 t1 = _mm512_fmadd_ps(_mm512_fmadd_ps(y3,nine,y2),frtfv,y1);
+			       return (_mm512_div_ps(t1,t0));
+			       
+		       }
+
+
+		        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m512d
+			finite_diff_6_zmm8r8(__m512d(*f)(__m512d),
+			                      const __m512d x,
+					      __m512d &err,
+					      const bool cmperr) {
+
+			       const __m512d  veps   = _mm512_set1_ps(std::numeric_limits<double>::epsilon());
+			         // Error bound ~eps^6/7
+                                 // Error: h^6f^(7)(x)/140 + 5|f(x)|eps/h
+			       const __m512d  two    = _mm512_set1_pd(2.0);
+			       const __m512d  three  = _mm512_set1_pd(3.0);
+			       const __m512d  four   = _mm512_set1_pd(4.0);
+			       const __m512d  nine   = _mm512_set1_pd(9.0);
+			       const __m512d  frtfv  = _mm512_set1_pd(45.0);
+			       const __m512d  sixty  = _mm512_set1_pd(60.0);
+			       const __m512d  svnth  = _mm512_set1_pd(0.1428571428571428571429);
+			       const __m512d  epsr   = _mm512_div_pd(veps,_mm512_set1_pd(168.0));
+			       __m512d        h      = _mm512_pow_pd(epsr,svnth);
+			       h                     = correct_xh_zmm8r8(x,h);
+			      
+			       const __m512d h4      = _mm512_mul_pd(four,h);
+			       const __m512d yh      = f(_mm512_add_pd(x,h));
+			       const __m512d h2      = _mm512_mul_pd(two,h);
+			       const __m512d ymh     = f(_mm512_sub_pd(x,h));
+			       const __m512d h3      = _mm512_mul_pd(three,h);
+			       const __m512d y1      = _mm512_sub_pd(yh,ymh);
+			       const __m512d y2      = _mm512_sub_pd(f(_mm512_sub_pd(x,h2)),
+			                                            f(_mm512_add_pd(x,h2)));
+			       const __m512d y3      = _mm512_sub_pd(f(_mm512_add_pd(x,h3)),
+			                                            f(_mm512_sub_pd(x,h3)));
+			       if(cmperr) {
+
+                                   // Mathematica code to generate fd scheme for 7th derivative:
+                                   // Sum[(-1)^i*Binomial[7, i]*(f[x+(3-i)*h] + f[x+(4-i)*h])/2, {i, 0, 7}]
+                                   // Mathematica to demonstrate that this is a finite difference formula for 7th derivative:
+                                   // Series[(f[x+4*h]-f[x-4*h] + 6*(f[x-3*h] - f[x+3*h]) + 14*(f[x-h] - f[x+h] + f[x+2*h] - f[x-2*h]))/2, {h, 0, 15}]
+				   const __m512d half= _mm512_set1_pd(0.5);
+				   
+				   const __m512d y4  = _mm512_sub_pd(f(_mm512_add_pd(x,h4)),
+				                                    f(_mm512_sub_pd(x,h4)));
+				   const __m512d t0  = _mm512_fmsub_pd(_mm512_set1_pd(6.0d),y3,
+				                                      _mm512_set1_pd(14.0d));
+				   const __m512d t1  = _mm512_fmsub_pd(t0,y1,_mm512_mul_pd(
+				                                            _mm512_set1_pd(14.0),y2));
+				   const __m512d y7  = _mm512_mul_pd(half,_mm512_sub_pd(y4,t1));
+				   const __m512d t2  = _mm512_div_pd(_mm512_abs_pd(y7),
+				                                    _mm512_mul_pd(_mm512_set1_pd(140.0),h));
+				   
+				   const __m512d t3  = _mm512_div_pd(_mm512_mul_pd(_mm512_set1_pd(5.0),
+				                                    _mm512_mul_pd(_mm512_add_pd(
+								                  _mm512_abs_pd(yh),
+										  _mm512_abs_pd(yhm)),veps)),h);
+				   err              = _mm512_add_pd(t2,t3);
+				                                    
+			       }                
+
+			       const __m512d t0 = _mm512_mul_pd(sixty,h);
+			       const __m512d t1 = _mm512_fmadd_pd(_mm512_fmadd_pd(y3,nine,y2),frtfv,y1);
+			       return (_mm512_div_pd(t1,t0));
+			       
+		       }
 			
     }
 
