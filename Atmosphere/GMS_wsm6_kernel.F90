@@ -1100,9 +1100,20 @@ ktest=1
 !   (n0i), ice diameter (d)
 !
 !===============================================================
-!
+      !
+      !dir$ assume_aligned t:64,n0sfac:64,q:64,qs:64
+      !dir$ assume_aligned den:64,qci:64,xni:64
+      !dir$ assume_aligned rslopeb:64,denfac:64
+      !dir$ assume_aligned qsum:64,qrs:64,rslope3:64
+      !dir$ assume_aligned rslope2:64,rslope:64,praci:64
+       !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
          do i = its, ite
        
           supcol = t0c-t(i,k)
@@ -1373,19 +1384,31 @@ ktest=1
 !----------------------------------------------------------------
 !     check mass conservation of generation terms and feedback to the
 !     large scale
-!
+      !
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
         do i = its, ite
           delta2(i,k)=0._sp
           delta3(i,k)=0._sp
           if(qrs(i,k,1).lt.1.e-4.and.qrs(i,k,2).lt.1.e-4) delta2(i,k)=1.
           if(qrs(i,k,1).lt.1.e-4) delta3(i,k)=1.
         enddo
-      enddo
+     enddo
+        !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
 
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
         do i = its, ite
 !
 !     cloud water
@@ -1408,9 +1431,17 @@ ktest=1
             endif
           endif
         enddo
-      enddo
-      do k = kts, kte
+     enddo
 
+         !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
+      do k = kts, kte
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
 !
 !     cloud ice
@@ -1430,9 +1461,16 @@ ktest=1
             endif
           endif
         enddo
-      enddo
+     enddo
+         !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+           !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
 !
 !     rain
@@ -1464,9 +1502,16 @@ ktest=1
             endif
           endif
         enddo
-      enddo
+     enddo
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
 !
 !     snow
@@ -1501,9 +1546,16 @@ ktest=1
             endif
           endif
         enddo
-      enddo
+     enddo
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
 !
 !     graupel
@@ -1538,9 +1590,16 @@ ktest=1
             endif
           endif
         enddo
-      enddo
+     enddo
+       !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
 !
 !     update
@@ -1605,8 +1664,15 @@ ktest=1
       dldti=cvap-cice
       xai=-dldti/rv
       xbi=xai+hsub/(rv*ttp)
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
           tr=ttp/t(i,k)
           qs(i,k,1)=psat*exp(log(tr)*(xa))*exp(xb*(1.-tr))
@@ -1629,7 +1695,12 @@ ktest=1
 !  pcond: condensational/evaporational rate of cloud water [HL A46] [RH83 A6]
 !     if there exists additional water vapor condensated/if
 !     evaporation of cloud water is not enough to remove subsaturation
-!
+      !
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
       do k = kts, kte
 
           work1(i,k,1) = conden(t(i,k),q(i,k),qs(i,k,1),xl(i,k),cpm(i,k))
@@ -1646,11 +1717,16 @@ ktest=1
 !
 !----------------------------------------------------------------
 !     padding for small values
-!
+      !
+       !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-#ifdef ALIGN_OK
-!DIR$ VECTOR ALIGNED
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
           if(qci(i,k,1).le.qmin) qci(i,k,1) = 0.0
           if(qci(i,k,2).le.qmin) qci(i,k,2) = 0.0
@@ -1659,16 +1735,14 @@ ktest=1
    enddo                  ! big loops
   END SUBROUTINE wsm62d
   !--------------------------------------------------------------------------
-#if defined __GFORTRAN__
-      subroutine slope_wsm6(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,   &
-           vt,its,ite,kts,kte) !GCC$ ATTRIBUTES hot :: slope_wsm6 !GCC$ ATTRIBUTES always_inline :: slope_wsm6 !GCC$ ATTRIBUTES aligned(32) :: slope_wsm6 !GCC$ ATTRIBUTES target_clones ("avx,avx512")
-#elif defined __INTEL_COMPILER
-      !DIR$ ATTRIBUTES inline :: slope_wsm6
-      subroutine slope_wsm6(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,   &
+
+        !DIR$ ATTRIBUTES inline :: slope_wsm6
+   subroutine slope_wsm6(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,   &
            vt,its,ite,kts,kte)
         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: slope_wsm6
-        !DIR$ ATTRIBUTES VECTOR :: slope_wsm6
-#endif
+        !dir$ optimize : 3
+        !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_wsm6
+
   IMPLICIT NONE
   INTEGER       ::               its,ite, jts,jte, kts,kte
   REAL(kind=sp), DIMENSION( its:ite , kts:kte,3) ::                                     &
@@ -1683,14 +1757,11 @@ ktest=1
                                                                        denfac, &
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
-#if defined __INTEL_COMPILER
-  !DIR$ ATTRIBUTES ALIGN : 64 :: n0sfac
+
   REAL(kind=sp), DIMENSION( its:ite , kts:kte ) ::                                      &
-                                                                        n0sfac
-#elif defined __GFORTRAN__
-  REAL(kind=sp), DIMENSION( its:ite , kts:kte ) ::                                      &
-                                                        n0sfac  !GCC$ ATTRIBUTES aligned(64) :: n0sfac
-#endif
+       n0sfac
+  !dir$ attributes align : 64 :: n0sfac
+
   REAL(kind=sp)       ::  lamdar, lamdas, lamdag, x, y, z, supcol
   integer(kind=i4)  :: i, j, k
 !----------------------------------------------------------------
@@ -1702,19 +1773,21 @@ ktest=1
 !
 
 
-
+      !dir$ assume_aligned qrs:64, rslope:64, rslopeb:64
+      !dir$ assume_aligned rslope2:64,rslope3:64
+      !dir$ assume_aligned vt:64,den:64,denfac:64,t:64
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-#if defined __INTEL_COMPILER
-         !DIR$ VECTOR ALIGNED
-         !DIR$ SIMD
-#elif defined __GFORTRAN__
-         !GCC$ VECTOR
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
         do i = its, ite
            supcol = t0c-t(i,k)
-#if defined __INTEL_COMPILER
-           !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,t:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
-#endif
+
 !---------------------------------------------------------------
 ! n0s: Intercept parameter for snow [m-4] [HDC 6]
 !---------------------------------------------------------------
@@ -1763,16 +1836,14 @@ ktest=1
   END subroutine slope_wsm6
 !-----------------------------------------------------------------------------
 #ifndef IINSIDE
-#if defined __GFORTRAN__ 
-      subroutine slope_rain(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,   & 
-       vt,kts,kte) !GCC$ ATTRIBUTES hot :: slope_rain !GCC$ ATTRIBUTES always_inline :: slope_rain !GCC$ ATTRIBUTES aligned(32) :: slope_rain !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_rain
-#elif defined __INTEL_COMPILER
+
       !DIR$ ATTRIBUTES INLINE :: slope_rain
       subroutine slope_rain(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,   & 
            vt,kts,kte)
         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: slope_rain
-        !DIR$ ATTIRBUTES VECTOR :: slope_rain
-#endif
+        !dir$ optimize : 3
+        !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_rain
+
   IMPLICIT NONE
   INTEGER(kind=i4)       ::               kts,kte
   REAL(kind=sp), DIMENSION( kts:kte) ::                                                 &
@@ -1787,7 +1858,8 @@ ktest=1
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
   REAL(kind=sp), DIMENSION( kts:kte ) ::                                                &
-                                                                       n0sfac
+       n0sfac
+  !dir$ attributes align : 64 :: n0sfac
   REAL(kind=sp)       ::  lamdar, x, y, z, supcol
   integer(kind=i4)  :: k
 !----------------------------------------------------------------
@@ -1795,16 +1867,14 @@ ktest=1
 !     valid for mixing ratio > 1.e-9 kg/kg.
       lamdar(x,y)=   sqrt(sqrt(pidn0r/(x*y)))      ! (pidn0r/(x*y))**.25
       !
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-#endif
-      do k = kts, kte
-#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,t:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(8)
+      do k = kts, kte
+   
           if(qrs(k).le.qcrmin)then
             rslope(k) = rslopermax
             rslopeb(k) = rsloperbmax
@@ -1821,15 +1891,14 @@ ktest=1
       enddo
   END subroutine slope_rain
   !------------------------------------------------------------------------------
-#if defined __GFORTRAN__
-      subroutine slope_snow(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,   &
-      vt,kts,kte) !GCC$ ATTRIBUTES hot :: slope_snow !GCC$ ATTRIBUTES always_inline :: slope_snow !GCC$ ATTRIBUTES aligned(32) :: slope_snow !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_snow
-#elif defined __INTEL_COMPILER
+
        !DIR$ ATTRIBUTES INLINE :: slope_snow 
       subroutine slope_snow(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3, &
            vt,kts,kte)
        !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: slope_snow
-       !DIR$ ATTIRBUTES VECTOR :: slope_snow
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_snow
+
 #endif
   IMPLICIT NONE
   INTEGER(kind=i4)       ::               kts,kte
@@ -1845,7 +1914,8 @@ ktest=1
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
   REAL(kind=sp), DIMENSION( kts:kte ) ::                                                &
-                                                                       n0sfac
+       n0sfac
+  !dir$ attributes align : 64 :: n0sfac
   REAL(kind=sp)       ::  lamdas, x, y, z, supcol
   integer(kind=i4) :: k
 !----------------------------------------------------------------
@@ -1853,16 +1923,14 @@ ktest=1
 !     valid for mixing ratio > 1.e-9 kg/kg.
       lamdas(x,y,z)= sqrt(sqrt(pidn0s*z/(x*y)))    ! (pidn0s*z/(x*y))**.25
 !
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-#endif
-      do k = kts, kte
-#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,t:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(8)
+      do k = kts, kte
+
           supcol = t0c-t(k)
 !---------------------------------------------------------------
 ! n0s: Intercept parameter for snow [m-4] [HDC 6]
@@ -1884,16 +1952,13 @@ ktest=1
       enddo
   END subroutine slope_snow
   !----------------------------------------------------------------------------------
-#if defined __GFORTRAN__
-      
-      subroutine slope_graup(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,  &
-   vt,kts,kte) !GCC$ ATTRIBUTES hot :: slope_graup !GCC$ ATTRIBUTES always_inline :: slope_graup !GCC$ ATTRIBUTES aligned(32) :: slope_graup !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_graup
-#elif defined __INTEL_COMPILER
+
+
         !DIR$ ATTRIBUTES INLINE :: slope_graup
       subroutine slope_graup(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3, &
            vt,kts,kte)
         !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: slope_graup
-        !DIR$ ATTRIBUTES VECTOR :: slope_graup
+         !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_graup
 #endif
   IMPLICIT NONE
   INTEGER(kind=i4)       :: kts,kte
@@ -1909,7 +1974,8 @@ ktest=1
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
   REAL(kind=sp), DIMENSION( kts:kte ) ::                                                &
-                                                                       n0sfac
+       n0sfac
+  !dir$ attributes align : 64 :: n0sfac
   REAL(kind=sp)       ::  lamdag, x, y, z, supcol
   integer(kind=i4) :: j, k
 !----------------------------------------------------------------
@@ -1917,16 +1983,16 @@ ktest=1
 !     valid for mixing ratio > 1.e-9 kg/kg.
       lamdag(x,y)=   sqrt(sqrt(pidn0g/(x*y)))      ! (pidn0g/(x*y))**.25
 !
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-#endif
-      do k = kts, kte
-#if defined __INTEL_COMPILER
          !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,t:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(8)
+      do k = kts, kte
+
+       
+
 !---------------------------------------------------------------
 ! n0s: Intercept parameter for snow [m-4] [HDC 6]
 !---------------------------------------------------------------
@@ -1947,15 +2013,14 @@ ktest=1
   END subroutine slope_graup
 !---------------------------------------------------------------------------------
   !-------------------------------------------------------------------
-#if defined __GFORTRAN__
+
+  
   
   SUBROUTINE nislfv_rain_plm(its,ite,kts,kte,denl,denfacl,tkl,dzl,wwl,rql,precip,dt,id,iter)
-    !GCC$ ATTRIBUTES hot :: nislfv_rain_plm !GCC$ ATTRIBUTES aligned(32) :: nislfv_rain_plm !GCC$ ATTRIBUTES target_clones("avx,avx512") :: nislfv_rain_plm
-#elif defined __INTEL_COMPILER
-  SUBROUTINE nislfv_rain_plm(its,ite,kts,kte,denl,denfacl,tkl,dzl,wwl,rql,precip,dt,id,iter)
     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: nislfv_rain_plm
-    !DIR$ ATTRIBUTES VECTOR :: nislfv_rain_plm
-#endif
+    !dir$ optimize : 3
+    !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: nislfv_rain_plm
+
 !-------------------------------------------------------------------
 !
 ! for non-iteration semi-Lagrangain forward advection for cloud
@@ -1990,29 +2055,7 @@ ktest=1
       real(kind=sp)      ::  th,th2,qqh,dqh
       real(kind=sp)      ::  zsum,qsum,dim,dip,c1,con1,fa1,fa2
       real(kind=sp)      ::  allold, allnew, zz, dzamin, cflmax, decfl
-#if defined __GFORTRAN__
-      real(kind=sp), dimension(kts:kte)   ::   dz  !GCC$ ATTRIBUTES aligned(64)    :: dz
-      real(kind=sp), dimension(kts:kte)   ::   ww  !GCC$ ATTRIBUTES aligned(64)    :: ww
-      real(kind=sp), dimension(kts:kte)   ::   qq  !GCC$ ATTRIBUTES aligned(64)    :: qq
-      real(kind=sp), dimension(kts:kte)   ::   wd  !GCC$ ATTRIBUTES aligned(64)    :: wd
-      real(kind=sp), dimension(kts:kte)   ::   wa  !GCC$ ATTRIBUTES aligned(64)    :: wa
-      real(kind=sp), dimension(kts:kte)   ::   was !GCC$ ATTRIBUTES aligned(64)    :: was
-      real(kind=sp), dimension(kts:kte)   ::   den !GCC$ ATTRIBUTES aligned(64)    :: den
-      real(kind=sp), dimension(kts:kte)   ::   denfac !GCC$ ATTRIBUTES aligned(64) :: denfac
-      real(kind=sp), dimension(kts:kte)   ::   tk  !GCC$ ATTRIBUTES aligned(64)    :: tk
-      real(kind=sp), dimension(kts:kte+1) ::   wi  !GCC$ ATTRIBUTES aligned(64)    :: wi
-      real(kind=sp), dimension(kts:kte+1) ::   zi  !GCC$ ATTRIBUTES aligned(64)    :: zi
-      real(kind=sp), dimension(kts:kte+1) ::   za  !GCC$ ATTRIBUTES aligned(64)    :: za
-      real(kind=sp), dimension(kts:kte)   ::   qn  !GCC$ ATTRIBUTES aligned(64)    :: qn
-      real(kind=sp), dimension(kts:kte)   ::   qr  !GCC$ ATTRIBUTES aligned(64)    :: qr
-      real(kind=sp), dimension(kts:kte)   ::   tmp1 !GCC$ ATTRIBUTES aligned(64)   :: tmp1
-      real(kind=sp), dimension(kts:kte)   ::   tmp2 !GCC$ ATTRIBUTES aligned(64)   :: tmp2
-      real(kind=sp), dimension(kts:kte)   ::   tmp3 !GCC$ ATTRIBUTES aligned(64)   :: tmp3
-      real(kind=sp), dimension(kts:kte+1) ::   dza  !GCC$ ATTRIBUTES aligned(64)   :: dza
-      real(kind=sp), dimension(kts:kte+1) ::   qa   !GCC$ ATTRIBUTES aligned(64)   :: qa
-      real(kind=sp), dimension(kts:kte+1) ::   qmi  !GCC$ ATTRIBUTES aligned(64)   :: qmi
-      real(kind=sp), dimension(kts:kte+1) ::   qpi  !GCC$ ATTRIBUTES aligned(64)   :: qpi
-#elif defined __INTEL_COMPILER
+
       real(kind=sp), dimension(kts:kte)   ::   dz, ww, qq, wd, wa, was
       !DIR$ ATTRIBUTES ALIGN : 64 :: dz
       !DIR$ ATTRIBUTES ALIGN : 64 :: ww
@@ -2039,15 +2082,15 @@ ktest=1
       !DIR$ ATTRIBUTES ALIGN : 64 :: qa
       !DIR$ ATTRIBUTES ALIGN : 64 :: qmi
       !DIR$ ATTRIBUTES ALIGN : 64 :: qpi
-#endif
+      
 !
 
       precip(:) = 0.0
 !
       i_loop : do i=its,ite
-#if defined __INTEL_COMPILER
+
          !DIR$ ASSUME_ALIGNED denl:64,denfacl:64,tkl:64,dzl:64,wwl:64,rql:64,precip:64
-#endif
+
 ! -----------------------------------
       dz(:) = dzl(i,:)
       qq(:) = rql(i,:)
@@ -2057,8 +2100,8 @@ ktest=1
       tk(:) = tkl(i,:)
 ! skip for no precipitation for all layers
       allold = 0.0
-#if defined __INTEL_COMPILER
-      !DIR$ SIMD REDUCTION(+:allold)
+
+       
       do k=kts,kte
         allold = allold + qq(k)
       enddo
@@ -2068,12 +2111,10 @@ ktest=1
 !
 ! compute interface values
       zi(kts)=0.0
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
       do k=kts,kte
         zi(k+1) = zi(k)+dz(k)
       enddo
@@ -2086,14 +2127,11 @@ ktest=1
 ! 2nd order interpolation to get wi
       wi(kts) = ww(kts)
       wi(kte+1) = ww(kte)
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif      
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do k=kts+1,kte
         wi(k) = (ww(k)*dz(k-1)+ww(k-1)*dz(k))/(dz(k-1)+dz(k))
       enddo
@@ -2102,14 +2140,11 @@ ktest=1
       fa2 = 1./16.
       wi(kts) = ww(kts)
       wi(kts+1) = 0.5*(ww(kts+1)+ww(kts))
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do k=kts+2,kte-1
         wi(k) = fa1*(ww(k)+ww(k-1))-fa2*(ww(k+1)+ww(k-2))
       enddo
@@ -2130,40 +2165,32 @@ ktest=1
         endif
       enddo
       ! compute arrival point
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif      
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+        
       do k=kts,kte+1
         za(k) = zi(k) - wi(k)*dt
       enddo
-!
+      !
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif         
+     
         dza(k) = za(k+1)-za(k)
       enddo
       dza(kte+1) = zi(kte+1) - za(kte+1)
 !
       ! computer deformation at arrival point
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif      
+        !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+      
       do k=kts,kte
         qa(k) = qq(k)*dz(k)/dza(k)
         qr(k) = qa(k)/den(k)
@@ -2189,14 +2216,11 @@ ktest=1
       endif
 !
       ! estimate values at arrival cell interface with monotone
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif      
+        !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite  
       do k=kts+1,kte
         dip=(qa(k+1)-qa(k))/(dza(k+1)+dza(k))
         dim=(qa(k)-qa(k-1))/(dza(k-1)+dza(k))
@@ -2304,15 +2328,13 @@ ktest=1
     END SUBROUTINE nislfv_rain_plm
     
     !-------------------------------------------------------------------
-#if defined __GFORTRAN__
-    SUBROUTINE nislfv_rain_plm6(its,ite,kts,kte,denl,denfacl,tkl,dzl,wwl,rql,rql2, &
-         precip1, precip2,dt,id,iter) !GCC$ ATTRIBUTES hot :: nislfv_rain_plm6 !GCC$ ATTRIBUTES aligned(32) :: nislfv_rain_plm6 !GCC$ ATTRIBUTES target_clones("avx,avx512") :: nislfv_rain_plm6
-#elif defined __INTEL_COMPILER
+
    SUBROUTINE nislfv_rain_plm6(its,ite,kts,kte,denl,denfacl,tkl,dzl,wwl,rql,rql2, &
         precip1, precip2,dt,id,iter)
      !DIR$ ATTRIBUTE CODE_ALIGN : 32 :: nislfv_rain_plm6
-     !DIR$ ATTRIBUTES VECTOR :: nislfv_rain_plm6
-#endif
+     !dir$ optimize : 3
+     !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: nislfv_rain_plm6
+
 !-------------------------------------------------------------------
 !
 ! for non-iteration semi-Lagrangain forward advection for cloud
@@ -2346,34 +2368,7 @@ ktest=1
       real(kind=sp)      ::  th,th2,qqh,dqh
       real(kind=sp)      ::  zsum,qsum,dim,dip,c1,con1,fa1,fa2
       real(kind=sp)      ::  allold, allnew, zz, dzamin, cflmax, decfl
-#if defined __GFORTRAN__
-      real(kind=sp), dimension(kts:kte)   ::  dz  !GCC$ ATTRIBUTES aligned(64) :: dz
-      real(kind=sp), dimension(kts:kte)   ::  ww  !GCC$ ATTRIBUTES aligned(64) :: ww
-      real(kind=sp), dimension(kts:kte)   ::  qq  !GCC$ ATTRIBUTES aligned(64) :: qq
-      real(kind=sp), dimension(kts:kte)   ::  qq2 !GCC$ ATTRIBUTES aligned(64) :: qq2
-      real(kind=sp), dimension(kts:kte)   ::  wd  !GCC$ ATTRIBUTES aligned(64) :: wd
-      real(kind=sp), dimension(kts:kte)   ::  wa  !GCC$ ATTRIBUTES aligned(64) :: wa
-      real(kind=sp), dimension(kts:kte)   ::  wa2 !GCC$ ATTRIBUTES aligned(64) :: wa2
-      real(kind=sp), dimension(kts:kte)   ::  was !GCC$ ATTRIBUTES aligned(64) :: was
-      real(kind=sp), dimension(kts:kte)   ::  den !GCC$ ATTRIBUTES aligned(64) :: den
-      real(kind=sp), dimension(kts:kte)   ::  denfac  !GCC$ ATTRIBUTES aligned(64) :: denfac
-      real(kind=sp), dimension(kts:kte)   ::  tk  !GCC$ ATTRIBUTES aligned(64) :: tk
-      real(kind=sp), dimension(kts:kte+1) ::  wi  !GCC$ ATTRIBUTES aligned(64) :: wi
-      real(kind=sp), dimension(kts:kte+1) ::  zi  !GCC$ ATTRIBUTES aligned(64) :: zi
-      real(kind=sp), dimension(kts:kte+1) ::  za  !GCC$ ATTRIBUTES aligned(64) :: za
-      real(kind=sp), dimension(kts:kte)   ::  qn  !GCC$ ATTRIBUTES aligned(64) :: qn
-      real(kind=sp), dimension(kts:kte)   ::  qr  !GCC$ ATTRIBUTES aligned(64) :: qr
-      real(kind=sp), dimension(kts:kte)   ::  qr2 !GCC$ ATTRIBUTES aligned(64) :: qr2
-      real(kind=sp), dimension(kts:kte)   ::  tmp !GCC$ ATTRIBUTES aligned(64) :: tmp
-      real(kind=sp), dimension(kts:kte)   ::  tmp1 !GCC$ ATTRIBUTES aligned(64) :: tmp1
-      real(kind=sp), dimension(kts:kte)   ::  tmp2 !GCC$ ATTRIBUTES aligned(64) :: tmp2
-      real(kind=sp), dimension(kts:kte)   ::  tmp3 !GCC$ ATTRIBUTES aligned(64) :: tmp3
-      real(kind=sp), dimension(kts:kte+1) ::  dza  !GCC$ ATTRIBUTES aligned(64) :: dza
-      real(kind=sp), dimension(kts:kte)   ::  qa   !GCC$ ATTRIBUTES aligned(64) :: qa
-      real(kind=sp), dimension(kts:kte)   ::  qa2  !GCC$ ATTRIBUTES aligned(64) :: qa2
-      real(kind=sp), dimension(kts:kte)   ::  qmi  !GCC$ ATTRIBUTES aligned(64) :: qmi
-      real(kind=sp), dimension(kts:kte)   ::  qpi  !GCC$ ATTRIBUTES aligned(64) :: qpi
-#elif defined __INTEL_COMPILER
+      
       real(kind=sp), dimension(kts:kte)   ::  dz, ww, qq, qq2, wd, wa, wa2, was
       !DIR$ ATTRIBUTES ALIGN : 64 :: dz
       !DIR$ ATTRIBUTES ALIGN : 64 :: ww
@@ -2413,9 +2408,9 @@ ktest=1
       precip2(:) = 0.0_sp
 !
       i_loop : do i=its,ite
-#if defined __INTEL_COMPILER
+
          !DIR$ ASSUME_ALIGNED denl:64,denfacl:64,tkl:64,dzl:64,wwl:64,rql:64,rql2:64,precip1:64,precip2:64
-#endif
+         
 ! -----------------------------------
       dz(:) = dzl(i,:)
       qq(:) = rql(i,:)
@@ -2426,9 +2421,7 @@ ktest=1
       tk(:) = tkl(i,:)
 ! skip for no precipitation for all layers
       allold = 0.0
-#if defined __INTEL_COMPILER
-      !DIR$ SIMD REDUCTION(+:allold)
-#endif
+
       do k=kts,kte
         allold = allold + qq(k)
       enddo
@@ -2438,7 +2431,7 @@ ktest=1
 !
 ! compute interface values
       zi(kts)=0.0_sp
-      
+        
       do k=kts,kte
         zi(k+1) = zi(k)+dz(k)
       enddo
@@ -2451,14 +2444,10 @@ ktest=1
 ! 2nd order interpolation to get wi
       wi(kts) = ww(kts)
       wi(kte+1) = ww(kte)
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif 
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
       do k=kts+1,kte
         wi(k) = (ww(k)*dz(k-1)+ww(k-1)*dz(k))/(dz(k-1)+dz(k))
       enddo
@@ -2467,14 +2456,11 @@ ktest=1
       fa2 = 1./16.
       wi(kts) = ww(kts)
       wi(kts+1) = 0.5*(ww(kts+1)+ww(kts))
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif       
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep 
       do k=kts+2,kte-1
         wi(k) = fa1*(ww(k)+ww(k-1))-fa2*(ww(k+1)+ww(k-2))
       enddo
@@ -2495,41 +2481,29 @@ ktest=1
         endif
       enddo
       ! compute arrival point
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif       
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
       do k=kts,kte+1
         za(k) = zi(k) - wi(k)*dt
       enddo
       !
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif       
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
       do k=kts,kte
         dza(k) = za(k+1)-za(k)
       enddo
       dza(kte+1) = zi(kte+1) - za(kte+1)
 !
       ! computer deformation at arrival point
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif       
-      do k=kts,kte
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+       do k=kts,kte
         qa(k) = qq(k)*dz(k)/dza(k)
         qa2(k) = qq2(k)*dz(k)/dza(k)
         qr(k) = qa(k)/den(k)
@@ -2544,14 +2518,11 @@ ktest=1
       if( n.le.iter ) then
         call slope_snow(qr,den,denfac,tk,tmp,tmp1,tmp2,tmp3,wa,kts,kte)
         call slope_graup(qr2,den,denfac,tk,tmp,tmp1,tmp2,tmp3,wa2,kts,kte)
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ SIMD IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif         
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite  
         do k = kts, kte
           tmp(k) = max((qr(k)+qr2(k)), 1.E-15_sp)
           IF ( tmp(k) .gt. 1.e-15_sp ) THEN
@@ -2695,16 +2666,14 @@ ktest=1
 !---------------------------------------------------------------------------------
 #else
   !-------------------------------------------------------------------
-#if defined __GFORTRAN__
-                 subroutine slope_rain_ii(qrs,den,denfac,t,rslope,rslopeb,&
- rslope2,rslope3, vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_rain_ii !GCC$ ATTRIBUTES always_inline :: slope_rain_ii !GCC$ ATTRIBUTES aligned(32) :: slope_rain_ii !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_rain_ii
-#elif defined __INTEL_COMPILER
+
                   !DIR$ ATTRIBUTES INLINE :: slope_rain_ii
                   subroutine slope_rain_ii(qrs,den,denfac,t,rslope,rslopeb,&
 rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                     !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: slope_rain_ii
-                    !DIR$ ATTRIBUTES VECTOR :: slope_rain_ii
-#endif
+                    !dir$ optimize : 3
+                    !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_rain
+
                     
  
   INTEGER(kind=i4)       :: its,ite,kts,kte
@@ -2728,20 +2697,20 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       lamdar(x,y)=   sqrt(sqrt(pidn0r/(x*y)))      ! (pidn0r/(x*y))**.25
 !
 
+      !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif
-
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
          do i = its, ite
-#if defined __INTEL_COMPILER
-         !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
-#endif            
+
+       
+          
          if (lmask(i)) then
           if(qrs(i,k).le.qcrmin)then
             rslope(i,k) = rslopermax
@@ -2761,13 +2730,13 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       enddo
   END subroutine slope_rain_ii
   !------------------------------------------------------------------------------
-#if defined __GFORTRAN__
-      subroutine slope_snow_ii(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,&
-vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES always_inline :: slope_snow_ii !GCC$ ATTRIBUTES aligned(32) :: slope_snow_ii !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_snow_ii
-#elif defined __INTEL_COMPILER
+
         subroutine slope_snow_ii(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,&
              vt,its,ite,kts,kte,lmask)
-#endif
+          !dir$ attributes forceinline :: slope_snow_ii
+          !dir$ attributes code_align : 32 :: slope_snow_ii
+          !dir$ optimize : 3
+          !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_snow_ii
   
   INTEGER(kind=i4)       :: its,ite,kts,kte
   REAL(kind=sp), DIMENSION( its:ite , kts:kte) ::                                       &
@@ -2781,12 +2750,10 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES
                                                                        denfac, &
                                                                             t
   REAL(kind=sp), PARAMETER  :: t0c = 273.15_sp
-#if defined __GFORTRAN__
-  REAL(kind=sp), DIMENSION( its:ite , kts:kte ) ::       n0sfac      !GCC$ ATTRIBUTES aligned(64) :: n0sfac
-#elif defined __INTEL_COMPILER
+
   REAL(kind=sp), DIMENSION( its:ite , kts:kte ) ::       n0sfac 
   !DIR$ ATTRIBUTES ALIGN : 64 :: n0sfac
-#endif
+
   LOGICAL(kind=i4) :: lmask(its:ite)
   REAL(kind=sp)       ::  lamdas, x, y, z, supcol
   integer(kind=i4) :: i, k
@@ -2795,20 +2762,18 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES
 !     valid for mixing ratio > 1.e-9 kg/kg.
       lamdas(x,y,z)= sqrt(sqrt(pidn0s*z/(x*y)))    ! (pidn0s*z/(x*y))**.25
 !
-
+      !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,t:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64,n0sfac:64
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif         
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
          do i = its, ite
-#if defined __INTEL_COMPILER
-            !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,t:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64,n0sfac:64
-#endif
+
          if (lmask(i)) then
           supcol = t0c-t(i,k)
 !---------------------------------------------------------------
@@ -2833,9 +2798,13 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_snow_ii !GCC$ ATTRIBUTES
       enddo
   END subroutine slope_snow_ii
   !----------------------------------------------------------------------------------
-#if defined __GFORTRAN__  
+
       subroutine slope_graup_ii(qrs,den,denfac,t,rslope,rslopeb,rslope2,rslope3,&
-vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTES always_inline :: slope_graup_ii !GCC$ ATTRIBUTES aligned(32) :: slope_graup_ii !GCC$ ATTRIBUTES target_clones("avx,avx512") :: slope_graup_ii
+           vt,its,ite,kts,kte,lmask)
+          !dir$ attributes forceinline :: slope_graup_ii
+          !dir$ attributes code_align : 32 :: slope_graup_ii
+          !dir$ optimize : 3
+          !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: slope_graup_ii
 
   INTEGER(kind=i4)      :: its,ite,kts,kte
   REAL(kind=sp), DIMENSION( its:ite , kts:kte) ::                                       &
@@ -2858,19 +2827,18 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       lamdag(x,y)=   sqrt(sqrt(pidn0g/(x*y)))      ! (pidn0g/(x*y))**.25
 !
 
+      !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k = kts, kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif           
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ vector mask_readwrite
+         !dir$ unroll(4)
          do i = its, ite
-#if defined __INTEL_COMPILER
-            !DIR$ ASSUME_ALIGNED qrs:64,den:64,denfac:64,rslope:64,rslopeb:64,rslope2:64,rslope3:64,vt:64
-#endif
+
          if (lmask(i)) then
 !---------------------------------------------------------------
 ! n0s: Intercept parameter for snow [m-4] [HDC 6]
@@ -2894,14 +2862,12 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
   END subroutine slope_graup_ii
 !---------------------------------------------------------------------------------
   !-------------------------------------------------------------------
-#if defined __GFORTRAN__
-  SUBROUTINE nislfv_rain_plm_ii(its,ite,kts,kte,denl,denfacl, &
-       tkl,dzl,wwl,rql,precip,dt,id,iter) !GCC$ ATTRIBUTES hot :: nislfv_rain_plm_ii !GCC$ ATTRIBUTES aligned(32) :: nislfv_rain_plm_ii !GCC$ ATTRIBUTES
-#elif defined __INTEL_COMPILER
+
    SUBROUTINE nislfv_rain_plm_ii(its,ite,kts,kte,denl,denfacl, &
         tkl,dzl,wwl,rql,precip,dt,id,iter)
      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: nislfv_rain_plm_ii
-#endif
+     !dir$ optimize : 3
+     !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: nislfv_rain_plm_ii
 !-------------------------------------------------------------------
 !
 ! for non-iteration semi-Lagrangain forward advection for cloud
@@ -2932,42 +2898,14 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
 !
       integer(kind=i4) ::   i,k,n,m,kk,iter
 #ifdef MASK_HISTOGRAM
-#if defined __GFORTRAN__
-      integer(kind=i4), dimension(kts:kte)     :: intp_count   !GCC$ ATTRIBUTES aligned(64) :: intp_count
-      integer(kind=i4), dimension(0:ite-its+1) :: intp_hist    !GCC$ ATTRIBUTES aligned(64) :: intp_hist
-#elif defined __INTEL_COMPILER
+
       integer(kind=i4), dimension(kts:kte)     :: intp_count
       !DIR$ ATTRIBUTES ALIGN : 64 :: intp_count
       integer(kind=i4), dimension(0:ite-its+1) :: intp_hist
-#endif
+      !dir$ attributes align : 64 :: intp_hist
 #endif
       real(kind=sp) ::  dim,dip,con1,fa1,fa2,decfl
-#if defined __GFORTRAN__
-      real(kind=sp),  dimension(its:ite) ::  allold            !GCC$ ATTRIBUTES aligned(64) :: allold
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  dz      !GCC$ ATTRIBUTES aligned(64) :: dz
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  ww      !GCC$ ATTRIBUTES aligned(64) :: ww
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  qq      !GCC$ ATTRIBUTES aligned(64) :: qq
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  wd      !GCC$ ATTRIBUTES aligned(64) :: wd
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  wa      !GCC$ ATTRIBUTES aligned(64) :: wa
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  was     !GCC$ ATTRIBUTES aligned(64) :: was
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  den     !GCC$ ATTRIBUTES aligned(64) :: den
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  denfac  !GCC$ ATTRIBUTES aligned(64) :: denfac
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  tk      !GCC$ ATTRIBUTES aligned(64) :: tk
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  wi      !GCC$ ATTRIBUTES aligned(64) :: wi
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  zi      !GCC$ ATTRIBUTES aligned(64) :: zi
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  za      !GCC$ ATTRIBUTES aligned(64) :: za
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  qn      !GCC$ ATTRIBUTES aligned(64) :: qn
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  qr      !GCC$ ATTRIBUTES aligned(64) :: qr
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  tmp     !GCC$ ATTRIBUTES aligned(64) :: tmp
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  tmp1    !GCC$ ATTRIBUTES aligned(64) :: tmp1
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  tmp2    !GCC$ ATTRIBUTES aligned(64) :: tmp2
-      real(kind=sp),  dimension(its:ite,kts:kte)   ::  tmp3    !GCC$ ATTRIBUTES aligned(64) :: tmp3
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  dza     !GCC$ ATTRIBUTES aligned(64) :: dza
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  qa      !GCC$ ATTRIBUTES aligned(64) :: qa
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  qmi     !GCC$ ATTRIBUTES aligned(64) :: qmi
-      real(kind=sp),  dimension(its:ite,kts:kte+1) ::  qpi     !GCC$ ATTRIBUTES aligned(64) :: qpi
-      logical(kind=i4), dimension(its:ite)       ::  lmask   !GCC$ ATTRIBUTES aligned(64) :: lmask
-#elif defined __INTEL_COMPILER
+
       real(kind=sp), dimension(its:ite) ::  allold
       !DIR$ ATTRIBUTES ALIGN : 64 :: allold
       real(kind=sp), dimension(its:ite,kts:kte)   ::   dz,ww, qq, wd, wa, was
@@ -2982,35 +2920,9 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       !DIR$ ATTRIBUTES ALIGN : 64 :: dza, qa, qmi, qpi
       logical(kind=i4), dimension(its:ite)      ::   lmask
       !DIR$ ATTRIBUTES ALIGN : 64 :: lmask
-#endif
+
       !
-#if defined __GFORTRAN__
-      INTEGER(kind=i4) ::  minkb, minkt
-      LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask  !GCC$ ATTRIBUTES aligned(64) :: intp_mask
-      LOGICAL(kind=i4), DIMENSION(its:ite) :: tmask      !GCC$ ATTRIBUTES aligned(64) :: tmask
-      INTEGER(kind=i4), DIMENSION(its:ite) :: kb         !GCC$ ATTRIBUTES aligned(64) :: kb
-      INTEGER(kind=i4), DIMENSION(its:ite) :: kt         !GCC$ ATTRIBUTES aligned(64) :: kt
-      REAL(kind=sp),      DIMENSION(its:ite) :: tl         !GCC$ ATTRIBUTES aligned(64) :: tl
-      REAL(kind=sp),      DIMENSION(its:ite) :: tl2        !GCC$ ATTRIBUTES aligned(64) :: tl2
-      REAL(kind=sp),      DIMENSION(its:ite) :: th         !GCC$ ATTRIBUTES aligned(64) :: th
-      REAL(kind=sp),      DIMENSION(its:ite) :: th2        !GCC$ ATTRIBUTES aligned(64) :: th2
-      REAL(kind=sp),      DIMENSION(its:ite) :: qqd        !GCC$ ATTRIBUTES aligned(64) :: qqd
-      REAL(kind=sp),      DIMENSION(its:ite) :: qqh        !GCC$ ATTRIBUTES aligned(64) :: qqh
-      REAL(kind=sp),      DIMENSION(its:ite) :: qql        !GCC$ ATTRIBUTES aligned(64) :: qql
-      REAL(kind=sp),      DIMENSION(its:ite) :: zsum       !GCC$ ATTRIBUTES aligned(64) :: zsum
-      REAL(kind=sp),      DIMENSION(its:ite) :: qsum       !GCC$ ATTRIBUTES aligned(64) :: qsum
-      REAL(kind=sp),      DIMENSION(its:ite) :: dql        !GCC$ ATTRIBUTES aligned(64) :: dql
-      REAL(kind=sp),      DIMENSION(its:ite) :: dqh        !GCC$ ATTRIBUTES aligned(64) :: dqh
-      REAL(kind=sp),      DIMENSION(its:ite) :: za_gath_t  !GCC$ ATTRIBUTES aligned(64) :: za_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: za_gath_b  !GCC$ ATTRIBUTES aligned(64) :: za_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: qa_gath_b  !GCC$ ATTRIBUTES aligned(64) :: qa_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: dza_gath_t !GCC$ ATTRIBUTES aligned(64) :: dza_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: dza_gath_b !GCC$ ATTRIBUTES aligned(64) :: dza_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: qpi_gath_t !GCC$ ATTRIBUTES aligned(64) :: qpi_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: qpi_gath_b !GCC$ ATTRIBUTES aligned(64) :: qpi_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_t !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_b !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_b
-#elif defined __INTEL_COMPILER
+
       INTEGER(kind=i4) ::  minkb, minkt
       LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask, tmask
       !DIR$ ATTRIBUTES ALIGN : 64 :: intp_mask, tmask
@@ -3028,28 +2940,22 @@ vt,its,ite,kts,kte,lmask) !GCC$ ATTRIBUTES hot :: slope_graup_ii !GCC$ ATTRIBUTE
       !DIR$ ATTRIBUTES ALIGN : 64 :: qpi_gath_t,qpi_gath_b
       REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_t,qmi_gath_b
       !DIR$ ATTRIBUTES ALIGN : 64 ::  qmi_gath_t,qmi_gath_b
-#endif
+
 !
 
 
-#if defined __INTEL_COMPILER
+
+
+      precip(:) = 0.0_sp
+      !
 !DIR$ ASSUME_ALIGNED denl:64,denfacl:64,tkl:64,dzl:64,wwl:64,rql:64,precip:64,lmask:64
 !DIR$ ASSUME_ALIGNED intp_mask:64,tmask:64,kb:64,kt:64,tl:64,tl2:64,qqd:64,qqh:64
 !DIR$ ASSUME_ALIGNED qql:64,zsum:64,dql:64,dqh:64,za_gath_t:64,za_gath_b:64,qa_gath_b:64
 !DIR$ ASSUME_ALIGNED dza_gath_t:64,dza_gath_b:64,qpi_gath_t:64,qpi_gath_b:64
 !DIR$ ASSUME_ALIGNED qmi_gath_t:64,qmi_gath_b:64,wi:64,ww:64,za:64,zi:64,dza:64
-#endif
-      precip(:) = 0.0_sp
-!
+      
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+              
          do i=its,ite
 
 ! -----------------------------------
