@@ -2953,9 +2953,14 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 !DIR$ ASSUME_ALIGNED qql:64,zsum:64,dql:64,dqh:64,za_gath_t:64,za_gath_b:64,qa_gath_b:64
 !DIR$ ASSUME_ALIGNED dza_gath_t:64,dza_gath_b:64,qpi_gath_t:64,qpi_gath_b:64
 !DIR$ ASSUME_ALIGNED qmi_gath_t:64,qmi_gath_b:64,wi:64,ww:64,za:64,zi:64,dza:64
-      
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts,kte
-              
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)    
          do i=its,ite
 
 ! -----------------------------------
@@ -2972,14 +2977,7 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       allold(i) = 0.0
       enddo
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+  
       do i=its,ite
         allold(i) = allold(i) + qq(i,k)
       enddo
@@ -2992,16 +2990,17 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       if (lmask(i)) then
       zi(i,kts)=0.0
       endif
-      enddo
+   enddo
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
       do i=its,ite
       if (lmask(i)) then
         zi(i,k+1) = zi(i,k)+dz(i,k)
@@ -3009,16 +3008,16 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       enddo
       enddo
 !
-! save departure wind
+      ! save departure wind
+       !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite
       do i=its,ite
       if (lmask(i)) then
       wd(i,k) = ww(i,k)
@@ -3035,15 +3034,15 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       wi(i,kte+1) = ww(i,kte)
       endif
       enddo
+       !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts+1,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do i=its,ite
       if (lmask(i)) then
         wi(i,k) = (ww(i,k)*dz(i,k-1)+ww(i,k-1)*dz(i,k))/(dz(i,k-1)+dz(i,k))
@@ -3059,15 +3058,15 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       wi(i,kts+1) = 0.5*(ww(i,kts+1)+ww(i,kts))
       endif
       enddo
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts+2,kte-1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep 
       do i=its,ite
       if (lmask(i)) then
         wi(i,k) = fa1*(ww(i,k)+ww(i,k-1))-fa2*(ww(i,k+1)+ww(i,k-2))
@@ -3081,16 +3080,17 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
 !
-! terminate of top of raingroup
+      ! terminate of top of raingroup
+        !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts+1,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
       do i=its,ite
       if (lmask(i)) then
         if( ww(i,k).eq.0.0 ) wi(i,k)=ww(i,k-1)
@@ -3100,15 +3100,9 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 !
 ! diffusivity of wi
       con1 = 0.05_sp
+      
       do k=kte,kts,-1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+         
       do i=its,ite
       if (lmask(i)) then
         decfl = (wi(i,k+1)-wi(i,k))*dt/dz(i,k)
@@ -3118,62 +3112,60 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
       enddo
-! compute arrival point
+      ! compute arrival point
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts,kte+1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite  
       do i=its,ite
       if (lmask(i)) then
         za(i,k) = zi(i,k) - wi(i,k)*dt
       endif
       enddo
       enddo
-!
+      !
+       !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do i=its,ite
       if (lmask(i)) then
         dza(i,k) = za(i,k+1)-za(i,k)
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif     
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do i=its,ite
       if (lmask(i)) then
       dza(i,kte+1) = zi(i,kte+1) - za(i,kte+1)
       endif
       enddo
 !
-! computer deformation at arrival point
+      ! computer deformation at arrival point
+        !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
       do i=its,ite
       if (lmask(i)) then
         qa(i,k) = qq(i,k)*dz(i,k)/dza(i,k)
@@ -3181,14 +3173,11 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+        
       do i=its,ite
       if (lmask(i)) then
       qa(i,kte+1) = 0.0
@@ -3201,15 +3190,14 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       if( n.le.iter ) then
         call slope_rain_ii(qr,den,denfac,tk,tmp,tmp1,tmp2,tmp3,wa,its,ite,kts,kte,lmask)
         if( n.ge.2 ) then
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
         do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
         do i=its,ite
         if (lmask(i)) then
           wa(i,k)=0.5*(wa(i,k)+was(i,k))
@@ -3217,15 +3205,14 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
         enddo
         enddo
         endif
+      !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
         do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
         do i=its,ite
         if (lmask(i)) then
 !#ifdef DEBUG
@@ -3241,16 +3228,17 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       n=n+1
       enddo
 !
-! estimate values at arrival cell interface with monotone
+      ! estimate values at arrival cell interface with monotone
+        !dir$ code_align(32)
+      !dir$ block_loop factor(16) level(1)
+      !dir$ block_loop factor(16) level(2)
       do k=kts+1,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+        !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
       do i=its,ite
       if (lmask(i)) then
         dip=(qa(i,k+1)-qa(i,k))/(dza(i,k+1)+dza(i,k))
@@ -3269,14 +3257,12 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif     
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite 
       do i=its,ite
       if (lmask(i)) then
       qpi(i,kts)=qa(i,kts)
@@ -3338,43 +3324,35 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 # define DX1 i,kb(i)
 # define DX2 i,kt(i)
 #endif
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
-             DO i = its,ite
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+            DO i = its,ite
                qa_gath_b(i) = qa(DX1)
                za_gath_b(i) = za(DX1)
                dza_gath_b(i) = dza(DX1)
                qpi_gath_b(i) = qpi(DX1)
                qmi_gath_b(i) = qmi(DX1)
              ENDDO
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+              !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
              DO i = its,ite
                za_gath_t(i) = za(DX2)
                dza_gath_t(i) = dza(DX2)
                qpi_gath_t(i) = qpi(DX2)
                qmi_gath_t(i) = qmi(DX2)
              ENDDO
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
              DO i = its,ite
              IF ( kt(i) .eq. kb(i) .AND. intp_mask(i) ) THEN
                tl(i)=(zi(i,k)-za_gath_b(i))/dza_gath_b(i)
@@ -3403,30 +3381,29 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                ENDIF
              ENDDO
 #endif
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif               
+              !dir$ code_align(32)
+              !dir$ block_loop factor(16) level(1)
+              !dir$ block_loop factor(16) level(2)              
              DO i = its,ite
-               if( kt(i)-kb(i).gt.1 .AND. intp_mask(i) ) then
+                if( kt(i)-kb(i).gt.1 .AND. intp_mask(i) ) then
+                   !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
                  do m=kb(i)+1,kt(i)-1
                      zsum(i) = zsum(i) + dza(i,m)
                      qsum(i) = qsum(i) + qa(i,m) * dza(i,m)
                  enddo
                endif
             ENDDO
- #if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif             
+               !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
              DO i = its,ite
              IF ( kt(i) .gt. kb(i) .AND. intp_mask(i) ) THEN
                th(i)=(zi(i,k+1)-za_gath_t(i))/dza_gath_t(i)
@@ -3465,14 +3442,12 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 ! rain out
       intp_mask = lmask
       sum_precip: do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif           
+              !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
              DO i = its,ite
              IF (za(i,k).lt.0.0.and.za(i,k+1).lt.0.0.AND.intp_mask(i)) THEN
                precip(i) = precip(i) + qa(i,k)*dza(i,k)
@@ -3483,16 +3458,17 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
              ENDDO
       enddo sum_precip
 !
-! replace the new values
+      ! replace the new values
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)     
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif  
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
       do i=its,ite
       if (lmask(i)) then
       rql(i,k) = qn(i,k)
@@ -3504,14 +3480,12 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 !
   END SUBROUTINE nislfv_rain_plm_ii
   !-------------------------------------------------------------------
-#if defined __GFORTRAN__
-  SUBROUTINE nislfv_rain_plm6_ii(its,ite,kts,kte,denl,denfacl,tkl,&
-       dzl,wwl,rql,rql2, precip1, precip2,dt,id,iter) !GCC$ ATTRIBUTES hot :: nislfv_rain_plm6_ii !GCC$ ATTRIBUTES aligned(32) :: nislfv_rain_plm6_ii
-#elif defined __INTEL_COMPILER
+
    SUBROUTINE nislfv_rain_plm6_ii(its,ite,kts,kte,denl,denfacl,tkl,&
         dzl,wwl,rql,rql2, precip1, precip2,dt,id,iter)
      !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: nislfv_rain_plm6_ii
-#endif
+     !dir$ optimize : 3
+      !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: nislfv_rain_plm6_ii
 !-------------------------------------------------------------------
 !
 ! for non-iteration semi-Lagrangain forward advection for cloud
@@ -3542,36 +3516,8 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 !
       integer(kind=i4) ::   i,k,n,m,kk,iter,ist
       real(kind=sp)      ::   dim,dip,con1,fa1,fa2,defcl
-#if defined __GFORTRAN__
-      real(kind=sp), dimension(its:ite) ::   allold
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  dz      !GCC$ ATTRIBUTES aligned(64) :: dz
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  ww      !GCC$ ATTRIBUTES aligned(64) :: ww
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  qq      !GCC$ ATTRIBUTES aligned(64) :: qq
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  qq2     !GCC$ ATTRIBUTES aligned(64) :: qq2
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  wd      !GCC$ ATTRIBUTES aligned(64) :: wd
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  wa      !GCC$ ATTRIBUTES aligned(64) :: wa
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  wa2     !GCC$ ATTRIBUTES aligned(64) :: wa2
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  was     !GCC$ ATTRIBUTES aligned(64) :: was
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  den     !GCC$ ATTRIBUTES aligned(64) :: den
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  denfac  !GCC$ ATTRIBUTES aligned(64) :: denfac
-      real(kind=sp), dimension(its:ite,kts:kte)   ::  tk      !GCC$ ATTRIBUTES aligned(64) :: tk
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  wi      !GCC$ ATTRIBUTES aligned(64) :: wi
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  zi      !GCC$ ATTRIBUTES aligned(64) :: zi
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  za      !GCC$ ATTRIBUTES aligned(64) :: za
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qn      !GCC$ ATTRIBUTES aligned(64) :: qn
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qr      !GCC$ ATTRIBUTES aligned(64) :: qr
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qr2     !GCC$ ATTRIBUTES aligned(64) :: qr2
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  tmp     !GCC$ ATTRIBUTES aligned(64) :: tmp
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  tmp1    !GCC$ ATTRIBUTES aligned(64) :: tmp1
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  tmp2    !GCC$ ATTRIBUTES aligned(64) :: tmp2
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  tmp3    !GCC$ ATTRIBUTES aligned(64) :: tmp3
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  dza     !GCC$ ATTRIBUTES aligned(64) :: dza
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qa      !GCC$ ATTRIBUTES aligned(64) :: qa
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qa2     !GCC$ ATTRIBUTES aligned(64) :: qa2
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qmi     !GCC$ ATTRIBUTES aligned(64) :: qmi
-      real(kind=sp), dimension(its:ite,kts:kte+1) ::  qpi     !GCC$ ATTRIBUTES aligned(64) :: qpi
-      logical(kind=i4), dimension(its:ite)      ::  lmask   !GCC$ ATTRIBUTES aligned(64) :: lmask
-#elif defined __INTEL_COMPILER
+
+
       real(kind=sp), dimension(its:ite)           ::   allold
       !DIR$ ATTRIBUTES ALIGN : 64 :: allold
       real(kind=sp), dimension(its:ite,kts:kte)   ::   dz, ww, qq, qq2, wd, wa, wa2, was
@@ -3586,35 +3532,10 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       !DIR$ ATTRIBUTES ALIGN : 64 ::     dza, qa,qa2,qmi,qpi
       logical(kind=i4), dimension(its:ite)      ::   lmask
       !DIR$ ATTRIBUTES ALIGN : 64 ::     lmask
-#endif
+
 !
       INTEGER(kind=i4) ::  minkb, minkt
-#if defined __GFORTRAN__
-      LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask     !GCC$ ATTRIBUTES aligned(64) :: intp_mask
-      LOGICAL(kind=i4), DIMENSION(its:ite) :: tmask         !GCC$ ATTRIBUTES aligned(64) :: tmask
-      INTEGER(kind=i4), DIMENSION(its:ite) :: kb            !GCC$ ATTRIBUTES aligned(64) :: kb
-      INTEGER(kind=i4), DIMENSION(its:ite) :: kt            !GCC$ ATTRIBUTES aligned(64) :: kt
-      REAL(kind=sp),      DIMENSION(its:ite) :: tl            !GCC$ ATTRIBUTES aligned(64) :: tl
-      REAL(kind=sp),      DIMENSION(its:ite) :: tl2           !GCC$ ATTRIBUTES aligned(64) :: tl2
-      REAL(kind=sp),      DIMENSION(its:ite) :: th            !GCC$ ATTRIBUTES aligned(64) :: th
-      REAL(kind=sp),      DIMENSION(its:ite) :: th2           !GCC$ ATTRIBUTES aligned(64) :: th2
-      REAL(kind=sp),      DIMENSION(its:ite) :: qqd           !GCC$ ATTRIBUTES aligned(64) :: qqd
-      REAL(kind=sp),      DIMENSION(its:ite) :: qqh           !GCC$ ATTRIBUTES aligned(64) :: qqh
-      REAL(kind=sp),      DIMENSION(its:ite) :: qql           !GCC$ ATTRIBUTES aligned(64) :: qql
-      REAL(kind=sp),      DIMENSION(its:ite) :: zsum          !GCC$ ATTRIBUTES aligned(64) :: zsum
-      REAL(kind=sp),      DIMENSION(its:ite) :: qsum          !GCC$ ATTRIBUTES aligned(64) :: qsum
-      REAL(kind=sp),      DIMENSION(its:ite) :: dql           !GCC$ ATTRIBUTES aligned(64) :: dql
-      REAL(kind=sp),      DIMENSION(its:ite) :: dqh           !GCC$ ATTRIBUTES aligned(64) :: dqh
-      REAL(kind=sp),      DIMENSION(its:ite) :: za_gath_t     !GCC$ ATTRIBUTES aligned(64) :: za_gath_t 
-      REAL(kind=sp),      DIMENSION(its:ite) :: za_gath_b     !GCC$ ATTRIBUTES aligned(64) :: za_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: qa_gath_b     !GCC$ ATTRIBUTES aligned(64) :: qa_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: dza_gath_t    !GCC$ ATTRIBUTES aligned(64) :: dza_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: dza_gath_b    !GCC$ ATTRIBUTES aligned(64) :: dza_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: qpi_gath_t    !GCC$ ATTRIBUTES aligned(64) :: qpi_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: qpi_gath_b    !GCC$ ATTRIBUTES aligned(64) :: qpi_gath_b
-      REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_t    !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_t
-      REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_b    !GCC$ ATTRIBUTES aligned(64) :: qmi_gath_b
-#elif defined __INTEL_COMPILER
+
       LOGICAL(kind=i4), DIMENSION(its:ite) :: intp_mask, tmask
       !DIR$ ATTRIBUTES ALIGN : 64 :: intp_mask, tmask
       INTEGER(kind=i4), DIMENSION(its:ite) :: kb, kt
@@ -3631,30 +3552,29 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       !DIR$ ATTRIBUTES ALIGN : 64 ::   qpi_gath_t,qpi_gath_b
       REAL(kind=sp),      DIMENSION(its:ite) :: qmi_gath_t,qmi_gath_b
       !DIR$ ATTRIBUTES ALIGN : 64 :: qmi_gath_t,qmi_gath_b
-#endif
+
 !
-#if defined __INTEL_COMPILER
+
 !DIR$ ASSUME_ALIGNED denl:64,denfacl:64,tkl:64,dzl:64,wwl:64,rql:64,precip:64,lmask:64
 !DIR$ ASSUME_ALIGNED intp_mask:64,tmask:64,kb:64,kt:64,tl:64,tl2:64,qqd:64,qqh:64
 !DIR$ ASSUME_ALIGNED qql:64,zsum:64,dql:64,dqh:64,za_gath_t:64,za_gath_b:64,qa_gath_b:64
 !DIR$ ASSUME_ALIGNED dza_gath_t:64,dza_gath_b:64,qpi_gath_t:64,qpi_gath_b:64
 !DIR$ ASSUME_ALIGNED qmi_gath_t:64,qmi_gath_b:64,wi:64,ww:64,za:64,zi:64,dza:64
 !DIR$ ASSUME_ALIGNED precip1:64,precip2:64,qmi:64,qa:64,rql2:64
-#endif
+
       precip(:) = 0.0
       precip1(:) = 0.0
       precip2(:) = 0.0
-!
+      !
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)    
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif 
-      do i=its,ite
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
+         do i=its,ite
 ! -----------------------------------
       dz(i,k) = dzl(i,k)
       qq(i,k) = rql(i,k)
@@ -3670,14 +3590,7 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       allold(i) = 0.0
       enddo
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+         
       do i=its,ite
         allold(i) = allold(i) + qq(i,k)
       enddo
@@ -3691,15 +3604,13 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       zi(i,kts)=0.0
       endif
       enddo
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
       do i=its,ite
       if(lmask(i)) then
         zi(i,k+1) = zi(i,k)+dz(i,k)
@@ -3707,16 +3618,15 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       enddo
       enddo
 !
-! save departure wind
+      ! save departure wind
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-    
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
       do i=its,ite
       if(lmask(i)) then
       wd(i,k) = ww(i,k)
@@ -3725,14 +3635,10 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       enddo
       n=1
       do while (n.le.(iter+1))
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif          
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
       do i=its,ite
       if(lmask(i)) then
 ! plm is 2nd order, we can use 2nd order wi or 3rd order wi
@@ -3741,15 +3647,16 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       wi(i,kte+1) = ww(i,kte)
       endif
       enddo
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts+1,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite
       do i=its,ite
       if(lmask(i)) then
         wi(i,k) = (ww(i,k)*dz(i,k-1)+ww(i,k-1)*dz(i,k))/(dz(i,k-1)+dz(i,k))
@@ -3759,43 +3666,40 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 ! 3rd order interpolation to get wi
       fa1 = 9./16.
       fa2 = 1./16.
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif       
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite 
       do i=its,ite
       if(lmask(i)) then
       wi(i,kts) = ww(i,kts)
       wi(i,kts+1) = 0.5*(ww(i,kts+1)+ww(i,kts))
       endif
       enddo
+         !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts+2,kte-1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite      
       do i=its,ite
       if(lmask(i)) then
         wi(i,k) = fa1*(ww(i,k)+ww(i,k-1))-fa2*(ww(i,k+1)+ww(i,k-2))
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif    
+        !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite     
       do i=its,ite
       if(lmask(i)) then
       wi(i,kte) = 0.5*(ww(i,kte)+ww(i,kte-1))
@@ -3803,16 +3707,17 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
 !
-! terminate of top of raingroup
+      ! terminate of top of raingroup
+        !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts+1,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+       !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite          
       do i=its,ite
       if(lmask(i)) then
         if( ww(i,k).eq.0.0 ) wi(i,k)=ww(i,k-1)
@@ -3822,15 +3727,16 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 !
 ! diffusivity of wi
       con1 = 0.05
+        !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kte,kts,-1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+           !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite     
       do i=its,ite
       if(lmask(i)) then
         decfl = (wi(i,k+1)-wi(i,k))*dt/dz(i,k)
@@ -3840,62 +3746,61 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
       enddo
-! compute arrival point
+      ! compute arrival point
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts,kte+1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+            !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
       do i=its,ite
       if(lmask(i)) then
         za(i,k) = zi(i,k) - wi(i,k)*dt
       endif
       enddo
       enddo
-!
+      !
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite    
       do i=its,ite
       if(lmask(i)) then
         dza(i,k) = za(i,k+1)-za(i,k)
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite    
       do i=its,ite
       if(lmask(i)) then
       dza(i,kte+1) = zi(i,kte+1) - za(i,kte+1)
       endif
       enddo
 !
-! computer deformation at arrival point
+      ! computer deformation at arrival point
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
       do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite    
       do i=its,ite
       if(lmask(i)) then
         qa(i,k) = qq(i,k)*dz(i,k)/dza(i,k)
@@ -3905,14 +3810,12 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif   
+      !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite   
       do i=its,ite
       if(lmask(i)) then
       qa(i,kte+1) = 0.0
@@ -3926,7 +3829,16 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       if( n.le.iter ) then
         call slope_snow_ii(qr,den,denfac,tk,tmp,tmp1,tmp2,tmp3,wa,its,ite,kts,kte,lmask)
         call slope_graup_ii(qr2,den,denfac,tk,tmp,tmp1,tmp2,tmp3,wa2,its,ite,kts,kte,lmask)
+         !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
         do k = kts,kte
+            !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite   
         do i=its,ite
         if(lmask(i)) then
           tmp(i,k) = max((qr(i,k)+qr2(i,k)), 1.E-15_sp)
@@ -3939,31 +3851,32 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
         enddo
         enddo
         if( n.ge.2 ) then
+           !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)     
         do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif              
+            !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite       
         do i=its,ite
         if(lmask(i)) then
           wa(i,k)=0.5*(wa(i,k)+was(i,k))
         endif
         enddo
         enddo
-        endif
+     endif
+              !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)    
         do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite   
         do i=its,ite
         if(lmask(i)) then
 !#ifdef DEBUG
@@ -3981,15 +3894,15 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       enddo
       ist_loop : do ist = 1, 2
       if (ist.eq.2) then
+                 !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)       
       do k=kts,kte+1
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite   
       do i=its,ite
       if(lmask(i)) then
        qa(i,k) = qa2(i,k)
@@ -4004,16 +3917,17 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
 !
-! estimate values at arrival cell interface with monotone
+      ! estimate values at arrival cell interface with monotone
+                 !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)       
       do k=kts+1,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite   
       do i=its,ite
       if(lmask(i)) then
         dip=(qa(i,k+1)-qa(i,k))/(dza(i,k+1)+dza(i,k))
@@ -4032,14 +3946,12 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
       endif
       enddo
       enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif
+       !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite 
       do i=its,ite
       if(lmask(i)) then
       qpi(i,kts)=qa(i,kts)
@@ -4098,14 +4010,11 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 # define DX1 i,kb(i)
 # define DX2 i,kt(i)
 #endif
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif
+              !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
              DO i = its,ite
                qa_gath_b(i) = qa(DX1)
                za_gath_b(i) = za(DX1)
@@ -4113,28 +4022,24 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                qpi_gath_b(i) = qpi(DX1)
                qmi_gath_b(i) = qmi(DX1)
              ENDDO
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-    
-#endif
+              !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+      
              DO i = its,ite
                za_gath_t(i) = za(DX2)
                dza_gath_t(i) = dza(DX2)
                qpi_gath_t(i) = qpi(DX2)
                qmi_gath_t(i) = qmi(DX2)
              ENDDO
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-    
-#endif
+              !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite 
              DO i = its,ite
              IF ( kt(i) .eq. kb(i) .AND. intp_mask(i) ) THEN
                tl(i)=(zi(i,k)-za_gath_b(i))/dza_gath_b(i)
@@ -4155,30 +4060,27 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                qsum(i)  = dql(i)*dza_gath_b(i)
              ENDIF
              ENDDO
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif          
+         
              DO i = its,ite
-               if( kt(i)-kb(i).gt.1 .AND. intp_mask(i) ) then
+                if( kt(i)-kb(i).gt.1 .AND. intp_mask(i) ) then
+                    !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+                   !dir$ vector mask_readwrite
                  do m=kb(i)+1,kt(i)-1
                      zsum(i) = zsum(i) + dza(i,m)
                      qsum(i) = qsum(i) + qa(i,m) * dza(i,m)
                  enddo
                endif
             ENDDO
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif            
+              !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite 
              DO i = its,ite
              IF ( kt(i) .gt. kb(i) .AND. intp_mask(i) ) THEN
                th(i)=(zi(i,k+1)-za_gath_t(i))/dza_gath_t(i)
@@ -4199,14 +4101,12 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 ! rain out
       intp_mask = lmask
       sum_precip: do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-      !DIR$ IVDEP
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      !GCC$ IVDEP
-#endif         
+             !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ ivdep
+         !dir$ vector mask_readwrite 
              DO i = its,ite
              IF (za(i,k).lt.0.0.and.za(i,k+1).lt.0.0.AND.intp_mask(i)) THEN
                precip(i) = precip(i) + qa(i,k)*dza(i,k)
@@ -4220,28 +4120,22 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 ! replace the new values
       if(ist.eq.1) then
         do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-    
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-    
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite 
         do i=its,ite
         if(lmask(i)) then
         rql(i,k) = qn(i,k)
         endif
         enddo
         enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-    
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite 
         do i=its,ite
         if(lmask(i)) then
         precip1(i) = precip(i)
@@ -4249,28 +4143,22 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
         enddo
       else
         do k=kts,kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-      
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite 
         do i=its,ite
         if(lmask(i)) then
         rql2(i,k) = qn(i,k)
         endif
         enddo
         enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif
+         !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(4)
+         !dir$ vector mask_readwrite 
         do i=its,ite
         if(lmask(i)) then
         precip2(i) = precip(i)
@@ -4285,12 +4173,10 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 #endif
 !+---+-----------------------------------------------------------------+
   ! Read array from unitno and convert from "no-chunk" to "chunk"
-#if defined __GFORTRAN__
-  SUBROUTINE readarray2(arr,arrname,unitno,ips,ipe) !GCC$ ATTRIBUTES cold :: readarray2 !GCC$ ATTRIBUTES aligned(32) :: readarray2
-#elif defined __INTEL_COMPILER
+
     SUBROUTINE readarray2(arr,arrname,unitno,ips,ipe)
       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: readarray2
-#endif
+
     REAL(kind=sp), contiguous,   INTENT(OUT) :: arr(:,:)
     CHARACTER(LEN=*),            INTENT(IN)  :: arrname
     INTEGER(kind=i4),          INTENT(IN)  :: unitno
@@ -4316,12 +4202,10 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
 
 !+---+-----------------------------------------------------------------+
   ! Read array from unitno and convert from "no-chunk" to "chunk"
-#if defined __GFORTRAN__
-  SUBROUTINE readarray3(arr,arrname,unitno,ips,ipe) !GCC$ ATTRIBUTES cold :: readarray3 !GCC$ ATTRIBUTES aligned(32) :: readarray3
-#elif defined __INTEL_COMPILER
+
     SUBROUTINE readarray3(arr,arrname,unitno,ips,ipe)
       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: readarray3
-#endif
+
     REAL(kind=sp),  contiguous   INTENT(OUT) :: arr(:,:,:)
     CHARACTER(LEN=*),            INTENT(IN)  :: arrname
     INTEGER(kind=i4),          INTENT(IN)  :: unitno
@@ -4472,19 +4356,7 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
     print *,' min ',trim(arrname),' = ',minval(tmparr),' at ',minloc(tmparr)
     DEALLOCATE(tmparr)
   END SUBROUTINE writearray4
-#if defined __GFORTRAN__
-  SUBROUTINE firstTouch(t, q                                      &   
-                   ,qci, qrs, den, p, delz                        &
-                   ,lat                                           &
-                   ,rain,rainncv                                  &
-                   ,sr                                            &
-                   ,ids,ide, jds,jde, kds,kde                     &
-                   ,ims,ime, jms,jme, kms,kme                     &
-                   ,its,ite, jts,jte, kts,kte                     &
-                   ,snow,snowncv                                  &
-                   ,graupel,graupelncv                            &
-                   )  !GCC$ ATTRIBUTES cold :: firstTouch !GCC$ ATTRIBUTES aligned(32) :: firstTouch
-#elif defined __INTEL_COMPILER
+   
     SUBROUTINE firstTouch(t, q                                      &   
                    ,qci, qrs, den, p, delz                        &
                    ,lat                                           &
@@ -4497,7 +4369,8 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                    ,graupel,graupelncv                            &
                    )
       !DIR$ ATTRIBUTES CODE_ALIGN : 32 :: firstTouch
-#endif
+      !dir$ optimize : 3
+      
 !-------------------------------------------------------------------
  
 !-------------------------------------------------------------------
@@ -4538,20 +4411,20 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
                                                       graupelncv
 ! LOCAL VAR
   INTEGER :: i, k
-!
+  !
+  !DIR$ ASSUME_ALIGNED t:64,q:64,qci:64,qrs:64,den:64,p:64,delz:64
+       !dir$ code_align(32)
+       !dir$ block_loop factor(16) level(1)
+       !dir$ block_loop factor(16) level(2)   
   do k = kts, kte
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-    
-#endif     
+       !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
      do i = its, ite
-#if defined __INTEL_COMPILER
-        !DIR$ ASSUME_ALIGNED t:64,q:64,qci:64,qrs:64,den:64,p:64,delz:64
-#endif
+
+      
+
           t(i,k) = 0.
           q(i,k) = 0.
           qci(i,k,1) = 0.
@@ -4564,75 +4437,63 @@ rslope2,rslope3, vt,its,ite,kts,kte,lmask)
           delz(i,k) = 0.
         enddo
      enddo
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-    
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif     
+       !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
      do i = its, ite
-#if defined __INTEL_COMPILER
+
         !DIR$ ASSUME_ALIGNED rain:64,rainncv:64,sr:64
-#endif
+
         rain(i) = 0.
         rainncv(i) = 0.
         sr(i) = 0.
       enddo
       if (PRESENT(snow)) then
+           !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
          do i = its, ite
-#if defined __INTEL_COMPILER
+
             !DIR$ ASSUME_ALIGNED snow:64
-#endif            
+            
           snow(i,lat) = 0.
         enddo
       endif
       if (PRESENT(snowncv)) then
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
+
    
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif         
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
          do i = its, ite
-#if defined __INTEL_COMPILER
+
             !DIR$ ASSUME_ALIGNED snowncv:64
-#endif
+
           snowncv(i,lat) = 0.
         enddo
       endif
       if (PRESENT(graupel)) then
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-     
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif         
+        
          do i = its, ite
-#if defined __INTEL_COMPILER
+
             !DIR$ ASSUME_ALIGNED graupel:64
-#endif
+
           graupel(i,lat) = 0.
         enddo
       endif
       if (PRESENT(graupelncv)) then
-#if defined __INTEL_COMPILER
-      !DIR$ VECTOR ALIGNED
-      !DIR$ VECTOR ALWAYS
-    
-#elif defined __GFORTRAN__
-      !GCC$ VECTOR
-     
-#endif         
+          !dir$ code_align(32)
+         !dir$ vector aligned
+         !dir$ vector always vectorlength(16)
+         !dir$ unroll(8)
+         
          do i = its, ite
-#if defined __INTEL_COMPILER
+
             !DIR$ ASSUME_ALIGNED graupelncv:64
-#endif
+
           graupelncv(i,lat) = 0.
         enddo
       endif
