@@ -110,5 +110,4 @@ float noise_density(const float xTs) {
 
 
 
-
 #endif /*__GMS_JAMMING_COMMON_CUH__*/
