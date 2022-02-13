@@ -1,6 +1,6 @@
 
-#include "cuda.h"
-#include "cuda_runtime.h"
+#include <cuda.h>
+#include <cuda_runtime.h>
 #include "GMS_cuda_memops.cuh"
 
 
