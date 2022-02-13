@@ -47,12 +47,14 @@
 #define GMS_CUDA_CHECK(func) do { \
   status = (func); \
   if(cudaSuccess != (status))  { \
-     goto Error;
+     goto Error;              \       
   } \
 	} while(0);
 #endif
 
-
+#if !defined(SOFTWARE_PREFETCH)
+#define SOFTWARE_PREFETCH 0
+#endif
 
 // Workaround for Fortran optional argument on C-side.
 #if !defined (FORTRAN_OPTIONAL)
