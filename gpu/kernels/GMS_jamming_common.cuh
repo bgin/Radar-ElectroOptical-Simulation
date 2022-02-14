@@ -4,7 +4,7 @@
 
 
 
-#include <cuda_runtime.h>
+
 
 // Speed of Light
 #define C 299792458.0f
