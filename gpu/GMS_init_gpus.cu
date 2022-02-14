@@ -205,6 +205,161 @@ Error:
 	 return;
 }
 
+int32_t convertSMVer2Cores(const int32_t major,
+                           const int32_t minor) {
+#if (LOG_ACTIVITY) == 1
+	GMS_CUDA_LOG("At prolog of convertSMVer2Cores.");
+#endif
+     typedef struct {
+         int32_t SM;  // 0xMm (hexidecimal notation), M = SM Major version,
+                  // and m = SM minor version
+         int32_t Cores;
+  } sSMtoCores;
+
+  sSMtoCores nGpuArchCoresPerSM[] = {
+      {0x30, 192},
+      {0x32, 192},
+      {0x35, 192},
+      {0x37, 192},
+      {0x50, 128},
+      {0x52, 128},
+      {0x53, 128},
+      {0x60,  64},
+      {0x61, 128},
+      {0x62, 128},
+      {0x70,  64},
+      {0x72,  64},
+      {0x75,  64},
+      {0x80,  64},
+      {0x86, 128},
+      {0x87, 128},
+      {-1, -1}};
+
+    int32_t index = 0;
+
+    while (nGpuArchCoresPerSM[index].SM != -1) {
+      if (nGpuArchCoresPerSM[index].SM == ((major << 4) + minor)) {
+          return nGpuArchCoresPerSM[index].Cores;
+     }
+
+     index++;
+   }
+
+  // If we don't find the values, we default use the previous one
+  // to run properly
+     printf(
+      "MapSMtoCores for SM %d.%d is undefined."
+      "  Default to use %d Cores/SM\n",
+        major, minor, nGpuArchCoresPerSM[index - 1].Cores);
+     return (nGpuArchCoresPerSM[index - 1].Cores);
+}
+
+const char * convertSMVer2ArchName(const int32_t major,
+                                   const int32_t minor) {
+#if (LOG_ACTIVITY) == 1
+	GMS_CUDA_LOG("At prolog of convertSMVer2ArchName.");
+#endif
+     typedef struct {
+         int32_t SM;  // 0xMm (hexidecimal notation), M = SM Major version,
+                  // and m = SM minor version
+         const char* name;
+     } sSMtoArchName;
+
+    sSMtoArchName nGpuArchNameSM[] = {
+      {0x30, "Kepler"},
+      {0x32, "Kepler"},
+      {0x35, "Kepler"},
+      {0x37, "Kepler"},
+      {0x50, "Maxwell"},
+      {0x52, "Maxwell"},
+      {0x53, "Maxwell"},
+      {0x60, "Pascal"},
+      {0x61, "Pascal"},
+      {0x62, "Pascal"},
+      {0x70, "Volta"},
+      {0x72, "Xavier"},
+      {0x75, "Turing"},
+      {0x80, "Ampere"},
+      {0x86, "Ampere"},
+      {-1, "Graphics Device"}};
+
+   int32_t index = 0;
+
+  while (nGpuArchNameSM[index].SM != -1) {
+    if (nGpuArchNameSM[index].SM == ((major << 4) + minor)) {
+        return nGpuArchNameSM[index].name;
+     }
+
+    index++;
+  }
+
+  
+  printf(
+      "MapSMtoArchName for SM %d.%d is undefined."
+      "  Default to use %s\n",
+      major, minor, nGpuArchNameSM[index - 1].name);
+     return (nGpuArchNameSM[index - 1].name);
+}
+
+#ifdef __CUDA_RUNTIME_H__
+ 
+int32_t gpuDeviceInit(const int32_t devID) {
+  int32_t device_count;
+  
+
+    GMS_CUDA_DEBUG_CHECK(cudaGetDeviceCount(&device_count));
+     
+  if (device_count == 0) {
+    fprintf(stderr,
+            "gpuDeviceInit() CUDA error: "
+            "no devices supporting CUDA.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  if (devID < 0) {
+    devID = 0;
+  }
+
+  if (devID > device_count - 1) {
+    fprintf(stderr, "\n");
+    fprintf(stderr, ">> %d CUDA capable GPU device(s) detected. <<\n",
+            device_count);
+    fprintf(stderr,
+            ">> gpuDeviceInit (-device=%d) is not a valid"
+            " GPU device. <<\n",
+            devID);
+    fprintf(stderr, "\n");
+    return -devID;
+  }
+
+  int computeMode = -1, major = 0, minor = 0;
+  
+   GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, devID));
+   GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&major, cudaDevAttrComputeCapabilityMajor, devID));
+   GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&minor, cudaDevAttrComputeCapabilityMinor, devID));
+  if (computeMode == cudaComputeModeProhibited) {
+    fprintf(stderr,
+            "Error: device is running in <Compute Mode "
+            "Prohibited>, no threads can use cudaSetDevice().\n");
+    return -1;
+  }
+
+  if (major < 1) {
+    fprintf(stderr, "gpuDeviceInit(): GPU device does not support CUDA.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  checkCudaErrors(cudaSetDevice(devID));
+  printf("gpuDeviceInit() CUDA Device [%d]: \"%s\n", devID, _ConvertSMVer2ArchName(major, minor));
+
+  return devID;  
+  Error:
+        return (-1);
+}
+
+
+#endif
+
 #if !defined (CHECK_FAILURE_GENERATOR)
 #define CHECK_FAILURE_GENERATOR(ierr,msg) \
  do {                                  \
