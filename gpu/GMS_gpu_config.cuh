@@ -52,6 +52,15 @@
 	} while(0);
 #endif
 
+#define GMS_CUBLAS_STAT_CHECK(stat)                                                                          \
+    do {                                                                                           \
+        cublasStatus_t err_ = (stat);                                                               \
+        if (err_ != CUBLAS_STATUS_SUCCESS) {                                                       \
+            std::printf("Abnormal cublas termination: error %d at %s:%d\n", err_, __FILE__, __LINE__);  \
+            goto Error;                                                                            \
+        }                                                                                          \
+    } while (0)
+
 #if !defined(SOFTWARE_PREFETCH)
 #define SOFTWARE_PREFETCH 0
 #endif
