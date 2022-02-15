@@ -129,6 +129,10 @@ do { if(!(predicate)) {fprintf(stderr, "Asserion failed: %s at line %d in file %
 #if !defined(PROFILE_HOST_TO_DEVICE)
 #define PROFILE_HOST_TO_DEVICE 1
 #endif
+			       
+#if !defined(PROFILE_DEVICE)
+#define PROFILE_DEVICE 1
+#endif
 
 
 #include <stdlib.h>
