@@ -125,6 +125,10 @@ do { if(!(predicate)) {fprintf(stderr, "Asserion failed: %s at line %d in file %
 #if !defined (HOST_ALIGN64) // Cache aware alignment.
 #define HOST_ALIGN64 64
 #endif
+			       
+#if !defined(PROFILE_HOST_TO_DEVICE)
+#define PROFILE_HOST_TO_DEVICE 1
+#endif
 
 
 #include <stdlib.h>
