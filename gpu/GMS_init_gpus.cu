@@ -349,12 +349,161 @@ int32_t gpuDeviceInit(const int32_t devID) {
     exit(EXIT_FAILURE);
   }
 
-  checkCudaErrors(cudaSetDevice(devID));
+  GMS_CUDA_DEBUG_CHECK(cudaSetDevice(devID));
   printf("gpuDeviceInit() CUDA Device [%d]: \"%s\n", devID, _ConvertSMVer2ArchName(major, minor));
 
   return devID;  
   Error:
         return (-1);
+}
+
+int32_t gpuGetMaxGflopsDeviceId() {
+      
+  int32_t current_device = 0, sm_per_multiproc = 0;
+  int32_t max_perf_device = 0;
+  int32_t device_count = 0;
+  int32_t devices_prohibited = 0;
+
+  uint64_t max_compute_perf = 0;
+  GMS_CUDA_DEBUG_CHECK(cudaGetDeviceCount(&device_count));
+
+  if (device_count == 0) {
+    fprintf(stderr,
+            "gpuGetMaxGflopsDeviceId() CUDA error:"
+            " no devices supporting CUDA.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // Find the best CUDA capable GPU device
+  current_device = 0;
+
+  while (current_device < device_count) {
+    int computeMode = -1, major = 0, minor = 0;
+    GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, current_device));
+    GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&major, cudaDevAttrComputeCapabilityMajor, current_device));
+    GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&minor, cudaDevAttrComputeCapabilityMinor, current_device));
+
+    // If this GPU is not running on Compute Mode prohibited,
+    // then we can add it to the list
+    if (computeMode != cudaComputeModeProhibited) {
+      if (major == 9999 && minor == 9999) {
+        sm_per_multiproc = 1;
+      } else {
+        sm_per_multiproc =
+            _ConvertSMVer2Cores(major,  minor);
+      }
+      int multiProcessorCount = 0, clockRate = 0;
+      GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&multiProcessorCount, cudaDevAttrMultiProcessorCount, current_device));
+      cudaError_t result = cudaDeviceGetAttribute(&clockRate, cudaDevAttrClockRate, current_device);
+      if (result != cudaSuccess) {
+        // If cudaDevAttrClockRate attribute is not supported we
+        // set clockRate as 1, to consider GPU with most SMs and CUDA Cores.
+        if(result == cudaErrorInvalidValue) {
+          clockRate = 1;
+        }
+        else {
+          fprintf(stderr, "CUDA error at %s:%d code=%d(%s) \n", __FILE__, __LINE__,
+            static_cast<unsigned int>(result), _cudaGetErrorEnum(result));
+          exit(EXIT_FAILURE);
+        }
+      }
+      uint64_t compute_perf = (uint64_t)multiProcessorCount * sm_per_multiproc * clockRate;
+
+      if (compute_perf > max_compute_perf) {
+        max_compute_perf = compute_perf;
+        max_perf_device = current_device;
+      }
+    } else {
+      devices_prohibited++;
+    }
+
+    ++current_device;
+  }
+
+  if (devices_prohibited == device_count) {
+    fprintf(stderr,
+            "gpuGetMaxGflopsDeviceId() CUDA error:"
+            " all devices have compute mode prohibited.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  return max_perf_device;   
+  Error:
+         return (-1); 
+}
+
+int32_t findIntegratedGPU() {
+    
+  int32_t current_device = 0;
+  int32_t device_count = 0;
+  int32_t devices_prohibited = 0;
+
+  GMS_CUDA_DEBUG_CHECK(cudaGetDeviceCount(&device_count));
+
+  if (device_count == 0) {
+    fprintf(stderr, "CUDA error: no devices supporting CUDA.\n");
+    exit(EXIT_FAILURE);
+  }
+
+ 
+  while (current_device < device_count) {
+    int computeMode = -1, integrated = -1;
+    GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, current_device));
+    GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&integrated, cudaDevAttrIntegrated, current_device));
+    
+    if (integrated && (computeMode != cudaComputeModeProhibited)) {
+        GMS_CUDA_DEBUG_CHECK(cudaSetDevice(current_device));
+
+      int major = 0, minor = 0;
+      GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&major, cudaDevAttrComputeCapabilityMajor, current_device));
+      GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&minor, cudaDevAttrComputeCapabilityMinor, current_device));
+      printf("GPU Device %d: \"%s\" with compute capability %d.%d\n\n",
+             current_device, convertSMVer2ArchName(major, minor), major, minor);
+
+      return current_device;
+    } else {
+      devices_prohibited++;
+    }
+
+    current_device++;
+  }
+
+  if (devices_prohibited == device_count) {
+    fprintf(stderr,
+            "CUDA error:"
+            " No GLES-CUDA Interop capable GPU found.\n");
+    exit(EXIT_FAILURE);
+  }
+
+   return 0;
+   Error:
+          return (-1);
+}
+
+bool checkCudaCapabilities(const int32_t major,
+                           const int32_t minor) {
+  int32_t dev;
+  int32_t major = 0, minor = 0;
+
+  GMS_CUDA_DEBUG_CHECK(cudaGetDevice(&dev));
+  GMS_CUDA_DEBUG_CHECK(cudaDeviceGetAttribute(&major, cudaDevAttrComputeCapabilityMajor, dev));
+  gms_cuda_debug_check(cudaDeviceGetAttribute(&minor, cudaDevAttrComputeCapabilityMinor, dev));
+
+  if ((major > major_version) ||
+      (major == major_version &&
+       minor >= minor_version)) {
+    printf("  Device %d: <%16s >, Compute SM %d.%d detected\n", dev,
+           _ConvertSMVer2ArchName(major, minor), major, minor);
+    return true;
+  } else {
+    printf(
+        "  No GPU device was found that can support "
+        "CUDA compute capability %d.%d.\n",
+        major_version, minor_version);
+    return false;
+    }
+    Error:
+           return (-1);
 }
 
 
