@@ -13,14 +13,17 @@
 void copy_int32_cpu_to_gpu(int32_t * __restrict d_ptr, 
 			   const int32_t * __restrict h_ptr,
 			   const size_t n,
-			   int32_t * ierr ) {
+			   int32_t * ierr )
+ {
 	if(*ierr <= 0) *ierr = 0;
 	if( NULL == h_ptr || n <= 0){ //  Host error handling
 	   *ierr = -1;
 	   return; 
 	}
-	cudaError status;
+	cudaError_t status;
+
 #if (GMS_CUDA_DEBUG_ON) == 1
+
 	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(int32_t)));
 	GMS_CUDA_DEBUG_CHECK(cudaMemcpy((void*)&d_ptr[0],(void*)&h_ptr[0],n * sizeof(int32_t),cudaMemcpyHostToDevice));
 #else
@@ -28,12 +31,18 @@ void copy_int32_cpu_to_gpu(int32_t * __restrict d_ptr,
 	GMS_CUDA_CHECK(cudaMemcpy((void*)&d_ptr[0],(void*)&h_ptr[0],n*sizeof(int32_t),cudaMemcpyHostToDevice));
 #endif
 	*ierr = 0;
+        return;
 Error:
-	cudaFree(d_ptr);
-
-	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
-					status);
+      
+	if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	   fatal_gpu_error(__PRETTY_FUNCTION__,
+		            status);
+        }
+        else{
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
 }
 
 
@@ -50,7 +59,7 @@ void copy_float_cpu_to_gpu(float * __restrict d_ptr,
 	   *ierr = -1;
 	   return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(float)));
 	GMS_CUDA_DEBUG_CHECK(cudaMemcpy((void*)&d_ptr[0],(void*)&h_ptr[0],n*sizeof(float),
@@ -61,11 +70,17 @@ void copy_float_cpu_to_gpu(float * __restrict d_ptr,
 					cudaMemcpyHostToDevice));
 #endif
 	*ierr = 0;
+        return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
-	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
+	if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	   fatal_gpu_error(__PRETTY_FUNCTION__,
 		            status);
+        }
+         else {
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
 }
 
 
@@ -83,7 +98,7 @@ void copy_double_cpu_to_gpu(double * __restrict d_ptr,
 	    *ierr = -1;
 	    return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(double)));
 	GMS_CUDA_DEBUG_CHECK(cudaMemcpy((void*)&d_ptr[0],(void*)&h_ptr[0],n*sizeof(double),
@@ -94,11 +109,51 @@ void copy_double_cpu_to_gpu(double * __restrict d_ptr,
 					cudaMemcpyHostToDevice));
 #endif
 	*ierr = 0;
+        return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
-	*ierr = -2;
+      if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	 fatal_gpu_error(__PRETTY_FUNCTION__,
+		            status);
+        }
+        else {
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
+}
+
+void copy_complex4_cpu_to_gpu(cuComplex * __restrict d_ptr,
+                              cuComplex * __restrict h_ptr,
+                              const size_t n,
+                              int32_t * ierr) {
+       if(*ierr <= 0) *ierr = 0;
+       if(NULL == h_ptr ||
+	   0 >= n     ) {
+	    *ierr = -1;
+	    return;
+	}
+	cudaError_t status;
+#if (GMS_CUDA_DEBUG_ON) == 1
+	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(cuComplex)));
+	GMS_CUDA_DEBUG_CHECK(cudaMemcpy((void*)&d_ptr[0],(void*)&h_ptr[0],n*sizeof(cuComplex),
+					cudaMemcpyHostToDevice));
+#else
+	GMS_CUDA_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(cuComplex)));
+	GMS_CUDA_CHECK(cudaMemcpy((void*)&d_ptr[0],(void*)&h_ptr[0],n*sizeof(cuComplex),
+					cudaMemcpyHostToDevice));
+#endif
+	*ierr = 0;
+        return;
+Error:
+        if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
 	fatal_gpu_error(__PRETTY_FUNCTION__,
 		            status);
+        }
+         else {
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
 }
 
 
@@ -116,18 +171,24 @@ void alloc_int32_gpu(int32_t * __restrict d_ptr,
 		*ierr = -1;
 		return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(int32_t)));
 #else
 	GMS_CUDA_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(int32_t)));
 #endif
 	*ierr = 0;
+        return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
-	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
+	if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	   fatal_gpu_error(__PRETTY_FUNCTION__,
 		            status);
+        }
+        else {
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
 }
 
 
@@ -145,18 +206,24 @@ void alloc_float_gpu(float * __restrict d_ptr,
 		*ierr = -1;
 		return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(float)));
 #else
 	GMS_CUDA_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(float)));
 #endif
 	*ierr = 0;
+        return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
-	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
+	if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	   fatal_gpu_error(__PRETTY_FUNCTION__,
 		            status);
+        }
+         else {
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
 }
 
 
@@ -172,18 +239,54 @@ void alloc_double_gpu(double * __restrict d_ptr,
 		*ierr = -1;
 		return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(double)));
 #else
 	GMS_CUDA_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(double)));
 #endif
 	*ierr = 0;
+        return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
-	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
+	
+        if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	  fatal_gpu_error(__PRETTY_FUNCTION__,
 		            status);
+          }
+          else {
+	      if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
+}
+
+void alloc_complex4_gpu(cuComplex * __restrict d_ptr,
+                        const size_t n,
+                        int32_t * ierr) {
+    if(*ierr < 0) *ierr = 0;
+    if(0 >= n ) {
+
+		*ierr = -1;
+		return;
+	}
+	cudaError_t status;
+#if (GMS_CUDA_DEBUG_ON) == 1
+	GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(cuComplex)));
+#else
+	GMS_CUDA_CHECK(cudaMalloc((void**)&d_ptr,n*sizeof(cuComplex)));
+#endif
+	*ierr = 0;
+        return;
+Error:
+       if(__builtin_expect(status==cudaErrorMemoryAllocation,0)){
+	  fatal_gpu_error(__PRETTY_FUNCTION__,
+		            status);
+        }
+        else {
+	   if(d_ptr) cudaFree(d_ptr);
+	      *ierr = -2;
+             return;
+       } 
 }
 
 
@@ -207,21 +310,22 @@ void copy_int32_gpu_to_cpu(const int32_t * __restrict d_ptr,
 		*ierr = -1;
 		return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(int32_t),
 					cudaMemcpyDeviceToHost));
-	*ierr = 0;
+	
 #else
 	GMS_CUDA_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(int32_t),
 					cudaMemcpyDeviceToHost));
-	*ierr = 0;
+	
 #endif
+        *ierr = 0;
+         return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
+	
 	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
-		            status);
+	return;
 }
 
 
@@ -236,21 +340,22 @@ void copy_float_gpu_to_cpu(const float * __restrict d_ptr,
 		*ierr = -1;
 		return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(float),
 					cudaMemcpyDeviceToHost));
-	*ierr = 0;
+	
 #else
 	GMS_CUDA_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(float),
 					cudaMemcpyDeviceToHost));
-	*ierr = 0;
+	
 #endif
+        *ierr = 0;
+        return;
 Error:
-	cudaFree((void*)&d_ptr[0]);
+	
 	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
-		            status);
+	return;
 }
 
 
@@ -265,22 +370,51 @@ void copy_double_gpu_to_cpu(const double * __restrict d_ptr,
 		*ierr = -1;
 		return;
 	}
-	cudaError status;
+	cudaError_t status;
 #if (GMS_CUDA_DEBUG_ON) == 1
 	GMS_CUDA_DEBUG_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(double),
 					cudaMemcpyDeviceToHost));
-	*ierr = 0;
+	
 #else
 	GMS_CUDA_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(double),
 			   cudaMemcpyDeviceToHost));
-	*ierr = 0;
+	
 #endif
+        *ierr = 0;
 Error:
-	cudaFree((void*)&d_ptr[0]);
+	
 	*ierr = -2;
-	fatal_gpu_error(__PRETTY_FUNCTION__,
-		            status);
+	 return;
 }
+
+
+void copy_complex4_gpu_to_cpu(cuComplex * __restrict d_ptr,
+                              cuComplex * __restrict h_ptr,
+                              const size_t n,
+                              int32_t ierr) {
+        if(*ierr < 0) *ierr = 0;
+	if(0 >= n) {
+
+		*ierr = -1;
+		return;
+	}
+	cudaError_t status;
+#if (GMS_CUDA_DEBUG_ON) == 1
+	GMS_CUDA_DEBUG_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(cuComplex),
+					cudaMemcpyDeviceToHost));
+	
+#else
+	GMS_CUDA_CHECK(cudaMemcpy(&h_ptr[0],&d_ptr[0],n*sizeof(cuComplex),
+			   cudaMemcpyDeviceToHost));
+	
+#endif
+         *ierr = 0;
+         return;
+Error:
+	
+	*ierr = -2;
+	 return;
+} 
 
 
 
