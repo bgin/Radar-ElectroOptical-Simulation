@@ -939,7 +939,221 @@ vnormalize(const float4 v) {
       return (v*inv);
 }
 
-// In-place
+__forceinline__
+__host__ __device__ float
+dot3f4(const float4 v1,
+       const float4 v2) {
+   const float4 a = make_float4(v1.x,v1.y,v1.z,0.0f);
+   const float4 b = make_float4(v2.x,v2.y,v2.z,0.0f);
+   return (dotp(a,b));
+}
+
+
+//*****************************************************//
+// Host/Device matrix 3x3 implementation
+//*****************************************************//
+
+const __host__ __device__ float4 zero = make_float4(0.0f,0.0f,0.0f,0.0f);
+typedef struct __align__(16) {
+   
+  float4 row3[3];
+} Mat3x3;
+
+__forceinline__
+__host__ __device__ void
+mat3x3_set_zero(Mat3x3 &mat) {
+     
+     mat.row3[0] = zero;
+     mat.row3[1] = zero;
+     mat.row3[2] = zero;
+}
+
+__forceinline__
+__host__ __device__ Mat3x3
+mat3x3_set_zero() {
+     Mat3x3 mat;
+     mat.row3[0] = zero;
+     mat.row3[1] = zero;
+     mat.row3[2] = zero;
+     return (mat);
+}
+
+__forceinline__ 
+__host__ __device__ void
+mat3x3_set_v1(const float4 a,
+              const float4 b,
+              const float4 c,
+              Mat3x3 &mat) {
+    
+     mat.row3[0] = a;
+     mat.row3[1] = b;
+     mat.row3[2] = c;
+}
+
+__forceinline__ 
+__host__ __device__ Mat3x3
+mat3x3_set_v1(const float4 a,
+              const float4 b,
+              const float4 c) {
+ 
+     Mat3x3 mat;
+     mat.row3[0] = a;
+     mat.row3[1] = b;
+     mat.row3[2] = c;
+     return (mat);
+}
+
+
+
+__forceinline__
+__host__ __device__ void
+mat3x3_identity(Mat3x3 &mat) {
+  
+     mat.row3[0] = make_float4(1.0f,0.0f,0.0f,0.0f);
+     mat.row3[1] = make_float4(0.0f,1.0f,0.0f,0.0f);
+     mat.row3[2] = make_float4(0.0f,0.0f,1.0f,0.0f);
+}
+
+__forceinline__
+__host__ __device__ Mat3x3
+mat3x3_identity() {
+    
+     Mat3x3 mat;
+     mat.row3[0] = make_float4(1.0f,0.0f,0.0f,0.0f);
+     mat.row3[1] = make_float4(0.0f,1.0f,0.0f,0.0f);
+     mat.row3[2] = make_float4(0.0f,0.0f,1.0f,0.0f);
+     return (mat);
+}
+
+__forceinline__
+__host__ __device__ void
+mat3x3_diagonal(const float x,
+                const float y,
+                const float z,
+                Mat3x3 &mat) {
+    
+    mat.row3[0] = make_float4(x,0.f,0.f,0.f);
+    mat.row3[1] = make_float4(0.f,y,0.f,0.f);
+    mat.row3[2] = make_float4(0.f,0.f,z,0.f);  
+}
+
+__forceinline__
+__host__ __device__ Mat3x3
+mat3x3_diagonal(const float x,
+                const float y,
+                const float z) {
+  
+    Mat3x3 mat;
+    mat.row3[0] = make_float4(x,0.f,0.f,0.f);
+    mat.row3[1] = make_float4(0.f,y,0.f,0.f);
+    mat.row3[2] = make_float4(0.f,0.f,z,0.f);  
+    return (mat);
+}
+
+__forceinline__
+__host__ __device__ void
+mat3x3_transpose(const Mat3x3 &in) {
+
+   Mat3x3 mat;
+   mat.row3[0] = make_float4(in.row3[0].x,in.row3[1].x,in.row3[2].x,0.0f);
+   mat.row3[1] = make_float4(in.row3[0].y,in.row3[1].y,in.row3[2].y,0.0f);
+   mat.row3[2] = make_float4(in.row3[0].z,in.row3[2].z,in.row3[2].z,0.0f);
+   return (mat);
+}
+
+__forceinline__
+__host__ __device__ Mat3x3
+mat3x3_transpose(Mat3x3 &mat,
+                 const Mat3x3 &in) {
+   
+   mat.row3[0] = make_float4(in.row3[0].x,in.row3[1].x,in.row3[2].x,0.0f);
+   mat.row3[1] = make_float4(in.row3[0].y,in.row3[1].y,in.row3[2].y,0.0f);
+   mat.row3[2] = make_float4(in.row3[0].z,in.row3[2].z,in.row3[2].z,0.0f);
+}
+
+__forceinline__
+__host__ __device__ void
+mat3x3_mul_mat3x3(Mat3x3 &mat,
+                  const Mat3x3 &m1,
+                  const Mat3x3 &m2) {
+
+    Mat3x3 tmp    = mat3x3_transpose(m2);
+    for(int i = 0; i != 3; ++i) {
+        mat.row3[i].x = dot3f4(m1.row3[i],tmp.row3[0]);
+        mat.row3[i].y = dot3f4(m1.row3[i],tmp.row3[1]);
+        mat.row3[i].z = dot3f4(m1.row3[i],tmp.row3[2]);
+        mat.row3[i].w = 0.0f;
+    }
+}
+
+__forceinline__
+__host__ __device__ Mat3x3
+mat3x3_mul_mat3x3(const Mat3x3 &m1,
+                  const Mat3x3 &m2) {
+     
+    Mat3x3 mat;
+    Mat3x3 tmp    = mat3x3_transpose(m2);
+    for(int i = 0; i != 3; ++i) {
+        mat.row3[i].x = dot3f4(m1.row3[i],tmp.row3[0]);
+        mat.row3[i].y = dot3f4(m1.row3[i],tmp.row3[1]);
+        mat.row3[i].z = dot3f4(m1.row3[i],tmp.row3[2]);
+        mat.row3[i].w = 0.0f;
+    }
+   return (mat);
+}
+
+__forceinline__
+__host__ __device__ void
+mat3x3_mul_float4(float4 &v4,
+                  const Mat3x3 &in,
+                  const float4 v) {
+   
+    v4.x = dot3f4(in.row3[0],v);
+    v4.y = dot3f4(in.row3[1],v);
+    v4.z = dot3f4(in.row3[2],v);
+    v4.w = 0.0f;
+}
+
+__forceinline__
+__host__ __device__ float4
+mat3x3_mul_float4(const Mat3x3 &in,
+                  const float4 v) {
+   
+    float4 v4;
+    v4.x = dot3f4(in.row3[0],v);
+    v4.y = dot3f4(in.row3[1],v);
+    v4.z = dot3f4(in.row3[2],v);
+    v4.w = 0.0f;
+    return (v4);
+}
+
+__forceinline__
+__host__ __device__ void
+mat3x3_mul_float(Mat3x3 &mat,
+                 const Mat3x3 &in,
+                 const float s) {
+    
+    mat.row3[0] = s*in.row3[0];
+    mat.row3[1] = s*in.row3[1];
+    mat.row3[2] = s*in.row3[2];
+}
+
+__forceinline__
+__host__ __device__ Mat3x3
+mat3x3_mul_float(const Mat3x3 &in,
+                 const float s) {
+
+     Mat3x3 mat;
+     mat.row3[0] = s*in.row3[0];
+     mat.row3[1] = s*in.row3[1];
+     mat.row3[2] = s*in.row3[2];
+     return (mat);
+}
+
+
+
+
+
 
 
 
@@ -956,14 +1170,10 @@ vnormalize(const float4 v) {
 
 #define BLOCKSIZE 256
 
-/*******************/
-/* iDivUp FUNCTION */
-/*******************/
+
 int iDivUp(int a, int b){ return ((a % b) != 0) ? (a / b + 1) : (a / b); }
 
-/********************/
-/* CUDA ERROR CHECK */
-/********************/
+
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
 {
@@ -974,9 +1184,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
    }
 }
 
-/********************/
-/* ADD_FLOAT KERNEL */
-/********************/
+
 __global__ void add_float(float *d_a, float *d_b, float *d_c, unsigned int N) {
 
     const int tid = 4 * threadIdx.x + blockIdx.x * (4 * blockDim.x);
@@ -1016,9 +1224,7 @@ __global__ void add_float(float *d_a, float *d_b, float *d_c, unsigned int N) {
 
 }
 
-/*********************/
-/* ADD_FLOAT2 KERNEL */
-/*********************/
+
 __global__ void add_float2(float2 *d_a, float2 *d_b, float2 *d_c, unsigned int N) {
 
     const int tid = 2 * threadIdx.x + blockIdx.x * (2 * blockDim.x);
@@ -1046,9 +1252,7 @@ __global__ void add_float2(float2 *d_a, float2 *d_b, float2 *d_c, unsigned int N
 
 }
 
-/*********************/
-/* ADD_FLOAT4 KERNEL */
-/*********************/
+
 __global__ void add_float4(float4 *d_a, float4 *d_b, float4 *d_c, unsigned int N) {
 
     const int tid = 1 * threadIdx.x + blockIdx.x * (1 * blockDim.x);
@@ -1070,9 +1274,7 @@ __global__ void add_float4(float4 *d_a, float4 *d_b, float4 *d_c, unsigned int N
 
 }
 
-/********/
-/* MAIN */
-/********/
+
 int main() {
 
     const int N = 4*10000000;
