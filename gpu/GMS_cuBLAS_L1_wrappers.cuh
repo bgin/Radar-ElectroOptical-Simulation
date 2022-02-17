@@ -107,6 +107,50 @@ cuBLAS_Sgemm_iface(cublasOperation_t,
                                        __ATTR_ALIGN__(32);
 
 
+void
+cuBLAS_Cgemm_iface(cublasOperation_t,
+                   cublasOperation_t,
+                   const int32_t,
+                   const int32_t,
+                   const int32_t,
+                   const cuComplex,
+                   const cuComplex * __restrict,
+                   const int32_t,
+                   const cuComplex * __restrict,
+                   const int32_t,
+                   cuComplex,
+                   cuComplex * __restrict,
+                   const int32_t,
+                   cudaError_t * __restrict,
+                   int32_t * __restrict,
+                   uint64_t * __restrict) 
+                                       __ATTR_HOT__
+                                       __ATTR_ALIGN__(32);
+
+
+
+void
+cuBLAS_Cgemm3m_iface(cublasOperation_t,
+                   cublasOperation_t,
+                   const int32_t,
+                   const int32_t,
+                   const int32_t,
+                   const cuComplex,
+                   const cuComplex * __restrict,
+                   const int32_t,
+                   const cuComplex * __restrict,
+                   const int32_t,
+                   cuComplex,
+                   cuComplex * __restrict,
+                   const int32_t,
+                   cudaError_t * __restrict,
+                   int32_t * __restrict,
+                   uint64_t * __restrict) 
+                                       __ATTR_HOT__
+                                       __ATTR_ALIGN__(32);
+
+
+
 
 
 
