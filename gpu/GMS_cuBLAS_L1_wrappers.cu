@@ -36,10 +36,12 @@ cuBLAS_Isamax_iface(const float * __restrict h_ptr,
     cublasHandle_t handle    = NULL;
     cudaStream_t   stream    = NULL;
     cudaError_t status;
+    int32_t merr = 0;
     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-    alloc_float_gpu(&d_ptr[0],(size_t)n,&ierr);
+    alloc_float_gpu(&d_ptr[0],(size_t)n,&merr);
+    if(merr != 0) goto Error;
     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptr,h_ptr,sizeof(float)*((size_t)n),
                          cudaMemcpyHostToDevice,stream));
 #if (PROFILE_HOST_TO_DEVICE) == 1
@@ -65,7 +67,7 @@ cuBLAS_Isamax_iface(const float * __restrict h_ptr,
       return;
       Error: 
             {
-                cudaFree(d_ptr);
+                if(d_ptr) cudaFree(d_ptr);
                 cublasDestroy(handle);
                 cudaStreamDestroy(stream);  
                 ierr = -2;
@@ -100,10 +102,12 @@ cuBLAS_Icamax_iface(const cuComplex * __restrict h_ptr,
     cublasHandle_t handle    = NULL;
     cudaStream_t   stream    = NULL;
     cudaError_t status;
+    int32_t merr = 0;
     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-    alloc_complex4_gpu(&d_ptr[0],(size_t)n,&ierr);
+    alloc_complex4_gpu(&d_ptr[0],(size_t)n,&merr);
+    if(merr != 0) goto Error;
     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptr,h_ptr,sizeof(cuComplex)*((size_t)n),
                          cudaMemcpyHostToDevice,stream));
 #if (PROFILE_HOST_TO_DEVICE) == 1
@@ -129,7 +133,7 @@ cuBLAS_Icamax_iface(const cuComplex * __restrict h_ptr,
        return;
       Error: 
             {
-                cudaFree(d_ptr);
+                if(d_ptr) cudaFree(d_ptr);
                 cublasDestroy(handle);
                 cudaStreamDestroy(stream);  
                 ierr = -2;
@@ -165,10 +169,12 @@ cuBLAS_Isamin_iface(const float * __restrict h_ptr,
     cublasHandle_t handle    = NULL;
     cudaStream_t   stream    = NULL;
     cudaError_t_t status;
+    int32_t merr = 0;
     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-    alloc_float_gpu(&d_ptr[0],(size_t)n,&ierr);
+    alloc_float_gpu(&d_ptr[0],(size_t)n,&merr);
+    if(merr != 0) goto Error;
     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptr,h_ptr,sizeof(float)*((size_t)n),
                          cudaMemcpyHostToDevice,stream));
 #if (PROFILE_HOST_TO_DEVICE) == 1
@@ -194,7 +200,7 @@ cuBLAS_Isamin_iface(const float * __restrict h_ptr,
       return;
       Error: 
             {
-                cudaFree(d_ptr);
+                if(d_ptr) cudaFree(d_ptr);
                 cublasDestroy(handle);
                 cudaStreamDestroy(stream);  
                 ierr = -2;
@@ -230,10 +236,12 @@ cuBLAS_Icamin_iface(const cuComplex * __restrict h_ptr,
     cublasHandle_t handle    = NULL;
     cudaStream_t   stream    = NULL;
     cudaError_t status;
+    int32_t merr = 0;
     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-    alloc_complex4_gpu(&d_ptr[0],(size_t)n,&ierr);
+    alloc_complex4_gpu(&d_ptr[0],(size_t)n,&merr);
+    if(merr != 0) goto Error;
     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptr,h_ptr,sizeof(cuComplex)*((size_t)n),
                          cudaMemcpyHostToDevice,stream));
 #if (PROFILE_HOST_TO_DEVICE) == 1
@@ -259,7 +267,7 @@ cuBLAS_Icamin_iface(const cuComplex * __restrict h_ptr,
        return;
       Error: 
             {
-                cudaFree(d_ptr);
+                if(d_ptr) cudaFree(d_ptr);
                 cublasDestroy(handle);
                 cudaStreamDestroy(stream);  
                 ierr = -2;
@@ -295,10 +303,12 @@ cuBLAS_Sasum_iface(const float * __restrict h_ptr,
     cublasHandle_t handle    = NULL;
     cudaStream_t   stream    = NULL;
     cudaError_t status;
+    int32_t merr = 0;
     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-    alloc_float_gpu(&d_ptr[0],(size_t)n,&ierr);
+    alloc_float_gpu(&d_ptr[0],(size_t)n,&merr);
+    if(merr != 0) goto Error;
     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptr,h_ptr,sizeof(float)*((size_t)n),
                          cudaMemcpyHostToDevice,stream));
 #if (PROFILE_HOST_TO_DEVICE) == 1
@@ -324,7 +334,7 @@ cuBLAS_Sasum_iface(const float * __restrict h_ptr,
       return;
       Error: 
             {
-                cudaFree(d_ptr);
+                if(d_ptr) cudaFree(d_ptr);
                 cublasDestroy(handle);
                 cudaStreamDestroy(stream);  
                 ierr = -2;
@@ -360,10 +370,12 @@ cuBLAS_Scasum_iface(const cuComplex * __restrict h_ptr,
     cublasHandle_t handle    = NULL;
     cudaStream_t   stream    = NULL;
     cudaError_t_t status;
+    int32_t merr = 0;
     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-    alloc_complex4_gpu(&d_ptr[0],(size_t)n,&ierr);
+    alloc_complex4_gpu(&d_ptr[0],(size_t)n,&merr);
+    if(merr != 0) goto Error;
     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptr,h_ptr,sizeof(cuComplex)*((size_t)n),
                          cudaMemcpyHostToDevice,stream));
 #if (PROFILE_HOST_TO_DEVICE) == 1
@@ -389,7 +401,7 @@ cuBLAS_Scasum_iface(const cuComplex * __restrict h_ptr,
       return;
       Error: 
             {
-                cudaFree(d_ptr));
+                if(d_ptr) cudaFree(d_ptr));
                 cublasDestroy(handle);
                 cudaStreamDestroy(stream);  
                 ierr = -2;
@@ -438,12 +450,16 @@ cuBLAS_Sgemm_iface(cublasOperation_t transa,
      float alph = alpha;
      float bet  = beta;
      cudaError_t_t status;
+     int32_t merr = 0;
      GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
      GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
      GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
-     alloc_float_gpu(d_ptrA,(size_t)(m*k),&ierr);
-     alloc_float_gpu(d_ptrB,(size_t)(n*k),&ierr);
-     alloc_float_gpu(d_ptrC,(size_t)(m*n),&ierr);
+     alloc_float_gpu(d_ptrA,(size_t)(m*k),&merr);
+     if(merr != 0) goto Error;
+     alloc_float_gpu(d_ptrB,(size_t)(n*k),&merr);
+     if(merr != 0) goto Error;
+     alloc_float_gpu(d_ptrC,(size_t)(m*n),&merr);
+     if(merr != 0) goto Error;
      GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrA,A,sizeof(float)*(m*k),
                           cudaMemcpyHostToDevice,stream));
      GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrB,B,sizeof(float)*(n*k),
@@ -475,9 +491,9 @@ cuBLAS_Sgemm_iface(cublasOperation_t transa,
       *err  = status;
       return; 
 Error:   {  
-           cudaFree(d_ptrA);
-           cudaFree(d_ptrB);
-           cudaFree(d_ptrC);
+           if(d_ptrA) cudaFree(d_ptrA);
+           if(d_ptrB) cudaFree(d_ptrB);
+           if(d_ptrC) cudaFree(d_ptrC);
            cublasDestroy(handle);
            cudaStreamDestroy(stream); 
            ierr = -2;
@@ -485,6 +501,194 @@ Error:   {
            return; 
     }
 }
- 
+
+
+void
+cuBLAS_Cgemm_iface(cublasOperation_t transa,
+                   cublasOperation_t transb,
+                   const int32_t m,
+                   const int32_t n,
+                   const int32_t k,
+                   const cuComplex alpha,
+                   const cuComplex * __restrict A,
+                   const int32_t LDA,
+                   const cuComplex * __restrict B,
+                   const int32_t LDB,
+                   cuComplex beta,
+                   cuComplex * __restrict C,
+                   const int32_t LDC,
+                   cudaError_t * __restrict err,
+                   int32_t * __restrict ierr,
+                   uint64_t * __restrict tsc_delta) {
+
+   if(__builtin_expect(n<=1,0)) {
+       *ierr = -1;
+       return;
+      }
+    *err    = 0;
+    *ierr   = 0;
+     
+#if (PROFILE_HOST_TO_DEVICE) == 1
+     volatile uint64_t dummy1;
+     volatile uint32_t dummy2;
+     volatile uint64_t tsc_start,tsc_end;
+     volatile uint32_t coreid;
+#endif
+     cublasHandle_t handle       = NULL;
+     cudaStream_t   stream       = NULL;
+     cuComplex * __restrict   d_ptrA = NULL;
+     cuComplex * __restrict   d_ptrB = NULL;
+     cuComplex * __restrict   d_ptrC = NULL;
+     cuComplex alph = alpha;
+     cuComplex bet  = beta;
+     cudaError_t_t status;
+     int32_t merr = 0;
+     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
+     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
+     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
+     alloc_complex4_gpu(d_ptrA,(size_t)(m*k),&merr);
+     if(merr != 0) goto Error;
+     alloc_complex4_gpu(d_ptrB,(size_t)(n*k),&merr);
+     if(merr != 0) goto Error;
+     alloc_complex4_gpu(d_ptrC,(size_t)(m*n),&merr);
+     if(merr != 0) goto Error;
+     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrA,A,sizeof(cuComplex)*(m*k),
+                          cudaMemcpyHostToDevice,stream));
+     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrB,B,sizeof(cuComplex)*(n*k),
+                          cudaMemcpyHostToDevice,stream));
+#if (PROFILE_HOST_TO_DEVICE) == 1
+      dummy1    = __rdtscp(&dummy2);
+      __asm__("lfence");
+      tsc_start = __rdtscp(&coreid);
+      __asm__("lfence");
+#endif
+      GMS_CUBLAS_STAT_CHECK(cublasCgemm(handle,transa,transb,m,n,k,&alph,
+                                        d_ptrA,LDA,d_ptrB,LDB,&bet,d_ptrC,LDC));
+#if (PROFILE_HOST_TO_DEVICE) == 1
+      __asm__("lfence");
+      tsc_end     = __rdtscp(&coreid);
+      *tsc_delta  = tsc_end-tsc_start-rdtscp_cost;
+      __asm__("lfence");
+      printf("cublasCgemm executed in: %llu reference cycles\n",*tsc_delta);
+#endif  
+      GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrC,d_C,sizeof(cuComplex)*(m*n),
+                                           cudaMemcpyDeviceToHost,stream));
+      GMS_CUDA_DEBUG_CHECK(cudaStreamSynchronize(stream));
+      GMS_CUDA_DEBUG_CHECK(cudaFree(d_ptrA));
+      GMS_CUDA_DEBUG_CHECK(cudaFree(d_ptrB));
+      GMS_CUDA_DEBUG_CHECK(cudaFree(d_ptrC));
+      GMS_CUBLAS_STAT_CHECK(cublasDestroy(handle));
+      GMS_CUDA_DEBUG_CHECK(cudaStreamDestroy(stream));
+      *ierr = 0;
+      *err  = status;
+      return; 
+Error:   {  
+           if(d_ptrA) cudaFree(d_ptrA);
+           if(d_ptrB) cudaFree(d_ptrB);
+           if(d_ptrC) cudaFree(d_ptrC);
+           cublasDestroy(handle);
+           cudaStreamDestroy(stream); 
+           ierr = -2;
+           *err = status;   
+           return; 
+    }  
+} 
+
+
+
+void
+cuBLAS_Cgemm3m_iface(cublasOperation_t transa,
+                   cublasOperation_t transb,
+                   const int32_t m,
+                   const int32_t n,
+                   const int32_t k,
+                   const cuComplex alpha,
+                   const cuComplex * __restrict A,
+                   const int32_t LDA,
+                   const cuComplex * __restrict B,
+                   const int32_t LDB,
+                   cuComplex beta,
+                   cuComplex * __restrict C,
+                   const int32_t LDC,
+                   cudaError_t * __restrict err,
+                   int32_t * __restrict ierr,
+                   uint64_t * __restrict tsc_delta) {
+
+   if(__builtin_expect(n<=1,0)) {
+       *ierr = -1;
+       return;
+      }
+    *err    = 0;
+    *ierr   = 0;
+     
+#if (PROFILE_HOST_TO_DEVICE) == 1
+     volatile uint64_t dummy1;
+     volatile uint32_t dummy2;
+     volatile uint64_t tsc_start,tsc_end;
+     volatile uint32_t coreid;
+#endif
+     cublasHandle_t handle       = NULL;
+     cudaStream_t   stream       = NULL;
+     cuComplex * __restrict   d_ptrA = NULL;
+     cuComplex * __restrict   d_ptrB = NULL;
+     cuComplex * __restrict   d_ptrC = NULL;
+     cuComplex alph = alpha;
+     cuComplex bet  = beta;
+     cudaError_t_t status;
+     int32_t merr = 0;
+     GMS_CUBLAS_STAT_CHECK(cublasCreate(&handle));
+     GMS_CUDA_DEBUG_CHECK(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
+     GMS_CUBLAS_STAT_CHECK(cublasSetStream(handle,stream));
+     alloc_complex4_gpu(d_ptrA,(size_t)(m*k),&merr);
+     if(merr != 0) goto Error;
+     alloc_complex4_gpu(d_ptrB,(size_t)(n*k),&merr);
+     if(merr != 0) goto Error;
+     alloc_complex4_gpu(d_ptrC,(size_t)(m*n),&merr);
+     if(merr != 0) goto Error;
+     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrA,A,sizeof(cuComplex)*(m*k),
+                          cudaMemcpyHostToDevice,stream));
+     GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrB,B,sizeof(cuComplex)*(n*k),
+                          cudaMemcpyHostToDevice,stream));
+#if (PROFILE_HOST_TO_DEVICE) == 1
+      dummy1    = __rdtscp(&dummy2);
+      __asm__("lfence");
+      tsc_start = __rdtscp(&coreid);
+      __asm__("lfence");
+#endif
+      GMS_CUBLAS_STAT_CHECK(cublasCgemm3m(handle,transa,transb,m,n,k,&alph,
+                                        d_ptrA,LDA,d_ptrB,LDB,&bet,d_ptrC,LDC));
+#if (PROFILE_HOST_TO_DEVICE) == 1
+      __asm__("lfence");
+      tsc_end     = __rdtscp(&coreid);
+      *tsc_delta  = tsc_end-tsc_start-rdtscp_cost;
+      __asm__("lfence");
+      printf("cublasCgemm3m executed in: %llu reference cycles\n",*tsc_delta);
+#endif  
+      GMS_CUDA_DEBUG_CHECK(cudaMemcpyAsync(d_ptrC,d_C,sizeof(cuComplex)*(m*n),
+                                           cudaMemcpyDeviceToHost,stream));
+      GMS_CUDA_DEBUG_CHECK(cudaStreamSynchronize(stream));
+      GMS_CUDA_DEBUG_CHECK(cudaFree(d_ptrA));
+      GMS_CUDA_DEBUG_CHECK(cudaFree(d_ptrB));
+      GMS_CUDA_DEBUG_CHECK(cudaFree(d_ptrC));
+      GMS_CUBLAS_STAT_CHECK(cublasDestroy(handle));
+      GMS_CUDA_DEBUG_CHECK(cudaStreamDestroy(stream));
+      *ierr = 0;
+      *err  = status;
+      return; 
+Error:   {  
+           if(d_ptrA) cudaFree(d_ptrA);
+           if(d_ptrB) cudaFree(d_ptrB);
+           if(d_ptrC) cudaFree(d_ptrC);
+           cublasDestroy(handle);
+           cudaStreamDestroy(stream); 
+           ierr = -2;
+           *err = status;   
+           return; 
+    }  
+} 
+
+
+
+  
 
 
