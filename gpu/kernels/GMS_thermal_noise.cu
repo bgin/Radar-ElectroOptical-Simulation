@@ -6,8 +6,11 @@
 #include "GMS_thermal_noise.cuh"
 #include "GMS_jamming_common.cuh"
 #if (SOFTWARE_PREFETCH) == 1
-#include "GMS_cuda_soft_prefetch.cuh"
+#include "GMS_gpu_helpers.cuh"
 #endif
+
+
+
 
 __global__ void
 therm_noise_range_kernel(  const float Frdr,
@@ -30,9 +33,9 @@ therm_noise_range_kernel(  const float Frdr,
 			   const float * __restrict d_Lt,
 			   const float * __restrict d_La,
 			   float * __restrict d_Rm,
-			   const int nth) {
+			   const uint32_t nth) {
 
-     int tid = blockDim.x*blockIdx.x+threadIdx.x;
+     uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
      if(tid < nth) {
 #if (SOFTWARE_PREFETCH) == 1
       __prefetch_global_l1(d_Pt);
