@@ -8,11 +8,11 @@
      cuBLAS Level-1 wrappers 
 */
 
-#include <cstdint>
-
-#include "GMS_config.h"
+#include <stdint>
 
 
+
+extern "C"
 void
 cuBLAS_Isamax_iface(const float * __restrict,
                     const int32_t,
@@ -21,9 +21,9 @@ cuBLAS_Isamax_iface(const float * __restrict,
                     cudaError_t * __restrict,
                     int32_t * __restrict,
                     uint64_t * __restrict) 
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
-
+                                        __attribute__((hot))
+                                        __attribute__((aligned(32)));
+extern "C"
 void
 cuBLAS_Icamax_iface(const cuComplex * __restrict,
                     const int32_t,
@@ -32,11 +32,11 @@ cuBLAS_Icamax_iface(const cuComplex * __restrict,
                     cudaError_t * __restrict,
                     int32_t * __restrict,
                     uint64_t * __restrict)  
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
+                                        __attribute__((hot))
+                                        __attribute__((aligned(32)));
 
 
-
+extern "C"
 void
 cuBLAS_Isamin_iface(const float * __restrict,
                     const int32_t,
@@ -45,10 +45,10 @@ cuBLAS_Isamin_iface(const float * __restrict,
                     cudaError_t * __restrict,
                     int32_t * __restrict,
                     uint64_t * __restrict) 
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
+                                        __attribute__((hot))
+                                        __attribute__((aligned(32)));
 
-
+extern "C"
 void
 cuBLAS_Icamin_iface(const cuComplex * __restrict,
                     const int32_t,
@@ -57,10 +57,10 @@ cuBLAS_Icamin_iface(const cuComplex * __restrict,
                     cudaError_t * __restrict,
                     int32_t * __restrict,
                     uint64_t * __restrict)  
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
+                                        __attribute__((hot))
+                                        __attribute__((aligned(32)));
 
-
+extern "C"
 void
 cuBLAS_Sasum_iface(const float * __restrict,
                    const int32_t,
@@ -69,11 +69,11 @@ cuBLAS_Sasum_iface(const float * __restrict,
                    cudaError_t * __restrict,
                    int32_t * __restrict,
                    uint64_t * __restrict) 
-                                        __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
+                                        __attribute__((hot))
+                                        __attribute__((aligned(32)));
 
 
-
+extern "C"
 void
 cuBLAS_Scasum_iface(const cuComplex * __restrict,
                    const int32_t,
@@ -82,74 +82,8 @@ cuBLAS_Scasum_iface(const cuComplex * __restrict,
                    cudaError_t * __restrict,
                    int32_t * __restrict,
                    uint64_t * __restrict) 
-                                        __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
-
-
-void
-cuBLAS_Sgemm_iface(cublasOperation_t,
-                   cublasOperation_t,
-                   const int32_t,
-                   const int32_t,
-                   const int32_t,
-                   const float,
-                   const float * __restrict,
-                   const int32_t,
-                   const float * __restrict,
-                   const int32_t,
-                   float,
-                   float * __restrict,
-                   const int32_t,
-                   cudaError_t * __restrict,
-                   int32_t * __restrict,
-                   uint64_t * __restrict) 
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
-
-
-void
-cuBLAS_Cgemm_iface(cublasOperation_t,
-                   cublasOperation_t,
-                   const int32_t,
-                   const int32_t,
-                   const int32_t,
-                   const cuComplex,
-                   const cuComplex * __restrict,
-                   const int32_t,
-                   const cuComplex * __restrict,
-                   const int32_t,
-                   cuComplex,
-                   cuComplex * __restrict,
-                   const int32_t,
-                   cudaError_t * __restrict,
-                   int32_t * __restrict,
-                   uint64_t * __restrict) 
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
-
-
-
-void
-cuBLAS_Cgemm3m_iface(cublasOperation_t,
-                   cublasOperation_t,
-                   const int32_t,
-                   const int32_t,
-                   const int32_t,
-                   const cuComplex,
-                   const cuComplex * __restrict,
-                   const int32_t,
-                   const cuComplex * __restrict,
-                   const int32_t,
-                   cuComplex,
-                   cuComplex * __restrict,
-                   const int32_t,
-                   cudaError_t * __restrict,
-                   int32_t * __restrict,
-                   uint64_t * __restrict) 
-                                       __ATTR_HOT__
-                                       __ATTR_ALIGN__(32);
-
-
+                                        __attribute__((hot))
+                                        __attribute__((aligned(32)));
 
 
 
