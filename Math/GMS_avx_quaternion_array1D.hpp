@@ -7,7 +7,7 @@
 namespace file_info {
 
 const unsigned int gGMS_AVX_QUATERNION_ARRAY1D_MAJOR = 1U;
-const unsigned int gGMS_AVX_QUATERNION_ARRAY1D_MINOR = 0U;
+const unsigned int gGMS_AVX_QUATERNION_ARRAY1D_MINOR = 1U;
 const unsigned int gGMS_AVX_QUATERNION_ARRAY1D_MICRO = 0U;
 const unsigned int gGMS_AVX_QUATERNION_ARRAY1D_FULLVER =
    1000U*gGMS_AVX_QUATERNION_ARRAY1D_MAJOR+
@@ -93,27 +93,27 @@ namespace gms {
 {
                 #pragma omp section
 		{
-                        m_x = gms_edmmap_2MiB(ullsize,
+		  m_x = (double*)gms_mmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+					       -1,0);
 		}
 		#pragma omp section
 		{
-			m_y = gms_edmmap_2MiB(ullsize,
+		  m_y = (double*)gms_mmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+					       -1,0);
 		}
 		#pragma omp section
 		{
-			m_z = gms_edmmap_2MiB(ullsize,
+		  m_z = (double*)gms_mmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+					       -1,0);
 		}
 		#pragma omp section
 		{
-			m_w = gms_edmmap_2MiB(ullsize,
+		  m_w = (double*)gms_mmap_2MiB(ullsize,
 			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+					       -1,0);
 		}
 }
 #else
@@ -121,18 +121,18 @@ namespace gms {
 {
                 #pragma omp section
 		{
-                        m_x = gms_dmalloca(ullsize,align32B);
+		  m_x = (double*)gms_mm_malloc(ullsize,align32B);
 		}
 		#pragma omp section
 		{
-			m_y = gms_dmalloca(ullsize,align32B);
+		  m_y = (double*)gms_mm_malloc(ullsize,align32B);
 		}
 		#pragma omp section
-			m_z = gms_dmalloca(ullsize,align32B);
+		m_z = (double*)gms_mm_malloc(ullsize,align32B);
 		}
 		#pragma omp section
 		{
-			m_w = gms_dmalloca(ullsize,align32B);
+		  m_w = (double*)gms_mm_malloc(ullsize,align32B);
 		}
 }
 #endif
@@ -165,27 +165,27 @@ namespace gms {
 {
                     #pragma omp section
 		    {
-                        m_x = gms_edmmap_2MiB(ullsize,
-			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+		      m_x = (double*)gms_mmap_2MiB(ullsize,
+			                    PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
+					    -1,0);
 		    }
 		    #pragma omp section
 		    {
-			m_y = gms_edmmap_2MiB(ullsize,
-			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+		      m_y = (double*)gms_mmap_2MiB(ullsize,
+			                    PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
+					    -1,0);
 		    }
 		    #pragma omp section
 		    {
-			m_z = gms_edmmap_2MiB(ullsize,
-			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+		      m_z = (double*)gms_mmap_2MiB(ullsize,
+			                    PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
+					    -1,0);
 		    }
 		    #pragma omp section
 		    {
-			m_w = gms_edmmap_2MiB(ullsize,
-			                      PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
-					      -1,0,lockm);
+		      m_w = (double*)gms_mmap_2MiB(ullsize,
+			                    PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
+					    -1,0);
 		    }
 }
 #else
@@ -193,19 +193,19 @@ namespace gms {
 {
                   #pragma omp section
 		  {
-                        m_x = gms_dmalloca(ullsize,align32B);
+		    m_x = (double*)gms_mm_malloc(ullsize,align32B);
 		  }
 		  #pragma omp section
 		  {
-			m_y = gms_dmalloca(ullsize,align32B);
+		    m_y = (double*)gms_mm_malloc(ullsize,align32B);
 		  }
 		  #pragma omp section
 		  {
-			m_z = gms_dmalloca(ullsize,align32B);
+		    m_z = (double*)gms_mm_malloc(ullsize,align32B);
 		  }
 		  #pragma omp section
 		  {
-			m_w = gms_dmalloca(ullsize,align32B);
+		    m_w = (double*)gms_mm_malloc(ullsize,align32B);
 		  }
 }
 #endif
@@ -291,20 +291,28 @@ namespace gms {
 	       void AVXQuat_Add_AVXQuat(AVXQuatArray1D &c,
 	                                const AVXQuatArray1D &b,
 					const AVXQuatArray1D &a) {
-		      if(b.m_size != a.m_size) { return;}
+					
+		      if(__builtin_expect(b.m_size != a.m_size,0) ||
+		         __builtin_expect(c.m_size != a.m_size,0)) { return;}
                       int32_t i,last_i;
 		      last_i = 0;
+		      const int32_t size = c.m_size;
 #if defined (__ICC) || defined (__INTEL_COMPILER)
 #pragma code_align(32)
 #endif
 #pragma omp parallel for schedule(static,32) default(none) private(i) \
-                      lastprivate(last_i) shared(c.m_x,x.m_y,x.m_z,c.m_w, \
-		            b.m_x,b.m_y,b.m_z,b.m_w, \
-			    a.m_x,a.m_y,a.m_z,a.m_w, \
-			    c.m_size) if(c.m_size >= 5000)
-                    for(i = 0; i != ROUND_TO_FOUR(c.m_size,4); i += 16) {
+                      lastprivate(last_i) shared(c,b,a,size) if(size>=5000)
+		      for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
 
 		          last_i = i;
+			  _mm_prefetch((const char*)&b.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_w[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
 			  _mm256_store_pd(&c.m_x[i+0],
 			                  _mm256_add_pd(_mm256_load_pd(&b.m_x[i+0]),
 					                  _mm256_load_pd(&a.m_x[i+0])));
@@ -358,13 +366,854 @@ namespace gms {
 #if defined (__ICC) || defined (__INTEL_COMPILER)
 #pragma loop_count min(1),avg(2),max(3)
 #endif
-                      for(; last_i != c.m_size; ++last_i) {
+                      for(; last_i != size; ++last_i) {
                            c.m_x[last_i] = b.m_x[last_i]+a.m_x[last_i];
 			   c.m_y[last_i] = b.m_y[last_i]+a.m_y[last_i];
 			   c.m_z[last_i] = b.m_z[last_i]+a.m_z[last_i];
 			   c.m_w[last_i] = b.m_w[last_i]+a.m_w[last_i];
 		      }
 	       }
+
+
+               __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Add_AVXQuat(AVXQuatArray1D &c,
+	                                AVXQuatArray1D &b,
+	                                const double * __restrict __ATTR_ALIGN__(32) re,
+					const double * __restrict __ATTR_ALIGN__(32) im,
+					const int32_t n) {
+
+		     if(__builtin_expect(c.m_size != n,0) ||
+		        __builtin_expect(c.m_size != b.m_size,0)) { return;}
+                        int32_t i,last_i;
+		        last_i = 0;
+			const int32_t size = c.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i) \
+                      lastprivate(last_i) shared(c,b,re,im,size) if(size>=5000)
+                     for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                         last_i = i;
+			 _mm_prefetch((const char*)&b.m_x[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&b.m_y[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&b.m_z[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&b.m_w[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+			 _mm256_store_pd(&c.m_x[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_x[i+0]),
+					                   _mm256_load_pd(&re[i+0])));
+			 _mm256_store_pd(&c.m_y[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_y[i+0]),
+					                   _mm256_load_pd(&im[i+0])));
+			 _mm256_store_pd(&c.m_z[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_z[i+0]),
+					                   _mm256_load_pd(&re[i+0])));
+			 _mm256_store_pd(&c.m_w[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_w[i+0]),
+					                   _mm256_load_pd(&im[i+0])));
+			 _mm256_store_pd(&c.m_x[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_x[i+4]),
+					                   _mm256_load_pd(&re[i+4])));
+			 _mm256_store_pd(&c.m_y[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_y[i+4]),
+					                   _mm256_load_pd(&im[i+4])));
+			 _mm256_store_pd(&c.m_z[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_z[i+4]),
+					                   _mm256_load_pd(&re[i+4])));
+			 _mm256_store_pd(&c.m_w[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_w[i+4]),
+					                   _mm256_load_pd(&im[i+4])));
+			 _mm256_store_pd(&c.m_x[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_x[i+8]),
+					                   _mm256_load_pd(&re[i+8])));
+			 _mm256_store_pd(&c.m_y[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_y[i+8]),
+					                   _mm256_load_pd(&im[i+8])));
+			 _mm256_store_pd(&c.m_z[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_z[i+8]),
+					                   _mm256_load_pd(&re[i+8])));
+			 _mm256_store_pd(&c.m_w[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_w[i+8]),
+					                   _mm256_load_pd(&im[i+8])));
+			 _mm256_store_pd(&c.m_x[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_x[i+12]),
+					                   _mm256_load_pd(&re[i+12])));
+			 _mm256_store_pd(&c.m_y[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_y[i+12]),
+					                   _mm256_load_pd(&im[i+12])));
+			 _mm256_store_pd(&c.m_z[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_z[i+12]),
+					                   _mm256_load_pd(&re[i+12])));
+			 _mm256_store_pd(&c.m_w[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&b.m_w[i+12]),
+					                   _mm256_load_pd(&im[i+12])));
+			 
+		     }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                          c.m_x[last_i] = b.m_x[last_i]+re[last_i];
+			  c.m_y[last_i] = b.m_y[last_i]+im[last_i];
+			  c.m_z[last_i] = b.m_z[last_i]+re[last_i];
+			  c.m_w[last_i] = b.m_w[last_i]+im[last_i];
+		      }
+		     
+	      }
+
+
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Add_AVXQuat(AVXQuatArray1D &b,
+	                                const AVXQuatArray1D &a,
+	                                const double * __restrict __ATTR_ALIGN__(32) re,
+					const int32_t n) {
+
+                     if(__builtin_expect(b.m_size != a.m_size,0) ||
+		        __builtin_expect(b.m_size != n,0)) { return;}
+		     __m256d re0,re4,re8,re12;
+		     re0 = _mm256_setzero_pd();
+		     re4 = re0;
+		     re8 = re0;
+		     re12= re0;
+		     int32_t i, last_i;
+		     last_i = 0;
+		     const int32_t size = a.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i,re0,re4,re8,re12) \
+                      lastprivate(last_i) shared(a,b,re,size) if(size>=5000)
+		      for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                          last_i = i;
+			  _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+			  re0 = _mm256_load_pd(&re[i+0]);
+			  _mm256_store_pd(&b.m_x[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_x[i+0]),re0));
+					                  
+			  _mm256_store_pd(&b.m_y[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_y[i+0]),re0));
+					                  
+			  _mm256_store_pd(&b.m_z[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_z[i+0]),re0));
+					                   
+			  _mm256_store_pd(&b.m_w[i+0],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_w[i+0]),re0));
+			  re4 = _mm256_load_pd(&re[i+4]);		                  
+		          _mm256_store_pd(&b.m_x[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_x[i+4]),re4));
+					                  
+			  _mm256_store_pd(&b.m_y[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_y[i+4]),re4));
+					                  
+			  _mm256_store_pd(&b.m_z[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_z[i+4]),re4));
+					                   
+			  _mm256_store_pd(&b.m_w[i+4],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_w[i+4]),re4));
+			  re8 = _mm256_load_pd(&re[i+8]);
+			  _mm256_store_pd(&b.m_x[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_x[i+8]),re8));
+					                  
+			  _mm256_store_pd(&b.m_y[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_y[i+8]),re8));
+					                  
+			  _mm256_store_pd(&b.m_z[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_z[i+8]),re8));
+					                   
+			  _mm256_store_pd(&b.m_w[i+8],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_w[i+8]),re8));
+			  re12 = _mm256_load_pd(&re[i+12]);
+			  _mm256_store_pd(&b.m_x[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_x[i+12]),re12));
+					                  
+			  _mm256_store_pd(&b.m_y[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_y[i+12]),re12));
+					                  
+			  _mm256_store_pd(&b.m_z[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_z[i+12]),re12));
+					                   
+			  _mm256_store_pd(&b.m_w[i+12],
+			                     _mm256_add_pd(_mm256_load_pd(&a.m_w[i+12]),re12));
+
+		      }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                          b.m_x[last_i] = a.m_x[last_i]+re[last_i];
+			  b.m_y[last_i] = a.m_y[last_i]+re[last_i];
+			  b.m_z[last_i] = a.m_z[last_i]+re[last_i];
+			  b.m_w[last_i] = a.m_w[last_i]+re[last_i];
+		      }
+		      
+	      }
+
+              //
+	      // In-place quaternionic addition
+	      //
+
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Add_AVXQuat(AVXQuatArray1D &b,
+	                                const AVXQuatArray1D &a) {
+
+                     if(__builtin_expect(b.m_size != a.m_size,0)) {return;}
+		     int32_t i,last_i;
+		     last_i = 0;
+		     const int32_t size = b.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i) \
+                      lastprivate(last_i) shared(b,a,size) if(size>=5000)
+                      for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                          last_i = i;
+			  _mm_prefetch((const char*)&b.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_w[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			  _mm256_store_pd(&b.m_x[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_x[i+0]),
+					                    _mm256_load_pd(&a.m_x[i+0])));
+			  _mm256_store_pd(&b.m_y[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_y[i+0]),
+					                    _mm256_load_pd(&a.m_y[i+0])));
+			  _mm256_store_pd(&b.m_z[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_z[i+0]),
+					                    _mm256_load_pd(&a.m_z[i+0])));
+			  _mm256_store_pd(&b.m_w[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_w[i+0]),
+					                    _mm256_load_pd(&a.m_w[i+0])));
+			  _mm256_store_pd(&b.m_x[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_x[i+4]),
+					                    _mm256_load_pd(&a.m_x[i+4])));
+			  _mm256_store_pd(&b.m_y[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_y[i+4]),
+					                    _mm256_load_pd(&a.m_y[i+4])));
+			  _mm256_store_pd(&b.m_z[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_z[i+4]),
+					                    _mm256_load_pd(&a.m_z[i+4])));
+			  _mm256_store_pd(&b.m_w[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_w[i+4]),
+					                    _mm256_load_pd(&a.m_w[i+4])));
+			  _mm256_store_pd(&b.m_x[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_x[i+8]),
+					                    _mm256_load_pd(&a.m_x[i+8])));
+			  _mm256_store_pd(&b.m_y[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_y[i+8]),
+					                    _mm256_load_pd(&a.m_y[i+8])));
+			  _mm256_store_pd(&b.m_z[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_z[i+8]),
+					                    _mm256_load_pd(&a.m_z[i+8])));
+			  _mm256_store_pd(&b.m_w[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_w[i+8]),
+					                    _mm256_load_pd(&a.m_w[i+8])));
+			  _mm256_store_pd(&b.m_x[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_x[i+12]),
+					                    _mm256_load_pd(&a.m_x[i+12])));
+			  _mm256_store_pd(&b.m_y[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_y[i+12]),
+					                    _mm256_load_pd(&a.m_y[i+12])));
+			  _mm256_store_pd(&b.m_z[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_z[i+12]),
+					                    _mm256_load_pd(&a.m_z[i+12])));
+			  _mm256_store_pd(&b.m_w[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&b.m_w[i+12]),
+					                    _mm256_load_pd(&a.m_w[i+12])));
+			  
+		      }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                          b.m_x[last_i] += a.m_x[last_i];
+			  b.m_y[last_i] += a.m_y[last_i];
+			  b.m_z[last_i] += a.m_z[last_i];
+			  b.m_w[last_i] += a.m_w[last_i];
+		      }
+                }
+  
+	       
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Add_AVXQuat(AVXQuatArray1D &a,
+	                                const double * __restrict __ATTR_ALIGN__(32) re,
+					const double * __restrict __ATTR_ALIGN__(32) im,
+					const int32_t n) {
+
+                     if(__builtin_expect(a.m_size != n,0)) { return;}
+		     __m256d re0,re4,re8,re12;
+		     __m256d im0,im4,im8,im12;
+		     int32_t i,last_i;
+		     last_i = 0;
+		     const int32_t size = a.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i,re0,re4,re8,re12,im0,im4,im8,im12) \
+                      lastprivate(last_i) shared(a,re,im,size) if(size>=5000)
+		     for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                         last_i = i;
+			 _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&re[i+16],   _MM_HINT_T0);
+			 _mm_prefetch((const char*)&im[i+16],   _MM_HINT_T0);
+			 _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			 re0 = _mm256_load_pd(&re[i+0]);
+			 im0 = _mm256_load_pd(&im[i+0]);
+                         _mm256_store_pd(&a.m_x[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_x[i+0]),re0));
+					                    
+			 _mm256_store_pd(&a.m_y[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_y[i+0]),im0));
+					                   
+			 _mm256_store_pd(&a.m_z[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_z[i+0]),re0));
+					                   
+			 _mm256_store_pd(&a.m_w[i+0],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_w[i+0]),im0));
+			 re4 = _mm256_load_pd(&re[i+4]);
+			 im4 = _mm256_load_pd(&im[i+4]);
+			 _mm256_store_pd(&a.m_x[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_x[i+4]),re4));
+					                    
+			 _mm256_store_pd(&a.m_y[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_y[i+4]),im4));
+					                   
+			 _mm256_store_pd(&a.m_z[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_z[i+4]),re4));
+					                   
+			 _mm256_store_pd(&a.m_w[i+4],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_w[i+4]),im4));
+			 re8 = _mm256_load_pd(&re[i+8]);
+			 im8 = _mm256_load_pd(&im[i+8]);
+			 _mm256_store_pd(&a.m_x[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_x[i+8]),re8));
+					                    
+			 _mm256_store_pd(&a.m_y[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_y[i+8]),im8));
+					                   
+			 _mm256_store_pd(&a.m_z[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_z[i+8]),re8));
+					                   
+			 _mm256_store_pd(&a.m_w[i+8],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_w[i+8]),im8));
+			 re12 = _mm256_load_pd(&re[i+12]);
+			 im12 = _mm256_load_pd(&im[i+12]);
+			 _mm256_store_pd(&a.m_x[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_x[i+12]),re12));
+					                    
+			 _mm256_store_pd(&a.m_y[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_y[i+12]),im12));
+					                   
+			 _mm256_store_pd(&a.m_z[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_z[i+12]),re12));
+					                   
+			 _mm256_store_pd(&a.m_w[i+12],
+			                      _mm256_add_pd(_mm256_load_pd(&a.m_w[i+12]),im12));
+					                   
+		     }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                           a.m_x[last_i] += re[last_i];
+			   a.m_y[last_i] += im[last_i];
+			   a.m_z[last_i] += re[last_i];
+			   a.m_w[last_i] += im[last_i];
+		      }
+		     
+	      }
+
+
+	      //
+	      // Quaternion array subtraction
+	      //
+
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Sub_AVXQuat(AVXQuatArray1D &c,
+	                                const AVXQuatArray1D &b,
+					const AVXQuatArray1D &a) {
+					
+		      if(__builtin_expect(b.m_size != a.m_size,0) ||
+		         __builtin_expect(c.m_size != a.m_size,0)) { return;}
+                      int32_t i,last_i;
+		      last_i = 0;
+		      const int32_t size = c.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i) \
+                      lastprivate(last_i) shared(c,b,a,size) if(size>=5000)
+		      for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+
+		          last_i = i;
+			  _mm_prefetch((const char*)&b.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_w[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			  _mm256_store_pd(&c.m_x[i+0],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+0]),
+					                  _mm256_load_pd(&a.m_x[i+0])));
+			  _mm256_store_pd(&c.m_y[i+0],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+0]),
+					                 _mm256_load_pd(&a.m_y[i+0])));
+			  _mm256_store_pd(&c.m_z[i+0],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+0]),
+					                 _mm256_load_pd(&a.m_z[i+0]) ));
+			  _mm256_store_pd(&c.m_w[i+0],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+0]),
+					                _mm256_load_pd(&a.m_w[i+0])));
+			  _mm256_store_pd(&c.m_x[i+4],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+4]),
+					                 _mm256_load_pd(&a.m_x[i+4])));
+			  _mm256_store_pd(&c.m_y[i+4],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+4]),
+					                  _mm256_load_pd(&a.m_y[i+4])));
+			  _mm256_store_pd(&c.m_z[i+4],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+4]),
+					                 _mm256_load_pd(&a.m_z[i+4])));
+			  _mm256_store_pd(&c.m_w[i+4],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+4]),
+					                 _mm256_load_pd(&a.m_w[i+4])));
+			  _mm256_store_pd(&c.m_x[i+8],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+8]),
+					                _mm256_load_pd(&a.m_x[i+8]) ));
+			  _mm256_store_pd(&c.m_y[i+8],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+8]),
+					                _mm256_load_pd(&a.m_y[i+8])));
+			  _mm256_store_pd(&c.m_z[i+8],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+8]),
+					                _mm256_load_pd(&a.m_z[i+8])));
+			  _mm256_store_pd(&c.m_w[i+8],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+8]),
+					                 _mm256_load_pd(&a.m_w[i+8])));
+			  _mm256_store_pd(&c.m_x[i+12],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+12]),
+					                _mm256_load_pd(&a.m_x[i+12])));
+			  _mm256_store_pd(&c.m_y[i+12],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+12]),
+					                _mm256_load_pd(&a.m_y[i+12])));
+			  _mm256_store_pd(&c.m_z[i+12],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+12]),
+					                 _mm256_load_pd(&a.m_z[i+12])));
+			  _mm256_store_pd(&c.m_w[i+12],
+			                  _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+12]),
+					                _mm256_load_pd(&a.m_w[i+12])));
+			  
+		      }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                           c.m_x[last_i] = b.m_x[last_i]-a.m_x[last_i];
+			   c.m_y[last_i] = b.m_y[last_i]-a.m_y[last_i];
+			   c.m_z[last_i] = b.m_z[last_i]-a.m_z[last_i];
+			   c.m_w[last_i] = b.m_w[last_i]-a.m_w[last_i];
+		      }
+	       }
+
+
+               __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Sub_AVXQuat(AVXQuatArray1D &c,
+	                                AVXQuatArray1D &b,
+	                                const double * __restrict __ATTR_ALIGN__(32) re,
+					const double * __restrict __ATTR_ALIGN__(32) im,
+					const int32_t n) {
+
+		     if(__builtin_expect(c.m_size != n,0) ||
+		        __builtin_expect(c.m_size != b.m_size,0)) { return;}
+                        int32_t i,last_i;
+		        last_i = 0;
+			const int32_t size = c.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i) \
+                      lastprivate(last_i) shared(c,b,re,im,size) if(size>=5000)
+                     for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                         last_i = i;
+			 _mm_prefetch((const char*)&b.m_x[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&b.m_y[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&b.m_z[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&b.m_w[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+			 _mm256_store_pd(&c.m_x[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+0]),
+					                   _mm256_load_pd(&re[i+0])));
+			 _mm256_store_pd(&c.m_y[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+0]),
+					                   _mm256_load_pd(&im[i+0])));
+			 _mm256_store_pd(&c.m_z[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+0]),
+					                   _mm256_load_pd(&re[i+0])));
+			 _mm256_store_pd(&c.m_w[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+0]),
+					                   _mm256_load_pd(&im[i+0])));
+			 _mm256_store_pd(&c.m_x[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+4]),
+					                   _mm256_load_pd(&re[i+4])));
+			 _mm256_store_pd(&c.m_y[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+4]),
+					                   _mm256_load_pd(&im[i+4])));
+			 _mm256_store_pd(&c.m_z[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+4]),
+					                   _mm256_load_pd(&re[i+4])));
+			 _mm256_store_pd(&c.m_w[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+4]),
+					                   _mm256_load_pd(&im[i+4])));
+			 _mm256_store_pd(&c.m_x[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+8]),
+					                   _mm256_load_pd(&re[i+8])));
+			 _mm256_store_pd(&c.m_y[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+8]),
+					                   _mm256_load_pd(&im[i+8])));
+			 _mm256_store_pd(&c.m_z[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+8]),
+					                   _mm256_load_pd(&re[i+8])));
+			 _mm256_store_pd(&c.m_w[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+8]),
+					                   _mm256_load_pd(&im[i+8])));
+			 _mm256_store_pd(&c.m_x[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+12]),
+					                   _mm256_load_pd(&re[i+12])));
+			 _mm256_store_pd(&c.m_y[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+12]),
+					                   _mm256_load_pd(&im[i+12])));
+			 _mm256_store_pd(&c.m_z[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+12]),
+					                   _mm256_load_pd(&re[i+12])));
+			 _mm256_store_pd(&c.m_w[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+12]),
+					                   _mm256_load_pd(&im[i+12])));
+			 
+		     }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                          c.m_x[last_i] = b.m_x[last_i]-re[last_i];
+			  c.m_y[last_i] = b.m_y[last_i]-im[last_i];
+			  c.m_z[last_i] = b.m_z[last_i]-re[last_i];
+			  c.m_w[last_i] = b.m_w[last_i]-im[last_i];
+		      }
+		     
+	      }
+
+
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Sub_AVXQuat(AVXQuatArray1D &b,
+	                                const AVXQuatArray1D &a,
+	                                const double * __restrict __ATTR_ALIGN__(32) re,
+					const int32_t n) {
+
+                     if(__builtin_expect(b.m_size != a.m_size,0) ||
+		        __builtin_expect(b.m_size != n,0)) { return;}
+		     __m256d re0,re4,re8,re12;
+		     re0 = _mm256_setzero_pd();
+		     re4 = re0;
+		     re8 = re0;
+		     re12= re0;
+		     int32_t i, last_i;
+		     last_i = 0;
+		     const int32_t size = a.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i,re0,re4,re8,re12) \
+                      lastprivate(last_i) shared(a,b,re,size) if(size>=5000)
+		      for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                          last_i = i;
+			  _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+			  re0 = _mm256_load_pd(&re[i+0]);
+			  _mm256_store_pd(&b.m_x[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+0]),re0));
+					                  
+			  _mm256_store_pd(&b.m_y[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+0]),re0));
+					                  
+			  _mm256_store_pd(&b.m_z[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+0]),re0));
+					                   
+			  _mm256_store_pd(&b.m_w[i+0],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+0]),re0));
+			  re4 = _mm256_load_pd(&re[i+4]);		                  
+		          _mm256_store_pd(&b.m_x[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+4]),re4));
+					                  
+			  _mm256_store_pd(&b.m_y[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+4]),re4));
+					                  
+			  _mm256_store_pd(&b.m_z[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+4]),re4));
+					                   
+			  _mm256_store_pd(&b.m_w[i+4],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+4]),re4));
+			  re8 = _mm256_load_pd(&re[i+8]);
+			  _mm256_store_pd(&b.m_x[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+8]),re8));
+					                  
+			  _mm256_store_pd(&b.m_y[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+8]),re8));
+					                  
+			  _mm256_store_pd(&b.m_z[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+8]),re8));
+					                   
+			  _mm256_store_pd(&b.m_w[i+8],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+8]),re8));
+			  re12 = _mm256_load_pd(&re[i+12]);
+			  _mm256_store_pd(&b.m_x[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+12]),re12));
+					                  
+			  _mm256_store_pd(&b.m_y[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+12]),re12));
+					                  
+			  _mm256_store_pd(&b.m_z[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+12]),re12));
+					                   
+			  _mm256_store_pd(&b.m_w[i+12],
+			                     _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+12]),re12));
+
+		      }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                          b.m_x[last_i] = a.m_x[last_i]-re[last_i];
+			  b.m_y[last_i] = a.m_y[last_i]-re[last_i];
+			  b.m_z[last_i] = a.m_z[last_i]-re[last_i];
+			  b.m_w[last_i] = a.m_w[last_i]-re[last_i];
+		      }
+		      
+	      }
+
+              //
+	      // In-place quaternionic addition
+	      //
+
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Sub_AVXQuat(AVXQuatArray1D &b,
+	                                const AVXQuatArray1D &a) {
+
+                     if(__builtin_expect(b.m_size != a.m_size,0)) {return;}
+		     int32_t i,last_i;
+		     last_i = 0;
+		     const int32_t size = b.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i) \
+                      lastprivate(last_i) shared(b,a,size) if(size>=5000)
+                      for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                          last_i = i;
+			  _mm_prefetch((const char*)&b.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&b.m_w[i+16],_MM_HINT_T0);
+			  _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			  _mm256_store_pd(&b.m_x[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+0]),
+					                    _mm256_load_pd(&a.m_x[i+0])));
+			  _mm256_store_pd(&b.m_y[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+0]),
+					                    _mm256_load_pd(&a.m_y[i+0])));
+			  _mm256_store_pd(&b.m_z[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+0]),
+					                    _mm256_load_pd(&a.m_z[i+0])));
+			  _mm256_store_pd(&b.m_w[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+0]),
+					                    _mm256_load_pd(&a.m_w[i+0])));
+			  _mm256_store_pd(&b.m_x[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+4]),
+					                    _mm256_load_pd(&a.m_x[i+4])));
+			  _mm256_store_pd(&b.m_y[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+4]),
+					                    _mm256_load_pd(&a.m_y[i+4])));
+			  _mm256_store_pd(&b.m_z[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+4]),
+					                    _mm256_load_pd(&a.m_z[i+4])));
+			  _mm256_store_pd(&b.m_w[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+4]),
+					                    _mm256_load_pd(&a.m_w[i+4])));
+			  _mm256_store_pd(&b.m_x[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+8]),
+					                    _mm256_load_pd(&a.m_x[i+8])));
+			  _mm256_store_pd(&b.m_y[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+8]),
+					                    _mm256_load_pd(&a.m_y[i+8])));
+			  _mm256_store_pd(&b.m_z[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+8]),
+					                    _mm256_load_pd(&a.m_z[i+8])));
+			  _mm256_store_pd(&b.m_w[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+8]),
+					                    _mm256_load_pd(&a.m_w[i+8])));
+			  _mm256_store_pd(&b.m_x[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_x[i+12]),
+					                    _mm256_load_pd(&a.m_x[i+12])));
+			  _mm256_store_pd(&b.m_y[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_y[i+12]),
+					                    _mm256_load_pd(&a.m_y[i+12])));
+			  _mm256_store_pd(&b.m_z[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_z[i+12]),
+					                    _mm256_load_pd(&a.m_z[i+12])));
+			  _mm256_store_pd(&b.m_w[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&b.m_w[i+12]),
+					                    _mm256_load_pd(&a.m_w[i+12])));
+			  
+		      }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                          b.m_x[last_i] -= a.m_x[last_i];
+			  b.m_y[last_i] -= a.m_y[last_i];
+			  b.m_z[last_i] -= a.m_z[last_i];
+			  b.m_w[last_i] -= a.m_w[last_i];
+		      }
+                }
+  
+	       
+	       __ATTR_ALWAYS_INLINE__
+	       __ATTR_HOT__
+	       __ATTR_ALIGN__(32)
+	       static inline
+	       void AVXQuat_Sub_AVXQuat(AVXQuatArray1D &a,
+	                                const double * __restrict __ATTR_ALIGN__(32) re,
+					const double * __restrict __ATTR_ALIGN__(32) im,
+					const int32_t n) {
+
+                     if(__builtin_expect(a.m_size != n,0)) { return;}
+		     __m256d re0,re4,re8,re12;
+		     __m256d im0,im4,im8,im12;
+		     int32_t i,last_i;
+		     last_i = 0;
+		     const int32_t size = a.m_size;
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp parallel for schedule(static,32) default(none) private(i,re0,re4,re8,re12,im0,im4,im8,im12) \
+                      lastprivate(last_i) shared(a,re,im,size) if(size>=5000)
+		     for(i = 0; i != ROUND_TO_FOUR(size,4); i += 16) {
+                         last_i = i;
+			 _mm_prefetch((const char*)&a.m_x[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&re[i+16],   _MM_HINT_T0);
+			 _mm_prefetch((const char*)&im[i+16],   _MM_HINT_T0);
+			 _mm_prefetch((const char*)&a.m_y[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&a.m_z[i+16],_MM_HINT_T0);
+			 _mm_prefetch((const char*)&a.m_w[i+16],_MM_HINT_T0);
+			 re0 = _mm256_load_pd(&re[i+0]);
+			 im0 = _mm256_load_pd(&im[i+0]);
+                         _mm256_store_pd(&a.m_x[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+0]),re0));
+					                    
+			 _mm256_store_pd(&a.m_y[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+0]),im0));
+					                   
+			 _mm256_store_pd(&a.m_z[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+0]),re0));
+					                   
+			 _mm256_store_pd(&a.m_w[i+0],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+0]),im0));
+			 re4 = _mm256_load_pd(&re[i+4]);
+			 im4 = _mm256_load_pd(&im[i+4]);
+			 _mm256_store_pd(&a.m_x[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+4]),re4));
+					                    
+			 _mm256_store_pd(&a.m_y[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+4]),im4));
+					                   
+			 _mm256_store_pd(&a.m_z[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+4]),re4));
+					                   
+			 _mm256_store_pd(&a.m_w[i+4],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+4]),im4));
+			 re8 = _mm256_load_pd(&re[i+8]);
+			 im8 = _mm256_load_pd(&im[i+8]);
+			 _mm256_store_pd(&a.m_x[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+8]),re8));
+					                    
+			 _mm256_store_pd(&a.m_y[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+8]),im8));
+					                   
+			 _mm256_store_pd(&a.m_z[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+8]),re8));
+					                   
+			 _mm256_store_pd(&a.m_w[i+8],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+8]),im8));
+			 re12 = _mm256_load_pd(&re[i+12]);
+			 im12 = _mm256_load_pd(&im[i+12]);
+			 _mm256_store_pd(&a.m_x[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_x[i+12]),re12));
+					                    
+			 _mm256_store_pd(&a.m_y[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_y[i+12]),im12));
+					                   
+			 _mm256_store_pd(&a.m_z[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_z[i+12]),re12));
+					                   
+			 _mm256_store_pd(&a.m_w[i+12],
+			                      _mm256_sub_pd(_mm256_load_pd(&a.m_w[i+12]),im12));
+					                   
+		     }
+#if defined (__ICC) || defined (__INTEL_COMPILER)
+#pragma loop_count min(1),avg(2),max(3)
+#endif
+                      for(; last_i != size; ++last_i) {
+                           a.m_x[last_i] -= re[last_i];
+			   a.m_y[last_i] -= im[last_i];
+			   a.m_z[last_i] -= re[last_i];
+			   a.m_w[last_i] -= im[last_i];
+		      }
+		     
+	      }
+
+
+
+	      
 	      
 	  
      } // math
