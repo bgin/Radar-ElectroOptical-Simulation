@@ -1148,6 +1148,384 @@ void reduce(int size, int threads, int blocks, int whichKernel, T *d_idata,
         }
 */
 
+//
+//   Transposition adapted from NVIDIA samples
+//
+
+// Each block transposes/copies a tile of TILE_DIM x TILE_DIM elements
+// using TILE_DIM x BLOCK_ROWS threads, so that each thread transposes
+// TILE_DIM/BLOCK_ROWS elements.  TILE_DIM must be an integral multiple of
+// BLOCK_ROWS
+
+#define TILE_DIM 16
+#define BLOCK_ROWS 16
+
+// This sample assumes that MATRIX_SIZE_X = MATRIX_SIZE_Y
+int MATRIX_SIZE_X = 1024;
+int MATRIX_SIZE_Y = 1024;
+int MUL_FACTOR = TILE_DIM;
+
+#define FLOOR(a, b) (a - (a % b))
+
+// Compute the tile size necessary to illustrate performance cases for SM20+
+// hardware
+int MAX_TILES = (FLOOR(MATRIX_SIZE_X, 512) * FLOOR(MATRIX_SIZE_Y, 512)) /
+                (TILE_DIM * TILE_DIM);
+
+// Number of repetitions used for timing.  Two sets of repetitions are
+// performed: 1) over kernel launches and 2) inside the kernel over just the
+// loads and stores
+
+#define NUM_REPS 100
+
+// -------------------------------------------------------
+// Copies
+// width and height must be integral multiples of TILE_DIM
+// -------------------------------------------------------
+
+__global__ void copy_r4(float * __restrict__ out, 
+                     const float * __restrict__ in, 
+                     int width, 
+                     int height) {
+  int32_t xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int32_t yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+
+  int32_t index = xIndex + width * yIndex;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+       out[index + i * width] = in[index + i * width];
+  }
+}
+
+__global__ void copy_i4(int32_t * __restrict__ out, 
+                        const int32_t * __restrict__ in, 
+                        int32_t width, 
+                        int32_t height) {
+  int32_t xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int32_t yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+
+  int32_t index = xIndex + width * yIndex;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+       out[index + i * width] = in[index + i * width];
+  }
+}
+
+
+__global__ void copy_c4(cuComplex * __restrict__ out, 
+                        const cuComplex * __restrict__ in, 
+                        int width, 
+                        int height) {
+  int32_t xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int32_t yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+
+  int32_t index = xIndex + width * yIndex;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+       out[index + i * width] = in[index + i * width];
+  }
+}
+
+
+__global__ void copy_shared_mem_r4(float * __restrict__ out, 
+                                   const float * __restrict__ in, 
+                                   int32_t width,
+                                   int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ float tile[TILE_DIM][TILE_DIM];
+
+  int xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+
+  int index = xIndex + width * yIndex;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    if (xIndex < width && yIndex < height) {
+      tile[threadIdx.y][threadIdx.x] = in[index];
+    }
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    if (xIndex < height && yIndex < width) {
+      out[index] = tile[threadIdx.y][threadIdx.x];
+    }
+  }
+}
+
+
+__global__ void copy_shared_mem_i4(int32_t * __restrict__ out, 
+                                   const int32_t * __restrict__ in, 
+                                   int32_t width,
+                                   int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ int32_t tile[TILE_DIM][TILE_DIM];
+
+  int xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+
+  int index = xIndex + width * yIndex;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    if (xIndex < width && yIndex < height) {
+      tile[threadIdx.y][threadIdx.x] = in[index];
+    }
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    if (xIndex < height && yIndex < width) {
+      out[index] = tile[threadIdx.y][threadIdx.x];
+    }
+  }
+}
+
+
+__global__ void copy_shared_mem_c4(cuComplex * __restrict__ out, 
+                                   const cuComplex * __restrict__ in, 
+                                   int32_t width,
+                                   int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ cuComplex tile[TILE_DIM][TILE_DIM];
+
+  int xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+
+  int index = xIndex + width * yIndex;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    if (xIndex < width && yIndex < height) {
+      tile[threadIdx.y][threadIdx.x] = in[index];
+    }
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    if (xIndex < height && yIndex < width) {
+      out[index] = tile[threadIdx.y][threadIdx.x];
+    }
+  }
+}
+
+// Coalesced transpose with no bank conflicts
+
+_global__ void transpose_r4_v1(float * __restrict__ out, 
+                               const float * __restrict__ in, 
+                               int32_t width,
+                               int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ float tile[TILE_DIM][TILE_DIM + 1];
+
+  int xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+  int index_in = xIndex + (yIndex)*width;
+
+  xIndex = blockIdx.y * TILE_DIM + threadIdx.x;
+  yIndex = blockIdx.x * TILE_DIM + threadIdx.y;
+  int index_out = xIndex + (yIndex)*height;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    tile[threadIdx.y + i][threadIdx.x] = in[index_in + i * width];
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    out[index_out + i * height] = tile[threadIdx.x][threadIdx.y + i];
+  }
+}
+
+
+_global__ void transpose_i4_v1(int32_t * __restrict__ out, 
+                               const int32_t * __restrict__ in, 
+                               int32_t width,
+                               int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ int32_t tile[TILE_DIM][TILE_DIM + 1];
+
+  int xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+  int index_in = xIndex + (yIndex)*width;
+
+  xIndex = blockIdx.y * TILE_DIM + threadIdx.x;
+  yIndex = blockIdx.x * TILE_DIM + threadIdx.y;
+  int index_out = xIndex + (yIndex)*height;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    tile[threadIdx.y + i][threadIdx.x] = in[index_in + i * width];
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    out[index_out + i * height] = tile[threadIdx.x][threadIdx.y + i];
+  }
+}
+
+
+_global__ void transpose_c4_v1(cuComplex * __restrict__ out, 
+                               const cuComplex * __restrict__ in, 
+                               int32_t width,
+                               int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ float tile[TILE_DIM][TILE_DIM + 1];
+
+  int xIndex = blockIdx.x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx.y * TILE_DIM + threadIdx.y;
+  int index_in = xIndex + (yIndex)*width;
+
+  xIndex = blockIdx.y * TILE_DIM + threadIdx.x;
+  yIndex = blockIdx.x * TILE_DIM + threadIdx.y;
+  int index_out = xIndex + (yIndex)*height;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    tile[threadIdx.y + i][threadIdx.x] = in[index_in + i * width];
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    out[index_out + i * height] = tile[threadIdx.x][threadIdx.y + i];
+  }
+}
+
+
+__global__ void transpose_r4_v2(float * __restrict__ out, 
+                                const float * __restrict__ in, 
+                                int32_t width,
+                                int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ float tile[TILE_DIM][TILE_DIM + 1];
+
+  int blockIdx_x, blockIdx_y;
+
+  // do diagonal reordering
+  if (width == height) {
+    blockIdx_y = blockIdx.x;
+    blockIdx_x = (blockIdx.x + blockIdx.y) % gridDim.x;
+  } else {
+    int bid = blockIdx.x + gridDim.x * blockIdx.y;
+    blockIdx_y = bid % gridDim.y;
+    blockIdx_x = ((bid / gridDim.y) + blockIdx_y) % gridDim.x;
+  }
+
+  // from here on the code is same as previous kernel except blockIdx_x replaces
+  // blockIdx.x and similarly for y
+
+  int xIndex = blockIdx_x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx_y * TILE_DIM + threadIdx.y;
+  int index_in = xIndex + (yIndex)*width;
+
+  xIndex = blockIdx_y * TILE_DIM + threadIdx.x;
+  yIndex = blockIdx_x * TILE_DIM + threadIdx.y;
+  int index_out = xIndex + (yIndex)*height;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    tile[threadIdx.y + i][threadIdx.x] = in[index_in + i * width];
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+       out[index_out + i * height] = tile[threadIdx.x][threadIdx.y + i];
+  }
+}
+
+
+__global__ void transpose_i4_v2(int32_t * __restrict__ out, 
+                                const int32_t * __restrict__ in, 
+                                int32_t width,
+                                int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ int32_t tile[TILE_DIM][TILE_DIM + 1];
+
+  int blockIdx_x, blockIdx_y;
+
+  // do diagonal reordering
+  if (width == height) {
+    blockIdx_y = blockIdx.x;
+    blockIdx_x = (blockIdx.x + blockIdx.y) % gridDim.x;
+  } else {
+    int bid = blockIdx.x + gridDim.x * blockIdx.y;
+    blockIdx_y = bid % gridDim.y;
+    blockIdx_x = ((bid / gridDim.y) + blockIdx_y) % gridDim.x;
+  }
+
+  // from here on the code is same as previous kernel except blockIdx_x replaces
+  // blockIdx.x and similarly for y
+
+  int xIndex = blockIdx_x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx_y * TILE_DIM + threadIdx.y;
+  int index_in = xIndex + (yIndex)*width;
+
+  xIndex = blockIdx_y * TILE_DIM + threadIdx.x;
+  yIndex = blockIdx_x * TILE_DIM + threadIdx.y;
+  int index_out = xIndex + (yIndex)*height;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    tile[threadIdx.y + i][threadIdx.x] = in[index_in + i * width];
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+       out[index_out + i * height] = tile[threadIdx.x][threadIdx.y + i];
+  }
+}
+
+
+__global__ void transpose_c4_v1(cuComplex * __restrict__ out, 
+                                const cuComplex * __restrict__ in, 
+                                int32_t width,
+                                int32_t height) {
+  // Handle to thread block group
+  cg::thread_block cta = cg::this_thread_block();
+  __shared__ cuComplex tile[TILE_DIM][TILE_DIM + 1];
+
+  int blockIdx_x, blockIdx_y;
+
+  // do diagonal reordering
+  if (width == height) {
+    blockIdx_y = blockIdx.x;
+    blockIdx_x = (blockIdx.x + blockIdx.y) % gridDim.x;
+  } else {
+    int bid = blockIdx.x + gridDim.x * blockIdx.y;
+    blockIdx_y = bid % gridDim.y;
+    blockIdx_x = ((bid / gridDim.y) + blockIdx_y) % gridDim.x;
+  }
+
+  // from here on the code is same as previous kernel except blockIdx_x replaces
+  // blockIdx.x and similarly for y
+
+  int xIndex = blockIdx_x * TILE_DIM + threadIdx.x;
+  int yIndex = blockIdx_y * TILE_DIM + threadIdx.y;
+  int index_in = xIndex + (yIndex)*width;
+
+  xIndex = blockIdx_y * TILE_DIM + threadIdx.x;
+  yIndex = blockIdx_x * TILE_DIM + threadIdx.y;
+  int index_out = xIndex + (yIndex)*height;
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+    tile[threadIdx.y + i][threadIdx.x] = in[index_in + i * width];
+  }
+
+  cg::sync(cta);
+
+  for (int i = 0; i < TILE_DIM; i += BLOCK_ROWS) {
+       out[index_out + i * height] = tile[threadIdx.x][threadIdx.y + i];
+  }
+}
 
 
 __global__
