@@ -1234,24 +1234,39 @@ L10:
 	/* ----------------------------------------------------------------------- */
 L20:
     if (neq[0] <= 0) { //fixed
-		goto L604;
+		//goto L604;
+          fprintf(stderr, "DLSODA-  NEQ (=I1) .lt. 1     \n");
+          *istate = -3
+          return (errorCode = 604);
     }
     if (*istate == 1) {
 		goto L25;
     }
     if (neq[0] > n) { //fixed
-		goto L605;
+		//goto L605;
+        fprintf(stderr, "DLSODA-  ISTATE = 3 and NEQ increased (I1 to I2). \n");
+        *istate = -3;
+        return (errorCode = 605);
     }
 L25:
     n = neq[0];  //fixed
     if (*itol < 1 || *itol > 4) {
-		goto L606;
+		//goto L606;
+         fprintf(stderr, "DLSODA-  ITOL (=I1) illegal.  \n");
+         *istate = -3;
+         return (errorCode = 606);
     }
     if (*iopt < 0 || *iopt > 1) {
-		goto L607;
+		//goto L607;
+          fprintf(stderr, "DLSODA-  IOPT (=I1) illegal.  \n");
+          *istate = -3;
+          return (errorCode = 607);
     }
     if (*jt == 3 || *jt < 1 || *jt > 5) {
-		goto L608;
+		//goto L608;
+          fprintf(stderr, "DLSODA-  JT (=I1) illegal.    \n");
+          *istate = -3;
+          return (errorCode = 608);  
     }
     jtyp = *jt;
     if (*jt <= 2) {
@@ -1260,10 +1275,16 @@ L25:
     ml = iwork[0];
     mu = iwork[1];
     if (ml < 0 || ml >= n) {
-		goto L609;
+		//goto L609;
+           fprintf(stderr, "DLSODA-  ML (=I1) illegal: .lt.0 or .ge.NEQ (=I2) \n");
+           *istate = -3;
+           return (errorCode = 609);
     }
     if (mu < 0 || mu >= n) {
-		goto L610;
+		//goto L610;
+          fprintf(stderr, "DLSODA-  MU (=I1) illegal: .lt.0 or .ge.NEQ (=I2) \n");
+          *istate = -3;
+          return (errorCode = 610);         
     }
 L30:
 	/* Next process and check the optional inputs. -------------------------- */
@@ -1285,18 +1306,27 @@ L30:
 L40:
     ixpr = iwork[4];
     if (ixpr < 0 || ixpr > 1) {
-		goto L611;
+		//goto L611;
+           fprintf(stderr, "DLSODA-  IXPR (=I1) illegal.  \n");
+           *istate = -3;
+           return (errorCode = 611);  
     }
     mxstep = iwork[5];
     if (mxstep < 0) {
-		goto L612;
+		//goto L612;
+           fprintf(stderr, "DLSODA-  MXSTEP (=I1) .lt. 0  \n");
+           *istate = -3;
+           return (errorCode = 612);
     }
     if (mxstep == 0) {
 		mxstep = mxstp0;
     }
     mxhnil = iwork[6];
     if (mxhnil < 0) {
-		goto L613;
+		//goto L613;
+          fprintf(stderr, "DLSODA-  MXHNIL (=I1) .lt. 0  \n");
+          *istate = -3;
+          return (errorCode = 613);
     }
     if (mxhnil == 0) {
 		mxhnil = mxhnl0;
@@ -1307,7 +1337,10 @@ L40:
     h0 = rwork[4];
     mxordn = iwork[7];
     if (mxordn < 0) {
-		goto L628;
+		//goto L628;
+         fprintf(stderr, "DLSODA-  MXORDN (=I1) .lt. 0  \n");
+         *istate = -3;
+         return (errorCode = 628);
     }
     if (mxordn == 0) {
 		mxordn = 100;
@@ -1315,19 +1348,29 @@ L40:
     mxordn = min(mxordn,mord[0]);
     mxords = iwork[8];
     if (mxords < 0) {
-		goto L629;
+		//goto L629;
+        fprintf(stderr, "DLSODA-  MXORDS (=I1) .lt. 0  \n");
+        *istate = -3;
+	return (errorCode = 629);
     }
     if (mxords == 0) {
 		mxords = 100;
     }
     mxords = min(mxords,mord[1]);
     if ((*tout - *t) * h0 < 0.) {
-		goto L614;
+		//goto L614;
+           fprintf(stderr, "DLSODA-  TOUT (=R1) behind T (=R2)      \n");
+           fprintf(stderr, "      Integration direction is given by H0 (=R1)  \n");
+           *istate = -3;
+           return (errorCode = 614);
     }
 L50:
     hmax = rwork[5];
     if (hmax < 0.) {
-		goto L615;
+		//goto L615;
+            fprintf(stderr, "DLSODA-  HMAX (=R1) .lt. 0.0  \n");
+            *istate = -3;
+            return (errorCode = 615);
     }
     hmxi = 0.;
     if (hmax > 0.) {
@@ -1335,7 +1378,10 @@ L50:
     }
     hmin = rwork[6];
     if (hmin < 0.) {
-		goto L616;
+		//goto L616;
+          fprintf(stderr, "DLSODA-  HMIN (=R1) .lt. 0.0  \n");
+          *istat = -3;
+          return (errorCode = 616);
     }
 	/* ----------------------------------------------------------------------- */
 	/* Set work array pointers and check lengths LRW and LIW. */
@@ -1385,10 +1431,16 @@ L60:
     }
     iwork[17] = leniw;
     if (*istate == 1 && *lrw < lenrwc) {
-		goto L617;
+		//goto L617;
+             fprintf(stderr, "DLSODA-  RWORK length needed, LENRW (=I1), exceeds LRW (=I2)\n");
+             *istate = -3;
+             return (errorCode = 617);
     }
     if (*istate == 1 && *liw < leniwc) {
-		goto L618;
+		//goto L618;
+              fprintf(stderr, "DLSODA-  IWORK length needed, LENIW (=I1), exceeds LIW (=I2)\n");
+              *istate = -3;
+              return (errorCode = 618);
     }
     if (*istate == 3 && *lrw < lenrwc) {
 		goto L550;
@@ -1490,7 +1542,10 @@ L100:
     }
     tcrit = rwork[0];
     if ((tcrit - *tout) * (*tout - *t) < 0.) {
-		goto L625;
+		//goto L625;
+           fprintf(stderr, "DLSODA-  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)   \n");
+           *istate = -3;
+           return (errorCode = 625);
     }
     if (h0 != 0. && (*t + h0 - tcrit) * h0 > 0.) {
 		h0 = tcrit - *t;
@@ -1527,7 +1582,11 @@ L110:
     i__1 = n;
     for (i__ = 1; i__ <= i__1; ++i__) {
 		if (rwork[i__ + lewt - 1 -1] <= 0.) {
-			goto L621;
+			//goto L621;
+                      ewti = rwork[lewt + i__ - 1 -1];
+                      fprintf(stderr, "DLSODA-  EWT(I1) is R1 .le. 0.0         \n");
+                      *istate = -3;
+                       return (errorCode = 621);
 		}
 		/* L120: */
 		rwork[i__ + lewt - 1 -1] = 1. / rwork[i__ + lewt - 1 -1];
@@ -2050,113 +2109,86 @@ L580:
 
    // errorCode = 603;
 //	goto L700;
-L604:
+//L604:
 
-    fprintf(stderr, "DLSODA-  NEQ (=I1) .lt. 1     \n");
+  // fprintf(stderr, "DLSODA-  NEQ (=I1) .lt. 1     \n");
 
-    errorCode = 604;
-	goto L700;
-L605:
+ //   errorCode = 604;
+//	goto L700;
+//L605:
 
-    fprintf(stderr, "DLSODA-  ISTATE = 3 and NEQ increased (I1 to I2). \n");
+//    fprintf(stderr, "DLSODA-  ISTATE = 3 and NEQ increased (I1 to I2). \n");
 
-    errorCode = 605;
-	goto L700;
-L606:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  ITOL (=I1) illegal.  \n");
-#endif
-    //xerrwd_(msg, &c__30, &c__6, &c__0, 1, itol, &c__0, &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 606;
-	goto L700;
-L607:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  IOPT (=I1) illegal.  \n");
-#endif
-    //xerrwd_(msg, &c__30, &c__7, &c__0, 1, iopt, &c__0, &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 607;
-	goto L700;
-L608:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  JT (=I1) illegal.    \n");
-#endif
-    //xerrwd_(msg, &c__30, &c__8, &c__0, 1, jt, &c__0, &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 608;
-	goto L700;
-L609:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  ML (=I1) illegal: .lt.0 or .ge.NEQ (=I2) \n");
-#endif
-    //xerrwd_(msg, &c__50, &c__9, &c__0, &c__2, &ml, &neq[1], &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 609;
-	goto L700;
-L610:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  MU (=I1) illegal: .lt.0 or .ge.NEQ (=I2) \n");
-#endif
-    //xerrwd_(msg, &c__50, 10, &c__0, &c__2, &mu, &neq[1], &c__0, &c_b62, &c_b62, (ftnlen)60);
-   errorCode = 610;
-	goto L700;
-L611:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  IXPR (=I1) illegal.  \n");
-#endif
-    //xerrwd_(msg, &c__30, 11, &c__0, 1, &ixpr, &c__0, &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 611;
-	goto L700;
-L612:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  MXSTEP (=I1) .lt. 0  \n");
-#endif
-    //xerrwd_(msg, &c__30, 12, &c__0, 1, &mxstep, &c__0, &c__0,&c_b62, &c_b62, (ftnlen)60);
-    errorCode = 612;
-	goto L700;
-L613:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  MXHNIL (=I1) .lt. 0  \n");
-#endif
-    //xerrwd_(msg, &c__30, 13, &c__0, 1, &mxhnil, &c__0, &c__0,&c_b62, &c_b62, (ftnlen)60);
-	errorCode = 613;
-    goto L700;
-L614:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  TOUT (=R1) behind T (=R2)      \n");
-#endif
-    //xerrwd_(msg, &c__40, 14, &c__0, &c__0, &c__0, &c__0, &c__2, tout, t, (ftnlen)60);
-#ifdef EMULATION_MODE
-    fprintf(stderr, "      Integration direction is given by H0 (=R1)  \n");
-#endif
-    //xerrwd_(msg, &c__50, 14, &c__0, &c__0, &c__0, &c__0, 1, &h0, &c_b62, (ftnlen)60);
-    errorCode = 614;
-	goto L700;
-L615:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  HMAX (=R1) .lt. 0.0  \n");
-#endif
-    //xerrwd_(msg, &c__30, 15, &c__0, &c__0, &c__0, &c__0, 1, &hmax, &c_b62, (ftnlen)60);
-    errorCode = 615;
-	goto L700;
-L616:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  HMIN (=R1) .lt. 0.0  \n");
-#endif
-    //xerrwd_(msg, &c__30, 16, &c__0, &c__0, &c__0, &c__0, 1, &hmin, &c_b62, (ftnlen)60);
-    errorCode = 616;
-	goto L700;
-L617:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  RWORK length needed, LENRW (=I1), exceeds LRW (=I2)\n");
-#endif
-    //xerrwd_(msg, &c__60, 17, &c__0, &c__2, &lenrw, lrw, &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 617;
-	goto L700;
-L618:
-#ifdef EMULATION_MODE
-    fprintf(stderr, "DLSODA-  IWORK length needed, LENIW (=I1), exceeds LIW (=I2)\n");
-#endif
-    //xerrwd_(msg, &c__60, 18, &c__0, &c__2, &leniw, liw, &c__0, &c_b62, &c_b62, (ftnlen)60);
-    errorCode = 618;
-	goto L700;
+//    errorCode = 605;
+//	goto L700;
+//L606:
+
+   // fprintf(stderr, "DLSODA-  ITOL (=I1) illegal.  \n");
+
+    //errorCode = 606;
+    //	goto L700;
+//L607:
+
+   // fprintf(stderr, "DLSODA-  IOPT (=I1) illegal.  \n");
+   //     errorCode = 607;
+//	goto L700;
+//L608:
+
+ //   fprintf(stderr, "DLSODA-  JT (=I1) illegal.    \n");
+ //   errorCode = 608;
+//	goto L700;
+//L609:
+
+ //   fprintf(stderr, "DLSODA-  ML (=I1) illegal: .lt.0 or .ge.NEQ (=I2) \n");
+  //  errorCode = 609;
+  //	goto L700;
+//L610:
+
+//    fprintf(stderr, "DLSODA-  MU (=I1) illegal: .lt.0 or .ge.NEQ (=I2) \n");
+  // errorCode = 610;
+	//goto L700;
+//L611:
+
+   // fprintf(stderr, "DLSODA-  IXPR (=I1) illegal.  \n");
+   // errorCode = 611;
+//	goto L700;
+//L612:
+
+//    fprintf(stderr, "DLSODA-  MXSTEP (=I1) .lt. 0  \n");
+//    errorCode = 612;
+//	goto L700;
+//L613:
+
+  //  fprintf(stderr, "DLSODA-  MXHNIL (=I1) .lt. 0  \n");
+   // errorCode = 613;
+    //goto L700;
+//L614:
+
+  //  fprintf(stderr, "DLSODA-  TOUT (=R1) behind T (=R2)      \n");
+  //  fprintf(stderr, "      Integration direction is given by H0 (=R1)  \n");
+  //  errorCode = 614;
+//	goto L700;
+//L615:
+
+    //fprintf(stderr, "DLSODA-  HMAX (=R1) .lt. 0.0  \n");
+  //  errorCode = 615;
+//	goto L700;
+//L616:
+
+    //fprintf(stderr, "DLSODA-  HMIN (=R1) .lt. 0.0  \n");
+
+   // errorCode = 616;
+	//goto L700;
+//L617:
+
+   // fprintf(stderr, "DLSODA-  RWORK length needed, LENRW (=I1), exceeds LRW (=I2)\n");
+   // errorCode = 617;
+//	goto L700;
+//L618:
+
+  //  fprintf(stderr, "DLSODA-  IWORK length needed, LENIW (=I1), exceeds LIW (=I2)\n");
+  //  errorCode = 618;
+//	goto L700;
 L619:
 #ifdef EMULATION_MODE
     fprintf(stderr, "DLSODA-  RTOL(I1) is R1 .lt. 0.0        \n");
@@ -2171,14 +2203,14 @@ L620:
     //xerrwd_(msg, &c__40, &c__20, &c__0, 1, &i__, &c__0, 1, &atoli, &c_b62, (ftnlen)60);
     errorCode = 620;
 	goto L700;
-L621:
-    ewti = rwork[lewt + i__ - 1 -1];
+//L621:
+   // ewti = rwork[lewt + i__ - 1 -1];
 
-    fprintf(stderr, "DLSODA-  EWT(I1) is R1 .le. 0.0         \n");
+   // fprintf(stderr, "DLSODA-  EWT(I1) is R1 .le. 0.0         \n");
 
-    //xerrwd_(msg, &c__40, &c__21, &c__0, 1, &i__, &c__0, 1, &ewti, &c_b62, (ftnlen)60);
-    errorCode = 621;
-	goto L700;
+  
+  //  errorCode = 621;
+	//goto L700;
 L622:
 
     fprintf(stderr, "DLSODA-  TOUT(=R1) too close to T(=R2) to start integration.\n");
@@ -2200,13 +2232,13 @@ L624:
     //xerrwd_(msg, &c__60, &c__24, &c__0, &c__0, &c__0, &c__0, &c__2, &tcrit, &tn, (ftnlen)60);
     errorCode = 624;
 	goto L700;
-L625:
+//L625:
 
-    fprintf(stderr, "DLSODA-  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)   \n");
+   // fprintf(stderr, "DLSODA-  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)   \n");
 
-    //xerrwd_(msg, &c__60, &c__25, &c__0, &c__0, &c__0, &c__0, &c__2, &tcrit, tout, (ftnlen)60);
-    errorCode = 625;
-	goto L700;
+   
+  //  errorCode = 625;
+//	goto L700;
 L626:
 
     fprintf(stderr, "DLSODA-  At start of problem, too much accuracy   \n");
@@ -2226,22 +2258,19 @@ L627:
     //xerrwd_(msg, &c__50, &c__27, &c__0, 1, itask, &c__0, 1, tout, &c_b62, (ftnlen)60);
     errorCode = 627;
 	goto L700;
-L628:
+//L628:
 
-    fprintf(stderr, "DLSODA-  MXORDN (=I1) .lt. 0  \n");
+    //fprintf(stderr, "DLSODA-  MXORDN (=I1) .lt. 0  \n");
+    //  errorCode = 628;
+	//goto L700;
+//L629:
 
-    //xerrwd_(msg, &c__30, &c__28, &c__0, 1, &mxordn, &c__0, &c__0,&c_b62, &c_b62, (ftnlen)60);
-    errorCode = 628;
-	goto L700;
-L629:
-
-    fprintf(stderr, "DLSODA-  MXORDS (=I1) .lt. 0  \n");
-
-    //xerrwd_(msg, &c__30, &c__29, &c__0, 1, &mxords, &c__0, &c__0,&c_b62, &c_b62, (ftnlen)60);
-	errorCode = 629;
-L700:
-    *istate = -3;
-	return errorCode;
+   // fprintf(stderr, "DLSODA-  MXORDS (=I1) .lt. 0  \n");
+    
+//	errorCode = 629;
+//L700:
+ //   *istate = -3;
+//	return errorCode;
 	
 L800:
 
@@ -3258,6 +3287,7 @@ L590:
     rh = rhup;
     if (rh < 1.1) {
 		goto L610;
+       
     }
     r__ = el[l - 1] / (REAL)l;
     i__1 = n;
