@@ -1,12 +1,44 @@
 
 
 #include <immintrin.h>
+#include <stdio.h>
 #include "GMS_init_gpus.cuh"
 //
 //	Implementation
 //
+// Few of functions adapted from NVIDIA Samples.
+/* Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *  * Neither the name of NVIDIA CORPORATION nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 
 #define TO_KiB(value) ((double)(value)) / (1024.0)
+#ifndef MIN
+#define MIN(x, y) ((x < y) ? x : y)
+#endif
 
 void devcaps_to_screen(const int dev_num, int * ierr, const bool all_info) {
 
@@ -205,6 +237,9 @@ Error:
 	 return;
 }
 
+// Adapted from NVIDIA Samples
+
+
 int32_t convertSMVer2Cores(const int32_t major,
                            const int32_t minor) {
 #if (LOG_ACTIVITY) == 1
@@ -245,8 +280,7 @@ int32_t convertSMVer2Cores(const int32_t major,
      index++;
    }
 
-  // If we don't find the values, we default use the previous one
-  // to run properly
+  
      printf(
       "MapSMtoCores for SM %d.%d is undefined."
       "  Default to use %d Cores/SM\n",
@@ -301,7 +335,7 @@ const char * convertSMVer2ArchName(const int32_t major,
      return (nGpuArchNameSM[index - 1].name);
 }
 
-#ifdef __CUDA_RUNTIME_H__
+
  
 int32_t gpuDeviceInit(const int32_t devID) {
   int32_t device_count;
@@ -506,8 +540,59 @@ bool checkCudaCapabilities(const int32_t major,
            return (-1);
 }
 
+ static uint32_t npow2(uint32_t x) {
+  --x;
+  x |= x >> 1;
+  x |= x >> 2;
+  x |= x >> 4;
+  x |= x >> 8;
+  x |= x >> 16;
+  return ++x;
+}
 
-#endif
+void setBlocksThreadNumber(const int32_t arch,
+                           const int32_t n,
+                           const int32_t mblocks,
+                           const int32_t mthreads,
+                           int32_t & blocks,
+                           int32_t & threads) {
+ 
+      cudaDeviceProp prop;
+      int32_t device;
+      GMS_CUDA_DEBUG_CHECK(cudaGetDevice(&device));
+      GMS_CUDA_DEBUG_CHECK(cudaGetDeviceProperties(&prop, device));
+
+     if (arch < 3) {
+         threads = (n < mthreads) ? npow2(n) : mthreads;
+         blocks = (n + threads - 1) / threads;
+     } else {
+        threads = (n < mthreads * 2) ? npow2((n + 1) / 2) : mthreads;
+        blocks = (n + (threads * 2 - 1)) / (threads * 2);
+  }
+
+  if ((float)threads * blocks >
+      (float)prop.maxGridSize[0] * prop.maxThreadsPerBlock) {
+      printf("n is too large!\n");
+  }
+
+  if (blocks > prop.maxGridSize[0]) {
+    printf(
+        "Grid size <%d> exceeds the device capability <%d>, set block size as "
+        "%d (original %d)\n",
+        blocks, prop.maxGridSize[0], threads * 2, threads);
+
+    blocks /= 2;
+    threads *= 2;
+  }
+
+  if (arch >= 6) {
+    blocks = MIN(mblocks, blocks);
+  } 
+  return;
+  Error:
+           blocks  = -1;
+           threads = -1;
+}
 
 #if !defined (CHECK_FAILURE_GENERATOR)
 #define CHECK_FAILURE_GENERATOR(ierr,msg) \
