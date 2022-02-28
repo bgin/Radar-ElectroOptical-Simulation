@@ -66,7 +66,7 @@ const char * convertSMVer2ArchName(const int32_t,
                                    const int32_t);
 
 
-#ifdef __CUDA_RUNTIME_H__
+
 int32_t gpuDeviceInit(const int32_t);
 
 // The device with highest Gflops throughput
@@ -81,7 +81,13 @@ int32_t findIntegratedGPU();
 
 // Finds the best CUDA device
 int32_t findCudaDevice();
-#endif
+
+void setBlocksThreadNumber(const int32_t,
+                           const int32_t,
+                           const int32_t,
+                           const int32_t,
+                           int32_t &,
+                           int32_t &);
 
 
 
