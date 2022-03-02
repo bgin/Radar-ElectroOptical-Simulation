@@ -423,13 +423,10 @@ struct ODE_6 {
 
 struct ODE_7 {
 
-      __device__ void operator()(int32_t * __restrict__ neq,
-                                 double  * __restrict__ t,
-                                 double  * __restrict__ y,
-                                 int32_t * __restrict__ ml,
-                                 int32_t * __restrict__ mu,
-                                 double  * __restrict__ pd,
-                                 int32_t * __restrict__ nrpd) { {
+      __device__ void operator()(int32_t *  __restrict__ neq,
+                                 double  *  __restrict__ t,
+                                 double  *  __restrict__ y,
+                                 double  *  __restrict__ ydot) { {
          
              ydot[0] = 1.71E0*y[0]+0.43E0*y[1]+8.32E0*y[2]+0.0007E0;
              ydot[1] = 1.71E0*y[0]-8.75E0*y[1];
@@ -485,5 +482,262 @@ struct JAC_7 {
      }
 };
 
+/*
+         SUBROUTINE F1(NEQ,T,Y,YDOT)
+        IMPLICIT NONE
+        INTEGER NEQ
+        DOUBLE PRECISION T, Y, YDOT
+        DIMENSION Y(2), YDOT(2)
 
+        YDOT(1) = Y(2)
+        YDOT(2) = 3.0D0*(1.0D0-Y(1)*Y(1))*Y(2) - Y(1)
+        RETURN
+      END SUBROUTINE F1
+
+      SUBROUTINE JAC1(NEQ,T,Y,ML,MU,PD,NROWPD)
+        IMPLICIT NONE
+        INTEGER NEQ, ML, MU, NROWPD
+        DOUBLE PRECISION T, Y, PD
+        DIMENSION Y(2), PD(NROWPD,2)
+
+        PD(1,1) = 0.0D0
+        PD(1,2) = 1.0D0
+        PD(2,1) = -6.0D0*Y(1)*Y(2) - 1.0D0
+        PD(2,2) = 3.0D0*(1.0D0-Y(1)*Y(1))
+        RETURN
+      END SUBROUTINE JAC1
+*/
+
+
+struct ODE_8 {
+
+     __device__ void operator()(int32_t *  __restrict__ neq,
+                                 double  *  __restrict__ t,
+                                 double  *  __restrict__ y,
+                                 double  *  __restrict__ ydot) {
+
+             ydot[0] = y[1];
+             ydot[1] = 3.0E+0*(1.0E+0-y[0]*y[0])*y[1]-y[0];
+      }
+};
+
+
+struct JAC_8 {
+
+     __device__ void operator()(int32_t * __restrict__ neq,
+                                 double  * __restrict__ t,
+                                 double  * __restrict__ y,
+                                 int32_t * __restrict__ ml,
+                                 int32_t * __restrict__ mu,
+                                 double  * __restrict__ pd,
+                                 int32_t * __restrict__ nrpd) {
+          
+            pd[0] = 0.0E+0;
+            pd[1] = 1.0E+0;
+            pd[2] = -6.0E+0*y[0]*y[1]-1.0E+0;
+            pd[3] = 3.0E+0*(1.0E+0-y[0]*y[0]);
+      }
+};
+
+
+/*
+       SUBROUTINE DERIVS(NEQ,T,Y,DY)
+!     Subroutine to evaluate dy/dt for this problem
+        IMPLICIT NONE
+        INTEGER NEQ
+        DOUBLE PRECISION T, Y, DY
+        DIMENSION Y(NEQ), DY(NEQ)
+
+        DY(1) = -0.04D0*Y(1) + 1D4*Y(2)*Y(3)
+        DY(2) = 0.04D0*Y(1) - 1D4*Y(2)*Y(3) - 3D7*Y(2)**2
+        DY(3) = 3D7*Y(2)**2
+        RETURN
+      END SUBROUTINE DERIVS
+
+      SUBROUTINE JACD(NEQ,T,Y,ML,MU,PD,NROWPD)
+!     Subroutine to define the exact Jacobian for this problem
+        IMPLICIT NONE
+        INTEGER NEQ, ML, MU, NROWPD
+        DOUBLE PRECISION T, Y, PD
+        DIMENSION Y(NEQ), PD(NROWPD,NEQ)
+
+        PD(1:NEQ,1:NEQ) = 0D0
+        PD(1,1) = -0.04D0
+        PD(1,2) = 1D4*Y(3)
+        PD(1,3) = 1D4*Y(2)
+        PD(2,1) = 0.04D0
+        PD(2,2) = -1D4*Y(3) - 6D7*Y(2)
+        PD(2,3) = -1D4*Y(2)
+        PD(3,1) = 0D0
+        PD(3,2) = 6D7*Y(2)
+        PD(3,3) = 0D0
+        RETURN
+      END SUBROUTINE JACD
+*/
+
+
+struct ODE_9 {
+
+     __device__ void operator()( int32_t *  __restrict__ neq,
+                                 double  *  __restrict__ t,
+                                 double  *  __restrict__ y,
+                                 double  *  __restrict__ ydot) {
+         
+           ydot[0] = -0.04E0*y[0]+1.0E+4*y[1]*y[2];
+           ydot[1] = 0.04E0*y[0]-1.0E+4*y[1]*y[2]-3.0E+7*(y[1]*y[1]);
+           ydot[2] = 3.0E+7*(y[1]*y[1]);
+    }
+};
+
+
+struct JAC_9 {
+
+       __device__ void operator()(int32_t * __restrict__ neq,
+                                 double  * __restrict__ t,
+                                 double  * __restrict__ y,
+                                 int32_t * __restrict__ ml,
+                                 int32_t * __restrict__ mu,
+                                 double  * __restrict__ pd,
+                                 int32_t * __restrict__ nrpd) {
+            
+            pd[0] = -0.04E0;
+            pd[1] = 1.0E+4*y[2];
+            pd[2] = 1.0E+4*y[1];
+            pd[3] = 0.04E0;
+            pd[4] = -1.0E+4*y[2]-6.0E+7*y[1];
+            pd[5] = -1.0E+4*y[1];
+            pd[6] = 0.0E0;
+            pd[7] = 6.0E+7*y[1];
+            pd[8] = 0.0E+0;
+      }
+};
+
+
+/*
+
+      SUBROUTINE DERIVS(NEQ,T,Y,YDOT)
+!     Subroutine to evaluate dy/dt for this problem
+        IMPLICIT NONE
+        INTEGER NEQ
+        DOUBLE PRECISION T, Y, YDOT
+        DIMENSION Y(NEQ), YDOT(NEQ)
+
+        YDOT(1) = 77.27D0*(Y(2)+Y(1)*(1.D0-8.375D-6*Y(1)-Y(2)))
+        YDOT(2) = (Y(3)-(1.D0+Y(1))*Y(2))/77.27D0
+        YDOT(3) = 0.161D0*(Y(1)-Y(3))
+        RETURN
+      END SUBROUTINE DERIVS
+
+      SUBROUTINE JACD(NEQ,T,Y,ML,MU,PD,NROWPD)
+!     Subroutine to define the exact Jacobian for this problem
+        IMPLICIT NONE
+        INTEGER NEQ, ML, MU, NROWPD
+        DOUBLE PRECISION T, Y, PD
+        DIMENSION Y(NEQ), PD(NROWPD,NEQ)
+
+        PD(1:NEQ,1:NEQ) = 0D0
+        PD(1,1) = 77.27D0*(1.D0-2.D0*8.375D-6*Y(1)-Y(2))
+        PD(1,2) = 77.27D0*(1.D0-Y(1))
+        PD(1,3) = 0.D0
+        PD(2,1) = -Y(2)/77.27D0
+        PD(2,2) = -(1.D0+Y(1))/77.27D0
+        PD(2,3) = 1.D0/77.27D0
+        PD(3,1) = .161D0
+        PD(3,2) = .0D0
+        PD(3,3) = -.161D0
+        RETURN
+      END SUBROUTINE JACD
+   
+*/
+
+
+struct ODE_10 {
+
+       __device__ void operator()(int32_t *  __restrict__ neq,
+                                 double  *  __restrict__ t,
+                                 double  *  __restrict__ y,
+                                 double  *  __restrict__ ydot) {
+            
+             ydot[0] = 77.27E+0*(y[1]+y[0]*(1.0E0-8.375E-6*y[0]-y[1]);
+             ydot[1] = (y[2]-(1.0E+0+y[0])*y[1])/77.27E+0;
+             ydot[2] = 0.161E+0*(y[0]-y[2]);
+       }
+};
+
+
+struct JAC_10 {
+
+        __device__ void operator()(int32_t * __restrict__ neq,
+                                 double  * __restrict__ t,
+                                 double  * __restrict__ y,
+                                 int32_t * __restrict__ ml,
+                                 int32_t * __restrict__ mu,
+                                 double  * __restrict__ pd,
+                                 int32_t * __restrict__ nrpd) {
+           
+             pd[0] = 77.27E0*(1.0-2.0*8.375E-6*y[0]-y[1]);
+             pd[1] = 77.27E0*(1.0-y[0]);
+             pd[2] = 0.0;
+             pd[3] = -y[1]/77.27;
+             pd[4] = -(1.0+y[0])/77.27;
+             pd[5] = 1.0/77.27;
+             pd[6] = 0.161;
+             pd[7] = 0.0;
+             pd[8] = -0.161;
+       }
+};
+
+
+/*
+       SUBROUTINE DERIVS(NEQ,T,YSOL,YDOT)
+        IMPLICIT NONE
+        INTEGER NEQ
+        DOUBLE PRECISION T, Y, YDOT, YSOL
+        DIMENSION YSOL(NEQ), YDOT(NEQ)
+
+        Y = YSOL(1)
+        YDOT(1) = (1.0D0/EPSILN)*((1.0D0-T)*Y-Y*Y)
+        RETURN
+      END SUBROUTINE DERIVS
+
+      SUBROUTINE JACD(NEQ,T,Y,ML,MU,PD,NROWPD)
+        IMPLICIT NONE
+        INTEGER NEQ, ML, MU, NROWPD
+        DOUBLE PRECISION T, Y, PD
+        DIMENSION Y(NEQ), PD(NROWPD,NEQ)
+
+        PD(1,1) = (1.0D0/EPSILN)*(1.0D0-T-2.0D0*Y(1))
+        RETURN
+      END SUBROUTINE JACD
+*/
+
+
+struct ODE_11 {
+
+      __device__ void operator()(int32_t *  __restrict__ neq,
+                                 double  *  __restrict__ t,
+                                 double  *  __restrict__ y,
+                                 double  *  __restrict__ ydot) {
+          
+          const double epsilon = 1.0E-6;
+          double tmp             = y[0];
+          ydot[0] = (1.0/epsilon)*((1.0-t)*tmp-tmp*tmp);
+     }
+};
+
+
+struct JAC_11 {
+
+      __device__ void operator()(int32_t * __restrict__ neq,
+                                 double  * __restrict__ t,
+                                 double  * __restrict__ y,
+                                 int32_t * __restrict__ ml,
+                                 int32_t * __restrict__ mu,
+                                 double  * __restrict__ pd,
+                                 int32_t * __restrict__ nrpd) {
+           
+           const double epsilon = 1.0E-6;
+           pd[0] = (1.0/epsilon)*(1.0-t-2.0*y[0]);
+     }
+};
 #endif /*__GMS_CULSODA_ODE_CUH__*/
