@@ -2,7 +2,7 @@
 #define __GMS_CULSODA_CUH__
 #include <math.h>
 #include <stdio.h>
-
+#include <cuda_runtime.h>
 #include "GMS_gpu_config.cuh"
 
 
@@ -23,19 +23,19 @@
  */
 
 
-#define REAL double
+#define double  double
 
 
 /* Common Block Declarations */
 struct cuLsodaCommonBlock
 {
-	REAL /*rowns[209],*/ CM_conit, CM_crate, CM_ccmax, CM_el0, CM_h__, CM_hmin, CM_hmxi, CM_hu, CM_rc, CM_tn, CM_uround, CM_pdest, CM_pdlast, CM_ratio, CM_hold, CM_rmax;
-	REAL  CM_el[13], CM_elco[156]	/* was [13][12] */, CM_tesco[36]	/* was [3][12] */;
-	REAL CM_rls[218];
-	REAL CM_tsw, /*rowns2[20],*/ CM_pdnorm;
-	REAL /*rownd2,*/ CM_cm1[12], CM_cm2[5];
-	REAL CM_rlsa[22];
-	REAL CM_sm1[12];
+	double  /*rowns[209],*/ CM_conit, CM_crate, CM_ccmax, CM_el0, CM_h__, CM_hmin, CM_hmxi, CM_hu, CM_rc, CM_tn, CM_uround, CM_pdest, CM_pdlast, CM_ratio, CM_hold, CM_rmax;
+	double   CM_el[13], CM_elco[156]	/* was [13][12] */, CM_tesco[36]	/* was [3][12] */;
+	double  CM_rls[218];
+	double  CM_tsw, /*rowns2[20],*/ CM_pdnorm;
+	double  /*rownd2,*/ CM_cm1[12], CM_cm2[5];
+	double  CM_rlsa[22];
+	double  CM_sm1[12];
 	int CM_init, CM_mxstep, CM_mxhnil, CM_nhnil, CM_nslast, CM_nyh, /*iowns[6],*/ CM_icf, 
 	CM_ierpj, CM_iersl, CM_jcur, CM_jstart, CM_kflag, CM_l, CM_lyh, CM_lewt, CM_lacor, CM_lsavf,
 	CM_lwm, CM_liwm, CM_meth, CM_miter, CM_maxord, CM_maxcor, CM_msbp, CM_mxncf, CM_n, CM_nq, 
@@ -57,17 +57,17 @@ struct cuLsodaCommonBlock
 //#define Fex_and_Jex_definition
 //struct myFex
 //{
-//	__device__ void operator()(int *neq, REAL *t, REAL *y, REAL *ydot/*, void *otherData*/)
+//	__device__ void operator()(int *neq, double  *t, double  *y, double  *ydot/*, void *otherData*/)
 //	{
-//		ydot[0] = (REAL)1.0E4 * y[1] * y[2] - (REAL).04E0 * y[0];
-//		ydot[2] = (REAL)3.0E7 * y[1] * y[1];
-//		ydot[1] = (REAL)-1.0 * (ydot[0] + ydot[2]);
+//		ydot[0] = (double )1.0E4 * y[1] * y[2] - (double ).04E0 * y[0];
+//		ydot[2] = (double )3.0E7 * y[1] * y[1];
+//		ydot[1] = (double )-1.0 * (ydot[0] + ydot[2]);
 //	}
 //};
 
 //struct myJex
 //{
-//	__device__ void operator()(int *neq, REAL *t, REAL *y, int ml, int mu, REAL *pd, int nrowpd/*, void *otherData*/)
+//	__device__ void operator()(int *neq, double  *t, double  *y, int ml, int mu, double  *pd, int nrowpd/*, void *otherData*/)
 //	{
 //		return;
 //	}
@@ -92,37 +92,37 @@ struct cuLsodaCommonBlock
 
 
 /*template<typename Fex, typename Jex>
-__device__ int dlsoda_(Fex, int *, REAL *, REAL *, REAL *, int *, REAL *, REAL *, int *, int *, int *, REAL *, int *, int *, int *, Jex, int *, struct cuLsodaCommonBlock *);
+__device__ int dlsoda_(Fex, int *, double  *, double  *, double  *, int *, double  *, double  *, int *, int *, int *, double  *, int *, int *, int *, Jex, int *, struct cuLsodaCommonBlock *);
 
 template<typename Fex, typename Jex> 
-__device__ int dstoda_(int *neq, REAL *y, REAL *yh, int *NOT_nyh, REAL *yh1, REAL *ewt, REAL *savf, REAL *acor, REAL *wm, int *iwm, Fex f, Jex jac, struct cuLsodaCommonBlock *common);
+__device__ int dstoda_(int *neq, double  *y, double  *yh, int *NOT_nyh, double  *yh1, double  *ewt, double  *savf, double  *acor, double  *wm, int *iwm, Fex f, Jex jac, struct cuLsodaCommonBlock *common);
 
 template<typename Fex, typename Jex> 
-__device__ int dprja_(int *neq, REAL *y, REAL *yh, int *NOT_nyh, REAL *ewt, REAL *ftem, REAL *savf, REAL *wm, int *iwm, Fex f, Jex jac, struct cuLsodaCommonBlock *common);
+__device__ int dprja_(int *neq, double  *y, double  *yh, int *NOT_nyh, double  *ewt, double  *ftem, double  *savf, double  *wm, int *iwm, Fex f, Jex jac, struct cuLsodaCommonBlock *common);
 
-__device__ int dsolsy_(REAL *wm, int *iwm, REAL *x, REAL *tem, struct cuLsodaCommonBlock *common);
-__device__ int dintdy_(REAL *t, int k, REAL *yh, int *NOT_nyh, REAL *dky, int *iflag, struct cuLsodaCommonBlock *common);
-__device__ int dcfode_(int meth, REAL *DCFODE_elco, REAL *DCFODE_tesco, struct cuLsodaCommonBlock *common);
-__device__ int dsolsy_(REAL *wm, int *iwm, REAL *x, REAL *tem, struct cuLsodaCommonBlock *common);
-__device__ int dewset_(int *PARAM_n, int *itol, REAL *rtol, REAL *atol, REAL *ycur, REAL *ewt, struct cuLsodaCommonBlock *common);
-__device__ REAL dmnorm_(int *PARAM_n, REAL *v, REAL *w, struct cuLsodaCommonBlock *common);
-__device__ REAL dfnorm_(int *PARAM_n, REAL *a, REAL *w, struct cuLsodaCommonBlock *common);
-__device__ REAL dbnorm_(int *PARAM_n, REAL *a, int *nra, int *ml, int *mu, REAL *w, struct cuLsodaCommonBlock *common);
-__device__ int dsrcma_(REAL *rsav, int *isav, int *job, struct cuLsodaCommonBlock *common);
-__device__ int dgefa_(REAL *a, int *lda, int *PARAM_n, int *ipvt, int *info, struct cuLsodaCommonBlock *common);
-__device__ int dgesl_(REAL *a, int *lda, int *PARAM_n, int *ipvt, REAL *b, int job, struct cuLsodaCommonBlock *common);
-__device__ int dgbfa_(REAL *abd, int *lda, int *PARAM_n, int *ml, int *mu, int *ipvt, int *info, struct cuLsodaCommonBlock *common);
-__device__ int dgbsl_(REAL *abd, int *lda, int *PARAM_n, int *ml, int *mu, int *ipvt, REAL *b, int job, struct cuLsodaCommonBlock *common);
-__device__ REAL dumach_( struct cuLsodaCommonBlock *common);
+__device__ int dsolsy_(double  *wm, int *iwm, double  *x, double  *tem, struct cuLsodaCommonBlock *common);
+__device__ int dintdy_(double  *t, int k, double  *yh, int *NOT_nyh, double  *dky, int *iflag, struct cuLsodaCommonBlock *common);
+__device__ int dcfode_(int meth, double  *DCFODE_elco, double  *DCFODE_tesco, struct cuLsodaCommonBlock *common);
+__device__ int dsolsy_(double  *wm, int *iwm, double  *x, double  *tem, struct cuLsodaCommonBlock *common);
+__device__ int dewset_(int *PARAM_n, int *itol, double  *rtol, double  *atol, double  *ycur, double  *ewt, struct cuLsodaCommonBlock *common);
+__device__ double  dmnorm_(int *PARAM_n, double  *v, double  *w, struct cuLsodaCommonBlock *common);
+__device__ double  dfnorm_(int *PARAM_n, double  *a, double  *w, struct cuLsodaCommonBlock *common);
+__device__ double  dbnorm_(int *PARAM_n, double  *a, int *nra, int *ml, int *mu, double  *w, struct cuLsodaCommonBlock *common);
+__device__ int dsrcma_(double  *rsav, int *isav, int *job, struct cuLsodaCommonBlock *common);
+__device__ int dgefa_(double  *a, int *lda, int *PARAM_n, int *ipvt, int *info, struct cuLsodaCommonBlock *common);
+__device__ int dgesl_(double  *a, int *lda, int *PARAM_n, int *ipvt, double  *b, int job, struct cuLsodaCommonBlock *common);
+__device__ int dgbfa_(double  *abd, int *lda, int *PARAM_n, int *ml, int *mu, int *ipvt, int *info, struct cuLsodaCommonBlock *common);
+__device__ int dgbsl_(double  *abd, int *lda, int *PARAM_n, int *ml, int *mu, int *ipvt, double  *b, int job, struct cuLsodaCommonBlock *common);
+__device__ double  dumach_( struct cuLsodaCommonBlock *common);
 //__device__ int xsetf_(int *mflag, struct CommonBlock *common);
 //__device__ int xsetun_(int *lun, struct CommonBlock *common);
 __device__ int ixsav_(int ipar, int *ivalue, int iset, struct cuLsodaCommonBlock *common);
-__device__ int idamax_(int *PARAM_n, REAL *dx, int incx, struct cuLsodaCommonBlock *common);
-__device__ int daxpy_(int *PARAM_n, REAL *da, REAL *dx, int incx, REAL *dy, int incy, struct cuLsodaCommonBlock *common);
-__device__ int dumsum_(REAL a, REAL b, REAL *c__, struct cuLsodaCommonBlock *common);
-__device__ int dscal_(int *PARAM_n, REAL *da, REAL *dx, int incx, struct cuLsodaCommonBlock *common);
-__device__ REAL ddot_(int *PARAM_n, REAL *dx, int incx, REAL *dy, int incy, struct cuLsodaCommonBlock *common);
-__device__ REAL d_sign(REAL *a, REAL *b);
+__device__ int idamax_(int *PARAM_n, double  *dx, int incx, struct cuLsodaCommonBlock *common);
+__device__ int daxpy_(int *PARAM_n, double  *da, double  *dx, int incx, double  *dy, int incy, struct cuLsodaCommonBlock *common);
+__device__ int dumsum_(double  a, double  b, double  *c__, struct cuLsodaCommonBlock *common);
+__device__ int dscal_(int *PARAM_n, double  *da, double  *dx, int incx, struct cuLsodaCommonBlock *common);
+__device__ double  ddot_(int *PARAM_n, double  *dx, int incx, double  *dy, int incy, struct cuLsodaCommonBlock *common);
+__device__ double  d_sign(double  *a, double  *b);
 __host__ __device__ void cuLsodaCommonBlockInit(struct cuLsodaCommonBlock *common);
 
 */
@@ -210,17 +210,17 @@ __host__ __device__ void cuLsodaCommonBlockInit(struct cuLsodaCommonBlock *commo
 
     //struct myFex
 //{
-//	__device__ void operator()(int *neq, REAL *t, REAL *y, REAL *ydot/*, void *otherData*/)
+//	__device__ void operator()(int *neq, double  *t, double  *y, double  *ydot/*, void *otherData*/)
 //	{
-//		ydot[0] = (REAL)1.0E4 * y[1] * y[2] - (REAL).04E0 * y[0];
-//		ydot[2] = (REAL)3.0E7 * y[1] * y[1];
-//		ydot[1] = (REAL)-1.0 * (ydot[0] + ydot[2]);
+//		ydot[0] = (double )1.0E4 * y[1] * y[2] - (double ).04E0 * y[0];
+//		ydot[2] = (double )3.0E7 * y[1] * y[1];
+//		ydot[1] = (double )-1.0 * (ydot[0] + ydot[2]);
 //	}
 //};
 
 //struct myJex
 //{
-//	__device__ void operator()(int *neq, REAL *t, REAL *y, int ml, int mu, REAL *pd, int nrowpd/*, void *otherData*/)
+//	__device__ void operator()(int *neq, double  *t, double  *y, int ml, int mu, double  *pd, int nrowpd/*, void *otherData*/)
 //	{
 //		return;
 //	}
@@ -232,16 +232,16 @@ __host__ __device__ void cuLsodaCommonBlockInit(struct cuLsodaCommonBlock *commo
 template<typename Fex,typename Jex>
 __device__ int dlsoda_(Fex f, 
                        int *  __restrict__ neq, 
-                       REAL * __restrict__ y, 
-                       REAL * __restrict__ t, 
-                       REAL * __restrict__ tout, 
+                       double  * __restrict__ y, 
+                       double  * __restrict__ t, 
+                       double  * __restrict__ tout, 
                        int *  __restrict__ itol, 
-                       REAL * __restrict__ rtol, 
-                       REAL * __restrict__ atol, 
+                       double  * __restrict__ rtol, 
+                       double  * __restrict__ atol, 
                        int * __restrict__ itask, 
                        int * __restrict__ istate, 
                        int * __restrict__ iopt, 
-                       REAL * __restrict__ rwork, 
+                       double  * __restrict__ rwork, 
                        int * __restrict__ lrw, 
                        int * __restrict__ iwork, 
                        int * __restrict__ liw, 
@@ -262,48 +262,48 @@ __device__ int dlsoda_(Fex f,
 	
     /* System generated locals */
     int i__1 = 0;
-    REAL d__1 = 0.;
-	REAL d__2 = 0.;
+    double  d__1 = 0.;
+	double  d__2 = 0.;
 
 	
 	
     /* Local variables */
      int i__;
-     REAL h0 = 0.;
+     double  h0 = 0.;
      int i1 = 0;
 	 int i2 = 0;
-     REAL w0 = 0.;
+     double  w0 = 0.;
      int ml = 0;
-     REAL rh = 0.;
+     double  rh = 0.;
      int mu = 0;
-     REAL tp = 0.;
+     double  tp = 0.;
      int lf0 = 0;
-     REAL big = 0.;
+     double  big = 0.;
      int kgo = 0;
-     REAL ayi = 0.;
-     REAL hmx = 0.;
-	 REAL tol = 0.;
-	 REAL sum = 0.;
+     double  ayi = 0.;
+     double  hmx = 0.;
+	 double  tol = 0.;
+	 double  sum = 0.;
      int len1 = 0;
 	 int len2 = 0;
-     REAL hmax = 0.;
+     double  hmax = 0.;
      int ihit = 0;
-     REAL ewti = 0.;
-	 REAL size = 0.;
+     double  ewti = 0.;
+	 double  size = 0.;
      int len1c = 0;
 	 int len1n = 0;
 	 int len1s = 0;
 	 int iflag;
-     REAL atoli = 0.;
+     double  atoli = 0.;
      int leniw = 0;
 	 int lenwm = 0;
 	 int imxer = 0;
-     REAL tcrit = 0.;
+     double  tcrit = 0.;
      int lenrw = 0;
-     REAL tdist = 0.;
-	 REAL rtoli = 0.; 
-	 REAL tolsf = 0.;
-	 REAL tnext = 0.;
+     double  tdist = 0.;
+	 double  rtoli = 0.; 
+	 double  tolsf = 0.;
+	 double  tnext = 0.;
 	
      int leniwc = 0;
      int lenrwc = 0;
@@ -313,7 +313,7 @@ __device__ int dlsoda_(Fex f,
 	/* DLSODA: Livermore Solver for Ordinary Differential Equations, with */
 	/*         Automatic method switching for stiff and nonstiff problems. */
 	
-	/* This version is in REAL precision. */
+	/* This version is in double  precision. */
 	
 	/* DLSODA solves the initial value problem for stiff or nonstiff */
 	/* systems of first order ODEs, */
@@ -778,7 +778,7 @@ __device__ int dlsoda_(Fex f,
 	/*                   default values will be used in all cases. */
 	/*          IOPT = 1 means one or more optional inputs are being used. */
 	
-	/* RWORK  = a real array (REAL precision) for work space, and (in the */
+	/* RWORK  = a real array (double  precision) for work space, and (in the */
 	/*          first 20 words) for conditional and optional inputs and */
 	/*          optional outputs. */
 	/*          As DLSODA switches automatically between stiff and nonstiff */
@@ -1161,9 +1161,9 @@ __device__ int dlsoda_(Fex f,
 	/* must declare, in the primary overlay, the variables in: */
 	/*   (1) the call sequence to DLSODA, and */
 	/*   (2) the two internal Common blocks */
-	/*         /DLS001/  of length  255  (218 REAL precision words */
+	/*         /DLS001/  of length  255  (218 double  precision words */
 	/*                      followed by 37 int words), */
-	/*         /DLSA01/  of length  31    (22 REAL precision words */
+	/*         /DLSA01/  of length  31    (22 double  precision words */
 	/*                      followed by  9 int words). */
 	
 	/* If DLSODA is used on a system in which the contents of internal */
@@ -1240,7 +1240,7 @@ __device__ int dlsoda_(Fex f,
 	/* 20010425  Major update: convert source lines to upper case; */
 	/*           added *DECK lines; changed from 1 to * in dummy dimensions; */
 	/*           changed names R1MACH/D1MACH to RUMACH/DUMACH; */
-	/*           renamed routines for uniqueness across single/REAL prec.; */
+	/*           renamed routines for uniqueness across single/double  prec.; */
 	/*           converted intrinsic names to generic form; */
 	/*           removed ILLIN and NTREP (data loaded) from Common; */
 	/*           removed all 'own' variables from Common; */
@@ -1248,7 +1248,7 @@ __device__ int dlsoda_(Fex f,
 	/*           replaced XERRWV/XERRWD with 1993 revised version; */
 	/*           converted prologues, comments, error messages to mixed case; */
 	/*           numerous corrections to prologues and internal comments. */
-	/* 20010507  Converted single precision source to REAL precision. */
+	/* 20010507  Converted single precision source to double  precision. */
 	/* 20010613  Revised excess accuracy test (to match rest of ODEPACK). */
 	/* 20010808  Fixed bug in DPRJA (matrix in DBNORM call). */
 	/* 20020502  Corrected declarations in descriptions of user routines. */
@@ -2333,11 +2333,11 @@ L800:
 
 /* DECK DINTDY */
 /* Subroutine */ 
-__device__ int dintdy_(REAL * __restrict__ t, 
+__device__ int dintdy_(double  * __restrict__ t, 
                        int k, 
-                       REAL * __restrict__ yh, 
+                       double  * __restrict__ yh, 
                        int * __restrict__ NOT_nyh, 
-                       REAL * __restrict__ dky, 
+                       double  * __restrict__ dky, 
                        int * __restrict__ iflag, 
                        struct cuLsodaCommonBlock *__restrict__ common)
 {
@@ -2346,7 +2346,7 @@ __device__ int dintdy_(REAL * __restrict__ t,
 	int yh_offset = 0;
 	int i__1 = 0;
 	int i__2 = 0;
-    REAL d__1 = 0.;
+    double  d__1 = 0.;
 	
     /* Builtin functions */
 
@@ -2355,15 +2355,15 @@ __device__ int dintdy_(REAL * __restrict__ t,
 	
 	
     /* Local variables */
-     REAL c__ = 0.;
+     double  c__ = 0.;
      int i__ = 0;
 	 int j = 0;
-     REAL r__ = 0;
-	 REAL s = 0; 
+     double  r__ = 0;
+	 double  s = 0; 
      int ic = 0;
 	 int jb = 0;
 	 int jj = 0;
-     REAL tp = 0;
+     double  tp = 0;
      int jb2 = 0;
 	 int jj1 = 0;
 	 int jp1 = 0;
@@ -2401,7 +2401,7 @@ __device__ int dintdy_(REAL * __restrict__ t,
 	/*   791129  DATE WRITTEN */
 	/*   890501  Modified prologue to SLATEC/LDOC format.  (FNF) */
 	/*   890503  Minor cosmetic changes.  (FNF) */
-	/*   930809  Renamed to allow single/REAL precision versions. (ACH) */
+	/*   930809  Renamed to allow single/double  precision versions. (ACH) */
 	/*   010418  Reduced size of Common block /DLS001/. (ACH) */
 	/*   031105  Restored 'own' variables to Common block /DLS001/, to */
 	/*           enable interrupt/restart feature. (ACH) */
@@ -2439,7 +2439,7 @@ __device__ int dintdy_(REAL * __restrict__ t,
 		ic *= jj;
     }
 L15:
-    c__ = (REAL) ic;
+    c__ = (double ) ic;
     i__1 = n;
     for (i__ = 1; i__ <= i__1; ++i__) {
 		/* L20: */
@@ -2464,7 +2464,7 @@ L15:
 			ic *= jj;
 		}
 	L35:
-		c__ = (REAL) ic;
+		c__ = (double ) ic;
 		i__2 = n;
 		for (i__ = 1; i__ <= i__2; ++i__) {
 			/* L40: */
@@ -2477,7 +2477,7 @@ L15:
     }
 L55:
     i__1 = -(k);
-    r__ = pow(h__, (REAL)i__1);
+    r__ = pow(h__, (double )i__1);
     i__1 = n;
     for (i__ = 1; i__ <= i__1; ++i__) {
 		/* L60: */
@@ -2508,14 +2508,14 @@ L90:
 
 template<typename Fex, typename Jex> 
 __device__ int dstoda_(int * __restrict__ neq, 
-                       REAL * __restrict__ y, 
-                       REAL * __restrict__ yh, 
+                       double  * __restrict__ y, 
+                       double  * __restrict__ yh, 
                        int * __restrict__ NOT_nyh, 
-                       REAL * __restrict__ yh1, 
-                       REAL * __restrict__ ewt, 
-                       REAL * __restrict__ savf, 
-                       REAL * __restrict__ acor, 
-                       REAL * __restrict__ wm, 
+                       double  * __restrict__ yh1, 
+                       double  * __restrict__ ewt, 
+                       double  * __restrict__ savf, 
+                       double  * __restrict__ acor, 
+                       double  * __restrict__ wm, 
                        int * __restrict__ iwm, 
                        Fex f, 
                        Jex jac, 
@@ -2530,9 +2530,9 @@ __device__ int dstoda_(int * __restrict__ neq,
 	int i__1 = 0;
 	int i__2 = 0;
 
-    REAL d__1 = 0.;
-	REAL d__2 = 0.;
-	REAL d__3 = 0.;
+    double  d__1 = 0.;
+	double  d__2 = 0.;
+	double  d__3 = 0.;
 	
     /* Builtin functions */
 	
@@ -2540,45 +2540,45 @@ __device__ int dstoda_(int * __restrict__ neq,
     int i__ = 0;
 	int j = 0;
 	int m = 0;
-    REAL r__ = 0.;
+    double  r__ = 0.;
     int i1 = 0;
 	int jb = 0;
-    REAL rh = 0.;
-	REAL rm = 0.;
-	REAL dm1 = 0.;
-	REAL dm2 = 0.;
+    double  rh = 0.;
+	double  rm = 0.;
+	double  dm1 = 0.;
+	double  dm2 = 0.;
     int lm1 = 0;
 	int lm2 = 0;
-    REAL rh1 = 0.;
-	REAL rh2 = 0.;
-	REAL del = 0.;
-	REAL ddn = 0.;
+    double  rh1 = 0.;
+	double  rh2 = 0.;
+	double  del = 0.;
+	double  ddn = 0.;
     int ncf = 0;
-    REAL pdh = 0.;
-	REAL dsm = 0.;
-	REAL dup = 0.;
-	REAL exm1 = 0.;
-	REAL exm2 = 0.;
+    double  pdh = 0.;
+	double  dsm = 0.;
+	double  dup = 0.;
+	double  exm1 = 0.;
+	double  exm2 = 0.;
     int nqm1 = 0;
 	int nqm2 = 0;
-    REAL dcon = 0.;
-	REAL delp = 0.;
+    double  dcon = 0.;
+	double  delp = 0.;
     int lm1p1 = 0;
 	int lm2p1 = 0;
-    REAL exdn = 0.;
-	REAL rhdn = 0.;
+    double  exdn = 0.;
+	double  rhdn = 0.;
     int iret = 0;
-    REAL told = 0.;
-	REAL rhsm = 0.;
+    double  told = 0.;
+	double  rhsm = 0.;
     int newq = 0;
-    REAL exsm = 0.;
-	REAL rhup = 0.;
-	REAL rate = 0.;
-	REAL exup = 0.;
-	REAL rh1it = 0.;
-	REAL alpha = 0.;
+    double  exsm = 0.;
+	double  rhup = 0.;
+	double  rate = 0.;
+	double  exup = 0.;
+	double  rh1it = 0.;
+	double  alpha = 0.;
     int iredo = 0;
-    REAL pnorm = 0.;
+    double  pnorm = 0.;
 	
     /* Parameter adjustments */
     //--neq;  //fixed
@@ -2765,7 +2765,7 @@ L150:
     nqnyh = nq * *NOT_nyh;
     rc = rc * el[0] / el0;
     el0 = el[0];
-    conit = .5 / (REAL)(nq + 2);
+    conit = .5 / (double )(nq + 2);
     switch (iret) {
 		case 1:  goto L160;
 		case 2:  goto L170;
@@ -3104,7 +3104,7 @@ L450:
 	/* Otherwise, switch to the BDF methods if the last step was */
 	/* restricted to insure stability (irflag = 1), and stay with Adams */
 	/* method if not.  When switching to BDF with polluted error estimates, */
-	/* in the absence of other information, REAL the step size. */
+	/* in the absence of other information, double  the step size. */
 	
 	/* When the estimates are OK, we make the usual test by computing */
 	/* the step size we could have (ideally) used on this step, */
@@ -3126,7 +3126,7 @@ L450:
     nqm2 = min(nq,mxords);
     goto L478;
 L470:
-    exsm = 1. / (REAL)l;
+    exsm = 1. / (double )l;
     rh1 = 1. / (pow(dsm, exsm) * 1.2 + 1.2e-6);
     rh1it = rh1 * 2.;
     pdh = pdlast * fabs(h__);
@@ -3139,7 +3139,7 @@ L470:
     }
     nqm2 = mxords;
     lm2 = mxords + 1;
-    exm2 = 1. / (REAL)lm2;
+    exm2 = 1. / (double )lm2;
     lm2p1 = lm2 + 1;
     dm2 = dmnorm_(&n, &yh[lm2p1 * yh_dim1 + 1 -yh_offset], ewt, common) / cm2[mxords - 1];
     rh2 = 1. / (pow(dm2, exm2) * 1.2 + 1.2e-6);
@@ -3174,13 +3174,13 @@ L478:
 	/* roundoff pollution, we stay with BDF. */
 	/* ----------------------------------------------------------------------- */
 L480:
-    exsm = 1. / (REAL)l;
+    exsm = 1. / (double )l;
     if (mxordn >= nq) {
 		goto L484;
     }
     nqm1 = mxordn;
     lm1 = mxordn + 1;
-    exm1 = 1. / (REAL)lm1;
+    exm1 = 1. / (double )lm1;
     lm1p1 = lm1 + 1;
     dm1 = dmnorm_(&n, &yh[lm1p1 * yh_dim1 + 1 -yh_offset], ewt, common) / cm1[mxordn - 1];
     rh1 = 1. / (pow(dm1, exm1) * 1.2 + 1.2e-6);
@@ -3287,19 +3287,19 @@ L520:
 		savf[i__ -1] = acor[i__ -1] - yh[i__ + lmax * yh_dim1 -yh_offset];
     }
     dup = dmnorm_(&n, savf, ewt, common) / tesco[nq * 3 - 1];
-    exup = (REAL)1. / (REAL)(l + 1);
-    rhup = (REAL)1. / (pow(dup, exup) * (REAL)1.4 + (REAL)1.4e-6);
+    exup = (double )1. / (double )(l + 1);
+    rhup = (double )1. / (pow(dup, exup) * (double )1.4 + (double )1.4e-6);
 L540:
-    exsm = (REAL)1. / l;
-    rhsm = (REAL)1. / (pow(dsm, exsm) * (REAL)1.2 + (REAL)1.2e-6);
+    exsm = (double )1. / l;
+    rhsm = (double )1. / (pow(dsm, exsm) * (double )1.2 + (double )1.2e-6);
     rhdn = 0.;
     if (nq == 1) {
 		goto L550;
     }
     ddn = dmnorm_(&n, &yh[l * yh_dim1 + 1 -yh_offset], ewt, common) / 
 	tesco[nq * 3 - 3];
-    exdn = (REAL)1. / (REAL)nq;
-    rhdn = (REAL)1. / (pow(ddn, exdn) * (REAL)1.3 + (REAL)1.3e-6);
+    exdn = (double )1. / (double )nq;
+    rhdn = (double )1. / (pow(ddn, exdn) * (double )1.3 + (double )1.3e-6);
 	/* If METH = 1, limit RH according to the stability region also. -------- */
 L550:
     if (meth == 2) {
@@ -3350,7 +3350,7 @@ L590:
     if (rh < 1.1) {
 		goto L610;
     }
-    r__ = el[l - 1] / (REAL)l;
+    r__ = el[l - 1] / (double )l;
     i__1 = n;
     for (i__ = 1; i__ <= i__1; ++i__) {
 		/* L600: */
@@ -3460,8 +3460,8 @@ L720:
 /* DECK DCFODE */
 /* Subroutine */ 
 __device__ int dcfode_(int PARAM_meth, 
-                       REAL * __restrict__ DCFODE_elco, 
-                       REAL * __restrict__ DCFODE_tesco, 
+                       double  * __restrict__ DCFODE_elco, 
+                       double  * __restrict__ DCFODE_tesco, 
                        struct cuLsodaCommonBlock *__restrict__ common)
 {
     /* System generated locals */
@@ -3470,23 +3470,23 @@ __device__ int dcfode_(int PARAM_meth,
     /* Local variables */
      int i__ = 0;
 	 int ib = 0;
-     REAL pc[12];
+     double  pc[12];
 	 for (int bubb = 0; bubb < 12; bubb ++)
 		{
 			pc[bubb] = 0.;
 		}
      int DCFODE_nq = 0;
-     REAL fnq = 0.;
+     double  fnq = 0.;
      int nqm1 = 0;
 	 int nqp1 = 0;
-     REAL ragq = 0.;
-	 REAL pint = 0.;
-	 REAL xpin = 0.;
-	 REAL fnqm1 = 0.;
-	 REAL agamq = 0.;
-	 REAL rqfac = 0.;
-	 REAL tsign = 0.;
-	 REAL rq1fac = 0.;
+     double  ragq = 0.;
+	 double  pint = 0.;
+	 double  xpin = 0.;
+	 double  fnqm1 = 0.;
+	 double  agamq = 0.;
+	 double  rqfac = 0.;
+	 double  tsign = 0.;
+	 double  rq1fac = 0.;
 	
 	/* ***BEGIN PROLOGUE  DCFODE */
 	/* ***SUBSIDIARY */
@@ -3526,7 +3526,7 @@ __device__ int dcfode_(int PARAM_meth,
 	/*   791129  DATE WRITTEN */
 	/*   890501  Modified prologue to SLATEC/LDOC format.  (FNF) */
 	/*   890503  Minor cosmetic changes.  (FNF) */
-	/*   930809  Renamed to allow single/REAL precision versions. (ACH) */
+	/*   930809  Renamed to allow single/double  precision versions. (ACH) */
 	/* ***END PROLOGUE  DCFODE */
 	/* **End */
 	
@@ -3548,8 +3548,8 @@ L100:
     DCFODE_tesco[5 -4] = 2.;
     DCFODE_tesco[7 -4] = 1.;
     DCFODE_tesco[39 -4] = 0.;
-    pc[0] = (REAL)1.;
-    rqfac =(REAL) 1.;
+    pc[0] = (double )1.;
+    rqfac =(double ) 1.;
     for (DCFODE_nq = 2; DCFODE_nq <= 12; ++DCFODE_nq) {
 		/* ----------------------------------------------------------------------- */
 		/* The PC array will contain the coefficients of the polynomial */
@@ -3557,9 +3557,9 @@ L100:
 		/* Initially, p(x) = 1. */
 		/* ----------------------------------------------------------------------- */
 		rq1fac = rqfac;
-		rqfac /= (REAL)DCFODE_nq;
+		rqfac /= (double )DCFODE_nq;
 		nqm1 = DCFODE_nq - 1;
-		fnqm1 = (REAL) nqm1;
+		fnqm1 = (double ) nqm1;
 		nqp1 = DCFODE_nq + 1;
 		/* Form coefficients of p(x)*(x+nq-1). ---------------------------------- */
 		pc[DCFODE_nq - 1] = 0.;
@@ -3577,9 +3577,9 @@ L100:
 		i__1 = DCFODE_nq;
 		for (i__ = 2; i__ <= i__1; ++i__) {
 			tsign = -tsign;
-			pint += tsign * pc[i__ - 1] / (REAL)i__;
+			pint += tsign * pc[i__ - 1] / (double )i__;
 			/* L120: */
-			xpin += tsign * pc[i__ - 1] / (REAL)(i__ + 1);
+			xpin += tsign * pc[i__ - 1] / (double )(i__ + 1);
 		}
 		/* Store coefficients in ELCO and TESCO. -------------------------------- */
 		DCFODE_elco[DCFODE_nq * 13 + 1 -14] = pint * rq1fac;
@@ -3587,13 +3587,13 @@ L100:
 		i__1 = DCFODE_nq;
 		for (i__ = 2; i__ <= i__1; ++i__) {
 			/* L130: */
-			DCFODE_elco[i__ + 1 + DCFODE_nq * 13 -14] = rq1fac * pc[i__ - 1] / (REAL)i__;
+			DCFODE_elco[i__ + 1 + DCFODE_nq * 13 -14] = rq1fac * pc[i__ - 1] / (double )i__;
 		}
 		agamq = rqfac * xpin;
 		ragq = 1. / agamq;
 		DCFODE_tesco[DCFODE_nq * 3 + 2 -4] = ragq;
 		if (DCFODE_nq < 12) {
-			DCFODE_tesco[nqp1 * 3 + 1 -4] = ragq * rqfac / (REAL)nqp1;
+			DCFODE_tesco[nqp1 * 3 + 1 -4] = ragq * rqfac / (double )nqp1;
 		}
 		DCFODE_tesco[nqm1 * 3 + 3 -4] = ragq;
 		/* L140: */
@@ -3609,7 +3609,7 @@ L200:
 		/*     p(x) = (x+1)*(x+2)*...*(x+nq). */
 		/* Initially, p(x) = 1. */
 		/* ----------------------------------------------------------------------- */
-		fnq = (REAL) DCFODE_nq;
+		fnq = (double ) DCFODE_nq;
 		nqp1 = DCFODE_nq + 1;
 		/* Form coefficients of p(x)*(x+nq). ------------------------------------ */
 		pc[nqp1 - 1] = 0.;
@@ -3628,8 +3628,8 @@ L200:
 		}
 		DCFODE_elco[DCFODE_nq * 13 + 2 -14] = 1.;
 		DCFODE_tesco[DCFODE_nq * 3 + 1 -4] = rq1fac;
-		DCFODE_tesco[DCFODE_nq * 3 + 2 -4] = ((REAL)nqp1) / DCFODE_elco[DCFODE_nq * 13 + 1 -14];
-		DCFODE_tesco[DCFODE_nq * 3 + 3 -4] = ((REAL)(DCFODE_nq + 2)) / DCFODE_elco[DCFODE_nq * 13 + 1 -14];
+		DCFODE_tesco[DCFODE_nq * 3 + 2 -4] = ((double )nqp1) / DCFODE_elco[DCFODE_nq * 13 + 1 -14];
+		DCFODE_tesco[DCFODE_nq * 3 + 3 -4] = ((double )(DCFODE_nq + 2)) / DCFODE_elco[DCFODE_nq * 13 + 1 -14];
 		rq1fac /= fnq;
 		/* L230: */
     }
@@ -3644,13 +3644,13 @@ export
 #endif 
 template<typename Fex, typename Jex> 
 __device__ int dprja_(int *  __restrict__ neq, 
-                      REAL * __restrict__ y,
-                      REAL * __restrict__ yh, 
+                      double  * __restrict__ y,
+                      double  * __restrict__ yh, 
                       int * __restrict__ NOT_nyh,
-                      REAL * __restrict__ ewt, 
-                      REAL * __restrict__ ftem, 
-                      REAL * __restrict__ savf, 
-                      REAL * __restrict__ wm, 
+                      double  * __restrict__ ewt, 
+                      double  * __restrict__ ftem, 
+                      double  * __restrict__ savf, 
+                      double  * __restrict__ wm, 
                       int * __restrict__ iwm, 
                       Fex f, 
                       Jex jac, 
@@ -3658,32 +3658,32 @@ __device__ int dprja_(int *  __restrict__ neq,
 {
     /* System generated locals */
     int yh_dim1, yh_offset, i__1, i__2, i__3, i__4;
-    REAL d__1 = 0.;
-	REAL d__2 = 0.;
+    double  d__1 = 0.;
+	double  d__2 = 0.;
 	
     /* Local variables */
     int i__ = 0;
 	int j;
-    REAL r__;
+    double  r__;
     int i1, i2, j1;
-    REAL r0;
+    double  r0;
     int ii = 0;
 	int jj = 0;
 	int ml = 0;
 	int mu = 0;
-    REAL yi = 0.;
-	REAL yj = 0.;
-	REAL hl0;
+    double  yi = 0.;
+	double  yj = 0.;
+	double  hl0;
     int ml3 = 0;
 	int np1 = 0;
-    REAL fac;
+    double  fac;
     int mba = 0;
 	int ier = 0;
-    REAL con = 0.;
-	REAL yjj;
+    double  con = 0.;
+	double  yjj;
     int meb1 = 0;
 	int lenp = 0;
-    REAL srur;
+    double  srur;
 	int mband = 0;
 	int meband = 0;
 	
@@ -3764,7 +3764,7 @@ L100:
 	/* If MITER = 2, make N calls to F to approximate J. -------------------- */
 L200:
     fac = dmnorm_(&n, savf, ewt, common);
-    r0 = fabs(h__) * 1e3 * uround * ((REAL)n) * fac;
+    r0 = fabs(h__) * 1e3 * uround * ((double )n) * fac;
     if (r0 == 0.) {
 		r0 = 1.;
     }
@@ -3906,10 +3906,10 @@ L570:
 
 /* DECK DSOLSY */
 /* Subroutine */ 
-__device__ int dsolsy_(REAL * __restrict__ wm, 
+__device__ int dsolsy_(double  * __restrict__ wm, 
                        int  * __restrict__ iwm, 
-                       REAL * __restrict__ x, 
-                       REAL * __restrict__ tem, 
+                       double  * __restrict__ x, 
+                       double  * __restrict__ tem, 
                        struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
@@ -3917,12 +3917,12 @@ __device__ int dsolsy_(REAL * __restrict__ wm,
 	
     /* Local variables */
     int i__ = 0;
-    REAL r__ = 0.;
-	REAL di = 0.;
+    double  r__ = 0.;
+	double  di = 0.;
     int ml = 0;
 	int mu = 0;
-    REAL hl0 = 0.;
-	REAL phl0 = 0.;
+    double  hl0 = 0.;
+	double  phl0 = 0.;
     int meband = 0;
 	
 	/* ***BEGIN PROLOGUE  DSOLSY */
@@ -3962,7 +3962,7 @@ __device__ int dsolsy_(REAL * __restrict__ wm,
 	/*   791129  DATE WRITTEN */
 	/*   890501  Modified prologue to SLATEC/LDOC format.  (FNF) */
 	/*   890503  Minor cosmetic changes.  (FNF) */
-	/*   930809  Renamed to allow single/REAL precision versions. (ACH) */
+	/*   930809  Renamed to allow single/double  precision versions. (ACH) */
 	/*   010418  Reduced size of Common block /DLS001/. (ACH) */
 	/*   031105  Restored 'own' variables to Common block /DLS001/, to */
 	/*           enable interrupt/restart feature. (ACH) */
@@ -4030,15 +4030,15 @@ L400:
 /* Subroutine */ 
 __device__ int dewset_(int * __restrict__ PARAM_n, 
                        int * __restrict__ itol, 
-                       REAL * __restrict__ rtol,  
-                       REAL * __restrict__ atol, 
-                       REAL * __restrict__ ycur, 
-                       REAL * __restrict__ ewt, 
+                       double  * __restrict__ rtol,  
+                       double  * __restrict__ atol, 
+                       double  * __restrict__ ycur, 
+                       double  * __restrict__ ewt, 
                        struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int i__1 = 0;
-    REAL d__1 = 0.;
+    double  d__1 = 0.;
 	
     /* Local variables */
 	int i__ = 0;
@@ -4061,7 +4061,7 @@ __device__ int dewset_(int * __restrict__ PARAM_n,
 	/*   791129  DATE WRITTEN */
 	/*   890501  Modified prologue to SLATEC/LDOC format.  (FNF) */
 	/*   890503  Minor cosmetic changes.  (FNF) */
-	/*   930809  Renamed to allow single/REAL precision versions. (ACH) */
+	/*   930809  Renamed to allow single/double  precision versions. (ACH) */
 	/* ***END PROLOGUE  DEWSET */
 	/* **End */
 	
@@ -4111,18 +4111,18 @@ L40:
 } /* dewset_ */
 
 /* DECK DMNORM */
-__device__ REAL dmnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ v, REAL * __restrict__ w, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ double  dmnorm_(int * __restrict__ PARAM_n, double  * __restrict__ v, double  * __restrict__ w, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int i__1 = 0;
-    REAL ret_val = 0.;
-	REAL d__1 = 0.;
-	REAL d__2 = 0.;
-	REAL d__3 = 0.;
+    double  ret_val = 0.;
+	double  d__1 = 0.;
+	double  d__2 = 0.;
+	double  d__3 = 0.;
 	
     /* Local variables */
      int i__ = 0;
-     REAL vm = 0.;
+     double  vm = 0.;
 	
 	/* ----------------------------------------------------------------------- */
 	/* This function routine computes the weighted max-norm */
@@ -4149,22 +4149,22 @@ __device__ REAL dmnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ v, REAL 
 } /* dmnorm_ */
 
 /* DECK DFNORM */
-__device__ REAL dfnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ a, REAL * __restrict__ w, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ double  dfnorm_(int * __restrict__ PARAM_n, double  * __restrict__ a, double  * __restrict__ w, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int a_dim1 = 0;
 	int a_offset = 0;
 	int i__1 = 0;
 	int i__2 = 0;
-    REAL ret_val = 0.;
-	REAL d__1 = 0.;
-	REAL d__2 = 0.;
+    double  ret_val = 0.;
+	double  d__1 = 0.;
+	double  d__2 = 0.;
 	
     /* Local variables */
      int i__ = 0;
 	 int j = 0;
-     REAL an = 0.;
-	 REAL sum = 0.;
+     double  an = 0.;
+	 double  sum = 0.;
 	
 	/* ----------------------------------------------------------------------- */
 	/* This function computes the norm of a full N by N matrix, */
@@ -4199,8 +4199,8 @@ __device__ REAL dfnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ a, REAL 
 } /* dfnorm_ */
 
 /* DECK DBNORM */
-__device__ REAL dbnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ a, int * __restrict__ nra, 
-                        int * __restrict__ ml, int * __restrict__ mu, REAL * __restrict__ w, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ double  dbnorm_(int * __restrict__ PARAM_n, double  * __restrict__ a, int * __restrict__ nra, 
+                        int * __restrict__ ml, int * __restrict__ mu, double  * __restrict__ w, struct cuLsodaCommonBlock * __restrict__ common)
 {
  
 	  /* System generated locals */
@@ -4208,15 +4208,15 @@ __device__ REAL dbnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ a, int *
 	int a_offset = 0;
 	int i__1 = 0;
 	int i__2 = 0;
-    REAL ret_val = 0.;
-	REAL d__1 = 0.;
-	REAL d__2 = 0.;
+    double  ret_val = 0.;
+	double  d__1 = 0.;
+	double  d__2 = 0.;
 	
     /* Local variables */
      int i__ = 0;
 	 int j = 0;
-     REAL an = 0.;
-	 REAL sum = 0.;
+     double  an = 0.;
+	 double  sum = 0.;
      int i1 = 0;
      int jhi = 0;
 	 int jlo = 0;
@@ -4266,7 +4266,7 @@ __device__ REAL dbnorm_(int * __restrict__ PARAM_n, REAL * __restrict__ a, int *
 
 /* DECK DSRCMA */
 /* Subroutine */ 
-__device__ int dsrcma_(REAL * __restrict__ rsav, int * __restrict__ isav, int * __restrict__job, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ int dsrcma_(double  * __restrict__ rsav, int * __restrict__ isav, int * __restrict__job, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* Initialized data */
 	
@@ -4355,7 +4355,7 @@ L100:
 
 /* DECK DGEFA */
 /* Subroutine */ 
-__device__ int dgefa_(REAL * __restrict__ a, int * __restrict__ lda, int * __restrict__ PARAM_n, 
+__device__ int dgefa_(double  * __restrict__ a, int * __restrict__ lda, int * __restrict__ PARAM_n, 
                      int * __restrict__ ipvt, int * __restrict__ info, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
@@ -4369,7 +4369,7 @@ __device__ int dgefa_(REAL * __restrict__ a, int * __restrict__ lda, int * __res
      int j = 0;
 	 int k = 0;
 	 int DGEFA_l = 0;
-     REAL t = 0.;
+     double  t = 0.;
      int kp1 = 0;
 	 int nm1 = 0;
 	
@@ -4383,7 +4383,7 @@ __device__ int dgefa_(REAL * __restrict__ a, int * __restrict__ lda, int * __res
 	/* ***AUTHOR  Moler, C. B., (U. of New Mexico) */
 	/* ***DESCRIPTION */
 	
-	/*     DGEFA factors a REAL precision matrix by Gaussian elimination. */
+	/*     DGEFA factors a double  precision matrix by Gaussian elimination. */
 	
 	/*     DGEFA is usually called by DGECO, but it can be called */
 	/*     directly with a saving in time if  RCOND  is not needed. */
@@ -4512,8 +4512,8 @@ L70:
 
 /* DECK DGESL */
 /* Subroutine */ 
-__device__ int dgesl_(REAL * __restrict__ a, int * __restrict__ lda, int * __restrict__ PARAM_n, int * __restrict__ ipvt, 
-                      REAL * __restrict__ b, int job, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ int dgesl_(double  * __restrict__ a, int * __restrict__ lda, int * __restrict__ PARAM_n, int * __restrict__ ipvt, 
+                      double  * __restrict__ b, int job, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int a_dim1 = 0;
@@ -4524,7 +4524,7 @@ __device__ int dgesl_(REAL * __restrict__ a, int * __restrict__ lda, int * __res
     /* Local variables */
     int k = 0;
 	int DGESL_l = 0.;
-    REAL t = 0.;
+    double  t = 0.;
     int kb = 0;
 	int nm1 = 0;
 	
@@ -4538,7 +4538,7 @@ __device__ int dgesl_(REAL * __restrict__ a, int * __restrict__ lda, int * __res
 	/* ***AUTHOR  Moler, C. B., (U. of New Mexico) */
 	/* ***DESCRIPTION */
 	
-	/*     DGESL solves the REAL precision system */
+	/*     DGESL solves the double  precision system */
 	/*     A * X = B  or  TRANS(A) * X = B */
 	/*     using the factors computed by DGECO or DGEFA. */
 	
@@ -4687,7 +4687,7 @@ L100:
 
 /* DECK DGBFA */
 /* Subroutine */ 
-__device__ int dgbfa_(REAL * __restrict__ abd, int * __restrict__ lda, int * __restrict__ PARAM_n, 
+__device__ int dgbfa_(double  * __restrict__ abd, int * __restrict__ lda, int * __restrict__ PARAM_n, 
                       int * __restrict__ ml, int * __restrict__ mu, 
                       int * __restrict__ ipvt, int * __restrict__ info, struct cuLsodaCommonBlock * __restrict__ common)
 {
@@ -4705,7 +4705,7 @@ __device__ int dgbfa_(REAL * __restrict__ abd, int * __restrict__ lda, int * __r
 	int k = 0;
 	int DGBFA_l = 0;
 	int m = 0;
-    REAL t = 0.;
+    double  t = 0.;
     int i0 = 0;
 	int j0 = 0;
 	int j1 = 0;
@@ -4724,7 +4724,7 @@ __device__ int dgbfa_(REAL * __restrict__ abd, int * __restrict__ lda, int * __r
 	/* ***AUTHOR  Moler, C. B., (U. of New Mexico) */
 	/* ***DESCRIPTION */
 	
-	/*     DGBFA factors a REAL precision band matrix by elimination. */
+	/*     DGBFA factors a double  precision band matrix by elimination. */
 	
 	/*     DGBFA is usually called by DGBCO, but it can be called */
 	/*     directly with a saving in time if  RCOND  is not needed. */
@@ -4942,8 +4942,8 @@ L130:
 
 /* DECK DGBSL */
 /* Subroutine */ 
-__device__ int dgbsl_(REAL * __restrict__ abd, int * __restrict__ lda, int * __restrict__ PARAM_n, 
-                      int * __restrict__ ml, int * __restrict__ mu, int * __restrict__ ipvt, REAL * __restrict__ b, int job, struct cuLsodaCommonBlock *common)
+__device__ int dgbsl_(double  * __restrict__ abd, int * __restrict__ lda, int * __restrict__ PARAM_n, 
+                      int * __restrict__ ml, int * __restrict__ mu, int * __restrict__ ipvt, double  * __restrict__ b, int job, struct cuLsodaCommonBlock *common)
 {
     /* System generated locals */
     int abd_dim1 = 0;
@@ -4957,7 +4957,7 @@ __device__ int dgbsl_(REAL * __restrict__ abd, int * __restrict__ lda, int * __r
     int k = 0;
 	int DGBSL_l = 0;
 	int m = 0;
-    REAL t = 0.;
+    double  t = 0.;
     int kb = 0;
 	int la = 0;
 	int lb = 0;
@@ -4974,7 +4974,7 @@ __device__ int dgbsl_(REAL * __restrict__ abd, int * __restrict__ lda, int * __r
 	/* ***AUTHOR  Moler, C. B., (U. of New Mexico) */
 	/* ***DESCRIPTION */
 	
-	/*     DGBSL solves the REAL precision band system */
+	/*     DGBSL solves the double  precision band system */
 	/*     A * X = B  or  TRANS(A) * X = B */
 	/*     using the factors computed by DGBCO or DGBFA. */
 	
@@ -5144,14 +5144,14 @@ L100:
 } /* dgbsl_ */
 
 /* DECK DUMACH */
-__device__ REAL dumach_(struct cuLsodaCommonBlock * __restrict__ common)
+__device__ double  dumach_(struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
-    REAL ret_val = 0.;
+    double  ret_val = 0.;
 	
     /* Local variables */
-	REAL u = 0.;
-	REAL comp = 0.;
+	double  u = 0.;
+	double  comp = 0.;
 	
 	/* ***BEGIN PROLOGUE  DUMACH */
 	/* ***PURPOSE  Compute the unit roundoff of the machine. */
@@ -5364,18 +5364,18 @@ __device__ int ixsav_(int ipar, int * __restrict__ ivalue, int iset, struct cuLs
 
 
 /* DECK IDAMAX */
-__device__ int idamax_(int *PARAM_n, REAL *dx, int incx, struct cuLsodaCommonBlock *common)
+__device__ int idamax_(int *PARAM_n, double  *dx, int incx, struct cuLsodaCommonBlock *common)
 {
     /* System generated locals */
     int ret_val = 0;
 	int i__1 = 0;
-    REAL d__1 = 0;
+    double  d__1 = 0;
 	
     /* Local variables */
     int i__ = 0;
 	int ix = 0;
-    REAL dmax__ = 0.;
-	REAL xmag = 0.;
+    double  dmax__ = 0.;
+	double  xmag = 0.;
 	
 	/* ***BEGIN PROLOGUE  IDAMAX */
 	/* ***PURPOSE  Find the smallest index of that component of a vector */
@@ -5394,13 +5394,13 @@ __device__ int idamax_(int *PARAM_n, REAL *dx, int incx, struct cuLsodaCommonBlo
 	
 	/*     --Input-- */
 	/*        N  number of elements in input vector(s) */
-	/*       DX  REAL precision vector with N elements */
+	/*       DX  double  precision vector with N elements */
 	/*     INCX  storage spacing between elements of DX */
 	
 	/*     --Output-- */
 	/*   IDAMAX  smallest index (zero if N .LE. 0) */
 	
-	/*     Find smallest index of maximum magnitude of REAL precision DX. */
+	/*     Find smallest index of maximum magnitude of double  precision DX. */
 	/*     IDAMAX = first I, I = 1 to N, to maximize ABS(DX(IX+(I-1)*INCX)), */
 	/*     where IX = 1 if INCX .GE. 0, else IX = 1+(1-N)*INCX. */
 	
@@ -5475,8 +5475,8 @@ L20:
 
 /* DECK DAXPY */
 /* Subroutine */
-__device__ int daxpy_(int * __restrict__ PARAM_n, REAL * __restrict__ da, REAL * __restrict__ dx, 
-                      int incx, REAL * __restrict__ dy, int incy, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ int daxpy_(int * __restrict__ PARAM_n, double  * __restrict__ da, double  * __restrict__ dx, 
+                      int incx, double  * __restrict__ dy, int incy, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int i__1 = 0;
@@ -5506,16 +5506,16 @@ __device__ int daxpy_(int * __restrict__ PARAM_n, REAL * __restrict__ da, REAL *
 	
 	/*     --Input-- */
 	/*        N  number of elements in input vector(s) */
-	/*       DA  REAL precision scalar multiplier */
-	/*       DX  REAL precision vector with N elements */
+	/*       DA  double  precision scalar multiplier */
+	/*       DX  double  precision vector with N elements */
 	/*     INCX  storage spacing between elements of DX */
-	/*       DY  REAL precision vector with N elements */
+	/*       DY  double  precision vector with N elements */
 	/*     INCY  storage spacing between elements of DY */
 	
 	/*     --Output-- */
-	/*       DY  REAL precision result (unchanged if N .LE. 0) */
+	/*       DY  double  precision result (unchanged if N .LE. 0) */
 	
-	/*     Overwrite REAL precision DY with REAL precision DA*DX + DY. */
+	/*     Overwrite double  precision DY with double  precision DA*DX + DY. */
 	/*     For I = 0 to N-1, replace  DY(LY+I*INCY) with DA*DX(LX+I*INCX) + */
 	/*       DY(LY+I*INCY), */
 	/*     where LX = 1 if INCX .GE. 0, else LX = 1+(1-N)*INCX, and LY is */
@@ -5616,7 +5616,7 @@ L60:
 } /* daxpy_ */
 
 /* Subroutine */ 
-__device__ int dumsum_(REAL a, REAL b, REAL * __restrict__ c__, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ int dumsum_(double  a, double  b, double  * __restrict__ c__, struct cuLsodaCommonBlock * __restrict__ common)
 {
 	/*     Routine to force normal storing of A + B, for DUMACH. */
     *c__ = a + b;
@@ -5625,7 +5625,7 @@ __device__ int dumsum_(REAL a, REAL b, REAL * __restrict__ c__, struct cuLsodaCo
 
 /* DECK DSCAL */
 /* Subroutine */ 
-__device__ int dscal_(int * __restrict__ PARAM_n, REAL * __restrict__ da, REAL * __restrict__dx, int incx, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ int dscal_(int * __restrict__ PARAM_n, double  * __restrict__ da, double  * __restrict__dx, int incx, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int i__1 = 0;
@@ -5652,14 +5652,14 @@ __device__ int dscal_(int * __restrict__ PARAM_n, REAL * __restrict__ da, REAL *
 	
 	/*     --Input-- */
 	/*        N  number of elements in input vector(s) */
-	/*       DA  REAL precision scale factor */
-	/*       DX  REAL precision vector with N elements */
+	/*       DA  double  precision scale factor */
+	/*       DX  double  precision vector with N elements */
 	/*     INCX  storage spacing between elements of DX */
 	
 	/*     --Output-- */
-	/*       DX  REAL precision result (unchanged if N.LE.0) */
+	/*       DX  double  precision result (unchanged if N.LE.0) */
 	
-	/*     Replace REAL precision DX by REAL precision DA*DX. */
+	/*     Replace double  precision DX by double  precision DA*DX. */
 	/*     For I = 0 to N-1, replace DX(IX+I*INCX) with  DA * DX(IX+I*INCX), */
 	/*     where IX = 1 if INCX .GE. 0, else IX = 1+(1-N)*INCX. */
 	
@@ -5736,12 +5736,12 @@ L40:
 } /* dscal_ */
 
 /* DECK DDOT */
-__device__ REAL ddot_(int * __restrict__ PARAM_n, REAL * __restrict__dx, int incx, REAL * __restrict__ dy, int incy, struct cuLsodaCommonBlock * __restrict__ common)
+__device__ double  ddot_(int * __restrict__ PARAM_n, double  * __restrict__dx, int incx, double  * __restrict__ dy, int incy, struct cuLsodaCommonBlock * __restrict__ common)
 {
     /* System generated locals */
     int i__1 = 0;
 	int i__2 = 0;
-    REAL ret_val = 0.;
+    double  ret_val = 0.;
 	
     /* Local variables */
      int i__ = 0;
@@ -5767,15 +5767,15 @@ __device__ REAL ddot_(int * __restrict__ PARAM_n, REAL * __restrict__dx, int inc
 	
 	/*     --Input-- */
 	/*        N  number of elements in input vector(s) */
-	/*       DX  REAL precision vector with N elements */
+	/*       DX  double  precision vector with N elements */
 	/*     INCX  storage spacing between elements of DX */
-	/*       DY  REAL precision vector with N elements */
+	/*       DY  double  precision vector with N elements */
 	/*     INCY  storage spacing between elements of DY */
 	
 	/*     --Output-- */
-	/*     DDOT  REAL precision dot product (zero if N .LE. 0) */
+	/*     DDOT  double  precision dot product (zero if N .LE. 0) */
 	
-	/*     Returns the dot product of REAL precision DX and DY. */
+	/*     Returns the dot product of double  precision DX and DY. */
 	/*     DDOT = sum for I = 0 to N-1 of  DX(LX+I*INCX) * DY(LY+I*INCY), */
 	/*     where LX = 1 if INCX .GE. 0, else LX = 1+(1-N)*INCX, and LY is */
 	/*     defined in a similar way using INCY. */
@@ -5876,9 +5876,9 @@ L60:
     return ret_val;
 } /* ddot_ */
 
-__device__ REAL d_sign(REAL * __restrict__ a, REAL * __restrict__ b)
+__device__ double  d_sign(double  * __restrict__ a, double  * __restrict__ b)
 {
-	REAL x = 0.;
+	double  x = 0.;
 	x = (*a >= 0 ? *a : - *a);
 	return( *b >= 0 ? x : -x);
 }
@@ -5923,14 +5923,14 @@ __host__ __device__ void cuLsodaCommonBlockInit(struct cuLsodaCommonBlock * __re
 	{
 		common->CM_ilsa[bugger] = 0;
 	}
-	REAL smThing[12] = { .5,.575,.55,.45,.35,.25,.2,.15,.1,.075,.05,.025 };
+	double  smThing[12] = { .5,.575,.55,.45,.35,.25,.2,.15,.1,.075,.05,.025 };
 	for(int bob = 0; bob <12; bob ++)
 	{
 		common->CM_sm1[bob] = smThing[bob];
 		
 	}
 	
-	// initialize REALs in the common block to zero
+	// initialize double s in the common block to zero
 	common->CM_conit = 0.;
 	common->CM_crate = 0.;
 	common->CM_ccmax = 0.;
@@ -6004,25 +6004,25 @@ __host__ __device__ void cuLsodaCommonBlockInit(struct cuLsodaCommonBlock * __re
 
 template<typename Fex, typename Jex>
 __global__ void dlsoda_kernel(Fex fex, 
-                        int *neq, 
-                        REAL *y, 
-                        REAL *t, 
-                        REAL *tout, 
-                        int *itol, 
-                        REAL *rtol, 
-                        REAL *atol, 
-                        int *itask, 
-                        int *istate, 
-                        int *iopt, 
-                        REAL *rwork, 
-                        int *lrw, 
-                        int *iwork, 
-                        int *liw, 
-                        Jex jac, 
-                        int *jt, 
-                        struct cuLsodaCommonBlock *common, 
-                        int *err, 
-                        int probSize)
+                              int *     __restrict__ neq, 
+                              double  * __restrict__ y, 
+                              double  * __restrict__ t, 
+                              double  * __restrict__ tout, 
+                              int *     __restrict__ itol, 
+                              double  * __restrict__ rtol, 
+                              double  * __restrict__ atol, 
+                              int *     __restrict__ itask, 
+                              int *     __restrict__ istate, 
+                              int *     __restrict__ iopt, 
+                              double  * __restrict__ rwork, 
+                              int *     __restrict__ lrw, 
+                              int *     __restrict__ iwork, 
+                              int *     __restrict__ liw, 
+                              Jex jac, 
+                              int *     __restrict__ jt, 
+                              struct cuLsodaCommonBlock * __restrict__ common, 
+                              int *  __restrict__ err, 
+                              int probSize)
 {
 	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 //	printf("Thread ID: %d\tProbsize: %d\n",me,probSize);
@@ -6051,29 +6051,111 @@ __global__ void dlsoda_kernel(Fex fex,
 	__syncthreads();
 }
 
+#include "GMS_cuda_memops.cuh"
+#if (PROFILE_HOST_TO_DEVICE) == 1
+#include <immintrin.h> //rdtscp
+#endif
+
+static const uint64_t rdtscp_cost = 42; // Skylake uarch
+
 template<typename Fex, typename Jex>
 void dlsoda_single_gpu(Fex fex,
-                int  * __restrict__ neq,
-                REAL * __restrict__ y,
-                REAL *t, 
-                REAL *tout, 
-                int *itol, 
-                REAL *rtol, 
-                REAL *atol, 
-                int *itask, 
-                int *istate, 
-                int *iopt, 
-                REAL *rwork, 
-                int *lrw, 
-                int *iwork, 
-                int *liw, 
+                int32_t  * __restrict__ neq,
+                double  *     __restrict__ y,
+                double  *     __restrict__ t, 
+                double  *     __restrict__ tout, 
+                int32_t *  __restrict__ itol, 
+                double  *     __restrict__ rtol, 
+                double  *     __restrict__ atol, 
+                int32_t *  __restrict__ itask, 
+                int32_t *  __restrict__ istate, 
+                int32_t *  __restrict__ iopt, 
+                double  *     __restrict__ rwork, 
+                int32_t *  __restrict__ lrw, 
+                int32_t *  __restrict__ iwork, 
+                int32_t *  __restrict__ liw, 
                 Jex jac, 
-                int *jt, 
-                struct cuLsodaCommonBlock *common, 
-                int *err, 
-                int probSize) {
-
-
+                int32_t *  __restrict__ jt, 
+                struct cuLsodaCommonBlock * __restrict__ common, 
+                int32_t * __restrict__ err, 
+                const int32_t probsize,
+                const int32_t n_step,
+                int32_t * ierr,
+                cudaError_t * __restrict__ cuerr,
+                uint64_t * __restrict tsc_delta ) {
+ 
+       *ierr = 0;
+       double  * __restrict__ d_t    = NULL;
+       double  * __restrict__ d_y    = NULL;
+       int32_t * __restrict__ d_jt   = NULL;
+       int32_t * __restrict__ d_neq  = NULL;
+       int32_t * __restrict__ d_liw  = NULL;
+       int32_t * __restrict__ d_lrw  = NULL;
+       double *  __restrict__ d_atol = NULL;
+       int32_t * __restrict__ d_itol = NULL;
+       int32_t * __restrict__ d_iopt = NULL;
+       double  * __restrict__ d_rtol = NULL;
+       int32_t * __restrict__ d_iout = NULL;
+       double  * __restrict__ d_tout = NULL;
+       int32_t * __restrict__ d_itask= NULL;
+       int32_t * __restrict__ d_iwork= NULL;
+       double  * __restrict__ d_rwork= NULL;
+       int32_t * __restrict__ d_istate=NULL;
+       struct cuLsodaCommonBlock * __restrict__ d_common = NULL;
+       int32_t * __restrict__ d_err  = NULL;
+#if (PROFILE_HOST_TO_DEVICE) == 1
+       volatile uint64_t dummy1;
+       volatile uint32_t dummy2;
+       volatile uint64_t tsc_start,tsc_end;
+       volatile uint32_t coreid;
+#endif
+       const int32_t threads_blocks = 32;
+       const int32_t blocks_grid    = (probsize+threads_blocks-1)/threads_blocks;
+       cudaError_t status;
+       int32_t merr = 0;
+       alloc_double_gpu(&d_t[0],(size_t)probsize,&merr);
+       alloc_double_gpu(&d_y[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_jt[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_neq[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_liw[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_lrw[0],(size_t)probsize,&merr);
+       alloc_double_gpu(&d_atol[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_itol[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_iopt[0],(size_t)probsize,&merr);
+       alloc_double_gpu(&d_rtol[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_iout[0],(size_t)probsize,&merr);
+       alloc_double_gpu(&d_tout[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_itask[0],(size_t)probsize,&merr);
+       alloc_int32_gpu(&d_iwork[0],(size_t)(probsize*24),&merr);
+       alloc_double_gpu(&d_rwork[0],(size_t)(probsize*86),&merr);
+       alloc_int32_gpu(&d_istate[0],(size_t)probsize,&merr);
+       GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_common,sizeof(struct cuLsodaCommonBlock)*probsize));
+       alloc_int32_gpu(&d_err[0],(size_t)probsize,&merr);
+       copy_double_cpu_to_gpu(d_t,t,(size_t)probsize,&merr);
+       copy_double_cpu_to_gpu(d_y,y,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_jt,jt,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_neq,neq,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_liw,liw,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_lrw,lrw,(size_t)probsize,&merr);
+       copy_double_cpu_to_gpu(d_atol,atol,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_itol,itol,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_iopt,iopt,(size_t)probsize,&merr);
+       copy_double_cpu_to_gpu(d_rtol,rtol,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_iout,iout,(size_t)probsize,&merr);
+       copy_double_cpu_to_gpu(d_tout,tout,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_itask,itask,(size_t)probsize,&merr);
+       copy_int32_cpu_to_gpu(d_iwork,iwork,(size_t)(probsize*24),&merr);
+       copy_double_cpu_to_gpu(d_rwork,rwork,(size_t)(probsize*86),&merr);
+       copy_int32_cpu_to_gpu(d_istate,istate,(size_t)probsize,&merr);
+       GMS_CUDA_DEBUG_CHECK(cudaMemcpy(d_common,common,sizeof(struct cuLsodaCommonBlock)*probSize, cudaMemcpyHostToDevice));
+       copy_int32_cpu_to_gpu(d_err,err,(size_t)probsize,&merr);
+#if (PROFILE_HOST_TO_DEVICE) == 1
+      dummy1    = __rdtscp(&dummy2);
+      __asm__("lfence");
+      tsc_start = __rdtscp(&coreid);
+      __asm__("lfence");
+#endif
+      
 }
 
 #endif /*__GMS_CULSODA_CUH__*/
