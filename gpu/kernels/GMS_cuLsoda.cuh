@@ -6004,33 +6004,38 @@ __host__ __device__ void cuLsodaCommonBlockInit(struct cuLsodaCommonBlock * __re
 
 template<typename Fex, typename Jex>
 __global__ void dlsoda_kernel(Fex fex, 
-                              int *     __restrict__ neq, 
+                              int32_t *     __restrict__ neq, 
                               double  * __restrict__ y, 
                               double  * __restrict__ t, 
                               double  * __restrict__ tout, 
-                              int *     __restrict__ itol, 
+                              int32_t *     __restrict__ itol, 
                               double  * __restrict__ rtol, 
                               double  * __restrict__ atol, 
-                              int *     __restrict__ itask, 
-                              int *     __restrict__ istate, 
-                              int *     __restrict__ iopt, 
+                              int32_t *     __restrict__ itask, 
+                              int32_t *     __restrict__ istate, 
+                              int32_t *     __restrict__ iopt, 
                               double  * __restrict__ rwork, 
-                              int *     __restrict__ lrw, 
-                              int *     __restrict__ iwork, 
-                              int *     __restrict__ liw, 
+                              int32_t *     __restrict__ lrw, 
+                              int32_t *     __restrict__ iwork, 
+                              int32_t *     __restrict__ liw, 
                               Jex jac, 
-                              int *     __restrict__ jt, 
+                              int32_t *     __restrict__ jt, 
                               struct cuLsodaCommonBlock * __restrict__ common, 
-                              int *  __restrict__ err, 
-                              int probSize)
+                              int32_t *  __restrict__ err, 
+                              const int32_t n_threads,
+                              const int32_t NEQ)
 {
+        const int32_t leni = 20+NEQ;
+        /* RWORK  = real work array of length at least: */
+	/*             22 + NEQ * MAX(16, NEQ + 9). */
+        const int32_t lenr = 22+NEQ*max(16,NEQ+9);
 	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 //	printf("Thread ID: %d\tProbsize: %d\n",me,probSize);
-	if(tid < probSize){
+	if(tid < n_threads){
 //	printf("neq: %d\ty[0]: %f\ty[1]: %f\ty[2]: %f\ty[3]: %f\tt: %f\ttout: %f\n",neq[me],y[4*me],y[4*me+1],y[4*me+2],y[4*me+3],t[me],tout[me]);
 	err[tid] = dlsoda_(fex, 
                            &neq[tid], 
-                           &y[4*tid], 
+                           &y[NEQ*tid], 
                            &t[tid], 
                            &tout[tid], 
                            &itol[tid], 
@@ -6039,9 +6044,9 @@ __global__ void dlsoda_kernel(Fex fex,
                            &itask[tid], 
                            &istate[tid], 
                            &iopt[tid], 
-                           &rwork[86*tid], 
+                           &rwork[lenr*tid], 
                            &lrw[tid], 
-                           &iwork[24*tid], 
+                           &iwork[leni*tid], 
                            &liw[tid], 
                            jac, 
                            &jt[tid], 
@@ -6078,8 +6083,8 @@ void dlsoda_single_gpu(Fex fex,
                 int32_t *  __restrict__ jt, 
                 struct cuLsodaCommonBlock * __restrict__ common, 
                 int32_t * __restrict__ err, 
-                const int32_t probsize,
-                const int32_t n_step,
+                const int32_t n_threads,
+                const int32_t NEQ,
                 int32_t * ierr,
                 cudaError_t * __restrict__ cuerr,
                 uint64_t * __restrict tsc_delta ) {
@@ -6109,53 +6114,127 @@ void dlsoda_single_gpu(Fex fex,
        volatile uint64_t tsc_start,tsc_end;
        volatile uint32_t coreid;
 #endif
+       const int32_t leni = 20+NEQ;
+        /* RWORK  = real work array of length at least: */
+	/*             22 + NEQ * MAX(16, NEQ + 9). */
+       const int32_t lenr = 22+NEQ*max(16,NEQ+9);
        const int32_t threads_blocks = 32;
-       const int32_t blocks_grid    = (probsize+threads_blocks-1)/threads_blocks;
+       const int32_t blocks_grid    = (n_threads+threads_blocks-1)/threads_blocks;
        cudaError_t status;
        int32_t merr = 0;
-       alloc_double_gpu(&d_t[0],(size_t)probsize,&merr);
-       alloc_double_gpu(&d_y[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_jt[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_neq[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_liw[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_lrw[0],(size_t)probsize,&merr);
-       alloc_double_gpu(&d_atol[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_itol[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_iopt[0],(size_t)probsize,&merr);
-       alloc_double_gpu(&d_rtol[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_iout[0],(size_t)probsize,&merr);
-       alloc_double_gpu(&d_tout[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_itask[0],(size_t)probsize,&merr);
-       alloc_int32_gpu(&d_iwork[0],(size_t)(probsize*24),&merr);
-       alloc_double_gpu(&d_rwork[0],(size_t)(probsize*86),&merr);
-       alloc_int32_gpu(&d_istate[0],(size_t)probsize,&merr);
-       GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_common,sizeof(struct cuLsodaCommonBlock)*probsize));
-       alloc_int32_gpu(&d_err[0],(size_t)probsize,&merr);
-       copy_double_cpu_to_gpu(d_t,t,(size_t)probsize,&merr);
-       copy_double_cpu_to_gpu(d_y,y,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_jt,jt,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_neq,neq,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_liw,liw,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_lrw,lrw,(size_t)probsize,&merr);
-       copy_double_cpu_to_gpu(d_atol,atol,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_itol,itol,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_iopt,iopt,(size_t)probsize,&merr);
-       copy_double_cpu_to_gpu(d_rtol,rtol,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_iout,iout,(size_t)probsize,&merr);
-       copy_double_cpu_to_gpu(d_tout,tout,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_itask,itask,(size_t)probsize,&merr);
-       copy_int32_cpu_to_gpu(d_iwork,iwork,(size_t)(probsize*24),&merr);
-       copy_double_cpu_to_gpu(d_rwork,rwork,(size_t)(probsize*86),&merr);
-       copy_int32_cpu_to_gpu(d_istate,istate,(size_t)probsize,&merr);
-       GMS_CUDA_DEBUG_CHECK(cudaMemcpy(d_common,common,sizeof(struct cuLsodaCommonBlock)*probSize, cudaMemcpyHostToDevice));
-       copy_int32_cpu_to_gpu(d_err,err,(size_t)probsize,&merr);
+       alloc_double_gpu(&d_t[0],(size_t)n_threads,&merr);
+       alloc_double_gpu(&d_y[0],(size_t)(n_threads*NEQ),&merr);
+       alloc_int32_gpu(&d_jt[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_neq[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_liw[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_lrw[0],(size_t)n_threads,&merr);
+       alloc_double_gpu(&d_atol[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_itol[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_iopt[0],(size_t)n_threads,&merr);
+       alloc_double_gpu(&d_rtol[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_iout[0],(size_t)n_threads,&merr);
+       alloc_double_gpu(&d_tout[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_itask[0],(size_t)n_threads,&merr);
+       alloc_int32_gpu(&d_iwork[0],(size_t)(n_threads*leni),&merr);
+       alloc_double_gpu(&d_rwork[0],(size_t)(n_threads*lenr),&merr);
+       alloc_int32_gpu(&d_istate[0],(size_t)n_threads,&merr);
+       GMS_CUDA_DEBUG_CHECK(cudaMalloc((void**)&d_common,sizeof(struct cuLsodaCommonBlock)*n_threads));
+       alloc_int32_gpu(&d_err[0],(size_t)n_threads,&merr);
+       copy_double_cpu_to_gpu(d_t,t,(size_t)n_threads,&merr);
+       copy_double_cpu_to_gpu(d_y,y,(size_t)(n_threads*NEQ),&merr);
+       copy_int32_cpu_to_gpu(d_jt,jt,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_neq,neq,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_liw,liw,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_lrw,lrw,(size_t)n_threads,&merr);
+       copy_double_cpu_to_gpu(d_atol,atol,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_itol,itol,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_iopt,iopt,(size_t)n_threads,&merr);
+       copy_double_cpu_to_gpu(d_rtol,rtol,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_iout,iout,(size_t)n_threads,&merr);
+       copy_double_cpu_to_gpu(d_tout,tout,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_itask,itask,(size_t)n_threads,&merr);
+       copy_int32_cpu_to_gpu(d_iwork,iwork,(size_t)(n_threads*leni),&merr);
+       copy_double_cpu_to_gpu(d_rwork,rwork,(size_t)(n_threads*lenr),&merr);
+       copy_int32_cpu_to_gpu(d_istate,istate,(size_t)n_threads,&merr);
+       GMS_CUDA_DEBUG_CHECK(cudaMemcpy(d_common,common,sizeof(struct cuLsodaCommonBlock)*n_threads, cudaMemcpyHostToDevice));
+       copy_int32_cpu_to_gpu(d_err,err,(size_t)n_threads,&merr);
 #if (PROFILE_HOST_TO_DEVICE) == 1
       dummy1    = __rdtscp(&dummy2);
       __asm__("lfence");
       tsc_start = __rdtscp(&coreid);
       __asm__("lfence");
 #endif
-      
+      dlsoda_kernel<<<blocks_grid,threads_blocks>>>(fex,d_neq,d_y,d_t,d_tout,d_itol,
+                                                    d_rtol,d_atol,d_itask,d_istate,
+                                                    d_iopt,d_rwork,d_lrw,d_iwork,d_liw,
+                                                    jex,d_jt,d_common,d_err,n_threads);
+
+#if (PROFILE_HOST_TO_DEVICE) == 1
+      __asm__("lfence");
+      tsc_end     = __rdtscp(&coreid);
+      *tsc_delta  = tsc_end-tsc_start-rdtscp_cost;
+      __asm__("lfence");
+      printf("dlsoda_kernel executed in: %llu reference cycles\n",*tsc_delta);
+#endif    
+      GMS_CUDA_DEBUG_CHECK(cudaDeviceSynchronize());
+      copy_double_gpu_to_cpu(d_t,t,(size_t)n_threads,&merr); 
+      copy_double_gpu_to_cpu(d_y,y,(size_t)(n_threads*NEQ),&merr); 
+      copy_int32_gpu_to_cpu(d_jt,jt,(size_t)n_threads,&merr);       
+      copy_int32_gpu_to_cpu(d_neq,neq,(size_t)n_threads,&merr);      
+      copy_int32_gpu_to_cpu(d_liw,liw,(size_t)n_threads,&merr); 
+      copy_int32_gpu_to_cpu(d_lrw,lrw,(size_t)n_threads,&merr); 
+      copy_double_gpu_to_cpu(d_atol,atol,(size_t)n_threads,&merr);      
+      copy_int32_gpu_to_cpu(d_itol,itol,(size_t)n_threads,&merr); 
+      copy_int32_gpu_to_cpu(d_iopt,iopt,(size_t)n_threads,&merr);    
+      copy_double_gpu_to_cpu(d_rtol,rtol,(size_t)n_threads,&merr); 
+      copy_double_gpu_to_cpu(d_tout,tout,(size_t)n_threads,&merr);  
+      copy_int32_gpu_to_cpu(d_itask,itask,(size_t)n_threads,&merr);
+      copy_int32_gpu_to_cpu(d_iwork,iwork,(size_t)(n_threads*leni),&merr);
+      copy_double_gpu_to_cpu(d_rwork,rwork,(size_t)(n_threads*lenr),&merr);
+      copy_int32_gpu_to_cpu(d_istate,istate,(size_t)n_threads,&merr);
+      GMS_CUDA_DEBUG_CHECK(cudaMemcpy(d_common,common,sizeof(struct cuLsodaCommonBlock)*n_threads, cudaMemcpyDeviceToHost));
+      copy_int32_gpu_to_cpu(d_err,err,(size_t)n_threads,&merr); 
+      cudaFree(d_t);
+      cudaFree(d_y);   
+      cudaFree(d_jt); 
+      cudaFree(d_neq);  
+      cudaFree(d_liw);
+      cudaFree(d_lrw); 
+      cudaFree(d_atol); 
+      cudaFree(d_itol);
+      cudaFree(d_iopt);  
+      cudaFree(d_rtol); 
+      cudaFree(d_tout); 
+      cudaFree(d_itask); 
+      cudaFree(d_iwork);  
+      cudaFree(d_rwork);  
+      cudaFree(d_istate); 
+      cudaFree(d_common); 
+      cudaFree(d_err); 
+      *cuerr = status;
+      return;
+
+      Error:
+      if(d_t)    cudaFree(d_t);
+      if(d_y)    cudaFree(d_y);   
+      if(d_jt)   cudaFree(d_jt); 
+      if(d_neq)  cudaFree(d_neq);  
+      if(d_liw)  cudaFree(d_liw);
+      if(d_lrw)  cudaFree(d_lrw); 
+      if(d_atol) cudaFree(d_atol); 
+      if(d_itol) cudaFree(d_itol);
+      if(d_iopt) cudaFree(d_iopt);  
+      if(d_rtol) cudaFree(d_rtol); 
+      if(d_tout) cudaFree(d_tout); 
+      if(d_itask)cudaFree(d_itask); 
+      if(d_iwork)cudaFree(d_iwork);  
+      if(d_rwork)cudaFree(d_rwork);  
+      if(d_istate)cudaFree(d_istate); 
+      if(d_common)cudaFree(d_common); 
+      if(d_err)cudaFree(d_err); 
+      *cuerr = status;
+      return;
+                             
 }
 
 #endif /*__GMS_CULSODA_CUH__*/
