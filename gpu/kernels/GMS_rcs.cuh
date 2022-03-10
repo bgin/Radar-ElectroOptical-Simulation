@@ -6,12 +6,24 @@
 #include <cstdint>
 
 extern "C"
-void empirical_K_cuda(const float * __restrict,
-                      const float * __restrict,
+void empirical_K_cuda(const float * __restrict__,
+                      const float * __restrict__,
                       const float,
-                      float * __restrict,
+                      float * __restrict__,
+                      const uint32_t,
+                      const uint32_t,
                       const uint32_t);
 
+extern "C"
+void effective_rcs_cuda(const float 
+                        const float * __restrict__, 
+                        const float, 
+                        const float, 
+                        float * __restrict__,
+                        float * __restrict__,
+                        const uint32_t,
+                        const uint32_t,
+                        const uint32_t);
 
 
 
