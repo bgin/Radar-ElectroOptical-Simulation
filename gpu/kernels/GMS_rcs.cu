@@ -3,9 +3,7 @@
 #include <cuda.h>
 #include "GMS_cpu_config.cuh"
 #include "GMS_rcs.cuh"
-#if (SOFTWARE_PREFETCH) == 1
-#include "GMS_gpu_helpers.cuh"
-#endif
+
 
 
 static const float sig0 =   1.0f;
