@@ -24,10 +24,7 @@ void empirical_K_kernel(const float * __restrict rcs, //// m^2, RCS monostatic t
 
      uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
      if(tid < n_threads) {
-#if (SOFTWARE_PREFETCH) == 1
-        __prefetch_global_l1(rcs);
-        __prefetch_global_l1(A);
-#endif
+
         const float PI24 = 0.74159265358979323846264338328f;
         const float tA   = A[tid];
         const float A2   = tA*tA;
