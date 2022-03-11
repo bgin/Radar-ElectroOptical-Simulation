@@ -26,6 +26,21 @@ void effective_rcs_cuda(const float
                         const uint32_t);
 
 
+extern "C"
+void bistatic_target_rcs_cuda(const float, 
+		              const float, 
+	                      const float * __restrict__,
+		              const float * __restrict__,
+			      const float * __restrict__,
+			      const float,   
+			      const int32_t, 
+			      float * __restrict,               
+                              float * __restrict,
+                              const uint32_t,
+                              const uint32_t,
+                              const uint32_t);
+
+
 
 
 #endif /*__GMS_RCS_CUH__*/
