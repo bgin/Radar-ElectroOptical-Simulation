@@ -141,7 +141,7 @@ void effective_rcs_cuda(const float gamma
             uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
             effective_rcs_kernel1<<<blocksGrid,threadsBlock>>>(gamma,R,h_a,h_t,rcs_eff,rcs_eff_db,n);
        }else if(type==2) {
-             uint32_t threadsBlock = 32;
+             uint32_t threadsBlock = 256;
              uint32_t blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
              effective_rcs_kernel2<<<blocksGrid,threadsBlock>>>(gamma,R,h_a,h_t,rcs_eff,rcs_eff_db,n);
       }
@@ -186,7 +186,86 @@ void bistatic_target_rcs_kernel1(const float sig0, // m^2, RCS monostatic target
 	     const float t3    = 1.0f+expf(t0);
 	     sigma[tid]        = sig0*t1;
 	     sigma_db[tid]     = 10.0f*log10f(sigma[tid]+0.00000000001f);
-           }
+
+
+          }
        }
 }   
+
+
+
+__global__
+void bistatic_target_rcs_kernel2(const float sig0, // m^2, RCS monostatic target
+		                 const float K,    // empirical constant defined by target configuration and complexity  // use function emprirical_K for computation
+	                         const float * __restrict__ Beta, // deg, bistatic angle (for input=1)
+		                 const float * __restrict__ R1,   // m, transmitter - target range (input=2)
+			         const float * __restrict__ R2,   // m, receiver    - target range (input=2)
+			         const float B,    // m, baseline
+			         const int32_t type, // input switch (1,2)
+			         float * __restrict sigma, // RCS                  
+                                 float * __restrict sigma_db,
+                                 const uint32_t n) {
+
+       uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+       uint32_t stride = blockDim.x*gridDim.x;
+       if(type==1) {
+          for(int32_t i = tid; i < n; i += stride) {
+              const float alpha = Beta[i]*z;
+              const float t0    = fabsf(alpha)-2.4f*K-1.0f;
+	      const float t1    = 1.0f+expf(t0);
+	      sigma[i]        = sig0*t1;
+	      sigma_db[i]     = 10.0f*log10f(sigma[i]+0.00000000001f);
+            }
+	}
+	else if(type==2) {
+          for(int32_t i = tid; i < n; i += stride) {
+              const float tR1   = R1[i];
+              const float tR2   = R2[i];
+              const float t0    = 1.0f/(2.0f*tR1*tR2);
+              const float tB    = B[i];
+	      const float R12   = tR1*tR1;
+	      const float R22   = tR2*tR2;
+	      const float B2    = tB*tB;
+	      const float t1    = R12+R22+B2;
+	      const float gam   = acosf(t0*t1);
+	      const float alpha = gam;
+	      const float t2    = K*fabsf(alpha)-2.4f*K-1.0f;
+	      const float t3    = 1.0f+expf(t0);
+	      sigma[i]          = sig0*t1;
+	      sigma_db[i]       = 10.0f*log10f(sigma[i]+0.00000000001f);
+
+
+          }
+       }
+}  
+
+
+void bistatic_target_rcs_cuda(const float sig0, 
+		              const float K, 
+	                      const float * __restrict__ Beta,
+		              const float * __restrict__ R1,
+			      const float * __restrict__ R2,
+			      const float B,   
+			      const int32_t type, 
+			      float * __restrict sigma,               
+                              float * __restrict sigma_db,
+                              const uint32_t n_threads,
+                              const uint32_t kernel_type,
+                              const uint32_t n) {
+
+       if(kernel_type==1) {
+            uint32_t threadsBlock = 32;
+            uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+            bistatic_target_rcs_kernel1<<<blocksGrid,threadsBlock>>>(sig0,K,Beta,R1,R2,B,type,sigma,sigma_db,n_threads);
+       }else if(kernel_type==2) {
+             uint32_t threadsBlock = 256;
+             uint32_t blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
+             bistatic_target_rcs_kernel2<<<blocksGrid,threadsBlock>>>(sig0,K,Beta,R1,R2,B,type,sigma,sigma_db,n);
+      }
+}
+
+
+
+
+
 
