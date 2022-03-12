@@ -41,6 +41,43 @@ void bistatic_target_rcs_cuda(const float,
                               const uint32_t);
 
 
+extern "C"
+void antenna_rcs_cuda(   const float * __restrict__,
+                         const float,            
+                         const float,                
+                         float * __restrict,   
+                         float * __restrict__ ,   
+                         const uint32_t,
+                         const uint32_t,
+                         const uint32_t);
+
+
+extern "C"
+void bird_insect_rcs_cuda(const float * __restrict__,
+                          float * __restrict__,
+                          const uint32_t);
+
+
+extern "C"
+void cone_ogive_rcs_cuda(const float, 
+                         const float * __restrict__,
+                         float * __restrict__,
+                         const uint32_t,
+                         const uint32_t,
+                         const uint32_t);
+
+extern "C"
+void cylinder_rcs_cuda(const float * __restrict__,
+                       const float * __restrict__,
+                       const float,              
+                       const float,            
+                       float * __restrict__,
+                       const uint32_t,
+                       const uint32_t,
+                       const uint32_t);
+
+
+
 
 
 #endif /*__GMS_RCS_CUH__*/
