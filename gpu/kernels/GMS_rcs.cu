@@ -6,12 +6,12 @@
 
 
 
-static const float sig0 =   1.0f;
-static const float PI   =   3.14159265358979323846264338328f;
-static const float PI2  =   6.283185307179586476925286766559f;
-static const float PI4  =   12.566370614359172953850573533118f;
-static const float z    =   0.017453292519943295769236907685f; //coeff deg-to-rad conversion
-
+#define sig0    1.0f
+#define PI      3.14159265358979323846264338328f
+#define PI2     6.283185307179586476925286766559f
+#define PI4     12.566370614359172953850573533118f
+#define z       0.017453292519943295769236907685f 
+#define PI16    50.2654824574366918154023f 
 
 __global__
 void empirical_K_kernel1(const float * __restrict rcs, //// m^2, RCS monostatic target
@@ -43,7 +43,7 @@ void empirical_K_kernel2const float * __restrict rcs, //// m^2, RCS monostatic t
 
     uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
     uint32_t stride = blockDim.x*gridDim.x;
-    for(int32_t i = tid; i < n; i += stride) {
+    for(uint32_t i = tid; i < n; i += stride) {
          const float PI24 = 0.74159265358979323846264338328f;
          const float tA   = A[i];
          const float A2   = tA*tA;
@@ -115,7 +115,7 @@ void effective_rcs_kernel2(const float gamma, //m, wavelength
     
      uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
      uint32_t stride = blockDim.x*gridDim.x;
-     for(int32_t i = tid; i < n; i += stride) {  
+     for(uint32_t i = tid; i < n; i += stride) {  
           const float t0 = PI2*ha_*h_t;
           const float t1 = R[i]*gamma;
           const float F  = sinf(t0/t1);
@@ -218,7 +218,7 @@ void bistatic_target_rcs_kernel2(const float sig0, // m^2, RCS monostatic target
             }
 	}
 	else if(type==2) {
-          for(int32_t i = tid; i < n; i += stride) {
+          for(uint32_t i = tid; i < n; i += stride) {
               const float tR1   = R1[i];
               const float tR2   = R2[i];
               const float t0    = 1.0f/(2.0f*tR1*tR2);
@@ -265,7 +265,225 @@ void bistatic_target_rcs_cuda(const float sig0,
 }
 
 
+__global__
+void antenna_rcs_kernel1(const float * __restrict__ Ae, //m^2, antenna effective apperture
+                         const float gamma,             //m,   wavelength
+                         const float G,                 // reflection coeff
+                         float * __restrict__ sigma,    // m^2, rcs
+                         float * __restrict__ sigma_db,   // dBsm, rcs with respect to area of 1 m^2
+                         const uint32_t n_threads) {
+
+        uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+        if(tid < n_threads) {
+           const float tAe = Ae[tid];
+           const float Ae2 = tAe*tAe;
+           const float gamma2 = gamma*gamma;
+           const float t0  = Ae2/gamma2;
+           sigma[tid]    = PI4*t0*G;
+           sigma_db[tid] = 10.0f*log10f(sigma[tid]);
+        }
+}
 
 
+__global__
+void antenna_rcs_kernel2(const float * __restrict__ Ae, //m^2, antenna effective apperture
+                         const float gamma,             //m,   wavelength
+                         const float G,                 // reflection coeff
+                         float * __restrict__ sigma,    // m^2, rcs
+                         float * __restrict__ sigma_db,   // dBsm, rcs with respect to area of 1 m^2
+                         const uint32_t n) {
 
+       uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+       uint32_t stride = blockDim.x*gridDim.x;
+       for(uint32_t i = tid; i < n; i += stride) {
+           const float tAe = Ae[i];
+           const float Ae2 = tAe*tAe;
+           const float gamma2 = gamma*gamma;
+           const float t0  = Ae2/gamma2;
+           sigma[i]    = PI4*t0*G;
+           sigma_db[i] = 10.0f*log10f(sigma[i]);
+      }  
+}
+
+
+void antenna_rcs_cuda(   const float * __restrict__ Ae,
+                         const float gamma,            
+                         const float G,                
+                         float * __restrict sigma,   
+                         float * __restrict__ sigma_db,   
+                         const uint32_t n_threads,
+                         const uint32_t type,
+                         const uint32_t n) {
+
+     if(type==1) {
+         uint32_t threadsBlock = 32;
+         uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+         antenna_rcs_kernel1<<<blocksGrid,threadsBlock>>>(Ae,gamma,G,sigma,sigma_db,n_threads);
+     }else if(type==2) {
+          uint32_t threadsBlock = 256;
+          uint32_t blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
+          antenna_rcs_kernel2<<<blocksGrid,threadsBlock>>>(Ae,gamma,G,sigma,sigma_db,n);
+    }
+}
+
+
+__global__
+void bird_insect_rcs_kernel(const float * __restrict__ W,
+                            float * __restrict__ rcs
+                            const uint32_t n_threads) {// gram, bird/insect weight
+     
+      uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+      if(tid < n_threads) {
+         const float tW = W[tid];
+         rcs[tid] = -46.0f+5.8f*log10f(tW);
+      } 
+}
+
+
+void bird_insect_rcs_cuda(const float * __restrict__ W,
+                          float * __restrict__ rcs,
+                          const uint32_t n_threads) {
+
+     uint32_t threadsBlock = 32;
+     uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+     bird_insect_rcs_kernel<<<blocksGrid,threadsBlock>>>(W,rcs,n_threads);
+}
+
+
+__global__
+void cone_ogive_rcs_kernel1(const float gamma, //m, wavelength
+                            const float * __restrict__ cha, // deg, cone half-angle, incidence nose-on
+                            float * __restrict__ sig1,
+                            const uint32_t n_threads) {
+ // This model applies to infintely large cone, or ogive larger than incident wavelength
+      uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+      if(tid < n_threads) {
+         const float tcha = cha[tid];
+         const float gamma2 = gamma*gamma;
+         const float ratio  = gamm2/PI16;
+         const float targ   = z*tcha
+         const float targ4  = targ*targ*targ*targ;
+         const float tan4   = tanf(targ4);
+         sig1[tid]          = ratio*tan4;
+      }
+}
+
+
+__global__
+void cone_ogive_rcs_kernel2(const float gamma, //m, wavelength
+                            const float * __restrict__ cha, // deg, cone half-angle, incidence nose-on
+                            float * __restrict__ sig1,
+                            const uint32_t n) {
+
+      uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+      uint32_t stride = blockDim.x*gridDim.x;
+      for(uint32_t i = tid; i < n; i += stride) {
+          const float tcha = cha[i];
+          const float gamma2 = gamma*gamma;
+          const float ratio  = gamm2/PI16;
+          const float targ   = z*tcha
+          const float targ4  = targ*targ*targ*targ;
+          const float tan4   = tanf(targ4);
+          sig1[i]          = ratio*tan4;
+      }
+}
+
+
+void cone_ogive_rcs_cuda(const float gamma, 
+                         const float * __restrict__ cha,
+                         float * __restrict__ sig1,
+                         const uint32_t n_threads,
+                         const uint32_t type,
+                         const uint32_t n) {
+
+     if(type==1) {
+        uint32_t threadsBlock = 32;
+        uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+        cone_ogive_rcs_kernel1<<<blocksGrid,threadsBlock>>>(gamma,cha,sig1,n_threads);
+     }
+     else if(type==2) {
+        uint32_t threadsBlock = 256;
+        uint32_t blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
+        cone_ogive_rcs_kernel2<<<blocksGrid,threadsBlock>>>(gamma,cha,sig1,n);
+     }
+}
+
+
+__global__
+void cylinder_rcs_kernel1(const float * __restrict__ Rcyl, //m, radius of cylinder
+                          const float * __restrict__ Lcyl, //m, length of cylinder
+                          const float gamma,               //m, wavelength
+                          const float theta,               //deg, angle between cylinder axis and radar line-of-sight
+                          float * __restrict__ sig,
+                          const uint32_t n_threads) {
+
+       uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+       if(tid < n_threads) {
+          const float tRcyl = Rcyl[tid];
+          const float tLcyl = Lcyl[tid];
+          const float t0    = PI4*tRcyl;
+          const float zth   = z*theta;
+          const float sinz  = sinf(zth);
+          const float term  = (t0*sinz)/gamma;
+          if(term<1.0f) sig[tid] = 0.0f;
+          const float cosz  = cosf(zth);
+          const float term1 = (tRcyl*gamma*sinz)/PI2;
+          const float sarg1 = (PI2*tLcyl)/gamma;
+          const float sarg2 = sarg1*cosz;
+	  const float term2 = sinf(sarg2/cosz);
+	  const float term22= term2*term2;
+          sig[tid]          = term1*term22;
+       } 
+}
+
+
+__global__
+void cylinder_rcs_kernel2(const float * __restrict__ Rcyl, //m, radius of cylinder
+                          const float * __restrict__ Lcyl, //m, length of cylinder
+                          const float gamma,               //m, wavelength
+                          const float theta,               //deg, angle between cylinder axis and radar line-of-sight
+                          float * __restrict__ sig,
+                          const uint32_t n) {
+
+      uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+      uint32_t stride = blockDim.x*gridDim.x;
+      for(uint32_t i = tid; i < n; i += stride) {
+          const float tRcyl = Rcyl[i];
+          const float tLcyl = Lcyl[i];
+          const float t0    = PI4*tRcyl;
+          const float zth   = z*theta;
+          const float sinz  = sinf(zth);
+          const float term  = (t0*sinz)/gamma;
+          if(term<1.0f) sig[i] = 0.0f;
+          const float cosz  = cosf(zth);
+          const float term1 = (tRcyl*gamma*sinz)/PI2;
+          const float sarg1 = (PI2*tLcyl)/gamma;
+          const float sarg2 = sarg1*cosz;
+	  const float term2 = sinf(sarg2/cosz);
+	  const float term22= term2*term2;
+          sig[i]          = term1*term22;
+       } 
+}
+
+
+void cylinder_rcs_cuda(const float * __restrict__ Rcyl,
+                       const float * __restrict__ Lcyl,
+                       const float gamma,              
+                       const float theta,            
+                       float * __restrict__ sig,
+                       const uint32_t n_threads,
+                       const uint32_t type,
+                       const uint32_t n) {
+
+     if(type==1) {
+        uint32_t threadsBlock = 32;
+        uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+        cylinder_rcs_kernel1<<<blocksGrid,threadsBlock>>>(Rcyl,Lcyl,gamma,theta,sig,n_threads);
+     }
+     else if(type==2) {
+        uint32_t threadsBlock = 256;
+        uint32_t blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
+        cylinder_rcs_kernel1<<<blocksGrid,threadsBlock>>>(Rcyl,Lcyl,gamma,theta,sig,n);
+     }
+}
 
