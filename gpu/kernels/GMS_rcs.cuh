@@ -77,6 +77,49 @@ void cylinder_rcs_cuda(const float * __restrict__,
                        const uint32_t);
 
 
+extern "C"
+void disk_rcs_cuda(const float * __restrict__ , 
+                   const float * __restrict__ , 
+                   const float,            
+                   const int32_t, 
+                   float * __restrict__ ,
+                   const uint32_t,
+                   const uint32_t,
+                   const uint32_t);
+
+
+extern "C"
+void curved_edge_rcs_cuda(const float * __restrict__,
+		          const float,
+                          float * __restrict__ ,
+                          const uint32_t);
+
+
+extern "C"
+void straight_edge_rcs_cuda(const float * __restrict__,
+                            float * __restrict__,
+                            const uint32_t);
+
+
+extern "C"
+void ellipsoid_rcs_cuda(  const float * __restrict__ ,
+                          const float * __restrict__ ,
+                          float * __restrict__,
+                          const uint32_t );
+
+
+extern "C"
+void plate_rcs_cuda(   const float * __restrict__, 
+                       const float * __restrict__, 
+                       const float,           
+                       const float,             
+	               const float,          
+                       float * __restrict__,
+                       const uint32_t,
+                       const uint32_t,
+                       const uint32_t);
+
+
 
 
 
