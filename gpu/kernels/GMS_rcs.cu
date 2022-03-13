@@ -487,3 +487,267 @@ void cylinder_rcs_cuda(const float * __restrict__ Rcyl,
      }
 }
 
+
+__global__
+void disk_rcs_kernel1(const float * __restrict__ Rd, //m^2, radius if disk
+                      const float * __restrict__ theta, //deg, angle relative to disk normal
+                      const float gamma,             //m, wavelength
+                      const int32_t type, //// disk type: 1=electrically large disk, 2=electrically small circular disk
+                      float * __restrict__ sig,
+                      const uint32_t n_threads) {
+
+        uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+        
+           if(type==1) {
+             if(tid < n_threads) {
+                 const float tRd = Rd[tid];
+                 const float tth = theta[tid];
+                 const float k = wavenumber_r4(gamma);
+                 const float gamma2 = gamma*gamma;
+                 const float carg = z*theta;
+                 const float coszt= cosf(carg*carg);
+                 const float t0 = PI*tRd*tRd;
+                 const float tleft = t1/gamma;
+                 const float sinzt = sinf(carg);
+                 const float jarg  = 2.0f*k*tRd*sinzt;
+                 const float bj1   = j1f(jarg);
+                 const float term  = 2.0f*bj1/jarg;
+                 const float tright= term*term;
+                 sig[tid] = tleft*tright*coszt;
+               }
+            }
+            else if(type==2) {
+               if(tid < n_threads) {
+                  const float tRd   = Rd[tid];
+                  const float Rd2   = tRd*tRd;
+                  const float tleft = 3534.2917352885173932704738f*Rd2;
+                  const float ratio = tRd/gamma;
+                  const float ratio4= ratio*ratio*ratio*ratio;
+                  sig[tid] = tleft*ratio4;
+            }
+        }    
+}
+
+
+__global__
+void disk_rcs_kernel2(const float * __restrict__ Rd, //m^2, radius if disk
+                      const float * __restrict__ theta, //deg, angle relative to disk normal
+                      const float gamma,             //m, wavelength
+                      const int32_t type, //// disk type: 1=electrically large disk, 2=electrically small circular disk
+                      float * __restrict__ sig,
+                      const uint32_t n) {
+
+           uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+           uint32_t stride = blockDim.x*gridDim.x;
+           if(type==1) {
+              for(uint32_t i = tid; i < n; i += stride) {
+                  const float tRd = Rd[i];
+                  const float tth = theta[i];
+                  const float k = wavenumber_r4(gamma);
+                  const float gamma2 = gamma*gamma;
+                  const float carg = z*theta;
+                  const float coszt= cosf(carg*carg);
+                  const float t0 = PI*tRd*tRd;
+                  const float tleft = t1/gamma;
+                  const float sinzt = sinf(carg);
+                  const float jarg  = 2.0f*k*tRd*sinzt;
+                  const float bj1   = j1f(jarg);
+                  const float term  = 2.0f*bj1/jarg;
+                  const float tright= term*term;
+                  sig[i] = tleft*tright*coszt;
+               }
+            }
+            else if(type==2) {
+               for(uint32_t i = tid; i < n; i += stride) {
+               const float tRd   = Rd[i];
+               const float Rd2   = tRd*tRd;
+               const float tleft = 3534.2917352885173932704738f*Rd2;
+               const float ratio = tRd/gamma;
+               const float ratio4= ratio*ratio*ratio*ratio;
+               sig[i] = tleft*ratio4;
+            }
+        }    
+}
+
+
+void disk_rcs_cuda(const float * __restrict__ Rd, 
+                   const float * __restrict__ theta, 
+                   const float gamma,            
+                   const int32_t type, 
+                   float * __restrict__ sig,
+                   const uint32_t n_threads,
+                   const uint32_t kernel_type,
+                   const uint32_t n) {
+
+     if(kernel_type==1) {
+        uint32_t threadsBlock = 32;
+        uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+        disk_rcs_kernel1<<<blocksGrid,threadsBlock>>>(Rd,theta,gamma,type,sig,n_threads);
+     }
+     else if(kernel_type==2) {
+        uint32_t threadsBlock = 256;
+        uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+        disk_rcs_kernel2<<<blocksGrid,threadsBlock>>>(Rd,theta,gamma,type,sig,n);
+     }
+}
+
+
+__global__
+void curved_edge_rcs_kernel(const float * __restrict__ Redg, //m, radius of edge contour, incidence edge-perpendicular
+		            const float gamma,//m, wavelength
+                            float * __restrict__ rcs ,
+                            const uint32_t n_threads) { 
+
+       uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+       if(tid < n_threads) {
+          const float tRedg = Redg[tid];
+          rcs[tid] = 0.5f*tRedg*gamma;
+       }
+}
+
+
+void curved_edge_rcs_cuda(const float * __restrict__ Redg,
+		          const float gamma,
+                          float * __restrict__ rcs,
+                          const uint32_t n_threads) {
+
+      uint32_t threadsBlock = 32;
+      uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+      curved_edge_rcs_kernel<<<blocksGrid,threadsBlock>>>(Redg,gamma,rcs,n_threads);
+}
+
+
+__global__
+void straight_edge_rcs(const float * __restrict__ Ledg,
+                       float * __restrict__ rcs,
+                       const uint32_t n_threads) {
+
+    uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+    if(tid < n_threads) {
+       const float tLedg = Ledg[tid];
+       rcs[tid] = (tLedg*tLedg)/PI;
+    }
+}
+
+
+void straight_edge_rcs_cuda(const float * __restrict__ Ledg,
+                            float * __restrict__ rcs,
+                            const uint32_t n_threads) {
+
+     uint32_t threadsBlock = 32;
+     uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+     straight_edge_rcs_kernel<<<blocksGrid,threadsBlock>>>(Ledg,rcs,n_threads);
+}
+
+
+__global__
+void ellipsoid_rcs_kernel(const float * __restrict__ a, //m, semimajor axis
+                          const float * __restrict__ b, //m, semiminor axis
+                          float * __restrict__ rcs,
+                          const uint32_t n_threads) {
+
+      uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+      if(tid < n_threads) {
+         const float ta = a[tid];
+         const float tb = b[tid];
+         const float b4 = tb*tb*tb*tb;
+         const float a2 = ta*ta;
+         rcs[tid]       = (PI*b4)/a2;
+      }   
+}
+
+
+void ellipsoid_rcs_cuda(  const float * __restrict__ a,
+                          const float * __restrict__ b,
+                          float * __restrict__ rcs,
+                          const uint32_t n_threads) {
+
+     uint32_t threadsBlock = 32;
+     uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+     ellipsoid_rcs_kernel<<<blocksGrid,threadsBlock>>>(a,b,rcs,n_threads);
+}
+
+
+__global__
+void plate_rcs_kernel1(const float * __restrict__ x, //m, plate length
+                       const float * __restrict__ y, //m, plate width
+                       const float theta,           //deg, angle relative to plate norm
+                       const float phi,             //deg, angle between the plate normal and radar los
+	               const float gamma,           //m, wavelength
+                       float * __restrict__ sig,
+                       const uint32_t n_threads) {         
+
+     uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+     if(tid < n_threads) {
+        const float tx     = x[tid];
+        const float zth    = z*theta;
+        const float ty     = y[tid];
+        const float gamma2 = gamma*gamma;
+        const float sinzt  = sinf(zth);
+	const float xy2    = PI4*(x*y*x*y);
+	const float coszt  = cosf(z*phi);
+	const float zth2  = zth*zth;
+	const float u     = wavenumber_r4(gamm)*x*sinzt*coszt;
+	const float sinu  = sinf(u)/u;
+	const float v     = wavenumber_r4(gamm)*y*sinzt*coszt;
+	const float sinv  = sinf(v)/v;
+	const float tleft = xy2/gamma2;
+	const float tmid  = sinu*sinv*sinu*sinv;
+	sig[tid]          = tleft*tmid*coszt;
+     }
+}
+
+
+__global__
+void plate_rcs_kernel2(const float * __restrict__ x, //m, plate length
+                       const float * __restrict__ y, //m, plate width
+                       const float theta,           //deg, angle relative to plate norm
+                       const float phi,             //deg, angle between the plate normal and radar los
+	               const float gamma,           //m, wavelength
+                       float * __restrict__ sig,
+                       const uint32_t n) {         
+
+        uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+        uint32_t stride = blockDim.x*gridDim.x;
+        for(uint32_t i = tid; i < n; i += stride) {
+            const float tx     = x[i];
+            const float zth    = z*theta;
+            const float ty     = y[i];
+            const float gamma2 = gamma*gamma;
+            const float sinzt  = sinf(zth);
+	    const float xy2    = PI4*(x*y*x*y);
+	    const float coszt  = cosf(z*phi);
+	    const float zth2  = zth*zth;
+	    const float u     = wavenumber_r4(gamm)*x*sinzt*coszt;
+	    const float sinu  = sinf(u)/u;
+	    const float v     = wavenumber_r4(gamm)*y*sinzt*coszt;
+	    const float sinv  = sinf(v)/v;
+	    const float tleft = xy2/gamma2;
+	    const float tmid  = sinu*sinv*sinu*sinv;
+	    sig[i]            = tleft*tmid*coszt;
+     }
+}
+
+
+void plate_rcs_cuda(   const float * __restrict__ x, 
+                       const float * __restrict__ y, 
+                       const float theta,           
+                       const float phi,             
+	               const float gamma,          
+                       float * __restrict__ sig,
+                       const uint32_t n_threads,
+                       const uint32_t type,
+                       const uint32_t n) {
+
+    if(type==1) {
+       uint32_t threadsBlock = 32;
+       uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+       plate_rcs_kernel1<<<blocksGrid,threadsBlock>>>(x,y,theta,phi,gamma,sig,n_threads);
+    }
+    else if(type==2) {
+       uint32_t threadsBlock = 256;
+       uint32_t blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+       plate_rcs_kernel2<<<blocksGrid,threadsBlock>>>(x,y,theta,phi,gamma,sig,n);
+    }
+}
+
