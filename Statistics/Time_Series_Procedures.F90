@@ -5025,6 +5025,10 @@
 ! =========================================================================================
 !
     function lp_coef( pl, k, fc, notest_fc ) result( lpcoef )
+       !dir$ attributes forceinline :: lp_coef
+       !dir$ attributes code_align : 32 :: lp_coef
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: lp_coef
 !
 ! Purpose
 ! _______
@@ -5110,6 +5114,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one, two, pi
@@ -5134,6 +5140,7 @@
 !
     real(stnd)               :: fc2, sum, arg, con, con2, tmp
     real(stnd), dimension(k) :: coef
+    !dir$ attributes align : 64 :: coef
 !
     integer(i4b) :: i, kmid, khalf
 !
@@ -5206,6 +5213,9 @@
 !
     coef(kmid) = sum
 !
+    !dir$ assume_aligned coef:64
+    !dir$ assume_aligned lpcoef:64
+    !$omp simd simdlen(8) private(tmp) reduction(+:sum) reduction(+:arg)
     do i=1_i4b, khalf
 !
         arg = arg + con
@@ -5231,6 +5241,10 @@
 ! =========================================================================================
 !
     function lp_coef2( pl, k, fc, win, notest_fc  ) result( lpcoef2 )
+        !dir$ attributes forceinline :: lp_coef2
+       !dir$ attributes code_align : 32 :: lp_coef2
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: lp_coef2
 !
 ! Purpose
 ! _______
@@ -5326,6 +5340,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one, two, pi
@@ -5350,6 +5366,7 @@
 !
     real(stnd)               :: fc2, sum, arg, con, con2, tmp, win2
     real(stnd), dimension(k) :: coef
+    !dir$ attributes align : 64 :: coef
 !
     integer(i4b) :: i, kmid, khalf
 !
@@ -5432,6 +5449,8 @@
     sum        = two*fc2
     coef(kmid) = sum
 !
+    !dir$ assume_aligned coef:64
+    !$omp simd simdlen(8) private(arg,tmp) reduction(+:sum)
     do i=1_i4b, khalf
 !
         arg  = real( i, stnd )
@@ -5458,6 +5477,10 @@
 ! =========================================================================================
 !
     function hp_coef( ph, k, fc, notest_fc ) result( hpcoef )
+       !dir$ attributes forceinline :: hp_coef
+       !dir$ attributes code_align : 32 :: hp_coef
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: hp_coef
 !
 ! Purpose
 ! _______
@@ -5543,6 +5566,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one, two, pi
@@ -5567,6 +5592,7 @@
 !
     real(stnd)               :: fc2, sum, arg, con, con2, tmp
     real(stnd), dimension(k) :: coef
+    !dir$ attributes align : 64 :: coef
 !
     integer(i4b) :: i, kmid, khalf
 !
@@ -5639,6 +5665,8 @@
 !
     coef(kmid) = sum
 !
+    !dir$ assume_aligned coef:64
+    !$omp simd simdlen(8) private(tmp) reduction(+:arg) reduction(+:sum)
     do i=1_i4b, khalf
 !
         arg = arg + con
@@ -5653,6 +5681,7 @@
 !
 !   NORMALIZE THE COEFFICIENTS.
 !
+    !dir$ assume_aligned hpcoef:64, coef:64
     hpcoef(:k) = -coef(:k)/sum
 !
     hpcoef(kmid) = hpcoef(kmid) + one
@@ -5666,6 +5695,10 @@
 ! =========================================================================================
 !
     function hp_coef2( ph, k, fc, win, notest_fc ) result( hpcoef2 )
+        !dir$ attributes forceinline :: hp_coef2
+       !dir$ attributes code_align : 32 :: hp_coef2
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: hp_coef2
 !
 ! Purpose
 ! _______
@@ -5759,6 +5792,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one, two, pi
@@ -5783,6 +5818,7 @@
 !
     real(stnd)               :: fc2, sum, arg, con, con2, tmp, win2
     real(stnd), dimension(k) :: coef
+    !dir$ attributes align : 64 :: coef
 !
     integer(i4b) :: i, kmid, khalf
 !
@@ -5865,6 +5901,8 @@
     sum        = two*fc2
     coef(kmid) = sum
 !
+    !dir$ assume_aligned coef:64
+    !$omp simd simdlen(8) private(arg,tmp) reduction(+:sum)
     do i=1_i4b, khalf
 !
         arg  = real( i, stnd )
@@ -5880,6 +5918,7 @@
 !
 !   NORMALIZE THE COEFFICIENTS.
 !
+    !dir$ assume_aligned hpcoef2:64,coef:64
     hpcoef2(:k) = -coef(:k)/sum
 !
     hpcoef2(kmid) = hpcoef2(kmid) + one
@@ -5893,6 +5932,10 @@
 ! =========================================================================================
 !
     function bd_coef( pl, ph, k, fch, fcl, notest_fc ) result( bdcoef )
+       !dir$ attributes forceinline :: bd_coef
+       !dir$ attributes code_align : 32 :: bd_coef
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: bd_coef
 !
 ! Purpose
 ! _______
@@ -6013,6 +6056,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+   ! use omp_lib
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one, c1_3
@@ -6038,6 +6083,8 @@
 !
     real(stnd)               :: fcl2, fch2, tmp
     real(stnd), dimension(k) :: coefl, coefh
+    !dir$ attributes align : 64 :: coefl
+    !dir$ attributes align : 64 :: coefh
 !
     logical(lgl) :: test_fc
 !
@@ -6126,6 +6173,7 @@
 !   COMPUTE THE BAND-PASS COEFFICIENTS AS THE DIFFERENCE IN WEIGHT FUNCTIONS
 !   FOR THE TWO NORMALIZED LOW-PASS FILTERS WITH CUTOFFS fcl2 AND fch2.
 !
+    !dir$ assume_aligned coefl:64, coefh:64
     bdcoef(:k) = coefl(:k) - coefh(:k)
 !
 !
@@ -6137,6 +6185,10 @@
 ! =========================================================================================
 !
     function bd_coef2( pl, ph, k, fch, fcl, win, notest_fc ) result( bdcoef2 )
+       !dir$ attributes forceinline :: bd_coef2
+       !dir$ attributes code_align : 32 :: bd_coef2
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: bd_coef2
 !
 ! Purpose
 ! _______
@@ -6263,6 +6315,7 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one
@@ -6288,6 +6341,7 @@
 !
     real(stnd)               :: fcl2, fch2, tmp
     real(stnd), dimension(k) :: coefl, coefh
+    !dir$ attributes align : 64 :: coefl,coefh
 !
     logical(lgl) :: test_fc
 !
@@ -6372,6 +6426,7 @@
 !   COMPUTE THE BAND-PASS COEFFICIENTS AS THE DIFFERENCE IN WEIGHT FUNCTIONS
 !   FOR THE TWO NORMALIZED LOW-PASS FILTERS WITH CUTOFFS fcl2 AND fch2.
 !
+    !dir$ assume_aligned coefl:64, coefh:64
     bdcoef2(:k) = coefl(:k) - coefh(:k)
 !
 !
@@ -6383,6 +6438,11 @@
 ! =========================================================================================
 !
     function pk_coef( freq, k, notest_freq ) result( pkcoef )
+       !dir$ attributes forceinline :: pk_coef
+       !dir$ attributes code_align : 32 :: pk_coef
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: pk_coef
+!
 !
 ! Purpose
 ! _______
@@ -6454,6 +6514,7 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
     use Utilities,         only : merror
     use Logical_Constants, only : true
     use Reals_Constants,   only : zero, half, one, c1_3
@@ -6469,6 +6530,7 @@
     real(stnd), intent(in)   :: freq
 !
     real(stnd), dimension(k) :: pkcoef
+    !dir$ attributes align : 64 :: pkcoef
 !
     logical(lgl), intent(in), optional :: notest_freq
 !
@@ -6478,6 +6540,8 @@
 !
     real(stnd)               :: fcl, fch, tmp
     real(stnd), dimension(k) :: coefl, coefh
+     !dir$ attributes align : 64 :: coefl
+     !dir$ attributes align : 64 :: coefh
 !
     integer(i4b) :: i
 !
@@ -6546,6 +6610,7 @@
 !   COMPUTE THE BAND-PASS COEFFICIENTS AS THE DIFFERENCE IN WEIGHT FUNCTIONS
 !   FOR THE TWO NORMALIZED LOW-PASS FILTERS WITH CUTOFFS fcl AND fch.
 !
+    !dir$ assume_aligned pkcoef:64, coefl:64, coefh:64
     pkcoef(:k) = coefl(:k) - coefh(:k)
 !
 !
@@ -6557,6 +6622,10 @@
 ! =========================================================================================
 !
     function moddan_coef( k, smooth_param ) result( moddancoef )
+       !dir$ attributes forceinline :: moddan_coef
+       !dir$ attributes code_align : 32 :: moddan_coef
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: moddan_coef
 !
 ! Purpose
 ! _______
@@ -6595,6 +6664,7 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
     use Utilities,         only : merror, assert
     use Reals_Constants,   only : zero, one
     use Char_Constants,    only : tseries_error50, tseries_error51
@@ -6607,12 +6677,14 @@
     integer(i4b), intent(in), dimension(:)  :: smooth_param
 !
     real(stnd), dimension(k) :: moddancoef
+     !dir$ attributes align : 64 :: moddancoef
 !
 !
 ! SPECIFICATIONS FOR LOCAL VARIABLES
 ! __________________________________
 !
     real(stnd), dimension(k) :: coef
+     !dir$ attributes align : 64 :: coef
 !
     integer(i4b) :: k2, index, nparam
 !
@@ -6645,11 +6717,13 @@
 !
 !   COMPUTE THE FILTER WEIGHTS.
 !
+     !dir$ assume_aligned coef:64
     coef(:k)    = zero
     coef(index) = one
 !
     call moddan_filter_rv( coef(:k), smooth_param(:), sym=one )
 !
+     !dir$ assume_aligned moddancoef:64
     moddancoef(:k) = coef(:k)
 !
 !
