@@ -6735,6 +6735,10 @@
 ! =========================================================================================
 !
     subroutine freq_func( nfreq, coef, freqr, four_freq, freq )
+       !dir$ attributes forceinline :: freq_func
+       !dir$ attributes code_align : 32 :: freq_func
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: freq_func
 !
 ! Purpose
 ! _______
@@ -6791,6 +6795,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror, assert, arth
     use Logical_Constants, only : true, false
     use Reals_Constants,   only : zero, one, two, pi
@@ -6814,6 +6820,7 @@
 !
     real(stnd)                   :: tmp
     real(stnd), dimension(nfreq) :: tmpvec, freq2
+     !dir$ attributes align : 64 :: tmpvec, freq2
 !
     integer(i4b) :: k, khalf, kmid, i, i2, n
 !
@@ -6863,6 +6870,7 @@
 !
     khalf = ( k - 1_i4b )/2_i4b
 !
+    !dir$ assume_aligned coef:64
     do i = 1_i4b, khalf
 !
         i2 = k + 1_i4b - i
@@ -6910,6 +6918,11 @@
 !
     freq2(:i)  = arth( zero, tmp, i )
 !
+    !dir$ assume_aligned tmpvec:64
+    !dir$ assume_aligned freq2:64
+    !dir$ assume_aligned freqr:64
+    !dir$ assume_aligned coef:64
+    !$omp simd simdlen(8) reduction(+:tmpvec) reduction(+:freqr) linear(i:1)
     do i = 1_i4b, khalf
 !
         tmpvec(:i2) = tmpvec(:i2) + freq2(:i2)
@@ -6937,6 +6950,10 @@
 ! =========================================================================================
 !
     subroutine symlin_filter_rv( vec, coef, trend, nfilt )
+       !dir$ attributes forceinline :: symlin_filter_rv
+       !dir$ attributes code_align : 32 :: symlin_filter_rv
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: symlin_filter_rv
 !
 ! Purpose
 ! _______
@@ -7000,6 +7017,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror, arth
     use Reals_Constants,   only : zero, one
     use Char_Constants,    only : tseries_error10, tseries_error43, tseries_error45, tseries_error46,    &
@@ -7093,6 +7112,8 @@
     nvecf = m - k + 1_i4b
     i2    = k - 1_i4b
 !
+     !dir$ assume_aligned coef:64, vec:64
+     !$omp simd simdlen(8)
     do i = 1_i4b, nvecf
 !
         i2    = i2 + 1_i4b
@@ -7114,6 +7135,7 @@
 !
 !           ADD MEAN.
 !
+            !dir$ assume_aligned vec:64
             vec(:nvecf) = vec(:nvecf) + orig
 !
         case( -2_i4b )
@@ -7122,6 +7144,7 @@
 !         
             offset = real( (k - 1_i4b)/2_i4b, stnd )
 !
+            !dir$ assume_aligned vec:64
             vec(:nvecf) = vec(:nvecf) + slope*arth( offset, one, nvecf )           
 !
         case( -3_i4b )
@@ -7130,6 +7153,7 @@
 !         
             offset = real( (k - 1_i4b)/2_i4b, stnd )
 !         
+             !dir$ assume_aligned vec:64
             vec(:nvecf) = vec(:nvecf) + ( orig + slope*arth( offset, one, nvecf ) )       
 !         
     end select
@@ -7149,6 +7173,10 @@
 ! =========================================================================================
 !
     subroutine symlin_filter_rm( mat, coef, trend, nfilt )
+         !dir$ attributes forceinline :: symlin_filter_rm
+       !dir$ attributes code_align : 32 :: symlin_filter_rm
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: symlin_filter_rm
 !
 ! Purpose
 ! _______
@@ -7212,6 +7240,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Reals_Constants,   only : zero
     use Char_Constants,    only : tseries_error10, tseries_error44, tseries_error45, tseries_error46,   &
@@ -7234,6 +7264,7 @@
     integer(i4b) :: n, m, k, khalf, i, i2, trend2, nmatf
 !
     real(stnd), dimension(size(mat,1)) :: orig, slope, tmpvec
+     !dir$ attributes align : 64 :: orig, slope,tmpvec
     real(stnd)                         :: tmp, offset
 !
 !
@@ -7309,6 +7340,8 @@
     nmatf = m - k + 1_i4b
     i2    = k - 1_i4b
 !
+     !dir$ assume_aligned tmpvec:64, mat:64,coef:64
+     !$omp simd simdlen(8)
     do i = 1_i4b, nmatf
 !
         i2    = i2 + 1_i4b
@@ -7330,6 +7363,8 @@
 !
 !           ADD MEANS.
 !
+            !dir$ assume_aligned mat:64
+            !$omp simd simdlen(8) reduction(+:mat)
             do i = 1_i4b, nmatf
                 mat(:n,i) = mat(:n,i) + orig(:n)
             end do
@@ -7340,6 +7375,8 @@
 !
             offset = real( (k - 3_i4b)/2_i4b, stnd )
 !
+            !dir$ assume_aligned mat:64, slope:64
+            !$omp simd simdlen(8) reduction(+:mat) private(tmp)
             do i = 1_i4b, nmatf
                 tmp       = real( i, stnd ) + offset
                 mat(:n,i) = mat(:n,i) + tmp*slope(:n)           
@@ -7351,6 +7388,8 @@
 !         
             offset = real( (k - 3_i4b)/2_i4b, stnd )
 !
+            !dir$ assume_aligned mat:64, slope:64,orig:64
+            !$omp simd simdlen(8) reduction(+:mat) private(tmp)
             do i = 1_i4b, nmatf
                 tmp       = real( i, stnd ) + offset
                 mat(:n,i) = mat(:n,i) + tmp*slope(:n) + orig(:n)      
@@ -7373,6 +7412,10 @@
 ! =========================================================================================
 !
     subroutine symlin_filter2_rv( vec, coef, trend, usefft, initfft )
+     
+       !dir$ attributes code_align : 32 :: symlin_filter2_rv
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: symlin_filter2_rv
 !
 ! Purpose
 ! _______
@@ -7449,6 +7492,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror, arth
     use Logical_Constants, only : true, false
     use Reals_Constants,   only : zero, one
@@ -7472,9 +7517,11 @@
 ! __________________________________
 !
     real(stnd), dimension(size(vec)) :: vec2
+     !dir$ attributes align : 64 :: vec2
     real(stnd)                       :: orig, slope, tmp
 !
     complex(stnd), dimension(:), allocatable :: vecc
+     !dir$ attributes align : 64 :: vecc
 !
     integer(i4b) :: m, k, i, i1, i2, trend2, kmid, khalf
 !   
@@ -7482,9 +7529,9 @@
 !
     logical(lgl) :: usefft2, initfft2
 !
-#ifdef _OPENMP
+
     logical      :: test_par
-#endif
+
 !
 !
 ! PARAMETERS
@@ -7586,6 +7633,7 @@
 !
 !       TRANSFORM THE TIME SERIES.
 !
+         !dir$ assume_aligned vecc:64,vec:64
         vecc(:m) = cmplx( vec(:m), zero, kind=stnd )
 !
         call fft_row( vecc(:m), forward=true  )
@@ -7593,12 +7641,14 @@
 !       MULTIPLY THE FOURIER TRANSFORM OF THE TIME SERIES
 !       BY THE TRANSFERT FUNCTION OF THE FILTER.
 !
+        !dir$ assume_aligned vecc:64,vec:64
         vecc(:m) = vecc(:m)*vec2(:m)
 !
 !       INVERT THE SEQUENCE BACK TO GET THE FILTERED TIME SERIES.
 !
         call fft_row( vecc(:m), forward=false )
 !
+         !dir$ assume_aligned vecc:64,vec:64
         vec(:m) = real( vecc(:m),  kind=stnd )
 !
 !       DEALLOCATE WORK ARRAYS.
@@ -7613,13 +7663,14 @@
 !
 !       MAKE A COPY OF THE TIME SERIES.
 !
+        !dir$ assume_aligned vec2:64,vec:64
         vec2(:m) = vec(:m)
 !
 !       NOW, FILTER THE TIME SERIES.
 !
         kmid  = ( k + 1_i4b )/2_i4b
 !   
-#ifdef _OPENMP
+
         i1 = omp_get_num_procs()
         i2 = omp_get_max_threads()
         test_par = .not.( omp_in_parallel() )   .and.      &
@@ -7633,9 +7684,10 @@
 !$OMP         ,SHARED(m,k,kmid,khalf,vec,vec2)
 !
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO simd simdlen(8) SCHEDULE(STATIC,8) 
 !
             do i = 1_i4b, khalf
+               !dir$ assume_aligned vec:64,coef:64,vec2:64
 !
                 i1 = kmid + 1_i4b - i
                 i2 = khalf + i
@@ -7647,10 +7699,11 @@
 !$OMP END DO NOWAIT
 !
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO simd simdlen(8) SCHEDULE(STATIC,8) 
 !
             do i = kmid, m-khalf
 !
+                 !dir$ assume_aligned vec:64,coef:64,vec2:64
                 i1 = i - kmid + 1_i4b
                 i2 = k  + i1  - 1_i4b
 !
@@ -7661,10 +7714,11 @@
 !$OMP END DO NOWAIT
 !
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO simd simdlen(8) SCHEDULE(STATIC,8) 
 !
             do i =  m-khalf+1_i4b, m
 !
+                 !dir$ assume_aligned vec:64,coef:64,vec2:64
                 i1 = k - khalf - i + m
                 i2 = m - i1 + 1_i4b
 !
@@ -7678,10 +7732,12 @@
 !
         else
 !
-#endif
+
             i1 = kmid + 1_i4b
             i2 = khalf
 !
+             !dir$ assume_aligned vec:64,coef:64,vec2:64
+             !$omp simd simdlen(8)
             do i = 1_i4b, khalf
 !
                 i1 = i1 - 1_i4b
@@ -7694,6 +7750,8 @@
             i1 = 0_i4b
             i2 = k - 1_i4b
 !
+             !dir$ assume_aligned vec:64,coef:64,vec2:64
+             !$omp simd simdlen(8)
             do i = kmid, m-khalf
 !
                 i1 = i1 + 1_i4b
@@ -7706,6 +7764,8 @@
             i1 = k
             i2 = m - k + 1_i4b
 !
+             !dir$ assume_aligned vec:64,coef:64,vec2:64
+             !$omp simd simdlen(8)
             do i =  m-khalf+1_i4b, m
 !
                 i1 = i1 - 1_i4b
@@ -7715,9 +7775,9 @@
 !
             end do
 !
-#ifdef _OPENMP
+
         end if
-#endif
+
 !
     end if
 !
@@ -7729,12 +7789,14 @@
 !
 !           ADD MEAN.
 !
+            !dir$ assume_aligned vec:64
             vec(:m) = vec(:m) + orig
 !
         case( -2_i4b )
 !
 !           ADD DRIFT.
 !         
+             
             vec(:m) = vec(:m) + slope*arth( zero, one, m )           
 !
         case( -3_i4b )
@@ -7754,6 +7816,9 @@
 ! =========================================================================================
 !
     subroutine symlin_filter2_rm( mat, coef, trend, usefft, initfft )
+       !dir$ attributes code_align : 32 :: symlin_filter2_rm
+       !dir$ optimize: 3
+       !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: symlin_filter2_rm
 !
 ! Purpose
 ! _______
@@ -7831,6 +7896,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Logical_Constants, only : true, false
     use Reals_Constants,   only : zero, one
@@ -7854,11 +7921,16 @@
 ! __________________________________
 !
     real(stnd), dimension(:,:),        allocatable :: mat2
+      !dir$ attributes align : 64 :: mat2
     real(stnd), dimension(:),          allocatable :: freqr
+      !dir$ attributes align : 64 :: freqr
     real(stnd), dimension(size(mat,1))             :: orig, slope
+      !dir$ attributes align : 64 :: orig
+      !dir$ attributes align : 64 :: slope
     real(stnd)                                     :: tmp
 !
     complex(stnd), dimension(:,:),     allocatable :: matc
+      !dir$ attributes align : 64 :: matc
 !
     integer(i4b) :: n, m, k, i, i1, i2, trend2, kmid, khalf
 !   
@@ -7866,15 +7938,17 @@
 !
     logical(lgl) :: usefft2, initfft2
 !
-#ifdef _OPENMP
+
 !
     integer(i4b)                       :: j
 !
     real(stnd), dimension(size(coef))  :: coef2
     real(stnd), dimension(size(mat,1)) :: vec
+       !dir$ attributes align : 64 :: coef2
+       !dir$ attributes align : 64 :: vec
 !
     logical                            :: test_par
-#endif
+
 !
 !
 ! PARAMETERS
@@ -7983,6 +8057,7 @@
 !
 !       TRANSFORM THE TIME SERIES.
 !
+       !dir$ assume_aligned matc:64, mat:64
         matc(:n,:m) = cmplx( mat(:n,:m), zero, kind=stnd )
 !
         call fft_row( matc(:n,:m), forward=true  )
@@ -7990,6 +8065,8 @@
 !       MULTIPLY THE FOURIER TRANSFORM OF THE TIME SERIES
 !       BY THE TRANSFERT FUNCTION OF THE FILTER.
 !
+         !dir$ assume_aligned matc:64, freqr:64
+         !$omp simd simdlen(8) reduction(+:matc)
         do i = 1_i4b, m
 !
             matc(:n,i) = matc(:n,i)*freqr(i)
@@ -8000,6 +8077,7 @@
 !
         call fft_row( matc(:n,:m), forward=false )
 !
+         !dir$ assume_aligned mat:64,matc:64
         mat(:n,:m) = real( matc(:n,:m),  kind=stnd )
 !
 !       DEALLOCATE WORK ARRAYS.
@@ -8022,13 +8100,14 @@
 !
 !       MAKE A COPY OF THE MULTICHANNEL TIME SERIES.
 !
+        !dir$ assume_aligned mat2:64,mat:64
         mat2(:n,:m) = mat(:n,:m)
 !
 !       NOW, FILTER THE TIME SERIES.
 !
         kmid  = ( k + 1_i4b )/2_i4b
 !   
-#ifdef _OPENMP
+
         i1 = omp_get_num_procs()
         i2 = omp_get_max_threads()
         test_par = .not.( omp_in_parallel() )   .and.      &
@@ -8043,7 +8122,7 @@
 !
             coef2(:k) = coef(:k)
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
             do i = 1_i4b, khalf
 !
@@ -8060,6 +8139,8 @@
 !
                 vec(:n) = zero
 !
+                 !dir$ assume_aligned vec:64,coef2:64,mat2:64
+                 !$omp simd reduction(+:vec)
                 do j=1_i4b, i2
 !
                     i1 = i1 + 1_i4b
@@ -8074,7 +8155,7 @@
 !$OMP END DO NOWAIT
 !
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
             do i = kmid, m-khalf
 !
@@ -8090,6 +8171,9 @@
 !
                 vec(:n) = zero
 !
+                
+                 !dir$ assume_aligned vec:64,coef2:64,mat2:64
+                 !$omp simd reduction(+:vec)
                 do j=1_i4b, k
 !
                     i1 = i1 + 1_i4b
@@ -8104,7 +8188,7 @@
 !$OMP END DO NOWAIT
 !
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
             do i =  m-khalf+1_i4b, m
 !
@@ -8121,6 +8205,9 @@
 !
                 vec(:n) = zero
 !
+                 
+                 !dir$ assume_aligned vec:64,coef2:64,mat2:64
+                 !$omp simd reduction(+:vec)
                 do j=1_i4b, i1
 !
                     i2 = i2 + 1_i4b
@@ -8143,6 +8230,8 @@
             i1 = kmid + 1_i4b
             i2 = khalf
 !
+             !dir$ assume_aligned mat:64,mat2:64,coef:64
+             !$omp simd simdlen(8)
             do i = 1_i4b, khalf
 !
                 i1 = i1 - 1_i4b
@@ -8155,6 +8244,8 @@
             i1 = 0_i4b
             i2 = k - 1_i4b
 !
+              !dir$ assume_aligned mat:64,mat2:64,coef:64
+             !$omp simd simdlen(8)
             do i = kmid, m-khalf
 !
                 i1 = i1 + 1_i4b
@@ -8167,6 +8258,8 @@
             i1 = k
             i2 = m - k + 1_i4b
 !
+             !dir$ assume_aligned mat:64,mat2:64,coef:64
+             !$omp simd simdlen(8)
             do i =  m-khalf+1_i4b, m
 !
                 i1 = i1 - 1_i4b
@@ -8176,9 +8269,9 @@
 !
             end do
 !
-#ifdef _OPENMP
+
         end if
-#endif
+
 !
 !       DEALLOCATE WORK ARRAY.
 !
@@ -8194,6 +8287,8 @@
 !
 !           ADD MEANS.
 !
+              !dir$ assume_aligned mat:64,orig:64
+             !$omp simd simdlen(8) reduction(+:mat)
             do i = 1_i4b, m
                 mat(:n,i) = mat(:n,i) + orig(:n)
             end do
@@ -8202,6 +8297,8 @@
 !
 !           ADD DRIFTS.
 !
+               !dir$ assume_aligned mat:64,slope:64
+             !$omp simd simdlen(8) private(tmp) reduction(+:mat)
             do i = 1_i4b, m
                 tmp       = real( i, stnd ) - one
                 mat(:n,i) = mat(:n,i) + tmp*slope(:n)           
@@ -8211,6 +8308,8 @@
 !
 !           ADD LINEAR LEAST SQUARES LINES.
 !         
+              !dir$ assume_aligned mat:64,slope:64,orig:64
+             !$omp simd simdlen(8) private(tmp) reduction(+:mat)
             do i = 1_i4b, m
                 tmp       = real( i, stnd ) - one
                 mat(:n,i) = mat(:n,i) + tmp*slope(:n) + orig(:n)      
