@@ -25,14 +25,7 @@ const char * const pgGMS_AVXCOMPLEX_DESCRIPT = "AVX manual vectorization of comp
 }
 
 
-/*
-	Bernard Gingold copyright notice:
-	This file is a part of Guided-Missile-Simulation program
-	Copyright(C) 2019 Bernard Gingold
-	License : GNU General Public License version 3 or later,
-	for additional information check file LICENSE.txt in
-	project directory.
-*/
+
 
 
 
