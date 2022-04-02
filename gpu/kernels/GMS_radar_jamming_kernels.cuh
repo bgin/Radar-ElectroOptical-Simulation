@@ -6,7 +6,6 @@
 #include <cstdint>
 
 
-
 extern "C"
 void therm_noise_range_cuda(       const float,
                                    const float,
@@ -105,7 +104,7 @@ void jammer_spectr_dens_cuda(  const float * __restrict__,
                                 const uint32_t,
                                 const uint32_t);
 
-
+extern "C"
 void single_jammer_temp_cuda(   const float * __restrict__,
                                 const float,
                                 const float,
@@ -127,7 +126,29 @@ void single_jammer_temp_cuda(   const float * __restrict__,
                                 const uint32_t);
 
 
-
+extern "C"
+void n_jammers_range_cuda(   const float,
+                             const float,
+                             const float * __restrict__,
+                             const float * __restrict__,
+                             const float,
+                             const float,
+                             const float,
+                             const float,
+                             const float * __restrict__ ,
+                             const float,
+                             const float,
+                             const float,
+                             const float,
+                             const float * __restrict__ ,
+                             const float,
+                             const float,
+                             const float,
+                             const float,
+                             float * __restrict,
+                             const uint32_t,
+                             const uint32_t,
+                             const uint32_t);
 
 
 
