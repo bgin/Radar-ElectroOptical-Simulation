@@ -6,7 +6,44 @@
 #include "GMS_radar_jamming_common.cuh"
 
 
+static __device__
+float therm_noise_range(   const float Frdr,
+                           const float Kth,
+                           const float rho,
+                           const float tf,
+                           const float tr,
+	                   const float th,
+		           const float d_Pt,
+		           const float gamm,
+			   const float d_w,
+			   const float d_h,
+			   const float Ln,
+			   const float d_Ts,
+			   const float sig,
+			   const float F,
+			   const float Fp,
+		           const float Flens,
+			   const float Dx,
+			   const float d_Lt,
+			   const float d_La) {
 
+        const float dc  = duty_cycle(rho,tr);
+        const float Pav = radar_avg_pow(d_Pt,dc);
+        const float ag  = radar_ant_gain(azimuth_bw(Kth,gamm,
+                                                    d_h),
+                                         elevation_bw(Kth,gamm,
+                                                    d_w),Ln);
+        const float N0  = noise_density(d_Ts);
+        const float den = 1984.4017075391884912304967f*N0*Dx*d_Lt*d_La;
+        const float t1  = gamm*gamm;
+        const float t2  = Pav*tf;
+        const float t3  = ag*ag;
+        const float t4  = sig*Frdr*Frdr*Fp*Fp;
+        const float t5  = F*F*F*F*Flens*Flens;
+        const float num = t1*t2*t3*t4*t5;
+        const float rat = num/den;
+        return (powf(rat,0.25f));
+}
 
 
 __global__ void
@@ -55,8 +92,8 @@ therm_noise_range_kernel1(  const float Frdr,
 
 __global__ void
 therm_noise_range_kernel2(  const float Frdr,
-                           const float Kth,
-                           const float rho,
+                            const float Kth,
+                            const float rho,
                            const float tf,
                            const float tr,
 	                   const float th,
@@ -98,7 +135,87 @@ therm_noise_range_kernel2(  const float Frdr,
      }
 }
 
+static __device__
+float tropo_range_loss(     const float Frdr,
+                            const float Kth,
+                            const float rho,
+                            const float tf,
+                            const float tr,
+	                    const float th,
+		            const float Pt,
+			    const float Rmj,
+			    const float gamm,
+			    const float w,
+			    const float h,
+			    const float Ln,
+			    const float Ts,
+			    const float sig,
+			    const float F,
+			    const float Fp,
+		            const float Flens,
+			    const float Dx,
+			    const float Lt,
+			    const float La,
+			    float Rm) {
 
+           
+           const float Rm = therm_noise_range(Frdr,Kth,rho,tf,tr,th,
+                                              Pt,Rmj,gamm,
+                                              w,h,Ln,Ts,
+                                              sig,F,FP,Flens,Dx,Lt,La,Rm);
+           return (La*(Rmj/Rm));                              
+} 
+
+
+__global__
+void jammer_req_temp_kernel1( const float Frdr,
+                              const float Kth,
+                              const float rho,
+                              const float tf,
+                              const float tr,
+                              const float th,
+                              const float * __restrict__ d_Pt,
+                              const float gamm,
+                              const float * __restrict__ d_w,
+                              const float * __restrict__ d_h,
+                              const float Ln,
+                              const float * __restrict__ d_Ts,
+                              const float sig,
+                              const float F,
+                              const float Fp,
+                              const float Flens,
+                              const float Dx,
+                              const float * __restrict__ d_Lt,
+                              const float * __restrict__ d_Rm,
+                              const float Rmj,
+                              const float La,
+                              const float Flen,
+                              float * __restrict__ rt,
+                              const uint32_t n_threads) {
+
+    uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
+    
+    if(tid < n_threads) {
+       Ts               = d_Ts[tid];
+       const float Rm   = therm_noise_range(Frdr,Kth,rho,tf,tr,th,
+                                            d_Pt[tid],Rmj,gamm,
+                                            d_w[tid],d_h[tid],Ln,d_Ts[tid],
+                                            sig,F,FP,Flens,Dx,d_Lt[tid],La,d_Rm[tid]);
+                                            
+       const float La1  = tropo_range_loss(Frdr,Kth,rho,tf,tr,th,d_Pt[tid],
+                                           Rmj,gamm,d_w[tid],d_h[tid],Ln,d_Ts[tid],
+                                           sig,F,Fp,Flens,Dx,d_Lt[tid],La);
+       const float Fln1 = sqrtf(Flen);
+       const float lrat = La/La1;
+       const float mrat = Flen/Fln1;
+       const float rrat = Rm/Rmj;
+       const float rrat4= (rrat*rrat*rrat*rrat)-1.0f;
+       rt[tid]          = Ts*lrat*(mrat*mrat)*rrat4;
+    }
+}
+	 
+
+			    
 
 __global__ void
 tropo_range_loss_kernel1(   const float Frdr,
@@ -128,11 +245,11 @@ tropo_range_loss_kernel1(   const float Frdr,
                             const uint32_t n) {
 
         
-      if(type==1) {
+     /* if(type==1) {
          uint threadsBlock = 32;
          uint blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
 	 therm_noise_range_kernel1<<<blocksGrid,threadsBlock>>>(Frdr,Kth,rho,tf,tr,th,
-	                                                      d_Pt,gamm.d_w,d_h,Ln,
+	                                                      d_Pt,gamm,d_w,d_h,Ln,
 							      d_Ts,sig,F,Fp,Flens,
 							      Dx,d_Lt,d_La,d_Rm,n_threads);
       }
@@ -143,12 +260,17 @@ tropo_range_loss_kernel1(   const float Frdr,
 	                                                      d_Pt,gamm.d_w,d_h,Ln,
 							      d_Ts,sig,F,Fp,Flens,
 							      Dx,d_Lt,d_La,d_Rm,n);
-      }
+      }*/
 	uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
         if(tid < n_threads) {
            const float La = d_La[tid];
 	   const float Rmj= d_Rmj[tid];
-	   const float Rm = d_Rm[tid];
+           const float Rm = therm_noise_range(Frdr,Kth,rho,tf,tr,th,
+                                              d_Pt[tid],Rmj,gamm,
+                                              d_w[tid],d_h[tid],Ln,d_Ts[tid],
+                                              sig,F,FP,Flens,Dx,d_Lt[tid],La,
+                                              d_Rm[tid]);
+           
 	   d_La1[tid]     = La*(Rmj/Rm);
         }
 }
@@ -182,7 +304,7 @@ tropo_range_loss_kernel2(   const float Frdr,
                             const uint32_t n) {
 
         
-      if(type==1) {
+      /*if(type==1) {
          uint threadsBlock = 32;
          uint blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
 	 therm_noise_range_kernel1<<<blocksGrid,threadsBlock>>>(Frdr,Kth,rho,tf,tr,th,
@@ -197,13 +319,18 @@ tropo_range_loss_kernel2(   const float Frdr,
 	                                                      d_Pt,gamm.d_w,d_h,Ln,
 							      d_Ts,sig,F,Fp,Flens,
 							      Dx,d_Lt,d_La,d_Rm,n);
-      }
+      }*/
       uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
       uint32_t stride = blockDim.x*gridDim.x;
       for(uint32_t i = tid; i < n; i += stride) {
            const float La = d_La[i];
 	   const float Rmj= d_Rmj[i];
-	   const float Rm = d_Rm[i];
+           const float Rm = therm_noise_range(Frdr,Kth,rho,tf,tr,th,
+                                              d_Pt[i],Rmj,gamm,
+                                              d_w[tid],d_h[i],Ln,d_Ts[i],
+                                              sig,F,FP,Flens,Dx,d_Lt[i],La,
+                                              d_Rm[i]);
+           
 	   d_La1[i]     = La*(Rmj/Rm);
         }
 }
@@ -670,4 +797,137 @@ void single_jammer_temp_cuda(   const float * __restrict__ gamma,
 }
 
 
-                                     
+//// Number of jammers range (km)
+__global__
+void n_jammers_range_kernel1(const float Kth,
+                             const float gamma,
+                             const float * __restrict__ h,
+                             const float * __restrict__ w,
+                             const float Ln,
+                             const float rho,
+                             const float tf,
+                             const float tr,
+                             const float * __restrict__ Pt,
+                             const float Frdr,
+                             const float Fp,
+                             const float F,
+                             const float Flen,
+                             const float * __restrict__ sig,
+                             const float Ts,
+                             const float Dx,
+                             const float Lt,
+                             const float La,
+                             float * __restrict Rnj,
+                             const uint32_t n_threads) {
+       
+       const float c0 = 1984.4017075391884912304842f
+       uint32_t tid   = blockDim.x*blockIdx.x+threadIdx.x;
+       if(tid < n_threads) {
+          const float xh     = h[tid];
+          const float xw     = w[tid];
+          const float xPt    = Pt[tid];
+          const float xsig   = sig[tid];
+          const float gamma2 = gamma*gamma;
+          const float Gr     = radar_ant_gain(azimuth_bw(Kth,gamma2,xh),
+                                              elevation_bw(Kth,gamma2,xw),Ln);
+          const float Gr2    = Gr*Gr;
+          const float dc     = duty_cycle(rho,tr);
+          const float pav    = radar_avg_power(xPt,dc);
+          const float N0     = noise_density(Ts);
+          const float F4     = F*F*F*F;
+          const float num    = pav*tf*Gr2*gamma*xsig*F4*Fp;
+          const float den    = c0*k_B*Ts*Dx*Lt*La;
+          const float ratio  = num/den;
+          Rnj[tid]           = powf(ratio,0.25f);
+       } 
+}
+
+__global__
+void n_jammers_range_kernel2(const float Kth,
+                             const float gamma,
+                             const float * __restrict__ h,
+                             const float * __restrict__ w,
+                             const float Ln,
+                             const float rho,
+                             const float tf,
+                             const float tr,
+                             const float * __restrict__ Pt,
+                             const float Frdr,
+                             const float Fp,
+                             const float F,
+                             const float Flen,
+                             const float * __restrict__ sig,
+                             const float Ts,
+                             const float Dx,
+                             const float Lt,
+                             const float La,
+                             float * __restrict Rnj,
+                             const uint32_t n) {
+       
+       const float c0 = 1984.4017075391884912304842f
+       uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+       uint32_t stride = blockDim.x*gridDim.x; 
+       for(uint32_t i = tid; i < n; i += stride) {   
+           const float xh     = h[i];
+           const float xw     = w[i];
+           const float xPt    = Pt[i];
+           const float xsig   = sig[i];
+           const float gamma2 = gamma*gamma;
+           const float Gr     = radar_ant_gain(azimuth_bw(Kth,gamma2,xh),
+                                              elevation_bw(Kth,gamma2,xw),Ln);
+           const float Gr2    = Gr*Gr;
+           const float dc     = duty_cycle(rho,tr);
+           const float pav    = radar_avg_power(xPt,dc);
+           const float N0     = noise_density(Ts);
+           const float F4     = F*F*F*F;
+           const float num    = pav*tf*Gr2*gamma*xsig*F4*Fp;
+           const float den    = c0*k_B*Ts*Dx*Lt*La;
+           const float ratio  = num/den;
+           Rnj[i]           = powf(ratio,0.25f);
+       } 
+} 
+
+
+void n_jammers_range_cuda(   const float Kth,
+                             const float gamma,
+                             const float * __restrict__ h,
+                             const float * __restrict__ w,
+                             const float Ln,
+                             const float rho,
+                             const float tf,
+                             const float tr,
+                             const float * __restrict__ Pt,
+                             const float Frdr,
+                             const float Fp,
+                             const float F,
+                             const float Flen,
+                             const float * __restrict__ sig,
+                             const float Ts,
+                             const float Dx,
+                             const float Lt,
+                             const float La,
+                             float * __restrict Rnj,
+                             const uint32_t n_threads,
+                             const uint32_t type,
+                             const uint32_t n) {
+     
+     if(type==1U) {
+         uint32_t threadsBlock = 32;
+         uint32_t blocksGrid   = (n_threads + threadsBlock - 1) / threadsBlock;
+         n_jammers_range_kernel1<<<blocksGrid,threadsBlock>>>(Kth,gamma,h,w,Ln,rho,tf,tr,
+                                                              Pt,Frdr,Fp,F,Flen,sig,Ts,Dx,
+                                                              Lt,La,Rnj,n_threads);
+     }
+     else if(type==2U) {
+          uint32_t threadsBlock = 256;
+          uint32_t blocksGrid   = (n + threadsBlock - 1) / threadsBlock;
+          n_jammers_range_kernel2<<<blocksGrid,threadsBlock>>>(Kth,gamma,h,w,Ln,rho,tf,tr,
+                                                              Pt,Frdr,Fp,F,Flen,sig,Ts,Dx,
+                                                              Lt,La,Rnj,n);
+     }
+} 
+
+
+
+ 
+                                  
