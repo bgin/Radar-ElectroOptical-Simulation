@@ -1066,7 +1066,7 @@ namespace gms {
 			    const float xF4  = xF*xF*xF*xF;
 			    const float num  = pav*xtf*Gr2*xgamm*xsig*xF4*xFp;
 			    const float den  = 1984.4017075391884912304842f*k_B4*xTs*xDx*xLt*xLa;
-			    const float ratio= num_den;
+			    const float ratio= num/den;
 			    return (cephes_powf(ratio,0.25f));             
 		   }
 
