@@ -151,10 +151,81 @@ void n_jammers_range_cuda(   const float,
                              const uint32_t);
 
 
+extern "C"
+void jammer_req_temp_cuda(    const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float * __restrict__,
+                              const float,
+                              const float * __restrict__,
+                              const float * __restrict__,
+                              const float,
+                              const float * __restrict__,
+                              const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float * __restrict__,
+                              const float * __restrict__,
+                              const float,
+                              const float,
+                              const float,
+                              float * __restrict__,
+                              const uint32_t,
+                              const uint32_t,
+                              const uint32_t);
 
 
+extern "C"
+void therm_noise_range1_cuda( const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float,
+	                      const float,
+		              const float * __restrict,
+		              const float,
+			      const float * __restrict,
+			      const float * __restrict,
+			      const float,
+			      const float * __restrict,
+			      const float,
+			      const float,
+			      const float,
+		              const float,
+			      const float,
+			      const float * __restrict,
+			      const float * __restrict,
+			      float * __restrict,
+			      const uint32_t);
 
 
+extern "C"
+void therm_noise_range2_cuda( const float,
+                              const float,
+                              const float,
+                              const float,
+                              const float,
+	                      const float,
+		              const float * __restrict,
+		              const float,
+			      const float * __restrict,
+			      const float * __restrict,
+			      const float,
+			      const float * __restrict,
+			      const float,
+			      const float,
+			      const float,
+		              const float,
+			      const float,
+			      const float * __restrict,
+			      const float * __restrict,
+			      float * __restrict,
+			      const uint32_t);
 
 
 
