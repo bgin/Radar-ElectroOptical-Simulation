@@ -48,26 +48,26 @@ float therm_noise_range(   const float Frdr,
 
 __global__ void
 therm_noise_range_kernel1(  const float Frdr,
-                           const float Kth,
-                           const float rho,
-                           const float tf,
-                           const float tr,
-	                   const float th,
-		           const float * __restrict d_Pt,
-		           const float gamm,
-			   const float * __restrict d_w,
-			   const float * __restrict d_h,
-			   const float Ln,
-			   const float * __restrict d_Ts,
-			   const float sig,
-			   const float F,
-			   const float Fp,
-		           const float Flens,
-			   const float Dx,
-			   const float * __restrict d_Lt,
-			   const float * __restrict d_La,
-			   float * __restrict d_Rm,
-			   const uint32_t n_threads) {
+                            const float Kth,
+                            const float rho,
+                            const float tf,
+                            const float tr,
+	                    const float th,
+		            const float * __restrict d_Pt,
+		            const float gamm,
+			    const float * __restrict d_w,
+			    const float * __restrict d_h,
+			    const float Ln,
+			    const float * __restrict d_Ts,
+			    const float sig,
+			    const float F,
+			    const float Fp,
+		            const float Flens,
+			    const float Dx,
+			    const float * __restrict d_Lt,
+			    const float * __restrict d_La,
+			    float * __restrict d_Rm,
+			    const uint32_t n_threads) {
 
      uint32_t tid = blockDim.x*blockIdx.x+threadIdx.x;
      if(tid < n_threads) {
@@ -88,6 +88,36 @@ therm_noise_range_kernel1(  const float Frdr,
         const float rat = num/den;
         Rm[tid]         = powf(rat,0.25f);
      }
+}
+
+
+void therm_noise_range1_cuda( const float Frdr,
+                              const float Kth,
+                              const float rho,
+                              const float tf,
+                              const float tr,
+	                      const float th,
+		              const float * __restrict d_Pt,
+		              const float gamm,
+			      const float * __restrict d_w,
+			      const float * __restrict d_h,
+			      const float Ln,
+			      const float * __restrict d_Ts,
+			      const float sig,
+			      const float F,
+			      const float Fp,
+		              const float Flens,
+			      const float Dx,
+			      const float * __restrict d_Lt,
+			      const float * __restrict d_La,
+			      float * __restrict d_Rm,
+			      const uint32_t n_threads) {
+
+         uint threadsBlock = 32;
+         uint blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+         therm_noise_range_kernel1<<<blocksGrid,threadsBlock>>>( Frdr,Kth,rho,tf,tr,th,d_Pt,gamm,
+                                                                 d_w,d_h,Ln,d_Ts,sig,F,Fp,Flens,Dx,
+                                                                 d_Lt,d_La,d_Rm,n_threads);
 }
 
 __global__ void
@@ -134,6 +164,35 @@ therm_noise_range_kernel2(  const float Frdr,
          Rm[i]         = powf(rat,0.25f);
      }
 }
+
+void therm_noise_range2_cuda( const float Frdr,
+                              const float Kth,
+                              const float rho,
+                              const float tf,
+                              const float tr,
+	                      const float th,
+		              const float * __restrict d_Pt,
+		              const float gamm,
+			      const float * __restrict d_w,
+			      const float * __restrict d_h,
+			      const float Ln,
+			      const float * __restrict d_Ts,
+			      const float sig,
+			      const float F,
+			      const float Fp,
+		              const float Flens,
+			      const float Dx,
+			      const float * __restrict d_Lt,
+			      const float * __restrict d_La,
+			      float * __restrict d_Rm,
+			      const uint32_t n) {
+
+         uint threadsBlock = 256;
+         uint blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
+         therm_noise_range_kernel2<<<blocksGrid,threadsBlock>>>( Frdr,Kth,rho,tf,tr,th,d_Pt,gamm,
+                                                                 d_w,d_h,Ln,d_Ts,sig,F,Fp,Flens,Dx,
+                                                                 d_Lt,d_La,d_Rm,n);
+
 
 static __device__
 float tropo_range_loss(     const float Frdr,
@@ -213,8 +272,100 @@ void jammer_req_temp_kernel1( const float Frdr,
        rt[tid]          = Ts*lrat*(mrat*mrat)*rrat4;
     }
 }
-	 
 
+__global__
+void jammer_req_temp_kernel2( const float Frdr,
+                              const float Kth,
+                              const float rho,
+                              const float tf,
+                              const float tr,
+                              const float th,
+                              const float * __restrict__ d_Pt,
+                              const float gamm,
+                              const float * __restrict__ d_w,
+                              const float * __restrict__ d_h,
+                              const float Ln,
+                              const float * __restrict__ d_Ts,
+                              const float sig,
+                              const float F,
+                              const float Fp,
+                              const float Flens,
+                              const float Dx,
+                              const float * __restrict__ d_Lt,
+                              const float * __restrict__ d_Rm,
+                              const float Rmj,
+                              const float La,
+                              const float Flen,
+                              float * __restrict__ rt,
+                              const uint32_t n) {
+
+   
+    uint32_t tid    = blockIdx.x*blockDim.x+threadIdx.x;
+    uint32_t stride = blockDim.x*gridDim.x;
+    for(uint32_t i = tid; i < n; i += stride) {
+       Ts               = d_Ts[tid];
+       const float Rm   = therm_noise_range(Frdr,Kth,rho,tf,tr,th,
+                                            d_Pt[i],Rmj,gamm,
+                                            d_w[i],d_h[i],Ln,d_Ts[i],
+                                            sig,F,FP,Flens,Dx,d_Lt[i],La,d_Rm[i]);
+                                            
+       const float La1  = tropo_range_loss(Frdr,Kth,rho,tf,tr,th,d_Pt[i],
+                                           Rmj,gamm,d_w[i],d_h[i],Ln,d_Ts[i],
+                                           sig,F,Fp,Flens,Dx,d_Lt[i],La);
+       const float Fln1 = sqrtf(Flen);
+       const float lrat = La/La1;
+       const float mrat = Flen/Fln1;
+       const float rrat = Rm/Rmj;
+       const float rrat4= (rrat*rrat*rrat*rrat)-1.0f;
+       rt[i]          = Ts*lrat*(mrat*mrat)*rrat4;
+    }
+}
+
+	 
+void jammer_req_temp_cuda(    const float Frdr,
+                              const float Kth,
+                              const float rho,
+                              const float tf,
+                              const float tr,
+                              const float th,
+                              const float * __restrict__ d_Pt,
+                              const float gamm,
+                              const float * __restrict__ d_w,
+                              const float * __restrict__ d_h,
+                              const float Ln,
+                              const float * __restrict__ d_Ts,
+                              const float sig,
+                              const float F,
+                              const float Fp,
+                              const float Flens,
+                              const float Dx,
+                              const float * __restrict__ d_Lt,
+                              const float * __restrict__ d_Rm,
+                              const float Rmj,
+                              const float La,
+                              const float Flen,
+                              float * __restrict__ rt,
+                              const uint32_t n_threads,
+                              const uint32_t type,
+                              const uint32_t n) {
+
+     if(type==1U) {
+         uint threadsBlock = 32;
+         uint blocksGrid  = (n_threads + threadsBlock - 1) / threadsBlock;
+         jammer_req_temp_kernel1<<<blocksGrid,threadsBlock>>>(Frdr,Kth,rho,tf,tr,th,d_Pt,
+                                                              gamm,d_w,d_h,Ln,d_Ts,sig,F,
+                                                              Fp,Flens,Dx,d_Lt,d_Rm,Rmj,
+                                                              La,Flen,rt,n_threads);
+     }
+     else if(type==2U) {
+         uint threadsBlock = 256;
+         uint blocksGrid  = (n + threadsBlock - 1) / threadsBlock;
+         jammer_req_temp_kernel1<<<blocksGrid,threadsBlock>>>(Frdr,Kth,rho,tf,tr,th,d_Pt,
+                                                              gamm,d_w,d_h,Ln,d_Ts,sig,F,
+                                                              Fp,Flens,Dx,d_Lt,d_Rm,Rmj,
+                                                              La,Flen,rt,n); 
+     }
+}
 			    
 
 __global__ void
