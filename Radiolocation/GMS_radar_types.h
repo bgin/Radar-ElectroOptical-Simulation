@@ -441,8 +441,50 @@ namespace gms {
 		                          //    - refractive index
 		    // Removed from the member list shall be passed as an function argument.			 
 	    } PropagationErrSIMD_R8_8;
-             
 
+
+	    // Athmospheric attenuation loss models (Blake Model)
+	  /*  typedef struct __ATTR_ALIGN__(64) BlakeModelAos_R4_1 {
+
+                    float theta;
+		    float R;         //nm, target range in vacuum
+		    float ha;        //m, heigth...?
+		    float freq;      //Mhz, radar frequency
+		    float Rkm;       //km, target range
+		    float Rm;        //m,  target range
+		    float hm;        //m,  target height above antenna
+		    float hkm;       //km, target heigth
+		    float dh;        //km, target height increment
+		    float L1a;       //dB, 2-way atmospheric attenuation loss
+		    int32_t K;       // number of points needed for approximation of absorption integral
+		    
+	    } BlakeModelAos_R4_1;*/
+            // Oxygen resonance frequencies (Blake Model usage) 
+            const float __ATTR_ALIGN__(64) f_N_plus[48] = {56.2648f,56.2648f,58.4466f,58.4466f,
+	                                                   59.5910f,59.5910f,60.4348f,60.4348f,
+							   61.1506f,61.1506f,61.8002f,61.8002f,
+							   62.4212f,62.4212f,62.9980f,62.9980f,
+							   63.5658f,63.5658f,64.1272f,64.1272f,
+							   64.6779f,64.6779f,65.2240f,65.2240f,
+							   65.7626f,65.7626f,66.2978f,66.2978f,
+							   66.8313f,66.8313f,67.3627f,67.3627f,
+							   67.8923f,67.8923f,68.4205f,68.4205f,
+							   68.9478f,68.9478f,69.4741f,69.4741f,
+							   70.0f,70.0f,70.5249f,70.55249f,
+							   71.0497f,71.0497f,0.0f,0.0f,0.0f};
+
+	    const float __ATTR_ALIGN__(64) f_N_minus[48] = {118.7505f,118.7505f,62.4862f,62.4862f,
+	                                                    60.3061f,60.3061f,59.1642f,59.1642f,
+							    58.3239f,58.3239f,57.6125f,57.6125f,
+							    56.9682f,56.9682f,56.3634f,56.3634f,
+							    55.7839f,55.7839f,55.2214f,55.2214f,
+							    54.6728f,54.6728f,54.1294f,54.1294f,
+							    53.5960f,53.5960f,53.0695f,53.0695f,
+							    52.5458f,52.5458f,52.0259f,52.0259f,
+							    51.5091f,51.5091f,50.9949f,50.9949f,
+							    50.4830f,50.4830f,49.9730f,49.9730f,
+							    49.4648f,49.4648f,48.9582f,48.9582f,
+							    48.4530f,48.4530f,0.0f,0.0f,0.0f};
       }
 
 }
