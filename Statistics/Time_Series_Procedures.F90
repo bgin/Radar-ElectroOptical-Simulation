@@ -8326,6 +8326,10 @@
 ! =========================================================================================
 !
     subroutine dan_filter_rv( vec, nsmooth, sym, trend )
+         !dir$ attributes code_align : 32 :: dan_filter_rv
+         !dir$ optimize: 3
+         !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: dan_filter_rv
+!
 !
 ! Purpose
 ! _______
@@ -8390,6 +8394,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror, arth
     use Reals_Constants,   only : zero, one
     use Char_Constants,    only : tseries_error10, tseries_error20, tseries_error60, tseries_error61
@@ -8412,12 +8418,11 @@
 !
     real(stnd)                       :: sym2, con, orig, slope, veci
     real(stnd), dimension(size(vec)) :: vec2
+     !dir$ attributes align : 64 :: vec2
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+
     logical      :: test_par
-#endif
-#endif
+
 !
 !
 ! PARAMETERS
@@ -8478,8 +8483,7 @@
     lim = ( nsmooth - 1_i4b )/2_i4b
     con = one/real( nsmooth , stnd )
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+
     j1 = omp_get_num_procs()
     j2 = omp_get_max_threads()
     test_par = .not.( omp_in_parallel() )   .and.      &
@@ -8489,15 +8493,17 @@
 !
     if ( test_par ) then
 !
+      !dir$ assume_aligned vec2:64,vec:64,sym:64
 !$OMP PARALLEL PRIVATE(i,j,j1,j2,veci)                     &
 !$OMP        , SHARED(m,lim,con,sym2,vec,vec2)
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
         do i = 1_i4b, lim
 !
             veci = vec2(i)
 !
+            !$omp simd simdlen(8) reduction(+:veci)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -8513,7 +8519,7 @@
 !
 !$OMP END DO
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
         do i = lim+1_i4b, m-lim
 !
@@ -8532,6 +8538,7 @@
 !
             veci = vec2(i)
 !
+            !$omp simd simdlen(8) reduction(+:veci)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -8577,13 +8584,14 @@
 !
     else
 !
-#endif
-#endif
+
 !
+        !dir$ assume_aligned vec2:64
         do i = 1_i4b, lim
 !
             veci = vec2(i)
 !
+            !$omp simd simdlen(8) reduction(+:veci)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -8610,6 +8618,7 @@
 !
             veci = vec2(i)
 !
+            !$omp simd simdlen(8) reduction(+:veci)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -8644,11 +8653,9 @@
 !
 !        end do
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+
     end if
-#endif
-#endif
+
 !
 !   ADD MEAN, DRIFT OR LINEAR LEAST SQUARES LINE FROM THE SERIES IF NEEDED.
 !
@@ -8658,18 +8665,21 @@
 !
 !           ADD MEAN.
 !
+            !dir$ assume_aligned vec:64
             vec(:m) = vec(:m) + orig
 !
         case( -2_i4b )
 !
 !           ADD DRIFT.
 !         
+            !dir$ assume_aligned vec:64
             vec(:m) = vec(:m) + slope*arth( zero, one, m )           
 !
         case( -3_i4b )
 !
 !           ADD LINEAR LEAST SQUARES LINE.
 !         
+             !dir$ assume_aligned vec:64
             vec(:m) = vec(:m) + ( orig + slope*arth( zero, one, m ) )       
 !         
     end select
@@ -8679,6 +8689,7 @@
 !----------------------------------------------------------------------
 !
     function extd_rv( index, sym ) result( vecj )
+     
 !
 ! Purpose
 ! _______
@@ -8775,6 +8786,9 @@
 ! =========================================================================================
 !
     subroutine dan_filter_rm( mat, nsmooth, sym, trend )
+         !dir$ attributes code_align : 32 :: dan_filter_rm
+         !dir$ optimize: 3
+         !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: dan_filter_rm
 !
 ! Purpose
 ! _______
@@ -8840,6 +8854,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror
     use Reals_Constants,   only : zero, one
     use Char_Constants,    only : tseries_error10, tseries_error20, tseries_error61, tseries_error62
@@ -8863,12 +8879,14 @@
     real(stnd)                                     :: sym2, con
     real(stnd), dimension(size(mat,1))             :: orig, slope, mati
     real(stnd), dimension(size(mat,1),size(mat,2)) :: mat2
+    !dir$ attributes align : 64 :: orig
+    !dir$ attributes align : 64 :: slope
+    !dir$ attributes align : 64 :: mati
+    !dir$ attributes align : 64 :: mat2
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+
     logical      :: test_par
-#endif
-#endif
+
 !
 !
 ! PARAMETERS
@@ -8938,17 +8956,18 @@
                J2>1_i4b
 !
     if ( test_par ) then
-!
+    !dir$ assume_aligned mati:64,mati2:64
 !$OMP PARALLEL PRIVATE(i,j,j1,j2,mati)                 &
 !$OMP          , SHARED(m,n,lim,con,sym2,mat,mat2)
 !
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
         do i = 1_i4b, lim
 !
             mati(:n) = mat2(:n,i)
 !
+            !$omp simd simdlen(8) reduction(+:mati)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -8964,7 +8983,7 @@
 !
 !$OMP END DO
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
         do i = lim+1_i4b, m-lim
 !
@@ -8977,12 +8996,13 @@
 !
 !$OMP END DO
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
         do i = m-lim+1_i4b, m
 !
             mati(:n) = mat2(:n,i)
 !
+            !$omp simd simdlen(8) reduction(+:mati)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -9002,13 +9022,14 @@
 !
     else
 !
-#endif
-#endif
+
 !
+         !dir$ assume_aligned mati:64,mat2:64
         do i = 1_i4b, lim
 !
             mati(:n) = mat2(:n,i)
 !
+             !$omp simd simdlen(8) reduction(+:mati)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -9035,6 +9056,7 @@
 !
             mati(:n) = mat2(:n,i)
 !
+             !$omp simd simdlen(8) reduction(+:mati)
             do j = 1_i4b, lim
 !
                 j1 = i - j
@@ -9048,11 +9070,9 @@
 !
         end do
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+
     end if
-#endif
-#endif
+
 !
 !   ADD MEANS, DRIFTS OR LINEAR LEAST SQUARES LINES FROM THE SERIES IF NEEDED.
 !
@@ -9062,6 +9082,8 @@
 !
 !           ADD MEANS.
 !
+            !dir$ assume_aligned mat:64,orig:64
+            !$omp simd simdlen(8) reduction(+:mat)
             do k = 1_i4b, m
                 mat(:n,k) = mat(:n,k) + orig(:n)
             end do
@@ -9070,6 +9092,8 @@
 !
 !           ADD DRIFTS.
 !
+            !dir$ assume_aligned mat:64,orig:64,slope:64
+            !$omp simd simdlen(8) reduction(+:mat) private(con)
             do k = 1_i4b, m
                 con       = real( k, stnd ) - one
                 mat(:n,k) = mat(:n,k) + con*slope(:n)           
@@ -9079,6 +9103,8 @@
 !
 !           ADD LINEAR LEAST SQUARES LINES.
 !         
+            !dir$ assume_aligned mat:64,orig:64,slope:64
+            !$omp simd simdlen(8) reduction(+:mat) private(con)
             do k = 1_i4b, m
                 con       = real( k, stnd ) - one
                 mat(:n,k) = mat(:n,k) + con*slope(:n) + orig(:n)      
