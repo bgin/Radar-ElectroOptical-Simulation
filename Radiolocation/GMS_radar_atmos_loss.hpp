@@ -676,6 +676,59 @@ namespace gms {
 			   
 		   }
 
+	    /*
+                  Band     Freq(Ghz)    K_alf (clear air)           k_alf/r (rain)       k_alf/r (snow)
+                  UHF       0.4            0.100                       0                  0
+                  L         1.3            0.012                       0.0003             0.0003
+                  S         3.0            0.015                       0.0013             0.0013
+                  C         5.5            0.017                       0.008              0.008
+                  X         10             0.24                        0.037              0.002
+                  Ku        15             0.055                       0.083              0.004
+                  K         22             0.030                       0.23               0.008
+                  Ka        35             0.14                        0.57               0.015
+                  V         60             35                          1.3                0.03
+             */
+
+	     // Simplified Barton atmos loss model
+
+	    __ATTR_ALWAYS_INLINE
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static
+	    inline
+	    float barton_atmos_loss_r4_1(const float theta, // rad, elevation angle
+	                                 const float R_km ,  // km, target range
+					 const float k_alf) { // attenuation coefficient (table above)
+
+                   constexpr float z    = 0.017453292519943295769236907685f; // deg-to-rad (PI/180)
+		   const float zth      = z*theta;
+		   const float th_eff   = 0.00025f/(zth+0.028f);
+		   const float R_eff    = 3.0f/cephes_sinf(th_eff);
+		   const float arg      = R_km/R_eff;
+		   const float arg2     = k_alf*R_eff;
+		   return (arg2*(1.0f-cephes_expf(-arg))); // db, two-way atmos attenaytion loss
+	    }
+
+
+	    __ATTR_ALWAYS_INLINE
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static
+	    inline
+	    double barton_atmos_loss_r8_1(const double theta, // rad, elevation angle
+	                                  const double R_km ,  // km, target range
+					  const double k_alf) { // attenuation coefficient (table above)
+
+                   constexpr double z    = 0.017453292519943295769236907685; // deg-to-rad (PI/180)
+		   const double zth      = z*theta;
+		   const double th_eff   = 0.00025/(zth+0.028);
+		   const double R_eff    = 3.0/std::sin(th_eff);
+		   const double arg      = R_km/R_eff;
+		   const double arg2     = k_alf*R_eff;
+		   return (arg2*(1.0-std::exp(-arg))); // db, two-way atmos attenaytion loss
+	    }
+					 
+
 
     }
 
