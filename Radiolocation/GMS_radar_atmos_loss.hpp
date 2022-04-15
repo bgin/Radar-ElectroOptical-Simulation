@@ -36,7 +36,7 @@ namespace gms {
 		     __ATTR_ALIGN__(32)
 		     static
 		     inline
-		     float blake_atmos_loss_r4_1(const float R,      //nm, target range in vacuum
+		     float blake_atmos_loss_r4_1(
 		                                 const float h_a,     //m, heigth
 						 const float f,      //Mhz, radar frequency
 						 const float theta,  //deg, angle
@@ -359,7 +359,7 @@ namespace gms {
 		     __ATTR_ALIGN__(32)
 		     static
 		     inline
-		     double blake_atmos_loss_r8_1(const double R,      //nm, target range in vacuum
+		     double blake_atmos_loss_r8_1(
 		                                  const double h_a,     //m, heigth
 						  const double f,      //Mhz, radar frequency
 						  const double theta,  //deg, angle
