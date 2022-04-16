@@ -20,6 +20,20 @@
 #define INDEX5(isize,jsize,ksize,xsize,i,j,k,x,y) i + isize*(j + jsize*(k + ksize*(x + xsize*y)))
 #endif
 
+/*#define I2D(i,j,dim0)                              i+j*dim0
+#define I3D(i,j,dim0,k,dim1)                       i+j*dim0+k*dim0*dim1
+#define I4D(i,j,dim0,k,dim1,l,dim2)                i+j*dim0+k*dim0*dim1+l*dim0*dim1*dim2
+#define I5D(i,j,dim0,k,dim1,l,dim2,m,dim3)         i+j*dim0+k*dim0*dim1+l*dim0*dim1*dim2+m*dim0*dim1*dim2*dim3
+#define I6D(i,j,dim0,k,dim1,l,dim2,m,dim3,n,dim4)  i+j*dim0+k*dim0*dim1+l*dim0*dim1*dim2+m*dim0*dim1*dim2*dim3+n*dim0*dim1*dim2*dim3*dim4
+*/
+
+//More optimized version
+#define I2D(i,j,dim0)                                        i+j*dim0
+#define I3D(i,j,dim0,k,dim01)                                i+j*dim0+k*dim01
+#define I4D(i,j,dim0,k,dim01,l,dim012)                       i+j*dim0+k*dim01+l*dim012
+#define I5D(i,j,dim0,k,dim01,l,dim012,m,dim0123)             i+j*dim0+k*dim01+l*dim012+m*dim0123
+#define I6D(i,j,dim0,k,dim01,l,dim012,m,dim0123,n,dim01234)  i+j*dim0+k*dim01+l*dim012+m*dim0123+n*dim01234
+
 /*
 	@Warning:
 				Macro parameters named idim,jdim,kdim,ldim
@@ -75,35 +89,6 @@
 // m_jme and m_kme must be present in the calling scope.
 //#define Dim3(j,k,i) ((j) + (m_jme) * ((k) + (m_kme) * (i)))
 
-/*
-   int[] sixDArrayToOneDArray(final int[][][][][][] sixDArray) {
 
-    int dim1Length = sixDArray.length;
-    int dim2Length = sixDArray[0].length;
-    int dim3Length = sixDArray[0][0].length;
-    int dim4Length = sixDArray[0][0][0].length;
-    int dim5Length = sixDArray[0][0][0][0].length;
-    int dim6Length = sixDArray[0][0][0][0][0].length;
-
-    int[] result = new int[dim1Length * dim2Length * dim3Length * dim4Length * dim5Length * dim6Length];
-
-    for (int i1 = 0; i1 < dim1Length; i1++)
-        for (int i2 = 0; i2 < dim2Length; i2++)
-            for (int i3 = 0; i3 < dim3Length; i3++)
-                for (int i4 = 0; i4 < dim4Length; i4++)
-                    for (int i5 = 0; i5 < dim5Length; i5++)
-                        for (int i6 = 0; i6 < dim6Length; i6++) {
-                            int oneDIndex = i1 * dim2Length * dim3Length * dim4Length * dim5Length * dim6Length
-                                          + i2 * dim3Length * dim4Length * dim5Length * dim6Length                                        
-                                          + i3 * dim4Length * dim5Length * dim6Length
-                                          + i4 * dim5Length * dim6Length
-                                          + i5 * dim6Length
-                                          + i6;
-                            result[oneDIndex] = sixDArray[i1][i2][i3][i4][i5][i6];
-                        }
-
-    return result;
-}
-*/
 
 #endif /*__GMS_INDICES_H__*/
