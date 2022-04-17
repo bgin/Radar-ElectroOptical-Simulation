@@ -727,10 +727,163 @@ namespace gms {
 		   const double arg2     = k_alf*R_eff;
 		   return (arg2*(1.0-std::exp(-arg))); // db, two-way atmos attenaytion loss
 	    }
-					 
+
+#include <omp.h>
+#include "GMS_cquadpack.h"
+
+// Integrand for beamshape_loss_r4 and beamshape_loss_r8
+// functions
+double
+gauss_v_pattern(double t, void * __restrict data) {
+     const double t_3db = *(double*)data;
+     const double t0    = t/t_3db;
+     const double vt = std::exp(-1.3863*t0*t0);
+     return (vt*vt*vt*vt);
+}
+	   // Beamshape Loss
+	    __ATTR_ALWAYS_INLINE
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static
+	    inline
+	    void beamshape_loss_r4(const float theta, //deg, 3-dB beamwidth				 
+                                   const float om_a,  //rpm, antenna rotation rate
+				   const float PRF,   //Hz, pulse repetition frequency
+				   const int32_t N,   //number of points to simulate antenna pattern
+				   const float n,   //number of pulses required for detection
+				   const int32_t level, //1->loss at 3-dB level, 2->loss at level specified by number of pulses required for detection
+				   float * __restrict __ATTR_ALIGN__(64) f_n,
+				   float & L1p       ) { //dB, beamshape loss
+
+		     if(__builtin_expect(N<=10,0)) { return;}
+		     float t0;
+		     float S_f; // area covered by actual power pattern (two-way propagation)
+		     float S_r; // area covered by ideal rectnagular pattern;
+		     // Quadpack dqage arguments
+		     float a,b,epsbas,epsrel,abserr;
+		     int32_t key,neval,ier,last;
+		     
+		     const float t_s   = 60.0f/om_a; //s, single scan time/s [rotating antenna]
+		     const float t_3db = t_s*theta*0.002777777777777777777777777778f; //s,time-on-target at 3dB beamwidth level
+                     const float n_3db = t_3db*PRF; // number of pulses received at 3dB level
+		     const float t_n   = n/PRF; //s, time-on-target required to receive n-pulses
+		     // Antenna pattern simulation
+		     const float Ts    = -5.0f*t_3db*0.5f; // pattern limits
+		     const float Te    = 5.0f*t_3db*0.5f;  // as above
+		     const float delt  = (Te-Ts)/N; //s, antenna pattern increment step
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+                     __assume_aligned(f_n,64);
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+                     f_n = (float*)__builtin_assume_aligned(f_n,64);
+#endif
+#pragma omp simd simdlen(4) linear(i:1) private(ti,t0)
+		     for(int32_t i; i != N; ++i) {
+                         const float ti = (float)i;
+			 const float t0 = (Ts+ti*delt)/t_3db;
+			 f_n[i]         = cephes_expf(-1.3863f*t0*t0);
+		     }
+		     if(level==1) {
+                        t0 = t_3db
+		     }
+		     else {
+                        t0 = tn;
+		     }
+		     //Beamshape loss calculation
+		     a = -100.0f*t0;
+		     b =  100.0f*t0;
+		     epsabs = 0.0f;
+		     epsrel = 0.0000001f;
+		     key    = 5;
+		     S_f    = (float)dqage(gauss_v_pattern,(double)a,(double)b,
+		                           (double)epsabs,(double)epsrel,key,
+					   (double)&abserr,&neval,&ier,&last,&t_3db);
+		     if(ier>0) {
+                        std::cerr << "dqage failed: ier=" << ier << std::endl;
+			return;
+		     }
+		     L1p = 10.0f*cephes_logf(S_r/S_f);
+	     }
 
 
-    }
+	       // Beamshape Loss
+	    __ATTR_ALWAYS_INLINE
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static
+	    inline
+	    void beamshape_loss_r8(const double theta, //deg, 3-dB beamwidth				 
+                                   const double om_a,  //rpm, antenna rotation rate
+				   const double PRF,   //Hz, pulse repetition frequency
+				   const int32_t N,   //number of points to simulate antenna pattern
+				   const double n,   //number of pulses required for detection
+				   const int32_t level, //1->loss at 3-dB level, 2->loss at level specified by number of pulses required for detection
+				   double * __restrict __ATTR_ALIGN__(64) f_n,
+				   double & L1p       ) { //dB, beamshape loss
+
+		     if(__builtin_expect(N<=10,0)) { return;}
+		     double t0;
+		     double S_f; // area covered by actual power pattern (two-way propagation)
+		     double S_r; // area covered by ideal rectnagular pattern;
+		     // Quadpack dqage arguments
+		     double a,b,epsbas,epsrel,abserr;
+		     int32_t key,neval,ier,last;
+		     
+		     const double t_s   = 60.0/om_a; //s, single scan time/s [rotating antenna]
+		     const double t_3db = t_s*theta*0.002777777777777777777777777778f; //s,time-on-target at 3dB beamwidth level
+                     const double n_3db = t_3db*PRF; // number of pulses received at 3dB level
+		     const double t_n   = n/PRF; //s, time-on-target required to receive n-pulses
+		     // Antenna pattern simulation
+		     const double Ts    = -5.0*t_3db*0.5; // pattern limits
+		     const double Te    = 5.0*t_3db*0.5;  // as above
+		     const double delt  = (Te-Ts)/N; //s, antenna pattern increment step
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+                     __assume_aligned(f_n,64);
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+                     f_n = (double*)__builtin_assume_aligned(f_n,64);
+#endif
+#pragma omp simd simdlen(8) linear(i:1) private(ti,t0)
+		     for(int32_t i; i != N; ++i) {
+                         const double ti = (double)i;
+			 const double t0 = (Ts+ti*delt)/t_3db;
+			 f_n[i]         = std::exp(-1.3863*t0*t0);
+		     }
+		     if(level==1) {
+                        t0 = t_3db
+		     }
+		     else {
+                        t0 = tn;
+		     }
+		     //Beamshape loss calculation
+		     a = -100.0*t0;
+		     b =  100.0*t0;
+		     epsabs = 0.0;
+		     epsrel = 0.00000001;
+		     key    = 5;
+		     S_f    = dqage(gauss_v_pattern,a,b,
+		                           epsabs,epsrel,key,
+					   &abserr,&neval,&ier,&last,&t_3db);
+		     if(ier>0) {
+                        std::cerr << "dqage failed: ier=" << ier << std::endl;
+			return;
+		     }
+		     L1p = 10.0*std::log(S_r/S_f);
+	     }
+
+
+             
+	     // CFAR loss (Constant False Alarm Rate)
+           /* __ATTR_ALWAYS_INLINE
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static
+	    inline
+	    void cfar_loss_r4(const int32_t ncells,
+	                      const float P_fa,  // probability of false alarm
+                              const float k0,    // initial guess*/
+
+
+			      
+    } 
 
 
 }
