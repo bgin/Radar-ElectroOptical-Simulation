@@ -50,6 +50,370 @@ namespace  gms {
            namespace math {
 
 
+	            // Local helper functions
+		    //Determines convergence in x based on if the reltol or abstol is satisfied.
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     __ATTR_PURE__
+		     static
+		     inline
+		     bool converged(const float a,
+		                    const float b) {
+                          
+                          float d = 0.0f;
+			  bool  converged = false;
+			  d = std::abs(b-a);
+			  if(d<=ATOL4) {
+                             converged = true;
+			  }
+			  else {
+                                 if(a!=0.0f) {
+                                    converged = (d/std::abs(a))<=RTOL4;
+				 }
+				 else {
+                                    converged = false;
+				 }
+			  }
+			  return (converged);
+		     }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     __ATTR_PURE__
+		     static
+		     inline
+		     bool converged(const double a,
+		                    const double b) {
+                          
+                          double d = 0.0;
+			  bool  converged = false;
+			  d = std::abs(b-a);
+			  if(d<=ATOL8) {
+                             converged = true;
+			  }
+			  else {
+                                 if(a!=0.0) {
+                                    converged = (d/std::abs(a))<=RTOL8;
+				 }
+				 else {
+                                    converged = false;
+				 }
+			  }
+			  return (converged);
+		     }
+
+
+		     //Given two points with two function evaluations, choose the best one
+                     //!  (the one closest to the root).
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+                     void choose_best(const float x1,
+		                      const float x2,
+				      const float f1,
+				      const float f2,
+				      float & xbest,
+				      float & fbest) {
+
+			   if(std::abs(f1)<std::abs(f2)) {
+                              xbest = x1;
+			      fbest = f1;
+			   }
+			   else {
+                              xbest = x2;
+			      fbest = f2;
+			   }
+		    }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+                     void choose_best(const double x1,
+		                      const double x2,
+				      const double f1,
+				      const double f2,
+				      double & xbest,
+				      double & fbest) {
+
+			   if(std::abs(f1)<std::abs(f2)) {
+                              xbest = x1;
+			      fbest = f1;
+			   }
+			   else {
+                              xbest = x2;
+			      fbest = f2;
+			   }
+		    }
+
+
+		    // Bisection step.
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     __ATTR_PURE__
+		     static
+		     inline
+		     float bisect(const float x1,
+		                  const float x2) {
+
+			 float x3 = 0.0f;
+			 x3 = (x1+x2)*0.5f;
+			 return (x3);
+		    }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     __ATTR_PURE__
+		     static
+		     inline
+		     double bisect(const double x1,
+		                   const double x2) {
+
+			 double x3 = 0.0;
+			 x3 = (x1+x2)*0.5;
+			 return (x3);
+		    }
+
+
+		   //Regula Falsi step.
+                   //!  With a protection to fall back to bisection if:
+                   //!
+                   //!   * the computed point is outside the original interval ([ax,bx]).
+                   //!   * f2 == f1
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    float regula_falsi_step(const float x1,
+		                            const float x2,
+					    const float f1,
+					    const float f2,
+					    const float ax,
+					    const float bx) {
+
+                         float delta = 0.0f;
+			 float x3    = 0.0f;
+			 delta       = f2-f1;
+			 if(delta!=0.0f) {
+                            //   ! intersection with x-axis of line connecting the two points:
+			    x3 = x1-(f1/delta)*(x2-x1);
+			    if(x3>ax && x3<bx) return (std::numeric_limits<float>::quiet_Nan());
+			 }
+			 x3 = bisect(x1,x2);
+			 return (x3);
+		   }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    double regula_falsi_step(const double x1,
+		                             const double x2,
+					     const double f1,
+					     const double f2,
+					     const double ax,
+					     const double bx) {
+
+                         double delta = 0.0;
+			 double x3    = 0.0;
+			 delta       = f2-f1;
+			 if(delta!=0.0) {
+                            //   ! intersection with x-axis of line connecting the two points:
+			    x3 = x1-(f1/delta)*(x2-x1);
+			    if(x3>ax && x3<bx) return (std::numeric_limits<double>::quiet_Nan());
+			 }
+			 x3 = bisect(x1,x2);
+			 return (x3);
+		   }
+
+
+		    //Secent step.
+                    //!  With a protection to fall back to bisection if:
+                    //!
+                    //!   * the computed point is outside the original interval ([ax,bx]).
+                    //!   * f2 == f1
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    float secant(const float x1,
+		                 const float x2,
+				 const float f1,
+				 const float f2,
+				 const float ax,
+				 const float bx) {
+
+                        float x3 = 0.0f;
+			if(f2==f1) {
+                           x3 = bisect(x1,x2);
+			}
+			else {
+                             x3 = x2-f2/(f2-f1)/(x2-x1);
+			     if(x3<ax || x3>bx) x3 = bisect(x1,x2);
+			}
+			return (x3);
+		   }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    double secant(const double x1,
+		                  const double x2,
+				  const double f1,
+				  const double f2,
+				  const double ax,
+				  const double bx) {
+
+                        double x3 = 0.0;
+			if(f2==f1) {
+                           x3 = bisect(x1,x2);
+			}
+			else {
+                             x3 = x2-f2/((f2-f1)/(x2-x1));
+			     if(x3<ax || x3>bx) x3 = bisect(x1,x2);
+			}
+			return (x3);
+		   }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    bool solution(const float x,
+		                  const float f,
+				  const float ftol,
+				  float & xzero,
+				  float & fzero) {
+
+                       bool result = false;
+		       if(std::abs(f)<=ftol) {
+                          xzero = x;
+			  fzero = f;
+			  result = true;
+		       }
+		       else {
+                          result = false;
+		       }
+		       return (result);
+		   }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                    
+		    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    bool solution(const double x,
+		                  const double f,
+				  const double ftol,
+				  double & xzero,
+				  double & fzero) {
+
+                       bool result = false;
+		       if(std::abs(f)<=ftol) {
+                          xzero = x;
+			  fzero = f;
+			  result = true;
+		       }
+		       else {
+                          result = false;
+		       }
+		       return (result);
+		   }		   
+
+
+		   
+		   
+		   
+
 /*
                           Find a zero of the function \( f(x) \) in the given interval
 !  \( [a_x,b_x] \) to within a tolerance \( 4 \epsilon |x| + tol \),
@@ -66,8 +430,11 @@ namespace  gms {
 !### See also
 !  * [zeroin.f](http://www.netlib.org/go/zeroin.f) from Netlib
 */
-
-
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
 		     __ATTR_ALIGN__(32)
@@ -170,7 +537,11 @@ namespace  gms {
 		      fzero = fb;
 		 }
 
-
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
 		     __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
 		     __ATTR_ALIGN__(32)
@@ -273,13 +644,618 @@ namespace  gms {
 		      fzero = fb;
 		 }
 
+		 
+/*
+ BlendTF blended method of trisection and false position methods.
+!
+!### Reference
+!  * E Badr, S Almotairi, A El Ghamry,
+!    "A Comparative Study among New Hybrid Root Finding
+!    Algorithms and Traditional Methods", Mathematics 2021, 9, 1306.
+    real(wp),intent(in)  :: ax      !! left endpoint of initial interval
+    real(wp),intent(in)  :: bx      !! right endpoint of initial interval
+    real(wp),intent(in)  :: fax     !! `f(ax)`
+    real(wp),intent(in)  :: fbx     !! `f(ax)`
+    real(wp),intent(out) :: xzero   !! abscissa approximating a zero of `f` in the interval `ax`,`bx`
+    real(wp),intent(out) :: fzero   !! value of `f` at the root (`f(xzero)`)
+    integer,intent(out)  :: iflag   !! status flag (`0`=root found, `-2`=max iterations reached)
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void blendtf(float (*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+			 constexpr float third = 0.33333333333333333333333333f;
+                         float a1,a2,b1,b2,fa,fb,a,b,xt1,xt2,xf,x,fx,fxt2,
+                               fxf,xprev,fxt1,fxprev,fa1,fa2,fb1,fb2;
+			 iflag = 0;
+			 a     = ax;
+			 b     = bx;
+			 fa    = fax;
+			 fb    = fbx;
+			 a1    = a;
+			 a2    = a;
+			 b1    = b;
+			 b2    = b;
+			 fa1   = fa;
+			 fa2   = fa;
+			 fb1   = fb;
+			 fb2   = fb;
+			 xprev = std::numeric_limits<float>::max();
+			 fxprev= std::numeric_limits<float>::max();
+
+			 for(int32_t i = 1; i < MAXITER; ++i) {
+
+			      if(fa==fb) {
+                                 iflag = -3;
+				 return;
+			      }
+			     xt1  = (b + 2.0f * a) * third;
+                             xt2  = (2.0f * b + a) * third;
+                             xf   = a - (fa*(b-a))/(fb-fa);
+                             x    = xt1;
+			     fxt1 = f(xt1);
+			     if(solution(xt1,fxt1,FTOL4,xzero,fzero)) return;
+			     fxt2 = f(xt2);
+			     if(solution(xt2,fxt2,FTOL4,xzero,fzero)) return;
+			     fxf  = f(xf);
+			     if(solution(xf,fxf,FTOL4,xzero,fzero)) return;
+			     fx   = fxt1;
+
+			     if(std::abs(fxf)<std::abs(fxt1)) {
+                                x = xf;
+				fx= fxf;
+			     }
+			     else if(std::abs(fxt2)<std::abs(fxt1)) {
+                                x  = xt2;
+				fx = fxt2;
+			     }
+
+			     if(converged(a,b) || i==MAXITER) {
+                                choose_best(x,xprev,fx,fxprev,xzero,fzero);
+				if(i==MAXITER) { iflag = -2; break;}
+			     }
+			     xprev = x;
+			     fxprev= fx;
+
+			     if((fx * fxt1) < 0.0f) {
+                                 b1 = xt1;
+				 fb1= fxt1;
+			     }
+			     else if((fxt1 * fxt2) < 0.0f) {
+                                 a1 = xt1;
+				 fa1= fxt1;
+				 b1 = xt2;
+				 fb1= fxt2;
+			     }
+			     else {
+                                 a1 = xt2;
+				 fa1= fxt2;
+			     }
+
+			     if(fa * fxf < 0.0f) {
+                                b2 = xf;
+				fb2= fxf;
+			     }
+			     else {
+                                a2 = xf;
+				fa2= fxf;
+			     }
+
+			     if(a1>a2) {
+                                a = a1;
+				fa= fa1;
+			     }
+			     else {
+                                a = a2;
+				fa= fa2;
+			     }
+
+			     if(b1<b2) {
+                                b = b1;
+				fb= fb1;
+			     }
+			     else {
+                                b = b2;
+				fb= fb2;
+			     }
+			 }
+		   }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void blendtf(double (*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+			 constexpr double third = 0.33333333333333333333333333;
+                         double a1,a2,b1,b2,fa,fb,a,b,xt1,xt2,xf,x,fx,fxt2,
+                                fxf,xprev,fxt1,fxprev,fa1,fa2,fb1,fb2;
+			 iflag = 0;
+			 a     = ax;
+			 b     = bx;
+			 fa    = fax;
+			 fb    = fbx;
+			 a1    = a;
+			 a2    = a;
+			 b1    = b;
+			 b2    = b;
+			 fa1   = fa;
+			 fa2   = fa;
+			 fb1   = fb;
+			 fb2   = fb;
+			 xprev = std::numeric_limits<double>::max();
+			 fxprev= std::numeric_limits<double>::max();
+
+			 for(int32_t i = 1; i < MAXITER; ++i) {
+
+			      if(fa==fb) {
+                                 iflag = -3;
+				 return;
+			      }
+			     xt1  = (b + 2.0 * a) * third;
+                             xt2  = (2.0 * b + a) * third;
+                             xf   = a - (fa*(b-a))/(fb-fa);
+                             x    = xt1;
+			     fxt1 = f(xt1);
+			     if(solution(xt1,fxt1,FTOL8,xzero,fzero)) return;
+			     fxt2 = f(xt2);
+			     if(solution(xt2,fxt2,FTOL8,xzero,fzero)) return;
+			     fxf  = f(xf);
+			     if(solution(xf,fxf,FTOL8,xzero,fzero)) return;
+			     fx   = fxt1;
+
+			     if(std::abs(fxf)<std::abs(fxt1)) {
+                                x = xf;
+				fx= fxf;
+			     }
+			     else if(std::abs(fxt2)<std::abs(fxt1)) {
+                                x  = xt2;
+				fx = fxt2;
+			     }
+
+			     if(converged(a,b) || i==MAXITER) {
+                                choose_best(x,xprev,fx,fxprev,xzero,fzero);
+				if(i==MAXITER) { iflag = -2; break;}
+			     }
+			     xprev = x;
+			     fxprev= fx;
+
+			     if((fx * fxt1) < 0.0) {
+                                 b1 = xt1;
+				 fb1= fxt1;
+			     }
+			     else if((fxt1 * fxt2) < 0.0) {
+                                 a1 = xt1;
+				 fa1= fxt1;
+				 b1 = xt2;
+				 fb1= fxt2;
+			     }
+			     else {
+                                 a1 = xt2;
+				 fa1= fxt2;
+			     }
+
+			     if(fa * fxf < 0.0) {
+                                b2 = xf;
+				fb2= fxf;
+			     }
+			     else {
+                                a2 = xf;
+				fa2= fxf;
+			     }
+
+			     if(a1>a2) {
+                                a = a1;
+				fa= fa1;
+			     }
+			     else {
+                                a = a2;
+				fa= fa2;
+			     }
+
+			     if(b1<b2) {
+                                b = b1;
+				fb= fb1;
+			     }
+			     else {
+                                b = b2;
+				fb= fb2;
+			     }
+			 }
+		   }
+
+/*
+  Modified anderson-bjorck-king method. Same as [[anderson_bjorck]], but with
+!  an extra initial bisection step.
+!
+!### See also
+!  * Kroger & Torsten, "On-Line Trajectory Generation in Robotic Systems", 2010.
+!    https://link.springer.com/content/pdf/bbm%3A978-3-642-05175-3%2F1.pdf
+     real(wp),intent(in)    :: ax      !! left endpoint of initial interval
+     real(wp),intent(in)    :: bx      !! right endpoint of initial interval
+     real(wp),intent(in)    :: fax     !! `f(ax)`
+     real(wp),intent(in)    :: fbx     !! `f(ax)`
+     real(wp),intent(out)   :: xzero   !! abscissa approximating a zero of `f` in the interval `ax`,`bx`
+     real(wp),intent(out)   :: fzero   !! value of `f` at the root (`f(xzero)`)
+     integer,intent(out)    :: iflag   !! status flag (`0`=root found, `-2`=max iterations reached)
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void anderson_bjorck_king(float(*f)(float x),
+		                               const float ax,
+		                               const float bx,
+					       const float fax,
+					       const float fbx,
+					       float & xzero,
+					       float & fzero,
+					       int32_t & iflag) {
+
+			    float x1,x2,x3,f1,f2,f3,g,f1tmp;
+                            bool root_found;
+
+			    iflag = 0;
+			    x1    = ax;
+			    x2    = bx;
+			    f1    = fax;
+			    f2    = fbx;
+
+			    for(int32_t i = 1; i < MAXITER; ++i) {
+
+			         x3 = bisect(x1,x2);
+				 f3 = f(x3);
+				 if(solution(x3,f3,FTOL4,xzero,fzero)) return;
+				 if(f2*f3 < 0.0f) {
+                                     x1 = x2;
+                                     x2 = x3;
+                                     f1 = f2;
+                                     f2 = f3;
+				 }
+				 else {
+                                     x2 = x3;
+				     f2 = f3;
+				 }
+				 x3 = secant(x1,x2,f1,f2,ax,bx);
+				 f3 = f(x3);
+				 if(solution(x3,f3,FTOL4,xzero,fzero)) return;
+				 if(f2*f3 < 0.0f) {
+                                     x1 = x2;
+                                     x2 = x3;
+                                     f1 = f2;
+                                     f2 = f3;
+                                     f1tmp = f1;
+				 }
+				 else {
+                                      //! zero lies between x1 and x3
+                                     g = 1.0f - f3/f2;
+                                     if (g<=0.0f) g = 0.5f;
+                                     x2 = x3;
+                                     f1tmp = f1;
+                                     f1 = g*f1;
+                                     f2 = f3;
+				 }
+				 root_found = converged(x1,x2);
+				 if(root_found || i==MAXITER) {
+                                    choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+				    if(!root_found) iflag = -2;
+				    break;
+				 }
+			    }
+		     }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void anderson_bjorck_king(double(*f)(double x),
+		                               const double ax,
+		                               const double bx,
+					       const double fax,
+					       const double fbx,
+					       double & xzero,
+					       double & fzero,
+					       int32_t & iflag) {
+
+			    double x1,x2,x3,f1,f2,f3,g,f1tmp;
+                            bool root_found;
+
+			    iflag = 0;
+			    x1    = ax;
+			    x2    = bx;
+			    f1    = fax;
+			    f2    = fbx;
+
+			    for(int32_t i = 1; i < MAXITER; ++i) {
+
+			         x3 = bisect(x1,x2);
+				 f3 = f(x3);
+				 if(solution(x3,f3,FTOL8,xzero,fzero)) return;
+				 if(f2*f3 < 0.0) {
+                                     x1 = x2;
+                                     x2 = x3;
+                                     f1 = f2;
+                                     f2 = f3;
+				 }
+				 else {
+                                     x2 = x3;
+				     f2 = f3;
+				 }
+				 x3 = secant(x1,x2,f1,f2,ax,bx);
+				 f3 = f(x3);
+				 if(solution(x3,f3,FTOL8,xzero,fzero)) return;
+				 if(f2*f3 < 0.0) {
+                                     x1 = x2;
+                                     x2 = x3;
+                                     f1 = f2;
+                                     f2 = f3;
+                                     f1tmp = f1;
+				 }
+				 else {
+                                      //! zero lies between x1 and x3
+                                     g = 1.0 - f3/f2;
+                                     if (g<=0.0f) g = 0.5;
+                                     x2 = x3;
+                                     f1tmp = f1;
+                                     f1 = g*f1;
+                                     f2 = f3;
+				 }
+				 root_found = converged(x1,x2);
+				 if(root_found || i==MAXITER) {
+                                    choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+				    if(!root_found) iflag = -2;
+				    break;
+				 }
+			    }
+		     }
+
+#include <algorithm>		     
+/*
+  Zhang's method (with corrections from Stage).
+!
+!### Reference
+!  * A. Zhang, "An Improvement to the Brent's Method",
+!    International Journal of Experimental Algorithms (IJEA), Volume (2) : Issue (1) : 2011.
+!    https://www.cscjournals.org/download/issuearchive/IJEA/Volume2/IJEA_V2_I1.pdf
+!  * S. A. Stage, "Comments on An Improvement to the Brent's Method",
+!    International Journal of Experimental Algorithms (IJEA), Volume (4) : Issue (1) : 2013.
+!    https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.740.923&rep=rep1&type=pdf
+     real(wp),intent(in)  :: ax      !! left endpoint of initial interval
+     real(wp),intent(in)  :: bx      !! right endpoint of initial interval
+     real(wp),intent(in)  :: fax     !! `f(ax)`
+     real(wp),intent(in)  :: fbx     !! `f(ax)`
+     real(wp),intent(out) :: xzero   !! abscissa approximating a zero of `f` in the interval `ax`,`bx`
+     real(wp),intent(out) :: fzero   !! value of `f` at the root (`f(xzero)`)
+     integer,intent(out)  :: iflag   !! status flag (`0`=root found, `-2`=max iterations reached)
+
+*/	      
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void zhang(float(*f)(float x),
+		                const float ax,
+		                const float bx,
+				const float fax,
+				const float fbx,
+				float & xzero,
+				float & fzero,
+				int32_t & iflag) {
+
+                       float a,b,c,fa,fb,fc,s,fs;
+		       iflag = 0;
+                       a     = ax;
+                       b     = bx;
+                       fa    = fax;
+                       fb    = fbx;
+
+		       for(int32_t i = 1; i < MAXITER; ++i) {
+
+		             c  = bisect(a,b);
+                             fc = f(c);
+                             if(solution(c,fc,FTOL4,xzero,fzero)) return;
+                             if(fa!=fc && fb!=fc) {
+                                  //! inverse quadratic interpolation
+                                 s = a*fb*fc/((fa-fb)*(fa-fc)) + 
+                                     b*fa*fc/((fb-fa)*(fb-fc)) + 
+                                     c*fa*fb/((fc-fa)*(fc-fb));
+                                 if(a<s && s<b)  {
+                                    fs = f(s);
+                                    if(abs(fs)<=FTOL4) {
+                                       xzero = s;
+                                       fzero = fs;
+                                       return;
+                                     }
+		                 }		    
+                                 else {
+                                         //! s is not in (a,b)
+                                         s = c; //! just use this (there are 3 options in the reference)
+                                         fs = fc;
+                                  }
+			     }
+                             else {
+                                    //! secant
+                                    if(fa*fc<0.0f) {   //! root in [a,c]
+                                        s = secant(a,c,fa,fc,ax,bx);
+				    }
+                                    else {         //! root in [c,b]
+                                        s = secant(c,b,fc,fb,ax,bx);
+                                    }
+                                    fs = f(s);
+                                    if(solution(s,fs,FTOL4,xzero,fzero)) return;
+                             }
+
+                             if (c>s) {
+                               //! ensures a <= c <= s <= b
+                                 std::swap(s,c);
+                                 std::swap(fs,fc);
+                             }
+                             if (fc*fs<0.0f){      //! root on [c,s]
+                                  a = c;
+                                  b = s;
+                                  fa = fc;
+                                  fb = fs;
+			     }
+                             else if(fa*fc<0.0f){  //! root on [a,c]
+                                  b = c;
+                                  fb = fc;
+			     }
+                             else {                        //! root on [s,b]
+                                  a = s;
+                                  fa = fs;
+                            }
+
+                            if(converged(a,b)) break;
+                            if(i == MAXITER) iflag = -2; //! max iterations reached
+
+		       }
+		       choose_best(a,b,fa,fb,xzero,fzero);
+		  }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+#pragma gcc optimization_level 3
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void zhang(double(*f)(double x),
+		                const double ax,
+		                const double bx,
+				const double fax,
+				const double fbx,
+				double & xzero,
+				double & fzero,
+				int32_t & iflag) {
+
+                       double a,b,c,fa,fb,fc,s,fs;
+		       iflag = 0;
+                       a     = ax;
+                       b     = bx;
+                       fa    = fax;
+                       fb    = fbx;
+
+		       for(int32_t i = 1; i < MAXITER; ++i) {
+
+		             c  = bisect(a,b);
+                             fc = f(c);
+                             if(solution(c,fc,FTOL8,xzero,fzero)) return;
+                             if(fa!=fc && fb!=fc) {
+                                  //! inverse quadratic interpolation
+                                 s = a*fb*fc/((fa-fb)*(fa-fc)) + 
+                                     b*fa*fc/((fb-fa)*(fb-fc)) + 
+                                     c*fa*fb/((fc-fa)*(fc-fb));
+                                 if(a<s && s<b)  {
+                                    fs = f(s);
+                                    if(abs(fs)<=FTOL8) {
+                                       xzero = s;
+                                       fzero = fs;
+                                       return;
+                                     }
+		                 }		    
+                                 else {
+                                         //! s is not in (a,b)
+                                         s = c; //! just use this (there are 3 options in the reference)
+                                         fs = fc;
+                                  }
+			     }
+                             else {
+                                    //! secant
+                                    if(fa*fc<0.0) {   //! root in [a,c]
+                                        s = secant(a,c,fa,fc,ax,bx);
+				    }
+                                    else {         //! root in [c,b]
+                                        s = secant(c,b,fc,fb,ax,bx);
+                                    }
+                                    fs = f(s);
+                                    if(solution(s,fs,FTOL8,xzero,fzero)) return;
+                             }
+
+                             if (c>s) {
+                               //! ensures a <= c <= s <= b
+                                 std::swap(s,c);
+                                 std::swap(fs,fc);
+                             }
+                             if (fc*fs<0.0){      //! root on [c,s]
+                                  a = c;
+                                  b = s;
+                                  fa = fc;
+                                  fb = fs;
+			     }
+                             else if(fa*fc<0.0){  //! root on [a,c]
+                                  b = c;
+                                  fb = fc;
+			     }
+                             else {                        //! root on [s,b]
+                                  a = s;
+                                  fa = fs;
+                            }
+
+                            if(converged(a,b)) break;
+                            if(i == MAXITER) iflag = -2; //! max iterations reached
+
+		       }
+		       choose_best(a,b,fa,fb,xzero,fzero);
+		  }
+
+
+   
+
 
 
      } //math
 
 } //gms
-
-
 
 
 
