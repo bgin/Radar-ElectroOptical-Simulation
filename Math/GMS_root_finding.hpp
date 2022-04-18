@@ -54,8 +54,7 @@ namespace  gms {
 		    //Determines convergence in x based on if the reltol or abstol is satisfied.
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
 		     __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -85,8 +84,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
 		     __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -119,8 +117,7 @@ namespace  gms {
                      //!  (the one closest to the root).
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -146,8 +143,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -175,8 +171,7 @@ namespace  gms {
 		    // Bisection step.
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -195,8 +190,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -220,8 +214,7 @@ namespace  gms {
                    //!   * f2 == f1
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                     
 		    __ATTR_ALWAYS_INLINE
@@ -252,8 +245,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                     
 		    __ATTR_ALWAYS_INLINE
@@ -289,8 +281,7 @@ namespace  gms {
                     //!   * f2 == f1
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                     
 		    __ATTR_ALWAYS_INLINE
@@ -319,8 +310,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                     
 		    __ATTR_ALWAYS_INLINE
@@ -350,8 +340,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                     
 		    __ATTR_ALWAYS_INLINE
@@ -381,8 +370,8 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
 #endif
                     
 		    __ATTR_ALWAYS_INLINE
@@ -432,8 +421,7 @@ namespace  gms {
 */
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -539,8 +527,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
 		     __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -662,8 +649,7 @@ namespace  gms {
 */
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -779,8 +765,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -910,8 +895,7 @@ namespace  gms {
 */
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -981,8 +965,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -1072,8 +1055,7 @@ namespace  gms {
 */	      
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
@@ -1161,8 +1143,7 @@ namespace  gms {
 
 #if defined(__INTEL_COMPILER) || defined(__ICC)
 #pragma intel optimization_level 3
-#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
-#pragma gcc optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
 #endif
                      __ATTR_ALWAYS_INLINE
 		     __ATTR_HOT__
