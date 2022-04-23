@@ -50,6 +50,9 @@ namespace  gms {
            namespace math {
 
 
+	              
+
+
 	            // Local helper functions
 		    //Determines convergence in x based on if the reltol or abstol is satisfied.
 #if defined(__INTEL_COMPILER) || defined(__ICC)
@@ -1229,10 +1232,636 @@ namespace  gms {
 		       choose_best(a,b,fa,fb,xzero,fzero);
 		  }
 
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void bisection(float(*f)(float x),
+		                    const float ax,
+		                    const float bx,
+				    const float fax,
+				    const float fbx,
+				    float & xzero,
+				    float & fzero,
+				    int32_t & iflag) {
 
+			  float x1,x2,x3,f1,f2,f3;
+			  bool  root_found = false;
+			  //! initialize:
+                          iflag = 0;
+                          x1    = ax;
+                          x2    = bx;
+                          f1    = fax;
+                          f2    = fbx;
+			  for(int32_t i = 1; i != MAXITER; ++i) {
+                                 //! bisection of the inclusion interval:
+                                 //!  x1------x3------x2
+                              x3 = bisect(x1,x2);
+
+                               //! calculate the new function value:
+                              f3 = f(x3);
+                              if (solution(x3,f3,FTOL4,xzero,fzero)) return;
+
+                              //! determine new inclusion interval:
+                              if (f2*f3<0.0f){
+                                  //! root lies between x2 and x3
+                                  x1 = x3;
+                                  x2 = x2;
+                                  f1 = f3;
+                                  f2 = f2;
+			      }
+                              else {
+                                 //! root lies between x1 and x3
+                                  x2 = x3;
+                                  f2 = f3;
+                             }
+                             //! check for convergence:
+                             root_found = converged(x1,x2);
+                             if(root_found || i==MAXITER) {
+                                  choose_best(x1,x2,f1,f2,xzero,fzero);
+                                  if (!root_found) iflag = -2;  //! max iterations reached
+                                  break;
+                              }
+			  }
+		    }
+/*
+!  Compute the zero of the function f(x) in the interval ax,bx using the bisection method.
+!
+!### See also
+!  * G.E. Mullges & F. Uhlig, "Numerical Algorithms with Fortran",
+!    Springer, 1996. Section 2.8.1, p 32-34.
+*/
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void bisection(double(*f)(double x),
+		                    const double ax,
+		                    const double bx,
+				    const double fax,
+				    const double fbx,
+				    double & xzero,
+				    double & fzero,
+				    int32_t & iflag) {
+
+			  double x1,x2,x3,f1,f2,f3;
+			  bool  root_found = false;
+			  //! initialize:
+                          iflag = 0;
+                          x1    = ax;
+                          x2    = bx;
+                          f1    = fax;
+                          f2    = fbx;
+			  for(int32_t i = 1; i != MAXITER; ++i) {
+                                 //! bisection of the inclusion interval:
+                                 //!  x1------x3------x2
+                              x3 = bisect(x1,x2);
+
+                               //! calculate the new function value:
+                              f3 = f(x3);
+                              if (solution(x3,f3,FTOL8,xzero,fzero)) return;
+
+                              //! determine new inclusion interval:
+                              if (f2*f3<0.0){
+                                  //! root lies between x2 and x3
+                                  x1 = x3;
+                                  x2 = x2;
+                                  f1 = f3;
+                                  f2 = f2;
+			      }
+                              else {
+                                 //! root lies between x1 and x3
+                                  x2 = x3;
+                                  f2 = f3;
+                             }
+                             //! check for convergence:
+                             root_found = converged(x1,x2);
+                             if(root_found || i==MAXITER) {
+                                  choose_best(x1,x2,f1,f2,xzero,fzero);
+                                  if (!root_found) iflag = -2;  //! max iterations reached
+                                  break;
+                              }
+			  }
+		    }
+
+/*
+   !*****************************************************************************************
+!>
+!  Compute the zero of the function f(x) in the interval ax,bx using the regula falsi method.
+
+*/
+		    
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void regula_falsi(float(*f)(float x),
+		                       const float ax,
+		                       const float bx,
+				       const float fax,
+				       const float fbx,
+				       float & xzero,
+				       float & fzero,
+				       int32_t & iflag) {
+
+                         float  x1,x2,x3,f1,f2,f3;
+			 bool   root_found;
+			 //! initialize:
+                         iflag = 0;
+                         x1    = ax;
+                         x2    = bx;
+                         f1    = fax;
+                         f2    = fbx;
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                              //! calculate the new function value:
+                              f3 = f(x3);
+                              if(solution(x3,f3,FTOL4,xzero,fzero)) return;
+                              //! determine new inclusion interval:
+				if (f2*f3<0.f) {
+                                    //! root lies between x2 and x3
+                                    x1 = x3;
+                                    x2 = x2;
+                                    f1 = f3;
+                                    f2 = f2;
+				}
+                                 else {
+                                   //! root lies between x1 and x3
+                                   x2 = x3;
+                                   f2 = f3;
+                                }
+                                //! check for convergence:
+                               root_found = converged(x1,x2);
+                               if (root_found || i==MAXITER) {
+                                   choose_best(x1,x2,f1,f2,xzero,fzero);
+                                   if(!root_found) iflag = -2;  //! max iterations reached
+                                   break;
+                               }
+			 }
+		    }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void regula_falsi(double(*f)(double x),
+		                       const double ax,
+		                       const double bx,
+				       const double fax,
+				       const double fbx,
+				       double & xzero,
+				       double & fzero,
+				       int32_t & iflag) {
+
+                         double  x1,x2,x3,f1,f2,f3;
+			 bool   root_found;
+			 //! initialize:
+                         iflag = 0;
+                         x1    = ax;
+                         x2    = bx;
+                         f1    = fax;
+                         f2    = fbx;
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                              //! calculate the new function value:
+                              f3 = f(x3);
+                              if(solution(x3,f3,FTOL8,xzero,fzero)) return;
+                              //! determine new inclusion interval:
+				if (f2*f3<0.0) {
+                                    //! root lies between x2 and x3
+                                    x1 = x3;
+                                    x2 = x2;
+                                    f1 = f3;
+                                    f2 = f2;
+				}
+                                 else {
+                                   //! root lies between x1 and x3
+                                   x2 = x3;
+                                   f2 = f3;
+                                }
+                                //! check for convergence:
+                               root_found = converged(x1,x2);
+                               if (root_found || i==MAXITER) {
+                                   choose_best(x1,x2,f1,f2,xzero,fzero);
+                                   if(!root_found) iflag = -2;  //! max iterations reached
+                                   break;
+                               }
+			 }
+		    }
+		    
+
+		    
    
+/*
+     !  Illinois method.
+!
+!### Reference
+!  * M. Dowell, P. Jarratt, "A modified regula falsi method for computing the root
+!    of an equation', BIT 11 (1971), 168-174.
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void illinois(float(*f)(float x),
+		                       const float ax,
+		                       const float bx,
+				       const float fax,
+				       const float fbx,
+				       float & xzero,
+				       float & fzero,
+				       int32_t & iflag) {
+
+                         float  x1,x2,x3,f1,f2,f3,delta,f1tmp;
+			 bool   root_found;
+			 //! initialize:
+                         iflag = 0;
+                         x1    = ax;
+                         x2    = bx;
+                         f1    = fax;
+                         f2    = fbx;
+			 for(int32 i = 1; i != MAXITER; ++i) {
+                             x3 = regula_falsi_step(x1,x2,f1,f2,ax,bx);
+                             //! calculate the new function value:
+                             f3 = f(x3);
+                             if(solution(x3,f3,FTOL4,xzero,fzero)) return;
+                             //! determine new inclusion interval:
+                             if(f2*f3<0.0f) {
+                                 //! root lies between x2 and x3
+                                 x1 = x2;
+                                 x2 = x3;
+                                 f1 = f2;
+                                 f1tmp = f1;
+                                 f2 = f3;
+			     }
+                             else {
+                                 //! root lies between x1 and x3
+                                 x2 = x3;
+                                 f2 = f3;
+                                 f1tmp = f1; //! actual function eval
+                                 f1 = 0.5f * f1;
+                             }
+                             //! check for convergence:
+                             root_found = converged(x1,x2);
+                             if(root_found || i==MAXITER) {
+                                  choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+                                  if (!root_found) iflag = -2;  //! max iterations reached
+                                  break;
+                             }
+			 }
+		     }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void illinois(double(*f)(double x),
+		                       const double ax,
+		                       const double bx,
+				       const double fax,
+				       const double fbx,
+				       double & xzero,
+				       double & fzero,
+				       int32_t & iflag) {
+
+                         double  x1,x2,x3,f1,f2,f3,delta,f1tmp;
+			 bool   root_found;
+			 //! initialize:
+                         iflag = 0;
+                         x1    = ax;
+                         x2    = bx;
+                         f1    = fax;
+                         f2    = fbx;
+			 for(int32 i = 1; i != MAXITER; ++i) {
+                             x3 = regula_falsi_step(x1,x2,f1,f2,ax,bx);
+                             //! calculate the new function value:
+                             f3 = f(x3);
+                             if(solution(x3,f3,FTOL8,xzero,fzero)) return;
+                             //! determine new inclusion interval:
+                             if(f2*f3<0.0) {
+                                 //! root lies between x2 and x3
+                                 x1 = x2;
+                                 x2 = x3;
+                                 f1 = f2;
+                                 f1tmp = f1;
+                                 f2 = f3;
+			     }
+                             else {
+                                 //! root lies between x1 and x3
+                                 x2 = x3;
+                                 f2 = f3;
+                                 f1tmp = f1; //! actual function eval
+                                 f1 = 0.5 * f1;
+                             }
+                             //! check for convergence:
+                             root_found = converged(x1,x2);
+                             if(root_found || i==MAXITER) {
+                                  choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+                                  if (!root_found) iflag = -2;  //! max iterations reached
+                                  break;
+                             }
+			 }
+		     }
+
+/*
+!>
+!  Compute the zero of the function f(x) in the interval ax,bx using the Anderson-Bjorck method.
+!
+!### See also
+!  * G.E. Mullges & F. Uhlig, "Numerical Algorithms with Fortran",
+!    Springer, 1996. Section 2.8.2, p 36.
+*/		     
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void anderson_bjorck(float(*f)(float x),
+		                          const float ax,
+		                          const float bx,
+				          const float fax,
+				          const float fbx,
+				          float & xzero,
+				          float & fzero,
+				          int32_t & iflag) {
+
+                          float  x1,x2,x3,f1,f2,f3,g,f1tmp;
+			  bool   root_found = false;
+			  //! initialize:
+                          iflag = 0;
+                          x1    = ax;
+                          x2    = bx;
+                          f1    = fax;
+                          f2    = fbx;
+			  for(int32_t i = 1; i != MAXITER; ++i) {
+                               x3 = secant(x1,x2,f1,f2,ax,bx);
+                               f3 = f(x3);
+                               if (solution(x3,f3,FTOL4,xzero,fzero)) return;
+                               //! determine a new inclusion interval:
+                               if(f2*f3<0.0f) {
+                                  //! zero lies between x2 and x3
+                                  x1 = x2;
+                                  x2 = x3;
+                                  f1 = f2;
+                                  f2 = f3;
+                                  f1tmp = f1;
+			       }
+                               else {
+	    
+                                  // zero lies between x1 and x3
+                                  g = 1.0f - f3/f2;
+                                  if(g<=0.0f) g = 0.5f;
+                                  x2 = x3;
+                                  f1tmp = f1;
+                                  f1 = g*f1;
+                                  f2 = f3;
+                               }
+                               //! check for convergence:
+                               root_found = converged(x1,x2);
+                               if(root_found || i == MAXITER) {
+                                   choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+                                   if (!root_found) iflag = -2;  //! max iterations reached
+                                   break;
+                               }
+			  }
+                   }
+
+		   
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void anderson_bjorck(double(*f)(double x),
+		                          const double ax,
+		                          const double bx,
+				          const double fax,
+				          const double fbx,
+				          double & xzero,
+				          double & fzero,
+				          int32_t & iflag) {
+
+                          double  x1,x2,x3,f1,f2,f3,g,f1tmp;
+			  bool   root_found = false;
+			  //! initialize:
+                          iflag = 0;
+                          x1    = ax;
+                          x2    = bx;
+                          f1    = fax;
+                          f2    = fbx;
+			  for(int32_t i = 1; i != MAXITER; ++i) {
+                               x3 = secant(x1,x2,f1,f2,ax,bx);
+                               f3 = f(x3);
+                               if (solution(x3,f3,FTOL8,xzero,fzero)) return;
+                               //! determine a new inclusion interval:
+                               if(f2*f3<0.0) {
+                                  //! zero lies between x2 and x3
+                                  x1 = x2;
+                                  x2 = x3;
+                                  f1 = f2;
+                                  f2 = f3;
+                                  f1tmp = f1;
+			       }
+                               else {
+	    
+                                  // zero lies between x1 and x3
+                                  g = 1.0 - f3/f2;
+                                  if(g<=0.0) g = 0.5;
+                                  x2 = x3;
+                                  f1tmp = f1;
+                                  f1 = g*f1;
+                                  f2 = f3;
+                               }
+                               //! check for convergence:
+                               root_found = converged(x1,x2);
+                               if(root_found || i == MAXITER) {
+                                   choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+                                   if (!root_found) iflag = -2;  //! max iterations reached
+                                   break;
+                               }
+			  }
+                   }
+
+/*
+!  Ridders method to find a root of f(x).
+!
+!### See also
+!  * Ridders, C., "A new algorithm for computing a single root of a real continuous function",
+!    IEEE Trans. on Circuits and Systems, Vol 26, Issue 11, Nov 1979.
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void ridders(float(*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+                        float  fh,fl,fm,fnew,denom,xh,xl,xm,xnew;
+			//! initialize:
+                        iflag = 0;
+                        fl    = fax;
+                        fh    = fbx;
+                        xl    = ax;
+                        xh    = bx;
+                        xzero = std::numeric_limits<float>::max();
+			for(int32_t i = 1; i != MAXITER; ++i) {
+                            xm = bisect(xl,xh);
+                            fm = f(xm);
+                            if(solution(xm,fm,FTOL4,xzero,fzero)) return;
+                            denom = std::sqrt(fm*fm-fl*fh);
+                            if (denom == 0.0f) {
+                                xzero = xm;
+                                fzero = fm;
+                                iflag = -3;       //! can't proceed: denominator is zero [TODO: add a bisection if this happens]
+                                break;
+                            }
+                            xnew = xm + (xm-xl)*(std::copysign(1.0f,fl-fh)*fm/denom);
+                            if(converged(xzero,xnew)) {  //! relative convergence in x
+                               //! additional check to prevent false convergence
+                                if (converged(xl,xm) || converged(xm,xh)) break;
+                            }
+                            xzero = xnew;
+                            fnew  = f(xzero);
+                            fzero = fnew;
+                            if(std::abs(fnew) <= FTOL4) break;    //! abs convergence in f
+                             //! to keep the root bracketed:
+                            if(std::copysign(fm,fnew) != fm) {
+                               xl = xm;
+                               fl = fm;
+                               xh = xzero;
+                               fh = fnew;
+			    }
+                            else if(std::copysign(fl,fnew) != fl) {
+                               xh = xzero;
+                               fh = fnew;
+			    }
+                            else if(std::copysign(fh,fnew) /= fh) {
+                               xl = xzero
+                               fl = fnew
+                            }
+                            if(converged(xl,xh)) break;    //! relative convergence in x
+                            if(i == MAXITER) iflag = -2;  //! max iterations exceeded
+
+			}
+		   }
 
 
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void ridders(double(*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+                        double  fh,fl,fm,fnew,denom,xh,xl,xm,xnew;
+			//! initialize:
+                        iflag = 0;
+                        fl    = fax;
+                        fh    = fbx;
+                        xl    = ax;
+                        xh    = bx;
+                        xzero = std::numeric_limits<double>::max();
+			for(int32_t i = 1; i != MAXITER; ++i) {
+                            xm = bisect(xl,xh);
+                            fm = f(xm);
+                            if(solution(xm,fm,FTOL8,xzero,fzero)) return;
+                            denom = std::sqrt(fm*fm-fl*fh);
+                            if (denom == 0.0) {
+                                xzero = xm;
+                                fzero = fm;
+                                iflag = -3;       //! can't proceed: denominator is zero [TODO: add a bisection if this happens]
+                                break;
+                            }
+                            xnew = xm + (xm-xl)*(std::copysign(1.0,fl-fh)*fm/denom);
+                            if(converged(xzero,xnew)) {  //! relative convergence in x
+                               //! additional check to prevent false convergence
+                                if (converged(xl,xm) || converged(xm,xh)) break;
+                            }
+                            xzero = xnew;
+                            fnew  = f(xzero);
+                            fzero = fnew;
+                            if(std::abs(fnew) <= FTOL8) break;    //! abs convergence in f
+                             //! to keep the root bracketed:
+                            if(std::copysign(fm,fnew) != fm) {
+                               xl = xm;
+                               fl = fm;
+                               xh = xzero;
+                               fh = fnew;
+			    }
+                            else if(std::copysign(fl,fnew) != fl) {
+                               xh = xzero;
+                               fh = fnew;
+			    }
+                            else if(std::copysign(fh,fnew) /= fh) {
+                               xl = xzero
+                               fl = fnew
+                            }
+                            if(converged(xl,xh)) break;    //! relative convergence in x
+                            if(i == MAXITER) iflag = -2;  //! max iterations exceeded
+
+			}
+		   }
+				       
 
      } //math
 
