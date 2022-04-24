@@ -1861,6 +1861,1013 @@ namespace  gms {
 
 			}
 		   }
+
+/*
+!*****************************************************************************************
+!>
+!  Pegasus method to find a root of f(x).
+!
+!### See also
+!  * G.E. Mullges & F. Uhlig, "Numerical Algorithms with Fortran",
+!    Springer, 1996. Section 2.8.2, p 35.
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void pegasus(float(*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+                         float x1,x2,x3,f1,f2,f3,f1tmp,denom;
+			 //! initialize:
+                         iflag = 0;
+                         x1    = ax;
+                         x2    = bx;
+                         f1    = fax;
+                         f2    = fbx;
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                              //! secant step
+                              x3 = secant(x1,x2,f1,f2,ax,bx);
+                              f3  = f(x3);  //! calculate f3
+                              if(solution(x3,f3,FTOL4,xzero,fzero)) return;
+                              //! determine a new inclusion interval:
+                              if(f2*f3<=0.0f) {  //! root on (x2,x3)
+                                 x1 = x2;
+                                 f1 = f2;
+                                 f1tmp = f1;
+			      }
+                              else{        //! root on (x1,x3)
+                                 f1tmp = f1;
+                                 denom = f2 + f3;
+                                 if(denom != 0.0f) {
+                                    //! proceed as normal
+                                    f1 = f1 * f2 / denom;
+				}
+                                 else {
+                                       //! can't proceed, keep as is.
+                                       //! [need a find a test case where this happens -TODO]
+				       ;
+                                 }
+                             }
+                             x2 = x3;
+                             f2 = f3;
+                             choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+                             if(converged(x1,x2)) break;   //! check for convergence
+                             if(i == MAXITER) iflag = -2; //! max iterations exceeded
+			 }
+		 }
+
+		 
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void pegasus(double(*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+                         double x1,x2,x3,f1,f2,f3,f1tmp,denom;
+			 //! initialize:
+                         iflag = 0;
+                         x1    = ax;
+                         x2    = bx;
+                         f1    = fax;
+                         f2    = fbx;
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                              //! secant step
+                              x3 = secant(x1,x2,f1,f2,ax,bx);
+                              f3  = f(x3);  //! calculate f3
+                              if(solution(x3,f3,FTOL8,xzero,fzero)) return;
+                              //! determine a new inclusion interval:
+                              if(f2*f3<=0.0) {  //! root on (x2,x3)
+                                 x1 = x2;
+                                 f1 = f2;
+                                 f1tmp = f1;
+			      }
+                              else{        //! root on (x1,x3)
+                                 f1tmp = f1;
+                                 denom = f2 + f3;
+                                 if(denom != 0.0) {
+                                    //! proceed as normal
+                                    f1 = f1 * f2 / denom;
+				}
+                                 else {
+                                       //! can't proceed, keep as is.
+                                       //! [need a find a test case where this happens -TODO]
+				       ;
+                                 }
+                             }
+                             x2 = x3;
+                             f2 = f3;
+                             choose_best(x1,x2,f1tmp,f2,xzero,fzero);
+                             if(converged(x1,x2)) break;   //! check for convergence
+                             if(i == MAXITER) iflag = -2; //! max iterations exceeded
+			 }
+		 }
+
+/*
+!*****************************************************************************************
+!>
+!  Bisected Direct Quadratic Regula Falsi (BDQRF) root solver method
+!  to find the root of a 1D function.
+!
+!### See also
+!  * R. G. Gottlieb, B. F. Thompson, "Bisected Direct Quadratic Regula Falsi",
+!    Applied Mathematical Sciences, Vol. 4, 2010, no. 15, 709-718.
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void bdqrf(  float(*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+			 float xdn,ydn,xup,yup,d,xm,ym,a,b,y2;
+			 //! initialize:
+                         iflag = 0;
+                         xzero = ax;
+                         fzero = fax;
+                         y2    = fbx;
+                         if(fzero<0.0f) {
+                            xdn = ax;
+                            ydn = fzero;
+                            xup = bx;
+                            yup = y2;
+			 }
+                         else {
+                            xup = ax;
+                            yup = fzero;
+                            xdn = bx;
+                            ydn = y2;
+                         }
+
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                              xm = bisect(xup,xdn);
+                              ym = f(xm);
+                              if(abs(ym)<=FTOL4){
+                                 xzero = xm
+                                 fzero = ym
+                                 break; //! Convergence
+                              }
+                              d = (xup - xdn) * 0.5f;
+                              a = (yup + ydn - 2.0f*ym)/(2.0f*d*d);
+                              b = (yup - ydn)/(2.0f*d);
+                              xzero = xm - 2.0f*ym/(b * (1.0f+std::sqrt(1.0f-4.0f*a*ym/(b*b))));
+                              fzero = f(xzero);
+                              if(abs(fzero)<=FTOL4) break; //! Convergence
+                              if(fzero>0.0f) {
+                                 yup = fzero;
+                                 xup = xzero;
+                                 if(ym<0.0f) {
+                                    ydn = ym;
+                                    xdn = xm;
+                                 }
+			     }
+                             else {
+                                 ydn = fzero;
+                                 xdn = xzero;
+                                 if(ym>0.0f) {
+                                    yup = ym;
+                                    xup = xm;
+                                 }
+                             }
+                             if(converged(xdn,xup) || i==MAXITER) {
+                                choose_best(xdn,xup,ydn,yup,xzero,fzero);
+                                if(i==MAXITER) iflag = -2;  //! maximum number of iterations
+                                break;
+                             }
+			 }
+		   }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void bdqrf(  double(*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+			 double xdn,ydn,xup,yup,d,xm,ym,a,b,y2;
+			 //! initialize:
+                         iflag = 0;
+                         xzero = ax;
+                         fzero = fax;
+                         y2    = fbx;
+                         if(fzero<0.0) {
+                            xdn = ax;
+                            ydn = fzero;
+                            xup = bx;
+                            yup = y2;
+			 }
+                         else {
+                            xup = ax;
+                            yup = fzero;
+                            xdn = bx;
+                            ydn = y2;
+                         }
+
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                              xm = bisect(xup,xdn);
+                              ym = f(xm);
+                              if(abs(ym)<=FTOL8){
+                                 xzero = xm
+                                 fzero = ym
+                                 break; //! Convergence
+                              }
+                              d = (xup - xdn) * 0.5;
+                              a = (yup + ydn - 2.0*ym)/(2.0*d*d);
+                              b = (yup - ydn)/(2.0*d);
+                              xzero = xm - 2.0*ym/(b * (1.0+std::sqrt(1.0-4.0*a*ym/(b*b))));
+                              fzero = f(xzero);
+                              if(abs(fzero)<=FTOL8) break; //! Convergence
+                              if(fzero>0.0) {
+                                 yup = fzero;
+                                 xup = xzero;
+                                 if(ym<0.0) {
+                                    ydn = ym;
+                                    xdn = xm;
+                                 }
+			     }
+                             else {
+                                 ydn = fzero;
+                                 xdn = xzero;
+                                 if(ym>0.0) {
+                                    yup = ym;
+                                    xup = xm;
+                                 }
+                             }
+                             if(converged(xdn,xup) || i==MAXITER) {
+                                choose_best(xdn,xup,ydn,yup,xzero,fzero);
+                                if(i==MAXITER) iflag = -2;  //! maximum number of iterations
+                                break;
+                             }
+			 }
+		   }
+
+/*
+ !  Improved Muller method (for real roots only).
+!  Will fall back to bisection if any step fails.
+!
+!### Reference
+!  * D. E. Muller, "A Method for Solving Algebraic Equations Using an Automatic Computer",
+!    Mathematical Tables and Other Aids to Computation, 10 (1956), 208-215.
+!  * Regular Muller here (Julia version):
+!    https://github.com/JuliaMath/Roots.jl/blob/97dbe2e178656e39b7f646cff278e4e985d60116/src/simple.jl
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void muller( float(*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+                       float a,b,c,cx,fa,fb,fc,fcx,x,q,q2,q1,aa,bb,cc,delta,dp,dm,denon,bprev,fbprev;
+		       bool  x_ok = false;
+		       iflag = 0;
+                       //! pick a third point in the middle [this could also be an optional input]
+                       cx  = bisect(ax,bx);
+                       fcx = f(cx);
+                       if(solution(cx,fcx,FTOL4,xzero,fzero)) return;
+                       //! [a,b,c]
+                       a = ax; fa = fax;
+                       b = cx; fb = fcx;
+                       c = bx; fc = fbx;
+                       bprev  = std::numeric_limits<float>::max();
+                       fbprev = bprev;
+		       for(int32_t i = 1; i != MAXITER; ++i) {
+                            //! muller step:
+                           q     = (c - b)/(b - a);
+                           q2    = q*q;
+                           q1    = q + 1.0f;
+                           aa    = q*fc - q*q1*fb + q2*fa;
+                           bb    = (q1+q)*fc - q1*q1*fb + q2*fa;
+                           cc    = q1*fc;
+                           delta = std::sqrt(std::max(0.0f,bb*bb-4.0f*aa*cc)); //! to avoid complex roots
+                           dp    = bb + delta;
+                           dm    = bb - delta;
+                           if(std::abs(dp) > abs(dm)) {
+                               denon = dp;
+			   }
+                           else {
+                               denon = dm;
+                           }
+                           x_ok = denon != 0.0f;
+                           if (x_ok) x = c - 2.0f*(c - b)*cc/denon;
+                           //! make sure that x is ok, in the correct interval, and distinct.
+                           //! if not, fall back to bisection on that interval
+                           if(fa*fb < 0.0f) {  //! root in (a,b)
+                               if(!x_ok || x<=a || x>=b) x = bisect(a,b);
+                               c  = b;
+                               fc = fb;
+                               b  = x;
+			   }
+                           else {  //! root in (b,c)
+                                if(!x_ok || x<=b || x>=c) x = bisect(b,c);
+                                a  = b;
+                                fa = fb;
+                                b  = x;
+                           }
+                           //! values are now [a,b,c], with b being the new estimate
+                           //! function evaluation for next estimate:
+                           fb = f(b);
+                           if(abs(fb)<=FTOL4) break;
+                           //! stopping criterion
+                           if(converged(a,c) || i == MAXITER) {
+                              if(i == MAXITER) iflag = -2; //! max iterations exceeded
+                              break;
+                           }
+                           bprev = b;
+                           fbprev = fb;
+		       }
+		       choose_best(b,bprev,fb,fbprev,xzero,fzero);
+		 }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void muller( double(*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+                       double a,b,c,cx,fa,fb,fc,fcx,x,q,q2,q1,aa,bb,cc,delta,dp,dm,denon,bprev,fbprev;
+		       bool  x_ok = false;
+		       iflag = 0;
+                       //! pick a third point in the middle [this could also be an optional input]
+                       cx  = bisect(ax,bx);
+                       fcx = f(cx);
+                       if(solution(cx,fcx,FTOL8,xzero,fzero)) return;
+                       //! [a,b,c]
+                       a = ax; fa = fax;
+                       b = cx; fb = fcx;
+                       c = bx; fc = fbx;
+                       bprev  = std::numeric_limits<double>::max();
+                       fbprev = bprev;
+		       for(int32_t i = 1; i != MAXITER; ++i) {
+                            //! muller step:
+                           q     = (c - b)/(b - a);
+                           q2    = q*q;
+                           q1    = q + 1.0;
+                           aa    = q*fc - q*q1*fb + q2*fa;
+                           bb    = (q1+q)*fc - q1*q1*fb + q2*fa;
+                           cc    = q1*fc;
+                           delta = std::sqrt(std::max(0.0,bb*bb-4.0*aa*cc)); //! to avoid complex roots
+                           dp    = bb + delta;
+                           dm    = bb - delta;
+                           if(std::abs(dp) > abs(dm)) {
+                               denon = dp;
+			   }
+                           else {
+                               denon = dm;
+                           }
+                           x_ok = denon != 0.0;
+                           if (x_ok) x = c - 2.0*(c - b)*cc/denon;
+                           //! make sure that x is ok, in the correct interval, and distinct.
+                           //! if not, fall back to bisection on that interval
+                           if(fa*fb < 0.0) {  //! root in (a,b)
+                               if(!x_ok || x<=a || x>=b) x = bisect(a,b);
+                               c  = b;
+                               fc = fb;
+                               b  = x;
+			   }
+                           else {  //! root in (b,c)
+                                if(!x_ok || x<=b || x>=c) x = bisect(b,c);
+                                a  = b;
+                                fa = fb;
+                                b  = x;
+                           }
+                           //! values are now [a,b,c], with b being the new estimate
+                           //! function evaluation for next estimate:
+                           fb = f(b);
+                           if(abs(fb)<=FTOL8) break;
+                           //! stopping criterion
+                           if(converged(a,c) || i == MAXITER) {
+                              if(i == MAXITER) iflag = -2; //! max iterations exceeded
+                              break;
+                           }
+                           bprev = b;
+                           fbprev = fb;
+		       }
+		       choose_best(b,bprev,fb,fbprev,xzero,fzero);
+		 }
+
+/*
+!*****************************************************************************************
+!>
+!  Brent's method with hyperbolic extrapolation.
+!
+!  A variation on the classic Brent routine to find a zero of the function f
+!  between the arguments ax and bx that uses hyperbolic extrapolation instead
+!  of inverse quadratic extrapolation.
+!
+!### Reference
+!  * SciPy `brenth.c`
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void brenth( float(*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+		        float xpre,xcur,xblk,fpre,fcur,fblk,spre,
+                              scur,sbis,delta,stry,dpre,dblk,xdelta;
+		        iflag = 0;
+                        xpre = ax;
+                        xcur = bx;
+                        fpre = fax;
+                        fcur = fbx;
+			for(int32_t i = 1; i != MAXITER; ++i) {
+                             if(fpre*fcur < 0.0f) {
+                                xblk = xpre;
+                                fblk = fpre;
+                                scur = xcur - xpre;
+                                spre = scur;
+                              }
+                              if(std::abs(fblk) < abs(fcur)) {
+                                 xpre = xcur;
+                                 xcur = xblk;
+                                 xblk = xpre;
+                                 fpre = fcur;
+                                 fcur = fblk;
+                                 fblk = fpre;
+                              }
+                             delta = (ATOL4 + RTOL4*std::abs(xcur))*0.5f;
+                             sbis = (xblk - xcur)*0.5f;
+                             if(std::abs(fcur)<=FTOL4 || std::abs(sbis)<delta) break; //! converged
+                             if(std::abs(spre)>delta && std::abs(fcur)<std::abs(fpre)) {
+                                 if(xpre == xblk) {
+                                    //! interpolate
+                                     stry = -fcur*(xcur - xpre)/(fcur - fpre);
+			          }
+                                  else {
+                                      //! extrapolate
+                                     dpre = (fpre - fcur)/(xpre - xcur);
+                                     dblk = (fblk - fcur)/(xblk - xcur);
+                                     stry = -fcur*(fblk - fpre)/(fblk*dpre - fpre*dblk);  //! only difference from brentq
+                                  }
+                                  if(2.0f*std::abs(stry)<std::min(abs(spre),3.0f*abs(sbis)-delta)) {
+                                     //! accept step
+                                      spre = scur;
+                                      scur = stry;
+			          }
+                                  else {
+                                     //! bisect
+                                     spre = sbis;
+                                     scur = sbis;
+                                  }
+			      }
+                              else {
+                                  //! bisect
+                                   spre = sbis;
+                                   scur = sbis;
+                             }
+                             xpre = xcur;
+                             fpre = fcur;
+                             if(std::abs(scur) > delta) {
+                                 xcur = xcur + scur;
+			     }
+                             else {
+                                 if(sbis > 0.0f) {
+                                    xdelta = delta;
+				 }
+                                 else {
+                                    xdelta = -delta;
+                                 }
+                                 xcur = xcur + xdelta;
+                             }
+                             fcur = f(xcur);
+                             if (std::abs(fcur) <= FTOL4) break; //! converged
+                             if (i == MAXITER) iflag = -2;  //! max iterations reached
+		       }
+		         xzero = xcur;
+                         fzero = fcur;
+		 }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void brenth( double(*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+		        double xpre,xcur,xblk,fpre,fcur,fblk,spre,
+                               scur,sbis,delta,stry,dpre,dblk,xdelta;
+		        iflag = 0;
+                        xpre = ax;
+                        xcur = bx;
+                        fpre = fax;
+                        fcur = fbx;
+			for(int32_t i = 1; i != MAXITER; ++i) {
+                             if(fpre*fcur < 0.0) {
+                                xblk = xpre;
+                                fblk = fpre;
+                                scur = xcur - xpre;
+                                spre = scur;
+                              }
+                              if(std::abs(fblk) < abs(fcur)) {
+                                 xpre = xcur;
+                                 xcur = xblk;
+                                 xblk = xpre;
+                                 fpre = fcur;
+                                 fcur = fblk;
+                                 fblk = fpre;
+                              }
+                             delta = (ATOL8 + RTOL8*std::abs(xcur))*0.5;
+                             sbis = (xblk - xcur)*0.5;
+                             if(std::abs(fcur)<=FTOL8 || std::abs(sbis)<delta) break; //! converged
+                             if(std::abs(spre)>delta && std::abs(fcur)<std::abs(fpre)) {
+                                 if(xpre == xblk) {
+                                    //! interpolate
+                                     stry = -fcur*(xcur - xpre)/(fcur - fpre);
+			          }
+                                  else {
+                                      //! extrapolate
+                                     dpre = (fpre - fcur)/(xpre - xcur);
+                                     dblk = (fblk - fcur)/(xblk - xcur);
+                                     stry = -fcur*(fblk - fpre)/(fblk*dpre - fpre*dblk);  //! only difference from brentq
+                                  }
+                                  if(2.0*std::abs(stry)<std::min(abs(spre),3.0*abs(sbis)-delta)) {
+                                     //! accept step
+                                      spre = scur;
+                                      scur = stry;
+			          }
+                                  else {
+                                     //! bisect
+                                     spre = sbis;
+                                     scur = sbis;
+                                  }
+			      }
+                              else {
+                                  //! bisect
+                                   spre = sbis;
+                                   scur = sbis;
+                             }
+                             xpre = xcur;
+                             fpre = fcur;
+                             if(std::abs(scur) > delta) {
+                                 xcur = xcur + scur;
+			     }
+                             else {
+                                 if(sbis > 0.0) {
+                                    xdelta = delta;
+				 }
+                                 else {
+                                    xdelta = -delta;
+                                 }
+                                 xcur = xcur + xdelta;
+                             }
+                             fcur = f(xcur);
+                             if (std::abs(fcur) <= FTOL8) break; //! converged
+                             if (i == MAXITER) iflag = -2;  //! max iterations reached
+		       }
+		         xzero = xcur;
+                         fzero = fcur;
+		 }
+
+
+/*
+!*****************************************************************************************
+!>
+!  Classic Brent's method to find a zero of the function f on the sign
+!  changing interval [ax, bx], but with a different formula for the extrapolation step.
+!
+!### Reference
+!  * SciPy brentq.c
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void brentq( float(*f)(float x),
+		                  const float ax,
+		                  const float bx,
+				  const float fax,
+				  const float fbx,
+				  float & xzero,
+				  float & fzero,
+				  int32_t & iflag) {
+
+                        float xpre,xcur,xblk,fpre,fcur,fblk,spre,
+                              scur,sbis,delta,stry,dpre,dblk,xdelta;
+		        iflag = 0;
+                        xpre = ax;
+                        xcur = bx;
+                        fpre = fax;
+                        fcur = fbx;
+			for(int32_t i = 1; i != MAXITER; ++i) {
+                             if(fpre*fcur < 0.0f) {
+                                xblk = xpre;
+                                fblk = fpre;
+                                scur = xcur - xpre;
+                                spre = scur;
+                              }
+                             if(std::abs(fblk) < std::abs(fcur)) {
+                                 xpre = xcur;
+                                 xcur = xblk;
+                                 xblk = xpre;
+                                 fpre = fcur;
+                                 fcur = fblk;
+                                 fblk = fpre;
+                             }
+                            delta = (ATOL4 + RTOL4*std::abs(xcur))*0.5f;
+                            sbis = (xblk - xcur)*0.5f;
+                            if(std::abs(fcur)<=FTOL4 || std::abs(sbis)<delta) break; //! converged
+                            if(std::abs(spre)>delta  && std::abs(fcur)<std::abs(fpre)) {
+                                if(xpre == xblk) {
+                                    //! interpolate
+                                    stry = -fcur*(xcur - xpre)/(fcur - fpre);
+				}
+                                else {
+                                      //! extrapolate
+                                     dpre = (fpre - fcur)/(xpre - xcur);
+                                     dblk = (fblk - fcur)/(xblk - xcur);
+                                     stry = -fcur*(fblk*dblk - fpre*dpre)/(dblk*dpre*(fblk - fpre));  //! only difference from brenth
+                                }
+                                if(2.0f*std::abs(stry)<std::min(abs(spre),3.0f*std::abs(sbis)-delta)) {
+                                     //! accept step
+                                     spre = scur;
+                                     scur = stry;
+				}
+                                else {
+                                     //! bisect
+                                     spre = sbis;
+                                     scur = sbis;
+                                }
+			   }
+                           else {
+                                    // ! bisect
+                                spre = sbis;
+                                scur = sbis;
+                           }
+                           xpre = xcur;
+                           fpre = fcur;
+                           if(std::abs(scur) > delta) {
+                                xcur = xcur + scur;
+                           else
+                                if(sbis > 0.0f) {
+                                    xdelta = delta;
+				}
+                                 else {
+                                    xdelta = -delta;
+                                }
+                               xcur = xcur + xdelta;
+                            }
+                           fcur = f(xcur);
+                           if(std::abs(fcur) <= FTOL4) break;  //! converged
+                           if(i == MAXITER) iflag = -2;   //! max iterations reached
+		     }
+		     xzero = xcur;
+                     fzero = fcur;	
+	       }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void brentq( double(*f)(double x),
+		                  const double ax,
+		                  const double bx,
+				  const double fax,
+				  const double fbx,
+				  double & xzero,
+				  double & fzero,
+				  int32_t & iflag) {
+
+                        double xpre,xcur,xblk,fpre,fcur,fblk,spre,
+                               scur,sbis,delta,stry,dpre,dblk,xdelta;
+		        iflag = 0;
+                        xpre = ax;
+                        xcur = bx;
+                        fpre = fax;
+                        fcur = fbx;
+			for(int32_t i = 1; i != MAXITER; ++i) {
+                             if(fpre*fcur < 0.0) {
+                                xblk = xpre;
+                                fblk = fpre;
+                                scur = xcur - xpre;
+                                spre = scur;
+                              }
+                             if(std::abs(fblk) < std::abs(fcur)) {
+                                 xpre = xcur;
+                                 xcur = xblk;
+                                 xblk = xpre;
+                                 fpre = fcur;
+                                 fcur = fblk;
+                                 fblk = fpre;
+                             }
+                            delta = (ATOL8+RTOL8*std::abs(xcur))*0.5;
+                            sbis = (xblk - xcur)*0.5;
+                            if(std::abs(fcur)<=FTOL8 || std::abs(sbis)<delta) break; //! converged
+                            if(std::abs(spre)>delta  && std::abs(fcur)<std::abs(fpre)) {
+                                if(xpre == xblk) {
+                                    //! interpolate
+                                    stry = -fcur*(xcur - xpre)/(fcur - fpre);
+				}
+                                else {
+                                      //! extrapolate
+                                     dpre = (fpre - fcur)/(xpre - xcur);
+                                     dblk = (fblk - fcur)/(xblk - xcur);
+                                     stry = -fcur*(fblk*dblk - fpre*dpre)/(dblk*dpre*(fblk - fpre));  //! only difference from brenth
+                                }
+                                if(2.0*std::abs(stry)<std::min(abs(spre),3.0*std::abs(sbis)-delta)) {
+                                     //! accept step
+                                     spre = scur;
+                                     scur = stry;
+				}
+                                else {
+                                     //! bisect
+                                     spre = sbis;
+                                     scur = sbis;
+                                }
+			   }
+                           else {
+                                    // ! bisect
+                                spre = sbis;
+                                scur = sbis;
+                           }
+                           xpre = xcur;
+                           fpre = fcur;
+                           if(std::abs(scur) > delta) {
+                                xcur = xcur + scur;
+                           else
+                                if(sbis > 0.0) {
+                                    xdelta = delta;
+				}
+                                 else {
+                                    xdelta = -delta;
+                                }
+                               xcur = xcur + xdelta;
+                            }
+                           fcur = f(xcur);
+                           if(std::abs(fcur) <= FTOL8) break;  //! converged
+                           if(i == MAXITER) iflag = -2;   //! max iterations reached
+		     }
+		      xzero = xcur;
+                      fzero = fcur;	
+	       }
+
+/*
+!  Chandrupatla's method.
+!
+!### Reference
+!  * T.R. Chandrupatla, "A new hybrid quadratic/bisection algorithm for
+!    finding the zero of a nonlinear function without derivatives," Advances in
+!    Engineering Software, Vol 28, 1997, pp. 145-149.
+!  * P. Scherer, "Computational Physics: Simulation of Classical and Quantum Systems",
+!    Section 6.1.7.3. [this routine was coded from that description]
+!  * Python version: https://www.embeddedrelated.com/showarticle/855.php
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void chandraupatla( float(*f)(float x),
+		                         const float ax,
+		                         const float bx,
+				         const float fax,
+				         const float fbx,
+				         float & xzero,
+				         float & fzero,
+				         int32_t & iflag) {
+
+                         float  a,b,c,fa,fb,fc,t,xt,ft,tol,tl,xi,phi,xm,fm;
+			 //! initialization:
+                         iflag = 0;
+                         b  = ax;
+                         a  = bx;
+                         c  = bx;
+                         fa = fbx;
+                         fb = fax;
+                         fc = fb;
+                         t  = 0.5;
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                                xt = a + t*(b-a);
+                                ft = f(xt);
+                                if(solution(xt,ft,FTOL4,xzero,fzero)) return;
+                                if(ft*fa>0.0f) {
+                                    c = a;
+                                    fc = fa;
+				}
+                                else {
+                                    c = b;
+                                    b = a;
+                                    fc = fb;
+                                    fb = fa;
+                               }
+                               a = xt;
+                               fa = ft;
+                               if(std::abs(fb) < std::abs(fa)) {
+                                   xm = b;
+                                   fm = fb;
+			       }
+                               else {
+                                   xm = a;
+                                   fm = fa;
+                               }
+                               if(i == MAXITER) {
+                                  iflag = -2; //! max iterations reached
+                                  break;
+                               }
+                               tol = 2.0f*RTOL4*std::abs(xm)+ATOL4;
+                               tl = tol/abs(b-c);
+                               if(tl > 0.5f) break;
+                               t = 0.5f;  //! use bisection unless we can use inverse quadratic below
+                               if(fa!=fb && fb!=fc) {
+                                   xi  = (a-b)/(c-b);
+                                   phi = (fa-fb)/(fc-fb);
+                                   if(1.0f-std::sqrt(1.0f-xi)<phi && phi<std::sqrt(xi)) {
+                                        //! inverse quadratic interpolation
+                                       t = (fa/(fb-fa))*(fc/(fb-fc))+((c-a)/(b-a))*(fa/(fc-fa))*(fb/(fc-fb));
+                                   }
+                               }
+                               t = std::min(1.0f-tl,std::max(tl, t));
+			 }
+			 xzero = xm;
+                         fzero = fm;
+		  }
+
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void chandraupatla( double(*f)(double x),
+		                         const double ax,
+		                         const double bx,
+				         const double fax,
+				         const double fbx,
+				         double & xzero,
+				         double & fzero,
+				         int32_t & iflag) {
+
+                         double  a,b,c,fa,fb,fc,t,xt,ft,tol,tl,xi,phi,xm,fm;
+			 //! initialization:
+                         iflag = 0;
+                         b  = ax;
+                         a  = bx;
+                         c  = bx;
+                         fa = fbx;
+                         fb = fax;
+                         fc = fb;
+                         t  = 0.5;
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                                xt = a + t*(b-a);
+                                ft = f(xt);
+                                if(solution(xt,ft,FTOL8,xzero,fzero)) return;
+                                if(ft*fa>0.0) {
+                                    c = a;
+                                    fc = fa;
+				}
+                                else {
+                                    c = b;
+                                    b = a;
+                                    fc = fb;
+                                    fb = fa;
+                               }
+                               a = xt;
+                               fa = ft;
+                               if(std::abs(fb) < std::abs(fa)) {
+                                   xm = b;
+                                   fm = fb;
+			       }
+                               else {
+                                   xm = a;
+                                   fm = fa;
+                               }
+                               if(i == MAXITER) {
+                                  iflag = -2; //! max iterations reached
+                                  break;
+                               }
+                               tol = 2.0*RTOL8*std::abs(xm)+ATOL8;
+                               tl = tol/abs(b-c);
+                               if(tl > 0.5) break;
+                               t = 0.5;  //! use bisection unless we can use inverse quadratic below
+                               if(fa!=fb && fb!=fc) {
+                                   xi  = (a-b)/(c-b);
+                                   phi = (fa-fb)/(fc-fb);
+                                   if(1.0-std::sqrt(1.0-xi)<phi && phi<std::sqrt(xi)) {
+                                        //! inverse quadratic interpolation
+                                       t = (fa/(fb-fa))*(fc/(fb-fc))+((c-a)/(b-a))*(fa/(fc-fa))*(fb/(fc-fb));
+                                   }
+                               }
+                               t = std::min(1.0-tl,std::max(tl, t));
+			 }
+			 xzero = xm;
+                         fzero = fm;
+		  }
+
+		  
+
+				  
+
 				       
 
      } //math
