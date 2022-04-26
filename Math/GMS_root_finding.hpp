@@ -399,11 +399,147 @@ namespace  gms {
                           result = false;
 		       }
 		       return (result);
-		   }		   
+		   }
 
+/*
+    !!  Given current enclosing interval [a,b] and a number c in (a,b), if
+    !!  f(c)=0 then sets the output a=c. Otherwise determines the new
+    !!  enclosing interval: [a,b]=[a,c] or [a,b]=[c,b]. Also updates the
+    !!  termination criterion corresponding to the new enclosing interval.
+    Inner function called by toms748 subroutine (Fortran original implementation).
+*/
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+              
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+                    void bracket(float (*f) (float x),
+		                 float & a,
+		                 float & b,
+				 float & c,
+				 float & fa,
+		                 float & fb,
+				 float & tol,
+				 float & d,
+				 float & fd) {
 
-		   
-		   
+                      float fc;
+		      //! adjust c if (b-a) is very small or if c is very close to a or b.
+                      tol = 0.7f*tol;
+                      if((b-a)<=2.0f*tol) 
+                          c = a+0.5f*(b-a);
+                      else if(c<=a+tol) 
+                          c = a+tol;
+                      else
+                          if(c>=b-tol) c = b-tol;
+    
+                      //! call subroutine to obtain f(c)
+                      fc = f(c);
+                      //! if c is a root, then set a=c and return. this will terminate the
+                      //! procedure in the calling routine.
+                      if(abs(fc)<=FTOL4) {
+                          a   = c;
+                          fa  = fc;
+                          d   = 0.0f;
+                          fd  = 0.0f;
+                      }
+                      else {
+                             //! if c is not a root, then determine the new enclosing interval.
+                             if((isign(fa)*isign(fc))<0) {
+                                  d   = b;
+                                  fd  = fb;
+                                  b   = c;
+                                  fb  = fc;
+			      }
+                              else {
+                                  d   = a;
+                                  fd  = fa;
+                                  a   = c;
+                                  fa  = fc;
+			      }
+
+			     //! update the termination criterion according to the new enclosing interval.
+                             if(std::abs(fb) <= std::abs(fa)) 
+                                  tol = get_tolerance(b);
+                             else
+                                  tol = get_tolerance(a);
+         		  }
+
+	             }
+
+		     
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+              
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+                    void bracket(double (*f) (double x),
+		                 double & a,
+		                 double & b,
+				 double & c,
+				 double & fa,
+		                 double & fb,
+				 double & tol,
+				 double & d,
+				 double & fd) {
+
+                      double fc;
+		      //! adjust c if (b-a) is very small or if c is very close to a or b.
+                      tol = 0.7*tol;
+                      if((b-a)<=2.0*tol) 
+                          c = a+0.5*(b-a);
+                      else if(c<=a+tol) 
+                          c = a+tol;
+                      else
+                          if(c>=b-tol) c = b-tol;
+    
+                      //! call subroutine to obtain f(c)
+                      fc = f(c);
+                      //! if c is a root, then set a=c and return. this will terminate the
+                      //! procedure in the calling routine.
+                      if(abs(fc)<=FTOL8) {
+                          a   = c;
+                          fa  = fc;
+                          d   = 0.0;
+                          fd  = 0.0;
+                      }
+                      else {
+                             //! if c is not a root, then determine the new enclosing interval.
+                             if((isign(fa)*isign(fc))<0) {
+                                  d   = b;
+                                  fd  = fb;
+                                  b   = c;
+                                  fb  = fc;
+			      }
+                              else {
+                                  d   = a;
+                                  fd  = fa;
+                                  a   = c;
+                                  fa  = fc;
+			      }
+
+			     //! update the termination criterion according to the new enclosing interval.
+                             if(std::abs(fb) <= std::abs(fa)) 
+                                  tol = get_tolerance(b);
+                             else
+                                  tol = get_tolerance(a);
+         		  }
+
+	             }
+
+		     
 		   
 
 /*
