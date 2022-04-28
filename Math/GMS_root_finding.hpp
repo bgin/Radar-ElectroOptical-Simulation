@@ -539,8 +539,271 @@ namespace  gms {
 
 	             }
 
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    int32_t isign(const float x) {
+                        int32_t i = 0;
+		        if(x>0.0f)
+			   i = 1;
+			else if(x==0.0f)
+			   i = 0;
+			else
+			   i = -1;
+
+			return (i);
+		   }
+
 		     
-		   
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    int32_t isign(const double x) {
+                        int32_t i = 0;
+		        if(x>0.0)
+			   i = 1;
+			else if(x==0.0)
+			   i = 0;
+			else
+			   i = -1;
+
+			return (i);
+		   }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    float get_tolerance(const float b) {
+
+                          float tol = 0.0f;
+			  tol = 2.0f*(ATOL4+2.0f*std::abs(b)*RTOL4);
+			  return (tol);
+		  }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    double get_tolerance(const double b) {
+
+                          double tol = 0.0;
+			  tol = 2.0*(ATOL8+2.0*std::abs(b)*RTOL8);
+			  return (tol);
+		  }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    void newqua(const float a,
+		                const float b,
+				const float d,
+				const float fa,
+				const float fb,
+				const float fd,
+				float & c,
+				int32_t k) {
+
+			int32_t ierror;
+			float   a0,a1,a2,pc,pdc;
+			//! initialization
+                        //! find the coefficients of the quadratic polynomial
+                        ierror = 0;
+                        a0 = fa;
+                        a1 = (fb-fa)/(b-a);
+                        a2 = ((fd-fb)/(d-b)-a1)/(d-a);
+			while(true) {
+			        //! safeguard to avoid overflow
+                             if((a2==0.0f) || (ierror==1)) {
+                                 c=a-a0/a1;
+                                 return
+                             }
+                             //! determine the starting point of newton steps
+                             if(isign(a2)*isign(fa) > 0)
+                                  c=a;
+                             else
+                                  c=b;
+                             //! start the safeguarded newton steps
+                            for(int32_t i = 1; i != k ++i) {
+                                 if(ierror==0) {
+                                     pc=a0+(a1+a2*(c-b))*(c-a);
+                                     pdc=a1+a2*((2.0_sp*c)-(a+b));
+                                     if(pdc==0.0f) 
+                                         ierror=1;
+                                     else
+                                         c=c-pc/pdc;
+                                  }
+                              }
+                              if(ierror!=1) break;
+			}
+		   }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    static
+		    inline
+		    void newqua(const double a,
+		                const double b,
+				const double d,
+				const double fa,
+				const double fb,
+				const double fd,
+				double & c,
+				int32_t k) {
+
+			int32_t ierror;
+			double   a0,a1,a2,pc,pdc;
+			//! initialization
+                        //! find the coefficients of the quadratic polynomial
+                        ierror = 0;
+                        a0 = fa;
+                        a1 = (fb-fa)/(b-a);
+                        a2 = ((fd-fb)/(d-b)-a1)/(d-a);
+			while(true) {
+			        //! safeguard to avoid overflow
+                             if((a2==0.0) || (ierror==1)) {
+                                 c=a-a0/a1;
+                                 return
+                             }
+                             //! determine the starting point of newton steps
+                             if(isign(a2)*isign(fa) > 0)
+                                  c=a;
+                             else
+                                  c=b;
+                             //! start the safeguarded newton steps
+                            for(int32_t i = 1; i != k ++i) {
+                                 if(ierror==0) {
+                                     pc=a0+(a1+a2*(c-b))*(c-a);
+                                     pdc=a1+a2*((2.0_sp*c)-(a+b));
+                                     if(pdc==0.0f) 
+                                         ierror=1;
+                                     else
+                                         c=c-pc/pdc;
+                                  }
+                              }
+                              if(ierror!=1) break;
+			}
+		   }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    float pzero(const float a,
+		                const float b,
+				const float d,
+				const float e,
+				const float fa,
+				const float fb,
+				const float fd,
+				const float fe) {
+
+                       float c = 0.0f;
+		       float q11,q21,q31,d21,d31,q22,q32,d32,q33;
+		       q11 = (d-e)*fd/(fe-fd);
+                       q21 = (b-d)*fb/(fd-fb);
+                       q31 = (a-b)*fa/(fb-fa);
+                       d21 = (b-d)*fd/(fd-fb);
+                       d31 = (a-b)*fb/(fb-fa);
+
+                       q22 = (d21-q11)*fb/(fe-fb);
+                       q32 = (d31-q21)*fa/(fd-fa);
+                       d32 = (d31-q21)*fd/(fd-fa);
+                       q33 = (d32-q22)*fa/(fe-fa);
+
+                       c = a + q31+q32+q33;
+		       return (c);
+		   }
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endifcc optimization_level 3
+#endif
+                    __ATTR_ALWAYS_INLINE
+		    __ATTR_HOT__
+		    __ATTR_ALIGN__(32)
+		    __ATTR_PURE__
+		    static
+		    inline
+		    double pzero(const double a,
+		                const double b,
+				const double d,
+				const double e,
+				const double fa,
+				const double fb,
+				const double fd,
+				const double fe) {
+
+                       double c = 0.0;
+		       double q11,q21,q31,d21,d31,q22,q32,d32,q33;
+		       q11 = (d-e)*fd/(fe-fd);
+                       q21 = (b-d)*fb/(fd-fb);
+                       q31 = (a-b)*fa/(fb-fa);
+                       d21 = (b-d)*fd/(fd-fb);
+                       d31 = (a-b)*fb/(fb-fa);
+
+                       q22 = (d21-q11)*fb/(fe-fb);
+                       q32 = (d31-q21)*fa/(fd-fa);
+                       d32 = (d31-q21)*fd/(fd-fa);
+                       q33 = (d32-q22)*fa/(fe-fa);
+
+                       c = a + q31+q32+q33;
+		       return (c);
+		   }		   
+
+
+
 
 /*
                           Find a zero of the function \( f(x) \) in the given interval
@@ -3000,8 +3263,275 @@ namespace  gms {
                          fzero = fm;
 		  }
 
-		  
+/*
+  TOMS748 rootfinding method.
+!
+!  Finds either an exact solution or an approximate solution of the
+!  equation `f(x)=0` in the interval [ax,bx]. At the begining of each
+!  iteration, the current enclosing interval is recorded as [a0,b0].
+!  The first iteration is simply a secant step. Starting with the
+!  second iteration, three steps are taken in each iteration. First
+!  two steps are either quadratic interpolation or cubic inverse
+!  interpolation. The third step is a double-size secant step. If the
+!  diameter of the enclosing interval obtained after those three steps
+!  is larger than 0.5*(b0-a0), then an additional bisection step will
+!  be taken.
+!
+!### References
+!  * http://www.netlib.org/toms/748
+!  * G. E. Alefeld, F. A. Potra and Yixun Shi,
+!    "Algorithm 748: Enclosing Zeros of Continuous Functions",
+!    ACM Transactions on Mathematical Software,
+!    Vol. 21. No. 3. September 1995. Pages 327-344.
+*/		  
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+		     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void toms748(       float(*f)(float x),
+		                         const float ax,
+		                         const float bx,
+				         const float fax,
+				         const float fbx,
+				         float & xzero,
+				         float & fzero,
+				         int32_t & iflag) {
 
+                        float  a,b,fa,fb,c,u,fu,a0,b0,tol,d,fd,
+                               prof,e,fe,tmpc;
+			a = ax;
+                        b = bx;
+                        fa = fax;
+                        fb = fbx;
+                        //! initialization. set the number of iteration as 0.
+                        //! set dumb values for the variables "e" and "fe".
+                        e  = std::numeric_limits<float>::max();
+                        fe = e;
+                        //! iteration starts. the enclosing interval before executing the
+                        //! iteration is recorded as [a0, b0].
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                               a0 = a;
+                               b0 = b;
+                               //! calculates the termination criterion. stops the procedure if the
+                               //! criterion is satisfied.
+                               if(std::abs(fb) <= std::abs(fa)) 
+                                  tol = get_tolerance(b);
+                               else
+                                  tol = get_tolerance(a);
+                               if((b-a)<=tol) break;
+                               //! for the first iteration, secant step is taken.
+                               if(i == 1) {
+                                  c=a-(fa/(fb-fa))*(b-a);
+                                  //! call subroutine "bracket" to get a shrinked enclosing interval as
+                                  //! well as to update the termination criterion. stop the procedure
+                                  //! if the criterion is satisfied or the exact solution is obtained.
+                                  bracket(f,a,b,c,fa,fb,tol,d,fd);
+                                  if((std::abs(fa)<=FTOL4 || ((b-a)<=tol)) break;
+                                  continue;
+                               }     
+     
+                               //! starting with the second iteration, in the first two steps, either
+                               //! quadratic interpolation is used by calling the subroutine "newqua"
+                               //! or the cubic inverse interpolation is used by calling the subroutine
+                               //! "pzero". in the following, if "prof" is not equal to 0, then the
+                               //! four function values "fa", "fb", "fd", and "fe" are distinct, and
+                               // ! hence "pzero" will be called.
+                               prof=(fa-fb)*(fa-fd)*(fa-fe)*(fb-fd)*(fb-fe)*(fd-fe);
+                               if((i == 2) .or. (prof == 0.0f)) {
+                                   newqua(a,b,d,fa,fb,fd,c,2);
+			       }
+                               else {
+                                   c = pzero(a,b,d,e,fa,fb,fd,fe);
+                                   if ((c-a)*(c-b) >= 0.0f) 
+                                        newqua(a,b,d,fa,fb,fd,c,2);
+                               }    
+                              e=d;
+                              fe=fd;
+                              //! call subroutine "bracket" to get a shrinked enclosing interval as
+                              //! well as to update the termination criterion. stop the procedure
+                              //! if the criterion is satisfied or the exact solution is obtained.
+                              bracket(f,a,b,c,fa,fb,tol,d,fd);
+                              if((std::abs(fa)<=FTOL4) || ((b-a)<=tol)) break;
+                              prof=(fa-fb)*(fa-fd)*(fa-fe)*(fb-fd)*(fb-fe)*(fd-fe);
+                              if(prof == 0.0f) {
+                                 newqua(a,b,d,fa,fb,fd,c,3);
+			      }
+                              else {
+                                 c = pzero(a,b,d,e,fa,fb,fd,fe);
+                              if((c-a)*(c-b) >= 0.0f) 
+                                  newqua(a,b,d,fa,fb,fd,c,3);
+                              }     
+     
+                              //! call subroutine "bracket" to get a shrinked enclosing interval as
+                              //! well as to update the termination criterion. stop the procedure
+                              //! if the criterion is satisfied or the exact solution is obtained.
+                              bracket(f,a,b,c,fa,fb,tol,d,fd);
+                              if((std::abs(fa)<=FTOL4) || ((b-a)<=tol)) break;
+                              e=d;
+                              fe=fd;
+                              //! takes the double-size secant step.
+                             if(std::abs(fa) < std::abs(fb)) {
+                                 u=a;
+                                 fu=fa;
+			     }
+                             else {
+                                 u=b;
+                                 fu=fb;
+                             }
+                             c=u-2.0f*(fu/(fb-fa))*(b-a);
+                             if(std::abs(c-u) > (0.5f*(b-a))) 
+                             c=a+0.5f*(b-a);
+
+
+                             //subroutine bracket to get a shrinked enclosing interval as
+                             //! well as to update the termination criterion. stop the procedure
+                             //! if the criterion is satisfied or the exact solution is obtained.
+                              bracket(f,a,b,c,fa,fb,tol,d,fd);
+                             if((std::abs(fa)<=FTOL4) || ((b-a)<=tol)) break;
+                             //! determines whether an additional bisection step is needed. and takes
+                             //! it if necessary.
+                             if((b-a) < (0.5f*(b0-a0))) continue;
+                             e=d;
+                             fe=fd;
+                             //! call subroutine "bracket" to get a shrinked enclosing interval as
+                             //! well as to update the termination criterion. stop the procedure
+                             //! if the criterion is satisfied or the exact solution is obtained.
+                             tmpc = a+0.5f*(b-a);
+                             bracket(f,a,b,tmpc,fa,fb,tol,d,fd);
+                             if(std::abs(fa)<=FTOL4) || ((b-a)<=tol)) break;
+                             if(i == MAXITER) iflag = -2;    //! maximum iterations reached
+			 }
+			  xzero = a;
+                          fzero = fa;
+		  }
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3
+#pragma intel optimization_parameter target_arch=AVX
+#endif
+                     __ATTR_ALWAYS_INLINE
+		     __ATTR_HOT__
+		     __ATTR_ALIGN__(32)
+		     static
+		     inline
+		     void toms748(       double(*f)(double x),
+		                         const double ax,
+		                         const double bx,
+				         const double fax,
+				         const double fbx,
+				         double & xzero,
+				         double & fzero,
+				         int32_t & iflag) {
+
+                        double  a,b,fa,fb,c,u,fu,a0,b0,tol,d,fd,
+                               prof,e,fe,tmpc;
+			a = ax;
+                        b = bx;
+                        fa = fax;
+                        fb = fbx;
+                        //! initialization. set the number of iteration as 0.
+                        //! set dumb values for the variables "e" and "fe".
+                        e  = std::numeric_limits<double>::max();
+                        fe = e;
+                        //! iteration starts. the enclosing interval before executing the
+                        //! iteration is recorded as [a0, b0].
+			 for(int32_t i = 1; i != MAXITER; ++i) {
+                               a0 = a;
+                               b0 = b;
+                               //! calculates the termination criterion. stops the procedure if the
+                               //! criterion is satisfied.
+                               if(std::abs(fb) <= std::abs(fa)) 
+                                  tol = get_tolerance(b);
+                               else
+                                  tol = get_tolerance(a);
+                               if((b-a)<=tol) break;
+                               //! for the first iteration, secant step is taken.
+                               if(i == 1) {
+                                  c=a-(fa/(fb-fa))*(b-a);
+                                  //! call subroutine "bracket" to get a shrinked enclosing interval as
+                                  //! well as to update the termination criterion. stop the procedure
+                                  //! if the criterion is satisfied or the exact solution is obtained.
+                                  bracket(f,a,b,c,fa,fb,tol,d,fd);
+                                  if((std::abs(fa)<=FTOL8 || ((b-a)<=tol)) break;
+                                  continue;
+                               }     
+     
+                               //! starting with the second iteration, in the first two steps, either
+                               //! quadratic interpolation is used by calling the subroutine "newqua"
+                               //! or the cubic inverse interpolation is used by calling the subroutine
+                               //! "pzero". in the following, if "prof" is not equal to 0, then the
+                               //! four function values "fa", "fb", "fd", and "fe" are distinct, and
+                               // ! hence "pzero" will be called.
+                               prof=(fa-fb)*(fa-fd)*(fa-fe)*(fb-fd)*(fb-fe)*(fd-fe);
+                               if((i == 2) .or. (prof == 0.0)) {
+                                   newqua(a,b,d,fa,fb,fd,c,2);
+			       }
+                               else {
+                                   c = pzero(a,b,d,e,fa,fb,fd,fe);
+                                   if ((c-a)*(c-b) >= 0.0f) 
+                                        newqua(a,b,d,fa,fb,fd,c,2);
+                               }    
+                              e=d;
+                              fe=fd;
+                              //! call subroutine "bracket" to get a shrinked enclosing interval as
+                              //! well as to update the termination criterion. stop the procedure
+                              //! if the criterion is satisfied or the exact solution is obtained.
+                              bracket(f,a,b,c,fa,fb,tol,d,fd);
+                              if((std::abs(fa)<=FTOL8) || ((b-a)<=tol)) break;
+                              prof=(fa-fb)*(fa-fd)*(fa-fe)*(fb-fd)*(fb-fe)*(fd-fe);
+                              if(prof == 0.0) {
+                                 newqua(a,b,d,fa,fb,fd,c,3);
+			      }
+                              else {
+                                 c = pzero(a,b,d,e,fa,fb,fd,fe);
+                              if((c-a)*(c-b) >= 0.0f) 
+                                  newqua(a,b,d,fa,fb,fd,c,3);
+                              }     
+     
+                              //! call subroutine "bracket" to get a shrinked enclosing interval as
+                              //! well as to update the termination criterion. stop the procedure
+                              //! if the criterion is satisfied or the exact solution is obtained.
+                              bracket(f,a,b,c,fa,fb,tol,d,fd);
+                              if((std::abs(fa)<=FTOL8) || ((b-a)<=tol)) break;
+                              e=d;
+                              fe=fd;
+                              //! takes the double-size secant step.
+                             if(std::abs(fa) < std::abs(fb)) {
+                                 u=a;
+                                 fu=fa;
+			     }
+                             else {
+                                 u=b;
+                                 fu=fb;
+                             }
+                             c=u-2.0*(fu/(fb-fa))*(b-a);
+                             if(std::abs(c-u) > (0.5*(b-a))) 
+                             c=a+0.5*(b-a);
+
+
+                             //subroutine bracket to get a shrinked enclosing interval as
+                             //! well as to update the termination criterion. stop the procedure
+                             //! if the criterion is satisfied or the exact solution is obtained.
+                             bracket(f,a,b,c,fa,fb,tol,d,fd);
+                             if((std::abs(fa)<=FTOL8) || ((b-a)<=tol)) break;
+                             //! determines whether an additional bisection step is needed. and takes
+                             //! it if necessary.
+                             if((b-a) < (0.5*(b0-a0))) continue;
+                             e=d;
+                             fe=fd;
+                             //! call subroutine "bracket" to get a shrinked enclosing interval as
+                             //! well as to update the termination criterion. stop the procedure
+                             //! if the criterion is satisfied or the exact solution is obtained.
+                             tmpc = a+0.5*(b-a);
+                             bracket(fa,b,tmpc,fa,fb,tol,d,fd);
+                             if(std::abs(fa)<=FTOL8) || ((b-a)<=tol)) break;
+                             if(i == MAXITER) iflag = -2;    //! maximum iterations reached
+			 }
+		  }
 				  
 
 				       
