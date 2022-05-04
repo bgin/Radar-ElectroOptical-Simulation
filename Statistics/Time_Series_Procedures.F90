@@ -9217,6 +9217,9 @@
 ! =========================================================================================
 !
     subroutine moddan_filter_rv( vec, smooth_param, sym, trend )
+           !dir$ attributes code_align : 32 :: moddan_filter_rv
+         !dir$ optimize: 3
+         !dir$ attributes optimization_parameter:TARGET_ARCH=skylake_avx512 :: moddan_filter_rv
 !
 ! Purpose
 ! _______
@@ -9282,6 +9285,8 @@
 ! USED MODULES
 ! ____________
 !
+    use Select_Parameters,  only : lgl, i4b, stnd
+    use omp_lib
     use Utilities,         only : merror, arth
     use Reals_Constants,   only : zero, half, one
     use Char_Constants,    only : tseries_error10, tseries_error20, tseries_error52
@@ -9304,12 +9309,13 @@
 !
     real(stnd)                       :: sym2, con, orig, slope, veci
     real(stnd), dimension(size(vec)) :: vec2
+    !dir$ attribute align : 64 :: vec2
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+!#ifndef _INTERNAL_PROC
+!#ifdef _OPENMP
     logical      :: test_par
-#endif
-#endif
+!#endif
+!#endif
 !
 !
 ! PARAMETERS
@@ -9368,8 +9374,8 @@
 !
 !   NOW, FILTER THE TIME SERIES.
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+!#ifndef _INTERNAL_PROC
+!#ifdef _OPENMP
     j1 = omp_get_num_procs()
     j2 = omp_get_max_threads()
     test_par = .not.( omp_in_parallel() )   .and.      &
@@ -9394,12 +9400,14 @@
 !
 !$OMP END SINGLE
 !
-!$OMP DO SCHEDULE(STATIC) 
+!$OMP DO SCHEDULE(STATIC,8) 
 !
             do i = 1_i4b, m
 !
                 veci = vec2(i)
 !
+                !dir$ assume_aligned vec2:64
+                !$omp simd simdlen(8) reduction(+:veci)
                 do j = 1_i4b, lim
 !
                     j1 = i - j
@@ -9434,8 +9442,8 @@
 !
     else
 !
-#endif
-#endif
+!#endif
+!#endif
 !
         do l = 1_i4b, nparam
 !
@@ -9481,11 +9489,11 @@
 !
         end do
 !
-#ifndef _INTERNAL_PROC
-#ifdef _OPENMP
+!#ifndef _INTERNAL_PROC
+!#ifdef _OPENMP
     end if
-#endif
-#endif
+!#endif
+!#endif
 !
 !   ADD MEAN, DRIFT OR LINEAR LEAST SQUARES LINE FROM THE SERIES IF NEEDED.
 !
@@ -9495,12 +9503,14 @@
 !
 !           ADD MEAN.
 !
+            !dir$ assume_aligned vec:64
             vec(:m) = vec(:m) + orig
 !
         case( -2_i4b )
 !
 !           ADD DRIFT.
 !         
+            !dir$ assume_aligned vec:64
             vec(:m) = vec(:m) + slope*arth( zero, one, m )           
 !
         case( -3_i4b )
