@@ -99,6 +99,10 @@ namespace file_info {
    #define USE_MMAP_1GiB 0
 #endif
 
+//SLEEF Libary SIMD functions usage
+#if !defined(USE_SLEEF_LIB)
+#define USE_SLEEF_LIB 1
+#endif
 // For Modified OpenBLAS kernels
 
 #define CONJ 
