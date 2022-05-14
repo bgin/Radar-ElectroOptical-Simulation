@@ -1,0 +1,529 @@
+
+#ifndef __GMS_RANGE_RATE_AVX512_HPP__
+#define __GMS_RANGE_RATE_AVX512_HPP__ 140520221111
+
+/*LICENSE:
+*
+*The source code is in the public domain and not licensed or under
+*copyright. The information and software may be used freely by the public.
+*As required by 17 U.S.C. 403, third parties producing copyrighted works
+*consisting predominantly of the material produced by U.S. government
+*agencies must provide notice with such work(s) identifying the U.S.
+*Government material incorporated and stating that such material is not
+*subject to copyright protection.
+*
+*Derived works shall not identify themselves in a manner that implies an
+*endorsement by or an affiliation with the Naval Research Laboratory.
+*
+*RECIPIENT BEARS ALL RISK RELATING TO QUALITY AND PERFORMANCE OF THE
+*SOFTWARE AND ANY RELATED MATERIALS, AND AGREES TO INDEMNIFY THE NAVAL
+*RESEARCH LABORATORY FOR ALL THIRD-PARTY CLAIMS RESULTING FROM THE ACTIONS
+*OF RECIPIENT IN THE USE OF THE SOFTWARE.
+@@Modified by Bernard Gingold, on 14-05-2022 11:11 +00200 (SAT 14 MAY 2022 11:11 GMT+2)
+  contact: beniekg@gmail.com
+*/
+
+namespace file_info {
+
+ const unsigned int gGMS_RANGE_RATE_AVX512_MAJOR = 1U;
+ const unsigned int gGMS_RANGE_RATE_AVX512_MINOR = 0U;
+ const unsigned int gGMS_RANGE_RATE_AVX512_MICRO = 0U;
+ const unsigned int gGMS_RANGE_RATE_AVX512_FULLVER =
+  1000U*gGMS_RANGE_RATE_AVX512_MAJOR+100U*gGMS_RANGE_RATE_AVX512_MINOR+10U*gGMS_RANGE_RATE_AVX512_MICRO;
+ const char * const pgGMS_RANGE_RATE_AVX512_CREATION_DATE = "14-05-2022 11:11 +00200 (SAT 14 MAY 2022 11:11 GMT+2)";
+ const char * const pgGMS_RANGE_RATE_AVX512_BUILD_DATE    = __DATE__ " " __TIME__ ;
+ const char * const pgGMS_RANGE_RATE_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+ const char * const pgGMS_RANGE_RATE_AVX512_SYNOPSIS      = "AVX512 based range-rate functions (vectorized)."
+
+
+}
+
+
+#include <immintrin.h>
+#include "GMS_config.h"
+
+
+namespace gms {
+
+         namespace math {
+
+/*GETRANGERATE2DGENCPP A C++ function to convert a Cartesian state in 2D
+ *        into a non-relativistic range rate, ignoring atmospheric effects.
+ *
+ *INPUTS: xTar The 4X1 Cartesian position and velocity vectors
+ *             [x;y;xDot;yDot].
+ *  useHalfRange A boolean value specifying whether the bistatic (round-
+ *             trip) range value (and hence the range rate) has been
+ *             divided by two. 
+ *         xTx The 4X1 [x;y;xDot;yDot] position and velocity vector of
+ *             the transmitter in global Cartesian coordinates.
+ *         xRx The 4X1 [x;y;xDot;yDot] position and velocity vector of
+ *             the receiver in global Cartesian coordinates.
+ *
+ *OUTPUTS: rr The range rate as a double.
+ *
+ *See the comments to the Matlab function getRangeRate for more information
+ *on how this function works.
+ *
+ *April 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+ *@@Modified by Bernard Gingold, on May 2022
+ **/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline     
+                      __m512d range_rate_2d_zmm8r8(const __m512d tar_x,
+		                                   const __m512d tar_y,
+						   const __m512d tar_xD,
+						   const __m512d tar_yD,
+						   const __m512d tx_x,
+						   const __m512d tx_y,
+						   const __m512d tx_xD,
+						   const __m512d tx_yD,
+						   const __m512d rx_x,
+						   const __m512d rx_y,
+						   const __m512d rx_xD,
+						   const __m512d rx_yD,
+						   const bool useHalfRange) {
+
+                        __m512d rr = _mm512_setzero_pd(); // return value i.e. rate-range
+			const __m512d half = _mm512_set1_pd(0.5);
+			__m512d dtr0,dtr1,dtl0,dtl1,mag;
+			__m512d t0,t1,t2,t3,t4;
+			dtr0 = _mm512_sub_pd(tar_x,rx_x);
+			dtr1 = _mm512_sub_pd(tar_y,rx_x);
+			mag  = _mm512_sqrt_pd(_mm512_add_pd(_mm512_mul_pd(dtr0,dtr0),
+			                                    _mm512_mul_pd(dtr1,dtr1)));
+		        dtr0 = _mm512_div_pd(dtr0,mag);
+			dtl0 = _mm512_sub_pd(tar_x,tx_x);
+			dtl1 = _mm512_sub_pd(tar_y,tx_x);
+			dtr1 = _mm512_div_pd(dtr1,mag);
+			mag  = _mm512_sqrt_pd(_mm512_add_pd(_mm512_mul_pd(dtl0,dtl0),
+			                                    _mm512_mul_pd(dtl1,dtl1)));
+		        dtl0 = _mm512_div_pd(dtl0,mag);
+			dtl1 = _mm512_div_pd(dtl1,mag);
+			t0   = _mm512_sub_pd(_mm512_mul_pd(dtr0,rx_xD),
+			                     _mm512_mul_pd(dtr1,rx_yD));
+			t1   = _mm512_sub_pd(_mm512_mul_pd(dtl0,tx_xD),
+			                     _mm512_mul_pd(dtl1,tx_yD));
+			t2   = _mm512_mul_pd(_mm512_add_pd(dtr0,dtl0),tar_xD);
+			t3   = _mm512_mul_pd(_mm512_add_pd(dtr1,dtl1),tar_yD);
+			t4   = _mm512_add_pd(t2,t3);
+			rr   = _mm512_sub_ps(t4,_mm512_sub_pd(t1,t0));
+		        if(useHalfRange) {
+                           rr = _mm512_mul_pd(rr,half);
+			}
+			return (rr);
+		   }
+
+
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline     
+                      __m512 range_rate_2d_zmm16r4(const __m512 tar_x,
+		                                   const __m512 tar_y,
+						   const __m512 tar_xD,
+						   const __m512 tar_yD,
+						   const __m512 tx_x,
+						   const __m512 tx_y,
+						   const __m512 tx_xD,
+						   const __m512 tx_yD,
+						   const __m512 rx_x,
+						   const __m512 rx_y,
+						   const __m512 rx_xD,
+						   const __m512 rx_yD,
+						   const bool useHalfRange) {
+
+                        __m512 rr = _mm512_setzero_ps(); // return value i.e. rate-range
+			const __m512 half = _mm512_set1_ps(0.5f);
+			__m512 dtr0,dtr1,dtl0,dtl1,mag;
+			__m512 t0,t1,t2,t3,t4;
+			dtr0 = _mm512_sub_ps(tar_x,rx_x);
+			dtr1 = _mm512_sub_ps(tar_y,rx_x);
+			mag  = _mm512_sqrt_ps(_mm512_add_ps(_mm512_mul_ps(dtr0,dtr0),
+			                                    _mm512_mul_ps(dtr1,dtr1)));
+		        dtr0 = _mm512_div_ps(dtr0,mag);
+			dtl0 = _mm512_sub_ps(tar_x,tx_x);
+			dtl1 = _mm512_sub_ps(tar_y,tx_x);
+			dtr1 = _mm512_div_ps(dtr1,mag);
+			mag  = _mm512_sqrt_ps(_mm512_add_ps(_mm512_mul_ps(dtl0,dtl0),
+			                                    _mm512_mul_ps(dtl1,dtl1)));
+		        dtl0 = _mm512_div_ps(dtl0,mag);
+			dtl1 = _mm512_div_ps(dtl1,mag);
+			t0   = _mm512_sub_ps(_mm512_mul_ps(dtr0,rx_xD),
+			                     _mm512_mul_ps(dtr1,rx_yD));
+			t1   = _mm512_sub_ps(_mm512_mul_ps(dtl0,tx_xD),
+			                     _mm512_mul_ps(dtl1,tx_yD));
+			t2   = _mm512_mul_ps(_mm512_add_ps(dtr0,dtl0),tar_xD);
+			t3   = _mm512_mul_ps(_mm512_add_ps(dtr1,dtl1),tar_yD);
+			t4   = _mm512_add_ps(t2,t3);
+			rr   = _mm512_sub_ps(t4,_mm512_sub_ps(t1,t0));
+			if(useHalfRange) {
+                           rr = _mm512_mul_ps(rr,half);
+			}
+			return (rr);
+		   }
+
+/*GETRANGERATE3DGENCPP A C++ function to convert a Cartesian state in 3D
+ *        into a non-relativistic range rate, ignoring atmospheric effects.
+ *
+ *INPUTS: xTar The 6X1 Cartesian position and velocity vectors
+ *             [x;y;z;xDot;yDot;zDot].
+ * useHalfRange A boolean value specifying whether the bistatic (round-
+ *             trip) range value (and hence the range rate) has been
+ *             divided by two. 
+ *         xTx The 6X1 [x;y;z;xDot;yDot;zDot] position and velocity
+ *             vector of the transmitter in global Cartesian coordinates.
+ *         xTx The 6X1 [x;y;z;xDot;yDot;zDot] position and velocity
+ *             vector of the receiver in global Cartesian coordinates.
+ *
+ *OUTPUTS: rr The range rate as a double.
+ *
+ *See the comments to the Matlab function getRangeRate for more information
+ *on how this function works.
+ *
+ *April 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+ *@@Modified by Bernard Gingold, on May 2022
+ **/
+		   
+				   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline     
+                      __m512d range_rate_3d_zmm8r8(const __m512d tar_x,
+		                                   const __m512d tar_y,
+						   const __m512d tar_z,
+						   const __m512d tar_xD,
+						   const __m512d tar_yD,
+						   const __m512d tar_zD,
+						   const __m512d tx_x,
+						   const __m512d tx_y,
+						   const __m512d tx_z,
+						   const __m512d tx_xD,
+						   const __m512d tx_yD,
+						   const __m512d tx_zD,
+						   const __m512d rx_x,
+						   const __m512d rx_y,
+						   const __m512d rx_z,
+						   const __m512d rx_xD,
+						   const __m512d rx_yD,
+						   const __m512d rx_zD,
+						   const bool useHalfRange) {
+
+                          __m512d rr = _mm512_setzero_pd(); // return value i.e. rate-range
+			  const __m512d half = _mm512_set1_pd(0.5);
+			  __m512d dtr0,dtr1,dtr2,dtl0,dtl1,dtl2,mag;
+		          __m512d t0,t1,t2,t3,t4,t5;
+			  dtr0 = _mm512_sub_pd(tar_x,rx_x);
+			  dtr1 = _mm512_sub_pd(tar_y,rx_y);
+			  dtr2 = _mm512_sub_pd(tar_z,rx_z);
+			  // Normalization
+			  mag = _mm512_fmadd_pd(dtr0,dtr0,
+			                        _mm512_fmadd_pd(dtr1,dtr1,
+						_mm512_fmadd_pd(dtr2,dtr2)));
+			  dtr0 = _mm512_div_pd(dtr0,mag);
+			  dtl0 = _mm512_sub_pd(tar_x,tx_x);
+			  dtr1 = _mm512_div_pd(dtr1,mag);
+			  dtl1 = _mm512_sub_pd(tar_y,tx_y);
+			  dtl2 = _mm512_sub_pd(tar_z,tx_z);
+			  dtr2 = _mm512_div_pd(dtr2,mag);
+			  // Normalization
+			  mag  = _mm512_fmadd_pd(dtl0,dtl0,
+			                        _mm512_fmadd_pd(dtl1,dtl1,
+						_mm512_fmadd_pd(dlr2,dtl2)));
+			  dtl0 = _mm512_div_pd(dtl0,mag);
+			  t0   = _mm512_fmsub_pd(dtr0,rx_xD,
+			                         _mm512_fmsub_pd(dtr1,rx_yD,
+						 _mm512_fmsub_pd(dtr2,rx_zD)));
+			  dtl1 = _mm512_div_pd(dtl1,mag);
+			  t1   = _mm512_fmsub_pd(dtl0,tx_xD,
+			                         _mm512_fmsub_pd(dtl1,tx_yD,
+						 _mm512_fmsub_pd(dtl2,tx_zD)));
+			  dtl2 = _mm512_div_pd(dtl2,mag);
+			  t2   = _mm512_mul_pd(_mm512_add_pd(dtr0,dtl0),tar_xD);
+			  t3   = _mm512_mul_pd(_mm512_add_pd(dtr1,dtl1),tar_yD);
+			  t4   = _mm512_mul_pd(_mm512_add_pd(dtr2,dtl2),tar_zD);
+			  t5   = _mm512_add_pd(t2,_mm512_add_pd(t3,t4));
+			  rr   = _mm512_sub_pd(t5,_mm512_sub_pd(t1,t0));
+			  if(useHalfRange) {
+                               rr = _mm512_mul_pd(rr,half);
+			  }
+			  return (rr);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline     
+                      __m512 range_rate_3d_zmm16r4(const __m512 tar_x,
+		                                   const __m512 tar_y,
+						   const __m512 tar_z,
+						   const __m512 tar_xD,
+						   const __m512 tar_yD,
+						   const __m512 tar_zD,
+						   const __m512 tx_x,
+						   const __m512 tx_y,
+						   const __m512 tx_z,
+						   const __m512 tx_xD,
+						   const __m512 tx_yD,
+						   const __m512 tx_zD,
+						   const __m512 rx_x,
+						   const __m512 rx_y,
+						   const __m512 rx_z,
+						   const __m512 rx_xD,
+						   const __m512 rx_yD,
+						   const __m512 rx_zD,
+						   const bool useHalfRange) {
+
+                          __m512 rr = _mm512_setzero_ps(); // return value i.e. rate-range
+			  const __m512 half = _mm512_set1_ps(0.5f);
+			  __m512 dtr0,dtr1,dtr2,dtl0,dtl1,dtl2,mag;
+		          __m512 t0,t1,t2,t3,t4,t5;
+			  dtr0 = _mm512_sub_ps(tar_x,rx_x);
+			  dtr1 = _mm512_sub_ps(tar_y,rx_y);
+			  dtr2 = _mm512_sub_ps(tar_z,rx_z);
+			  // Normalization
+			  mag = _mm512_fmadd_ps(dtr0,dtr0,
+			                        _mm512_fmadd_ps(dtr1,dtr1,
+						_mm512_fmadd_ps(dtr2,dtr2)));
+			  dtr0 = _mm512_div_ps(dtr0,mag);
+			  dtl0 = _mm512_sub_ps(tar_x,tx_x);
+			  dtr1 = _mm512_div_ps(dtr1,mag);
+			  dtl1 = _mm512_sub_ps(tar_y,tx_y);
+			  dtl2 = _mm512_sub_ps(tar_z,tx_z);
+			  dtr2 = _mm512_div_ps(dtr2,mag);
+			  // Normalization
+			  mag  = _mm512_fmadd_ps(dtl0,dtl0,
+			                        _mm512_fmadd_ps(dtl1,dtl1,
+						_mm512_fmadd_ps(dlr2,dtl2)));
+			  dtl0 = _mm512_div_ps(dtl0,mag);
+			  t0   = _mm512_fmsub_ps(dtr0,rx_xD,
+			                         _mm512_fmsub_ps(dtr1,rx_yD,
+						 _mm512_fmsub_ps(dtr2,rx_zD)));
+			  dtl1 = _mm512_div_ps(dtl1,mag);
+			  t1   = _mm512_fmsub_ps(dtl0,tx_xD,
+			                         _mm512_fmsub_ps(dtl1,tx_yD,
+						 _mm512_fmsub_ps(dtl2,tx_zD)));
+			  dtl2 = _mm512_div_ps(dtl2,mag);
+			  t2   = _mm512_mul_ps(_mm512_add_ps(dtr0,dtl0),tar_xD);
+			  t3   = _mm512_mul_ps(_mm512_add_ps(dtr1,dtl1),tar_yD);
+			  t4   = _mm512_mul_ps(_mm512_add_ps(dtr2,dtl2),tar_zD);
+			  t5   = _mm512_add_ps(t2,_mm512_add_ps(t3,t4));
+			  rr   = _mm512_sub_ps(t5,_mm512_sub_ps(t1,t0));
+			  if(useHalfRange) {
+                               rr = _mm512_mul_ps(rr,half);
+			  }
+			  return (rr);
+		    }
+
+/*A C++-only implementations of a functions for computing the gradient of
+ *bistatic range.  See the Matlab equivalents for more comments.
+ *
+*February 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+**@@Modified by Bernard Gingold, on May 2022
+**/
+/*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline  
+                      __m512d range_grad_zmm8r8(const __m512d p,
+					        const __m512d Tx,
+					        const __m512d Rx,
+					        const bool useHalfRange) {
+
+			  const __m512d half = _mm512_set1_pd(0.5);
+			  __m512d temp,vnorm,J;
+			  double norm        = 0.0;
+			  //deltaTx=x-lTx;
+			  temp  = _mm512_sub_pd(p,Tx);
+			  norm  = _mm512_reduce_add_pd(_mm512_mul_pd(temp,temp));
+			  vnorm = _mm512_set1_pd(norm);
+			  vnorm = _mm512_sqrt_pd(vnorm);
+			  //deltaTx.'/norm(deltaTx)
+			  J     = _mm512_div_pd(temp,vnorm);
+			  // eltaRx=x-lRx;
+			  temp  = _mm512_sub_pd(p,Rx);
+			  norm  = 0.0;
+			  vnorm = _mm512_setzero_pd();
+			  norm  = _mm512_reduce_add_pd(_mm512_mul_pd(temp,temp));
+			  vnorm = _mm512_set1_pd(norm);
+			  vnorm = _mm512_sqrt_pd(vnorm);
+			  ////deltaTx=x-lTx;
+			  J     = _mm512_add_pd(J,_mm512_div_pd(temp,vnorm));
+			  if(useHalfRange) {
+                             J  = _mm512_mul_pd(J,half);
+			  }
+			  return (J);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline  
+                      __m512 range_grad_zmm16r4(const __m512 p,
+					        const __m512 Tx,
+					        const __m512 Rx,
+					        const bool useHalfRange) {
+
+			  const __m512 half = _mm512_set1_ps(0.5f);
+			  __m512 temp,vnorm,J;
+			  float norm        = 0.0f;
+			  //deltaTx=x-lTx;
+			  temp  = _mm512_sub_ps(p,Tx);
+			  norm  = _mm512_reduce_add_ps(_mm512_mul_ps(temp,temp));
+			  vnorm = _mm512_set1_ps(norm);
+			  vnorm = _mm512_sqrt_ps(vnorm);
+			  //deltaTx.'/norm(deltaTx)
+			  J     = _mm512_div_ps(temp,vnorm);
+			  // eltaRx=x-lRx;
+			  temp  = _mm512_sub_ps(p,Rx);
+			  norm  = 0.0f;
+			  vnorm = _mm512_setzero_ps();
+			  norm  = _mm512_reduce_add_ps(_mm512_mul_ps(temp,temp));
+			  vnorm = _mm512_set1_ps(norm);
+			  vnorm = _mm512_sqrt_ps(vnorm);
+			  ////deltaTx=x-lTx;
+			  J     = _mm512_add_ps(J,_mm512_div_ps(temp,vnorm));
+			  if(useHalfRange) {
+                             J  = _mm512_mul_ps(J,half);
+			  }
+			  return (J);
+		    }
+
+/**RANGEHESSIANCPP A C++-only implementations of a function for computing
+ *the Hessian of bistatic range.  See the Matlab equivalent for more
+ *comments.
+ *
+ *June 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+ *@@Modified by Bernard Gingold, on May 2022
+ */
+/*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
+		    
+                      
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline  
+                      __m512d range_hessian_1d_zmm8r8() {
+                         __m512d H = _mm512_setzero_pd();
+			 return (H);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline  
+                      __m512 range_hessian_1d_zmm16r4() {
+                         __m512 H = _mm512_setzero_ps();
+			 return (H);
+		     }
+
+#include "GMS_simd_utils.hpp"
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void range_hessian_2d_zmm8r8(__m512d &H_0,
+		                                   __m512d &H_1,
+						   __m512d &H_2,
+						   __m512d &H_3,
+						   const __m512d x_0,
+						   const __m512d x_1,
+						   const __m512d x_2,
+						   const bool useHalfRange) {
+
+			   const __m512d _2   = _mm512_set1_pd(2.0);
+			   const __m512d _1   = _mm512_set1_pd(1.0);
+			   const __m512d xC2  = _mm512_mul_pd(x_0,x_0);
+			   const __m512d yC2  = _mm512_mul_pd(x_1,x_1);
+			   const __m512d r    = _mm512_sqrt_pd(_mm512_add_pd(xC2,yC2));
+			   const __m512d r3   = _mm512_mul_pd(r,_mm512_mul_pd(r,r));
+			   const __m512d invr = _mm512_div_pd(_1,r);
+			   H_0                = _mm512_add_pd(_mm512_div_pd(zmm8r8_negate(xC2),
+			                                                    r3),invr);
+			   H_1                = _mm512_div_pd(_mm512_mul_pd(zmm8r8_negate(x_0),
+			                                                    x_1),r3);
+			   H_2                = H1;
+			   H_3                = _mm512_add_pd(_mm512_div_pd(zmm8r8_negate(yC2),
+			                                                    r3),invr);
+			   if(useHalfRange) {
+                              H_0 = _mm512_mul_pd(H_0,_2);
+			      H_1 = _mm512_mul_pd(H_1,_2);
+			      H_2 = _mm512_mul_pd(H_2,_2);
+			      H_3 = _mm512_mul_pd(H_3,_2);
+			   }
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void range_hessian_2d_zmm16r4(__m512 &H_0,
+		                                    __m512 &H_1,
+						    __m512 &H_2,
+						    __m512 &H_3,
+						   const __m512 x_0,
+						   const __m512 x_1,
+						   const __m512 x_2,
+						   const bool useHalfRange) {
+
+			   const __m512 _2   = _mm512_set1_ps(2.0f);
+			   const __m512 _1   = _mm512_set1_ps(1.0f);
+			   const __m512 xC2  = _mm512_mul_ps(x_0,x_0);
+			   const __m512 yC2  = _mm512_mul_ps(x_1,x_1);
+			   const __m512 r    = _mm512_sqrt_ps(_mm512_add_ps(xC2,yC2));
+			   const __m512 r3   = _mm512_mul_ps(r,_mm512_mul_ps(r,r));
+			   const __m512 invr = _mm512_div_ps(_1,r);
+			   H_0                = _mm512_add_ps(_mm512_div_ps(zmm16r4_negate(xC2),
+			                                                    r3),invr);
+			   H_1                = _mm512_div_ps(_mm512_mul_ps(zmm16r4_negate(x_0),
+			                                                    x_1),r3);
+			   H_2                = H1;
+			   H_3                = _mm512_add_ps(_mm512_div_ps(zmm16r4_negate(yC2),
+			                                                    r3),invr);
+			   if(useHalfRange) {
+                              H_0 = _mm512_mul_ps(H_0,_2);
+			      H_1 = _mm512_mul_ps(H_1,_2);
+			      H_2 = _mm512_mul_ps(H_2,_2);
+			      H_3 = _mm512_mul_ps(H_3,_2);
+			   }
+		    }
+
+		    
+		      
+ 
+      }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+#endif /*__GMS_RANGE_RATE_AVX512_HPP__*/
