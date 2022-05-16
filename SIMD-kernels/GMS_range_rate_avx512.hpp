@@ -907,11 +907,422 @@ namespace gms {
 		    }
 
  
-		    
+/*CART2RUVGENCPP A C++ function to convert a Cartesian point into range,
+ *           and direction cosines, possibly including the w component.
+ *
+ *INPUTS: retData A pointer to an array of doubles with 3 elements to
+ *                hold the result in [r;u;v] order or with 4 elements if
+ *                includeW is true to hold [r;u;v;w].
+ *             zC The 3X1 Cartesian points [x;y;z] to be converted.
+ *   useHalfRange A boolean value specifying whether the bistatic (round-
+ *                trip) range value has been divided by two. 
+ *            zTx The 3X1 [x;y;z] location vector of the transmitter in
+ *                global Cartesian coordinates.
+ *            zRx The 3X1 [x;y;z] location vector of the receiver in global
+ *                Cartesian coordinates.
+ *             M  A 3X3 rotation matrices to go from the alignment of the
+ *                global coordinate system to that at the receiver. It is
+ *                stored one columns after the other, consistent with how
+ *                Matlab indexes matrices.
+ *       includeW A boolean value indicating whether retData has space for
+ *                a fourth component and the fourth component should be
+ *                included.
+ *
+ *OUTPUTS: None. The results are placed in retData.
+ *
+ *See the comments to the Matlab function Cart2ruv for more information
+ *on how this function works.
+ *
+ *April 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+ *@@Modified by Bernard Gingold, on May 2022
+ **/
 
-		    
-		      
-		      
+	 	    
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_ruv_zmm8r8(__m512d &r,
+		                              __m512d &u,
+					      __m512d &v,
+					      __m512d &w,
+					      const __m512d C_x,
+					      const __m512d C_y,
+					      const __m512d C_z,
+					      const __m512d T_x,
+					      const __m512d T_y,
+					      const __m512d T_z,
+					      const __m512d R_x,
+					      const __m512d R_y,
+					      const __m512d R_z,
+					      const __m512d * __restrict __ATTR_ALIGN__(64) M, //flattened 3x3 matrix
+					      const bool useHalfRange) {
+
+                          __m512d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512d r1,r2;
+			  __m512d diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m512d M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_pd(C_x,R_x);
+			  const __m512d M1 = M[1];
+			  diff1 = _mm512_sub_pd(C_y,R_y);
+			  const __m512d M2 = M[2];
+			  diff2 = _mm512_sub_pd(C_z,R_z);
+			  const __m512d M3 = M[3];
+			  diff3 = _mm512_sub_pd(T_x,R_x);
+			  const __m512d M4 = M[4];
+			  diff4 = _mm512_sub_pd(T_y,R_y);
+			  const __m512d M5 = M[5];
+			  diff5 = _mm512_sub_pd(T_z,R_z);
+			  const __m512d M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_pd(M0,diff3,_mm512_fmadd_pd(M3,diff4,_mm512_mul_pd(M6,diff5)));
+			  CL0   = _mm512_fmadd_pd(M0,diff0,_mm512_fmadd_pd(M3,diff1,_mm512_mul_pd(M6,diff2)));
+			  const __m512d M7 = M[7];
+			  CL1   = _mm512_fmadd_pd(M1,diff0,_mm512_fmadd_pd(M4,diff1,_mm512_mul_pd(M7,diff2)));
+			  TxL1  = _mm512_fmadd_pd(M1,diff3,_mm512_fmadd_pd(M4,diff4,_mm512_mul_pd(M7,diff5)));
+			  const __m512d M8 = M[8];
+			  CL2   = _mm512_fmadd_pd(M2,diff0,_mm512_fmadd_pd(M5,diff1,_mm512_mul_pd(M8,diff2)));
+			  TxL2  = _mm512_fmadd_pd(M2,diff3,_mm512_fmadd_pd(M5,diff4,_mm512_mul_pd(M8,diff5)));
+			  ///Receiver to target.
+			  __m512d sarg = _mm512_fmadd_pd(CL0,CL0,_mm512_fmadd_pd(CL1,CL1,_mm512_mul_pd(CL2,CL2)));
+			  r1    = _mm512_sqrt_pd(sarg);
+			  diff0 = _mm512_sub_pd(CL0,TxL0);
+			  diff1 = _mm512_sub_pd(CL1,TxL1);
+			  u     = _mm512_div_pd(CL0,r1);
+			  diff2 = _mm512_sub_pd(CL2,TxL2);
+			  w     = _mm512_div_pd(CL2,r1);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_pd(diff0,diff0,_mm512_fmadd_pd(diff1,diff1,_mm512_mul_pd(diff2,diff2)));
+			  r2    = _mm512_sqrt_pd(sarg);
+			  r     = _mm512_add_pd(r1,r2);
+			  v     = _mm512_div_pd(CL1,r1);
+			  if(useHalfRange) {
+                             const __m512d _0_5 = _mm512_set1_pd(0.5);
+			     r  = _mm512_mul_pd(r,_0_5);
+			  }
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_ruv_zmm16r4(__m512 &r,
+		                               __m512 &u,
+					       __m512 &v,
+					       __m512 &w,
+					      const __m512 C_x,
+					      const __m512 C_y,
+					      const __m512 C_z,
+					      const __m512 T_x,
+					      const __m512 T_y,
+					      const __m512 T_z,
+					      const __m512 R_x,
+					      const __m512 R_y,
+					      const __m512 R_z,
+					      const __m512 * __restrict __ATTR_ALIGN__(64) M, //flattened 3x3 matrix
+					      const bool useHalfRange) {
+
+                          __m512 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512 r1,r2;
+			  __m512 diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m512 M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_ps(C_x,R_x);
+			  const __m512 M1 = M[1];
+			  diff1 = _mm512_sub_ps(C_y,R_y);
+			  const __m512 M2 = M[2];
+			  diff2 = _mm512_sub_ps(C_z,R_z);
+			  const __m512 M3 = M[3];
+			  diff3 = _mm512_sub_ps(T_x,R_x);
+			  const __m512 M4 = M[4];
+			  diff4 = _mm512_sub_ps(T_y,R_y);
+			  const __m512 M5 = M[5];
+			  diff5 = _mm512_sub_ps(T_z,R_z);
+			  const __m512 M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_ps(M0,diff3,_mm512_fmadd_ps(M3,diff4,_mm512_mul_ps(M6,diff5)));
+			  CL0   = _mm512_fmadd_ps(M0,diff0,_mm512_fmadd_ps(M3,diff1,_mm512_mul_ps(M6,diff2)));
+			  const __m512 M7 = M[7];
+			  CL1   = _mm512_fmadd_ps(M1,diff0,_mm512_fmadd_ps(M4,diff1,_mm512_mul_ps(M7,diff2)));
+			  TxL1  = _mm512_fmadd_ps(M1,diff3,_mm512_fmadd_ps(M4,diff4,_mm512_mul_ps(M7,diff5)));
+			  const __m512 M8 = M[8];
+			  CL2   = _mm512_fmadd_ps(M2,diff0,_mm512_fmadd_ps(M5,diff1,_mm512_mul_ps(M8,diff2)));
+			  TxL2  = _mm512_fmadd_ps(M2,diff3,_mm512_fmadd_ps(M5,diff4,_mm512_mul_ps(M8,diff5)));
+			  ///Receiver to target.
+			  __m512 sarg = _mm512_fmadd_ps(CL0,CL0,_mm512_fmadd_ps(CL1,CL1,_mm512_mul_ps(CL2,CL2)));
+			  r1    = _mm512_sqrt_ps(sarg);
+			  diff0 = _mm512_sub_ps(CL0,TxL0);
+			  diff1 = _mm512_sub_ps(CL1,TxL1);
+			  u     = _mm512_div_ps(CL0,r1);
+			  diff2 = _mm512_sub_ps(CL2,TxL2);
+			  w     = _mm512_div_ps(CL2,r1);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_ps(diff0,diff0,_mm512_fmadd_ps(diff1,diff1,_mm512_mul_ps(diff2,diff2)));
+			  r2    = _mm512_sqrt_ps(sarg);
+			  r     = _mm512_add_ps(r1,r2);
+			  v     = _mm512_div_ps(CL1,r1);
+			  if(useHalfRange) {
+                             const __m512 _0_5 = _mm512_set1_ps(0.5f);
+			     r  = _mm512_mul_ps(r,_0_5);
+			  }
+		     }
+
+
+		     
+/*CART2SPHEREGENCPP A C++ function to convert Cartesian points to bistatic
+ *            range, azimuth and elevation.
+ *
+ *INPUTS: retData A pointer to an array of doubles with 3 elements to
+ *                hold the result in [range;azimuth;elevation]. order.
+ *     cartPoints A pointer to the 3X1 Cartesian points [x;y;z] to be
+ *                converted.
+ *     systemType An integer specifying the axis from which the angles are
+ *                measured. Possible values are
+ *                0 Azimuth is measured counterclockwise from the x-axis in
+ *                  the x-y plane. Elevation is measured up from the x-y
+ *                  plane (towards the z-axis). This is consistent with
+ *                  common spherical coordinate systems for specifying
+ *                  longitude (azimuth) and geocentric latitude
+ *                  (elevation).
+ *                1 Azimuth is measured counterclockwise from the z-axis in
+ *                  the z-x plane. Elevation is measured up from the z-x
+ *                  plane (towards the y-axis). This is consistent with
+ *                  some spherical coordinate systems that use the z-axis
+ *                  as the boresight direction of the radar.
+ *                2 This is the same as 0 except instead of being given
+ *                  elevation, one desires the angle away from the z-axis,
+ *                  which is (pi/2-elevation).
+ *                3 This is the same as 0 except azimuth is measured
+ *                  clockwise from the y-axis in the x-y plane instead of
+ *                  counterclockwise from the x-axis. This coordinate
+ *                  system often arises when given "bearings" in a local
+ *                  East-North-Up coordinate system, where the bearing
+ *                  directions are measured East of North.
+ *   useHalfRange A boolean value specifying whether the bistatic (round-
+ *                trip) range value has been divided by two. 
+ *            zTx The 3X1 [x;y;z] location vector of the transmitter in
+ *                global Cartesian coordinates.
+ *            zRx The 3X1 [x;y;z] location vector of the receiver in global
+ *                Cartesian coordinates.
+ *             M  A 3X3  rotation matrices to go from the alignment of the
+ *                global coordinate system to that at the receiver. It is
+ *                stored one columns after the other, consistent with how
+ *                Matlab indexes matrices.
+ *
+ *OUTPUTS: None. The results are placed in retData.
+ *
+ *See the comments to the Matlab function Cart2Sphere for more information
+ *on how this function works.
+ *
+ *April 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+ *@@Modified by Bernard Gingold, on May 2022
+ **/
+
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_sphere_zmm8r8(__m512d &range,
+		                                 __m512d &az,
+						 __m512d &elev,
+						 const __m512d C_x,
+						 const __m512d C_y,
+						 const __m512d C_z,
+						 const __m512d T_x,
+						 const __m512d T_y,
+						 const __m512d T_z,
+						 const __m512d R_x,
+						 const __m512d R_y,
+						 const __m512d R_z,
+						 const __m512d * __restrict __ATTR_ALIGN__(64) M,
+						 const int sysType,
+						 const bool useHalfRange) {
+
+			  const __m512d _0   = _mm512_setzero_pd();
+			  const __m512d _0_5 = _mm512_set1_pd(0.5);
+                          __m512d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512d diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m512d r1,r2;
+			  const __m512d M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_pd(C_x,R_x);
+			  const __m512d M1 = M[1];
+			  diff1 = _mm512_sub_pd(C_y,R_y);
+			  const __m512d M2 = M[2];
+			  diff2 = _mm512_sub_pd(C_z,R_z);
+			  const __m512d M3 = M[3];
+			  diff3 = _mm512_sub_pd(T_x,R_x);
+			  const __m512d M4 = M[4];
+			  diff4 = _mm512_sub_pd(T_y,R_y);
+			  const __m512d M5 = M[5];
+			  diff5 = _mm512_sub_pd(T_z,R_z);
+			  const __m512d M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_pd(M0,diff3,_mm512_fmadd_pd(M3,diff4,_mm512_mul_pd(M6,diff5)));
+			  CL0   = _mm512_fmadd_pd(M0,diff0,_mm512_fmadd_pd(M3,diff1,_mm512_mul_pd(M6,diff2)));
+			  const __m512d M7 = M[7];
+			  CL1   = _mm512_fmadd_pd(M1,diff0,_mm512_fmadd_pd(M4,diff1,_mm512_mul_pd(M7,diff2)));
+			  TxL1  = _mm512_fmadd_pd(M1,diff3,_mm512_fmadd_pd(M4,diff4,_mm512_mul_pd(M7,diff5)));
+			  const __m512d M8 = M[8];
+			  CL2   = _mm512_fmadd_pd(M2,diff0,_mm512_fmadd_pd(M5,diff1,_mm512_mul_pd(M8,diff2)));
+			  TxL2  = _mm512_fmadd_pd(M2,diff3,_mm512_fmadd_pd(M5,diff4,_mm512_mul_pd(M8,diff5)));
+			  ///Receiver to target.
+			  __m512d sarg = _mm512_fmadd_pd(CL0,CL0,_mm512_fmadd_pd(CL1,CL1,_mm512_mul_pd(CL2,CL2)));
+			  r1    = _mm512_sqrt_pd(sarg);
+			  diff0 = _mm512_sub_pd(CL0,TxL0);
+			  diff1 = _mm512_sub_pd(CL1,TxL1);
+			  diff2 = _mm512_sub_pd(CL2,TxL2);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_pd(diff0,diff0,_mm512_fmadd_pd(diff1,diff1,_mm512_mul_pd(diff2,diff2)));
+			  r2    = _mm512_sqrt_pd(sarg);
+			  range = _mm512_add_pd(r1,r2);
+			  if(sysType==0||sysType==2||sysType==3) {
+                             __mmask8 m1,m2;
+			     m1 = _mm512_cmp_pd_mask(CL1,_0,_CMP_EQ_OQ);
+			     m2 = _mm512_cmp_pd_mask(CL0,_0,_CMP_EQ_OQ);
+			     if(m1 && m2) {
+                                az = _0;
+			     }
+			     else {
+                                az = _mm512_atan2_pd(CL1,CL0);
+			     }
+			     elev = _mm512_atan2_pd(CL2,_mm512_hypot_pd(CL0,CL1));
+			     if(sysType==2) {
+                                const __m512d pi2 = _mm512_set1_pd(1.5707963267948966192313);
+				elev              = _mm512_sub_pd(pi2,elev);
+			     }
+			     else if(sysType==3) {
+                                const __m512d pi2 = _mm512_set1_pd(1.5707963267948966192313);
+				az                = _mm512_sub_pd(pi2,az);
+			     }
+			  }
+			  else {
+                              __mmask8 m1,m2;
+			      m1 = _mm512_cmp_pd_mask(CL2,_0,_CMP_EQ_OQ);
+			      m2 = _mm512_cmp_pd_mask(CL0,_0,_CMP_EQ_OQ);
+			      if(m1 && m2) {
+                                 az = _0;
+			      }
+			      else {
+                                 az = _mm512_atan2_pd(CL0,CL2);
+			      }
+			      elev = _mm512_atan2_pd(CL1,_mm512_hypot_pd(CL2,CL0));
+			  }
+
+			  if(useHalfRange) {
+                             range = _mm512_mul_pd(range,_0_5);
+			  }
+		     }
+
+
+
+		     __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_sphere_zmm16r4(__m512 &range,
+		                                  __m512 &az,
+						  __m512 &elev,
+						  const __m512 C_x,
+						  const __m512 C_y,
+						  const __m512 C_z,
+						  const __m512 T_x,
+						  const __m512 T_y,
+						  const __m512 T_z,
+						  const __m512 R_x,
+						  const __m512 R_y,
+						  const __m512 R_z,
+						  const __m512 * __restrict __ATTR_ALIGN__(64) M,
+						  const int sysType,
+						  const bool useHalfRange) {
+
+			  const __m512 _0   = _mm512_setzero_ps();
+			  const __m512 _0_5 = _mm512_set1_ps(0.5f);
+                          __m512 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512 diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m512 r1,r2;
+			  const __m512 M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_ps(C_x,R_x);
+			  const __m512 M1 = M[1];
+			  diff1 = _mm512_sub_ps(C_y,R_y);
+			  const __m512 M2 = M[2];
+			  diff2 = _mm512_sub_ps(C_z,R_z);
+			  const __m512 M3 = M[3];
+			  diff3 = _mm512_sub_ps(T_x,R_x);
+			  const __m512 M4 = M[4];
+			  diff4 = _mm512_sub_ps(T_y,R_y);
+			  const __m512 M5 = M[5];
+			  diff5 = _mm512_sub_ps(T_z,R_z);
+			  const __m512 M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_ps(M0,diff3,_mm512_fmadd_ps(M3,diff4,_mm512_mul_ps(M6,diff5)));
+			  CL0   = _mm512_fmadd_ps(M0,diff0,_mm512_fmadd_ps(M3,diff1,_mm512_mul_ps(M6,diff2)));
+			  const __m512 M7 = M[7];
+			  CL1   = _mm512_fmadd_ps(M1,diff0,_mm512_fmadd_ps(M4,diff1,_mm512_mul_ps(M7,diff2)));
+			  TxL1  = _mm512_fmadd_ps(M1,diff3,_mm512_fmadd_ps(M4,diff4,_mm512_mul_ps(M7,diff5)));
+			  const __m512 M8 = M[8];
+			  CL2   = _mm512_fmadd_ps(M2,diff0,_mm512_fmadd_ps(M5,diff1,_mm512_mul_ps(M8,diff2)));
+			  TxL2  = _mm512_fmadd_ps(M2,diff3,_mm512_fmadd_ps(M5,diff4,_mm512_mul_ps(M8,diff5)));
+			  ///Receiver to target.
+			  __m512 sarg = _mm512_fmadd_ps(CL0,CL0,_mm512_fmadd_ps(CL1,CL1,_mm512_mul_ps(CL2,CL2)));
+			  r1    = _mm512_sqrt_ps(sarg);
+			  diff0 = _mm512_sub_ps(CL0,TxL0);
+			  diff1 = _mm512_sub_ps(CL1,TxL1);
+			  diff2 = _mm512_sub_ps(CL2,TxL2);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_ps(diff0,diff0,_mm512_fmadd_ps(diff1,diff1,_mm512_mul_ps(diff2,diff2)));
+			  r2    = _mm512_sqrt_ps(sarg);
+			  range = _mm512_add_ps(r1,r2);
+			  if(sysType==0||sysType==2||sysType==3) {
+                             __mmask16 m1,m2;
+			     m1 = _mm512_cmp_ps_mask(CL1,_0,_CMP_EQ_OQ);
+			     m2 = _mm512_cmp_ps_mask(CL0,_0,_CMP_EQ_OQ);
+			     if(m1 && m2) {
+                                az = _0;
+			     }
+			     else {
+                                az = _mm512_atan2_ps(CL1,CL0);
+			     }
+			     elev = _mm512_atan2_ps(CL2,_mm512_hypot_ps(CL0,CL1));
+			     if(sysType==2) {
+                                const __m512 pi2 = _mm512_set1_ps(1.5707963267948966192313f);
+				elev              = _mm512_sub_ps(pi2,elev);
+			     }
+			     else if(sysType==3) {
+                                const __m512 pi2 = _mm512_set1_ps(1.5707963267948966192313f);
+				az                = _mm512_sub_ps(pi2,az);
+			     }
+			  }
+			  else {
+                              __mmask16 m1,m2;
+			      m1 = _mm512_cmp_ps_mask(CL2,_0,_CMP_EQ_OQ);
+			      m2 = _mm512_cmp_ps_mask(CL0,_0,_CMP_EQ_OQ);
+			      if(m1 && m2) {
+                                 az = _0;
+			      }
+			      else {
+                                 az = _mm512_atan2_ps(CL0,CL2);
+			      }
+			      elev = _mm512_atan2_ps(CL1,_mm512_hypot_ps(CL2,CL0));
+			  }
+
+			  if(useHalfRange) {
+                             range = _mm512_mul_ps(range,_0_5);
+			  }
+		     }
+
+ 
  
       }
 
