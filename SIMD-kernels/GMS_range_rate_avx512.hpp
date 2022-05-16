@@ -632,7 +632,7 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void range_hess_hen_2d_zmm8r8(__m512d &H_0,
+		      void range_hess_gen_2d_zmm8r8(__m512d &H_0,
 		                                    __m512d &H_1,
 						    __m512d &H_2,
 						    __m512d &H_3,
@@ -687,7 +687,7 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void range_hess_hen_2d_zmm16r4(__m512 &H_0,
+		      void range_hess_gen_2d_zmm16r4(__m512 &H_0,
 		                                     __m512 &H_1,
 						     __m512 &H_2,
 						     __m512 &H_3,
