@@ -567,6 +567,53 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
+		      void range_hessian_3d_zmm8r8(__m512d * __restrict __ATTR_ALIGN__(64) H,
+		                                   const __m512d x_0,
+						   const __m512d x_1,
+						   const __m512d x_2,
+						   const bool useHalfRange) {
+                           __m512d invr,invr3;
+                           const __m512d _1   = _mm512_set1_pd(1.0);
+			   const __m512d xC2  = _mm512_mul_pd(x_0,x_0);
+			   const __m512d yC2  = _mm512_mul_pd(x_1,x_1);
+			   const __m512d zC2  = _mm512_mul_pd(x_2,x_2);
+			   const __m512d r    = _mm512_sqrt_pd(
+			                              _mm512_add_pd(xC2,_mm512_add_pd(yC2,zC2)));
+			   const __m512d r3   = _mm512_mul_pd(r,_mm512_mul_pd(r,r));
+			   invr               = _mm512_div_pd(_1,r);
+			   invr3              = _mm512_div_pd(_1,r3);
+			   H[0]                = _mm512_fmadd_pd(zmm8r8_negate(xC2),invr3,invr);
+			   H[1]                = _mm512_mul_pd(zmm8r8_negate(x_0),
+			                                      _mm512_mul_pd(x_1,invr3));
+			   H[2]                = _mm512_mul_pd(zmm8r8_negate(x_0),
+			                                      _mm512_mul_pd(x_2,invr3));
+			   H[3]                = H[1];
+			   H[4]                = _mm512_fmadd_pd(zmm8r8_negate(yC2),invr3,invr);
+			   H[5]                = _mm512_mul_pd(zmm8r8_negate(x_1),
+			                                      _mm512_mul_pd(x_2,invr3));
+			   H[6]                = H[2];
+			   H[7]                = H[5];
+			   H[8]                = _mm512_fmadd_pd(zmm8r8_negate(zC2),invr3,invr);
+			   if(useHalfRange) {
+                               H[0] = _mm512_add_pd(H[0],H[0]);
+			       H[1] = _mm512_add_pd(H[1],H[1]);
+			       H[2] = _mm512_add_pd(H[2],H[2]);
+			       H[3] = _mm512_add_pd(H[3],H[3]);
+			       H[4] = _mm512_add_pd(H[4],H[4]);
+			       H[5] = _mm512_add_pd(H[5],H[5]);
+			       H[6] = _mm512_add_pd(H[6],H[6]);
+			       H[7] = _mm512_add_pd(H[7],H[7]);
+			       H[8] = _mm512_add_pd(H[8],H[8]);
+			   }
+		    }
+
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
 		      void range_hessian_3d_zmm16r4(__m512 &H_0,
 		                                    __m512 &H_1,
 						    __m512 &H_2,
