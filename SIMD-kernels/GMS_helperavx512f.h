@@ -31,7 +31,7 @@
 #include <x86intrin.h>
 #include <stdint.h>
 #include "misc.h"
-#include "GMS_config.h"
+
 //#endif
 
 
