@@ -646,7 +646,476 @@ namespace gms {
 		   }
 
 
-		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void spher_ang_hess_zmm16r4(__m512 * __restrict __ATTR_ALIGN__(64) H,
+		                                  const __m512 G0,
+						  const __m512 G1,
+						  const __m512 G2,
+						  const int32_t sysType) {
+                         const __m512 x  = G0;
+			 const __m512 x2 = _mm512_mul_ps(x,x);
+			 const __m512 y  = G1;
+			 const __m512 y2 = _mm512_mul_ps(y,y);
+			 const __m512 z  = G2;
+			 const __m512 z2 = _mm512_mul_ps(z,z);
+			 const __m512 x4 = _mm512_mul_ps(x2,x2);
+			 
+			 if(sysType==0) {
+			    const __m512 _2 = _mm512_set1_ps(2.0f);
+			    const __m512 _3 = _mm512_set1_ps(3.0f);
+			    const __m512 _0 = _mm512_setzero_ps();
+                            __m512 rxy,r4,r4xy,rxy3;
+			    __m512 t0,t1,t2,t3,t4,t5,c0;
+			    r4xy = _mm512_add_ps(x2,y2);
+			    rxy  = _mm512_sqrt_ps(r4xy);
+			    r4   = _mm512_add_ps(r4xy,z2);
+			    r4   = _mm512_mul_ps(r4,r4);
+			    r4xy = _mm512_mul_ps(r4xy,r4xy);
+			    rxy3 = _mm512_mul_ps(rxy,_mm512_mul_pd(rxy,rxy));
+			    t0   = _mm512_mul_ps(rxy3,r4);
+			    c0   = _mm512_mul_ps(rxy,r4);
+			    H[0] = _mm512_div_ps(_mm512_mul_ps(_2,_mm512_mul_ps(x,y)),r4xy);
+			    H[4] = zmm16r4_negate(H[0]);
+			    H[8] = _0;
+			    H[3] = _mm512_div_ps(_mm512_sub_ps(y2,x2),r4xy);
+			    H[1] = H[3];
+			    H[6] = _0;
+			    H[2] = H[6];
+			    H[7] = _0;
+			    H[5] = H[7];
+			    t1   = _mm512_mul_ps(y2,_mm512_add_ps(y2,z2));
+			    t2   = _mm512_fmadd_ps(x2,y2,_mm512_mul_ps(_2,x4));
+			    H[9] = _mm512_div_ps(_mm512_mul_ps(z,_mm512_sub_ps(t1,t2)),t0);
+			    t3   = _mm512_mul_ps(x2,_mm512_sub_ps(z2,y2));
+			    t4   = _mm512_sub_ps(x4,_mm512_mul_ps(_2,_mm512_mul_ps(y2,y2)));
+			    H[13]= _mm512_div_ps(zmm16r4_negate(_mm512_mul_ps(z,_mm512_add_ps(t3,t4))),t0);
+			    H[17]= _mm512_div_ps(zmm16r4_negate(_mm512_mul_ps(_2,_mm512_mul_ps(rxy,z))),r4);
+			    t1   = _mm512_fmadd_ps(_mm512_mul_ps(_3,rxy),rxy,z2);
+			    t2   = _mm512_mul_ps(x,_mm512_mul_ps(y,z));
+			    H[12]= _mm512_div_ps(_mm512_mul_ps(t1,t2),t0);
+			    H[10]= H[12];
+			    t3   = _mm512_mul_ps(x,_mm512_sub_ps(_mm512_add_ps(x2,y2),z2));
+			    H[15]= _mm512_div_ps(zmm16r4_negate(t3),c0);
+			    H[11]= H[15];
+			    t4   = _mm512_mul_ps(y,_mm512_sub_ps(_mm512_add_ps(x2,y2),z2));
+			    H[16]= _mm512_div_ps(zmm16r4_negate(t4),c0);
+			    H[14]= H[16];
+			 }
+			 else if(sysType==1) {
+			    const __m512 _2 = _mm512_set1_ps(2.0f);
+			    const __m512 _3 = _mm512_set1_ps(3.0f);
+			    const __m512 _0 = _mm512_setzero_ps();
+                            __m512 x4,rxz,r4xz,rxz3,r4;
+			    __m512 c0,c1,c2,c3,c4,c5;
+			    x4   = _mm512_mul_ps(x2,x2);
+			    r4xz = _mm512_add_ps(x2,z2);
+			    rxz  = _mm512_sqrt_ps(r4xz);
+			    rxz3 = _mm512_mul_ps(rxz,_mm512_mul_ps(rxz,rxz));
+			    r4   = _mm512_add_ps(r4xz,y2);
+			    r4xz = _mm512_mul_ps(r4xz,r4xz);
+			    r4   = _mm512_mul_ps(r4,r4);
+			    c0   = _mm512_mul_ps(rxz3,r4);
+			    c5   = _mm512_mul_ps(rxz,r4);
+			    H[0] = _mm512_div_ps(zmm16r4_negate(_mm512_mul_ps(_2,_mm512_mul_ps(x,z))),r4xz);
+			    H[4] = _0;
+			    H[8] = _mm512_div_ps(_mm512_mul_ps(_2,_mm512_mul_ps(x,z)),r4xz);
+			    H[3] = _0;
+			    H[1] = H[3];
+			    H[6] = _mm512_div_ps(_mm512_sub_ps(x2,z2),r4xz);
+			    H[2] = H[6];
+			    H[7] = _0;
+			    H[5] = H[7];
+			    c1   = _mm512_mul_ps(z2,_mm512_add_ps(y2,z2));
+			    c2   = _mm512_fmadd_ps(_2,x4,_mm512_mul_ps(x2,z2));
+			    H[9] = _mm512_div_ps(_mm512_mul_ps(y,_mm512_sub_ps(c2,c1)),c0);
+			    H[13]= zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(_2,_mm512_mul_ps(y,rxz))),r4);
+			    c3   = _mm512_mul_ps(x2,_mm512_mul_ps(_mm512_add_ps(y,z),_mm512_sub_ps(y,z)));
+			    c4   = _mm512_fmsub_ps(x4,_2,_mm512_mul_ps(z2,z2));
+			    H[17]= zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(y,_mm512_add_ps(c3,c4))),c0);
+			    H[12]= zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(_mm512_add_ps(_mm512_sub_ps(x2,y2),z2)),c5));
+			    H[10]= H[12];
+			    c1   = _mm512_fmadd_ps(_3,x2,_mm512_fmadd_ps(_3,z2,y2));
+			    c2   = _mm512_mul_ps(x,_mm512_mul_ps(y,z));
+			    H[15]= _mm512_div_ps(_mm512_mul_ps(c1,c2),c0);
+			    H[11]= H[15];
+			    c3   = _mm512_mul_ps(z,_mm512_add_ps(_mm512_sub_ps(x2,y2),z2));
+			    H[16]= zmm16r4_negate(_mm512_div_ps(c3,c5));
+			    H[14]= H[16];
+			 }
+			 else if(sysType==3) {
+			    const __m512 _2 = _mm512_set1_ps(2.0f);
+			    const __m512 _3 = _mm512_set1_ps(3.0f);
+			    const __m512 _0 = _mm512_setzero_ps();
+			    __m512 rxy,r4,r4xy,rxy3;
+			    __m512 c0,c1,c2,c3,c4,c5;
+			    r4xy  = _mm512_add_ps(x2,y2);
+			    rxy   = _mm512_sqrt_ps(r4xy);
+			    r4    = _mm512_add_ps(r4xy,z2);
+			    r4    = _mm512_mul_ps(r4,r4);
+			    r4xy  = _mm512_mul_ps(r4xy,r4xy);
+			    rxy3  = _mm512_mul_ps(rxy,_mm512_mul_ps(rxy,rxy));
+			    c0    = _mm512_mul_ps(rxy3,r4);
+			    c5    = _mm512_mul_ps(rxy,r4);
+			    H[0]  = zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(_2,_mm512_mul_ps(x,y)),r4xy));
+			    H[4]  = H[0];
+			    H[8]  = _0;
+			    H[3]  = _mm512_div_ps(_mm512_mul_ps(_mm512_sub_ps(x,y),
+								_mm512_add_ps(x,y)),r4xy);
+			    H[1]  = H[3];
+			    H[6]  = H[0];
+			    H[2]  = H[6];
+			    H[7]  = _0;
+			    H[5]  = H[7];
+			    c1    = _mm512_mul_ps(y2,_mm512_add_ps(y2,z2));
+			    c2    = _mm512_fmadd_ps(_2,x4,_mm512_mul_ps(x2,y2));
+			    H[9]  = _mm512_div_ps(_mm512_mul_ps(z,_mm512_sub_ps(c2,c1)),c0);
+			    c3    = _mm512_mul_ps(x2,_mm512_sub_ps(z2,y2));
+			    c4    = _mm512_fmsub_ps(_2,_mm512_mul_ps(y2,y2),x4);
+			    H[13] = zmm16r4_negate(_mm512_div_ps(
+							_mm512_mul_ps(z,_mm512_add_ps(c3,c4))),c0);
+			    H[17] = zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(_2,
+								_mm512_mul_ps(rxy,z)),r4));
+			    c1    = _mm512_mul_ps(x,_mm512_mul_ps(y,z));
+			    c2    = _mm512_fmadd_ps(_3,_mm512_mul_ps(rxy,rxy),z2);
+			    H[12] = _mm512_div_ps(_mm512_mul_ps(c1,c2),c0);
+			    H[10] = H[12];
+			    c3    = _mm512_mul_ps(x,_mm512_sub_ps(
+			                                  _mm512_add_ps(x2,y2),z2));
+			    H[15] = zmm16r4_negate(_mm512_div_ps(c3,c5));
+			    H[11] = H[15];
+			    c4    = _mm512_mul_ps(y,_mm512_sub_ps(
+			                                  _mm512_add_ps(x2,y2),z2));
+			    H[16] = zmm16r4_negate(_mm512_div_ps(c4,c5));
+			    H[14] = H[16];
+				
+			 }
+			 else { // sysType == 2
+                            const __m512 _2 = _mm512_set1_ps(2.0f);
+			    const __m512 _3 = _mm512_set1_ps(3.0f);
+			    const __m512 _0 = _mm512_setzero_ps();
+			    __m512 r4xy,r4,rxy,x4,y4,rxy3;
+			    __m512 c0,c1,c2,c3,c4,c5;
+			    r4xy  = _mm512_add_ps(x2,y2);
+			    r4    = _mm512_add_ps(r4xy,z2);
+			    r4    = _mm512_mul_ps(r4,r4);
+			    rxy   = _mm512_sqrt_ps(r4xy);
+			    r4xy  = _mm512_mul_ps(r4xy,r4xy);
+			    rxy3  = _mm512_mul_ps(rxy,_mm512_mul_ps(rxy,rxy));
+			    x4    = _mm512_mul_ps(x2,x2);
+			    y4    = _mm512_mul_ps(y2,y2);
+			    c0    = _mm512_mul_ps(rxy3,r4);
+			    c5    = _mm512_mul_ps(rxy,r4);
+			    H[0]  = _mm512_div_ps(_mm512_mul_ps(_2,
+			                          _mm512_mul_ps(x,y)),r4xy);
+			    H[4]  = zmm16r4_negate(H[0]);
+			    H[8]  = _0;
+			    H[3]  = _mm512_div_ps(_mm512_sub_ps(y2,x2),r4xy);
+			    H[1]  = H[0];
+			    H[6]  = _0;
+			    H[2]  = H[6];
+			    H[7]  = _0;
+			    H[5]  = H[7];
+			    c1    = _mm512_fmsub_ps(zmm16r4_negate(_2),x4,_mm512_mul_ps(x2,y2));
+			    c2    = _mm512_fmadd_ps(y2,z2,y4);
+			    H[9]  = _mm512_div_ps(_mm512_mul_ps(z,_mm512_add_ps(c1,c2)),c0);
+			    c3    = _mm512_mul_ps(x2,_mm512_sub_ps(z2,y2));
+			    c4    = _mm512_sub_ps(x4,_mm512_mul_ps(_2,y4));
+			    H[13] = _mm512_div_ps(_mm512_mul_ps(z,_mm512_add_ps(c3,c4)),c0);
+			    H[17] = _mm512_div_ps(_mm512_mul_ps(_2,_mm512_mul_ps(rxy,z)),r4);
+			    c1    = _mm512_fmadd_ps(_3,_mm512_mul_ps(rxy,rxy),z2);
+			    c2    = _mm512_mul_ps(x,_mm512_mul_ps(y,z));
+			    H[12] = zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(c1,c2),c0));
+			    H[10] = H[12];
+			    H[15] = _mm512_div_ps(_mm512_mul_ps(x,_mm512_sub_ps(
+			                                          _mm512_add_ps(x2,y2),z2)),c5);
+			    H[11] = H[15];
+			    H[16] = _mm512_div_ps(_mm512_mul_ps(y,_mm512_sub_ps(
+			                                          _mm512_add_ps(x2,y2),z2)),c5);
+			    H[14] = H[16];
+			}
+		   }
+
+/*A C++-only implementations of functions for computing the gradient of
+*spherical azimuth and elevation angles. See the Matlab equivalent for
+*more comments.
+*
+*February 2017 David F. Crouse, Naval Research Laboratory, Washington D.C.
+**May  2022 Bernard Gingold, manually vectorized.
+**/
+/*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/		   
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void spher_ang_grad_zmm8r8(__m512d &Mat0,
+		                                 __m512d &Mat1,
+						 __m512d &Mat2,
+						 __m512d &Mat3,
+						 __m512d &Mat4,
+						 __m512d &Mat5,
+						 const __m512d G0,
+						 const __m512d G1,
+						 const __m512d G2,
+						 const __m512d Rx_x,
+						 const __m512d Rx_y,
+						 const __m512d Rx_z,
+						 const __m512d * __restrict __ATTR_ALIGN__(64) M,
+						 const int32_t sysType) {
+						 
+			  const __m512d _0 = _mm512_setzero_pd();
+                          __m512d J0,J1,J2,J3,J4,J;
+			  const __m512d M0    = M[0];
+			  const __m512d M1    = M[1];
+			  const __m512d temp0 = _mm512_sub_pd(G0,Rx_x);
+			  const __m512d M3    = M[3];
+			  const __m512d M4    = M[4];
+			  const __m512d temp1 = _mm512_sub_pd(G1,Rx_y);
+			  const __m512d M6    = M[6];
+			  const __m512d M7    = M[7];
+			  const __m512d temp2 = _mm512_sub_pd(G2,Rx_z);
+			  const __m512d x     = _mm512_fmadd_pd(M0,temp0,
+			                              _mm512_fmadd_pd(M3,temp1,
+						            _mm512_mul_pd(M6,temp2)));
+			  const __m512d M2    = M[2];
+			  const __m512d y     = _mm512_fmadd_pd(M1,temp0,
+			                              _mm512_fmadd_pd(M4,temp1,
+						            _mm512_mul_pd(M7,temp2)));
+			  const __m512d M5    = M[5];
+			  const __m512d M8    = M[8];
+			  const __m512d z     =  _mm512_fmadd_pd(M2,temp0,
+			                              _mm512_fmadd_pd(M5,temp1,
+						            _mm512_mul_pd(M8,temp2)));
+			  if(sysType==0) {
+                             const __m512d r2   = _mm512_fmadd_pd(x,x,
+			                               _mm512_fmadd_pd(y,y,
+						                 _mm512_mul_pd(z,z)));
+			     const __m512d sqrv = _mm512_fmadd_pd(x,x,
+			                                     _mm512_mul_pd(y,y));
+			     const __m512d sqrtv= _mm512_sqrt_pd(sqrv);
+			     const __m512d denom= _mm512_mul_pd(r2,sqrtv);
+			      //Derivatives with respect to x.
+			     J0 = zmm8r8_negate(_mm512_div_pd(y,sqrv));
+			     J1 = zmm8r8_negate(_mm512_div_pd(
+			                                  _mm512_mul_pd(x,z),denom));
+			      //Derivatives with respect to y.
+			     J2 = _mm512_div_pd(x,sqrv);
+			     J3 = zmm8r8_negate(_mm512_div_pd(
+			                                  _mm512_mul_pd(y,z),denom));
+			     //Derivatives with respect to z.
+			     J4 = _0;
+			     J5 = _mm512_div_pd(sqrtv,r2);
+			  }
+			  else if(sysType==2) {
+                             const __m512d r2   = _mm512_fmadd_pd(x,x,
+			                               _mm512_fmadd_pd(y,y,
+						                 _mm512_mul_pd(z,z)));
+			     const __m512d sqrv = _mm512_fmadd_pd(x,x,
+			                                     _mm512_mul_pd(y,y));
+			     const __m512d sqrtv= _mm512_sqrt_pd(sqrv);
+			     const __m512d denom= _mm512_mul_pd(r2,sqrtv);
+			     J0 = zmm8r8_negate(_mm512_div_pd(y,sqrv));
+			     J1 = _mm512_div_pd(_mm512_mul_pd(x,z),denom);
+			     J2 = _mm512_div_pd(x,sqrv);
+			     J3 = _mm512_div_pd(_mm512_mul_pd(y,z),denom);
+			     J4 = _0;
+			     J5 = zmm8r8_negate(_mm512_div_pd(sqrtv,r2));
+			  }
+			  else if(sysType==3) {
+                             const __m512d r2   = _mm512_fmadd_pd(x,x,
+			                               _mm512_fmadd_pd(y,y,
+						                 _mm512_mul_pd(z,z)));
+			     const __m512d sqrv = _mm512_fmadd_pd(x,x,
+			                                     _mm512_mul_pd(y,y));
+			     const __m512d sqrtv= _mm512_sqrt_pd(sqrv);
+			     J0 = _mm512_div_pd(y,sqrv);
+			     J1 = zmm8r8_negate(_mm512_div_pd(
+			                                  _mm512_mul_pd(x,z),denom));
+			     J2 = zmm8r8_negate(_mm512_div_pd(x,sqrv));
+			     J3 = zmm8r8_negate(_mm512_div_pd(
+			                                  _mm512_mul_pd(y,z),denom));
+			     J4 = _0;
+			     J5 = _mm512_div_pd(sqrtv,r2);
+			  }
+			  else { //sysType==1
+                             const __m512d r2   = _mm512_fmadd_pd(x,x,
+			                               _mm512_fmadd_pd(y,y,
+						                 _mm512_mul_pd(z,z)));
+			     const __m512d sqrv = _mm512_fmadd_pd(x,x,
+			                                     _mm512_mul_pd(y,y));
+			     const __m512d sqrtv= _mm512_sqrt_pd(sqrv);
+			     J0 = _mm512_div_pd(z,sqrv);
+			     J1 = zmm8r8_negate(_mm512_div_pd(
+			                                  _mm512_mul_pd(x,y),denom));
+			     J2 = _0;
+			     J3 = _mm512_div_pd(sqrtv,r2);
+			     J4 = zmm8r8_negate(_mm512_div_pd(x,sqrv));
+			     J5 = zmm8r8_negate(_mm512_div_pd(
+			                                  _mm512_mul_pd(z,y),denom));
+			  }
+
+			  //Rotate from local back to global coordinates.
+                          //J=J*M;
+			  Mat0 = _mm512_fmadd_pd(J0,M0,
+			                   _mm512_fmadd_pd(J2,M1,
+					              _mm512_mul_pd(J4,M2)));
+			  Mat1 = _mm512_fmadd_pd(J1,M0,
+			                   _mm512_fmadd_pd(J3,M1,
+					              _mm512_mul_pd(J5,M2)));
+			  Mat2 = _mm512_fmadd_pd(J0,M3,
+			                   _mm512_fmadd_pd(J2,M4,
+					              _mm512_mul_pd(J4,M5)));
+			  Mat3 = _mm512_fmadd_pd(J1,M3,
+			                   _mm512_fmadd_pd(J3,M4,
+					              _mm512_mul_pd(J5,M5)));
+			  Mat4 = _mm512_fmadd_pd(J0,M6,
+			                   _mm512_fmadd_pd(J2,M7,
+					              _mm512_mul_pd(J4,M8)));
+			  Mat5 = _mm512_fmadd_pd(J1,M6,
+			                   _mm512_fmadd_pd(J3,M7,
+					              _mm512_mul_pd(J5,M8)));
+			  
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void spher_ang_grad_zmm16r4(__m512 &Mat0,
+		                                  __m512 &Mat1,
+						  __m512 &Mat2,
+						  __m512 &Mat3,
+						  __m512 &Mat4,
+						  __m512 &Mat5,
+						  const __m512 G0,
+						  const __m512 G1,
+						  const __m512 G2,
+						  const __m512 Rx_x,
+						  const __m512 Rx_y,
+						  const __m512 Rx_z,
+						  const __m512 * __restrict __ATTR_ALIGN__(64) M,
+						  const int32_t sysType) {
+						 
+			  const __m512 _0 = _mm512_setzero_ps();
+                          __m512 J0,J1,J2,J3,J4,J;
+			  const __m512 M0    = M[0];
+			  const __m512 M1    = M[1];
+			  const __m512 temp0 = _mm512_sub_ps(G0,Rx_x);
+			  const __m512 M3    = M[3];
+			  const __m512 M4    = M[4];
+			  const __m512 temp1 = _mm512_sub_ps(G1,Rx_y);
+			  const __m512 M6    = M[6];
+			  const __m512 M7    = M[7];
+			  const __m512 temp2 = _mm512_sub_ps(G2,Rx_z);
+			  const __m512 x     = _mm512_fmadd_ps(M0,temp0,
+			                              _mm512_fmadd_ps(M3,temp1,
+						            _mm512_mul_ps(M6,temp2)));
+			  const __m512 M2    = M[2];
+			  const __m512 y     = _mm512_fmadd_ps(M1,temp0,
+			                              _mm512_fmadd_ps(M4,temp1,
+						            _mm512_mul_ps(M7,temp2)));
+			  const __m512 M5    = M[5];
+			  const __m512 M8    = M[8];
+			  const __m512 z     =  _mm512_fmadd_ps(M2,temp0,
+			                              _mm512_fmadd_ps(M5,temp1,
+						            _mm512_mul_ps(M8,temp2)));
+			  if(sysType==0) {
+                             const __m512 r2   = _mm512_fmadd_ps(x,x,
+			                               _mm512_fmadd_ps(y,y,
+						                 _mm512_mul_ps(z,z)));
+			     const __m512 sqrv = _mm512_fmadd_ps(x,x,
+			                                     _mm512_mul_ps(y,y));
+			     const __m512 sqrtv= _mm512_sqrt_ps(sqrv);
+			     const __m512 denom= _mm512_mul_ps(r2,sqrtv);
+			      //Derivatives with respect to x.
+			     J0 = zmm16r4_negate(_mm512_div_ps(y,sqrv));
+			     J1 = zmm16r4_negate(_mm512_div_ps(
+			                                  _mm512_mul_ps(x,z),denom));
+			      //Derivatives with respect to y.
+			     J2 = _mm512_div_ps(x,sqrv);
+			     J3 = zmm16r4_negate(_mm512_div_ps(
+			                                  _mm512_mul_ps(y,z),denom));
+			     //Derivatives with respect to z.
+			     J4 = _0;
+			     J5 = _mm512_div_ps(sqrtv,r2);
+			  }
+			  else if(sysType==2) {
+                             const __m512 r2   = _mm512_fmadd_ps(x,x,
+			                               _mm512_fmadd_ps(y,y,
+						                 _mm512_mul_ps(z,z)));
+			     const __m512 sqrv = _mm512_fmadd_ps(x,x,
+			                                     _mm512_mul_ps(y,y));
+			     const __m512 sqrtv= _mm512_sqrt_ps(sqrv);
+			     const __m512 denom= _mm512_mul_ps(r2,sqrtv);
+			     J0 = zmm16r4_negate(_mm512_div_ps(y,sqrv));
+			     J1 = _mm512_div_ps(_mm512_mul_ps(x,z),denom);
+			     J2 = _mm512_div_ps(x,sqrv);
+			     J3 = _mm512_div_ps(_mm512_mul_ps(y,z),denom);
+			     J4 = _0;
+			     J5 = zmm16r4_negate(_mm512_div_ps(sqrtv,r2));
+			  }
+			  else if(sysType==3) {
+                             const __m512 r2   = _mm512_fmadd_ps(x,x,
+			                               _mm512_fmadd_ps(y,y,
+						                 _mm512_mul_ps(z,z)));
+			     const __m512 sqrv = _mm512_fmadd_ps(x,x,
+			                                     _mm512_mul_ps(y,y));
+			     const __m512 sqrtv= _mm512_sqrt_ps(sqrv);
+			     J0 = _mm512_div_ps(y,sqrv);
+			     J1 = zmm16r4_negate(_mm512_div_ps(
+			                                  _mm512_mul_ps(x,z),denom));
+			     J2 = zmm16r4_negate(_mm512_div_ps(x,sqrv));
+			     J3 = zmm16r4_negate(_mm512_div_ps(
+			                                  _mm512_mul_ps(y,z),denom));
+			     J4 = _0;
+			     J5 = _mm512_div_ps(sqrtv,r2);
+			  }
+			  else { //sysType==1
+                             const __m512 r2   = _mm512_fmadd_ps(x,x,
+			                               _mm512_fmadd_ps(y,y,
+						                 _mm512_mul_ps(z,z)));
+			     const __m512 sqrv = _mm512_fmadd_ps(x,x,
+			                                     _mm512_mul_ps(y,y));
+			     const __m512 sqrtv= _mm512_sqrt_ps(sqrv);
+			     J0 = _mm512_div_ps(z,sqrv);
+			     J1 = zmm16r4_negate(_mm512_div_ps(
+			                                  _mm512_mul_ps(x,y),denom));
+			     J2 = _0;
+			     J3 = _mm512_div_ps(sqrtv,r2);
+			     J4 = zmm16r4_negate(_mm512_div_ps(x,sqrv));
+			     J5 = zmm16r4_negate(_mm512_div_ps(
+			                                  _mm512_mul_ps(z,y),denom));
+			  }
+
+			  //Rotate from local back to global coordinates.
+                          //J=J*M;
+			  Mat0 = _mm512_fmadd_ps(J0,M0,
+			                   _mm512_fmadd_ps(J2,M1,
+					              _mm512_mul_ps(J4,M2)));
+			  Mat1 = _mm512_fmadd_ps(J1,M0,
+			                   _mm512_fmadd_ps(J3,M1,
+					              _mm512_mul_ps(J5,M2)));
+			  Mat2 = _mm512_fmadd_ps(J0,M3,
+			                   _mm512_fmadd_ps(J2,M4,
+					              _mm512_mul_ps(J4,M5)));
+			  Mat3 = _mm512_fmadd_ps(J1,M3,
+			                   _mm512_fmadd_ps(J3,M4,
+					              _mm512_mul_ps(J5,M5)));
+			  Mat4 = _mm512_fmadd_ps(J0,M6,
+			                   _mm512_fmadd_ps(J2,M7,
+					              _mm512_mul_ps(J4,M8)));
+			  Mat5 = _mm512_fmadd_ps(J1,M6,
+			                   _mm512_fmadd_ps(J3,M7,
+					              _mm512_mul_ps(J5,M8)));
+			  
+		    }
 	
     } // math
 
