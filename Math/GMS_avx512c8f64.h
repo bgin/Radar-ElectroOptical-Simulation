@@ -9,7 +9,7 @@ namespace file_info {
 
 	const unsigned int gGMS_AVX512C8F64_MINOR = 1;
 
-	const unsigned int gLAM_AVX512C8F64_MICRO = 0;
+	const unsigned int gGMS_AVX512C8F64_MICRO = 0;
 
 	const unsigned int gGMS_AVX512C8F64_FULLVER = 
 		1000U*gGMS_AVX512C8F64_MAJOR+100U*gGMS_AVX3C8F64_MINOR+10U*gGMS_AVX3C8F64_MICRO;
