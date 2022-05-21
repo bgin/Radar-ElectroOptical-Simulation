@@ -52,10 +52,10 @@ embedd_fehlenberg78(double (*f)(double,double),
      scale = 1.0;
      for (i = 0; i < ATTEMPTS; ++i) {
          err = std::fabs(runge_kutta(f,temp_y,x,h));
-         if(err== 0.0) { scale = R8_MAX_SCALE_FACTOR; break; }
+         if(err== 0.0) { scale = MAX_SCALE_FACTOR; break; }
          yy = (temp_y[0]==0.0) ? tolerance : std::fabs(temp_y[0]);
          scale = 0.8 * std::pow( tolerance * yy / err,err_exponent);
-         scale = std::min(std::max(scale,R8_MIN_SCALE_FACTOR),R8_MAX_SCALE_FACTOR);
+         scale = std::min(std::max(scale,MIN_SCALE_FACTOR),MAX_SCALE_FACTOR);
          if(err<(tolerance * yy)) break;
          h *= scale;
          if(x + h > xmax) h = xmax - x;
@@ -73,97 +73,6 @@ embedd_fehlenberg78(double (*f)(double,double),
     y[1] = temp_y[1];
     return 0;
 }
-
-
-int32_t
-embedd_fehlenberg78(float (*f)(float,float),
-                       float * __restrict __ATTR_ALIGN__(8) y,
-		       float x,
-		       float h,
-		       float xmax,
-		       float * __restrict h_next,
-		       float tolerance) {
-
-     constexpr float err_exponent = 0.142857142857142857142857142857f;
-     __ATTR_ALIGN__(8) float temp_y[2];
-     float err;
-     float yy;
-     int32_t last_ival = 0;
-     int32_t i;
-      // Verify that the step size is positive and that the upper endpoint //
-      // of integration is greater than the initial enpoint.               //
-     if(__builtin_expect(xmax<x,0) ||
-        __builtin_expect(h<=0.0f,0)) { return (-2);}
-       // If the upper endpoint of the independent variable agrees with the //
-       // initial value of the independent variable.  Set the value of the  //
-       // dependent variable and return success.
-     *h_next = h;
-     y[1] = y[0];
-     if(__builtin_expect(xmax==x,0)) {  return (0);}
-       // Insure that the step size h is not larger than the length of the //
-       // integration interval.                                            //
-     if(h>(xmax-x)) { h = xmax - x; last_interval = 1;}
-
-        // Redefine the error tolerance to an error tolerance per unit    //
-        // length of the integration interval.                            //
-     tolerance /= (xmax - x);
-
-        // Integrate the diff eq y'=f(x,y) from x=x to x=xmax trying to  //
-        // maintain an error less than tolerance * (xmax-x) using an     //
-        // initial step size of h and initial value: y = y[0]            //
-     temp_y[0] = y[0];
-     while(x<xmax) {
-     scale = 1.0f;
-     for (i = 0; i < ATTEMPTS; ++i) {
-         err = std::fabsf(runge_kutta(f,temp_y,x,h));
-         if(err== 0.0f) { scale = R4_MAX_SCALE_FACTOR; break; }
-         yy = (temp_y[0]==0.0f) ? tolerance : std::fabsf(temp_y[0]);
-         scale = 0.8f * cephes_powf( tolerance * yy / err,err_exponent);
-         scale = std::min(std::max(scale,R4_MIN_SCALE_FACTOR),R4_MAX_SCALE_FACTOR);
-         if(err<(tolerance * yy)) break;
-         h *= scale;
-         if(x + h > xmax) h = xmax - x;
-         else if( x + h + 0.5f * h > xmax ) h = 0.5f * h;
-      }
-      if( i >= ATTEMPTS ) { *h_next = h * scale; return -1; };
-      temp_y[0] = temp_y[1];         
-      x += h;
-      h *= scale;
-      *h_next = h;
-      if ( last_interval ) break;
-      if (  x + h > xmax ) { last_interval = 1; h = xmax - x; }
-      else if ( x + h + 0.5f * h > xmax ) h = 0.5f * h;
-   }
-    y[1] = temp_y[1];
-    return 0;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-//  static double Runge_Kutta(double (*f)(double,double), double *y,          //
-//                                                       double x0, double h) //
-//                                                                            //
-//  Description:                                                              //
-//     This routine uses Fehlberg's embedded 7th and 8th order methods to     //
-//     approximate the solution of the differential equation y'=f(x,y) with   //
-//     the initial condition y = y[0] at x = x0.  The value at x + h is       //
-//     returned in y[1].  The function returns err / h ( the absolute error   //
-//     per step size ).                                                       //
-//                                                                            //
-//  Arguments:                                                                //
-//     double *f  Pointer to the function which returns the slope at (x,y) of //
-//                integral curve of the differential equation y' = f(x,y)     //
-//                which passes through the point (x0,y[0]).                   //
-//     double y[] On input y[0] is the initial value of y at x, on output     //
-//                y[1] is the solution at x + h.                              //
-//     double x   Initial value of x.                                         //
-//     double h   Step size                                                   //
-//                                                                            //
-//  Return Values:                                                            //
-//     This routine returns the err / h.  The solution of y(x) at x + h is    //
-//     returned in y[1].                                                      //
-//                                                                            //
-////////////////////////////////////////////////////////////////////////////////
 
 __ATTR_ALIGN__(32)
 __ATTR_HOT__
@@ -269,6 +178,100 @@ runge_kutta(double (*f)(double,double),
                                            + c_9_10 * (k9 + k10) );
     return (err_factor * (k1 + k11 - k12 - k13));
 }
+
+
+
+int32_t
+embedd_fehlenberg78(float (*f)(float,float),
+                       float * __restrict __ATTR_ALIGN__(8) y,
+		       float x,
+		       float h,
+		       float xmax,
+		       float * __restrict h_next,
+		       float tolerance) {
+
+     constexpr float err_exponent = 0.142857142857142857142857142857f;
+     __ATTR_ALIGN__(8) float temp_y[2];
+     float err;
+     float yy;
+     int32_t last_ival = 0;
+     int32_t i;
+      // Verify that the step size is positive and that the upper endpoint //
+      // of integration is greater than the initial enpoint.               //
+     if(__builtin_expect(xmax<x,0) ||
+        __builtin_expect(h<=0.0f,0)) { return (-2);}
+       // If the upper endpoint of the independent variable agrees with the //
+       // initial value of the independent variable.  Set the value of the  //
+       // dependent variable and return success.
+     *h_next = h;
+     y[1] = y[0];
+     if(__builtin_expect(xmax==x,0)) {  return (0);}
+       // Insure that the step size h is not larger than the length of the //
+       // integration interval.                                            //
+     if(h>(xmax-x)) { h = xmax - x; last_interval = 1;}
+
+        // Redefine the error tolerance to an error tolerance per unit    //
+        // length of the integration interval.                            //
+     tolerance /= (xmax - x);
+
+        // Integrate the diff eq y'=f(x,y) from x=x to x=xmax trying to  //
+        // maintain an error less than tolerance * (xmax-x) using an     //
+        // initial step size of h and initial value: y = y[0]            //
+     temp_y[0] = y[0];
+     while(x<xmax) {
+     scale = 1.0f;
+     for (i = 0; i < ATTEMPTS; ++i) {
+         err = std::fabsf(runge_kutta(f,temp_y,x,h));
+         if(err== 0.0f) { scale = MAX_SCALE_FACTOR; break; }
+         yy = (temp_y[0]==0.0f) ? tolerance : std::fabsf(temp_y[0]);
+         scale = 0.8f * cephes_powf( tolerance * yy / err,err_exponent);
+         scale = std::min(std::max(scale,MIN_SCALE_FACTOR),MAX_SCALE_FACTOR);
+         if(err<(tolerance * yy)) break;
+         h *= scale;
+         if(x + h > xmax) h = xmax - x;
+         else if( x + h + 0.5f * h > xmax ) h = 0.5f * h;
+      }
+      if( i >= ATTEMPTS ) { *h_next = h * scale; return -1; };
+      temp_y[0] = temp_y[1];         
+      x += h;
+      h *= scale;
+      *h_next = h;
+      if ( last_interval ) break;
+      if (  x + h > xmax ) { last_interval = 1; h = xmax - x; }
+      else if ( x + h + 0.5f * h > xmax ) h = 0.5f * h;
+   }
+    y[1] = temp_y[1];
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  static double Runge_Kutta(double (*f)(double,double), double *y,          //
+//                                                       double x0, double h) //
+//                                                                            //
+//  Description:                                                              //
+//     This routine uses Fehlberg's embedded 7th and 8th order methods to     //
+//     approximate the solution of the differential equation y'=f(x,y) with   //
+//     the initial condition y = y[0] at x = x0.  The value at x + h is       //
+//     returned in y[1].  The function returns err / h ( the absolute error   //
+//     per step size ).                                                       //
+//                                                                            //
+//  Arguments:                                                                //
+//     double *f  Pointer to the function which returns the slope at (x,y) of //
+//                integral curve of the differential equation y' = f(x,y)     //
+//                which passes through the point (x0,y[0]).                   //
+//     double y[] On input y[0] is the initial value of y at x, on output     //
+//                y[1] is the solution at x + h.                              //
+//     double x   Initial value of x.                                         //
+//     double h   Step size                                                   //
+//                                                                            //
+//  Return Values:                                                            //
+//     This routine returns the err / h.  The solution of y(x) at x + h is    //
+//     returned in y[1].                                                      //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 __ATTR_ALIGN__(32)
