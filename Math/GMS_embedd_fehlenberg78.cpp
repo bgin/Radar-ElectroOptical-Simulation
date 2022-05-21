@@ -52,10 +52,10 @@ embedd_fehlenberg78(double (*f)(double,double),
      scale = 1.0;
      for (i = 0; i < ATTEMPTS; ++i) {
          err = std::fabs(runge_kutta(f,temp_y,x,h));
-         if(err== 0.0) { scale = MAX_SCALE_FACTOR; break; }
+         if(err== 0.0) { scale = R8_MAX_SCALE_FACTOR; break; }
          yy = (temp_y[0]==0.0) ? tolerance : std::fabs(temp_y[0]);
          scale = 0.8 * std::pow( tolerance * yy / err,err_exponent);
-         scale = std::min(std::max(scale,MIN_SCALE_FACTOR),MAX_SCALE_FACTOR);
+         scale = std::min(std::max(scale,R8_MIN_SCALE_FACTOR),R8_MAX_SCALE_FACTOR);
          if(err<(tolerance * yy)) break;
          h *= scale;
          if(x + h > xmax) h = xmax - x;
@@ -116,10 +116,10 @@ embedd_fehlenberg78(float (*f)(float,float),
      scale = 1.0f;
      for (i = 0; i < ATTEMPTS; ++i) {
          err = std::fabsf(runge_kutta(f,temp_y,x,h));
-         if(err== 0.0f) { scale = MAX_SCALE_FACTOR; break; }
+         if(err== 0.0f) { scale = R4_MAX_SCALE_FACTOR; break; }
          yy = (temp_y[0]==0.0f) ? tolerance : std::fabsf(temp_y[0]);
          scale = 0.8f * cephes_powf( tolerance * yy / err,err_exponent);
-         scale = std::min(std::max(scale,MIN_SCALE_FACTOR),MAX_SCALE_FACTOR);
+         scale = std::min(std::max(scale,R4_MIN_SCALE_FACTOR),R4_MAX_SCALE_FACTOR);
          if(err<(tolerance * yy)) break;
          h *= scale;
          if(x + h > xmax) h = xmax - x;
