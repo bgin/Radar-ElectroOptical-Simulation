@@ -69,19 +69,19 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void  spher_inv_jac_zmm8r8(__m512d &J0,
-		                                 __m512d &J1,
-						 __m512d &J2,
-						 __m512d &J3,
-						 __m512d &J4,
-						 __m512d &J5,
-						 __m512d &J6,
-						 __m512d &J7,
-						 __m512d &J8,
-						 const __m512d x,
-						 const __m512d y,
-						 const __m512d z,
-						 const int32_t sysType) {
+		      void  spher_inv_jac_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) J0,
+		                                   double * __restrict __ATTR_ALIGN__(64) J1,
+						   double * __restrict __ATTR_ALIGN__(64) J2,
+						   double * __restrict __ATTR_ALIGN__(64) J3,
+						   double * __restrict __ATTR_ALIGN__(64) J4,
+						   double * __restrict __ATTR_ALIGN__(64) J5,
+						   double * __restrict __ATTR_ALIGN__(64) J6,
+						   double * __restrict __ATTR_ALIGN__(64) J7,
+						   double * __restrict __ATTR_ALIGN__(64) J8,
+						   const __m512d x,
+						   const __m512d y,
+						   const __m512d z,
+						   const int32_t sysType) {
 #if (USE_SLEEF_LIB) == 1
                          const __m512d sinaz = xsin(y);
 			 const __m512d cosaz = xcos(y);
@@ -96,69 +96,168 @@ namespace gms {
                          if(sysType==0) {
 			    const __m512d nx = zmm8r8_negate(x):
                             //dx/dr
-			    J0 = _mm512_mul_pd(cosaz,cosel);
+			    _mm512_store_pd(&J0[0],_mm512_mul_pd(cosaz,cosel));
 			    //dy/dr
-			    J1 = _mm512_mul_pd(cosel,sinaz);
+			    _mm512_store_pd(&J1[0], _mm512_mul_pd(cosel,sinaz));
 			    //dz/dr
-			    J2 = sinel;
+			    _mm512_store_pd(&J2[0],sinel);
 			    //dx/dAz
-			    J3 = _mm512_mul_pd(nx,
-			                       _mm512_mul_pd(cosel,sinaz));
+			    _mm512_store_pd(&J3[0],_mm512_mul_pd(nx,
+			                       _mm512_mul_pd(cosel,sinaz)));
 			    //dy/dAz
-			    J4 = _mm512_mul_pd(x,_mm512_mul_pd(cosaz,cosel));
+			    _mm512_store_pd(&J4[0], _mm512_mul_pd(x,_mm512_mul_pd(cosaz,cosel)));
 			    //dz/dAz
-			    J5 = _mm512_setzero_pd();
+			    _mm512_store_pd(&J5[0], _mm512_setzero_pd());
 			    //dx/dEl
-			    J6 = _mm512_mul_pd(nx,
-			                       _mm512_mul_pd(cosaz,sinel));
+			    _mm512_store_pd(&J6[0],_mm512_mul_pd(nx,
+			                       _mm512_mul_pd(cosaz,sinel)));
 			    //dy/dEl
-			    J7 = _mm512_mul_pd(nx,
-			                       _mm512_mul_pd(sinaz,sinel));
+			    _mm512_store_pd(&J7[0],_mm512_mul_pd(nx,
+			                       _mm512_mul_pd(sinaz,sinel)));
 			    //dz/dEl
-			    J8 = _mm512_mul_pd(x,cosel);
+			    _mm512_store_pd(&J8[0],_mm512_mul_pd(x,cosel));
 			 }
 			 else if(sysType==1) {
                              const __m512d nx    = zmm8r8_negate(x):
 			     const __m512d cazel = _mm512_mul_pd(cosaz,cosel);
-			     J0 = _mm512_mul_pd(cosel,sinaz);
-			     J1 = sinel;
-			     J2 = cazel;
-			     J3 = _mm512_mul_pd(x,cazel);
-			     J4 = _mm512_setzero_pd();
-			     J5 = _mm512_mul_pd(nx,_mm512_mul_pd(cosel,sinaz));
-			     J6 = _mm512_mul_pd(nx,_mm512_mul_pd(sinaz,sinel));
-			     J7 = _mm512_mul_pd(x,cosel);
-			     J8 = _mm512_mul_pd(nx,_mm512_mul_pd(cosaz,sinel));
+			     _mm512_store_pd(&J0[0],_mm512_mul_pd(cosel,sinaz));
+			     _mm512_store_pd(&J1[0],sinel);
+			     _mm512_store_pd(&J2[0],cazel);
+			     _mm512_store_pd(&J3[0], _mm512_mul_pd(x,cazel));
+			     _mm512_store_pd(&J4[0], _mm512_setzero_pd());
+			     _mm512_store_pd(&J5[0], _mm512_mul_pd(nx,_mm512_mul_pd(cosel,sinaz)));
+			     _mm512_store_pd(&J6[0], _mm512_mul_pd(nx,_mm512_mul_pd(sinaz,sinel)));
+			     _mm512_store_pd(&J7[0], _mm512_mul_pd(x,cosel));
+			     _mm512_store_pd(&J8[0], _mm512_mul_pd(nx,_mm512_mul_pd(cosaz,sinel)));
 			 }
 			 else if(sysType==3) {
                              const __m512d nx    = zmm8r8_negate(x):
 			     const __m512d sc    = _mm512_mul_pd(sinaz,cosel);
 			     const __m512d cc    = _mm512_mul_pd(cosaz,cosel);
-			     J0 = sc;
-			     J1 = cc;
-			     J2 = sinel;
-			     J3 = _mm512_mul_pd(x,cc);
-			     J4 = _mm512_mul_pd(nx,sc);
-			     J5 = _mm512_setzero_pd();
-			     J6 = _mm512_mul_pd(nx,_mm512_mul_pd(sinaz,sinel));
-			     J7 = _mm512_mul_pd(nx,_mm512_mul_pd(cosaz,sinel));
-			     J8 = _mm512_mul_pd(x,cosel);
+			     _mm512_store_pd(&J0[0],sc);
+			     _mm512_store_pd(&J1[0],cc);
+			     _mm512_store_pd(&J2[0],sinel);
+			     _mm512_store_pd(&J3[0],_mm512_mul_pd(x,cc));
+			     _mm512_store_pd(&J4[0],_mm512_mul_pd(nx,sc));
+			     _mm512_store_pd(&J5[0],_mm512_setzero_pd());
+			     _mm512_store_pd(&J6[0],_mm512_mul_pd(nx,_mm512_mul_pd(sinaz,sinel)));
+			     _mm512_store_pd(&J7[0],_mm512_mul_pd(nx,_mm512_mul_pd(cosaz,sinel)));
+			     _mm512_store_pd(&J8[0],_mm512_mul_pd(x,cosel));
 			 }
 			 else { // sysType==2
                              const __m512d nx    = zmm8r8_negate(x):
 			     const __m512d ss    = _mm512_mul_pd(sinaz,sinel);
 			     const __m512d cs    = _mm512_mul_pd(cosaz,sinel);
-			     J0 = cs;
-			     J1 = ss;
-			     J2 = cosel;
-			     J3 = _mm512_mul_pd(nx,ss);
-			     J4 = _mm512_mul_pd(x,cs);
-			     J5 = _mm512_setzero_pd();
-			     J6 = _mm512_mul_pd(x,_mm512_mul_pd(cosaz,cosel));
-			     J7 = _mm512_mul_pd(x,_mm512_mul_pd(cosel,sinaz));
-			     J8 = _mm512_mul_pd(nx,sinel);
+			     _mm512_store_pd(&J0[0],cs);
+			     _mm512_store_pd(&J1[0],ss);
+			     _mm512_store_pd(&J2[0],cosel);
+			     _mm512_store_pd(&J3[0],_mm512_mul_pd(nx,ss));
+			     _mm512_store_pd(&J4[0],_mm512_mul_pd(x,cs));
+			     _mm512_store_pd(&J5[0],_mm512_setzero_pd());
+			     _mm512_store_pd(&J6[0],_mm512_mul_pd(x,_mm512_mul_pd(cosaz,cosel)));
+			     _mm512_store_pd(&J7[0],_mm512_mul_pd(x,_mm512_mul_pd(cosel,sinaz)));
+			     _mm512_store_pd(&J8[0],_mm512_mul_pd(nx,sinel));
 			 }
 		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void  spher_inv_jac_zmm8r8_u(double * __restrict J0,
+		                                   double * __restrict J1,
+						   double * __restrict J2,
+						   double * __restrict J3,
+						   double * __restrict J4,
+						   double * __restrict J5,
+						   double * __restrict J6,
+						   double * __restrict J7,
+						   double * __restrict J8,
+						   const __m512d x,
+						   const __m512d y,
+						   const __m512d z,
+						   const int32_t sysType) {
+#if (USE_SLEEF_LIB) == 1
+                         const __m512d sinaz = xsin(y);
+			 const __m512d cosaz = xcos(y);
+			 const __m512d sinel = xsin(z);
+			 const __m512d cosel = xcos(z);
+#else
+                         const __m512d sinaz = _mm512_sin_pd(y);
+			 const __m512d cosaz = _mm512_cos_pd(y);
+			 const __m512d sinel = _mm512_sin_pd(z);
+			 const __m512d cosel = _mm512_cos_pd(z);
+#endif
+                         if(sysType==0) {
+			    const __m512d nx = zmm8r8_negate(x):
+                            //dx/dr
+			    _mm512_storeu_pd(&J0[0],_mm512_mul_pd(cosaz,cosel));
+			    //dy/dr
+			    _mm512_storeu_pd(&J1[0], _mm512_mul_pd(cosel,sinaz));
+			    //dz/dr
+			    _mm512_storeu_pd(&J2[0],sinel);
+			    //dx/dAz
+			    _mm512_storeu_pd(&J3[0],_mm512_mul_pd(nx,
+			                       _mm512_mul_pd(cosel,sinaz)));
+			    //dy/dAz
+			    _mm512_storeu_pd(&J4[0], _mm512_mul_pd(x,_mm512_mul_pd(cosaz,cosel)));
+			    //dz/dAz
+			    _mm512_storeu_pd(&J5[0], _mm512_setzero_pd());
+			    //dx/dEl
+			    _mm512_storeu_pd(&J6[0],_mm512_mul_pd(nx,
+			                       _mm512_mul_pd(cosaz,sinel)));
+			    //dy/dEl
+			    _mm512_storeu_pd(&J7[0],_mm512_mul_pd(nx,
+			                       _mm512_mul_pd(sinaz,sinel)));
+			    //dz/dEl
+			    _mm512_storeu_pd(&J8[0],_mm512_mul_pd(x,cosel));
+			 }
+			 else if(sysType==1) {
+                             const __m512d nx    = zmm8r8_negate(x):
+			     const __m512d cazel = _mm512_mul_pd(cosaz,cosel);
+			     _mm512_storeu_pd(&J0[0],_mm512_mul_pd(cosel,sinaz));
+			     _mm512_storeu_pd(&J1[0],sinel);
+			     _mm512_storeu_pd(&J2[0],cazel);
+			     _mm512_storeu_pd(&J3[0], _mm512_mul_pd(x,cazel));
+			     _mm512_storeu_pd(&J4[0], _mm512_setzero_pd());
+			     _mm512_storeu_pd(&J5[0], _mm512_mul_pd(nx,_mm512_mul_pd(cosel,sinaz)));
+			     _mm512_storeu_pd(&J6[0], _mm512_mul_pd(nx,_mm512_mul_pd(sinaz,sinel)));
+			     _mm512_storeu_pd(&J7[0], _mm512_mul_pd(x,cosel));
+			     _mm512_storeu_pd(&J8[0], _mm512_mul_pd(nx,_mm512_mul_pd(cosaz,sinel)));
+			 }
+			 else if(sysType==3) {
+                             const __m512d nx    = zmm8r8_negate(x):
+			     const __m512d sc    = _mm512_mul_pd(sinaz,cosel);
+			     const __m512d cc    = _mm512_mul_pd(cosaz,cosel);
+			     _mm512_storeu_pd(&J0[0],sc);
+			     _mm512_storeu_pd(&J1[0],cc);
+			     _mm512_storeu_pd(&J2[0],sinel);
+			     _mm512_storeu_pd(&J3[0],_mm512_mul_pd(x,cc));
+			     _mm512_storeu_pd(&J4[0],_mm512_mul_pd(nx,sc));
+			     _mm512_storeu_pd(&J5[0],_mm512_setzero_pd());
+			     _mm512_storeu_pd(&J6[0],_mm512_mul_pd(nx,_mm512_mul_pd(sinaz,sinel)));
+			     _mm512_storeu_pd(&J7[0],_mm512_mul_pd(nx,_mm512_mul_pd(cosaz,sinel)));
+			     _mm512_storeu_pd(&J8[0],_mm512_mul_pd(x,cosel));
+			 }
+			 else { // sysType==2
+                             const __m512d nx    = zmm8r8_negate(x):
+			     const __m512d ss    = _mm512_mul_pd(sinaz,sinel);
+			     const __m512d cs    = _mm512_mul_pd(cosaz,sinel);
+			     _mm512_storeu_pd(&J0[0],cs);
+			     _mm512_storeu_pd(&J1[0],ss);
+			     _mm512_storeu_pd(&J2[0],cosel);
+			     _mm512_storeu_pd(&J3[0],_mm512_mul_pd(nx,ss));
+			     _mm512_storeu_pd(&J4[0],_mm512_mul_pd(x,cs));
+			     _mm512_storeu_pd(&J5[0],_mm512_setzero_pd());
+			     _mm512_storeu_pd(&J6[0],_mm512_mul_pd(x,_mm512_mul_pd(cosaz,cosel)));
+			     _mm512_storeu_pd(&J7[0],_mm512_mul_pd(x,_mm512_mul_pd(cosel,sinaz)));
+			     _mm512_storeu_pd(&J8[0],_mm512_mul_pd(nx,sinel));
+			 }
+		   }
+
+
 
 
 	             
@@ -169,19 +268,19 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void  spher_inv_jac_zmm16r4(__m512 &J0,
-		                                  __m512 &J1,
-						  __m512 &J2,
-						  __m512 &J3,
-						  __m512 &J4,
-						  __m512 &J5,
-						  __m512 &J6,
-						  __m512 &J7,
-						  __m512 &J8,
-						  const __m512 x,
-						  const __m512 y,
-						  const __m512 z,
-						  const int32_t sysType) {
+		      void  spher_inv_jac_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) J0,
+		                                    float * __restrict __ATTR_ALIGN__(64) J1,
+						    float * __restrict __ATTR_ALIGN__(64) J2,
+						    float * __restrict __ATTR_ALIGN__(64) J3,
+						    float * __restrict __ATTR_ALIGN__(64) J4,
+						    float * __restrict __ATTR_ALIGN__(64) J5,
+						    float * __restrict __ATTR_ALIGN__(64) J6,
+						    float * __restrict __ATTR_ALIGN__(64) J7,
+						    float * __restrict __ATTR_ALIGN__(64) J8,
+						    const __m512 x,
+						    const __m512 y,
+						    const __m512 z,
+						    const int32_t sysType) {
 #if (USE_SLEEF_LIB) == 1
                          const __m512 sinaz = xsinf(y);
 			 const __m512 cosaz = xcosf(y);
@@ -196,69 +295,167 @@ namespace gms {
                          if(sysType==0) {
 			    const __m512 nx = zmm16r4_negate(x):
                             //dx/dr
-			    J0 = _mm512_mul_ps(cosaz,cosel);
+			    _mm512_store_ps(&J0[0],_mm512_mul_ps(cosaz,cosel));
 			    //dy/dr
-			    J1 = _mm512_mul_ps(cosel,sinaz);
+			    _mm512_store_ps(&J1[0],_mm512_mul_ps(cosel,sinaz));
 			    //dz/dr
-			    J2 = sinel;
+			    _mm512_store_ps(&J2[0],sinel);
 			    //dx/dAz
-			    J3 = _mm512_mul_ps(nx,
-			                       _mm512_mul_ps(cosel,sinaz));
+			    _mm512_store_ps(&J3[0],_mm512_mul_ps(nx,
+			                       _mm512_mul_ps(cosel,sinaz)));
 			    //dy/dAz
-			    J4 = _mm512_mul_ps(x,_mm512_mul_ps(cosaz,cosel));
+			    _mm512_store_ps(&J4[0],_mm512_mul_ps(x,_mm512_mul_ps(cosaz,cosel)));
 			    //dz/dAz
-			    J5 = _mm512_setzero_ps();
+			    _mm512_store_ps(&J5[0],_mm512_setzero_ps());
 			    //dx/dEl
-			    J6 = _mm512_mul_ps(nx,
-			                       _mm512_mul_ps(cosaz,sinel));
+			    _mm512_store_ps(&J6[0],_mm512_mul_ps(nx,
+			                       _mm512_mul_ps(cosaz,sinel)));
 			    //dy/dEl
-			    J7 = _mm512_mul_ps(nx,
-			                       _mm512_mul_ps(sinaz,sinel));
+			    _mm512_store_ps(&J7[0],_mm512_mul_ps(nx,
+			                       _mm512_mul_ps(sinaz,sinel)));
 			    //dz/dEl
-			    J8 = _mm512_mul_ps(x,cosel);
+			    _mm512_store_ps(&J8[0],_mm512_mul_ps(x,cosel));
 			 }
 			 else if(sysType==1) {
                              const __m512 nx    = zmm16r4_negate(x):
 			     const __m512 cazel = _mm512_mul_ps(cosaz,cosel);
-			     J0 = _mm512_mul_ps(cosel,sinaz);
-			     J1 = sinel;
-			     J2 = cazel;
-			     J3 = _mm512_mul_ps(x,cazel);
-			     J4 = _mm512_setzero_ps();
-			     J5 = _mm512_mul_ps(nx,_mm512_mul_ps(cosel,sinaz));
-			     J6 = _mm512_mul_ps(nx,_mm512_mul_ps(sinaz,sinel));
-			     J7 = _mm512_mul_ps(x,cosel);
-			     J8 = _mm512_mul_ps(nx,_mm512_mul_ps(cosaz,sinel));
+			     _mm512_store_ps(&J0[0],_mm512_mul_ps(cosel,sinaz));
+			     _mm512_store_ps(&J1[0],sinel);
+			     _mm512_store_ps(&J2[0],cazel);
+			     _mm512_store_ps(&J3[0],_mm512_mul_ps(x,cazel));
+			     _mm512_store_ps(&J4[0],_mm512_setzero_ps());
+			     _mm512_store_ps(&J5[0],_mm512_mul_ps(nx,_mm512_mul_ps(cosel,sinaz)));
+			     _mm512_store_ps(&J6[0],_mm512_mul_ps(nx,_mm512_mul_ps(sinaz,sinel)));
+			     _mm512_store_ps(&J7[0],_mm512_mul_ps(x,cosel));
+			     _mm512_store_ps(&J8[0],_mm512_mul_ps(nx,_mm512_mul_ps(cosaz,sinel)));
 			 }
 			 else if(sysType==3) {
                              const __m512 nx    = zmm16r4_negate(x):
 			     const __m512 sc    = _mm512_mul_ps(sinaz,cosel);
 			     const __m512 cc    = _mm512_mul_ps(cosaz,cosel);
-			     J0 = sc;
-			     J1 = cc;
-			     J2 = sinel;
-			     J3 = _mm512_mul_ps(x,cc);
-			     J4 = _mm512_mul_ps(nx,sc);
-			     J5 = _mm512_setzero_ps();
-			     J6 = _mm512_mul_ps(nx,_mm512_mul_ps(sinaz,sinel));
-			     J7 = _mm512_mul_ps(nx,_mm512_mul_ps(cosaz,sinel));
-			     J8 = _mm512_mul_ps(x,cosel);
+			     _mm512_store_ps(&J0[0],sc);
+			     _mm512_store_ps(&J1[0],cc);
+			     _mm512_store_ps(&J2[0],sinel);
+			     _mm512_store_ps(&J3[0],_mm512_mul_ps(x,cc));
+			     _mm512_store_ps(&J4[0],_mm512_mul_ps(nx,sc));
+			     _mm512_store_ps(&J5[0],_mm512_setzero_ps());
+			     _mm512_store_ps(&J6[0],_mm512_mul_ps(nx,_mm512_mul_ps(sinaz,sinel)));
+			     _mm512_store_ps(&J7[0],_mm512_mul_ps(nx,_mm512_mul_ps(cosaz,sinel)));
+			     _mm512_store_ps(&J8[0],_mm512_mul_ps(x,cosel));
 			 }
 			 else { // sysType==2
                              const __m512 nx    = zmm16r4_negate(x):
 			     const __m512 ss    = _mm512_mul_ps(sinaz,sinel);
 			     const __m512 cs    = _mm512_mul_ps(cosaz,sinel);
-			     J0 = cs;
-			     J1 = ss;
-			     J2 = cosel;
-			     J3 = _mm512_mul_ps(nx,ss);
-			     J4 = _mm512_mul_ps(x,cs);
-			     J5 = _mm512_setzero_ps();
-			     J6 = _mm512_mul_ps(x,_mm512_mul_ps(cosaz,cosel));
-			     J7 = _mm512_mul_ps(x,_mm512_mul_ps(cosel,sinaz));
-			     J8 = _mm512_mul_ps(nx,sinel);
+			     _mm512_store_ps(&J0[0],cs);
+			     _mm512_store_ps(&J1[0],ss);
+			     _mm512_store_ps(&J2[0],cosel);
+			     _mm512_store_ps(&J3[0],_mm512_mul_ps(nx,ss));
+			     _mm512_store_ps(&J4[0],_mm512_mul_ps(x,cs));
+			     _mm512_store_ps(&J5[0],_mm512_setzero_ps());
+			     _mm512_store_ps(&J6[0],_mm512_mul_ps(x,_mm512_mul_ps(cosaz,cosel)));
+			     _mm512_store_ps(&J7[0],_mm512_mul_ps(x,_mm512_mul_ps(cosel,sinaz)));
+			     _mm512_store_ps(&J8[0],_mm512_mul_ps(nx,sinel));
 			 }
 		   }
+
+
+		     __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void  spher_inv_jac_zmm16r4_u(float * __restrict J0,
+		                                    float * __restrict J1,
+						    float * __restrict J2,
+						    float * __restrict J3,
+						    float * __restrict J4,
+						    float * __restrict J5,
+						    float * __restrict J6,
+						    float * __restrict J7,
+						    float * __restrict J8,
+						    const __m512 x,
+						    const __m512 y,
+						    const __m512 z,
+						    const int32_t sysType) {
+#if (USE_SLEEF_LIB) == 1
+                         const __m512 sinaz = xsinf(y);
+			 const __m512 cosaz = xcosf(y);
+			 const __m512 sinel = xsinf(z);
+			 const __m512 cosel = xcosf(z);
+#else
+                         const __m512 sinaz = _mm512_sin_ps(y);
+			 const __m512 cosaz = _mm512_cos_ps(y);
+			 const __m512 sinel = _mm512_sin_ps(z);
+			 const __m512 cosel = _mm512_cos_ps(z);
+#endif
+                         if(sysType==0) {
+			    const __m512 nx = zmm16r4_negate(x):
+                            //dx/dr
+			    _mm512_storeu_ps(&J0[0],_mm512_mul_ps(cosaz,cosel));
+			    //dy/dr
+			    _mm512_storeu_ps(&J1[0],_mm512_mul_ps(cosel,sinaz));
+			    //dz/dr
+			    _mm512_storeu_ps(&J2[0],sinel);
+			    //dx/dAz
+			    _mm512_storeu_ps(&J3[0],_mm512_mul_ps(nx,
+			                       _mm512_mul_ps(cosel,sinaz)));
+			    //dy/dAz
+			    _mm512_storeu_ps(&J4[0],_mm512_mul_ps(x,_mm512_mul_ps(cosaz,cosel)));
+			    //dz/dAz
+			    _mm512_storeu_ps(&J5[0],_mm512_setzero_ps());
+			    //dx/dEl
+			    _mm512_storeu_ps(&J6[0],_mm512_mul_ps(nx,
+			                       _mm512_mul_ps(cosaz,sinel)));
+			    //dy/dEl
+			    _mm512_storeu_ps(&J7[0],_mm512_mul_ps(nx,
+			                       _mm512_mul_ps(sinaz,sinel)));
+			    //dz/dEl
+			    _mm512_storeu_ps(&J8[0],_mm512_mul_ps(x,cosel));
+			 }
+			 else if(sysType==1) {
+                             const __m512 nx    = zmm16r4_negate(x):
+			     const __m512 cazel = _mm512_mul_ps(cosaz,cosel);
+			     _mm512_storeu_ps(&J0[0],_mm512_mul_ps(cosel,sinaz));
+			     _mm512_storeu_ps(&J1[0],sinel);
+			     _mm512_storeu_ps(&J2[0],cazel);
+			     _mm512_storeu_ps(&J3[0],_mm512_mul_ps(x,cazel));
+			     _mm512_storeu_ps(&J4[0],_mm512_setzero_ps());
+			     _mm512_storeu_ps(&J5[0],_mm512_mul_ps(nx,_mm512_mul_ps(cosel,sinaz)));
+			     _mm512_storeu_ps(&J6[0],_mm512_mul_ps(nx,_mm512_mul_ps(sinaz,sinel)));
+			     _mm512_storeu_ps(&J7[0],_mm512_mul_ps(x,cosel));
+			     _mm512_storeu_ps(&J8[0],_mm512_mul_ps(nx,_mm512_mul_ps(cosaz,sinel)));
+			 }
+			 else if(sysType==3) {
+                             const __m512 nx    = zmm16r4_negate(x):
+			     const __m512 sc    = _mm512_mul_ps(sinaz,cosel);
+			     const __m512 cc    = _mm512_mul_ps(cosaz,cosel);
+			     _mm512_storeu_ps(&J0[0],sc);
+			     _mm512_storeu_ps(&J1[0],cc);
+			     _mm512_storeu_ps(&J2[0],sinel);
+			     _mm512_storeu_ps(&J3[0],_mm512_mul_ps(x,cc));
+			     _mm512_storeu_ps(&J4[0],_mm512_mul_ps(nx,sc));
+			     _mm512_storeu_ps(&J5[0],_mm512_setzero_ps());
+			     _mm512_storeu_ps(&J6[0],_mm512_mul_ps(nx,_mm512_mul_ps(sinaz,sinel)));
+			     _mm512_storeu_ps(&J7[0],_mm512_mul_ps(nx,_mm512_mul_ps(cosaz,sinel)));
+			     _mm512_storeu_ps(&J8[0],_mm512_mul_ps(x,cosel));
+			 }
+			 else { // sysType==2
+                             const __m512 nx    = zmm16r4_negate(x):
+			     const __m512 ss    = _mm512_mul_ps(sinaz,sinel);
+			     const __m512 cs    = _mm512_mul_ps(cosaz,sinel);
+			     _mm512_storeu_ps(&J0[0],cs);
+			     _mm512_storeu_ps(&J1[0],ss);
+			     _mm512_storeu_ps(&J2[0],cosel);
+			     _mm512_storeu_ps(&J3[0],_mm512_mul_ps(nx,ss));
+			     _mm512_storeu_ps(&J4[0],_mm512_mul_ps(x,cs));
+			     _mm512_storeu_ps(&J5[0],_mm512_setzero_ps());
+			     _mm512_storeu_ps(&J6[0],_mm512_mul_ps(x,_mm512_mul_ps(cosaz,cosel)));
+			     _mm512_storeu_ps(&J7[0],_mm512_mul_ps(x,_mm512_mul_ps(cosel,sinaz)));
+			     _mm512_storeu_ps(&J8[0],_mm512_mul_ps(nx,sinel));
+			 }
+		   }
+
 
 		   /*
                         Different definitions with an array of type __m512d/__m512 i.e. AoSoA
