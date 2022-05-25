@@ -441,13 +441,13 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void range_hessian_2d_zmm8r8(__m512d &H_0,
-		                                   __m512d &H_1,
-						   __m512d &H_2,
-						   __m512d &H_3,
-						   const __m512d x_0,
-						   const __m512d x_1,
-						   const bool useHalfRange) {
+		      void range_hessian_2d_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) H_0,
+		                                     double * __restrict __ATTR_ALIGN__(64) H_1,
+						     double * __restrict __ATTR_ALIGN__(64) H_2,
+						     double * __restrict __ATTR_ALIGN__(64) H_3,
+						     const __m512d x_0,
+						     const __m512d x_1,
+						     const bool useHalfRange) {
 
 			   const __m512d _2   = _mm512_set1_pd(2.0);
 			   const __m512d _1   = _mm512_set1_pd(1.0);
@@ -456,18 +456,18 @@ namespace gms {
 			   const __m512d r    = _mm512_sqrt_pd(_mm512_add_pd(xC2,yC2));
 			   const __m512d r3   = _mm512_mul_pd(r,_mm512_mul_pd(r,r));
 			   const __m512d invr = _mm512_div_pd(_1,r);
-			   H_0                = _mm512_add_pd(_mm512_div_pd(zmm8r8_negate(xC2),
-			                                                    r3),invr);
-			   H_1                = _mm512_div_pd(_mm512_mul_pd(zmm8r8_negate(x_0),
-			                                                    x_1),r3);
-			   H_2                = H1;
-			   H_3                = _mm512_add_pd(_mm512_div_pd(zmm8r8_negate(yC2),
-			                                                    r3),invr);
+			   _mm512_store_pd(&H_0[0],_mm512_add_pd(_mm512_div_pd(zmm8r8_negate(xC2),
+			                                                    r3),invr));
+			   _mm512_store_pd(&H_1[0],_mm512_div_pd(_mm512_mul_pd(zmm8r8_negate(x_0),
+			                                                    x_1),r3));
+			   _mm512_store_pd(&H_2[0],_mm512_load_pd(&H1[0]));
+			   _mm512_store_pd(&H_3[0],_mm512_add_pd(_mm512_div_pd(zmm8r8_negate(yC2),
+			                                                    r3),invr));
 			   if(useHalfRange) {
-                              H_0 = _mm512_mul_pd(H_0,_2);
-			      H_1 = _mm512_mul_pd(H_1,_2);
-			      H_2 = _mm512_mul_pd(H_2,_2);
-			      H_3 = _mm512_mul_pd(H_3,_2);
+                              _mm512_store_pd(&H_0[0],_mm512_mul_pd(_mm512_load_pd(&H_0[0],_2)));
+			      _mm512_store_pd(&H_1[0],_mm512_mul_pd(_mm512_load_pd(&H_1[0],_2)));
+			      _mm512_store_pd(&H_2[0],_mm512_mul_pd(_mm512_load_pd(&H_2[0],_2)));
+			      _mm512_store_pd(&H_3[0],_mm512_mul_pd(_mm512_load_pd(&H_3[0],_2)));
 			   }
 		    }
 
@@ -477,13 +477,49 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void range_hessian_2d_zmm16r4(__m512 &H_0,
-		                                    __m512 &H_1,
-						    __m512 &H_2,
-						    __m512 &H_3,
-						   const __m512 x_0,
-						   const __m512 x_1,
-						   const bool useHalfRange) {
+		      void range_hessian_2d_zmm8r8_u(double * __restrict H_0,
+		                                     double * __restrict H_1,
+						     double * __restrict H_2,
+						     double * __restrict H_3,
+						     const __m512d x_0,
+						     const __m512d x_1,
+						     const bool useHalfRange) {
+
+			   const __m512d _2   = _mm512_set1_pd(2.0);
+			   const __m512d _1   = _mm512_set1_pd(1.0);
+			   const __m512d xC2  = _mm512_mul_pd(x_0,x_0);
+			   const __m512d yC2  = _mm512_mul_pd(x_1,x_1);
+			   const __m512d r    = _mm512_sqrt_pd(_mm512_add_pd(xC2,yC2));
+			   const __m512d r3   = _mm512_mul_pd(r,_mm512_mul_pd(r,r));
+			   const __m512d invr = _mm512_div_pd(_1,r);
+			   _mm512_storeu_pd(&H_0[0],_mm512_add_pd(_mm512_div_pd(zmm8r8_negate(xC2),
+			                                                    r3),invr));
+			   _mm512_storeu_pd(&H_1[0],_mm512_div_pd(_mm512_mul_pd(zmm8r8_negate(x_0),
+			                                                    x_1),r3));
+			   _mm512_storeu_pd(&H_2[0],_mm512_loadu_pd(&H1[0]));
+			   _mm512_storeu_pd(&H_3[0],_mm512_add_pd(_mm512_div_pd(zmm8r8_negate(yC2),
+			                                                    r3),invr));
+			   if(useHalfRange) {
+                              _mm512_storeu_pd(&H_0[0],_mm512_mul_pd(_mm512_loadu_pd(&H_0[0],_2)));
+			      _mm512_storeu_pd(&H_1[0],_mm512_mul_pd(_mm512_loadu_pd(&H_1[0],_2)));
+			      _mm512_storeu_pd(&H_2[0],_mm512_mul_pd(_mm512_loadu_pd(&H_2[0],_2)));
+			      _mm512_storeu_pd(&H_3[0],_mm512_mul_pd(_mm512_loadu_pd(&H_3[0],_2)));
+			   }
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void range_hessian_2d_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) H_0,
+		                                      float * __restrict __ATTR_ALIGN__(64) H_1,
+						      float * __restrict __ATTR_ALIGN__(64) H_2,
+						      float * __restrict __ATTR_ALIGN__(64) H_3,
+						      const __m512 x_0,
+						      const __m512 x_1,
+						      const bool useHalfRange) {
 
 			   const __m512 _2   = _mm512_set1_ps(2.0f);
 			   const __m512 _1   = _mm512_set1_ps(1.0f);
@@ -492,18 +528,54 @@ namespace gms {
 			   const __m512 r    = _mm512_sqrt_ps(_mm512_add_ps(xC2,yC2));
 			   const __m512 r3   = _mm512_mul_ps(r,_mm512_mul_ps(r,r));
 			   const __m512 invr = _mm512_div_ps(_1,r);
-			   H_0                = _mm512_add_ps(_mm512_div_ps(zmm16r4_negate(xC2),
-			                                                    r3),invr);
-			   H_1                = _mm512_div_ps(_mm512_mul_ps(zmm16r4_negate(x_0),
-			                                                    x_1),r3);
-			   H_2                = H1;
-			   H_3                = _mm512_add_ps(_mm512_div_ps(zmm16r4_negate(yC2),
-			                                                    r3),invr);
+			   _mm512_store_ps(&H_0[0],_mm512_add_ps(_mm512_div_ps(zmm16r4_negate(xC2),
+			                                                    r3),invr));
+			   _mm512_store_ps(&H_1[0],_mm512_div_ps(_mm512_mul_ps(zmm16r4_negate(x_0),
+			                                                    x_1),r3));
+			   _mm512_store_ps(&H_2[0],_mm512_load_ps(&H1[0]));
+			   _mm512_store_ps(&H_3[0],_mm512_add_ps(_mm512_div_ps(zmm16r4_negate(yC2),
+			                                                    r3),invr));
 			   if(useHalfRange) {
-                              H_0 = _mm512_mul_ps(H_0,_2);
-			      H_1 = _mm512_mul_ps(H_1,_2);
-			      H_2 = _mm512_mul_ps(H_2,_2);
-			      H_3 = _mm512_mul_ps(H_3,_2);
+                              _mm512_store_ps(&H_0[0],_mm512_mul_ps(_mm512_load_ps(&H_0[0],_2)));
+			      _mm512_store_ps(&H_1[0],_mm512_mul_ps(_mm512_load_ps(&H_1[0],_2)));
+			      _mm512_store_ps(&H_2[0],_mm512_mul_ps(_mm512_load_ps(&H_2[0],_2)));
+			      _mm512_store_ps(&H_3[0],_mm512_mul_ps(_mm512_load_ps(&H_3[0],_2)));
+			   }
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void range_hessian_2d_zmm16r4_a(float * __restrict  H_0,
+		                                      float * __restrict  H_1,
+						      float * __restrict  H_2,
+						      float * __restrict  H_3,
+						      const __m512 x_0,
+						      const __m512 x_1,
+						      const bool useHalfRange) {
+
+			   const __m512 _2   = _mm512_set1_ps(2.0f);
+			   const __m512 _1   = _mm512_set1_ps(1.0f);
+			   const __m512 xC2  = _mm512_mul_ps(x_0,x_0);
+			   const __m512 yC2  = _mm512_mul_ps(x_1,x_1);
+			   const __m512 r    = _mm512_sqrt_ps(_mm512_add_ps(xC2,yC2));
+			   const __m512 r3   = _mm512_mul_ps(r,_mm512_mul_ps(r,r));
+			   const __m512 invr = _mm512_div_ps(_1,r);
+			   _mm512_storeu_ps(&H_0[0],_mm512_add_ps(_mm512_div_ps(zmm16r4_negate(xC2),
+			                                                    r3),invr));
+			   _mm512_storeu_ps(&H_1[0],_mm512_div_ps(_mm512_mul_ps(zmm16r4_negate(x_0),
+			                                                    x_1),r3));
+			   _mm512_storeu_ps(&H_2[0],_mm512_loadu_ps(&H1[0]));
+			   _mm512_storeu_ps(&H_3[0],_mm512_add_ps(_mm512_div_ps(zmm16r4_negate(yC2),
+			                                                    r3),invr));
+			   if(useHalfRange) {
+                              _mm512_storeu_ps(&H_0[0],_mm512_mul_ps(_mm512_loadu_ps(&H_0[0],_2)));
+			      _mm512_storeu_ps(&H_1[0],_mm512_mul_ps(_mm512_loadu_ps(&H_1[0],_2)));
+			      _mm512_storeu_ps(&H_2[0],_mm512_mul_ps(_mm512_loadu_ps(&H_2[0],_2)));
+			      _mm512_storeu_ps(&H_3[0],_mm512_mul_ps(_mm512_loadu_ps(&H_3[0],_2)));
 			   }
 		    }
 
