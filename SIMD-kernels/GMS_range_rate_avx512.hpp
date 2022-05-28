@@ -549,7 +549,7 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void range_hessian_2d_zmm16r4_a(float * __restrict  H_0,
+		      void range_hessian_2d_zmm16r4_u(float * __restrict  H_0,
 		                                      float * __restrict  H_1,
 						      float * __restrict  H_2,
 						      float * __restrict  H_3,
@@ -594,10 +594,10 @@ namespace gms {
 						     double * __restrict __ATTR_ALIGN__(64) H_6,
 						     double * __restrict __ATTR_ALIGN__(64) H_7,
 						     double * __restrict __ATTR_ALIGN__(64) H_8,
-						   const __m512d x_0,
-						   const __m512d x_1,
-						   const __m512d x_2,
-						   const bool useHalfRange) {
+						     const __m512d x_0,
+						     const __m512d x_1,
+						     const __m512d x_2,
+						     const bool useHalfRange) {
                            __m512d invr,invr3;
                            const __m512d _1   = _mm512_set1_pd(1.0);
 			   const __m512d xC2  = _mm512_mul_pd(x_0,x_0);
@@ -1483,6 +1483,180 @@ namespace gms {
 			  }
 		    }
 
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void range_hess_3d_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) H_0,
+		                                   float * __restrict __ATTR_ALIGN__(64) H_1,
+						   float * __restrict __ATTR_ALIGN__(64) H_2,
+						   float * __restrict __ATTR_ALIGN__(64) H_3,
+						   float * __restrict __ATTR_ALIGN__(64) H_4,
+						   float * __restrict __ATTR_ALIGN__(64) H_5,
+						   float * __restrict __ATTR_ALIGN__(64) H_6,
+						   float * __restrict __ATTR_ALIGN__(64) H_7,
+						   float * __restrict __ATTR_ALIGN__(64) H_8,
+						   const __m512 x_0,
+						   const __m512 x_1,
+						   const __m512 x_2,
+						   const __m512 rx_0,
+						   const __m512 rx_1,
+						   const __m512 rx_2,
+						   const __m512 tx_0,
+						   const __m512 tx_1,
+						   const __m512 tx_2,
+						   const bool useHalfRange) {
+
+
+			  const __m512 _1      = _mm512_set1_ps(1.0f);
+			  const __m512 _0_5    = _mm512_set1_ps(0.5f);
+			  const __m512 dRxx    = _mm512_sub_ps(x_0,rx_0);
+			  const __m512 dRxx2   = _mm512_mul_ps(dRxx,dRxx);
+			  const __m512 dRxy    = _mm512_sub_ps(x_1,rx_1);
+			  const __m512 dRxy2   = _mm512_mul_ps(dRxy,dRxy);
+			  const __m512 dRxz    = _mm512_sub_ps(x_2,rx_2);
+			  const __m512 dRxz2   = _mm512_mul_ps(dRxz,dRxz);
+			  const __m512 nrmdRx  = _mm512_sqrt_ps(_mm512_mul_ps(dRxx2,
+			                                                       _mm512_mul_ps(dRxy2,dRxz2)));
+			  const __m512 inv0    = _mm512_div_ps(_1,nrmdRx);						      
+			  const __m512 nrmdRx3 = _mm512_mul_ps(nrmdRx,_mm512_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m512 inv1    = _mm512_div_ps(_1,nrmdRx3);
+			  const __m512 dTxx    = _mm512_sub_ps(x_0,tx_0);
+			  const __m512 dTxx2   = _mm512_mul_ps(dTxx,dTxx);
+			  const __m512 dTxy    = _mm512_sub_ps(x_1,tx_1);
+			  const __m512 dTxy2   = _mm512_mul_ps(dTxy,dTxy);
+			  const __m512 dTxz    = _mm512_sub_ps(x_2,tx_2);
+			  const __m512 dTxz2   = _mm512_mul_ps(dTxz,dTxz);
+			  const __m512 nrmdTx  = _mm512_sqrt_ps(_mm512_mul_ps(dTxx2,
+			                                                       _mm512_mul_ps(dTxy2,dTxz2)));
+			  const __m512 inv3    = _mm512_div_ps(_1,nrmdTx);
+			  const __m512 nrmdTx3 = _mm512_mul_ps(nrmdTx,_mm512_mul_ps(nrmdTx3,nrmdTx3));
+			  const __m512 inv2    = _mm512_div_ps(_1,nrmdTx3);
+			  _mm512_store_ps(&H_0[0],_mm512_sub_ps(_mm512_fmadd_ps(zmm16r4_negate(dRxx2),inv1,inv0),
+			                                        _mm512_fmadd_ps(dTxx2,inv2,inv3)));
+			  _mm512_store_ps(&H_1[0],_mm512_sub_ps(_mm512_mul_ps(zmm16r4_negate(dRxx),
+			                                        _mm512_mul_ps(dRxy,inv1)),
+								_mm512_mul_ps(dTxx,
+								_mm512_mul_ps(dTxy,inv2))));
+			  _mm512_store_ps(&H_2[0],_mm512_sub_ps(_mm512_mul_ps(zmm16r4_negate(dRxx),
+			                                        _mm512_mul_ps(dRxz,inv1)),
+								_mm512_mul_ps(dTxx,
+								_mm512_mul_ps(dTxz,inv2))));
+			  _mm512_store_ps(&H_3[0],_mm512_load_ps(&H_1[0]));
+			  _mm512_store_ps(&H_4[0],_mm512_sub_ps(_mm512_fmadd_ps(zmm16r4_negate(dRxy2),inv1,inv0),
+			                                        _mm512_fmadd_ps(dTxy2,inv2,inv3)));
+			  _mm512_store_ps(&H_5[0],_mm512_sub_ps(_mm512_mul_ps(zmm16r4_negate(dRxy),
+			                                        _mm512_mul_ps(dRxz,inv1)),
+								_mm512_mul_ps(dTxy,
+								_mm512_mul_ps(dTxz,inv2))));
+			  _mm512_store_ps(&H_6[0],_mm512_load_ps(&H_2[0]));
+			  _mm512_store_ps(&H_7[0],_mm512_load_ps(&H_5[0]));
+			  _mm512_store_ps(&H_8[0],_mm512_sub_ps(_mm512_fmadd_ps(zmm16r4_negate(dRxz2),inv1,inv0),
+			                                        _mm512_fmadd_ps(dTxz2,inv2,inv3)));
+			  if(useHalfRange) {
+                             _mm512_store_ps(&H_0[0],_mm512_mul_ps(_mm512_load_ps(&H_0[0],_0_5)));
+			     _mm512_store_ps(&H_1[0],_mm512_mul_ps(_mm512_load_ps(&H_1[0],_0_5)));
+			     _mm512_store_ps(&H_2[0],_mm512_mul_ps(_mm512_load_ps(&H_2[0],_0_5)));
+			     _mm512_store_ps(&H_3[0],_mm512_mul_ps(_mm512_load_ps(&H_3[0],_0_5)));
+			     _mm512_store_ps(&H_4[0],_mm512_mul_ps(_mm512_load_ps(&H_4[0],_0_5)));
+			     _mm512_store_ps(&H_5[0],_mm512_mul_ps(_mm512_load_ps(&H_5[0],_0_5)));
+			     _mm512_store_ps(&H_6[0],_mm512_mul_ps(_mm512_load_ps(&H_6[0],_0_5)));
+			     _mm512_store_ps(&H_7[0],_mm512_mul_ps(_mm512_load_ps(&H_7[0],_0_5)));
+			     _mm512_store_ps(&H_8[0],_mm512_mul_ps(_mm512_load_ps(&H_8[0],_0_5)));
+			  }
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void range_hess_3d_zmm16r4_u(float * __restrict H_0,
+		                                   float * __restrict H_1,
+						   float * __restrict H_2,
+						   float * __restrict H_3,
+						   float * __restrict H_4,
+						   float * __restrict H_5,
+						   float * __restrict H_6,
+						   float * __restrict H_7,
+						   float * __restrict H_8,
+						   const __m512 x_0,
+						   const __m512 x_1,
+						   const __m512 x_2,
+						   const __m512 rx_0,
+						   const __m512 rx_1,
+						   const __m512 rx_2,
+						   const __m512 tx_0,
+						   const __m512 tx_1,
+						   const __m512 tx_2,
+						   const bool useHalfRange) {
+
+
+			  const __m512 _1      = _mm512_set1_ps(1.0f);
+			  const __m512 _0_5    = _mm512_set1_ps(0.5f);
+			  const __m512 dRxx    = _mm512_sub_ps(x_0,rx_0);
+			  const __m512 dRxx2   = _mm512_mul_ps(dRxx,dRxx);
+			  const __m512 dRxy    = _mm512_sub_ps(x_1,rx_1);
+			  const __m512 dRxy2   = _mm512_mul_ps(dRxy,dRxy);
+			  const __m512 dRxz    = _mm512_sub_ps(x_2,rx_2);
+			  const __m512 dRxz2   = _mm512_mul_ps(dRxz,dRxz);
+			  const __m512 nrmdRx  = _mm512_sqrt_ps(_mm512_mul_ps(dRxx2,
+			                                                       _mm512_mul_ps(dRxy2,dRxz2)));
+			  const __m512 inv0    = _mm512_div_ps(_1,nrmdRx);						      
+			  const __m512 nrmdRx3 = _mm512_mul_ps(nrmdRx,_mm512_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m512 inv1    = _mm512_div_ps(_1,nrmdRx3);
+			  const __m512 dTxx    = _mm512_sub_ps(x_0,tx_0);
+			  const __m512 dTxx2   = _mm512_mul_ps(dTxx,dTxx);
+			  const __m512 dTxy    = _mm512_sub_ps(x_1,tx_1);
+			  const __m512 dTxy2   = _mm512_mul_ps(dTxy,dTxy);
+			  const __m512 dTxz    = _mm512_sub_ps(x_2,tx_2);
+			  const __m512 dTxz2   = _mm512_mul_ps(dTxz,dTxz);
+			  const __m512 nrmdTx  = _mm512_sqrt_ps(_mm512_mul_ps(dTxx2,
+			                                                       _mm512_mul_ps(dTxy2,dTxz2)));
+			  const __m512 inv3    = _mm512_div_ps(_1,nrmdTx);
+			  const __m512 nrmdTx3 = _mm512_mul_ps(nrmdTx,_mm512_mul_ps(nrmdTx3,nrmdTx3));
+			  const __m512 inv2    = _mm512_div_ps(_1,nrmdTx3);
+			  _mm512_storeu_ps(&H_0[0],_mm512_sub_ps(_mm512_fmadd_ps(zmm16r4_negate(dRxx2),inv1,inv0),
+			                                        _mm512_fmadd_ps(dTxx2,inv2,inv3)));
+			  _mm512_storeu_ps(&H_1[0],_mm512_sub_ps(_mm512_mul_ps(zmm16r4_negate(dRxx),
+			                                        _mm512_mul_ps(dRxy,inv1)),
+								_mm512_mul_ps(dTxx,
+								_mm512_mul_ps(dTxy,inv2))));
+			  _mm512_storeu_ps(&H_2[0],_mm512_sub_ps(_mm512_mul_ps(zmm16r4_negate(dRxx),
+			                                        _mm512_mul_ps(dRxz,inv1)),
+								_mm512_mul_ps(dTxx,
+								_mm512_mul_ps(dTxz,inv2))));
+			  _mm512_storeu_ps(&H_3[0],_mm512_loadu_ps(&H_1[0]));
+			  _mm512_storeu_ps(&H_4[0],_mm512_sub_ps(_mm512_fmadd_ps(zmm16r4_negate(dRxy2),inv1,inv0),
+			                                        _mm512_fmadd_ps(dTxy2,inv2,inv3)));
+			  _mm512_storeu_ps(&H_5[0],_mm512_sub_ps(_mm512_mul_ps(zmm16r4_negate(dRxy),
+			                                        _mm512_mul_ps(dRxz,inv1)),
+								_mm512_mul_ps(dTxy,
+								_mm512_mul_ps(dTxz,inv2))));
+			  _mm512_storeu_ps(&H_6[0],_mm512_loadu_ps(&H_2[0]));
+			  _mm512_storeu_ps(&H_7[0],_mm512_loadu_ps(&H_5[0]));
+			  _mm512_storeu_ps(&H_8[0],_mm512_sub_ps(_mm512_fmadd_ps(zmm16r4_negate(dRxz2),inv1,inv0),
+			                                        _mm512_fmadd_ps(dTxz2,inv2,inv3)));
+			  if(useHalfRange) {
+                             _mm512_storeu_ps(&H_0[0],_mm512_mul_ps(_mm512_loadu_ps(&H_0[0],_0_5)));
+			     _mm512_storeu_ps(&H_1[0],_mm512_mul_ps(_mm512_loadu_ps(&H_1[0],_0_5)));
+			     _mm512_storeu_ps(&H_2[0],_mm512_mul_ps(_mm512_loadu_ps(&H_2[0],_0_5)));
+			     _mm512_storeu_ps(&H_3[0],_mm512_mul_ps(_mm512_loadu_ps(&H_3[0],_0_5)));
+			     _mm512_storeu_ps(&H_4[0],_mm512_mul_ps(_mm512_loadu_ps(&H_4[0],_0_5)));
+			     _mm512_storeu_ps(&H_5[0],_mm512_mul_ps(_mm512_loadu_ps(&H_5[0],_0_5)));
+			     _mm512_storeu_ps(&H_6[0],_mm512_mul_ps(_mm512_loadu_ps(&H_6[0],_0_5)));
+			     _mm512_storeu_ps(&H_7[0],_mm512_mul_ps(_mm512_loadu_ps(&H_7[0],_0_5)));
+			     _mm512_storeu_ps(&H_8[0],_mm512_mul_ps(_mm512_loadu_ps(&H_8[0],_0_5)));
+			  }
+		    }
+
+
+
+ 
+
  
 /*CART2RUVGENCPP A C++ function to convert a Cartesian point into range,
  *           and direction cosines, possibly including the w component.
@@ -1588,6 +1762,145 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
+		      void cart_to_ruv_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) r,
+		                                double * __restrict __ATTR_ALIGN__(64) u,
+					        double * __restrict __ATTR_ALIGN__(64) v,
+					        double * __restrict __ATTR_ALIGN__(64) w,
+					      const __m512d C_x,
+					      const __m512d C_y,
+					      const __m512d C_z,
+					      const __m512d T_x,
+					      const __m512d T_y,
+					      const __m512d T_z,
+					      const __m512d R_x,
+					      const __m512d R_y,
+					      const __m512d R_z,
+					      const __m512d * __restrict __ATTR_ALIGN__(64) M, //flattened 3x3 matrix
+					      const bool useHalfRange) {
+
+                          __m512d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512d r1,r2;
+			  __m512d diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m512d M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_pd(C_x,R_x);
+			  const __m512d M1 = M[1];
+			  diff1 = _mm512_sub_pd(C_y,R_y);
+			  const __m512d M2 = M[2];
+			  diff2 = _mm512_sub_pd(C_z,R_z);
+			  const __m512d M3 = M[3];
+			  diff3 = _mm512_sub_pd(T_x,R_x);
+			  const __m512d M4 = M[4];
+			  diff4 = _mm512_sub_pd(T_y,R_y);
+			  const __m512d M5 = M[5];
+			  diff5 = _mm512_sub_pd(T_z,R_z);
+			  const __m512d M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_pd(M0,diff3,_mm512_fmadd_pd(M3,diff4,_mm512_mul_pd(M6,diff5)));
+			  CL0   = _mm512_fmadd_pd(M0,diff0,_mm512_fmadd_pd(M3,diff1,_mm512_mul_pd(M6,diff2)));
+			  const __m512d M7 = M[7];
+			  CL1   = _mm512_fmadd_pd(M1,diff0,_mm512_fmadd_pd(M4,diff1,_mm512_mul_pd(M7,diff2)));
+			  TxL1  = _mm512_fmadd_pd(M1,diff3,_mm512_fmadd_pd(M4,diff4,_mm512_mul_pd(M7,diff5)));
+			  const __m512d M8 = M[8];
+			  CL2   = _mm512_fmadd_pd(M2,diff0,_mm512_fmadd_pd(M5,diff1,_mm512_mul_pd(M8,diff2)));
+			  TxL2  = _mm512_fmadd_pd(M2,diff3,_mm512_fmadd_pd(M5,diff4,_mm512_mul_pd(M8,diff5)));
+			  ///Receiver to target.
+			  __m512d sarg = _mm512_fmadd_pd(CL0,CL0,_mm512_fmadd_pd(CL1,CL1,_mm512_mul_pd(CL2,CL2)));
+			  r1    = _mm512_sqrt_pd(sarg);
+			  diff0 = _mm512_sub_pd(CL0,TxL0);
+			  diff1 = _mm512_sub_pd(CL1,TxL1);
+			  _mm512_store_pd(&u[0],_mm512_div_pd(CL0,r1));
+			  diff2 = _mm512_sub_pd(CL2,TxL2);
+			  _mm512_store_pd(&w[0],_mm512_div_pd(CL2,r1));
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_pd(diff0,diff0,_mm512_fmadd_pd(diff1,diff1,_mm512_mul_pd(diff2,diff2)));
+			  r2    = _mm512_sqrt_pd(sarg);
+			  _mm512_store_pd(&r[0],_mm512_add_pd(r1,r2));
+			  _mm512_store_pd(&v[0],_mm512_div_pd(CL1,r1));
+			  if(useHalfRange) {
+                             const __m512d _0_5 = _mm512_set1_pd(0.5);
+			     _mm512_store_pd(&r[0],_mm512_mul_pd(_mm512_load_pd(&r[0],_0_5)));
+			  }
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_ruv_zmm8r8_u(double * __restrict r,
+		                                double * __restrict u,
+					        double * __restrict v,
+					        double * __restrict w,
+					      const __m512d C_x,
+					      const __m512d C_y,
+					      const __m512d C_z,
+					      const __m512d T_x,
+					      const __m512d T_y,
+					      const __m512d T_z,
+					      const __m512d R_x,
+					      const __m512d R_y,
+					      const __m512d R_z,
+					      const __m512d * __restrict __ATTR_ALIGN__(64) M, //flattened 3x3 matrix
+					      const bool useHalfRange) {
+
+                          __m512d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512d r1,r2;
+			  __m512d diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m512d M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_pd(C_x,R_x);
+			  const __m512d M1 = M[1];
+			  diff1 = _mm512_sub_pd(C_y,R_y);
+			  const __m512d M2 = M[2];
+			  diff2 = _mm512_sub_pd(C_z,R_z);
+			  const __m512d M3 = M[3];
+			  diff3 = _mm512_sub_pd(T_x,R_x);
+			  const __m512d M4 = M[4];
+			  diff4 = _mm512_sub_pd(T_y,R_y);
+			  const __m512d M5 = M[5];
+			  diff5 = _mm512_sub_pd(T_z,R_z);
+			  const __m512d M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_pd(M0,diff3,_mm512_fmadd_pd(M3,diff4,_mm512_mul_pd(M6,diff5)));
+			  CL0   = _mm512_fmadd_pd(M0,diff0,_mm512_fmadd_pd(M3,diff1,_mm512_mul_pd(M6,diff2)));
+			  const __m512d M7 = M[7];
+			  CL1   = _mm512_fmadd_pd(M1,diff0,_mm512_fmadd_pd(M4,diff1,_mm512_mul_pd(M7,diff2)));
+			  TxL1  = _mm512_fmadd_pd(M1,diff3,_mm512_fmadd_pd(M4,diff4,_mm512_mul_pd(M7,diff5)));
+			  const __m512d M8 = M[8];
+			  CL2   = _mm512_fmadd_pd(M2,diff0,_mm512_fmadd_pd(M5,diff1,_mm512_mul_pd(M8,diff2)));
+			  TxL2  = _mm512_fmadd_pd(M2,diff3,_mm512_fmadd_pd(M5,diff4,_mm512_mul_pd(M8,diff5)));
+			  ///Receiver to target.
+			  __m512d sarg = _mm512_fmadd_pd(CL0,CL0,_mm512_fmadd_pd(CL1,CL1,_mm512_mul_pd(CL2,CL2)));
+			  r1    = _mm512_sqrt_pd(sarg);
+			  diff0 = _mm512_sub_pd(CL0,TxL0);
+			  diff1 = _mm512_sub_pd(CL1,TxL1);
+			  _mm512_storeu_pd(&u[0],_mm512_div_pd(CL0,r1));
+			  diff2 = _mm512_sub_pd(CL2,TxL2);
+			  _mm512_storeu_pd(&w[0],_mm512_div_pd(CL2,r1));
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_pd(diff0,diff0,_mm512_fmadd_pd(diff1,diff1,_mm512_mul_pd(diff2,diff2)));
+			  r2    = _mm512_sqrt_pd(sarg);
+			  _mm512_storeu_pd(&r[0],_mm512_add_pd(r1,r2));
+			  _mm512_storeu_pd(&v[0],_mm512_div_pd(CL1,r1));
+			  if(useHalfRange) {
+                             const __m512d _0_5 = _mm512_set1_pd(0.5);
+			     _mm512_storeu_pd(&r[0],_mm512_mul_pd(_mm512_loadu_pd(&r[0],_0_5)));
+			  }
+		     }
+
+
+
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
 		      void cart_to_ruv_zmm16r4(__m512 &r,
 		                               __m512 &u,
 					       __m512 &v,
@@ -1649,6 +1962,143 @@ namespace gms {
 			     r  = _mm512_mul_ps(r,_0_5);
 			  }
 		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_ruv_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) r,
+		                                 float * __restrict __ATTR_ALIGN__(64) u,
+					         float * __restrict __ATTR_ALIGN__(64) v,
+					         float * __restrict __ATTR_ALIGN__(64) w,
+					         const __m512 C_x,
+					         const __m512 C_y,
+					         const __m512 C_z,
+					         const __m512 T_x,
+					         const __m512 T_y,
+					         const __m512 T_z,
+					         const __m512 R_x,
+					         const __m512 R_y,
+					         const __m512 R_z,
+					         const __m512 * __restrict __ATTR_ALIGN__(64) M, //flattened 3x3 matrix
+					         const bool useHalfRange) {
+
+                          __m512 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512 r1,r2;
+			  __m512 diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m512 M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_ps(C_x,R_x);
+			  const __m512 M1 = M[1];
+			  diff1 = _mm512_sub_ps(C_y,R_y);
+			  const __m512 M2 = M[2];
+			  diff2 = _mm512_sub_ps(C_z,R_z);
+			  const __m512 M3 = M[3];
+			  diff3 = _mm512_sub_ps(T_x,R_x);
+			  const __m512 M4 = M[4];
+			  diff4 = _mm512_sub_ps(T_y,R_y);
+			  const __m512 M5 = M[5];
+			  diff5 = _mm512_sub_ps(T_z,R_z);
+			  const __m512 M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_ps(M0,diff3,_mm512_fmadd_ps(M3,diff4,_mm512_mul_ps(M6,diff5)));
+			  CL0   = _mm512_fmadd_ps(M0,diff0,_mm512_fmadd_ps(M3,diff1,_mm512_mul_ps(M6,diff2)));
+			  const __m512 M7 = M[7];
+			  CL1   = _mm512_fmadd_ps(M1,diff0,_mm512_fmadd_ps(M4,diff1,_mm512_mul_ps(M7,diff2)));
+			  TxL1  = _mm512_fmadd_ps(M1,diff3,_mm512_fmadd_ps(M4,diff4,_mm512_mul_ps(M7,diff5)));
+			  const __m512 M8 = M[8];
+			  CL2   = _mm512_fmadd_ps(M2,diff0,_mm512_fmadd_ps(M5,diff1,_mm512_mul_ps(M8,diff2)));
+			  TxL2  = _mm512_fmadd_ps(M2,diff3,_mm512_fmadd_ps(M5,diff4,_mm512_mul_ps(M8,diff5)));
+			  ///Receiver to target.
+			  __m512 sarg = _mm512_fmadd_ps(CL0,CL0,_mm512_fmadd_ps(CL1,CL1,_mm512_mul_ps(CL2,CL2)));
+			  r1    = _mm512_sqrt_ps(sarg);
+			  diff0 = _mm512_sub_ps(CL0,TxL0);
+			  diff1 = _mm512_sub_ps(CL1,TxL1);
+			  _mm512_store_ps(&u[0],_mm512_div_ps(CL0,r1));
+			  diff2 = _mm512_sub_ps(CL2,TxL2);
+			  _mm512_store_ps(&w[0],_mm512_div_ps(CL2,r1));
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_ps(diff0,diff0,_mm512_fmadd_ps(diff1,diff1,_mm512_mul_ps(diff2,diff2)));
+			  r2    = _mm512_sqrt_ps(sarg);
+			  _mm512_store_ps(&r[0],_mm512_add_ps(r1,r2));
+			  _mm512_store_ps(&v[0],_mm512_div_ps(CL1,r1));
+			  if(useHalfRange) {
+                             const __m512 _0_5 = _mm512_set1_ps(0.5f);
+			     _mm512_store_ps(&r[0],_mm512_mul_ps(_mm512_load_ps(&r[0],_0_5)));
+			  }
+		     }
+
+
+		       __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_ruv_zmm16r4_u(float * __restrict r,
+		                                 float * __restrict u,
+					         float * __restrict v,
+					         float * __restrict w,
+					         const __m512 C_x,
+					         const __m512 C_y,
+					         const __m512 C_z,
+					         const __m512 T_x,
+					         const __m512 T_y,
+					         const __m512 T_z,
+					         const __m512 R_x,
+					         const __m512 R_y,
+					         const __m512 R_z,
+					         const __m512 * __restrict __ATTR_ALIGN__(64) M, //flattened 3x3 matrix
+					         const bool useHalfRange) {
+
+                          __m512 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512 r1,r2;
+			  __m512 diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m512 M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_ps(C_x,R_x);
+			  const __m512 M1 = M[1];
+			  diff1 = _mm512_sub_ps(C_y,R_y);
+			  const __m512 M2 = M[2];
+			  diff2 = _mm512_sub_ps(C_z,R_z);
+			  const __m512 M3 = M[3];
+			  diff3 = _mm512_sub_ps(T_x,R_x);
+			  const __m512 M4 = M[4];
+			  diff4 = _mm512_sub_ps(T_y,R_y);
+			  const __m512 M5 = M[5];
+			  diff5 = _mm512_sub_ps(T_z,R_z);
+			  const __m512 M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_ps(M0,diff3,_mm512_fmadd_ps(M3,diff4,_mm512_mul_ps(M6,diff5)));
+			  CL0   = _mm512_fmadd_ps(M0,diff0,_mm512_fmadd_ps(M3,diff1,_mm512_mul_ps(M6,diff2)));
+			  const __m512 M7 = M[7];
+			  CL1   = _mm512_fmadd_ps(M1,diff0,_mm512_fmadd_ps(M4,diff1,_mm512_mul_ps(M7,diff2)));
+			  TxL1  = _mm512_fmadd_ps(M1,diff3,_mm512_fmadd_ps(M4,diff4,_mm512_mul_ps(M7,diff5)));
+			  const __m512 M8 = M[8];
+			  CL2   = _mm512_fmadd_ps(M2,diff0,_mm512_fmadd_ps(M5,diff1,_mm512_mul_ps(M8,diff2)));
+			  TxL2  = _mm512_fmadd_ps(M2,diff3,_mm512_fmadd_ps(M5,diff4,_mm512_mul_ps(M8,diff5)));
+			  ///Receiver to target.
+			  __m512 sarg = _mm512_fmadd_ps(CL0,CL0,_mm512_fmadd_ps(CL1,CL1,_mm512_mul_ps(CL2,CL2)));
+			  r1    = _mm512_sqrt_ps(sarg);
+			  diff0 = _mm512_sub_ps(CL0,TxL0);
+			  diff1 = _mm512_sub_ps(CL1,TxL1);
+			  _mm512_storeu_ps(&u[0],_mm512_div_ps(CL0,r1));
+			  diff2 = _mm512_sub_ps(CL2,TxL2);
+			  _mm512_storeu_ps(&w[0],_mm512_div_ps(CL2,r1));
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_ps(diff0,diff0,_mm512_fmadd_ps(diff1,diff1,_mm512_mul_ps(diff2,diff2)));
+			  r2    = _mm512_sqrt_ps(sarg);
+			  _mm512_storeu_ps(&r[0],_mm512_add_ps(r1,r2));
+			  _mm512_storeu_ps(&v[0],_mm512_div_ps(CL1,r1));
+			  if(useHalfRange) {
+                             const __m512 _0_5 = _mm512_set1_ps(0.5f);
+			     _mm512_storeu_ps(&r[0],_mm512_mul_ps(_mm512_loadu_ps(&r[0],_0_5)));
+			  }
+		     }
+
 
 
 		     
@@ -1800,8 +2250,209 @@ namespace gms {
 		     }
 
 
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_sphere_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) range,
+		                                   double * __restrict __ATTR_ALIGN__(64) az,
+						   double * __restrict __ATTR_ALIGN__(64) elev,
+						   const __m512d C_x,
+						   const __m512d C_y,
+						   const __m512d C_z,
+						   const __m512d T_x,
+						   const __m512d T_y,
+						   const __m512d T_z,
+						   const __m512d R_x,
+						   const __m512d R_y,
+						   const __m512d R_z,
+						   const __m512d * __restrict __ATTR_ALIGN__(64) M,
+						   const int sysType,
+						   const bool useHalfRange) {
 
-		     __ATTR_REGCALL__
+			  const __m512d _0   = _mm512_setzero_pd();
+			  const __m512d _0_5 = _mm512_set1_pd(0.5);
+                          __m512d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512d diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m512d r1,r2;
+			  const __m512d M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_pd(C_x,R_x);
+			  const __m512d M1 = M[1];
+			  diff1 = _mm512_sub_pd(C_y,R_y);
+			  const __m512d M2 = M[2];
+			  diff2 = _mm512_sub_pd(C_z,R_z);
+			  const __m512d M3 = M[3];
+			  diff3 = _mm512_sub_pd(T_x,R_x);
+			  const __m512d M4 = M[4];
+			  diff4 = _mm512_sub_pd(T_y,R_y);
+			  const __m512d M5 = M[5];
+			  diff5 = _mm512_sub_pd(T_z,R_z);
+			  const __m512d M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_pd(M0,diff3,_mm512_fmadd_pd(M3,diff4,_mm512_mul_pd(M6,diff5)));
+			  CL0   = _mm512_fmadd_pd(M0,diff0,_mm512_fmadd_pd(M3,diff1,_mm512_mul_pd(M6,diff2)));
+			  const __m512d M7 = M[7];
+			  CL1   = _mm512_fmadd_pd(M1,diff0,_mm512_fmadd_pd(M4,diff1,_mm512_mul_pd(M7,diff2)));
+			  TxL1  = _mm512_fmadd_pd(M1,diff3,_mm512_fmadd_pd(M4,diff4,_mm512_mul_pd(M7,diff5)));
+			  const __m512d M8 = M[8];
+			  CL2   = _mm512_fmadd_pd(M2,diff0,_mm512_fmadd_pd(M5,diff1,_mm512_mul_pd(M8,diff2)));
+			  TxL2  = _mm512_fmadd_pd(M2,diff3,_mm512_fmadd_pd(M5,diff4,_mm512_mul_pd(M8,diff5)));
+			  ///Receiver to target.
+			  __m512d sarg = _mm512_fmadd_pd(CL0,CL0,_mm512_fmadd_pd(CL1,CL1,_mm512_mul_pd(CL2,CL2)));
+			  r1    = _mm512_sqrt_pd(sarg);
+			  diff0 = _mm512_sub_pd(CL0,TxL0);
+			  diff1 = _mm512_sub_pd(CL1,TxL1);
+			  diff2 = _mm512_sub_pd(CL2,TxL2);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_pd(diff0,diff0,_mm512_fmadd_pd(diff1,diff1,_mm512_mul_pd(diff2,diff2)));
+			  r2    = _mm512_sqrt_pd(sarg);
+			  _mm512_store_pd(&range[0],_mm512_add_pd(r1,r2));
+			  if(sysType==0||sysType==2||sysType==3) {
+                             __mmask8 m1,m2;
+			     m1 = _mm512_cmp_pd_mask(CL1,_0,_CMP_EQ_OQ);
+			     m2 = _mm512_cmp_pd_mask(CL0,_0,_CMP_EQ_OQ);
+			     if(m1 && m2) {
+                                _mm512_store_pd(&az[0],_0);
+			     }
+			     else {
+                                _mm512_store_pd(&az[0],_mm512_atan2_pd(CL1,CL0));
+			     }
+			     _mm512_store_pd(&elev[0],_mm512_atan2_pd(CL2,_mm512_hypot_pd(CL0,CL1)));
+			     if(sysType==2) {
+                                const __m512d pi2 = _mm512_set1_pd(1.5707963267948966192313);
+				_mm512_store_pd(&elev[0],_mm512_sub_pd(pi2,_mm512_load_pd(&elev[0])));
+			     }
+			     else if(sysType==3) {
+                                const __m512d pi2 = _mm512_set1_pd(1.5707963267948966192313);
+				_mm512_store_pd(&az[0],_mm512_sub_pd(pi2,_mm512_load_pd(&az[0])));
+			     }
+			  }
+			  else {
+                              __mmask8 m1,m2;
+			      m1 = _mm512_cmp_pd_mask(CL2,_0,_CMP_EQ_OQ);
+			      m2 = _mm512_cmp_pd_mask(CL0,_0,_CMP_EQ_OQ);
+			      if(m1 && m2) {
+                                 _mm512_store_pd(&az[0],_0);
+			      }
+			      else {
+                                 _mm512_store_pd(&az[0],_mm512_atan2_pd(CL0,CL2));
+			      }
+			      _mm512_store_pd(&elev[0],_mm512_atan2_pd(CL1,_mm512_hypot_pd(CL2,CL0)));
+			  }
+
+			  if(useHalfRange) {
+                             _mm512_store_pd(&range[0],_mm512_mul_pd(_mm512_load_pd(&range[0],_0_5)));
+			  }
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_sphere_zmm8r8_u(double * __restrict  range,
+		                                   double * __restrict  az,
+						   double * __restrict  elev,
+						   const __m512d C_x,
+						   const __m512d C_y,
+						   const __m512d C_z,
+						   const __m512d T_x,
+						   const __m512d T_y,
+						   const __m512d T_z,
+						   const __m512d R_x,
+						   const __m512d R_y,
+						   const __m512d R_z,
+						   const __m512d * __restrict __ATTR_ALIGN__(64) M,
+						   const int sysType,
+						   const bool useHalfRange) {
+
+			  const __m512d _0   = _mm512_setzero_pd();
+			  const __m512d _0_5 = _mm512_set1_pd(0.5);
+                          __m512d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512d diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m512d r1,r2;
+			  const __m512d M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_pd(C_x,R_x);
+			  const __m512d M1 = M[1];
+			  diff1 = _mm512_sub_pd(C_y,R_y);
+			  const __m512d M2 = M[2];
+			  diff2 = _mm512_sub_pd(C_z,R_z);
+			  const __m512d M3 = M[3];
+			  diff3 = _mm512_sub_pd(T_x,R_x);
+			  const __m512d M4 = M[4];
+			  diff4 = _mm512_sub_pd(T_y,R_y);
+			  const __m512d M5 = M[5];
+			  diff5 = _mm512_sub_pd(T_z,R_z);
+			  const __m512d M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_pd(M0,diff3,_mm512_fmadd_pd(M3,diff4,_mm512_mul_pd(M6,diff5)));
+			  CL0   = _mm512_fmadd_pd(M0,diff0,_mm512_fmadd_pd(M3,diff1,_mm512_mul_pd(M6,diff2)));
+			  const __m512d M7 = M[7];
+			  CL1   = _mm512_fmadd_pd(M1,diff0,_mm512_fmadd_pd(M4,diff1,_mm512_mul_pd(M7,diff2)));
+			  TxL1  = _mm512_fmadd_pd(M1,diff3,_mm512_fmadd_pd(M4,diff4,_mm512_mul_pd(M7,diff5)));
+			  const __m512d M8 = M[8];
+			  CL2   = _mm512_fmadd_pd(M2,diff0,_mm512_fmadd_pd(M5,diff1,_mm512_mul_pd(M8,diff2)));
+			  TxL2  = _mm512_fmadd_pd(M2,diff3,_mm512_fmadd_pd(M5,diff4,_mm512_mul_pd(M8,diff5)));
+			  ///Receiver to target.
+			  __m512d sarg = _mm512_fmadd_pd(CL0,CL0,_mm512_fmadd_pd(CL1,CL1,_mm512_mul_pd(CL2,CL2)));
+			  r1    = _mm512_sqrt_pd(sarg);
+			  diff0 = _mm512_sub_pd(CL0,TxL0);
+			  diff1 = _mm512_sub_pd(CL1,TxL1);
+			  diff2 = _mm512_sub_pd(CL2,TxL2);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_pd(diff0,diff0,_mm512_fmadd_pd(diff1,diff1,_mm512_mul_pd(diff2,diff2)));
+			  r2    = _mm512_sqrt_pd(sarg);
+			  _mm512_storeu_pd(&range[0],_mm512_add_pd(r1,r2));
+			  if(sysType==0||sysType==2||sysType==3) {
+                             __mmask8 m1,m2;
+			     m1 = _mm512_cmp_pd_mask(CL1,_0,_CMP_EQ_OQ);
+			     m2 = _mm512_cmp_pd_mask(CL0,_0,_CMP_EQ_OQ);
+			     if(m1 && m2) {
+                                _mm512_storeu_pd(&az[0],_0);
+			     }
+			     else {
+                                _mm512_storeu_pd(&az[0],_mm512_atan2_pd(CL1,CL0));
+			     }
+			     _mm512_storeu_pd(&elev[0],_mm512_atan2_pd(CL2,_mm512_hypot_pd(CL0,CL1)));
+			     if(sysType==2) {
+                                const __m512d pi2 = _mm512_set1_pd(1.5707963267948966192313);
+				_mm512_storeu_pd(&elev[0],_mm512_sub_pd(pi2,_mm512_loadu_pd(&elev[0])));
+			     }
+			     else if(sysType==3) {
+                                const __m512d pi2 = _mm512_set1_pd(1.5707963267948966192313);
+				_mm512_storeu_pd(&az[0],_mm512_sub_pd(pi2,_mm512_loadu_pd(&az[0])));
+			     }
+			  }
+			  else {
+                              __mmask8 m1,m2;
+			      m1 = _mm512_cmp_pd_mask(CL2,_0,_CMP_EQ_OQ);
+			      m2 = _mm512_cmp_pd_mask(CL0,_0,_CMP_EQ_OQ);
+			      if(m1 && m2) {
+                                 _mm512_storeu_pd(&az[0],_0);
+			      }
+			      else {
+                                 _mm512_storeu_pd(&az[0],_mm512_atan2_pd(CL0,CL2));
+			      }
+			      _mm512_storeu_pd(&elev[0],_mm512_atan2_pd(CL1,_mm512_hypot_pd(CL2,CL0)));
+			  }
+
+			  if(useHalfRange) {
+                             _mm512_storeu_pd(&range[0],_mm512_mul_pd(_mm512_loadu_pd(&range[0],_0_5)));
+			  }
+		     }
+
+
+
+
+
+
+		      __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
@@ -1899,6 +2550,206 @@ namespace gms {
 			  }
 		     }
 
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_sphere_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) range,
+		                                    float * __restrict __ATTR_ALIGN__(64) az,
+						    float * __restrict __ATTR_ALIGN__(64) elev,
+						    const __m512 C_x,
+						    const __m512 C_y,
+						    const __m512 C_z,
+						    const __m512 T_x,
+						    const __m512 T_y,
+						    const __m512 T_z,
+						    const __m512 R_x,
+						    const __m512 R_y,
+						    const __m512 R_z,
+						    const __m512 * __restrict __ATTR_ALIGN__(64) M,
+						    const int sysType,
+						    const bool useHalfRange) {
+
+			  const __m512 _0   = _mm512_setzero_ps();
+			  const __m512 _0_5 = _mm512_set1_ps(0.5f);
+                          __m512 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512 diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m512 r1,r2;
+			  const __m512 M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_ps(C_x,R_x);
+			  const __m512 M1 = M[1];
+			  diff1 = _mm512_sub_ps(C_y,R_y);
+			  const __m512 M2 = M[2];
+			  diff2 = _mm512_sub_ps(C_z,R_z);
+			  const __m512 M3 = M[3];
+			  diff3 = _mm512_sub_ps(T_x,R_x);
+			  const __m512 M4 = M[4];
+			  diff4 = _mm512_sub_ps(T_y,R_y);
+			  const __m512 M5 = M[5];
+			  diff5 = _mm512_sub_ps(T_z,R_z);
+			  const __m512 M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_ps(M0,diff3,_mm512_fmadd_ps(M3,diff4,_mm512_mul_ps(M6,diff5)));
+			  CL0   = _mm512_fmadd_ps(M0,diff0,_mm512_fmadd_ps(M3,diff1,_mm512_mul_ps(M6,diff2)));
+			  const __m512 M7 = M[7];
+			  CL1   = _mm512_fmadd_ps(M1,diff0,_mm512_fmadd_ps(M4,diff1,_mm512_mul_ps(M7,diff2)));
+			  TxL1  = _mm512_fmadd_ps(M1,diff3,_mm512_fmadd_ps(M4,diff4,_mm512_mul_ps(M7,diff5)));
+			  const __m512 M8 = M[8];
+			  CL2   = _mm512_fmadd_ps(M2,diff0,_mm512_fmadd_ps(M5,diff1,_mm512_mul_ps(M8,diff2)));
+			  TxL2  = _mm512_fmadd_ps(M2,diff3,_mm512_fmadd_ps(M5,diff4,_mm512_mul_ps(M8,diff5)));
+			  ///Receiver to target.
+			  __m512 sarg = _mm512_fmadd_ps(CL0,CL0,_mm512_fmadd_ps(CL1,CL1,_mm512_mul_ps(CL2,CL2)));
+			  r1    = _mm512_sqrt_ps(sarg);
+			  diff0 = _mm512_sub_ps(CL0,TxL0);
+			  diff1 = _mm512_sub_ps(CL1,TxL1);
+			  diff2 = _mm512_sub_ps(CL2,TxL2);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_ps(diff0,diff0,_mm512_fmadd_ps(diff1,diff1,_mm512_mul_ps(diff2,diff2)));
+			  r2    = _mm512_sqrt_ps(sarg);
+			  _mm512_store_ps(&range[0],_mm512_add_ps(r1,r2));
+			  if(sysType==0||sysType==2||sysType==3) {
+                             __mmask16 m1,m2;
+			     m1 = _mm512_cmp_ps_mask(CL1,_0,_CMP_EQ_OQ);
+			     m2 = _mm512_cmp_ps_mask(CL0,_0,_CMP_EQ_OQ);
+			     if(m1 && m2) {
+                                _mm512_store_ps(&az[0],_0);
+			     }
+			     else {
+                                _mm512_store_ps(&az[0],_mm512_atan2_ps(CL1,CL0));
+			     }
+			     _mm512_store_ps(&elev[0],_mm512_atan2_ps(CL2,_mm512_hypot_ps(CL0,CL1)));
+			     if(sysType==2) {
+                                const __m512 pi2 = _mm512_set1_ps(1.5707963267948966192313f);
+				_mm512_store_ps(&elev[0],_mm512_sub_ps(pi2,_mm512_load_ps(&elev[0])));
+			     }
+			     else if(sysType==3) {
+                                const __m512 pi2 = _mm512_set1_ps(1.5707963267948966192313f);
+				_mm512_store_ps(&az[0],_mm512_sub_ps(pi2,_mm512_load_ps(&az[0])));
+			     }
+			  }
+			  else {
+                              __mmask16 m1,m2;
+			      m1 = _mm512_cmp_ps_mask(CL2,_0,_CMP_EQ_OQ);
+			      m2 = _mm512_cmp_ps_mask(CL0,_0,_CMP_EQ_OQ);
+			      if(m1 && m2) {
+                                 _mm512_store_ps(&az[0],_0);
+			      }
+			      else {
+                                 _mm512_store_ps(&az[0],_mm512_atan2_ps(CL0,CL2));
+			      }
+			      _mm512_store_ps(&elev[0],_mm512_atan2_ps(CL1,_mm512_hypot_ps(CL2,CL0)));
+			  }
+
+			  if(useHalfRange) {
+                             _mm512_store_ps(&range[0],_mm512_mul_ps(_mm512_load_ps(&range[0],_0_5)));
+			  }
+		     }
+
+ 
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void cart_to_sphere_zmm16r4_u(float * __restrict  range,
+		                                    float * __restrict  az,
+						    float * __restrict  elev,
+						    const __m512 C_x,
+						    const __m512 C_y,
+						    const __m512 C_z,
+						    const __m512 T_x,
+						    const __m512 T_y,
+						    const __m512 T_z,
+						    const __m512 R_x,
+						    const __m512 R_y,
+						    const __m512 R_z,
+						    const __m512 * __restrict __ATTR_ALIGN__(64) M,
+						    const int sysType,
+						    const bool useHalfRange) {
+
+			  const __m512 _0   = _mm512_setzero_ps();
+			  const __m512 _0_5 = _mm512_set1_ps(0.5f);
+                          __m512 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m512 diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m512 r1,r2;
+			  const __m512 M0 = M[0];
+			  //Compute the target location in the receiver's coordinate system.
+			  diff0 = _mm512_sub_ps(C_x,R_x);
+			  const __m512 M1 = M[1];
+			  diff1 = _mm512_sub_ps(C_y,R_y);
+			  const __m512 M2 = M[2];
+			  diff2 = _mm512_sub_ps(C_z,R_z);
+			  const __m512 M3 = M[3];
+			  diff3 = _mm512_sub_ps(T_x,R_x);
+			  const __m512 M4 = M[4];
+			  diff4 = _mm512_sub_ps(T_y,R_y);
+			  const __m512 M5 = M[5];
+			  diff5 = _mm512_sub_ps(T_z,R_z);
+			  const __m512 M6 = M[6];
+			   //Compute the transmitter location in the receiver's local coordinate
+                          //system.
+			  TxL0  = _mm512_fmadd_ps(M0,diff3,_mm512_fmadd_ps(M3,diff4,_mm512_mul_ps(M6,diff5)));
+			  CL0   = _mm512_fmadd_ps(M0,diff0,_mm512_fmadd_ps(M3,diff1,_mm512_mul_ps(M6,diff2)));
+			  const __m512 M7 = M[7];
+			  CL1   = _mm512_fmadd_ps(M1,diff0,_mm512_fmadd_ps(M4,diff1,_mm512_mul_ps(M7,diff2)));
+			  TxL1  = _mm512_fmadd_ps(M1,diff3,_mm512_fmadd_ps(M4,diff4,_mm512_mul_ps(M7,diff5)));
+			  const __m512 M8 = M[8];
+			  CL2   = _mm512_fmadd_ps(M2,diff0,_mm512_fmadd_ps(M5,diff1,_mm512_mul_ps(M8,diff2)));
+			  TxL2  = _mm512_fmadd_ps(M2,diff3,_mm512_fmadd_ps(M5,diff4,_mm512_mul_ps(M8,diff5)));
+			  ///Receiver to target.
+			  __m512 sarg = _mm512_fmadd_ps(CL0,CL0,_mm512_fmadd_ps(CL1,CL1,_mm512_mul_ps(CL2,CL2)));
+			  r1    = _mm512_sqrt_ps(sarg);
+			  diff0 = _mm512_sub_ps(CL0,TxL0);
+			  diff1 = _mm512_sub_ps(CL1,TxL1);
+			  diff2 = _mm512_sub_ps(CL2,TxL2);
+			  //Target to transmitter
+			  sarg  = _mm512_fmadd_ps(diff0,diff0,_mm512_fmadd_ps(diff1,diff1,_mm512_mul_ps(diff2,diff2)));
+			  r2    = _mm512_sqrt_ps(sarg);
+			  _mm512_storeu_ps(&range[0],_mm512_add_ps(r1,r2));
+			  if(sysType==0||sysType==2||sysType==3) {
+                             __mmask16 m1,m2;
+			     m1 = _mm512_cmp_ps_mask(CL1,_0,_CMP_EQ_OQ);
+			     m2 = _mm512_cmp_ps_mask(CL0,_0,_CMP_EQ_OQ);
+			     if(m1 && m2) {
+                                _mm512_storeu_ps(&az[0],_0);
+			     }
+			     else {
+                                _mm512_storeu_ps(&az[0],_mm512_atan2_ps(CL1,CL0));
+			     }
+			     _mm512_store_ups(&elev[0],_mm512_atan2_ps(CL2,_mm512_hypot_ps(CL0,CL1)));
+			     if(sysType==2) {
+                                const __m512 pi2 = _mm512_set1_ps(1.5707963267948966192313f);
+				_mm512_storeu_ps(&elev[0],_mm512_sub_ps(pi2,_mm512_loadu_ps(&elev[0])));
+			     }
+			     else if(sysType==3) {
+                                const __m512 pi2 = _mm512_set1_ps(1.5707963267948966192313f);
+				_mm512_storeu_ps(&az[0],_mm512_sub_ps(pi2,_mm512_loadu_ps(&az[0])));
+			     }
+			  }
+			  else {
+                              __mmask16 m1,m2;
+			      m1 = _mm512_cmp_ps_mask(CL2,_0,_CMP_EQ_OQ);
+			      m2 = _mm512_cmp_ps_mask(CL0,_0,_CMP_EQ_OQ);
+			      if(m1 && m2) {
+                                 _mm512_storeu_ps(&az[0],_0);
+			      }
+			      else {
+                                 _mm512_storeu_ps(&az[0],_mm512_atan2_ps(CL0,CL2));
+			      }
+			      _mm512_storeu_ps(&elev[0],_mm512_atan2_ps(CL1,_mm512_hypot_ps(CL2,CL0)));
+			  }
+
+			  if(useHalfRange) {
+                             _mm512_storeu_ps(&range[0],_mm512_mul_ps(_mm512_loadu_ps(&range[0],_0_5)));
+			  }
+		     }
+
+ 
  
  
       }
