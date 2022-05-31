@@ -1049,10 +1049,10 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
                          const __m512d cth = _mm512_cos_pd(theta);
 			 const __m512d sth = _mm512_sin_pd(theta);
 #endif
-                         vcth              = _mm512_mul_pd(v,vcth);
-			 vsth              = _mm512_mul_pd(v,vsth);
-			 vdcth             = _mm512_mul_pd(vDot,vcth);
-			 vdsth             = _mm512_mul_pd(vDot,vsth);
+                         vcth              = _mm512_mul_pd(v,cth);
+			 vsth              = _mm512_mul_pd(v,sth);
+			 vdcth             = _mm512_mul_pd(vDot,cth);
+			 vdsth             = _mm512_mul_pd(vDot,sth);
 		   }
 
 
@@ -1076,10 +1076,10 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
                          const __m512d cth = _mm512_cos_pd(theta);
 			 const __m512d sth = _mm512_sin_pd(theta);
 #endif
-                         _mm512_store_pd(&vcth[0],_mm512_mul_pd(v,vcth));
-			 _mm512_store_pd(&vsth[0],_mm512_mul_pd(v,vsth));
-			 _mm512_store_pd(&vdcth[0],_mm512_mul_pd(vDot,vcth));
-			 _mm512_store_pd(&vdsth[0],_mm512_mul_pd(vDot,vsth));
+                         _mm512_store_pd(&vcth[0],_mm512_mul_pd(v,cth));
+			 _mm512_store_pd(&vsth[0],_mm512_mul_pd(v,sth));
+			 _mm512_store_pd(&vdcth[0],_mm512_mul_pd(vDot,cth));
+			 _mm512_store_pd(&vdsth[0],_mm512_mul_pd(vDot,sth));
 		   }
 
 
@@ -1103,10 +1103,10 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
                          const __m512d cth = _mm512_cos_pd(theta);
 			 const __m512d sth = _mm512_sin_pd(theta);
 #endif
-                         _mm512_storeu_pd(&vcth[0],_mm512_mul_pd(v,vcth));
-			 _mm512_storeu_pd(&vsth[0],_mm512_mul_pd(v,vsth));
-			 _mm512_storeu_pd(&vdcth[0],_mm512_mul_pd(vDot,vcth));
-			 _mm512_storeu_pd(&vdsth[0],_mm512_mul_pd(vDot,vsth));
+                         _mm512_storeu_pd(&vcth[0],_mm512_mul_pd(v,cth));
+			 _mm512_storeu_pd(&vsth[0],_mm512_mul_pd(v,sth));
+			 _mm512_storeu_pd(&vdcth[0],_mm512_mul_pd(vDot,cth));
+			 _mm512_storeu_pd(&vdsth[0],_mm512_mul_pd(vDot,sth));
 		   }
 
 
@@ -1130,10 +1130,10 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
                          const __m512 cth = _mm512_cos_ps(theta);
 			 const __m512 sth = _mm512_sin_ps(theta);
 #endif
-                         vcth              = _mm512_mul_ps(v,vcth);
-			 vsth              = _mm512_mul_ps(v,vsth);
-			 vdcth             = _mm512_mul_ps(vDot,vcth);
-			 vdsth             = _mm512_mul_ps(vDot,vsth);
+                         vcth              = _mm512_mul_ps(v,cth);
+			 vsth              = _mm512_mul_ps(v,sth);
+			 vdcth             = _mm512_mul_ps(vDot,cth);
+			 vdsth             = _mm512_mul_ps(vDot,sth);
 		   }
 
 
@@ -1157,10 +1157,10 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
                          const __m512 cth = _mm512_cos_ps(theta);
 			 const __m512 sth = _mm512_sin_ps(theta);
 #endif
-                         _mm512_store_ps(&vcth[0],_mm512_mul_ps(v,vcth));
-			 _mm512_store_ps(&vsth[0],_mm512_mul_ps(v,vsth));
-			 _mm512_store_ps(&vdcth[0],_mm512_mul_ps(vDot,vcth));
-			 _mm512_store_ps(&vdsth[0],_mm512_mul_ps(vDot,vsth));
+                         _mm512_store_ps(&vcth[0],_mm512_mul_ps(v,cth));
+			 _mm512_store_ps(&vsth[0],_mm512_mul_ps(v,sth));
+			 _mm512_store_ps(&vdcth[0],_mm512_mul_ps(vDot,cth));
+			 _mm512_store_ps(&vdsth[0],_mm512_mul_ps(vDot,sth));
 		   }
 
 
@@ -1185,10 +1185,10 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
                          const __m512 cth = _mm512_cos_ps(theta);
 			 const __m512 sth = _mm512_sin_ps(theta);
 #endif
-                         _mm512_storeu_ps(&vcth[0],_mm512_mul_ps(v,vcth));
-			 _mm512_storeu_ps(&vsth[0],_mm512_mul_ps(v,vsth));
-			 _mm512_storeu_ps(&vdcth[0],_mm512_mul_ps(vDot,vcth));
-			 _mm512_storeu_ps(&vdsth[0],_mm512_mul_ps(vDot,vsth));
+                         _mm512_storeu_ps(&vcth[0],_mm512_mul_ps(v,cth));
+			 _mm512_storeu_ps(&vsth[0],_mm512_mul_ps(v,sth));
+			 _mm512_storeu_ps(&vdcth[0],_mm512_mul_ps(vDot,cth));
+			 _mm512_storeu_ps(&vdsth[0],_mm512_mul_ps(vDot,sth));
 		   }
 
 
