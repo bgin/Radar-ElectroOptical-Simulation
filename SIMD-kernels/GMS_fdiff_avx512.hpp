@@ -65,6 +65,7 @@ namespace gms {
 
 #if (CORRECT_XH_SLOW) == 1
 #include <cmath>
+#endif
                         __ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
