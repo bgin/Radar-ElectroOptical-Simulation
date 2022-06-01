@@ -70,8 +70,8 @@ namespace gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m512d
-		        rk4_step_zmm8r8(__m512d(*f)(const __m512d,
-			                            const __m512d),
+		        rk4_step_zmm8r8(__m512d(*f)(__m512d,
+			                            __m512d),
 				        __m512d y0,
 				        __m512d x0,
 					const __m512d h,
@@ -104,8 +104,8 @@ namespace gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m512
-		        rk4_step_zmm16r4(__m512(*f)(const __m512,
-			                            const __m512),
+		        rk4_step_zmm16r4(__m512(*f)(__m512,
+			                            __m512),
 				         __m512 y0,
 				         __m512 x0,
 					 const __m512 h,
