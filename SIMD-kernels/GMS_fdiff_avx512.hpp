@@ -12,9 +12,9 @@ namespace file_version {
       100U*GMS_FDIFF_AVX512_MINOR+
       10U*GMS_FDIFF_AVX512_MICRO;
     const char * const GMS_FDIFF_AVX512_CREATION_DATE = "10-02-2022 12:24 PM +00200 (THR 10 FEB 2022 GMT+2)";
-    const char * const GMS_DERIVATIVE_AVX512_BUILD_DATE    = __DATE__ ":" __TIME__;
-    const char * const GMS_DERIVATIVE_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_DERIVATIVE_AVX512_DESCRIPTION   = "Vectorized (AVX512) finite difference implementation."
+    const char * const GMS_FDIFF_AVX512_BUILD_DATE    = __DATE__ ":" __TIME__;
+    const char * const GMS_FDIFF_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+    const char * const GMS_FDIFF_AVX512_DESCRIPTION   = "Vectorized (AVX512) finite difference implementation."
 
 }
 
