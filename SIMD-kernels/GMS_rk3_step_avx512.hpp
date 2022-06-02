@@ -21,7 +21,7 @@ namespace file_version {
     const char * const GMS_RK3_STEP_AVX512_CREATION_DATE = "02-06-2022 09:30 PM +00200 (THR 02 JUN 2022 GMT+2)";
     const char * const GMS_RK3_STEPAVX512_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_RK3_STEP_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_RK3_STEP_AVX512_DESCRIPTION   = "Vectorized (AVX512) Heuns step."
+    const char * const GMS_RK3_STEP_AVX512_DESCRIPTION   = "Vectorized (AVX512) Runge-kutta order 3 step."
 
 }
 
