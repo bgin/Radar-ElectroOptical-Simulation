@@ -21,7 +21,7 @@ namespace file_version {
     const char * const GMS_EULER_STEP_AVX512_CREATION_DATE = "01-06-2022 14:48 PM +00200 (WED 01 JUN 2022 GMT+2)";
     const char * const GMS_EULER_STEPAVX512_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_EULER_STEP_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_EULER_STEP_AVX512_DESCRIPTION   = "Vectorized (AVX512) Runge-Kutta order 4 step."
+    const char * const GMS_EULER_STEP_AVX512_DESCRIPTION   = "Vectorized (AVX512) Euler step."
 
 }
 
