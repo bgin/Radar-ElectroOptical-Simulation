@@ -33,17 +33,17 @@ SOFTWARE.
 
 namespace file_version {
 
-    const unsigned int GMS_RKR2_STEP_AVX512_MAJOR = 1U;
-    const unsigned int GMS_RKR2_STEP_AVX512_MINOR = 0U;
-    const unsigned int GMS_RKR2_STEP_AVX512_MICRO = 0U;
-    const unsigned int GMS_RKR2_STEP_AVX512_FULLVER =
-      1000U*GMS_RKR2_STEP_AVX512_MAJOR+
-      100U*GMS_RKR2_STEP_AVX512_MINOR+
-      10U*GMS_RKR2_STEP_AVX512_MICRO;
-    const char * const GMS_RKR2_STEP_AVX512_CREATION_DATE = "03-06-2022 08:18 PM +00200 (FRI 03 JUN 2022 GMT+2)";
-    const char * const GMS_RKR2_STEPAVX512_BUILD_DATE    = __DATE__ ":" __TIME__;
-    const char * const GMS_RKR2_STEP_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_RKR2_STEP_AVX512_DESCRIPTION   = "Vectorized (AVX512) Runge-Kutta-Ralston order 4 step."
+    const unsigned int GMS_RK38_STEP_AVX512_MAJOR = 1U;
+    const unsigned int GMS_RK38_STEP_AVX512_MINOR = 0U;
+    const unsigned int GMS_RK38_STEP_AVX512_MICRO = 0U;
+    const unsigned int GMS_RK38_STEP_AVX512_FULLVER =
+      1000U*GMS_RK38_STEP_AVX512_MAJOR+
+      100U*GMS_RK38_STEP_AVX512_MINOR+
+      10U*GMS_RK38_STEP_AVX512_MICRO;
+    const char * const GMS_RK38_STEP_AVX512_CREATION_DATE = "03-06-2022 08:18 PM +00200 (FRI 03 JUN 2022 GMT+2)";
+    const char * const GMS_RK38_STEPAVX512_BUILD_DATE    = __DATE__ ":" __TIME__;
+    const char * const GMS_RK38_STEP_AVX512_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+    const char * const GMS_RK38_STEP_AVX512_DESCRIPTION   = "Vectorized (AVX512) Runge-Kutta-Ralston order 3/8 step."
 
 }
 
