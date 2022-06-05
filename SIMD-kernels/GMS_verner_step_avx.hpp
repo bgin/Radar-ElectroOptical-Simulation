@@ -360,7 +360,137 @@ namespace gms {
 			       return (y0);
 		      }
 
+////////////////////////////////////////////////////////////////////////////////
+//  double Runge_Kutta_Verner_Richardson( double (*f)(double, double),        //
+//                      double y0, double x0, double h, int number_of_steps,  //
+//                                                   int richarson_columns);  //
+//                                                                            //
+//  Description:                                                              //
+//     This routine uses the Runge-Kutta-Verner method described above        //
+//     together with Richardson extrapolation to approximate the solution at  //
+//     x = x0 + h * number_of_steps of the initial value problem y'=f(x,y),   //
+//     y(x0) = y0.                                                            //
+//                                                                            //
+//  Arguments:                                                                //
+//     double *f                                                              //
+//            Pointer to the function which returns the slope at (x,y) of the //
+//            integral curve of the differential equation y' = f(x,y) which   //
+//            passes through the point (x0,y0).                               //
+//     double y0                                                              //
+//            The initial value of y at x = x0.                               //
+//     double x0                                                              //
+//            The initial value of x.                                         //
+//     double h                                                               //
+//            The step size.                                                  //
+//     int    number_of_steps                                                 //
+//            The number of steps. Must be nonnegative.                       //
+//     int    richardson_columns                                              //
+//            The maximum number of columns to use in the Richardson          //
+//            extrapolation to the limit.                                     //
+//                                                                            //
+//  Return Values:                                                            //
+//     The solution of the initial value problem y' = f(x,y), y(x0) = y0 at   //
+//     x = x0 + number_of_steps * h.                                          //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////	 
 
+#include <algorithm> 
+
+                        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m256d
+			verner_richardson_ymm4r8(__m256d(*f)(__m256d,
+			                                     __m256d),
+						 __m256d y0,
+						 __m256d x0,
+						 const __m256d h,
+						 const int32_t n,
+						 int32_t n_cols) {
+
+			   __ATTR_ALIGN__(32) const __m256d richardson[] = {_mm256_set1_pd(1.0/255.0),
+			                                                    _mm256_set1_pd(1.0/511.0),
+								            _mm256_set1_pd(1.0/1023.0),
+								            _mm256_set1_pd(1.0/2047.0),
+								            _mm256_set1_pd(1.0/4095.0)};
+			   constexpr int32_t MAX_COLS = 6;
+			   __ATTR_ALIGN__(32) __m256d dt[MAX_COLS];
+			   const __m256d _1_2 = _mm256_set1_pd(0.5);
+			   __m256d integral,delta,h_used;
+			   int32_t n_subints;
+			   n_cols = std::max(1,std::min(MAX_COLS,n_cols));
+			   while(--n >= 0) {
+                                 h_used = h;
+				 n_subints = 1;
+				 #pragma loop_count min(1),max(6),avg(3)
+				 for(int32_t j = 0; j < n_cols; ++j) {
+                                     integral = verner_step_ymm4r8(f,y0,x0,h_used,n_subints);
+				     for(int32_t k = 0; k < j; ++k) {
+                                         delta = _mm256_sub_pd(integral,dt[k]);
+					 dt[k] = integral;
+					 integral = _mm256_fmadd_pd(richardson[k],delta,integral);
+				     }
+				     dt[j] = integral;
+				     h_used = _mm256_mul_pd(h_used,_1_2);
+				     n_subints += n_subints;
+				 }
+				 y0 = integral;
+				 x0 = _mm256_add_pd(x0,h);
+			   }
+			   return (y0);
+		    }
+
+
+		        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m256
+			verner_richardson_ymm8r4(__m256(*f)(__m256,
+			                                     __m2556),
+						 __m256 y0,
+						 __m256 x0,
+						 const __m256 h,
+						 const int32_t n,
+						 int32_t n_cols) {
+
+			   __ATTR_ALIGN__(32) const __m256 richardson[] = { _mm256_set1_ps(1.0f/255.0f),
+			                                                    _mm256_set1_ps(1.0f/511.0f),
+								            _mm256_set1_ps(1.0f/1023.0f),
+								            _mm256_set1_ps(1.0f/2047.0f),
+								            _mm256_set1_ps(1.0f/4095.0f)};
+			   constexpr int32_t MAX_COLS = 6;
+			   __ATTR_ALIGN__(32) __m256 dt[MAX_COLS];
+			   const __m256 _1_2 = _mm256_set1_ps(0.5f);
+			   __m256 integral,delta,h_used;
+			   int32_t n_subints;
+			   n_cols = std::max(1,std::min(MAX_COLS,n_cols));
+			   while(--n >= 0) {
+                                 h_used = h;
+				 n_subints = 1;
+				 #pragma loop_count min(1),max(6),avg(3)
+				 for(int32_t j = 0; j < n_cols; ++j) {
+                                     integral = verner_step_ymm8r4(f,y0,x0,h_used,n_subints);
+				     for(int32_t k = 0; k < j; ++k) {
+                                         delta = _mm256_sub_ps(integral,dt[k]);
+					 dt[k] = integral;
+					 integral = _mm256_fmadd_ps(richardson[k],delta,integral);
+				     }
+				     dt[j] = integral;
+				     h_used = _mm256_mul_ps(h_used,_1_2);
+				     n_subints += n_subints;
+				 }
+				 y0 = integral;
+				 x0 = _mm256_add_ps(x0,h);
+			   }
+			   return (y0);
+		    }
+
+
+	 
     }
 
 
