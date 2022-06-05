@@ -182,11 +182,11 @@ namespace gms {
 						 const int32_t n,
 						 int32_t n_cols) {
 
-			   __ATTR_ALIGN__(32) const __m256d richardson[] = {_mm512_set1_pd(1.0/3.0),
-			                                                    _mm512_set1_pd(1.0/7.0),
-								            _mm512_set1_pd(1.0/15.0),
-								            _mm512_set1_pd(1.0/31.0),
-								            _mm512_set1_pd(1.0/63.0)};
+			   __ATTR_ALIGN__(32) const __m256d richardson[] = {_mm256_set1_pd(1.0/3.0),
+			                                                    _mm256_set1_pd(1.0/7.0),
+								            _mm256_set1_pd(1.0/15.0),
+								            _mm256_set1_pd(1.0/31.0),
+								            _mm256_set1_pd(1.0/63.0)};
 			   constexpr int32_t MAX_COLS = 6;
 			   __ATTR_ALIGN__(32) __m256d dt[MAX_COLS];
 			   const __m256d _1_2 = _mm256_set1_pd(0.5);
@@ -220,7 +220,7 @@ namespace gms {
                         __ATTR_ALIGN__(32)
 			__ATTR_VECTORCALL__
 	                static inline
-			__m512
+			__m256
 			heuns_richardson_ymm8r4(__m256(*f)(__m256,
 			                                     __m256),
 						 __m256 y0,
