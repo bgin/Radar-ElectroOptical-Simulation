@@ -91,7 +91,7 @@ namespace gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m512d
-			verner_step_zmm8r8(_m512d(*f)(__m512d,
+			verner_step_zmm8r8(__m512d(*f)(__m512d,
 			                             __m512d),
 					    __m512d y0,
 					    __m512d x0,
@@ -229,7 +229,7 @@ namespace gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m512
-			verner_step_zmm16r4(_m512(*f)(__m512,
+			verner_step_zmm16r4(__m512(*f)(__m512,
 			                             __m512),
 					    __m512 y0,
 					    __m512 x0,
