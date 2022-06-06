@@ -52,9 +52,9 @@
 
 #define Idx3D(i,j,k)     ((i) * jdim + ((j) * kdim + (k)))
 
-#define Idx4D(i,j,k,l)   ((i) + idim * ((j) + jdim * ((k) + kdim * (l))))
+#define Idx4D(i,j,k,l)   ((i) * idim + ((j) * jdim + ((k) * kdim + (l))))
 
-#define Idx5D(i,j,k,l,m) ((i) + idim * ((j) + jdim * (k) + kdim * (l) + ldim * (m)))
+#define Idx5D(i,j,k,l,m) ((i) * idim + ((j) * jdim + (k) * kdim + (l) * ldim + (m)))
 
 /*
 	@Warning:
@@ -66,7 +66,7 @@
 
 #define I3D(i,j,k)  ((i) * ny + ((j) * nz + (k)))
 
-#define I4D(i,j,k,l)  ((i) + nx * ((j) + ny * ((k) + nz * ((l)))))
+#define I4D(i,j,k,l)  ((i) * nx + ((j) * ny + ((k) * nz + ((l)))))
 
 /*
 	In this case dimension parameters 
@@ -88,11 +88,11 @@
 */
 #define IS2D(i,idim,j)   i * jdim + j
 
-#define IS3D(i,idim,j,jdim,k) i + idim * (j + jdim * k)
+#define IS3D(i,idim,j,jdim,k) i * idim + (j * jdim + k)
 
-#define IS4D(i,idim,j,jdim,k,kdim,l) i + idim * (j + jdim * (k + kdim * l))
+#define IS4D(i,idim,j,jdim,k,kdim,l) i * idim + (j * jdim + (k * kdim + l))
 
-#define IS5D(i,idim,j,jdim,k,kdim,l,ldim,m) i + idim * (j + jdim * (k + kdim + (l + ldim * m)))
+#define IS5D(i,idim,j,jdim,k,kdim,l,ldim,m) i * idim + (j * jdim + (k * kdim + (l * ldim + m)))
 
 // WRF indexing scheme
 // m_jme and m_kme must be present in the calling scope.
