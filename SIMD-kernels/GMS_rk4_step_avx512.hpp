@@ -191,7 +191,7 @@ namespace gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m512d
-			rk3v2_richardson_zmm8r8(__m512d(*f)(__m512d,
+			rk4_richardson_zmm8r8(__m512d(*f)(__m512d,
 			                                     __m512d),
 						 __m512d y0,
 						 __m512d x0,
@@ -216,7 +216,7 @@ namespace gms {
 				 n_subints = 1;
 				 #pragma loop_count min(1),max(6),avg(3)
 				 for(int32_t j = 0; j < n_cols; ++j) {
-                                     integral = rk34_step_zmm8r8(f,y0,x0,h_used,n_subints);
+                                     integral = rk4_step_zmm8r8(f,y0,x0,h_used,n_subints);
 				     for(int32_t k = 0; k < j; ++k) {
                                          delta = _mm512_sub_pd(integral,dt[k]);
 					 dt[k] = integral;
@@ -239,7 +239,7 @@ namespace gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m512
-			rk3v2_richardson_zmm16r4(__m512(*f)(__m512,
+			rk4_richardson_zmm16r4(__m512(*f)(__m512,
 			                                     __m512),
 						 __m512 y0,
 						 __m512 x0,
