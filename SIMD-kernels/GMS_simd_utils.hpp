@@ -2,6 +2,7 @@
 
 #ifndef __GMS_SIMD_UTILS_HPP__
 #define __GMS_SIMD_UTILS_HPP__ 040120220918
+
 /*MIT License
 Copyright (c) 2020 Bernard Gingold
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -60,6 +61,57 @@ namespace  gms {
 			  const __m256d  NZ256DP = _mm256_set1_ps(-0.0);
 			  const __m512   NZ512SP = _mm512_set1_ps(-0.0F);
 			  const __m512d  NZ512DP = _mm512_set1_pd(-0.0F);
+		      }
+
+
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __mmask8 isinf_zmm8r8(__m512d x) {
+
+                         union {
+                           __m512i u;
+			   __m512d f;
+			 } ieee754;
+			 const __m512i c0 = _mm512_set1_epi64(0x7fffffff);
+			 const __m512i c1 = _mm512_set1_epi64(0x7ff00000);
+			 const __m512i _0 = _mm512_setzero_si512();
+			 __m512i t0,t1;
+			 __mmask8 b0,b1;
+			 ieee754.f = x;
+			 t0 = _mm512_and_epi64(_mm512_srli_epi64(ieee754.u,32),c0);
+			 b0 = _mm512_cmp_epi64_mask(t0,c1,_MM_CMPINT_EQ);
+			 b1 = _mm512_cmp_epi64_mask(ieee754.u,_0,_MM_CMPINT_EQ);
+			 return (b0 && b1);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __mmask8 isnan_zmm8r8(__m512d x) {
+
+		        union {
+                           __m512i u;
+			   __m512d f;
+			 } ieee754;
+			 const __m512i c0 = _mm512_set1_epi64(0x7fffffff);
+			 const __m512i c1 = _mm512_set1_epi64(0x7ff00000);
+			 const __m512i _0 = _mm512_setzero_si512();
+			 __m512i t0,t1;
+			 __mmask8 b0,b1;
+			 ieee754.f = x;
+			 t0 = _mm512_and_epi64(_mm512_srli_epi64(ieee754.u,32),c0);
+			 b0 = _mm512_cmp_epi64_mask(ieee754.u,_0,_MM_CMPINT_NE);
+			 t1 = _mm512_movm_epi64(b0);
+			 b1 = _mm512_cmp_epi64_mask(t1,c1,_MM_CMPINT_LT);
+			 b0 = _mm512_movm_epi64(t0);
+			 return (b0+b1);
+			
 		      }
 
 
