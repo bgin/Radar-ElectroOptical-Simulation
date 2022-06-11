@@ -43,7 +43,7 @@ namespace file_version {
     const char * const GMS_RKG_STEP_AVX_CREATION_DATE = "03-06-2022 10:46 AM +00200 (FRI 03 JUN 2022 GMT+2)";
     const char * const GMS_RKG_STEP_AVX_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_RKG_STEP_AVX_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_RKG_STEP_AVX_DESCRIPTION   = "Vectorized (AVX) Runge-Kutta-Gill order 4 step."
+    const char * const GMS_RKG_STEP_AVX_DESCRIPTION   = "Vectorized (AVX512) Runge-Kutta-Gill order 4 step."
 
 }
 
