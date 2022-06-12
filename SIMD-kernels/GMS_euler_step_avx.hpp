@@ -97,7 +97,7 @@ namespace  gms {
 
                            const __m256d _0_5 = _mm256_set1_pd(0.5);
 			   const __m256d h2   = _mm256_mul_pd(_0_5,h);
-			   __m512d k1;
+			   __m256d k1;
 			   while(--n >= 0) {
                                  k1 = _mm256_mul_pd(h,f(x0,y0));
 				 y0 = _mm256_add_pd(y0,_mm256_mul_pd(h,
@@ -125,7 +125,7 @@ namespace  gms {
 
                            const __m256 _0_5 = _mm256_set1_ps(0.5f);
 			   const __m256 h2   = _mm256_mul_ps(_0_5,h);
-			   __m512 k1;
+			   __m256 k1;
 			   while(--n >= 0) {
                                  k1 = _mm256_mul_ps(h,f(x0,y0));
 				 y0 = _mm256_add_ps(y0,_mm256_mul_ps(h,
