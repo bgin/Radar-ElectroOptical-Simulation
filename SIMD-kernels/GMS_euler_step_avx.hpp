@@ -179,7 +179,7 @@ namespace  gms {
 			__ATTR_VECTORCALL__
 	                static inline
 			__m256d
-			euler_richardson_ymm4r8(__m512d(*f)(__m256d,
+			euler_richardson_ymm4r8(__m256d(*f)(__m256d,
 			                                     __m256d),
 						 __m256d y0,
 						 __m256d x0,
