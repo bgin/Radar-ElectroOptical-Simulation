@@ -45,6 +45,7 @@ namespace file_version {
 
 
 #include <immintrin.h>
+#include <cstdint>
 #include "GMS_config.h"
 
 namespace  gms {
