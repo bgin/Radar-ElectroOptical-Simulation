@@ -211,13 +211,17 @@ contains
         !dir$ assume_aligned anm:64
         !dir$ assume_aligned bnm:64
         !dir$ ivdep
-        !$omp simd simdlen(8) linear(n:1)
+        !$omp parallel default(none) private(n,m) shared(narr,nmax0,en,anm,bnm,mmax0,marr, &
+        !&omp&                              dnm,cm) 
+        !$omp do simd schedule(static,8) 
         do n = 1, nmax0
             narr(n) = dble(n)
             en(n)    = dsqrt(dble(n*(n+1)))
             anm(n,0) = dsqrt( dble((2*n-1)*(2*n+1)) ) / narr(n)
             bnm(n,0) = dsqrt( dble((2*n+1)*(n-1)*(n-1)) / dble(2*n-3) ) / narr(n)
         end do
+        !$omp end do
+        !$omp do simd schedule(static,8)
         do m = 1, mmax0
             marr(m) = dble(m)
             cm(m)    = dsqrt(dble(2*m+1)/dble(2*m*m*(m+1)))
@@ -233,7 +237,8 @@ contains
                 dnm(n,m) = dsqrt( dble((n-m)*(n+m)*(2*n+1)*(n-1)) / dble((2*n-1)*(n+1)) )
             end do
         enddo
-
+        !$omp end dp
+        !$omp end parallel
         return
 
     end subroutine initalf
@@ -545,14 +550,18 @@ contains
         !dir$ assume_aligned mparm:64
         !dir$ ivdep
         !dir$ code_align(32)
-        !$omp simd simdlen(8) linear(n:1)
+        !$omp parallel default(none) private(n,c,s,m) &
+        !$omp shared(amaxn,tparm,mparm,amaxs,pmaxm,pmaxn,pmaxs)
+        !$omp do simd schedule(static,8)
         do n = 1,amaxn
             tparm(c) = 0.0
             tparm(c+1) = -mparm(c+1)
             mparm(c+1) = 0.0
             c = c + 2
         enddo
+        !$omp end do
          !dir$ code_align(32) 
+        !$omp do simd schedule(static,8)
         do s = 1,amaxs
               !dir$ assume_aligned tparm:64
               !dir$ assume_aligned mparm:64
@@ -569,7 +578,9 @@ contains
                 c = c + 4
             enddo
         enddo
+        !$omp end do
          !dir$ code_align(32)
+        !$omp do simd schedule(static,8)
         do m = 1,pmaxm
               !dir$ assume_aligned tparm:64
               !dir$ assume_aligned mparm:64
@@ -604,7 +615,11 @@ contains
             enddo
 
         enddo
+        !$omp end do nowait
+        !$omp end parallel
          !dir$ code_align(32)
+        !$omp parallel do default(none) private(n,l,s,c) &
+        !$omp shared(tmaxl,tparm,mparm,tmaxs,tmaxn)
         do l = 1,tmaxl
                  !dir$ assume_aligned tparm:64
                  !dir$ assume_aligned mparm:64
@@ -638,7 +653,7 @@ contains
                 enddo
             enddo
         enddo
-
+        !$omp end parallel do
         return
 
     end subroutine parity
@@ -1586,6 +1601,7 @@ subroutine gd2qd(glatin,glon,qlat,qlon,f1e,f1n,f2e,f2n,rc)
     !dir$ assume_aligned gvbar:64,normadj:64
     !dir$ ivdep
     !dir$ code_align(32)
+    
     !$omp simd simdlen(8)
     do n = 0, nmax
       sh(i) = gpbar(n,0)
