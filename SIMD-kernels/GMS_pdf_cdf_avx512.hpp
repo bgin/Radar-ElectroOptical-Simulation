@@ -2,25 +2,6 @@
 #ifndef __GMS_PDF_CDF_AVX512_HPP__
 #define __GMS_PDF_CDF_AVX512_HPP__ 290520221332
 
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 namespace file_info {
 
  const unsigned int gGMS_PDF_CDF_AVX512_MAJOR = 1U;
@@ -414,13 +395,412 @@ namespace gms {
 		      __m512d anglit_sample_zmm8r8(const __m512 cdf) {
 
                             return (anglit_cdf_inv_zmm8r8(cdf));
+		    }
+
+/*
+      !*****************************************************************************80
+!
+!! ARCSIN_CDF evaluates the Arcsin CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    20 March 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!
+!    Input, real ( kind = 8 ) A, the parameter of the CDF.
+!    A must be positive.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d arcsin_cdf_zmm8r8(const __m512d x,
+		                                const __m512d a) {
+
+                         const __m512d invpi = _mm512_set1_pd(0.318309886183790671537767526745);
+			 const __m512d _0    = _mm512_setzero_pd();
+			 const __m512d _1_2  = _mm512_set1_pd(0.5);
+			 const __m512d _1    = _mm512_set1_pd(1.0);
+			 __m512d t0,cdf;
+			 __mmask8 m0,m1;
+			 m0  = _mm512_cmp_pd_mask(x,zmm8r8_negate(a),_CMP_LE_OQ);
+#if (USE_SLEEF_LIB) == 1
+                         t0  = _mm512_mul_pd(xasin(_mm512_div_pd(x,a),invpi));
+#else
+                         t0  = _mm512_mul_pd(_mm512_asin_pd(_mm512_div_pd(x,a),invpi));
+#endif
+			 m1  = _mm512_cmp_pd_mask(x,a,_CMP_LT_OQ);
+                         cdf = _mm512_mask_blend_pd(m0,_mm512_add_pd(_1_2,t0),_0);
+			 cdf = _mm512_mask_blend_pd(m1,cdf,_1); 
+                         return (cdf);
+		   }
+
+
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 arcsin_cdf_zmm16r4(const __m512 x,
+		                                const __m512 a) {
+
+                         const __m512 invpi = _mm512_set1_ps(0.318309886183790671537767526745f);
+			 const __m512 _0    = _mm512_setzero_ps();
+			 const __m512 _1_2  = _mm512_set1_ps(0.5f);
+			 const __m512 _1    = _mm512_set1_ps(1.0f);
+			 __m512 t0,cdf;
+			 __mmask16 m0,m1;
+			 m0  = _mm512_cmp_ps_mask(x,zmm16r4_negate(a),_CMP_LE_OQ);
+                         t0  = _mm512_mul_ps(_mm512_asin_ps(_mm512_div_ps(x,a),invpi));
+			 m1  = _mm512_cmp_ps_mask(x,a,_CMP_LT_OQ);
+                         cdf = _mm512_mask_blend_ps(m0,_mm512_add_pd(_1_2,t0),_0);
+			 cdf = _mm512_mask_blend_ps(m1,cdf,_1); 
+                         return (cdf);
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d arcsin_cdf_inv_zmm8r8(const __m512d cdf,
+		                                    const __m512d a) {
+
+                           const __m512d pi    = _mm512_set1_pd(3.14159265358979323846264338328);
+			   const __m512d _0    = _mm512_setzero_pd();
+			   const __m512d _1    = _mm512_set1_pd(1.0);
+			   const __m512d nan   = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			   const __m512d _1_2  = _mm512_set1_pd(0.5);
+			   __m512d x;
+			   if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			      __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                              return (nan);
+			   }
+#if (USE_SLEEF_LIB) == 1
+                             x = _mm512_mul_pd(xsin(_mm512_mul_pd(pi,_mm512_sub_pd(cdf,_1_2))));
+			     
+#else
+                             x = _mm512_mul_pd(_mm512_sin_pd(_mm512_mul_pd(pi,_mm512_sub_pd(cdf,_1_2))));
+#endif
+                             return (x);
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 arcsin_cdf_inv_zmm16r4(const __m512 cdf,
+		                                    const __m512 a) {
+
+                           const __m512 pi    = _mm512_set1_ps(3.14159265358979323846264338328f);
+			   const __m512 _0    = _mm512_setzero_ps();
+			   const __m512 _1    = _mm512_set1_ps(1.0f);
+			   const __m512 nan   = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			   const __m512 _1_2  = _mm512_set1_ps(0.5f);
+			   __m512 x;
+			   if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			      __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                              return (nan);
+			   }
+#if (USE_SLEEF_LIB) == 1
+                             x = _mm512_mul_ps(xsinf(_mm512_mul_ps(pi,_mm512_sub_ps(cdf,_1_2))));
+			     
+#else
+                             x = _mm512_mul_ps(_mm512_sin_ps(_mm512_mul_ps(pi,_mm512_sub_ps(cdf,_1_2))));
+#endif
+                             return (x);
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                      __m512d arcsin_mean_zmm8r8() {
+
+		            return (_mm512_setzero_pd());
 		      }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                      __m512 arcsin_mean_zmm16r4() {
+
+		            return (_mm512_setzero_ps());
+		      }
+
+
+/*
+!*****************************************************************************80
+!
+!! ARCSIN_PDF evaluates the Arcsin PDF.
+!
+!  Discussion:
+!
+!    The LOGISTIC EQUATION has the form:
+!
+!      X(N+1) = 4.0D+00 * LAMBDA * ( 1.0D+00 - X(N) ).
+!
+!    where 0 < LAMBDA <= 1.  This nonlinear difference equation maps
+!    the unit interval into itself, and is a simple example of a system
+!    exhibiting chaotic behavior.  Ulam and von Neumann studied the
+!    logistic equation with LAMBDA = 1, and showed that iterates of the
+!    function generated a sequence of pseudorandom numbers with
+!    the Arcsin probability density function.
+!
+!    The derived sequence
+!
+!      Y(N) = ( 2 / PI ) * Arcsin ( SQRT ( X(N) ) )
+!
+!    is a pseudorandom sequence with the uniform probability density
+!    function on [0,1].  For certain starting values, such as X(0) = 0, 0.75,
+!    or 1.0D+00, the sequence degenerates into a constant sequence, and for
+!    values very near these, the sequence takes a while before becoming
+!    chaotic.
+!
+!    The formula is:
+!
+!      PDF(X) = 1 / ( pi * sqrt ( A^2 - X^2 ) )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    20 March 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    Daniel Zwillinger, Stephen Kokoska,
+!    CRC Standard Probability and Statistics Tables and Formulae,
+!    Chapman and Hall/CRC, 2000, pages 114-115.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    -A < X < A.
+!
+!    Input, real ( kind = 8 ) A, the parameter of the CDF.
+!    A must be positive.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d arcsin_pdf_zmm8r8(const __m512d x,
+		                                const __m512d a) {
+
+                           const __m512d pi    = _mm512_set1_pd(3.14159265358979323846264338328);
+			   const __m512d _0    = _mm512_setzero_pd();
+			   const __m512d _1    = _mm512_set1_pd(1.0);
+			   const __m512d nan   = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			   __m512d pdf,t0;
+			   __mmask8 m,m1;
+			   if(__builtin_expect(_mm512_cmp_pd_mask(a,_0,_CMP_LE_OQ))) {
+                               return (nan);
+			   }
+			   m  =  _mm512_cmp_pd_mask(x,zmm8r8_negate(a),_CMP_LE_OQ);
+			   t0 =  _mm512_sqrt_pd(_mm512_sub_pd(_mm512_mul_pd(a,a),
+			                                      _mm512_mul_pd(x,x)));
+			   m1 = _mm512_cmp_pd_mask(x,a,_CMP_GE_OQ);
+			   __mmask8 m2 = m || m1;
+			   pdf = _mm512_mask_blend_pd(m2,_mm512_div_pd(_1,
+			                                           _mm512_mul_pd(pi,t0)),_0);
+			   return (pdf);
+			   
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 arcsin_pdf_zmm16r4(const __m512 x,
+		                                const __m512 a) {
+
+                           const __m512 pi    = _mm512_set1_ps(3.14159265358979323846264338328f);
+			   const __m512 _0    = _mm512_setzero_ps();
+			   const __m512 _1    = _mm512_set1_ps(1.0f);
+			   const __m512 nan   = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			   __m512 pdf,t0;
+			   __mmask 16m,m1;
+			   if(__builtin_expect(_mm512_cmp_ps_mask(a,_0,_CMP_LE_OQ))) {
+                               return (nan);
+			   }
+			   m  =  _mm512_cmp_ps_mask(x,zmm16r4_negate(a),_CMP_LE_OQ);
+			   t0 =  _mm512_sqrt_ps(_mm512_sub_ps(_mm512_mul_ps(a,a),
+			                                      _mm512_mul_ps(x,x)));
+			   m1 = _mm512_cmp_ps_mask(x,a,_CMP_GE_OQ);
+			   const __mmask16 m2 = m || m1;
+			   pdf = _mm512_mask_blend_ps(m2,_mm512_div_ps(_1,
+			                                           _mm512_mul_ps(pi,t0)),_0);
+			   return (pdf);
+			   
+		    }
+
+/*
+!*****************************************************************************80
+!
+!! ARCSIN_VARIANCE returns the variance of the Arcsin PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    20 March 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, the parameter of the CDF.
+!    A must be positive.
+!
+!    Output, real ( kind = 8 ) VARIANCE, the variance of the PDF.
+!		    
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                       __m512d arcsin_variance_zmm8r8(const __m512d a) {
+
+                         const __m512d _1_2 = _mm512_set1_pd(0.5);
+			 __m512d variance;
+			 variance = _mm512_mul_pd(a,_mm512_mul_pd(a,_1_2));
+			 return (variance);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                       __m512 arcsin_variance_zmm16r4(const __m512 a) {
+
+                         const __m512 _1_2 = _mm512_set1_ps(0.5f);
+			 __m512 variance;
+			 variance = _mm512_mul_ps(a,_mm512_mul_ps(a,_1_2));
+			 return (variance);
+		     }
+
+/*
+!*****************************************************************************80
+!
+!! ARCSIN_SAMPLE samples the Arcsin PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    20 March 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, the parameter of the CDF.
+!    A must be positive.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF.
+!
+*/
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d arcsin_sample_zmm8r8() {
+
+                         __m512d cdf;
+			 svrng_engine_t engine;
+			 svrng_distribution_t uniform;
+			 uint32_t seed    = 0U;
+			 int32_t result   = -9999;
+			 int32_t err      = -9999;
+			 result           = _rdrand32_step(&seed);
+			 if(!result) seed = 1043915199U;
+			 engine           = svrng_new_mt19937_engine(seed);
+			 err              = svrng_get_status();
+			 if(err!=SVRNG_STATUS_OK) {
+                            const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			    return (nan);
+			 }
+			 uniform          = svrng_new_uniform_distribution_double(0.0,1.0);
+			 const double * __restrict ptr = (const double*)(&svrng_generate8_double(engine,uniform));
+			 cdf              = arcsin_cdf_inv_zmm8r8(_mm512_loadu_pd(&ptr[0]));
+			 svrng_delete_engine(engine);
+			 return (cdf);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d arcsin_sample_zmm8r8(const __m512 cdf) {
+
+                            return (arcsin_cdf_inv_zmm8r8(cdf));
+		    }
+   
 		    
 		    
 
-     }
+      } //math
 
-}
+} // gms
 
 
 
