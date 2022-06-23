@@ -243,8 +243,8 @@ c
 c
 c     compute truncation on deep interior
 c
-!$OMP PARALLEL DO PRIVATE(i,j,ux3,ux4,uy3,uy4,cxx,cx,cyy,cy,tx,ty)
-!$OMP+SHARED (dlx,dly,dlxx,dlyy,dlx4,dly4,tdlx3,tdly3,u,cof,nx,ny)
+!$OMP PARALLEL DO PRIVATE(i,j,ux3,ux4,uy3,uy4,cxx,cx,cyy,cy,tx,ty) &
+!$OMP& SHARED (dlx,dly,dlxx,dlyy,dlx4,dly4,tdlx3,tdly3,u,cof,nx,ny)
       do j=3,ny-2
 	do i=3,nx-2
 	  ux3 = (-u(i-2,j)+2.0*u(i-1,j)-2.0*u(i+1,j)+u(i+2,j))/tdlx3
