@@ -2,25 +2,6 @@
 #ifndef __GMS_PDF_CDF_AVX512_HPP__
 #define __GMS_PDF_CDF_AVX512_HPP__ 290520221332
 
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 namespace file_info {
 
  const unsigned int gGMS_PDF_CDF_AVX512_MAJOR = 1U;
@@ -353,6 +334,230 @@ namespace gms {
 			    return (gamlog);
 			    
 		  }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 gamma_log_zmm16r4(const __m512 x) {
+		      
+                            if(__builtin_expect(_mm512_cmp_ps_mask(x,_0,_CMP_LE_OQ),0) ||
+			       __builtin_expect(_mm512_cmp_ps_mask(x,xbig,_CMP_GT_OQ),0)) {
+                               return (huge);
+			    }
+ 
+                         __ATTR_ALIGN__(64) const __m512 c[7] = { _mm512_set1_ps(-1.910444077728E-03),
+			                                     _mm512_set1_ps(8.4171387781295E-04),
+                                                             _mm512_set1_ps(-5.952379913043012E-04), 
+                                                             _mm512_set1_ps(7.93650793500350248E-04), 
+                                                             _mm512_set1_ps(-2.777777777777681622553E-03), 
+                                                             _mm512_set1_ps(8.333333333333333331554247E-02), 
+                                                             _mm512_set1_ps(5.7083835261E-03)};
+			 __ATTR_ALIGN__(64) const __m512 p1[8] = {_mm512_set1_ps(4.945235359296727046734888E+00), 
+                                                             _mm512_set1_ps(2.018112620856775083915565E+02), 
+                                                             _mm512_set1_ps(2.290838373831346393026739E+03), 
+                                                             _mm512_set1_ps(1.131967205903380828685045E+04),
+                                                             _mm512_set1_ps(2.855724635671635335736389E+04), 
+                                                             _mm512_set1_ps(3.848496228443793359990269E+04), 
+                                                             _mm512_set1_ps(2.637748787624195437963534E+04), 
+                                                             _mm512_set1_ps(7.225813979700288197698961E+03)};
+			 __ATTR_ALIGN__(64) const __m512 p2[8] = {_mm512_set1_ps(4.974607845568932035012064E+00), 
+                                                             _mm512_set1_ps(5.424138599891070494101986E+02), 
+                                                             _mm512_set1_ps(1.550693864978364947665077E+04), 
+                                                             _mm512_set1_ps(1.847932904445632425417223E+05), 
+                                                             _mm512_set1_ps(1.088204769468828767498470E+06), 
+                                                             _mm512_set1_ps(3.338152967987029735917223E+06), 
+                                                             _mm512_set1_ps(5.106661678927352456275255E+06), 
+                                                             _mm512_set1_ps(3.074109054850539556250927E+06)};
+			 __ATTR_ALIGN__(64) const __m512 p4[8] = {_mm512_set1_ps(1.474502166059939948905062E+04), 
+                                                             _mm512_set1_ps(2.426813369486704502836312E+06), 
+                                                             _mm512_set1_ps(1.214755574045093227939592E+08), 
+                                                             _mm512_set1_ps(2.663432449630976949898078E+09), 
+                                                             _mm512_set1_ps(2.940378956634553899906876E+10), 
+                                                             _mm512_set1_ps(1.702665737765398868392998E+11), 
+                                                             _mm512_set1_ps(4.926125793377430887588120E+11), 
+                                                             _mm512_set1_ps(5.606251856223951465078242E+11)};
+                         __ATTR_ALIGN__(64) const __m512 q1[8] = {_mm512_set1_ps(6.748212550303777196073036E+01), 
+                                                             _mm512_set1_ps(1.113332393857199323513008E+03), 
+                                                             _mm512_set1_ps(7.738757056935398733233834E+03), 
+                                                             _mm512_set1_ps(2.763987074403340708898585E+04), 
+                                                             _mm512_set1_ps(5.499310206226157329794414E+04), 
+                                                             _mm512_set1_ps(6.161122180066002127833352E+04), 
+                                                             _mm512_set1_ps(3.635127591501940507276287E+04), 
+                                                             _mm512_set1_ps(8.785536302431013170870835E+03)};
+			 __ATTR_ALIGN__(64) const __m512 q2[8] = {_mm512_set1_ps(1.830328399370592604055942E+02),
+                                                             _mm512_set1_ps(7.765049321445005871323047E+03), 
+                                                             _mm512_set1_ps(1.331903827966074194402448E+05),
+                                                             _mm512_set1_ps(1.136705821321969608938755E+06), 
+                                                             _mm512_set1_ps(5.267964117437946917577538E+06), 
+                                                             _mm512_set1_ps(1.346701454311101692290052E+07), 
+                                                             _mm512_set1_ps(1.782736530353274213975932E+07), 
+                                                             _mm512_set1_ps(9.533095591844353613395747E+06)};
+			 __ATTR_ALIGN__(64) const __m512 q4[8] = {_mm512_set1_ps(2.690530175870899333379843E+03), 
+                                                             _mm512_set1_ps(6.393885654300092398984238E+05), 
+                                                             _mm512_set1_ps(4.135599930241388052042842E+07), 
+                                                             _mm512_set1_ps(1.120872109616147941376570E+09), 
+                                                             _mm512_set1_ps(1.488613728678813811542398E+10), 
+                                                             _mm512_set1_ps(1.016803586272438228077304E+11), 
+                                                             _mm512_set1_ps(3.417476345507377132798597E+11), 
+                                                             _mm512_set1_ps(4.463158187419713286462081E+11)};
+			    const __m512 d1     = _mm512_set1_ps(-5.772156649015328605195174E-01);
+			    const __m512 d2     = _mm512_set1_ps(4.227843350984671393993777E-01);
+                            const __m512 d4     = _mm512_set1_ps(1.791759469228055000094023E+00);
+                            const __m512 frtbig = _mm512_set1_ps(1.42E+09);
+                            const __m512 pnt68  = _mm512_set1_ps(0.6796875E+00);
+			    const __m512 sqrtpi = _mm512_set1_ps(0.9189385332046727417803297E+00);
+			    const __m512 xbig   = _mm512_set1_ps(4.08E+36);
+			    const __m512 _0     = _mm512_setzero_ps();
+			    const __m512 _1_2   = _mm512_set1_ps(0.5);
+			    const __m512 _1_5   = _mm512_set1_ps(1.5);
+			    const __m512 _1     = _mm512_set1_ps(1.0);
+			    const __m512 _4     = _mm512_set1_ps(4.0);
+			    const __m512 _2     = _mm512_set1_ps(2.0);
+			    const __m512 _12    = _mm512_set1_ps(12.0);
+			    const __m512 huge   = _mm512_set1_ps(std::numeric_limits<float>::max());
+			    const __m512 eps    = _mm512_set1_ps(std::numeric_limits<float>::epsilon());
+			    __m512 gamlog,res,xden;
+			    __m512 xm1,xm2,xm4;
+			    __m512 xnum,xsq,corr;
+			    gamlog = _mm512_setzero_ps();
+			   
+			    if(_mm512_cmp_ps_mask(x,eps,_CMP_LE_OQ)) {
+                               res = zmm16r4_negate(_mm512_log_ps(x));
+			    }
+			    else if(_mm512_cmp_ps_mask(x,_1_5,_CMP_LE_OQ)) {
+                               const __mmask16 m0 = _mm512_cmp_ps_mask(x,pnt68,_CMP_LT_OQ);
+			       corr = _mm512_mask_blend_ps(m0,_0,zmm16r4_negate(_mm512_log_ps(x)));
+			       xm1  = _mm512_mask_blend_ps(m0,_mm512_sub_ps(
+			                                                _mm512_sub_ps(x,_1_2),_1_2));
+
+			       if(_mm512_cmp_ps_mask(x,_1_2,_CMP_LE_OQ) ||
+			          _mm512_cmp_ps_mask(pnt68,x,_CMP_LE_OQ)) {
+                                   xden = _1;
+				   xnum = _0;
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[0]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[0]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[1]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[1]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[2]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[2]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[3]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[3]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[4]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[4]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[5]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[5]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[6]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[6]);
+				   xnum = _mm512_fmadd_ps(xnum,xm1,p1[7]);
+				   xden = _mm512_fmadd_ps(xden,xm1,q1[7]);
+				   const __m512 t0 = _mm512_fmadd_ps(xm1,
+				                                  _mm512_div_ps(xnum,xden),d1);
+				   res  = _mm512_add_ps(corr,
+				                    _mm512_mul_ps(xm1,t0));
+				}
+				else {
+
+                                   xm2  = _mm512_sub_ps(_mm512_sub_ps(x,_1_2),_1_2);
+				   xden = _1;
+				   xnum = _0;
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[0]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[0]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[1]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[1]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[2]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[2]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[3]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[3]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[4]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[4]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[5]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[5]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[6]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[6]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[7]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[7]);
+				   const __m512 t0 = _mm512_fmadd_ps(xm2,
+				                                  _mm512_div_ps(xnum,xden),d2);
+				   res  = _mm512_add_ps(corr,
+				                    _mm512_mul_ps(xm2,t0));
+				}
+			    }
+			    else if(_mm512_cmp_ps_mask(x,_4,_CMP_LE_OQ)) {
+                                   xm2  = _mm512_sub_ps(x,_2);
+				   xden = _1;
+				   xnum = _0;
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[0]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[0]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[1]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[1]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[2]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[2]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[3]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[3]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[4]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[4]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[5]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[5]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[6]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[6]);
+				   xnum = _mm512_fmadd_ps(xnum,xm2,p2[7]);
+				   xden = _mm512_fmadd_ps(xden,xm2,q2[7]);
+				   res  = _mm512_mul_ps(xm2,
+				                    _mm512_fmadd_ps(xm2,
+						                _mm512_div_ps(xnum,xden),d2));
+			    }
+			    else if(_mm512_cmp_ps_mask(x,_12,_CMP_LE_OQ)) {
+                                   xm4  = _mm512_sub_ps(x,_4);
+				   xden = zmm16r4_negate(_1);
+				   xnum = _0;
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[0]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[0]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[1]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[1]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[2]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[2]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[3]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[3]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[4]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[4]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[5]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[5]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[6]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[6]);
+				   xnum = _mm512_fmadd_ps(xnum,xm4,p4[7]);
+				   xden = _mm512_fmadd_ps(xden,xm4,q4[7]);
+				   res  = _mm512_fmadd_ps(xm4,_mm512_div_ps(xnum,xden),d4);
+			    }
+			    else {
+                                   res  = _0;
+				   if(_mm512_cmp_ps_mask(x,frtbig,_CMP_LE_OQ)) {
+                                      res = c[6];
+				      xsq = _mm512_mul_ps(x,x);
+				      res = _mm512_add_ps(_mm512_div_ps(res,xsq),c[0]);
+				      res = _mm512_add_ps(_mm512_div_ps(res,xsq),c[1]);
+				      res = _mm512_add_ps(_mm512_div_ps(res,xsq),c[2]);
+				      res = _mm512_add_ps(_mm512_div_ps(res,xsq),c[3]);
+				      res = _mm512_add_ps(_mm512_div_ps(res,xsq),c[4]);
+				      res = _mm512_add_ps(_mm512_div_ps(res,xsq),c[5]);
+				   }
+                                   res  = _mm512_div_ps(res,x);
+				   corr = _mm512_log_ps(x);
+				   res  = _mm512_sub_ps(_mm512_add_ps(res,sqrtpi),
+				                        _mm512_mul_ps(_1_2,corr));
+				   res  = _mm512_fmadd_ps(x,_mm512_sub_ps(corr,_1),res);
+				   
+			    }
+
+			    gamlog = res;
+			    return (gamlog);
+			    
+		  }
+
+
+		  
 
 
 /*
@@ -795,303 +1000,13 @@ namespace gms {
 		    }
                  
 
-/*
-!*****************************************************************************80
-!
-!! ANGLIT_CDF evaluates the Anglit CDF.
-!
-!  Licensing:
-!
-!    This code is distributed under the GNU LGPL license.
-!
-!  Modified:
-!
-!    29 December 1999
-!
-!  Author:
-!
-!    John Burkardt
-!
-!  Parameters:
-!
-!    Input, real ( kind = 8 ) X, the argument of the CDF.
-!
-!    Output, real ( kind = 8 ) CDF, the value of the CDF.
-*/
-	              __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512d anglit_cdf_zmm8r8(const __m512d x) {
-
-                           const __m512d pi    = _mm512_set1_pd(3.14159265358979323846264338328);
-			   const __m512d pi2   = _mm512_set1_pd(1.57079632679489661923132169164);
-			   const __m512d _0_5  = _mm512_set1_pd(0.5);
-			   const __m512d pi4   = _mm512_set1_pd(0.78539816339744830961566084582);
-			   const __m512d _2    = _mm512_set1_pd(2.0);
-			   const __m512d _1    = _mm512_set1_pd(1.0);
-			   __m512d cdf,tmp;
-			   __mmask8 m1,m2;
-			   m1  = _mm512_cmp_pd_mask(x,pi4,_CMP_LT_OQ);
-#if (USE_SLEEF_LIB) == 1
-			   tmp = xcos(_mm512_fmadd_pd(_2,x,pi2));
-#else
-                           tmp = _mm512_cos_pd(_mm512_fmadd_pd(_2,x,pi2));
-#endif
-                           cdf = _mm512_mask_blend_pd(m1,_1,
-			                          _mm512_sub_pd(_0_5,
-						            _mm512_mul_pd(_0_5,tmp)));
-			   m2  = _mm512_cmp_pd_mask(x,zmm8r8_negate(pi4),_CMP_LT_OQ);
-			   cdf = _mm512_mask_blend_pd(m2,cdf,_mm512_setzero_pd());
-			   return (cdf);
-		  }
 
 
-		      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512 anglit_cdf_zmm16r4(const __m512 x) {
-
-                           const __m512 pi    = _mm512_set1_pd(3.14159265358979323846264338328f);
-			   const __m512 pi2   = _mm512_set1_pd(1.57079632679489661923132169164f);
-			   const __m512 _0_5  = _mm512_set1_pd(0.5f);
-			   const __m512 pi4   = _mm512_set1_pd(0.78539816339744830961566084582f);
-			   const __m512 _2    = _mm512_set1_pd(2.0f);
-			   const __m512 _1    = _mm512_set1_pd(1.0f);
-			   __m512 cdf,tmp;
-			   __mmask16 m1,m2;
-			   m1  = _mm512_cmp_ps_mask(x,pi4,_CMP_LT_OQ);
-#if (USE_SLEEF_LIB) == 1
-			   tmp = xcosf(_mm512_fmadd_ps(_2,x,pi2));
-#else
-                           tmp = _mm512_cos_ps(_mm512_fmadd_ps(_2,x,pi2));
-#endif
-                           cdf = _mm512_mask_blend_ps(m1,_1,
-			                          _mm512_sub_ps(_0_5,
-						            _mm512_mul_ps(_0_5,tmp)));
-			   m2  = _mm512_cmp_ps_mask(x,zmm16r4_negate(pi4),_CMP_LT_OQ);
-			   cdf = _mm512_mask_blend_ps(m2,cdf,_mm512_setzero_ps());
-			   return (cdf);
-		  }
 
 
-/*
-!*****************************************************************************80
-!
-!! ANGLIT_CDF_INV inverts the Anglit CDF.
-!
-!  Licensing:
-!
-!    This code is distributed under the GNU LGPL license.
-!
-!  Modified:
-!
-!    29 December 1999
-!
-!  Author:
-!
-!    John Burkardt
-!
-!  Parameters:
-!
-!    Input, real ( kind = 8 ) CDF, the value of the CDF.
-!    0.0D+00 <= CDF <= 1.0.
-!
-!    Output, real ( kind = 8 ) X, the corresponding argument.
-*/
 
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512d anglit_cdf_inv_zmm8r8(const __m512d cdf) {
-
-                           const __m512d _0    = _mm512_setzero_pd();
-			   const __m512d _1    = _mm512_set1_pd(1.0);
-			   const __m512d pi2   = _mm512_set1_pd(1.57079632679489661923132169164);
-			   const __m512d _0_5  = _mm512_set1_pd(0.5);
-			   const __m512d _2    = _mm512_set1_pd(2.0);
-			   __m512d x,tmp;
-			   __mmask8 m1,m2;
-			   m1  = _mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ);
-			   m2  = _mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ);
-			   if(m1 || m2) {
-                              x = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
-			      return (x);
-			   }
-#if (USE_SLEEF_LIB) == 1
-                             tmp = xacos(_mm512_sub_pd(_1,
-			                           _mm512_mul_pd(_2,cdf)));
-#else
-                             tmp = _mm512_acos_pd(_mm512_sub_pd(_1,
-			                           _mm512_mul_pd(_2,cdf)));
-#endif
-                             x   = _mm512_fmsub_pd(_0_5,tmp,pi2);
-			     return (x);
-		    }
-
-
-		      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512 anglit_cdf_inv_zmm16r4(const __m512 cdf) {
-
-                           const __m512 _0    = _mm512_setzero_ps();
-			   const __m512 _1    = _mm512_set1_ps(1.0f);
-			   const __m512 pi2   = _mm512_set1_ps(1.57079632679489661923132169164f);
-			   const __m512 _0_5  = _mm512_set1_ps(0.5f);
-			   const __m512 _2    = _mm512_set1_ps(2.0f);
-			   __m512 x,tmp;
-			   __mmask16 m1,m2;
-			   m1  = _mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ);
-			   m2  = _mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ);
-			   if(m1 || m2) {
-                              x = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
-			      return (x);
-			   }
-#if (USE_SLEEF_LIB) == 1
-                             tmp = xacosf(_mm512_sub_ps(_1,
-			                           _mm512_mul_ps(_2,cdf)));
-#else
-                             tmp = _mm512_acos_ps(_mm512_sub_ps(_1,
-			                           _mm512_mul_ps(_2,cdf)));
-#endif
-                             x   = _mm512_fmsub_ps(_0_5,tmp,pi2);
-			     return (x);
-		    }
-
-/*
- !*****************************************************************************80
-!
-!! ANGLIT_MEAN returns the mean of the Anglit PDF.
-!
-!  Licensing:
-!
-!    This code is distributed under the GNU LGPL license.
-!
-!  Modified:
-!
-!    28 December 1999
-!
-!  Author:
-!
-!    John Burkardt
-!
-!  Parameters:
-!
-!    Output, real ( kind = 8 ) MEAN, the mean of the PDF.
-!
-*/
-
-
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512d anglit_mean_zmm8r8() {
-
-		             return (_mm512_setzero_pd());
-		     }
-
-
-		      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512 anglit_mean_zmm16r4() {
-
-		             return (_mm512_setzero_ps());
-		     }
-
-/*
-!*****************************************************************************80
-!
-!! ANGLIT_PDF evaluates the Anglit PDF.
-!
-!  Discussion:
-!
-!    PDF(X) = sin ( 2 * X + PI / 2 ) for -PI/4 <= X <= PI/4
-!
-!  Licensing:
-!
-!    This code is distributed under the GNU LGPL license.
-!
-!  Modified:
-!
-!    28 December 1999
-!
-!  Author:
-!
-!    John Burkardt
-!
-!  Parameters:
-!
-!    Input, real ( kind = 8 ) X, the argument of the PDF.
-!
-!    Output, real ( kind = 8 ) PDF, the value of the PDF.
-*/
-
-
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512d anglit_pdf_zmm8r8(const __m512d x) {
-
-                         const __m512d pi2  = _mm512_set1_pd(1.57079632679489661923132169164);
-			 const __m512d _2   = _mm512_set1_pd(2.0);
-			 const __m512d _0   = _mm512_setzero_pd();
-			 __m512d pdf;
-			 __mmask8 m,m1,m2;
-			 m1  = _mm512_cmp_pd_mask(zmm8r8_negate(pi2),x,_CMP_LT_OQ);
-			 m2  = _mm512_cmp_pd_mask(pi2,x,_CMP_LE_OQ);
-			 m   = m1||m2;
-#if (USE_SLEEF_LIB) == 1
-			 tmp = xsin(_mm512_fmadd_pd(_2,x,pi2));
-#else
-                         tmp = _mm512_sin_pd(_mm512_fmadd_pd(_2,x,pi2));
-#endif
-			 pdf = _mm512_mask_blend_pd(m,tmp,_0);
-			 return (pdf);
-		    }
-
-
-		      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
-		      __m512 anglit_pdf_zmm16r4(const __m512 x) {
-
-                         const __m512 pi2  = _mm512_set1_ps(1.57079632679489661923132169164f);
-			 const __m512 _2   = _mm512_set1_ps(2.0f);
-			 const __m512 _0   = _mm512_setzero_ps();
-			 __m512 pdf;
-			 __mmask16 m,m1,m2;
-			 m1  = _mm512_cmp_ps_mask(zmm16r4_negate(pi2),x,_CMP_LT_OQ);
-			 m2  = _mm512_cmp_ps_mask(pi2,x,_CMP_LE_OQ);
-			 m   = m1||m2;
-#if (USE_SLEEF_LIB) == 1
-			 tmp = xsinf(_mm512_fmadd_ps(_2,x,pi2));
-#else
-                         tmp = _mm512_sin_ps(_mm512_fmadd_ps(_2,x,pi2));
-#endif
-			 pdf = _mm512_mask_blend_ps(m,tmp,_0);
-			 return (pdf);
-		    }
-
-/*
-!*****************************************************************************80
+/*!*****************************************************************************80
 !
 !! ANGLIT_SAMPLE samples the Anglit PDF.
 !
@@ -1121,7 +1036,7 @@ namespace gms {
 #else
 #error 'Required Intel Compiler distribution'
 #endif
-
+/*
                       __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
 		      __ATTR_HOT__
@@ -1160,6 +1075,7 @@ namespace gms {
 
                             return (anglit_cdf_inv_zmm8r8(cdf));
 		    }
+*/
 
 /*
       !*****************************************************************************80
@@ -1637,9 +1553,547 @@ namespace gms {
 			      }
 			      return (cdf);
 		    }
+
+
+/*!*****************************************************************************80
+!
+!! BETA_PDF evaluates the Beta PDF.
+!
+!  Discussion:
+!
+!    The formula for the PDF is:
+!
+!      PDF(A,B;X) = X**(A-1) * (1-X)**(B-1) / BETA(A,B).
+!
+!    A = B = 1 yields the Uniform distribution on [0,1].
+!    A = B = 1/2 yields the Arcsin distribution.
+!        B = 1 yields the power function distribution.
+!    A = B -> Infinity tends to the Normal distribution.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    01 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    0.0D+00 <= X <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A,
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!*/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d beta_pdf_zmm8r8(const __m512d x,
+		                              const __m512d a,
+					      const __m512d b) {
+
+                         const __m512d _0 = _mm512_setzero_pd();
+			 const __m512d _1 = _mm512_set1_pd(1.0);
+			 const __m512d t0 = _mm512_sub_pd(a,_1);
+			 const __m512d t1 = _mm512_sub_pd(_1,x);
+			 const __m512d t2 = _mm512_sub_pd(b,_1);
+			 __m512d pdf,term1,term2,term3;
+			 __mmask8 m0,m1,m2;
+			 term1            = _mm512_pow_pd(x,t0);
+			 m0               = _mm512_cmp_pd_mask(x,_0,_CMP_LT_OQ);
+			 term2            = _mm512_mul_pd(term1,_mm512_pow_pd(t1,t2));
+			 m1               = _mm512_cmp_pd_mask(x,_1,_CMP_LT_OQ);
+			 term3            = _mm512_div_pd(term2,beta_zmm8r8(a,b));
+			 m                = m1||m2;
+			 pdf              = _mm512_mask_blend_pd(m,term3,_0);
+			 return (pdf);
+		    }
+
+
+		     __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      beta_pdf_zmm16r4(const __m512 x,
+		                       const __m512 a,
+				       const __m512 b) {
+
+                         const __m512 _0 = _mm512_setzero_ps();
+			 const __m512 _1 = _mm512_set1_ps(1.0);
+			 const __m512 t0 = _mm512_sub_ps(a,_1);
+			 const __m512 t1 = _mm512_sub_ps(_1,x);
+			 const __m512 t2 = _mm512_sub_ps(b,_1);
+			 __m512 pdf,term1,term2,term3;
+			 __mmask16 m0,m1,m2;
+			 term1            = _mm512_pow_ps(x,t0);
+			 m0               = _mm512_cmp_ps_mask(x,_0,_CMP_LT_OQ);
+			 term2            = _mm512_mul_ps(term1,_mm512_pow_pd(t1,t2));
+			 m1               = _mm512_cmp_ps_mask(x,_1,_CMP_LT_OQ);
+			 term3            = _mm512_div_ps(term2,beta_zmm16r4(a,b));
+			 m                = m1||m2;
+			 pdf              = _mm512_mask_blend_ps(m,term3,_0);
+			 return (pdf);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      beta_variance_zmm8r8(const __m512d a,
+		                           const __m512d b) {
+
+			  __m512d variance;
+                          const __m512d _1  = _mm512_set1_pd(1.0);
+			  const __m512d ab  = _mm512_add_pd(a,b);
+			  const __m512d t0  = _mm512_mul_pd(_mm512_mul_pd(ab,ab),
+			                                    _mm512_add_pd(_1,ab));
+			  variance          = _mm512_div_pd(_mm512_mul_pd(a,b),t0);				   
+			  
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      beta_variance_zmm16r4(const __m512 a,
+		                            const __m512 b) {
+
+			  __m512 variance;
+                          const __m512 _1  = _mm512_set1_ps(1.0f);
+			  const __m512 ab  = _mm512_add_ps(a,b);
+			  const __m512 t0  = _mm512_mul_ps(_mm512_mul_ps(ab,ab),
+			                                    _mm512_add_ps(_1,ab));
+			  variance          = _mm512_div_ps(_mm512_mul_ps(a,b),t0);				   
+			  
+		    }
+
+/*
+!*****************************************************************************80
+!
+!! WEIBULL_CDF evaluates the Weibull CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    12 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!    A <= X.
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0.0D+00 < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!		    
+*/
+
                       
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                      __m512d
+		      weibull_cdf_zmm8r8(const __m512d x,
+		                         const __m512d a,
+					 const __m512d b,
+					 const __m512d c) {
+
+                          const __m512d  _0 = _mm512_setzero_pd();
+			  const __m512d  _1 = _mm512_set1_pd(1.0);
+			  const __m512d  y  = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+			  const __m512d  exc= _mm512_exp_pd(_mm512_pow_pd(y,c));
+			  __m512d cdf;
+			  const __mmask8 m  = _mm512_cmp_pd_mask(a,x,_CMP_LT_OQ);
+			  cdf               = _mm512_mask_blend_pd(m,_mm512_sub_pd(_1,
+			                                                       _mm512_div_pd(_1,exc)),_0);
+			  return (cdf);
+		   }
 		    
 		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                      __m512
+		      weibull_cdf_zmm16r4(const __m512 x,
+		                          const __m512 a,
+					  const __m512 b,
+					  const __m512 c) {
+
+                          const __m512  _0 = _mm512_setzero_ps();
+			  const __m512  _1 = _mm512_set1_ps(1.0f);
+			  const __m512  y  = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+			  const __m512  exc= _mm512_exp_ps(_mm512_pow_ps(y,c));
+			  __m512 cdf;
+			  const __mmask16 m  = _mm512_cmp_ps_mask(a,x,_CMP_LT_OQ);
+			  cdf               = _mm512_mask_blend_ps(m,_mm512_sub_ps(_1,
+			                                                       _mm512_div_ps(_1,exc)),_0);
+			  return (cdf);
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                      __m512d
+		      weibull_cdf_inv_zmm8r8(const __m512d a,
+		                             const __m512d b,
+					     const __m512d c,
+					     const __m512d cdf) {
+
+                        const __m512d  _0  = _mm512_setzero_pd();
+			const __m512d  _1  = _mm512_set1_pd(1.0);
+			const __m512d  nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			__m512d t0,t1,x;
+			if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			   __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                           return (nan);
+			}
+			t0                 = zmm8r8_negate(_mm512_log_pd(_mm512_sub_pd(_1,cdf)));
+			t1                 = _mm512_pow_pd(t0,_mm512_div_pd(_1,c));
+			x                  = _mm512_fmadd_pd(a,b,t1);
+			return (x);
+			
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+                      __m512
+		      weibull_cdf_inv_zmm16r4(const __m512 a,
+		                             const __m512 b,
+					     const __m512 c,
+					     const __m512 cdf) {
+
+                        const __m512  _0  = _mm512_setzero_ps();
+			const __m512  _1  = _mm512_set1_ps(1.0f);
+			const __m512  nan = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			__m512 t0,t1,x;
+			if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			   __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                           return (nan);
+			}
+			t0                 = zmm16r4_negate(_mm512_log_pd(_mm512_sub_ps(_1,cdf)));
+			t1                 = _mm512_pow_ps(t0,_mm512_div_ps(_1,c));
+			x                  = _mm512_fmadd_ps(a,b,t1);
+			return (x);
+			
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      weibull_sample_zmm8r8(const __m512d vrand,
+		                            const __m512d a,
+					    const __m512d b,
+					    const __m512d c) {
+
+                         return (weibull_cdf_zmm8r8(a,b,c,vrand));
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      weibull_sample_zmm16r4(const __m512 vrand,
+		                            const __m512 a,
+					    const __m512 b,
+					    const __m512 c) {
+
+                         return (weibull_cdf_zmm16r4(a,b,c,vrand));
+		   }
+
+/*
+!*****************************************************************************80
+!
+!! WEIBULL_VARIANCE returns the variance of the Weibull PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    16 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0.0D+00 < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) VARIANCE, the variance of the PDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+                      weibull_discrete_cdf_zmm8r8(const __m512d x,
+		                                  const __m512d a,
+					          const __m512d b) {
+
+			    __m512d cdf;
+                            const __m512d  _0 = _mm512_setzero_pd();
+			    const __m512d  _1 = _mm512_set1_pd(1.0);
+			    const __m512d  t0 = _mm512_pow_pd(_mm512_add_pd(x,_1),b);
+			    const __m512d  t1 = _mm512_pow_pd(_mm512_sub_pd(_1,a),t0);
+			    const __mmask8 m  = _mm512_cmp_pd_mask(x,_0,_CMP_LT_OQ);
+			    cdf               = _mm512_mask_blend_pd(m,_mm512_sub_pd(_1,t1),_0);
+			    return (cdf);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+                      weibull_discrete_cdf_zmm16r4(const __m512 x,
+		                                  const __m512 a,
+					          const __m512 b) {
+
+			    __m512 cdf;
+                            const __m512  _0 = _mm512_setzero_ps();
+			    const __m512  _1 = _mm512_set1_ps(1.0f);
+			    const __m512  t0 = _mm512_pow_ps(_mm512_add_ps(x,_1),b);
+			    const __m512  t1 = _mm512_pow_ps(_mm512_sub_ps(_1,a),t0);
+			    const __mmask16 m  = _mm512_cmp_ps_mask(x,_0,_CMP_LT_OQ);
+			    cdf               = _mm512_mask_blend_ps(m,_mm512_sub_pd(_1,t1),_0);
+			    return (cdf);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      weibull_discrete_pdf_zmm8r8(const __m512d x,
+		                                  const __m512d a,
+					          const __m512d b) {
+
+                            __m512d pdf;
+                            const __m512d  _0 = _mm512_setzero_pd();
+			    const __m512d  _1 = _mm512_set1_pd(1.0);
+			    const __m512d  t0 = _mm512_pow_pd(_mm512_add_pd(x,_1),b);
+			    const __m512d  _1a= _mm512_sub_pd(_1,a);
+			    const __m512d  t1 = _mm512_pow_pd(_1a,t0);
+                            const __m512d  t2 = _mm512_pow_pd(x,b);
+			    const __m512d  t3 = _mm512_pow_pd(_1a,t2);
+			    pdf               = _mm512_sub_pd(t3,t1);
+			    return (pdf);
+		   }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      weibull_discrete_pdf_zmm16r4(const __m512 x,
+		                                  const __m512 a,
+					          const __m512 b) {
+
+                            __m512 pdf;
+                            const __m512  _0 = _mm512_setzero_ps();
+			    const __m512  _1 = _mm512_set1_ps(1.0);
+			    const __m512  t0 = _mm512_pow_ps(_mm512_add_ps(x,_1),b);
+			    const __m512  _1a= _mm512_sub_ps(_1,a);
+			    const __m512  t1 = _mm512_pow_ps(_1a,t0);
+                            const __m512  t2 = _mm512_pow_ps(x,b);
+			    const __m512  t3 = _mm512_pow_ps(_1a,t2);
+			    pdf               = _mm512_sub_ps(t3,t1);
+			    return (pdf);
+		   }
+
+
+/*
+!*****************************************************************************80
+!
+!! WEIBULL_DISCRETE_CDF_INV inverts the Discrete Weibull CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    19 October 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 <= A <= 1.0D+00,
+!    0.0D+00 < B.
+!
+!    Output, integer ( kind = 4 ) X, the corresponding argument.
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      weibull_discr_icdf_zmm8r8(const __m512d cdf,
+		                                const __m512d a,
+						const __m512d b) {
+
+                          const __m512d  nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			  const __m512d  _0  = _mm512_setzero_pd();
+			  const __m512d  _1  = _mm512_set1_pd(1.0);
+			  if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			     __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                           return (nan);
+			  }
+			  const __m512d t0   =  _mm512_log_pd(_mm512_sub_pd(_1,cdf));
+			  const __m512d t1   =  _mm512_log_pd(_mm512_sub_pd(_1,a));
+			  const __m512d t2   =  _mm512_div_pd(t1,t2)
+			  const __m512d t3   =  _mm512_pow_pd(t2,_mm512_div_pd(_1,b));
+			  __m512d x;
+			  x                  =  _mm512_ceil_pd(_mm512_sub_pd(t3,_1));
+			  return (x);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      weibull_discr_icdf_zmm16r4(const __m512 cdf,
+		                                const __m512 a,
+						const __m512 b) {
+
+                          const __m512  nan = _mm512_set1_pd(std::numeric_limits<float>::quiet_NaN());
+			  const __m512  _0  = _mm512_setzero_ps();
+			  const __m512  _1  = _mm512_set1_ps(1.0f);
+			  if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			     __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                           return (nan);
+			  }
+			  const __m512 t0   =  _mm512_log_ps(_mm512_sub_ps(_1,cdf));
+			  const __m512 t1   =  _mm512_log_ps(_mm512_sub_ps(_1,a));
+			  const __m512 t2   =  _mm512_div_ps(t1,t2)
+			  const __m512 t3   =  _mm512_pow_ps(t2,_mm512_div_ps(_1,b));
+			  __m512 x;
+			  x                  =  _mm512_ceil_ps(_mm512_sub_ps(t3,_1));
+			  return (x);
+		    }
+
+
+		    
+
+/*
+!*****************************************************************************80
+!
+!! WEIBULL_DISCRETE_SAMPLE samples the discrete Weibull PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    07 March 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 <= A <= 1.0D+00,
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, integer ( kind = 4 ) X, a sample of the PDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+		      weibull_discr_samp_zmm8r8(   const __m512d vrand,
+		                                   const __m512d a,
+						   const __m512d b) {
+
+                         return (weibull_discr_icdf_zmm8r8(vrand,a,b));
+		    }
+
+		   
+
 
       } //math
 
