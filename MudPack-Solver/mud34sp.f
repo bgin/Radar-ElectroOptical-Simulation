@@ -183,10 +183,10 @@ c
       end
 
       subroutine tr3sp(nx,ny,nz,u,r,cofx,cofy,cofz)
-       !dir$ attributes forceinline :: md34sp
-       !dir$ attributes code_align : 32 :: md34sp
+       !dir$ attributes forceinline :: tr3sp
+       !dir$ attributes code_align : 32 :: tr3sp
        !dir$ optimize : 3
-       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: md34sp
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: tr3sp
        use omp_lib
 c
 c     estimate truncation error using second order approximation in u
@@ -299,7 +299,7 @@ c
 !$omp private(ux3,ux4,uy3,uy4,uz3,uz4)                      &
 !$omp shared(kstart,kfinal,istart,ifinal,dlxx,cofx,cofy)    &
 !$omp shared(dlyy,dlzz,cofz,dlz,nx,ny,nz,nxa,nyc,dlx,nze)   &
-!$omp shared(r,jfinal,ifinal)
+!$omp shared(jstart,r,u,jfinal,ifinal,dly)
       do k=kstart,kfinal
 	do i=istart,ifinal
 	  do j=jstart,2
