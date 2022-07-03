@@ -68,7 +68,14 @@ subroutine c1f2kb ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,1,2)
 
   if ( ido <= 1 .and. na /= 1 ) then
-    
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
     do k=1,l1
       chold1 = cc(1,k,1,1)+cc(1,k,1,2)
       cc(1,k,1,2) = cc(1,k,1,1)-cc(1,k,1,2)
@@ -182,7 +189,15 @@ subroutine c1f2kf ( ido, l1, na, cc, in1, ch, in2, wa )
       sn = 1.0_dp / real ( 2 * l1, kind = dp )
 
       if (na == 1) go to 106
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
       do k=1,l1
          chold1 = sn*(cc(1,k,1,1)+cc(1,k,1,2))
          cc(1,k,1,2) = sn*(cc(1,k,1,1)-cc(1,k,1,2))
@@ -193,7 +208,14 @@ subroutine c1f2kf ( ido, l1, na, cc, in1, ch, in2, wa )
       end do
 
       return
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
   106 do k=1,l1
          ch(1,k,1,1) = sn*(cc(1,k,1,1)+cc(1,k,1,2))
          ch(1,k,2,1) = sn*(cc(1,k,1,1)-cc(1,k,1,2))
@@ -306,7 +328,14 @@ subroutine c1f3kb ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,2,2)
 
       if ( 1 < ido .or. na == 1) go to 102
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
       do k=1,l1
          tr2 = cc(1,k,1,2)+cc(1,k,1,3)
          cr2 = cc(1,k,1,1)+taur*tr2
@@ -448,9 +477,17 @@ subroutine c1f3kf ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,2,2)
 
       if ( 1 < ido ) go to 102
-      sn = 1.0D+00 / real ( 3 * l1, kind = 8 )
+      sn = 1.0_dp / real ( 3 * l1, kind = 8 )
       if (na == 1) go to 106
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
       do k=1,l1
          tr2 = cc(1,k,1,2)+cc(1,k,1,3)
          cr2 = cc(1,k,1,1)+taur*tr2
@@ -467,7 +504,15 @@ subroutine c1f3kf ( ido, l1, na, cc, in1, ch, in2, wa )
       end do
 
       return
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
   106 do k=1,l1
          tr2 = cc(1,k,1,2)+cc(1,k,1,3)
          cr2 = cc(1,k,1,1)+taur*tr2
@@ -608,7 +653,13 @@ subroutine c1f4kb ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,3,2)
 
       if ( 1 < ido .or. na == 1) go to 102
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do k=1,l1
          ti1 = cc(2,k,1,1)-cc(2,k,1,3)
          ti2 = cc(2,k,1,1)+cc(2,k,1,3)
@@ -764,9 +815,15 @@ subroutine c1f4kf ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,3,2)
 
       if ( 1 < ido ) go to 102
-      sn = 1.0D+00 / real ( 4 * l1, kind = 8 )
+      sn = 1.0_dp / real ( 4 * l1, kind = 8 )
       if (na == 1) go to 106
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do k=1,l1
          ti1 = cc(2,k,1,1)-cc(2,k,1,3)
          ti2 = cc(2,k,1,1)+cc(2,k,1,3)
@@ -787,7 +844,13 @@ subroutine c1f4kf ( ido, l1, na, cc, in1, ch, in2, wa )
       end do
 
       return
-  
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
   106 do 107 k=1,l1
          ti1 = cc(2,k,1,1)-cc(2,k,1,3)
          ti2 = cc(2,k,1,1)+cc(2,k,1,3)
@@ -957,7 +1020,15 @@ subroutine c1f5kb ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,4,2)
 
       if ( 1 < ido .or. na == 1) go to 102
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
       do k=1,l1
          ti5 = cc(2,k,1,2)-cc(2,k,1,5)
          ti2 = cc(2,k,1,2)+cc(2,k,1,5)
@@ -1163,9 +1234,17 @@ subroutine c1f5kf ( ido, l1, na, cc, in1, ch, in2, wa )
  real(kind=dp) wa(ido,4,2)
 
       if ( 1 < ido ) go to 102
-      sn = 1.0D+00 / real ( 5 * l1, kind = 8 )
+      sn = 1.0_dp / real ( 5 * l1, kind = 8 )
       if (na == 1) go to 106
-
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ assume (mod(l1,8) .eq. 0)
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
       do k=1,l1
          ti5 = cc(2,k,1,2)-cc(2,k,1,5)
          ti2 = cc(2,k,1,2)+cc(2,k,1,5)
@@ -1723,7 +1802,7 @@ subroutine c1fgkf ( ido, ip, l1, lid, na, cc, cc1, in1, ch, ch1, in2, wa )
   116 continue
 
       if ( 1 < ido ) go to 136
-      sn = 1.0D+00 / real ( ip * l1, kind = 8 )
+      sn = 1.0_dp / real ( ip * l1, kind = 8 )
       if (na == 1) go to 146
    !dir$ assume_aligned ch1:64
    !dir$ assume_aligned cc1:64
@@ -3189,6 +3268,13 @@ subroutine cmf2kb ( lot, ido, l1, na, cc, im1, in1, ch, im2, in2, wa )
   if ( 1 < ido .or. na == 1 ) go to 102
 
     do k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ ivdep
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do m1=1,m1d,im1
         chold1 = cc(1,m1,k,1,1)+cc(1,m1,k,1,2)
         cc(1,m1,k,1,2) = cc(1,m1,k,1,1)-cc(1,m1,k,1,2)
@@ -3319,6 +3405,14 @@ subroutine cmf2kf ( lot, ido, l1, na, cc, im1, in1, ch, im2, in2, wa )
       if (na == 1) go to 106
 
       do k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ ivdep
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
         do m1=1,m1d,im1
          chold1 = sn*(cc(1,m1,k,1,1)+cc(1,m1,k,1,2))
          cc(1,m1,k,1,2) = sn*(cc(1,m1,k,1,1)-cc(1,m1,k,1,2))
@@ -3466,6 +3560,14 @@ subroutine cmf3kb ( lot, ido, l1, na, cc, im1, in1, ch, im2, in2, wa )
   if ( 1 < ido .or. na == 1) go to 102
 
       do k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ ivdep
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
          do m1=1,m1d,im1
          tr2 = cc(1,m1,k,1,2)+cc(1,m1,k,1,3)
          cr2 = cc(1,m1,k,1,1)+taur*tr2
@@ -3621,6 +3723,14 @@ subroutine cmf3kf ( lot, ido, l1, na, cc, im1, in1, ch, im2, in2, wa )
       sn = 1.0_dp / real ( 3 * l1, kind = dp )
       if (na == 1) go to 106
       do 101 k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ ivdep
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
          do 101 m1=1,m1d,im1
          tr2 = cc(1,m1,k,1,2)+cc(1,m1,k,1,3)
          cr2 = cc(1,m1,k,1,1)+taur*tr2
@@ -3802,6 +3912,12 @@ subroutine cmf4kb ( lot, ido, l1, na, cc, im1, in1, ch, im2, in2, wa )
       if ( 1 < ido .or. na == 1) go to 102
 
       do k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
         do m1=1,m1d,im1
           ti1 = cc(2,m1,k,1,1)-cc(2,m1,k,1,3)
           ti2 = cc(2,m1,k,1,1)+cc(2,m1,k,1,3)
@@ -5674,8 +5790,8 @@ subroutine cosq1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
       if (n-2) 102,101,103
   101 ssqrt2 = 1.0_dp / sqrt ( 2.0_dp )
       tsqx = ssqrt2*x(1,2)
-      x(1,2) = 0.5D+00 *x(1,1)-tsqx
-      x(1,1) = 0.5D+00 *x(1,1)+tsqx
+      x(1,2) = 0.5_dp *x(1,1)-tsqx
+      x(1,1) = 0.5_dp *x(1,1)+tsqx
   102 return
   103 call cosqf1 (n,inc,x,wsave,work,ier1)
 
@@ -5778,7 +5894,7 @@ subroutine cosq1i ( n, wsave, lensav, ier )
    !dir$ vector always
    !dir$ unroll(4)
   do k=1,n
-    fk = fk + 1.0D+00
+    fk = fk + 1.0_dp
     wsave(k) = cos(fk*dt)
   end do
 
@@ -6781,7 +6897,8 @@ subroutine cost1i ( n, wsave, lensav, ier )
   return
 end
 subroutine costb1 ( n, inc, x, wsave, work, ier )
-
+       !dir$ attributes code_align : 32 :: cost1b
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! COSTB1 is an FFTPACK5.1 auxiliary routine.
@@ -6822,19 +6939,19 @@ subroutine costb1 ( n, inc, x, wsave, work, ier )
  real(kind=dp) dsum
  real(kind=dp) fnm1s2
  real(kind=dp) fnm1s4
-  integer(kind=i4)i
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)k
-  integer(kind=i4)kc
-  integer(kind=i4)lenx
-  integer(kind=i4)lnsv
-  integer(kind=i4)lnwk
-  integer(kind=i4)modn
-  integer(kind=i4)n
-  integer(kind=i4)nm1
-  integer(kind=i4)np1
-  integer(kind=i4)ns2
+  integer(kind=i4) i
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) k
+  integer(kind=i4) kc
+  integer(kind=i4) lenx
+  integer(kind=i4) lnsv
+  integer(kind=i4) lnwk
+  integer(kind=i4) modn
+  integer(kind=i4) n
+  integer(kind=i4) nm1
+  integer(kind=i4) np1
+  integer(kind=i4) ns2
  real(kind=dp) t1
  real(kind=dp) t2
  real(kind=dp) work(*)
@@ -6882,7 +6999,7 @@ subroutine costb1 ( n, inc, x, wsave, work, ier )
       if (modn == 0) go to 124
       x(1,ns2+1) = x(1,ns2+1)+x(1,ns2+1)
   124 lenx = inc*(nm1-1)  + 1
-      lnsv = nm1 + int(log( real ( nm1, kind = 8 ) )/log( 2.0D+00 )) + 4
+      lnsv = nm1 + int(log( real ( nm1, kind = 8 ) )/log( 2.0_dp )) + 4
       lnwk = nm1
 
       call rfft1f(nm1,inc,x,lenx,wsave(n+1),lnsv,work,lnwk,ier1)
@@ -6893,12 +7010,12 @@ subroutine costb1 ( n, inc, x, wsave, work, ier )
         return
       end if
 
-      fnm1s2 = real ( nm1, kind = 8 ) / 2.0D+00 
-      dsum = 0.5D+00 * dsum
+      fnm1s2 = real ( nm1, kind = 8 ) / 2.0_dp 
+      dsum = 0.5_dp * dsum
       x(1,1) = fnm1s2*x(1,1)
       if(mod(nm1,2) /= 0) go to 30
       x(1,nm1) = x(1,nm1)+x(1,nm1)
-   30 fnm1s4 = real ( nm1, kind = 8 ) / 4.0D+00
+   30 fnm1s4 = real ( nm1, kind = 8 ) / 4.0_dp
 
       do i=3,n,2
          xi = fnm1s4*x(1,i)
@@ -6914,7 +7031,8 @@ subroutine costb1 ( n, inc, x, wsave, work, ier )
   return
 end
 subroutine costf1 ( n, inc, x, wsave, work, ier )
-
+       !dir$ attributes code_align : 32 :: costf1
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! COSTF1 is an FFTPACK5.1 auxiliary routine.
@@ -6953,19 +7071,19 @@ subroutine costf1 ( n, inc, x, wsave, work, ier )
   integer(kind=i4)inc
 
  real(kind=dp) dsum
-  integer(kind=i4)i
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)k
-  integer(kind=i4)kc
-  integer(kind=i4)lenx
-  integer(kind=i4)lnsv
-  integer(kind=i4)lnwk
-  integer(kind=i4)modn
-  integer(kind=i4)n
-  integer(kind=i4)nm1
-  integer(kind=i4)np1
-  integer(kind=i4)ns2
+  integer(kind=i4) i
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) k
+  integer(kind=i4) kc
+  integer(kind=i4) lenx
+  integer(kind=i4) lnsv
+  integer(kind=i4) lnwk
+  integer(kind=i4) modn
+  integer(kind=i4) n
+  integer(kind=i4) nm1
+  integer(kind=i4) np1
+  integer(kind=i4) ns2
  real(kind=dp) snm1
  real(kind=dp) t1
  real(kind=dp) t2
@@ -6985,15 +7103,15 @@ subroutine costf1 ( n, inc, x, wsave, work, ier )
 
       if (n-2) 200,101,102
   101 x1h = x(1,1)+x(1,2)
-      x(1,2) = 0.5D+00 * (x(1,1)-x(1,2))
-      x(1,1) = 0.5D+00 * x1h
+      x(1,2) = 0.5_dp * (x(1,1)-x(1,2))
+      x(1,1) = 0.5_dp * x1h
       go to 200
   102 if ( 3 < n ) go to 103
       x1p3 = x(1,1)+x(1,3)
       tx2 = x(1,2)+x(1,2)
-      x(1,2) = 0.5D+00 * (x(1,1)-x(1,3))
-      x(1,1) = 0.25D+00 *(x1p3+tx2)
-      x(1,3) = 0.25D+00 *(x1p3-tx2)
+      x(1,2) = 0.5_dp * (x(1,1)-x(1,3))
+      x(1,1) = 0.25_dp *(x1p3+tx2)
+      x(1,3) = 0.25_dp *(x1p3-tx2)
       go to 200
   103 dsum = x(1,1)-x(1,n)
       x(1,1) = x(1,1)+x(1,n)
@@ -7010,7 +7128,7 @@ subroutine costf1 ( n, inc, x, wsave, work, ier )
       if (modn == 0) go to 124
       x(1,ns2+1) = x(1,ns2+1)+x(1,ns2+1)
   124 lenx = inc*(nm1-1)  + 1
-      lnsv = nm1 + int(log( real ( nm1, kind = 8 ) )/log( 2.0D+00 )) + 4
+      lnsv = nm1 + int(log( real ( nm1, kind = 8 ) )/log( 2.0_dp )) + 4
       lnwk = nm1
 
       call rfft1f(nm1,inc,x,lenx,wsave(n+1),lnsv,work,lnwk,ier1)
@@ -7021,27 +7139,28 @@ subroutine costf1 ( n, inc, x, wsave, work, ier )
         go to 200
       end if
 
-      snm1 = 1.0D+00 / real ( nm1, kind = 8 )
+      snm1 = 1.0_dp / real ( nm1, kind = 8 )
       dsum = snm1*dsum
       if(mod(nm1,2) /= 0) go to 30
       x(1,nm1) = x(1,nm1)+x(1,nm1)
    30 do i=3,n,2
-         xi = 0.5D+00 * x(1,i)
-         x(1,i) = 0.5D+00 * x(1,i-1)
+         xi = 0.5_dp * x(1,i)
+         x(1,i) = 0.5_dp * x(1,i-1)
          x(1,i-1) = dsum
          dsum = dsum+xi
       end do
       if (modn /= 0) go to 117
       x(1,n) = dsum
-  117 x(1,1) = 0.5D+00 * x(1,1)
-      x(1,n) = 0.5D+00 * x(1,n)
+  117 x(1,1) = 0.5_dp * x(1,1)
+      x(1,n) = 0.5_dp * x(1,n)
   200 continue
 
   return
 end
 subroutine costmb ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
   lenwrk, ier )
-
+        !dir$ attributes code_align : 32 :: costmb
+        !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! COSTMB: real double precision backward cosine transform, multiple vectors.
@@ -7131,17 +7250,17 @@ subroutine costmb ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
 !
   implicit none
 
-  integer(kind=i4)inc
-  integer(kind=i4)lensav
-  integer(kind=i4)lenwrk
+  integer(kind=i4) inc
+  integer(kind=i4) lensav
+  integer(kind=i4) lenwrk
 
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)iw1
-  integer(kind=i4)jump
-  integer(kind=i4)lenx
-  integer(kind=i4)lot
-  integer(kind=i4)n
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) iw1
+  integer(kind=i4) jump
+  integer(kind=i4) lenx
+  integer(kind=i4) lot
+  integer(kind=i4) n
  real(kind=dp) work(lenwrk)
  real(kind=dp) wsave(lensav)
  real(kind=dp) x(inc,*)
@@ -7154,7 +7273,7 @@ subroutine costmb ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
     call xerfft ('costmb', 6)
     return
   else if (lensav < &
-    2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+    2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('costmb', 8)
     return
@@ -7180,7 +7299,8 @@ subroutine costmb ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
 end
 subroutine costmf ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
   lenwrk, ier )
-
+       !dir$ attributes code_align : 32 :: costmf
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! COSTMF: real double precision forward cosine transform, multiple vectors.
@@ -7270,17 +7390,17 @@ subroutine costmf ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
 !
   implicit none
 
-  integer(kind=i4)inc
-  integer(kind=i4)lensav
-  integer(kind=i4)lenwrk
+  integer(kind=i4) inc
+  integer(kind=i4) lensav
+  integer(kind=i4) lenwrk
 
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)iw1
-  integer(kind=i4)jump
-  integer(kind=i4)lenx
-  integer(kind=i4)lot
-  integer(kind=i4)n
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) iw1
+  integer(kind=i4) jump
+  integer(kind=i4) lenx
+  integer(kind=i4) lot
+  integer(kind=i4) n
  real(kind=dp) work(lenwrk)
  real(kind=dp) wsave(lensav)
  real(kind=dp) x(inc,*)
@@ -7292,7 +7412,7 @@ subroutine costmf ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
     ier = 1
     call xerfft ('costmf', 6)
     return
-  else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('costmf', 8)
     return
@@ -7318,7 +7438,8 @@ subroutine costmf ( lot, jump, n, inc, x, lenx, wsave, lensav, work, &
   return
 end
 subroutine costmi ( n, wsave, lensav, ier )
-
+       !dir$ attributes code_align : 32 :: costmi
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! COSTMI: initialization for COSTMB and COSTMF.
@@ -7382,21 +7503,21 @@ subroutine costmi ( n, wsave, lensav, ier )
 
  real(kind=dp) dt
  real(kind=dp) fk
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)k
-  integer(kind=i4)kc
-  integer(kind=i4)lnsv
-  integer(kind=i4)n
-  integer(kind=i4)nm1
-  integer(kind=i4)np1
-  integer(kind=i4)ns2
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) k
+  integer(kind=i4) kc
+  integer(kind=i4) lnsv
+  integer(kind=i4) n
+  integer(kind=i4) nm1
+  integer(kind=i4) np1
+  integer(kind=i4) ns2
  real(kind=dp) pi
  real(kind=dp) wsave(lensav)
 
   ier = 0
 
-  if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  if (lensav < 2*n + int(log( real ( n, kind = dp ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('costmi', 3)
     return
@@ -7409,18 +7530,18 @@ subroutine costmi ( n, wsave, lensav, ier )
       nm1 = n-1
       np1 = n+1
       ns2 = n/2
-      pi = 4.0D+00 * atan ( 1.0D+00 )
+      pi = 4.0_dp * atan ( 1.0_dp )
       dt = pi/ real ( nm1, kind = 8 )
-      fk = 0.0D+00
+      fk = 0.0_dp
 
       do k=2,ns2
          kc = np1-k
-         fk = fk + 1.0D+00
-         wsave(k) = 2.0D+00 * sin(fk*dt)
-         wsave(kc) = 2.0D+00 * cos(fk*dt)
+         fk = fk + 1.0_dp
+         wsave(k) = 2.0_dp * sin(fk*dt)
+         wsave(kc) = 2.0_dp * cos(fk*dt)
       end do
 
-      lnsv = nm1 + int(log( real ( nm1, kind = 8 ) )/log( 2.0D+00 )) +4
+      lnsv = nm1 + int(log( real ( nm1, kind = 8 ) )/log( 2.0_dp )) +4
 
       call rfftmi (nm1, wsave(n+1), lnsv, ier1)
 
@@ -7432,7 +7553,8 @@ subroutine costmi ( n, wsave, lensav, ier )
   return
 end
 subroutine mcsqb1 (lot,jump,n,inc,x,wsave,work,ier)
-
+       !dir$ attributes code_align : 32 :: cost1i
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! MCSQB1 is an FFTPACK5.1 auxilliary function.
@@ -7500,24 +7622,24 @@ subroutine mcsqb1 (lot,jump,n,inc,x,wsave,work,ier)
   do i=3,n,2
     do m=1,lj,jump
       xim1 = x(m,i-1)+x(m,i)
-      x(m,i) = 0.5D+00 * (x(m,i-1)-x(m,i))
-      x(m,i-1) = 0.5D+00 * xim1
+      x(m,i) = 0.5_dp * (x(m,i-1)-x(m,i))
+      x(m,i-1) = 0.5_dp * xim1
     end do
   end do
 
   do m=1,lj,jump
-    x(m,1) = 0.5D+00 * x(m,1)
+    x(m,1) = 0.5_dp * x(m,1)
   end do
 
   modn = mod(n,2)
   if (modn == 0) then
     do m=1,lj,jump
-      x(m,n) = 0.5D+00 * x(m,n)
+      x(m,n) = 0.5_dp * x(m,n)
     end do
   end if
 
   lenx = (lot-1)*jump + inc*(n-1)  + 1
-  lnsv = n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) + 4
+  lnsv = n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) + 4
   lnwk = lot*n
 
   call rfftmb(lot,jump,n,inc,x,lenx,wsave(n+1),lnsv,work,lnwk,ier1)
@@ -7561,7 +7683,10 @@ subroutine mcsqb1 (lot,jump,n,inc,x,wsave,work,ier)
   return
 end
 subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
-
+       !dir$ attributes forceinline :: mcsqf1
+       !dir$ attributes code_align : 32 :: mcsqf1
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: mcsqf1
 !*****************************************************************************80
 !
 !! MCSQF1 is an FFTPACK5.1 auxilliary function.
@@ -7597,25 +7722,25 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
 !
   implicit none
 
-  integer(kind=i4)inc
-  integer(kind=i4)lot
+  integer(kind=i4) inc
+  integer(kind=i4) lot
 
-  integer(kind=i4)i
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)jump
-  integer(kind=i4)k
-  integer(kind=i4)kc
-  integer(kind=i4)lenx
-  integer(kind=i4)lnsv
-  integer(kind=i4)lnwk
-  integer(kind=i4)lj
-  integer(kind=i4)m
-  integer(kind=i4)m1
-  integer(kind=i4)modn
-  integer(kind=i4)n
-  integer(kind=i4)np2
-  integer(kind=i4)ns2
+  integer(kind=i4) i
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) jump
+  integer(kind=i4) k
+  integer(kind=i4) kc
+  integer(kind=i4) lenx
+  integer(kind=i4) lnsv
+  integer(kind=i4) lnwk
+  integer(kind=i4) lj
+  integer(kind=i4) m
+  integer(kind=i4) m1
+  integer(kind=i4) modn
+  integer(kind=i4) n
+  integer(kind=i4) np2
+  integer(kind=i4) ns2
  real(kind=dp) work(lot,*)
  real(kind=dp) wsave(*)
  real(kind=dp) x(inc,*)
@@ -7630,6 +7755,12 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
   do k=2,ns2
     kc = np2-k
     m1 = 0
+   !dir$ assume_aligned work:64
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
     do m=1,lj,jump
       m1 = m1 + 1
       work(m1,k)  = x(m,k)+x(m,kc)
@@ -7641,6 +7772,12 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
 
   if (modn == 0) then
     m1 = 0
+   !dir$ assume_aligned work:64
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
     do m=1,lj,jump
       m1 = m1 + 1
       work(m1,ns2+1) = x(m,ns2+1)+x(m,ns2+1)
@@ -7650,6 +7787,14 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
        do 102 k=2,ns2
          kc = np2-k
          m1 = 0
+   !dir$ assume_aligned work:64
+   !dir$ assume_aligned x:64
+   !dir$ assume_aligned wsave:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
          do 302 m=1,lj,jump
          m1 = m1 + 1
          x(m,k)  = wsave(k-1)*work(m1,kc)+wsave(kc-1)*work(m1,k)
@@ -7659,6 +7804,14 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
 
       if (modn /= 0) go to 303
       m1 = 0
+   !dir$ assume_aligned work:64
+   !dir$ assume_aligned x:64
+   !dir$ assume_aligned wsave:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
       do 304 m=1,lj,jump
          m1 = m1 + 1
          x(m,ns2+1) = wsave(ns2)*work(m1,ns2+1)
@@ -7666,7 +7819,7 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
  303  continue
 
       lenx = (lot-1)*jump + inc*(n-1)  + 1
-      lnsv = n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) + 4
+      lnsv = n + int(log( real ( n, kind = dp ) )/log( 2.0_dp )) + 4
       lnwk = lot*n
 
       call rfftmf(lot,jump,n,inc,x,lenx,wsave(n+1),lnsv,work,lnwk,ier1)
@@ -7678,8 +7831,8 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
 
       do 103 i=3,n,2
          do 203 m=1,lj,jump
-            xim1 = 0.5D+00 * (x(m,i-1)+x(m,i))
-            x(m,i) = 0.5D+00 * (x(m,i-1)-x(m,i))
+            xim1 = 0.5_dp * (x(m,i-1)+x(m,i))
+            x(m,i) = 0.5_dp * (x(m,i-1)-x(m,i))
             x(m,i-1) = xim1
  203     continue
   103 continue
@@ -7689,7 +7842,10 @@ subroutine mcsqf1 (lot,jump,n,inc,x,wsave,work,ier)
   return
 end
 subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
-
+       !dir$ attributes forceinline :: mcstb1
+       !dir$ attributes code_align : 32 :: mcstb1
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: mcstb1
 !*****************************************************************************80
 !
 !! MCSTB1 is an FFTPACK5.1 auxilliary function.
@@ -7730,24 +7886,24 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
  real(kind=dp) dsum(*)
  real(kind=dp) fnm1s2
  real(kind=dp) fnm1s4
-  integer(kind=i4)i
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)jump
-  integer(kind=i4)k
-  integer(kind=i4)kc
-  integer(kind=i4)lenx
-  integer(kind=i4)lj
-  integer(kind=i4)lnsv
-  integer(kind=i4)lnwk
-  integer(kind=i4)lot
-  integer(kind=i4)m
-  integer(kind=i4)m1
-  integer(kind=i4)modn
-  integer(kind=i4)n
-  integer(kind=i4)nm1
-  integer(kind=i4)np1
-  integer(kind=i4)ns2
+  integer(kind=i4) i
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) jump
+  integer(kind=i4) k
+  integer(kind=i4) kc
+  integer(kind=i4) lenx
+  integer(kind=i4) lj
+  integer(kind=i4) lnsv
+  integer(kind=i4) lnwk
+  integer(kind=i4) lot
+  integer(kind=i4) m
+  integer(kind=i4) m1
+  integer(kind=i4) modn
+  integer(kind=i4) n
+  integer(kind=i4) nm1
+  integer(kind=i4) np1
+  integer(kind=i4) ns2
  real(kind=dp) t1
  real(kind=dp) t2
  real(kind=dp) work(*)
@@ -7765,7 +7921,13 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
       ns2 = n/2
       lj = (lot-1)*jump+1
       if (n-2) 106,101,102
-
+  
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+ 
   101 do 111 m=1,lj,jump
          x1h = x(m,1)+x(m,2)
          x(m,2) = x(m,1)-x(m,2)
@@ -7775,7 +7937,13 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
       return
 
   102 if ( 3 < n ) go to 103
-      do 112 m=1,lj,jump
+  
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+    do 112 m=1,lj,jump
          x1p3 = x(m,1)+x(m,3)
          x2 = x(m,2)
          x(m,2) = x(m,1)-x(m,3)
@@ -7784,14 +7952,23 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   112 continue
 
       return
-
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
  103  do m=1,lj,jump
         x(m,1) = x(m,1)+x(m,1)
         x(m,n) = x(m,n)+x(m,n)
       end do
 
       m1 = 0
-
+   !dir$ assume_aligned x:64
+   !dir$ assume_aligned dsum:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do m=1,lj,jump
          m1 = m1+1
          dsum(m1) = x(m,1)-x(m,n)
@@ -7800,6 +7977,14 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
 
       do 104 k=2,ns2
          m1 = 0
+   !dir$ assume_aligned x:64
+   !dir$ assume_aligned dsum:64
+   !dir$ assume_aligned wsave:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
          do 114 m=1,lj,jump
            m1 = m1+1
            kc = np1-k
@@ -7819,7 +8004,7 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   123    continue
  124  continue
       lenx = (lot-1)*jump + inc*(nm1-1)  + 1
-      lnsv = nm1 + int(log( real ( nm1, kind = 8 ))/log( 2.0D+00 )) + 4
+      lnsv = nm1 + int(log( real ( nm1, kind = 8 ))/log( 2.0_dp )) + 4
       lnwk = lot*nm1
 
       call rfftmf(lot,jump,nm1,inc,x,lenx,wsave(n+1),lnsv,work,lnwk,ier1)
@@ -7830,18 +8015,18 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
         go to 106
       end if
 
-      fnm1s2 = real ( nm1, kind = 8 ) /  2.0D+00
+      fnm1s2 = real ( nm1, kind = 8 ) /  2.0_dp
       m1 = 0
       do 10 m=1,lj,jump
       m1 = m1+1
-      dsum(m1) = 0.5D+00 * dsum(m1)
+      dsum(m1) = 0.5_dp * dsum(m1)
       x(m,1) = fnm1s2 * x(m,1)
    10 continue
       if(mod(nm1,2) /= 0) go to 30
       do 20 m=1,lj,jump
       x(m,nm1) = x(m,nm1)+x(m,nm1)
    20 continue
- 30   fnm1s4 = real ( nm1, kind = 8 ) / 4.0D+00
+ 30   fnm1s4 = real ( nm1, kind = 8 ) / 4.0_dp
       do 105 i=3,n,2
          m1 = 0
          do 115 m=1,lj,jump
@@ -7863,7 +8048,10 @@ subroutine mcstb1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   return
 end
 subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
-
+       !dir$ attributes forceinline :: mcstf1
+       !dir$ attributes code_align : 32 :: mcstf1
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: mcstf1
 !*****************************************************************************80
 !
 !! MCSTF1 is an FFTPACK5.1 auxilliary function.
@@ -7902,24 +8090,24 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   integer(kind=i4)inc
 
  real(kind=dp) dsum(*)
-  integer(kind=i4)i
-  integer(kind=i4)ier
-  integer(kind=i4)ier1
-  integer(kind=i4)jump
-  integer(kind=i4)k
-  integer(kind=i4)kc
-  integer(kind=i4)lenx
-  integer(kind=i4)lj
-  integer(kind=i4)lnsv
-  integer(kind=i4)lnwk
-  integer(kind=i4)lot
-  integer(kind=i4)m
-  integer(kind=i4)m1
-  integer(kind=i4)modn
-  integer(kind=i4)n
-  integer(kind=i4)nm1
-  integer(kind=i4)np1
-  integer(kind=i4)ns2
+  integer(kind=i4) i
+  integer(kind=i4) ier
+  integer(kind=i4) ier1
+  integer(kind=i4) jump
+  integer(kind=i4) k
+  integer(kind=i4) kc
+  integer(kind=i4) lenx
+  integer(kind=i4) lj
+  integer(kind=i4) lnsv
+  integer(kind=i4) lnwk
+  integer(kind=i4) lot
+  integer(kind=i4) m
+  integer(kind=i4) m1
+  integer(kind=i4) modn
+  integer(kind=i4) n
+  integer(kind=i4) nm1
+  integer(kind=i4) np1
+  integer(kind=i4) ns2
  real(kind=dp) snm1
  real(kind=dp) t1
  real(kind=dp) t2
@@ -7939,22 +8127,38 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   lj = (lot-1)*jump+1
 
       if (n-2) 200,101,102
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
   101 do 111 m=1,lj,jump
          x1h = x(m,1)+x(m,2)
-         x(m,2) = 0.5D+00 * (x(m,1)-x(m,2))
-         x(m,1) = 0.5D+00 * x1h
+         x(m,2) = 0.5_dp * (x(m,1)-x(m,2))
+         x(m,1) = 0.5_dp * x1h
   111 continue
       go to 200
   102 if ( 3 < n ) go to 103
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do 112 m=1,lj,jump
          x1p3 = x(m,1)+x(m,3)
          tx2 = x(m,2)+x(m,2)
-         x(m,2) = 0.5D+00 * (x(m,1)-x(m,3))
-         x(m,1) = 0.25D+00 * (x1p3+tx2)
-         x(m,3) = 0.25D+00 * (x1p3-tx2)
+         x(m,2) = 0.5_dp * (x(m,1)-x(m,3))
+         x(m,1) = 0.25_dp * (x1p3+tx2)
+         x(m,3) = 0.25_dp * (x1p3-tx2)
   112 continue
       go to 200
   103 m1 = 0
+   !dir$ assume_aligned x:64
+   !dir$ assume_aligned dsum:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do 113 m=1,lj,jump
          m1 = m1+1
          dsum(m1) = x(m,1)-x(m,n)
@@ -7962,6 +8166,13 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   113 continue
       do 104 k=2,ns2
          m1 = 0
+   !dir$ assume_aligned x:64
+   !dir$ assume_aligned wsave:64
+   !dir$ assume_aligned dsum:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
          do 114 m=1,lj,jump
          m1 = m1+1
          kc = np1-k
@@ -7980,7 +8191,7 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
   123    continue
  124  continue
       lenx = (lot-1)*jump + inc*(nm1-1)  + 1
-      lnsv = nm1 + int(log( real ( nm1, kind = 8 ))/log( 2.0D+00 )) + 4
+      lnsv = nm1 + int(log( real ( nm1, kind = dp ))/log( 2.0_dp )) + 4
       lnwk = lot*nm1
 
       call rfftmf(lot,jump,nm1,inc,x,lenx,wsave(n+1),lnsv,work,lnwk,ier1)
@@ -7991,7 +8202,7 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
         return
       end if
 
-      snm1 = 1.0D+00 / real ( nm1, kind = 8 )
+      snm1 = 1.0_dp / real ( nm1, kind = 8 )
       do 10 m=1,lot
       dsum(m) = snm1*dsum(m)
    10 continue
@@ -8003,8 +8214,8 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
          m1 = 0
          do 115 m=1,lj,jump
             m1 = m1+1
-            xi = 0.5D+00 * x(m,i)
-            x(m,i) = 0.5D+00 * x(m,i-1)
+            xi = 0.5_dp * x(m,i)
+            x(m,i) = 0.5_dp * x(m,i-1)
             x(m,i-1) = dsum(m1)
             dsum(m1) = dsum(m1)+xi
   115 continue
@@ -8018,10 +8229,14 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
       end do
 
  117  continue
-
+   !dir$ assume_aligned x:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do m=1,lj,jump
-        x(m,1) = 0.5D+00 * x(m,1)
-        x(m,n) = 0.5D+00 * x(m,n)
+        x(m,1) = 0.5_dp * x(m,1)
+        x(m,n) = 0.5_dp * x(m,n)
       end do
 
  200  continue
@@ -8030,6 +8245,10 @@ subroutine mcstf1(lot,jump,n,inc,x,wsave,dsum,work,ier)
 end
 subroutine mradb2 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1)
 
+       !dir$ attributes forceinline :: mradb2
+       !dir$ attributes code_align : 32 :: mradb2
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: mradb2
 !*****************************************************************************80
 !
 !! MRADB2 is an FFTPACK5.1 auxilliary function.
@@ -8065,24 +8284,24 @@ subroutine mradb2 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1)
 !
   implicit none
 
-  integer(kind=i4)ido
-  integer(kind=i4)in1
-  integer(kind=i4)in2
-  integer(kind=i4)l1
+  integer(kind=i4) ido
+  integer(kind=i4) in1
+  integer(kind=i4) in2
+  integer(kind=i4) l1
 
  real(kind=dp) cc(in1,ido,2,l1)
  real(kind=dp) ch(in2,ido,l1,2)
-  integer(kind=i4)i
-  integer(kind=i4)ic
-  integer(kind=i4)idp2
-  integer(kind=i4)im1
-  integer(kind=i4)im2
-  integer(kind=i4)k
-  integer(kind=i4)m
-  integer(kind=i4)m1
-  integer(kind=i4)m1d
-  integer(kind=i4)m2
-  integer(kind=i4)m2s
+  integer(kind=i4) i
+  integer(kind=i4) ic
+  integer(kind=i4) idp2
+  integer(kind=i4) im1
+  integer(kind=i4) im2
+  integer(kind=i4) k
+  integer(kind=i4) m
+  integer(kind=i4) m1
+  integer(kind=i4) m1d
+  integer(kind=i4) m2
+  integer(kind=i4) m2s
  real(kind=dp) wa1(ido)
 
   m1d = (m-1)*im1+1
@@ -8090,6 +8309,12 @@ subroutine mradb2 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1)
 
   do k=1,l1
     m2 = m2s
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
     do m1=1,m1d,im1
       m2 = m2+im2
       ch(m2,1,k,1) = cc(m1,1,1,k)+cc(m1,ido,2,k)
@@ -8103,6 +8328,14 @@ subroutine mradb2 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1)
          do 103 i=3,ido,2
             ic = idp2-i
                m2 = m2s
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned wa:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
                do 1002 m1=1,m1d,im1
                m2 = m2+im2
         ch(m2,i-1,k,1) = cc(m1,i-1,1,k)+cc(m1,ic-1,2,k)
@@ -8119,6 +8352,12 @@ subroutine mradb2 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1)
       if (mod(ido,2) == 1) return
   105 do 106 k=1,l1
           m2 = m2s
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
           do 1003 m1=1,m1d,im1
           m2 = m2+im2
          ch(m2,ido,k,1) = cc(m1,ido,1,k)+cc(m1,ido,1,k)
@@ -8130,7 +8369,10 @@ subroutine mradb2 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1)
   return
 end
 subroutine mradb3 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2)
-
+       !dir$ attributes forceinline :: mradb3
+       !dir$ attributes code_align : 32 :: mradb3
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: mradb3
 !*****************************************************************************80
 !
 !! MRADB3 is an FFTPACK5.1 auxilliary function.
@@ -8166,25 +8408,25 @@ subroutine mradb3 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2)
 !
   implicit none
 
-  integer(kind=i4)ido
-  integer(kind=i4)in1
-  integer(kind=i4)in2
-  integer(kind=i4)l1
+  integer(kind=i4) ido
+  integer(kind=i4) in1
+  integer(kind=i4) in2
+  integer(kind=i4)  l1
 
  real(kind=dp) arg
  real(kind=dp) cc(in1,ido,3,l1)
  real(kind=dp) ch(in2,ido,l1,3)
-  integer(kind=i4)i
-  integer(kind=i4)ic
-  integer(kind=i4)idp2
-  integer(kind=i4)im1
-  integer(kind=i4)im2
-  integer(kind=i4)k
-  integer(kind=i4)m
-  integer(kind=i4)m1
-  integer(kind=i4)m1d
-  integer(kind=i4)m2
-  integer(kind=i4)m2s
+  integer(kind=i4) i
+  integer(kind=i4) ic
+  integer(kind=i4) idp2
+  integer(kind=i4) im1
+  integer(kind=i4) im2
+  integer(kind=i4) k
+  integer(kind=i4) m
+  integer(kind=i4) m1
+  integer(kind=i4) m1d
+  integer(kind=i4) m2
+  integer(kind=i4) m2s
  real(kind=dp) taui
  real(kind=dp) taur
  real(kind=dp) wa1(ido)
@@ -8192,19 +8434,25 @@ subroutine mradb3 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2)
 
   m1d = (m-1)*im1+1
   m2s = 1-im2
-  arg= 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 ) / 3.0D+00
+  arg= 2.0_dp * 4.0_dp * atan ( 1.0_dp ) / 3.0_dp
   taur=cos(arg)
   taui=sin(arg)
 
   do k=1,l1
     m2 = m2s
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
     do m1=1,m1d,im1
       m2 = m2+im2
-      ch(m2,1,k,1) = cc(m1,1,1,k)+ 2.0D+00 *cc(m1,ido,2,k)
-      ch(m2,1,k,2) = cc(m1,1,1,k)+( 2.0D+00 *taur)*cc(m1,ido,2,k) &
-        -( 2.0D+00 *taui)*cc(m1,1,3,k)
-      ch(m2,1,k,3) = cc(m1,1,1,k)+( 2.0D+00 *taur)*cc(m1,ido,2,k) &
-        + 2.0D+00 *taui*cc(m1,1,3,k)
+      ch(m2,1,k,1) = cc(m1,1,1,k)+ 2.0_dp *cc(m1,ido,2,k)
+      ch(m2,1,k,2) = cc(m1,1,1,k)+( 2.0_dp *taur)*cc(m1,ido,2,k) &
+        -( 2.0_dp *taui)*cc(m1,1,3,k)
+      ch(m2,1,k,3) = cc(m1,1,1,k)+( 2.0_dp *taur)*cc(m1,ido,2,k) &
+        + 2.0_dp *taui*cc(m1,1,3,k)
     end do
   end do
 
@@ -8218,6 +8466,14 @@ subroutine mradb3 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2)
          do 102 i=3,ido,2
             ic = idp2-i
                m2 = m2s
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned wa:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
                do 1002 m1=1,m1d,im1
                m2 = m2+im2
         ch(m2,i-1,k,1) = cc(m1,i-1,1,k)+(cc(m1,i-1,3,k)+cc(m1,ic-1,2,k))
@@ -8258,7 +8514,10 @@ subroutine mradb3 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2)
   return
 end
 subroutine mradb4 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2,wa3)
-
+       !dir$ attributes forceinline :: mradb4
+       !dir$ attributes code_align : 32 :: mradb4
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: mradb4
 !*****************************************************************************80
 !
 !! MRADB4 is an FFTPACK5.1 auxilliary function.
@@ -8319,9 +8578,10 @@ subroutine mradb4 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2,wa3)
 
       m1d = (m-1)*im1+1
       m2s = 1-im2
-      sqrt2=sqrt( 2.0D+00 )
+      sqrt2=sqrt( 2.0_dp )
       do 101 k=1,l1
           m2 = m2s
+          
           do m1=1,m1d,im1
           m2 = m2+im2
          ch(m2,1,k,3) = (cc(m1,1,1,k)+cc(m1,ido,4,k)) &
@@ -8455,29 +8715,29 @@ subroutine mradb5 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2,wa3,wa4)
 
   m1d = (m-1)*im1+1
   m2s = 1-im2
-  arg= 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 ) / 5.0D+00 
+  arg= 2.0_dp * 4.0_dp * atan ( 1.0_dp ) / 5.0_dp 
   tr11=cos(arg)
   ti11=sin(arg)
-  tr12=cos( 2.0D+00 *arg)
-  ti12=sin( 2.0D+00 *arg)
+  tr12=cos( 2.0_dp *arg)
+  ti12=sin( 2.0_dp *arg)
 
       do 101 k=1,l1
       m2 = m2s
       do 1001 m1=1,m1d,im1
          m2 = m2+im2
-         ch(m2,1,k,1) = cc(m1,1,1,k)+ 2.0D+00 *cc(m1,ido,2,k)+ 2.0D+00 *cc(m1,ido,4,k)
-         ch(m2,1,k,2) = (cc(m1,1,1,k)+tr11* 2.0D+00 *cc(m1,ido,2,k) &
-         +tr12* 2.0D+00 *cc(m1,ido,4,k))-(ti11* 2.0D+00 *cc(m1,1,3,k) &
-         +ti12* 2.0D+00 *cc(m1,1,5,k))
-         ch(m2,1,k,3) = (cc(m1,1,1,k)+tr12* 2.0D+00 *cc(m1,ido,2,k) &
-         +tr11* 2.0D+00 *cc(m1,ido,4,k))-(ti12* 2.0D+00 *cc(m1,1,3,k) &
-         -ti11* 2.0D+00 *cc(m1,1,5,k))
-         ch(m2,1,k,4) = (cc(m1,1,1,k)+tr12* 2.0D+00 *cc(m1,ido,2,k) &
-         +tr11* 2.0D+00 *cc(m1,ido,4,k))+(ti12* 2.0D+00 *cc(m1,1,3,k) &
-         -ti11* 2.0D+00 *cc(m1,1,5,k))
-         ch(m2,1,k,5) = (cc(m1,1,1,k)+tr11* 2.0D+00 *cc(m1,ido,2,k) &
-         +tr12* 2.0D+00 *cc(m1,ido,4,k))+(ti11* 2.0D+00 *cc(m1,1,3,k) &
-         +ti12* 2.0D+00 *cc(m1,1,5,k))
+         ch(m2,1,k,1) = cc(m1,1,1,k)+ 2.0_dp *cc(m1,ido,2,k)+ 2.0_dp *cc(m1,ido,4,k)
+         ch(m2,1,k,2) = (cc(m1,1,1,k)+tr11* 2.0_dp *cc(m1,ido,2,k) &
+         +tr12* 2.0_dp *cc(m1,ido,4,k))-(ti11* 2.0_dp *cc(m1,1,3,k) &
+         +ti12* 2.0_dp *cc(m1,1,5,k))
+         ch(m2,1,k,3) = (cc(m1,1,1,k)+tr12* 2.0_dp *cc(m1,ido,2,k) &
+         +tr11* 2.0_dp *cc(m1,ido,4,k))-(ti12* 2.0_dp *cc(m1,1,3,k) &
+         -ti11* 2.0_dp *cc(m1,1,5,k))
+         ch(m2,1,k,4) = (cc(m1,1,1,k)+tr12* 2.0_dp *cc(m1,ido,2,k) &
+         +tr11* 2.0_dp *cc(m1,ido,4,k))+(ti12* 2.0_dp *cc(m1,1,3,k) &
+         -ti11* 2.0_dp *cc(m1,1,5,k))
+         ch(m2,1,k,5) = (cc(m1,1,1,k)+tr11* 2.0_dp *cc(m1,ido,2,k) &
+         +tr12* 2.0_dp *cc(m1,ido,4,k))+(ti11* 2.0_dp *cc(m1,1,3,k) &
+         +ti12* 2.0_dp *cc(m1,1,5,k))
  1001          continue
   101 continue
 
@@ -8660,7 +8920,7 @@ subroutine mradbg (m,ido,ip,l1,idl1,cc,c1,c2,im1,in1,ch,ch2,im2,in2,wa)
 
   m1d = ( m - 1 ) * im1 + 1
   m2s = 1 - im2
-  tpi = 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 )
+  tpi = 2.0_dp * 4.0_dp * atan ( 1.0_dp )
   arg = tpi / real ( ip, kind = 8 )
   dcp = cos ( arg )
   dsp = sin ( arg )
@@ -8739,8 +8999,8 @@ subroutine mradbg (m,ido,ip,l1,idl1,cc,c1,c2,im1,in1,ch,ch2,im2,in2,wa)
   113       continue
   114    continue
   115 continue
-  116 ar1 = 1.0D+00
-      ai1 = 0.0D+00
+  116 ar1 = 1.0_dp
+      ai1 = 0.0_dp
       do 120 l=2,ipph
          lc = ipp2-l
          ar1h = dcp*ar1-dsp*ai1
@@ -9046,7 +9306,7 @@ subroutine mradf3 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2)
 
   m1d = (m-1)*im1+1
   m2s = 1-im2
-  arg= 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 ) / 3.0D+00
+  arg= 2.0_dp * 4.0_dp * atan ( 1.0_dp ) / 3.0_dp
   taur=cos(arg)
   taui=sin(arg)
 
@@ -9168,7 +9428,7 @@ subroutine mradf4 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2,wa3)
  real(kind=dp) wa2(ido)
  real(kind=dp) wa3(ido)
 
-  hsqt2=sqrt( 2.0D+00 ) / 2.0D+00 
+  hsqt2=sqrt( 2.0_dp ) / 2.0_dp 
   m1d = (m-1)*im1+1
   m2s = 1-im2
 
@@ -9323,11 +9583,11 @@ subroutine mradf5 (m,ido,l1,cc,im1,in1,ch,im2,in2,wa1,wa2,wa3,wa4)
 
   m1d = (m-1)*im1+1
   m2s = 1-im2
-  arg= 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 ) / 5.0D+00
+  arg= 2.0_dp * 4.0_dp * atan ( 1.0_dp ) / 5.0_dp
   tr11=cos(arg)
   ti11=sin(arg)
-  tr12=cos( 2.0D+00 *arg)
-  ti12=sin( 2.0D+00 *arg)
+  tr12=cos( 2.0_dp *arg)
+  ti12=sin( 2.0_dp *arg)
 
       do 101 k=1,l1
          m2 = m2s
@@ -9539,7 +9799,7 @@ subroutine mradfg (m,ido,ip,l1,idl1,cc,c1,c2,im1,in1,ch,ch2,im2,in2,wa)
 
   m1d = (m-1)*im1+1
   m2s = 1-im2
-  tpi= 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 )
+  tpi= 2.0_dp * 4.0_dp * atan ( 1.0_dp )
   arg = tpi / real ( ip, kind = 8 )
   dcp = cos(arg)
   dsp = sin(arg)
@@ -9653,8 +9913,8 @@ subroutine mradfg (m,ido,ip,l1,idl1,cc,c1,c2,im1,in1,ch,ch2,im2,in2,wa)
   122    continue
   123 continue
 
-      ar1 = 1.0D+00
-      ai1 = 0.0D+00
+      ar1 = 1.0_dp
+      ai1 = 0.0_dp
       do 127 l=2,ipph
          lc = ipp2-l
          ar1h = dcp*ar1-dsp*ai1
@@ -9847,8 +10107,8 @@ subroutine mrftb1 (m,im,n,in,c,ch,wa,fac)
    10 continue 
   end do
 
-      half = 0.5D+00
-      halfm = -0.5D+00
+      half = 0.5_dp
+      halfm = -0.5_dp
       modn = mod(n,2)
       nl = n-2
       if(modn /= 0) nl = n-1
@@ -10048,8 +10308,8 @@ subroutine mrftf1 (m,im,n,in,c,ch,wa,fac)
   110    l2 = l1
   111 continue
 
-      sn = 1.0D+00 / real ( n, kind = 8 )
-      tsn =  2.0D+00 / real ( n, kind = 8 )
+      sn = 1.0_dp / real ( n, kind = 8 )
+      tsn =  2.0_dp / real ( n, kind = 8 )
       tsnm = -tsn
       modn = mod(n,2)
       nl = n-2
@@ -10201,7 +10461,7 @@ subroutine mrfti1 (n,wa,fac)
   107 if (nl /= 1) go to 104
       fac(1) = n
       fac(2) = nf
-      tpi = 8.0D+00 * atan ( 1.0D+00 )
+      tpi = 8.0_dp * atan ( 1.0_dp )
       argh = tpi / real ( n, kind = 8 )
       is = 0
       nfm1 = nf-1
@@ -10217,10 +10477,10 @@ subroutine mrfti1 (n,wa,fac)
             ld = ld+l1
             i = is
             argld = real ( ld, kind = 8 ) * argh
-            fi = 0.0D+00
+            fi = 0.0_dp
             do ii=3,ido,2
               i = i+2
-              fi = fi + 1.0D+00
+              fi = fi + 1.0_dp
               arg = fi*argld
 	          wa(i-1) = cos ( arg )
 	          wa(i) = sin ( arg )
@@ -10303,7 +10563,7 @@ subroutine msntb1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
   lj = (lot-1)*jump+1
 
       if (n-2) 200,102,103
- 102  srt3s2 = sqrt( 3.0D+00 )/ 2.0D+00 
+ 102  srt3s2 = sqrt( 3.0_dp )/ 2.0_dp 
 
       do m=1,lj,jump
          xhold = srt3s2*(x(m,1)+x(m,2))
@@ -10330,14 +10590,14 @@ subroutine msntb1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
       m1 = 0
       do 123 m=1,lj,jump
          m1 = m1+1
-         xh(m1,ns2+2) =  4.0D+00 * x(m,ns2+1)
+         xh(m1,ns2+2) =  4.0_dp * x(m,ns2+1)
   123 continue
   124 do m=1,lot
-         xh(m,1) = 0.0D+00
+         xh(m,1) = 0.0_dp
       end do
 
       lnxh = lot-1 + lot*(np1-1) + 1
-      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0D+00 )) + 4
+      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0_dp )) + 4
       lnwk = lot*np1
 
       call rfftmf(lot,1,np1,lot,xh,lnxh,wsave(ns2+1),lnsv,work,lnwk,ier1)     
@@ -10352,7 +10612,7 @@ subroutine msntb1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
       do m=1,lot
         xh(m,np1) = xh(m,np1)+xh(m,np1)
       end do
- 30   fnp1s4 = real ( np1 ) / 4.0D+00
+ 30   fnp1s4 = real ( np1 ) / 4.0_dp
       m1 = 0
       do 125 m=1,lj,jump
          m1 = m1+1
@@ -10450,7 +10710,7 @@ subroutine msntf1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
   lj = (lot-1)*jump+1
 
       if (n-2) 101,102,103
- 102  ssqrt3 = 1.0D+00 / sqrt ( 3.0D+00 )
+ 102  ssqrt3 = 1.0_dp / sqrt ( 3.0_dp )
 
       do m=1,lj,jump
          xhold = ssqrt3*(x(m,1)+x(m,2))
@@ -10477,13 +10737,13 @@ subroutine msntf1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
       m1 = 0
       do 123 m=1,lj,jump
          m1 = m1 + 1
-         xh(m1,ns2+2) =  4.0D+00  * x(m,ns2+1)
+         xh(m1,ns2+2) =  4.0_dp  * x(m,ns2+1)
   123 continue
   124 do 127 m=1,lot
-         xh(m,1) = 0.0D+00
+         xh(m,1) = 0.0_dp
   127 continue 
       lnxh = lot-1 + lot*(np1-1) + 1
-      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0D+00 )) + 4
+      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0_dp )) + 4
       lnwk = lot*np1
 
       call rfftmf(lot,1,np1,lot,xh,lnxh,wsave(ns2+1),lnsv,work,lnwk,ier1)     
@@ -10497,19 +10757,19 @@ subroutine msntf1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
       do 20 m=1,lot
       xh(m,np1) = xh(m,np1)+xh(m,np1)
    20 continue
-   30 sfnp1 = 1.0D+00 / real ( np1, kind = 8 )
+   30 sfnp1 = 1.0_dp / real ( np1, kind = 8 )
       m1 = 0
       do 125 m=1,lj,jump
          m1 = m1+1
-         x(m,1) = 0.5D+00 * xh(m1,1)
+         x(m,1) = 0.5_dp * xh(m1,1)
          dsum(m1) = x(m,1)
   125 continue
       do 105 i=3,n,2
          m1 = 0
          do 115 m=1,lj,jump
             m1 = m1+1
-            x(m,i-1) = 0.5D+00 * xh(m1,i)
-            dsum(m1) = dsum(m1)+ 0.5D+00 * xh(m1,i-1)
+            x(m,i-1) = 0.5_dp * xh(m1,i)
+            dsum(m1) = dsum(m1)+ 0.5_dp * xh(m1,i-1)
             x(m,i) = dsum(m1)
   115    continue
   105 continue
@@ -10518,7 +10778,7 @@ subroutine msntf1(lot,jump,n,inc,x,wsave,dsum,xh,work,ier)
       m1 = 0
       do m=1,lj,jump
          m1 = m1+1
-         x(m,n) = 0.5D+00 * xh(m1,n+1)
+         x(m,n) = 0.5_dp * xh(m1,n+1)
       end do
 
   200 continue
@@ -10738,16 +10998,16 @@ subroutine r1f3kb (ido,l1,cc,in1,ch,in2,wa1,wa2)
  real(kind=dp) wa1(ido)
  real(kind=dp) wa2(ido)
 
-  arg = 2.0D+00 * 4.0D+00 * atan ( 1.0D+00 ) / 3.0D+00 
+  arg = 2.0_dp * 4.0_dp * atan ( 1.0_dp ) / 3.0_dp 
   taur = cos ( arg )
   taui = sin ( arg )
 
   do k = 1, l1
-    ch(1,1,k,1) = cc(1,1,1,k) + 2.0D+00 * cc(1,ido,2,k)
-    ch(1,1,k,2) = cc(1,1,1,k) + ( 2.0D+00 * taur ) * cc(1,ido,2,k) &
-      - ( 2.0D+00 *taui)*cc(1,1,3,k)
-    ch(1,1,k,3) = cc(1,1,1,k) + ( 2.0D+00 *taur)*cc(1,ido,2,k) &
-      + 2.0D+00 *taui*cc(1,1,3,k)
+    ch(1,1,k,1) = cc(1,1,1,k) + 2.0_dp * cc(1,ido,2,k)
+    ch(1,1,k,2) = cc(1,1,1,k) + ( 2.0_dp * taur ) * cc(1,ido,2,k) &
+      - ( 2.0_dp *taui)*cc(1,1,3,k)
+    ch(1,1,k,3) = cc(1,1,1,k) + ( 2.0_dp *taur)*cc(1,ido,2,k) &
+      + 2.0_dp *taui*cc(1,1,3,k)
   end do
 
   if (ido == 1) then
@@ -10849,7 +11109,7 @@ subroutine r1f3kf (ido,l1,cc,in1,ch,in2,wa1,wa2)
  real(kind=dp) wa1(ido)
  real(kind=dp) wa2(ido)
 
-  arg= 2.0D+00 * 4.0D+00 * atan( 1.0D+00 )/ 3.0D+00 
+  arg= 2.0_dp * 4.0_dp * atan( 1.0_dp )/ 3.0_dp 
   taur=cos(arg)
   taui=sin(arg)
 
@@ -10957,7 +11217,7 @@ subroutine r1f4kb (ido,l1,cc,in1,ch,in2,wa1,wa2,wa3)
  real(kind=dp) wa2(ido)
  real(kind=dp) wa3(ido)
 
-  sqrt2=sqrt( 2.0D+00 )
+  sqrt2=sqrt( 2.0_dp )
 
   do k=1,l1
     ch(1,1,k,3) = (cc(1,1,1,k)+cc(1,ido,4,k)) &
@@ -11070,7 +11330,7 @@ subroutine r1f4kf (ido,l1,cc,in1,ch,in2,wa1,wa2,wa3)
  real(kind=dp) wa2(ido)
  real(kind=dp) wa3(ido)
 
-  hsqt2=sqrt( 2.0D+00 )/ 2.0D+00 
+  hsqt2=sqrt( 2.0_dp )/ 2.0_dp 
 
   do k=1,l1
     ch(1,1,1,k) = (cc(1,1,k,2)+cc(1,1,k,4))+(cc(1,1,k,1)+cc(1,1,k,3))
@@ -11188,26 +11448,26 @@ subroutine r1f5kb (ido,l1,cc,in1,ch,in2,wa1,wa2,wa3,wa4)
  real(kind=dp) wa3(ido)
  real(kind=dp) wa4(ido)
 
-  arg= 2.0D+00 * 4.0D+00 * atan( 1.0D+00 ) / 5.0D+00
+  arg= 2.0_dp * 4.0_dp * atan( 1.0_dp ) / 5.0_dp
   tr11=cos(arg)
   ti11=sin(arg)
-  tr12=cos( 2.0D+00 *arg )
-  ti12=sin( 2.0D+00 *arg )
+  tr12=cos( 2.0_dp *arg )
+  ti12=sin( 2.0_dp *arg )
 
   do k=1,l1
-    ch(1,1,k,1) = cc(1,1,1,k)+ 2.0D+00 *cc(1,ido,2,k)+ 2.0D+00 *cc(1,ido,4,k)
-    ch(1,1,k,2) = (cc(1,1,1,k)+tr11* 2.0D+00 *cc(1,ido,2,k) &
-      +tr12* 2.0D+00 *cc(1,ido,4,k))-(ti11* 2.0D+00 *cc(1,1,3,k) &
-      +ti12* 2.0D+00 *cc(1,1,5,k))
-    ch(1,1,k,3) = (cc(1,1,1,k)+tr12* 2.0D+00 *cc(1,ido,2,k) &
-      +tr11* 2.0D+00 *cc(1,ido,4,k))-(ti12* 2.0D+00 *cc(1,1,3,k) &
-      -ti11* 2.0D+00 *cc(1,1,5,k))
-    ch(1,1,k,4) = (cc(1,1,1,k)+tr12* 2.0D+00 *cc(1,ido,2,k) &
-      +tr11* 2.0D+00 *cc(1,ido,4,k))+(ti12* 2.0D+00 *cc(1,1,3,k) &
-      -ti11* 2.0D+00 *cc(1,1,5,k))
-    ch(1,1,k,5) = (cc(1,1,1,k)+tr11* 2.0D+00 *cc(1,ido,2,k) &
-      +tr12* 2.0D+00 *cc(1,ido,4,k))+(ti11* 2.0D+00 *cc(1,1,3,k) &
-      +ti12* 2.0D+00 *cc(1,1,5,k))
+    ch(1,1,k,1) = cc(1,1,1,k)+ 2.0_dp *cc(1,ido,2,k)+ 2.0_dp *cc(1,ido,4,k)
+    ch(1,1,k,2) = (cc(1,1,1,k)+tr11* 2.0_dp *cc(1,ido,2,k) &
+      +tr12* 2.0_dp *cc(1,ido,4,k))-(ti11* 2.0_dp *cc(1,1,3,k) &
+      +ti12* 2.0_dp *cc(1,1,5,k))
+    ch(1,1,k,3) = (cc(1,1,1,k)+tr12* 2.0_dp *cc(1,ido,2,k) &
+      +tr11* 2.0_dp *cc(1,ido,4,k))-(ti12* 2.0_dp *cc(1,1,3,k) &
+      -ti11* 2.0_dp *cc(1,1,5,k))
+    ch(1,1,k,4) = (cc(1,1,1,k)+tr12* 2.0_dp *cc(1,ido,2,k) &
+      +tr11* 2.0_dp *cc(1,ido,4,k))+(ti12* 2.0_dp *cc(1,1,3,k) &
+      -ti11* 2.0_dp *cc(1,1,5,k))
+    ch(1,1,k,5) = (cc(1,1,1,k)+tr11* 2.0_dp *cc(1,ido,2,k) &
+      +tr12* 2.0_dp *cc(1,ido,4,k))+(ti11* 2.0_dp *cc(1,1,3,k) &
+      +ti12* 2.0_dp *cc(1,1,5,k))
   end do
 
   if (ido == 1) return
@@ -11358,11 +11618,11 @@ subroutine r1f5kf (ido,l1,cc,in1,ch,in2,wa1,wa2,wa3,wa4)
  real(kind=dp) wa3(ido)
  real(kind=dp) wa4(ido)
 
-  arg= 2.0D+00 * 4.0D+00 * atan( 1.0D+00 ) / 5.0D+00
+  arg= 2.0_dp * 4.0_dp * atan( 1.0_dp ) / 5.0_dp
   tr11=cos(arg)
   ti11=sin(arg)
-  tr12=cos( 2.0D+00 *arg)
-  ti12=sin( 2.0D+00 *arg)
+  tr12=cos( 2.0_dp *arg)
+  ti12=sin( 2.0_dp *arg)
 
   do k=1,l1
     ch(1,1,1,k) = cc(1,1,k,1)+(cc(1,1,k,5)+cc(1,1,k,2))+ &
@@ -11482,7 +11742,10 @@ subroutine r1f5kf (ido,l1,cc,in1,ch,in2,wa1,wa2,wa3,wa4)
   return
 end
 subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
-
+       !dir$ attributes forceinline :: r1fgkb
+       !dir$ attributes code_align : 32 :: r1fgkb
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: r1fgkb
 !*****************************************************************************80
 !
 !! R1FGKB is an FFTPACK5.1 auxilliary function.
@@ -11559,8 +11822,8 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
  real(kind=dp) tpi
  real(kind=dp) wa(ido)
 
-  tpi= 2.0D+00 * 4.0D+00 * atan( 1.0D+00 )
-  arg = tpi / real ( ip, kind = 8 )
+  tpi= 2.0_dp * 4.0_dp * atan( 1.0_dp )
+  arg = tpi / real ( ip, kind = dp )
   dcp = cos(arg)
   dsp = sin(arg)
   idp2 = ido+2
@@ -11571,6 +11834,12 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   if (ido < l1) go to 103
 
       do k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
          do i=1,ido
             ch(1,i,k,1) = cc(1,i,1,k)
          end do
@@ -11581,6 +11850,12 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   103 continue
 
   do i=1,ido
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
     do k=1,l1
       ch(1,i,k,1) = cc(1,i,1,k)
     end do
@@ -11589,6 +11864,12 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   106 do 108 j=2,ipph
          jc = ipp2-j
          j2 = j+j
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
          do 107 k=1,l1
             ch(1,1,k,j) = cc(1,ido,j2-2,k)+cc(1,ido,j2-2,k)
             ch(1,1,k,jc) = cc(1,1,j2-1,k)+cc(1,1,j2-1,k)
@@ -11600,6 +11881,12 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
       do 111 j=2,ipph
          jc = ipp2-j
          do 110 k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
             do 109 i=3,ido,2
                ic = idp2-i
                ch(1,i-1,k,j) = cc(1,i-1,2*j-1,k)+cc(1,ic-1,2*j-2,k)
@@ -11614,6 +11901,12 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          jc = ipp2-j
          do 114 i=3,ido,2
             ic = idp2-i
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
             do 113 k=1,l1
                ch(1,i-1,k,j) = cc(1,i-1,2*j-1,k)+cc(1,ic-1,2*j-2,k)
                ch(1,i-1,k,jc) = cc(1,i-1,2*j-1,k)-cc(1,ic-1,2*j-2,k)
@@ -11622,13 +11915,20 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   113       continue
   114    continue
   115 continue
-  116 ar1 = 1.0D+00
-      ai1 = 0.0D+00
+  116 ar1 = 1.0_dp
+      ai1 = 0.0_dp
       do 120 l=2,ipph
          lc = ipp2-l
          ar1h = dcp*ar1-dsp*ai1
          ai1 = dcp*ai1+dsp*ar1
          ar1 = ar1h
+   !dir$ assume_aligned ch2:64
+   !dir$ assume_aligned c2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
          do 117 ik=1,idl1
             c2(1,ik,l) = ch2(1,ik,1)+ar1*ch2(1,ik,2)
             c2(1,ik,lc) = ai1*ch2(1,ik,ip)
@@ -11642,6 +11942,14 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
             ar2h = dc2*ar2-ds2*ai2
             ai2 = dc2*ai2+ds2*ar2
             ar2 = ar2h
+   !dir$ assume_aligned ch2:64
+   !dir$ assume_aligned c2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
+   !$omop simd reduction(+:c2)
             do 118 ik=1,idl1
                c2(1,ik,l) = c2(1,ik,l)+ar2*ch2(1,ik,j)
                c2(1,ik,lc) = c2(1,ik,lc)+ai2*ch2(1,ik,jc)
@@ -11649,13 +11957,25 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   119    continue
   120 continue
       do 122 j=2,ipph
+   !dir$ assume_aligned ch2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !$omp simd reduction(+:ch2)
          do 121 ik=1,idl1
             ch2(1,ik,1) = ch2(1,ik,1)+ch2(1,ik,j)
   121    continue
   122 continue
       do 124 j=2,ipph
          jc = ipp2-j
-         do 123 k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+        do 123 k=1,l1
             ch(1,1,k,j) = c1(1,1,k,j)-c1(1,1,k,jc)
             ch(1,1,k,jc) = c1(1,1,k,j)+c1(1,1,k,jc)
   123    continue
@@ -11665,7 +11985,13 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
       do 127 j=2,ipph
          jc = ipp2-j
          do 126 k=1,l1
-            do 125 i=3,ido,2
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+           do 125 i=3,ido,2
                ch(1,i-1,k,j) = c1(1,i-1,k,j)-c1(1,i,k,jc)
                ch(1,i-1,k,jc) = c1(1,i-1,k,j)+c1(1,i,k,jc)
                ch(1,i,k,j) = c1(1,i,k,j)+c1(1,i-1,k,jc)
@@ -11677,7 +12003,13 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   128 do 131 j=2,ipph
          jc = ipp2-j
          do 130 i=3,ido,2
-            do 129 k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+          do 129 k=1,l1
                ch(1,i-1,k,j) = c1(1,i-1,k,j)-c1(1,i,k,jc)
                ch(1,i-1,k,jc) = c1(1,i-1,k,j)+c1(1,i,k,jc)
                ch(1,i,k,j) = c1(1,i,k,j)+c1(1,i-1,k,jc)
@@ -11702,6 +12034,14 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          idij = is
          do 137 i=3,ido,2
             idij = idij+2
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ assume_aligned wa:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
             do 136 k=1,l1
                c1(1,i-1,k,j) = wa(idij-1)*ch(1,i-1,k,j)-wa(idij)*ch(1,i,k,j)
                c1(1,i,k,j) = wa(idij-1)*ch(1,i,k,j)+wa(idij)*ch(1,i-1,k,j)
@@ -11714,6 +12054,14 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          is = is+ido
          do 141 k=1,l1
             idij = is
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ assume_aligned wa:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !dir$ fma
             do 140 i=3,ido,2
                idij = idij+2
                c1(1,i-1,k,j) = wa(idij-1)*ch(1,i-1,k,j)-wa(idij)*ch(1,i,k,j)
@@ -11726,7 +12074,10 @@ subroutine r1fgkb (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   return
 end
 subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
-
+       !dir$ attributes forceinline :: r1fgkf
+       !dir$ attributes code_align : 32 :: r1fgkf
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: r1fgkf
 !*****************************************************************************80
 !
 !! R1FGKF is an FFTPACK5.1 auxilliary function.
@@ -11803,8 +12154,8 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
  real(kind=dp) tpi
  real(kind=dp) wa(ido)
 
-  tpi= 2.0D+00 * 4.0D+00 * atan( 1.0D+00 )
-  arg = tpi/real ( ip, kind = 8 )
+  tpi= 2.0_dp * 4.0_dp * atan( 1.0_dp )
+  arg = tpi/real ( ip, kind = dp )
   dcp = cos(arg)
   dsp = sin(arg)
   ipph = (ip+1)/2
@@ -11813,12 +12164,23 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   nbd = (ido-1)/2
 
       if (ido == 1) go to 119
-
+   !dir$ assume_aligned ch2:64
+   !dir$ assume_aligned c2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
       do ik=1,idl1
          ch2(1,ik,1) = c2(1,ik,1)
       end do
 
       do j=2,ip
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
          do k=1,l1
             ch(1,1,k,j) = c1(1,1,k,j)
          end do
@@ -11831,6 +12193,14 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          idij = is
          do 105 i=3,ido,2
             idij = idij+2
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ assume_aligned wa:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
             do 104 k=1,l1
                ch(1,i-1,k,j) = wa(idij-1)*c1(1,i-1,k,j)+wa(idij)*c1(1,i,k,j)
                ch(1,i,k,j) = wa(idij-1)*c1(1,i,k,j)-wa(idij)*c1(1,i-1,k,j)
@@ -11843,6 +12213,14 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          is = is+ido
          do 109 k=1,l1
             idij = is
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ assume_aligned wa:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
             do 108 i=3,ido,2
                idij = idij+2
                ch(1,i-1,k,j) = wa(idij-1)*c1(1,i-1,k,j)+wa(idij)*c1(1,i,k,j)
@@ -11854,6 +12232,12 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
       do 114 j=2,ipph
          jc = ipp2-j
          do 113 k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
             do 112 i=3,ido,2
                c1(1,i-1,k,j) = ch(1,i-1,k,j)+ch(1,i-1,k,jc)
                c1(1,i-1,k,jc) = ch(1,i,k,j)-ch(1,i,k,jc)
@@ -11866,6 +12250,12 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   115 do 118 j=2,ipph
          jc = ipp2-j
          do 117 i=3,ido,2
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
             do 116 k=1,l1
                c1(1,i-1,k,j) = ch(1,i-1,k,j)+ch(1,i-1,k,jc)
                c1(1,i-1,k,jc) = ch(1,i,k,j)-ch(1,i,k,jc)
@@ -11880,19 +12270,32 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   120 continue
   121 do 123 j=2,ipph
          jc = ipp2-j
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned c1:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+    !dir$ unroll(8)
          do 122 k=1,l1
             c1(1,1,k,j) = ch(1,1,k,j)+ch(1,1,k,jc)
             c1(1,1,k,jc) = ch(1,1,k,jc)-ch(1,1,k,j)
   122    continue
   123 continue
 
-      ar1 = 1.0D+00
-      ai1 = 0.0D+00
+      ar1 = 1.0_dp
+      ai1 = 0.0_dp
       do 127 l=2,ipph
          lc = ipp2-l
          ar1h = dcp*ar1-dsp*ai1
          ai1 = dcp*ai1+dsp*ar1
          ar1 = ar1h
+   !dir$ assume_aligned ch2:64
+   !dir$ assume_aligned c2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
          do 124 ik=1,idl1
             ch2(1,ik,l) = c2(1,ik,1)+ar1*c2(1,ik,2)
             ch2(1,ik,lc) = ai1*c2(1,ik,ip)
@@ -11906,6 +12309,14 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
             ar2h = dc2*ar2-ds2*ai2
             ai2 = dc2*ai2+ds2*ar2
             ar2 = ar2h
+   !dir$ assume_aligned ch2:64
+   !dir$ assume_aligned c2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ fma
+   !dir$ unroll(8)
+   !$omp simd reduction(+:ch2)
             do 125 ik=1,idl1
                ch2(1,ik,l) = ch2(1,ik,l)+ar2*c2(1,ik,j)
                ch2(1,ik,lc) = ch2(1,ik,lc)+ai2*c2(1,ik,jc)
@@ -11913,6 +12324,13 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
   126    continue
   127 continue
       do 129 j=2,ipph
+   !dir$ assume_aligned ch2:64
+   !dir$ assume_aligned c2:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
+   !$omp simd reduction(+:ch2)
          do 128 ik=1,idl1
             ch2(1,ik,1) = ch2(1,ik,1)+c2(1,ik,j)
   128    continue
@@ -11944,6 +12362,12 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          jc = ipp2-j
          j2 = j+j
          do 139 k=1,l1
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
             do 138 i=3,ido,2
                ic = idp2-i
                cc(1,i-1,j2-1,k) = ch(1,i-1,k,j)+ch(1,i-1,k,jc)
@@ -11959,6 +12383,12 @@ subroutine r1fgkf (ido,ip,l1,idl1,cc,c1,c2,in1,ch,ch2,in2,wa)
          j2 = j+j
          do 143 i=3,ido,2
             ic = idp2-i
+   !dir$ assume_aligned ch:64
+   !dir$ assume_aligned cc:64
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+   !dir$ unroll(8)
             do 142 k=1,l1
                cc(1,i-1,j2-1,k) = ch(1,i-1,k,j)+ch(1,i-1,k,jc)
                cc(1,ic-1,j2-2,k) = ch(1,i-1,k,j)-ch(1,i-1,k,jc)
@@ -12020,7 +12450,8 @@ subroutine r2w ( ldr, ldw, l, m, r, w )
   return
 end
 subroutine r4_factor ( n, nf, fac )
-
+       !dir$ attributes code_align : 32 :: r4_factor
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! R4_FACTOR factors of an integer for real double precision computations.
@@ -12112,7 +12543,8 @@ subroutine r4_factor ( n, nf, fac )
   return
 end
 subroutine r4_mcfti1 ( n, wa, fnf, fac )
-
+       !dir$ attributes code_align : 32 :: r4_mcfti1
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! R4_MCFTI1 sets up factors and tables, real double precision arithmetic.
@@ -12181,7 +12613,10 @@ subroutine r4_mcfti1 ( n, wa, fnf, fac )
   return
 end
 subroutine r4_tables ( ido, ip, wa )
-
+       !dir$ attributes forceinline :: r4_tables
+       !dir$ attributes code_align : 32 :: r4_tables
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: r4_tables
 !*****************************************************************************80
 !
 !! R4_TABLES computes trigonometric tables, real double precision arithmetic.
@@ -12230,22 +12665,26 @@ subroutine r4_tables ( ido, ip, wa )
  real(kind=dp) tpi
  real(kind=dp) wa(ido,ip-1,2)
 
-  tpi = 8.0D+00 * atan ( 1.0D+00 )
-  argz = tpi / real ( ip, kind = 8 )
-  arg1 = tpi / real ( ido * ip, kind = 8 )
+  tpi = 8.0_dp * atan ( 1.0_dp )
+  argz = tpi / real ( ip, kind = dp )
+  arg1 = tpi / real ( ido * ip, kind = dp )
 
   do j = 2, ip
 
-    arg2 = real ( j - 1, kind = 8 ) * arg1
-
+    arg2 = real ( j - 1, kind = dp ) * arg1
+   !dir$ assume_aligned wa:64
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
     do i = 1, ido
-      arg3 = real ( i - 1, kind = 8 ) * arg2
+      arg3 = real ( i - 1, kind = dp ) * arg2
       wa(i,j-1,1) = cos ( arg3 )
       wa(i,j-1,2) = sin ( arg3 )
     end do
 
     if ( 5 < ip ) then
-      arg4 = real ( j - 1, kind = 8 ) * argz
+      arg4 = real ( j - 1, kind = dp) * argz
       wa(1,j-1,1) = cos ( arg4 )
       wa(1,j-1,2) = sin ( arg4 )
     end if
@@ -12255,7 +12694,9 @@ subroutine r4_tables ( ido, ip, wa )
   return
 end
 subroutine r8_factor ( n, nf, fac )
-
+       !dir$ attributes forceinline :: r8_factor
+       !dir$ attributes code_align : 32 :: r8_tables
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! R8_FACTOR factors of an integer for real double precision computations.
@@ -12345,7 +12786,8 @@ subroutine r8_factor ( n, nf, fac )
   return
 end
 subroutine r8_mcfti1 ( n, wa, fnf, fac )
-
+       !dir$ attributes code_align : 32 :: r8_mcfti1
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! R8_MCFTI1 sets up factors and tables, real double precision arithmetic.
@@ -12412,7 +12854,10 @@ subroutine r8_mcfti1 ( n, wa, fnf, fac )
   return
 end
 subroutine r8_tables ( ido, ip, wa )
-
+       !dir$ attributes forceinline :: r8_tables
+       !dir$ attributes code_align : 32 :: r8_tables
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: r8_tables
 !*****************************************************************************80
 !
 !! R8_TABLES computes trigonometric tables, real double precision arithmetic.
@@ -12459,22 +12904,27 @@ subroutine r8_tables ( ido, ip, wa )
  real(kind=dp) tpi
  real(kind=dp) wa(ido,ip-1,2)
 
-  tpi = 8.0D+00 * atan ( 1.0D+00 )
-  argz = tpi / real ( ip, kind = 8 )
-  arg1 = tpi / real ( ido * ip, kind = 8 )
+  tpi = 8.0_dp * atan ( 1.0_dp )
+  argz = tpi / real ( ip, kind = dp )
+  arg1 = tpi / real ( ido * ip, kind = dp )
 
   do j = 2, ip
 
-    arg2 = real ( j - 1, kind = 8 ) * arg1
-
+    arg2 = real ( j - 1, kind = dp ) * arg1
+   !dir$ assume_aligned wa:64
+   !dir$ ivdep
+   !dir$ vector aligned 
+   !dir$ vector vectorlength(8)
+   !dir$ vector always
+  
     do i = 1, ido
-      arg3 = real ( i - 1, kind = 8 ) * arg2
+      arg3 = real ( i - 1, kind = dp ) * arg2
       wa(i,j-1,1) = cos ( arg3 )
       wa(i,j-1,2) = sin ( arg3 )
     end do
 
     if ( 5 < ip ) then
-      arg4 = real ( j - 1, kind = 8 ) * argz
+      arg4 = real ( j - 1, kind = dp ) * argz
       wa(1,j-1,1) = cos ( arg4 )
       wa(1,j-1,2) = sin ( arg4 )
     end if
@@ -12484,7 +12934,9 @@ subroutine r8_tables ( ido, ip, wa )
   return
 end
 subroutine rfft1b ( n, inc, r, lenr, wsave, lensav, work, lenwrk, ier )
-
+       !dir$ attributes code_align : 32 :: rfft1b
+       !dir$ optimize : 3
+     
 !*****************************************************************************80
 !
 !! RFFT1B: real double precision backward fast Fourier transform, 1D.
@@ -12576,7 +13028,7 @@ subroutine rfft1b ( n, inc, r, lenr, wsave, lensav, work, lenwrk, ier )
   if (lenr < inc*(n-1) + 1) then
     ier = 1
     call xerfft ('rfft1b ', 6)
-  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('rfft1b ', 8)
   else if (lenwrk < n) then
@@ -12593,7 +13045,9 @@ subroutine rfft1b ( n, inc, r, lenr, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine rfft1f ( n, inc, r, lenr, wsave, lensav, work, lenwrk, ier )
-
+       !dir$ attributes code_align : 32 :: rfft1f
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! RFFT1F: real double precision forward fast Fourier transform, 1D.
@@ -12685,7 +13139,7 @@ subroutine rfft1f ( n, inc, r, lenr, wsave, lensav, work, lenwrk, ier )
   if (lenr < inc*(n-1) + 1) then
     ier = 1
     call xerfft ('rfft1f ', 6)
-  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('rfft1f ', 8)
   else if (lenwrk < n) then
@@ -12702,7 +13156,9 @@ subroutine rfft1f ( n, inc, r, lenr, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine rfft1i ( n, wsave, lensav, ier )
-
+       !dir$ attributes code_align : 32 :: rfft1i
+       !dir$ optimize : 3
+       
 !*****************************************************************************80
 !
 !! RFFT1I: initialization for RFFT1B and RFFT1F.
@@ -12769,7 +13225,7 @@ subroutine rfft1i ( n, wsave, lensav, ier )
 
   ier = 0
 
-  if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('rfft1i ', 3)
   end if
@@ -12783,7 +13239,10 @@ subroutine rfft1i ( n, wsave, lensav, ier )
   return
 end
 subroutine rfft2b ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
-
+      
+       !dir$ attributes code_align : 32 :: rfft2b
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: rfft2b
 !*****************************************************************************80
 !
 !! RFFT2B: real double precision backward fast Fourier transform, 2D.
@@ -12893,9 +13352,9 @@ subroutine rfft2b ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
 !
 !  verify lensav
 !
-  lwsav =   l+int(log( real ( l, kind = 8 ) )/log( 2.0D+00 ))+4
-  mwsav =   2*m+int(log( real ( m, kind = 8 ) )/log( 2.0D+00 ))+4
-  mmsav =   m+int(log( real ( m, kind = 8 ) )/log( 2.0D+00 ))+4
+  lwsav =   l+int(log( real ( l, kind = 8 ) )/log( 2.0_dp ))+4
+  mwsav =   2*m+int(log( real ( m, kind = 8 ) )/log( 2.0_dp ))+4
+  mmsav =   m+int(log( real ( m, kind = 8 ) )/log( 2.0_dp ))+4
   modl = mod(l,2)
   modm = mod(m,2)
 
@@ -12976,7 +13435,7 @@ subroutine rfft2b ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
       end do
       end do
       call rfftmb(m,ldim,l,1,r,m*ldim,wsave(1), &
-           l+int(log( real ( l, kind = 8 ) )/log( 2.0D+00 ))+4,work,lenwrk,ier1)
+           l+int(log( real ( l, kind = 8 ) )/log( 2.0_dp ))+4,work,lenwrk,ier1)
 
       if(ier1/=0) then
          ier=20
@@ -12995,7 +13454,10 @@ subroutine rfft2b ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
-
+      
+       !dir$ attributes code_align : 32 :: rfft2f
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: rfft2f
 !*****************************************************************************80
 !
 ! RFFT2F: real double precision forward fast Fourier transform, 2D.
@@ -13104,9 +13566,9 @@ subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
 !
 !  verify lensav
 !
-  lwsav =   l+int(log( real ( l, kind = 8 ) )/log( 2.0D+00 ))+4
-  mwsav =   2*m+int(log( real ( m, kind = 8 ) )/log( 2.0D+00 ))+4
-  mmsav =   m+int(log( real ( m, kind = 8 ) )/log( 2.0D+00 ))+4
+  lwsav =   l+int(log( real ( l, kind = 8 ) )/log( 2.0_dp ))+4
+  mwsav =   2*m+int(log( real ( m, kind = 8 ) )/log( 2.0_dp ))+4
+  mmsav =   m+int(log( real ( m, kind = 8 ) )/log( 2.0_dp ))+4
 
       if (lensav < lwsav+mwsav+mmsav) then
         ier = 2
@@ -13133,7 +13595,7 @@ subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
 !  transform first dimension of array
 !
       call rfftmf(m,ldim,l,1,r,m*ldim,wsave(1), &
-           l+int(log( real ( l, kind = 8 ) )/log( 2.0D+00 ))+4,work,lenwrk,ier1)
+           l+int(log( real ( l, kind = 8 ) )/log( 2.0_dp ))+4,work,lenwrk,ier1)
 
       if(ier1 /= 0 ) then
          ier=20
@@ -13144,7 +13606,7 @@ subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
       ldx = 2*int((l+1)/2)-1
       do i=2,ldx
       do j=1,m
-      r(i,j) = 0.5D+00 * r(i,j)
+      r(i,j) = 0.5_dp * r(i,j)
       end do
       end do
       do j=1,m
@@ -13163,7 +13625,7 @@ subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
       call rfftmf(1,1,m,ldim,r,m*ldim, &
            wsave(lwsav+mwsav+1),mmsav,work,lenwrk,ier1)
       do j=2,2*((m+1)/2)-1
-      r(1,j) = 0.5D+00 * r(1,j)
+      r(1,j) = 0.5_dp * r(1,j)
       end do
       do j=3,m,2
       r(1,j) = -r(1,j)
@@ -13192,7 +13654,7 @@ subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
       call rfftmf(1,1,m,ldim,r(l,1),m*ldim, &
            wsave(lwsav+mwsav+1),mmsav,work,lenwrk,ier1)
       do j=2,2*((m+1)/2)-1
-      r(l,j) = 0.5D+00 * r(l,j)
+      r(l,j) = 0.5_dp * r(l,j)
       end do
       do j=3,m,2
       r(l,j) = -r(l,j)
@@ -13210,7 +13672,10 @@ subroutine rfft2f ( ldim, l, m, r, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine rfft2i ( l, m, wsave, lensav, ier )
-
+     
+       !dir$ attributes code_align : 32 :: c1f2kb
+       !dir$ optimize : 3
+     
 !*****************************************************************************80
 !
 !! RFFT2I: initialization for RFFT2B and RFFT2F.
@@ -13294,9 +13759,9 @@ subroutine rfft2i ( l, m, wsave, lensav, ier )
 !
 ! verify lensav
 !
-  lwsav =   l+int(log( real ( l, kind = 8 ) )/log( 2.0D+00 ))+4
-  mwsav =   2*m+int(log( real ( m, kind = 8 ) )/log( 2.0D+00 ))+4
-  mmsav =   m+int(log( real ( m, kind = 8 ) )/log( 2.0D+00 ))+4
+  lwsav =   l+int(log( real ( l, kind = 8 ) )/log( 2.0_dp ))+4
+  mwsav =   2*m+int(log( real ( m, kind = 8 ) )/log( 2.0_dp ))+4
+  mmsav =   m+int(log( real ( m, kind = 8 ) )/log( 2.0_dp ))+4
 
   if (lensav < lwsav+mwsav+mmsav) then
     ier = 2
@@ -13331,7 +13796,10 @@ subroutine rfft2i ( l, m, wsave, lensav, ier )
   return
 end
 subroutine rfftb1 ( n, in, c, ch, wa, fac )
-
+ 
+       !dir$ attributes code_align : 32 :: rfftb1
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! RFFTB1 is an FFTPACK5.1 auxiliary routine.
@@ -13401,8 +13869,8 @@ subroutine rfftb1 ( n, in, c, ch, wa, fac )
       if(k1 == nf) go to 10
       na = 1-na
    10 continue 
-      half = 0.5D+00
-      halfm = -0.5D+00
+      half = 0.5_dp
+      halfm = -0.5_dp
       modn = mod(n,2)
       nl = n-2
       if(modn /= 0) nl = n-1
@@ -13473,7 +13941,10 @@ subroutine rfftb1 ( n, in, c, ch, wa, fac )
   return
 end
 subroutine rfftf1 ( n, in, c, ch, wa, fac )
-
+ 
+       !dir$ attributes code_align : 32 :: rfftf1
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! RFFTF1 is an FFTPACK5.1 auxiliary routine.
@@ -13589,8 +14060,8 @@ subroutine rfftf1 ( n, in, c, ch, wa, fac )
   110    l2 = l1
   111 continue
 
-      sn = 1.0D+00 / real ( n, kind = 8 )
-      tsn =  2.0D+00  / real ( n, kind = 8 )
+      sn = 1.0_dp / real ( n, kind = 8 )
+      tsn =  2.0_dp  / real ( n, kind = 8 )
       tsnm = -tsn
       modn = mod(n,2)
       nl = n-2
@@ -13615,7 +14086,10 @@ subroutine rfftf1 ( n, in, c, ch, wa, fac )
   return
 end
 subroutine rffti1 ( n, wa, fac )
-
+       !dir$ attributes forceinline :: rffti1
+       !dir$ attributes code_align : 32 :: rffti1
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: rffti1
 !*****************************************************************************80
 !
 !! RFFTI1 is an FFTPACK5.1 auxiliary routine.
@@ -13717,7 +14191,7 @@ subroutine rffti1 ( n, wa, fac )
   107 if (nl /= 1) go to 104
       fac(1) = n
       fac(2) = nf
-      tpi = 8.0D+00 * atan ( 1.0D+00 )
+      tpi = 8.0_dp * atan ( 1.0_dp )
       argh = tpi / real ( n, kind = 8 )
       is = 0
       nfm1 = nf-1
@@ -13733,10 +14207,10 @@ subroutine rffti1 ( n, wa, fac )
             ld = ld+l1
             i = is
             argld = real ( ld, kind = 8 ) * argh
-            fi = 0.0D+00
+            fi = 0.0_dp
             do 108 ii=3,ido,2
                i = i+2
-               fi = fi + 1.0D+00
+               fi = fi + 1.0_dp
                arg = fi*argld
 	       wa(i-1) = cos ( arg )
 	       wa(i) = sin ( arg )
@@ -13750,7 +14224,10 @@ subroutine rffti1 ( n, wa, fac )
 end
 subroutine rfftmb ( lot, jump, n, inc, r, lenr, wsave, lensav, work, lenwrk, &
   ier )
-
+ 
+       !dir$ attributes code_align : 32 :: rfftmb
+       !dir$ optimize : 3
+     
 !*****************************************************************************80
 !
 !! RFFTMB: real double precision backward FFT, 1D, multiple vectors.
@@ -13858,7 +14335,7 @@ subroutine rfftmb ( lot, jump, n, inc, r, lenr, wsave, lensav, work, lenwrk, &
     ier = 1
     call xerfft ('rfftmb ', 6)
     return
-  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('rfftmb ', 8)
     return
@@ -13882,7 +14359,10 @@ subroutine rfftmb ( lot, jump, n, inc, r, lenr, wsave, lensav, work, lenwrk, &
 end
 subroutine rfftmf ( lot, jump, n, inc, r, lenr, wsave, lensav, &
   work, lenwrk, ier )
-
+ 
+       !dir$ attributes code_align : 32 :: rfftmf
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! RFFTMF: real double precision forward FFT, 1D, multiple vectors.
@@ -13990,7 +14470,7 @@ subroutine rfftmf ( lot, jump, n, inc, r, lenr, wsave, lensav, &
     ier = 1
     call xerfft ('rfftmf ', 6)
     return
-  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('rfftmf ', 8)
     return
@@ -14013,7 +14493,10 @@ subroutine rfftmf ( lot, jump, n, inc, r, lenr, wsave, lensav, &
   return
 end
 subroutine rfftmi ( n, wsave, lensav, ier )
-
+  
+       !dir$ attributes code_align : 32 :: rfftmi
+       !dir$ optimize : 3
+     
 !*****************************************************************************80
 !
 !! RFFTMI: initialization for RFFTMB and RFFTMF.
@@ -14080,7 +14563,7 @@ subroutine rfftmi ( n, wsave, lensav, ier )
 
   ier = 0
 
-  if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  if (lensav < n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('rfftmi ', 3)
     return
@@ -14095,7 +14578,10 @@ subroutine rfftmi ( n, wsave, lensav, ier )
   return
 end
 subroutine sinq1b ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
-
+ 
+       !dir$ attributes code_align : 32 :: sinq1b
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: sinq1b
 !*****************************************************************************80
 !
 !! SINQ1B: real double precision backward sine quarter wave transform, 1D.
@@ -14196,7 +14682,7 @@ subroutine sinq1b ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
   if (lenx < inc*(n-1) + 1) then
     ier = 1
     call xerfft ('sinq1b', 6)
-  else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('sinq1b', 8)
   else if (lenwrk < n) then
@@ -14231,7 +14717,10 @@ subroutine sinq1b ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine sinq1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
-
+  
+       !dir$ attributes code_align : 32 :: sinq1f
+       !dir$ optimize : 3
+     
 !*****************************************************************************80
 !
 !! SINQ1F: real double precision forward sine quarter wave transform, 1D.
@@ -14333,7 +14822,7 @@ subroutine sinq1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
         ier = 1
         call xerfft ('sinq1f', 6)
         go to 300
-      else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+      else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
         ier = 2
         call xerfft ('sinq1f', 8)
         go to 300
@@ -14365,7 +14854,10 @@ subroutine sinq1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine sinq1i ( n, wsave, lensav, ier )
-
+  
+       !dir$ attributes code_align : 32 :: sinq1i
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! SINQ1I: initialization for SINQ1B and SINQ1F.
@@ -14434,7 +14926,7 @@ subroutine sinq1i ( n, wsave, lensav, ier )
 
       ier = 0
 
-      if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+      if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
         ier = 2
         call xerfft ('sinq1i', 3)
         go to 300
@@ -14451,7 +14943,10 @@ subroutine sinq1i ( n, wsave, lensav, ier )
 end
 subroutine sinqmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
   work, lenwrk, ier )
-
+  
+       !dir$ attributes code_align : 32 :: sinqmb
+       !dir$ optimize : 3
+       
 !*****************************************************************************80
 !
 !! SINQMB: real double precision backward sine quarter wave, multiple vectors.
@@ -14568,7 +15063,7 @@ subroutine sinqmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
       if (lenx < (lot-1)*jump + inc*(n-1) + 1) then
         ier = 1
         call xerfft ('sinqmb', 6)
-      else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+      else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
         ier = 2
         call xerfft ('sinqmb', 8)
       else if (lenwrk < lot*n) then
@@ -14583,7 +15078,7 @@ subroutine sinqmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
       if (1 < n ) go to 101
 
       do m=1,lj,jump
-         x(m,1) =  4.0D+00 * x(m,1)
+         x(m,1) =  4.0_dp * x(m,1)
       end do
 
       return
@@ -14615,7 +15110,10 @@ subroutine sinqmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
 end
 subroutine sinqmf ( lot, jump, n, inc, x, lenx, wsave, lensav, &
   work, lenwrk, ier )
-
+ 
+       !dir$ attributes code_align : 32 :: sinqmf
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! SINQMF: real double precision forward sine quarter wave, multiple vectors.
@@ -14733,7 +15231,7 @@ subroutine sinqmf ( lot, jump, n, inc, x, lenx, wsave, lensav, &
         ier = 1
         call xerfft ('sinqmf', 6)
         return
-      else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+      else if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
         ier = 2
         call xerfft ('sinqmf', 8)
         return
@@ -14780,7 +15278,10 @@ subroutine sinqmf ( lot, jump, n, inc, x, lenx, wsave, lensav, &
   return
 end
 subroutine sinqmi ( n, wsave, lensav, ier )
-
+ 
+       !dir$ attributes code_align : 32 :: sinqmi
+       !dir$ optimize : 3
+       
 !*****************************************************************************80
 !
 !! SINQMI: initialization for SINQMB and SINQMF.
@@ -14849,7 +15350,7 @@ subroutine sinqmi ( n, wsave, lensav, ier )
 
   ier = 0
 
-  if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  if (lensav < 2*n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('sinqmi', 3)
     return
@@ -14865,7 +15366,10 @@ subroutine sinqmi ( n, wsave, lensav, ier )
   return
 end
 subroutine sint1b ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
-
+ 
+       !dir$ attributes code_align : 32 :: sint1b
+       !dir$ optimize : 3
+       
 !*****************************************************************************80
 !
 !! SINT1B: real double precision backward sine transform, 1D.
@@ -14964,7 +15468,7 @@ subroutine sint1b ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
     call xerfft ('sint1b', 6)
     return
   else if ( lensav < n / 2 + n + int ( log ( real ( n, kind = 8 ) ) &
-    / log ( 2.0D+00 ) ) + 4 ) then
+    / log ( 2.0_dp ) ) + 4 ) then
     ier = 2
     call xerfft ('sint1b', 8)
     return
@@ -14984,7 +15488,10 @@ subroutine sint1b ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine sint1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
-
+ 
+       !dir$ attributes code_align : 32 :: sint1f
+       !dir$ optimize : 3
+      
 !*****************************************************************************80
 !
 !! SINT1F: real double precision forward sine transform, 1D.
@@ -15082,7 +15589,7 @@ subroutine sint1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
     ier = 1
     call xerfft ('sint1f', 6)
     return
-  else if (lensav < n/2 + n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  else if (lensav < n/2 + n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('sint1f', 8)
     return
@@ -15102,7 +15609,10 @@ subroutine sint1f ( n, inc, x, lenx, wsave, lensav, work, lenwrk, ier )
   return
 end
 subroutine sint1i ( n, wsave, lensav, ier )
-
+      
+       !dir$ attributes code_align : 32 :: sint1i
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: sint1i
 !*****************************************************************************80
 !
 !! SINT1I: initialization for SINT1B and SINT1F.
@@ -15177,13 +15687,13 @@ subroutine sint1i ( n, wsave, lensav, ier )
 
   ier = 0
 
-  if (lensav < n/2 + n + int(log( real ( n, kind = 8 ) )/log( 2.0D+00 )) +4) then
+  if (lensav < n/2 + n + int(log( real ( n, kind = 8 ) )/log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('sint1i', 3)
     return
   end if
 
-  pi =  4.0D+00 * atan ( 1.0D+00 )
+  pi =  4.0_dp * atan ( 1.0_dp )
 
   if (n <= 1) then
     return
@@ -15194,10 +15704,10 @@ subroutine sint1i ( n, wsave, lensav, ier )
   dt = pi / real ( np1, kind = 8 )
 
   do k=1,ns2
-    wsave(k) =  2.0D+00 *sin(k*dt)
+    wsave(k) =  2.0_dp *sin(k*dt)
   end do
 
-  lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0D+00 )) +4
+  lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0_dp )) +4
 
   call rfft1i (np1, wsave(ns2+1), lnsv, ier1)
 
@@ -15209,7 +15719,10 @@ subroutine sint1i ( n, wsave, lensav, ier )
   return
 end
 subroutine sintb1 ( n, inc, x, wsave, xh, work, ier )
-
+      
+       !dir$ attributes code_align : 32 :: sintb1
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: sintb1
 !*****************************************************************************80
 !
 !! SINTB1 is an FFTPACK5.1 auxiliary routine.
@@ -15272,7 +15785,7 @@ subroutine sintb1 ( n, inc, x, wsave, xh, work, ier )
 
       ier = 0
       if (n-2) 200,102,103
-  102 srt3s2 = sqrt( 3.0D+00 ) / 2.0D+00
+  102 srt3s2 = sqrt( 3.0_dp ) / 2.0_dp
       xhold = srt3s2*(x(1,1)+x(1,2))
       x(1,2) = srt3s2*(x(1,1)-x(1,2))
       x(1,1) = xhold
@@ -15289,10 +15802,10 @@ subroutine sintb1 ( n, inc, x, wsave, xh, work, ier )
   104 continue
       modn = mod(n,2)
       if (modn == 0) go to 124
-      xh(ns2+2) =  4.0D+00 * x(1,ns2+1)
-  124 xh(1) = 0.0D+00
+      xh(ns2+2) =  4.0_dp * x(1,ns2+1)
+  124 xh(1) = 0.0_dp
       lnxh = np1
-      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0D+00 )) + 4
+      lnsv = np1 + int(log( real ( np1, kind = dp ))/log( 2.0_dp )) + 4
       lnwk = np1
 
       call rfft1f(np1,1,xh,lnxh,wsave(ns2+1),lnsv,work,lnwk,ier1)    
@@ -15305,7 +15818,7 @@ subroutine sintb1 ( n, inc, x, wsave, xh, work, ier )
 
       if(mod(np1,2) /= 0) go to 30
       xh(np1) = xh(np1)+xh(np1)
- 30   fnp1s4 = real ( np1, kind = 8 ) / 4.0D+00
+ 30   fnp1s4 = real ( np1, kind = dp ) / 4.0_dp
          x(1,1) = fnp1s4*xh(1)
          dsum = x(1,1)
       do i=3,n,2
@@ -15323,7 +15836,10 @@ subroutine sintb1 ( n, inc, x, wsave, xh, work, ier )
   return
 end
 subroutine sintf1 ( n, inc, x, wsave, xh, work, ier )
-
+      
+       !dir$ attributes code_align : 32 :: sintf1
+       !dir$ optimize : 3
+       !dir$ attributes optimization_parameter: "TARGET_ARCH=skylake_avx512" :: sintf1
 !*****************************************************************************80
 !
 !! SINTF1 is an FFTPACK5.1 auxiliary routine.
@@ -15386,7 +15902,7 @@ subroutine sintf1 ( n, inc, x, wsave, xh, work, ier )
 
       ier = 0
       if (n-2) 200,102,103
-  102 ssqrt3 = 1.0D+00 / sqrt ( 3.0D+00 )
+  102 ssqrt3 = 1.0_dp / sqrt ( 3.0_dp )
       xhold = ssqrt3*(x(1,1)+x(1,2))
       x(1,2) = ssqrt3*(x(1,1)-x(1,2))
       x(1,1) = xhold
@@ -15403,10 +15919,10 @@ subroutine sintf1 ( n, inc, x, wsave, xh, work, ier )
 
       modn = mod(n,2)
       if (modn == 0) go to 124
-      xh(ns2+2) =  4.0D+00 * x(1,ns2+1)
-  124 xh(1) = 0.0D+00
+      xh(ns2+2) =  4.0_dp * x(1,ns2+1)
+  124 xh(1) = 0.0_dp
       lnxh = np1
-      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0D+00 )) + 4
+      lnsv = np1 + int(log( real ( np1, kind = 8 ))/log( 2.0_dp )) + 4
       lnwk = np1
 
       call rfft1f(np1,1,xh,lnxh,wsave(ns2+1),lnsv,work, lnwk,ier1)     
@@ -15418,25 +15934,26 @@ subroutine sintf1 ( n, inc, x, wsave, xh, work, ier )
 
       if(mod(np1,2) /= 0) go to 30
       xh(np1) = xh(np1)+xh(np1)
-   30 sfnp1 = 1.0D+00 / real ( np1, kind = 8 )
-         x(1,1) = 0.5D+00 * xh(1)
+   30 sfnp1 = 1.0_dp / real ( np1, kind = 8 )
+         x(1,1) = 0.5_dp * xh(1)
          dsum = x(1,1)
 
       do i=3,n,2
-            x(1,i-1) = 0.5D+00 * xh(i)
-            dsum = dsum + 0.5D+00 * xh(i-1)
+            x(1,i-1) = 0.5_dp * xh(i)
+            dsum = dsum + 0.5_dp * xh(i-1)
             x(1,i) = dsum
       end do
 
       if (modn /= 0) go to 200
-      x(1,n) = 0.5D+00 * xh(n+1)
+      x(1,n) = 0.5_dp * xh(n+1)
   200 continue
 
   return
 end
 subroutine sintmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
   work, lenwrk, ier )
-
+       !dir$ attributes code_align : 32 :: sintmb
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! SINTMB: real double precision backward sine transform, multiple vectors.
@@ -15549,7 +16066,7 @@ subroutine sintmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
     call xerfft ('sintmb', 6)
     return
   else if ( lensav < n / 2 + n + int ( log ( real ( n, kind = 8 ) ) &
-    /log( 2.0D+00 )) +4) then
+    /log( 2.0_dp )) +4) then
     ier = 2
     call xerfft ('sintmb', 8)
     return
@@ -15578,7 +16095,8 @@ subroutine sintmb ( lot, jump, n, inc, x, lenx, wsave, lensav, &
 end
 subroutine sintmf ( lot, jump, n, inc, x, lenx, wsave, lensav, &
   work, lenwrk, ier )
-
+       !dir$ attributes code_align : 32 :: sintmf
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! SINTMF: real double precision forward sine transform, multiple vectors.
@@ -15690,8 +16208,8 @@ subroutine sintmf ( lot, jump, n, inc, x, lenx, wsave, lensav, &
     ier = 1
     call xerfft ( 'sintmf', 6 )
     return
-  else if ( lensav < n / 2 + n + int ( log ( real ( n, kind = 8 ) ) &
-    / log ( 2.0D+00 ) ) + 4 ) then
+  else if ( lensav < n / 2 + n + int ( log ( real ( n, kind = dp ) ) &
+    / log ( 2.0_dp ) ) + 4 ) then
     ier = 2
     call xerfft ( 'sintmf', 8 )
     return
@@ -15717,7 +16235,8 @@ subroutine sintmf ( lot, jump, n, inc, x, lenx, wsave, lensav, &
   return
 end
 subroutine sintmi ( n, wsave, lensav, ier )
-
+       !dir$ attributes code_align : 32 :: sintmi
+       !dir$ optimize : 3
 !*****************************************************************************80
 !
 !! SINTMI: initialization for SINTMB and SINTMF.
@@ -15793,13 +16312,13 @@ subroutine sintmi ( n, wsave, lensav, ier )
   ier = 0
 
   if ( lensav < n / 2 + n + int ( log ( real ( n, kind = 8 ) ) &
-    / log ( 2.0D+00 ) ) + 4 ) then
+    / log ( 2.0_dp ) ) + 4 ) then
     ier = 2
     call xerfft ( 'sintmi', 3 )
     return
   end if
 
-  pi = 4.0D+00 * atan ( 1.0D+00 )
+  pi = 4.0_dp * atan ( 1.0_dp )
 
   if ( n <= 1 ) then
     return
@@ -15807,13 +16326,13 @@ subroutine sintmi ( n, wsave, lensav, ier )
 
   ns2 = n / 2
   np1 = n + 1
-  dt = pi / real ( np1, kind = 8 )
+  dt = pi / real ( np1, kind = dp )
 
   do k = 1, ns2
-    wsave(k) = 2.0D+00 * sin ( k * dt )
+    wsave(k) = 2.0_dp * sin ( k * dt )
   end do
 
-  lnsv = np1 + int ( log ( real ( np1, kind = 8 ) ) / log ( 2.0D+00 ) ) + 4
+  lnsv = np1 + int ( log ( real ( np1, kind = dp ) ) / log ( 2.0_dp ) ) + 4
   call rfftmi ( np1, wsave(ns2+1), lnsv, ier1 )
 
   if ( ier1 /= 0 ) then
