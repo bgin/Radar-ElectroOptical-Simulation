@@ -248,6 +248,8 @@ c
       end
 
       subroutine muh21(nx,ny,rhsf,phif,coef,bndyc,wk,iwk)
+          !dir$ optimize:3 
+          !dir$ attributes code_align : 32 :: muh21
       implicit none
       integer nx,ny,iwk(*)
       real phif(nx,ny),rhsf(nx,ny),wk(*)
@@ -260,10 +262,13 @@ c
       integer ncx,ncy,jj,ij,i,j,iter
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+     !dir$ attributes align : 64 :: /imud2/
       common/fmud2/xa,xb,yc,yd,tolmax,relmax
+     !dir$ attributes align : 64 :: /fmud2/
       common/mud2c/kpbgn(50),kcbgn(50),ktxbgn(50),ktybgn(50),
-     +nxk(50),nyk(50),isx,jsy
+     +     nxk(50),nyk(50),isx,jsy
+     !dir$ attributes align : 64 :: /mud2c/
       integer ibeta,ialfa,izmat,idmat
       common/muh2c/ibeta,ialfa,izmat,idmat
       external coef,bndyc
@@ -349,6 +354,7 @@ c      error control
 c
 	  relmax = 0.0
 	  phmax = 0.0
+
 	  do j=1,nfy
 	    jj = j*(nfx+2)
 	    do i=1,nfx
@@ -379,6 +385,8 @@ c
       end
 
       subroutine kcymh2(wk,iwk)
+          !dir$ optimize:3 
+          !dir$ attributes code_align : 32 :: kcymh2
 c
 c     execute multigrid k cycle from kcur grid level
 c     kcycle=1 for v cycles, kcycle=2 for w cycles
@@ -394,12 +402,16 @@ c
       integer kpbgn,kcbgn,ktxbgn,ktybgn,nxk,nyk,isx,jsy
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+      !dir$ attributes align : 64 :: /imud2/
       common/fmud2/xa,xb,yc,yd,tolmax,relmax
+      !dir$ attributes align : 64 :: /fmud2/
       common/mud2c/kpbgn(50),kcbgn(50),ktxbgn(50),ktybgn(50),
-     +nxk(50),nyk(50),isx,jsy
+     +     nxk(50),nyk(50),isx,jsy
+      !dir$ attributes align : 64 :: /mud2c/
       integer ibeta,ialfa,izmat,idmat
       common/muh2c/ibeta,ialfa,izmat,idmat
+      !dir$ attributes align : 64 :: /muh2c/
       integer kount(50)
       klevel = kcur
       nx = nxk(klevel)
@@ -578,6 +590,10 @@ c
       end
 
       subroutine dismh2(nx,ny,cof,tx,ty,bndyc,coef,wk,iwk,ier)
+          !dir$ optimize:3 
+          !dir$ attributes code_align : 32 :: dismh2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: dismh2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: dismh2
 c
 c     discretize elliptic pde for muh2, set nonfatal errors
 c
@@ -592,10 +608,13 @@ c
       real x,y,cxx,cyy,cx,cy,ce,c1,c2,c3,c4,c5,alfa,gbdy
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+      !dir$ attributes align : 64 :: /imud2/
       common/fmud2/xa,xb,yc,yd,tolmax,relmax
+      !dir$ attributes align : 64 :: /fmud2/
       integer ibeta,ialfa,izmat,idmat
       common/muh2c/ibeta,ialfa,izmat,idmat
+      !dir$ attributes align : 64 :: /muh2c/
       external bndyc,coef
       dlx = (xb-xa)/(nx-1)
       dlx2 = dlx+dlx
@@ -621,8 +640,10 @@ c
 c     compute discretization coefficients on interior and
 c     nonspecified boundaries
 c
+      !dir$ assume_aligned cof:64
       do j=jst,jfn
-	y = yc+(j-1)*dly
+         y = yc+(j-1)*dly
+         !dir$ vector aligned
 	do i=ist,ifn
 	  x = xa+(i-1)*dlx
 	  call coef(x,y,cxx,cyy,cx,cy,ce)
@@ -658,6 +679,8 @@ c
 	kbdy = 1
 	x = xa
 	i = 1
+        !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do j=jst,jfn
 	  y = yc+(j-1)*dly
 	  call bndyc(kbdy,y,alfa,gbdy)
@@ -672,6 +695,8 @@ c
 	kbdy = 2
 	x = xb
 	i = nx
+         !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do j=jst,jfn
 	  y = yc+(j-1)*dly
 	  call bndyc(kbdy,y,alfa,gbdy)
@@ -686,6 +711,8 @@ c
 	kbdy = 3
 	y = yc
 	j = 1
+         !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do i=ist,ifn
 	  x = xa+(i-1)*dlx
 	  call bndyc(kbdy,x,alfa,gbdy)
@@ -700,6 +727,8 @@ c
 	kbdy = 4
 	y = yd
 	j = ny
+         !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do i=ist,ifn
 	  x = xa+(i-1)*dlx
 	  call bndyc(kbdy,x,alfa,gbdy)
@@ -731,7 +760,9 @@ c
 c     set coefficient for specified boundaries
 c
       if (nxa.eq.1) then
-	i = 1
+         i = 1
+          !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do j=1,ny
 	  do l=1,5
 	    cof(i,j,l) = 0.0
@@ -740,7 +771,9 @@ c
 	end do
       end if
       if (nxb.eq.1) then
-	i = nx
+         i = nx
+          !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do j=1,ny
 	  do l=1,5
 	    cof(i,j,l) = 0.0
@@ -749,7 +782,9 @@ c
 	end do
       end if
       if (nyc.eq.1) then
-	j = 1
+         j = 1
+          !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do i=1,nx
 	  do l=1,5
 	    cof(i,j,l) = 0.0
@@ -758,7 +793,9 @@ c
 	end do
       end if
       if (nyd.eq.1) then
-	j = ny
+         j = ny
+          !dir$ assume_aligned cof:64
+        !dir$ vector aligned
 	do i=1,nx
 	  do l=1,5
 	    cof(i,j,l) = 0.0
@@ -797,6 +834,8 @@ c
 c
 c    nonperiodic x line relaxation
 c
+            !dir$ assume_aligned cof:64,tx:64
+            !dir$ vector aligned
 	  do i=1,nx
 	    im1 = max0(i-1,1)
 	    do j=1,ny
@@ -814,6 +853,8 @@ c
 c
 c     set and factor iff nx > 3
 c
+        !dir$ assume_aligned cof:64,tx:64
+        !dir$ vector aligned
 	    do i=1,nx-1
 	      do j=1,ny
 		tx(i,j,1) = cof(i,j,1)
@@ -832,6 +873,8 @@ c
 c
 c     nonperiodic y line relaxation
 c
+        !dir$ assume_aligned cof:64,ty:64
+        !dir$ vector aligned
 	  do j=1,ny
 	    jm1 = max0(j-1,1)
 	    do i=1,nx
@@ -849,6 +892,8 @@ c
 c
 c     set and factor iff ny > 3
 c
+              !dir$ assume_aligned cof:64,ty:64
+              !dir$ vector aligned
 	    do j=1,ny-1
 	      do i=1,nx
 		ty(j,i,1) = cof(i,j,3)
@@ -865,9 +910,14 @@ c
       end
 
       subroutine lud2(nx,ny,cof,beta,alfa,index,nxa)
+          !dir$ optimize:3 
+          !dir$ attributes code_align : 32 :: lud2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: lud2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: lud2
 c
 c     decompose nonperiodic block coefficient matrix
 c
+      use omp_lib
       implicit none
       integer nx,ny,nxa
       real cof(nx,ny,6),beta(nx,nx,*),alfa(nx,nx,*)
@@ -889,7 +939,12 @@ c
 	end do
 	call transp(nx,alfa(1,1,jcur))
 	call setbeta(nx,ny,cof,beta,jcur,nxa)
+        !dir$ assume_aligned beta:64,alfa:64,cof:64
 	do i=1,nx
+        !dir$ vector aligned
+        !dir$ ivdep
+        !dir$ vector vectorlength(4)
+        !$omp simd reduction(-:beta)   
 	  do l=1,nx
 	    beta(i,l,jcur)=beta(i,l,jcur)-alfa(i,l,jcur)*cof(l,jcur-1,4)
 	  end do
@@ -903,6 +958,7 @@ c
       end
 
       subroutine dir2(nx,ny,phi,cof,beta,alfa,index)
+        !dir$ attributes forceinline :: dir2
 c
 c     direct solve at coarsest grid
 c
@@ -918,20 +974,35 @@ c     backward sweep
       end
 
       subroutine for2(nx,ny,phi,frhs,alfa)
+          !dir$ optimize:3
+          !dir$ attributes forceinline :: for2
+          !dir$ attributes code_align : 32 :: for2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: for2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: for2
 c
 c     forward sweep
 c
+      use omp_lib
       implicit none
       integer nx,ny,i,j,l
       real phi(0:nx+1,0:ny+1),frhs(nx,ny),alfa(nx,nx,*),sum
+      !dir$ assume_aligned phi:64,frhs:64
       do j=1,ny
+         !dir$ vector aligned
+         !dir$ vector vectorlength(4)
+         !dir$ unroll(16)
 	do i=1,nx
 	  phi(i,j)=frhs(i,j)
 	end do
       end do
+      !dir$ assume_aligned alpha:64,phi:64
       do j=2,ny
 	do i=1,nx
-	  sum=0.0
+           sum=0.0
+           !dir$ ivdep
+           !dir$ vector aligned
+           !dir$ vector vectorlength(4)
+           !$omp simd reduction(+:sum)
 	  do l=1,nx
 	    sum=sum+alfa(i,l,j)*phi(l,j-1)
 	  end do
@@ -941,16 +1012,28 @@ c
       return                                                                    
       end                                                                       
 
+      
       subroutine bkw2(nx,ny,phi,cof,beta,index)
+          !dir$ optimize:3
+          !dir$ attributes forceinline :: bkw2
+          !dir$ attributes code_align : 32 :: bkw2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: bkw2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: bkw2
 c
+      use omp_lib
       implicit none
       integer nx,ny,index(nx,ny)
       real phi(0:nx+1,0:ny+1),cof(nx,ny,6),beta(nx,nx,*)
       integer iz,j,jb,i
       iz = 0
       call sgsl(beta(1,1,ny),nx,nx,index(1,ny),phi(1,ny),iz)
+      !dir$ assume_aligned phi:64,cof:64
       do jb=2,ny
-	j = ny-jb+1
+         j = ny-jb+1
+         !dir$ ivdep
+         !dir$ vector aligned
+         !dir$ vector vectorlength(4)
+         !$omp simd reduction(-:phi)
 	do i=1,nx
 	  phi(i,j) = phi(i,j) - cof(i,j,4)*phi(i,j+1)
 	end do
@@ -960,6 +1043,10 @@ c
       end                                                                       
 
       subroutine lud2p(nx,ny,cof,beta,alfa,zmat,dmat,index,nxa)
+          !dir$ optimize:3
+          !dir$ attributes code_align : 32 :: lud2p
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: lud2p
+          !dir$ attributes optimization_parameter: 'g2s=on' :: lud2p
       implicit none
       integer nx,ny,index(nx,ny),i,iz,j,l,jcur,jm1,i1,nxa
       real cof(nx,ny,6),alfa(nx,nx,*),beta(nx,nx,*)
@@ -969,7 +1056,12 @@ c
 c     set dmat(1)=alfa(1)
 c
       call setalfa(nx,ny,cof,alfa,jcur)
+      !dir$ assume_aligned dmat:64,alfa:64
       do i=1,nx
+         !dir$ ivdep
+         !dir$ vector aligned
+         !dir$ vector always
+         !dir$ vector vectorlength(4)
 	do l=1,nx
 	  dmat(i,l,1) = alfa(i,l,jcur)
 	end do
@@ -1003,7 +1095,12 @@ c
 c
 c
 	call setbeta(nx,ny,cof,beta,jcur,nxa)
+        !dir$ assume_aligned beta:64,alfa:64,cof:64
 	do i=1,nx
+        !dir$ ivdep
+        !dir$ vector aligned
+         !dir$ vector vectorlength(4)
+          !$omp simd reduction(-:beta)
 	  do l=1,nx
 	    beta(i,l,jcur)=beta(i,l,jcur)-alfa(i,l,jcur)*cof(l,jcur-1,4)
 	  end do
@@ -1028,6 +1125,11 @@ c
 c
 c     adjust dmat(ny-2) = gama(ny-2)-alfa(ny-2)*dmat(ny-2)
 c
+           !dir$ assume_aligned dmat:64,cof:64
+           !dir$ ivdep
+           !dir$ vector aligned
+           !dir$ vector vectorlength(4)
+           !dir$ vector always
 	  do i=1,nx
 	    dmat(i,i,jcur) = cof(i,jcur,4)+dmat(i,i,jcur)
 	  end do
@@ -1051,8 +1153,13 @@ c
 c
 c     solve transpose of zmat(j) umat(j) = -zmat(j-1) gama(j-1)
 c
+      !dir$ assume_aligned zmat:64,cof:64
       do jcur = 2,ny-3
-	do i=1,nx
+         do i=1,nx
+         !dir$ vector aligned
+         !dir$ vector vectorlength(4)
+         !dir$ ivdep
+         !$omp simd reduction(-:zmat)
 	  do j=1,nx
 	      zmat(j,i,jcur) = -zmat(i,j,jcur-1)*cof(j,jcur-1,4)
 	  end do
@@ -1102,9 +1209,13 @@ c
       end
 
       subroutine dir2p(nx,ny,phi,cof,beta,alfa,zmat,dmat,index)
+      !dir$ optimize:3
+      !dir$ attributes forceinline :: dir2p
+         
 c
 c     direct method for periodic b.c.
 c
+      use omp_lib
       implicit none
       integer nx,ny,index(nx,ny)
       real phi(0:nx+1,0:ny+1),cof(nx,ny,6)
@@ -1118,18 +1229,32 @@ c     backward sweep
       end
 
       subroutine for2p(nx,ny,phi,frhs,alfa,zmat)
+          !dir$ optimize:3
+          !dir$ attributes forceinline :: for2p
+          !dir$ attributes code_align : 32 :: for2p
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: for2p
+          !dir$ attributes optimization_parameter: 'g2s=on' :: for2p
+       use omp_lib
       implicit none
       integer nx,ny,i,j,jcur,l,k
       real phi(0:nx+1,0:ny+1),frhs(nx,ny),sum
       real alfa(nx,nx,*),zmat(nx,nx,*)
+      !dir$ assume_aligned phi:64,frhs:64
       do j=1,ny-1
-	do i=1,nx
+       !dir$ vector aligned
+       !dir$ vector vectorlength(4)
+       !dir$ unroll(16)
+ 	do i=1,nx
 	  phi(i,j)=frhs(i,j)
 	end do
       end do
       do jcur=2,ny-2
 	do i=1,nx
-	  sum=0.0
+           sum=0.0
+          !dir$ vector aligned
+          !dir$ vector vectorlength(4)
+          !dir$ ivdep
+          !$omp simd reduction(+:sum)
 	  do l=1,nx
 	    sum=sum+alfa(i,l,jcur)*phi(l,jcur-1)
 	  end do
@@ -1140,9 +1265,14 @@ c
 c     solve:
 c     zmat(1)*phi(1)+...+zmat(ny-2)*phi(ny-2) + phi(ny-1) = f(ny-1)
 c
+      !dir$ assume_aligned zmat:64,phi:64
       do i=1,nx
 	sum = 0.0
 	do k=1,ny-2
+             !dir$ vector aligned
+          !dir$ vector vectorlength(4)
+          !dir$ ivdep
+          !$omp simd reduction(+:sum)
 	  do l=1,nx
 	    sum = sum + zmat(i,l,k)*phi(l,k)
 	  end do
@@ -1153,7 +1283,13 @@ c
       end
 
       subroutine bkw2p(nx,ny,phi,cof,beta,dmat,index)
+             !dir$ optimize:3
+          !dir$ attributes forceinline :: bkw2p
+          !dir$ attributes code_align : 32 :: bkw2p
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: bkw2p
+          !dir$ attributes optimization_parameter: 'g2s=on' :: bkw2p
 c
+          use omp_lib 
       implicit none
       integer nx,ny,index(nx,ny),iz,i,l,kb,k
       real phi(0:nx+1,0:ny+1),cof(nx,ny,6),beta(nx,nx,ny),dmat(nx,nx,*)
@@ -1163,9 +1299,14 @@ c
 c
 c     solve beta(ny-2)*phi(ny-2) = phi(ny-2)-dmat(ny-2)*phi(ny-1)
 c
+      !dir$ assume_aligned dmat:64,phi:64
       do i=1,nx
-	sum = 0.0
-	do l=1,nx
+         sum = 0.0
+            !dir$ vector aligned
+          !dir$ vector vectorlength(4)
+          !dir$ ivdep
+          !$omp simd reduction(+:sum)
+         do l=1,nx
 	  sum = sum + dmat(i,l,ny-2)*phi(l,ny-1)
 	end do
 	phi(i,ny-2) = phi(i,ny-2) - sum
@@ -1178,7 +1319,11 @@ c
       do kb=4,ny
 	k = ny-kb+1
 	do i=1,nx
-	  sum = 0.0
+           sum = 0.0
+              !dir$ vector aligned
+          !dir$ vector vectorlength(4)
+          !dir$ ivdep
+          !$omp simd reduction(+:sum)
 	  do l=1,nx
 	    sum = sum+dmat(i,l,k)*phi(l,ny-1)
 	  end do
@@ -1196,6 +1341,11 @@ c
       end
 
       subroutine setbeta(nx,ny,cof,beta,jcur,nxa)
+             !dir$ optimize:3
+          !dir$ attributes forceinline :: setbeta
+          !dir$ attributes code_align : 32 :: setbeta
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: setbeta
+          !dir$ attributes optimization_parameter: 'g2s=on' :: setbeta
 c
 c     set diagonal matrix on block
 c
@@ -1238,6 +1388,11 @@ c
       end
 
       subroutine adjmh2(nx,ny,phi,cof,bndyc,coef)
+                !dir$ optimize:3
+          !dir$ attributes forceinline :: adjmh2
+          !dir$ attributes code_align : 32 :: adjmh2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: adjmh2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: adjmh2
 c
 c     adjust righthand side in cof(i,j,6) for boundary conditions
 c
@@ -1252,8 +1407,11 @@ c
       real x,y,cxx,cyy,cx,cy,ce,c1,c2,c3,c4,alfa,gbdy
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+     !dir$ attributes align : 64 :: /imud2/
+     
       common/fmud2/xa,xb,yc,yd,tolmax,relmax
+      !dir$ attributes align : 64 :: /fmud2/
       external bndyc,coef
       dlx = (xb-xa)/(nx-1)
       dly = (yd-yc)/(ny-1)
@@ -1328,25 +1486,37 @@ c
 c     set specified boundaries in rhs from phi
 c
       if (nxa.eq.1) then
-	i = 1
+         i = 1
+         !dir$ assume_aligned cof:64,phi:64
+         !dir$ vector aligned
+         !dir$ vector always
 	do j=1,ny
 	  cof(i,j,6) = phi(i,j)
 	end do
       end if
       if (nxb.eq.1) then
-	i = nx
+         i = nx
+         !dir$ assume_aligned cof:64,phi:64
+         !dir$ vector aligned
+         !dir$ vector always
 	do j=1,ny
 	  cof(i,j,6) = phi(i,j)
 	end do
       end if
       if (nyc.eq.1) then
-	j = 1
+         j = 1
+         !dir$ assume_aligned cof:64,phi:64
+         !dir$ vector aligned
+         !dir$ vector always
 	do i=1,nx
 	  cof(i,j,6) = phi(i,j)
 	end do
       end if
       if (nyd.eq.1) then
-	j = ny
+         j = ny
+            !dir$ assume_aligned cof:64,phi:64
+         !dir$ vector aligned
+         !dir$ vector always
 	do i=1,nx
 	  cof(i,j,6) = phi(i,j)
 	end do
@@ -1355,6 +1525,11 @@ c
       end
 
       subroutine resmh2(nx,ny,phi,ncx,ncy,phic,rhsc,cof,resf)
+                   !dir$ optimize:3
+                   !dir$ attributes forceinline :: resmh2
+                   !dir$ attributes code_align : 32 :: resmh2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: resmh2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: resmh2
 c
 c     restrict residual from fine to coarse mesh using fully weighted
 c     residual restriction
@@ -1366,7 +1541,8 @@ c
       integer nx,ny,ncx,ncy,i,j,ic,jc
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+      !dir$ attributes align : 64 :: /imud2/
       real rhsc(ncx,ncy),resf(nx,ny)
       real phi(0:nx+1,0:ny+1),phic(0:ncx+1,0:ncy+1)
       real cof(nx,ny,6)
@@ -1381,9 +1557,14 @@ c
 c
 c     compute residual on fine mesh in resf
 c
-!$OMP PARALLEL DO SHARED(resf,cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(resf,cof,phi,nx,ny) PRIVATE(i,j)
       do j=1,ny
-	do i=1,nx
+        !dir$ assume_aligned resf:64,cof:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+ 	do i=1,nx
 	  resf(i,j) =  cof(i,j,6)-(
      +             cof(i,j,1)*phi(i-1,j)+
      +             cof(i,j,2)*phi(i+1,j)+
@@ -1400,6 +1581,10 @@ c
       end
 
       subroutine relmh2(nx,ny,phi,cof,tx,ty,sum)
+              
+                   !dir$ attributes forceinline :: relmh2
+                   !dir$ attributes code_align : 32 :: relmh2
+          
 c
 c     relaxation for muh2
 c
@@ -1411,7 +1596,8 @@ c
      +             kcycle,iprer,ipost,intpol,kps
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+      !dir$ attributes align : 64 :: /imud2/
       if (method.eq.0) then                ! point relaxation
 	call relmh2p(nx,ny,phi,cof)
       else if (method.eq.1) then           ! line x relaxation
@@ -1426,6 +1612,10 @@ c
       end
 
       subroutine relmh2p(nx,ny,phi,cof)
+          !dir$ optimize:3
+          !dir$ attributes code_align : 32 :: relmh2p
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: relmh2p
+          !dir$ attributes optimization_parameter: 'g2s=on' :: relmh2p
 c
 c     gauss-seidel red/black point relaxation
 c
@@ -1436,7 +1626,8 @@ c
      +             kcycle,iprer,ipost,intpol,kps
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+      !dir$ attributes align : 64 :: /imud2/
       real phi(0:nx+1,0:ny+1),cof(nx,ny,6)
 c
 c    periodic adjustment bypass block
@@ -1445,7 +1636,7 @@ c
 c
 c     relax on red grid points
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
 	do i=1,nx,2
 	  do j=1,ny,2
 	    phi(i,j) = (cof(i,j,6) -
@@ -1455,7 +1646,7 @@ c
 	  end do
 	end do
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
 	do i=2,nx,2
 	  do j=2,ny,2
 	    phi(i,j) = (cof(i,j,6) -
@@ -1468,7 +1659,7 @@ c
 c     relax on black grid points
 c
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
 	do i=1,nx,2
 	  do j=2,ny,2
 	    phi(i,j) = (cof(i,j,6) -
@@ -1478,7 +1669,7 @@ c
 	  end do
 	end do
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
 	do i=2,nx,2
 	  do j=1,ny,2
 	    phi(i,j) = (cof(i,j,6) -
@@ -1508,7 +1699,7 @@ c
 c     relax on red grid points
 c
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
       do i=1,nx,2
 	do j=1,ny,2
 	  phi(i,j) = (cof(i,j,6) -
@@ -1518,7 +1709,7 @@ c
 	end do
       end do
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
       do i=2,nx,2
 	do j=2,ny,2
 	  phi(i,j) = (cof(i,j,6) -
@@ -1546,7 +1737,7 @@ c
 c     relax on black grid points
 c
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
       do i=1,nx,2
 	do j=2,ny,2
 	  phi(i,j) = (cof(i,j,6) -
@@ -1556,7 +1747,7 @@ c
 	end do
       end do
 c
-!$OMP PARALLEL DO SHARED(cof,phi,nx,ny) PRIVATE(i,j)
+!$OMP PARALLEL DO DO SCHEDULE(STATIC,8) SHARED(cof,phi,nx,ny) PRIVATE(i,j)
       do i=2,nx,2
 	do j=1,ny,2
 	  phi(i,j) = (cof(i,j,6) -
@@ -1584,9 +1775,14 @@ c
       end
 
       subroutine slxmh2(nx,ny,phi,cof,tx,sum)
+          !dir$ optimize:3
+          !dir$ attributes code_align : 32 :: slxmh2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: slxmh2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: slxmh2
 c
 c     line relaxation in the x direction (periodic or nonperiodic)
 c
+      use omp_lib
       implicit none
       integer nx,ny,i,ib,j
       integer intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
@@ -1594,7 +1790,8 @@ c
      +             kcycle,iprer,ipost,intpol,kps
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+     !dir$ attributes align : 64 :: /imud2/
       real phi(0:nx+1,0:ny+1),cof(nx,ny,6),tx(nx,ny,*),sum(ny)
 c
 c     replace line x with point gauss-seidel if
@@ -1618,11 +1815,16 @@ c
 c
 c     x direction not periodic
 c
-!$OMP PARALLEL DO SHARED(cof,phi,tx,nx,ny) PRIVATE(i,ib,j)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(cof,phi,tx,nx,ny) PRIVATE(i,ib,j)
 c
 c     sweep odd j lines
 c
-	do j=1,ny,2
+         do j=1,ny,2
+             !dir$ assume_aligned cof:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
 	  do i=1,nx
 	    phi(i,j)=cof(i,j,6)-cof(i,j,3)*phi(i,j-1)-cof(i,j,4)*
      +               phi(i,j+1)
@@ -1645,8 +1847,13 @@ c
 c
 c     sweep even j lines forward and back
 c
-!$OMP PARALLEL DO SHARED(cof,phi,tx,nx,ny) PRIVATE(i,j,ib)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(cof,phi,tx,nx,ny) PRIVATE(i,j,ib)
 	do j=2,ny,2
+            !dir$ assume_aligned cof:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
 	  do i=1,nx
 	    phi(i,j)=cof(i,j,6)-cof(i,j,3)*phi(i,j-1)-cof(i,j,4)*
      +               phi(i,j+1)
@@ -1655,6 +1862,11 @@ c
 	    phi(i,j) = phi(i,j)-tx(i-1,j,1)*phi(i-1,j)
 	  end do
 	  phi(nx,j) = phi(nx,j)/tx(nx,j,2)
+           !dir$ assume_aligned tx:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
 	  do ib=2,nx
 	    i = nx-ib+1
 	    phi(i,j) = (phi(i,j)-tx(i,j,3)*phi(i+1,j))/tx(i,j,2)
@@ -1672,8 +1884,13 @@ c
 c
 c      sweep odd lines forward and back
 c
-!$OMP PARALLEL DO SHARED(sum,cof,phi,tx,nx,ny) PRIVATE(i,j,ib)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(sum,cof,phi,tx,nx,ny) PRIVATE(i,j,ib)
 	do j=1,ny,2
+            !dir$ assume_aligned cof:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
 	  do i=1,nx-1
 	    phi(i,j)=cof(i,j,6)-cof(i,j,3)*phi(i,j-1)-cof(i,j,4)*
      +               phi(i,j+1)
@@ -1682,7 +1899,13 @@ c
 c     forward sweep
 	  do i=2,nx-2
 	    phi(i,j) = phi(i,j)-tx(i,j,1)*phi(i-1,j)
-	  end do
+         end do
+         !dir$ assume_aligned sum:64,tx:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(+:sum)
 	  do i=1,nx-2
 	    sum(j) = sum(j)+tx(i,j,5)*phi(i,j)
 	  end do
@@ -1710,8 +1933,13 @@ c
 c
 c     sweep even j lines
 c
-!$OMP PARALLEL DO SHARED(sum,cof,phi,tx,nx,ny) PRIVATE(i,j,ib)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(sum,cof,phi,tx,nx,ny) PRIVATE(i,j,ib)
 	do j=2,ny,2
+            !dir$ assume_aligned cof:64,phi:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
 	  do i=1,nx-1
 	    phi(i,j)=cof(i,j,6)-cof(i,j,3)*phi(i,j-1)-cof(i,j,4)*
      +               phi(i,j+1)
@@ -1721,7 +1949,13 @@ c     forward sweep
 c
 	  do i=2,nx-2
 	    phi(i,j) = phi(i,j)-tx(i,j,1)*phi(i-1,j)
-	  end do
+         end do
+        !dir$ assume_aligned sum:64,phi:64,tx:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(+:sum)
 	  do i=1,nx-2
 	    sum(j) = sum(j)+tx(i,j,5)*phi(i,j)
 	  end do
@@ -1761,6 +1995,11 @@ c
       end
 
       subroutine slymh2(nx,ny,phi,cof,ty,sum)
+        !dir$ optimize:3
+          !dir$ attributes code_align : 32 :: slymh2
+          !dir$ attributes optimization_parameter: 'target_arch=skylake-avx512' :: slymh2
+          !dir$ attributes optimization_parameter: 'g2s=on' :: slymh2
+      use omp_lib
       implicit none
       integer nx,ny,i,j,jb
       integer intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
@@ -1768,7 +2007,8 @@ c
      +             kcycle,iprer,ipost,intpol,kps
       common/imud2/intl,nxa,nxb,nyc,nyd,ixp,jyq,iex,jey,nfx,nfy,iguess,
      +             maxcy,method,nwork,lwork,itero,ngrid,klevel,kcur,
-     +             kcycle,iprer,ipost,intpol,kps
+     +     kcycle,iprer,ipost,intpol,kps
+      !dir$ attributes align : 64 :: /imud2/
       real phi(0:nx+1,0:ny+1),cof(nx,ny,6),ty(ny,nx,*),sum(nx)
 c
 c     replace line y with point gauss-seidel if
@@ -1793,7 +2033,7 @@ c
 c
 c     y direction not periodic
 c
-!$OMP PARALLEL DO SHARED(cof,phi,ty,nx,ny) PRIVATE(i,j,jb)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(cof,phi,ty,nx,ny) PRIVATE(i,j,jb)
 c
 c     sweep odd x lines
 c
@@ -1805,6 +2045,12 @@ c
 c
 c     forward sweep thru odd x lines
 c
+         !dir$ assume_aligned phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(-:phi)
 	  do j=2,ny
 	    phi(i,j) = phi(i,j)-ty(j-1,i,1)*phi(i,j-1)
 	  end do
@@ -1812,6 +2058,12 @@ c
 c      backward sweep
 c
 	  phi(i,ny) = phi(i,ny)/ty(ny,i,2)
+             !dir$ assume_aligned phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(-:phi)
 	  do jb=2,ny
 	    j = ny-jb+1
 	    phi(i,j) = (phi(i,j)-ty(j,i,3)*phi(i,j+1))/ty(j,i,2)
@@ -1820,12 +2072,18 @@ c
 c
 c     forward sweep even x lines
 c
-!$OMP PARALLEL DO SHARED(cof,phi,ty,nx,ny) PRIVATE(i,j,jb)
+!$OMP PARALLEL DO SCHEDULE(STTAIC,8) SHARED(cof,phi,ty,nx,ny) PRIVATE(i,j,jb)
 	do i=2,nx,2
 	  do j=1,ny
 	    phi(i,j)=cof(i,j,6)-cof(i,j,1)*phi(i-1,j)-cof(i,j,2)*
      +               phi(i+1,j)
-	  end do
+         end do
+             !dir$ assume_aligned phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(-:phi)
 	  do j=2,ny
 	    phi(i,j) = phi(i,j)-ty(j-1,i,1)*phi(i,j-1)
 	  end do
@@ -1833,6 +2091,12 @@ c
 c      backward sweep
 c
 	  phi(i,ny) = phi(i,ny)/ty(ny,i,2)
+              !dir$ assume_aligned phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(-:phi)
 	  do jb=2,ny
 	    j = ny-jb+1
 	    phi(i,j) = (phi(i,j)-ty(j,i,3)*phi(i,j+1))/ty(j,i,2)
@@ -1852,15 +2116,27 @@ c
 c     forward sweep odd x lines
 c
 c
-!$OMP PARALLEL DO SHARED(cof,phi,ty,sum,nx,ny) PRIVATE(i,j,jb)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(cof,phi,ty,sum,nx,ny) PRIVATE(i,j,jb)
 	do i=1,nx,2
 	  do j=1,ny-1
 	    phi(i,j)=cof(i,j,6)-cof(i,j,1)*phi(i-1,j)-cof(i,j,2)*
      +               phi(i+1,j)
-	  end do
+         end do
+            !dir$ assume_aligned phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(-:phi)
 	  do j=2,ny-2
 	    phi(i,j) = phi(i,j)-ty(j,i,1)*phi(i,j-1)
-	  end do
+         end do
+             !dir$ assume_aligned sum:64,phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(+:sum)
 	  do j=1,ny-2
 	    sum(i) = sum(i)+ty(j,i,5)*phi(i,j)
 	  end do
@@ -1870,7 +2146,8 @@ c     backward sweep
 c
 	  phi(i,ny-1) = phi(i,ny-1)/ty(ny-1,i,2)
 	  phi(i,ny-2) = (phi(i,ny-2)-ty(ny-2,i,4)*phi(i,ny-1))/
-     +                   ty(ny-2,i,2)
+     +         ty(ny-2,i,2)
+           
 	  do jb=4,ny
 	    j = ny-jb+1
 	    phi(i,j) = (phi(i,j)-ty(j,i,3)*phi(i,j+1)-ty(j,i,4)*
@@ -1889,16 +2166,28 @@ c
 c     forward sweep even x lines
 c
 c
-!$OMP PARALLEL DO SHARED(sum,cof,phi,ty,nx,ny) PRIVATE(i,j,jb)
+!$OMP PARALLEL DO SCHEDULE(STATIC,8) SHARED(sum,cof,phi,ty,nx,ny) PRIVATE(i,j,jb)
 	do i=2,nx,2
 	  do j=1,ny-1
 	    phi(i,j)=cof(i,j,6)-cof(i,j,1)*phi(i-1,j)-cof(i,j,2)*
      +               phi(i+1,j)
 
-	  end do
+         end do
+             !dir$ assume_aligned phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(-:phi)
 	  do j=2,ny-2
 	    phi(i,j) = phi(i,j)-ty(j,i,1)*phi(i,j-1)
-	  end do
+         end do
+             !dir$ assume_aligned sum:64,phi:64,ty:64
+        !dir$ ivdep
+        !dir$ vector aligned
+        !dir$ vector vectorlength(4)
+        !dir$ vector always
+          !$omp simd reduction(+:sum)
 	  do j=1,ny-2
 	    sum(i) = sum(i)+ty(j,i,5)*phi(i,j)
 	  end do
@@ -1908,7 +2197,8 @@ c     backward sweep
 c
 	  phi(i,ny-1) = phi(i,ny-1)/ty(ny-1,i,2)
 	  phi(i,ny-2) = (phi(i,ny-2)-ty(ny-2,i,4)*phi(i,ny-1))/
-     +                   ty(ny-2,i,2)
+     +         ty(ny-2,i,2)
+           
 	  do jb=4,ny
 	    j = ny-jb+1
 	    phi(i,j) = (phi(i,j)-ty(j,i,3)*phi(i,j+1)-ty(j,i,4)*
