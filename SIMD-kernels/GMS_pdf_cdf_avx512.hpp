@@ -2747,8 +2747,509 @@ namespace gms {
 			   return (pdf);
 		   }
 
+/*
+!*****************************************************************************80
+!
+!! VON_MISES_SAMPLE samples the von Mises PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    07 March 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    Donald Best, Nicholas Fisher,
+!    Efficient Simulation of the von Mises Distribution,
+!    Applied Statistics,
+!    Volume 28, Number 2, pages 152-157.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, a parameter of the PDF.
+!    A is the preferred direction, in radians.
+!    -PI <= A <= PI.
+!
+!    Input, real ( kind = 8 ) B, a parameter of the PDF.
+!    B measures the "concentration" of the distribution around the
+!    angle A.  B = 0 corresponds to a uniform distribution
+!    (no concentration).  Higher values of B cause greater concentration
+!    of probability near A.
+!    0.0D+00 <= B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF.
+	              
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+                      von_misses_sample_zmm8r8(const __m512d a,
+		                               const __m512d b) {
+
+                          const __m512d  pi   = _mm512_set1_pd(3.14159265358979323846264338328);
+			  const __m512d  _1   = _mm512_set1_pd(1.0);
+			  const __m512d  _2   = _mm512_set1_pd(2.0);
+			  const __m512d  _4   = _mm512_set1_pd(4.0);
+			  const __m512d  _1_2 = _mm512_set1_pd(0.5);
+			  __m512d c,f,rho,tau,u1,r;
+			  __m512d u2,u3,x,z;
+			  __m512d t0,t1,t2;
+			  svrng_engine_t engine;
+			  svrng_distribution_t uniform;
+			  uint32_t seed    = 0U;
+			  int32_t result   = -9999;
+			  int32_t err      = -9999;
+			  result           = _rdrand32_step(&seed);
+			  if(!result) seed = 1563548129U;
+			  engine           = svrng_new_mt19937_engine(seed);
+			  err              = svrng_get_status();
+			  if(err!=SVRNG_STATUS_OK) {
+                             const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			     return (nan);
+			  }
+			  uniform             = svrng_new_uniform_distribution_double(0.0,1.0);
+			  t0                  = _mm512_fmadd_pd(_4,_mm512_mul_pd(b,b),_1);
+			  tau                 = _mm512_add_pd(_1,_mm512_sqrt_pd(t0));
+			  t1                  = _mm512_add_pd(b,b);
+			  rho                 = _mm512_div_pd(_mm512_sub_pd(tau,
+			                                                _mm512_sqrt_pd(_mm512_add_pd(tau,tau))),t1);
+			  t2                  = _mm512_fmadd_pd(rho,rho,_1);
+			  r                   = _mm512_div_pd(t2,_mm512_add_pd(rho,rho));
+            
+ 			 while(true) {
+                               
+                              const double * __restrict ptr = (const double*)(&svrng_generate8_double(engine,uniform));
+                              u1                            = _mm512_loadu_pd(&ptr[0]);
+#if (USE_SLEEF_LIB) == 1
+			      z                             = xcos(_mm512_mul_pd(pi,u1));
+#else
+                              z                             = _mm512_cos_pd(_mm512_mul_pd(pi,u1));
+#endif
+                              f                             = _mm512_div_pd(_mm512_fmadd_pd(r,z,_1),
+			                                                    _mm512_add_pd(r,z));
+			      c                             = _mm512_mul_pd(b,_mm512_sub_pd(r,f));
+			      t0                            = _mm512_mul_pd(c,_mm512_sub_pd(_2,c));
+			                       
+			      if(_mm512_cmp_mask_pd(u2,t0,_CMP_LT_OQ)) break;
+			      t1                            = _mm512_add_pd(_mm512_log_pd(
+			                                                  _mm512_div_pd(c,u2)),_1);
+			      if(_mm512_cmp_mask_pd(c,t1,_CMP_LE_OQ)) break;
+			 }
+			 const double * __restrict ptr2 =
+			                    (const double*)(&svrng_generate8_double(engine,uniform));
+			 u3                             = _mm512_loadu_pd(&ptr2[0]);
+		         t2                             = zmm8r8_sign_zmm8r8(_1,_mm512_sub_pd(u3,_1_2));
+			 x                              = _mm512_fmadd_pd(t2,_mm512_acos_pd(f),a);
+			 svrng_delete_engine(engine);
+			 return (x)
+		   }
+
 
 		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+                      von_misses_sample_zmm16r4(const __m512 a,
+		                                const __m512 b) {
+
+                          const __m512   pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+			  const __m512   _1   = _mm512_set1_ps(1.0f);
+			  const __m512  _2    = _mm512_set1_ps(2.0f);
+			  const __m512  _4    = _mm512_set1_ps(4.0f);
+			  const __m512  _1_2  = _mm512_set1_ps(0.5f);
+			  __m512 c,f,rho,tau,u1,r;
+			  __m512 u2,u3,x,z;
+			  __m512 t0,t1,t2;
+			  svrng_engine_t engine;
+			  svrng_distribution_t uniform;
+			  uint32_t seed    = 0U;
+			  int32_t result   = -9999;
+			  int32_t err      = -9999;
+			  result           = _rdrand32_step(&seed);
+			  if(!result) seed = 1563548129U;
+			  engine           = svrng_new_mt19937_engine(seed);
+			  err              = svrng_get_status();
+			  if(err!=SVRNG_STATUS_OK) {
+                             const __m512 nan = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			     return (nan);
+			  }
+			  uniform             = svrng_new_uniform_distribution_float(0.0f,1.0f);
+			  t0                  = _mm512_fmadd_ps(_4,_mm512_mul_ps(b,b),_1);
+			  tau                 = _mm512_add_ps(_1,_mm512_sqrt_ps(t0));
+			  t1                  = _mm512_add_ps(b,b);
+			  rho                 = _mm512_div_ps(_mm512_sub_ps(tau,
+			                                                _mm512_sqrt_ps(_mm512_add_ps(tau,tau))),t1);
+			  t2                  = _mm512_fmadd_ps(rho,rho,_1);
+			  r                   = _mm512_div_ps(t2,_mm512_add_ps(rho,rho));
+            
+ 			 while(true) {
+                               
+                              const float * __restrict ptr = (const float*)(&svrng_generate16_float(engine,uniform));
+                              u1                            = _mm512_loadu_ps(&ptr[0]);
+#if (USE_SLEEF_LIB) == 1
+			      z                             = xcosf(_mm512_mul_ps(pi,u1));
+#else
+                              z                             = _mm512_cos_ps(_mm512_mul_ps(pi,u1));
+#endif
+                              f                             = _mm512_div_ps(_mm512_fmadd_ps(r,z,_1),
+			                                                    _mm512_add_ps(r,z));
+			      c                             = _mm512_mul_ps(b,_mm512_sub_ps(r,f));
+			      t0                            = _mm512_mul_ps(c,_mm512_sub_ps(_2,c));
+			                       
+			      if(_mm512_cmp_mask_ps(u2,t0,_CMP_LT_OQ)) break;
+			      t1                            = _mm512_add_ps(_mm512_log_ps(
+			                                                  _mm512_div_ps(c,u2)),_1);
+			      if(_mm512_cmp_mask_ps(c,t1,_CMP_LE_OQ)) break;
+			 }
+			 const float * __restrict ptr2 =
+			                    (const float*)(&svrng_generate16_float(engine,uniform));
+			 u3                             = _mm512_loadu_ps(&ptr2[0]);
+		         t2                             = zmm16r4_sign_zmm16r4(_1,_mm512_sub_ps(u3,_1_2));
+			 x                              = _mm512_fmadd_ps(t2,_mm512_acos_ps(f),a);
+			 svrng_delete_engine(engine);
+			 return (x)
+		   }
+
+/*
+!*****************************************************************************80
+!
+!! RAYLEIGH_PDF evaluates the Rayleigh PDF.
+!
+!  Discussion:
+!
+!    PDF(A;X) = ( X / A^2 ) * EXP ( - X^2 / ( 2 * A^2 ) )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    15 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    0.0D+00 <= X
+!
+!    Input, real ( kind = 8 ) A, the parameter of the PDF.
+!    0 < A.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+                      
+*/
+
+
+                       __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+		      rayleigh_pdf_zmm8r8(const __m512d x,
+		                          const __m512d a) {
+
+                           const __m512d  _0 = _mm512_setzero_pd();
+			   __m512d t0,t1,t2,t3,pdf;
+			   const __mmask8 m  = _mm512_cmp_pd_mask(x,_0,_CMP_LT_OQ);
+			   t0                = _mm512_mul_pd(a,a);
+			   t1                = zmm8r8_negate(_mm512_div_pd(_mm512_mul_pd(x,x),
+			                                                   _mm512_add_pd(t0,t0)));
+			   t2                = _mm512_div_pd(x,t0);
+#if (USE_SLEEF_LIB) == 1
+                           t3               = _mm512_mul_pd(t2,xexp(t1));
+#else
+			   t3               = _mm512_mul_pd(t2,_mm512_exp_pd(t1));
+#endif
+                           pdf              = _mm512_mask_blend_pd(m,t3,_0);
+                           return (pdf);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+		      rayleigh_pdf_zmm16r4(const __m512 x,
+		                           const __m512 a) {
+
+                           const __m512  _0 = _mm512_setzero_ps();
+			   __m512 t0,t1,t2t3,pdf;
+			   const __mmask16 m  = _mm512_cmp_ps_mask(x,_0,_CMP_LT_OQ);
+			   t0                = _mm512_mul_ps(a,a);
+			   t1                = zmm16r4_negate(_mm512_div_ps(_mm512_mul_ps(x,x),
+			                                                   _mm512_add_ps(t0,t0)));
+			   t2                = _mm512_div_ps(x,t0);
+#if (USE_SLEEF_LIB) == 1
+                           t3                = _mm512_mul_ps(t2,xexpf(t1));
+#else
+			   t3                = _mm512_mul_ps(t2,_mm512_exp_ps(t1));
+#endif
+                           pdf               = _mm512_mask_blend_ps(m,_t3,_0);
+                           return (pdf);
+		     }
+
+/*
+!*****************************************************************************80
+!
+!! RAYLEIGH_MEAN returns the mean of the Rayleigh PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    16 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, the parameter of the PDF.
+!    0.0D+00 < A.
+!
+!    Output, real ( kind = 8 ) MEAN, the mean of the PDF.		     
+*/
+
+
+                      
+      		       __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+		      rayleigh_mean_zmm8r8(const __m512d a) {
+
+                          const __m512d hpi =  _mm512_set1_pd(0.5*3.14159265358979323846264338328);
+			  __m512d mean;
+			  mean              =  _mm512_mul_pd(a,_mm512_sqrt_pd(hpi));
+			  return (mean);
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+		      rayleigh_mean_zmmr16r4(const __m512d a) {
+
+                          const __m512 hpi =  _mm512_set1_ps(0.5f*3.14159265358979323846264338328f);
+			  __m512 mean;
+			  mean              =  _mm512_mul_ps(a,_mm512_sqrt_ps(hpi));
+			  return (mean);
+		   }
+
+
+/*
+!*****************************************************************************80
+!
+!! RAYLEIGH_CDF_INV inverts the Rayleigh CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    16 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, the parameter of the PDF.
+!    0.0D+00 < A.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument.
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+		      rayleigh_invcdf_zmm8r8(const __m512d cdf,
+		                             const __m512d a) {
+
+			 const __m512d _0 = _mm512_setzero_pd();
+			 const __m512d _1 = _mm512_setzero_pd(1.0);
+			 const __m512d n2 = _mm512_setzero_pd(-2.0);
+			 __m512d inv,t0,t1,;
+                         if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			    __builtin_expect(_mm512_cmp_pd_mask(_1,cdf,_CMP_LT_OQ),0)) {return;}
+			 t0  = _mm512_log_pd(_mm512_sub_pd(_1,cdf));
+			 t1  = _mm512_mul_pd(_2,_mm512_mul_pd(a,a));
+                         inv = _mm512_sqrt_pd(_mm512_mul_pd(t0,t1));
+			 return (inv);
+			   
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+		      rayleigh_invcdf_zmm16r4(const __m512 cdf,
+		                             const __m512 a) {
+
+			 const __m512 _0 = _mm512_setzero_ps();
+			 const __m512 _1 = _mm512_setzero_ps(1.0f);
+			 const __m512 n2 = _mm512_setzero_ps(-2.0f);
+			 __m512 inv,t0,t1,;
+                         if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			    __builtin_expect(_mm512_cmp_ps_mask(_1,cdf,_CMP_LT_OQ),0)) {return;}
+			 t0  = _mm512_log_ps(_mm512_sub_ps(_1,cdf));
+			 t1  = _mm512_mul_ps(_2,_mm512_mul_ps(a,a));
+                         inv = _mm512_sqrt_ps(_mm512_mul_ps(t0,t1));
+			 return (inv);
+			   
+		     }
+
+
+/*
+!*****************************************************************************80
+!
+!! RAYLEIGH_CDF evaluates the Rayleigh CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    16 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!    0.0D+00 <= X.
+!
+!    Input, real ( kind = 8 ) A, the parameter of the PDF.
+!    0.0D+00 < A.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+*/
+
+
+                       __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+		      rayleigh_cdf_zmm8r8(const __m512d x,
+		                          const __m512d a) {
+
+                         const __m512d _0 = _mm512_setzero_pd();
+			 const __m512d _1 = _mm512_setzero_pd(1.0);
+			 __m512d cdf,t0,t1;
+			 t0              = _mm512_mul_pd(_2,_mm512_mul_pd(a,a));
+			 t1              = zmm8r8_negate(_mm512_mul_pd(x,x));
+#if (USE_SLEEF_LIB) == 1
+                         cdf             = _mm512_sub_pd(_1,xexp(_mm512_div_pd(t1,t0)));
+			                            
+#else
+			 cdf             = _mm512_sub_pd(_1,
+			                             _mm512_exp_pd(_mm512_div_pd(t1,t0)));
+#endif
+                         return (cdf);
+		    }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+		      rayleigh_cdf_zmm16r4(const __m512 x,
+		                           const __m512 a) {
+
+                         const __m512 _0 = _mm512_setzero_ps();
+			 const __m512 _1 = _mm512_setzero_ps(1.0f);
+			 __m512 cdf,t0,t1;
+			 t0              = _mm512_mul_pd(_2,_mm512_mul_ps(a,a));
+			 t1              = zmm16r4_negate(_mm512_mul_ps(x,x));
+#if (USE_SLEEF_LIB) == 1
+                         cdf             = _mm512_sub_ps(_1,xexpf(_mm512_div_ps(t1,t0)));
+			                            
+#else
+			 cdf             = _mm512_sub_ps(_1,
+			                             _mm512_exp_ps(_mm512_div_ps(t1,t0)));
+#endif
+                         return (cdf);
+		    }
+
+
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+		      rayleigh_sample_zmm8r8(const __m512d rand,
+		                             const __m512d a) {
+
+                          return (rayleigh_invcdf_zmm8r8(rand,a));
+		     }
+
+
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+		      rayleigh_sample_zmm16r4(const __m512 rand,
+		                             const __m512 a) {
+
+                          return (rayleigh_invcdf_zmm16r4(rand,a));
+		     }
+
 
 
       } //math
