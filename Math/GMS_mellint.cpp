@@ -120,7 +120,7 @@ mellint_dqagp_omp(double(*re_f)(double t, void * __restrict user_data), // Melli
       	for(int32_t i = 0; i < npts; ++i) {
             re = dqagp(re_f,a,b,nsng,sng,epsabs,epsrel,&reabser[i],
 	               &reneval[i],&reier[i],&input[i]);
-	    im = dqagp(re_f,im_f,a,b,nsng,sng,epsabs,epsrel,&imabser[i],
+	    im = dqagp(re_f,a,b,nsng,sng,epsabs,epsrel,&imabser[i],
 	               &imneval[i],&imier[i],&input[i]);
 	    output[i] = re+I*im;
 	}
