@@ -13,10 +13,7 @@
 **********************************************************************************
 */
 
-//*********************************************************************************************************
-// Changes:
-// Argument 'input' was removed: //void * __restrict input, // values of complex power argument ,i.e. s
-//********************************************************************************************************
+
 bool
 gms::math::
 laplacet_dqagi_omp(double(*re_f)(double t, void * __restrict user_data),
@@ -26,6 +23,7 @@ laplacet_dqagi_omp(double(*re_f)(double t, void * __restrict user_data),
 		   const double epsabs,
 		   const double epsrel,
 		   const QuadErrorParams &params,
+		   void * __restrict input, // values of complex power argument ,i.e. s
                    const int32_t npts,
 		   c8 * __restrict output) {
 		  
@@ -46,9 +44,9 @@ laplacet_dqagi_omp(double(*re_f)(double t, void * __restrict user_data),
 	firstprivate(re,im) private(i)
       for(int32_t i = 0; i < npts; ++i) {
           re = dqagi(re_f,bound,inf,epsabs,epsrel,&reabser[i],
-	             &reneval[i],&reier[i]); //&input[i]) <---- was removed
+	             &reneval[i],&reier[i],&input[i]); 
 	  im = dqagi(im_f,bound,inf,epsabs,epsrel,&imabser[i],
-	             &imneval[i],&imier[i]); //&input[i]) <---- was removed
+	             &imneval[i],&imier[i],&input[i]); 
 	  output[i] = re+I*im;
       }
       return (true);
@@ -65,6 +63,7 @@ laplacet_dqage_omp(double(*re_f)(double t, void * __restrict user_data), // Lapl
 		  const double epsrel,                    // relative accuracy requested.
 		  const int32_t irule,                    // integration rule to be used
 		  const QuadErrorParams & params,          // DQAGE aggregated per real and imaginary integrator error results
+		  void * __restrict input, // values of complex power argument ,i.e. s 
 		  const int npts,                         // Mellin number of points
 		  c8 *   __restrict output) {             // Result of Mellin Transform
       if(__builtin_expect(!mp.is_allocated,0)) { return (false);}
@@ -85,9 +84,9 @@ laplacet_dqage_omp(double(*re_f)(double t, void * __restrict user_data), // Lapl
 	firstprivate(re,im) private(i)
 	for(int32_t i = 0; i < npts; ++i) {
             re = dqage(re_f,a,b,epsabs,epsrel,irule,&reabser[i],
-	               &reneval[i],&reier[i],&relast[i]);
+	               &reneval[i],&reier[i],&relast[i],&input[i]);
 	    im = dqage(im_f,a,b,epsabs,epsrel,irule,&imabser[i],
-	               &imneval[i],&imier[i],imlast[i]);
+	               &imneval[i],&imier[i],&imlast[i],&input[i]);
 	    output[i] = re+I*im;
 	}
 	return (true);
@@ -105,6 +104,7 @@ laplacet_dqagp_omp(double(*re_f)(double t, void * __restrict user_data), // Lapl
                   const double epsabs,                         // absolute accuracy requested.
 		  const double epsrel,                         // relative accuracy requested.
 		  const QuadErrorParams &params,               // DQAGE aggregated per real and imaginary integrator error results
+		   void * __restrict input, // values of complex power argument ,i.e. s
 		  const int npts,                            // Laplace number of points
 		  c8 *   __restrict output) {
 
@@ -124,9 +124,9 @@ laplacet_dqagp_omp(double(*re_f)(double t, void * __restrict user_data), // Lapl
 	firstprivate(re,im) private(i)
       	for(int32_t i = 0; i < npts; ++i) {
             re = dqagp(re_f,a,b,nsng,sng,epsabs,epsrel,&reabser[i],
-	               &reneval[i],&reier[i]);
+	               &reneval[i],&reier[i],&input[i]);
 	    im = dqagp(re_f,im_f,a,b,nsng,sng,epsabs,epsrel,&imabser[i],
-	               &imneval[i],&imier[i]);
+	               &imneval[i],&imier[i],&input[i]);
 	    output[i] = re+I*im;
 	}
 	return (true);
@@ -143,6 +143,7 @@ laplacet_dqagi(double(*re_f)(double t, void * __restrict user_data),
 		  const double epsabs,
 		  const double epsrel,
 		  const QuadErrorParams &params,
+	          void * __restrict input, // values of complex power argument ,i.e. s
 		  const int32_t npts,
 		  c8 * __restrict output) {
 		  
@@ -159,9 +160,9 @@ laplacet_dqagi(double(*re_f)(double t, void * __restrict user_data),
 
       for(int32_t i = 0; i < npts; ++i) {
           re = dqagi(re_f,bound,inf,epsabs,epsrel,&reabser[i],
-	             &reneval[i],&reier[i]);
+	             &reneval[i],&reier[i],&input[i]);
 	  im = dqagi(im_f,bound,inf,epsabs,epsrel,&imabser[i],
-	             &imneval[i],&imier[i]);
+	             &imneval[i],&imier[i],&input[i]);
 	  output[i] = re+I*im;
       }
       return (true);
@@ -178,6 +179,7 @@ laplacet_dqage(double(*re_f)(double t, void * __restrict user_data), // Laplace 
 		  const double epsrel,                    // relative accuracy requested.
 		  const int32_t irule,                    // integration rule to be used
 		  const QuadErrorParams & params          // DQAGE aggregated per real and imaginary integrator error results
+	          void * __restrict input, // values of complex power argument ,i.e. s
 		  const int npts,                         // Laplace number of points
 		  c8 *   __restrict output) {             // Result of Laplace Transform
       if(__builtin_expect(!mp.is_allocated,0)) { return (false);}
@@ -194,9 +196,9 @@ laplacet_dqage(double(*re_f)(double t, void * __restrict user_data), // Laplace 
       double im = 0.0;
       for(int32_t i = 0; i < npts; ++i) {
             re = dqage(re_f,a,b,epsabs,epsrel,irule,&reabser[i],
-	               &reneval[i],&reier[i],&relast[i]);
+	               &reneval[i],&reier[i],&relast[i],&input[i]);
 	    im = dqage(im_f,a,b,epsabs,epsrel,irule,&imabser[i],
-	               &imneval[i],&imier[i],imlast[i]);
+	               &imneval[i],&imier[i],&imlast[i],&input[i]);
 	    output[i] = re+I*im;
 	}
 	return (true);
@@ -214,6 +216,7 @@ laplacet_dqagp(double(*re_f)(double t, void * __restrict user_data), // Laplace 
                   const double epsabs,                         // absolute accuracy requested.
 		  const double epsrel,                         // relative accuracy requested.
 		  const QuadErrorParams &params               // DQAGE aggregated per real and imaginary integrator error results
+	          void * __restrict input, // values of complex power argument ,i.e. s
 		  const int npts,                            // Laplace number of points
 		  c8 *   __restrict output) {
 
@@ -229,9 +232,9 @@ laplacet_dqagp(double(*re_f)(double t, void * __restrict user_data), // Laplace 
       double im = 0.0;
       for(int32_t i = 0; i < npts; ++i) {
             re = dqagp(re_f,a,b,nsng,sng,epsabs,epsrel,&reabser[i],
-	               &reneval[i],&reier[i]);
+	               &reneval[i],&reier[i],&input[i]);
 	    im = dqagp(re_f,im_f,a,b,nsng,sng,epsabs,epsrel,&imabser[i],
-	               &imneval[i],&imier[i]);
+	               &imneval[i],&imier[i],&input[i]);
 	    output[i] = re+I*im;
 	}
 	return (true);
