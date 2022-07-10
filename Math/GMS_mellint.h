@@ -86,7 +86,6 @@ namespace gms {
                 }
             */
 
-
 	  // OpenMP versions
 
 	  bool
@@ -97,8 +96,8 @@ namespace gms {
 			    const double,                        // DQAGI epsabs argument
 			    const double,                        // DQAGI epsrel argument
 			    const QuadErrorParams &              // DQAGI aggregated per real and imaginary integrator error results
-			    void * __restrict,                   // DQAGI user_data, i.e. complex vector of 's' values
-			    const int,                           // Mellin number of points
+                            void * __restrict,                   // DQAGI user_data, i.e. complex vector of 's' values
+   			    const int,                           // Mellin number of points
 			    c8 *   __restrict)                   // Mellin output complex vector transform data
                                                   __ATTR_HOT__
 						  __ATTR_ALIGN__(32);
@@ -113,8 +112,8 @@ namespace gms {
 			    const double,                         // relative accuracy requested.
 			    const int32_t,                        // integration rule to be used
 			    const QuadErrorParams &               // DQAGE aggregated per real and imaginary integrator error results
-			    void * __restrict,                    // DQAGE user_data, i.e. complex vector of 's' values
-			    const int,                            // Mellin number of points
+                            void * __restrict,                   // DQAGI user_data, i.e. complex vector of 's' values
+	                    const int,                            // Mellin number of points
 			    c8 *   __restrict)                    // Mellin output complex vector transform data
                                                   __ATTR_HOT__
 						  __ATTR_ALIGN__(32);
@@ -129,7 +128,7 @@ namespace gms {
                             const double,                         // absolute accuracy requested.
 			    const double,                         // relative accuracy requested.
 			    const QuadErrorParams &               // DQAGE aggregated per real and imaginary integrator error results
-			    void * __restrict,                    // DQAGE user_data, i.e. complex vector of 's' values
+                            void * __restrict,                   // DQAGI user_data, i.e. complex vector of 's' values
 			    const int,                            // Mellin number of points
 			    c8 *   __restrict)
 			                           __ATTR_HOT__
@@ -144,7 +143,7 @@ namespace gms {
 			    const double,                        // DQAGI epsabs argument
 			    const double,                        // DQAGI epsrel argument
 			    const QuadErrorParams &              // DQAGI aggregated per real and imaginary integrator error results
-			    void * __restrict,                   // DQAGI user_data, i.e. complex vector of 's' values
+			     void * __restrict,                   // DQAGI user_data, i.e. complex vector of 's' values
 			    const int,                           // Mellin number of points
 			    c8 *   __restrict)                   // Mellin output complex vector transform data
                                                   __ATTR_HOT__
@@ -160,7 +159,7 @@ namespace gms {
 			    const double,                         // relative accuracy requested.
 			    const int32_t,                        // integration rule to be used
 			    const QuadErrorParams &               // DQAGE aggregated per real and imaginary integrator error results
-			    void * __restrict,                    // DQAGE user_data, i.e. complex vector of 's' values
+			     void * __restrict,                    // DQAGE user_data, i.e. complex vector of 's' values
 			    const int,                            // Mellin number of points
 			    c8 *   __restrict)                    // Mellin output complex vector transform data
                                                   __ATTR_HOT__
@@ -197,4 +196,4 @@ namespace gms {
 
 
 
-#endif /*__GMS_MELLINT_OMP_H__*/
+
