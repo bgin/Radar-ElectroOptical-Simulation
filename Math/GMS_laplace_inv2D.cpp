@@ -160,7 +160,7 @@ gaver_stehfest_coff_r8_1(int32_t ncoeff,
      constexpr double ln2 = 0.6931471805599453094172;
      int32_t i,j,k;
      int32_t nx,sx,n;
-     n = coeff+coeff;
+     n = ncoeff+ncoeff;
      nh = n/2;
      const std::size_t len1 = (std::size_t)(n+2);
      const std::size_t len2 = (std::size_t)(n/2-1+2);
