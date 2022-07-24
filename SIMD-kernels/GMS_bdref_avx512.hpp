@@ -485,7 +485,288 @@ c +--------------------------------------------------------------------
 			    return (brdf);
 		    }
 
+#include "GMS_simd_utils.hpp"
 
+		        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m512d
+			brdf_ocean_zmm8r8(const bool do_shadow,
+			                  const __m512d refrac_idx,
+					  const __m512d ws,
+					  const __m512d mu_i,
+					  const __m512d mu_r,
+					  const __m512d dphi) {
+/*
+c +--------------------------------------------------------------------
+c Version 3: 1D Gaussian Rough Ocean BRDF
+c   Input:
+c
+c   mu_i:         absolute cosine of incident polar angle (positive)
+c   mu_r:         absolute cosine of reflected polar angle (positive)
+c   dphi:         relative azimuth (radians) 
+c   do_shadow:    BRDF parameter, open/close shadow effect 
+c   refrac_index: BRDF parameter, refractive index of boundary media (water)
+c   ws:           BRDF parameter, wind speed (m/s)
+c
+c   Output:
+c
+c   brdf:         1D Gaussian Rough Ocean BRDF
+c          
+c +--------------------------------------------------------------------
+*/
+                             const __m512d pi     = _mm512_set1_pd(3.14159265358979323846264338328);
+                             const __m512d _1     = _mm512_set1_pd(1.0);
+			     const __m512d _2     = _mm512_set1_pd(2.0);
+			     const __m512d _4     = _mm512_set1_pd(4.0);
+			     const __m512d _1_2   = _mm512_set1_pd(0.5);
+			     const __m512d c1     = _mm512_set1_pd(0.003);
+			     const __m512d c2     = _mm512_set1_pd(0.00512);
+			     const __m512d muimur = _mm512_add_pd(mu_i,mu_r);
+			     const __m512d cdphi  = _mm512_cos_pd(dphi);
+			     __m512d brdf,shadow;
+			     __m512d t0,t1,t2,t3,sa1,sa2,oct;
+			     __m512d sin_i,sin_r,cos_theta,sigma_sq;
+			     __m512d mu_n_sq,p,n_i,n_t,cos_li,cos_lt;
+			     __m512d sin_li,sin_lt,r_s,r_p,r;
+                             sin_i    = _mm512_sqrt_pd(_mm512_sub_pd(_1,
+			                                     _mm512_mul_pd(mu_i,mu_i)));
+			     n_i      = _1;
+			     sigma_sq = _mm512_fmadd_pd(c2,ws,c1);
+			     n_t      = refrac_idx;
+			     sun_r    = _mm512_sqrt_pd(_mm512_sub_pd(_1,
+			                                     _mm512_mul_pd(mu_r,mu_r)));
+			     cos_theta= _mm512_fmadd_pd(zmm8r8_negate(mu_i),mu_r,
+			                                         _mm512_mul_pd(cdphi,
+								          _mm512_mul_pd(sin_i,sin_r)));
+			     t0       = _mm512_mul_pd(_2,_mm512_sub_pd(_1,cos_theta));
+			     mu_n_sq  = _mm512_div_pd(_mm512_mul_pd(muimur,muimur),t0);
+			     oct      = _mm512_sub_pd(_1,cos_theta); 
+			     t1       = _mm512_div_pd(_1,_mm512_mul_pd(pi,sigma_sq));
+			     sa1      = _mm512_mul_pd(_1_2,oct);
+			     t2       = _mm512_div_pd(_mm512_sub_pd(_1,mu_n_sq),
+			                              _mm512_mul_pd(sigma_sq,mu_n_sq));
+			     sa2      = _mm512_sub_pd(_1,sa1);
+			     p        = _mm512_mul_pd(t1,_mm512_exp_pd(negate_zmm8r8(t2)));
+			     sin_li   = _mm512_sqrt_pd(sa2);
+			     cos_li   = _mm512_sqrt_pd(sa1);
+			     sin_lt   = _mm512_mul_pd(n_i,_mm512_div_pd(sin_li,n_t));
+			     cos_lt   = _mm512_sqrt_pd(_mm512_sub_pd(_1,
+			                                         _mm512_mul_pd(sin_lt,sin_lt)));
+			     t0       = _mm512_mul_pd(n_i,cos_lt);
+			     t1       = _mm512_mul_pd(n_t,cos_li);
+			     t2       = _mm512_mul_pd(n_t,cos_lt);
+			     t3       = _mm512_mul_pd(n_i,cos_li);
+			     r_s      = _mm512_div_pd(_mm512_sub_pd(t3,t2),
+			                              _mm512_add_pd(t3,t2));
+			     r_p      = _mm512_div_pd(_mm512_sub_pd(t1,t0),
+			                              _mm512_add_pd(t0,t1));
+			     r        = _mm512_mul_pd(_1_2,_mm512_fmadd_pd(r_s,r_s,
+			                              _mm512_mul_pd(r_p,r_p)));
+			     t0       = _mm512_mul_pd(p,r);
+			     t1       = _mm512_mul_pd(_mm512_mul_pd(mu_i,mu_r),
+			                              _mm512_mul_pd(mu_n_sq,mu_n_sq));
+			     brdf     = _mm512_div_pd(t0,_mm512_mul_pd(_4,t1));
+			     if(do_shadow) {
+                                t2    = _mm512_div_pd(_1,shadow_eta_zmm8r8(mu_i,sigma_sq,pi));
+				t3    = _mm512_add_pd(shadow_eta_zmm8r8(mu_r,sigma_sq,pi),_1);
+				shadow= _mm512_add_pd(t2,t3);
+				brdf  = _mm512_add_pd(brdf,shadow);
+				return (brdf);
+			     }
+			     return (brdf);                     
+		      }
+
+
+		       __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m512d
+			shadow_eta_zmm8r8(const __m512d cos_theta,
+			                  const __m512d sigma_sq,
+					  const __m512d pi) {
+
+/*
+c +--------------------------------------------------------------------
+c Version 3: shadow effect function
+c            called by OCEABRDF2
+c   Input:
+c
+c   COS_THETA     absolute cosine of incident/reflected polar angle (positive)
+c   SIGMA_SQ      slope variance 
+c   PI            3.141592653... constant
+c
+c   Output:
+c
+c   SHADOW_ETA:   shadow function
+c +--------------------------------------------------------------------
+*/
+
+                              const __m512d  _1  = _mm512_set1_pd(1.0);
+			      const __m512d _1_2 = _mm512_set1_pd(0.5);
+			      const __m512d ssqpi= _mm512_div_pd(sigma_sq,pi);
+			      __m512d seta;
+			      __m512d sin_theta,mu,sigma_sq,term1,term2;
+			      __m512d t0,t1;
+			      sin_theta = _mm512_sqrt_pd(_mm512_sub_pd(_1,
+			                                          _mm512_mul_pd(cos_theta,cos_theta)));
+			      mu        = _mm512_div_pd(cos_theta,sin_theta);
+			      t0        = _mm512_div_pd(_mm512_sqrt_pd(ssqpi),mu);
+			      t1        = _mm512_mul_pd(zmm8r8_negate(mu),
+			                                        _mm512_div_pd(mu,sigma_sq));
+			      term1     = _mm512_mul_pd(t0,_mm512_exp_pd(t1));
+			      term2     = _mm512_erfc_pd(_mm512_div_pd(mu,
+			                                        _mm512_sqrt_pd(sigma_sq)));
+			      seta      = _mm512_mul_pd(_1_2,
+			                              _mm512_sub_pd(term1,term2));
+			      return (seta);
+		       }
+					 
+
+
+		        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m512
+			brdf_ocean_zmm16r4(const bool do_shadow,
+			                  const __m512 refrac_idx,
+					  const __m512 ws,
+					  const __m512 mu_i,
+					  const __m512 mu_r,
+					  const __m512 dphi) {
+/*
+c +--------------------------------------------------------------------
+c Version 3: 1D Gaussian Rough Ocean BRDF
+c   Input:
+c
+c   mu_i:         absolute cosine of incident polar angle (positive)
+c   mu_r:         absolute cosine of reflected polar angle (positive)
+c   dphi:         relative azimuth (radians) 
+c   do_shadow:    BRDF parameter, open/close shadow effect 
+c   refrac_index: BRDF parameter, refractive index of boundary media (water)
+c   ws:           BRDF parameter, wind speed (m/s)
+c
+c   Output:
+c
+c   brdf:         1D Gaussian Rough Ocean BRDF
+c          
+c +--------------------------------------------------------------------
+*/
+                             const __m512 pi     = _mm512_set1_ps(3.14159265358979323846264338328f);
+                             const __m512 _1     = _mm512_set1_ps(1.0f);
+			     const __m512 _2     = _mm512_set1_ps(2.0f);
+			     const __m512 _4     = _mm512_set1_ps(4.0f);
+			     const __m512 _1_2   = _mm512_set1_ps(0.5f);
+			     const __m512 c1     = _mm512_set1_ps(0.003f);
+			     const __m512 c2     = _mm512_set1_ps(0.00512f);
+			     const __m512 muimur = _mm512_add_ps(mu_i,mu_r);
+			     const __m512 cdphi  = _mm512_cos_ps(dphi);
+			     __m512 brdf,shadow;
+			     __m512 t0,t1,t2,t3,sa1,sa2,oct;
+			     __m512 sin_i,sin_r,cos_theta,sigma_sq;
+			     __m512 mu_n_sq,p,n_i,n_t,cos_li,cos_lt;
+			     __m512 sin_li,sin_lt,r_s,r_p,r;
+                             sin_i    = _mm512_sqrt_ps(_mm512_sub_ps(_1,
+			                                     _mm512_mul_ps(mu_i,mu_i)));
+			     n_i      = _1;
+			     sigma_sq = _mm512_fmadd_ps(c2,ws,c1);
+			     n_t      = refrac_idx;
+			     sun_r    = _mm512_sqrt_ps(_mm512_sub_ps(_1,
+			                                     _mm512_mul_ps(mu_r,mu_r)));
+			     cos_theta= _mm512_fmadd_ps(zmm16r4_negate(mu_i),mu_r,
+			                                         _mm512_mul_ps(cdphi,
+								          _mm512_mul_ps(sin_i,sin_r)));
+			     t0       = _mm512_mul_ps(_2,_mm512_sub_ps(_1,cos_theta));
+			     mu_n_sq  = _mm512_div_ps(_mm512_mul_ps(muimur,muimur),t0);
+			     oct      = _mm512_sub_ps(_1,cos_theta); 
+			     t1       = _mm512_div_ps(_1,_mm512_mul_ps(pi,sigma_sq));
+			     sa1      = _mm512_mul_ps(_1_2,oct);
+			     t2       = _mm512_div_ps(_mm512_sub_ps(_1,mu_n_sq),
+			                              _mm512_mul_ps(sigma_sq,mu_n_sq));
+			     sa2      = _mm512_sub_ps(_1,sa1);
+			     p        = _mm512_mul_ps(t1,_mm512_exp_ps(zmm16r4_negate(t2)));
+			     sin_li   = _mm512_sqrt_ps(sa2);
+			     cos_li   = _mm512_sqrt_ps(sa1);
+			     sin_lt   = _mm512_mul_ps(n_i,_mm512_div_ps(sin_li,n_t));
+			     cos_lt   = _mm512_sqrt_ps(_mm512_sub_ps(_1,
+			                                         _mm512_mul_ps(sin_lt,sin_lt)));
+			     t0       = _mm512_mul_ps(n_i,cos_lt);
+			     t1       = _mm512_mul_ps(n_t,cos_li);
+			     t2       = _mm512_mul_ps(n_t,cos_lt);
+			     t3       = _mm512_mul_ps(n_i,cos_li);
+			     r_s      = _mm512_div_ps(_mm512_sub_ps(t3,t2),
+			                              _mm512_add_ps(t3,t2));
+			     r_p      = _mm512_div_ps(_mm512_sub_ps(t1,t0),
+			                              _mm512_add_ps(t0,t1));
+			     r        = _mm512_mul_ps(_1_2,_mm512_fmadd_ps(r_s,r_s,
+			                              _mm512_mul_ps(r_p,r_p)));
+			     t0       = _mm512_mul_ps(p,r);
+			     t1       = _mm512_mul_ps(_mm512_mul_ps(mu_i,mu_r),
+			                              _mm512_mul_ps(mu_n_sq,mu_n_sq));
+			     brdf     = _mm512_div_ps(t0,_mm512_mul_ps(_4,t1));
+			     if(do_shadow) {
+                                t2    = _mm512_div_ps(_1,shadow_eta_zmm16r4(mu_i,sigma_sq,pi));
+				t3    = _mm512_add_ps(shadow_eta_zmm16r4(mu_r,sigma_sq,pi),_1);
+				shadow= _mm512_add_ps(t2,t3);
+				brdf  = _mm512_add_ps(brdf,shadow);
+				return (brdf);
+			     }
+			     return (brdf);                     
+		      }
+
+
+		        __ATTR_ALWAYS_INLINE__
+                        __ATTR_HOT__
+                        __ATTR_ALIGN__(32)
+			__ATTR_VECTORCALL__
+	                static inline
+			__m512
+			shadow_eta_zmm16r4(const __m512 cos_theta,
+			                  const __m512 sigma_sq,
+					  const __m512 pi) {
+
+/*
+c +--------------------------------------------------------------------
+c Version 3: shadow effect function
+c            called by OCEABRDF2
+c   Input:
+c
+c   COS_THETA     absolute cosine of incident/reflected polar angle (positive)
+c   SIGMA_SQ      slope variance 
+c   PI            3.141592653... constant
+c
+c   Output:
+c
+c   SHADOW_ETA:   shadow function
+c +--------------------------------------------------------------------
+*/
+
+                              const __m512  _1  = _mm512_set1_pd(1.0f);
+			      const __m512 _1_2 = _mm512_set1_pd(0.5f);
+			      const __m512 ssqpi= _mm512_div_pd(sigma_sq,pi);
+			      __m512 seta;
+			      __m512 sin_theta,mu,sigma_sq,term1,term2;
+			      __m512 t0,t1;
+			      sin_theta = _mm512_sqrt_ps(_mm512_sub_ps(_1,
+			                                          _mm512_mul_ps(cos_theta,cos_theta)));
+			      mu        = _mm512_div_ps(cos_theta,sin_theta);
+			      t0        = _mm512_div_ps(_mm512_sqrt_ps(ssqpi),mu);
+			      t1        = _mm512_mul_ps(zmm16r4_negate(mu),
+			                                        _mm512_div_ps(mu,sigma_sq));
+			      term1     = _mm512_mul_ps(t0,_mm512_exp_ps(t1));
+			      term2     = _mm512_erfc_ps(_mm512_div_ps(mu,
+			                                        _mm512_sqrt_ps(sigma_sq)));
+			      seta      = _mm512_mul_ps(_1_2,
+			                              _mm512_sub_ps(term1,term2));
+			      return (seta);
+		       }
+					 
 
 
 
