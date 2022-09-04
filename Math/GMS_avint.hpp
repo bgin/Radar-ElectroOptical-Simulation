@@ -107,29 +107,30 @@ namespace gms {
                                     const int32_t n,
                                     const float xlo,
                                     const float xup,
+				    float &ans,
                                     int32_t &ierr)        {
 
                           float a , b , c , ca , cb , cc , fl , fr , r3 , &
                                 rp5 , slope , sum , syl , syl2 , syl3 , syu , &
                                 syu2 , syu3 , term1 , term2 , term3 , x1 , &
-                                x12 , x13 , x2 , x23 , x3, ans;
+                                x12 , x13 , x2 , x23 , x3;
                           int32_t i , inlft , inrt , istart , istop;
                           ierr = 1;
-                          ans = 0.0;
+                          ans = 0.0f;
                           // Error check and trivial cases
                           if(xlo==xup) return;
                           if(xlo>xup) {
                              ierr = 2;
-                             return std::numeric_limits<float>::quiet_NaN();
+                             return;
                           }
                           if(n<2) {
                              ierr = 5;
-                             return std::numeric_limits<float>::quiet_NaN();
+                             return;
                           }
                           for(i = 1; i < n; ++i) {
                                if(x[i]<=x[i-1]) {
                                   ierr = 4;
-                                  return std::numeric_limits<float>::quiet_NaN();
+                                  return;
                                }
                                if(x[i]>xup) break;
                          }
@@ -234,12 +235,13 @@ namespace gms {
                                      const int32_t n,
                                      const double xlo,
                                      const double xup,
+				     double &ans,
                                      int32_t &ierr)        {
 
                           double a , b , c , ca , cb , cc , fl , fr , r3 , &
                                  rp5 , slope , sum , syl , syl2 , syl3 , syu , &
                                  syu2 , syu3 , term1 , term2 , term3 , x1 , &
-                                 x12 , x13 , x2 , x23 , x3, ans;
+                                 x12 , x13 , x2 , x23 , x3;
                           int32_t i , inlft , inrt , istart , istop;
                           ierr = 1;
                           ans = 0.0;
@@ -247,16 +249,16 @@ namespace gms {
                           if(xlo==xup) return;
                           if(xlo>xup) {
                              ierr = 2;
-                             return std::numeric_limits<double>::quiet_NaN();
+                             return;
                           }
                           if(n<2) {
                              ierr = 5;
-                             return std::numeric_limits<double>::quiet_NaN();
+                             return;
                           }
                           for(i = 1; i < n; ++i) {
                                if(x[i]<=x[i-1]) {
                                   ierr = 4;
-                                  return std::numeric_limits<double>::quiet_NaN();
+                                  return;
                                }
                                if(x[i]>xup) break;
                          }
