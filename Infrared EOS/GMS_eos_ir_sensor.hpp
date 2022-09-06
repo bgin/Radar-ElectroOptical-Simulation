@@ -29,11 +29,93 @@ namespace file_version {
 #include <cstdint>
 #include <omp.h>
 #include <cmath>
+#include <limits>
 #include "GMS_config.h"
 
 namespace gms {
 
          namespace eos {
+
+
+
+	      namespace {
+                  // Taken from StackOverflow article.
+		  // https://stackoverflow.com/questions/17333/what-is-the-most-effective-way-for-float-and-double-comparison
+#pragma omp declare simd simdlen(16)
+                  bool approximatelyEqual(const float a,
+		                          const float b,
+					  const float epsilon) {
+			   const float fabsa = std::fabs(a);
+			   const float fabsb = std::fabs(b);
+                           return std::fabs(a - b) <=
+                           ((fabsa < fabsb ? fabsb : fabsa) * epsilon);
+                   }
+#pragma omp declare simd simdlen(8)
+		   bool approximatelyEqual(const double a,
+		                           const double b,
+					   const double epsilon) {
+			   const double fabsa = std::fabs(a);
+			   const double fabsb = std::fabs(b);
+                           return fabs(a - b) <=
+                           ((fabsa < fabsb ? fabsb : fabsa) * epsilon);
+                   }
+#pragma omp declare simd simdlen(16)
+                  bool essentiallyEqual(const float a,
+		                        const float b,
+					const float epsilon) {
+                           const float fabsa = std::fabs(a);
+			   const float fabsb = std::fabs(b);
+                           return fabs(a - b) <=
+			   ((fabsa > fabsb ? fabsb : fabsa) * epsilon);
+                   }
+#pragma omp declare simd simdlen(8)
+                   bool essentiallyEqual(const double a,
+		                         const double b,
+					 const double epsilon) {
+                           const double fabsa = std::fabs(a);
+			   const double fabsb = std::fabs(b);
+                           return fabs(a - b) <=
+			   ((fabsa > fabsb ? fabsb : fabsa) * epsilon);
+                   }
+#pragma omp declare simd simdlen(16)		   
+                  bool definitelyGreaterThan(const float a,
+		                             const float b,
+					     const float epsilon) {
+                           const float fabsa = std::fabs(a);
+			   const float fabsb = std::fabs(b);
+                           return (a - b) >
+			   ((fabsa < fabsb ? fabsb : fabsa) * epsilon);
+		  }
+#pragma omp declare simd simdlen(8)
+		  bool definitelyGreaterThan(const double a,
+		                             const double b,
+					     const double epsilon) {
+                           const double fabsa = std::fabs(a);
+			   const double fabsb = std::fabs(b);
+                           return (a - b) >
+			   ((fabsa < fabsb ? fabsb : fabsa) * epsilon);
+		  }
+#pragma omp declare simd simdlen(16)
+                  bool definitelyLessThan(const float a,
+		                          const float b,
+					  const float epsilon) {
+                           const float fabsa = std::fabs(a);
+			   const float fabsb = std::fabs(b);
+                           return (b - a) >
+			   ((fabsa < fabsb ? fabsb : fabsa) * epsilon);
+                 }
+#pragma omp declare simd simdlen(8)
+		 bool definitelyLessThan( const double a,
+		                          const double b,
+					  const double epsilon) {
+                           const double fabsa = std::fabs(a);
+			   const double fabsb = std::fabs(b);
+                           return (b - a) >
+			   ((fabsa < fabsb ? fabsb : fabsa) * epsilon);
+                 }
+
+
+	    }
 
 
 	      __ATTR_ALWAYS_INLINE__
@@ -453,7 +535,254 @@ namespace gms {
                    Dmin = t0*t1;
 		   return (Dmin);
 	   }
-	  
+
+
+	   //!величина расфокусировки
+           //!Formula 1, p. 59
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float defocus_cof(const float l2,
+	                      const float alpha,
+			      const float O,
+			      const int32_t inf) {
+
+                 float df = 0.0f;
+		 float cos2a,icos;
+		 cos2a = std::cos(alpha+alpha);
+                 icos  = 1.0f/cos2a;
+                 if(inf) 
+                    df    = l2/(icos-1.0f)*O;
+                 else
+                    df    = l2/(icos-1.0f);
+                 return (df);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double defocus_cof(const double l2,
+	                       const double alpha,
+			       const double O,
+			       const int32_t inf) {
+
+                 double df = 0.0;
+		 double cos2a,icos;
+		 cos2a = std::cos(alpha+alpha);
+                 icos  = 1.0/cos2a;
+                 if(inf) 
+                    df    = l2/(icos-1.0)*O;
+                 else
+                    df    = l2/(icos-1.0);
+                 return (df);
+	  }
+
+
+	  //! Диаметр кружка рассеяния р
+          //! Formula 3, p.59
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float circle_dispersion(const float d,
+	                            const float l1,
+				    const float l2,
+				    const float alpha,
+				    const float O,
+				    const int32_t inf) {
+
+                  float rho = 0.0f;
+		  float t0,t1;
+		  t0  = d/(l1+l2);
+                  t1  = defocus_cof(l2,alpha,O,inf);
+                  rho = t0*t1;
+		  return (rho);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double circle_dispersion(const double d,
+	                             const double l1,
+				     const double l2,
+				     const double alpha,
+				     const double O,
+				     const int32_t inf) {
+
+                  double rho = 0.0;
+		  double t0,t1;
+		  t0  = d/(l1+l2);
+                  t1  = defocus_cof(l2,alpha,O,inf);
+                  rho = t0*t1;
+		  return (rho);
+	   }
+
+
+	   //!Formula 2, p. 59
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float circ_dispers_diam(const float l1,
+	                            const float l2,
+				    const float alpha,
+				    const float O,
+				    const int32_t inf) {
+
+                 float ratio = 0.0f;
+		 float t0,t1;
+		 t0    = l1+l2;
+                 t1    = defocus_cos(l2,alpha,O,inf);
+                 ratio = t1/t0;
+		 return (ratio);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double circ_dispers_diam(const double l1,
+	                             const double l2,
+				     const double alpha,
+				     const double O,
+				     const int32_t inf) {
+
+                 double ratio = 0.0;
+		 double t0,t1;
+		 t0    = l1+l2;
+                 t1    = defocus_cos(l2,alpha,O,inf);
+                 ratio = t1/t0;
+		 return (ratio);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float defocus_small_ang(const float O,
+	                            const float l2,
+				    const float alpha) {
+
+                float rho = 0.0f;
+		float t0,t1,t2,alpha2;
+		const float eps = std::numeric_limits<float>::epsilon();
+		alpha2 = alpha+alpha;
+		t0     = std::cos(alpha2);
+		t1     = 1.0f-(alpha2*alpha2*0.5f);
+		if(approximatelyEqual(t0,t1,eps)) {
+                   t2  = l2*0.5f;
+		   rho = O*t2*alpha2*alpha2;
+		   return (rho);
+		}
+		else {
+                   rho = std::numeric_limits<float>::quiet_NaN();
+		   return (rho);
+		}
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double defocus_small_ang(const double O,
+	                             const double l2,
+				     const double alpha) {
+
+                double rho = 0.0;
+		double t0,t1,t2,alpha2;
+		const double eps = std::numeric_limits<double>::epsilon();
+		alpha2 = alpha+alpha;
+		t0     = std::cos(alpha2);
+		t1     = 1.0-(alpha2*alpha2*0.5);
+		if(approximatelyEqual(t0,t1,eps)) {
+                   t2  = l2*0.5;
+		   rho = O*t2*alpha2*alpha2;
+		   return (rho);
+		}
+		else {
+                   rho = std::numeric_limits<double>::quiet_NaN();
+		   return (rho);
+		}
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float traj_scan_dxdt(const float dx[2],
+	                         const float dt[2]) {
+ 
+                  float dxdt = 0.0f;
+		  dxdt = (dx[1]-dx[0])/(dt[1]-dt[0]);
+		  return (dxdt);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double traj_scan_dxdt(const double dx[2],
+	                         const double dt[2]) {
+ 
+                  double dxdt = 0.0;
+		  dxdt = (dx[1]-dx[0])/(dt[1]-dt[0]);
+		  return (dxdt);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float traj_scan_dydt(const float dy[2],
+	                         const float dt[2]) {
+ 
+                  float dydt = 0.0f;
+		  dxdt = (dy[1]-dy[0])/(dt[1]-dt[0]);
+		  return (dydt);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double traj_scan_dydt(const double dy[2],
+	                          const double dt[2]) {
+ 
+                  double dydt = 0.0;
+		  dxdt = (dy[1]-dy[0])/(dt[1]-dt[0]);
+		  return (dydt);
+	  }
+
+
+	  //! СКАНИРОВАНИЕ ЗЕРКАЛОМ, ВРАЩАЮЩИМСЯ
+          //! ВОКРУГ ОСИ, НЕПЕРПЕНДИКУЛЯРНОЙ К НЕМУ
+          //! Formula 1, p. 100
+          
+
 
     } //eos
 
