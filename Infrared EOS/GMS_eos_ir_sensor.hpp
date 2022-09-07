@@ -781,7 +781,592 @@ namespace gms {
 	  //! СКАНИРОВАНИЕ ЗЕРКАЛОМ, ВРАЩАЮЩИМСЯ
           //! ВОКРУГ ОСИ, НЕПЕРПЕНДИКУЛЯРНОЙ К НЕМУ
           //! Formula 1, p. 100
-          
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+	    float fov_x_axis(const float H,
+	                     const float delta,
+			     const float gamma) {
+
+               float ax = 0.0f;
+	       float gamm2,tdel;
+	       gamm2    = 0.5f*gamma;
+	       tdel     = std::tan(delta);
+	       ax       = H*tdel*std::cos(gamm2);
+	       return (ax);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+	    double fov_x_axis(const double H,
+	                      const double delta,
+			      const double gamma) {
+
+               double ax = 0.0;
+	       double gamm2,tdel;
+	       gamm2    = 0.5*gamma;
+	       tdel     = std::tan(delta);
+	       ax       = H*tdel*std::cos(gamm2);
+	       return (ax);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+	    float fov_y_axis(const float H,
+	                     const float delta,
+			     const float gamma) {
+
+               float ay = 0.0f;
+	       float ax,t0;
+	       t0       = 0.5f*gamma;
+	       ax       = fov_x_axis(H,delta,gamma);
+	       ay       = t0*ax;
+	       return (ay);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+	    double fov_y_axis(const double H,
+	                      const double delta,
+			      const double gamma) {
+
+               double ay = 0.0;
+	       double ax,t0;
+	       t0       = 0.5*gamma;
+	       ax       = fov_x_axis(H,delta,gamma);
+	       ay       = t0*ax;
+	       return (ay);
+	  }
+
+
+	 //!Если рабочая зона сканирования ограничена углом G, то
+         //!ширина захвата
+         //!Formula 3, p. 100
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float scan_width(const float H,
+	                     const float gamma,
+			     const float theta) {
+
+                float B = 0.0f;
+		float gam2,th2,t0,t1;
+		gam2  = 0.5f*gamma;
+                th2   = 0.5f*theta;
+                t0    = std::tan(gam2);
+                t1    = std::sin(th2);
+                B     = (H+H)*t0*t1;
+		return (B);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double scan_width(const double H,
+	                      const double gamma,
+			      const double theta) {
+
+                double B = 0.0;
+		double gam2,th2,t0,t1;
+		gam2  = 0.5*gamma;
+                th2   = 0.5*theta;
+                t0    = std::tan(gam2);
+                t1    = std::sin(th2);
+                B     = (H+H)*t0*t1;
+		return (B);
+	   }
+
+
+	   //!Плоскопараллельная пластинка, установленная за 
+           //!объективом, изменяет ход лучей таким образом, что изображение
+           //! светящейся точки отодвигается и его положение зависит от угла у
+           //!между оптической осью и нормалью N к поверхности пластинки
+           //! Formula 7,8 p. 106
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float refract_shift(const float i1,
+	                        const float delta,
+				const float alfa,
+				const float gamma,
+				const float n) {
+
+                 float l = 0.0f;
+		 float ag,num,den,sin2,sag,t0,t1;
+		 const float eps = std::numeric_limits<float>::epsilon();
+		 if(approximatelyEqual(i1,ag,eps)) {
+                     sag  = std::sin(ag);
+                     t0   = delta*sag;
+                     sin2 = sag*sag;
+                     num  = 1.0f-sag;
+                     den  = n*n-sag;
+                     t1   = 1.0f-std::sqrt(num/den);
+                     l    = t0*t2;
+		 }
+		 else if(alfa==0.0f) {
+                     sag  = std::sin(gamma);
+                     t0   = -delta*sag;
+                     sin2 = sag*sag;
+                     num  = 1.0f-sin2;
+                     den  = n*n-sin2;
+                     t1   = 1.0f-sqrt(num/den);
+                     l    = t0*t1;
+		 }
+		 else {
+                     sag  = std::sin(i1);
+                     t0   = delta*sag;
+                     sin2 = sag*sag;
+                     num  = 1.0f-sin2;
+                     den  = n*n-sin2;
+                     t1   = 1.0f-sqrt(num/den);
+                     l    = t0*t1;
+		 }
+		 return (l);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double refract_shift(const double i1,
+	                         const double delta,
+				 const double alfa,
+				 const double gamma,
+				 const double n) {
+
+                 double l = 0.0;
+		 double ag,num,den,sin2,sag,t0,t1;
+		 const double eps = std::numeric_limits<double>::epsilon();
+		 if(approximatelyEqual(i1,ag,eps)) {
+                     sag  = std::sin(ag);
+                     t0   = delta*sag;
+                     sin2 = sag*sag;
+                     num  = 1.0-sag;
+                     den  = n*n-sag;
+                     t1   = 1.0-std::sqrt(num/den);
+                     l    = t0*t2;
+		 }
+		 else if(alfa==0.0) {
+                     sag  = std::sin(gamma);
+                     t0   = -delta*sag;
+                     sin2 = sag*sag;
+                     num  = 1.0-sin2;
+                     den  = n*n-sin2;
+                     t1   = 1.0-sqrt(num/den);
+                     l    = t0*t1;
+		 }
+		 else {
+                     sag  = std::sin(i1);
+                     t0   = delta*sag;
+                     sin2 = sag*sag;
+                     num  = 1.0-sin2;
+                     den  = n*n-sin2;
+                     t1   = 1.0-sqrt(num/den);
+                     l    = t0*t1;
+		 }
+		 return (l);
+	  }
+
+
+	  //!Formula 1, p. 108
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void project_xy_axis( const float l,
+	                          const float alpha,
+				  float &xl,
+				  float &yl) {
+
+                float absl = 0.0f;
+		absl       = std::abs(l);
+		xl         = std::cos(alpha);
+		yl         = std::sin(alpha);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void project_xy_axis( const double l,
+	                          const double alpha,
+				  double &xl,
+				  double &yl) {
+
+                double absl = 0.0;
+		absl       = std::abs(l);
+		xl         = std::cos(alpha);
+		yl         = std::sin(alpha);
+	  }
+
+
+	 //!Величину смещения луча s вдоль перпендикуляра к 
+         //!поверхности пластинки
+         //! Formula 2, p. 108
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float s_shift(const float l,
+	                  const float alpha,
+		          const float gamma) {
+
+              float s = 0.0f;
+	      float ag,sag;
+	      ag = alpha-gamma;
+              sag= std::sin(ag);
+              s  = l/sag;
+	      return (s);
+	 }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double s_shift(const double l,
+	                   const double alpha,
+		           const double gamma) {
+
+              double s = 0.0;
+	      double ag,sag;
+	      ag = alpha-gamma;
+              sag= std::sin(ag);
+              s  = l/sag;
+	      return (s);
+	 }
+
+
+	 //! Проекции s на оси координат равны
+         //! Formula 4, p. 108
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void  project_s_xy(const float s,
+	                       const float gamma,
+			       float &xs,
+			       float &ys) {
+
+                 xs = s*std::cos(gamma);
+                 ys = s*std::sin(gamma);
+	 }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void  project_s_xy(const double s,
+	                       const double gamma,
+			       double &xs,
+			       double &ys) {
+
+                 xs = s*std::cos(gamma);
+                 ys = s*std::sin(gamma);
+	 }
+
+
+      //! что расстояния от начала координат О до точек
+      //! пересечения лучей, образующих с горизонталью угла ±а, с 
+      //! перпендикуляром к пластинке
+      //! Formula 1, p. 110
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float ray_intercept_pa(const float delta,
+	                           const float alpha,
+				   const float gamma,
+				   const float n) {
+
+               float sp = 0.0f;
+	       float ag,num,den,n2,sag,sin2;
+	       ag  = abs(alpha)-gamma;
+               n2  = n*n;
+               num = std::cos(ag);
+               sag = std::sin(ag);
+               sin2= std::sag*sag;
+               den = std::sqrt(n2-sin2);
+               sp  = std::delta*1.0f-(num/den);
+	       return (sp);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double ray_intercept_pa(const double delta,
+	                            const double alpha,
+				    const double gamma,
+				    const double n) {
+
+               double sp = 0.0;
+	       double ag,num,den,n2,sag,sin2;
+	       ag  = abs(alpha)-gamma;
+               n2  = n*n;
+               num = std::cos(ag);
+               sag = std::sin(ag);
+               sin2= std::sag*sag;
+               den = std::sqrt(n2-sin2);
+               sp  = std::delta*1.0-(num/den);
+	       return (sp);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float ray_intercept_na( const float delta,
+	                            const float alpha,
+				    const float gamma,
+				    const float n) {
+
+               float sn = 0.0f;
+	       float ag,num,den,n2,sag,sin2;
+	       ag  = abs(alpha)+gamma;
+               n2  = n*n;
+               num = std::cos(ag);
+               sag = std::sin(ag);
+               sin2= sag*sag;
+               den = sqrt(n2-sin2);
+               sn  = delta*1.0f-(num/den);
+	       return (sn);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double ray_intercept_na( const double delta,
+	                             const double alpha,
+				     const double gamma,
+				     const double n) {
+
+               double sn = 0.0;
+	       double ag,num,den,n2,sag,sin2;
+	       ag  = abs(alpha)+gamma;
+               n2  = n*n;
+               num = std::cos(ag);
+               sag = std::sin(ag);
+               sin2= sag*sag;
+               den = sqrt(n2-sin2);
+               sn  = delta*1.0-(num/den);
+	       return (sn);
+	  }
+
+
+	  //! Formula 3, p. 110
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float ray_diff(const float delta,
+	                   const float alpha,
+			   const float gamma,
+			   const float n,
+			   const float u) {
+
+              float ds = 0.0f;
+	      float t0,t1,u2,u2g,su2,sg,t2,n2,t3,t4,t5;
+	      n   = n*n;
+              u2  = u*0.5f;
+              u2g = u2-gamma;
+              t2  = std::sin(u2g);
+              su2 = t2*t2;
+              if(n2>=su2){
+                 t3 = (-2.0f*delta)/n;
+                 t4 = std::sin(u2);
+                 t5 = std::sin(gamma);
+                 ds = t3*t4*t5;
+	      }
+              else {
+                 t0  = ray_intercept_pa(delta,alpha,gamma,n)
+                 t1  = ray_intercept_na(delta,alpha,gamma,n)
+                 ds  = t0-t1;
+             }
+	     return (ds);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double ray_diff(const double delta,
+	                    const double alpha,
+			    const double gamma,
+			    const double n,
+			    const double u) {
+
+              double ds = 0.0;
+	      double t0,t1,u2,u2g,su2,sg,t2,n2,t3,t4,t5;
+	      n   = n*n;
+              u2  = u*0.5;
+              u2g = u2-gamma;
+              t2  = std::sin(u2g);
+              su2 = t2*t2;
+              if(n2>=su2){
+                 t3 = (-2.0*delta)/n;
+                 t4 = std::sin(u2);
+                 t5 = std::sin(gamma);
+                 ds = t3*t4*t5;
+	      }
+              else {
+                 t0  = ray_intercept_pa(delta,alpha,gamma,n)
+                 t1  = ray_intercept_na(delta,alpha,gamma,n)
+                 ds  = t0-t1;
+             }
+	     return (ds);
+	  }
+
+
+	  //!Поле точек пересечения лучей, преломленных пластинкой,
+          //!относительно оси Ох (рис. 87) имеет симметрию, поэтому 
+          //!упростим обозначения и выполним расчет соответствующих 
+          //!координат на основании
+          //! Formula 6,7, p. 111
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void compute_dxdy(const float alpha,
+	                      const float beta,
+			      const float delta,
+			      const float gamma,
+			      const float n,
+			      const float u,
+			      float &dx,
+			      float &dy) {
+
+                 float ag,ds,t0,t1,t2;
+		 ag  = alpha+gamma;
+                 ds  = ray_diff(delta,alfa,gamma,n,u);
+                 t0  = sin(ag);
+                 t1  = 2.0f*std::sin(alpha);
+                 t2  = 2.0f*std::cos(alpha);
+                 dx  = t0/t1*ds;
+                 dy  = t0/t2*ds;
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void compute_dxdy(const double alpha,
+	                      const double beta,
+			      const double delta,
+			      const double gamma,
+			      const double n,
+			      const double u,
+			      double &dx,
+			      double &dy) {
+
+                 double ag,ds,t0,t1,t2;
+		 ag  = alpha+gamma;
+                 ds  = ray_diff(delta,alfa,gamma,n,u);
+                 t0  = sin(ag);
+                 t1  = 2.0*std::sin(alpha);
+                 t2  = 2.0*std::cos(alpha);
+                 dx  = t0/t1*ds;
+                 dy  = t0/t2*ds;
+	   }
+
+
+	   //! Formula 7,8  p. 111
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void compute_xy(  const float alpha,
+	                      const float beta,
+			      const float delta,
+			      const float gamma,
+			      const float n,
+			      const float u,
+			      float &x,
+			      float &y) {
+
+                float sag,cag,pa,dx,dy,xs,ys;
+		sag  = std::sin(gamma);
+                cag  = std::cos(gamma);
+                pa   = ray_intercept_pa(delta,alpha,gamma,n);
+                xs   = pa*sag;
+                ys   = pa*cag;
+                compute_dxdy(alpha,beta,delta,gamma,n,u,dx,dy);
+                x    = xs+dx;
+                y    = ys+dx;
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void compute_xy(  const double alpha,
+	                      const double beta,
+			      const double delta,
+			      const double gamma,
+			      const double n,
+			      const double u,
+			      double &x,
+			      double &y) {
+
+                double sag,cag,pa,dx,dy,xs,ys;
+		sag  = std::sin(gamma);
+                cag  = std::cos(gamma);
+                pa   = ray_intercept_pa(delta,alpha,gamma,n);
+                xs   = pa*sag;
+                ys   = pa*cag;
+                compute_dxdy(alpha,beta,delta,gamma,n,u,dx,dy);
+                x    = xs+dx;
+                y    = ys+dx;
+	   }
+
 
 
     } //eos
