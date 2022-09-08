@@ -1368,6 +1368,368 @@ namespace gms {
 	   }
 
 
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+	    void compute_xdyd(const float gamma,
+	                      const float u,
+			      const float n,
+			      float &xd,
+			      float &yd) {
+
+                float cosg,sing,sin2s,sin2d,u2,u2gs,u2gd,n2,t0,t1,t2,t3,t4;
+		cosg = std::cos(gamma);
+                sing = std::sin(gamma);
+                u2   = u*0.5f;
+                n2   = n*n;
+                u2gs = u2+gamma;
+                ungd = u2-gamma;
+                t0   = sin(u2gs);
+                sin2s= t0*t0;
+                t1   = std::sin(u2gd);
+                sin2d= t1*t1;
+                t2   = 1.0f/(4.0f*std::sin(u2));
+                t3   = std::sqrt(n2-sin2s);
+                t0   = sin2s/t3;
+                t4   = std::sqrt(n2-sin2d);
+                t1   = sin2d/t4;
+                dx   = cosg-t2*(t0+t1);
+                t2   = 1.0f/(4.0f*std::cos(u2));
+                dy   = sing-t2*(t0-t1);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+	    void compute_xdyd(const double gamma,
+	                      const double u,
+			      const double n,
+			      double &xd,
+			      double &yd) {
+
+                double cosg,sing,sin2s,sin2d,u2,u2gs,u2gd,n2,t0,t1,t2,t3,t4;
+		cosg = std::cos(gamma);
+                sing = std::sin(gamma);
+                u2   = u*0.5;
+                n2   = n*n;
+                u2gs = u2+gamma;
+                ungd = u2-gamma;
+                t0   = sin(u2gs);
+                sin2s= t0*t0;
+                t1   = std::sin(u2gd);
+                sin2d= t1*t1;
+                t2   = 1.0f/(4.0*std::sin(u2));
+                t3   = std::sqrt(n2-sin2s);
+                t0   = sin2s/t3;
+                t4   = std::sqrt(n2-sin2d);
+                t1   = sin2d/t4;
+                dx   = cosg-t2*(t0+t1);
+                t2   = 1.0/(4.0f*std::cos(u2));
+                dy   = sing-t2*(t0-t1);
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void paraxial_xdyd(const float gamma,
+	                       const float alpha,
+			       const float n,
+			       float &xd,
+			       float &yd) {
+
+               float n2,cosg,sing,sin4g,sin2g,num,den,cos2g,t0,t1,n2ss;
+	       n2    = n*n;
+               cosg  = std::cos(gamma);
+	       n2ss  = n2-sing*sing;
+               cos2g = std::cos(gamma+gamma);
+               sing  = std::sin(gamma);
+               sin4g = sing*sing*sing*sing;
+               num   = n2*cos2g+sin4g;
+               den   = std::pow(n2ss,1.5f);
+               xd    = cosg-num/den;
+               t0    = sqrt(n2ss);
+               t1    = 1.0f-cosg/t0;
+               yd    = sing*t1;
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void paraxial_xdyd(const double gamma,
+	                       const double alpha,
+			       const double n,
+			       double &xd,
+			       double &yd) {
+
+               double n2,cosg,sing,sin4g,sin2g,num,den,cos2g,t0,t1,n2ss;
+	       n2    = n*n;
+               cosg  = std::cos(gamma);
+	       n2ss  = n2-sing*sing;
+               cos2g = std::cos(gamma+gamma);
+               sing  = std::sin(gamma);
+               sin4g = sing*sing*sing*sing;
+               num   = n2*cos2g+sin4g;
+               den   = std::pow(n2ss,1.5);
+               xd    = cosg-num/den;
+               t0    = sqrt(n2ss);
+               t1    = 1.0-cosg/t0;
+               yd    = sing*t1;
+	  }
+
+
+	  //!СКАНИРОВАНИЕ ВРАЩАЮЩИМИСЯ ОБЪЕКТИВАМИ
+          //!Formula 1, p. 121
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void fov_axay(const float H,
+	                  const float delx,
+			  const float dely,
+			  const float phi,
+			  float &ax,
+			  float &ay) {
+
+               float sec2,phi2,t0,t1,sec;
+	       phi2  = 0.5f*phi;
+               sec   = 1.0f/std::cos(phi2);
+               sec2  = sec*sec;
+               ax    = H*delx*sec2;
+               ay    = H*dely*sec;
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void fov_axay(const double H,
+	                  const doube delx,
+			  const double dely,
+			  const double phi,
+			  double &ax,
+			  double &ay) {
+
+               double sec2,phi2,t0,t1,sec;
+	       phi2  = 0.5*phi;
+               sec   = 1.0/std::cos(phi2);
+               sec2  = sec*sec;
+               ax    = H*delx*sec2;
+               ay    = H*dely*sec;
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void fov_dxdy(const float x,
+	                  const float y,
+			  const float F,
+			  const float phi,
+			  float &dx,
+			  float &dy) {
+
+              float d0x,d0y,phi2;
+	      d0y   = y/F;
+              phi2  = 0.5f*phi;
+              d0x   = x/F;
+              dy    = d0y;
+              dx    = d0x*std::cos(phi2);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void fov_dxdy(const double x,
+	                  const double y,
+			  const double F,
+			  const double phi,
+			  double &dx,
+			  double &dy) {
+
+              double d0x,d0y,phi2;
+	      d0y   = y/F;
+              phi2  = 0.5*phi;
+              d0x   = x/F;
+              dy    = d0y;
+              dx    = d0x*std::cos(phi2);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            void volt_impulse_uxuy(const float u,
+	                           const float om1,
+				   const float om2,
+				   const float t,
+				   float &ux,
+				   float &uy) {
+
+                float om1t,om2t,t0,t1;
+		om1t = om1*t;
+                om2t = om2*t;
+                t0   = std::sin(om1t)+std::sin(om2t);
+                t1   = std::cos(om1t)+std::cos(om2t);
+                ux   = u*t0;
+                uy   = u*t1;
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            void volt_impulse_uxuy(const double u,
+	                           const double om1,
+				   const double om2,
+				   const double t,
+				   double &ux,
+				   double &uy) {
+
+                double om1t,om2t,t0,t1;
+		om1t = om1*t;
+                om2t = om2*t;
+                t0   = std::sin(om1t)+std::sin(om2t);
+                t1   = std::cos(om1t)+std::cos(om2t);
+                ux   = u*t0;
+                uy   = u*t1;
+	   }
+
+
+	//! Phase Modulation
+        //! Formula 1, p. 143
+        //! растрового анализатора со 
+        //!скрещивающимися осями, выполненного в виде надетой на вращающийся 
+        //!барабан тонкой пленки, прозрачность которой изменяется по 
+        //!синусоидальному закону
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(16)
+            float raster_transparency(const float rho_avg,
+	                              const float rho_max,
+				      const float rho_min,
+				      const float l,
+				      const float L,
+				      const float N) {
+
+               float rho = 0.0f;
+	       constexpr float twopi = 6.283185307179586476925286766559f;
+	       float t0,t1,t2;
+	       t0  = 0.5f*(rho_max-rho_min);
+               t1  = L/N;
+               t2  = std::sin(twopi*l*t1);
+               rho = rho_avg+t0*t2;
+	       return (rho);
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+#pragma omp declare simd simdlen(8)
+            double raster_transparency(const double rho_avg,
+	                               const double rho_max,
+				       const double rho_min,
+				       const double l,
+				       const double L,
+				       const double N) {
+
+               double rho = 0.0;
+	       constexpr double twopi = 6.283185307179586476925286766559;
+	       double t0,t1,t2;
+	       t0  = 0.5*(rho_max-rho_min);
+               t1  = L/N;
+               t2  = std::sin(twopi*l*t1);
+               rho = rho_avg+t0*t2;
+	       return (rho);
+	  }
+
+
+#include "GMS_avint.hpp"
+ 
+
+             //!СТРУКТУРА И СПЕКТР МОДУЛИРОВАННОГО ПОТОКА
+             //!ИЗЛУЧЕНИЯ
+             //!Formula 1, p. 178
+             //! Ф(*) = Int rp(z,t)E(z,t) dsig
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_flux_integral_omp(const float * __restrict rhoE,
+	                                  const float * __restrict absc,
+					  const int32_t n,
+					  const int32_t t,
+					  const float * __restrict xlo,
+					  const float * __restrict xup,
+					  float * __restrict Phit,
+					  float * __restrict ier) {
+
+                 float ans_x   = 0.0f;
+		 int32_t err_x = 0;
+#pragma omp parallel for default(none) schedule(runtime) \
+                 private(i,ans,err) shared(t,rhoE,absc,n,xlo,xup)
+		 for(int32_t i = 0, i < t; ++i) {
+                     avint(&rhoE[i*n],&absc[0],n,xlo,xup,ans,err);
+		     Phit[i] = ans;
+		     ier[i]  = err;
+		 }
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_flux_integral_omp(const double * __restrict rhoE, // points to memory of size: (0:n-1,t)
+	                                  const double * __restrict absc,
+					  const int32_t n,
+					  const int32_t t,
+					  const double * __restrict xlo,
+					  const double * __restrict xup,
+					  double * __restrict Phit, // results data size: 0:t-1
+					  double * __restrict ier) {
+
+                 double ans_x   = 0.0f;
+		 int32_t err_x = 0;
+#pragma omp parallel for default(none) schedule(runtime) \
+                 private(i,ans,err) shared(t,rhoE,absc,n,xlo,xup)
+		 for(int32_t i = 0, i < t; ++i) {
+                     avint(&rhoE[i*n],&absc[0],n,xlo,xup,ans,err);
+		     Phit[i] = ans;
+		     ier[i]  = err;
+		 }
+	   }
+
+
+
+
+
 
     } //eos
 
