@@ -1693,7 +1693,7 @@ namespace gms {
                  float ans_x   = 0.0f;
 		 int32_t err_x = 0;
 #pragma omp parallel for default(none) schedule(runtime) \
-                 private(i,ans,err) shared(t,rhoE,absc,n,xlo,xup)
+                 private(i,ans,err) shared(t,rhoE,absc,n,xlo,xup,ier)
 		 for(int32_t i = 0, i < t; ++i) {
                      avint(&rhoE[i*n],&absc[0],n,xlo,xup,ans,err);
 		     Phit[i] = ans;
@@ -1718,13 +1718,729 @@ namespace gms {
                  double ans_x   = 0.0f;
 		 int32_t err_x = 0;
 #pragma omp parallel for default(none) schedule(runtime) \
-                 private(i,ans,err) shared(t,rhoE,absc,n,xlo,xup)
+                 private(i,ans,err) shared(t,rhoE,absc,n,xlo,xup,ier)
 		 for(int32_t i = 0, i < t; ++i) {
                      avint(&rhoE[i*n],&absc[0],n,xlo,xup,ans,err);
 		     Phit[i] = ans;
 		     ier[i]  = err;
 		 }
 	   }
+
+
+	     __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_flux_integral(    const float * __restrict rhoE,
+	                                  const float * __restrict absc,
+					  const int32_t n,
+					  const int32_t t,
+					  const float * __restrict xlo,
+					  const float * __restrict xup,
+					  float * __restrict Phit,
+					  float * __restrict ier) {
+
+                 float ans_x   = 0.0f;
+		 int32_t err_x = 0;
+		 for(int32_t i = 0, i < t; ++i) {
+                     avint(&rhoE[i*n],&absc[0],n,xlo,xup,ans,err);
+		     Phit[i] = ans;
+		     ier[i]  = err;
+		 }
+	   }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_flux_integral(    const double * __restrict rhoE, // points to memory of size: (0:n-1,t)
+	                                  const double * __restrict absc,
+					  const int32_t n,
+					  const int32_t t,
+					  const double * __restrict xlo,
+					  const double * __restrict xup,
+					  double * __restrict Phit, // results data size: 0:t-1
+					  double * __restrict ier) {
+
+                 double ans_x   = 0.0f;
+		 int32_t err_x = 0;
+		 for(int32_t i = 0, i < t; ++i) {
+                     avint(&rhoE[i*n],&absc[0],n,xlo,xup,ans,err);
+		     Phit[i] = ans;
+		     ier[i]  = err;
+		 }
+	   }
+
+
+	   //!! Formula 3, p. 180
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_opacity_integral_omp(const float invs,
+	                                     const float * __restrict rhophi,
+					     const float * __restrict absc,
+					     const int32_t n,
+					     const int32_t t,
+					     const float xlo,
+					     const float xup,
+					     float * __restrict rho,
+					     int32_t * __restrict ier) {
+
+                 float ans   = 0.0f;
+		 int32_t err = 0;
+#pragma omp parallel for default(none) schedule(runtime) \
+                 private(i,ans,err) \
+		 shared(t,rhophi,n,xlo,xup,invs,absc,ier)
+		 for(int32_t i = 0; i < t; ++i) {
+                     avint(&rhophi[i*n],&absc[0],n,xlo,xup,ans,err);
+		     rho[i] = invs*ans;
+		     ier[i] = err;
+		 }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_opacity_integral(    const float invs,
+	                                     const float * __restrict rhophi,
+					     const float * __restrict absc,
+					     const int32_t n,
+					     const int32_t t,
+					     const float xlo,
+					     const float xup,
+					     float * __restrict rho,
+					     int32_t * __restrict ier) {
+
+                 float ans   = 0.0f;
+		 int32_t err = 0;
+		 for(int32_t i = 0; i < t; ++i) {
+                     avint(&rhophi[i*n],&absc[0],n,xlo,xup,ans,err);
+		     rho[i] = invs*ans;
+		     ier[i] = err;
+		 }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_opacity_integral_omp(const double invs,
+	                                     const double * __restrict rhophi,
+					     const double * __restrict absc,
+					     const int32_t n,
+					     const int32_t t,
+					     const double xlo,
+					     const double xup,
+					     double * __restrict rho,
+					     int32_t * __restrict ier) {
+
+                 double ans   = 0.0;
+		 int32_t err = 0;
+#pragma omp parallel for default(none) schedule(runtime) \
+                 private(i,ans,err) \
+		 shared(t,rhophi,n,xlo,xup,invs,absc,ier)
+		 for(int32_t i = 0; i < t; ++i) {
+                     avint(&rhophi[i*n],&absc[0],n,xlo,xup,ans,err);
+		     rho[i] = invs*ans;
+		     ier[i] = err;
+		 }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void raster_opacity_integral(    const double invs,
+	                                     const double * __restrict rhophi,
+					     const float * __restrict absc,
+					     const int32_t n,
+					     const int32_t t,
+					     const double xlo,
+					     const double xup,
+					     double * __restrict rho,
+					     int32_t * __restrict ier) {
+
+                 double ans   = 0.0;
+		 int32_t err = 0;
+		 for(int32_t i = 0; i < t; ++i) {
+                     avint(&rhophi[i*n],&absc[0],n,xlo,xup,ans,err);
+		     rho[i] = invs*ans;
+		     ier[i] = err;
+		 }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_16x(const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                float arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		float arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+		float t0,t1,t2,t3,t4,t5,t6,t7;
+		float t8,t9,t10,t11,t12,t13,t14,t15;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%16;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<16) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 16) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+                   t2        = (float)i+2;
+                   arg2      = kom0*t2;
+                   coss[i+2] = std::cos(arg2);
+                   t3        = (float)i+3;
+                   arg3      = kom0*t3;
+                   coss[i+3] = std::cos(arg3);
+                   t4        = (float)i+4;
+                   arg4      = kom0*t4;
+                   coss[i+4] = std::cos(arg4);
+                   t5        = (float)i+5;
+                   arg5      = kom0*t5;
+                   coss[i+5] = std::cos(arg5);
+                   t6        = (float)i+6;
+                   arg6      = kom0*t6;
+                   coss[i+6] = std::cos(arg6);
+                   t7        = (float)i+7;
+                   arg7      = kom0*t7;
+                   coss[i+7] = std::cos(arg7);
+                   t8        = (float)i+8;
+                   arg8      = kom0*t8;
+                   coss[i+8] = std::cos(arg8);
+                   t9        = (float)i+9;
+                   arg9      = kom0*t9;
+                   coss[i+9] = std::cos(arg9);
+                   t10       = (float)i+10;
+                   arg10     = kom0*t10;
+                   coss[i+10]= std::cos(arg10);
+                   t11       = (float)i+11;
+                   arg11     = kom0*t11;
+                   coss[i+11]= std::cos(arg11);
+                   t12       = (float)i+12;
+                   arg12     = kom0*t12;
+                   coss[i+12]= std::cos(arg12);
+                   t13       = (float)i+13;
+                   arg13     = kom0*t13;
+                   coss[i+13]= std::cos(arg13);
+                   t14       = (float)i+14;
+                   arg14     = kom0*t14;
+                   coss[i+14]= std::cos(arg14);
+                   t15       = (float)i+15;
+                   arg15     = kom0*t15;
+                   coss[i+15]= std::cos(arg15);
+	      }
+	  }
+
+
+	     __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_16x(const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                double arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		double arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+		double t0,t1,t2,t3,t4,t5,t6,t7;
+		double t8,t9,t10,t11,t12,t13,t14,t15;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%16;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<16) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 16) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+                   t2        = (double)i+2;
+                   arg2      = kom0*t2;
+                   coss[i+2] = std::cos(arg2);
+                   t3        = (double)i+3;
+                   arg3      = kom0*t3;
+                   coss[i+3] = std::cos(arg3);
+                   t4        = (double)i+4;
+                   arg4      = kom0*t4;
+                   coss[i+4] = std::cos(arg4);
+                   t5        = (double)i+5;
+                   arg5      = kom0*t5;
+                   coss[i+5] = std::cos(arg5);
+                   t6        = (double)i+6;
+                   arg6      = kom0*t6;
+                   coss[i+6] = std::cos(arg6);
+                   t7        = (double)i+7;
+                   arg7      = kom0*t7;
+                   coss[i+7] = std::cos(arg7);
+                   t8        = (double)i+8;
+                   arg8      = kom0*t8;
+                   coss[i+8] = std::cos(arg8);
+                   t9        = (double)i+9);
+                   arg9      = kom0*t9;
+                   coss[i+9] = std::cos(arg9);
+                   t10       = (double)i+10;
+                   arg10     = kom0*t10;
+                   coss[i+10]= std::cos(arg10);
+                   t11       = (double)i+11;
+                   arg11     = kom0*t11;
+                   coss[i+11]= std::cos(arg11);
+                   t12       = (double)i+12;
+                   arg12     = kom0*t12;
+                   coss[i+12]= std::cos(arg12);
+                   t13       = (double)i+13;
+                   arg13     = kom0*t13;
+                   coss[i+13]= std::cos(arg13);
+                   t14       = (double)i+14;
+                   arg14     = kom0*t14;
+                   coss[i+14]= std::cos(arg14);
+                   t15       = (double)i+15;
+                   arg15     = kom0*t15;
+                   coss[i+15]= std::cos(arg15);
+	      }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_8x(const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                float arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		float t0,t1,t2,t3,t4,t5,t6,t7;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%8;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<8) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 8) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+                   t2        = (float)i+2;
+                   arg2      = kom0*t2;
+                   coss[i+2] = std::cos(arg2);
+                   t3        = (float)i+3;
+                   arg3      = kom0*t3;
+                   coss[i+3] = std::cos(arg3);
+                   t4        = (float)i+4;
+                   arg4      = kom0*t4;
+                   coss[i+4] = std::cos(arg4);
+                   t5        = (float)i+5;
+                   arg5      = kom0*t5;
+                   coss[i+5] = std::cos(arg5);
+                   t6        = (float)i+6;
+                   arg6      = kom0*t6;
+                   coss[i+6] = std::cos(arg6);
+                   t7        = (float)i+7;
+                   arg7      = kom0*t7;
+                   coss[i+7] = std::cos(arg7);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_8x(const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                double arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		double t0,t1,t2,t3,t4,t5,t6,t7;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%8;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<8) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 8) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+                   t2        = (double)i+2;
+                   arg2      = kom0*t2;
+                   coss[i+2] = std::cos(arg2);
+                   t3        = (double)i+3;
+                   arg3      = kom0*t3;
+                   coss[i+3] = std::cos(arg3);
+                   t4        = (double)i+4;
+                   arg4      = kom0*t4;
+                   coss[i+4] = std::cos(arg4);
+                   t5        = (double)i+5;
+                   arg5      = kom0*t5;
+                   coss[i+5] = std::cos(arg5);
+                   t6        = (double)i+6;
+                   arg6      = kom0*t6;
+                   coss[i+6] = std::cos(arg6);
+                   t7        = (double)i+7;
+                   arg7      = kom0*t7;
+                   coss[i+7] = std::cos(arg7);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_4x( const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                float arg0,arg1,arg2,arg3;
+		float t0,t1,t2,t3;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%4;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 4) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+                   t2        = (float)i+2;
+                   arg2      = kom0*t2;
+                   coss[i+2] = std::cos(arg2);
+                   t3        = (float)i+3;
+                   arg3      = kom0*t3;
+                   coss[i+3] = std::cos(arg3);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_4x(const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                double arg0,arg1,arg2,arg3;
+		double t0,t1,t2,t3;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%4;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 4) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+                   t2        = (double)i+2;
+                   arg2      = kom0*t2;
+                   coss[i+2] = std::cos(arg2);
+                   t3        = (double)i+3;
+                   arg3      = kom0*t3;
+                   coss[i+3] = std::cos(arg3);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_2x( const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                float arg0,arg1;
+		float t0,t1;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%2;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<2) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 2) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void cos_series_unroll_2x(const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) coss,
+				       const float k) {
+
+                double arg0,arg1;
+		double t0,t1;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%2;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       coss[i] = std::cos(arg0);
+		   }
+		   if(n<2) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(coss,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 2) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   coss[i]   = std::cos(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   coss[i+1] = std::cos(arg1);
+               }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_16x(const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) sins,
+				       const float k) {
+
+                float arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		float arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+		float t0,t1,t2,t3,t4,t5,t6,t7;
+		float t8,t9,t10,t11,t12,t13,t14,t15;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%16;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<16) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 16) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+                   t2        = (float)i+2;
+                   arg2      = kom0*t2;
+                   sins[i+2] = std::sin(arg2);
+                   t3        = (float)i+3;
+                   arg3      = kom0*t3;
+                   sins[i+3] = std::sin(arg3);
+                   t4        = (float)i+4;
+                   arg4      = kom0*t4;
+                   sins[i+4] = std::sins(arg4);
+                   t5        = (float)i+5;
+                   arg5      = kom0*t5;
+                   sins[i+5] = std::sin(arg5);
+                   t6        = (float)i+6;
+                   arg6      = kom0*t6;
+                   sins[i+6] = std::sin(arg6);
+                   t7        = (float)i+7;
+                   arg7      = kom0*t7;
+                   sins[i+7] = std::sin(arg7);
+                   t8        = (float)i+8;
+                   arg8      = kom0*t8;
+                   sins[i+8] = std::sin(arg8);
+                   t9        = (float)i+9;
+                   arg9      = kom0*t9;
+                   sins[i+9] = std::sin(arg9);
+                   t10       = (float)i+10;
+                   arg10     = kom0*t10;
+                   sins[i+10]= std::sin(arg10);
+                   t11       = (float)i+11;
+                   arg11     = kom0*t11;
+                   sins[i+11]= std::sin(arg11);
+                   t12       = (float)i+12;
+                   arg12     = kom0*t12;
+                   sins[i+12]= std::sin(arg12);
+                   t13       = (float)i+13;
+                   arg13     = kom0*t13;
+                   sins[i+13]= std::sin(arg13);
+                   t14       = (float)i+14;
+                   arg14     = kom0*t14;
+                   sins[i+14]= std::sin(arg14);
+                   t15       = (float)i+15;
+                   arg15     = kom0*t15;
+                   sins[i+15]= std::sin(arg15);
+	      }
+	  }
+
+
+
+
+	  
+
+
+
+
+
+
+
+	  
+
+
+
+
+
 
 
 
