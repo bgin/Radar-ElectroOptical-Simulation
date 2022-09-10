@@ -2426,7 +2426,614 @@ namespace gms {
 
 
 
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_16x(const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) sins,
+				       const double k) {
 
+                double arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		double arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+		double t0,t1,t2,t3,t4,t5,t6,t7;
+		double t8,t9,t10,t11,t12,t13,t14,t15;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%16;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<16) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 16) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+                   t2        = (double)i+2;
+                   arg2      = kom0*t2;
+                   sins[i+2] = std::sin(arg2);
+                   t3        = (double)i+3;
+                   arg3      = kom0*t3;
+                   sins[i+3] = std::sin(arg3);
+                   t4        = (double)i+4;
+                   arg4      = kom0*t4;
+                   sins[i+4] = std::sins(arg4);
+                   t5        = (double)i+5;
+                   arg5      = kom0*t5;
+                   sins[i+5] = std::sin(arg5);
+                   t6        = (double)i+6;
+                   arg6      = kom0*t6;
+                   sins[i+6] = std::sin(arg6);
+                   t7        = (double)i+7;
+                   arg7      = kom0*t7;
+                   sins[i+7] = std::sin(arg7);
+                   t8        = (double)i+8;
+                   arg8      = kom0*t8;
+                   sins[i+8] = std::sin(arg8);
+                   t9        = (double)i+9;
+                   arg9      = kom0*t9;
+                   sins[i+9] = std::sin(arg9);
+                   t10       = (double)i+10;
+                   arg10     = kom0*t10;
+                   sins[i+10]= std::sin(arg10);
+                   t11       = (double)i+11;
+                   arg11     = kom0*t11;
+                   sins[i+11]= std::sin(arg11);
+                   t12       = (double)i+12;
+                   arg12     = kom0*t12;
+                   sins[i+12]= std::sin(arg12);
+                   t13       = (double)i+13;
+                   arg13     = kom0*t13;
+                   sins[i+13]= std::sin(arg13);
+                   t14       = (double)i+14;
+                   arg14     = kom0*t14;
+                   sins[i+14]= std::sin(arg14);
+                   t15       = (double)i+15;
+                   arg15     = kom0*t15;
+                   sins[i+15]= std::sin(arg15);
+	      }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_8x(const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) sins,
+				       const float k) {
+
+                float arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		float t0,t1,t2,t3,t4,t5,t6,t7;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%8;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<8) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 8) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+                   t2        = (float)i+2;
+                   arg2      = kom0*t2;
+                   sins[i+2] = std::sin(arg2);
+                   t3        = (float)i+3;
+                   arg3      = kom0*t3;
+                   sins[i+3] = std::sin(arg3);
+                   t4        = (float)i+4;
+                   arg4      = kom0*t4;
+                   sins[i+4] = std::sins(arg4);
+                   t5        = (float)i+5;
+                   arg5      = kom0*t5;
+                   sins[i+5] = std::sin(arg5);
+                   t6        = (float)i+6;
+                   arg6      = kom0*t6;
+                   sins[i+6] = std::sin(arg6);
+                   t7        = (float)i+7;
+                   arg7      = kom0*t7;
+                   sins[i+7] = std::sin(arg7);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_8x( const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) sins,
+				       const double k) {
+
+                double arg0,arg1,arg2,arg3,arg4,arg,arg6,arg7;
+		double t0,t1,t2,t3,t4,t5,t6,t7;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%8;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<8) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 8) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+                   t2        = (double)i+2;
+                   arg2      = kom0*t2;
+                   sins[i+2] = std::sin(arg2);
+                   t3        = (double)i+3;
+                   arg3      = kom0*t3;
+                   sins[i+3] = std::sin(arg3);
+                   t4        = (double)i+4;
+                   arg4      = kom0*t4;
+                   sins[i+4] = std::sins(arg4);
+                   t5        = (double)i+5;
+                   arg5      = kom0*t5;
+                   sins[i+5] = std::sin(arg5);
+                   t6        = (double)i+6;
+                   arg6      = kom0*t6;
+                   sins[i+6] = std::sin(arg6);
+                   t7        = (double)i+7;
+                   arg7      = kom0*t7;
+                   sins[i+7] = std::sin(arg7);
+               }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_4x(const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) sins,
+				       const float k) {
+
+                float arg0,arg1,arg2,arg3;
+		float t0,t1,t2,t3;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%4;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 4) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+                   t2        = (float)i+2;
+                   arg2      = kom0*t2;
+                   sins[i+2] = std::sin(arg2);
+                   t3        = (float)i+3;
+                   arg3      = kom0*t3;
+                   sins[i+3] = std::sin(arg3);
+               }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_4x( const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) sins,
+				       const double k) {
+
+                double arg0,arg1,arg2,arg3;
+		double t0,t1,t2,t3;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%4;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 4) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+                   t2        = (double)i+2;
+                   arg2      = kom0*t2;
+                   sins[i+2] = std::sin(arg2);
+                   t3        = (double)i+3;
+                   arg3      = kom0*t3;
+                   sins[i+3] = std::sin(arg3);
+               }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_2x(const float om0,
+	                               const int32_t n,
+				       float * __restrict __ATTR_ALIGN__(64) sins,
+				       const float k) {
+
+                float arg0,arg1;
+		float t0,t1;
+		float kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%2;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (float)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<2) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 2) {
+                   t0        = (float)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (float)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+              }
+	  }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void sin_series_unroll_2x( const double om0,
+	                               const int32_t n,
+				       double * __restrict __ATTR_ALIGN__(64) sins,
+				       const double k) {
+
+                double arg0,arg1;
+		double t0,t1;
+		double kom0;
+		int32_t i,m,m1;
+		kom0 = k*om0;
+		m    = n%2;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0      = (double)i;
+		       arg0    = kom0*t0;
+		       sins[i] = std::sin(arg0);
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+	        __assume_aligned(sins,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	      for(i = m1; i != n; i += 2) {
+                   t0        = (double)i;
+                   arg0      = kom0*t0;
+                   sins[i]   = std::sin(arg0);
+                   t1        = (double)i+1;
+                   arg1      = kom0*t1;
+                   sins[i+1] = std::sin(arg1);
+              }
+	  }
+
+
+	   //! форма импульса потока излучения описывается,
+           //! например, косинус-квадратной зависимостью
+           //! Formula 3, p. 184
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const float Phi0,
+					     const int32_t n,
+					     const float tin) {
+
+                constexpr float hpi = 1.57079632679489661923132169164f;
+		float tin2,t0,t1,t2,t3,t4,t5,t6,t7;
+                float t8,t9,t10,t11,t12,t13,t14,t15;
+                float arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                float arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+                float c0,c1,c2,c3,c4,c5,c6,c7;
+                float c8,c9,c10,c11,c12,c13,c14,c15;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%16;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (float)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<16) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 16) {
+                      t0         = (float)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (float)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                      t2         = (float)i+2;
+                      arg2       = hpi*t2/tin2;
+                      c2         = std::cos(arg2);
+                      Phi0t[i+2] = c2*c2;
+                      t3         = (float)i+3;
+                      arg3       = hpi*t3/tin2;
+                      c3         = std::cos(arg3);
+                      Phi0t[i+3] = c3*c3;
+                      t4         = (float)i+4;
+                      arg4       = hpi*t4/tin2;
+                      c4         = std::cos(arg4);
+                      Phi0t[i+4] = c4*c4;
+                      t5         = (float)i+5;
+                      arg5       = hpi*t5/tin2;
+                      c5         = std::cos(arg5);
+                      Phi0t[i+5] = c5*c5;
+                      t6         = (float)i+6;
+                      arg6       = hpi*t6/tin2;
+                      c6         = std::cos(arg6);
+                      Phi0t[i+6] = c6*c6;
+                      t7         = (float)i+7;
+		      arg7       = hpi*t7/tin2;
+                      c7         = std::cos(arg7);
+                      Phi0t[i+7] = c7*c7;
+                      t8         = (float)i+8;
+                      arg8       = hpi*t8/tin2;
+                      c8         = std::cos(arg8);
+                      Phi0t[i+8] = c8*c8;
+                      t9         = (float)i+9;
+                      arg9       = hpi*t9/tin2;
+                      c9         = std::cos(arg9);
+                      Phi0t[i+9] = c9*c9;
+                      t10        = (float)i+10;
+                      arg10      = hpi*t10/tin2;
+                      c10        = std::cos(arg10);
+                      Phi0t[i+10]= c10*c10;
+                      t11        = (float)i+11;
+                      arg11      = hpi*t11/tin2;
+                      c11        = std::cos(arg11);
+                      Phi0t[i+11]= c11*c11;
+                      t12        = (float)i+12;
+                      arg12      = hpi*t12/tin2;
+                      c12        = std::cos(arg12);
+                      Phi0t[i+12]= c12*c12;
+                      t13        = (float)i+13;
+                      arg13      = hpi*t13/tin2;
+                      c13        = std::cos(arg13);
+                      Phi0t[i+13]= c13*c13;
+                      t14        = (float)i+14;
+                      arg14      = hpi*t14/tin2;
+                      c14        = std::cos(arg14);
+                      Phi0t[i+14]= c14*c14;
+                      t15        = (float)i+15;
+                      arg15      = hpi*t15/tin2;
+                      c15        = std::cos(arg15);
+                      Phi0t[i+15]= c15*c15;
+       
+
+		}
+	 }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const double Phi0,
+					     const int32_t n,
+					     const double tin) {
+
+                constexpr double hpi = 1.57079632679489661923132169164;
+		double tin2,t0,t1,t2,t3,t4,t5,t6,t7;
+                double t8,t9,t10,t11,t12,t13,t14,t15;
+                double arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                double arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+                double c0,c1,c2,c3,c4,c5,c6,c7;
+                double c8,c9,c10,c11,c12,c13,c14,c15;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%16;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (double)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<16) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 16) {
+                      t0         = (double)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (double)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                      t2         = (double)i+2;
+                      arg2       = hpi*t2/tin2;
+                      c2         = std::cos(arg2);
+                      Phi0t[i+2] = c2*c2;
+                      t3         = (double)i+3;
+                      arg3       = hpi*t3/tin2;
+                      c3         = std::cos(arg3);
+                      Phi0t[i+3] = c3*c3;
+                      t4         = (double)i+4;
+                      arg4       = hpi*t4/tin2;
+                      c4         = std::cos(arg4);
+                      Phi0t[i+4] = c4*c4;
+                      t5         = (double)i+5;
+                      arg5       = hpi*t5/tin2;
+                      c5         = std::cos(arg5);
+                      Phi0t[i+5] = c5*c5;
+                      t6         = (double)i+6;
+                      arg6       = hpi*t6/tin2;
+                      c6         = std::cos(arg6);
+                      Phi0t[i+6] = c6*c6;
+                      t7         = (double)i+7;
+		      arg7       = hpi*t7/tin2;
+                      c7         = std::cos(arg7);
+                      Phi0t[i+7] = c7*c7;
+                      t8         = (double)i+8;
+                      arg8       = hpi*t8/tin2;
+                      c8         = std::cos(arg8);
+                      Phi0t[i+8] = c8*c8;
+                      t9         = (double)i+9;
+                      arg9       = hpi*t9/tin2;
+                      c9         = std::cos(arg9);
+                      Phi0t[i+9] = c9*c9;
+                      t10        = (double)i+10;
+                      arg10      = hpi*t10/tin2;
+                      c10        = std::cos(arg10);
+                      Phi0t[i+10]= c10*c10;
+                      t11        = (double)i+11;
+                      arg11      = hpi*t11/tin2;
+                      c11        = std::cos(arg11);
+                      Phi0t[i+11]= c11*c11;
+                      t12        = (double)i+12;
+                      arg12      = hpi*t12/tin2;
+                      c12        = std::cos(arg12);
+                      Phi0t[i+12]= c12*c12;
+                      t13        = (double)i+13;
+                      arg13      = hpi*t13/tin2;
+                      c13        = std::cos(arg13);
+                      Phi0t[i+13]= c13*c13;
+                      t14        = (double)i+14;
+                      arg14      = hpi*t14/tin2;
+                      c14        = std::cos(arg14);
+                      Phi0t[i+14]= c14*c14;
+                      t15        = (double)i+15;
+                      arg15      = hpi*t15/tin2;
+                      c15        = std::cos(arg15);
+                      Phi0t[i+15]= c15*c15;
+       
+
+		}
+	 }
+
+
+
+
+
+
+
+
+	  
+
+
+
+
+
+
+  
 	  
 
 
