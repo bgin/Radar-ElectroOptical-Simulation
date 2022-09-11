@@ -3020,6 +3020,1188 @@ namespace gms {
 	 }
 
 
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const float Phi0,
+					     const int32_t n,
+					     const float tin) {
+
+                constexpr float hpi = 1.57079632679489661923132169164f;
+		float tin2,t0,t1,t2,t3,t4,t5,t6,t7;
+                float arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                float c0,c1,c2,c3,c4,c5,c6,c7;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%8;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (float)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<8) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 8) {
+                      t0         = (float)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (float)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                      t2         = (float)i+2;
+                      arg2       = hpi*t2/tin2;
+                      c2         = std::cos(arg2);
+                      Phi0t[i+2] = c2*c2;
+                      t3         = (float)i+3;
+                      arg3       = hpi*t3/tin2;
+                      c3         = std::cos(arg3);
+                      Phi0t[i+3] = c3*c3;
+                      t4         = (float)i+4;
+                      arg4       = hpi*t4/tin2;
+                      c4         = std::cos(arg4);
+                      Phi0t[i+4] = c4*c4;
+                      t5         = (float)i+5;
+                      arg5       = hpi*t5/tin2;
+                      c5         = std::cos(arg5);
+                      Phi0t[i+5] = c5*c5;
+                      t6         = (float)i+6;
+                      arg6       = hpi*t6/tin2;
+                      c6         = std::cos(arg6);
+                      Phi0t[i+6] = c6*c6;
+                      t7         = (float)i+7;
+		      arg7       = hpi*t7/tin2;
+                      c7         = std::cos(arg7);
+                      Phi0t[i+7] = c7*c7;
+                
+       
+		}
+	 }
+
+
+	    __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_8x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const double Phi0,
+					     const int32_t n,
+					     const double tin) {
+
+                constexpr double hpi = 1.57079632679489661923132169164;
+		double tin2,t0,t1,t2,t3,t4,t5,t6,t7;
+                double arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                double c0,c1,c2,c3,c4,c5,c6,c7;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%8;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (double)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<8) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 8) {
+                      t0         = (double)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (double)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                      t2         = (double)i+2;
+                      arg2       = hpi*t2/tin2;
+                      c2         = std::cos(arg2);
+                      Phi0t[i+2] = c2*c2;
+                      t3         = (double)i+3;
+                      arg3       = hpi*t3/tin2;
+                      c3         = std::cos(arg3);
+                      Phi0t[i+3] = c3*c3;
+                      t4         = (double)i+4;
+                      arg4       = hpi*t4/tin2;
+                      c4         = std::cos(arg4);
+                      Phi0t[i+4] = c4*c4;
+                      t5         = (double)i+5;
+                      arg5       = hpi*t5/tin2;
+                      c5         = std::cos(arg5);
+                      Phi0t[i+5] = c5*c5;
+                      t6         = (double)i+6;
+                      arg6       = hpi*t6/tin2;
+                      c6         = std::cos(arg6);
+                      Phi0t[i+6] = c6*c6;
+                      t7         = (double)i+7;
+		      arg7       = hpi*t7/tin2;
+                      c7         = std::cos(arg7);
+                      Phi0t[i+7] = c7*c7;
+                  
+		}
+	 }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_4x( float * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const float Phi0,
+					     const int32_t n,
+					     const float tin) {
+
+                constexpr float hpi = 1.57079632679489661923132169164f;
+		float tin2,t0,t1,t2,t3;
+                float arg0,arg1,arg2,arg3;
+                float c0,c1,c2,c3;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%4;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (float)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 4) {
+                      t0         = (float)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (float)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                      t2         = (float)i+2;
+                      arg2       = hpi*t2/tin2;
+                      c2         = std::cos(arg2);
+                      Phi0t[i+2] = c2*c2;
+                      t3         = (float)i+3;
+                      arg3       = hpi*t3/tin2;
+                      c3         = std::cos(arg3);
+                      Phi0t[i+3] = c3*c3;
+                                   
+       
+		}
+	 }
+
+
+         
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_4x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const double Phi0,
+					     const int32_t n,
+					     const double tin) {
+
+                constexpr double hpi = 1.57079632679489661923132169164;
+		double tin2,t0,t1,t2,t3;
+                double arg0,arg1,arg2,arg3;
+                double c0,c1,c2,c3;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%4;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (double)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<4) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 4) {
+                      t0         = (double)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (double)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                      t2         = (double)i+2;
+                      arg2       = hpi*t2/tin2;
+                      c2         = std::cos(arg2);
+                      Phi0t[i+2] = c2*c2;
+                      t3         = (double)i+3;
+                      arg3       = hpi*t3/tin2;
+                      c3         = std::cos(arg3);
+                      Phi0t[i+3] = c3*c3;
+              }
+	 }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_2x( float * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const float Phi0,
+					     const int32_t n,
+					     const float tin) {
+
+                constexpr float hpi = 1.57079632679489661923132169164f;
+		float tin2,t0,t1;
+                float arg0,arg1;
+                float c0,c1;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%2;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (float)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<2) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(4)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 2) {
+                      t0         = (float)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (float)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                                                    
+       
+		}
+	 }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void squared_cos_flux_unroll_2x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
+	                                     const double Phi0,
+					     const int32_t n,
+					     const double tin) {
+
+                constexpr double hpi = 1.57079632679489661923132169164;
+		double tin2,t0,t1;
+                double arg0,arg1;
+                double c0,c1;
+                tin2 = 0.5f*tin;
+		int32_t i,m,m1;
+		m = n%2;
+		if(m!=0) {
+                   for(i = 0; i != m; ++i) {
+                       t0       = (double)i;
+		       arg0     = hpi*t0/tin2;
+		       c0       = std::cos(arg0);
+		       Phi0t[i] = c0*c0;
+		   }
+		   if(n<2) return;
+		}
+		m1 = m+1;
+		__assume_aligned(Phi0t,64);
+              #pragma vector aligned
+	      #pragma ivdep
+	      #pragma vector vectorlength(8)
+	      #pragma vector multiple_gather_scatter_by_shuffles
+	      #pragma vector always
+	        for(i = m1; i != n; i += 2) {
+                      t0         = (double)i;
+		      arg0       = hpi*t0/tin2;
+                      c0         = std::cos(arg0);
+                      Phi0t[i]   = c0*c0;
+                      t1         = (double)i+1;
+                      arg1       = hpi*t1/tin2;
+                      c1         = std::cos(arg1);
+                      Phi0t[i+1] = c1*c1;
+                    
+              }
+	 }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const float Phi0,
+                                              const float * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const float T) {
+
+                   constexpr float twopi = 6.283185307179586476925286766559f;
+                   float arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                   float arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+                   float f0,f1,f2,f3,f4,f5,f6,f7;
+                   float f8,f9,f10,f11,f12,f13,f14,f15;
+                   float c0,c1,c2,c3,c4,c5,c6,c7;
+                   float c8,c9,c10,c11,c12,c13,c14,c15;
+                   float sa0,sa1,sa2,sa3,sa4,sa,sa6,sa7;
+                   float sa8,sa9,sa10,sa11,sa12,sa13,sa14,sa15;
+                   float hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5f*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%16;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0f-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<16) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(4)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 16) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0f-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0f-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                       f2         = freq[i+2];
+                       c2         = twopi*f2*hT;
+                       sa2        = std::sin(c2)/c2;
+                       arg2       = 1.0f-(f2*hT*f2*hT);
+                       Phi0f[i+2] = Phi0T*(sa2/arg2);
+                       f3         = freq[i+3];
+                       c3         = twopi*f3*hT;
+                       sa3        = std::sin(c3)/c3;
+                       arg3       = 1.0f-(f3*hT*f3*hT);
+                       Phi0f[i+3] = Phi0T*(sa3/arg3);
+                       f4         = freq[i+4];
+                       c4         = twopi*f4*hT;
+                       sa4        = std::sin(c4)/c4;
+                       arg4       = 1.0f-(f4*hT*f4*hT);
+                       Phi0f[i+4] = Phi0T*(sa4/arg4);
+                       f5         = freq[i+5];
+                       c5         = twopi*f5*hT;
+                       sa5        = std::sin(c5)/c5;
+                       arg5       = 1.0f-(f5*hT*f5*hT);
+                       Phi0f[i+5] = Phi0T*(sa5/arg5);
+                       f6         = freq(i+6);
+                       c6         = twopi*f6*hT;
+                       sa6        = sin(c6)/c6;
+                       arg6       = 1.0f-(f6*hT*f6*hT);
+                       Phi0f[i+6] = Phi0T*(sa6/arg6);
+                       f7         = freq[i+7];
+                       c7         = twopi*f7*hT;
+                       sa7        = std::sin(c7)/c7;
+                       arg7       = 1.0f-(f7*hT*f7*hT);
+                       Phi0f[i+7] = Phi0T*(sa7/arg7);
+                       f8         = freq[i+8];
+                       c8         = twopi*f8*hT;
+                       sa8        = std::sin(c8)/c8;
+                       arg8       = 1.0f-(f8*hT*f8*hT);
+                       Phi0f[i+8] = Phi0T*(sa8/arg8);
+                       f9         = freq[i+9];
+                       c9         = twopi*f9*hT;
+                       sa9        = sstd::in(c9)/c9;
+                       arg9       = 1.0f-(f9*hT*f9*hT);
+                       Phi0f[i+9] = Phi0T*(sa9/arg9);
+                       f10        = freq[i+10];
+                       c10        = twopi*f10*hT;
+                       sa10       = std::sin(c10)/c10;
+                       arg10      = 1.0f-(f10*hT*f10*hT);
+                       Phi0f[i+10]= Phi0T*(sa10/arg10);
+                       f11        = freq[i+11];
+                       c11        = twopi*f11*hT;
+                       sa11       = std::sin(c11)/c11;
+                       arg11      = 1.0f-(f11*hT*f11*hT);
+                       Phi0f[i+11]= Phi0T*(sa11/arg11);
+                       f12        = freq[i+12];
+                       c12        = twopi*f12*hT;
+                       sa12       = std::sin(c12)/c12;
+                       arg12      = 1.0f-(f12*hT*f12*hT);
+                       Phi0f[i+12]= Phi0T*(sa12/arg12);
+                       f13        = freq(i+13);
+                       c13        = twopi*f13*hT;
+                       sa13       = std::sin(c13)/c13;
+                       arg13      = 1.0f-(f13*hT*f13*hT);
+                       Phi0f[i+13]= Phi0T*(sa13/arg13);
+                       f14        = freq[i+14];
+                       c14        = twopi*f14*hT;
+                       sa14       = std::sin(c14)/c14;
+                       arg14      = 1.0f-(f14*hT*f14*hT);
+                       Phi0f[i+14]= Phi0T*(sa14/arg14);
+                       f15        = freq[i+15];
+                       c15        = twopi*f15*h;
+                       sa15       = std::sin(c15)/c15;
+                       arg15      = 1.0f-(f15*hT*f15*hT);
+                       Phi0f[i+15]= Phi0T*(sa15/arg15);
+                  }
+           }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const double Phi0,
+                                              const double * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const double T) {
+
+                   constexpr double twopi = 6.283185307179586476925286766559;
+                   double arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                   double arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+                   double f0,f1,f2,f3,f4,f5,f6,f7;
+                   double f8,f9,f10,f11,f12,f13,f14,f15;
+                   double c0,c1,c2,c3,c4,c5,c6,c7;
+                   double c8,c9,c10,c11,c12,c13,c14,c15;
+                   double sa0,sa1,sa2,sa3,sa4,sa,sa6,sa7;
+                   double sa8,sa9,sa10,sa11,sa12,sa13,sa14,sa15;
+                   double hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5f*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%16;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<16) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(8)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 16) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                       f2         = freq[i+2];
+                       c2         = twopi*f2*hT;
+                       sa2        = std::sin(c2)/c2;
+                       arg2       = 1.0-(f2*hT*f2*hT);
+                       Phi0f[i+2] = Phi0T*(sa2/arg2);
+                       f3         = freq[i+3];
+                       c3         = twopi*f3*hT;
+                       sa3        = std::sin(c3)/c3;
+                       arg3       = 1.0-(f3*hT*f3*hT);
+                       Phi0f[i+3] = Phi0T*(sa3/arg3);
+                       f4         = freq[i+4];
+                       c4         = twopi*f4*hT;
+                       sa4        = std::sin(c4)/c4;
+                       arg4       = 1.0-(f4*hT*f4*hT);
+                       Phi0f[i+4] = Phi0T*(sa4/arg4);
+                       f5         = freq[i+5];
+                       c5         = twopi*f5*hT;
+                       sa5        = std::sin(c5)/c5;
+                       arg5       = 1.0-(f5*hT*f5*hT);
+                       Phi0f[i+5] = Phi0T*(sa5/arg5);
+                       f6         = freq(i+6);
+                       c6         = twopi*f6*hT;
+                       sa6        = sin(c6)/c6;
+                       arg6       = 1.0-(f6*hT*f6*hT);
+                       Phi0f[i+6] = Phi0T*(sa6/arg6);
+                       f7         = freq[i+7];
+                       c7         = twopi*f7*hT;
+                       sa7        = std::sin(c7)/c7;
+                       arg7       = 1.0-(f7*hT*f7*hT);
+                       Phi0f[i+7] = Phi0T*(sa7/arg7);
+                       f8         = freq[i+8];
+                       c8         = twopi*f8*hT;
+                       sa8        = std::sin(c8)/c8;
+                       arg8       = 1.0-(f8*hT*f8*hT);
+                       Phi0f[i+8] = Phi0T*(sa8/arg8);
+                       f9         = freq[i+9];
+                       c9         = twopi*f9*hT;
+                       sa9        = sstd::in(c9)/c9;
+                       arg9       = 1.0-(f9*hT*f9*hT);
+                       Phi0f[i+9] = Phi0T*(sa9/arg9);
+                       f10        = freq[i+10];
+                       c10        = twopi*f10*hT;
+                       sa10       = std::sin(c10)/c10;
+                       arg10      = 1.0-(f10*hT*f10*hT);
+                       Phi0f[i+10]= Phi0T*(sa10/arg10);
+                       f11        = freq[i+11];
+                       c11        = twopi*f11*hT;
+                       sa11       = std::sin(c11)/c11;
+                       arg11      = 1.0-(f11*hT*f11*hT);
+                       Phi0f[i+11]= Phi0T*(sa11/arg11);
+                       f12        = freq[i+12];
+                       c12        = twopi*f12*hT;
+                       sa12       = std::sin(c12)/c12;
+                       arg12      = 1.0-(f12*hT*f12*hT);
+                       Phi0f[i+12]= Phi0T*(sa12/arg12);
+                       f13        = freq(i+13);
+                       c13        = twopi*f13*hT;
+                       sa13       = std::sin(c13)/c13;
+                       arg13      = 1.0-(f13*hT*f13*hT);
+                       Phi0f[i+13]= Phi0T*(sa13/arg13);
+                       f14        = freq[i+14];
+                       c14        = twopi*f14*hT;
+                       sa14       = std::sin(c14)/c14;
+                       arg14      = 1.0-(f14*hT*f14*hT);
+                       Phi0f[i+14]= Phi0T*(sa14/arg14);
+                       f15        = freq[i+15];
+                       c15        = twopi*f15*h;
+                       sa15       = std::sin(c15)/c15;
+                       arg15      = 1.0-(f15*hT*f15*hT);
+                       Phi0f[i+15]= Phi0T*(sa15/arg15);
+                  }
+           }
+
+
+           
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const float Phi0,
+                                              const float * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const float T) {
+
+                   constexpr float twopi = 6.283185307179586476925286766559f;
+                   float arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                   float f0,f1,f2,f3,f4,f5,f6,f7;
+                   float c0,c1,c2,c3,c4,c5,c6,c7;
+                   float sa0,sa1,sa2,sa3,sa4,sa,sa6,sa7;
+                   float hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5f*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%8;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0f-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<8) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(4)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 8) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0f-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0f-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                       f2         = freq[i+2];
+                       c2         = twopi*f2*hT;
+                       sa2        = std::sin(c2)/c2;
+                       arg2       = 1.0f-(f2*hT*f2*hT);
+                       Phi0f[i+2] = Phi0T*(sa2/arg2);
+                       f3         = freq[i+3];
+                       c3         = twopi*f3*hT;
+                       sa3        = std::sin(c3)/c3;
+                       arg3       = 1.0f-(f3*hT*f3*hT);
+                       Phi0f[i+3] = Phi0T*(sa3/arg3);
+                       f4         = freq[i+4];
+                       c4         = twopi*f4*hT;
+                       sa4        = std::sin(c4)/c4;
+                       arg4       = 1.0f-(f4*hT*f4*hT);
+                       Phi0f[i+4] = Phi0T*(sa4/arg4);
+                       f5         = freq[i+5];
+                       c5         = twopi*f5*hT;
+                       sa5        = std::sin(c5)/c5;
+                       arg5       = 1.0f-(f5*hT*f5*hT);
+                       Phi0f[i+5] = Phi0T*(sa5/arg5);
+                       f6         = freq(i+6);
+                       c6         = twopi*f6*hT;
+                       sa6        = sin(c6)/c6;
+                       arg6       = 1.0f-(f6*hT*f6*hT);
+                       Phi0f[i+6] = Phi0T*(sa6/arg6);
+                       f7         = freq[i+7];
+                       c7         = twopi*f7*hT;
+                       sa7        = std::sin(c7)/c7;
+                       arg7       = 1.0f-(f7*hT*f7*hT);
+                       Phi0f[i+7] = Phi0T*(sa7/arg7);
+                     
+                  }
+           }
+
+
+           
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_8x( double * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const double Phi0,
+                                              const double * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const double T) {
+
+                   constexpr double twopi = 6.283185307179586476925286766559;
+                   double arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                   double f0,f1,f2,f3,f4,f5,f6,f7;
+                   double c0,c1,c2,c3,c4,c5,c6,c7;
+                   double sa0,sa1,sa2,sa3,sa4,sa,sa6,sa7;
+                   double hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%8;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<8) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(8)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 8) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                       f2         = freq[i+2];
+                       c2         = twopi*f2*hT;
+                       sa2        = std::sin(c2)/c2;
+                       arg2       = 1.0-(f2*hT*f2*hT);
+                       Phi0f[i+2] = Phi0T*(sa2/arg2);
+                       f3         = freq[i+3];
+                       c3         = twopi*f3*hT;
+                       sa3        = std::sin(c3)/c3;
+                       arg3       = 1.0-(f3*hT*f3*hT);
+                       Phi0f[i+3] = Phi0T*(sa3/arg3);
+                       f4         = freq[i+4];
+                       c4         = twopi*f4*hT;
+                       sa4        = std::sin(c4)/c4;
+                       arg4       = 1.0-(f4*hT*f4*hT);
+                       Phi0f[i+4] = Phi0T*(sa4/arg4);
+                       f5         = freq[i+5];
+                       c5         = twopi*f5*hT;
+                       sa5        = std::sin(c5)/c5;
+                       arg5       = 1.0-(f5*hT*f5*hT);
+                       Phi0f[i+5] = Phi0T*(sa5/arg5);
+                       f6         = freq(i+6);
+                       c6         = twopi*f6*hT;
+                       sa6        = sin(c6)/c6;
+                       arg6       = 1.0-(f6*hT*f6*hT);
+                       Phi0f[i+6] = Phi0T*(sa6/arg6);
+                       f7         = freq[i+7];
+                       c7         = twopi*f7*hT;
+                       sa7        = std::sin(c7)/c7;
+                       arg7       = 1.0-(f7*hT*f7*hT);
+                       Phi0f[i+7] = Phi0T*(sa7/arg7);
+                      
+                  }
+           }
+
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_4x( float * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const float Phi0,
+                                              const float * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const float T) {
+
+                   constexpr float twopi = 6.283185307179586476925286766559f;
+                   float arg0,arg1,arg2,arg3;
+                   float f0,f1,f2,f3;
+                   float c0,c1,c2,c3,c4,c5,c6,c7;
+                   float sa0,sa1,sa2,sa3;
+                   float hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5f*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%4;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0f-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<4) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(4)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 4) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0f-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0f-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                       f2         = freq[i+2];
+                       c2         = twopi*f2*hT;
+                       sa2        = std::sin(c2)/c2;
+                       arg2       = 1.0f-(f2*hT*f2*hT);
+                       Phi0f[i+2] = Phi0T*(sa2/arg2);
+                       f3         = freq[i+3];
+                       c3         = twopi*f3*hT;
+                       sa3        = std::sin(c3)/c3;
+                       arg3       = 1.0f-(f3*hT*f3*hT);
+                       Phi0f[i+3] = Phi0T*(sa3/arg3);
+                                           
+                  }
+           }
+
+
+            
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_4x( double * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const double Phi0,
+                                              const double * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const double T) {
+
+                   constexpr double twopi = 6.283185307179586476925286766559;
+                   double arg0,arg1,arg2,arg3;
+                   double f0,f1,f2,f3;
+                   double c0,c1,c2,c3;
+                   double sa0,sa1,sa2,sa3;
+                   double hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%4;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<4) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(8)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 4) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                       f2         = freq[i+2];
+                       c2         = twopi*f2*hT;
+                       sa2        = std::sin(c2)/c2;
+                       arg2       = 1.0-(f2*hT*f2*hT);
+                       Phi0f[i+2] = Phi0T*(sa2/arg2);
+                       f3         = freq[i+3];
+                       c3         = twopi*f3*hT;
+                       sa3        = std::sin(c3)/c3;
+                       arg3       = 1.0-(f3*hT*f3*hT);
+                       Phi0f[i+3] = Phi0T*(sa3/arg3);
+                 }
+           }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_2x( float * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const float Phi0,
+                                              const float * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const float T) {
+
+                   constexpr float twopi = 6.283185307179586476925286766559f;
+                   float arg0,arg1;
+                   float f0,f1;
+                   float c0,c1;
+                   float sa0,sa1;
+                   float hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5f*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%2;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0f-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<2) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(4)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 2) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0f-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0f-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                                                                 
+                  }
+           }
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void const_flux_spectr_unroll_2x( double * __restrict __ATTR_ALIGN__(64) Phi0f,
+                                              const double Phi0,
+                                              const double * __restrict __ATTR_ALIGN__(64) freq,
+                                              const int32_t n,
+                                              const double T) {
+
+                   constexpr double twopi = 6.283185307179586476925286766559;
+                   double arg0,arg1;
+                   double f0,f1;
+                   double c0,c1;
+                   double sa0,sa1;
+                   double hT,Phi0T;
+                   int32_t i,m,m1;
+                   hT    = 0.5*T;
+                   Phi0T = Phi0*hT;
+                   m     = n%2;
+                   if(m!=0) {
+                      for(i = 0; i != m; ++i) {
+                           f0         = freq[i];
+                           c0         = twopi*f0*hT;
+                           sa0        = std::sin(c0)/c0;
+                           arg0       = 1.0-(f0*hT*f0*hT);
+                           Phi0f[i]   = Phi0T*(sa0/arg0);
+                      }
+                      if(m<2) return;
+                   }
+                   m1 = m+1;
+                   __assume_aligned(Phi0f,64);
+                   __assume_aligned(freq,64);
+                  #pragma vector aligned
+	          #pragma ivdep
+	          #pragma vector vectorlength(8)
+	          #pragma vector multiple_gather_scatter_by_shuffles
+	          #pragma vector always
+                  for(i = m1; i != n; i += 2) {
+                       f0         = freq[i];
+                       c0         = twopi*f0*hT;
+                       sa0        = std::sin(c0)/c0;
+                       arg0       = 1.0-(f0*hT*f0*hT);
+                       Phi0f[i]   = Phi0T*(sa0/arg0);
+                       f1         = freq[i+1];
+                       c1         = twopi*f1*hT;
+                       sa1        = std::sin(c1)/c1;
+                       arg1       = 1.0-(f0*hT*f1*hT);
+                       Phi0f[i+1] = Phi0T*(sa1/arg1);
+                 }
+           }
+
+
+        //  !Идеальный гармонический модулятор
+        //!Formula 1,2 p. 187
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void ideal_modulator_unroll_16x(float * __restrict __ATTR_ALIGN__(64) rhot_s,
+                                            float * __restrict __ATTR_ALIGN__(64) rhot_c,
+                                            const int32_t n,
+                                            const float f0,
+                                            const float phi0,
+                                            const float rho0,
+                                            const float rho1) {
+
+                 constexpr float twopi = 6.283185307179586476925286766559f;
+                 float t0,t1,t2,t3,t4,t5,t6,t7;
+                 float t8,t9,t10,t11,t12,t13,t14,t15;
+                 float s0,s1,s2,s3,s4,s5,s6,s7;
+                 float s8,s9,s10,s11,s12,s13,s14,s15;
+                 float c0,c1,c2,c3,c4,c5,c6,c7;
+                 float c8,c9,c10,c11,c12,c13,c14,c15;
+                 float psi0,psi1,psi2,psi3,psi4,psi5,psi6,psi7;
+                 float psi8,psi9,psi10,psi11,psi12,psi13,psi14,psi15;
+                 float om0;
+                 int32_t i,m,m1;
+                 om0 = twopi*f0;
+                 m   = n%16;
+                 if(m!=0) {
+                    for(i = 0; i != m; ++i) {
+                        t0        = (float)i;
+                        psi0      = om0*t0+phi0;
+                        s0        = rho0+rho1*std::sin(psi0);
+                        rhot_s[i] = s0
+                        c0        = rho0+rho1*std::cos(psi0);
+                        rhot_c[i] = c0;
+                    }
+                    if(n<16) return;
+                 }
+                 m1 = m+1;
+                 __assume_aligned(rhot_s,64);
+                 __assume_aligned(rhot_c,64);
+                 #pragma vector aligned
+	         #pragma ivdep
+	         #pragma vector vectorlength(4)
+	         #pragma vector multiple_gather_scatter_by_shuffles
+	         #pragma vector always
+                 for(i = m1; i != n; i += 16) {
+                      t0          = (float)i;
+                      psi0        = om0*t0+phi0;
+                      s0          = rho0+rho1*std::sin(psi0);
+                      rhot_s[i]   = s0;
+                      c0          = rho0+rho1*std::cos(psi0);
+                      rhot_c[i]   = c0;
+                      t1          = (float)i+1;
+                      psi1        = om0*t1+phi0;
+                      s1          = rho0+rho1*std::sin(psi1);
+                      rhot_s[i+1] = s1;
+                      c0          = rho0+rho1*std::cos(psi1);
+                      rhot_c[i+1] = c1;
+                      t2          = (float)i+2;
+                      psi2        = om0*t2+phi0;
+                      s2          = rho0+rho1*std::sin(psi2);
+                      rhot_s[i+2] = s2;
+                      c2          = rho0+rho1*std::cos(psi2);
+                      rhot_c[i+2] = c2;
+                      t3          = (float)i+3;
+                      psi3        = om0*t3+phi0;
+                      s3          = rho0+rho1*std::sin(psi3);
+                      rhot_s[i+3] = s3;
+                      c3          = rho0+rho1*std::cos(psi3);
+                      rhot_c[i+3] = c3;
+                      t4          = (float)i+4;
+                      psi4        = om0*t4+phi0;
+                      s4          = rho0+rho1*std::sin(psi4);
+                      rhot_s[i+4] = s4;
+                      c4          = rho0+rho1*std::cos(psi4);
+                      rhot_c[i+4] = c4;
+                      t5          = (float)i+5;
+                      psi5        = om0*t5+phi0;
+                      s5          = rho0+rho1*std::sin(psi5);
+                      rhot_s[i+5] = s5;
+                      c5          = rho0+rho1*std::cos(psi5)
+                      rhot_c[i+5] = c5
+                      t6          = (float)i+6;
+                      psi6        = om0*t6+phi0
+                      s6          = rho0+rho1*std::sin(psi6);
+                      rhot_s[i+6] = s6;
+                      c6          = rho0+rho1*cos(psi6);
+                      rhot_c[i+6] = c6;
+                      t7          = (float)i+7;
+                      psi7        = om0*t7+phi0;
+                      s7          = rho0+rho1*std::sin(psi7);
+                      rhot_s[i+7] = s7;
+                      c7          = rho0+rho1*std::cos(psi7);
+                      rhot_c[i+7] = c7;
+                      t8          = (float)i+8;
+                      psi8        = om0*t8+phi0;
+                      s8          = rho0+rho1*std::sin(psi8);
+                      rhot_s[i+8] = s8;
+                      c8          = rho0+rho1*std::cos(psi8);
+                      rhot_c[i+8] = c8;
+                      t9          = (float)i+9;
+                      psi9        = om0*t9+phi0;
+                      s9          = rho0+rho1*std::sin(psi9);
+                      rhot_s[i+9] = s9;
+                      c9          = rho0+rho1*std::cos(psi9);
+                      rhot_c[i+9] = c9;
+                      t10         = (float)i+10;
+                      psi10       = om0*t10+phi0;
+                      s10         = rho0+rho1*std::sin(psi10);
+                      rhot_s[i+10]= s10;
+                      c10         = rho0+rho1*std::cos(psi10);
+                      rhot_c[i+10]= c10;
+                      t11         = (float)i+11;
+                      psi11       = om0*t11+phi0;
+                      s11         = rho0+rho1*std::sin(psi11);
+                      rhot_s[i+11]= s11;
+                      c11         = rho0+rho1*std::cos(psi11);
+                      rhot_c[i+11]= c11;
+                      t12         = (float)i+12;
+                      psi12       = om0*t12+phi0;
+                      s12         = rho0+rho1*std::sin(psi12);
+                      rhot_s[i+12]= s12;
+                      c12         = rho0+rho1*std::cos(psi12);
+                      rhot_c[i+12]= c12;
+                      t13         = (float)i+13;
+                      psi13       = om0*t13+phi0;
+                      s13         = rho0+rho1*std::sin(psi13);
+                      rhot_s[i+13]= s13;
+                      c13         = rho0+rho1*std::cos(psi13);
+                      rhot_c[i+13]= c13;
+                      t14         = (float)i+14;
+                      psi14       = om0*t14+phi0;
+                      s14         = rho0+rho1*std::sin(psi14);
+                      rhot_s[i+14]= s14;
+                      c14         = rho0+rho1*std::cos(psi14);
+                      rhot_c[i+14]= c14;
+                      t15         = (float)i+15;
+                      psi15       = om0*t15+phi0;
+                      s15         = rho0+rho1*std::sin(psi15)
+                      rhot_s[i+15]= s15;
+                      c15         = rho0+rho1*std::cos(psi15)
+                      rhot_c[i+15]= c15;
+                 }
+        }
+
+           
+
+
+           
+
+
+
+
+
+
+
+
+
+
+           
+
+
+
+
+
+
+            
+
+
+
+
+
+
+         
+
+
+
+
 
 
 
