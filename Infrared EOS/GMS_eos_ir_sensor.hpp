@@ -5359,6 +5359,861 @@ namespace gms {
          }
 
 
+         
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const float * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const float Phi0,
+                                           const int32_t n,
+                                           const float T,
+                                           const float * __restrict __ATTR_ALIGN__(64) k,
+                                           const float tin) {
+
+                 constexpr float pi2 = 1.5707963267948966192313216916398f;
+                 float phik0,phik1,phik2,phik3,phik4,phik5,phik6,phik7;
+                 float phik8,phik9,phik10,phik11,phik12,phik13,phik14,phik15;
+                 float arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                 float arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+                 float k0,k1,k2,k3,k4,k5,k6,k7;
+                 float k8,k9,k10,k11,k12,k13,k14,k15;
+                 float twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0f/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%16;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<16) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(4)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 16) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i] = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                          k2      = k[i+2];
+                          arg2    = k2*pi2;
+                          Ak[i+2] = Phi0*(std::sin(arg2)/arg2); 
+                          k3      = k[i+3];
+                          arg3    = k3*pi2;
+                          Ak[i+3] = Phi0*(std::sin(arg3)/arg3); 
+                          k4      = k[i+4];
+                          arg4    = k4*pi2;
+                          Ak[i+4] = Phi0*(std::sin(arg4)/arg4); 
+                          k5      = k[i+5];
+                          arg5    = k5*pi2;
+                          Ak[i+5] = Phi0*(std::sin(arg5)/arg5); 
+                          k6      = k[i+6];
+                          arg6    = k6*pi2;
+                          Ak[i+6] = Phi0*(std::sin(arg6)/arg6);
+                          k7      = k[i+7];
+                          arg7    = k7*pi2;
+                          Ak[i+7] = Phi0*(std::sin(arg7)/arg7);   
+                          k8      = k[i+8];
+                          arg8    = k8*pi2;
+                          Ak[i+8] = Phi0*(std::sin(arg8)/arg8); 
+                          k9      = k(i+9);
+                          arg9    = k9*pi2;
+                          Ak[i+9] = Phi0*(std::sin(arg9)/arg9); 
+                          k10     = k[i+10];
+                          arg10   = k10*pi2;
+                          Ak[i+10]= Phi0*(std::sin(arg10)/arg10); 
+                          k11     = k[i+11];
+                          arg11   = k11*pi2;
+                          Ak[i+11]= Phi0*(std::sin(arg11)/arg11); 
+                          k12     = k[i+12];
+                          arg12   = k12*pi2;
+                          Ak[i+12]= Phi0*(std::sin(arg12)/arg12); 
+                          k13     = k[i+13];
+                          arg13   = k13*pi2;
+                          Ak[i+13]= Phi0*(std::sin(arg13)/arg13); 
+                          k14     = k(i+14);
+                          arg14   = k14*pi2;
+                          Ak[i+14]= Phi0*(std::sin(arg14)/arg14);
+                          k15     = k[i+15];
+                          arg15   = k15*pi2;
+                          Ak[i+15]= Phi0*(std::sin(arg15)/arg15);  
+                      }
+                      
+                     }
+                     else {
+                          m = n%16;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<16) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(4)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 16) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                              phik2   = Phik[i+2];
+                              Ak[i+2] = twoT*phik2;
+                              phik3   = Phik[i+3];
+                              Ak[i+3] = twoT*phik3;
+                              phik4   = Phik[i+4];
+                              Ak[i+4] = twoT*phik4;
+                              phik5   = Phik[i+5];
+                              Ak[i+5] = twoT*phik5;
+                              phik6   = Phik[i+6];
+                              Ak[i+6] = twoT*phik6;
+                              phik7   = Phik[i+7];
+                              Ak[i+7] = twoT*phik7;
+                              phik8   = Phik[i+8];
+                              Ak[i+8] = twoT*phik8;
+                              phik9   = Phik[i+9];
+                              Ak[i+9] = twoT*phik9;
+                              phik10  = Phik[i+10];
+                              Ak[i+10]= twoT*phik10;
+                              phik11  = Phik[i+11];
+                              Ak[i+11]= twoT*phik11;
+                              phik12  = Phik[i+12];
+                              Ak[i+12]= twoT*phik12;
+                              phik13  = Phik[i+13];
+                              Ak[i+13]= twoT*phik13;
+                              phik14  = Phik[i+14];
+                              Ak[i+14]= twoT*phik14;
+                              phik15  = Phik[i+15];
+                              Ak[i+15] = twoT*phik15;
+                          }
+                 }
+          }
+
+
+          
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const double * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const double Phi0,
+                                           const int32_t n,
+                                           const double T,
+                                           const double * __restrict __ATTR_ALIGN__(64) k,
+                                           const double tin) {
+
+                 constexpr double pi2 = 1.5707963267948966192313216916398;
+                 double phik0,phik1,phik2,phik3,phik4,phik5,phik6,phik7;
+                 double phik8,phik9,phik10,phik11,phik12,phik13,phik14,phik15;
+                 double arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                 double arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15;
+                 double k0,k1,k2,k3,k4,k5,k6,k7;
+                 double k8,k9,k10,k11,k12,k13,k14,k15;
+                 double twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%16;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<16) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(8)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 16) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i] = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                          k2      = k[i+2];
+                          arg2    = k2*pi2;
+                          Ak[i+2] = Phi0*(std::sin(arg2)/arg2); 
+                          k3      = k[i+3];
+                          arg3    = k3*pi2;
+                          Ak[i+3] = Phi0*(std::sin(arg3)/arg3); 
+                          k4      = k[i+4];
+                          arg4    = k4*pi2;
+                          Ak[i+4] = Phi0*(std::sin(arg4)/arg4); 
+                          k5      = k[i+5];
+                          arg5    = k5*pi2;
+                          Ak[i+5] = Phi0*(std::sin(arg5)/arg5); 
+                          k6      = k[i+6];
+                          arg6    = k6*pi2;
+                          Ak[i+6] = Phi0*(std::sin(arg6)/arg6);
+                          k7      = k[i+7];
+                          arg7    = k7*pi2;
+                          Ak[i+7] = Phi0*(std::sin(arg7)/arg7);   
+                          k8      = k[i+8];
+                          arg8    = k8*pi2;
+                          Ak[i+8] = Phi0*(std::sin(arg8)/arg8); 
+                          k9      = k(i+9);
+                          arg9    = k9*pi2;
+                          Ak[i+9] = Phi0*(std::sin(arg9)/arg9); 
+                          k10     = k[i+10];
+                          arg10   = k10*pi2;
+                          Ak[i+10]= Phi0*(std::sin(arg10)/arg10); 
+                          k11     = k[i+11];
+                          arg11   = k11*pi2;
+                          Ak[i+11]= Phi0*(std::sin(arg11)/arg11); 
+                          k12     = k[i+12];
+                          arg12   = k12*pi2;
+                          Ak[i+12]= Phi0*(std::sin(arg12)/arg12); 
+                          k13     = k[i+13];
+                          arg13   = k13*pi2;
+                          Ak[i+13]= Phi0*(std::sin(arg13)/arg13); 
+                          k14     = k(i+14);
+                          arg14   = k14*pi2;
+                          Ak[i+14]= Phi0*(std::sin(arg14)/arg14);
+                          k15     = k[i+15];
+                          arg15   = k15*pi2;
+                          Ak[i+15]= Phi0*(std::sin(arg15)/arg15);  
+                      }
+                      
+                     }
+                     else {
+                          m = n%16;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<16) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(8)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 16) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                              phik2   = Phik[i+2];
+                              Ak[i+2] = twoT*phik2;
+                              phik3   = Phik[i+3];
+                              Ak[i+3] = twoT*phik3;
+                              phik4   = Phik[i+4];
+                              Ak[i+4] = twoT*phik4;
+                              phik5   = Phik[i+5];
+                              Ak[i+5] = twoT*phik5;
+                              phik6   = Phik[i+6];
+                              Ak[i+6] = twoT*phik6;
+                              phik7   = Phik[i+7];
+                              Ak[i+7] = twoT*phik7;
+                              phik8   = Phik[i+8];
+                              Ak[i+8] = twoT*phik8;
+                              phik9   = Phik[i+9];
+                              Ak[i+9] = twoT*phik9;
+                              phik10  = Phik[i+10];
+                              Ak[i+10]= twoT*phik10;
+                              phik11  = Phik[i+11];
+                              Ak[i+11]= twoT*phik11;
+                              phik12  = Phik[i+12];
+                              Ak[i+12]= twoT*phik12;
+                              phik13  = Phik[i+13];
+                              Ak[i+13]= twoT*phik13;
+                              phik14  = Phik[i+14];
+                              Ak[i+14]= twoT*phik14;
+                              phik15  = Phik[i+15];
+                              Ak[i+15] = twoT*phik15;
+                          }
+                 }
+          }
+
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const float * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const float Phi0,
+                                           const int32_t n,
+                                           const float T,
+                                           const float * __restrict __ATTR_ALIGN__(64) k,
+                                           const float tin) {
+
+                 constexpr float pi2 = 1.5707963267948966192313216916398f;
+                 float phik0,phik1,phik2,phik3,phik4,phik5,phik6,phik7;
+                 float arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                 float k0,k1,k2,k3,k4,k5,k6,k7;
+                 float twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0f/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%8;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<8) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(4)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 8) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i]   = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                          k2      = k[i+2];
+                          arg2    = k2*pi2;
+                          Ak[i+2] = Phi0*(std::sin(arg2)/arg2); 
+                          k3      = k[i+3];
+                          arg3    = k3*pi2;
+                          Ak[i+3] = Phi0*(std::sin(arg3)/arg3); 
+                          k4      = k[i+4];
+                          arg4    = k4*pi2;
+                          Ak[i+4] = Phi0*(std::sin(arg4)/arg4); 
+                          k5      = k[i+5];
+                          arg5    = k5*pi2;
+                          Ak[i+5] = Phi0*(std::sin(arg5)/arg5); 
+                          k6      = k[i+6];
+                          arg6    = k6*pi2;
+                          Ak[i+6] = Phi0*(std::sin(arg6)/arg6);
+                          k7      = k[i+7];
+                          arg7    = k7*pi2;
+                          Ak[i+7] = Phi0*(std::sin(arg7)/arg7);   
+                        
+                      }
+                      
+                     }
+                     else {
+                          m = n%8;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<8) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(4)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 8) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                              phik2   = Phik[i+2];
+                              Ak[i+2] = twoT*phik2;
+                              phik3   = Phik[i+3];
+                              Ak[i+3] = twoT*phik3;
+                              phik4   = Phik[i+4];
+                              Ak[i+4] = twoT*phik4;
+                              phik5   = Phik[i+5];
+                              Ak[i+5] = twoT*phik5;
+                              phik6   = Phik[i+6];
+                              Ak[i+6] = twoT*phik6;
+                              phik7   = Phik[i+7];
+                              Ak[i+7] = twoT*phik7;
+                              
+                          }
+                 }
+          }
+
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_8x(double * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const double * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const double Phi0,
+                                           const int32_t n,
+                                           const double T,
+                                           const double * __restrict __ATTR_ALIGN__(64) k,
+                                           const double tin) {
+
+                 constexpr double pi2 = 1.5707963267948966192313216916398;
+                 double phik0,phik1,phik2,phik3,phik4,phik5,phik6,phik7;
+                 double arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7;
+                 double k0,k1,k2,k3,k4,k5,k6,k7;
+                 double twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%8;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<8) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(8)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 8) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i]   = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                          k2      = k[i+2];
+                          arg2    = k2*pi2;
+                          Ak[i+2] = Phi0*(std::sin(arg2)/arg2); 
+                          k3      = k[i+3];
+                          arg3    = k3*pi2;
+                          Ak[i+3] = Phi0*(std::sin(arg3)/arg3); 
+                          k4      = k[i+4];
+                          arg4    = k4*pi2;
+                          Ak[i+4] = Phi0*(std::sin(arg4)/arg4); 
+                          k5      = k[i+5];
+                          arg5    = k5*pi2;
+                          Ak[i+5] = Phi0*(std::sin(arg5)/arg5); 
+                          k6      = k[i+6];
+                          arg6    = k6*pi2;
+                          Ak[i+6] = Phi0*(std::sin(arg6)/arg6);
+                          k7      = k[i+7];
+                          arg7    = k7*pi2;
+                          Ak[i+7] = Phi0*(std::sin(arg7)/arg7);   
+                         
+                      }
+                      
+                     }
+                     else {
+                          m = n%8;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<8) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(8)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 8) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                              phik2   = Phik[i+2];
+                              Ak[i+2] = twoT*phik2;
+                              phik3   = Phik[i+3];
+                              Ak[i+3] = twoT*phik3;
+                              phik4   = Phik[i+4];
+                              Ak[i+4] = twoT*phik4;
+                              phik5   = Phik[i+5];
+                              Ak[i+5] = twoT*phik5;
+                              phik6   = Phik[i+6];
+                              Ak[i+6] = twoT*phik6;
+                              phik7   = Phik[i+7];
+                              Ak[i+7] = twoT*phik7;
+                             
+                          }
+                 }
+          }
+
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_4x(float * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const float * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const float Phi0,
+                                           const int32_t n,
+                                           const float T,
+                                           const float * __restrict __ATTR_ALIGN__(64) k,
+                                           const float tin) {
+
+                 constexpr float pi2 = 1.5707963267948966192313216916398f;
+                 float phik0,phik1,phik2,phik3;
+                 float arg0,arg1,arg2,arg3;
+                 float k0,k1,k2,k3;
+                 float twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0f/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%4;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<4) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(4)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 4) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i]   = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                          k2      = k[i+2];
+                          arg2    = k2*pi2;
+                          Ak[i+2] = Phi0*(std::sin(arg2)/arg2); 
+                          k3      = k[i+3];
+                          arg3    = k3*pi2;
+                          Ak[i+3] = Phi0*(std::sin(arg3)/arg3); 
+                                               
+                      }
+                      
+                     }
+                     else {
+                          m = n%4;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<4) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(4)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 4) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                              phik2   = Phik[i+2];
+                              Ak[i+2] = twoT*phik2;
+                              phik3   = Phik[i+3];
+                              Ak[i+3] = twoT*phik3;
+                                                           
+                          }
+                 }
+          }
+
+
+           
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_4x(double * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const double * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const double Phi0,
+                                           const int32_t n,
+                                           const double T,
+                                           const double * __restrict __ATTR_ALIGN__(64) k,
+                                           const double tin) {
+
+                 constexpr double pi2 = 1.5707963267948966192313216916398;
+                 double phik0,phik1,phik2,phik3;
+                 double arg0,arg1,arg2,arg3;
+                 double k0,k1,k2,k3;
+                 double twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%4;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<4) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(8)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 4) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i]   = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                          k2      = k[i+2];
+                          arg2    = k2*pi2;
+                          Ak[i+2] = Phi0*(std::sin(arg2)/arg2); 
+                          k3      = k[i+3];
+                          arg3    = k3*pi2;
+                          Ak[i+3] = Phi0*(std::sin(arg3)/arg3); 
+                                                  
+                      }
+                      
+                     }
+                     else {
+                          m = n%4;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<4) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(8)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 4) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                              phik2   = Phik[i+2];
+                              Ak[i+2] = twoT*phik2;
+                              phik3   = Phik[i+3];
+                              Ak[i+3] = twoT*phik3;
+                                                          
+                          }
+                 }
+          }
+
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_2x(float * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const float * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const float Phi0,
+                                           const int32_t n,
+                                           const float T,
+                                           const float * __restrict __ATTR_ALIGN__(64) k,
+                                           const float tin) {
+
+                 constexpr float pi2 = 1.5707963267948966192313216916398f;
+                 float phik0,phik1;
+                 float arg0,arg1;
+                 float k0,k1;
+                 float twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0f/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%2;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<2) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(4)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 2) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i]   = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                                                                        
+                      }
+                      
+                     }
+                     else {
+                          m = n%2;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<2) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(4)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 2) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                             
+                                                           
+                          }
+                 }
+          }
+
+
+
+            __ATTR_ALWAYS_INLINE__
+	    __ATTR_HOT__
+	    __ATTR_ALIGN__(32)
+	    static inline
+	    void rect_pulse_amp_unroll_2x(double * __restrict __ATTR_ALIGN__(64) Ak,
+                                           const double * __restrict __ATTR_ALIGN__(64) Phik,
+                                           const double Phi0,
+                                           const int32_t n,
+                                           const double T,
+                                           const double * __restrict __ATTR_ALIGN__(64) k,
+                                           const double tin) {
+
+                 constexpr double pi2 = 1.5707963267948966192313216916398;
+                 double phik0,phik1;
+                 double arg0,arg1;
+                 double k0,k1;
+                 double twoT,kpi2;
+                 int32_t i,m,m1;
+                 twoT = 2.0/T;
+                 if(approximatelyEqual(tin,twoT,
+                             std::numeric_limits<float>::epsilon())) {
+                      m = n%2;
+                      if(m!=0) {
+                         for(i = 0; i != m; ++i) {
+                              k0    = k[i];
+                              arg0  = k0*pi2;
+                              Ak[i] = Phi0*(std::sin(arg0)/arg0); 
+                          }
+                          if(n<2) return;
+                      }
+                      m1 = m+1;
+                      __assume_aligned(Ak,64);
+                      __assume_aligned(k,64);
+                      #pragma vector aligned
+	              #pragma ivdep
+	              #pragma vector vectorlength(8)
+	              #pragma vector multiple_gather_scatter_by_shuffles
+	              #pragma vector always
+                      for(i = m1; i != n; i += 2) {
+                          k0      = k[i];
+                          arg0    = k0*pi2;
+                          Ak[i]   = Phi0*(std::sin(arg0)/arg0);
+                          k1      = k(i+1);
+                          arg1    = k1*pi2;
+                          Ak[i+1] = Phi0*(std::sin(arg1)/arg1); 
+                        
+                                                  
+                      }
+                      
+                     }
+                     else {
+                          m = n%2;
+                          if(m!=0) {
+                             for(i = 0; i != m; ++i) {
+                                 phik0 = Phik[i];
+                                 Ak[i] = twoT*phik0;
+                             }
+                             if(n<2) return;
+                          }
+                          m1 = m+1;
+                          __assume_aligned(Ak,64);
+                          __assume_aligned(k,64);
+                          #pragma vector aligned
+	                  #pragma ivdep
+	                  #pragma vector vectorlength(8)
+	                  #pragma vector multiple_gather_scatter_by_shuffles
+	                  #pragma vector always
+                          for(i = m1; i != n; i += 2) {
+                              phik0   = Phik[i];
+                              Ak[i]   = twoT*phik0;
+                              phik1   = Phik[i+1];
+                              Ak[i+1] = twoT*phik1;
+                            
+                                                          
+                          }
+                 }
+          }
+
+
+
+
+
+
+
+
 
 
 
