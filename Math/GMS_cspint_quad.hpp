@@ -122,7 +122,10 @@ namespace gms {
                                       double * __restrict __ATTR_ALIGN__(64) work,
                                       double & result) {
                            
-                           if(ntab<3) return;
+                           if(ntab<3) {
+                               result = std::numeric_limits<double>::quiet_NaN();
+                               return;
+                           }
                            double r,s,term,u,t0;
                            int32_t i,j;
 
@@ -134,8 +137,12 @@ namespace gms {
                            __assume_aligned(e,64);
                            __assume_aligned(work,64);
 
-                           for(i = 0; i != ntab-1; ++i) 
-                               if(xtab[i+1]<=xtab[i]) return;
+                           for(i = 0; i != ntab-1; ++i){
+                               if(xtab[i+1]<=xtab[i]) {
+                                  result = std::numeric_limits<double>::quiet_NaN();
+                                  return;
+                               }
+                           }
                            s = 0.0;
                            #pragma vector aligned
                            #pragma omp simd
@@ -239,7 +246,10 @@ label120:
                                       float * __restrict __ATTR_ALIGN__(64) work,
                                       float & result) {
                            
-                           if(ntab<3) return;
+                           if(ntab<3) {
+                              result = std::numeric_limits<float>::quiet_NaN();
+                              return;
+                           }
                            float r,s,term,u,t0;
                            int32_t i,j;
 
@@ -251,8 +261,12 @@ label120:
                            __assume_aligned(e,64);
                            __assume_aligned(work,64);
 
-                           for(i = 0; i != ntab-1; ++i) 
-                               if(xtab[i+1]<=xtab[i]) return;
+                           for(i = 0; i != ntab-1; ++i) {
+                               if(xtab[i+1]<=xtab[i]) {
+                                  result = std::numeric_limits<float>::quiet_NaN();
+                                  return;
+                               }
+                           }
                            s = 0.0f;
                            #pragma vector aligned
                            #pragma omp simd
