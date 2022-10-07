@@ -69,12 +69,6 @@ namespace file_info {
     #define  __ATTR_TARGET_AVX512F__ __attribute__ ((target ("avx512f")))
 #endif
 
-#if !defined(__ATTR_ALL_TARGETS_CLONES__)
-    #define __ATTR_ALL_TARGETS_CLONES__  _attribute__((flatten,target_clones("default,sse4.2,avx,"\
-    "avx2,avx512f,arch=skylake,arch=tremont,arch=skylake-avx512,"\
-    "arch=cascadelake,arch=cooperlake,arch=tigerlake,arch=icelake-server")))
-#endif
-
 #if !defined(__ATTR_TARGET_CLDEMOTE__)
     #define __ATTR_TARGET_CLDEMOTE__ __attribute__ ((target ("cldemote")))
 #endif
@@ -99,10 +93,6 @@ namespace file_info {
    #define USE_MMAP_1GiB 0
 #endif
 
-//SLEEF Libary SIMD functions usage
-#if !defined(USE_SLEEF_LIB)
-#define USE_SLEEF_LIB 1
-#endif
 // For Modified OpenBLAS kernels
 
 #define CONJ 
@@ -249,6 +239,11 @@ Using OpenMP.
     #define USE_SAFE_COMPLEX_DIVISION 1
 #endif
 
+// Division replacement by inverse.
+#if !defined(DIVISION_REPLACEMENT)
+#define DIVISION_REPLACEMENT 0
+#endif
+
 /*
 Intel MKL support.
 Include all headers - master header file.
@@ -297,14 +292,18 @@ Include all headers - master header file.
   char pad##ordinal[(size)];
 #endif
 
-
-#if !defined (PAD_TO_ALIGNED) && defined (__linux)
+#if !defined (PAD_TO_ALIGNED) && !defined (__linux)
 #define PAD_TO_ALIGNED(alignment,ordinal,size) \
+	__declspec(align((alignment))) char pad##ordinal[(size)];
+#elif !defined (PAD_TO_ALIGNED) && defined (__linux)
+#define PAD_TO_ALIGNED(alignment,ordinal,size) #
         __attribute__((align((alignment))) char pad##ordinal[(size)];
 #endif
 
-
-#if !defined (ALIGN_AT) && defined (__linux)
+#if !defined (ALIGN_AT) && !defined (__linux)
+#define ALIGN_AT(alignment) \
+	__declspec(align((alignment)))
+#elif !defined (ALIGN_AT) && defined (__linux)
 #define ALIGN_AT(alignment)  \
         __attribute__((align(alignment)))
 #endif
