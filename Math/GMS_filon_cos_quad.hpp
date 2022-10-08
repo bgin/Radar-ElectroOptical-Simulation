@@ -203,8 +203,8 @@ namespace  gms {
                             th6  = th5*theta;
                             th7  = th6*theta;
                             th8  = th7*theta;
-                            t0   = std::sin(t*xtabn);
-                            t1   = std::sin(t*xtab1);
+                            t0   = std::cos(t*xtabn);
+                            t1   = std::cos(t*xtab1);
                             if(6.0*std::abs(theta)<=1.0) {
 #if (DIVISION_REPLACEMENT) == 0
                                  alpha = 2.0*th3/45.0-2.0*th5/315.0+
@@ -249,7 +249,7 @@ namespace  gms {
                             for(i = 0; i != ntab; i += 2) {
                                 const double ftabi = ftab[i];
                                 const double xtabi = xtab[i];
-                                sum = sum+ftabi*std::sin(t*xtabi);
+                                sum = sum+ftabi*std::cos(t*xtabi);
                                 s2n = sum-0.5*(ftabn*t0+ftab1*t1);
                             }
                             #pragma vector aligned
@@ -257,7 +257,7 @@ namespace  gms {
                             for(i = 1; i != ntab-1; i += 2) {
                                 const double ftabi = ftab[i];
                                 const double xtabi = xtab[i];
-                                s2nm1 = s2nm1+ftabi*std::sin(t*xtabi);
+                                s2nm1 = s2nm1+ftabi*std::cos(t*xtabi);
                             }
                             sum    = beta*s2n+gamma*s2nm1;
                             t4     = ftab1*t2-ftab2*t3;
@@ -312,8 +312,8 @@ namespace  gms {
                             th6  = th5*theta;
                             th7  = th6*theta;
                             th8  = th7*theta;
-                            t0   = std::sin(t*xtabn);
-                            t1   = std::sin(t*xtab1);
+                            t0   = std::cos(t*xtabn);
+                            t1   = std::cos(t*xtab1);
                             if(6.0f*std::abs(theta)<=1.0f) {
 #if (DIVISION_REPLACEMENT) == 0
                                  alpha = 2.0f*th3/45.0f-2.0f*th5/315.0f+
@@ -358,7 +358,7 @@ namespace  gms {
                             for(i = 0; i != ntab; i += 2) {
                                 const double ftabi = ftab[i];
                                 const double xtabi = xtab[i];
-                                sum = sum+ftabi*std::sin(t*xtabi);
+                                sum = sum+ftabi*std::cos(t*xtabi);
                                 s2n = sum-0.5f*(ftabn*t0+ftab1*t1);
                             }
                             #pragma vector aligned
@@ -366,7 +366,7 @@ namespace  gms {
                             for(i = 1; i != ntab-1; i += 2) {
                                 const double ftabi = ftab[i];
                                 const double xtabi = xtab[i];
-                                s2nm1 = s2nm1+ftabi*std::sin(t*xtabi);
+                                s2nm1 = s2nm1+ftabi*std::cos(t*xtabi);
                             }
                             sum    = beta*s2n+gamma*s2nm1;
                             t4     = ftab1*t2-ftab2*t3;
