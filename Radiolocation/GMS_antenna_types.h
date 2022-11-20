@@ -262,7 +262,28 @@ namespace gms {
               } JM_r8_t;
 
 
+              typedef struct __ATTR_ALIGN__(32) eikr_c4_t {
+                      // Time-Harmonic complex exponential
+                      float               * __restrict R;
+                      std::complex<float> * __restrict ce;
+                      float                            k;
+                      int32_t                          npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,8)
+#endif              
+              } eikr_c4_t;
 
+
+               typedef struct __ATTR_ALIGN__(32) eikr_c8_t {
+                      // Time-Harmonic complex exponential
+                      double               * __restrict R;
+                      std::complex<double> * __restrict ce;
+                      double                            k;
+                      int32_t                           npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,8)
+#endif              
+              } eikr_c8_t;
               
                
        }
