@@ -284,7 +284,99 @@ namespace gms {
                       PAD_TO(0,8)
 #endif              
               } eikr_c8_t;
-              
+
+
+              typedef struct __ATTR_ALIGN__(32) eikr_r4_t {
+                      // ! Time-Harmonic complex exponential decomposed into 
+                      // ! real and imaginary parts
+                      float                 * __restrict R;
+                      float                 * __restrict e_re;
+                      float                 * __restrict e_im;
+                      float                              k;
+                      int32_t                            npts;
+              } eikr_r4_t;
+
+
+              typedef struct __ATTR_ALIGN__(32) eikr_r8_t {
+                      // ! Time-Harmonic complex exponential decomposed into 
+                      // ! real and imaginary parts
+                      double                 * __restrict R;
+                      double                 * __restrict e_re;
+                      double                 * __restrict e_im;
+                      double                              k;
+                      int32_t                             npts;
+              } eikr_r8_t;
+
+
+              // ! Formula (1-37)
+              //! Average level of side lobes
+              typedef struct __ATTR_ALIGN__(64) f137_r4_t {
+                       
+                       float                 * __restrict sinth;
+                       float                 * __restrict F;
+                       float                              ith;
+                       float                              iph;
+                       float                              ifac;
+                       float                              omega;
+                       float                              avsl;
+                       int32_t                            nth;
+                       int32_t                            nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif  
+              } f137_r4_t;
+
+
+              // ! Formula (1-37)
+              //! Average level of side lobes
+              typedef struct __ATTR_ALIGN__(64) f137_r8_t {
+                       
+                       double                 * __restrict sinth;
+                       double                 * __restrict F;
+                       double                              ith;
+                       double                              iph;
+                       double                              ifac;
+                       double                              omega;
+                       double                              avsl;
+                       int32_t                             nth;
+                       int32_t                             nph;
+              } f137_r8_t;
+
+
+              // ! Formula (1-38)
+              //! Average level of side lobes
+              typedef struct __ATTR_ALIGN__(64) f138_r4_t {
+                       
+                       float                 * __restrict sinth;
+                       float                 * __restrict Fsqr;
+                       float                              ith;
+                       float                              iph;
+                       float                              ifac;
+                       float                              omega;
+                       float                              avsl;
+                       int32_t                            nth;
+                       int32_t                            nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif  
+              } f138_r4_t;
+
+
+              // ! Formula (1-38)
+              //! Average level of side lobes
+              typedef struct __ATTR_ALIGN__(64) f138_r8_t {
+                       
+                       double                 * __restrict sinth;
+                       double                 * __restrict Fsqr;
+                       double                              ith;
+                       double                              iph;
+                       double                              ifac;
+                       double                              omega;
+                       double                              avsl;
+                       int32_t                             nth;
+                       int32_t                             nph;
+              } f138_r8_t;
+
                
        }
 
