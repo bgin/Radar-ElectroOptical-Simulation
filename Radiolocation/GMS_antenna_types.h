@@ -564,8 +564,8 @@ namespace gms {
              } Hvm_r8_t;
 
 
-             ! Formula (2-22,2-23)
-             typedef struct __ATTR_ALIGN__ Nev_r4_t {
+             //! Formula (2-22,2-23)
+             typedef struct __ATTR_ALIGN__(64) Nev_r4_t {
 
                        struct JE_r4_t                         jer4;
                        struct eikr_r4_t                       er4;
@@ -582,11 +582,11 @@ namespace gms {
 #endif
              } Nev_r4_t;
 
+              //! Formula (2-22,2-23)
+             typedef struct __ATTR_ALIGN__(64) Nev_r8_t {
 
-              typedef struct __ATTR_ALIGN__ Nev_r8_t {
-
-                       struct JE_r8_t                          jer4;
-                       struct eikr_r8_t                         er4;
+                       struct JE_r8_t                          jer8;
+                       struct eikr_r8_t                         er8;
                        double                     * __restrict costh;
                        double                     * __restrict ne_xr;
                        double                     * __restrict ne_xi;
@@ -598,7 +598,180 @@ namespace gms {
 #if (USE_STRUCT_PADDING) == 1
                       PAD_TO(0,38)
 #endif
-             } Nev_r4_t;
+             } Nev_r8_t;
+
+
+             //! Formula (2-22,2-23)
+             typedef struct __ATTR_ALIGN__(64) Nev_c4_t {
+
+                       struct JE_c4_t                         jec4;
+                       struct eikr_c4_t                       ec4;
+                       float                     * __restrict costh;
+                       std::complex<float>       * __restrict ne_x;
+                       std::complex<float>       * __restrict ne_y;
+                       std::complex<float>       * __restrict ne_z;
+                       int32_t                                npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nev_c4_t;
+
+
+              //! Formula (2-22,2-23)
+             typedef struct __ATTR_ALIGN__(64) Nev_c8_t {
+
+                       struct JE_c8_t                          jcr8;
+                       struct eikr_c8_t                         ec8;
+                       double                     * __restrict costh;
+                       std::complex<double>       * __restrict ne_x;
+                       std::complex<double>       * __restrict ne_y;
+                       std::complex<double>       * __restrict ne_z;
+                       int32_t                                 npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nev_c8_t;
+
+
+             //! Formula (2-24,2-25)
+             typedef struct __ATTR_ALIGN__(64) Nmv_r4_t {
+
+                       struct JM_r4_t                         jmr4;
+                       struct eikr_r4_t                       er4;
+                       float                     * __restrict costh;
+                       float                     * __restrict nm_xr;
+                       float                     * __restrict nm_xi;
+                       float                     * __restrict nm_yr;
+                       float                     * __restrict nm_yi;
+                       float                     * __restrict nm_zr;
+                       float                     * __restrict nm_zi;
+                       int32_t                                npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nmv_r4_t;
+
+              //! Formula (2-24,2-25)
+             typedef struct __ATTR_ALIGN__(64) Nmv_r8_t {
+
+                       struct JM_r8_t                          jmr8;
+                       struct eikr_r8_t                         er8;
+                       double                     * __restrict costh;
+                       double                     * __restrict nm_xr;
+                       double                     * __restrict nm_xi;
+                       double                     * __restrict nm_yr;
+                       double                     * __restrict nm_yi;
+                       double                     * __restrict nm_zr;
+                       double                     * __restrict nm_zi;
+                       int32_t                                 npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nmv_r8_t;
+
+
+             //! Formula (2-24,2-25)
+             typedef struct __ATTR_ALIGN__(64) Nmv_c4_t {
+
+                       struct JM_c4_t                         jmc4;
+                       struct eikr_c4_t                       ec4;
+                       float                     * __restrict costh;
+                       std::complex<float>       * __restrict nm_x;
+                       std::complex<float>       * __restrict nm_y;
+                       std::complex<float>       * __restrict nm_z;
+                       int32_t                                npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nmv_c4_t;
+
+
+              //! Formula (2-24,2-25)
+             typedef struct __ATTR_ALIGN__(64) Nmv_c8_t {
+
+                       struct JM_c8_t                          jmc8;
+                       struct eikr_c8_t                         ec8;
+                       double                     * __restrict costh;
+                       std::complex<double>       * __restrict nm_x;
+                       std::complex<double>       * __restrict nm_y;
+                       std::complex<double>       * __restrict nm_z;
+                       int32_t                                 npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nmv_c8_t;
+
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhev_r4_t {
+
+                       struct Nev_r4_t                         ner4;
+                       struct eikr_r4_t                        er4;   // 96-bytes
+                       float                      * __restrict hv_xr;
+                       float                      * __restrict hv_xi;
+                       float                      * __restrict hv_yr;
+                       float                      * __restrict hv_yi;
+                       float                      * __restrict hv_zr;
+                       float                      * __restrict hv_zi;
+                       float                                   if_re;
+                       float                                   if_im; // 54-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,42)
+#endif           
+            } FFhev_r4_t;
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhev_r8_t {
+
+                       struct Nev_r8_t                          ner8;
+                       struct eikr_r8_t                         er8;   // 96-bytes
+                       double                      * __restrict hv_xr;
+                       double                      * __restrict hv_xi;
+                       double                      * __restrict hv_yr;
+                       double                      * __restrict hv_yi;
+                       double                      * __restrict hv_zr;
+                       double                      * __restrict hv_zi;
+                       double                                   if_re;
+                       double                                   if_im; // 54-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,34)
+#endif           
+            } FFhev_r8_t;
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhev_c4_t {
+
+                       struct Nev_c4_t                         nec4;
+                       struct eikr_c4_t                        ec4;   // 96-bytes
+                       std::complex<float>        * __restrict hv_x;
+                       std::complex<float>        * __restrict hv_y;
+                       std::complex<float>        * __restrict hv_z;
+                       std::complex<float>                     ifac; // 32-bytes
+         
+            } FFhev_r4_t;
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhev_c8_t {
+
+                       struct Nev_c8_t                          nec8;
+                       struct eikr_c8_t                         ec8;   // 96-bytes
+                       std::complex<double>        * __restrict hv_x;
+                       std::complex<double>        * __restrict hv_y;
+                       std::complex<double>        * __restrict hv_z;
+                       std::complex<double>                     ifac;
+                       
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,56)
+#endif           
+            } FFhev_c8_t;
 
                
        } // radiolocation
