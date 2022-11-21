@@ -563,6 +563,43 @@ namespace gms {
 #endif
              } Hvm_r8_t;
 
+
+             ! Formula (2-22,2-23)
+             typedef struct __ATTR_ALIGN__ Nev_r4_t {
+
+                       struct JE_r4_t                         jer4;
+                       struct eikr_r4_t                       er4;
+                       float                     * __restrict costh;
+                       float                     * __restrict ne_xr;
+                       float                     * __restrict ne_xi;
+                       float                     * __restrict ne_yr;
+                       float                     * __restrict ne_yi;
+                       float                     * __restrict ne_zr;
+                       float                     * __restrict ne_zi;
+                       int32_t                                npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nev_r4_t;
+
+
+              typedef struct __ATTR_ALIGN__ Nev_r8_t {
+
+                       struct JE_r8_t                          jer4;
+                       struct eikr_r8_t                         er4;
+                       double                     * __restrict costh;
+                       double                     * __restrict ne_xr;
+                       double                     * __restrict ne_xi;
+                       double                     * __restrict ne_yr;
+                       double                     * __restrict ne_yi;
+                       double                     * __restrict ne_zr;
+                       double                     * __restrict ne_zi;
+                       int32_t                                 npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Nev_r4_t;
+
                
        } // radiolocation
 
