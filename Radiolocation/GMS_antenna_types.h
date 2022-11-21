@@ -377,10 +377,77 @@ namespace gms {
                        int32_t                             nph;
               } f138_r8_t;
 
-               
-       }
 
-}
+              //! Formula (1-39)
+              // ! Dispersion coefficient
+              typedef struct __ATTR_ALIGN__(64) f139_r4_t {
+
+                       float                  * __restrict P;
+                       float                  * __restrict sinth;
+                       float                               ith;
+                       float                               iph;
+                       float                               omega;
+                       int32_t                             nth;
+                       int32_t                             nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,26)
+#endif 
+              } f139_r4_t;
+
+
+              //! Formula (1-39)
+              // ! Dispersion coefficient
+              typedef struct __ATTR_ALIGN__(64) f139_r8_t {
+
+                       double                  * __restrict P;
+                       double                  * __restrict sinth;
+                       double                               ith;
+                       double                               iph;
+                       double                               omega;
+                       int32_t                              nth;
+                       int32_t                              nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,16)
+#endif 
+              } f139_r8_t; 
+
+
+             //  ! Formula (2-13)
+             //  ! Hertz vector electric
+             typedef struct __ATTR_ALIGN__(64) Hve_c4_t {
+
+                       struct JE_c4_t                        jec4;
+                       struct eikr_c4_t                      ec4;
+                       std::complex<float>                   ifac;
+                       std::complex<float>      * __restrict he_x;
+                       std::complex<float>      * __restrict he_y;
+                       std::complex<float>      * __restrict he_z;
+                       int32_t                               npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,60)
+#endif
+             } Hve_c4_t;
+
+
+             //  ! Formula (2-13)
+             //  ! Hertz vector electric
+             typedef struct __ATTR_ALIGN__(64) Hve_c8_t {
+
+                       struct JE_c8_t                         jec8;
+                       struct eikr_c8_t                       ec8;
+                       std::complex<double>                   ifac;
+                       std::complex<double>      * __restrict he_x;
+                       std::complex<double>      * __restrict he_y;
+                       std::complex<double>      * __restrict he_z;
+                       int32_t                                npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,52)
+#endif
+             } Hve_c8_t;
+               
+       } // radiolocation
+
+} // gms
 
 
 
