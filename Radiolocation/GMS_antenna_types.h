@@ -773,6 +773,287 @@ namespace gms {
 #endif           
             } FFhev_c8_t;
 
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector magnetic
+            typedef struct __ATTR_ALIGN__(64) FFhmv_r4_t {
+
+                       struct Nmv_r4_t                         nmr4;
+                       struct eikr_r4_t                        er4;   // 96-bytes
+                       float                      * __restrict hm_xr;
+                       float                      * __restrict hm_xi;
+                       float                      * __restrict hm_yr;
+                       float                      * __restrict hm_yi;
+                       float                      * __restrict hm_zr;
+                       float                      * __restrict hm_zi;
+                       float                                   if_re;
+                       float                                   if_im; // 54-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,42)
+#endif           
+            } FFhmv_r4_t;
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhmv_r8_t {
+
+                       struct Nmv_r8_t                          nmr8;
+                       struct eikr_r8_t                         er8;   // 96-bytes
+                       double                      * __restrict hm_xr;
+                       double                      * __restrict hm_xi;
+                       double                      * __restrict hm_yr;
+                       double                      * __restrict hm_yi;
+                       double                      * __restrict hm_zr;
+                       double                      * __restrict hm_zi;
+                       double                                   if_re;
+                       double                                   if_im; // 54-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,34)
+#endif           
+            } FFhmv_r8_t;
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhmv_c4_t {
+
+                       struct Nmv_c4_t                         nec4;
+                       struct eikr_c4_t                        ec4;   // 96-bytes
+                       std::complex<float>        * __restrict hm_x;
+                       std::complex<float>        * __restrict hm_y;
+                       std::complex<float>        * __restrict hm_z;
+                       std::complex<float>                     ifac; // 32-bytes
+         
+            } FFhmv_r4_t;
+
+
+            //! Formula (2-22)
+            //! "Far-field" Hertz vector electric
+            typedef struct __ATTR_ALIGN__(64) FFhmv_c8_t {
+
+                       struct Nmv_c8_t                          nmc8;
+                       struct eikr_c8_t                         ec8;   // 96-bytes
+                       std::complex<double>        * __restrict hm_x;
+                       std::complex<double>        * __restrict hm_y;
+                       std::complex<double>        * __restrict hm_z;
+                       std::complex<double>                     ifac;
+                       
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,56)
+#endif           
+            } FFhmv_c8_t;
+
+
+           //! Formula (2-26)
+           //! Cosine of integration angle.
+           typedef struct __ATTR_ALIGN__(64) f226_r4_t {
+
+                       float                      * __restrict cth;
+                       float                      * __restrict cthi;
+                       float                      * __restrict sth;
+                       float                      * __restrict sthi;
+                       float                      * __restrict cphphi;
+                       float                      * __restrict ciang;
+                       int32_t                                 npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif   
+           } f226_r4_t;
+
+
+           //! Formula (2-26)
+           //! Cosine of integration angle.
+           typedef struct __ATTR_ALIGN__(64) f226_r8_t {
+
+                       double                      * __restrict cth;
+                       double                      * __restrict cthi;
+                       double                      * __restrict sth;
+                       double                      * __restrict sthi;
+                       double                      * __restrict cphphi;
+                       double                      * __restrict ciang;
+                       int32_t                                 npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif   
+           } f226_r8_t;
+
+
+           /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nesph_r4_t {
+
+                       struct Nev_r4_t                          nev; //64-bytes
+                       float                      * __restrict  cphi;
+                       float                      * __restrict  cth;
+                       float                      * __restrict  sphi;
+                       float                      * __restrict  sth;
+                       float                      * __restrict  nth_re;
+                       float                      * __restrict  nth_im;
+                       float                      * __restrict  nph_re;
+                       float                      * __restrict  nph_im;
+                       int32_t                                  npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif 
+            } Nesph_r4_t;
+
+
+              /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nesph_r8_t {
+
+                       struct Nev_r8_t                           nev; //64-bytes
+                       double                      * __restrict  cphi;
+                       double                      * __restrict  cth;
+                       double                      * __restrict  sphi;
+                       double                      * __restrict  sth;
+                       double                      * __restrict  nth_re;
+                       double                      * __restrict  nth_im;
+                       double                      * __restrict  nph_re;
+                       double                      * __restrict  nph_im;
+                       int32_t                                   npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif 
+            } Nesph_r8_t;
+
+
+              /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nesph_c4_t {
+
+                       struct Nev_c4_t                          nev; //64-bytes
+                       float                      * __restrict  cphi;
+                       float                      * __restrict  cth;
+                       float                      * __restrict  sphi;
+                       float                      * __restrict  sth;
+                       std::complex<float>        * __restrict  nth;
+                       std::complex<float>        * __restrict  nph;
+                       int32_t                                  npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } Nesph_c4_t;
+
+
+              /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nesph_c8_t {
+
+                       struct Nev_c8_t                           nev; //64-bytes
+                       double                      * __restrict  cphi;
+                       double                      * __restrict  cth;
+                       double                      * __restrict  sphi;
+                       double                      * __restrict  sth;
+                       std::complex<double>        * __restrict  nth;
+                       std::complex<double>        * __restrict  nph;
+                       int32_t                                   npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } Nesph_c8_t;
+
+
+             /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nmsph_r4_t {
+
+                       struct Nmv_r4_t                          nmv; //64-bytes
+                       float                      * __restrict  cphi;
+                       float                      * __restrict  cth;
+                       float                      * __restrict  sphi;
+                       float                      * __restrict  sth;
+                       float                      * __restrict  nth_re;
+                       float                      * __restrict  nth_im;
+                       float                      * __restrict  nph_re;
+                       float                      * __restrict  nph_im;
+                       int32_t                                  npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif 
+            } Nmsph_r4_t;
+
+
+              /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nmsph_r8_t {
+
+                       struct Nmv_r8_t                           nmv; //64-bytes
+                       double                      * __restrict  cphi;
+                       double                      * __restrict  cth;
+                       double                      * __restrict  sphi;
+                       double                      * __restrict  sth;
+                       double                      * __restrict  nth_re;
+                       double                      * __restrict  nth_im;
+                       double                      * __restrict  nph_re;
+                       double                      * __restrict  nph_im;
+                       int32_t                                   npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif 
+            } Nmsph_r8_t;
+
+
+              /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nmsph_c4_t {
+
+                       struct Nmv_c4_t                          nmv; //64-bytes
+                       float                      * __restrict  cphi;
+                       float                      * __restrict  cth;
+                       float                      * __restrict  sphi;
+                       float                      * __restrict  sth;
+                       std::complex<float>        * __restrict  nth;
+                       std::complex<float>        * __restrict  nph;
+                       int32_t                                  npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } Nmsph_c4_t;
+
+
+              /*
+               ! Formula (2-36)
+               ! 'N'-electric and 'N'-magnetic vector functions of fields voltage
+               ! in spherical coordinate system.
+            */
+            typedef struct __ATTR_ALIGN__(64) Nmsph_c8_t {
+
+                       struct Nmv_c8_t                           nmv; //64-bytes
+                       double                      * __restrict  cphi;
+                       double                      * __restrict  cth;
+                       double                      * __restrict  sphi;
+                       double                      * __restrict  sth;
+                       std::complex<double>        * __restrict  nth;
+                       std::complex<double>        * __restrict  nph;
+                       int32_t                                   npts; //60-bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } Nmsph_c8_t;
+
                
        } // radiolocation
 
