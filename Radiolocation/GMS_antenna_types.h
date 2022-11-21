@@ -444,6 +444,125 @@ namespace gms {
                       PAD_TO(0,52)
 #endif
              } Hve_c8_t;
+
+
+             //  ! Formula (2-13)
+             //  ! Hertz vector electric
+             typedef struct __ATTR_ALIGN__(64) Hve_r4_t {
+
+                       struct JE_r4_t                        jer4;
+                       struct eikr_r4_t                      er4;
+                       float                                 if_re;
+                       float                                 if_im;
+                       float                    * __restrict he_xr;
+                       float                    * __restrict he_xi;
+                       float                    * __restrict he_yr;
+                       float                    * __restrict he_yi;
+                       float                    * __restrict he_zr;
+                       float                    * __restrict he_zi;
+                       int32_t                               npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Hve_r4_t;
+
+
+             //  ! Formula (2-13)
+             //  ! Hertz vector electric
+             typedef struct __ATTR_ALIGN__(64) Hve_r8_t {
+
+                       struct JE_r8_t                         jer8;
+                       struct eikr_r8_t                       er8;
+                       double                                 if_re;
+                       double                                 if_im;
+                       double                    * __restrict he_xr;
+                       double                    * __restrict he_xi;
+                       double                    * __restrict he_yr;
+                       double                    * __restrict he_yi;
+                       double                    * __restrict he_zr;
+                       double                    * __restrict he_zi;
+                       int32_t                                npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,30)
+#endif
+             } Hve_r8_t;
+
+
+             //  ! Formula (2-15)
+             //  ! Hertz vector magnetic
+             typedef struct __ATTR_ALIGN__(64) Hvm_c4_t {
+
+                       struct JM_c4_t                        jmc4;
+                       struct eikr_c4_t                      ec4;
+                       std::complex<float>                   ifac;
+                       std::complex<float>      * __restrict hm_x;
+                       std::complex<float>      * __restrict hm_y;
+                       std::complex<float>      * __restrict hm_z;
+                       int32_t                               npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,60)
+#endif
+             } Hvm_c4_t;
+
+
+             //  ! Formula (2-15)
+             //  ! Hertz vector magnetic
+             typedef struct __ATTR_ALIGN__(64) Hvm_c8_t {
+
+                       struct JM_c8_t                         jmc8;
+                       struct eikr_c8_t                       ec8;
+                       std::complex<double>                   ifac;
+                       std::complex<double>      * __restrict hm_x;
+                       std::complex<double>      * __restrict hm_y;
+                       std::complex<double>      * __restrict hm_z;
+                       int32_t                                npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,52)
+#endif
+             } Hvm_c8_t;
+
+
+             //  ! Formula (2-15)
+             //  ! Hertz vector magnetic
+             typedef struct __ATTR_ALIGN__(64) Hve_r4_t {
+
+                       struct JM_r4_t                        jmr4;
+                       struct eikr_r4_t                      er4;
+                       float                                 if_re;
+                       float                                 if_im;
+                       float                    * __restrict hm_xr;
+                       float                    * __restrict hm_xi;
+                       float                    * __restrict hm_yr;
+                       float                    * __restrict hm_yi;
+                       float                    * __restrict hm_zr;
+                       float                    * __restrict hm_zi;
+                       int32_t                               npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,38)
+#endif
+             } Hvm_r4_t;
+
+
+             //  ! Formula (2-15)
+             //  ! Hertz vector magnetic
+             typedef struct __ATTR_ALIGN__(64) Hvm_r8_t {
+
+                       struct JM_r8_t                         jmr8;
+                       struct eikr_r8_t                       er8;
+                       double                                 if_re;
+                       double                                 if_im;
+                       double                    * __restrict hm_xr;
+                       double                    * __restrict hm_xi;
+                       double                    * __restrict hm_yr;
+                       double                    * __restrict hm_yi;
+                       double                    * __restrict hm_zr;
+                       double                    * __restrict hm_zi;
+                       int32_t                                npts;  
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,30)
+#endif
+             } Hvm_r8_t;
+
                
        } // radiolocation
 
