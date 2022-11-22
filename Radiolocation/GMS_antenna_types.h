@@ -1440,7 +1440,71 @@ namespace gms {
                       PAD_TO(0,56)
 #endif 
            } f239_c8_t;
-               
+
+           /*
+                ! Formula (2-43)
+                ! The current distribution along the 'z' coordiante
+            */
+            typedef struct __ATTR_ALIGN__(32) f243_r4_t {
+
+                          float                        * __restrict Iz;
+                          float                                     I0;
+                          float                                     k;
+                          int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } f243_r4_t;
+
+
+             /*
+                ! Formula (2-43)
+                ! The current distribution along the 'z' coordiante
+            */
+            typedef struct __ATTR_ALIGN__(32) f243_r8_t {
+
+                          double                        * __restrict Iz;
+                          double                                     I0;
+                          double                                     k;
+                          int32_t                                    npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif 
+            } f243_r8_t;
+
+
+            /*
+                ! Formula (2-44)
+                ! Radiation pattern of thin wire (odd m)
+             */
+            typedef struct __ATTR_ALIGN__(32) f244_r4_t {
+
+                           float                        * __restrict Fth;
+                           float                                     A;
+                           int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,16)
+#endif 
+            } f244_r4_t;
+
+
+               /*
+                ! Formula (2-44)
+                ! Radiation pattern of thin wire (odd m)
+             */
+            typedef struct __ATTR_ALIGN__(32) f244_r8_t {
+
+                           double                        * __restrict Fth;
+                           double                                     A;
+                           int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } f244_r8_t;
+  
+
+
+
        } // radiolocation
 
 } // gms
