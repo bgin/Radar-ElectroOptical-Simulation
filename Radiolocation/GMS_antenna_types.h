@@ -1054,6 +1054,98 @@ namespace gms {
 #endif 
             } Nmsph_c8_t;
 
+
+            //! Formula (2-27)
+            //! Far field (zone) 'electric current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFec_r4_t {
+
+                        struct eikr_r4_t                          eikr;
+                        struct Nesph_r4_t           * __restrict  nesp;
+                        struct Nev_r4_t             * __restrict  nev;
+                        float                       * __restrict  e_r;
+                        float                       * __restrict  e_th;
+                        float                       * __restrict  e_ph;
+                        float                       * __restrict  ffec_xr;
+                        float                       * __restrict  ffec_xi;
+                        float                       * __restrict  ffec_yr;
+                        float                       * __restrict  ffec_yi;
+                        float                       * __restrict  ffec_zr;
+                        float                       * __restrict  ffec_zi;
+                        float                                     if_re;
+                        float                                     if_im;
+                        int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,60)
+#endif 
+            } FFec_r4_t;
+
+
+            //! Formula (2-27)
+            //! Far field (zone) 'electric current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFec_r8_t {
+
+                        struct eikr_r8_t                           eikr;
+                        struct Nesph_r8_t            * __restrict  nesp;
+                        struct Nev_r8_t              * __restrict  nev;
+                        double                       * __restrict  e_r;
+                        double                       * __restrict  e_th;
+                        double                       * __restrict  e_ph;
+                        double                       * __restrict  ffec_xr;
+                        double                       * __restrict  ffec_xi;
+                        double                       * __restrict  ffec_yr;
+                        double                       * __restrict  ffec_yi;
+                        double                       * __restrict  ffec_zr;
+                        double                       * __restrict  ffec_zi;
+                        double                                     if_re;
+                        double                                     if_im;
+                        int32_t                                    npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,52)
+#endif 
+            } FFec_r8_t;
+
+
+            //! Formula (2-27)
+            //! Far field (zone) 'electric current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFec_c4_t {
+
+                        struct eikr_c4_t                          eikr;
+                        struct Nesph_c4_t           * __restrict  nesp;
+                        struct Nev_c4_t             * __restrict  nev;
+                        float                       * __restrict  e_r;
+                        float                       * __restrict  e_th;
+                        float                       * __restrict  e_ph;
+                        std::complex<float>         * __restrict  ffec_x;
+                        std::complex<float>         * __restrict  ffec_y;
+                        std::complex<float>         * __restrict  ffec_z;
+                        std::complex<float>                       ifac;
+                        int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif 
+            } FFec_c4_t;
+
+
+            //! Formula (2-27)
+            //! Far field (zone) 'electric current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFec_c8_t {
+
+                        struct eikr_c8_t                           eikr;
+                        struct Nesph_c8_t            * __restrict  nesp;
+                        struct Nev_c8_t              * __restrict  nev;
+                        double                       * __restrict  e_r;
+                        double                       * __restrict  e_th;
+                        double                       * __restrict  e_ph;
+                        std::complex<double>         * __restrict  ffec_x;
+                        std::complex<double>         * __restrict  ffec_y;
+                        std::complex<double>         * __restrict  ffec_z;
+                        std::complex<double>                       ifac;
+                        int32_t                                    npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } FFec_c8_t;
+
                
        } // radiolocation
 
