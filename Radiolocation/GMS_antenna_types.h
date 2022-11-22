@@ -1321,6 +1321,57 @@ namespace gms {
 #endif 
            } poynting_avg_c8_t;
 
+
+           //  ! Formula (2-37)
+           //! Intensity of radiation (steradian angle) in directions: phi,theta
+           typedef struct __ATTR_ALIGN__(64) f237_r4_t {
+
+                        struct poynting_avg_r4_t                   pavg;
+                        float                         * __restrict P_re;
+                        float                         * __restrict P_im;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,54)
+#endif 
+           } f237_r4_t;
+
+
+           //  ! Formula (2-37)
+           //! Intensity of radiation (steradian angle) in directions: phi,theta
+           typedef struct __ATTR_ALIGN__(64) f237_r8_t {
+
+                        struct poynting_avg_r8_t                   pavg;
+                        double                         * __restrict P_re;
+                        double                         * __restrict P_im;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,54)
+#endif 
+           } f237_r8_t;
+
+
+           //  ! Formula (2-37)
+           //! Intensity of radiation (steradian angle) in directions: phi,theta
+           typedef struct __ATTR_ALIGN__(64) f237_c4_t {
+
+                        struct poynting_avg_c4_t                   pavg;
+                        std::complex<float>           * __restrict P;
+                        
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,62)
+#endif 
+           } f237_c4_t;
+
+
+           //  ! Formula (2-37)
+           //! Intensity of radiation (steradian angle) in directions: phi,theta
+           typedef struct __ATTR_ALIGN__(64) f237_c8_t {
+
+                        struct poynting_avg_c8_t                   pavg;
+                        std::complex<double>          * __restrict P;
+                        
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,62)
+#endif 
+           } f237_c8_t;
                
        } // radiolocation
 
