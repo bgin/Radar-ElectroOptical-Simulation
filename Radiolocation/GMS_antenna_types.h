@@ -1146,6 +1146,100 @@ namespace gms {
 #endif 
             } FFec_c8_t;
 
+
+            //    ! Formula (2-27)
+            // ! Far field (zone) 'magnetic current' for R>=2*D^2/gamma
+              typedef struct __ATTR_ALIGN__(64) FFmc_r4_t {
+
+                        struct eikr_r4_t                          eikr;
+                        struct Nmsph_r4_t           * __restrict  nmsp;
+                        struct Nmv_r4_t             * __restrict  nmv;
+                        float                       * __restrict  e_r;
+                        float                       * __restrict  e_th;
+                        float                       * __restrict  e_ph;
+                        float                       * __restrict  ffmc_xr;
+                        float                       * __restrict  ffmc_xi;
+                        float                       * __restrict  ffmc_yr;
+                        float                       * __restrict  ffmc_yi;
+                        float                       * __restrict  ffmc_zr;
+                        float                       * __restrict  ffmc_zi;
+                        float                                     if_re;
+                        float                                     if_im;
+                        int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,60)
+#endif 
+            } FFmc_r4_t;
+
+
+            //! Formula (2-27)
+            //! Far field (zone) 'magnetic current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFmc_r8_t {
+
+                        struct eikr_r8_t                           eikr;
+                        struct Nmsph_r8_t            * __restrict  nmsp;
+                        struct Nmv_r8_t              * __restrict  nmv;
+                        double                       * __restrict  e_r;
+                        double                       * __restrict  e_th;
+                        double                       * __restrict  e_ph;
+                        double                       * __restrict  ffmc_xr;
+                        double                       * __restrict  ffmc_xi;
+                        double                       * __restrict  ffmc_yr;
+                        double                       * __restrict  ffmc_yi;
+                        double                       * __restrict  ffmc_zr;
+                        double                       * __restrict  ffmc_zi;
+                        double                                     if_re;
+                        double                                     if_im;
+                        int32_t                                    npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,52)
+#endif 
+            } FFmc_r8_t;
+
+
+            //! Formula (2-27)
+            //! Far field (zone) 'electric current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFmc_c4_t {
+
+                        struct eikr_c4_t                          eikr;
+                        struct Nmsph_c4_t           * __restrict  nmsp;
+                        struct Nmv_c4_t             * __restrict  nmv;
+                        float                       * __restrict  e_r;
+                        float                       * __restrict  e_th;
+                        float                       * __restrict  e_ph;
+                        std::complex<float>         * __restrict  ffmc_x;
+                        std::complex<float>         * __restrict  ffmc_y;
+                        std::complex<float>         * __restrict  ffmc_z;
+                        std::complex<float>                       ifac;
+                        int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif 
+            } FFmc_c4_t;
+
+
+            //! Formula (2-27)
+            //! Far field (zone) 'electric current' for R>=2*D^2/gamma
+            typedef struct __ATTR_ALIGN__(64) FFmc_c8_t {
+
+                        struct eikr_c8_t                           eikr;
+                        struct Nmsph_c8_t            * __restrict  nmsp;
+                        struct Nmv_c8_t              * __restrict  nmv;
+                        double                       * __restrict  e_r;
+                        double                       * __restrict  e_th;
+                        double                       * __restrict  e_ph;
+                        std::complex<double>         * __restrict  ffmc_x;
+                        std::complex<double>         * __restrict  ffmc_y;
+                        std::complex<double>         * __restrict  ffmc_z;
+                        std::complex<double>                       ifac;
+                        int32_t                                    npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif 
+            } FFmc_c8_t;
+
+
+
                
        } // radiolocation
 
