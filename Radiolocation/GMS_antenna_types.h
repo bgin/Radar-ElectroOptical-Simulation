@@ -1239,6 +1239,87 @@ namespace gms {
             } FFmc_c8_t;
 
 
+           //  ! Formula (2-38)
+           typedef struct __ATTR_ALIGN__(64) poynting_avg_r4_t {
+
+                        struct Nmsph_r4_t             * __restrict nmsp;
+                        struct Nesph_r4_t             * __restrict nesp;
+                        float                         * __restrict R;
+                        float                         * __restrict e_r;
+                        float                         * __restrict S_re;
+                        float                         * __restrict S_im;
+                        float                                      k2;
+                        float                                      eps_r;
+                        float                                      eps_i;
+                        float                                      mu_r;
+                        float                                      mu_i;
+                        int32_t                                    nth;
+                        int32_t                                    nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,52)
+#endif 
+           } poynting_avg_r4_t;
+
+
+             //  ! Formula (2-38)
+           typedef struct __ATTR_ALIGN__(64) poynting_avg_r8_t {
+
+                        struct Nmsph_r8_t             * __restrict nmsp;
+                        struct Nesph_r8_t             * __restrict nesp;
+                        double                        * __restrict R;
+                        double                        * __restrict e_r;
+                        double                        * __restrict S_re;
+                        double                        * __restrict S_im;
+                        double                                     k2;
+                        double                                     eps_r;
+                        double                                     eps_i;
+                        double                                     mu_r;
+                        double                                     mu_i;
+                        int32_t                                    nth;
+                        int32_t                                    nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,32)
+#endif 
+           } poynting_avg_r8_t;
+
+
+           
+           //  ! Formula (2-38)
+           typedef struct __ATTR_ALIGN__(64) poynting_avg_c4_t {
+
+                        struct Nmsph_c4_t             * __restrict nmsp;
+                        struct Nesph_c4_t             * __restrict nesp;
+                        float                         * __restrict R;
+                        float                         * __restrict e_r;
+                        std::complex<float>           * __restrict S;
+                        std::complex<float>                        eps;
+                        std::complex<float>                        mu;
+                        float                                      k2;
+                        int32_t                                    nth;
+                        int32_t                                    nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,60)
+#endif 
+           } poynting_avg_c4_t;
+
+
+           //  ! Formula (2-38)
+           typedef struct __ATTR_ALIGN__(64) poynting_avg_c8_t {
+
+                        struct Nmsph_c8_t             * __restrict nmsp;
+                        struct Nesph_c8_t             * __restrict nesp;
+                        double                        * __restrict R;
+                        double                        * __restrict e_r;
+                        std::complex<double>          * __restrict S;
+                        std::complex<double>                       eps;
+                        std::complex<double>                       mu;
+                        double                                     k2;
+                        int32_t                                    nth;
+                        int32_t                                    nph;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,40)
+#endif 
+           } poynting_avg_c8_t;
 
                
        } // radiolocation
