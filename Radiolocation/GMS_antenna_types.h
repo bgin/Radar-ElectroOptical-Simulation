@@ -1372,6 +1372,74 @@ namespace gms {
                       PAD_TO(0,62)
 #endif 
            } f237_c8_t;
+
+
+          /*
+                 ! Formula (2-39)
+                 ! Normalized radiation pattern expressed by the ratio
+                 ! of poynting vectors.
+           */
+           typedef struct __ATTR_ALIGN__(64) f239_r4_t {
+
+                         struct poynting_avg_r4_t                  pv;
+                         struct poynitng_avg_r4_t                  pvmax;
+                         float                        * __restrict psi_re;
+                         float                        * __restrict psi_im; //272 bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,48)
+#endif 
+           } f239_r4_t;
+
+
+            /*
+                 ! Formula (2-39)
+                 ! Normalized radiation pattern expressed by the ratio
+                 ! of poynting vectors.
+           */
+           typedef struct __ATTR_ALIGN__(64) f239_r8_t {
+
+                         struct poynting_avg_r8_t                   pv;
+                         struct poynitng_avg_r8_t                   pvmax;
+                         double                        * __restrict psi_re;
+                         double                        * __restrict psi_im; //272 bytes
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,48)
+#endif 
+           } f239_r8_t;
+
+
+              /*
+                 ! Formula (2-39)
+                 ! Normalized radiation pattern expressed by the ratio
+                 ! of poynting vectors.
+           */
+           typedef struct __ATTR_ALIGN__(64) f239_c4_t {
+
+                         struct poynting_avg_c4_t                  pv;
+                         struct poynitng_avg_c4_t                  pvmax;
+                         std::complex<float>          * __restrict psi;
+                         
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,56)
+#endif 
+           } f239_c4_t;
+
+
+            /*
+                 ! Formula (2-39)
+                 ! Normalized radiation pattern expressed by the ratio
+                 ! of poynting vectors.
+           */
+           typedef struct __ATTR_ALIGN__(64) f239_r8_t {
+
+                         struct poynting_avg_c8_t                   pv;
+                         struct poynitng_avg_c8_t                   pvmax;
+                         std::complex<double>          * __restrict psi;
+                         
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,56)
+#endif 
+           } f239_c8_t;
                
        } // radiolocation
 
