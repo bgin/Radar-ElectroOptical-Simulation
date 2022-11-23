@@ -772,7 +772,9 @@ namespace gms {
 
              //! Formula (2-24,2-25)
              typedef struct __ATTR_ALIGN__(64) Nmv_c4_t {
-
+                       Nvm_c4_t()                              = delete();
+                       Nvm_c4_t(const Nvm_c4_t &)              = delete();
+                       Nvm_c4_t & operator=(const Nvm_c4_t &)  = delete();
                        struct JM_c4_t                         jmc4;
                        struct eikr_c4_t                       ec4;
                        float                     * __restrict costh;
@@ -788,7 +790,9 @@ namespace gms {
 
               //! Formula (2-24,2-25)
              typedef struct __ATTR_ALIGN__(64) Nmv_c8_t {
-
+                       Nvm_c8_t()                              = delete();
+                       Nvm_c8_t(const Nvm_c8_t &)              = delete();
+                       Nvm_c8_t & operator=(const Nvm_c8_t &)  = delete();
                        struct JM_c8_t                          jmc8;
                        struct eikr_c8_t                         ec8;
                        double                     * __restrict costh;
@@ -806,7 +810,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhev_r4_t {
-
+                       FFhev_r4_t()                            = delete;
+                       FFhev_r4_t(const FFHev_r4_t &)          = delete;
+                       FFhev_r4_t & operator=(const FFhev_r4_t)= delete;
                        struct Nev_r4_t                         ner4;
                        struct eikr_r4_t                        er4;   // 96-bytes
                        float                      * __restrict hv_xr;
@@ -826,7 +832,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhev_r8_t {
-
+                       FFhev_r8_t()                            = delete;
+                       FFhev_r8_t(const FFHev_r8_t &)          = delete;
+                       FFhev_r8_t & operator=(const FFhev_r8_t)= delete;
                        struct Nev_r8_t                          ner8;
                        struct eikr_r8_t                         er8;   // 96-bytes
                        double                      * __restrict hv_xr;
@@ -846,7 +854,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhev_c4_t {
-
+                       FFhev_c4_t()                            = delete;
+                       FFhev_c4_t(const FFHev_c4_t &)          = delete;
+                       FFhev_c4_t & operator=(const FFhev_c4_t)= delete;
                        struct Nev_c4_t                         nec4;
                        struct eikr_c4_t                        ec4;   // 96-bytes
                        std::complex<float>        * __restrict hv_x;
@@ -860,7 +870,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhev_c8_t {
-
+                       FFhev_c8_t()                            = delete;
+                       FFhev_c8_t(const FFHev_c8_t &)          = delete;
+                       FFhev_c8_t & operator=(const FFhev_c8_t)= delete;
                        struct Nev_c8_t                          nec8;
                        struct eikr_c8_t                         ec8;   // 96-bytes
                        std::complex<double>        * __restrict hv_x;
@@ -877,7 +889,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector magnetic
             typedef struct __ATTR_ALIGN__(64) FFhmv_r4_t {
-
+                       FFhev_r4_t()                            = delete;
+                       FFhev_r4_t(const FFHev_r4_t &)          = delete;
+                       FFhev_r4_t & operator=(const FFhev_r4_t)= delete;
                        struct Nmv_r4_t                         nmr4;
                        struct eikr_r4_t                        er4;   // 96-bytes
                        float                      * __restrict hm_xr;
@@ -897,7 +911,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhmv_r8_t {
-
+                       FFhev_r8_t()                            = delete;
+                       FFhev_r8_t(const FFHev_r8_t &)          = delete;
+                       FFhev_r8_t & operator=(const FFhev_r8_t)= delete;
                        struct Nmv_r8_t                          nmr8;
                        struct eikr_r8_t                         er8;   // 96-bytes
                        double                      * __restrict hm_xr;
@@ -917,7 +933,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhmv_c4_t {
-
+                       FFhev_c4_t()                            = delete;
+                       FFhev_c4_t(const FFHev_c4_t &)          = delete;
+                       FFhev_c4_t & operator=(const FFhev_r4_t)= delete;
                        struct Nmv_c4_t                         nec4;
                        struct eikr_c4_t                        ec4;   // 96-bytes
                        std::complex<float>        * __restrict hm_x;
@@ -931,7 +949,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhmv_c8_t {
-
+                       FFhev_c8_t()                            = delete;
+                       FFhev_c8_t(const FFHev_c8_t &)          = delete;
+                       FFhev_c8_t & operator=(const FFhev_c8_t)= delete;
                        struct Nmv_c8_t                          nmc8;
                        struct eikr_c8_t                         ec8;   // 96-bytes
                        std::complex<double>        * __restrict hm_x;
