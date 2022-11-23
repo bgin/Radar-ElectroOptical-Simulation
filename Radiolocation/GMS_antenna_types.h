@@ -40,6 +40,9 @@ namespace gms {
 
               typedef struct __ATTR_ALIGN__(32) E_c4_t {
                       // Complex electric field.
+                      E_c4_t()                           = delete;
+                      E_c4_t(const E_c4_t &)             = delete;
+                      E_c4_t & operator=(const E_c4_t &) = delete;
                       std::complex<float> * __restrict e_x
                       std::complex<float> * __restrict e_y
                       std::complex<float> * __restrict e_z;
@@ -52,6 +55,9 @@ namespace gms {
               
                typedef struct __ATTR_ALIGN__(32) H_c4_t {
                       // Complex magnetic field.
+                      H_c4_t()                           = delete;
+                      H_c4_t(const H_c4_t &)             = delete;
+                      H_c4_t & operator=(const H_c4_t &) = delete;
                       std::complex<float> * __restrict h_x
                       std::complex<float> * __restrict h_y
                       std::complex<float> * __restrict h_z;
@@ -64,6 +70,9 @@ namespace gms {
 
                typedef struct __ATTR_ALIGN__(32) E_c8_t {
                       // Complex electric field.
+                      E_c8_t()                           = delete;
+                      E_c8_t(const E_c8_t &)             = delete;
+                      E_c8_t & operator=(const E_c8_t &) = delete;
                       std::complex<double> * __restrict e_x
                       std::complex<double> * __restrict e_y
                       std::complex<double> * __restrict e_z;
@@ -76,6 +85,9 @@ namespace gms {
               
                typedef struct __ATTR_ALIGN__(32) H_c8_t {
                       // Complex magnetic field.
+                      H_c8_t()                           = delete;
+                      H_c8_t(const H_c8_t &)             = delete;
+                      H_c8_t & operator=(const H_c8_t &) = delete;
                       std::complex<double> * __restrict h_x
                       std::complex<double> * __restrict h_y
                       std::complex<double> * __restrict h_z;
@@ -89,6 +101,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) E_r4_t {
                       //  ! Complex Electric  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
+                      E_r4_t()                           = delete;
+                      E_r4_t(const E_r4_t &)             = delete;
+                      E_r4_t & operator=(const E_r4_t &) = delete;
                       float * __restrict e_xr;
                       float * __restrict e_xi;
                       float * __restrict e_yr;
@@ -105,6 +120,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) H_r4_t {
                       //  ! Complex Magnetic  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
+                      H_r4_t()                           = delete;
+                      H_r4_t(const H_r4_t &)             = delete;
+                      H_r4_t & operator=(const H_r4_t &) = delete;
                       float * __restrict h_xr;
                       float * __restrict h_xi;
                       float * __restrict h_yr;
@@ -121,6 +139,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) E_r8_t {
                       //  ! Complex Electric  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
+                      E_r8_t()                           = delete;
+                      E_r8_t(const E_r8_t &)             = delete;
+                      E_r8_t & operator=(const E_r8_t &) = delete;
                       double * __restrict e_xr;
                       double * __restrict e_xi;
                       double * __restrict e_yr;
@@ -137,6 +158,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) H_r8_t {
                       //  ! Complex Magnetic  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
+                      H_r8_t()                           = delete;
+                      H_r8_t(const H_r8_t &)             = delete;
+                      H_r8_t & operator=(const H_r8_t &) = delete;
                       double * __restrict h_xr;
                       double * __restrict h_xi;
                       double * __restrict h_yr;
@@ -152,6 +176,9 @@ namespace gms {
 
               typedef struct __ATTR_ALIGN__(32) JE_c4_t {
                       // Complex magnetic current
+                      JE_c4_t()                            = delete;
+                      JE_c4_t(const JE_c4_t &)             = delete;
+                      JE_c4_t & operator=(const JE_c4_t &) = delete;
                       std::complex<float> * __restrict je_x;
                       std::complex<float> * __restrict je_y;
                       std::complex<float> * __restrict je_z;
@@ -164,6 +191,9 @@ namespace gms {
 
               typedef struct __ATTR_ALIGN__(32) JM_c4_t {
                       // Complex electric current
+                      JM_c4_t()                            = delete;
+                      JM_c4_t(const JM_c4_t &)             = delete;
+                      JM_c4_t & operator=(const JM_c4_t &) = delete;
                       std::complex<float> * __restrict jm_x;
                       std::complex<float> * __restrict jm_y;
                       std::complex<float> * __restrict jm_z;
@@ -176,6 +206,9 @@ namespace gms {
 
               typedef struct __ATTR_ALIGN__(32) JE_c8_t {
                       // Complex magnetic current
+                      JE_c8_t()                            = delete;
+                      JE_c8_t(const JE_c8_t &)             = delete;
+                      JE_c8_t & operator=(const JE_c8_t &) = delete;
                       std::complex<double> * __restrict je_x;
                       std::complex<double> * __restrict je_y;
                       std::complex<double> * __restrict je_z;
@@ -188,6 +221,9 @@ namespace gms {
 
               typedef struct __ATTR_ALIGN__(32) JM_c8_t {
                       // Complex electric current
+                      JM_c8_t()                            = delete;
+                      JM_c8_t(const JM_c8_t &)             = delete;
+                      JM_c8_t & operator=(const JM_c8_t &) = delete;
                       std::complex<double> * __restrict jm_x;
                       std::complex<double> * __restrict jm_y;
                       std::complex<double> * __restrict jm_z;
@@ -201,6 +237,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) JE_r4_t {
                      // ! Complex Electric Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
+                      JE_r4_t()                            = delete;
+                      JE_r4_t(const JE_r4_t &)             = delete;
+                      JE_r4_t & operator=(const JE_r4_t &) = delete;
                       float * __restrict je_xr;
                       float * __restrict je_xi;
                       float * __restrict je_yr;
@@ -217,6 +256,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) JM_r4_t {
                      // ! Complex Magnetic Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
+                      JM_r4_t()                            = delete;
+                      JM_r4_t(const JM_r4_t &)             = delete;
+                      JM_r4_t & operator=(const JM_r4_t &) = delete;
                       float * __restrict jm_xr;
                       float * __restrict jm_xi;
                       float * __restrict jm_yr;
@@ -233,6 +275,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) JE_r8_t {
                      // ! Complex Electric Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
+                      JE_r8_t()                            = delete;
+                      JE_r8_t(const JE_r8_t &)             = delete;
+                      JE_r8_t & operator=(const JE_r8_t &) = delete;
                       double * __restrict je_xr;
                       double * __restrict je_xi;
                       double * __restrict je_yr;
@@ -249,6 +294,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(64) JM_r8_t {
                      // ! Complex Magnetic Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
+                      JM_r8_t()                            = delete;
+                      JM_r8_t(const JM_r8_t &)             = delete;
+                      JM_r8_t & operator=(const JM_r8_t &) = delete;
                       double * __restrict jm_xr;
                       double * __restrict jm_xi;
                       double * __restrict jm_yr;
@@ -1703,7 +1751,47 @@ namespace gms {
                       PAD_TO(0,28)
 #endif  
            } f247_f8_t;
-          
+
+
+           /*
+               ! Formula (2-49)
+               ! Wire (running-wave) radiation pattern
+           */
+          typedef struct __ATTR_ALIGN__(32) f249_r4_t {
+
+                            float                          * __restrict Fth;
+                            float                                       k;
+                            float                                       L;
+                            float                                       A;
+                            float                                       beta;
+                            int32_t                                     nth;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif   
+          } f249_r4_t;
+
+
+           /*
+               ! Formula (2-49)
+               ! Wire (running-wave) radiation pattern
+           */
+          typedef struct __ATTR_ALIGN__(64) f249_r8_t {
+
+                            double                          * __restrict Fth;
+                            double                                       k;
+                            double                                       L;
+                            double                                       A;
+                            double                                       beta;
+                            int32_t                                      nth;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif  
+          } f249_r8_t;
+
+
+          /*
+              
+          */
 
 
        } // radiolocation
