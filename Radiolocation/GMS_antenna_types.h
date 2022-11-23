@@ -1670,6 +1670,39 @@ namespace gms {
 #endif  
           } f246_c8_t;
 
+
+          /*
+              ! Formula (2-47)
+              ! Wire symmetric current radiation pattern
+          */
+           typedef struct __ATTR_ALIGN__(32) f247_r4_t {
+
+                            float                          * __restrict Fth;
+                            float                                       k;
+                            float                                       L;
+                            float                                       A;
+                            int32_t                                     nth;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,8)
+#endif  
+           } f247_f4_t;
+
+
+           /*
+              ! Formula (2-47)
+              ! Wire symmetric current radiation pattern
+          */
+           typedef struct __ATTR_ALIGN__(64) f247_r8_t {
+
+                            double                          * __restrict Fth;
+                            double                                       k;
+                            double                                       L;
+                            double                                       A;
+                            int32_t                                     nth;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,28)
+#endif  
+           } f247_f8_t;
           
 
 
