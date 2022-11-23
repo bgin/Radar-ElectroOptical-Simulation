@@ -1501,8 +1501,105 @@ namespace gms {
                       PAD_TO(0,12)
 #endif 
             } f244_r8_t;
-  
 
+
+           /*
+               ! Formula (2-45)
+               ! Radiation pattern of thin wire (even m)
+            */ 
+            typedef struct __ATTR_ALIGN__(32) f245_r4_t {
+
+                           float                        * __restrict Fth;
+                           float                                     A;
+                           int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,16)
+#endif  
+           } f245_r4_t;
+
+
+           /*
+               ! Formula (2-45)
+               ! Radiation pattern of thin wire (even m)
+            */ 
+            typedef struct __ATTR_ALIGN__(32) f245_r8_t {
+
+                           double                        * __restrict Fth;
+                           double                                     A;
+                           int32_t                                   npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif  
+           } f245_r8_t;
+
+
+           /*
+               ! Formula (2-48)
+               ! For a wire with current modulated by phase speed
+           */
+           typedef struct __ATTR_ALIGN__(32) f248_r4_t {
+
+                            float                       * __restrict Iz_re;
+                            float                       * __restrict Iz_im;
+                            float                                    I0_re;
+                            float                                    I0_im;
+                            float                                    beta
+                            int32_t                                  nz;
+ 
+           } f248_r4_t;
+
+
+          /*
+               ! Formula (2-48)
+               ! For a wire with current modulated by phase speed
+           */
+           typedef struct __ATTR_ALIGN__(64) f248_r8_t {
+
+                            double                       * __restrict Iz_re;
+                            double                       * __restrict Iz_im;
+                            double                                    I0_re;
+                            double                                    I0_im;
+                            double                                    beta
+                            int32_t                                   nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif  
+           } f248_r8_t;
+
+
+           /*
+               ! Formula (2-48)
+               ! For a wire with current modulated by phase speed
+           */
+           typedef struct __ATTR_ALIGN__(32) f248_c4_t {
+
+                            std::complex<float>          * __restrict Iz;
+                            std::complex<float>                       I0;
+                            float                                     beta
+                            int32_t                                   nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,8)
+#endif   
+           } f248_c4_t;
+
+
+          /*
+               ! Formula (2-48)
+               ! For a wire with current modulated by phase speed
+           */
+           typedef struct __ATTR_ALIGN__(64) f248_c8_t {
+
+                            std::complex<double>          * __restrict Iz_re;
+                            std::complex<double>                       I0;
+                            double                                     beta
+                            int32_t                                    nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif  
+           } f248_c8_t;
+
+
+          
 
 
        } // radiolocation
