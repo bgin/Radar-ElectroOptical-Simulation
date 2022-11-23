@@ -312,6 +312,9 @@ namespace gms {
 
               typedef struct __ATTR_ALIGN__(32) eikr_c4_t {
                       // Time-Harmonic complex exponential
+                      eikr_c4_t()                              = delete;
+                      eikr_c4_t(const eikr_c4_t &)             = delete;
+                      eikr_c4_t & operator=(const eikr_c4_t &) = delete;
                       float               * __restrict R;
                       std::complex<float> * __restrict ce;
                       float                            k;
@@ -324,6 +327,9 @@ namespace gms {
 
                typedef struct __ATTR_ALIGN__(32) eikr_c8_t {
                       // Time-Harmonic complex exponential
+                      eikr_c8_t()                              = delete;
+                      eikr_c8_t(const eikr_c8_t &)             = delete;
+                      eikr_c8_t & operator=(const eikr_c8_t &) = delete;
                       double               * __restrict R;
                       std::complex<double> * __restrict ce;
                       double                            k;
@@ -337,6 +343,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(32) eikr_r4_t {
                       // ! Time-Harmonic complex exponential decomposed into 
                       // ! real and imaginary parts
+                      eikr_r4_t()                              = delete;
+                      eikr_r4_t(const eikr_r4_t &)             = delete;
+                      eikr_r4_t & operator=(const eikr_r4_t &) = delete;
                       float                 * __restrict R;
                       float                 * __restrict e_re;
                       float                 * __restrict e_im;
@@ -348,6 +357,9 @@ namespace gms {
               typedef struct __ATTR_ALIGN__(32) eikr_r8_t {
                       // ! Time-Harmonic complex exponential decomposed into 
                       // ! real and imaginary parts
+                      eikr_r8_t()                              = delete;
+                      eikr_r8_t(const eikr_r8_t &)             = delete;
+                      eikr_r8_t & operator=(const eikr_r8_t &) = delete;
                       double                 * __restrict R;
                       double                 * __restrict e_re;
                       double                 * __restrict e_im;
@@ -359,7 +371,9 @@ namespace gms {
               // ! Formula (1-37)
               //! Average level of side lobes
               typedef struct __ATTR_ALIGN__(64) f137_r4_t {
-                       
+                       f137_r4_t()                             = delete;
+                       f137_r4_t(const f137_r4_t &)            = delete;
+                       f137_r4_t & operator=(const f137_r4_t &)= delete;
                        float                 * __restrict sinth;
                        float                 * __restrict F;
                        float                              ith;
@@ -378,7 +392,9 @@ namespace gms {
               // ! Formula (1-37)
               //! Average level of side lobes
               typedef struct __ATTR_ALIGN__(64) f137_r8_t {
-                       
+                       f137_r8_t()                             = delete;
+                       f137_r8_t(const f137_r8_t &)            = delete;
+                       f137_r8_t & operator=(const f137_r8_t &)= delete;
                        double                 * __restrict sinth;
                        double                 * __restrict F;
                        double                              ith;
@@ -394,7 +410,9 @@ namespace gms {
               // ! Formula (1-38)
               //! Average level of side lobes
               typedef struct __ATTR_ALIGN__(64) f138_r4_t {
-                       
+                       f138_r4_t()                             = delete;
+                       f138_r4_t(const f138_r4_t &)            = delete;
+                       f138_r4_t & operator=(const f138_r4_t &)= delete;
                        float                 * __restrict sinth;
                        float                 * __restrict Fsqr;
                        float                              ith;
@@ -413,7 +431,9 @@ namespace gms {
               // ! Formula (1-38)
               //! Average level of side lobes
               typedef struct __ATTR_ALIGN__(64) f138_r8_t {
-                       
+                       f138_r8_t()                             = delete;
+                       f138_r8_t(const f138_r8_t &)            = delete;
+                       f138_r8_t & operator=(const f138_r8_t &)= delete;
                        double                 * __restrict sinth;
                        double                 * __restrict Fsqr;
                        double                              ith;
@@ -429,7 +449,9 @@ namespace gms {
               //! Formula (1-39)
               // ! Dispersion coefficient
               typedef struct __ATTR_ALIGN__(64) f139_r4_t {
-
+                       f139_r4_t()                             = delete;
+                       f139_r4_t(const f139_r4_t &)            = delete;
+                       f139_r4_t & operator=(const f139_r4_t &)= delete; 
                        float                  * __restrict P;
                        float                  * __restrict sinth;
                        float                               ith;
@@ -446,7 +468,9 @@ namespace gms {
               //! Formula (1-39)
               // ! Dispersion coefficient
               typedef struct __ATTR_ALIGN__(64) f139_r8_t {
-
+                       f139_r8_t()                             = delete;
+                       f139_r8_t(const f139_r8_t &)            = delete;
+                       f139_r8_t & operator=(const f139_r8_t &)= delete;
                        double                  * __restrict P;
                        double                  * __restrict sinth;
                        double                               ith;
@@ -463,7 +487,9 @@ namespace gms {
              //  ! Formula (2-13)
              //  ! Hertz vector electric
              typedef struct __ATTR_ALIGN__(64) Hve_c4_t {
-
+                       Hve_c4_t()                              = delete();
+                       Hve_c4_t(const Hve_c4_t &)              = delete();
+                       Hve_c4_t & operator=(const Hve_c4_t &)  = delete();
                        struct JE_c4_t                        jec4;
                        struct eikr_c4_t                      ec4;
                        std::complex<float>                   ifac;
@@ -480,7 +506,9 @@ namespace gms {
              //  ! Formula (2-13)
              //  ! Hertz vector electric
              typedef struct __ATTR_ALIGN__(64) Hve_c8_t {
-
+                       Hve_c8_t()                              = delete();
+                       Hve_c8_t(const Hve_c8_t &)              = delete();
+                       Hve_c8_t & operator=(const Hve_c8_t &)  = delete();
                        struct JE_c8_t                         jec8;
                        struct eikr_c8_t                       ec8;
                        std::complex<double>                   ifac;
@@ -497,7 +525,9 @@ namespace gms {
              //  ! Formula (2-13)
              //  ! Hertz vector electric
              typedef struct __ATTR_ALIGN__(64) Hve_r4_t {
-
+                       Hve_r4_t()                              = delete();
+                       Hve_r4_t(const Hve_r4_t &)              = delete();
+                       Hve_r4_t & operator=(const Hve_r4_t &)  = delete();
                        struct JE_r4_t                        jer4;
                        struct eikr_r4_t                      er4;
                        float                                 if_re;
@@ -518,7 +548,9 @@ namespace gms {
              //  ! Formula (2-13)
              //  ! Hertz vector electric
              typedef struct __ATTR_ALIGN__(64) Hve_r8_t {
-
+                       Hve_r8_t()                              = delete();
+                       Hve_r8_t(const Hve_r8_t &)              = delete();
+                       Hve_r8_t & operator=(const Hve_r8_t &)  = delete();
                        struct JE_r8_t                         jer8;
                        struct eikr_r8_t                       er8;
                        double                                 if_re;
@@ -539,7 +571,9 @@ namespace gms {
              //  ! Formula (2-15)
              //  ! Hertz vector magnetic
              typedef struct __ATTR_ALIGN__(64) Hvm_c4_t {
-
+                       Hvm_c4_t()                              = delete();
+                       Hvm_c4_t(const Hvm_c4_t &)              = delete();
+                       Hvm_c4_t & operator=(const Hvm_c4_t &)  = delete();
                        struct JM_c4_t                        jmc4;
                        struct eikr_c4_t                      ec4;
                        std::complex<float>                   ifac;
@@ -556,7 +590,9 @@ namespace gms {
              //  ! Formula (2-15)
              //  ! Hertz vector magnetic
              typedef struct __ATTR_ALIGN__(64) Hvm_c8_t {
-
+                       Hvm_c8_t()                              = delete();
+                       Hvm_c8_t(const Hvm_c8_t &)              = delete();
+                       Hvm_c8_t & operator=(const Hvm_c8_t &)  = delete();
                        struct JM_c8_t                         jmc8;
                        struct eikr_c8_t                       ec8;
                        std::complex<double>                   ifac;
@@ -573,7 +609,9 @@ namespace gms {
              //  ! Formula (2-15)
              //  ! Hertz vector magnetic
              typedef struct __ATTR_ALIGN__(64) Hve_r4_t {
-
+                       Hvm_r4_t()                              = delete();
+                       Hvm_r4_t(const Hvm_r4_t &)              = delete();
+                       Hvm_r4_t & operator=(const Hvm_r4_t &)  = delete(); 
                        struct JM_r4_t                        jmr4;
                        struct eikr_r4_t                      er4;
                        float                                 if_re;
@@ -594,7 +632,9 @@ namespace gms {
              //  ! Formula (2-15)
              //  ! Hertz vector magnetic
              typedef struct __ATTR_ALIGN__(64) Hvm_r8_t {
-
+                       Hvm_r8_t()                              = delete();
+                       Hvm_r8_t(const Hvm_r8_t &)              = delete();
+                       Hvm_r8_t & operator=(const Hvm_r8_t &)  = delete();
                        struct JM_r8_t                         jmr8;
                        struct eikr_r8_t                       er8;
                        double                                 if_re;
@@ -614,7 +654,9 @@ namespace gms {
 
              //! Formula (2-22,2-23)
              typedef struct __ATTR_ALIGN__(64) Nev_r4_t {
-
+                       Nev_r4_t()                              = delete();
+                       Nev_r4_t(const Nev_r4_t &)              = delete();
+                       Nev_r4_t & operator=(const Nev_r4_t &)  = delete();
                        struct JE_r4_t                         jer4;
                        struct eikr_r4_t                       er4;
                        float                     * __restrict costh;
@@ -632,7 +674,9 @@ namespace gms {
 
               //! Formula (2-22,2-23)
              typedef struct __ATTR_ALIGN__(64) Nev_r8_t {
-
+                       Nev_r8_t()                              = delete();
+                       Nev_r8_t(const Nev_r8_t &)              = delete();
+                       Nev_r8_t & operator=(const Nev_r8_t &)  = delete(); 
                        struct JE_r8_t                          jer8;
                        struct eikr_r8_t                         er8;
                        double                     * __restrict costh;
@@ -651,7 +695,9 @@ namespace gms {
 
              //! Formula (2-22,2-23)
              typedef struct __ATTR_ALIGN__(64) Nev_c4_t {
-
+                       Nev_c4_t()                              = delete();
+                       Nev_c4_t(const Nev_c4_t &)              = delete();
+                       Nev_c4_t & operator=(const Nev_c4_t &)  = delete();
                        struct JE_c4_t                         jec4;
                        struct eikr_c4_t                       ec4;
                        float                     * __restrict costh;
@@ -667,7 +713,9 @@ namespace gms {
 
               //! Formula (2-22,2-23)
              typedef struct __ATTR_ALIGN__(64) Nev_c8_t {
-
+                       Nev_c8_t()                              = delete();
+                       Nev_c8_t(const Nev_c8_t &)              = delete();
+                       Nev_c8_t & operator=(const Nev_c8_t &)  = delete();
                        struct JE_c8_t                          jcr8;
                        struct eikr_c8_t                         ec8;
                        double                     * __restrict costh;
@@ -683,7 +731,9 @@ namespace gms {
 
              //! Formula (2-24,2-25)
              typedef struct __ATTR_ALIGN__(64) Nmv_r4_t {
-
+                       Nvm_r4_t()                              = delete();
+                       Nvm_r4_t(const Nvm_r4_t &)              = delete();
+                       Nvm_r4_t & operator=(const Nvm_r4_t &)  = delete();
                        struct JM_r4_t                         jmr4;
                        struct eikr_r4_t                       er4;
                        float                     * __restrict costh;
@@ -701,7 +751,9 @@ namespace gms {
 
               //! Formula (2-24,2-25)
              typedef struct __ATTR_ALIGN__(64) Nmv_r8_t {
-
+                       Nvm_r8_t()                              = delete();
+                       Nvm_r8_t(const Nvm_r8_t &)              = delete();
+                       Nvm_r8_t & operator=(const Nvm_r8_t &)  = delete();
                        struct JM_r8_t                          jmr8;
                        struct eikr_r8_t                         er8;
                        double                     * __restrict costh;
