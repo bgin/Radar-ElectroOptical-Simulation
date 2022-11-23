@@ -1594,7 +1594,7 @@ namespace gms {
                             double                                     beta
                             int32_t                                    nz;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,20)
+                      PAD_TO(0,28)
 #endif  
            } f248_c8_t;
 
