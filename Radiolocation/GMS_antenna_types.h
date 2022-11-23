@@ -1589,7 +1589,7 @@ namespace gms {
            */
            typedef struct __ATTR_ALIGN__(64) f248_c8_t {
 
-                            std::complex<double>          * __restrict Iz_re;
+                            std::complex<double>          * __restrict Iz;
                             std::complex<double>                       I0;
                             double                                     beta
                             int32_t                                    nz;
@@ -1598,6 +1598,77 @@ namespace gms {
 #endif  
            } f248_c8_t;
 
+
+           /*
+               ! Formula (2-46)
+               ! Symmetric sinusoidal current distribution.
+            */
+           typedef struct __ATTR_ALIGN__(64) f246_r4_t {
+
+                            float                         * __restrict Iz_re;
+                            float                         * __restrict Iz_im;
+                            float                                      I0_re;
+                            float                                      I0_im;
+                            float                                      L;
+                            float                                      k;
+                            int32_t                                    nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,28)
+#endif  
+          } f246_r4_t;
+
+
+           /*
+               ! Formula (2-46)
+               ! Symmetric sinusoidal current distribution.
+            */
+           typedef struct __ATTR_ALIGN__(64) f246_r8_t {
+
+                            double                         * __restrict Iz_re;
+                            double                         * __restrict Iz_im;
+                            double                                      I0_re;
+                            double                                      I0_im;
+                            double                                      L;
+                            double                                      k;
+                            int32_t                                    nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,12)
+#endif  
+          } f246_r8_t;
+
+
+             /*
+               ! Formula (2-46)
+               ! Symmetric sinusoidal current distribution.
+            */
+           typedef struct __ATTR_ALIGN__(32) f246_c4_t {
+
+                            std::complex<float>            * __restrict Iz;
+                            std::complex<float>                         I0;
+                            float                                       L;
+                            float                                       k;
+                            int32_t                                     nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,4)
+#endif  
+          } f246_c4_t;
+
+
+           /*
+               ! Formula (2-46)
+               ! Symmetric sinusoidal current distribution.
+            */
+           typedef struct __ATTR_ALIGN__(64) f246_c8_t {
+
+                            std::complex<double>           * __restrict Iz;
+                            std::complex<double>                        I0;
+                            double                                      L;
+                            double                                      k;
+                            int32_t                                    nz;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,20)
+#endif  
+          } f246_c8_t;
 
           
 
