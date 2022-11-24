@@ -1198,7 +1198,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'electric current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFec_r4_t {
-
+                        FFec_r4_t()                                = delete;
+                        FFec_r4_t(const FFec_r4_t &)               = delete;
+                        FFec_r4_t & operator=(const FFec_r4_t &)   = delete;
                         struct eikr_r4_t                          eikr;
                         struct Nesph_r4_t           * __restrict  nesp;
                         struct Nev_r4_t             * __restrict  nev;
@@ -1223,7 +1225,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'electric current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFec_r8_t {
-
+                        FFec_r8_t()                                = delete;
+                        FFec_r8_t(const FFec_r8_t &)               = delete;
+                        FFec_r8_t & operator=(const FFec_r8_t &)   = delete;
                         struct eikr_r8_t                           eikr;
                         struct Nesph_r8_t            * __restrict  nesp;
                         struct Nev_r8_t              * __restrict  nev;
@@ -1248,7 +1252,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'electric current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFec_c4_t {
-
+                        FFec_c4_t()                                = delete;
+                        FFec_c4_t(const FFec_c4_t &)               = delete;
+                        FFec_c4_t & operator=(const FFec_c4_t &)   = delete;
                         struct eikr_c4_t                          eikr;
                         struct Nesph_c4_t           * __restrict  nesp;
                         struct Nev_c4_t             * __restrict  nev;
@@ -1269,7 +1275,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'electric current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFec_c8_t {
-
+                        FFec_c8_t()                                = delete;
+                        FFec_c8_t(const FFec_c8_t &)               = delete;
+                        FFec_c8_t & operator=(const FFec_c8_t &)   = delete;
                         struct eikr_c8_t                           eikr;
                         struct Nesph_c8_t            * __restrict  nesp;
                         struct Nev_c8_t              * __restrict  nev;
@@ -1290,7 +1298,9 @@ namespace gms {
             //    ! Formula (2-27)
             // ! Far field (zone) 'magnetic current' for R>=2*D^2/gamma
               typedef struct __ATTR_ALIGN__(64) FFmc_r4_t {
-
+                        FFmc_r4_t()                                = delete;
+                        FFmc_r4_t(const FFmc_r4_t &)               = delete;
+                        FFmc_r4_t & operator=(const FFmc_r4_t &)   = delete;
                         struct eikr_r4_t                          eikr;
                         struct Nmsph_r4_t           * __restrict  nmsp;
                         struct Nmv_r4_t             * __restrict  nmv;
@@ -1315,7 +1325,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'magnetic current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFmc_r8_t {
-
+                        FFmc_r8_t()                                = delete;
+                        FFmc_r8_t(const FFmc_r8_t &)               = delete;
+                        FFmc_r8_t & operator=(const FFmc_r8_t &)   = delete;
                         struct eikr_r8_t                           eikr;
                         struct Nmsph_r8_t            * __restrict  nmsp;
                         struct Nmv_r8_t              * __restrict  nmv;
@@ -1340,7 +1352,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'electric current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFmc_c4_t {
-
+                        FFmc_c4_t()                                = delete;
+                        FFmc_c4_t(const FFmc_c4_t &)               = delete;
+                        FFmc_c4_t & operator=(const FFmc_c4_t &)   = delete;
                         struct eikr_c4_t                          eikr;
                         struct Nmsph_c4_t           * __restrict  nmsp;
                         struct Nmv_c4_t             * __restrict  nmv;
@@ -1361,7 +1375,9 @@ namespace gms {
             //! Formula (2-27)
             //! Far field (zone) 'electric current' for R>=2*D^2/gamma
             typedef struct __ATTR_ALIGN__(64) FFmc_c8_t {
-
+                        FFmc_c8_t()                                = delete;
+                        FFmc_c8_t(const FFmc_c8_t &)               = delete;
+                        FFmc_c8_t & operator=(const FFmc_c8_t &)   = delete;
                         struct eikr_c8_t                           eikr;
                         struct Nmsph_c8_t            * __restrict  nmsp;
                         struct Nmv_c8_t              * __restrict  nmv;
@@ -1381,7 +1397,9 @@ namespace gms {
 
            //  ! Formula (2-38)
            typedef struct __ATTR_ALIGN__(64) poynting_avg_r4_t {
-
+                        poynting_avg_r4_t()                             = delete;
+                        poynting_avg_r4_t(const poynting_avg_r4_t &)    = delete;
+                        poynting_avg_r4_t & operator=(const poynting_avg_r4_t &) = delete;
                         struct Nmsph_r4_t             * __restrict nmsp;
                         struct Nesph_r4_t             * __restrict nesp;
                         float                         * __restrict R;
@@ -1403,7 +1421,9 @@ namespace gms {
 
              //  ! Formula (2-38)
            typedef struct __ATTR_ALIGN__(64) poynting_avg_r8_t {
-
+                        poynting_avg_r8_t()                             = delete;
+                        poynting_avg_r8_t(const poynting_avg_r8_t &)    = delete;
+                        poynting_avg_r8_t & operator=(const poynting_avg_r8_t &) = delete;
                         struct Nmsph_r8_t             * __restrict nmsp;
                         struct Nesph_r8_t             * __restrict nesp;
                         double                        * __restrict R;
@@ -1426,7 +1446,9 @@ namespace gms {
            
            //  ! Formula (2-38)
            typedef struct __ATTR_ALIGN__(64) poynting_avg_c4_t {
-
+                        poynting_avg_c4_t()                             = delete;
+                        poynting_avg_c4_t(const poynting_avg_c4_t &)    = delete;
+                        poynting_avg_c4_t & operator=(const poynting_avg_c4_t &) = delete;
                         struct Nmsph_c4_t             * __restrict nmsp;
                         struct Nesph_c4_t             * __restrict nesp;
                         float                         * __restrict R;
@@ -1445,7 +1467,9 @@ namespace gms {
 
            //  ! Formula (2-38)
            typedef struct __ATTR_ALIGN__(64) poynting_avg_c8_t {
-
+                        poynting_avg_c8_t()                             = delete;
+                        poynting_avg_c8_t(const poynting_avg_c8_t &)    = delete;
+                        poynting_avg_c8_t & operator=(const poynting_avg_c8_t &) = delete;
                         struct Nmsph_c8_t             * __restrict nmsp;
                         struct Nesph_c8_t             * __restrict nesp;
                         double                        * __restrict R;
@@ -1465,7 +1489,9 @@ namespace gms {
            //  ! Formula (2-37)
            //! Intensity of radiation (steradian angle) in directions: phi,theta
            typedef struct __ATTR_ALIGN__(64) f237_r4_t {
-
+                        f237_r4_t()                                = delete;
+                        f237_r4_t(const f237_r4_t &)               = delete;
+                        f237_r4_t & operator=(const f237_r4_t &)   = delete;
                         struct poynting_avg_r4_t                   pavg;
                         float                         * __restrict P_re;
                         float                         * __restrict P_im;
@@ -1478,7 +1504,9 @@ namespace gms {
            //  ! Formula (2-37)
            //! Intensity of radiation (steradian angle) in directions: phi,theta
            typedef struct __ATTR_ALIGN__(64) f237_r8_t {
-
+                        f237_r8_t()                                = delete;
+                        f237_r8_t(const f237_r8_t &)               = delete;
+                        f237_r8_t & operator=(const f237_r8_t &)   = delete;
                         struct poynting_avg_r8_t                   pavg;
                         double                         * __restrict P_re;
                         double                         * __restrict P_im;
@@ -1491,7 +1519,9 @@ namespace gms {
            //  ! Formula (2-37)
            //! Intensity of radiation (steradian angle) in directions: phi,theta
            typedef struct __ATTR_ALIGN__(64) f237_c4_t {
-
+                        f237_c4_t()                                = delete;
+                        f237_c4_t(const f237_c4_t &)               = delete;
+                        f237_c4_t & operator=(const f237_c4_t &)   = delete;
                         struct poynting_avg_c4_t                   pavg;
                         std::complex<float>           * __restrict P;
                         
@@ -1504,7 +1534,9 @@ namespace gms {
            //  ! Formula (2-37)
            //! Intensity of radiation (steradian angle) in directions: phi,theta
            typedef struct __ATTR_ALIGN__(64) f237_c8_t {
-
+                        f237_c8_t()                                = delete;
+                        f237_c8_t(const f237_c8_t &)               = delete;
+                        f237_c8_t & operator=(const f237_c8_t &)   = delete; 
                         struct poynting_avg_c8_t                   pavg;
                         std::complex<double>          * __restrict P;
                         
@@ -1520,7 +1552,9 @@ namespace gms {
                  ! of poynting vectors.
            */
            typedef struct __ATTR_ALIGN__(64) f239_r4_t {
-
+                         f239_r4_t()                                = delete;
+                         f239_r4_t(const f239_r4_t &)               = delete;
+                         f239_r4_t & operator=(const f239_r4_t &)   = delete;
                          struct poynting_avg_r4_t                  pv;
                          struct poynitng_avg_r4_t                  pvmax;
                          float                        * __restrict psi_re;
@@ -1537,7 +1571,9 @@ namespace gms {
                  ! of poynting vectors.
            */
            typedef struct __ATTR_ALIGN__(64) f239_r8_t {
-
+                         f239_r8_t()                                = delete;
+                         f239_r8_t(const f239_r8_t &)               = delete;
+                         f239_r8_t & operator=(const f239_r8_t &)   = delete;
                          struct poynting_avg_r8_t                   pv;
                          struct poynitng_avg_r8_t                   pvmax;
                          double                        * __restrict psi_re;
@@ -1554,7 +1590,9 @@ namespace gms {
                  ! of poynting vectors.
            */
            typedef struct __ATTR_ALIGN__(64) f239_c4_t {
-
+                         f239_c4_t()                                = delete;
+                         f239_c4_t(const f239_c4_t &)               = delete;
+                         f239_c4_t & operator=(const f239_c4_t &)   = delete;
                          struct poynting_avg_c4_t                  pv;
                          struct poynitng_avg_c4_t                  pvmax;
                          std::complex<float>          * __restrict psi;
@@ -1570,8 +1608,10 @@ namespace gms {
                  ! Normalized radiation pattern expressed by the ratio
                  ! of poynting vectors.
            */
-           typedef struct __ATTR_ALIGN__(64) f239_r8_t {
-
+           typedef struct __ATTR_ALIGN__(64) f239_c8_t {
+                         f239_c8_t()                                = delete;
+                         f239_c8_t(const f239_r4_t &)               = delete;
+                         f239_c8_t & operator=(const f239_c8_t &)   = delete; 
                          struct poynting_avg_c8_t                   pv;
                          struct poynitng_avg_c8_t                   pvmax;
                          std::complex<double>          * __restrict psi;
@@ -1586,7 +1626,9 @@ namespace gms {
                 ! The current distribution along the 'z' coordiante
             */
             typedef struct __ATTR_ALIGN__(32) f243_r4_t {
-
+                          f243_r4_t()                                = delete;
+                          f243_r4_t(const f243_r4_t &)               = delete;
+                          f243_r4_t & operator=(const f243_r4_t &)   = delete;
                           float                        * __restrict Iz;
                           float                                     I0;
                           float                                     k;
@@ -1602,7 +1644,9 @@ namespace gms {
                 ! The current distribution along the 'z' coordiante
             */
             typedef struct __ATTR_ALIGN__(32) f243_r8_t {
-
+                          f243_r8_t()                                = delete;
+                          f243_r8_t(const f243_r8_t &)               = delete;
+                          f243_r8_t & operator=(const f243_r8_t &)   = delete;
                           double                        * __restrict Iz;
                           double                                     I0;
                           double                                     k;
@@ -1618,7 +1662,9 @@ namespace gms {
                 ! Radiation pattern of thin wire (odd m)
              */
             typedef struct __ATTR_ALIGN__(32) f244_r4_t {
-
+                           f244_r4_t()                                = delete;
+                           f244_r4_t(const f244_r4_t &)               = delete;
+                           f244_r4_t & operator=(const f244_r4_t &)   = delete;
                            float                        * __restrict Fth;
                            float                                     A;
                            int32_t                                   npts;
@@ -1633,7 +1679,9 @@ namespace gms {
                 ! Radiation pattern of thin wire (odd m)
              */
             typedef struct __ATTR_ALIGN__(32) f244_r8_t {
-
+                           f244_r8_t()                                = delete;
+                           f244_r8_t(const f244_r8_t &)               = delete;
+                           f244_r8_t & operator=(const f244_r8_t &)   = delete;
                            double                        * __restrict Fth;
                            double                                     A;
                            int32_t                                   npts;
@@ -1648,7 +1696,9 @@ namespace gms {
                ! Radiation pattern of thin wire (even m)
             */ 
             typedef struct __ATTR_ALIGN__(32) f245_r4_t {
-
+                           f245_r4_t()                                = delete;
+                           f245_r4_t(const f245_r4_t &)               = delete;
+                           f245_r4_t & operator=(const f245_r4_t &)   = delete;
                            float                        * __restrict Fth;
                            float                                     A;
                            int32_t                                   npts;
@@ -1663,7 +1713,9 @@ namespace gms {
                ! Radiation pattern of thin wire (even m)
             */ 
             typedef struct __ATTR_ALIGN__(32) f245_r8_t {
-
+                           f245_r8_t()                                = delete;
+                           f245_r8_t(const f245_r8_t &)               = delete;
+                           f245_r8_t & operator=(const f245_r8_t &)   = delete; 
                            double                        * __restrict Fth;
                            double                                     A;
                            int32_t                                   npts;
@@ -1678,7 +1730,9 @@ namespace gms {
                ! For a wire with current modulated by phase speed
            */
            typedef struct __ATTR_ALIGN__(32) f248_r4_t {
-
+                            f248_r4_t()                                = delete;
+                            f248_r4_t(const f248_r4_t &)               = delete;
+                            f248_r4_t & operator=(const f248_r4_t &)   = delete; 
                             float                       * __restrict Iz_re;
                             float                       * __restrict Iz_im;
                             float                                    I0_re;
@@ -1694,7 +1748,9 @@ namespace gms {
                ! For a wire with current modulated by phase speed
            */
            typedef struct __ATTR_ALIGN__(64) f248_r8_t {
-
+                            f248_r8_t()                                = delete;
+                            f248_r8_t(const f248_r8_t &)               = delete;
+                            f248_r8_t & operator=(const f248_r8_t &)   = delete; 
                             double                       * __restrict Iz_re;
                             double                       * __restrict Iz_im;
                             double                                    I0_re;
@@ -1712,7 +1768,9 @@ namespace gms {
                ! For a wire with current modulated by phase speed
            */
            typedef struct __ATTR_ALIGN__(32) f248_c4_t {
-
+                            f248_c4_t()                                = delete;
+                            f248_c4_t(const f248_c4_t &)               = delete;
+                            f248_c4_t & operator=(const f248_c4_t &)   = delete; 
                             std::complex<float>          * __restrict Iz;
                             std::complex<float>                       I0;
                             float                                     beta
@@ -1728,7 +1786,9 @@ namespace gms {
                ! For a wire with current modulated by phase speed
            */
            typedef struct __ATTR_ALIGN__(64) f248_c8_t {
-
+                            f248_c8_t()                                = delete;
+                            f248_c8_t(const f248_c8_t &)               = delete;
+                            f248_c8_t & operator=(const f248_c8_t &)   = delete; 
                             std::complex<double>          * __restrict Iz;
                             std::complex<double>                       I0;
                             double                                     beta
@@ -1744,7 +1804,9 @@ namespace gms {
                ! Symmetric sinusoidal current distribution.
             */
            typedef struct __ATTR_ALIGN__(64) f246_r4_t {
-
+                            f246_r4_t()                                = delete;
+                            f246_r4_t(const f246_r4_t &)               = delete;
+                            f246_r4_t & operator=(const f246_r4_t &)   = delete; 
                             float                         * __restrict Iz_re;
                             float                         * __restrict Iz_im;
                             float                                      I0_re;
@@ -1763,7 +1825,9 @@ namespace gms {
                ! Symmetric sinusoidal current distribution.
             */
            typedef struct __ATTR_ALIGN__(64) f246_r8_t {
-
+                            f246_r8_t()                                = delete;
+                            f246_r8_t(const f246_r8_t &)               = delete;
+                            f246_r8_t & operator=(const f246_r8_t &)   = delete; 
                             double                         * __restrict Iz_re;
                             double                         * __restrict Iz_im;
                             double                                      I0_re;
@@ -1782,7 +1846,9 @@ namespace gms {
                ! Symmetric sinusoidal current distribution.
             */
            typedef struct __ATTR_ALIGN__(32) f246_c4_t {
-
+                            f246_c4_t()                                = delete;
+                            f246_c4_t(const f246_c4_t &)               = delete;
+                            f246_c4_t & operator=(const f246_c4_t &)   = delete; 
                             std::complex<float>            * __restrict Iz;
                             std::complex<float>                         I0;
                             float                                       L;
@@ -1799,7 +1865,9 @@ namespace gms {
                ! Symmetric sinusoidal current distribution.
             */
            typedef struct __ATTR_ALIGN__(64) f246_c8_t {
-
+                            f246_c8_t()                                = delete;
+                            f246_c8_t(const f246_c8_t &)               = delete;
+                            f246_c8_t & operator=(const f246_c8_t &)   = delete; 
                             std::complex<double>           * __restrict Iz;
                             std::complex<double>                        I0;
                             double                                      L;
@@ -1816,7 +1884,9 @@ namespace gms {
               ! Wire symmetric current radiation pattern
           */
            typedef struct __ATTR_ALIGN__(32) f247_r4_t {
-
+                            f247_r4_t()                                = delete;
+                            f247_r4_t(const f247_r4_t &)               = delete;
+                            f247_r4_t & operator=(const f247_r4_t &)   = delete; 
                             float                          * __restrict Fth;
                             float                                       k;
                             float                                       L;
@@ -1833,7 +1903,9 @@ namespace gms {
               ! Wire symmetric current radiation pattern
           */
            typedef struct __ATTR_ALIGN__(64) f247_r8_t {
-
+                            f247_r8_t()                                = delete;
+                            f247_r8_t(const f247_r8_t &)               = delete;
+                            f247_r8_t & operator=(const f247_r8_t &)   = delete; 
                             double                          * __restrict Fth;
                             double                                       k;
                             double                                       L;
@@ -1850,7 +1922,9 @@ namespace gms {
                ! Wire (running-wave) radiation pattern
            */
           typedef struct __ATTR_ALIGN__(32) f249_r4_t {
-
+                            f249_r4_t()                                = delete;
+                            f249_r4_t(const f249_r4_t &)               = delete;
+                            f249_r4_t & operator=(const f249_r4_t &)   = delete; 
                             float                          * __restrict Fth;
                             float                                       k;
                             float                                       L;
@@ -1868,7 +1942,9 @@ namespace gms {
                ! Wire (running-wave) radiation pattern
            */
           typedef struct __ATTR_ALIGN__(64) f249_r8_t {
-
+                            f249_r8_t()                                = delete;
+                            f249_r8_t(const f249_r8_t &)               = delete;
+                            f249_r8_t & operator=(const f249_r8_t &)   = delete;  
                             double                          * __restrict Fth;
                             double                                       k;
                             double                                       L;
