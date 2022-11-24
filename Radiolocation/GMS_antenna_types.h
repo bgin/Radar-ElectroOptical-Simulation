@@ -812,7 +812,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhev_r4_t {
                        FFhev_r4_t()                            = delete;
                        FFhev_r4_t(const FFHev_r4_t &)          = delete;
-                       FFhev_r4_t & operator=(const FFhev_r4_t)= delete;
+                       FFhev_r4_t & operator=(const FFhev_r4_t &)= delete;
                        struct Nev_r4_t                         ner4;
                        struct eikr_r4_t                        er4;   // 96-bytes
                        float                      * __restrict hv_xr;
@@ -834,7 +834,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhev_r8_t {
                        FFhev_r8_t()                            = delete;
                        FFhev_r8_t(const FFHev_r8_t &)          = delete;
-                       FFhev_r8_t & operator=(const FFhev_r8_t)= delete;
+                       FFhev_r8_t & operator=(const FFhev_r8_t &)= delete;
                        struct Nev_r8_t                          ner8;
                        struct eikr_r8_t                         er8;   // 96-bytes
                        double                      * __restrict hv_xr;
@@ -856,7 +856,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhev_c4_t {
                        FFhev_c4_t()                            = delete;
                        FFhev_c4_t(const FFHev_c4_t &)          = delete;
-                       FFhev_c4_t & operator=(const FFhev_c4_t)= delete;
+                       FFhev_c4_t & operator=(const FFhev_c4_t &)= delete;
                        struct Nev_c4_t                         nec4;
                        struct eikr_c4_t                        ec4;   // 96-bytes
                        std::complex<float>        * __restrict hv_x;
@@ -872,7 +872,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhev_c8_t {
                        FFhev_c8_t()                            = delete;
                        FFhev_c8_t(const FFHev_c8_t &)          = delete;
-                       FFhev_c8_t & operator=(const FFhev_c8_t)= delete;
+                       FFhev_c8_t & operator=(const FFhev_c8_t &)= delete;
                        struct Nev_c8_t                          nec8;
                        struct eikr_c8_t                         ec8;   // 96-bytes
                        std::complex<double>        * __restrict hv_x;
@@ -891,7 +891,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhmv_r4_t {
                        FFhmv_r4_t()                            = delete;
                        FFhmv_r4_t(const FFhmv_r4_t &)          = delete;
-                       FFhmv_r4_t & operator=(const FFhmv_r4_t)= delete;
+                       FFhmv_r4_t & operator=(const FFhmv_r4_t &)= delete;
                        struct Nmv_r4_t                         nmr4;
                        struct eikr_r4_t                        er4;   // 96-bytes
                        float                      * __restrict hm_xr;
@@ -913,7 +913,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhmv_r8_t {
                        FFhmv_r8_t()                            = delete;
                        FFhmv_r8_t(const FFHmv_r8_t &)          = delete;
-                       FFhmv_r8_t & operator=(const FFhmv_r8_t)= delete;
+                       FFhmv_r8_t & operator=(const FFhmv_r8_t &)= delete;
                        struct Nmv_r8_t                          nmr8;
                        struct eikr_r8_t                         er8;   // 96-bytes
                        double                      * __restrict hm_xr;
@@ -935,7 +935,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhmv_c4_t {
                        FFhmv_c4_t()                            = delete;
                        FFhmv_c4_t(const FFhmv_c4_t &)          = delete;
-                       FFhmv_c4_t & operator=(const FFhmv_r4_t)= delete;
+                       FFhmv_c4_t & operator=(const FFhmv_r4_t &)= delete;
                        struct Nmv_c4_t                         nec4;
                        struct eikr_c4_t                        ec4;   // 96-bytes
                        std::complex<float>        * __restrict hm_x;
@@ -951,7 +951,7 @@ namespace gms {
             typedef struct __ATTR_ALIGN__(64) FFhmv_c8_t {
                        FFhmv_c8_t()                            = delete;
                        FFhmv_c8_t(const FFhmv_c8_t &)          = delete;
-                       FFhmv_c8_t & operator=(const FFhmv_c8_t)= delete;
+                       FFhmv_c8_t & operator=(const FFhmv_c8_t &)= delete;
                        struct Nmv_c8_t                          nmc8;
                        struct eikr_c8_t                         ec8;   // 96-bytes
                        std::complex<double>        * __restrict hm_x;
@@ -970,7 +970,7 @@ namespace gms {
            typedef struct __ATTR_ALIGN__(64) f226_r4_t {
                        f226_r4_t()                             = delete;
                        f226_r4_t(const f226_r4_t &)            = delete;
-                       f226_r4_t & operator=(const f226_r4_t)  = delete;
+                       f226_r4_t & operator=(const f226_r4_t) &  = delete;
                        float                      * __restrict cth;
                        float                      * __restrict cthi;
                        float                      * __restrict sth;
@@ -987,7 +987,9 @@ namespace gms {
            //! Formula (2-26)
            //! Cosine of integration angle.
            typedef struct __ATTR_ALIGN__(64) f226_r8_t {
-
+                       f226_r8_t()                             = delete;
+                       f226_r8_t(const f226_r8_t &)            = delete;
+                       f226_r8_t & operator=(const f226_r8_t) &  = delete;
                        double                      * __restrict cth;
                        double                      * __restrict cthi;
                        double                      * __restrict sth;
@@ -1007,7 +1009,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nesph_r4_t {
-
+                       Nesph_r4_t()                               = delete;
+                       Nesph_r4_t(const Nesph_r4_t &)             = delete;
+                       Nesph_r4_t & operator=(const Nesph_r4_t &) = delete;
                        struct Nev_r4_t                          nev; //64-bytes
                        float                      * __restrict  cphi;
                        float                      * __restrict  cth;
@@ -1030,7 +1034,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nesph_r8_t {
-
+                       Nesph_r8_t()                               = delete;
+                       Nesph_r8_t(const Nesph_r8_t &)             = delete;
+                       Nesph_r8_t & operator=(const Nesph_r8_t &) = delete;
                        struct Nev_r8_t                           nev; //64-bytes
                        double                      * __restrict  cphi;
                        double                      * __restrict  cth;
@@ -1053,7 +1059,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nesph_c4_t {
-
+                       Nesph_c4_t()                               = delete;
+                       Nesph_c4_t(const Nesph_c4_t &)             = delete;
+                       Nesph_c4_t & operator=(const Nesph_c4_t &) = delete;
                        struct Nev_c4_t                          nev; //64-bytes
                        float                      * __restrict  cphi;
                        float                      * __restrict  cth;
@@ -1074,7 +1082,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nesph_c8_t {
-
+                       Nesph_c8_t()                               = delete;
+                       Nesph_c8_t(const Nesph_c8_t &)             = delete;
+                       Nesph_c8_t & operator=(const Nesph_c8_t &) = delete;
                        struct Nev_c8_t                           nev; //64-bytes
                        double                      * __restrict  cphi;
                        double                      * __restrict  cth;
@@ -1095,7 +1105,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nmsph_r4_t {
-
+                       Nmsph_r4_t()                               = delete;
+                       Nmsph_r4_t(const Nmsph_r4_t &)             = delete;
+                       Nmsph_r4_t & operator=(const Nmsph_r4_t &) = delete;
                        struct Nmv_r4_t                          nmv; //64-bytes
                        float                      * __restrict  cphi;
                        float                      * __restrict  cth;
@@ -1118,7 +1130,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nmsph_r8_t {
-
+                       Nmsph_r8_t()                               = delete;
+                       Nmsph_r8_t(const Nmsph_r8_t &)             = delete;
+                       Nmsph_r8_t & operator=(const Nmsph_r8_t &) = delete;
                        struct Nmv_r8_t                           nmv; //64-bytes
                        double                      * __restrict  cphi;
                        double                      * __restrict  cth;
@@ -1141,7 +1155,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nmsph_c4_t {
-
+                       Nmsph_c4_t()                               = delete;
+                       Nmsph_c4_t(const Nmsph_c4_t &)             = delete;
+                       Nmsph_c4_t & operator=(const Nmsph_c4_t &) = delete; 
                        struct Nmv_c4_t                          nmv; //64-bytes
                        float                      * __restrict  cphi;
                        float                      * __restrict  cth;
@@ -1162,7 +1178,9 @@ namespace gms {
                ! in spherical coordinate system.
             */
             typedef struct __ATTR_ALIGN__(64) Nmsph_c8_t {
-
+                       Nmsph_c8_t()                               = delete;
+                       Nmsph_c8_t(const Nmsph_c8_t &)             = delete;
+                       Nmsph_c8_t & operator=(const Nmsph_c8_t &) = delete;
                        struct Nmv_c8_t                           nmv; //64-bytes
                        double                      * __restrict  cphi;
                        double                      * __restrict  cth;
