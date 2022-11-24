@@ -889,9 +889,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector magnetic
             typedef struct __ATTR_ALIGN__(64) FFhmv_r4_t {
-                       FFhev_r4_t()                            = delete;
-                       FFhev_r4_t(const FFHev_r4_t &)          = delete;
-                       FFhev_r4_t & operator=(const FFhev_r4_t)= delete;
+                       FFhmv_r4_t()                            = delete;
+                       FFhmv_r4_t(const FFhmv_r4_t &)          = delete;
+                       FFhmv_r4_t & operator=(const FFhmv_r4_t)= delete;
                        struct Nmv_r4_t                         nmr4;
                        struct eikr_r4_t                        er4;   // 96-bytes
                        float                      * __restrict hm_xr;
@@ -911,9 +911,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhmv_r8_t {
-                       FFhev_r8_t()                            = delete;
-                       FFhev_r8_t(const FFHev_r8_t &)          = delete;
-                       FFhev_r8_t & operator=(const FFhev_r8_t)= delete;
+                       FFhmv_r8_t()                            = delete;
+                       FFhmv_r8_t(const FFHmv_r8_t &)          = delete;
+                       FFhmv_r8_t & operator=(const FFhmv_r8_t)= delete;
                        struct Nmv_r8_t                          nmr8;
                        struct eikr_r8_t                         er8;   // 96-bytes
                        double                      * __restrict hm_xr;
@@ -933,9 +933,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhmv_c4_t {
-                       FFhev_c4_t()                            = delete;
-                       FFhev_c4_t(const FFHev_c4_t &)          = delete;
-                       FFhev_c4_t & operator=(const FFhev_r4_t)= delete;
+                       FFhmv_c4_t()                            = delete;
+                       FFhmv_c4_t(const FFhmv_c4_t &)          = delete;
+                       FFhmv_c4_t & operator=(const FFhmv_r4_t)= delete;
                        struct Nmv_c4_t                         nec4;
                        struct eikr_c4_t                        ec4;   // 96-bytes
                        std::complex<float>        * __restrict hm_x;
@@ -949,9 +949,9 @@ namespace gms {
             //! Formula (2-22)
             //! "Far-field" Hertz vector electric
             typedef struct __ATTR_ALIGN__(64) FFhmv_c8_t {
-                       FFhev_c8_t()                            = delete;
-                       FFhev_c8_t(const FFHev_c8_t &)          = delete;
-                       FFhev_c8_t & operator=(const FFhev_c8_t)= delete;
+                       FFhmv_c8_t()                            = delete;
+                       FFhmv_c8_t(const FFhmv_c8_t &)          = delete;
+                       FFhmv_c8_t & operator=(const FFhmv_c8_t)= delete;
                        struct Nmv_c8_t                          nmc8;
                        struct eikr_c8_t                         ec8;   // 96-bytes
                        std::complex<double>        * __restrict hm_x;
@@ -968,7 +968,9 @@ namespace gms {
            //! Formula (2-26)
            //! Cosine of integration angle.
            typedef struct __ATTR_ALIGN__(64) f226_r4_t {
-
+                       f226_r4_t()                             = delete;
+                       f226_r4_t(const f226_r4_t &)            = delete;
+                       f226_r4_t & operator=(const f226_r4_t)  = delete;
                        float                      * __restrict cth;
                        float                      * __restrict cthi;
                        float                      * __restrict sth;
