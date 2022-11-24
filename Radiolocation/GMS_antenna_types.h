@@ -36,7 +36,7 @@ namespace file_info {
 namespace gms {
 
 
-          namespace  radiolocation
+          namespace  radiolocation {
 
               typedef struct __ATTR_ALIGN__(32) E_c4_t {
                       // Complex electric field.
