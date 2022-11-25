@@ -305,7 +305,7 @@ namespace gms {
                          eikr_t & operator=(const eikr_t &x) {
                                
                               if(this == &x) return (*this);
-                              eikr_t<T1,T2> tmp(m_mpts,m_k);
+                              eikr_t<T1,T2> tmp(x);
                               std::swap(*this,tmp);
                               return (*this);
                          }
@@ -318,6 +318,88 @@ namespace gms {
                          }
                };
 
+
+                  /*
+                       // ! Formula (1-37)
+                       //! Average level of side lobes
+                   */
+                  template<typename T>
+                  struct alignas(64) f137_t {
+                         
+                       int32_t          m_nth;
+                       int32_t          m_nph;
+                       T                m_ith;
+                       T                m_iph;
+                       T                m_ifac;
+                       T                m_omega;
+                       T                m_avsl;
+                       std::valarray<T> m_sinth;
+                       std::valarray<T> m_F;
+
+                       f137_t()         = default;
+
+                       f137_t(const int32_t nth,
+                              const int32_t nph,
+                              const T       ith,
+                              const T       iph,
+                              const T       ifac,
+                              const T       omega) {
+                           
+                           m_nth       = nth;
+                           m_nph       = nph;
+                           m_ith       = ith;
+                           m_iph       = iph;
+                           m_ifac      = ifac;
+                           m_omega     = omega;
+                           m_avsl      = static_cast<T>(0.0);
+                           m_sinth     = std::valarray<T>(m_nth);
+                           m_F         = std::valarray<T>(m_nth*m_nph);
+                      }
+
+
+                      f137_t(const f137_t &x) {
+                           
+                           m_nth       = x.m_nth;
+                           m_nph       = x.m_nph;
+                           m_ith       = x.m_ith;
+                           m_iph       = x.m_iph;
+                           m_ifac      = x.m_ifac;
+                           m_omega     = x.m_omega;
+                           m_avsl      = x.m_avsl;
+                           m_sinth     = x.m_sinth;
+                           m_F         = x.m_F;
+                      }
+
+                      f137_t(f137_t &&x) noexcept(true) {
+                           
+                           m_nth       = std::move(x.m_nth);
+                           m_nph       = std::move(x.m_nph);
+                           m_ith       = std::move(x.m_ith);
+                           m_iph       = std::move(x.m_iph);
+                           m_ifac      = std::move(x.m_ifac);
+                           m_omega     = std::move(x.m_omega);
+                           m_avsl      = std::move(x.m_avsl);
+                           m_sinth     = std::move(x.m_sinth);
+                           m_F         = std::move(x.m_F);
+                      }
+
+                     ~f137_t()                  = default;
+
+                      f137_t & operator=(const f137_t &x) {
+                          
+                           if(this == &x) return (*this);
+                           f137_t<T> tmp(x);
+                           std::swap(*this,tmp);
+                           return (*this);
+                      }
+
+                      f137_t & operator=(f137_t &&x) noexcept(true) {
+                           
+                           if(this == &x) return (*this);
+                           *this = std::move(x);
+                            return (*this);
+                      }
+               };
                
 
                  
