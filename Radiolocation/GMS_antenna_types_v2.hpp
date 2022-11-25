@@ -253,7 +253,7 @@ namespace gms {
                           return (*this);
                      }
 
-                     JExyz_t & operator=(JMxyz_t &&x) noexcept(true) {
+                     JExyz_t & operator=(JExyz_t &&x) noexcept(true) {
                           
                           if(this == &x) return (*this);
                           *this = std::move(x);
@@ -262,6 +262,61 @@ namespace gms {
                      
                }; 
 
+
+                  /*
+                        // Time-Harmonic complex exponential
+                   */
+                  template<typename T1, typename T2>
+                  struct alignas(64) eikr_t {
+
+                         int32_t             m_npts;
+                         T1                  m_k;
+                         std::valarray<T1>   m_R;
+                         std::valarray<T2>   m_ce;
+
+                         eikr_t()            = default;
+                         eikr_t(const int32_t npts,
+                                const T1      k) {
+
+                              m_npts   = npts;
+                              m_k      = k;
+                              m_R      = std::valarray<T1>(m_npts);
+                              m_ce     = std::valarray<T2>(m_npts);
+                         }
+
+                         eikr_t(const eikr_t &x) {
+                               
+                              m_npts   = x.m_npts;
+                              m_k      = x.m_k;
+                              m_R      = x.m_R;
+                              m_ce     = x.m_ce;
+                         }
+
+                         eikr_t(eikr_t &&x) noexcept(true) {
+                             
+                              m_npts    = std::move(x.m_npts);
+                              m_k       = std::move(x.m_k);
+                              m_R       = std::move(x.m_R);
+                              m_ce      = std::move(x.m_ce);
+                         }
+
+                        ~eikr_t()              = default;
+
+                         eikr_t & operator=(const eikr_t &x) {
+                               
+                              if(this == &x) return (*this);
+                              eikr_t<T1,T2> tmp(m_mpts,m_k);
+                              std::swap(*this,tmp);
+                              return (*this);
+                         }
+
+                         eikr_t & operator=(eikr_t &&x) noexcept(true) {
+                              
+                              if(this == &x) return (*this);
+                              *this = std::move(x);
+                              return (*this);
+                         }
+               };
 
                
 
