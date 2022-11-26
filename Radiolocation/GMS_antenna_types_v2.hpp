@@ -653,7 +653,7 @@ namespace gms {
                              m_hex     = std::valarray<T1>(m_npts);
                              m_hey     = std::valarray<T1>(m_npts);
                              m_hez     = std::valarray<T1>(m_npts);
-                         }
+                        }
 
                           Hve_t(const Hve_t &x) {
 
@@ -676,6 +676,7 @@ namespace gms {
                              m_ce      = std::move(x.m_ce);
                              m_hex     = std::move(x.m_hex);
                              m_hey     = std::move(x.m_hey);
+                             m_hez     = std::move(x.m_hez);
                          }
 
                         ~Hve_t()               = default;
@@ -696,6 +697,84 @@ namespace gms {
                          }
                         
                };
+
+
+                   /*
+                      //  ! Formula (2-15)
+                      //  ! Hertz vector magnetic
+                   */
+                  template<typename T1, typename T2>
+                  struct alignas(64)  Hvm_t {
+
+                          int32_t           m_npts;
+                          T1                m_k;
+                          T2                m_ifac;
+                          JMxyz_t           m_jmc;
+                          eikr_t            m_ce;
+                          std::valarray<T2> m_hmx;
+                          std::valarray<T2> m_hmy;
+                          std::valarray<T2> m_hmz;
+
+                          Hvm_t()             = default;
+
+                          Hvm_t(const int32_t npts,
+                                const T1      k,
+                                const T2      ifac) {
+
+                             m_npts    = npts;
+                             m_k       = k;
+                             m_ifac    = ifac;
+                             m_jmc     = JMxyz_t<T1>(m_npts);
+                             m_ce      = eikr_t<T1,T2>(m_npts,m_k);
+                             m_hmx     = std::valarray<T1>(m_npts);
+                             m_hmy     = std::valarray<T1>(m_npts);
+                             m_hmz     = std::valarray<T1>(m_npts);
+                         }
+
+                          Hvm_t(const Hvm_t &x) {
+
+                             m_npts    = x.m_npts;
+                             m_k       = x.m_k;
+                             m_ifac    = x.m_ifac;
+                             m_jmc     = x.m_jmc;
+                             m_ce      = x.m_ce;
+                             m_hmx     = x.m_hmx;
+                             m_hmy     = x.m_hmy;
+                             m_hmz     = x.m_hmz;
+                         }
+
+                          Hvm_t(Hvm_t &&x) noexcept(true) {
+
+                             m_npts    = std::move(x.m_npts);
+                             m_k       = std::move(x.m_k);
+                             m_ifac    = std::move(x.m_ifac);
+                             m_jmc     = std::move(x.m_jmc);
+                             m_ce      = std::move(x.m_ce);
+                             m_hmx     = std::move(x.m_hmx);
+                             m_hmy     = std::move(x.m_hmy);
+                             m_hmz     = std::move(x.m_hmz);
+                         }
+
+                        ~Hvm_t()               = default;
+ 
+                         Hvm_t & operator=(const Hvm_t &x) {
+
+                               if(this == &x) return (*this);
+                               Hvm_t<T1,T2> tmp(npts,k,ifac);
+                               std::swap(*this,tmp);
+                               return (*this);
+                         }  
+
+                         Hvm_t & operator=(Hvm_t &&x) noexcept(true) {
+
+                               if(this == &x) return (*this);
+                               *this = std::move(x);
+                               return (*this);
+                         }
+                        
+               };
+
+
 
                  
        } // radiolocation
