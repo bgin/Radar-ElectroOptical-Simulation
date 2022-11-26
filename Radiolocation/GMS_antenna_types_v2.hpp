@@ -854,6 +854,79 @@ namespace gms {
                 };
 
 
+                  /*
+                      //! Formula (2-24,2-25)
+                  */
+                   template<typename T1,typename T2>
+                  struct alignas(64) Nmv_t {
+
+                          int32_t           m_npts;
+                          T1                m_k;
+                          JMxyz_t<T1>       m_jmc;
+                          eikr_t<T1,T2>     m_ec;
+                          std::valarray<T1> m_costh;
+                          std::valarray<T1> m_nmx;
+                          std::valarray<T1> m_nmy;
+                          std::valarray<T1> m_nmz;
+
+                          Nmv_t()               = default;
+
+                          Nmv_t(const int32_t npts,
+                                const T1      k)  {
+
+                             m_npts    = npts;
+                             m_k       = k;
+                             m_jmc     = JMxyz_t<T1>(m_npts);
+                             m_ec      = eikr_t<T1,T2>(m_npts,m_k);
+                             m_costh   = std::valarray<T1>(m_npts);
+                             m_nmx     = std::valarray<T1>(m_npts);
+                             m_nmy     = std::valarray<T1>(m_npts);
+                             m_nmz     = std::valarray<T1>(m_npts);
+                         }
+
+                          Nmv_t(const Nmv_t &x) {
+
+                             m_npts    = x.m_npts;
+                             m_k       = x.m_k;
+                             m_jmc     = x.m_jmc;
+                             m_ec      = x.m_ec;
+                             m_costh   = x.m_costh;
+                             m_nmx     = x.m_nmx;
+                             m_nmy     = x.m_nmy;
+                             m_nmz     = x.m_nmz;
+                         }
+
+                          Nmv_t(Nmv_t &&x) noexcept(true) {
+
+                             m_npts    = std::move(x.m_npts);
+                             m_k       = std::move(x.m_k);
+                             m_jmc     = std::move(x.m_jmc);
+                             m_ec      = std::move(x.m_ec);
+                             m_costh   = std::move(x.m_costh);
+                             m_nmx     = std::move(x.m_nmx);
+                             m_nmy     = std::move(x.m_nmy);
+                             m_nmz     = std::move(x.m_nmz);
+                         }
+
+                        ~Nmv_t()                 = default;
+
+                         Nmv_t & operator=(const Nmv_t &x) {
+
+                               if(this == &x) return (*this);
+                               Nmv_t<T1,T2> tmp(x);
+                               std::swap(*this,tmp);
+                               return (*this);
+                         }
+
+                         Nmv_t & operator=(Nmv_t &&x) noexcept(true) {
+
+                               if(this == &x) return (*this);
+                               *this = std::move(x);
+                               return (*this);
+                         }
+                };
+
+
 
                  
        } // radiolocation
