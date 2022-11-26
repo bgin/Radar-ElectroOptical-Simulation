@@ -1002,6 +1002,83 @@ namespace gms {
                 };
 
 
+                 /*
+                     //! Formula (2-22)
+                     //! "Far-field" Hertz vector magnetic
+                */
+                  template<typename T, typename T2>
+                  struct alignas(64) FFhmv_t  {
+
+                          int32_t           m_npts;
+                          T1                m_k;
+                          T2                m_ifac;
+                          Nmv_t<T1,T2>      m_nmv;
+                          eikr_t<T1,T2>     m_ec;
+                          std::valarray<T2> m_hmx;
+                          std::valarray<T2> m_hmy;
+                          std::valarray<T2> m_hmz;
+
+                          FFhmv_t()             = default;
+
+                          FFhmv_t(const int32_t npts,
+                                  const T1      k,
+                                  const T2      ifac) {
+
+                             m_npts       = npts;
+                             m_k          = k;
+                             m_ifac       = ifac;
+                             m_nmv        = Nmv_t<T1,T2>(m_npts,m_k);
+                             m_ec         = eikr_t<T1,T2>(m_npts,m_k);
+                             m_hmx        = std::valarray<T2>(m_npts);
+                             m_hmy        = std::valarray<T2>(m_npts);
+                             m_hmz        = std::valarray<T2>(m_npts);
+                         }
+
+                          FFhmv_t(const FFhmv_t &x) {
+
+                             m_npts       = x.m_npts;
+                             m_k          = x.m_k;
+                             m_ifac       = x.m_ifac;
+                             m_nmv        = x.m_nmv;
+                             m_ec         = x.m_ec;
+                             m_hmx        = x.m_hmx;
+                             m_hmy        = x.m_hmy;
+                             m_hmz        = x.m_hmz;
+                         }
+
+                          FFhmv_t(FFhmv_t &&x) noexcept(true) {
+
+                             m_npts       = std::move(x.m_npts);
+                             m_k          = std::move(x.m_k);
+                             m_ifac       = std::move(x.m_ifac);
+                             m_nmv        = std::move(x.m_nmv);
+                             m_ec         = std::move(x.m_ec);
+                             m_hmx        = std::move(x.m_hmx);
+                             m_hmy        = std::move(x.m_hmy);
+                             m_hmz        = std::move(x.m_hmz);
+                         }
+
+                        ~FFhmv_t()                 = default;
+
+                         FFhmv_t & operator=(const FFhmv_t &x) {
+
+                               if(this == &x) return (*this);
+                               FFhmv<T1,T2> tmp(x);
+                               std::swap(*this,tmp);
+                               return (*this);
+                        }
+
+                         FFhmv_t & operator=(FFhmv_t &&x) noexcept(true) {
+
+                               if(this == &x) return (*this);
+                               *this = std::move(x);
+                               return (*this);
+                        }
+                };
+
+
+
+
                  
        } // radiolocation
 
