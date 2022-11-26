@@ -927,6 +927,80 @@ namespace gms {
                 };
 
 
+                /*
+                     //! Formula (2-22)
+                     //! "Far-field" Hertz vector electric
+                */
+                  template<typename T, typename T2>
+                  struct alignas(64) FFhev_t  {
+
+                          int32_t           m_npts;
+                          T1                m_k;
+                          T2                m_ifac;
+                          Nev_t<T1,T2>      m_nev;
+                          eikr_t<T1,T2>     m_ec;
+                          std::valarray<T2> m_hvx;
+                          std::valarray<T2> m_hvy;
+                          std::valarray<T2> m_hvz;
+
+                          FFhev_t()             = default;
+
+                          FFhev_t(const int32_t npts,
+                                  const T1      k,
+                                  const T2      ifac) {
+
+                             m_npts       = npts;
+                             m_k          = k;
+                             m_ifac       = ifac;
+                             m_nev        = Nev_t<T1,T2>(m_npts,m_k);
+                             m_ec         = eikr_t<T1,T2>(m_npts,m_k);
+                             m_hvx        = std::valarray<T2>(m_npts);
+                             m_hvy        = std::valarray<T2>(m_npts);
+                             m_hvz        = std::valarray<T2>(m_npts);
+                         }
+
+                          FFhev_t(const FFhev_t &x) {
+
+                             m_npts       = x.m_npts;
+                             m_k          = x.m_k;
+                             m_ifac       = x.m_ifac;
+                             m_nev        = x.m_nev;
+                             m_ec         = x.m_ec;
+                             m_hvx        = x.m_hvx;
+                             m_hvy        = x.m_hvy;
+                             m_hvz        = x.m_hvz;
+                         }
+
+                          FFhev_t(FFhev_t &&x) noexcept(true) {
+
+                             m_npts       = std::move(x.m_npts);
+                             m_k          = std::move(x.m_k);
+                             m_ifac       = std::move(x.m_ifac);
+                             m_nev        = std::move(x.m_nev);
+                             m_ec         = std::move(x.m_ec);
+                             m_hvx        = std::move(x.m_hvx);
+                             m_hvy        = std::move(x.m_hvy);
+                             m_hvz        = std::move(x.m_hvz);
+                         }
+
+                        ~FFhev_t()                 = default;
+
+                         FFhev_t & operator=(const FFhev_t &x) {
+
+                               if(this == &x) return (*this);
+                               FFhev<T1,T2> tmp(x);
+                               std::swap(*this,tmp);
+                               return (*this);
+                        }
+
+                         FFhev_t & operator=(FFhev_t &&x) noexcept(true) {
+
+                               if(this == &x) return (*this);
+                               *this = std::move(x);
+                               return (*this);
+                        }
+                };
+
 
                  
        } // radiolocation
