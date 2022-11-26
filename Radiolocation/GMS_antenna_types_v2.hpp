@@ -95,6 +95,72 @@ namespace gms {
 
                   
                   template<typename T>
+                  struct alignas(64) Exyz_rt {
+
+                     int32_t            m_npts;
+                     std::valarray<T>   m_exr;
+                     std::valarray<T>   m_exi;
+                     std::valarray<T>   m_eyr;
+                     std::valarray<T>   m_eyi;
+                     std::valarray<T>   m_ezr;
+                     std::valarray<T>   m_ezi;
+
+                     Exyz_rt()          = default;
+ 
+                     Exyz_rt(const int32_t npts) {
+
+                           m_npts   = npts;
+                           m_exr    = std::valarray<T>(m_npts);
+                           m_exi    = std::valarray<T>(m_npts);
+                           m_eyr    = std::valarray<T>(m_npts);
+                           m_eyi    = std::valarray<T>(m_npts);
+                           m_ezr    = std::valarray<T>(m_npts);
+                           m_ezi    = std::valarray<T>(m_npts);
+                     }
+
+                     Exyz_rt(const Exyz_rt &x) {
+
+                           m_npts    = x.m_npts;
+                           m_exr     = x.m_exr;
+                           m_exi     = x.m_exi;
+                           m_eyr     = x.m_eyr;
+                           m_eyi     = x.m_eyi;
+                           m_ezr     = x.m_ezr;
+                           m_ezi     = x.m_ezi;
+                     }
+
+                     Exyz_rt(Exyz_rt &&x) noexcept(true) {
+
+                          m_npts      = std::move(m_npts);
+                          m_exr       = std::move(x.m_exr);
+                          m_exi       = std::move(x.m_exi);
+                          m_eyr       = std::move(x.m_eyr);
+                          m_eyi       = std::move(x.m_eyi);
+                          m_ezr       = std::move(x.m_ezr);
+                          m_ezi       = std::move(x.m_ezi); 
+                     }
+
+                    ~Exyz_rt()             = default;
+
+                     Exyz_rt & operator=(const Exyz_rt &x) {
+
+                          if(this == &x) return (*this);
+                          Exyz_rt<T> tmp(x);
+                          std::swap(*this,tmp);
+                          return (*this);
+                     }
+
+                     Exyz_rt & operator=(Exyz_rt &&x) noexcept(true) {
+                          
+                          if(this == &x) return (*this);
+                          *this = std::move(x);
+                          return (*this);
+                     }
+                     
+               };
+
+                  
+                  template<typename T>
                   struct alignas(64) Hxyz_t {
 
                      int32_t            m_npts;
@@ -128,7 +194,7 @@ namespace gms {
                           m_hz       = std::move(x.m_hz); 
                      }
 
-                    ~Hxyz()             = default;
+                    ~Hxyz_t()             = default;
 
                      Hxyz_t & operator=(const Hxyz_t &x) {
 
@@ -146,6 +212,73 @@ namespace gms {
                      }
                      
                };
+
+
+                  template<typename T>
+                  struct alignas(64) Hxyz_rt {
+
+                     int32_t            m_npts;
+                     std::valarray<T>   m_hxr;
+                     std::valarray<T>   m_hxi;
+                     std::valarray<T>   m_hyr;
+                     std::valarray<T>   m_hyi;
+                     std::valarray<T>   m_hzr;
+                     std::valarray<T>   m_hzi;
+
+                     Hxyz_rt()          = default;
+ 
+                     Hxyz_rt(const int32_t npts) {
+
+                           m_npts   = npts;
+                           m_hxr    = std::valarray<T>(m_npts);
+                           m_hxi    = std::valarray<T>(m_npts);
+                           m_hyr    = std::valarray<T>(m_npts);
+                           m_hyi    = std::valarray<T>(m_npts);
+                           m_hzr    = std::valarray<T>(m_npts);
+                           m_hzi    = std::valarray<T>(m_npts);
+                     }
+
+                     Hxyz_rt(const Hxyz_rt &x) {
+
+                           m_npts    = x.m_npts;
+                           m_hxr     = x.m_hxr;
+                           m_hxi     = x.m_hxi;
+                           m_hyr     = x.m_hyr;
+                           m_hyi     = x.m_hyi;
+                           m_hzr     = x.m_hzr;
+                           m_hzi     = x.m_hzi;
+                     }
+
+                     Hxyz_t(Hxyz_rt &&x) noexcept(true) {
+
+                          m_npts      = std::move(m_npts);
+                          m_hxr       = std::move(x.m_hxr);
+                          m_hxi       = std::move(x.m_hxi);
+                          m_hyr       = std::move(x.m_hyr);
+                          m_hyi       = std::move(x.m_hyi);
+                          m_hzr       = std::move(x.m_hzr);
+                          m_hzi       = std::move(x.m_hzi); 
+                     }
+
+                    ~Hxyz_rt()             = default;
+
+                     Hxyz_rt & operator=(const Hxyz_rt &x) {
+
+                          if(this == &x) return (*this);
+                          Hxyz_t<T> tmp(x);
+                          std::swap(*this,tmp);
+                          return (*this);
+                     }
+
+                     Hxyz_rt & operator=(Hxyz_rt &&x) noexcept(true) {
+                          
+                          if(this == &x) return (*this);
+                          *this = std::move(x);
+                          return (*this);
+                     }
+                     
+               };
+ 
  
 
 
@@ -204,6 +337,73 @@ namespace gms {
                      }
                      
                }; 
+
+
+                  template<typename T>
+                  struct alignas(64) JMxyz_rt {
+
+                     int32_t            m_npts;
+                     std::valarray<T>   m_jmxr;
+                     std::valarray<T>   m_jmxi;
+                     std::valarray<T>   m_jmyr;
+                     std::valarray<T>   m_jmyi;
+                     std::valarray<T>   m_jmzr;
+                     std::valarray<T>   m_jmzi
+
+                     JMxyz_rt()          = default;
+ 
+                     JMxyz_rt(const int32_t npts) {
+
+                           m_npts    = npts;
+                           m_jmxr    = std::valarray<T>(m_npts);
+                           m_jmxi    = std::valarray<T>(m_npts);
+                           m_jmyr    = std::valarray<T>(m_npts);
+                           m_jmyi    = std::valarray<T>(m_npts);
+                           m_jmzr    = std::valarray<T>(m_npts);
+                           m_jmzi    = std::valarray<T>(m_npts);
+                     }
+
+                     JMxyz_rt(const JMxyz_rt &x) {
+
+                           m_npts     = x.m_npts;
+                           m_jmxr     = x.m_jmxr;
+                           m_jmxi     = x.m_jmxi;
+                           m_jmyr     = x.m_jmyr;
+                           m_jmyi     = x.m_jmyi;
+                           m_jmzr     = x.m_jmzr;
+                           m_jmzi     = x.m_jmzi;
+                     }
+
+                     JMxyz_rt(JMxyz_rt &&x) noexcept(true) {
+
+                          m_npts       = std::move(m_npts);
+                          m_jmxr       = std::move(x.m_jmxr);
+                          m_jmxi       = std::move(x.m_jmxi);
+                          m_jmyr       = std::move(x.m_jmyr);
+                          m_jmyi       = std::move(x.m_jmyi);
+                          m_jmzr       = std::move(x.m_jmzr); 
+                          m_jmzi       = std::move(x.m_jmzi);
+                     }
+
+                    ~JMxyz_rt()             = default;
+
+                     JMxyz_rt & operator=(const JMxyz_rt &x) {
+
+                          if(this == &x) return (*this);
+                          JMxyz_t<T> tmp(x);
+                          std::swap(*this,tmp);
+                          return (*this);
+                     }
+
+                     JMxyz_rt & operator=(JMxyz_rt &&x) noexcept(true) {
+                          
+                          if(this == &x) return (*this);
+                          *this = std::move(x);
+                          return (*this);
+                     }
+                     
+               }; 
+
 
 
                     /*
