@@ -639,8 +639,8 @@ namespace gms {
                           int32_t           m_npts;
                           T1                m_k;
                           T2                m_ifac;
-                          JExyz_t           m_jec;
-                          eikr_t            m_ce;
+                          JExyz_t<T1>       m_jec;
+                          eikr_t<T1,T2>     m_ce;
                           std::valarray<T2> m_hex;
                           std::valarray<T2> m_hey;
                           std::valarray<T2> m_hez;
@@ -690,7 +690,7 @@ namespace gms {
                          Hve_t & operator=(const Hve_t &x) {
 
                                if(this == &x) return (*this);
-                               Hve_t<T1,T2> tmp(npts,k,ifac);
+                               Hve_t<T1,T2> tmp(x);
                                std::swap(*this,tmp);
                                return (*this);
                          }  
@@ -715,8 +715,8 @@ namespace gms {
                           int32_t           m_npts;
                           T1                m_k;
                           T2                m_ifac;
-                          JMxyz_t           m_jmc;
-                          eikr_t            m_ce;
+                          JMxyz_t<T1>       m_jmc;
+                          eikr_t <T1,T2>    m_ce;
                           std::valarray<T2> m_hmx;
                           std::valarray<T2> m_hmy;
                           std::valarray<T2> m_hmz;
@@ -766,7 +766,7 @@ namespace gms {
                          Hvm_t & operator=(const Hvm_t &x) {
 
                                if(this == &x) return (*this);
-                               Hvm_t<T1,T2> tmp(npts,k,ifac);
+                               Hvm_t<T1,T2> tmp(x);
                                std::swap(*this,tmp);
                                return (*this);
                          }  
@@ -779,6 +779,79 @@ namespace gms {
                          }
                         
                };
+
+
+               /*
+                      //! Formula (2-22,2-23)
+                */
+                  template<typename T1,typename T2>
+                  struct alignas(64) Nev_t {
+
+                          int32_t           m_npts;
+                          T1                m_k;
+                          JExyz_t<T1>       m_jec;
+                          eikr_t<T1,T2>     m_ec;
+                          std::valarray<T1> m_costh;
+                          std::valarray<T1> m_nex;
+                          std::valarray<T1> m_ney;
+                          std::valarray<T1> m_nez;
+
+                          Nev_t()               = default;
+
+                          Nev_t(const int32_t npts,
+                                const T1      k)  {
+
+                             m_npts    = npts;
+                             m_k       = k;
+                             m_jec     = JExyz_t<T1>(m_npts);
+                             m_ec      = eikr_t<T1,T2>(m_npts,m_k);
+                             m_costh   = std::valarray<T1>(m_npts);
+                             m_nex     = std::valarray<T1>(m_npts);
+                             m_ney     = std::valarray<T1>(m_npts);
+                             m_nez     = std::valarray<T1>(m_npts);
+                         }
+
+                          Nev_t(const Nev_t &x) {
+
+                             m_npts    = x.m_npts;
+                             m_k       = x.m_k;
+                             m_jec     = x.m_jec;
+                             m_ec      = x.m_ec;
+                             m_costh   = x.m_costh;
+                             m_nex     = x.m_nex;
+                             m_ney     = x.m_ney;
+                             m_nez     = x.m_nez;
+                         }
+
+                          Nev_t(Nev_t &&x) noexcept(true) {
+
+                             m_npts    = std::move(x.m_npts);
+                             m_k       = std::move(x.m_k);
+                             m_jec     = std::move(x.m_jec);
+                             m_ec      = std::move(x.m_ec);
+                             m_costh   = std::move(x.m_costh);
+                             m_nex     = std::move(x.m_nex);
+                             m_ney     = std::move(x.m_ney);
+                             m_nez     = std::move(x.m_nez);
+                         }
+
+                        ~Nev_t()                 = default;
+
+                         Nev_t & operator=(const Nev_t &x) {
+
+                               if(this == &x) return (*this);
+                               Nev_t<T1,T2> tmp(x);
+                               std::swap(*this,tmp);
+                               return (*this);
+                         }
+
+                         Nev_t & operator=(Nev_t &&x) noexcept(true) {
+
+                               if(this == &x) return (*this);
+                               *this = std::move(x);
+                               return (*this);
+                         }
+                };
 
 
 
