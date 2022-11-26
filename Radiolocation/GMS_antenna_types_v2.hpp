@@ -357,6 +357,27 @@ namespace gms {
                       }
 
 
+                       f137_t(const int32_t nth,
+                              const int32_t nph,
+                              const T       ith,
+                              const T       iph,
+                              const T       ifac,
+                              const T       omega,
+                              std::valarray<T> &&sinth
+                              std::valarray<T> &&F) {
+
+                           m_nth       = nth;
+                           m_nph       = nph;
+                           m_ith       = ith;
+                           m_iph       = iph;
+                           m_ifac      = ifac;
+                           m_omega     = omega;
+                           m_avsl      = static_cast<T>(0.0);
+                           m_sinth     = std::move(sinth); 
+                           m_F         = std::move(F);
+                      }
+
+
                       f137_t(const f137_t &x) {
                            
                            m_nth       = x.m_nth;
@@ -435,6 +456,27 @@ namespace gms {
                            m_avsl      = static_cast<T>(0.0);
                            m_sinth     = std::valarray<T>(m_nth);
                            m_F         = std::valarray<T>(m_nth*m_nph);
+                      }
+
+
+                      f138_t(const int32_t nth,
+                             const int32_t nph,
+                             const T       ith,
+                             const T       iph,
+                             const T       ifac,
+                             const T       omega,
+                             std::valarray<T> &&sinth,
+                             std::valarray<T> &&F) {
+
+                           m_nth       = nth;
+                           m_nph       = nph;
+                           m_ith       = ith;
+                           m_iph       = iph;
+                           m_ifac      = ifac;
+                           m_omega     = omega;
+                           m_avsl      = static_cast<T>(0.0);
+                           m_sinth     = std::move(sinth);
+                           m_F         = std::move(F);
                       }
 
 
@@ -518,6 +560,25 @@ namespace gms {
                       }
 
 
+                      f139_t( const int32_t nth,
+                              const int32_t nph,
+                              const T       ith,
+                              const T       iph,
+                              const T       omega,
+                              std::valarray<T> &&sinth,
+                              std::valarray<T> &&P) {
+
+                           m_nth       = nth;
+                           m_nph       = nph;
+                           m_ith       = ith;
+                           m_iph       = iph;
+                           m_omega     = omega;
+                           m_rho       = static_cast<T>(0.0);
+                           m_sinth     = std::move(sinth);
+                           m_F         = std::move(F); 
+                      }
+
+
                       f139_t(const f139_t &x) {
                            
                            m_nth       = x.m_nth;
@@ -529,6 +590,7 @@ namespace gms {
                            m_sinth     = x.m_sinth;
                            m_P         = x.m_P;
                       }
+
 
                       f139_t(f139_t &&x) noexcept(true) {
                            
@@ -560,6 +622,80 @@ namespace gms {
                       }
                };
 
+
+                  /*
+                      //  ! Formula (2-13)
+                      //  ! Hertz vector electric
+                   */
+                  template<typename T1, typename T2>
+                  struct alignas(64)  Hve_t {
+
+                          int32_t           m_npts;
+                          T1                m_k;
+                          T2                m_ifac;
+                          JExyz_t           m_jec;
+                          eikr_t            m_ce;
+                          std::valarray<T2> m_hex;
+                          std::valarray<T2> m_hey;
+                          std::valarray<T2> m_hez;
+
+                          Hve_t()             = default;
+
+                          Hve_t(const int32_t npts,
+                                const T1      k,
+                                const T2      ifac) {
+
+                             m_npts    = npts;
+                             m_k       = k;
+                             m_ifac    = ifac;
+                             m_jec     = JExyz_t<T1>(m_npts);
+                             m_ce      = eikr_t<T1,T2>(m_npts,m_k);
+                             m_hex     = std::valarray<T1>(m_npts);
+                             m_hey     = std::valarray<T1>(m_npts);
+                             m_hez     = std::valarray<T1>(m_npts);
+                         }
+
+                          Hve_t(const Hve_t &x) {
+
+                             m_npts    = x.m_npts;
+                             m_k       = x.m_k;
+                             m_ifac    = x.m_ifac;
+                             m_jec     = x.m_jec;
+                             m_ce      = x.m_ce;
+                             m_hex     = x.m_hex;
+                             m_hey     = x.m_hey;
+                             m_hez     = x.m_hez;
+                         }
+
+                          Hve_t(Hve_t &&x) noexcept(true) {
+
+                             m_npts    = std::move(x.m_npts);
+                             m_k       = std::move(x.m_k);
+                             m_ifac    = std::move(x.m_ifac);
+                             m_jec     = std::move(x.m_jec);
+                             m_ce      = std::move(x.m_ce);
+                             m_hex     = std::move(x.m_hex);
+                             m_hey     = std::move(x.m_hey);
+                         }
+
+                        ~Hve_t()               = default;
+ 
+                         Hve_t & operator=(const Hve_t &x) {
+
+                               if(this == &x) return (*this);
+                               Hve_t<T1,T2> tmp(npts,k,ifac);
+                               std::swap(*this,tmp);
+                               return (*this);
+                         }  
+
+                         Hve_t & operator=(Hve_t &&x) noexcept(true) {
+
+                               if(this == &x) return (*this);
+                               *this = std::move(x);
+                               return (*this);
+                         }
+                        
+               };
 
                  
        } // radiolocation
