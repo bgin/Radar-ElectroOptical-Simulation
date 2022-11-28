@@ -1307,6 +1307,345 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
+                   void cadd_zmm16r4_unroll_10x_u(const float * __restrict  __ATTR_ALIGN__(64) xre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
+                                                  const int32_t n) {
+
+                        if(__builtin_expect(0==n,0)) {return;}
+                        int32_t i;
+
+                        for(i = 0; (i+159) < n; i += 160) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1   
+                            _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            _mm512_store_ps(&zre[i+0], _mm512_add_ps(zmm0,zmm1));
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            _mm512_store_ps(&zim[i+0], _mm512_add_ps(zmm2,zmm3));
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+                            const __m512 zmm8  = _mm512_load_ps(&xre[i+32]);
+                            const __m512 zmm9  = _mm512_load_ps(&yre[i+32]);
+                            _mm512_store_ps(&zre[i+32], _mm512_add_ps(zmm8,zmm9));
+                            const __m512 zmm10 = _mm512_load_ps(&xim[i+32]);
+                            const __m512 zmm11 = _mm512_load_ps(&yim[i+32]);
+                            _mm512_store_ps(&zim[i+32], _mm512_add_ps(zmm10,zmm11));
+                            const __m512 zmm12 = _mm512_load_ps(&xre[i+48]);
+                            const __m512 zmm13 = _mm512_load_ps(&yre[i+48]);
+                            _mm512_store_ps(&zre[i+48], _mm512_add_ps(zmm12,zmm13));
+                            const __m512 zmm14 = _mm512_load_ps(&xim[i+48]);
+                            const __m512 zmm15 = _mm512_load_ps(&yim[i+48]);
+                            _mm512_store_ps(&zim[i+48], _mm512_add_ps(zmm14,zmm15));
+                            const __m512 zmm16 = _mm512_load_ps(&xre[i+64]);
+                            const __m512 zmm17 = _mm512_load_ps(&yre[i+64]);
+                            _mm512_store_ps(&zre[i+64], _mm512_add_ps(zmm16,zmm17));
+                            const __m512 zmm18 = _mm512_load_ps(&xim[i+64]);
+                            const __m512 zmm19 = _mm512_load_ps(&yim[i+64]);
+                            _mm512_store_ps(&zim[i+64], _mm512_add_ps(zmm18,zmm19));
+                            _mm_prefetch((const char *)&xre[i+128],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+128],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+128],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+128],_MM_HINT_T0);
+                            const __m512 zmm20 = _mm512_load_ps(&xre[i+80]);
+                            const __m512 zmm21 = _mm512_load_ps(&yre[i+80]);
+                            _mm512_store_ps(&zre[i+80], _mm512_add_ps(zmm20,zmm21));
+                            const __m512 zmm22 = _mm512_load_ps(&xim[i+80]);
+                            const __m512 zmm23 = _mm512_load_ps(&yim[i+80]);
+                            _mm512_store_ps(&zim[i+80], _mm512_add_ps(zmm22,zmm23));
+                            const __m512 zmm24 = _mm512_load_ps(&xre[i+96]);
+                            const __m512 zmm25 = _mm512_load_ps(&yre[i+96]);
+                            _mm512_store_ps(&zre[i+96], _mm512_add_ps(zmm24,zmm25));
+                            const __m512 zmm26 = _mm512_load_ps(&xim[i+96]);
+                            const __m512 zmm27 = _mm512_load_ps(&yim[i+96]);
+                            _mm512_store_ps(&zim[i+96], _mm512_add_ps(zmm26,zmm27));
+                            const __m512 zmm28 = _mm512_load_ps(&xre[i+112]);
+                            const __m512 zmm29 = _mm512_load_ps(&yre[i+112]);
+                            _mm512_store_ps(&zre[i+112], _mm512_add_ps(zmm28,zmm29));
+                            const __m512 zmm30 = _mm512_load_ps(&xim[i+112]);
+                            const __m512 zmm31 = _mm512_load_ps(&yim[i+112]);
+                            _mm512_store_ps(&zim[i+112], _mm512_add_ps(zmm30,zmm31));
+                            const __m512 zmm32 = _mm512_load_ps(&xre[i+128]); //SPILLING!!
+                            const __m512 zmm33 = _mm512_load_ps(&yre[i+128]);
+                            _mm512_store_ps(&zre[i+128], _mm512_add_ps(zmm32,zmm33));
+                            const __m512 zmm34 = _mm512_load_ps(&xim[i+128]);
+                            const __m512 zmm35 = _mm512_load_ps(&yim[i+128]);
+                            _mm512_store_ps(&zim[i+128], _mm512_add_ps(zmm34,zmm35));
+                            const __m512 zmm36 = _mm512_load_ps(&xre[i+144]); //SPILLING!!
+                            const __m512 zmm37 = _mm512_load_ps(&yre[i+144]);
+                            _mm512_store_ps(&zre[i+144], _mm512_add_ps(zmm36,zmm37));
+                            const __m512 zmm38 = _mm512_load_ps(&xim[i+144]);
+                            const __m512 zmm39 = _mm512_load_ps(&yim[i+144]);
+                            _mm512_store_ps(&zim[i+144], _mm512_add_ps(zmm38,zmm39));
+#else
+                            _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xre[i+128],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+128],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+128],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+128],_MM_HINT_T0);
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            const __m512 zmm8  = _mm512_load_ps(&xre[i+32]);
+                            const __m512 zmm9  = _mm512_load_ps(&yre[i+32]);
+                            const __m512 zmm10 = _mm512_load_ps(&xim[i+32]);
+                            const __m512 zmm11 = _mm512_load_ps(&yim[i+32]);
+                            const __m512 zmm12 = _mm512_load_ps(&xre[i+48]);
+                            const __m512 zmm13 = _mm512_load_ps(&yre[i+48]);
+                            const __m512 zmm14 = _mm512_load_ps(&xim[i+48]);
+                            const __m512 zmm15 = _mm512_load_ps(&yim[i+48]);
+                            const __m512 zmm16 = _mm512_load_ps(&xre[i+64]);
+                            const __m512 zmm17 = _mm512_load_ps(&yre[i+64]);
+                            const __m512 zmm18 = _mm512_load_ps(&xim[i+64]);
+                            const __m512 zmm19 = _mm512_load_ps(&yim[i+64]);
+                            const __m512 zmm20 = _mm512_load_ps(&xre[i+80]);
+                            const __m512 zmm21 = _mm512_load_ps(&yre[i+80]);
+                            const __m512 zmm22 = _mm512_load_ps(&xim[i+80]);
+                            const __m512 zmm23 = _mm512_load_ps(&yim[i+80]);
+                            const __m512 zmm24 = _mm512_load_ps(&xre[i+96]);
+                            const __m512 zmm25 = _mm512_load_ps(&yre[i+96]);
+                            const __m512 zmm26 = _mm512_load_ps(&xim[i+96]);
+                            const __m512 zmm27 = _mm512_load_ps(&yim[i+96]);
+                            const __m512 zmm28 = _mm512_load_ps(&xre[i+112]);
+                            const __m512 zmm29 = _mm512_load_ps(&yre[i+112]);
+                            const __m512 zmm30 = _mm512_load_ps(&xim[i+112]);
+                            const __m512 zmm31 = _mm512_load_ps(&yim[i+112]);
+                            const __m512 zmm32 = _mm512_load_ps(&xre[i+128]); //SPILLING!!
+                            const __m512 zmm33 = _mm512_load_ps(&yre[i+128]);
+                            const __m512 zmm34 = _mm512_load_ps(&xim[i+128]);
+                            const __m512 zmm35 = _mm512_load_ps(&yim[i+128]);
+                            const __m512 zmm36 = _mm512_load_ps(&xre[i+144]); //SPILLING!!
+                            const __m512 zmm37 = _mm512_load_ps(&yre[i+144]);
+                            const __m512 zmm38 = _mm512_load_ps(&xim[i+144]);
+                            const __m512 zmm39 = _mm512_load_ps(&yim[i+144]);
+                            _mm512_store_ps(&zre[i+0],  _mm512_add_ps(zmm0,zmm1));
+                            _mm512_store_ps(&zim[i+0],  _mm512_add_ps(zmm2,zmm3));
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+                            _mm512_store_ps(&zre[i+32], _mm512_add_ps(zmm8,zmm9));
+                            _mm512_store_ps(&zim[i+32], _mm512_add_ps(zmm10,zmm11));
+                            _mm512_store_ps(&zre[i+48], _mm512_add_ps(zmm12,zmm13));
+                            _mm512_store_ps(&zim[i+48], _mm512_add_ps(zmm14,zmm15));
+                            _mm512_store_ps(&zre[i+64], _mm512_add_ps(zmm16,zmm17));
+                            _mm512_store_ps(&zim[i+64], _mm512_add_ps(zmm18,zmm19));
+                            _mm512_store_ps(&zre[i+80], _mm512_add_ps(zmm20,zmm21));
+                            _mm512_store_ps(&zim[i+80], _mm512_add_ps(zmm22,zmm23));
+                            _mm512_store_ps(&zre[i+96], _mm512_add_ps(zmm24,zmm25));
+                            _mm512_store_ps(&zim[i+96], _mm512_add_ps(zmm26,zmm27));
+                            _mm512_store_ps(&zre[i+112], _mm512_add_ps(zmm28,zmm29));
+                            _mm512_store_ps(&zim[i+112], _mm512_add_ps(zmm30,zmm31));
+                            _mm512_store_ps(&zre[i+128], _mm512_add_ps(zmm32,zmm33));
+                            _mm512_store_ps(&zim[i+128], _mm512_add_ps(zmm34,zmm35));
+                            _mm512_store_ps(&zre[i+144], _mm512_add_ps(zmm36,zmm37));
+                            _mm512_store_ps(&zim[i+144], _mm512_add_ps(zmm38,zmm39));
+#endif
+                        }
+
+                       for(; (i+79) < n; i += 80) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1   
+                            
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            _mm512_store_ps(&zre[i+0], _mm512_add_ps(zmm0,zmm1));
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            _mm512_store_ps(&zim[i+0], _mm512_add_ps(zmm2,zmm3));
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+                            const __m512 zmm8  = _mm512_load_ps(&xre[i+32]);
+                            const __m512 zmm9  = _mm512_load_ps(&yre[i+32]);
+                            _mm512_store_ps(&zre[i+32], _mm512_add_ps(zmm8,zmm9));
+                            const __m512 zmm10 = _mm512_load_ps(&xim[i+32]);
+                            const __m512 zmm11 = _mm512_load_ps(&yim[i+32]);
+                            _mm512_store_ps(&zim[i+32], _mm512_add_ps(zmm10,zmm11));
+                            const __m512 zmm12 = _mm512_load_ps(&xre[i+48]);
+                            const __m512 zmm13 = _mm512_load_ps(&yre[i+48]);
+                            _mm512_store_ps(&zre[i+48], _mm512_add_ps(zmm12,zmm13));
+                            const __m512 zmm14 = _mm512_load_ps(&xim[i+48]);
+                            const __m512 zmm15 = _mm512_load_ps(&yim[i+48]);
+                            _mm512_store_ps(&zim[i+48], _mm512_add_ps(zmm14,zmm15));
+                            const __m512 zmm16 = _mm512_load_ps(&xre[i+64]);
+                            const __m512 zmm17 = _mm512_load_ps(&yre[i+64]);
+                            _mm512_store_ps(&zre[i+64], _mm512_add_ps(zmm16,zmm17));
+                            const __m512 zmm18 = _mm512_load_ps(&xim[i+64]);
+                            const __m512 zmm19 = _mm512_load_ps(&yim[i+64]);
+                            _mm512_store_ps(&zim[i+64], _mm512_add_ps(zmm18,zmm19));
+#else
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            const __m512 zmm8  = _mm512_load_ps(&xre[i+32]);
+                            const __m512 zmm9  = _mm512_load_ps(&yre[i+32]);
+                            const __m512 zmm10 = _mm512_load_ps(&xim[i+32]);
+                            const __m512 zmm11 = _mm512_load_ps(&yim[i+32]);
+                            const __m512 zmm12 = _mm512_load_ps(&xre[i+48]);
+                            const __m512 zmm13 = _mm512_load_ps(&yre[i+48]);
+                            const __m512 zmm14 = _mm512_load_ps(&xim[i+48]);
+                            const __m512 zmm15 = _mm512_load_ps(&yim[i+48]);
+                            const __m512 zmm16 = _mm512_load_ps(&xre[i+64]);
+                            const __m512 zmm17 = _mm512_load_ps(&yre[i+64]);
+                            const __m512 zmm18 = _mm512_load_ps(&xim[i+64]);
+                            const __m512 zmm19 = _mm512_load_ps(&yim[i+64]);
+                            _mm512_store_ps(&zre[i+0],  _mm512_add_ps(zmm0,zmm1));
+                            _mm512_store_ps(&zim[i+0],  _mm512_add_ps(zmm2,zmm3));
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            _mm512_storeups(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+                            _mm512_store_ps(&zre[i+32], _mm512_add_ps(zmm8,zmm9));
+                            _mm512_store_ps(&zim[i+32], _mm512_add_ps(zmm10,zmm11));
+                            _mm512_store_ps(&zre[i+48], _mm512_add_ps(zmm12,zmm13));
+                            _mm512_store_ps(&zim[i+48], _mm512_add_ps(zmm14,zmm15));
+                            _mm512_store_ps(&zre[i+64], _mm512_add_ps(zmm16,zmm17));
+                            _mm512_store_ps(&zim[i+64], _mm512_add_ps(zmm18,zmm19));
+#endif
+                       }
+
+                       for(; (i+63) < n; i += 64) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1   
+                            
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            _mm512_store_ps(&zre[i+0], _mm512_add_ps(zmm0,zmm1));
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            _mm512_store_ps(&zim[i+0], _mm512_add_ps(zmm2,zmm3));
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+                            const __m512 zmm8  = _mm512_load_ps(&xre[i+32]);
+                            const __m512 zmm9  = _mm512_load_ps(&yre[i+32]);
+                            _mm512_store_ps(&zre[i+32], _mm512_add_ps(zmm8,zmm9));
+                            const __m512 zmm10 = _mm512_load_ps(&xim[i+32]);
+                            const __m512 zmm11 = _mm512_load_ps(&yim[i+32]);
+                            _mm512_store_ps(&zim[i+32], _mm512_add_ps(zmm10,zmm11));
+                            const __m512 zmm12 = _mm512_load_ps(&xre[i+48]);
+                            const __m512 zmm13 = _mm512_load_ps(&yre[i+48]);
+                            _mm512_store_ps(&zre[i+48], _mm512_add_ps(zmm12,zmm13));
+                            const __m512 zmm14 = _mm512_load_ps(&xim[i+48]);
+                            const __m512 zmm15 = _mm512_load_ps(&yim[i+48]);
+                            _mm512_store_ps(&zim[i+48], _mm512_add_ps(zmm14,zmm15));
+#else
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            const __m512 zmm8  = _mm512_load_ps(&xre[i+32]);
+                            const __m512 zmm9  = _mm512_load_ps(&yre[i+32]);
+                            const __m512 zmm10 = _mm512_load_ps(&xim[i+32]);
+                            const __m512 zmm11 = _mm512_load_ps(&yim[i+32]);
+                            const __m512 zmm12 = _mm512_load_ps(&xre[i+48]);
+                            const __m512 zmm13 = _mm512_load_ps(&yre[i+48]);
+                            const __m512 zmm14 = _mm512_load_ps(&xim[i+48]);
+                            const __m512 zmm15 = _mm512_load_ps(&yim[i+48]);
+                            _mm512_store_ps(&zre[i+0],  _mm512_add_ps(zmm0,zmm1));
+                            _mm512_store_ps(&zim[i+0],  _mm512_add_ps(zmm2,zmm3));
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+                            _mm512_store_ps(&zre[i+32], _mm512_add_ps(zmm8,zmm9));
+                            _mm512_store_ps(&zim[i+32], _mm512_add_ps(zmm10,zmm11));
+                            _mm512_store_ps(&zre[i+48], _mm512_add_ps(zmm12,zmm13));
+                            _mm512_store_ps(&zim[i+48], _mm512_add_ps(zmm14,zmm15));
+#endif
+                      }
+
+                      for(; (i+31) < n; i += 32) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1   
+                            
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            _mm512_store_ps(&zre[i+0], _mm512_add_ps(zmm0,zmm1));
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            _mm512_store_ps(&zim[i+0], _mm512_add_ps(zmm2,zmm3));
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+#else
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            const __m512 zmm4  = _mm512_load_ps(&xre[i+16]);
+                            const __m512 zmm5  = _mm512_load_ps(&yre[i+16]);
+                            const __m512 zmm6  = _mm512_load_ps(&xim[i+16]);
+                            const __m512 zmm7  = _mm512_load_ps(&yim[i+16]);
+                            _mm512_store_ps(&zre[i+0],  _mm512_add_ps(zmm0,zmm1));
+                            _mm512_store_ps(&zim[i+0],  _mm512_add_ps(zmm2,zmm3));
+                            _mm512_store_ps(&zre[i+16], _mm512_add_ps(zmm4,zmm5));
+                            _mm512_store_ps(&zim[i+16], _mm512_add_ps(zmm6,zmm7));
+#endif
+                      }
+
+                     for(; (i+15) < n; i += 16) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1   
+                            
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            _mm512_store_ps(&zre[i+0], _mm512_add_ps(zmm0,zmm1));
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            _mm512_store_ps(&zim[i+0], _mm512_add_ps(zmm2,zmm3));
+#else
+                            const __m512 zmm0  = _mm512_load_ps(&xre[i+0]);
+                            const __m512 zmm1  = _mm512_load_ps(&yre[i+0]);
+                            const __m512 zmm2  = _mm512_load_ps(&xim[i+0]);
+                            const __m512 zmm3  = _mm512_load_ps(&yim[i+0]);
+                            _mm512_store_ps(&zre[i+0],  _mm512_add_ps(zmm0,zmm1));
+                            _mm512_store_ps(&zim[i+0],  _mm512_add_ps(zmm2,zmm3));
+#endif
+                     }
+
+                     for(; (i+0) < n; i += 1) {
+                             
+                            zre[i] = xre[i] + yre[i];
+                            zim[i] = xim[i] + yim[i];
+                      }
+
+                  }
+ 
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
                    void cadd_zmm16r4_unroll_6x_u(const float * __restrict  xre,
                                                   const float * __restrict  xim,
                                                   const float * __restrict  yre,
