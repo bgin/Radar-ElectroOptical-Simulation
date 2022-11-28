@@ -1385,6 +1385,251 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void cadd_zmm16r4_unroll_10x_u(const float * __restrict xre,
+                                                  const float * __restrict xim, 
+                                                  const __m512             vs,
+                                                  float  * __restrict zre,
+                                                  float  * __restrict zim,
+                                                  const int32_t n) {
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                         register const __m512 zmmx    = vs;
+                         const float * __restrict pzmm =  (const float*)&vs[0];
+                         for(i = 0; (i+159) < n; i += 160) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                              _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+                              register const __m512 zmm4 = _mm512_loadu_ps(&xre[i+32]);
+                              _mm512_storeu_ps(&zre[i+32], _mm512_add_ps(zmm4,zmmx));
+                              register const __m512 zmm5 = _mm512_loadu_ps(&xim[i+32]);
+                              _mm512_storeu_ps(&zim[i+32], _mm512_add_ps(zmm5,zmmx));
+                              _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                              register const __m512 zmm6 = _mm512_loadu_ps(&xre[i+48]);
+                              _mm512_storeu_ps(&zre[i+48], _mm512_add_ps(zmm6,zmmx));
+                              register const __m512 zmm7 = _mm512_loadu_ps(&xim[i+48]);
+                              _mm512_storeu_ps(&zim[i+48], _mm512_add_ps(zmm7,zmmx));
+                              register const __m512 zmm8 = _mm512_loadu_ps(&xre[i+64]);
+                              _mm512_storeu_ps(&zre[i+64], _mm512_add_ps(zmm8,zmmx));
+                              register const __m512 zmm9 = _mm512_loadu_ps(&xim[i+64]);
+                              _mm512_storeu_ps(&zim[i+64], _mm512_add_ps(zmm9,zmmx));
+                              _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
+                              register const __m512 zmm10 = _mm512_loadu_ps(&xre[i+80]);
+                              _mm512_storeu_ps(&zre[i+80], _mm512_add_ps(zmm10,zmmx));
+                              register const __m512 zmm11 = _mm512_loadu_ps(&xim[i+80]);
+                              _mm512_storeu_ps(&zim[i+80], _mm512_add_ps(zmm11,zmmx));
+                              register const __m512 zmm12 = _mm512_loadu_ps(&xre[i+96]);
+                              _mm512_storeu_ps(&zre[i+96], _mm512_add_ps(zmm12,zmmx));
+                              register const __m512 zmm13 = _mm512_loadu_ps(&xim[i+96]);
+                              _mm512_storeu_ps(&zim[i+96], _mm512_add_ps(zmm13,zmmx));
+                              _mm_prefetch((const char *)&xre[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+128],_MM_HINT_T0);
+                              register const __m512 zmm14 = _mm512_loadu_ps(&xre[i+112]);
+                              _mm512_storeu_ps(&zre[i+112], _mm512_add_ps(zmm14,zmmx));
+                              register const __m512 zmm15 = _mm512_loadu_ps(&xim[i+112]);
+                              _mm512_storeu_ps(&zim[i+112], _mm512_add_ps(zmm15,zmmx));
+                              register const __m512 zmm16 = _mm512_loadu_ps(&xre[i+128]);
+                              _mm512_storeu_ps(&zre[i+128], _mm512_add_ps(zmm16,zmmx));
+                              register const __m512 zmm17 = _mm512_loadu_ps(&xim[i+128]);
+                              _mm512_storeu_ps(&zim[i+128], _mm512_add_ps(zmm17,zmmx));
+                              register const __m512 zmm18 = _mm512_loadu_ps(&xre[i+144]);
+                              _mm512_storeu_ps(&zre[i+144], _mm512_add_ps(zmm18,zmmx));
+                              register const __m512 zmm19 = _mm512_loadu_ps(&xim[i+144]);
+                              _mm512_storeu_ps(&zim[i+144], _mm512_add_ps(zmm19,zmmx));
+#else
+                              _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xre[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char *)&xim[i+128],_MM_HINT_T0);
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              register const __m512 zmm4 = _mm512_loadu_ps(&xre[i+32]);
+                              register const __m512 zmm5 = _mm512_loadu_ps(&xim[i+32]);
+                              register const __m512 zmm6 = _mm512_loadu_ps(&xre[i+48]);
+                              register const __m512 zmm7 = _mm512_loadu_ps(&xim[i+48]);
+                              register const __m512 zmm8 = _mm512_loadu_ps(&xre[i+64]);
+                              register const __m512 zmm9 = _mm512_loadu_ps(&xim[i+64]);
+                              register const __m512 zmm10 = _mm512_loadu_ps(&xre[i+80]);
+                              register const __m512 zmm11 = _mm512_loadu_ps(&xim[i+80]);
+                              register const __m512 zmm12 = _mm512_loadu_ps(&xre[i+96]);
+                              register const __m512 zmm13 = _mm512_loadu_ps(&xim[i+96]);
+                              register const __m512 zmm14 = _mm512_loadu_ps(&xre[i+112]);
+                              register const __m512 zmm15 = _mm512_loadu_ps(&xim[i+112]);
+                              register const __m512 zmm16 = _mm512_loadu_ps(&xre[i+128]);
+                              register const __m512 zmm17 = _mm512_loadu_ps(&xim[i+128]);
+                              register const __m512 zmm18 = _mm512_loadu_ps(&xre[i+144]);
+                              register const __m512 zmm19 = _mm512_loadu_ps(&xim[i+144]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+                              _mm512_storeu_ps(&zre[i+32], _mm512_add_ps(zmm4,zmmx));
+                              _mm512_storeu_ps(&zim[i+32], _mm512_add_ps(zmm5,zmmx));
+                              _mm512_storeu_ps(&zre[i+48], _mm512_add_ps(zmm6,zmmx));
+                              _mm512_storeu_ps(&zim[i+48], _mm512_add_ps(zmm7,zmmx));
+                              _mm512_storeu_ps(&zre[i+64], _mm512_add_ps(zmm8,zmmx));
+                              _mm512_storeu_ps(&zim[i+64], _mm512_add_ps(zmm9,zmmx));
+                              _mm512_storeu_ps(&zre[i+80], _mm512_add_ps(zmm10,zmmx));
+                              _mm512_storeu_ps(&zim[i+80], _mm512_add_ps(zmm11,zmmx));
+                              _mm512_storeu_ps(&zre[i+96], _mm512_add_ps(zmm12,zmmx));
+                              _mm512_storeu_ps(&zim[i+96], _mm512_add_ps(zmm13,zmmx));
+                              _mm512_storeu_ps(&zre[i+112], _mm512_add_ps(zmm14,zmmx));
+                              _mm512_storeu_ps(&zim[i+112], _mm512_add_ps(zmm15,zmmx));
+                              _mm512_storeu_ps(&zre[i+128], _mm512_add_ps(zmm16,zmmx));
+                              _mm512_storeu_ps(&zim[i+128], _mm512_add_ps(zmm17,zmmx));
+                              _mm512_storeu_ps(&zre[i+144], _mm512_add_ps(zmm18,zmmx));
+                              _mm512_storeu_ps(&zim[i+144], _mm512_add_ps(zmm19,zmmx));
+#endif
+                        }
+
+                       for(; (i+79) < n; i += 80) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+                              register const __m512 zmm4 = _mm512_loadu_ps(&xre[i+32]);
+                              _mm512_storeu_ps(&zre[i+32], _mm512_add_ps(zmm4,zmmx));
+                              register const __m512 zmm5 = _mm512_loadu_ps(&xim[i+32]);
+                              _mm512_storeu_ps(&zim[i+32], _mm512_add_ps(zmm5,zmmx));
+                              register const __m512 zmm6 = _mm512_loadu_ps(&xre[i+48]);
+                              _mm512_storeu_ps(&zre[i+48], _mm512_add_ps(zmm6,zmmx));
+                              register const __m512 zmm7 = _mm512_loadu_ps(&xim[i+48]);
+                              _mm512_storeu_ps(&zim[i+48], _mm512_add_ps(zmm7,zmmx));
+                              register const __m512 zmm8 = _mm512_loadu_ps(&xre[i+64]);
+                              _mm512_storeu_ps(&zre[i+64], _mm512_add_ps(zmm8,zmmx));
+                              register const __m512 zmm9 = _mm512_loadu_ps(&xim[i+64]);
+                              _mm512_storeu_ps(&zim[i+64], _mm512_add_ps(zmm9,zmmx)); 
+#else
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              register const __m512 zmm4 = _mm512_loadu_ps(&xre[i+32]);
+                              register const __m512 zmm5 = _mm512_loadu_ps(&xim[i+32]);
+                              register const __m512 zmm6 = _mm512_loadu_ps(&xre[i+48]);
+                              register const __m512 zmm7 = _mm512_loadu_ps(&xim[i+48]);
+                              register const __m512 zmm8 = _mm512_loadu_ps(&xre[i+64]);
+                              register const __m512 zmm9 = _mm512_loadu_ps(&xim[i+64]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+                              _mm512_storeu_ps(&zre[i+32], _mm512_add_ps(zmm4,zmmx));
+                              _mm512_storeu_ps(&zim[i+32], _mm512_add_ps(zmm5,zmmx));
+                              _mm512_storeu_ps(&zre[i+48], _mm512_add_ps(zmm6,zmmx));
+                              _mm512_storeu_ps(&zim[i+48], _mm512_add_ps(zmm7,zmmx));
+                              _mm512_storeu_ps(&zre[i+64], _mm512_add_ps(zmm8,zmmx));
+                              _mm512_storeu_ps(&zim[i+64], _mm512_add_ps(zmm9,zmmx));
+#endif
+                       }
+
+                      for(; (i+63) < n; i += 64) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+                              register const __m512 zmm4 = _mm512_loadu_ps(&xre[i+32]);
+                              _mm512_storeu_ps(&zre[i+32], _mm512_add_ps(zmm4,zmmx));
+                              register const __m512 zmm5 = _mm512_loadu_ps(&xim[i+32]);
+                              _mm512_storeu_ps(&zim[i+32], _mm512_add_ps(zmm5,zmmx));
+                              register const __m512 zmm6 = _mm512_loadu_ps(&xre[i+48]);
+                              _mm512_storeu_ps(&zre[i+48], _mm512_add_ps(zmm6,zmmx));
+                              register const __m512 zmm7 = _mm512_loadu_ps(&xim[i+48]);
+                              _mm512_storeu_ps(&zim[i+48], _mm512_add_ps(zmm7,zmmx));
+#else
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              register const __m512 zmm4 = _mm512_loadu_ps(&xre[i+32]);
+                              register const __m512 zmm5 = _mm512_loadu_ps(&xim[i+32]);
+                              register const __m512 zmm6 = _mm512_loadu_ps(&xre[i+48]);
+                              register const __m512 zmm7 = _mm512_loadu_ps(&xim[i+48]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+                              _mm512_storeu_ps(&zre[i+32], _mm512_add_ps(zmm4,zmmx));
+                              _mm512_storeu_ps(&zim[i+32], _mm512_add_ps(zmm5,zmmx));
+                              _mm512_storeu_ps(&zre[i+48], _mm512_add_ps(zmm6,zmmx));
+                              _mm512_storeu_ps(&zim[i+48], _mm512_add_ps(zmm7,zmmx));
+#endif
+                      }
+
+                     for(; (i+31) < n; i += 32) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+#else
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              register const __m512 zmm2 = _mm512_loadu_ps(&xre[i+16]);
+                              register const __m512 zmm3 = _mm512_loadu_ps(&xim[i+16]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+                              _mm512_storeu_ps(&zre[i+16], _mm512_add_ps(zmm2,zmmx));
+                              _mm512_storeu_ps(&zim[i+16], _mm512_add_ps(zmm3,zmmx));
+#endif
+                     }
+
+                    for(; (i+15) < n; i += 16) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+#else
+                              register const __m512 zmm0 = _mm512_loadu_ps(&xre[i+0]);
+                              register const __m512 zmm1 = _mm512_loadu_ps(&xim[i+0]);
+                              _mm512_storeu_ps(&zre[i+0], _mm512_add_ps(zmm0,zmmx));
+                              _mm512_storeu_ps(&zim[i+0], _mm512_add_ps(zmm1,zmmx));
+#endif
+                    }
+
+                    for(; (i+0) < n; i += 1) {
+                          const float s = pzmm[i];
+                          zre[i] = xre[i] + s;
+                          zim[i] = zim[i] + s;
+                    }
+
+                 }
+
+
                   
 
         } // math
