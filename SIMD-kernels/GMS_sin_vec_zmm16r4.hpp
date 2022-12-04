@@ -712,6 +712,212 @@ namespace  gms {
                            y[i] = ceph_sinf(x[i]);
                      }
                } 
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void sinv_zmm16r4_unroll_10x_u(const float * __restrict  x,
+                                                  float * __restrict  y,
+                                                  const int32_t n) {
+
+                       if(__builtin_expect(0==n,0)) {return;}
+                       int32_t i;
+                      
+                       for(i = 0; (i+159) < n; i += 160) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           _mm_prefetch((const char *)&x[i+64],_MM_HINT_T0);
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           register const vfloat zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const vfloat zmm5      = xsinf(zmm4);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           register const vfloat zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const vfloat zmm7      = xsinf(zmm6);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+                           register const vfloat zmm8      = _mm512_loadu_ps(&x[i+64]); 
+                           register const vfloat zmm9      = xsinf(zmm8);
+                           _mm512_storeu_ps(&y[i+64], zmm9);
+                           _mm_prefetch((const char *)&x[i+128],_MM_HINT_T0);
+                           register const vfloat zmm10      = _mm512_loadu_ps(&x[i+80]); 
+                           register const vfloat zmm11      = xsinf(zmm10);
+                           _mm512_storeu_ps(&y[i+80], zmm11);
+                           register const vfloat zmm12      = _mm512_loadu_ps(&x[i+96]); 
+                           register const vfloat zmm13      = xsinf(zmm12);
+                           _mm512_storeu_ps(&y[i+96], zmm13);
+                           register const vfloat zmm14      = _mm512_loadu_ps(&x[i+112]); 
+                           register const vfloat zmm15      = xsinf(zmm14);
+                           _mm512_storeu_ps(&y[i+112], zmm15);
+                           register const vfloat zmm16      = _mm512_loadu_ps(&x[i+128]); 
+                           register const vfloat zmm17      = xsinf(zmm16);
+                           _mm512_storeu_ps(&y[i+128], zmm17);
+                           _mm_prefetch((const char *)&x[i+144],_MM_HINT_T0);
+                           register const vfloat zmm18      = _mm512_loadu_ps(&x[i+144]); 
+                           register const vfloat zmm19      = xsinf(zmm18);
+                           _mm512_storeu_ps(&y[i+144], zmm19);
+#else
+                           _mm_prefetch((const char *)&x[i+64],_MM_HINT_T0);
+                           _mm_prefetch((const char *)&x[i+128],_MM_HINT_T0);
+                           _mm_prefetch((const char *)&x[i+144],_MM_HINT_T0);
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const vfloat zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const vfloat zmm8      = _mm512_loadu_ps(&x[i+64]); 
+                           register const vfloat zmm10     = _mm512_loadu_ps(&x[i+80]);
+                           register const vfloat zmm12     = _mm512_loadu_ps(&x[i+96]); 
+                           register const vfloat zmm14     = _mm512_loadu_ps(&x[i+112]);  
+                           register const vfloat zmm16     = _mm512_loadu_ps(&x[i+128]); 
+                           register const vfloat zmm18     = _mm512_loadu_ps(&x[i+144]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           register const vfloat zmm5      = xsinf(zmm4);
+                           register const vfloat zmm7      = xsinf(zmm6);
+                           register const vfloat zmm9      = xsinf(zmm8);
+                           register const vfloat zmm11     = xsinf(zmm10);
+                           register const vfloat zmm13     = xsinf(zmm12);
+                           register const vfloat zmm15     = xsinf(zmm14);
+                           register const vfloat zmm17     = xsinf(zmm16);
+                           register const vfloat zmm19     = xsinf(zmm18);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+                           _mm512_storeu_ps(&y[i+64], zmm9);
+                           _mm512_storeu_ps(&y[i+80], zmm11);
+                           _mm512_storeu_ps(&y[i+96], zmm13);
+                           _mm512_storeu_ps(&y[i+112], zmm15);
+                           _mm512_storeu_ps(&y[i+128], zmm17);
+                           _mm512_storeu_ps(&y[i+144], zmm19);
+#endif
+                       }
+
+                       for(; (i+127) < n; i += 128) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           register const vfloat zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const vfloat zmm5      = xsinf(zmm4);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           register const vfloat zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const vfloat zmm7      = xsinf(zmm6);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+                           register const vfloat zmm8      = _mm512_loadu_ps(&x[i+64]); 
+                           register const vfloat zmm9      = xsinf(zmm8);
+                           _mm512_storeu_ps(&y[i+64], zmm9);
+                           _mm_prefetch((const char *)&x[i+128],_MM_HINT_T0);
+                           register const vfloat zmm10      = _mm512_load_ps(&x[i+80]); 
+                           register const vfloat zmm11      = xsinf(zmm10);
+                           _mm512_storeu_ps(&y[i+80], zmm11);
+                           register const vfloat zmm12      = _mm512_loadu_ps(&x[i+96]); 
+                           register const vfloat zmm13      = xsinf(zmm12);
+                           _mm512_storeu_ps(&y[i+96], zmm13);
+                           register const vfloat zmm14      = _mm512_loadu_ps(&x[i+112]); 
+                           register const vfloat zmm15      = xsinf(zmm14);
+                           _mm512_storeu_ps(&y[i+112], zmm15);
+#else
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const vfloat zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const vfloat zmm8      = _mm512_loadu_ps(&x[i+64]); 
+                           register const vfloat zmm10     = _mm512_loadu_ps(&x[i+80]);
+                           register const vfloat zmm12     = _mm512_loadu_ps(&x[i+96]); 
+                           register const vfloat zmm14     = _mm512_loadu_ps(&x[i+112]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           register const vfloat zmm5      = xsinf(zmm4);
+                           register const vfloat zmm7      = xsinf(zmm6);
+                           register const vfloat zmm9      = xsinf(zmm8);
+                           register const vfloat zmm11     = xsinf(zmm10);
+                           register const vfloat zmm13     = xsinf(zmm12);
+                           register const vfloat zmm15     = xsinf(zmm14);
+                           register const vfloat zmm17     = xsinf(zmm16);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+                           _mm512_storeu_ps(&y[i+64], zmm9);
+                           _mm512_storeu_ps(&y[i+80], zmm11);
+                           _mm512_storeu_ps(&y[i+96], zmm13);
+                           _mm512_storeu_ps(&y[i+112], zmm15);
+#endif
+                       }
+
+                       for(; (i+63) < n; i += 64) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           register const vfloat zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const vfloat zmm5      = xsinf(zmm4);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           register const vfloat zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const vfloat zmm7      = xsinf(zmm6);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+#else
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const vfloat zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           register const vfloat zmm5      = xsinf(zmm4);
+                           register const vfloat zmm7      = xsinf(zmm6);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+#endif
+                      }
+
+                     for(; (i+31) < n; i += 32) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+#else
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           register const vfloat zmm3      = xsinf(zmm2);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+#endif
+                     }
+
+                     for(; (i+15) < n; i += 15) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const vfloat zmm1      = xsinf(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+#else
+                           register const vfloat zmm0      = _mm512_loadu_ps(&x[i+0]);
+                           register const vfloat zmm1      = xsinf(zmm0); 
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+#endif
+                     } 
+
+                     for(; (i+0) < n; i += 1) {
+                           y[i] = ceph_sinf(x[i]);
+                     }
+               } 
+
                     
 
         } // math 
