@@ -2227,6 +2227,155 @@ namespace  gms {
                }
 
 
+               /*             
+      These sine vector kernels call Intel SVML library
+      sine function implementation which is not inlined
+      by the ICC/ICPC compilers, hence a pre-load call
+      to _mm512_sin_ps and warmup loop are inserted in
+      order to mitigate as far as it is possible the 
+      issue of impossibility of caching ahead of time. 
+*/
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void sinv_zmm16r4_unroll_6x_u(const float * __restrict  x,
+                                                   float * __restrict  y,
+                                                   const __m512 a,
+                                                   const __m512 b,
+                                                   const __m512 c,
+                                                   const int32_t n) {
+
+                       if(__builtin_expect(0==n,0)) {return;}
+                       volatile __m512 d;
+                       int32_t i;
+                       // Start the preload phase.
+                       _mm_prefetch((const char *)&x[0],_MM_HINT_T0);
+                       volatile __m512 first = _mm512_sin_ps(_mm512_load_ps(&x[0])); //L1I cache miss.
+                       // Warmup loop of ~100 cycles (worst case scenario) of memory-fetch machine 
+                       // code instructions, needed to keep core busy while waiting on instructions
+                       // arrival, this is done to prevent the logic from progressing towards main 
+                       // loop.
+                       for(int32_t j=0; j != 14; ++j) {
+                           d = _mm512_add_ps(d,_mm512_fmadd_ps(a,b,c));
+                       }
+
+                       // Main processing loop starts here
+                       for(i = 0; (i+95) < n; i += 96) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           _mm_prefetch((const char *)&x[i+48],_MM_HINT_T0);
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const __m512 zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const __m512 zmm3      = _mm512_sin_ps(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           register const __m512 zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const __m512 zmm5      = _mm512_sin_ps(zmm4);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           register const __m512 zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const __m512 zmm7      = _mm512_sin_ps(zmm6);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+                           _mm_prefetch((const char *)&x[i+96],_MM_HINT_T0);
+                           register const __m512 zmm8      = _mm512_loadu_ps(&x[i+64]); 
+                           register const __m512 zmm9      = _mm512_sin_ps(zmm8);
+                           _mm512_storeu_ps(&y[i+64], zmm9);
+                           register const __m512 zmm10      = _mm512_loadu_ps(&x[i+80]); 
+                           register const __m512 zmm11      = _mm512_sin_ps(zmm10);
+                           _mm512_storeu_ps(&y[i+80], zmm11);
+#else
+                           _mm_prefetch((const char *)&x[i+48],_MM_HINT_T0);
+                           _mm_prefetch((const char *)&x[i+96],_MM_HINT_T0);
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const __m512 zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const __m512 zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const __m512 zmm8      = _mm512_loadu_ps(&x[i+64]);
+                           register const __m512 zmm10     = _mm512_loadu_ps(&x[i+80]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           register const __m512 zmm3      = _mm512_sin_ps(zmm2);
+                           register const __m512 zmm5      = _mm512_sin_ps(zmm4);
+                           register const __m512 zmm7      = _mm512_sin_ps(zmm6);
+                           register const __m512 zmm9      = _mm512_sin_ps(zmm8);
+                           register const __m512 zmm11     = _mm512_sin_ps(zmm10);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+                           _mm512_storeu_ps(&y[i+64], zmm9);
+                           _mm512_storeu_ps(&y[i+80], zmm11);
+#endif
+                     }
+
+                     for(; (i+63) < n; i += 64) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const __m512 zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const __m512 zmm3      = _mm512_sin_ps(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           register const __m512 zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const __m512 zmm5      = _mm512_sin_ps(zmm4);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           register const __m512 zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const __m512 zmm7      = _mm512_sin_ps(zmm6);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+#else
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const __m512 zmm4      = _mm512_loadu_ps(&x[i+32]); 
+                           register const __m512 zmm6      = _mm512_loadu_ps(&x[i+48]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           register const __m512 zmm3      = _mm512_sin_ps(zmm2);
+                           register const __m512 zmm5      = _mm512_sin_ps(zmm4);
+                           register const __m512 zmm7      = _mm512_sin_ps(zmm6);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+                           _mm512_storeu_ps(&y[i+32], zmm5);
+                           _mm512_storeu_ps(&y[i+48], zmm7);
+#endif
+                     }
+
+                    for(; (i+31) < n; i += 32) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           register const __m512 zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const __m512 zmm3      = _mm512_sin_ps(zmm2);
+                           _mm512_storeu_ps(&y[i+16], zmm3);
+#else
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm2      = _mm512_loadu_ps(&x[i+16]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           register const __m512 zmm3      = _mm512_sin_ps(zmm2);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+                           _mm512_storeu_ps(&y[i+16], zmm3); 
+#endif
+
+                    }
+
+                    for(; (i+15) < n; i += 16) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+#else
+                           register const __m512 zmm0      = _mm512_loadu_ps(&x[i+0]); 
+                           register const __m512 zmm1      = _mm512_sin_ps(zmm0);
+                           _mm512_storeu_ps(&y[i+0], zmm1);
+#endif
+                    }
+
+                    for(; (i+0) < n; i += 1) {
+                           y[i] = ceph_sinf(x[i]);
+                     }
+               }
+
+
+
               
 
                     
