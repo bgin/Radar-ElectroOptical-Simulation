@@ -847,7 +847,7 @@ namespace  gms {
 
                      for(; (i+0) < n; i += 1) {
                            if(m[i])
-                              y[i] = ceph_expf(z[i]);
+                              y[i] = ceph_expf(x[i]+z[i]);
                            else
                               y[i] = ceph_expf(x[i]);
                      }
@@ -1426,7 +1426,7 @@ namespace  gms {
 
                      for(; (i+0) < n; i += 1) {
                            if(m[i])
-                              y[i] = ceph_expf(z[i]);
+                              y[i] = ceph_expf(x[i]+z[i]);
                            else
                               y[i] = ceph_expf(x[i]);
                      }
@@ -2895,7 +2895,7 @@ namespace  gms {
 
                      for(; (i+0) < n; i += 1) {
                            if(m[i])
-                              y[i] = ceph_expf(z[i]);
+                              y[i] = ceph_expf(x[i]+z[i]);
                            else
                               y[i] = ceph_expf(x[i]);
                      }
@@ -3290,7 +3290,7 @@ namespace  gms {
 
                      for(; (i+0) < n; i += 1) {
                            if(m[i])
-                              y[i] = ceph_expf(z[i]);
+                              y[i] = ceph_expf(x[i]+z[i]);
                            else
                               y[i] = ceph_expf(x[i]);
                      }
