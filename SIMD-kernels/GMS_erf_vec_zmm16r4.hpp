@@ -1830,7 +1830,7 @@ namespace  gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
-                   void cosv_zmm16r4_unroll_6x_u(const float * __restrict  x,
+                   void erfv_zmm16r4_unroll_6x_u(const float * __restrict  x,
                                                    float * __restrict  y,
                                                    const __m512 a,
                                                    const __m512 b,
