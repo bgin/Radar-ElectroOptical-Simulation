@@ -41,8 +41,15 @@ namespace file_version {
 
 #include <cstdint>
 #include <immintrin.h>
+#include <cmath>
 #include "GMS_config.h"
+#include "GMS_sleefsimdsp.hpp"
+#include "GMS_sleefsimddp.hpp"
+#include "GMS_cephes.h"
 
+#if !defined(PHASE_PDF_PRELOAD_SVML)
+#define PHASE_PDF_PRELOAD_SVML 1
+#endif
 
 namespace  gms {
 
@@ -66,14 +73,14 @@ namespace  gms {
                          aa   = _mm512_mul_ps(a,a);
                          hphi = _mm512_mul_ps(_0_5,phi);
                          haa  = _mm512_mul_ps(_0_5,aa);
-                         acphi= _mm512_mul_ps(a,_mm512_cos_ps(phi));
+                         acphi= _mm512_mul_ps(a,xcosf(phi));
                          t0   = _mm512_mul_ps(sq2pi,acphi);
-                         invex= _mm512_div_ps(_1,_mm512_exp_ps(haa));
+                         invex= _mm512_div_ps(_1,xexpf(haa));
                          t1   = _mm512_fmadd_ps(sq2pi,acphi,_1);
                          errf = _mm512_erf_ps(acphi);
-                         t2   = _mm512_cos_ps(hphi);
+                         t2   = xcosf(hphi);
                          c2phi= _mm512_mul_ps(t2,t2);
-                         expt2= _mm512_exp_ps(_mm512_mul_ps(aa,c2phi));
+                         expt2= xexpf(_mm512_mul_ps(aa,c2phi));
                          t2   = _mm512_mul_ps(t1,_mm512_mul_ps(errf,expt2));
                          f1   = _mm512_mul_ps(inv2pi,_mm512_mul_ps(invex,t2));
                          return (f1);
@@ -97,17 +104,64 @@ namespace  gms {
                          aa   = _mm512_mul_pd(a,a);
                          hphi = _mm512_mul_pd(_0_5,phi);
                          haa  = _mm512_mul_pd(_0_5,aa);
-                         acphi= _mm512_mul_pd(a,_mm512_cos_pd(phi));
+                         acphi= _mm512_mul_pd(a,xcos(phi));
                          t0   = _mm512_mul_pd(sq2pi,acphi);
-                         invex= _mm512_div_pd(_1,_mm512_exp_pd(haa));
+                         invex= _mm512_div_pd(_1,xexp(haa));
                          t1   = _mm512_fmadd_pd(sq2pi,acphi,_1);
                          errf = _mm512_erf_pd(acphi);
-                         t2   = _mm512_cos_pd(hphi);
+                         t2   = xcos(hphi);
                          c2phi= _mm512_mul_pd(t2,t2);
-                         expt2= _mm512_exp_pd(_mm512_mul_pd(aa,c2phi));
+                         expt2= xexp(_mm512_mul_pd(aa,c2phi));
                          t2   = _mm512_mul_pd(t1,_mm512_mul_pd(errf,expt2));
                          f1   = _mm512_mul_pd(inv2pi,_mm512_mul_pd(invex,t2));
                          return (f1);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void phase_pdf_zmm16r4_unroll_10x_a(const __m512 a,
+                                             const float * __restrict __ATTR_ALIGN__(64) phi,
+                                             float * __restrict __ATTR_ALIGN__(64)       f1,
+                                             const int32_t n
+#if (PHASE_PDF_PRELOAD_SVML) == 1
+                                                            ,
+                                             const __m512 v1,
+                                             const __m512 v2,
+                                             const __m512 v3
+#endif
+                                             ) {
+
+                       if(__builtin_expect(0==n,0)) {return;}
+#if (PHASE_PDF_PRELOAD_SVML) == 1
+                          volatile __m512 r;
+                          volatile __m512 x;
+                          volatile __m512 d;
+                          _mm_prefetch((const char*)&phi[0], _MM_HINT_T0);
+                          y = _mm512_load_ps(&phi[0]);
+                          r = pdf_phase_zmm16r4(x,y);
+                          // Warmup loop of ~300 cycles (worst case scenario) of memory-fetch machine 
+                          // code instructions, needed to keep core busy while waiting on instructions
+                          // arrival, this is done to prevent the logic from progressing towards main 
+                          // loop.
+                       for(int32_t j=0; j != 14; ++j) {
+                           d = _mm512_add_ps(d,_mm512_fmadd_ps(v1,v2,v3));
+                       } 
+#endif
+                       int32_t i;
+                       // Main processing loop starts.
+                       for(i = 0; (i+95) < n; i += 96) {
+#if (GMS_INTERLEAVE_SIMD_OPS_SCHEDULE) == 1
+                           _mm_prefetch((const char*)&phi[i+48], _MM_HINT_T0);
+                           const register __m512 zmm0  = _mm512_load_ps(&phi[i+0]);
+                           const register __m512 zmm1  = 
+#else
+
+#endif                           
+
+                       }
                  }
 
          } // math
