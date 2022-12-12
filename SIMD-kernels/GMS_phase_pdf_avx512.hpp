@@ -43,9 +43,7 @@ namespace file_version {
 #include <immintrin.h>
 #include <cmath>
 #include "GMS_config.h"
-#include "GMS_sleefsimdsp.hpp"
-#include "GMS_sleefsimddp.hpp"
-#include "GMS_cephes.h"
+
 
 
 
@@ -102,14 +100,14 @@ namespace  gms {
                          aa   = _mm512_mul_pd(a,a);
                          hphi = _mm512_mul_pd(_0_5,phi);
                          haa  = _mm512_mul_pd(_0_5,aa);
-                         acphi= _mm512_mul_pd(a,xcos(phi));
+                         acphi= _mm512_mul_pd(a,xcosf(phi));
                          t0   = _mm512_mul_pd(sq2pi,acphi);
-                         invex= _mm512_div_pd(_1,xexp(haa));
+                         invex= _mm512_div_pd(_1,xexpf(haa));
                          t1   = _mm512_fmadd_pd(sq2pi,acphi,_1);
                          errf = _mm512_erf_pd(acphi);
                          t2   = xcos(hphi);
                          c2phi= _mm512_mul_pd(t2,t2);
-                         expt2= xexp(_mm512_mul_pd(aa,c2phi));
+                         expt2= xexpf(_mm512_mul_pd(aa,c2phi));
                          t2   = _mm512_mul_pd(t1,_mm512_mul_pd(errf,expt2));
                          f1   = _mm512_mul_pd(inv2pi,_mm512_mul_pd(invex,t2));
                          return (f1);
