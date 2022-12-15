@@ -1678,7 +1678,7 @@ namespace gms {
                     for(; (i+0) < n; i += 1) {
                           const float s = pzmm[i];
                           zre[i] = xre[i] + s;
-                          zim[i] = zim[i] + s;
+                          zim[i] = xim[i] + s;
                     }
                  }
 
@@ -1909,7 +1909,7 @@ namespace gms {
                     for(; (i+0) < n; i += 1) {
                           const float s = pzmm[i];
                           zre[i] = xre[i] + s;
-                          zim[i] = zim[i] + s;
+                          zim[i] = xim[i] + s;
                     }
                  }
 
@@ -2084,7 +2084,7 @@ namespace gms {
                     for(; (i+0) < n; i += 1) {
                           const float s = pzmm[i];
                           zre[i] = xre[i] + s;
-                          zim[i] = zim[i] + s;
+                          zim[i] = xim[i] + s;
                     }
 
                  }
@@ -2258,7 +2258,7 @@ namespace gms {
                     for(; (i+0) < n; i += 1) {
                           const float s = pzmm[i];
                           zre[i] = xre[i] + s;
-                          zim[i] = zim[i] + s;
+                          zim[i] = xim[i] + s;
                     }
 
                  }
@@ -2354,7 +2354,7 @@ namespace gms {
                     for(; (i+0) < n; i += 1) {
                           const float s = pzmm[i];
                           zre[i] = xre[i] + s;
-                          zim[i] = zim[i] + s;
+                          zim[i] = xim[i] + s;
                     }
 
                  }
@@ -2448,7 +2448,7 @@ namespace gms {
                     for(; (i+0) < n; i += 1) {
                           const float s = pzmm[i];
                           zre[i] = xre[i] + s;
-                          zim[i] = zim[i] + s;
+                          zim[i] = xim[i] + s;
                     }
 
                  }
