@@ -3502,10 +3502,6 @@ namespace gms {
                             zmm4  = _mm512_mul_ps(_mm512_mul_ps(zmm3,zmm2),
                                                            _mm512_mul_ps(zmm1,zmm4));
                             _mm512_storeu_ps(&yim[i+128], zmm4);
-                            _mm_prefetch((const char *)&xre[i+192],_MM_HINT_T0);
-                            _mm_prefetch((const char *)&yre[i+192],_MM_HINT_T0);
-                            _mm_prefetch((const char *)&xim[i+192],_MM_HINT_T0);
-                            _mm_prefetch((const char *)&yim[i+192],_MM_HINT_T0);
                             zmm5 = _mm512_loadu_ps(&xre[i+144]);
                             zmm6 = _mm512_loadu_ps(&yre[i+144]); // yre modified
                             zmm7 = _mm512_loadu_ps(&xim[i+144]);
@@ -3754,6 +3750,511 @@ namespace gms {
 		         yim[i] = (xim[i] * yre[i]) + (xre[i] * yim[i]);
                     }
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void cmul_zmm16r4_12x_aip(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                             const float * __restrict __ATTR_ALIGN__(64) yre,
+                                             float * __restrict __ATTR_ALIGN__(64) yre,
+                                             float * __restrict __ATTR_ALIGN__(64) yim,
+                                             const int32_t n) {
+
+                        if(__builtin_expect(0==n,0)) {return;}
+
+                         register __m512 zmm0,zmm1,zmm2,zmm3;
+                         register __m512 zmm4,zmm5,zmm6,zmm7;
+                         register __m512 zmm8,zmm9,zmm10,zmm11;
+                         register __m512 zmm12,zmm13,zmm14,zmm15;
+                         register __m512 zmm16,zmm17,zmm18,zmm19;
+                         register __m512 zmm20,zmm21,zmm22,zmm23;
+                         register __m512 zmm24,zmm25,zmm26,zmm27;
+                         register __m512 zmm28,zmm29,zmm30,zmm31;
+                         int32_t i;
+                        for(i = 0; (i+191) < n; i += 192) {
+                            _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+                            zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_store_ps(&yim[i+0], zmm3);
+                            zmm4  = _mm512_load_ps(&xre[i+16]);
+                            zmm5  = _mm512_load_ps(&yre[i+16]);  // yre modified
+                            zmm6  = _mm512_load_ps(&xim[i+16]);
+                            zmm7  = _mm512_load_ps(&yim[i+16]);  // yim modified
+                            zmm5 = _mm512_sub_ps(_mm512_mul_ps(zmm4,zmm5),
+                                                                        _mm512_mul_ps(zmm6,zmm7));
+                            _mm512_store_ps(&yre[i+16], zmm5);
+                            zmm7 = _mm512_mul_ps(_mm512_mul_ps(zmm6,zmm5),
+                                                                        _mm512_mul_ps(zmm7,zmm7));
+                            _mm512_store_ps(&yim[i+16], zmm7);
+                            zmm8 = _mm512_load_ps(&xre[i+32]);
+                            zmm9 = _mm512_load_ps(&yre[i+32]); // yre modified
+                            zmm10= _mm512_load_ps(&xim[i+32]);
+                            zmm11= _mm512_load_ps(&yim[i+32]); // yim modified
+                            zmm9 = _mm512_sub_ps(_mm512_mul_ps(zmm8,zmm9),
+                                                                        _mm512_mul_ps(zmm10,zmm11));
+                            _mm512_store_ps(&yre[i+32], zmm9);
+                            zmm11  = _mm512_mul_ps(_mm512_mul_ps(zmm10,zmm9),
+                                                                        _mm512_mul_ps(zmm8,zmm11));
+                            _mm512_store_ps(&yim[i+32], zmm11);
+                            _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
+                            zmm12 = _mm512_load_ps(&xre[i+48]);
+                            zmm13 = _mm512_load_ps(&yre[i+48]); // yre modified
+                            zmm14 = _mm512_load_ps(&xim[i+48]);
+                            zmm15 = _mm512_load_ps(&yim[i+48]); // yim modified
+                            zmm13 = _mm512_sub_ps(_mm512_mul_ps(zmm12,zmm13),
+                                                                        _mm512_mul_ps(zmm14,zmm15));
+                            _mm512_store_ps(&yre[i+48], zmm13);
+                            zmm15  = _mm512_mul_ps(_mm512_mul_ps(zmm14,zmm13),
+                                                                        _mm512_mul_ps(zmm12,zmm15));
+                            _mm512_store_ps(&yim[i+48], zmm15);
+                            zmm16 = _mm512_load_ps(&xre[i+64]);
+                            zmm17 = _mm512_load_ps(&yre[i+64]); // yre modified
+                            zmm18 = _mm512_load_ps(&xim[i+64]);
+                            zmm19 = _mm512_load_ps(&yim[i+64]); // yim modified
+                            zmm17 = _mm512_sub_ps(_mm512_mul_ps(zmm16,zmm17),
+                                                                        _mm512_mul_ps(zmm18,zmm19));
+                            _mm512_store_ps(&yre[i+64], zmm17);
+                            zmm19  = _mm512_mul_ps(_mm512_mul_ps(zmm18,zmm17),
+                                                                        _mm512_mul_ps(zmm16,zmm19));
+                            _mm512_store_ps(&yim[i+64], zmm19);
+                            zmm20 = _mm512_load_ps(&xre[i+80]);
+                            zmm21 = _mm512_load_ps(&yre[i+80]); // yre modified
+                            zmm22 = _mm512_load_ps(&xim[i+80]);
+                            zmm23 = _mm512_load_ps(&yim[i+80]); // yim modified
+                            zmm21 = _mm512_sub_ps(_mm512_mul_ps(zmm20,zmm21),
+                                                       _mm512_mul_ps(zmm22,zmm23));
+                            _mm512_store_ps(&yre[i+80], zmm21);
+                            zmm23  = _mm512_mul_ps(_mm512_mul_ps(zmm22,zmm21),
+                                                           _mm512_mul_ps(zmm20,zmm23));
+                            _mm512_store_ps(&yim[i+80], zmm23);
+                            _mm_prefetch((const char *)&xre[i+144],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+144],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+144],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+144],_MM_HINT_T0);
+                            zmm24 = _mm512_load_ps(&xre[i+96]);
+                            zmm25 = _mm512_load_ps(&yre[i+96]); // yre modified
+                            zmm26 = _mm512_load_ps(&xim[i+96]);
+                            zmm27 = _mm512_load_ps(&yim[i+96]); // yim modified
+                            zmm25 = _mm512_sub_ps(_mm512_mul_ps(zmm24,zmm25),
+                                                       _mm512_mul_ps(zmm25,zmm27));
+                            _mm512_store_ps(&yre[i+96], zmm25);
+                             zmm27  = _mm512_mul_ps(_mm512_mul_ps(zmm26,zmm25),
+                                                           _mm512_mul_ps(zmm24,zmm27));
+                            _mm512_store_ps(&yim[i+96], zmm27);
+                            zmm28 = _mm512_load_ps(&xre[i+112]);
+                            zmm29 = _mm512_load_ps(&yre[i+112]);  // yre modified
+                            zmm30 = _mm512_load_ps(&xim[i+112]);
+                            zmm31 = _mm512_load_ps(&yim[i+112]);  // yim modified
+                            zmm29 = _mm512_sub_ps(_mm512_mul_ps(zmm28,zmm29),
+                                                       _mm512_mul_ps(zmm30,zmm31));
+                            _mm512_store_ps(&yre[i+112], zmm29);
+                            zmm31  = _mm512_mul_ps(_mm512_mul_ps(zmm30,zmm29),
+                                                           _mm512_mul_ps(zmm28,zmm31));
+                            _mm512_store_ps(&yim[i+112], zmm31);
+                            zmm1 = _mm512_load_ps(&xre[i+128]);
+                            zmm2 = _mm512_load_ps(&yre[i+128]); // yre modified
+                            zmm3 = _mm512_load_ps(&xim[i+128]);
+                            zmm4 = _mm512_load_ps(&yim[i+128]); // yim modified
+                            zmm2 = _mm512_sub_ps(_mm512_mul_ps(zmm1,zmm2),
+                                                       _mm512_mul_ps(zmm3,zmm4));
+                            _mm512_store_ps(&yre[i+128], zmm2);
+                            zmm4  = _mm512_mul_ps(_mm512_mul_ps(zmm3,zmm2),
+                                                           _mm512_mul_ps(zmm1,zmm4));
+                            _mm512_storeu_ps(&yim[i+128], zmm4);
+                            _mm_prefetch((const char *)&xre[i+192],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yre[i+192],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&xim[i+192],_MM_HINT_T0);
+                            _mm_prefetch((const char *)&yim[i+192],_MM_HINT_T0);
+                            zmm5 = _mm512_load_ps(&xre[i+144]);
+                            zmm6 = _mm512_load_ps(&yre[i+144]); // yre modified
+                            zmm7 = _mm512_load_ps(&xim[i+144]);
+                            zmm8 = _mm512_load_ps(&yim[i+144]); // yim modified
+                            zmm6 = _mm512_sub_ps(_mm512_mul_ps(zmm5,zmm6),
+                                                       _mm512_mul_ps(zmm7,zmm8));
+                            _mm512_store_ps(&yre[i+144], zmm6);
+                             zmm8  = _mm512_mul_ps(_mm512_mul_ps(zmm7,zmm6),
+                                                           _mm512_mul_ps(zmm5,zmm8));
+                            _mm512_store_ps(&yim[i+144], zmm8);
+                            zmm9 = _mm512_load_ps(&xre[i+160]);
+                            zmm10= _mm512_load_ps(&yre[i+160]); // yre modified
+                            zmm11= _mm512_load_ps(&xim[i+160]);
+                            zmm12= _mm512_load_ps(&yim[i+160]); // yim modified
+                            zmm10= _mm512_sub_ps(_mm512_mul_ps(zmm9,zmm10),
+                                                       _mm512_mul_ps(zmm11,zmm12));
+                            _mm512_store_ps(&yre[i+160], zmm10);
+                            zmm12 = _mm512_mul_ps(_mm512_mul_ps(zmm11,zmm10),
+                                                           _mm512_mul_ps(zmm9,zmm12));
+                            _mm512_store_ps(&yim[i+160], zmm12);
+                            zmm13 = _mm512_load_ps(&xre[i+176]);
+                            zmm14 = _mm512_load_ps(&yre[i+176]); // yre modified
+                            zmm15 = _mm512_load_ps(&xim[i+176]);
+                            zmm16 = _mm512_load_ps(&yim[i+176]);  // yim modified
+                            zmm14 = _mm512_sub_ps(_mm512_mul_ps(zmm13,zmm14),
+                                                       _mm512_mul_ps(zmm15,zmm16));
+                            _mm512_store_ps(&yre[i+176], zmm14);
+                            zmm16 = _mm512_mul_ps(_mm512_mul_ps(zmm15,zmm14),
+                                                           _mm512_mul_ps(zmm13,zmm16));
+                            _mm512_store_ps(&yim[i+176], zmm16);
+                      }
+
+                        for(; (i+159) < n; i += 160) {
+                            zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_store_ps(&yim[i+0], zmm3);
+                            zmm4  = _mm512_load_ps(&xre[i+16]);
+                            zmm5  = _mm512_load_ps(&yre[i+16]);  // yre modified
+                            zmm6  = _mm512_load_ps(&xim[i+16]);
+                            zmm7  = _mm512_load_ps(&yim[i+16]);  // yim modified
+                            zmm5 = _mm512_sub_ps(_mm512_mul_ps(zmm4,zmm5),
+                                                                        _mm512_mul_ps(zmm6,zmm7));
+                            _mm512_store_ps(&yre[i+16], zmm5);
+                            zmm7 = _mm512_mul_ps(_mm512_mul_ps(zmm6,zmm5),
+                                                                        _mm512_mul_ps(zmm7,zmm7));
+                            _mm512_store_ps(&yim[i+16], zmm7);
+                            zmm8 = _mm512_load_ps(&xre[i+32]);
+                            zmm9 = _mm512_load_ps(&yre[i+32]); // yre modified
+                            zmm10= _mm512_load_ps(&xim[i+32]);
+                            zmm11= _mm512_load_ps(&yim[i+32]); // yim modified
+                            zmm9 = _mm512_sub_ps(_mm512_mul_ps(zmm8,zmm9),
+                                                                        _mm512_mul_ps(zmm10,zmm11));
+                            _mm512_store_ps(&yre[i+32], zmm9);
+                            zmm11  = _mm512_mul_ps(_mm512_mul_ps(zmm10,zmm9),
+                                                                        _mm512_mul_ps(zmm8,zmm11));
+                            _mm512_store_ps(&yim[i+32], zmm11);
+                            zmm12 = _mm512_load_ps(&xre[i+48]);
+                            zmm13 = _mm512_load_ps(&yre[i+48]); // yre modified
+                            zmm14 = _mm512_load_ps(&xim[i+48]);
+                            zmm15 = _mm512_load_ps(&yim[i+48]); // yim modified
+                            zmm13 = _mm512_sub_ps(_mm512_mul_ps(zmm12,zmm13),
+                                                                        _mm512_mul_ps(zmm14,zmm15));
+                            _mm512_store_ps(&yre[i+48], zmm13);
+                            zmm15  = _mm512_mul_ps(_mm512_mul_ps(zmm14,zmm13),
+                                                                        _mm512_mul_ps(zmm12,zmm15));
+                            _mm512_store_ps(&yim[i+48], zmm15);
+                            zmm16 = _mm512_load_ps(&xre[i+64]);
+                            zmm17 = _mm512_load_ps(&yre[i+64]); // yre modified
+                            zmm18 = _mm512_load_ps(&xim[i+64]);
+                            zmm19 = _mm512_load_ps(&yim[i+64]); // yim modified
+                            zmm17 = _mm512_sub_ps(_mm512_mul_ps(zmm16,zmm17),
+                                                                        _mm512_mul_ps(zmm18,zmm19));
+                            _mm512_store_ps(&yre[i+64], zmm17);
+                            zmm19  = _mm512_mul_ps(_mm512_mul_ps(zmm18,zmm17),
+                                                                        _mm512_mul_ps(zmm16,zmm19));
+                            _mm512_store_ps(&yim[i+64], zmm19);
+                            zmm20 = _mm512_load_ps(&xre[i+80]);
+                            zmm21 = _mm512_load_ps(&yre[i+80]); // yre modified
+                            zmm22 = _mm512_load_ps(&xim[i+80]);
+                            zmm23 = _mm512_load_ps(&yim[i+80]); // yim modified
+                            zmm21 = _mm512_sub_ps(_mm512_mul_ps(zmm20,zmm21),
+                                                       _mm512_mul_ps(zmm22,zmm23));
+                            _mm512_store_ps(&yre[i+80], zmm21);
+                            zmm23  = _mm512_mul_ps(_mm512_mul_ps(zmm22,zmm21),
+                                                           _mm512_mul_ps(zmm20,zmm23));
+                            _mm512_store_ps(&yim[i+80], zmm23);
+                            zmm24 = _mm512_load_ps(&xre[i+96]);
+                            zmm25 = _mm512_load_ps(&yre[i+96]); // yre modified
+                            zmm26 = _mm512_load_ps(&xim[i+96]);
+                            zmm27 = _mm512_load_ps(&yim[i+96]); // yim modified
+                            zmm25 = _mm512_sub_ps(_mm512_mul_ps(zmm24,zmm25),
+                                                       _mm512_mul_ps(zmm25,zmm27));
+                            _mm512_store_ps(&yre[i+96], zmm25);
+                             zmm27  = _mm512_mul_ps(_mm512_mul_ps(zmm26,zmm25),
+                                                           _mm512_mul_ps(zmm24,zmm27));
+                            _mm512_store_ps(&yim[i+96], zmm27);
+                            zmm28 = _mm512_loadups(&xre[i+112]);
+                            zmm29 = _mm512_load_ps(&yre[i+112]);  // yre modified
+                            zmm30 = _mm512_load_ps(&xim[i+112]);
+                            zmm31 = _mm512_load_ps(&yim[i+112]);  // yim modified
+                            zmm29 = _mm512_sub_ps(_mm512_mul_ps(zmm28,zmm29),
+                                                       _mm512_mul_ps(zmm30,zmm31));
+                            _mm512_store_ps(&yre[i+112], zmm29);
+                            zmm31  = _mm512_mul_ps(_mm512_mul_ps(zmm30,zmm29),
+                                                           _mm512_mul_ps(zmm28,zmm31));
+                            _mm512_store_ps(&yim[i+112], zmm31);
+                            zmm1 = _mm512_load_ps(&xre[i+128]);
+                            zmm2 = _mm512_load_ps(&yre[i+128]); // yre modified
+                            zmm3 = _mm512_load_ps(&xim[i+128]);
+                            zmm4 = _mm512_load_ps(&yim[i+128]); // yim modified
+                            zmm2 = _mm512_sub_ps(_mm512_mul_ps(zmm1,zmm2),
+                                                       _mm512_mul_ps(zmm3,zmm4));
+                            _mm512_store_ps(&yre[i+128], zmm2);
+                            zmm4  = _mm512_mul_ps(_mm512_mul_ps(zmm3,zmm2),
+                                                           _mm512_mul_ps(zmm1,zmm4));
+                            _mm512_store_ps(&yim[i+128], zmm4);
+                            zmm5 = _mm512_load_ps(&xre[i+144]);
+                            zmm6 = _mm512_load_ps(&yre[i+144]); // yre modified
+                            zmm7 = _mm512_load_ps(&xim[i+144]);
+                            zmm8 = _mm512_load_ps(&yim[i+144]); // yim modified
+                            zmm6 = _mm512_sub_ps(_mm512_mul_ps(zmm5,zmm6),
+                                                       _mm512_mul_ps(zmm7,zmm8));
+                            _mm512_store_ps(&yre[i+144], zmm6);
+                             zmm8  = _mm512_mul_ps(_mm512_mul_ps(zmm7,zmm6),
+                                                           _mm512_mul_ps(zmm5,zmm8));
+                            _mm512_store_ps(&yim[i+144], zmm8);
+
+                      }
+
+                        for(; (i+127) < n; i += 128) {
+                            zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_store_ps(&yim[i+0], zmm3);
+                            zmm4  = _mm512_load_ps(&xre[i+16]);
+                            zmm5  = _mm512_load_ps(&yre[i+16]);  // yre modified
+                            zmm6  = _mm512_load_ps(&xim[i+16]);
+                            zmm7  = _mm512_load_ps(&yim[i+16]);  // yim modified
+                            zmm5 = _mm512_sub_ps(_mm512_mul_ps(zmm4,zmm5),
+                                                                        _mm512_mul_ps(zmm6,zmm7));
+                            _mm512_store_ps(&yre[i+16], zmm5);
+                            zmm7 = _mm512_mul_ps(_mm512_mul_ps(zmm6,zmm5),
+                                                                        _mm512_mul_ps(zmm7,zmm7));
+                            _mm512_storeu_ps(&yim[i+16], zmm7);
+                            zmm8 = _mm512_load_ps(&xre[i+32]);
+                            zmm9 = _mm512_load_ps(&yre[i+32]); // yre modified
+                            zmm10= _mm512_load_ps(&xim[i+32]);
+                            zmm11= _mm512_load_ps(&yim[i+32]); // yim modified
+                            zmm9 = _mm512_sub_ps(_mm512_mul_ps(zmm8,zmm9),
+                                                                        _mm512_mul_ps(zmm10,zmm11));
+                            _mm512_store_ps(&yre[i+32], zmm9);
+                            zmm11  = _mm512_mul_ps(_mm512_mul_ps(zmm10,zmm9),
+                                                                        _mm512_mul_ps(zmm8,zmm11));
+                            _mm512_store_ps(&yim[i+32], zmm11);
+                            zmm12 = _mm512_load_ps(&xre[i+48]);
+                            zmm13 = _mm512_load_ps(&yre[i+48]); // yre modified
+                            zmm14 = _mm512_load_ps(&xim[i+48]);
+                            zmm15 = _mm512_load_ps(&yim[i+48]); // yim modified
+                            zmm13 = _mm512_sub_ps(_mm512_mul_ps(zmm12,zmm13),
+                                                                        _mm512_mul_ps(zmm14,zmm15));
+                            _mm512_store_ps(&yre[i+48], zmm13);
+                            zmm15  = _mm512_mul_ps(_mm512_mul_ps(zmm14,zmm13),
+                                                                        _mm512_mul_ps(zmm12,zmm15));
+                            _mm512_store_ps(&yim[i+48], zmm15);
+                            zmm16 = _mm512_load_ps(&xre[i+64]);
+                            zmm17 = _mm512_load_ps(&yre[i+64]); // yre modified
+                            zmm18 = _mm512_load_ps(&xim[i+64]);
+                            zmm19 = _mm512_load_ps(&yim[i+64]); // yim modified
+                            zmm17 = _mm512_sub_ps(_mm512_mul_ps(zmm16,zmm17),
+                                                                        _mm512_mul_ps(zmm18,zmm19));
+                            _mm512_store_ps(&yre[i+64], zmm17);
+                            zmm19  = _mm512_mul_ps(_mm512_mul_ps(zmm18,zmm17),
+                                                                        _mm512_mul_ps(zmm16,zmm19));
+                            _mm512_store_ps(&yim[i+64], zmm19);
+                            zmm20 = _mm512_load_ps(&xre[i+80]);
+                            zmm21 = _mm512_load_ps(&yre[i+80]); // yre modified
+                            zmm22 = _mm512_load_ps(&xim[i+80]);
+                            zmm23 = _mm512_load_ps(&yim[i+80]); // yim modified
+                            zmm21 = _mm512_sub_ps(_mm512_mul_ps(zmm20,zmm21),
+                                                       _mm512_mul_ps(zmm22,zmm23));
+                            _mm512_store_ps(&yre[i+80], zmm21);
+                            zmm23  = _mm512_mul_ps(_mm512_mul_ps(zmm22,zmm21),
+                                                           _mm512_mul_ps(zmm20,zmm23));
+                            _mm512_store_ps(&yim[i+80], zmm23);
+                            zmm24 = _mm512_load_ps(&xre[i+96]);
+                            zmm25 = _mm512_load_ps(&yre[i+96]); // yre modified
+                            zmm26 = _mm512_load_ps(&xim[i+96]);
+                            zmm27 = _mm512_load_ps(&yim[i+96]); // yim modified
+                            zmm25 = _mm512_sub_ps(_mm512_mul_ps(zmm24,zmm25),
+                                                       _mm512_mul_ps(zmm25,zmm27));
+                            _mm512_store_ps(&yre[i+96], zmm25);
+                             zmm27  = _mm512_mul_ps(_mm512_mul_ps(zmm26,zmm25),
+                                                           _mm512_mul_ps(zmm24,zmm27));
+                            _mm512_store_ps(&yim[i+96], zmm27);
+                            zmm28 = _mm512_load_ps(&xre[i+112]);
+                            zmm29 = _mm512_load_ps(&yre[i+112]);  // yre modified
+                            zmm30 = _mm512_load_ps(&xim[i+112]);
+                            zmm31 = _mm512_load_ps(&yim[i+112]);  // yim modified
+                            zmm29 = _mm512_sub_ps(_mm512_mul_ps(zmm28,zmm29),
+                                                       _mm512_mul_ps(zmm30,zmm31));
+                            _mm512_store_ps(&yre[i+112], zmm29);
+                            zmm31  = _mm512_mul_ps(_mm512_mul_ps(zmm30,zmm29),
+                                                           _mm512_mul_ps(zmm28,zmm31));
+                            _mm512_store_ps(&yim[i+112], zmm31);
+
+                      }
+
+                        for(; (i+95) < n; i += 96) {
+                             zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_store_ps(&yim[i+0], zmm3);
+                            zmm4  = _mm512_load_ps(&xre[i+16]);
+                            zmm5  = _mm512_load_ps(&yre[i+16]);  // yre modified
+                            zmm6  = _mm512_load_ps(&xim[i+16]);
+                            zmm7  = _mm512_load_ps(&yim[i+16]);  // yim modified
+                            zmm5 = _mm512_sub_ps(_mm512_mul_ps(zmm4,zmm5),
+                                                                        _mm512_mul_ps(zmm6,zmm7));
+                            _mm512_store_ps(&yre[i+16], zmm5);
+                            zmm7 = _mm512_mul_ps(_mm512_mul_ps(zmm6,zmm5),
+                                                                        _mm512_mul_ps(zmm7,zmm7));
+                            _mm512_store_ps(&yim[i+16], zmm7);
+                            zmm8 = _mm512_load_ps(&xre[i+32]);
+                            zmm9 = _mm512_load_ps(&yre[i+32]); // yre modified
+                            zmm10= _mm512_load_ps(&xim[i+32]);
+                            zmm11= _mm512_load_ps(&yim[i+32]); // yim modified
+                            zmm9 = _mm512_sub_ps(_mm512_mul_ps(zmm8,zmm9),
+                                                                        _mm512_mul_ps(zmm10,zmm11));
+                            _mm512_store_ps(&yre[i+32], zmm9);
+                            zmm11  = _mm512_mul_ps(_mm512_mul_ps(zmm10,zmm9),
+                                                                        _mm512_mul_ps(zmm8,zmm11));
+                            _mm512_store_ps(&yim[i+32], zmm11);
+                            zmm12 = _mm512_load_ps(&xre[i+48]);
+                            zmm13 = _mm512_load_ps(&yre[i+48]); // yre modified
+                            zmm14 = _mm512_load_ps(&xim[i+48]);
+                            zmm15 = _mm512_load_ps(&yim[i+48]); // yim modified
+                            zmm13 = _mm512_sub_ps(_mm512_mul_ps(zmm12,zmm13),
+                                                                        _mm512_mul_ps(zmm14,zmm15));
+                            _mm512_store_ps(&yre[i+48], zmm13);
+                            zmm15  = _mm512_mul_ps(_mm512_mul_ps(zmm14,zmm13),
+                                                                        _mm512_mul_ps(zmm12,zmm15));
+                            _mm512_store_ps(&yim[i+48], zmm15);
+                            zmm16 = _mm512_load_ps(&xre[i+64]);
+                            zmm17 = _mm512_load_ps(&yre[i+64]); // yre modified
+                            zmm18 = _mm512_load_ps(&xim[i+64]);
+                            zmm19 = _mm512_load_ps(&yim[i+64]); // yim modified
+                            zmm17 = _mm512_sub_ps(_mm512_mul_ps(zmm16,zmm17),
+                                                                        _mm512_mul_ps(zmm18,zmm19));
+                            _mm512_store_ps(&yre[i+64], zmm17);
+                            zmm19  = _mm512_mul_ps(_mm512_mul_ps(zmm18,zmm17),
+                                                                        _mm512_mul_ps(zmm16,zmm19));
+                            _mm512_store_ps(&yim[i+64], zmm19);
+                            zmm20 = _mm512_load_ps(&xre[i+80]);
+                            zmm21 = _mm512_load_ps(&yre[i+80]); // yre modified
+                            zmm22 = _mm512_load_ps(&xim[i+80]);
+                            zmm23 = _mm512_load_ps(&yim[i+80]); // yim modified
+                            zmm21 = _mm512_sub_ps(_mm512_mul_ps(zmm20,zmm21),
+                                                       _mm512_mul_ps(zmm22,zmm23));
+                            _mm512_store_ps(&yre[i+80], zmm21);
+                            zmm23  = _mm512_mul_ps(_mm512_mul_ps(zmm22,zmm21),
+                                                           _mm512_mul_ps(zmm20,zmm23));
+                            _mm512_store_ps(&yim[i+80], zmm23);
+
+                      }
+
+                        for(; (i+63) < n; i += 64) {
+                              zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_store_ps(&yim[i+0], zmm3);
+                            zmm4  = _mm512_load_ps(&xre[i+16]);
+                            zmm5  = _mm512_load_ps(&yre[i+16]);  // yre modified
+                            zmm6  = _mm512_load_ps(&xim[i+16]);
+                            zmm7  = _mm512_load_ps(&yim[i+16]);  // yim modified
+                            zmm5 = _mm512_sub_ps(_mm512_mul_ps(zmm4,zmm5),
+                                                                        _mm512_mul_ps(zmm6,zmm7));
+                            _mm512_store_ps(&yre[i+16], zmm5);
+                            zmm7 = _mm512_mul_ps(_mm512_mul_ps(zmm6,zmm5),
+                                                                        _mm512_mul_ps(zmm7,zmm7));
+                            _mm512_store_ps(&yim[i+16], zmm7);
+                            zmm8 = _mm512_load_ps(&xre[i+32]);
+                            zmm9 = _mm512_load_ps(&yre[i+32]); // yre modified
+                            zmm10= _mm512_load_ps(&xim[i+32]);
+                            zmm11= _mm512_load_ps(&yim[i+32]); // yim modified
+                            zmm9 = _mm512_sub_ps(_mm512_mul_ps(zmm8,zmm9),
+                                                                        _mm512_mul_ps(zmm10,zmm11));
+                            _mm512_store_ps(&yre[i+32], zmm9);
+                            zmm11  = _mm512_mul_ps(_mm512_mul_ps(zmm10,zmm9),
+                                                                        _mm512_mul_ps(zmm8,zmm11));
+                            _mm512_store_ps(&yim[i+32], zmm11);
+                            zmm12 = _mm512_load_ps(&xre[i+48]);
+                            zmm13 = _mm512_load_ps(&yre[i+48]); // yre modified
+                            zmm14 = _mm512_load_ps(&xim[i+48]);
+                            zmm15 = _mm512_load_ps(&yim[i+48]); // yim modified
+                            zmm13 = _mm512_sub_ps(_mm512_mul_ps(zmm12,zmm13),
+                                                                        _mm512_mul_ps(zmm14,zmm15));
+                            _mm512_store_ps(&yre[i+48], zmm13);
+                            zmm15  = _mm512_mul_ps(_mm512_mul_ps(zmm14,zmm13),
+                                                                        _mm512_mul_ps(zmm12,zmm15));
+                            _mm512_store_ps(&yim[i+48], zmm15);
+
+                      }
+
+                        for(; (i+31) < n; i += 32) {
+                            zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_storeu_ps(&yim[i+0], zmm3);
+                            zmm4  = _mm512_load_ps(&xre[i+16]);
+                            zmm5  = _mm512_load_ps(&yre[i+16]);  // yre modified
+                            zmm6  = _mm512_load_ps(&xim[i+16]);
+                            zmm7  = _mm512_load_ps(&yim[i+16]);  // yim modified
+                            zmm5 = _mm512_sub_ps(_mm512_mul_ps(zmm4,zmm5),
+                                                                        _mm512_mul_ps(zmm6,zmm7));
+                            _mm512_store_ps(&yre[i+16], zmm5);
+                            zmm7 = _mm512_mul_ps(_mm512_mul_ps(zmm6,zmm5),
+                                                                        _mm512_mul_ps(zmm7,zmm7));
+                            _mm512_store_ps(&yim[i+16], zmm7);
+
+                      }
+
+                        for(; (i+15) < n; i += 16) {
+                            zmm0  = _mm512_load_ps(&xre[i+0]);
+                            zmm1  = _mm512_load_ps(&yre[i+0]); // yre modified
+                            zmm2  = _mm512_load_ps(&xim[i+0]);
+                            zmm3  = _mm512_load_ps(&yim[i+0]); // yim modified
+                            zmm1  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                                        _mm512_mul_ps(zmm2,zmm3));
+                            _mm512_store_ps(&yre[i+0], zmm1);
+                             zmm3  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                                        _mm512_mul_ps(zmm0,zmm3));
+                            _mm512_store_ps(&yim[i+0], zmm3);
+
+                      }
+
+                      for(; (i+0) < n; i += 1) {
+                         yre[i] = (xre[i] * yre[i]) - (xim[i] * yim[i]);
+		         yim[i] = (xim[i] * yre[i]) + (xre[i] * yim[i]);
+                    }
+                }
+
+
+
+                
 
 
 
