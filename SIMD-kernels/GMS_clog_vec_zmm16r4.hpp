@@ -1115,6 +1115,295 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void clogv_zmm16r4_unroll_6x_u(const float * __restrict re,
+                                                   const float * __restrict im,
+                                                   float * __restrict wrk1,
+                                                   float * __restrict wrk2,
+                                                   float * __restrict clogr,
+                                                   float * __restrict clogi,
+                                                   const int32_t n) {
+
+                        if(__builtin_expect(0==n,0)) { return;}
+                          register vfloat zmm0,zmm1,zmm2,zmm3;
+                          register vfloat zmm4,zmm5,zmm6,zmm7;
+                          register vfloat zmm8,zmm9,zmm10,zmm11;
+                          register vfloat zmm12,zmm13,zmm14,zmm15;
+                          register vfloat zmm16,zmm17;
+                          int32_t i;
+                          cargv_zmm16r4_unroll_6x_u(re,im,wrk1,n);
+                          cabsv_zmm16r4_unroll_6x_u(re,im,wrk2,n);
+                          // wrk1 -- cabs
+                          // wrk2 -- carg
+                        for(; (i+95) < n; i += 96) {
+                            _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
+                            _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
+                            zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_loadu_ps(&wrk2[i+0]);
+                            _mm512_storeu_ps(&clogr[i+0],zmm1);
+                            _mm512_storeu_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_loadu_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_loadu_ps(&wrk2[i+16]);
+                            _mm512_storeu_ps(&clogr[i+16],zmm4);
+                            _mm512_storeu_ps(&clogi[i+16],zmm5);
+                            _mm_prefetch((const char*)&wrk1[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char*)&wrk2[i+64],_MM_HINT_T0);
+                            zmm6 = _mm512_loadu_ps(&wrk1[i+32]);
+                            zmm7 = xlogf(zmm6);
+                            zmm8 = _mm512_loadu_ps(&wrk2[i+32]);
+                            _mm512_storeu_ps(&clogr[i+32],zmm7);
+                            _mm512_storeu_ps(&clogi[i+32],zmm8);
+                            zmm9 = _mm512_loadu_ps(&wrk1[i+48]);
+                            zmm10= xlogf(zmm9);
+                            zmm11= _mm512_loadu_ps(&wrk2[i+48]);
+                            _mm512_storeu_ps(&clogr[i+48],zmm10);
+                            _mm512_storeu_ps(&clogi[i+48],zmm11);
+                            _mm_prefetch((const char*)&wrk1[i+96],_MM_HINT_T0);
+                            _mm_prefetch((const char*)&wrk2[i+96],_MM_HINT_T0);
+                            zmm12 = _mm512_loadu_ps(&wrk1[i+64]);
+                            zmm13 = xlogf(zmm12);
+                            zmm14 = _mm512_loadu_ps(&wrk2[i+64]);
+                            _mm512_storeu_ps(&clogr[i+64],zmm13);
+                            _mm512_storeu_ps(&clogi[i+64],zmm14);
+                            zmm15 = _mm512_loadu_ps(&wrk1[i+80]);
+                            zmm16 = xlogf(zmm15);
+                            zmm17 = _mm512_loadu_ps(&wrk2[i+80]);
+                            _mm512_storeu_ps(&clogr[i+80],zmm16);
+                            _mm512_storeu_ps(&clogi[i+80],zmm17);
+                                                     
+                       }
+
+                       for(; (i+79) < n; i += 80) {
+                             zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_loadu_ps(&wrk2[i+0]);
+                            _mm512_storeu_ps(&clogr[i+0],zmm1);
+                            _mm512_storeu_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_loadu_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_loadu_ps(&wrk2[i+16]);
+                            _mm512_storeu_ps(&clogr[i+16],zmm4);
+                            _mm512_storeu_ps(&clogi[i+16],zmm5);
+                            zmm6 = _mm512_loadu_ps(&wrk1[i+32]);
+                            zmm7 = xlogf(zmm6);
+                            zmm8 = _mm512_loadu_ps(&wrk2[i+32]);
+                            _mm512_storeu_ps(&clogr[i+32],zmm7);
+                            _mm512_storeu_ps(&clogi[i+32],zmm8);
+                            zmm9 = _mm512_loadu_ps(&wrk1[i+48]);
+                            zmm10= xlogf(zmm9);
+                            zmm11= _mm512_loadu_ps(&wrk2[i+48]);
+                            _mm512_storeu_ps(&clogr[i+48],zmm10);
+                            _mm512_storeu_ps(&clogi[i+48],zmm11);
+                            zmm12 = _mm512_loadu_ps(&wrk1[i+64]);
+                            zmm13 = xlogf(zmm12);
+                            zmm14 = _mm512_loadu_ps(&wrk2[i+64]);
+                            _mm512_storeu_ps(&clogr[i+64],zmm13);
+                       }
+
+                        for(; (i+63) < n; i += 64) {
+                            zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_loadu_ps(&wrk2[i+0]);
+                            _mm512_storeu_ps(&clogr[i+0],zmm1);
+                            _mm512_storeu_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_loadu_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_loadu_ps(&wrk2[i+16]);
+                            _mm512_storeu_ps(&clogr[i+16],zmm4);
+                            _mm512_storeu_ps(&clogi[i+16],zmm5);
+                            zmm6 = _mm512_loadu_ps(&wrk1[i+32]);
+                            zmm7 = xlogf(zmm6);
+                            zmm8 = _mm512_loadu_ps(&wrk2[i+32]);
+                            _mm512_storeu_ps(&clogr[i+32],zmm7);
+                            _mm512_storeu_ps(&clogi[i+32],zmm8);
+                            zmm9 = _mm512_loadu_ps(&wrk1[i+48]);
+                            zmm10= xlogf(zmm9);
+                            zmm11= _mm512_loadu_ps(&wrk2[i+48]);
+                            _mm512_storeu_ps(&clogr[i+48],zmm10);
+                            _mm512_storeu_ps(&clogi[i+48],zmm11);
+                       }
+
+                        for(; (i+31) < n; i += 32) {
+                            zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_loadu_ps(&wrk2[i+0]);
+                            _mm512_storeu_ps(&clogr[i+0],zmm1);
+                            _mm512_storeu_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_loadu_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_loadu_ps(&wrk2[i+16]);
+                            _mm512_storeu_ps(&clogr[i+16],zmm4);
+                            _mm512_storeu_ps(&clogi[i+16],zmm5);
+                       }
+
+                         for(; (i+15) < n; i += 16) {
+                            zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_loadu_ps(&wrk2[i+0]);
+                            _mm512_storeu_ps(&clogr[i+0],zmm1);
+                            _mm512_storeu_ps(&clogi[i+0],zmm2);
+                       }
+
+                         for(; (i+0) < n; i += 1) {
+                            const float re   = wrk1[i];
+                            const float x    = ceph_logf(re);
+                            const float im   = wrk2[i];
+                            clogr[i]         = x;
+                            clogi[i]         = im; 
+                       }
+ 
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void clogv_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                                   const float * __restrict __ATTR_ALIGN__(64) im,
+                                                   float * __restrict __ATTR_ALIGN__(64) wrk1,
+                                                   float * __restrict __ATTR_ALIGN__(64) wrk2,
+                                                   float * __restrict __ATTR_ALIGN__(64) clogr,
+                                                   float * __restrict __ATTR_ALIGN__(64) clogi,
+                                                   const int32_t n) {
+
+                        if(__builtin_expect(0==n,0)) { return;}
+                          register vfloat zmm0,zmm1,zmm2,zmm3;
+                          register vfloat zmm4,zmm5,zmm6,zmm7;
+                          register vfloat zmm8,zmm9,zmm10,zmm11;
+                          register vfloat zmm12,zmm13,zmm14,zmm15;
+                          register vfloat zmm16,zmm17;
+                          int32_t i;
+                          cargv_zmm16r4_unroll_6x_a(re,im,wrk1,n);
+                          cabsv_zmm16r4_unroll_6x_a(re,im,wrk2,n);
+                          // wrk1 -- cabs
+                          // wrk2 -- carg
+                        for(; (i+95) < n; i += 96) {
+                            _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
+                            _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
+                            zmm0 = _mm512_load_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_load_ps(&wrk2[i+0]);
+                            _mm512_store_ps(&clogr[i+0],zmm1);
+                            _mm512_store_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_load_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_loadu_ps(&wrk2[i+16]);
+                            _mm512_store_ps(&clogr[i+16],zmm4);
+                            _mm512_store_ps(&clogi[i+16],zmm5);
+                            _mm_prefetch((const char*)&wrk1[i+64],_MM_HINT_T0);
+                            _mm_prefetch((const char*)&wrk2[i+64],_MM_HINT_T0);
+                            zmm6 = _mm512_load_ps(&wrk1[i+32]);
+                            zmm7 = xlogf(zmm6);
+                            zmm8 = _mm512_load_ps(&wrk2[i+32]);
+                            _mm512_store_ps(&clogr[i+32],zmm7);
+                            _mm512_store_ps(&clogi[i+32],zmm8);
+                            zmm9 = _mm512_load_ps(&wrk1[i+48]);
+                            zmm10= xlogf(zmm9);
+                            zmm11= _mm512_load_ps(&wrk2[i+48]);
+                            _mm512_store_ps(&clogr[i+48],zmm10);
+                            _mm512_store_ps(&clogi[i+48],zmm11);
+                            _mm_prefetch((const char*)&wrk1[i+96],_MM_HINT_T0);
+                            _mm_prefetch((const char*)&wrk2[i+96],_MM_HINT_T0);
+                            zmm12 = _mm512_load_ps(&wrk1[i+64]);
+                            zmm13 = xlogf(zmm12);
+                            zmm14 = _mm512_load_ps(&wrk2[i+64]);
+                            _mm512_store_ps(&clogr[i+64],zmm13);
+                            _mm512_store_ps(&clogi[i+64],zmm14);
+                            zmm15 = _mm512_load_ps(&wrk1[i+80]);
+                            zmm16 = xlogf(zmm15);
+                            zmm17 = _mm512_load_ps(&wrk2[i+80]);
+                            _mm512_store_ps(&clogr[i+80],zmm16);
+                            _mm512_store_ps(&clogi[i+80],zmm17);
+                                                      
+                       }
+
+                        for(; (i+79) < n; i += 80) {
+                             zmm0 = _mm512_load_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_load_ps(&wrk2[i+0]);
+                            _mm512_store_ps(&clogr[i+0],zmm1);
+                            _mm512_store_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_load_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_load_ps(&wrk2[i+16]);
+                            _mm512_store_ps(&clogr[i+16],zmm4);
+                            _mm512_store_ps(&clogi[i+16],zmm5);
+                            zmm6 = _mm512_load_ps(&wrk1[i+32]);
+                            zmm7 = xlogf(zmm6);
+                            zmm8 = _mm512_load_ps(&wrk2[i+32]);
+                            _mm512_store_ps(&clogr[i+32],zmm7);
+                            _mm512_store_ps(&clogi[i+32],zmm8);
+                            zmm9 = _mm512_load_ps(&wrk1[i+48]);
+                            zmm10= xlogf(zmm9);
+                            zmm11= _mm512_load_ps(&wrk2[i+48]);
+                            _mm512_store_ps(&clogr[i+48],zmm10);
+                            _mm512_store_ps(&clogi[i+48],zmm11);
+                            zmm12 = _mm512_load_ps(&wrk1[i+64]);
+                            zmm13 = xlogf(zmm12);
+                            zmm14 = _mm512_load_ps(&wrk2[i+64]);
+                            _mm512_store_ps(&clogr[i+64],zmm13);
+                       }
+
+                        for(; (i+63) < n; i += 64) {
+                            zmm0 = _mm512_load_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_load_ps(&wrk2[i+0]);
+                            _mm512_store_ps(&clogr[i+0],zmm1);
+                            _mm512_store_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_load_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_load_ps(&wrk2[i+16]);
+                            _mm512_store_ps(&clogr[i+16],zmm4);
+                            _mm512_store_ps(&clogi[i+16],zmm5);
+                            zmm6 = _mm512_load_ps(&wrk1[i+32]);
+                            zmm7 = xlogf(zmm6);
+                            zmm8 = _mm512_load_ps(&wrk2[i+32]);
+                            _mm512_store_ps(&clogr[i+32],zmm7);
+                            _mm512_store_ps(&clogi[i+32],zmm8);
+                            zmm9 = _mm512_load_ps(&wrk1[i+48]);
+                            zmm10= xlogf(zmm9);
+                            zmm11= _mm512_load_ps(&wrk2[i+48]);
+                            _mm512_store_ps(&clogr[i+48],zmm10);
+                            _mm512_store_ps(&clogi[i+48],zmm11);
+                       }
+
+                        for(; (i+31) < n; i += 32) {
+                            zmm0 = _mm512_load_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_load_ps(&wrk2[i+0]);
+                            _mm512_store_ps(&clogr[i+0],zmm1);
+                            _mm512_store_ps(&clogi[i+0],zmm2);
+                            zmm3 = _mm512_load_ps(&wrk1[i+16]);
+                            zmm4 = xlogf(zmm3);
+                            zmm5 = _mm512_load_ps(&wrk2[i+16]);
+                            _mm512_store_ps(&clogr[i+16],zmm4);
+                            _mm512_store_ps(&clogi[i+16],zmm5);
+                       }
+
+                         for(; (i+15) < n; i += 16) {
+                            zmm0 = _mm512_load_ps(&wrk1[i+0]);
+                            zmm1 = xlogf(zmm0);
+                            zmm2 = _mm512_load_ps(&wrk2[i+0]);
+                            _mm512_store_ps(&clogr[i+0],zmm1);
+                            _mm512_store_ps(&clogi[i+0],zmm2);
+                       }
+
+                         for(; (i+0) < n; i += 1) {
+                            const float re   = wrk1[i];
+                            const float x    = ceph_logf(re);
+                            const float im   = wrk2[i];
+                            clogr[i]         = x;
+                            clogi[i]         = im; 
+                       }
+ 
+                 }
+
 
 
        } // math
