@@ -687,6 +687,168 @@ namespace  gms {
                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void cargv_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                                   const float * __restrict __ATTR_ALIGN__(64) im,
+                                                   float * __restrict __ATTR_ALIGN__(64) carg,
+                                                   const int32_t n) {
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                          register vfloat zmm0,zmm1,zmm2,zmm3;
+                          register vfloat zmm4,zmm5,zmm6,zmm7;
+                          register vfloat zmm8,zmm9,zmm10,zmm11;
+                          int32_t i;
+
+                          for(i = 0; (i+95) < n; i += 96) {
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_load_ps(&im[i+0]);
+                              _mm512_store_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                              zmm2  = _mm512_load_ps(&re[i+16]);
+                              zmm3  = _mm512_load_ps(&im[i+16]);
+                              _mm512_store_ps(&carg[i+16], xatan2f(zmm2,zmm3));
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm4  = _mm512_load_ps(&re[i+32]);
+                              zmm5  = _mm512_load_ps(&im[i+32]);
+                              _mm512_store_ps(&carg[i+32], xatan2f(zmm4,zmm5));
+                              zmm6  = _mm512_load_ps(&re[i+48]);
+                              zmm7  = _mm512_load_ps(&im[i+48]);
+                              _mm512_store_ps(&carg[i+48], xatan2f(zmm6,zmm7));
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              zmm8  = _mm512_load_ps(&re[i+64]);
+                              zmm9  = _mm512_load_ps(&im[i+64]);
+                              _mm512_store_ps(&carg[i+64], xatan2f(zmm8,zmm9));
+                              zmm10 = _mm512_load_ps(&re[i+80]);
+                              zmm11 = _mm512_load_ps(&im[i+80]);
+                              _mm512_store_ps(&carg[i+80], xatan2f(zmm10,zmm11));
+                              
+                         }
+
+                      for(; (i+63) < n; i += 64) {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_load_ps(&im[i+0]);
+                              _mm512_store_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                              zmm2  = _mm512_load_ps(&re[i+16]);
+                              zmm3  = _mm512_load_ps(&im[i+16]);
+                              _mm512_store_ps(&carg[i+16], xatan2f(zmm2,zmm3));
+                              zmm4  = _mm512_load_ps(&re[i+32]);
+                              zmm5  = _mm512_load_ps(&im[i+32]);
+                              _mm512_store_ps(&carg[i+32], xatan2f(zmm4,zmm5));
+                              zmm6  = _mm512_load_ps(&re[i+48]);
+                              zmm7  = _mm512_load_ps(&im[i+48]);
+                              _mm512_store_ps(&carg[i+48], xatan2f(zmm6,zmm7));   
+                       }
+
+                       for(; (i+31) < n; i += 32) {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_load_ps(&im[i+0]);
+                              _mm512_store_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                              zmm2  = _mm512_load_ps(&re[i+16]);
+                              zmm3  = _mm512_load_ps(&im[i+16]);
+                              _mm512_store_ps(&carg[i+16], xatan2f(zmm2,zmm3));
+                      }
+
+                       for(; (i+15) < n; i += 16) {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_load_ps(&im[i+0]);
+                              _mm512_store_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                      }
+
+                       for(; (i+0) < n; i += 1) {
+                              const float xre = re[i];
+                              const float xim = im[i];
+                              carg[i]         = ceph_atan2f(xre,xim);
+                      }
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void cargv_zmm16r4_unroll_6x_u(const float * __restrict  re,
+                                                   const float * __restrict  im,
+                                                   float * __restrict  carg,
+                                                   const int32_t n) {
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                          register vfloat zmm0,zmm1,zmm2,zmm3;
+                          register vfloat zmm4,zmm5,zmm6,zmm7;
+                          register vfloat zmm8,zmm9,zmm10,zmm11;
+                          int32_t i;
+
+                          for(i = 0; (i+95) < n; i += 96) {
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_loadu_ps(&im[i+0]);
+                              _mm512_storeu_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                              zmm2  = _mm512_loadu_ps(&re[i+16]);
+                              zmm3  = _mm512_loadu_ps(&im[i+16]);
+                              _mm512_storeu_ps(&carg[i+16], xatan2f(zmm2,zmm3));
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm4  = _mm512_loadu_ps(&re[i+32]);
+                              zmm5  = _mm512_loadu_ps(&im[i+32]);
+                              _mm512_storeu_ps(&carg[i+32], xatan2f(zmm4,zmm5));
+                              zmm6  = _mm512_loadu_ps(&re[i+48]);
+                              zmm7  = _mm512_loadu_ps(&im[i+48]);
+                              _mm512_storeu_ps(&carg[i+48], xatan2f(zmm6,zmm7));
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              zmm8  = _mm512_loadu_ps(&re[i+64]);
+                              zmm9  = _mm512_loadu_ps(&im[i+64]);
+                              _mm512_storeu_ps(&carg[i+64], xatan2f(zmm8,zmm9));
+                              zmm10 = _mm512_loadu_ps(&re[i+80]);
+                              zmm11 = _mm512_loadu_ps(&im[i+80]);
+                              _mm512_storeu_ps(&carg[i+80], xatan2f(zmm10,zmm11));
+                                                           
+                        }
+
+                       
+
+                      for(; (i+63) < n; i += 64) {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_loadu_ps(&im[i+0]);
+                              _mm512_storeu_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                              zmm2  = _mm512_loadu_ps(&re[i+16]);
+                              zmm3  = _mm512_loadu_ps(&im[i+16]);
+                              _mm512_storeu_ps(&carg[i+16], xatan2f(zmm2,zmm3));
+                              zmm4  = _mm512_loadu_ps(&re[i+32]);
+                              zmm5  = _mm512_loadu_ps(&im[i+32]);
+                              _mm512_storeu_ps(&carg[i+32], xatan2f(zmm4,zmm5));
+                              zmm6  = _mm512_loadu_ps(&re[i+48]);
+                              zmm7  = _mm512_loadu_ps(&im[i+48]);
+                              _mm512_storeu_ps(&carg[i+48], xatan2f(zmm6,zmm7));   
+                       }
+
+                       for(; (i+31) < n; i += 32) {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_loadu_ps(&im[i+0]);
+                              _mm512_storeu_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                              zmm2  = _mm512_loadu_ps(&re[i+16]);
+                              zmm3  = _mm512_loadu_ps(&im[i+16]);
+                              _mm512_storeu_ps(&carg[i+16], xatan2f(zmm2,zmm3));
+                      }
+
+                       for(; (i+15) < n; i += 16) {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_loadu_ps(&im[i+0]);
+                              _mm512_storeu_ps(&carg[i+0], xatan2f(zmm0,zmm1));
+                      }
+
+                       for(; (i+0) < n; i += 1) {
+                              const float xre = re[i];
+                              const float xim = im[i];
+                              carg[i]         = ceph_atan2f(xre,xim);
+                      }
+               }
 
 
 
