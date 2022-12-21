@@ -1594,7 +1594,188 @@ namespace  gms {
 
 
 
-                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void cexpv_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                                   const float * __restrict __ATTR_ALIGN__(64) xim,
+                                                   float * __restrict __ATTR_ALIGN__(64) cexpr,
+                                                   float * __restrict __ATTR_ALIGN__(64) cexpi,
+                                                   const int32_t n) {
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                          register vfloat zmm0,zmm1,zmm2,zmm3;
+                          register vfloat zmm4,zmm5,zmm6,zmm7;
+                          register vfloat zmm8,zmm9,zmm10,zmm11;
+                          register vfloat zmm12,zmm13,zmm14,zmm15;
+                          register vfloat zmm16,zmm17,zmm18,zmm19;
+                          register vfloat zmm20,zmm21,zmm22,zmm23;
+                          register vfloat zmm24,zmm25,zmm26,zmm27;
+                          register vfloat zmm28,zmm29;
+                          int32_t i;
+
+                         for(i = 0; (i+95) < n; i += 96) {
+                             _mm_prefetch((const char*)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&xim[i+32],_MM_HINT_T0);
+                             zmm0  = _mm512_load_ps(&xre[i+0]);
+                             zmm1  = _mm512_load_ps(&xim[i+0]);
+                             zmm2  = xexpf(zmm0);
+                             zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                             _mm512_store_ps(&cexpr[i+0],zmm3);
+                             zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                             _mm512_store_ps(&cexpi[i+0],zmm4);
+                             zmm5  = _mm512_load_ps(&xre[i+16]);
+                             zmm6  = _mm512_load_ps(&xim[i+16]);
+                             zmm7  = xexpf(zmm5);
+                             zmm8  = _mm512_mul_ps(zmm7,xcosf(zmm6));
+                             _mm512_store_ps(&cexpr[i+16],zmm8);
+                             zmm9  = _mm512_mul_ps(zmm7,xsinf(zmm6));
+                             _mm512_store_ps(&cexpi[i+16],zmm9);
+                             _mm_prefetch((const char*)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&xim[i+64],_MM_HINT_T0);
+                             zmm10  = _mm512_load_ps(&xre[i+32]);
+                             zmm11  = _mm512_load_ps(&xim[i+32]);
+                             zmm12  = xexpf(zmm10);
+                             zmm13  = _mm512_mul_ps(zmm12,xcosf(zmm11));
+                             _mm512_store_ps(&cexpr[i+32],zmm13);
+                             zmm14  = _mm512_mul_ps(zmm12,xsinf(zmm11));
+                             _mm512_store_ps(&cexpi[i+32],zmm14);
+                             zmm15  = _mm512_load_ps(&xre[i+48]);
+                             zmm16  = _mm512_load_ps(&xim[i+48]);
+                             zmm17  = xexpf(zmm15);
+                             zmm18  = _mm512_mul_ps(zmm17,xcosf(zmm16));
+                             _mm512_store_ps(&cexpr[i+48],zmm18);
+                             zmm19  = _mm512_mul_ps(zmm17,xsinf(zmm16));
+                             _mm512_store_ps(&cexpi[i+48],zmm19);
+                             _mm_prefetch((const char*)&xre[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&xim[i+96],_MM_HINT_T0);
+                             zmm20  = _mm512_load_ps(&xre[i+64]);
+                             zmm21  = _mm512_load_ps(&xim[i+64]);
+                             zmm22  = xexpf(zmm20);
+                             zmm23  = _mm512_mul_ps(zmm22,xcosf(zmm21));
+                             _mm512_store_ps(&cexpr[i+64],zmm23);
+                             zmm24  = _mm512_mul_ps(zmm22,xsinf(zmm21));
+                             _mm512_store_ps(&cexpi[i+64],zmm24);
+                             zmm25  = _mm512_load_ps(&xre[i+80]);
+                             zmm26  = _mm512_load_ps(&xim[i+80]);
+                             zmm27  = xexpf(zmm25);
+                             zmm28  = _mm512_mul_ps(zmm27,xcosf(zmm26));
+                             _mm512_store_ps(&cexpr[i+80],zmm28);
+                             zmm29  = _mm512_mul_ps(zmm27,xsinf(zmm26));
+                             _mm512_store_ps(&cexpi[i+80],zmm29);
+                             
+                         }
+
+                       
+                        
+                         for(; (i+79) < n; i += 80) {
+                             zmm0  = _mm512_load_ps(&xre[i+0]);
+                             zmm1  = _mm512_load_ps(&xim[i+0]);
+                             zmm2  = xexpf(zmm0);
+                             zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                             _mm512_store_ps(&cexpr[i+0],zmm3);
+                             zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                             _mm512_store_ps(&cexpi[i+0],zmm4);
+                             zmm5  = _mm512_load_ps(&xre[i+16]);
+                             zmm6  = _mm512_load_ps(&xim[i+16]);
+                             zmm7  = xexpf(zmm5);
+                             zmm8  = _mm512_mul_ps(zmm7,xcosf(zmm6));
+                             _mm512_store_ps(&cexpr[i+16],zmm8);
+                             zmm9  = _mm512_mul_ps(zmm7,xsinf(zmm6));
+                             _mm512_store_ps(&cexpi[i+16],zmm9);
+                             zmm10  = _mm512_load_ps(&xre[i+32]);
+                             zmm11  = _mm512_load_ps(&xim[i+32]);
+                             zmm12  = xexpf(zmm10);
+                             zmm13  = _mm512_mul_ps(zmm12,xcosf(zmm11));
+                             _mm512_store_ps(&cexpr[i+32],zmm13);
+                             zmm14  = _mm512_mul_ps(zmm12,xsinf(zmm11));
+                             _mm512_store_ps(&cexpi[i+32],zmm14);
+                             zmm15  = _mm512_load_ps(&xre[i+48]);
+                             zmm16  = _mm512_load_ps(&xim[i+48]);
+                             zmm17  = xexpf(zmm15);
+                             zmm18  = _mm512_mul_ps(zmm17,xcosf(zmm16));
+                             _mm512_store_ps(&cexpr[i+48],zmm18);
+                             zmm19  = _mm512_mul_ps(zmm17,xsinf(zmm16));
+                             _mm512_store_ps(&cexpi[i+48],zmm19);
+                             zmm20  = _mm512_load_ps(&xre[i+64]);
+                             zmm21  = _mm512_load_ps(&xim[i+64]);
+                             zmm22  = xexpf(zmm20);
+                             zmm23  = _mm512_mu_ps(zmm22,xcosf(zmm21));
+                             _mm512_store_ps(&cexpr[i+64],zmm23);
+                             zmm24  = _mm512_mul_ps(zmm22,xsinf(zmm21));
+                             _mm512_store_ps(&cexpi[i+64],zmm24);
+                        }
+
+                         for(; (i+63) < n; i += 64) {
+                              zmm0  = _mm512_load_ps(&xre[i+0]);
+                             zmm1  = _mm512_load_ps(&xim[i+0]);
+                             zmm2  = xexpf(zmm0);
+                             zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                             _mm512_store_ps(&cexpr[i+0],zmm3);
+                             zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                             _mm512_store_ps(&cexpi[i+0],zmm4);
+                             zmm5  = _mm512_load_ps(&xre[i+16]);
+                             zmm6  = _mm512_load_ps(&xim[i+16]);
+                             zmm7  = xexpf(zmm5);
+                             zmm8  = _mm512_mul_ps(zmm7,xcosf(zmm6));
+                             _mm512_store_ps(&cexpr[i+16],zmm8);
+                             zmm9  = _mm512_mul_ps(zmm7,xsinf(zmm6));
+                             _mm512_store_ps(&cexpi[i+16],zmm9);
+                             zmm10  = _mm512_load_ps(&xre[i+32]);
+                             zmm11  = _mm512_load_ps(&xim[i+32]);
+                             zmm12  = xexpf(zmm10);
+                             zmm13  = _mm512_mul_ps(zmm12,xcosf(zmm11));
+                             _mm512_store_ps(&cexpr[i+32],zmm13);
+                             zmm14  = _mm512_mul_ps(zmm12,xsinf(zmm11));
+                             _mm512_store_ps(&cexpi[i+32],zmm14);
+                             zmm15  = _mm512_load_ps(&xre[i+48]);
+                             zmm16  = _mm512_load_ps(&xim[i+48]);
+                             zmm17  = xexpf(zmm15);
+                             zmm18  = _mm512_mul_ps(zmm17,xcosf(zmm16));
+                             _mm512_store_ps(&cexpr[i+48],zmm18);
+                             zmm19  = _mm512_mul_ps(zmm17,xsinf(zmm16));
+                             _mm512_store_ps(&cexpi[i+48],zmm19); 
+                        }
+
+                         for(; (i+31) < n; i += 32) {
+                             zmm0  = _mm512_load_ps(&xre[i+0]);
+                             zmm1  = _mm512_load_ps(&xim[i+0]);
+                             zmm2  = xexpf(zmm0);
+                             zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                             _mm512_store_ps(&cexpr[i+0],zmm3);
+                             zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                             _mm512_store_ps(&cexpi[i+0],zmm4);
+                             zmm5  = _mm512_load_ps(&xre[i+16]);
+                             zmm6  = _mm512_load_ps(&xim[i+16]);
+                             zmm7  = xexpf(zmm5);
+                             zmm8  = _mm512_mul_ps(zmm7,xcosf(zmm6));
+                             _mm512_store_ps(&cexpr[i+16],zmm8);
+                             zmm9  = _mm512_mul_ps(zmm7,xsinf(zmm6));
+                             _mm512_store_ps(&cexpi[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16) {
+                             zmm0  = _mm512_load_ps(&xre[i+0]);
+                             zmm1  = _mm512_load_ps(&xim[i+0]);
+                             zmm2  = xexpf(zmm0);
+                             zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                             _mm512_store_ps(&cexpr[i+0],zmm3);
+                             zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                             _mm512_store_ps(&cexpi[i+0],zmm4);
+                        }
+
+                         for(; (i+0) < n; i += 1) {
+                             const float re = xre[i];
+                             const float im = xim[i];
+                             const float x  = ceph_expf(re);
+                             const float y  = x * ceph_sinf(im);
+                             cexpr[i]       = y;
+                             const float z  = x * ceph_cosf(im);
+                             cexpi[i]       = z; 
+                        }
+                }
+
 
                   
 
