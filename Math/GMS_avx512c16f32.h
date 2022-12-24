@@ -636,7 +636,7 @@ namespace gms {
 	     __ATTR_VECTORCALL__
 	     static inline
 	     ZMM16c4 ctan(const ZMM16c4 x) {
-                       return (ctan(x)/csin(x));
+                       return (csin(x)/ccos(x));
 	     }
 
 	     __ATTR_HOT__
@@ -660,7 +660,7 @@ namespace gms {
                                      _mm512_mask_blend_ps(mask,x.m_im,y.m_im)});
               }
 
-	     __ATTR_HOT__
+	 /*    __ATTR_HOT__
 	     __ATTR_ALIGN__(32)
 	     __ATTR_VECTORCALL__
              static inline
@@ -695,7 +695,7 @@ namespace gms {
 	                          _mm512_mul_ps(x.m_im,ratio)),denom);
 	                return (ZMM16c4{re_part,im_part});
                       }
-               }
+               } */
 
 	      __ATTR_HOT__
 	      __ATTR_ALIGN__(16)
@@ -1101,9 +1101,9 @@ namespace gms {
         static inline ZMM16c4
         operator/(const ZMM16c4 x,
                   const ZMM16c4 y) {
-#if defined USE_SAFE_COMPLEX_DIVISION && (USE_SAFE_COMPLEX_DIVISION) == 1
-              return (cdiv_smith(x,y));
-#else
+//#if defined USE_SAFE_COMPLEX_DIVISION && (USE_SAFE_COMPLEX_DIVISION) == 1
+//              return (cdiv_smith(x,y));
+//#else
               const __m512 zmm0 = _mm512_mul_ps(x.m_re,y.m_re);
               const __m512 zmm1 = _mm512_mul_ps(x.m_im,y.m_im);
               const __m512 zmm2 = _mm512_mul_ps(x.m_im,y.m_re);
@@ -1114,7 +1114,7 @@ namespace gms {
               const __m512 im_part = _mm512_sub_ps(zmm2,zmm3);
               return (ZMM16c4{_mm512_div_ps(re_part,den),
                                   _mm512_div_ps(im_part,den)});
-#endif
+//#endif
            }
 
 	 __ATTR_HOT__
