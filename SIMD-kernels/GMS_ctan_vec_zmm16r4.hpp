@@ -132,6 +132,47 @@ namespace  gms {
                 }   
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void ctan_zmm16r4_unroll_6x_u( const float * __restrict xre,
+                                                   const float * __restrict xim,
+                                                   float * __restrict wrkcr,
+                                                   float * __restrict wrkci,
+                                                   float * __restrict wrksr,
+                                                   float * __restrict wrksi,
+                                                   float * __restrict ctre,
+                                                   float * __restrict ctim,
+                                                   const int32_t n) {
+
+                        csinv_zmm16r4_unroll_6x_u(xre,xim,wrksr,wrksi,n);
+                        ccosv_zmm16r4_unroll_6x_u(xre,xim,wrkcr,wrkci,n);
+                        cdiv_zmm16r4_unroll_6x_u(wrksr,wrksi,wrkcr,wrkci,ctre,ctri,n);
+                }   
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           static inline
+                   void ctan_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) xre,
+                                                   const float * __restrict __ATTR_ALIGN__(64) xim,
+                                                   float * __restrict __ATTR_ALIGN__(64) wrkcr,
+                                                   float * __restrict __ATTR_ALIGN__(64) wrkci,
+                                                   float * __restrict __ATTR_ALIGN__(64) wrksr,
+                                                   float * __restrict __ATTR_ALIGN__(64) wrksi,
+                                                   float * __restrict __ATTR_ALIGN__(64) ctre,
+                                                   float * __restrict __ATTR_ALIGN__(64) ctim,
+                                                   const int32_t n) {
+
+                        csinv_zmm16r4_unroll_6x_a(xre,xim,wrksr,wrksi,n);
+                        ccosv_zmm16r4_unroll_6x_a(xre,xim,wrkcr,wrkci,n);
+                        cdiv_zmm16r4_unroll_6x_a(wrksr,wrksi,wrkcr,wrkci,ctre,ctri,n);
+                }   
+
+
+
       } // math
 
 
