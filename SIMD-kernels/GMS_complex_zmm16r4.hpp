@@ -301,16 +301,16 @@ namespace  gms {
                                        float *       __restrict zim) {
 
                            register __m512 zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
-                           zmm0  = _mm512_loadu_ps(&xre[i+0]);
-                           zmm1  = _mm512_loadu_ps(&yre[i+0]);
-                           zmm2  = _mm512_loadu_ps(&xim[i+0]);
-                           zmm3  = _mm512_loadu_ps(&yim[i+0]);
+                           zmm0  = _mm512_loadu_ps(&xre[0]);
+                           zmm1  = _mm512_loadu_ps(&yre[0]);
+                           zmm2  = _mm512_loadu_ps(&xim[0]);
+                           zmm3  = _mm512_loadu_ps(&yim[0]);
                            zmm4  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
                                                                         _mm512_mul_ps(zmm2,zmm3));
-                           _mm512_storeu_ps(&zre[i+0], zmm4);
+                           _mm512_storeu_ps(&zre[0], zmm4);
                            zmm5  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
                                                                         _mm512_mul_ps(zmm0,zmm3));
-                           _mm512_storeu_ps(&zim[i+0], zmm5);
+                           _mm512_storeu_ps(&zim[0], zmm5);
                }
 
 
@@ -327,20 +327,109 @@ namespace  gms {
                                        float *       __restrict __ATTR_ALIGN__(64) zim) {
 
                            register __m512 zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
-                           zmm0  = _mm512_load_ps(&xre[i+0]);
-                           zmm1  = _mm512_load_ps(&yre[i+0]);
-                           zmm2  = _mm512_load_ps(&xim[i+0]);
-                           zmm3  = _mm512_load_ps(&yim[i+0]);
+                           zmm0  = _mm512_load_ps(&xre[0]);
+                           zmm1  = _mm512_load_ps(&yre[0]);
+                           zmm2  = _mm512_load_ps(&xim[0]);
+                           zmm3  = _mm512_load_ps(&yim[0]);
                            zmm4  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
                                                                         _mm512_mul_ps(zmm2,zmm3));
-                           _mm512_store_ps(&zre[i+0], zmm4);
+                           _mm512_store_ps(&zre[0], zmm4);
                            zmm5  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
                                                                         _mm512_mul_ps(zmm0,zmm3));
-                           _mm512_store_ps(&zim[i+0], zmm5);
+                           _mm512_store_ps(&zim[0], zmm5);
                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmul_zmm16r4(const __m512 xre,
+                                     const __m512 xim,
+                                     const __m512 yre,
+                                     const __m512 yim,
+                                     __m512 &     zre,
+                                     __m512 &     zim) {
 
+                         register __m512 zmm0,zmm1;
+                         zmm0 = _mm512_sub_ps(_mm512_mul_ps(xre,yre),
+                                              _mm512_mul_ps(xim,yim));
+                         zre  = zmm0;
+                         zmm1 = _mm512_mul_ps(_mm512_mul_ps(xim,yre),
+                                              _mm512_mul_ps(xre,yim));
+                         zim  = zmm1;
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmul_zmm16r4(const __m512 xre,
+                                     const __m512 xim,
+                                     const __m512 s,
+                                     __m512 &     zre,
+                                     __m512 &     zim) {
+
+                        zre = _mm512_mul_ps(xre,s);
+                        zim = _mm512_mul_ps(xim,s);
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmul_zmm16r4_uip(const float * __restrict xre,
+                                         const float * __restrict xim,
+                                         float *       __restrict zre,
+                                         float *       __restrict zim) {
+
+                           register __m512 zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
+                           zmm0  = _mm512_loadu_ps(&xre[0]);
+                           zmm1  = _mm512_loadu_ps(&zre[0]);
+                           zmm2  = _mm512_loadu_ps(&xim[0]);
+                           zmm3  = _mm512_loadu_ps(&zim[0]);
+                           zmm4  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                 _mm512_mul_ps(zmm2,zmm3));
+                           _mm512_storeu_ps(&zre[0], zmm4);
+                           zmm5  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                 _mm512_mul_ps(zmm0,zmm3));
+                           _mm512_storeu_ps(&zim[0], zmm5);
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmul_zmm16r4_aip(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                         const float * __restrict __ATTR_ALIGN__(64) xim,
+                                         float *       __restrict __ATTR_ALIGN__(64) zre,
+                                         float *       __restrict __ATTR_ALIGN__(64) zim) {
+
+                           register __m512 zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
+                           zmm0  = _mm512_load_ps(&xre[0]);
+                           zmm1  = _mm512_load_ps(&zre[0]);
+                           zmm2  = _mm512_load_ps(&xim[0]);
+                           zmm3  = _mm512_load_ps(&zim[0]);
+                           zmm4  = _mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1),
+                                                 _mm512_mul_ps(zmm2,zmm3));
+                           _mm512_store_ps(&zre[0], zmm4);
+                           zmm5  = _mm512_mul_ps(_mm512_mul_ps(zmm2,zmm1),
+                                                 _mm512_mul_ps(zmm0,zmm3));
+                           _mm512_store_ps(&zim[0], zmm5);
+               }
+
+                 ////////////////////////////////////////////////////////////////////////////
+
+
+
+                                         
 
 
       } // math
