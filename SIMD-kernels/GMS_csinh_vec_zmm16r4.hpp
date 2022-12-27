@@ -1051,7 +1051,7 @@ namespace  gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
-                   void csinhv_zmm16r4_unroll_8x_u(const float * __restrict xre,
+                   void csinhv_zmm16r4_unroll_6x_u(const float * __restrict xre,
                                                    const float * __restrict xim,
                                                    float * __restrict csre,
                                                    float * __restrict csim,
