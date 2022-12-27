@@ -904,8 +904,6 @@ namespace  gms {
                           register vfloat zmm12,zmm13,zmm14,zmm15;
                           register vfloat zmm16,zmm17,zmm18,zmm19;
                           register vfloat zmm20,zmm21,zmm22,zmm23;
-                          register vfloat zmm24,zmm25,zmm26,zmm27;
-                          register vfloat zmm28,zmm29,zmm30,zmm31;
                           int32_t i;
  
                           for(i = 0; (i+95) < n; i += 96) {
@@ -1067,8 +1065,6 @@ namespace  gms {
                           register vfloat zmm12,zmm13,zmm14,zmm15;
                           register vfloat zmm16,zmm17,zmm18,zmm19;
                           register vfloat zmm20,zmm21,zmm22,zmm23;
-                          register vfloat zmm24,zmm25,zmm26,zmm27;
-                          register vfloat zmm28,zmm29,zmm30,zmm31;
                           int32_t i;
  
                           for(i = 0; (i+95) < n; i += 96) {
