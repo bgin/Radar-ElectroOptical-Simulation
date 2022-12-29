@@ -445,12 +445,12 @@ namespace  gms {
                         zmm1  = _mm512_loadu_ps(&yim[0]); //d
                         zmm2  = _mm512_loadu_ps(&xim[0]); //b
                         zmm3  = _mm512_loadu_ps(&yre[0]); //c
-                        zmm4  = _mm512_add_ps(_mm512_div_ps(zmm0,zmm3),
-                                                _mm512_div_ps(zmm2,zmm1));
-                        zmm5  = _mm512_sub_ps(_mm512_div_ps(zmm2,zmm3),
-                                                _mm512_div_ps(zmm0,zmm1));
-                        zmm6  = _mm512_add_ps(_mm512_div_ps(zmm3,zmm3),
-                                                _mm512_div_ps(zmm1,zmm1));
+                        zmm4  = _mm512_fmadd_ps(zmm0,zmm3,
+                                                _mm512_mul_ps(zmm2,zmm1));
+                        zmm5  = _mm512_fmsub_ps(zmm2,zmm3,
+                                                _mm512_mul_ps(zmm0,zmm1));
+                        zmm6  = _mm512_fmadd_ps(zmm3,zmm3),
+                                                _mm512_mul_ps(zmm1,zmm1));
                         _mm512_storeu_ps(&zre[0], _mm512_div_ps(zmm4,zmm6));
                         _mm512_storeu_ps(&zim[0], _mm512_div_ps(zmm5,zmm6));
                 }
@@ -474,18 +474,39 @@ namespace  gms {
                         zmm1  = _mm512_load_ps(&yim[0]); //d
                         zmm2  = _mm512_load_ps(&xim[0]); //b
                         zmm3  = _mm512_load_ps(&yre[0]); //c
-                        zmm4  = _mm512_add_ps(_mm512_div_ps(zmm0,zmm3),
-                                                _mm512_div_ps(zmm2,zmm1));
-                        zmm5  = _mm512_sub_ps(_mm512_div_ps(zmm2,zmm3),
-                                                _mm512_div_ps(zmm0,zmm1));
-                        zmm6  = _mm512_add_ps(_mm512_div_ps(zmm3,zmm3),
-                                                _mm512_div_ps(zmm1,zmm1));
+                        zmm4  = _mm512_fmadd_ps(zmm0,zmm3,
+                                                _mm512_mul_ps(zmm2,zmm1));
+                        zmm5  = _mm512_fmsub_ps(zmm2,zmm3,
+                                                _mm512_mul_ps(zmm0,zmm1));
+                        zmm6  = _mm512_fmadd_ps(zmm3,zmm3,
+                                                _mm512_mul_ps(zmm1,zmm1));
                         _mm512_store_ps(&zre[0], _mm512_div_ps(zmm4,zmm6));
                         _mm512_store_ps(&zim[0], _mm512_div_ps(zmm5,zmm6));
                 }
               
                                          
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_zmm16r4(const __m512 xre,
+                                     const __m512 xim,
+                                     const __m512 yre,
+                                     const __m512 yim,
+                                     __m512 & zre,
+                                     __m512 & zim) {
 
+                      register __m512 zmm0,zmm1,zmm2;
+                      zmm0 = _mm512_fmadd_ps(xre,yre,
+                                           _mm512_mul_ps(xim,yim));
+                      zmm1 = _mm512_fmsub_ps(xim,yre,
+                                           _mm512_mul_ps(xre,yim));
+                      zmm2 = _mm512_fmadd_ps(zmm3,zmm3,
+                                           _mm512_mul_ps(zmm1,zmm1));
+                      zre  = _mm512_div_ps(0,2);
+                      zim  = _mm512_div_ps(1,2);
+                }
 
       } // math
 
