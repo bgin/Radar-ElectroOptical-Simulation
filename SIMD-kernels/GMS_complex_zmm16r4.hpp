@@ -427,8 +427,63 @@ namespace  gms {
 
                  ////////////////////////////////////////////////////////////////////////////
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_zmm16r4_u(const float * __restrict xre,
+                                       const float * __restrict xim,
+                                       const float * __restrict yre,
+                                       const float * __restrict yim,
+                                       float *       __restrict zre,
+                                       float *       __restrict zim) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3; 
+                        register __m512 zmm4,zmm5,zmm6;
+                        zmm0  = _mm512_loadu_ps(&xre[0]); //a
+                        zmm1  = _mm512_loadu_ps(&yim[0]); //d
+                        zmm2  = _mm512_loadu_ps(&xim[0]); //b
+                        zmm3  = _mm512_loadu_ps(&yre[0]); //c
+                        zmm4  = _mm512_add_ps(_mm512_div_ps(zmm0,zmm3),
+                                                _mm512_div_ps(zmm2,zmm1));
+                        zmm5  = _mm512_sub_ps(_mm512_div_ps(zmm2,zmm3),
+                                                _mm512_div_ps(zmm0,zmm1));
+                        zmm6  = _mm512_add_ps(_mm512_div_ps(zmm3,zmm3),
+                                                _mm512_div_ps(zmm1,zmm1));
+                        _mm512_storeu_ps(&zre[0], _mm512_div_ps(zmm4,zmm6));
+                        _mm512_storeu_ps(&zim[0], _mm512_div_ps(zmm5,zmm6));
+                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_zmm16r4_a(const float * __restrict xre,
+                                       const float * __restrict xim,
+                                       const float * __restrict yre,
+                                       const float * __restrict yim,
+                                       float *       __restrict zre,
+                                       float *       __restrict zim) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3; 
+                        register __m512 zmm4,zmm5,zmm6;
+                        zmm0  = _mm512_load_ps(&xre[0]); //a
+                        zmm1  = _mm512_load_ps(&yim[0]); //d
+                        zmm2  = _mm512_load_ps(&xim[0]); //b
+                        zmm3  = _mm512_load_ps(&yre[0]); //c
+                        zmm4  = _mm512_add_ps(_mm512_div_ps(zmm0,zmm3),
+                                                _mm512_div_ps(zmm2,zmm1));
+                        zmm5  = _mm512_sub_ps(_mm512_div_ps(zmm2,zmm3),
+                                                _mm512_div_ps(zmm0,zmm1));
+                        zmm6  = _mm512_add_ps(_mm512_div_ps(zmm3,zmm3),
+                                                _mm512_div_ps(zmm1,zmm1));
+                        _mm512_store_ps(&zre[0], _mm512_div_ps(zmm4,zmm6));
+                        _mm512_store_ps(&zim[0], _mm512_div_ps(zmm5,zmm6));
+                }
+              
                                          
 
 
