@@ -504,8 +504,8 @@ namespace  gms {
                                            _mm512_mul_ps(xre,yim));
                       zmm2 = _mm512_fmadd_ps(zmm3,zmm3,
                                            _mm512_mul_ps(zmm1,zmm1));
-                      zre  = _mm512_div_ps(0,2);
-                      zim  = _mm512_div_ps(1,2);
+                      zre  = _mm512_div_ps(zmm0,zmm2);
+                      zim  = _mm512_div_ps(zmm1,zmm2);
                 }
 
 
@@ -677,6 +677,9 @@ namespace  gms {
                                                 _mm512_div_ps(_mm512_fmsub_ps(xim,r,xre),den),
                                                 _mm512_div_ps(_mm512_sub_ps(xim,_mm512_mul_ps(xre,r)),den)));
                }
+
+
+                   
 
       } // math
 
