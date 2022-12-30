@@ -578,6 +578,76 @@ namespace  gms {
                         _mm512_store_ps(&zim[0], _mm512_div_ps(zmm5,zmm6));
               }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_smith_zmm16r4_u(const float * __restrict xre,
+                                             const float * __restrict xim,
+                                             const float * __restrict yre,
+                                             const float * __restrict yim,
+                                             float *       __restrict zre,
+                                             float *       __restrict zim) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        register __m512 r,den;
+                        __mmask16 m = 0x0;
+                        zmm0 = _mm512_loadu_ps(&yre[0]); // c
+                        zmm1 = _mm512_loadu_ps(&yim[0]); // d
+                        zmm2 = _mm512_loadu_ps(&xre[0]); // a
+                        zmm3 = _mm512_loadu_ps(&xim[0]); // b
+                        m    = _mm512_cmp_ps_mask(_mm512_abs_ps(zmm0),
+                                                  _mm512_abs_ps(zmm1),
+                                                  _CMP_GE_OQ);
+                        r    = _mm512_mask_blend_ps(m,_mm512_div_ps(zmm0,zmm1),
+                                                      _mm512_div_ps(zmm1,zmm0)); // r
+                        den  = _mm512_mask_blend_ps(m,_mm512_fmadd_ps(r,zmm0,zmm1),
+                                                      _mm512_fmadd_ps(r,zmm1,zmm0));
+                        _mm512_storeu_ps(&zre[0], _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmadd_ps(zmm2,r,zmm3),den),
+                                                _mm512_div_ps(_mm512_fmadd_ps(zmm3,r,zmm2),den)));
+                        _mm512_storeu_ps(&zim[0], _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmsub_ps(zmm3,r,zmm2),den),
+                                                _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,r)),den)));
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_smith_zmm16r4_a(const float * __restrict xre,
+                                             const float * __restrict xim,
+                                             const float * __restrict yre,
+                                             const float * __restrict yim,
+                                             float *       __restrict zre,
+                                             float *       __restrict zim) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        register __m512 r,den;
+                        __mmask16 m = 0x0;
+                        zmm0 = _mm512_load_ps(&yre[0]); // c
+                        zmm1 = _mm512_load_ps(&yim[0]); // d
+                        zmm2 = _mm512_load_ps(&xre[0]); // a
+                        zmm3 = _mm512_load_ps(&xim[0]); // b
+                        m    = _mm512_cmp_ps_mask(_mm512_abs_ps(zmm0),
+                                                  _mm512_abs_ps(zmm1),
+                                                  _CMP_GE_OQ);
+                        r    = _mm512_mask_blend_ps(m,_mm512_div_ps(zmm0,zmm1),
+                                                      _mm512_div_ps(zmm1,zmm0)); // r
+                        den  = _mm512_mask_blend_ps(m,_mm512_fmadd_ps(r,zmm0,zmm1),
+                                                      _mm512_fmadd_ps(r,zmm1,zmm0));
+                        _mm512_storeu_ps(&zre[0], _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmadd_ps(zmm2,r,zmm3),den),
+                                                _mm512_div_ps(_mm512_fmadd_ps(zmm3,r,zmm2),den)));
+                        _mm512_storeu_ps(&zim[0], _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmsub_ps(zmm3,r,zmm2),den),
+                                                _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,r)),den)));
+               }
+
       } // math
 
 
