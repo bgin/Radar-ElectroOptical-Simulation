@@ -648,6 +648,36 @@ namespace  gms {
                                                 _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,r)),den)));
                }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_smith_zmm16r4(const __m512 xre,
+                                           const __m512 xim,
+                                           const __m512 yre,
+                                           const __m512 yim,
+                                           __m512 * __restrict zre,
+                                           __m512 * __restrict zim) {
+
+                        register __m512 r,den;
+                        __mmask16 m = 0x0;
+                        m    = _mm512_cmp_ps_mask(_mm512_abs_ps(yre),
+                                                  _mm512_abs_ps(yim),
+                                                  _CMP_GE_OQ);
+                        r    = _mm512_mask_blend_ps(m,_mm512_div_ps(yre,yim),
+                                                      _mm512_div_ps(yim,yre)); // r
+                        den  = _mm512_mask_blend_ps(m,_mm512_fmadd_ps(r,yre,yim),
+                                                      _mm512_fmadd_ps(r,yim,yre));
+                        *zre  =  _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmadd_ps(xre,r,xim),den),
+                                                _mm512_div_ps(_mm512_fmadd_ps(xim,r,xre),den));
+                        *zim  =  _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmsub_ps(xim,r,xre),den),
+                                                _mm512_div_ps(_mm512_sub_ps(xim,_mm512_mul_ps(xre,r)),den)));
+               }
+
       } // math
 
 
