@@ -101,14 +101,14 @@ namespace  gms {
                                      const __m512 xim,
                                      const __m512 yre,
                                      const __m512 yim,
-                                     __m512 &     zre,
-                                     __m512 &     zim) {
+                                     __m512 * __restrict zre,
+                                     __m512 * __restrict zim) {
                      
                         register __m512 zmm0,zmm1;
-                        zmm0 = _mm512_add_ps(xre,yre);
-                        zre  = zmm0;
-                        zmm1 = _mm512_add_ps(xim,yim);
-                        zim  = zmm1;
+                        zmm0  = _mm512_add_ps(xre,yre);
+                        *zre  = zmm0;
+                        zmm1  = _mm512_add_ps(xim,yim);
+                        *zim  = zmm1;
                 }
 
 
@@ -120,11 +120,11 @@ namespace  gms {
                    void cadd_zmm16r4(const __m512 xre,
                                      const __m512 xim,
                                      const __m512 s,
-                                     __m512 &     zre,
-                                     __m512 &     zim) {
+                                     __m512 * __restrict     zre,
+                                     __m512 * __restrict     zim) {
 
-                        zre = _mm512_add_ps(xre,s);
-                        zim = _mm512_add_ps(xim,s);
+                        *zre = _mm512_add_ps(xre,s);
+                        *zim = _mm512_add_ps(xim,s);
                }
 
 
@@ -221,14 +221,14 @@ namespace  gms {
                                      const __m512 xim,
                                      const __m512 yre,
                                      const __m512 yim,
-                                     __m512 &     zre,
-                                     __m512 &     zim) {
+                                     __m512 * __restrict     zre,
+                                     __m512 * __restrict     zim) {
                      
                         register __m512 zmm0,zmm1;
-                        zmm0 = _mm512_sub_ps(xre,yre);
-                        zre  = zmm0;
-                        zmm1 = _mm512_sub_ps(xim,yim);
-                        zim  = zmm1;
+                        zmm0  = _mm512_sub_ps(xre,yre);
+                        *zre  = zmm0;
+                        zmm1  = _mm512_sub_ps(xim,yim);
+                        *zim  = zmm1;
                 }
 
 
@@ -240,11 +240,11 @@ namespace  gms {
                    void csub_zmm16r4(const __m512 xre,
                                      const __m512 xim,
                                      const __m512 s,
-                                     __m512 &     zre,
-                                     __m512 &     zim) {
+                                     __m512 * __restrict     zre,
+                                     __m512 * __restrict     zim) {
 
-                        zre = _mm512_sub_ps(xre,s);
-                        zim = _mm512_sub_ps(xim,s);
+                        *zre = _mm512_sub_ps(xre,s);
+                        *zim = _mm512_sub_ps(xim,s);
                }
 
 
@@ -349,16 +349,16 @@ namespace  gms {
                                      const __m512 xim,
                                      const __m512 yre,
                                      const __m512 yim,
-                                     __m512 &     zre,
-                                     __m512 &     zim) {
+                                     __m512 * __restrict     zre,
+                                     __m512 * __restrict     zim) {
 
                          register __m512 zmm0,zmm1;
                          zmm0 = _mm512_sub_ps(_mm512_mul_ps(xre,yre),
                                               _mm512_mul_ps(xim,yim));
-                         zre  = zmm0;
+                         *zre  = zmm0;
                          zmm1 = _mm512_mul_ps(_mm512_mul_ps(xim,yre),
                                               _mm512_mul_ps(xre,yim));
-                         zim  = zmm1;
+                         *zim  = zmm1;
                 }
 
 
@@ -370,11 +370,11 @@ namespace  gms {
                    void cmul_zmm16r4(const __m512 xre,
                                      const __m512 xim,
                                      const __m512 s,
-                                     __m512 &     zre,
-                                     __m512 &     zim) {
+                                     __m512 * __restrict   zre,
+                                     __m512 * __restrict   zim) {
 
-                        zre = _mm512_mul_ps(xre,s);
-                        zim = _mm512_mul_ps(xim,s);
+                        *zre = _mm512_mul_ps(xre,s);
+                        *zim = _mm512_mul_ps(xim,s);
                }
 
 
@@ -494,8 +494,8 @@ namespace  gms {
                                      const __m512 xim,
                                      const __m512 yre,
                                      const __m512 yim,
-                                     __m512 & zre,
-                                     __m512 & zim) {
+                                     __m512 * __restrict zre,
+                                     __m512 * __restrict zim) {
 
                       register __m512 zmm0,zmm1,zmm2;
                       zmm0 = _mm512_fmadd_ps(xre,yre,
@@ -504,8 +504,8 @@ namespace  gms {
                                            _mm512_mul_ps(xre,yim));
                       zmm2 = _mm512_fmadd_ps(zmm3,zmm3,
                                            _mm512_mul_ps(zmm1,zmm1));
-                      zre  = _mm512_div_ps(zmm0,zmm2);
-                      zim  = _mm512_div_ps(zmm1,zmm2);
+                      *zre  = _mm512_div_ps(zmm0,zmm2);
+                      *zim  = _mm512_div_ps(zmm1,zmm2);
                 }
 
 
@@ -517,11 +517,11 @@ namespace  gms {
                    void cdiv_zmm16r4(const __m512 xre,
                                      const __m512 xim,
                                      const __m512 s,
-                                     __m512 & zre,
-                                     __m512 & zim) {
+                                     __m512 * __restrict zre,
+                                     __m512 * __restrict zim) {
 
-                        zre = _mm512_div_ps(xre,s);
-                        zim = _mm512_div_ps(xim,s);
+                        *zre = _mm512_div_ps(xre,s);
+                        *zim = _mm512_div_ps(xim,s);
                }
 
 
@@ -677,6 +677,9 @@ namespace  gms {
                                                 _mm512_div_ps(_mm512_fmsub_ps(xim,r,xre),den),
                                                 _mm512_div_ps(_mm512_sub_ps(xim,_mm512_mul_ps(xre,r)),den)));
                }
+
+
+
 
 
                    
