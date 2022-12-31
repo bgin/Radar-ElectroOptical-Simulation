@@ -780,6 +780,50 @@ namespace  gms {
                        carg = xatan2f(re,im);
                        return (carg);
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cconj_zmm16r4_u(const float * __restrict im,
+                                        float * __restrict  conj) {
+
+                        register __m512 zmm0;
+                        const register __m512 none = _mm512_set1_ps(-1.0f);
+                        zmm0 = _mm512_loadu_ps(&im[0]);
+                        _mm512_storeu_ps(&conj[0], _mm512_mul_ps(none,zmm0));
+               }  
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cconj_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) im,
+                                        float * __restrict  __ATTR_ALIGN__(64) conj) {
+
+                        register __m512 zmm0;
+                        const register __m512 none = _mm512_set1_ps(-1.0f);
+                        zmm0 = _mm512_load_ps(&im[0]);
+                        _mm512_store_ps(&conj[0], _mm512_mul_ps(none,zmm0));
+               }  
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 cconj_zmm16r4(const __m512 im) {
+                          
+                         const register __m512 none = _mm512_set1_ps(-1.0f);
+                         register __m512 conj;
+                         conj = _mm512_mul_ps(none,im);
+                         return (conj); 
+               } 
                    
 
       } // math
