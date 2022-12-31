@@ -824,6 +824,64 @@ namespace  gms {
                          conj = _mm512_mul_ps(none,im);
                          return (conj); 
                } 
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ccos_zmm16r4_u(const float * __restrict xre,
+                                       const float * __restrict xim,
+                                       float * __restrict  csre,
+                                       float * __restrict  csim) {
+
+                      register __m512 zmm0,zmm1,zmm2,zmm3;
+                      zmm0  = _mm512_loadu_ps(&xre[0]);
+                      zmm1  = _mm512_loadu_ps(&xim[0]);
+                      zmm2  = _mm512_mul_ps(xcosf(zmm0),xcoshf(zmm1));
+                      _mm512_storeu_ps(&csre[0],zmm2);
+                      zmm3  = _mm512_mul_ps(xsinf(zmm0),xsinhf(zmm1));
+                      _mm512_storeu_ps(&csim[0],zmm3);
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ccos_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                       const float * __restrict __ATTR_ALIGN__(64) xim,
+                                       float * __restrict  __ATTR_ALIGN__(64) csre,
+                                       float * __restrict  __ATTR_ALIGN__(64) csim) {
+
+                      register __m512 zmm0,zmm1,zmm2,zmm3;
+                      zmm0  = _mm512_load_ps(&xre[0]);
+                      zmm1  = _mm512_load_ps(&xim[0]);
+                      zmm2  = _mm512_mul_ps(xcosf(zmm0),xcoshf(zmm1));
+                      _mm512_store_ps(&csre[0],zmm2);
+                      zmm3  = _mm512_mul_ps(xsinf(zmm0),xsinhf(zmm1));
+                      _mm512_store_ps(&csim[0],zmm3);
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ccos_zmm16r4(const __m512 xre,
+                                     const __m512 xim,
+                                     __m512 * __restrict csre,
+                                     __m512 * __restrict csim) {
+
+                      register __m512 zmm0,zmm1;
+                      zmm0  = _mm512_mul_ps(xcosf(xre),xcoshf(xim));
+                      *csre = zmm0;
+                      zmm1  = _mm512_mul_ps(xsinf(xre),xsinhf(xim));
+                      *csim = zmm1; 
+               }
                    
 
       } // math
