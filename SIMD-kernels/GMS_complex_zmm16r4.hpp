@@ -1320,6 +1320,73 @@ namespace  gms {
               }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void csqrt_zmm16r4_u(const float * __restrict xre,
+                                       const float * __restrict xim,
+                                       float * __restrict wrkc,
+                                       float * __restrict csqr,
+                                       float * __restrict csqi) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        const register __m512 half = _mm512_set1_ps(0.5f);
+                        cabs_zmm16r4_u(xre,xim,wrkc);
+                        zmm0  = _mm512_loadu_ps(&xre[0]);
+                        zmm1  = _mm512_loadu_ps(&wrkc[0]);
+                        zmm2  = _mm512_mul_ps(half,_mm512_add_ps(zmm1,zmm0));
+                        _mm512_storeu_ps(&csqr[0],_mm512_sqrt_ps(zmm2));
+                        zmm3  = _mm512_mul_ps(half,_mm512_sub_ps(zmm1,zmm0));
+                        _mm512_storeu_ps(&csqi[0],_mm512_sqrt_ps(zmm3));
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void csqrt_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                       const float * __restrict __ATTR_ALIGN__(64) xim,
+                                       float * __restrict __ATTR_ALIGN__(64) wrkc,
+                                       float * __restrict __ATTR_ALIGN__(64) csqr,
+                                       float * __restrict __ATTR_ALIGN__(64) csqi) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        const register __m512 half = _mm512_set1_ps(0.5f);
+                        cabs_zmm16r4_a(xre,xim,wrkc);
+                        zmm0  = _mm512_load_ps(&xre[0]);
+                        zmm1  = _mm512_load_ps(&wrkc[0]);
+                        zmm2  = _mm512_mul_ps(half,_mm512_add_ps(zmm1,zmm0));
+                        _mm512_store_ps(&csqr[0],_mm512_sqrt_ps(zmm2));
+                        zmm3  = _mm512_mul_ps(half,_mm512_sub_ps(zmm1,zmm0));
+                        _mm512_store_ps(&csqi[0],_mm512_sqrt_ps(zmm3));
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void csqrt_zmm16r4(const __m512 xre,
+                                      const __m512 xim,
+                                      __m512 * __restrict wrkc,
+                                      __m512 * __restrict csqr,
+                                      __m512 * __restrict csqi) {
+
+                       register __m512 zmm0,zmm1;
+                       const register __m512 half = _mm512_set1_ps(0.5f); 
+                       cabs_zmm16r4(xre,xim,wrkc);
+                       zmm0  = _mm512_mul_ps(half,_mm512_add_ps(*wrkc,xre));
+                       *csqr = zmm0;
+                       zmm1  = _mm512_mul_ps(half,_mm512_sub_ps(*wrkc,xre));
+                       *csqi = zmm1; 
+              }
+
+
 
                 
 
