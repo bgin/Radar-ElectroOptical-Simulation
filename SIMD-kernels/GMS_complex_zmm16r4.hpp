@@ -1203,6 +1203,68 @@ namespace  gms {
               }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cexp_zmm16r4_u(const float * __restrict xre,
+                                       const float * __restrict xim,
+                                       float * __restrict cexpr,
+                                       float * __restrict cexpi ) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        zmm0  = _mm512_loadu_ps(&xre[0]);
+                        zmm1  = _mm512_loadu_ps(&xim[0]);
+                        zmm2  = xexpf(zmm0);
+                        zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                        _mm512_storeu_ps(&cexpr[0],zmm3);
+                        zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                        _mm512_storeu_ps(&cexpi[0],zmm4);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cexp_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                       const float * __restrict __ATTR_ALIGN__(64) xim,
+                                       float * __restrict __ATTR_ALIGN__(64) cexpr,
+                                       float * __restrict __ATTR_ALIGN__(64) cexpi ) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        zmm0  = _mm512_load_ps(&xre[0]);
+                        zmm1  = _mm512_load_ps(&xim[0]);
+                        zmm2  = xexpf(zmm0);
+                        zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
+                        _mm512_store_ps(&cexpr[0],zmm3);
+                        zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                        _mm512_store_ps(&cexpi[0],zmm4);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cexp_zmm16r4(const __m512 xre,
+                                     const __m512 xim,
+                                     __m512 * __restrict cexpr,
+                                     __m512 * __restrict cexpi) {
+
+                        register __m512 zmm0;
+                        zmm0   = xexpf(xre);
+                        *cexpr = _mm512_mul_ps(zmm0,xcosf(xim));
+                        *cexpi = _mm512_mul_ps(zmm0,xsinf(xim));
+              }
+
+
+                
+
+
       } // math
 
 
