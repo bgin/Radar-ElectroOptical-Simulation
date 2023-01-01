@@ -1262,6 +1262,65 @@ namespace  gms {
               }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cpolar_zmm16r4_u(const float * __restrict rho,
+                                         const float * __restrict tht,
+                                         float * __restrict  re,
+                                         float * __restrict  im) {
+
+                         register __m512 zmm0,zmm1,zmm2,zmm3;
+                         zmm0 = _mm512_loadu_ps(&rho[0]);
+                         zmm1 = _mm512_loadu_ps(&tht[0]);
+                         zmm2 = _mm512_mul_ps(zmm0,xcosf(zmm1)); //tht
+                         _mm512_storeu_ps(&re[0],zmm2);
+                         zmm3 = _mm512_mul_ps(zmm0,xsinf(zmm1)); //tht
+                         _mm512_storeu_ps(&im[0],zmm3);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cpolar_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) rho,
+                                         const float * __restrict __ATTR_ALIGN__(64) tht,
+                                         float * __restrict  __ATTR_ALIGN__(64) re,
+                                         float * __restrict  __ATTR_ALIGN__(64) im) {
+
+                         register __m512 zmm0,zmm1,zmm2,zmm3;
+                         zmm0 = _mm512_load_ps(&rho[0]);
+                         zmm1 = _mm512_load_ps(&tht[0]);
+                         zmm2 = _mm512_mul_ps(zmm0,xcosf(zmm1)); //tht
+                         _mm512_store_ps(&re[0],zmm2);
+                         zmm3 = _mm512_mul_ps(zmm0,xsinf(zmm1)); //tht
+                         _mm512_store_ps(&im[0],zmm3);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cpolar_zmm16r4(const __m512 rho,
+                                       const __m512 tht,
+                                       __m512 * __restrict re,
+                                       __m512 * __restrict im) {
+
+                        register __m512 zmm0,zmm1;
+                        zmm0 = _mm512_mul_ps(rho,xcosf(tht));
+                        *re  = zmm0;
+                        zmm1 = _mm512_mul_ps(rho,xsinf(tht));
+                        *im  = zmm1;
+              }
+
+
+
                 
 
 
