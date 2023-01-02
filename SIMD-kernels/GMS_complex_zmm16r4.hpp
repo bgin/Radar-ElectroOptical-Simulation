@@ -1673,6 +1673,91 @@ namespace  gms {
               }  
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cnorm_cprod_zmm16r4_u(const float * __restrict xre,
+                                              const float * __restrict xim,
+                                              const float * __restrict yre,
+                                              const float * __restrict yim,
+                                              float * __restrict mre,
+                                              float * __restrict mim ) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        register __m512 rep,imp,magc1,magc2,vcmag;
+                        zmm0 = _mm512_loadu_ps(&xre[0]);
+                        zmm1 = _mm512_loadu_ps(&yre[0]);
+                        zmm2 = _mm512_loadu_ps(&xim[0]);
+                        zmm3 = _mm512_loadu_ps(&yim[0]);
+                        rep  = _mm512_fmadd_ps(zmm0,zmm1,
+                                               _mm512_mul_ps(zmm2,zmm3));
+                        magc1= _mm512_mul_ps(rep,rep);
+                        imp  = _mm512_fmsub_ps(zmm2,zmm1,
+                                               _mm512_mul_ps(zmm0,zmm3));
+                        magc2= _mm512_mul_ps(imp,imp);
+                        vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
+                        _mm512_storeu_ps(&mre[0], _mm512_div_ps(rep,vcmag));
+                        _mm512_storeu_ps(&mim[0], _mm512_div_ps(imp,vcmag));
+             }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cnorm_cprod_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                              const float * __restrict __ATTR_ALIGN__(64) xim,
+                                              const float * __restrict __ATTR_ALIGN__(64) yre,
+                                              const float * __restrict __ATTR_ALIGN__(64) yim,
+                                              float * __restrict __ATTR_ALIGN__(64) mre,
+                                              float * __restrict __ATTR_ALIGN__(64) mim ) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        register __m512 rep,imp,magc1,magc2,vcmag;
+                        zmm0 = _mm512_load_ps(&xre[0]);
+                        zmm1 = _mm512_load_ps(&yre[0]);
+                        zmm2 = _mm512_load_ps(&xim[0]);
+                        zmm3 = _mm512_load_ps(&yim[0]);
+                        rep  = _mm512_fmad_ps(zmm0,zmm1,
+                                               _mm512_mul_ps(zmm2,zmm3));
+                        magc1= _mm512_mul_ps(rep,rep);
+                        imp  = _mm512_fmsub_ps(zmm2,zmm1,
+                                               _mm512_mul_ps(zmm0,zmm3));
+                        magc2= _mm512_mul_ps(imp,imp);
+                        vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
+                        _mm512_store_ps(&mre[0], _mm512_div_ps(rep,vcmag));
+                        _mm512_store_ps(&mim[0], _mm512_div_ps(imp,vcmag));
+             }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cnorm_cprod_zmm16r4(const __m512 xre,
+                                            const __m512 xim,
+                                            const __m512 yre,
+                                            const __m512 yim,
+                                            __m512 * __restrict mre,
+                                            __m512 * __restrict mim) {
+
+                        register __m512 rep,imp,magc1,magc2,vcmag;
+                        rep  = _mm512_fmad_ps(xre,yre,
+                                               _mm512_mul_ps(xim,yim));
+                        magc1= _mm512_mul_ps(rep,rep);
+                        imp  = _mm512_fmsub_ps(xim,yre,
+                                               _mm512_mul_ps(xre,yim));
+                        magc2= _mm512_mul_ps(imp,imp);
+                        vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
+                        *mre = _mm512_div_ps(rep,vcmag);
+                        *mim = _mm512_div_ps(imp,vcmag)
+             }
+
+
       } // math
 
 
