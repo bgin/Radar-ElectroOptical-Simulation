@@ -1486,7 +1486,7 @@ namespace  gms {
 
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         register __m512 rep,imp;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         zmm0 = _mm512_loadu_ps(&xre[0]);
                         zmm1 = _mm512_loadu_ps(&yre[0]);
@@ -1519,7 +1519,7 @@ namespace  gms {
 
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         register __m512 rep,imp;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         zmm0 = _mm512_load_ps(&xre[0]);
                         zmm1 = _mm512_load_ps(&yre[0]);
@@ -1551,7 +1551,7 @@ namespace  gms {
                                            float * __restrict min) {
 
                         register __m512 rep,imp;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         sre = 0.0f;
                         rep  = _mm512_fmsub_ps(xre,yre,
@@ -1581,7 +1581,7 @@ namespace  gms {
 
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         register __m512 rep,imp,den,rquot,iquot;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         zmm0 = _mm512_loadu_ps(&xre[0]);
                         zmm1 = _mm512_loadu_ps(&yre[0]);
@@ -1618,7 +1618,7 @@ namespace  gms {
 
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         register __m512 rep,imp,den,rquot,iquot;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         zmm0 = _mm512_load_ps(&xre[0]);
                         zmm1 = _mm512_load_ps(&yre[0]);
@@ -1654,7 +1654,7 @@ namespace  gms {
                                              float * __restrict mim) {
 
                         register __m512 rep,imp,den,rquot,iquot;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         sre  = 0.0f;
                         rep  = _mm512_fmsub_ps(xre,yre,
@@ -1772,7 +1772,7 @@ namespace  gms {
                       
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         register __m512 re,im;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         zmm0 = _mm512_loadu_ps(&xre[0]);
                         zmm1 = _mm512_loadu_ps(&yre[0]);
@@ -1803,7 +1803,7 @@ namespace  gms {
                       
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         register __m512 re,im;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         zmm0 = _mm512_load_ps(&xre[0]);
                         zmm1 = _mm512_load_ps(&yre[0]);
@@ -1833,7 +1833,7 @@ namespace  gms {
                                             float * __restrict min) {
 
                         register __m512 re,im;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         re   = _mm512_fmadd_ps(xre,yre,
                                                _mm512_mul_ps(xim,yim));
@@ -1857,7 +1857,7 @@ namespace  gms {
                                               float * __restrict min) {
 
                         register __m512 re,im;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         re   = _mm512_loadu_ps(&xre[0]);
                         sre  = _mm512_reduce_ps(re);
@@ -1879,7 +1879,7 @@ namespace  gms {
                                               float * __restrict min) {
 
                         register __m512 re,im;
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         re   = _mm512_load_ps(&xre[0]);
                         sre  = _mm512_reduce_ps(re);
@@ -1900,7 +1900,7 @@ namespace  gms {
                                               float * __restrict mre,
                                               float * __restrict min) {
 
-                        constexpr inv16 = 0.0625f;
+                        constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         sre  = _mm512_reduce_ps(xre);
                         *mre = sre*inv16;
@@ -2041,6 +2041,9 @@ namespace  gms {
                                                           _mm512_mul_ps(xim,yim)));
                         *mre = cvmag;
              }
+
+
+
 
 
 
