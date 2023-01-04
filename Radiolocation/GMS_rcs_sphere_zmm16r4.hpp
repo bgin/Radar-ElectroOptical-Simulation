@@ -120,6 +120,40 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void bsc_func_324_zmm16r4_u(const float * __restrict  pk0a, // size of sphere expressed in wavenumber units
+                                               __m512 * __restrict F0r, // the results
+                                               __m512 * __restrict F0i) { // the results
+
+                        register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                        const register __m512 _1 = _mm512_set1_ps(1.0f);
+                        const register __m512 c0 = _mm512_set1_ps(1.5f);
+                        const register __m512 c1 = _mm512_set1_ps(0.092592592592592592592592592593f);
+                        const register __m512 c2 = _mm512_set1_ps(0.018888888888888888888888888889f);
+                        const register __m512 c3 = _mm512_set1_ps(0.558656504577139497774418409339f);
+                        const register __m512 c4 = _mm512_set1_ps(1.2f);
+                        const register __m512 c5 = _mm512_set1_ps(0.5f);
+                        __m512 k0a2,k0a3,k0a4,k0a6;
+                        __m512 t0,t1,t2,t3;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        t1   = _mm512_sub_ps(_1,_mm512_mul_ps(c1,k0a2));
+                        k0a3 = _mm512_mul_ps(k0a2,k0a);
+                        t0   = _mm512_mul_ps(c0,k0a3);
+                        k0a4 = _mm512_mul_ps(k0a3,k0a);
+                        k0a6 = _mm512_mul_ps(k0a3,k0a2);
+                        t2   = _mm512_fmsub_ps(c2,k0a4,_mm512_mul_ps(c3,k0a6));
+                        t3   = _mm512_mul_ps(t0,_mm512_add_ps(t1,t1));
+                        *F0r = t3;
+                        t0   = _mm512_mul_ps(c5,k0a6);
+                        t1   = _mm512_add_ps(_1,_mm512_mul_ps(c4,k0a2));
+                        *F0i = _mm512_mul_ps(t0,t1);
+                }
+
+
                   /*
                         Radar Cross Section Handbook 1, page 147, formula 3.2-5
                         Backscattering cross section
