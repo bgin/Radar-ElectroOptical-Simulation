@@ -1213,13 +1213,14 @@ namespace  gms {
                                        float * __restrict cexpr,
                                        float * __restrict cexpi ) {
 
+                        register const __m512 I = _mm512_set1_ps(1.0f);
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_loadu_ps(&xre[0]);
                         zmm1  = _mm512_loadu_ps(&xim[0]);
                         zmm2  = xexpf(zmm0);
                         zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
                         _mm512_storeu_ps(&cexpr[0],zmm3);
-                        zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                        zmm4  = _mm512_mul_ps(zmm2,_mm512_mul_ps(xsinf(zmm1),I));
                         _mm512_storeu_ps(&cexpi[0],zmm4);
               }
 
@@ -1234,13 +1235,14 @@ namespace  gms {
                                        float * __restrict __ATTR_ALIGN__(64) cexpr,
                                        float * __restrict __ATTR_ALIGN__(64) cexpi ) {
 
+                        register const __m512 I = _mm512_set1_ps(1.0f);
                         register __m512 zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_load_ps(&xre[0]);
                         zmm1  = _mm512_load_ps(&xim[0]);
                         zmm2  = xexpf(zmm0);
                         zmm3  = _mm512_mul_ps(zmm2,xcosf(zmm1));
                         _mm512_store_ps(&cexpr[0],zmm3);
-                        zmm4  = _mm512_mul_ps(zmm2,xsinf(zmm1));
+                        zmm4  = _mm512_mul_ps(zmm2,_mm512_mul_ps(xsinf(zmm1),I));
                         _mm512_store_ps(&cexpi[0],zmm4);
               }
 
@@ -1255,10 +1257,11 @@ namespace  gms {
                                      __m512 * __restrict cexpr,
                                      __m512 * __restrict cexpi) {
 
+                        register const __m512 I = _mm512_set1_ps(1.0f);
                         register __m512 zmm0;
                         zmm0   = xexpf(xre);
                         *cexpr = _mm512_mul_ps(zmm0,xcosf(xim));
-                        *cexpi = _mm512_mul_ps(zmm0,xsinf(xim));
+                        *cexpi = _mm512_mul_ps(zmm0,_mm512_mul_ps(xsinf(xim),I));
               }
 
 
