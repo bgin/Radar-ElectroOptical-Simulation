@@ -53,6 +53,13 @@ namespace gms {
                        Theta = 0, far-field
                        Valid for k0a < 1 only!!
                    */
+
+                   const  static __m512 Ir  = _mm512_setzero_ps();
+                   const  static __m512 Ii  = _mm512_set1_ps(1.0f);
+                   const  static __m512 nIr = _mm512_set1_ps(-0.0f);
+                   const  static __m512 nIi = _mm512_set1_ps(-1.0f);
+                   const  static __m512 PI  = _mm512_set1_ps(3.14159265358979323846264338328f);
+
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -246,6 +253,108 @@ namespace gms {
                         return (sigma);
                 }
 
+
+
+#include "GMS_complex_zmm16r4.hpp"
+
+
+                  /*
+                        Creeping wave term, F c(0) at the upper end of the resonance region.
+                        Formula 3.2-8
+                    */
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void bsc_f328_zmm16r4(const __m512 x,//k0a
+                                         __m512 * __restrict Fc0r,
+                                         __m512 * __restrict Fc0i) {
+
+                      register __m512 p43,pn16,pn13,pn23,p13;
+                      register __m512 t0r,t0i,t1r,t1i,t2r,t2i;  
+                      register __m512 t3r,t3i,t4r,t4i,t5r,t5i;
+                      register __m512 t6r,t6i,e1r,e1i,e2r,e2i;
+                      register __m512 e3r,e3i,t6r,t6i,t7r,t7i;
+                      register __m512 argr,argi,resr,resi;              
+                      const register __m512 c0  = _mm512_set1_ps(1.357588f);
+                      p43                       = _mm512_pow_ps(x,
+                                                        _mm512_set1_ps(1.3333333333333333333333333333333f));
+                      t0r                       = _mm512_mul_ps(nIr,p43); // - / x 4/3
+                      t0i                       = _mm512_mul_ps(nIi,p43); // - / x 4/3
+                      const register __m512 c0r = _mm512_set1_ps(0.741196f);
+                      const register __m512 c0i = _mm512_set1_ps(1.283788f);
+                      pn16                      = _mm512_pow_ps(x,
+                                                        _mm512_set1_ps(0.166666666666666666666666666667f));
+                      pn16                      = _mm512_rcp14_ps(pn16);
+                      const register __m512 c1r = _mm512_set1_ps(2.200002f);
+                      const register __m512 c1i = _mm512_set1_ps(-1.270172f);
+                      pn23                      = _mm512_pow_ps(x,
+                                                        _mm512_set1_ps(0.666666666666666666666666666667f));
+                      pn23                      = _mm512_rcp14_ps(pn23);
+                      const register __m512 c2r = _mm512_set1_ps(0.445396f);
+                      const register __m512 c2i = _mm512_set1_ps(0.257150f);
+                      p13                       = _mm512_pow_ps(x,
+                                                        _mm512_set1_ps(-0.3333333333333333333333333333333333f));
+                      const register __m512 c3r = _mm512_set1_ps(0.964654f);
+                      const register __m512 c3i = _mm512_set1_ps(1.670829f);
+                      pn13                      = _mm512_rcp14_ps(p13);
+                      const register __m512 c4r = _mm512_set1_ps(7.014224f);
+                      const register __m512 c4i = _mm512_set1_ps(-4.049663f);
+                      t1r                       = _mm512_set1_ps(-0.0f); // e^ipi(x-1/6)
+                      t1i                       = _mm512_mul_ps(pn16,_mm512_set1_ps(-3.14159265358979323846264338328f)); //-//-//
+                      const register __m512 c5r = _mm512_set1_ps(0.444477f);
+                      const register __m512 c5i = _mm512_set1_ps(0.256619f);
+                      t2r                       = _mm512_fmadd_ps(c0r,pn23,c0);
+                      t2i                       = _mm512_fmadd_ps(c0i,pn23,c0); // [1.357588 + (0.741196 + /1.283788) at 2/3]
+                      const register __m512 c6r = _mm512_set1_ps(0.798821f);
+                      const register __m512 c6i = _mm512_set1_ps(1.383598f);
+                      t3r                       = _mm512_mul_ps(pn13,c1r);
+                      t3i                       = _mm512_mul_ps(pn13,c1i);
+                      const register __m512 c7r = _mm512_set1_ps(5.048956f);
+                      const register __m512 c7i = _mm512_set1_ps(-2.915016f);
+                      t4r                       = _mm512_mul_ps(pn13,c2r);
+                      t4i                       = _mm512_mul_ps(pn13,c2i);
+                      const register __m512 c8r = _mm512_set1_ps(0.312321f);
+                      const register __m512 c8i = _mm512_set1_ps(0.180319f);
+                      t5r                       = _mm512_add_ps(t3r,t4r);
+                      t5i                       = _mm512_add_ps(t3i,t4i);
+                      cexp_zmm16r4(t5r,t5i,&e1r,&e1i); // exp[—x1/*(2.200002 - /1.270172) + x“1/3(0.445396 + i 0.257150)]}E
+                      t3r                       = _mm512_fmadd_ps(c3r,pn23,_mm512_set1_ps(0.695864f)); //0.695864 + (0.964654 + /1.670829) at 2/3
+                      t3i                       = _mm512_fmadd_ps(c3i,pn23,_mm512_set1_ps(0.695864f)); //--//--//--//
+                      t4r                       = _mm512_mul_ps(p13,c4r);
+                      t4i                       = _mm512_mul_ps(p13,c4i);
+                      t5r                       = _mm512_mul_ps(pn13,c5r);
+                      t5i                       = _mm512_mul_ps(pn13,c5i);
+                      t6r                       = _mm512_sub_ps(t4r,t5r);
+                      t6i                       = _mm512_sub_ps(t4i,t5i);
+                      cexp_zmm16r4(t6r,t6i,&e2r,&e2i); // exp[-x 1/*(7.014224 -/4.049663) - * -1/2(0.444477 + /0.256619)]
+                      t4r                       = _mm512_fmadd_ps(c4r,pn23,_mm512_set1_ps(0.807104f)); // 0.807104 + (0.798821 + /1.383598) at 2/3
+                      t4i                       = _mm512_fmadd_ps(c4i,pn23,_mm512_set1_ps(0.807104f)); //--//--//
+                      t5r                       = _mm512_mul_ps(p13,c7r);
+                      t5i                       = _mm512_mul_ps(p13,c7i);
+                      t6r                       = _mm512_mul_ps(pn13,c8r);
+                      t6i                       = _mm512_mul_ps(pn13,c8i);
+                      t7r                       = _mm512_sub_ps(t5r,t6r);
+                      t7i                       = _mm512_sub_ps(t5i,t6i);
+                      cexp_zmm16r4(t7r,t7i,&e3r,&e3i); // exp[—x1/8(5.048956 - /2.915016) - Ar1/3(0.312321 + /0.180319)]
+                      t5r                       = _mm512_setzero_ps();
+                      t5i                       = _mm512_setzero_ps();
+                      cmul_zmm16r4(t2r,t2i,e1r,e1i,&t5r,&t5i); 
+                      t6r                       = _mm512_setzero_ps();
+                      t6i                       = _mm512_setzero_ps();
+                      cmul_zmm16r4(t3r,t3i,e2r,e2i,&t6r,&t6i);
+                      t7r                       = _mm512_setzero_ps();
+                      t7i                       = _mm512_setzero_ps();
+                      cmul_zmm16r4(t4r,t4i,e3r,e3i,&t7r,&t7i);
+                      argr                      = _mm512_add_ps(t5r,_mm512_sub_ps(t6r,t7r));
+                      argi                      = _mm512_add_ps(t5i,_mm512_sub_ps(t6i,t7i));
+                      t4r                       = _mm512_setzero_ps();
+                      t4i                       = _mm512_setzero_ps();
+                      cmul_zmm16r4(t1r,t1i,argr,argi,&t4r,&t4i);
+                      cexp_zmm16r4(t4r,t4i,&resr,&resi);
+                      cmul_zmm16r4(t04,t0i,resr,resi,&Fc0r,&Fc0i);                    
+                }
 
 
      } // radiolocation
