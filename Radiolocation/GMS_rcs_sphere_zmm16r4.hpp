@@ -566,6 +566,8 @@ namespace gms {
                        The complex scattering amplitudes near the lower end of the resonance
                        region (say, 0.4 < k^a < 1) 
                        E-plane approximation
+                       These equations are not valid at all for k0a > 1. They are
+                       valid for all theta angles.
                    */
 
                    __ATTR_ALWAYS_INLINE__
@@ -731,6 +733,8 @@ namespace gms {
                        The complex scattering amplitudes near the lower end of the resonance
                        region (say, 0.4 < k^a < 1) 
                        H-plane approximation
+                       These equations are not valid at all for k0a > 1. They are
+                       valid for all theta angles.
                    */
 
                    __ATTR_ALWAYS_INLINE__
