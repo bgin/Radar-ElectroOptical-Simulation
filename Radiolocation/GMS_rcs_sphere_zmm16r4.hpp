@@ -1142,6 +1142,55 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S2_f3217_zmm16r4_u(const float * __restrict  pk0a,
+                                           const float * __restrict  ptht,
+                                           float * __restrict  S2r,
+                                           float * __restrict  S2i) {
+                        
+                        register __m512 k0a        = _mm512_loadu_ps(&pk0a[0]);
+                        register __m512 tht        = _mm512_loadu_ps(&tht[0]);
+                        const register __m512 _1   = _mm512_set1_ps(1.0f);
+                        const register __m512 quat = _mm512_set1_ps(0.25f);
+                        const register __m512 _6   = _mm512_set1_ps(6.0f);
+                        const register __m512 half = _mm512_set1_ps(0.5f);
+                        register __m512 k0ah,k0a2,k0aa,cexpr,cexpi;
+                        register __m512 sint,sin2t,cost,cos2t,cos3t,carr,cari,htht; 
+                        register __m512 t0r,t0i,t1r,t1i,t2,t3,cos6t,resr,resi;
+                        k0ah  = _mm512_mul_ps(half,k0a);
+                        htht  = _mm512_mul_ps(half,tht);
+                        cost  = xcosf(tht);
+                        k0aa  = _mm512_add_ps(k0a,k0a);
+                        k0a2  = _mm512_mul_ps(k0a,k0a);
+                        sint  = xsinf(htht);
+                        sin2t = _mm512_mul_ps(sint,sint);
+                        carr  = _mm512_set1_ps(-0.0f);
+                        cari  = _mm512_mul_ps(k0aa,htht);
+                        cexp_zmm16r4(carr,cari,&cexpr,&cexpi);
+                        cexpr = _mm512_mul_ps(k0ah,cexpr);// exp term
+                        cexpi = _mm512_mul_ps(k0ah,cexpi);// exp term
+                        cos2t = _mm512_mul_ps(cost,cost);
+                        cos3t = _mm512_mul_ps(cost,cos2t);
+                        cos6t = _mm512_mul_ps(cos3t,cos2t);
+                        t3    = _mm512_div_ps(_mm512_mul_ps(_mm512_add_ps(_6,cost),sin2t),cos6t);
+                        t0r   = _mm512_setzero_ps();
+                        t0i   = _mm512_div_ps(_mm512_mul_ps(Ii,cost),_mm512_mul_ps(k0aa,cos3t));
+                        t0r   = _1;                    // second term
+                        t0i   = _mm512_sub_ps(_1,t0i); // second term
+                        t2    = _mm512_mul_ps(quat,k0a2);
+                        cerr  = _mm512_mul_ps(t2,t3);
+                        t1r   = _mm512_sub_ps(t0r,cerr);
+                        t1i   = _mm512_sub_ps(t0i,cerr);
+                        cmul_zmm16r4(cexpr,cexpi,t1r,t1i,&resr,&resi);
+                        _mm512_storeu_ps(&S2r[0],resr);
+                        _mm512_storeu_ps(&S2i[0],resi);
+                }
+
+
 
      } // radiolocation
 
