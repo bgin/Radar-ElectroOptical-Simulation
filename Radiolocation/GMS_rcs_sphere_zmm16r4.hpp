@@ -1191,6 +1191,100 @@ namespace gms {
                 }
 
 
+                   /*
+
+                       Creeping wave contribution equations.
+                       Eqs. (3.2-18) and (3.2-19) are not valid near either the backscattering or
+                       forward scattering directions, but are valid in an intermediate region
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S1_f3218_zmm16r4(const __m512 x, //k0a
+                                         const __m512 tht,
+                                         __m512 * __restrict S1r,
+                                         __m512 * __restrict S1i) {
+                        
+                        __m512 sint,tant,pmth,ppth;;
+                        sint             = xsinf(tht);
+                        const __m512 c0  = _mm512_set1_ps(0.083333333333333333333333333333f);
+                        const register __m512 px13= _mm512_pow_ps(x,_mm512_set1_ps(0.33333333333333333333333333333333333333333f);  
+                        const register __m512 pi  = _mm512_set1_ps(3.14159265358979323846264338328f);
+                        const __m512 pnx13         = _mm512_rcp14_ps(px13);
+                        const register __m512 pi2 = _mm512_set1_ps(6.283185307179586476925286766559f);
+                        const register __m512 _1  = _mm512_set1_ps(1.0f);
+                        
+                        const __m512 pnx23         = _mm512_pow_ps(x,_mm512_set1_ps(0.666666666666666666666666666667f));
+                                     pnx23         = _mm512_rcp_ps(pn23);
+                        const register __m512 c1  = _mm512_set1_ps(0.8750f);
+                        const register __m512 c2  = _mm512_set1_ps(2.715175f);
+                        tant             = xtanf(tht);
+                        const register __m512 c3  = _mm512_set1_ps(1.391727f);
+                        const register __m512 c4  = _mm512_set1_ps(0.201776f);
+                        pmth                      = _mm512_sub_ps(pi,tht);
+                        const register __m512 c0r = _mm512_set1_ps(0.933508f);
+                        ppth                      = _mm512_add_ps(pi,tht);
+                        const register __m512 c0i = _mm512_set1_ps(1.616911f);
+                        const register __m512 c1r = _mm512_set1_ps(0.700283f);
+                        const register __m512 c1i = _mm512_set1_ps(0.404308f);
+                        const register __m512 c2r = _mm512_set1_ps(0.141774f);
+                        const register __m512 c2i = _mm512_set1_ps(0.081853f);
+                        const register __m512 c3r = _mm512_set1_ps(0.700283f);
+                        const register __m512 c3i = _mm512_set1_ps(0.404308f);
+                        const register __m512 c4r = _mm512_set1_ps(0.141774f);
+                        const register __m512 c4i = _mm512_set1_ps(0.081853f);
+                        const register __m512 c5r = _mm512_set1_ps(1.032306f);
+                        const register __m512 c5i = _mm512_set1_ps(1.788036f);
+                        const register __m512 c6r = _mm512_set1_ps(2.232697f);
+                        const register __m512 c6i = _mm512_set1_ps(1.289048f);
+                        const register __m512 c7r = _mm512_set1_ps(0.141482f);
+                        const register __m512 c7i = _mm512_set1_ps(0.081684f);
+                        const register __m512 c8r = _mm512_set1_ps(2.232697f);
+                        const register __m512 c8i = _mm512_set1_ps(1.289048f);
+                        const register __m512 c9r = _mm512_set1_ps(0.141482f);
+                        const register __m512 c9i = _mm512_set1_ps(0.081684f);
+                        const register __m512 c10r= _mm512_set1_ps(1.607133f);
+                        const register __m512 c10i= _mm512_set1_ps(0.927879f);
+                        const register __m512 c11r= _mm512_set1_ps(0.099415f);
+                        const register __m512 c11i= _mm512_set1_ps(0.057397f);
+                        const register __m512 c12r= _mm512_set1_ps(1.607133f);
+                        const __m512 c12i= _mm512_set1_ps(0.927879f);
+                        const __m512 c13r= _mm512_set1_ps(0.099415f);
+                        const __m512 c13i= _mm512_set1_ps(0.057397f);
+                        __m512 t0r,t0i,t1r,t1i,t2r,t2i,t3r,t3i,t4r,t4i;
+                        __m512 t5r,t5i,t6r,t6i,t7r,t7i,t8r,t8i,t9r,t9i;
+                        __m512 cer,cei,c1tht;
+                        __m512 xttht,r0,r1,r2,r3,r4;
+                        c1tht = _mm512_div_ps(c1,xttht)
+                        t0r   = nIr;
+                        t0i   = px13;
+                        r0    =  _mm512_mul_ps(pi2,sint);
+                        r1    = _mm512_sqrt_ps(x,r0);
+                        t0i   = _mm512_mul_ps(t0i,r1);
+                        t1r   = Ir;
+                        t1i   = _mm512_mul_ps(pi,_mm512_add_ps(x,c0));
+                        cexp_zmm16r4(t1r,t1i,&cer,&cei); // 
+                        cmul_zmm16r4(t0r,t01,cer,cei,&t2r,&t2i); // exp term (first term) in  t2r,t2i
+                        t3r   = _mm512_fmadd_ps(pnx23,c0r,c2);
+                        t3i   = _mm512_fmadd_ps(pnx23,c0i,c2); // [2.715175 + x-*/*(0.933508 + 11.616911)
+                        xttht = _mm512_mul_ps(x,tant);
+                        t0r   = _1;
+                        t0i   = _mm512_sub_ps(_1,c1tht);// 1-(i-0.8750/x*tan(theta))
+                        t1r   = _1;
+                        t1i   = _mm512_add_ps(_1,c1tht);// 1+(i-0.8750/x*tan(theta))
+                        t4r   = pmth;// same as below real part.
+                        t4i   = _mm512_sub_ps(_mm512_mul_ps(Ini,_mm512_mul_ps(x,tht)),pmth);//-ixth-(pi-th)
+                        t5r   = _mm512_sub_ps(Ir,ppth);// same as below real part.
+                        t5i   = _mm512_sub_ps(_mm512_mul_ps(x,tht),ppth);//ixth-(pi+th)
+                        t6r   = _mm512_mul_ps(px13,c1r);
+                        t6i   = _mm512_mul_ps(px13,_mm512_mul_ps(Ini,c1i));
+                        cmul_zmm16r4(t5r,t5i,t6r,t6i,&t7r,&t7i); //t7r,t7i = (t5r,t5i)*(t6r,t6i)
+                } 
+
+
 
      } // radiolocation
 
