@@ -1442,6 +1442,66 @@ namespace gms {
                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3223_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) ptheta,
+                                              float * __restrict __ATTR_ALIGN__(64) rcs  ) {
+       
+                           register __m512       k0a  = _mm512_load_ps(&pk0a[0]);
+                           const register __m512 _4   = _mm512_set1_ps(4.0f);
+                           register __m512       a    = _mm512_load_ps(&pa[0]);
+                           const register __m512 half = _mm512_set1_ps(0.5f);
+                           register __m512       theta= _mm512_load_ps(&ptheta[0]);
+                           const register __m512 _1   = _mm512_set1_ps(1.0f);
+                           register __m512 k0a4,a2,sqr,cost,t0,t1,t2; 
+                           register __m512 rcs;
+                           cost = xcosf(theta);
+                           k0a4 = _mm512_mul_ps(k0a,k0a,_mm512_mul_ps(k0a,k0a));
+                           a2   = _mm512_mul_ps(a,a);
+                           t0   = _mm512_fmadd_ps(half,cost,_1);
+                           sqr  = _mm512_mul_ps(t0,t0);
+                           t1   = _mm512_mul_ps(pi,a2);
+                           t2   = _mm512_mul_ps(_4,k0a4);
+                           _mm512_store_ps(&rcs[0] ,_mm512_mul_ps(t1,_mm512_mul_ps(t2,sqr)));
+                           
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3223_zmm16r4_a(  const float * __restrict  pk0a,
+                                              const float * __restrict  pa,
+                                              const float * __restrict  ptheta,
+                                              float * __restrict  rcs  ) {
+       
+                           register __m512       k0a  = _mm512_loadu_ps(&pk0a[0]);
+                           const register __m512 _4   = _mm512_set1_ps(4.0f);
+                           register __m512       a    = _mm512_loadu_ps(&pa[0]);
+                           const register __m512 half = _mm512_set1_ps(0.5f);
+                           register __m512       theta= _mm512_loadu_ps(&ptheta[0]);
+                           const register __m512 _1   = _mm512_set1_ps(1.0f);
+                           register __m512 k0a4,a2,sqr,cost,t0,t1,t2; 
+                           register __m512 rcs;
+                           cost = xcosf(theta);
+                           k0a4 = _mm512_mul_ps(k0a,k0a,_mm512_mul_ps(k0a,k0a));
+                           a2   = _mm512_mul_ps(a,a);
+                           t0   = _mm512_fmadd_ps(half,cost,_1);
+                           sqr  = _mm512_mul_ps(t0,t0);
+                           t1   = _mm512_mul_ps(pi,a2);
+                           t2   = _mm512_mul_ps(_4,k0a4);
+                           _mm512_storeu_ps(&rcs[0] ,_mm512_mul_ps(t1,_mm512_mul_ps(t2,sqr)));
+                           
+               }
+
+
                    
 
 
