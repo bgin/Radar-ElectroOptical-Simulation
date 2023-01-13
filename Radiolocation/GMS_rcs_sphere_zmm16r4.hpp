@@ -1569,9 +1569,9 @@ namespace gms {
                                              float * __restrict  S12r,
                                              float * __restrict  S12i) {
 
-                        const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
                         const register __m512 nhlf = _mm512_set1_ps(-0.5f);
-                        const register __m512 tht  = _mm512_load_ps(&ptht[0]);
+                        const register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
                         const register __m512 htht = _mm512_mul_ps(_mm512_set1_ps(0.5f),tht);
                         register __m512 cosht,hk0a,_2k0a,carr,cari,cexr,cexi;
                         cosht = xcosf(htht);          
@@ -1580,10 +1580,22 @@ namespace gms {
                         carr  = nIr;
                         cari  = _mm512_mul_ps(nIi,_mm512_mul_ps(_2k0a,cosht));
                         cexp_zmm16r4(carr,cari,&cexr,cexi);
-                        _mm512_store_ps(&S12r[0], _mm512_mul_ps(hk0a,cexr));
-                        _mm512_store_ps(&S12i[0], _mm512_mul_ps(hk0a,cexi));
+                        _mm512_storeu_ps(&S12r[0], _mm512_mul_ps(hk0a,cexr));
+                        _mm512_storeu_ps(&S12i[0], _mm512_mul_ps(hk0a,cexi));
               }
-                  
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3225_zmm16r4(const __m512 a) {
+                         
+                         register __m512 rcs;
+                         rcs = _mm512_mul_ps(pi,_mm512_mul_ps(a,a));
+                         return (rcs);
+              }
 
 
      } // radiolocation
