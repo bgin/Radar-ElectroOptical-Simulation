@@ -1798,6 +1798,31 @@ namespace gms {
                }
 
 
+                 /*
+                       Scattering functions equation at upper end of resonance region.
+                       Optics wave term and creeping wave term.
+                       Optics wave term, formula 3.2-28
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Fo_f3228_zmm16r4(const __m512 k0a,
+                                         __m512 * __restrict For,
+                                         __m512 * __restrict Foi) {
+
+                        const register __m512 hlf = _mm512_set1_ps(0.5f);
+                        const register __m512 c0  = _mm512_set1_ps(0.916666666666666666666666666667f);
+                        register __m512 k0a2,t0;
+                        k0a2                      = _mm512_mul_ps(k0a,k0a);
+                        t0                        = _mm512_sub_ps(k0a2,c0);
+                        *For                      = Inr;
+                        *Foi                      = _mm512_mul_ps(Ini,_mm512_mul_ps(hlf,t0));
+                }
+
+
                  
 
 
