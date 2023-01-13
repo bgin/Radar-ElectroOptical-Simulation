@@ -1598,6 +1598,44 @@ namespace gms {
               }
 
 
+                /*
+                       Resonance region (0.4 < k0a < 20.0), equations are valid only for k0a < 1.0.
+                       Complex scattering amplitude represented as a scattering function -- formula 3.2-26
+                 */
+
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S12_f3226_zmm16r4(const __m512 k0a,
+                                          __m512 * __restrict S12r,
+                                          __m512 * __restrict S12i) {
+
+                        __m512 k0a2,k0a3,k0a4,k0a6;
+                        __m512 t0,t1,t2,t3;
+                        const register __m512 nhlf = _mm512_set1_ps(-0.5f);
+                        k0a2                       = _mm512_mul_ps(k0a,k0a);
+                        const register __m512 _1   = _mm512_set1_ps(1.0f);
+                        k0a3                       = _mm512_mul_ps(k0a2,k0a);
+                        const register __m512 c0   = _mm512_set1_ps(113.0f/90.0f);
+                        k0a4                       = _mm512_mul_ps(k0a2,k0a2);
+                        const register __m512 c1   = _mm512_set1_ps(1783.0f/2100.0f);
+                        k0a6                       = _mm512_mul_ps(k0a3,k0a2);
+                        const register __m512 c2   = _mm512_set1_ps(670057.0f/396900.0f);
+                        t0                         = _mm512_mul_ps(nhlf,k0a3)
+                        const register __m512 c3   = _mm512_set1_ps(0.833333333333333333333333333333f);
+                        const register __m512 c4   = _mm512_set1_ps(0.24f);
+                        t1                         = _mm512_fmsub_ps(_mm512_add_ps(_1,c0),k0a2,
+                                                                 _mm512_fmsub_ps(c1,k0a4,
+                                                                             _mm512_mul_ps(c2,k0a6)));
+                        *S12r                      = _mm512_mul_ps(t0,t1);
+                        t2                         = _mm512_mul_ps(Ini,_mm512_mul_ps(c3,k0a6));
+                        t3                         = _mm512_fmadd_ps(c4,k0a3,_1);
+                        *S12i                      = _mm512_mul_ps(t2,t3);
+               }
+
+
      } // radiolocation
 
 } // gms
