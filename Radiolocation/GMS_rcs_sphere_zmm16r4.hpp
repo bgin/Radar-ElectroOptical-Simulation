@@ -1738,6 +1738,66 @@ namespace gms {
                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3227_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            float * __restrict __ATTR_ALIGN__(64) rcs) {
+
+                          register __m512 k0a      = _mm512_load_ps(&pk0a[0]);
+                          register __m512  a       = _mm512_load_ps(&pa[0]);
+                          register __m512 a2,k0a2,k0a4,k0a6,t0;
+                          register __m512 t1;
+                          a2                       = _mm512_mul_ps(a,a);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          k0a2                     = _mm512_mul_ps(k0a,k0a);
+                          const register __m512 c0 = _mm512_set1_ps(113.0f/45.0f);
+                          k0a4                     = _mm512_mul_ps(k0a2,k0a2);
+                          const register __m512 c1 = _mm512_set1_ps(6899.0f/56700.0f);
+                          k0a6                     = _mm512_mul_ps(k0a4,_mm512_mul_ps(k0a,k0a));
+                          const register __m512 c2 = _mm512_set1_ps(5419129.0f/1984500.0f);
+                          t0                       = _mm512_mul_ps(pi,_mm512_mul_ps(a2,k0a4));
+                          t1                       = _mm512_fmsub_ps(_mm512_add_ps(_1,c0),k0a2,
+                                                                             _mm512_fmsub_ps(c1,k0a4,
+                                                                                         _mm512_mul_ps(c2,k0a6)));
+                          _mm512_store_ps(&rcs[0],  _mm512_mul_ps(t0,t1));
+                         
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3227_zmm16r4_u(const float * __restrict  pk0a,
+                                            const float * __restrict  pa,
+                                            float * __restrict  rcs) {
+
+                          register __m512 k0a      = _mm512_loadu_ps(&pk0a[0]);
+                          register __m512  a       = _mm512_loadu_ps(&pa[0]);
+                          register __m512 a2,k0a2,k0a4,k0a6,t0;
+                          register __m512 t1;
+                          a2                       = _mm512_mul_ps(a,a);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          k0a2                     = _mm512_mul_ps(k0a,k0a);
+                          const register __m512 c0 = _mm512_set1_ps(113.0f/45.0f);
+                          k0a4                     = _mm512_mul_ps(k0a2,k0a2);
+                          const register __m512 c1 = _mm512_set1_ps(6899.0f/56700.0f);
+                          k0a6                     = _mm512_mul_ps(k0a4,_mm512_mul_ps(k0a,k0a));
+                          const register __m512 c2 = _mm512_set1_ps(5419129.0f/1984500.0f);
+                          t0                       = _mm512_mul_ps(pi,_mm512_mul_ps(a2,k0a4));
+                          t1                       = _mm512_fmsub_ps(_mm512_add_ps(_1,c0),k0a2,
+                                                                             _mm512_fmsub_ps(c1,k0a4,
+                                                                                         _mm512_mul_ps(c2,k0a6)));
+                          _mm512_storeu_ps(&rcs[0],  _mm512_mul_ps(t0,t1));
+                         
+               }
+
+
                  
 
 
