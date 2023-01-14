@@ -1809,18 +1809,42 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Fo_f3228_zmm16r4(const __m512 k0a,
-                                         __m512 * __restrict For,
-                                         __m512 * __restrict Foi) {
+                   void FO_f3228_zmm16r4(const __m512 k0a,
+                                         __m512 * __restrict FOr,
+                                         __m512 * __restrict FOi) {
 
                         const register __m512 hlf = _mm512_set1_ps(0.5f);
                         const register __m512 c0  = _mm512_set1_ps(0.916666666666666666666666666667f);
                         register __m512 k0a2,t0;
                         k0a2                      = _mm512_mul_ps(k0a,k0a);
                         t0                        = _mm512_sub_ps(k0a2,c0);
-                        *For                      = Inr;
-                        *Foi                      = _mm512_mul_ps(Ini,_mm512_mul_ps(hlf,t0));
+                        *FOr                      = Inr;
+                        *FOi                      = _mm512_mul_ps(Ini,_mm512_mul_ps(hlf,t0));
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void FO_f3228_zmm16r4_a(const float * __restrict pk0a,
+                                           float * __restrict FOr,
+                                           float * __restrict FOi) {
+
+                        register __m512       k0a = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 hlf = _mm512_set1_ps(0.5f);
+                        const register __m512 c0  = _mm512_set1_ps(0.916666666666666666666666666667f);
+                        register __m512 k0a2,t0;
+                        k0a2                      = _mm512_mul_ps(k0a,k0a);
+                        t0                        = _mm512_sub_ps(k0a2,c0);
+                        _mm512_store_ps(&FOr[0],   Inr);
+                        _mm512_store_ps(&FOi[0],   _mm512_mul_ps(Ini,_mm512_mul_ps(hlf,t0)));
+                }
+
+
+                  
+
 
 
                  
