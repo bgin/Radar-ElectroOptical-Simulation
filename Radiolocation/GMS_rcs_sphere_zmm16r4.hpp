@@ -2272,6 +2272,24 @@ namespace gms {
                         _mm512_store_ps(&Fi[0]  ,_mm512_mul_ps(nIi,_mm512_mul_ps(hlf,k0a2)));
                  }
 
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void F_f3233_zmm16r4_u(const float * __restrict  pk0a,
+                                          float * __restrict  Fr,
+                                          float * __restrict  Fi) {
+
+                        register __m512 k0a       = _mm512_loadu_ps(&pk0a[0]);
+                        const register __m512 hlf = _mm512_set1_ps(0.5f);
+                        register __m512 k0a2;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        _mm512_storeu_ps(&Fr[0]  ,nIr);
+                        _mm512_storeu_ps(&Fi[0]  ,_mm512_mul_ps(nIi,_mm512_mul_ps(hlf,k0a2)));
+                 }
+
      } // radiolocation
 
 } // gms
