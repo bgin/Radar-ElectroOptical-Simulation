@@ -2231,6 +2231,47 @@ namespace gms {
                                                      pi,_mm512_mul_ps(a2,ka04)));
                  }
 
+
+                   /*
+                         High-frequency region -- forward scattering function and 
+                         cross-section (k0a > 20)
+                         Formula 3.2-33 (Forward scattering function).
+                     */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void F_f3233_zmm16r4(const __m512 k0a,
+                                        __m512 * __restrict Fr,
+                                        __m512 * __restrict Fi) {
+
+                        const register __m512 hlf = _mm512_set1_ps(0.5f);
+                        register __m512 k0a2;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        *Fr  = nIr;
+                        *Fi  = _mm512_mul_ps(nIi,_mm512_mul_ps(hlf,k0a2));
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void F_f3233_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                          float * __restrict __ATTR_ALIGN__(64) Fr,
+                                          float * __restrict __ATTR_ALIGN__(64) Fi) {
+
+                        register __m512 k0a       = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 hlf = _mm512_set1_ps(0.5f);
+                        register __m512 k0a2;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        _mm512_store_ps(&Fr[0]  ,nIr);
+                        _mm512_store_ps(&Fi[0]  ,_mm512_mul_ps(nIi,_mm512_mul_ps(hlf,k0a2)));
+                 }
+
      } // radiolocation
 
 } // gms
