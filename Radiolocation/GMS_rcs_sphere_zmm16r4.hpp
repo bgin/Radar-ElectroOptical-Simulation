@@ -2113,6 +2113,27 @@ namespace gms {
                } 
 
 
+                 /*
+                         Low frquency region (k0a < 0.4), Rayleigh approximation
+                         for forward scattering function and cross-section.
+                         Formulae: 3.2-31, 3.2-32
+                         Forward scattering function.
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 F_f3231_zmm16r4(const __m512 k0a) {
+
+                          const register __m512 nhlf = _mm512_set1_ps(-0.5f);
+                          register __m512 k0a3,Fpi;
+                          k0a3 = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          Fpi  = _mm512_mul_ps(nhlf,k0a3);
+                          return (Fpi); 
+                  }
+
      } // radiolocation
 
 } // gms
