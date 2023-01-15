@@ -2166,6 +2166,71 @@ namespace gms {
                           _mm512_storeu_ps(&Fpi[0] ,_mm512_mul_ps(nhlf,k0a3));
                  }
 
+
+                    /*
+                         Low frquency region (k0a < 0.4), Rayleigh approximation
+                         for forward scattering function and cross-section.
+                         Formulae: 3.2-31, 3.2-32
+                         RCS.
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3232_zmm16r4(const __m512 k0a,
+                                            const __m512 a) {
+
+                          register __m512 a2,ka04,rcs,t0;
+                          a2   = _mm512_mul_ps(a,a);
+                          t0   = _mm512_mul_ps(ka0,ka0);
+                          ka04 = _mm512_mul_ps(t0,t0);
+                          rcs  = _mm512_mul_ps(pi,_mm512_mul_ps(a2,ka04));
+                          return (rcs); 
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3232_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            float * __restrict __ATTR_ALIGN__(64) rcs) {
+
+                          register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 a2,ka04,t0;
+                          a2   = _mm512_mul_ps(a,a);
+                          t0   = _mm512_mul_ps(ka0,ka0);
+                          ka04 = _mm512_mul_ps(t0,t0);
+                          _mm512_store_ps(&rcs[0] ,_mm512_mul_ps(
+                                                     pi,_mm512_mul_ps(a2,ka04)));
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3232_zmm16r4_u(  const float * __restrict  pk0a,
+                                              const float * __restrict    pa,
+                                              float * __restrict  rcs) {
+
+                          register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 a2,ka04,t0;
+                          a2   = _mm512_mul_ps(a,a);
+                          t0   = _mm512_mul_ps(ka0,ka0);
+                          ka04 = _mm512_mul_ps(t0,t0);
+                          _mm512_storeu_ps(&rcs[0] ,_mm512_mul_ps(
+                                                     pi,_mm512_mul_ps(a2,ka04)));
+                 }
+
      } // radiolocation
 
 } // gms
