@@ -2351,6 +2351,37 @@ namespace gms {
                  }
 
 
+                  /*
+                          Low-frequency region (k1a < 0.8).
+                          Expansion by two series terms i.e. A0,A1 and B0,B1.
+
+                    */
+                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A_coeffs_zmm16r4(const __m512 k0a5,
+                                         const __m512 m1r,
+                                         const __m512 m1i,
+                                         __m512 * __restrict A1r,
+                                         __m512 * __restrict A1i,
+                                         __m512 * __restrict A2r,
+                                         __m512 * __restrict A2i) {
+
+                        const register __m512 c0 = _mm512_set1_ps(0.033333333333333333333333333333f);
+                        const register __m512 _1 = _mm512_set1_ps(1.0f);
+                        register __m512 c0r,c0i;
+                        c0r = _mm512_mul_ps(_mm512_sub_ps(m1r,_1),k0a5);
+                        c0i = _mm512_mul_ps(_mm512_sub_ps(m1i,_1),k0a5);
+                        *A1r = _mm512_mul_ps(c0r,c0);
+                        *A1i = _mm512_mul_ps(c0i,c0);
+                        *A2r = Ir;
+                        *A2i = Ir
+                }
+
+
      } // radiolocation
 
 } // gms
