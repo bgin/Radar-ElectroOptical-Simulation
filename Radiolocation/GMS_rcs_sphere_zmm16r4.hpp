@@ -2313,6 +2313,25 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f3234_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            float * __restrict __ATTR_ALIGN__(64) rcs) {
+
+                          register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 a2,ka02,rcs;
+                          a2   = _mm512_mul_ps(a,a);
+                          ka02   = _mm512_mul_ps(ka0,ka0);
+                          _mm512_store_ps(&rcs[0], _mm512_mul_ps(pi,_mm512_mul_ps(a2,ka02)));
+                          
+                 }
+
+
      } // radiolocation
 
 } // gms
