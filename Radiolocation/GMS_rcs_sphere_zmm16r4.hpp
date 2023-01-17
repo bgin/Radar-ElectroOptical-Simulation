@@ -2624,6 +2624,41 @@ namespace gms {
                           return (rcs);
                }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void rcs_f337_zmm16r4(  const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0a4,
+                                           const float * __restrict __ATTR_ALIGN__(64) pm1r,
+                                           const float * __restrict __ATTR_ALIGN__(64) pm1i,
+                                           float * __restrict __ATTR_ALIGN__(64) rcs ) {
+
+                          register __m512 a        = _mm512_load_ps(&pa[0]);
+                          register __m512 aa       = _mm512_mul_ps(a,a);
+                          register __m512 k0a4     = _mm512_load_ps(&pk0a4[0]);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 m1r      = _mm512_load_ps(&pm1r[0]);
+                          const register __m512 _2 = _mm512_set1_ps(2.0f);
+                          register __m512 m1i      = _mm512_load_ps(&pm1i[0]);
+                          const register __m512 _4 = _mm512_set1_ps(4.0f);
+                          register __m512 fac      = _mm512_mul_ps(_4,
+                                                               _mm512_mul_ps(PI,aa));
+                          register __m512 mm1r,mm1i,mma2r,mma2i,mms1r,mms1i,t0r,t0i;
+                          register __m512 cabs,rcs;
+                          cmul_zmm16r4(m1r,m1i,m1r,m1i,&mm1r,&mm1i);
+                          mms1r = _mm512_sub_ps(mm1r,_1);
+                          mms1i = _mm512_sub_ps(mm1i,_1);
+                          mma2r = _mm512_add_ps(mm1r,_2);
+                          mma2i = _mm512_add_ps(mm1i,_2);
+                          cdiv_zmm16r4(mm1sr,mm1si,mma2r,mma2i,&t0r,&t0i);
+                          cabs = cabs_zmm16r4(t0r,t0i);
+                          _mm512_store_ps(&rcs[0], _mm512_mul_ps(fac,_mm512_mul_ps(cabs,k0a4)));
+                    
+               }
+
      } // radiolocation
 
 } // gms
