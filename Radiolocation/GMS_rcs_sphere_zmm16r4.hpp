@@ -2464,14 +2464,80 @@ namespace gms {
                         m1s1i                    = _mm512_sub_ps(mm1i,_1);
                         const register __m512 c1 = _mm512_set1_ps(0.055555555555555555555555555556f);
                         m1s2r                    = _mm512_sub_ps(mm1r,_2);
-                        register __m512 t0r,t0i,t1r,t1i,t2r,t2i;
+                        register __m512 t0r,t0i,t1r,t1i,t2r,t2i,t3r,t3i;
                         m1s2i                    = _mm512_sub_ps(mm1i,_2);
                         m1a2r                    = _mm512_add_ps(mm1r,_2);
                         m1a2i                    = _mm512_add_ps(mm1i,_2);
+                        cmul_zmm16r4(m1a2r,m1a2i,m1a2r,m1a2i,&t3r,&t3i);
                         _2m1r                    = _mm512_fmadd_ps(_2,mm1r,_3);
                         _2m1i                    = _mm512_fmadd_ps(_2,mm1i,_3);
-                        
+                        cdiv_zmm16r4(m1s1r,m1s1i,m1a2r,m1a2i,&t0r,&t0i);
+                        t0r = _mm512_mul_ps(t0r,k0a3);
+                        t0i = _mm512_mul_ps(t0i,k0a3);
+                        cmul_zmm16r4(m1s1r,m1s1i,m1s2r,m1s2i,&t1r,&t1i);
+                        cdiv_zmm16r4(t1r,t1i,t3r,t3i,&t2r,&t2i);
+                        t2r = _mm512_mul_ps(c0,_mm512_mul_ps(t2r,k0a5));
+                        t2i = _mm512_mul_ps(c0,_mm512_mul_ps(t2i,k0a5));
+                        *B1r = _mm512_add_ps(t0r,t2r);
+                        *B1i = _mm512_add_ps(t0i,t2i);
+                        cdiv_zmm16r4(m1s1r,m1s1i,_2m1r,_2m1i,&t0r,&t0i);
+                        *B2r = _mm512_mul_ps(c1,_mm512_mul_ps(t0r,k0a5));
+                        *B2i = _mm512_mul_ps(c1,_mm512_mul_ps(t0i,k0a5));
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B_coffs_f335_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64)  pk0a3,
+                                               const float * __restrict __ATTR_ALIGN__(64)  pk0a5,
+                                               const float * __restrict __ATTR_ALIGN__(64)  pm1r,
+                                               const float * __restrict __ATTR_ALIGN__(64)  pm1i,
+                                               float * __restrict __ATTR_ALIGN__(64) B1r,
+                                               float * __restrict __ATTR_ALIGN__(64) B1i,
+                                               float * __restrict __ATTR_ALIGN__(64) B2r,
+                                               float * __restrict __ATTR_ALIGN__(64) B2i) {
+                 
+                        register __m512 k0a3 = _mm512_load_ps(&pk0a3[0]);
+                        register __m512 k0a5 = _mm512_load_ps(&pk0a5[0]);
+                        register __m512 m1r  = _mm512_load_ps(&pm1r[0]);
+                        register __m512 m1i  = _mm512_load_ps(&pm1i[0]);
+                        register __m512 mm1r,mm1i,m1s1r,m1s1i,m1s2r,m1s2i;
+                        register __m512 m1a2r,m1a2i,_2m1r,_2m1i;
+                        const register __m512 _1 = _mm512_set1_ps(1.0f);
+                        mm1r                     = _mm512_mul_ps(m1r,m1r);
+                        const register __m512 _2 = _mm512_set1_ps(2.0f);
+                        mm1i                     = _mm512_mul_ps(m1i,m1i);
+                        const register __m512 _3 = _mm512_set1_ps(3.0f);
+                        m1s1r                    = _mm512_sub_ps(mm1r,_1);
+                        const register __m512 c0 = _mm512_set1_ps(0.6f);
+                        m1s1i                    = _mm512_sub_ps(mm1i,_1);
+                        const register __m512 c1 = _mm512_set1_ps(0.055555555555555555555555555556f);
+                        m1s2r                    = _mm512_sub_ps(mm1r,_2);
+                        register __m512 t0r,t0i,t1r,t1i,t2r,t2i,t3r,t3i;
+                        m1s2i                    = _mm512_sub_ps(mm1i,_2);
+                        m1a2r                    = _mm512_add_ps(mm1r,_2);
+                        m1a2i                    = _mm512_add_ps(mm1i,_2);
+                        cmul_zmm16r4(m1a2r,m1a2i,m1a2r,m1a2i,&t3r,&t3i);
+                        _2m1r                    = _mm512_fmadd_ps(_2,mm1r,_3);
+                        _2m1i                    = _mm512_fmadd_ps(_2,mm1i,_3);
+                        cdiv_zmm16r4(m1s1r,m1s1i,m1a2r,m1a2i,&t0r,&t0i);
+                        t0r = _mm512_mul_ps(t0r,k0a3);
+                        t0i = _mm512_mul_ps(t0i,k0a3);
+                        cmul_zmm16r4(m1s1r,m1s1i,m1s2r,m1s2i,&t1r,&t1i);
+                        cdiv_zmm16r4(t1r,t1i,t3r,t3i,&t2r,&t2i);
+                        t2r = _mm512_mul_ps(c0,_mm512_mul_ps(t2r,k0a5));
+                        t2i = _mm512_mul_ps(c0,_mm512_mul_ps(t2i,k0a5));
+                        _mm512_store_ps(&B1r[0], _mm512_add_ps(t0r,t2r));
+                        _mm512_store_ps(&B1i[0], _mm512_add_ps(t0i,t2i));
+                        cdiv_zmm16r4(m1s1r,m1s1i,_2m1r,_2m1i,&t0r,&t0i);
+                        _mm512_store_ps(&B2r[0], _mm512_mul_ps(c1,_mm512_mul_ps(t0r,k0a5)));
+                        _mm512_store_ps(&B2i[0], _mm512_mul_ps(c1,_mm512_mul_ps(t0i,k0a5)));
+                }
+
+
 
 
      } // radiolocation
