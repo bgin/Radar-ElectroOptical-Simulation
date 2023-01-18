@@ -3072,6 +3072,80 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3310_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                            const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            const float * __restrict __ATTR_ALIGN__(64) pka04,
+                                            const float * __restrict __ATTR_ALIGN__(64) pmm1r,
+                                            const float * __restrict __ATTR_ALIGN__(64) pmm1i) {
+
+                          const register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          const register __m512 a   = _mm512_load_ps(&pa[0]);
+                          const register __m512 ka04= _mm512_load_ps(&pka04[0]);
+                          const register __m512 mm1r= _mm512_load_ps(&pmm1r[0]);
+                          const register __m512 mm1i= _mm512_load_ps(&pmm1i[0]);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          const register __m512 aa = _mm512_mul_ps(a,a);
+                          const register __m512 _2 = _mm512_set1_ps(2.0f); 
+                          const register __m512 cost = xcosf(tht);
+                          const register __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 cos2t,mms1r,mms1i,mma2r,mma2i;
+                          register __m512 divr,divi,rcs,frac,cabs;
+                          cos2t   = _mm512_mul_ps(cost,cost);
+                          mms1r   = _mm512_sub_ps(mm1r,_1);
+                          mma2r   = _mm512_add_ps(mm1r,_2);
+                          mms1i   = _mm512_sub_ps(mm1i,_1);
+                          mma2i   = _mm512_add_ps(mm1i,_2);
+                          cdiv_zmm16r4(mms1r,mms1i,mma2r,mma2i,&divr,&divi);
+                          frac    = _mm512_mul_ps(_4pi,aa);
+                          cabs    = cabs_zmm16r4(divr,divi);
+                          rcs     = _mm512_mul_ps(_mm512_mul_ps(frac,cabs),
+                                                  _mm512_mul_ps(cos2t,ka04));
+                          return (rcs); 
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3310_zmm16r4_u(const float * __restrict  ptht,
+                                            const float * __restrict  pa,
+                                            const float * __restrict  pka04,
+                                            const float * __restrict  pmm1r,
+                                            const float * __restrict  pmm1i) {
+
+                          const register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                          const register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          const register __m512 ka04= _mm512_loadu_ps(&pka04[0]);
+                          const register __m512 mm1r= _mm512_loadu_ps(&pmm1r[0]);
+                          const register __m512 mm1i= _mm512_loadu_ps(&pmm1i[0]);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          const register __m512 aa = _mm512_mul_ps(a,a);
+                          const register __m512 _2 = _mm512_set1_ps(2.0f); 
+                          const register __m512 cost = xcosf(tht);
+                          const register __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 cos2t,mms1r,mms1i,mma2r,mma2i;
+                          register __m512 divr,divi,rcs,frac,cabs;
+                          cos2t   = _mm512_mul_ps(cost,cost);
+                          mms1r   = _mm512_sub_ps(mm1r,_1);
+                          mma2r   = _mm512_add_ps(mm1r,_2);
+                          mms1i   = _mm512_sub_ps(mm1i,_1);
+                          mma2i   = _mm512_add_ps(mm1i,_2);
+                          cdiv_zmm16r4(mms1r,mms1i,mma2r,mma2i,&divr,&divi);
+                          frac    = _mm512_mul_ps(_4pi,aa);
+                          cabs    = cabs_zmm16r4(divr,divi);
+                          rcs     = _mm512_mul_ps(_mm512_mul_ps(frac,cabs),
+                                                  _mm512_mul_ps(cos2t,ka04));
+                          return (rcs); 
+                 }
+
+
 
 
      } // radiolocation
