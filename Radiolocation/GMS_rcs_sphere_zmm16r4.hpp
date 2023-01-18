@@ -2871,7 +2871,7 @@ namespace gms {
                }
 
 
-                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -2921,6 +2921,60 @@ namespace gms {
                         *S2r  = _mm512_fmadd_ps(t1r,cost,div1r);
                         *S2i  = _mm512_fmadd_ps(t1i,cost,div1i);
                }
+
+
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S2_f338_zmm16r4_a(const __m512 ka03,
+                                          const __m512 ka05,
+                                          const __m512 tht,
+                                          const __m512 mm1r,
+                                          const __m512 mm1i,
+                                        __m512 * __restrict S2r,
+                                        __m512 * __restrict S2i) {
+
+                        register __m512 mms1r,mms1i,mms2r,mms2i;
+                        register __m512 mma2r,mma2i,mma3r,mma3i;
+                        register __m512 div1r,div1i,div2r,div2i;
+                        register __m512 div3r,div3i,mulr,muli,t1r,t1i;
+                        register __m512 cost,cos2t,msqr,msqi,t0r,t0i;
+                        const register __m512 _1 = _mm512_set1_ps(1.0f);
+                        mms1r                    = _mm512_sub_ps(mm1r,_1);
+                        mms1i                    = _mm512_sub_ps(mm1i,_1);
+                        const register __m512 _2 = _mm512_set1_ps(2.0f);
+                        mms2r                    = _mm512_sub_ps(mm1r,_2);
+                        mms2i                    = _mm512_sub_ps(mm1i,_2);
+                        const register __m512 _3 = _mm512_set1_ps(3.0f);
+                        mma2r                    = _mm512_add_ps(mm1r,_2);
+                        mma2i                    = _mm512_add_ps(mm1i,_2);
+                        cmul_zmm16r4(mma2r,mma2i,mma2r,mma2i,&msqr,&msqi);
+                        const register __m512 c0 = _mm512_set1_ps(0.6f);
+                        mma3r                    = _mm512_add_ps(mm1r,_3);
+                        mma3i                    = _mm512_add_ps(mm1i,_3);
+                        const register __m512 c1 = _mm512_set1_ps(0.166666666666666666666666666667f);
+                        cost                     = xcosf(tht);
+                        const register __m512 c2 = _mm512_set1_ps(0.033333333333333333333333333333f);
+                        cos2t                    = xcosf(_mm512_add_ps(tht,tht));
+                        cdiv_zmm16r4(mms1r,mms1i,mma2r,mma2i,&div1r,&div1i);
+                        div1r = _mm512_mul_ps(div1r,ka03);
+                        cmul_zmm16r4(mms1r,mms1i,mms2r,mms2i,&mulr,&muli);
+                        div1i = _mm512_mul_ps(div1i,ka03);
+                        cdiv_zmm16r4(mulr,muli,msqr,msqi,&div2r,&div2i);
+                        t0r   = _mm512_mul_ps(c2,mms1r);
+                        t0i   = _mm512_mul_ps(c2,mms1i);
+                        cdiv_zmm16r4(mms1r,mms1i,mma2r,mma2i,&div3r,&div3i);
+                        div3r = _mm512_mul_ps(c1,_mm512_mul_ps(div3r,cost));
+                        div3i = _mm512_mul_ps(c1,_mm512_mul_ps(div2i,cost));
+                        t1r   = _mm512_sub_ps(div2r,_mm512_sub_ps(div3r,t0r));
+                        t1i   = _mm512_sub_ps(div2i,_mm512_sub_ps(div3i,t0i));
+                        *S2r  = _mm512_fmadd_ps(t1r,cost,div1r);
+                        *S2i  = _mm512_fmadd_ps(t1i,cost,div1i);
+               }
+
 
 
 
