@@ -3039,6 +3039,7 @@ namespace gms {
 
                    /*
                          E-plane and H-plane RCS.
+                         Formulae: 3.3-10,3.3-11
                      */
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -3211,7 +3212,84 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3311_zmm16r4_u(const float * __restrict  ptht,
+                                              const float * __restrict  pa,
+                                              const float * __restrict  pka04,
+                                              const float * __restrict  pmm1r,
+                                              const float * __restrict  pmm1i) {
 
+                          const register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                          const register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          const register __m512 ka04= _mm512_loadu_ps(&pka04[0]);
+                          const register __m512 mm1r= _mm512_loadu_ps(&pmm1r[0]);
+                          const register __m512 mm1i= _mm512_loadu_ps(&pmm1i[0]);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          const register __m512 aa = _mm512_mul_ps(a,a);
+                          const register __m512 _2 = _mm512_set1_ps(2.0f); 
+                          const register __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 mms1r,mms1i,mma2r,mma2i;
+                          register __m512 divr,divi,rcs,frac,cabs;
+                          mms1r   = _mm512_sub_ps(mm1r,_1);
+                          mma2r   = _mm512_add_ps(mm1r,_2);
+                          mms1i   = _mm512_sub_ps(mm1i,_1);
+                          mma2i   = _mm512_add_ps(mm1i,_2);
+                          cdiv_zmm16r4(mms1r,mms1i,mma2r,mma2i,&divr,&divi);
+                          frac    = _mm512_mul_ps(_4pi,aa);
+                          cabs    = cabs_zmm16r4(divr,divi);
+                          rcs     = _mm512_mul_ps(ka04,_mm512_mul_ps(frac,cabs));
+                                                  
+                          return (rcs); 
+                 }
+
+
+                    /*
+                          Bistatic Geometric Optics Rays.
+                          The RCS of sphere included N-rays.
+                          E-plane or H-plane, for backscattering
+                          and forward-scattering E and H RCS are 
+                          identical
+                     */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3314_zmm16r4(const __m512 * __restrict Snthr,
+                                            const __m512 * __restrict Snthi,
+                                            const __m512 * __restrict cjphr,
+                                            const __m512 * __restrict cjphi,
+                                            __m512 * __restrict wrkr,
+                                            __m512 * __restrict wrki,
+                                            const __m512 k02,
+                                            const int32_t N) {
+
+                          const register __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 tmpre,tmpim;
+                          register __m512 rcs,cabs,frac;
+                          frac = _mm512_div_ps(_4pi,k02);
+                          accre = _mm512_setzero_ps();
+                          accim = _mm512_setzero_ps();
+                          for(int32_t i = 0; i != N; ++i) {
+                              cmul_zmm16r4(Snthr[i],Snthi[i],cjphr[i],cjphi[i], 
+                                           &wrkr[i],&wrki[i]);
+                                                   
+                          }
+                          for(int32_t i = 0; i != N-1; ++i) {
+                               tmpre = _mm512_add_ps(wrkr[i],wrkr[i+1]);
+                               accre = _mm512_add_ps(accre,tmpre); 
+                               tmpim = _mm512_add_ps(wrki[i],wrki[i+1]);
+                               accim = _mm512_add_ps(accim,tmpim);
+                          }
+                          cabs = cabs_zmm16r4(accre,accim);
+                          rcs  _mm512_mul_ps(frac,cabs);
+                }
+                   
 
      } // radiolocation
 
