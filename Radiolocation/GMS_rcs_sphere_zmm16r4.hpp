@@ -3355,7 +3355,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f3317_zmm16r4_a(const float * __restrict  pm1r,
+                   __m512 rcs_f3317_zmm16r4_u(const float * __restrict  pm1r,
                                               const float * __restrict  pm1i,
                                               const float * __restrict  pa) {
 
@@ -3376,6 +3376,30 @@ namespace gms {
                           rcs  = _mm512_mul_ps(frac,cabs);
                           return (rcs);
                   }
+
+
+                    /*
+                       Forward scattering RCS.
+                       Formula 3.3-19
+                         */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3319_zmm16r4(const __m512 a,
+                                            const __m512 k0a) {
+
+                          const register __m512 aa   = _mm512_mul_ps(a,a);
+                          const register __m512 c0   = _mm512_set1_ps(2.25f);
+                          const register __m512 k0a23= _mm512_pow_ps(k0a,
+                                                                 _mm512_set1_ps(0.666666666666666666666666666667f);
+                          register __m512 rcs,fac;
+                          fac = _mm512_mul_ps(PI,aa);
+                          rcs = _mm512_mul_ps(fac,_mm512_mul_ps(c0,k0a23));
+                          return (rcs);
+                 }
                   
                    
 
