@@ -3287,8 +3287,68 @@ namespace gms {
                                accim = _mm512_add_ps(accim,tmpim);
                           }
                           cabs = cabs_zmm16r4(accre,accim);
-                          rcs  _mm512_mul_ps(frac,cabs);
+                          rcs  = _mm512_mul_ps(frac,cabs);
+                          return (rcs);
                 }
+
+
+                  /*
+                         Large sphere limit, k0a > 1.15/m1 (reflective region).
+                         Backscattering RCS, formula 3.3-17
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3317_zmm16r4(const __m512 m1r,
+                                            const __m512 m1i,
+                                            const __m512 a) {
+
+                          const register __m512 _1   = _mm512_set1_ps(1.0f);
+                          const register __m512 frac = _mm512_mul_ps(PI,
+                                                                 _mm512_mul_ps(a,a));
+                          register __m512 divr,divi,m1s1r,m1s1i;
+                          register __m512 m1a1r,m1a1i,cabs,rcs;
+                          m1s1r = _mm512_sub_ps(m1r,_1);
+                          m1a1r = _mm512_add_ps(m1r,_1);
+                          m1s1i = _mm512_sub_ps(m1i,_1);
+                          m1a1i = _mm512_add_ps(m1i,_1);
+                          cdiv_zmm16r4(m1s1r,m1s1i,m1a1r,m1a1i,&divr,&divi); 
+                          cabs = _zmm16r4(divr,divi);
+                          rcs  = _mm512_mul_ps(frac,cabs);
+                          return (rcs);
+                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3317_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pm1r,
+                                              const float * __restrict __ATTR_ALIGN__(64) pm1i,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa) {
+
+                          const register __m512 m1r  = _mm512_load_ps(&pm1r[0]);
+                          const register __m512 m1i  = _mm512_load_ps(&pm1i[0]);
+                          const register __m512 a    = _mm512_load_ps(&pa[0]);
+                          const register __m512 _1   = _mm512_set1_ps(1.0f);
+                          const register __m512 frac = _mm512_mul_ps(PI,
+                                                                 _mm512_mul_ps(a,a));
+                          register __m512 divr,divi,m1s1r,m1s1i;
+                          register __m512 m1a1r,m1a1i,cabs,rcs;
+                          m1s1r = _mm512_sub_ps(m1r,_1);
+                          m1a1r = _mm512_add_ps(m1r,_1);
+                          m1s1i = _mm512_sub_ps(m1i,_1);
+                          m1a1i = _mm512_add_ps(m1i,_1);
+                          cdiv_zmm16r4(m1s1r,m1s1i,m1a1r,m1a1i,&divr,&divi); 
+                          cabs = _zmm16r4(divr,divi);
+                          rcs  = _mm512_mul_ps(frac,cabs);
+                          return (rcs);
+                  }
+                  
                    
 
      } // radiolocation
