@@ -3348,6 +3348,34 @@ namespace gms {
                           rcs  = _mm512_mul_ps(frac,cabs);
                           return (rcs);
                   }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f3317_zmm16r4_a(const float * __restrict  pm1r,
+                                              const float * __restrict  pm1i,
+                                              const float * __restrict  pa) {
+
+                          const register __m512 m1r  = _mm512_loadu_ps(&pm1r[0]);
+                          const register __m512 m1i  = _mm512_loadu_ps(&pm1i[0]);
+                          const register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                          const register __m512 _1   = _mm512_set1_ps(1.0f);
+                          const register __m512 frac = _mm512_mul_ps(PI,
+                                                                 _mm512_mul_ps(a,a));
+                          register __m512 divr,divi,m1s1r,m1s1i;
+                          register __m512 m1a1r,m1a1i,cabs,rcs;
+                          m1s1r = _mm512_sub_ps(m1r,_1);
+                          m1a1r = _mm512_add_ps(m1r,_1);
+                          m1s1i = _mm512_sub_ps(m1i,_1);
+                          m1a1i = _mm512_add_ps(m1i,_1);
+                          cdiv_zmm16r4(m1s1r,m1s1i,m1a1r,m1a1i,&divr,&divi); 
+                          cabs = _zmm16r4(divr,divi);
+                          rcs  = _mm512_mul_ps(frac,cabs);
+                          return (rcs);
+                  }
                   
                    
 
