@@ -3488,6 +3488,90 @@ namespace gms {
                         *S1i = _mm512_mul_ps(faci,t1);
                  }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S1_f3322_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pm1r,
+                                           const float * __restrict __ATTR_ALIGN__(64) pm1i,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                           float * __restrict __ATTR_ALIGN__(64) S1r,
+                                           float * __restrict __ATTR_ALIGN__(64) S1i) {
+                       
+                        const register __m512 m1r = _mm512_load_ps(&pm1r[0]);
+                        const register __m512 m1i = _mm512_load_ps(&pm1i[0]);
+                        const register __m512 tht = _mm512_load_ps(&ptht[0]);
+                        const register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                        register __m512 cosht,m1s1r,m1s1i,htht,cost,t0,t1;
+                        register __m512 st,ct,carg,carg2,facr,faci,sinc;
+                        const register __m512 _1   = _mm512_set1_ps(1.0f);
+                        cost  = xcosf(tht);
+                        const register __m512 k0a3 = _mm512_mul_ps(k0a,
+                                                           _mm512_mul_ps(k0a,k0a));
+                        m1s1r = _mm512_sub_ps(m1r,_1);
+                        m1s1i = _mm512_sub_ps(m1i,_1);
+                        const register __m512 _2k0a  = _mm512_add_ps(k0a,k0a);
+                        const register __m512 _2k0a3 = _mm512_add_ps(k0a3,k0a3)
+                        htht = _mm512_mul_ps(_mm512_set1_ps(0.5f),tht);
+                        cosht= xcosf(htht);
+                        facr = _mm512_mul_ps(_2k0a3,m1s1r);
+                        faci = _mm512_mul_ps(_2k0a3,m1s1i);
+                        carg = _mm512_mul_ps(_2k0a,cosht);
+                        carg2= _mm512_mul_ps(carg,carg);
+                        st   = xsinf(carg);
+                        sinc = _mm512_div_ps(st,carg);
+                        ct   = xcosf(carg);
+                        t0   = _mm512_mul_ps(_mm512_sub_ps(st,ct),cost);
+                        t1   = _mm512_div_ps(t0,carg2);
+                        _mm512_store_ps(&S1r[0], _mm512_mul_ps(facr,t1));
+                        _mm512_store_ps(&S1i[0], _mm512_mul_ps(faci,t1));
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S1_f3322_zmm16r4_u(const float * __restrict  pm1r,
+                                           const float * __restrict  pm1i,
+                                           const float * __restrict  ptht,
+                                           const float * __restrict  pk0a,
+                                           float * __restrict S1r,
+                                           float * __restrict  S1i) {
+                       
+                        const register __m512 m1r = _mm512_loadu_ps(&pm1r[0]);
+                        const register __m512 m1i = _mm512_loadu_ps(&pm1i[0]);
+                        const register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                        const register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                        register __m512 cosht,m1s1r,m1s1i,htht,cost,t0,t1;
+                        register __m512 st,ct,carg,carg2,facr,faci,sinc;
+                        const register __m512 _1   = _mm512_set1_ps(1.0f);
+                        cost  = xcosf(tht);
+                        const register __m512 k0a3 = _mm512_mul_ps(k0a,
+                                                           _mm512_mul_ps(k0a,k0a));
+                        m1s1r = _mm512_sub_ps(m1r,_1);
+                        m1s1i = _mm512_sub_ps(m1i,_1);
+                        const register __m512 _2k0a  = _mm512_add_ps(k0a,k0a);
+                        const register __m512 _2k0a3 = _mm512_add_ps(k0a3,k0a3)
+                        htht = _mm512_mul_ps(_mm512_set1_ps(0.5f),tht);
+                        cosht= xcosf(htht);
+                        facr = _mm512_mul_ps(_2k0a3,m1s1r);
+                        faci = _mm512_mul_ps(_2k0a3,m1s1i);
+                        carg = _mm512_mul_ps(_2k0a,cosht);
+                        carg2= _mm512_mul_ps(carg,carg);
+                        st   = xsinf(carg);
+                        sinc = _mm512_div_ps(st,carg);
+                        ct   = xcosf(carg);
+                        t0   = _mm512_mul_ps(_mm512_sub_ps(st,ct),cost);
+                        t1   = _mm512_div_ps(t0,carg2);
+                        _mm512_storeu_ps(&S1r[0], _mm512_mul_ps(facr,t1));
+                        _mm512_storeu_ps(&S1i[0], _mm512_mul_ps(faci,t1));
+                 }
+
      } // radiolocation
 
 } // gms
