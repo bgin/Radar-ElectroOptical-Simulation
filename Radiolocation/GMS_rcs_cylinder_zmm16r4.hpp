@@ -89,6 +89,30 @@ namespace gms {
               }
 
 
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f419_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          const register __m512 a   = _mm512_load_ps(&pa[0]);
+                          const register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          const register __m512 num = _mm512_mul_ps(a, 
+                                                           _mm512_set1_ps(9.869604401089358618834490999876f));
+                          const register __m512 pi4 = _mm512_set1_ps(2.467401100272339654708622749969f);
+                          const register __m512 c0  = _mm512_set1_ps(0.8905f);
+                          const register __m512 arg = _mm512_mul_ps(k0a,c0);
+                          __m512 ln,ln2,rcs,den;
+                          ln = logkf(arg);
+                          ln2= _mm512_mul_ps(ln,ln);
+                          den= _mm512_fmadd_ps(k0a,ln2,pi4);
+                          rcs= _mm512_div_ps(num,den);
+                          return (rcs);
+              }
+
+
 
 
 
