@@ -3444,7 +3444,49 @@ namespace gms {
                           return (rcs);
                  }
 
-                   
+
+                    /*
+                         Approximate solutions for far-field region (Rayleigh-Gans)
+                         (abs(m1-1) << 1,2*k0a abs(m1-1) << 1)
+                         Bistatic scattering formula 3.3-22
+                     */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void S1_f3322_zmm16r4(const __m512 m1r,
+                                         const __m512 m1i,
+                                         const __m512 tht,
+                                         const __m512 k0a,
+                                         __m512 * __restrict S1r,
+                                         __m512 * __restrict S1i) {
+                       
+                        register __m512 cosht,m1s1r,m1s1i,htht,cost,t0,t1;
+                        register __m512 st,ct,carg,carg2,facr,faci,sinc;
+                        const register __m512 _1   = _mm512_set1_ps(1.0f);
+                        cost  = xcosf(tht);
+                        const register __m512 k0a3 = _mm512_mul_ps(k0a,
+                                                           _mm512_mul_ps(k0a,k0a));
+                        m1s1r = _mm512_sub_ps(m1r,_1);
+                        m1s1i = _mm512_sub_ps(m1i,_1);
+                        const register __m512 _2k0a  = _mm512_add_ps(k0a,k0a);
+                        const register __m512 _2k0a3 = _mm512_add_ps(k0a3,k0a3)
+                        htht = _mm512_mul_ps(_mm512_set1_ps(0.5f),tht);
+                        cosht= xcosf(htht);
+                        facr = _mm512_mul_ps(_2k0a3,m1s1r);
+                        faci = _mm512_mul_ps(_2k0a3,m1s1i);
+                        carg = _mm512_mul_ps(_2k0a,cosht);
+                        carg2= _mm512_mul_ps(carg,carg);
+                        st   = xsinf(carg);
+                        sinc = _mm512_div_ps(st,carg);
+                        ct   = xcosf(carg);
+                        t0   = _mm512_mul_ps(_mm512_sub_ps(st,ct),cost);
+                        t1   = _mm512_div_ps(t0,carg2);
+                        *S1r = _mm512_mul_ps(facr,t1);
+                        *S1i = _mm512_mul_ps(faci,t1);
+                 }
 
      } // radiolocation
 
