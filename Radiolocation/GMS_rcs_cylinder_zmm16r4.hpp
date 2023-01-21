@@ -340,6 +340,30 @@ namespace gms {
                   }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4123_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          return (rcs_f4120_zmm16r4_a(pa,pk0a));
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4123_zmm16r4_u(const float * __restrict  pa,
+                                              const float * __restrict  pk0a) {
+
+                          return (rcs_f4120_zmm16r4_u(pa,pk0a));
+              }
+
+
 
       } // radiolocation
 
