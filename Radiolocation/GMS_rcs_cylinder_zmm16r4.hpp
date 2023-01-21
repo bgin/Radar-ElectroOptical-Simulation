@@ -167,9 +167,11 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f4120_zmm16r4(const float * __restrict a,
-                                            const __m512 k0a) {
+                   __m512 rcs_f4120_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            const float * __restrict __ATTR_ALIGN__(64) pk0a) {
 
+                          const register __m512 a    = _mm512_load_ps(&pa[0]);
+                          const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
                           const register __m512 pi2a = _mm512_mul_ps(a, 
                                                     _mm512_set1_ps(9.869604401089358618834490999876f));
                           const register __m512 c0   = _mm512_set1_ps(2.25f);
@@ -178,6 +180,68 @@ namespace gms {
                           register __m512 rcs;
                           rcs = _mm512_mul_ps(pi2a,_mm512_mul_ps(c0,k0a3));
                           return (rcs);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4120_zmm16r4_u(const float * __restrict  pa,
+                                            const float * __restrict  pk0a) {
+
+                          const register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                          const register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
+                          const register __m512 pi2a = _mm512_mul_ps(a, 
+                                                    _mm512_set1_ps(9.869604401089358618834490999876f));
+                          const register __m512 c0   = _mm512_set1_ps(2.25f);
+                          const register __m512 k0a3 = _mm512_mul_ps(k0a,
+                                                                 _mm512_mul_ps(k0a,k0a));
+                          register __m512 rcs;
+                          rcs = _mm512_mul_ps(pi2a,_mm512_mul_ps(c0,k0a3));
+                          return (rcs);
+              }
+
+
+                /*
+                        Bistatic scattering widths, E-field cylinder axis-parallel
+                        Formula 4.1-21
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4121_zmm16r4(const __m512 a,
+                                            const __m512 k0a) {
+
+                          return (rcs_f4120_zmm16r4(a,k0a));
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4121_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                            const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          return (rcs_f4120_zmm16r4_a(pa,pk0a));
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4121_zmm16r4_u(const float * __restrict  pa,
+                                              const float * __restrict  pk0a) {
+
+                          return (rcs_f4120_zmm16r4_u(pa,pk0a));
               }
 
       } // radiolocation
