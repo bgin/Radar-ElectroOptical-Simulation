@@ -273,6 +273,31 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4122_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphi,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          const register __m512 phi = _mm512_load_ps(&pphi[0]);
+                          const register __m512 a   = _mm512_load_ps(&pa[0]);
+                          const register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          const register __m512 pi2a= _mm512_mul_ps(a, 
+                                                    _mm512_set1_ps(9.869604401089358618834490999876f));
+                          const register __m512 hlf = _mm512_set1_ps(0.5f);
+                          register __m512 cosph,k0a3,frac,sqr,rcs; 
+                          k0a3  = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          cosph = xcosf(phi);
+                          frac  = _mm512_add_ps(hlf,cosph);
+                          sqr   = _mm512_mul_ps(frac,frac);
+                          rcs   = _mm512_mul_ps(pi2a,_mm512_mul_ps(k0a3,sqr));
+                          return (rcs);
+                 }
+
+
 
 
 
