@@ -323,6 +323,21 @@ namespace gms {
                  }
 
 
+                   /*
+                       Forward scattering widths, E-field.
+                       Formula 4.1-23
+                   */
+ 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4123_zmm16r4(const __m512 a,
+                                            const __m512 k0a) {
+
+                          return (rcs_f4120_zmm16r4(a,k0a));
+                  }
 
 
 
