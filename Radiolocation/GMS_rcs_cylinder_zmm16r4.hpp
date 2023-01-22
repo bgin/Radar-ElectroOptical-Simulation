@@ -622,6 +622,46 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Iz_f4127_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64) peps0,
+                                           const  float * __restrict __ATTR_ALIGN__(64) pmu0,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pEr,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pEi,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           float * __restrict __ATTR_ALIGN__(64) Kzr,
+                                           float * __restrict __ATTR_ALIGN__(64) Kzi) {
+
+                        const register __m512 eps0 = _mm512_load_ps(&peps0[0]);
+                        const register __m512 _2pi= _mm512_set1_ps(6.283185307179586476925286766559f);
+                        const register __m512 mu0  = _mm512_load_ps(&pmu0[0]);
+                        const register __m512 sqr = _mm512_sqrt_ps(_mm512_div_ps(eps0,mu0));
+                        const register __m512 Er   = _mm512_load_ps(&pEr[0]);
+                        const register __m512 Ei   = _mm512_load_ps(&pEi[0]);
+                        const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 lna = _mm512_mul_ps(k0a,
+                                                     _mm512_set1_ps(0.8905f));
+                        const register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        const register __m512 ln  = logkf(lna);
+                        const register __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                        __m512 t0r,t0i,t1r,t1i,divr,divi,resr,resi,t2r,t2i;
+                        t0r = nIr;
+                        t0i = _mm512_mul_ps(nIi,sqr);
+                        t1r = _mm512_mul_ps(k0,ln);
+                        t2r = _mm512_mul_ps(_2pi,Er);
+                        t1i = _mm512_mul_ps(nIi,pi2);
+                        t2i = _mm512_mul_ps(_2pi,Ei);
+                        cdiv_zmm16r4(t2r,t2i,t1r,t1i,&divr,&divi);
+                        cmul_zmm16r4(t0r,t0i,divr,divi,&resr,&resi);
+                        _mm512_store_ps(&Izr[0], resr);
+                        _mm512_store_ps(&Izi[0], resi);
+                 }
+
+
 
       } // radiolocation
 
