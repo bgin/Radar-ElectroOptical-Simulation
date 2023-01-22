@@ -497,6 +497,77 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Kz_f4125_zmm16r4_u(const  float * __restrict  peps0,
+                                           const  float * __restrict  pmu0,
+                                           const   float * __restrict  pEr,
+                                           const   float * __restrict  pEi,
+                                           const   float * __restrict  pk0a,
+                                           float * __restrict  Kzr,
+                                           float * __restrict  Kzi) {
+
+                        const register __m512 eps0 = _mm512_loadu_ps(&peps0[0]);
+                        const register __m512 mu0  = _mm512_loadu_ps(&pmu0[0]);
+                        const register __m512 Er   = _mm512_loadu_ps(&pEr[0]);
+                        const register __m512 Ei   = _mm512_loadu_ps(&pEi[0]);
+                        const register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
+                        const register __m512 lna = _mm512_mul_ps(k0a,
+                                                     _mm512_set1_ps(0.8905f));
+                        const register __m512 ln  = logkf(lna);
+                        const __m512 sqr = _mm512_sqrt_ps(_mm512_div_ps(eps0,mu0));
+                        const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                        __m512 t0r,t0i,t1r,t1i,divr,divi,resr,resi;
+                        t0r = nIr;
+                        t0i = _mm512_mul_ps(nIi,sqr);
+                        t1r = _mm512_mul_ps(k0a,ln);
+                        t1i = _mm512_mul_ps(nIi,pi2);
+                        cdiv_zmm16r4(Er,Ei,t1r,t1i,&divr,&divi);
+                        cmul_zmm16r4(t0r,t0i,divr,divi,&resr,&resi);
+                        _mm512_storeu_ps(&Kzr[0], resr);
+                        _mm512_storeu_ps(&Kzi[0], resi);
+                 }
+
+
+                  /*
+                          Surface currents (k0a << 1), for long cylinder (wire).
+                          H-field cylinder axis parallel.
+                          Formula 4.1-26
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Kph_f4126_zmm16r4(const __m512 Hr,
+                                          const __m512 Hi,
+                                          __m512 * __restrict Kphr,
+                                          __m512 * __restrict Kphi) {
+
+                        *Kphr = _mm512_mul_ps(nIi,Hr);
+                        *Kphi = _mm512_mul_ps(nIi,Hi);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Kph_f4126_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) Hr,
+                                            const float * __restrict __ATTR_ALIGN__(64) Hi,
+                                           float * __restrict __ATTR_ALIGN__(64) Kphr,
+                                          float * __restrict __ATTR_ALIGN__(64)Kphi) {
+
+                        _mm512_store_ps(&Kphr[0] ,_mm512_mul_ps(nIi,_mm512_load_ps(&Hr[0]));
+                        _mm512_store_ps(&Kphi[0] ,_mm512_mul_ps(nIi,_mm512_load_ps(&Hi[0]));
+                 }
+
+
 
       } // radiolocation
 
