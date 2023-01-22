@@ -457,8 +457,8 @@ namespace gms {
                         t1r = _mm512_mul_ps(k0a,ln);
                         t1i = _mm512_mul_ps(nIi,pi2);
                         cdiv_zmm16r4(Er,Ei,t1r,t1i,&divr,&divi);
-                        *Kzr = _mm512_mul_ps(t0r,divr);
-                        *Kzi = _mm512_mul_ps(t0i,divi);
+                        cmul_zmm16r4(t0r,t0i,divr,divi,&Kzr,&Kzi);
+                      
                  }
 
 
@@ -467,27 +467,33 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Kz_f4125_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64) eps0,
-                                           const  float * __restrict __ATTR_ALIGN__(64) mu0,
-                                           const   float * __restrict __ATTR_ALIGN__(64) Er,
-                                           const   float * __restrict __ATTR_ALIGN__(64) Ei,
-                                           const   float * __restrict __ATTR_ALIGN__(64) k0a,
+                   void Kz_f4125_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64) peps0,
+                                           const  float * __restrict __ATTR_ALIGN__(64) pmu0,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pEr,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pEi,
+                                           const   float * __restrict __ATTR_ALIGN__(64) pk0a,
                                            float * __restrict __ATTR_ALIGN__(64) Kzr,
                                            float * __restrict __ATTR_ALIGN__(64) Kzi) {
 
+                        const register __m512 eps0 = _mm512_load_ps(&peps0[0]);
+                        const register __m512 mu0  = _mm512_load_ps(&pmu0[0]);
+                        const register __m512 Er   = _mm512_load_ps(&pEr[0]);
+                        const register __m512 Ei   = _mm512_load_ps(&pEi[0]);
+                        const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
                         const register __m512 lna = _mm512_mul_ps(k0a,
                                                      _mm512_set1_ps(0.8905f));
                         const register __m512 ln  = logkf(lna);
                         const __m512 sqr = _mm512_sqrt_ps(_mm512_div_ps(eps0,mu0));
                         const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
-                        __m512 t0r,t0i,t1r,t1i,divr,divi;
+                        __m512 t0r,t0i,t1r,t1i,divr,divi,resr,resi;
                         t0r = nIr;
                         t0i = _mm512_mul_ps(nIi,sqr);
                         t1r = _mm512_mul_ps(k0a,ln);
                         t1i = _mm512_mul_ps(nIi,pi2);
                         cdiv_zmm16r4(Er,Ei,t1r,t1i,&divr,&divi);
-                        *Kzr = _mm512_mul_ps(t0r,divr);
-                        *Kzi = _mm512_mul_ps(t0i,divi);
+                        cmul_zmm16r4(t0r,t0i,divr,divi,&resr,&resi);
+                        _mm512_store_ps(&Kzr[0], resr);
+                        _mm512_store_ps(&Kzi[0], resi);
                  }
 
 
