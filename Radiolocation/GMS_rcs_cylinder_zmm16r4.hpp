@@ -427,6 +427,41 @@ namespace gms {
                   }
 
 
+                    /*
+                          Surface currents (k0a << 1), for long cylinder (wire).
+                          E-field cylinder axis parallel.
+                          Formula 4.1-25
+                       */
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Kz_f4125_zmm16r4(const __m512 eps0,
+                                         const __m512 mu0,
+                                         const __m512 Er,
+                                         const __m512 Ei,
+                                         const __m512 k0a,
+                                         __m512 * __restrict Kzr,
+                                         __m512 * __restrict Kzi) {
+
+                        const register __m512 lna = _mm512_mul_ps(k0a,
+                                                     _mm512_set1_ps(0.8905f));
+                        const register __m512 ln  = logkf(lna);
+                        const __m512 sqr = _mm512_sqrt_ps(_mm512_div_ps(eps0,mu0));
+                        const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                        __m512 t0r,t0i,t1r,t1i,divr,divi;
+                        t0r = nIr;
+                        t0i = _mm512_mul_ps(nIi,sqr);
+                        t1r = _mm512_mul_ps(k0a,ln);
+                        t1i = _mm512_mul_ps(nIi,pi2);
+                        cdiv_zmm16r4(Er,Ei,t1r,t1i,&divr,&divi);
+                        *Kzr = _mm512_mul_ps(t0r,divr);
+                        *Kzi = _mm512_mul_ps(t0i,divi);
+                 }
+
+
 
       } // radiolocation
 
