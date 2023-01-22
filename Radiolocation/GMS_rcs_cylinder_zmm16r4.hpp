@@ -433,7 +433,7 @@ namespace gms {
                           Formula 4.1-25
                        */
 
-                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -561,10 +561,64 @@ namespace gms {
                    void Kph_f4126_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) Hr,
                                             const float * __restrict __ATTR_ALIGN__(64) Hi,
                                            float * __restrict __ATTR_ALIGN__(64) Kphr,
-                                          float * __restrict __ATTR_ALIGN__(64)Kphi) {
+                                          float * __restrict __ATTR_ALIGN__(64) Kphi) {
 
                         _mm512_store_ps(&Kphr[0] ,_mm512_mul_ps(nIi,_mm512_load_ps(&Hr[0]));
                         _mm512_store_ps(&Kphi[0] ,_mm512_mul_ps(nIi,_mm512_load_ps(&Hi[0]));
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Kph_f4126_zmm16r4_u(const float * __restrict  Hr,
+                                            const float * __restrict  Hi,
+                                           float * __restrict  Kphr,
+                                          float * __restrict Kphi) {
+
+                        _mm512_storeu_ps(&Kphr[0] ,_mm512_mul_ps(nIi,_mm512_loadu_ps(&Hr[0]));
+                        _mm512_storeu_ps(&Kphi[0] ,_mm512_mul_ps(nIi,_mm512_loadu_ps(&Hi[0]));
+                 }
+
+
+                   /*
+                        The toal current along the wire.
+                        Formula 4.1-27 
+
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Iz_f4127_zmm16r4(const __m512 eps0,
+                                         const __m512 mu0,
+                                         const __m512 Er,
+                                         const __m512 Ei,
+                                         const __m512 k0a,
+                                         const __m512 k0,
+                                         __m512 * __restrict Izr,
+                                         __m512 * __restrict Izi) {
+
+                        const register __m512 lna = _mm512_mul_ps(k0a,
+                                                     _mm512_set1_ps(0.8905f));
+                        const register __m512 _2pi= _mm512_set1_ps(6.283185307179586476925286766559f);
+                        const register __m512 ln  = logkf(lna);
+                        const __m512 sqr = _mm512_sqrt_ps(_mm512_div_ps(eps0,mu0));
+                        const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                        __m512 t0r,t0i,t1r,t1i,divr,divi,t2r,t2i;
+                        t0r = nIr;
+                        t0i = _mm512_mul_ps(nIi,sqr);
+                        t2r = _mm512_mul_ps(_2pi,Er);
+                        t1r = _mm512_mul_ps(k0,ln);
+                        t2i = _mm512_mul_ps(_2pi,Ei);
+                        t1i = _mm512_mul_ps(nIi,pi2);
+                        cdiv_zmm16r4(t2r,t2i,t1r,t1i,&divr,&divi);
+                        cmul_zmm16r4(t0r,t0i,divr,divi,&Izr,&Izi);
+                      
                  }
 
 
