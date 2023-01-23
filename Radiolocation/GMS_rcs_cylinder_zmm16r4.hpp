@@ -726,7 +726,7 @@ namespace gms {
 
                         register __m512 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
                         register __m512 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m512 k0as,fac,earg,_2a,cer,cei;
+                        register __m512 k0as,fac,earg,_2a,cer,cei,exr,exi;
                         register __m512 t2r,t2i;
                         const register __m512 c0 = _mm512_set1_ps(0.375f);
                         cosf2 = xcosf(phi2);
@@ -743,7 +743,7 @@ namespace gms {
                         const register __m512 c5 = _mm512_set1_ps(5.0f);
                         t0     = _mm512_mul_ps(a,cosf2);
                         const register __m512 c6 = _mm512_set1_ps(1.0f);
-                        t1     = _mm512div_ps(t0,_2r);
+                        t1     = _mm512_div_ps(t0,_2r);
                         fac    = _mm512_sqrt_ps(t1);
                         earg   = _mm512_mul_ps(k0,
                                           _mm512_sub_ps(r,_mm512_mul_ps(_2a,cosf2)));
@@ -762,13 +762,85 @@ namespace gms {
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
                         t2r    = c6;
                         t2i    = _mm512_add_ps(c6,t2i);
+                        cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
                         t2i    = _mm512_add_ps(t2i,t5);
-                        cmul_zmm16r4(t1r,t1i,t2r,t2i,&t0r,&t0i);
+                        cmul_zmm16r4(exr,exi,t2r,t2i,&t0r,&t0i);
                         *EOr = t0r;
                         *EOi = t0i;
                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EO_f4129_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                           const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) pr,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                           const float * __restrict __ATTR_ALIGN__(64) pEr,
+                                           const float * __restrict __ATTR_ALIGN__(64) pEi,
+                                           float * __restrict __ATTR_ALIGN__(64) EOr,
+                                           float * __restrict __ATTR_ALIGN__(64) EOi) {
+
+                        const register __m512 phi2 = _mm512_load_ps(&pphi2[0]);
+                        const register __m512 a    = _mm512_load_ps(&pa[0]);
+                        const register __m512 r    = _mm512_load_ps(&pr[0]);
+                        const register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 Er   = _mm512_load_ps(&pEr[0]);
+                        const register __m512 Ei   = _mm512_load_ps(&pEi[0]);
+                        register __m512 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                        register __m512 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                        register __m512 k0as,fac,earg,_2a,cer,cei,exr,exi;;
+                        register __m512 t2r,t2i;
+                        const register __m512 c0 = _mm512_set1_ps(0.375f);
+                        cosf2 = xcosf(phi2);
+                        const register __m512 c1 = _mm512_set1_ps(0.1171875f);
+                        cos2f2 = _mm512_mul_ps(cosf2,cosf2);
+                        const register __m512 c2 = _mm512_set1_ps(4.0f);
+                        cos4f2 = _mm512_mul_ps(cos2f2,cos2f2);
+                        _2k0a  = _mm512_add_ps(k0a,k0a);
+                        const register __m512 c3 = _mm512_set1_ps(8.0f);
+                        _2r    = _mm512_add_ps(r,r);
+                        _2a    = _mm512_add_ps(a,a);
+                        const register __m512 c4 = _mm512_set1_ps(33.0f);
+                        k0as   = _mm512_mul_ps(k0a,k0a);
+                        const register __m512 c5 = _mm512_set1_ps(5.0f);
+                        t0     = _mm512_mul_ps(a,cosf2);
+                        const register __m512 c6 = _mm512_set1_ps(1.0f);
+                        t1     = _mm512_div_ps(t0,_2r);
+                        fac    = _mm512_sqrt_ps(t1);
+                        earg   = _mm512_mul_ps(k0,
+                                          _mm512_sub_ps(r,_mm512_mul_ps(_2a,cosf2)));
+                        t0r    = Ir;
+                        t0i    = _mm512_mul_ps(Ii,earg);
+                        cexp_zmm16r4(t0r,t0i,&cer,&cei);
+                        t3     = _mm512_rcp14_ps(cos2f2);
+                        cmul_zmm16r4(t0r,t0i,cer,cei,&t1r,&t1i);
+                        t3     = _mm512_sub_ps(t3,c0);//taken t3
+                        t0     = _mm512_mul_ps(_4,_mm512_mul_ps(k0as,cos2f2));
+                        t4     = _mm512_rcp14_ps(t0);//taken t4
+                        t1     = _mm512_mul_ps(c3,cos2f2);
+                        t2     = _mm512_sub_ps(c1,_mm512_div_ps(c4,t1)); // t2 taken
+                        t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
+                        t2r    = Ir;
+                        t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
+                        t2r    = c6;
+                        t2i    = _mm512_add_ps(c6,t2i);
+                        cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
+                        t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
+                        t2r    = _mm512_add_ps(t2r,t5);
+                        t2i    = _mm512_add_ps(t2i,t5);
+                        cmul_zmm16r4(exr,exi,t2r,t2i,&t0r,&t0i);
+                        _mm512_store_ps(&EOr[0], t0r);
+                        _mm512_store_ps(&EOi[0], t0i);
+                 }
+
 
 
 
