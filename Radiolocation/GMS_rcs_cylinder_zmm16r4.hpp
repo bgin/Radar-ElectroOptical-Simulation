@@ -926,7 +926,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void HO_f4129_zmm16r4(const __m512 phi2,
+                   void HO_f4131_zmm16r4(const __m512 phi2,
                                          const __m512 a,
                                          const __m512 r,
                                          const __m512 k0,
@@ -989,7 +989,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void HO_f4129_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                   void HO_f4131_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphi2,
                                            const float * __restrict __ATTR_ALIGN__(64) pa,
                                            const float * __restrict __ATTR_ALIGN__(64) pr,
                                            const float * __restrict __ATTR_ALIGN__(64) pk0,
@@ -1059,7 +1059,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void HO_f4129_zmm16r4_u(const float * __restrict  pphi2,
+                   void HO_f4131_zmm16r4_u(const float * __restrict  pphi2,
                                            const float * __restrict  pa,
                                            const float * __restrict  pr,
                                            const float * __restrict  pk0,
@@ -1122,6 +1122,29 @@ namespace gms {
                         _mm512_storeu_ps(&HOr[0], t0r);
                         _mm512_storeu_ps(&HOi[0], t0i);
                  }
+
+
+                 
+                 /*
+                        Approximation for upper-middle and high-frequency region
+                        (k0a > 2).
+                        Bistatic creeping wave approximation for resonance region
+                        (0<<phi<pi/2, k0a > 2)
+                        Electric-field.
+                        Formula 4.1-30
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EC_f4130_zmm16r4(const __m512 Er,
+                                         const __m512 Ei,
+                                         const __m512 a,
+                                         const
+
+                   
 
 
 
