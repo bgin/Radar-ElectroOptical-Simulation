@@ -1215,6 +1215,79 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(64) ECr,
                                            float * __restrict __ATTR_ALIGN__(64) ECi) {
 
+                        const register __m512 phi  = _mm512_load_ps(&pphi[0]);
+                        const register __m512 a    = _mm512_load_ps(&pa[0]);
+                        const register __m512 r    = _mm512_load_ps(&pr[0]);
+                        const register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 Er   = _mm512_load_ps(&pEr[0]);
+                        const register __m512 Ei   = _mm512_load_ps(&pEi[0]);
+                        register __m512 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                        register __m512 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                        register __m512 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m512 pi12 = _mm512_set1_ps(0.261799387799149436538553615273f);
+                        const  __m512 k0ai16 = _mm512_pow_ps(k0a,
+                                                         _mm512_set1_ps(0.166666666666666666666666666667f));
+                        const register __m512 k0apaphi = _mm512_fmadd_ps(k0a,PI,phi);
+                        e2ar   = Ir; 
+                        e2ai   = k0apaphi;
+                        cexp_zmm16r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        k0ai16 = _mm512_rcp14_ps(k0ai16);
+                        const register __m512 k0apsphi = _mm512_fmsub_ps(k0a,PI,phi);
+                        const  __m512 c0   = _mm512_set1_ps(0.910721f);
+                        const  register __m512 k0rp12 = _mm512_fmadd_ps(k0,r,pi12);
+                        e3ar   = Ir;
+                        e3ai   = k0apsphi;
+                        cexp_zmm16r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        const  __m512 c0r  = _mm512_set1_ps(0.9358135f);
+                        sqr    = _mm512_div_ps(a,_mm512_add_ps(r,r);
+                        const  __m512 c0i  = _mm512_set1_ps(1.607129f);
+                        sqr    = _mm512_sqrt_ps(sqr);
+                        const  __m512 c1r  = _mm512_set1_ps(0.057397f);
+                        Etr    = _mm512_mul_ps(Er,sqr);// first complex term
+                        Eti    = _mm512_mul_ps(Ei,sqr);// first complex term
+                        const  __m512 c1i  = _mm512_set1_ps(-0.0994145f);
+                        const  __m512 _1   = _mm512_set1_ps(1.0f);
+                        const  __m512 k0an23 = _mm512_pow_ps(k0a,
+                                                          _mm512_set1_ps(0.666666666666666666666666666667f));
+                        k0an23 = _mm512_rcp14_ps(k0an23);
+                        const __m512 k0an43= _mm512_pow_ps(k0a,
+                                                        _mm512_set1_ps(1.333333333333333333333333333333f));
+                        k0an43 = _mm512_rcp14_ps(k0an43);
+                        e1ar = Ir;
+                        e1ai = k0rp12;
+                        cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        t0r = _mm512_fmadd_ps(_1,c0r,k0an23);// 1st complex term
+                        t0i = _mm512_fmadd_ps(_1,c0i,k0an23);// //-//-//-
+                        t1r = _mm512_mul_ps(c1r,k0an43);
+                        t1i = _mm512_mul_ps(c1i,k0an43);
+                        tmp1r = _mm512_sub_ps(t0r,t1r);
+                        tmp1i = _mm512_sub_ps(t0i,t1i);
+                        cmul_zmm16r4(ce2r,ce2i,tmp1r,tmp1i,&tmp2r,&tmp2i);
+                        cmul_zmm16r4(ce3r,ce3i,tmp1r,tmp1i,&tmp3r,&tmp3i);
+                        t0r = _mm512_setzero_ps();
+                        t0i = _mm512_setzero_ps();
+                        cmul_zmm16r4(Etr,Eti,tmp2r,tmp2i,&t0r,&t0i)
+                        _mm512_store_ps(&ECr[0] ,_mm512_add_ps(t0r,tmp3r));
+                        _mm512_store_ps(&ECi[0] ,_mm512_add_ps(t0i,tmp3i));
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EC_f4130_zmm16r4_a(const float * __restrict  pEr,
+                                           const float * __restrict  pEi,
+                                           const float * __restrict  pa,
+                                           const float * __restrict  pr,
+                                           const float * __restrict  pk0,
+                                           const float * __restrict  pk0a,
+                                           const float * __restrict  pphi,
+                                           float * __restrict  ECr,
+                                           float * __restrict ECi) {
+
                         const register __m512 phi  = _mm512_loadu_ps(&pphi[0]);
                         const register __m512 a    = _mm512_loadu_ps(&pa[0]);
                         const register __m512 r    = _mm512_loadu_ps(&pr[0]);
@@ -1268,9 +1341,161 @@ namespace gms {
                         t0r = _mm512_setzero_ps();
                         t0i = _mm512_setzero_ps();
                         cmul_zmm16r4(Etr,Eti,tmp2r,tmp2i,&t0r,&t0i)
-                        _mm512_store_ps(&ECr[0] ,_mm512_add_ps(t0r,tmp3r));
-                        _mm512_store_ps(&ECi[0] ,_mm512_add_ps(t0i,tmp3i));
+                        _mm512_storeu_ps(&ECr[0] ,_mm512_add_ps(t0r,tmp3r));
+                        _mm512_storeu_ps(&ECi[0] ,_mm512_add_ps(t0i,tmp3i));
                  }
+
+
+                    /*
+                        Approximation for upper-middle and high-frequency region
+                        (k0a > 2).
+                        Bistatic creeping wave approximation for resonance region
+                        (0<<phi<pi/2, k0a > 2)
+                        Magnetic-field.
+                        Formula 4.1-32
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HC_f4132_zmm16r4(const __m512 Hr,
+                                         const __m512 Hi,
+                                         const __m512 a,
+                                         const __m512 r,
+                                         const __m512 k0,
+                                         const __m512 k0a,
+                                         const __m512 phi,
+                                         __m512 * __restrict HCr,
+                                         __m512 * __restrict HCi) {
+
+                        register __m512 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                        register __m512 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                        register __m512 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m512 pi12 = _mm512_set1_ps(0.261799387799149436538553615273f);
+                        const  __m512 k0ai16 = _mm512_pow_ps(k0a,
+                                                         _mm512_set1_ps(0.166666666666666666666666666667f));
+                        const register __m512 k0apaphi = _mm512_fmadd_ps(k0a,PI,phi);
+                        e2ar   = Ir; 
+                        e2ai   = k0apaphi;
+                        cexp_zmm16r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        k0ai16 = _mm512_rcp14_ps(k0ai16);
+                        const register __m512 k0apsphi = _mm512_fmsub_ps(k0a,PI,phi);
+                        const  __m512 c0   = _mm512_set1_ps(1.531915f);
+                        const  register __m512 k0rp12 = _mm512_fmadd_ps(k0,r,pi12);
+                        e3ar   = Ir;
+                        e3ai   = k0apsphi;
+                        cexp_zmm16r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        const  __m512 c0r  = _mm512_set1_ps(0.404308f);
+                        sqr    = _mm512_div_ps(a,_mm512_add_ps(r,r);
+                        const  __m512 c0i  = _mm512_set1_ps(0.70028f);
+                        sqr    = _mm512_sqrt_ps(sqr);
+                        const  __m512 c1r  = _mm512_set1_ps(0.072732f);
+                        Etr    = _mm512_mul_ps(Er,sqr);// first complex term
+                        Eti    = _mm512_mul_ps(Ei,sqr);// first complex term
+                        const  __m512 c1i  = _mm512_set1_ps(-0.1259755f);
+                        const  __m512 _1   = _mm512_set1_ps(1.0f);
+                        const  __m512 k0an23 = _mm512_pow_ps(k0a,
+                                                          _mm512_set1_ps(0.666666666666666666666666666667f));
+                        k0an23 = _mm512_rcp14_ps(k0an23);
+                        const __m512 k0an43= _mm512_pow_ps(k0a,
+                                                        _mm512_set1_ps(1.333333333333333333333333333333f));
+                        k0an43 = _mm512_rcp14_ps(k0an43);
+                        e1ar = Ir;
+                        e1ai = k0rp12;
+                        cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        t0r = _mm512_fmadd_ps(_1,c0r,k0an23);// 1st complex term
+                        t0i = _mm512_fmadd_ps(_1,c0i,k0an23);// //-//-//-
+                        t1r = _mm512_mul_ps(c1r,k0an43);
+                        t1i = _mm512_mul_ps(c1i,k0an43);
+                        tmp1r = _mm512_sub_ps(t0r,t1r);
+                        tmp1i = _mm512_sub_ps(t0i,t1i);
+                        cmul_zmm16r4(ce2r,ce2i,tmp1r,tmp1i,&tmp2r,&tmp2i);
+                        cmul_zmm16r4(ce3r,ce3i,tmp1r,tmp1i,&tmp3r,&tmp3i);
+                        t0r = _mm512_setzero_ps();
+                        t0i = _mm512_setzero_ps();
+                        cmul_zmm16r4(Etr,Eti,tmp2r,tmp2i,&t0r,&t0i)
+                        *HCr = _mm512_add_ps(t0r,tmp3r);
+                        *HCi = _mm512_add_ps(t0i,tmp3i);
+                 }
+
+
+                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HC_f4132_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64)  pHr,
+                                           const  float * __restrict __ATTR_ALIGN__(64)  pHi,
+                                           const  float * __restrict __ATTR_ALIGN__(64)  pa,
+                                           const  float * __restrict __ATTR_ALIGN__(64)  pr,
+                                           const  float * __restrict __ATTR_ALIGN__(64)  pk0,
+                                           const  float * __restrict __ATTR_ALIGN__(64)  pk0a,
+                                           const  float * __restrict __ATTR_ALIGN__(64)  pphi,
+                                           float * __restrict __ATTR_ALIGN__(64)  HCr,
+                                           float * __restrict __ATTR_ALIGN__(64)  HCi) {
+
+                        const register __m512 phi  = _mm512_load_ps(&pphi[0]);
+                        const register __m512 a    = _mm512_load_ps(&pa[0]);
+                        const register __m512 r    = _mm512_load_ps(&pr[0]);
+                        const register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        const register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
+                        const register __m512 Hr   = _mm512_load_ps(&pHr[0]);
+                        const register __m512 Hi   = _mm512_load_ps(&pHi[0]);
+                        register __m512 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                        register __m512 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                        register __m512 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m512 pi12 = _mm512_set1_ps(0.261799387799149436538553615273f);
+                        const  __m512 k0ai16 = _mm512_pow_ps(k0a,
+                                                         _mm512_set1_ps(0.166666666666666666666666666667f));
+                        const register __m512 k0apaphi = _mm512_fmadd_ps(k0a,PI,phi);
+                        e2ar   = Ir; 
+                        e2ai   = k0apaphi;
+                        cexp_zmm16r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        k0ai16 = _mm512_rcp14_ps(k0ai16);
+                        const register __m512 k0apsphi = _mm512_fmsub_ps(k0a,PI,phi);
+                        const  __m512 c0   = _mm512_set1_ps(1.531915f);
+                        const  register __m512 k0rp12 = _mm512_fmadd_ps(k0,r,pi12);
+                        e3ar   = Ir;
+                        e3ai   = k0apsphi;
+                        cexp_zmm16r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        const  __m512 c0r  = _mm512_set1_ps(0.404308f);
+                        sqr    = _mm512_div_ps(a,_mm512_add_ps(r,r);
+                        const  __m512 c0i  = _mm512_set1_ps(0.70028f);
+                        sqr    = _mm512_sqrt_ps(sqr);
+                        const  __m512 c1r  = _mm512_set1_ps(0.072732f);
+                        Etr    = _mm512_mul_ps(Er,sqr);// first complex term
+                        Eti    = _mm512_mul_ps(Ei,sqr);// first complex term
+                        const  __m512 c1i  = _mm512_set1_ps(-0.1259755f);
+                        const  __m512 _1   = _mm512_set1_ps(1.0f);
+                        const  __m512 k0an23 = _mm512_pow_ps(k0a,
+                                                          _mm512_set1_ps(0.666666666666666666666666666667f));
+                        k0an23 = _mm512_rcp14_ps(k0an23);
+                        const __m512 k0an43= _mm512_pow_ps(k0a,
+                                                        _mm512_set1_ps(1.333333333333333333333333333333f));
+                        k0an43 = _mm512_rcp14_ps(k0an43);
+                        e1ar = Ir;
+                        e1ai = k0rp12;
+                        cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        t0r = _mm512_fmadd_ps(_1,c0r,k0an23);// 1st complex term
+                        t0i = _mm512_fmadd_ps(_1,c0i,k0an23);// //-//-//-
+                        t1r = _mm512_mul_ps(c1r,k0an43);
+                        t1i = _mm512_mul_ps(c1i,k0an43);
+                        tmp1r = _mm512_sub_ps(t0r,t1r);
+                        tmp1i = _mm512_sub_ps(t0i,t1i);
+                        cmul_zmm16r4(ce2r,ce2i,tmp1r,tmp1i,&tmp2r,&tmp2i);
+                        cmul_zmm16r4(ce3r,ce3i,tmp1r,tmp1i,&tmp3r,&tmp3i);
+                        t0r = _mm512_setzero_ps();
+                        t0i = _mm512_setzero_ps();
+                        cmul_zmm16r4(Etr,Eti,tmp2r,tmp2i,&t0r,&t0i)
+                        _mm512_store_ps(&HCr[0] ,_mm512_add_ps(t0r,tmp3r));
+                        _mm512_store_ps(&HCi[0] ,_mm512_add_ps(t0i,tmp3i));
+                 }
+
+
 
 
                    
