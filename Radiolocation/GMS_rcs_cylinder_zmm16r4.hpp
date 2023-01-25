@@ -1350,7 +1350,7 @@ namespace gms {
                         Approximation for upper-middle and high-frequency region
                         (k0a > 2).
                         Bistatic creeping wave approximation for resonance region
-                        (0<<phi<pi/2, k0a > 2)
+                        valid only for (0<<phi<pi/2, k0a > 2)
                         Magnetic-field.
                         Formula 4.1-32
                     */
@@ -1567,6 +1567,47 @@ namespace gms {
                         _mm512_storeu_ps(&HCr[0] ,_mm512_add_ps(t0r,tmp3r));
                         _mm512_storeu_ps(&HCi[0] ,_mm512_add_ps(t0i,tmp3i));
                  }
+
+
+                   /*
+
+                       Backscattering creeping-wave approximation for resonance region
+                       (phi == 0, k0a > 2).
+                       Optical wave component e-field, formula 4.1-33
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EO_f4133_zmm16r4(const __m512 Er,
+                                         const __m512 Ei,
+                                         const __m512 a,
+                                         const __m512 r,
+                                         const __m512 k0a,
+                                         __m512 * __restrict EOr,
+                                         __m512 * __restrict EOi) {
+
+                        register __m512 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3;
+                        register __m512 ear,eai,cer,cei,facr,faci;
+                        const __m512 _1 = _mm512_set1_ps(1.0f);
+                        _2r             = _mm512_add_ps(r,r);
+                        _2k0a           = _mm512_add_ps(k0a,k0a);
+                        const __m512 _5 = _mm512_set1_ps(5.0f);
+                        k0r             = _mm512_mul_ps(k0,r);
+                        const __m512 c0 = _mm512_set1_ps(127.0f);
+                        t0              = _mm512_sub_ps(k0r,_2k0a);
+                        ear             = Ir;
+                        const __m512 c1 = _mm512_set1_ps(512.0f);
+                        eai             = t0;
+                        t1              = _mm512_div_ps(a,_2r);
+                        t2              = _mm512_sqrt_ps(t1);
+                        facr            = _mm512_mul_ps(Er,t2);
+                        faci            = _mm512_mul_ps(Ei,t2);
+                        
+                 }
+
 
 
 
