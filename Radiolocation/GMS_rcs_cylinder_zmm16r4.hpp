@@ -2316,8 +2316,16 @@ namespace gms {
                           Formula 4.1-38
                      */
 
+                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4138_zmm16r4(const __m512 a) {
 
-                 
+                          return (__m512_mul_ps(a,PI));
+                  }
 
 
                   
