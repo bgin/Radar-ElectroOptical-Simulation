@@ -1956,7 +1956,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void EC_f4134_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pEr,
+                   void EC_f4134_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pEr,
                                          const float * __restrict __ATTR_ALIGN__(64) pEi,
                                          const float * __restrict __ATTR_ALIGN__(64) pa,
                                          const float * __restrict __ATTR_ALIGN__(64) pr,
@@ -2008,6 +2008,67 @@ namespace gms {
                         cmul_zmm16r4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
                         _mm512_store_ps(&ECr[0] ,_mm512_mul_ps(t0r,rex));
                         _mm512_store_ps(&ECi[0] ,_mm512_mul_ps(t0i,rex));
+                }
+
+
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EC_f4134_zmm16r4_u(const float * __restrict  pEr,
+                                           const float * __restrict  pEi,
+                                           const float * __restrict  pa,
+                                           const float * __restrict  pr,
+                                           const float * __restrict  pk0,
+                                           float * __restrict  ECr,
+                                           float * __restrict  ECi) {
+
+                        const register __m512 Er = _mm512_loadu_ps(&pEr[0]);
+                        const register __m512 Ei = _mm512_loadu_ps(&pEi[0]);
+                        const register __m512 a  = _mm512_loadu_ps(&pa[0]);
+                        const register __m512 r  = _mm512_loadu_ps(&pr[0]);
+                        const register __m512 k0 = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 k0r,k0a,k0a13,k0an13,k0an16;
+                        register __m512 fracr,fraci,_2r,t0,t1,t2;
+                        register __m512 e1ar,e1ai,exar;
+                        register __m512 ce1r,ce1i,rex,t0r,t0i;
+                        const __m512 pi12 = _mm512_set1_ps(0.261799387799149436538553615273f);
+                        k0r   = _mm512_mul_ps(k0,r);
+                        const __m512 c0   = _mm512_set1_ps(2.939945f);
+                        k0a   = _mm512_mul_ps(k0,a);
+                        const __m512 c1   = _mm512_set1_ps(0.180318f); 
+                        k0a13 = _mm512_pow_ps(k0a,
+                                         _mm512_set1_ps(0.333333333333333333333333333333333333f));
+                        const __m512 c2   = _mm512_set1_ps(1.821442f);
+                        _2r   = _mm512_add_ps(r,r);
+                        const __m512 c3   = _mm512_set1_ps(-5.048945f);
+                        k0an13= _mm512_rcp14_ps(k0a13);
+                        const __m512 c4   = _mm512_set1_ps(0.312320f);
+                        t0    = _mm512_div_ps(a,_2r);
+                        t1    = _mm512_pow_ps(k0a,
+                                          _mm512_set1_ps(0.166666666666666666666666666667f));
+                        k0an16= _mm512_rcp14_ps(t1);
+                        t2    = _mm512_sqrt_ps(t0);
+                        fracr = _mm512_mul_ps(Er,t2);
+                        fraci = _mm512_mul_ps(Ei,t2);
+                        t0    = _mm512_fmsub_ps(c0,k0a13,
+                                            _mm512_mul_ps(c1,k0an13));
+                        t1    = _mm512_fmadd_ps(k0a,PI,_mm512_add_ps(pi12,t0));
+                        t1    = _mm512_add_ps(k0r,t1);
+                        e1ar  = Ir;
+                        e1ai  = t1;
+                        cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i);
+                        exar  = _mm512_fmsub_ps(c3,k0a13,
+                                            _mm512_mul_ps(c4,k0an13));
+                        t1    = _mm512_mul_ps(c2,k0an16);
+                        t2    = xexpf(exar);
+                        rex   = _mm512_rcp14_ps(t2);
+                        rex   = _mm512_mul_ps(rex,t1);
+                        cmul_zmm16r4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
+                        _mm512_storeu_ps(&ECr[0] ,_mm512_mul_ps(t0r,rex));
+                        _mm512_storeu_ps(&ECi[0] ,_mm512_mul_ps(t0i,rex));
                 }
 
 
