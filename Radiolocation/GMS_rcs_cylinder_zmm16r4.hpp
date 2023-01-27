@@ -2259,6 +2259,7 @@ namespace gms {
                   /*
                         Bistatic scattering width in high frequency limit (k0a > 20)
                         for |PI-phi| > k0a^0.3
+                        Formula 4.1-37
                     */
 
                    __ATTR_ALWAYS_INLINE__
@@ -2308,6 +2309,12 @@ namespace gms {
                           rcs   = _mm512_mul_ps(PI,_mm512_mul_ps(a,cosp2));
                           return (rcs);
                  }
+
+
+                    /*
+                          Backscattering Width in High-Frequency Limit (k0a > 20)
+                          Formula 4.1-38
+                     */
 
 
                  
