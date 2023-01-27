@@ -2328,6 +2328,18 @@ namespace gms {
                   }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4138_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pa) {
+
+                          register __m512 a = _mm512_load_ps(&pa[0]);
+                          return (__m512_mul_ps(a,PI));
+                  }
+
+
                   
 
 
