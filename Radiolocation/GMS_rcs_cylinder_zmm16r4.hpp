@@ -2073,6 +2073,67 @@ namespace gms {
 
 
 
+                   /*
+
+                       Backscattering creeping-wave approximation for resonance region
+                       (phi == 0, k0a > 2).
+                       Creeping wave component h-field, formula 4.1-36
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HC_f4136_zmm16r4(const __m512 Hr,
+                                         const __m512 Hi,
+                                         const __m512 a,
+                                         const __m512 r,
+                                         const __m512 k0,
+                                         __m512 * __restrict HCr,
+                                         __m512 * __restrict HCi) {
+
+                        register __m512 k0r,k0a,k0a13,k0an13,k0an16;
+                        register __m512 fracr,fraci,_2r,t0,t1,t2;
+                        register __m512 e1ar,e1ai,exar;
+                        register __m512 ce1r,ce1i,rex,t0r,t0i;
+                        const __m512 pi12 = _mm512_set1_ps(0.261799387799149436538553615273f);
+                        k0r   = _mm512_mul_ps(k0,r);
+                        const __m512 c0   = _mm512_set1_ps(1.2701695f);
+                        k0a   = _mm512_mul_ps(k0,a);
+                        const __m512 c1   = _mm512_set1_ps(0.2284945f); 
+                        k0a13 = _mm512_pow_ps(k0a,
+                                         _mm512_set1_ps(0.333333333333333333333333333333333333f));
+                        const __m512 c2   = _mm512_set1_ps(3.063830f);
+                        _2r   = _mm512_add_ps(r,r);
+                        const __m512 c3   = _mm512_set1_ps(-2.200000f);
+                        k0an13= _mm512_rcp14_ps(k0a13);
+                        const __m512 c4   = _mm512_set1_ps(0.3957635f);
+                        t0    = _mm512_div_ps(a,_2r);
+                        t1    = _mm512_pow_ps(k0a,
+                                          _mm512_set1_ps(0.166666666666666666666666666667f));
+                        k0an16= _mm512_rcp14_ps(t1);
+                        t2    = _mm512_sqrt_ps(t0);
+                        fracr = _mm512_mul_ps(Hr,t2);
+                        fraci = _mm512_mul_ps(Hi,t2);
+                        t0    = _mm512_fmsub_ps(c0,k0a13,
+                                            _mm512_mul_ps(c1,k0an13));
+                        t1    = _mm512_fmadd_ps(k0a,PI,_mm512_add_ps(pi12,t0));
+                        t1    = _mm512_add_ps(k0r,t1);
+                        e1ar  = Ir;
+                        e1ai  = t1;
+                        cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i);
+                        exar  = _mm512_fmsub_ps(c3,k0a13,
+                                            _mm512_mul_ps(c4,k0an13));
+                        t1    = _mm512_mul_ps(c2,k0an16);
+                        t2    = xexpf(exar);
+                        rex   = _mm512_rcp14_ps(t2);
+                        rex   = _mm512_mul_ps(rex,t1);
+                        cmul_zmm16r4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
+                        *HCr = _mm512_mul_ps(t0r,rex);
+                        *HCi = _mm512_mul_ps(t0i,rex);
+                }
 
 
 
