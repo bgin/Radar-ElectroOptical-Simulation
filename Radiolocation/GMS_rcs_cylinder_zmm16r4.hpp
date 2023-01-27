@@ -2256,6 +2256,25 @@ namespace gms {
                 }
 
 
+                  /*
+                        Bistatic scattering width in high frequency limit (k0a > 20)
+                        
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4137_zmm16r4(const __m512 a,
+                                            const __m512 phi2) {
+
+                          register __m512 rcs,cosp2;
+                          cosp2 = xcosf(phi2);
+                          rcs   = _mm512_mul_ps(PI,_mm512_mul_ps(a,cosp2));
+                          return (rcs);
+                 }
+
 
                   
 
