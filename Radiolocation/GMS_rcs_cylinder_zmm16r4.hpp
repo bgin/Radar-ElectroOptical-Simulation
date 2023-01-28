@@ -2608,6 +2608,60 @@ namespace gms {
                  }
 
 
+                   /*
+                        Approximations for the low frequency region (k0a<<1,k1a<<1)
+                        Scattered far-zone e-field, formula 4.1-45
+                    */
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Es_f4145_zmm16r4(const __m512 EIr,
+                                         const __m512 EIi,
+                                         const __m512 r,
+                                         const __m512 k0,
+                                         const __m512 k0a,
+                                         const __m512 phi,
+                                         const __m512 eps0,
+                                         const __m512 eps1,
+                                         const __m512 mu0,
+                                         const __m512 mu1,
+                                         __m512 * __restrict ESr,
+                                         __m512 * __restrict ESi) {
+
+                        register __m512 k0r,k0as,fracr,fraci,k0as2;
+                        register __m512 ear,eai,cer,cei,t0r,t0i;
+                        register __m512 t0,t1,cosp,t2,sk0r,t3,mul;
+                        const __m512 _1 = _mm512_set1_ps(1.0f);
+                        k0r             = _mm512_mul_ps(k0,r);
+                        const __m512 _2 = _mm512_set1_ps(2.0f);
+                        sk0r            = _mm512_sqrt_ps(k0r);
+                        k0as            = _mm512_mul_ps(k0a,k0a);
+                        const __m512 hlf= _mm512_set1_ps(0.5f);
+                        k0as2           = _mm512_mul_ps(hlf,k0as);
+                        const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
+                        cosp            = xcosf(phi);
+                        const __m512 pi2= _mm512_set1_ps(1.253314137315500251207882642406f);
+                        fracr           = _mm512_mul_ps(EIr,pi2);
+                        t0              = _mm512_sub_ps(_mm512_div_ps(eps1,eps2),_1);
+                        fraci           = _mm512_mul_ps(EIi,pi2);
+                        t1              = _mm512_div_ps(_mm512_sub_ps(mu1,mu0),
+                                                        _mm512_add_ps(mu1,mu0));
+                        ear             = Ir;
+                        t2              = _mm512_add_ps(t1,t1);
+                        eai             = _mm512_sub_ps(k0r,pi4);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        t1              = _mm512_mul_ps(t2,cosp);
+                        cer = _mm512_div_ps(cer,sk0r);
+                        t3  = _mm512_sub_ps(t0,t1);
+                        cei = _mm512_div_ps(cei,sk0r);
+                        mul = _mm512_mul_ps(k0as2,t3);
+                        t0r = _mm512_mul_ps(cer,mul);
+                        t0i = _mm512_mul_ps(cei,mul);
+                        cmul_zmm16r4(fracr,fraci,t0r,t0i,*ESr,*ESi);
+               }
 
                    
 
