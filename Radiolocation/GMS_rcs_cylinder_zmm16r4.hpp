@@ -2556,6 +2556,26 @@ namespace gms {
                         _mm512_storeu_ps(&Esi[0], resi);
               }
 
+
+                  /*
+                         Forward scattering widths and pattern in high-frequency limit
+                         (k0a>20.0), constant angle (alpha=0)
+                         Formula 4.1-41, RCS.
+                     */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4141_zmm16r4(const __m512 k0a) {
+
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          register __m512 rcs;
+                          rcs = _mm512_mul_ps(_4,_mm512_mul_ps(k0a,k0a));
+                          return (rcs);
+                 }
+
                 
 
 
