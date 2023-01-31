@@ -3818,6 +3818,45 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Tin_f4173_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                            const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                            const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                            const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                            const float * __restrict __ATTR_ALIGN__(64) ppsi,
+                                            float * __restrict __ATTR_ALIGN__(64) Tinr,
+                                            float * __restrict __ATTR_ALIGN__(64) Tini) {
+
+                         register __m512 mur  = _mm512_load_ps(&pmur[0]);
+                         register __m512 mui  = _mm512_load_ps(&pmui[0]);
+                         register __m512 epsr = _mm512_load_ps(&pepsr[0]);
+                         register __m512 epsi = _mm512_load_ps(&pepsi[0]);
+                         register __m512 psi  = _mm512_load_ps(&ppsi[0]);
+                         const __m512 _1 = _mm512_set1_ps(1.0f);
+                         register __m512 cosp,_2cosp,divr,divi;
+                         register __m512 sqr1,sqi1,sqr2,sqi2;
+                         register __m512 sinp,sin2p,mulr,muli;
+                         register __m512 t0r,t0i,_1msp;
+                         cosp = xcosf(psi);
+                         sinp = xsinf(psi);
+                         _2cosp = _mm512_add_ps(cosp,cosp);
+                         sin2p  = _mm512_mul_ps(sinp,sinp);
+                         _1msp  = _mm512_sub_ps(_1,sin2p);
+                         cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
+                         cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
+                         t0r = _mm512_div_ps(_1msp,mulr);
+                         t0i = _mm512_div_ps(_1msp,muli);
+                         csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
+                         csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
+                         _mm512_store_ps(&Tinr[0] ,_mm512_fmadd_ps(sqr1,sqr2,cosp));
+                         _mm512_store_ps(&Tini[0] ,_mm512_fmadd_ps(sqi1,sqi2,cosp));
+                 }
+
+
 
                     
 
