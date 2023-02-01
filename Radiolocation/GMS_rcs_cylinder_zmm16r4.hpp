@@ -4204,12 +4204,12 @@ namespace gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pmur,
-                                            const float * __restrict __ATTR_ALIGN__(64) pmui,
-                                            const float * __restrict __ATTR_ALIGN__(64) pepsr,
-                                            const float * __restrict __ATTR_ALIGN__(64) pepsi,
-                                            const float * __restrict __ATTR_ALIGN__(64) ppsi,
-                                            float * __restrict __ATTR_ALIGN__(64) Rinr,
-                                            float * __restrict __ATTR_ALIGN__(64) Rini) {
+                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                             const float * __restrict __ATTR_ALIGN__(64) ppsi,
+                                             float * __restrict __ATTR_ALIGN__(64) Rinr,
+                                             float * __restrict __ATTR_ALIGN__(64) Rini) {
 
                          register __m512 mur  = _mm512_load_ps(&pmur[0]);
                          register __m512 mui  = _mm512_load_ps(&pmui[0]);
@@ -4239,6 +4239,91 @@ namespace gms {
                          _mm512_store_ps(&Rinr[0], resr);
                          _mm512_store_ps(&Rini[0], resi);
                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Rin_f4176_zmm16r4_u( const float * __restrict  pmur,
+                                             const float * __restrict  pmui,
+                                             const float * __restrict  pepsr,
+                                             const float * __restrict  pepsi,
+                                             const float * __restrict  ppsi,
+                                             float * __restrict  Rinr,
+                                             float * __restrict  Rini) {
+
+                         register __m512 mur  = _mm512_loadu_ps(&pmur[0]);
+                         register __m512 mui  = _mm512_loadu_ps(&pmui[0]);
+                         register __m512 epsr = _mm512_loadu_ps(&pepsr[0]);
+                         register __m512 epsi = _mm512_loadu_ps(&pepsi[0]);
+                         register __m512 psi  = _mm512_loadu_ps(&ppsi[0]);
+                         register __m512 cosp,sinp,sin2p,divr,divi;
+                         register __m512 mulr,muli,denr,deni,numr,numi;
+                         register __m512 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
+                         const __m512 _1 = _mm512_set1_ps(1.0f);
+                         cosp = xcosf(psi);
+                         sinp = xsinf(psi);
+                         sin2p= _mm512_add_ps(sinp,sinp);
+                         cdiv_zmm16r4(mur,mui,epsr,epsi,&divr,&divi);
+                         cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
+                         t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
+                         t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                         csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
+                         sqr2 = _mm512_mul_ps(cosp,sqr2);
+                         sqi2 = _mm512_mul_ps(cosp,sqi2);
+                         numr = _mm512_sub_ps(sqr2,sqr1);
+                         denr = _mm512_add_ps(sqr2,sqr1);
+                         numi = _mm512_sub_ps(sqi2,sqi1);
+                         deni = _mm512_add_ps(sqi2,sqi1);
+                         cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
+                         _mm512_storeu_ps(&Rinr[0], resr);
+                         _mm512_storeu_ps(&Rini[0], resi);
+                 }
+
+
+                    /*
+                           Fresnel reflection and transmission coefficients
+                           Formula 4.1-77
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Rin_f4177_zmm16r4( const __m512 mur,
+                                           const __m512 mui,
+                                           const __m512 epsr,
+                                           const __m512 epsi,
+                                           const __m512 psi,
+                                           __m512 * __restrict Rinr,
+                                           __m512 * __restrict Rini) {
+
+                         register __m512 cosp,sinp,sin2p,divr,divi;
+                         register __m512 mulr,muli,denr,deni,numr,numi;
+                         register __m512 sqr1,sqi1,sqr2,sqi2,t0r,t0i;
+                         const __m512 _1 = _mm512_set1_ps(1.0f);
+                         cosp = xcosf(psi);
+                         sinp = xsinf(psi);
+                         sin2p= _mm512_add_ps(sinp,sinp);
+                         cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
+                         cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
+                         t0r = _mm512_sub_ps(_1,_mm512_mul_ps(mulr,sin2p));
+                         t0i = _mm512_sub_ps(_1,_mm512_mul_ps(muli,sin2p));
+                         csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
+                         sqr2 = _mm512_mul_ps(sqr2,cosp);
+                         sqi2 = _mm512_mul_ps(sqi2,cosp);
+                         numr = _mm512_sub_ps(sqr2,sqr1);
+                         denr = _mm512_add_ps(sqr2,sqr1);
+                         numi = _mm512_sub_ps(sqi2,sqi1);
+                         deni = _mm512_add_ps(sqi2,sqi1);
+                         cdiv_zmm16r4(numr,numi,denr,deni,*Rinr,*Rini);
+                }
 
 
                   
