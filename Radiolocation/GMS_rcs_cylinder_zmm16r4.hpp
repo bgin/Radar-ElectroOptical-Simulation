@@ -4708,6 +4708,31 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Rint_f4169_zmm16r4( const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                             float * __restrict __ATTR_ALIGN__(64) Rintr,
+                                             float * __restrict __ATTR_ALIGN__(64) Rinti) {
+                        
+                        register __m512 mur  = _mm512_load_ps(&pmur[0]);
+                        register __m512 mui  = _mm512_load_ps(&pmui[0]);
+                        register __m512 epsr = _mm512_load_ps(&pepsr[0]);
+                        register __m512 epsi = _mm512_load_ps(&pepsi[0]);
+                        register __m512 t0r,t0i;
+                        const __m512 n1 = _mm512_mul_ps(-1.0f);
+                        Rext_f4164_zmm16r4(mur,mui,epsr,epsi,&t0r,&t0i);
+                        _mm512_store_ps(&Rintr[0] ,_mm512_mul_ps(n1,t0r));
+                        _mm512_store_ps(&Rinti[0] ,_mm512_mul_ps(n1,t0i));
+                 }
+
+
+
       } // radiolocation
 
 
