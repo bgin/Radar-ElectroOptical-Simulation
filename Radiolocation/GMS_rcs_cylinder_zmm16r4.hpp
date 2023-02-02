@@ -4532,7 +4532,94 @@ namespace gms {
                 }
 
 
-                   
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Tin_f4167_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                             float * __restrict __ATTR_ALIGN__(64) Tinr,
+                                             float * __restrict __ATTR_ALIGN__(64) Tini ) {
+
+                          register __m512 mur  = _mm512_load_ps(&pmur[0]);
+                          register __m512 mui  = _mm512_load_ps(&pmui[0]);
+                          register __m512 epsr = _mm512_load_ps(&pepsr[0]);
+                          register __m512 epsi = _mm512_load_ps(&pepsi[0]);
+                          register __m512 sqr1,sqi1,sqr2,sqi2,resr,resi;
+                          register __m512 sumr,sumi,mu2r,mu2i;
+                          csqrt_zmm16r4(mur,mui,&sqr1,&sqi1);
+                          mu2r = _mm512_add_ps(sqr1,sqr1);
+                          mu2i = _mm512_add_ps(sqi1,sqi1);
+                          csqrt_zmm16r4(epsr,epsi,&sqr2,&sqi2);
+                          sumr = _mm512_add_ps(sqr1,sqr2);
+                          sumi = _mm512_add_ps(sqi1,sqi2);
+                          cdiv_zmm16r4(mu2r,mu2i,sumr,sumi,&resr,&resi);
+                          _mm512_store_ps(&Tinr[0], resr);
+                          _mm512_store_ps(&Tini[0], resi);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Tin_f4167_zmm16r4_u( const float * __restrict  pmur,
+                                             const float * __restrict  pmui,
+                                             const float * __restrict  pepsr,
+                                             const float * __restrict  pepsi,
+                                             float * __restrict  Tinr,
+                                             float * __restrict  Tini ) {
+
+                          register __m512 mur  = _mm512_loadu_ps(&pmur[0]);
+                          register __m512 mui  = _mm512_loadu_ps(&pmui[0]);
+                          register __m512 epsr = _mm512_loadu_ps(&pepsr[0]);
+                          register __m512 epsi = _mm512_loadu_ps(&pepsi[0]);
+                          register __m512 sqr1,sqi1,sqr2,sqi2,resr,resi;
+                          register __m512 sumr,sumi,mu2r,mu2i;
+                          csqrt_zmm16r4(mur,mui,&sqr1,&sqi1);
+                          mu2r = _mm512_add_ps(sqr1,sqr1);
+                          mu2i = _mm512_add_ps(sqi1,sqi1);
+                          csqrt_zmm16r4(epsr,epsi,&sqr2,&sqi2);
+                          sumr = _mm512_add_ps(sqr1,sqr2);
+                          sumi = _mm512_add_ps(sqi1,sqi2);
+                          cdiv_zmm16r4(mu2r,mu2i,sumr,sumi,&resr,&resi);
+                          _mm512_storeu_ps(&Tinr[0], resr);
+                          _mm512_storeu_ps(&Tini[0], resi);
+                }
+
+
+                  /*
+                          Axial rays, when phi = 0
+                          Formula 4.1-68
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Tout_f4168_zmm16r4( const __m512 mur,
+                                           const __m512 mui,
+                                           const __m512 epsr,
+                                           const __m512 epsi,
+                                           __m512 * __restrict Toutr,
+                                           __m512 * __restrict Touti) {
+
+                          register __m512 sqr1,sqi1,sqr2,sqi2;
+                          register __m512 sumr,sumi,eps2r,eps2i;
+                          csqrt_zmm16r4(epsr,epsi,&sqr1,&sqi1);
+                          eps2r = _mm512_add_ps(sqr1,sqr1);
+                          eps2i = _mm512_add_ps(sqi1,sqi1);
+                          csqrt_zmm16r4(mur,mui,&sqr2,&sqi2);
+                          sumr = _mm512_add_ps(sqr1,sqr2);
+                          sumi = _mm512_add_ps(sqi1,sqi2);
+                          cdiv_zmm16r4(eps2r,eps2i,sumr,sumi,*Toutr,*Touti);
+                }
 
 
       } // radiolocation
