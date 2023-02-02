@@ -4412,6 +4412,35 @@ namespace gms {
                 }
 
 
+                  /*
+                          Specular rays reflection
+                          Formula 4.1-64
+                      */
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Rext_f4164_zmm16r4(const __m512 mur,
+                                           const __m512 mui,
+                                           const __m512 epsr,
+                                           const __m512 epsi,
+                                           __m512 * __restrict Rexr,
+                                           __m512 * __restrict Rexi) {
+
+                        register __m512 sqr1,sqi1,sqr2,sqi2;
+                        register __m512 difr,difi,sumr,sumi;
+                        csqrt_zmm16r4(mur,mui,&sqr1,sqi1);
+                        csqrt_zmm16r4(epsr,epsi,&sqr2,&sqi2);
+                        difr = _mm512_sub_ps(sqr1,sqr2);
+                        sumr = _mm512_add_ps(sqr1,sqr2);
+                        difi = _mm512_sub_ps(sqi1,sqi2);
+                        sumi = _mm512_add_ps(sqi1,sqi2);
+                        cdiv_zmm16r4(difr,difi,sumr,sumi,*Rexr,*Rexi);
+                }
+
+
 
       } // radiolocation
 
