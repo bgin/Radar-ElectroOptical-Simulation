@@ -4622,6 +4622,36 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Tout_f4168_zmm16r4(  const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                             const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                             float * __restrict __ATTR_ALIGN__(64) Toutr,
+                                             float * __restrict __ATTR_ALIGN__(64) Touti ) {
+
+                          register __m512 mur  = _mm512_load_ps(&pmur[0]);
+                          register __m512 mui  = _mm512_load_ps(&pmui[0]);
+                          register __m512 epsr = _mm512_load_ps(&pepsr[0]);
+                          register __m512 epsi = _mm512_load_ps(&pepsi[0]);
+                          register __m512 sqr1,sqi1,sqr2,sqi2;
+                          register __m512 sumr,sumi,eps2r,eps2i,resr,resi;
+                          csqrt_zmm16r4(epsr,epsi,&sqr1,&sqi1);
+                          eps2r = _mm512_add_ps(sqr1,sqr1);
+                          eps2i = _mm512_add_ps(sqi1,sqi1);
+                          csqrt_zmm16r4(mur,mui,&sqr2,&sqi2);
+                          sumr = _mm512_add_ps(sqr1,sqr2);
+                          sumi = _mm512_add_ps(sqi1,sqi2);
+                          cdiv_zmm16r4(eps2r,eps2i,sumr,sumi,&resr,&resi);
+                          _mm512_store_ps(&Toutr[0], resr);
+                          _mm512_store_ps(&Touti[0], resi);
+                }
+
+
       } // radiolocation
 
 
