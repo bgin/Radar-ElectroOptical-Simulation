@@ -4880,8 +4880,8 @@ namespace gms {
                           denr  = _mm512_add_ps(e1mr,e0mr);
                           deni  = _mm512_add_ps(e1mi,e0mi);
                           cdiv_zmm16r4(numr,numi,denr,deni,&div2r,&div2i);
-                          div2r = _mm512_mul_ps(_1,_mm512_mul_ps(div2r,cosp));
-                          div2i = _mm512_mul_ps(_1,_mm512_mul_ps(div2r,cosp));
+                          div2r = _mm512_mul_ps(_2,_mm512_mul_ps(div2r,cosp));
+                          div2i = _mm512_mul_ps(_2,_mm512_mul_ps(div2r,cosp));
                           t1r   = _mm512_sub_ps(t0r,div2r);
                           t1i   = _mm512_sub_ps(t0i,div2i);
                           cabs  = cabs_zmm16r4(t1r,t1i);
@@ -4948,8 +4948,8 @@ namespace gms {
                           denr  = _mm512_add_ps(e1mr,e0mr);
                           deni  = _mm512_add_ps(e1mi,e0mi);
                           cdiv_zmm16r4(numr,numi,denr,deni,&div2r,&div2i);
-                          div2r = _mm512_mul_ps(_1,_mm512_mul_ps(div2r,cosp));
-                          div2i = _mm512_mul_ps(_1,_mm512_mul_ps(div2r,cosp));
+                          div2r = _mm512_mul_ps(_2,_mm512_mul_ps(div2r,cosp));
+                          div2i = _mm512_mul_ps(_2,_mm512_mul_ps(div2r,cosp));
                           t1r   = _mm512_sub_ps(t0r,div2r);
                           t1i   = _mm512_sub_ps(t0i,div2i);
                           cabs  = cabs_zmm16r4(t1r,t1i);
@@ -5016,8 +5016,8 @@ namespace gms {
                           denr  = _mm512_add_ps(e1mr,e0mr);
                           deni  = _mm512_add_ps(e1mi,e0mi);
                           cdiv_zmm16r4(numr,numi,denr,deni,&div2r,&div2i);
-                          div2r = _mm512_mul_ps(_1,_mm512_mul_ps(div2r,cosp));
-                          div2i = _mm512_mul_ps(_1,_mm512_mul_ps(div2r,cosp));
+                          div2r = _mm512_mul_ps(_2,_mm512_mul_ps(div2r,cosp));
+                          div2i = _mm512_mul_ps(_2,_mm512_mul_ps(div2r,cosp));
                           t1r   = _mm512_sub_ps(t0r,div2r);
                           t1i   = _mm512_sub_ps(t0i,div2i);
                           cabs  = cabs_zmm16r4(t1r,t1i);
