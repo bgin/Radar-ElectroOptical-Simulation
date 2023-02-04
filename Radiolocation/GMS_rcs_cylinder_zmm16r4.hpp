@@ -4830,7 +4830,7 @@ namespace gms {
 
 
                     /*
-                         Bistatic scattering width (k0a0<<1, k1a0<<1)
+                         Bistatic scattering width (k0a0<<1, k1a0<<1), function of phi angle.
                          Formula 4.1-104
                       */
 
@@ -5024,6 +5024,11 @@ namespace gms {
                           rcs   = _mm512_mul_ps(frac,cabs);
                           return (rcs);
                }
+
+
+                /*
+
+                  */
 
 
                
