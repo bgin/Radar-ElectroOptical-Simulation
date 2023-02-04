@@ -4831,7 +4831,7 @@ namespace gms {
 
                     /*
                          Bistatic scattering width (k0a0<<1, k1a0<<1)
-                         Formula 4.1-103
+                         Formula 4.1-104
                       */
 
                    __ATTR_ALWAYS_INLINE__
@@ -4839,7 +4839,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f41103_zmm16r4(const __m512 a0,
+                   __m512 rcs_f41104_zmm16r4(const __m512 a0,
                                              const __m512 a1,
                                              const __m512 k0a0,
                                              const __m512 phi,
@@ -4895,7 +4895,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f41103_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa0,
+                   __m512 rcs_f41104_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa0,
                                                const float * __restrict __ATTR_ALIGN__(64) pa1,
                                                const float * __restrict __ATTR_ALIGN__(64) pk0a0,
                                                const float * __restrict __ATTR_ALIGN__(64) pphi,
@@ -4958,12 +4958,12 @@ namespace gms {
                }
 
 
-                 __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
                    __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f41103_zmm16r4_u(const float * __restrict  pa0,
+                   __m512 rcs_f41104_zmm16r4_u(const float * __restrict  pa0,
                                                const float * __restrict  pa1,
                                                const float * __restrict  pk0a0,
                                                const float * __restrict  pphi,
@@ -5024,6 +5024,9 @@ namespace gms {
                           rcs   = _mm512_mul_ps(frac,cabs);
                           return (rcs);
                }
+
+
+               
 
 
 
