@@ -5471,6 +5471,47 @@ namespace gms {
                }
 
 
+                  /*
+
+                       Hollow cylindrical shell.
+                       Approximations for the low frequency region
+                       (k0a0<<1, k1a0<<1).
+                       Formula 4.1-126
+                   */
+
+
+                     __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41126_zmm16r4(const __m512 a1,
+                                          const __m512 a0,
+                                          const __m512 k0a0,
+                                          const __m512 mu1r,
+                                          const __m512 mu1i,
+                                          const __m512 mu0r,
+                                          const __m512 mu0i,
+                                          __m512 * __restrict B0r,
+                                          __m512 * __restrict B0i) {
+
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
+                          register __m512 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                          register __m512 t0r,t0i;
+                          a1a0  = _mm512_div_ps(a1,a0);
+                          k0a02 = _mm512_mul_ps(k0a,k0a);
+                          a1a0s = _mm512_mul_ps(a1a0,a1a0);
+                          fracr = Ir;
+                          _1ma  = _mm512_sub_ps(_1,a1a0s);
+                          fraci = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a02));
+                          cdiv_zmm16r4(mu1r,mu1i,mu0r,mu0i,&divr,&divi);
+                          divr = _mm512_sub_ps(divr,_1);
+                          divi = _mm512_sub_ps(divi,_1);
+                          t0r  = _mm512_mul_ps(divr,_1ma);
+                          t0i  = _mm512_mul_ps(divi,_1ma);
+                          cmul_zmm16r4(fracr,fraci,t0r,t0i,*B0r,*B0i);
+               }
 
 
                  
