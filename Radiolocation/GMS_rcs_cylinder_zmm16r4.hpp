@@ -5625,9 +5625,9 @@ namespace gms {
 
                           const __m512 _1 = _mm512_set1_ps(1.0f);
                           const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
-                          register __m512 k0a02,a1a0,a1a0s,_1ma;
-                          register __m512 divr,divi,divrs,divis;
-                          register __m512 sqpr,sqpi,sqmr,sqmi;
+                          register __m512 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                          register __m512 divr,divi,divrs,divis,t1r,t1i;
+                          register __m512 sqpr,sqpi,sqmr,sqmi,t0r,t0i;
                           register __m512 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm512_mul_ps(k0a,k0a);
                           fraci = Ir;
@@ -5635,7 +5635,83 @@ namespace gms {
                           fracr = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a02));
                           a1a0s = _mm512_mul_ps(a1a0,a1a0);
                           _1ma  = _mm512_sub_ps(_1,a1a0s);
+                          cdiv_zmm16r4(mu1r,mu1i,mu0r,mu0i,&divr,&divi);
+                          cmul_zmm16r4(divr,divi,divr,divi,&divrs,&divis);
+                          divrs = _mm512_sub_ps(divrs,_1);
+                          divis = _mm512_sub_ps(divis,_1);
+                          numr  = _mm512_mul_ps(divrs,_1ma);
+                          numi  = _mm512_mul_ps(divis,_1ma);
+                          t0r   = _mm512_add_ps(divr,_1);
+                          t0i   = _mm512_add_ps(divi,_1);
+                          cmul_zmm16r4(t0r,t0i,t0r,t0i,&sqpr,&sqpi);
+                          t1r   = _mm512_sub_ps(divr,_1);
+                          t1i   = _mm512_sub_ps(divi,_1);
+                          cmul_zmm16r4(t1r,t1i,t1r,t1i,&sqmr,&sqmi);
+                          sqmr = _mm512_mul_ps(sqmr,a1a02);
+                          sqmi = _mm512_mul_ps(sqmi,a1a02);
+                          denr = _mm512_sub_ps(sqpr,sqmr);
+                          deni = _mm512_sub_ps(sqpi,sqmi);
+                          cdiv_zmm16r4(numr,numi,denr,deni,&ratr,&rati);
+                          cmul_zmm16r4(fracr,fraci,ratr,rati,*A1r,*A1i);
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41125_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64) pa1,
+                                            const  float * __restrict __ATTR_ALIGN__(64) pa0,
+                                            const  float * __restrict __ATTR_ALIGN__(64) pk0a0,
+                                            const  float * __restrict __ATTR_ALIGN__(64) pmu1r,
+                                            const  float * __restrict __ATTR_ALIGN__(64) pmu1i,
+                                            const  float * __restrict __ATTR_ALIGN__(64) pmu0r,
+                                            const  float * __restrict __ATTR_ALIGN__(64) pmu0i,
+                                            float * __restrict __ATTR_ALIGN__(64) A1r,
+                                            float * __restrict __ATTR_ALIGN__(64) A1i) {
+
+                          register __m512 a1    = _mm512_load_ps(&pa1[0]);
+                          register __m512 a0    = _mm512_load_ps(&pa0[0]);
+                          register __m512 k0a0  = _mm512_load_ps(&pk0a0[0]);
+                          register __m512 mu1r = _mm512_load_ps(&pmu1r[0]);
+                          register __m512 mu1i = _mm512_load_ps(&pmu1i[0]); 
+                          register __m512 mu0r = _mm512_load_ps(&pmu0r[0]);
+                          register __m512 mu0i = _mm512_load_ps(&pmu0i[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
+                          register __m512 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                          register __m512 divr,divi,divrs,divis,t1r,t1i;
+                          register __m512 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
+                          register __m512 numr,numi,denr,deni,fracr,fraci;
+                          k0a02 = _mm512_mul_ps(k0a,k0a);
+                          fraci = Ir;
+                          a1a0  = _mm512_div_ps(a1,a0);
+                          fracr = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a02));
+                          a1a0s = _mm512_mul_ps(a1a0,a1a0);
+                          _1ma  = _mm512_sub_ps(_1,a1a0s);
+                          cdiv_zmm16r4(mu1r,mu1i,mu0r,mu0i,&divr,&divi);
+                          cmul_zmm16r4(divr,divi,divr,divi,&divrs,&divis);
+                          divrs = _mm512_sub_ps(divrs,_1);
+                          divis = _mm512_sub_ps(divis,_1);
+                          numr  = _mm512_mul_ps(divrs,_1ma);
+                          numi  = _mm512_mul_ps(divis,_1ma);
+                          t0r   = _mm512_add_ps(divr,_1);
+                          t0i   = _mm512_add_ps(divi,_1);
+                          cmul_zmm16r4(t0r,t0i,t0r,t0i,&sqpr,&sqpi);
+                          t1r   = _mm512_sub_ps(divr,_1);
+                          t1i   = _mm512_sub_ps(divi,_1);
+                          cmul_zmm16r4(t1r,t1i,t1r,t1i,&sqmr,&sqmi);
+                          sqmr = _mm512_mul_ps(sqmr,a1a02);
+                          sqmi = _mm512_mul_ps(sqmi,a1a02);
+                          denr = _mm512_sub_ps(sqpr,sqmr);
+                          deni = _mm512_sub_ps(sqpi,sqmi);
+                          cdiv_zmm16r4(numr,numi,denr,deni,&ratr,&rati);
+                          cmul_zmm16r4(fracr,fraci,ratr,rati,&resr,&resi);
+                          _mm512_store_ps(&A1r[0], resr);
+                          _mm512_store_ps(&A1i[0], resi);
+                }
+
 
 
                  
