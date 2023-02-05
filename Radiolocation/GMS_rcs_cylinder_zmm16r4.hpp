@@ -6182,7 +6182,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f41163_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pa,
+                   __m512 rcs_f41163_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
                                              const float * __restrict __ATTR_ALIGN__(64) pk0a) {
 
                           register __m512 a   = _mm512_load_ps(&pa[0]);
@@ -6195,6 +6195,56 @@ namespace gms {
                           rcs  = _mm512_mul_ps(k0a3,t0);
                           return (rcs);
                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f41163_zmm16r4_u(const float * __restrict  pa,
+                                             const float * __restrict  pk0a) {
+
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 k0a = _mm512_loadu_ps(&pk0a[0]); 
+                          const __m512 c0   = _mm512_set1_ps(0.0625f);
+                          const __m512 pipi = _mm512_set1_ps( 9.869604401089358618834490999876f);
+                          register __m512 rcs,t0,k0a3;
+                          k0a3 = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          t0   = _mm512_mul_ps(pipi,a);
+                          rcs  = _mm512_mul_ps(k0a3,t0);
+                          return (rcs);
+                 }
+
+
+                    /*
+                          Low-frequncy approximations (k0a<0.2)
+                          Cylindrical Luneberg lens (k0a<0.2).  
+                          Scattering widths.
+                          Formula 4.1-164
+                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f41163_zmm16r4(const __m512 a,
+                                             const __m512 k0a,
+                                             const __m512 phi) {
+
+                          const __m512 c0   = _mm512_set1_ps(0.03607f);
+                          const __m512 pipi = _mm512_set1_ps( 9.869604401089358618834490999876f);
+                          register __m512 rcs,t0,cosp,k0a3;
+                          cosp  = xcosf(phi);
+                          t0    = _mm512_mul_ps(c0,_mm512_mul_ps(pipi,a));
+                          k0a3  = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          cos2p = _mm512_mul_ps(cosp,cosp);
+                          rcs   = _mm512_mul_ps(t0,_mm512_mul_ps(k0a3,cos2p));
+                          return (rcs);
+                 }
+
 
 
                  
