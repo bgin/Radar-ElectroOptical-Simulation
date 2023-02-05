@@ -5600,6 +5600,44 @@ namespace gms {
                }
 
 
+                  /*
+
+                          Hollow cylindrical shell.
+                          Approximations for the low frequency region
+                          (k0a0<<1, k1a0<<1).
+                           Formula 4.1-125
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41125_zmm16r4(const __m512 a1,
+                                          const __m512 a0,
+                                          const __m512 k0a0,
+                                          const __m512 mu1r,
+                                          const __m512 mu1i,
+                                          const __m512 mu0r,
+                                          const __m512 mu0i,
+                                          __m512 * __restrict A1r,
+                                          __m512 * __restrict A1i) {
+
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
+                          register __m512 k0a02,a1a0,a1a0s,_1ma;
+                          register __m512 divr,divi,divrs,divis;
+                          register __m512 sqpr,sqpi,sqmr,sqmi;
+                          register __m512 numr,numi,denr,deni,fracr,fraci;
+                          k0a02 = _mm512_mul_ps(k0a,k0a);
+                          fraci = Ir;
+                          a1a0  = _mm512_div_ps(a1,a0);
+                          fracr = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a02));
+                          a1a0s = _mm512_mul_ps(a1a0,a1a0);
+                          _1ma  = _mm512_sub_ps(_1,a1a0s);
+                }
+
+
                  
 
 
