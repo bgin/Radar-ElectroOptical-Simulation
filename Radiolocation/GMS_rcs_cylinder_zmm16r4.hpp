@@ -5770,6 +5770,15 @@ namespace gms {
                 }
 
 
+                 /*
+
+                          Hollow cylindrical shell.
+                          Approximations for the low frequency region
+                          (k0a0<<1, k1a0<<1).
+                           Formula 4.1-127
+                    */
+
+
 
 
                  
