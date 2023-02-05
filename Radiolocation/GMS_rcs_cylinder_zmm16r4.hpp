@@ -5990,6 +5990,105 @@ namespace gms {
                 }
 
 
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41162_zmm16r4_u(const float * __restrict  pk0a,
+                                            float * __restrict  A0r,
+                                            float * __restrict  A0i) {
+
+                   
+                         register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         register __m512 k0a2,k0ah;
+                         k0a2 = _mm512_mul_ps(k0a,k0a);
+                         _mm512_storeu_ps(&A0r[0] ,Ir);
+                         k0ah = _mm512_mul_ps(hlf,k0a2);
+                         _mm512_storeu_ps(&A0i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah)));
+                }
+
+
+                 
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41162_zmm16r4(__m512 * __restrict B0r,
+                                          __m512 * __restrict B0i) {
+
+                        *B0r = _mm512_setzero_ps();
+                        *B0i = _mm512_setzero_ps();
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41162_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) B0r,
+                                          float * __restrict __ATTR_ALIGN__(64) B0i) {
+
+                        _mm512_store_ps(&B0r[0] ,_mm512_setzero_ps());
+                        _mm512_store_ps(&B0i[0] ,_mm512_setzero_ps());
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41162_zmm16r4_u(float * __restrict  B0r,
+                                          float * __restrict  B0i) {
+
+                        _mm512_storeu_ps(&B0r[0] ,_mm512_setzero_ps());
+                        _mm512_storeu_ps(&B0i[0] ,_mm512_setzero_ps());
+               }
+
+
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41162_zmm16r4(__m512 * __restrict A1r,
+                                          __m512 * __restrict A1i) {
+
+                        *A1r = _mm512_setzero_ps();
+                        *A1i = _mm512_setzero_ps();
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41162_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) A1r,
+                                          float * __restrict __ATTR_ALIGN__(64) A1i) {
+
+                        _mm512_store_ps(&A1r[0] ,_mm512_setzero_ps());
+                        _mm512_store_ps(&A1i[0] ,_mm512_setzero_ps());
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41162_zmm16r4_u(float * __restrict  A1r,
+                                            float * __restrict  A1i) {
+
+                        _mm512_storeu_ps(&A1r[0] ,_mm512_setzero_ps());
+                        _mm512_storeu_ps(&A1i[0] ,_mm512_setzero_ps());
+               }
 
                  
 
