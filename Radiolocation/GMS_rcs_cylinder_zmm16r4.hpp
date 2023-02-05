@@ -6090,6 +6090,68 @@ namespace gms {
                         _mm512_storeu_ps(&A1i[0] ,_mm512_setzero_ps());
                }
 
+
+                      __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B1_f41162_zmm16r4(const __m512 k0a,
+                                          __m512 * __restrict B1r,
+                                          __m512 * __restrict B1i) {
+
+                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 c0 = _mm512_set1_ps(1.8992f);
+                         register __m512 k0a2,k0ah;
+                         k0a2 = _mm512_mul_ps(k0a,k0a);
+                         *B1r = Ir;
+                         k0ah = _mm512_mul_ps(c0,k0a2);
+                         *B1i = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah));
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B1_f41162_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            float * __restrict __ATTR_ALIGN__(64) B1r,
+                                            float * __restrict __ATTR_ALIGN__(64) B1i) {
+
+                   
+                         register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 c0 = _mm512_set1_ps(1.8992f);
+                         register __m512 k0a2,k0ah;
+                         k0a2 = _mm512_mul_ps(k0a,k0a);
+                         _mm512_store_ps(&B1r[0] ,Ir);
+                         k0ah = _mm512_mul_ps(c0,k0a2);
+                         _mm512_store_ps(&B1i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah)));
+                }
+
+
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41162_zmm16r4_u(const float * __restrict  pk0a,
+                                            float * __restrict  A0r,
+                                            float * __restrict  A0i) {
+
+                   
+                         register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         register __m512 k0a2,k0ah;
+                         k0a2 = _mm512_mul_ps(k0a,k0a);
+                         _mm512_storeu_ps(&A0r[0] ,Ir);
+                         k0ah = _mm512_mul_ps(hlf,k0a2);
+                         _mm512_storeu_ps(&A0i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah)));
+                }
+
+
                  
 
 
