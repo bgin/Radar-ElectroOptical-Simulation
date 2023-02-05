@@ -5943,14 +5943,51 @@ namespace gms {
 
                     /*
 
-                          Low-frequncy approximations.
+                          Low-frequncy approximations (k0a<0.2)
                           Cylindrical Luneberg lens (k0a<0.2).
-                          
+                          Formula 4.1-162
                      */
 
+                    
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41162_zmm16r4(const __m512 k0a,
+                                          __m512 * __restrict A0r,
+                                          __m512 * __restrict A0i) {
+
+                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         register __m512 k0a2,k0ah;
+                         k0a2 = _mm512_mul_ps(k0a,k0a);
+                         *A0r = Ir;
+                         k0ah = _mm512_mul_ps(hlf,k0a2);
+                         *A0i = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah));
+                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41162_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            float * __restrict __ATTR_ALIGN__(64) A0r,
+                                            float * __restrict __ATTR_ALIGN__(64) A0i) {
 
+                   
+                         register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         register __m512 k0a2,k0ah;
+                         k0a2 = _mm512_mul_ps(k0a,k0a);
+                         _mm512_store_ps(&A0r[0] ,Ir);
+                         k0ah = _mm512_mul_ps(hlf,k0a2);
+                         _mm512_store_ps(&A0i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah)));
+                }
 
 
 
