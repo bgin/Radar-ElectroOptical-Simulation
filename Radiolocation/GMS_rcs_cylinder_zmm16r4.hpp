@@ -5832,23 +5832,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void B1_f41125_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64) pa1,
+                   void B1_f41127_zmm16r4_a(const  float * __restrict __ATTR_ALIGN__(64) pa1,
                                             const  float * __restrict __ATTR_ALIGN__(64) pa0,
                                             const  float * __restrict __ATTR_ALIGN__(64) pk0a0,
-                                            const  float * __restrict __ATTR_ALIGN__(64) pmu1r,
-                                            const  float * __restrict __ATTR_ALIGN__(64) pmu1i,
-                                            const  float * __restrict __ATTR_ALIGN__(64) pmu0r,
-                                            const  float * __restrict __ATTR_ALIGN__(64) pmu0i,
-                                            float * __restrict __ATTR_ALIGN__(64) A1r,
-                                            float * __restrict __ATTR_ALIGN__(64) A1i) {
+                                            const  float * __restrict __ATTR_ALIGN__(64) peps1r,
+                                            const  float * __restrict __ATTR_ALIGN__(64) peps1i,
+                                            const  float * __restrict __ATTR_ALIGN__(64) peps0r,
+                                            const  float * __restrict __ATTR_ALIGN__(64) peps0i,
+                                            float * __restrict __ATTR_ALIGN__(64) B1r,
+                                            float * __restrict __ATTR_ALIGN__(64) B1i) {
 
                           register __m512 a1    = _mm512_load_ps(&pa1[0]);
                           register __m512 a0    = _mm512_load_ps(&pa0[0]);
                           register __m512 k0a0  = _mm512_load_ps(&pk0a0[0]);
-                          register __m512 mu1r = _mm512_load_ps(&pmu1r[0]);
-                          register __m512 mu1i = _mm512_load_ps(&pmu1i[0]); 
-                          register __m512 mu0r = _mm512_load_ps(&pmu0r[0]);
-                          register __m512 mu0i = _mm512_load_ps(&pmu0i[0]);
+                          register __m512 eps1r = _mm512_load_ps(&peps1r[0]);
+                          register __m512 eps1i = _mm512_load_ps(&peps1i[0]); 
+                          register __m512 eps0r = _mm512_load_ps(&peps0r[0]);
+                          register __m512 eps0i = _mm512_load_ps(&peps0i[0]);
                           const __m512 _1 = _mm512_set1_ps(1.0f);
                           const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
                           register __m512 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
