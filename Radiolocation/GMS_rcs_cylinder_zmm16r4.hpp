@@ -6381,6 +6381,62 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41165_zmm16r4_u(float * __restrict  A0r,
+                                            float * __restrict  A0i) {
+
+                        _mm512_storeu_ps(&A0r[0], Ir);
+                        _mm512_storeu_ps(&A0i[0], Ir);
+                }
+
+
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41165_zmm16r4(__m512 * __restrict B0r,
+                                          __m512 * __restrict B0i) {
+
+                        *B0r = Ir;
+                        *B0i = Ir;
+                }
+
+
+                  
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41165_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) B0r,
+                                            float * __restrict __ATTR_ALIGN__(64) B0i) {
+
+                        _mm512_store_ps(&B0r[0], Ir);
+                        _mm512_store_ps(&B0i[0], Ir);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B0_f41165_zmm16r4_u(float * __restrict  B0r,
+                                            float * __restrict  B0i) {
+
+                        _mm512_storeu_ps(&B0r[0], Ir);
+                        _mm512_storeu_ps(&B0i[0], Ir);
+                }
+
+
+                   
+
+
 
 
 
