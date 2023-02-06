@@ -6500,6 +6500,42 @@ namespace gms {
                        Formula: 1.4-166
                    */
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f14166_zmm16r4(const __m512 a,
+                                             const __m512 k0a) {
+
+                          const __m512 qtr = _mm512_set1_ps(0.25f);
+                          const __m512 pip = _mm512_set1_ps(9.869604401089358618834490999876f);
+                          register __m512 a4,k0a3,rcs;
+                          a4   = _mm512_mul_ps(a,qtr);
+                          k0a3 = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          rcs  = _mm512_mul_ps(k0a3,_mm512_mul_ps(pip,a4));
+                          return (rcs);
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f14166_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                               const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          const __m512 qtr = _mm512_set1_ps(0.25f);
+                          const __m512 pip = _mm512_set1_ps(9.869604401089358618834490999876f);
+                          register __m512 a4,k0a3,rcs;
+                          a4   = _mm512_mul_ps(a,qtr);
+                          k0a3 = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          rcs  = _mm512_mul_ps(k0a3,_mm512_mul_ps(pip,a4));
+                          return (rcs);
+               }
 
 
 
