@@ -6336,6 +6336,52 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41165_zmm16r4_u(const float * __restrict  pk0a,
+                                            float * __restrict  A0r,
+                                            float * __restrict  A0i) {
+
+                        register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a2;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        _mm512_storeu_ps(&A0r[0], Ir);
+                        _mm512_storeu_ps(&A0i[0], _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a2)));
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41165_zmm16r4(__m512 * __restrict A0r,
+                                          __m512 * __restrict A0i) {
+
+                        *A0r = Ir;
+                        *A0i = Ir;
+                }
+
+
+                  
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A1_f41165_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) A0r,
+                                            float * __restrict __ATTR_ALIGN__(64) A0i) {
+
+                        _mm512_store_ps(&A0r[0], Ir);
+                        _mm512_store_ps(&A0i[0], Ir);
+                }
+
+
+
 
 
                  
