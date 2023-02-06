@@ -6294,6 +6294,48 @@ namespace gms {
                  }
 
 
+                  /*
+
+                      Cylindrical Eaton-Lippman Lens, (k0a<0.2)
+                      Formulae 4.1-165
+                  */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41165_zmm16r4(const __m512 k0a,
+                                          __m512 * __restrict A0r,
+                                          __m512 * __restrict A0i) {
+
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a2;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        *A0r = Ir;
+                        *A0i = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a2));
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void A0_f41165_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            float * __restrict __ATTR_ALIGN__(64) A0r,
+                                            float * __restrict __ATTR_ALIGN__(64) A0i) {
+
+                        register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a2;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        _mm512_store_ps(&A0r[0], Ir);
+                        _mm512_store_ps(&A0i[0], _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0a2)));
+                }
+
+
 
 
                  
