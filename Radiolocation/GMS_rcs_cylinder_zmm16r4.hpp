@@ -6458,11 +6458,11 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void B1_f41165_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                   void B1_f41165_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
                                           float * __restrict __ATTR_ALIGN__(64) B1r,
                                           float * __restrict __ATTR_ALIGN__(64) B1i) {
 
-                        register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                        register __m512 k0a = _mm512_load_ps(&pk0a[0]);
                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
                         const __m512 c0  = _mm512_set1_ps(0.43616f);
                         register __m512 k0a2,t0;
@@ -6473,7 +6473,32 @@ namespace gms {
                 }
 
 
-                   
+                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void B1_f41165_zmm16r4_u(const float * __restrict  pk0a,
+                                          float * __restrict  B1r,
+                                          float * __restrict  B1i) {
+
+                        register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 c0  = _mm512_set1_ps(0.43616f);
+                        register __m512 k0a2,t0;
+                        k0a2 = _mm512_mul_ps(k0a,k0a);
+                        t0   = _mm512_mul_ps(c0,k0a2);
+                        _mm512_storeu_ps(&B1r[0] ,Ir);
+                        _mm512_storeu_ps(&B1i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,t0)));
+                }
+
+
+                  /*
+
+                       Cylindrical Eaton-Lippman Lens, (k0a<0.2) 
+                       Scattering widths.
+                       Formula: 1.4-166
+                   */
 
 
 
