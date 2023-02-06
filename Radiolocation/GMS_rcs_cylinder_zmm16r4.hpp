@@ -6538,7 +6538,54 @@ namespace gms {
                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f14166_zmm16r4_u(const float * __restrict pa,
+                                               const float * __restrict  pk0a) {
 
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                          const __m512 qtr = _mm512_set1_ps(0.25f);
+                          const __m512 pip = _mm512_set1_ps(9.869604401089358618834490999876f);
+                          register __m512 a4,k0a3,rcs;
+                          a4   = _mm512_mul_ps(a,qtr);
+                          k0a3 = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          rcs  = _mm512_mul_ps(k0a3,_mm512_mul_ps(pip,a4));
+                          return (rcs);
+               }
+
+
+                  /*
+
+                       Cylindrical Eaton-Lippman Lens, (k0a<0.2) 
+                       Scattering widths.
+                       Formula: 1.4-167
+                   */
+                 
+ 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f14167_zmm16r4(const __m512 a,
+                                             const __m512 k0a,
+                                             const __m512 phi) {
+
+                          const __m512 c0  = _mm512_set1_ps(0.19024f);
+                          const __m512 pip = _mm512_set1_ps(9.869604401089358618834490999876f);
+                          register __m512 cosp,cos2p,k0a3,rcs,t1;
+                          k0a3 = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
+                          t1   = _mm512_mul_ps(_mm512_mul_ps(c0,pip),
+                                               _mm512_mul_ps(a,k0a3));
+                          cosp = xcosf(phi);
+                          cos2p = _mm512_mul_ps(cosp,cosp);
+                          rcs   = _mm512_mul_ps(t1,cos2p);         
+                          return (rcs);
+               }
 
                  
 
