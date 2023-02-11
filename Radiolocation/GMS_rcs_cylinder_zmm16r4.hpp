@@ -7847,6 +7847,15 @@ namespace gms {
                 }
 
 
+                    /*
+                         Infinitely long cylinder.
+                         Scattered fields (k0a0 sqrt(epsr*mur-sin^2(Psi) < 0.5)
+                         TE-incident E-field.
+                         Formula 4.2-55
+
+                   */
+
+
 
 
 
