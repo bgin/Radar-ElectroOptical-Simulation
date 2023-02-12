@@ -8435,7 +8435,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Ez_f4254_zmm16r4_a(const float * __restrict  pH0r,
+                   void Ez_f4254_zmm16r4_u(const float * __restrict  pH0r,
                                           const float * __restrict pH0i,
                                           const float * __restrict  pk0z,
                                           const float * __restrict  pk0r,
@@ -8449,16 +8449,16 @@ namespace gms {
                                           float * __restrict  Hzr,
                                           float * __restrict  Hzi ) {
                          
-                         register __m512 H0r   = _mm512_load_ps(&pH0r[0]);
-                         register __m512 H0i   = _mm512_load_ps(&pH0i[0]);
-                         register __m512 k0z   = _mm512_load_ps(&pk0z[0]);
-                         register __m512 k0a0  = _mm512_load_ps(&pk0a0[0]);
-                         register __m512 psi   = _mm512_load_ps(&ppsi[0]);
-                         register __m512 pphi  = _mm512_load_ps(&pphi[0]);
-                         register __m512 epsr  = _mm512_load_ps(&pepsr[0]);
-                         register __m512 epsi  = _mm512_load_ps(&pepsi[0]);
-                         register __m512 mur   = _mm512_load_ps(&pmur[0]);
-                         register __m512 mui   = _mm512_load_ps(&pmui[0]); 
+                         register __m512 H0r   = _mm512_loadu_ps(&pH0r[0]);
+                         register __m512 H0i   = _mm512_loadu_ps(&pH0i[0]);
+                         register __m512 k0z   = _mm512_loadu_ps(&pk0z[0]);
+                         register __m512 k0a0  = _mm512_loadu_ps(&pk0a0[0]);
+                         register __m512 psi   = _mm512_loadu_ps(&ppsi[0]);
+                         register __m512 pphi  = _mm512_loadu_ps(&pphi[0]);
+                         register __m512 epsr  = _mm512_loadu_ps(&pepsr[0]);
+                         register __m512 epsi  = _mm512_loadu_ps(&pepsi[0]);
+                         register __m512 mur   = _mm512_loadu_ps(&pmur[0]);
+                         register __m512 mui   = _mm512_loadu_ps(&pmui[0]); 
                          const __m512 e0u0 = _mm512_set1_ps(0.00001763712109284471382861586f);
                          const __m512 pi4  = _mm512_set1_ps(0.78539816339744830961566084582f);
                          const __m512 _1   = _mm512_set1_ps(1.0f);
@@ -8494,10 +8494,66 @@ namespace gms {
                          divi = _mm512_mul_ps(divi,spsph);
                          t0i  = _mm512_mul_ps(Ii,_mm512_mul_ps(t0i,k0a02));
                          cmul_zmm16r4(t0r,t0i,divr,divi,&resr,&resi);
-                         _mm512_store_ps(&Hzr[0], resr);
-                         _mm512_store_ps(&Hzi[0], resi);
+                         _mm512_storeu_ps(&Hzr[0], resr);
+                         _mm512_storeu_ps(&Hzi[0], resi);
                  }
 
+
+                  /*
+                     Bistatic scattering width for (k0a0 sqrt(epsr*mur-sin^2(Psi) < 0.5)
+                     Infinitely long cylinder.
+                     TM-incident.
+                     Formula 4.2-56
+                 */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4256_zmm16r4(const __m512 a0,
+                                            const __m512 k0a0,
+                                            const __m512 psi,
+                                            const __m512 phi,
+                                            const __m512 epsr,
+                                            const __m512 epsi,
+                                            const __m512 mur,
+                                            const __m512 mui) {
+
+                         const __m512 _4 = _mm512_set1_ps(4.0f);
+                         const __m512 spi= _mm512_set1_ps(9.869604401089358618834490999876f);
+                         const __m512 _2 = _mm512_set1_ps(2.0f);
+                         register __m512 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0;
+                         register __m512 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                         register __m512 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                         k0a03  = _mm512_mul_ps(k0a0,_mm512_mul_ps(k0a0,k0a0));
+                         epsrm1 = _mm512_sub_ps(epsr,_1);
+                         spia   = _mm512_mul_ps(spi,a0);
+                         epsim1 = _mm512_sub_ps(epsi,_1);
+                         cosps  = xcosf(psi);
+                         epsrp1 = _mm512_add_ps(epsr,_1);
+                         cos2ps = _mm512_mul_ps(cosps,cosps);
+                         epsip1 = _mm512_add_ps(epsi,_1);
+                         sinps  = xsinf(ps);
+                         murm1  = _mm512_sub_ps(mur,_1);
+                         sin2ps = _mm512_mul_ps(sinps,sinps);
+                         muim1  = _mm512_sub_ps(mui,_1);
+                         cosp   = xcosf(phi);
+                         murp1  = _mm512_add_ps(mur,_1);
+                         t0     = _mm512_mul_ps(_4,cos2ps);
+                         muip1  = _mm512_add_ps(mui,_1);
+                         frac   = _mm512_div_ps(spia,t0);
+                         epsrcps= _mm512_mul_ps(epsrm1,cos2ps);
+                         frac   = _mm512_mul_ps(frac,k0a03);
+                         epsicps= _mm512_mul_ps(epsim1,cos2ps);
+                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
+                         cmul_zmm16r4(epsrm1,epsim1,murp1,muip1,&mul2r,&mul2i);
+                         numr = _mm512_fmadd_ps(mul2r,sin2ps,mul1r);
+                         numi = _mm512_fmadd_ps(mul2i,sin2ps,mul1i);
+                         cmul_zmm16r4(epsrp1,epsip1,murp1,muip1,&mul3r,&mul3i);
+                         
+                 }
 
 
 
