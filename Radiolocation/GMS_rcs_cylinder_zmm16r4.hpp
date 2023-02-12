@@ -8889,6 +8889,18 @@ namespace gms {
                  }
 
 
+                   /*
+
+                           Bistatic scattering width for (k0a0 sqrt(epsr*mur-sin^2(Psi) < 0.5)
+                           Infinitely long cylinder.
+                           TM-incident.
+                           Formula 4.2-57
+                     */
+
+
+                        
+
+
 
 
 
