@@ -9418,8 +9418,43 @@ namespace gms {
                            Formula 4.3-18
                       */
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f4318_zmm16r4(const __m512 EIr,
+                                         const __m512 EIi,
+                                         const __m512 k0,
+                                         const __m512 r,
+                                         const __m512 psii,
+                                         const __m512 psis,
+                                         const __m512 phi,
+                                         const __m512 a,
+                                         __m512 * __restrict ESr,
+                                         __m512 * __restrict ESi) {
 
-
+                         const __m512 _43pi = _mm512_set1_ps(0.424413181578387562050356702327f);
+                         register __m512 ir,a3,k02,cosp,spsii,spsis,t0,t1;
+                         register __m512 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
+                         a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                         ir   = _mm512_rcp14_ps(r);
+                         spsis= xsinf(psis);
+                         k02  = _mm512_mul_ps(k0,k0);
+                         ear  = _mm512_mul_ps(k0,r);
+                         cosp = xcosf(phi); 
+                         eai  = Ir;
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         t0   = _mm512_mul_ps(_43pi,k02);
+                         spsii= xsinf(psii);
+                         t0r  = _mm512_mul_ps(t0,_mm512_mul_ps(cer,ir));
+                         t0i  = _mm512_mul_ps(t0,_mm512_mul_ps(cei,ir)); 
+                         t1   = _mm512_mul_ps(spsii,_mm512_mul_ps(spsis,cosp));
+                         t0   = _mm512_mul_ps(a3,t1);
+                         t1r  = _mm512_mul_ps(EIr,t0);
+                         t1i  = _mm512_mul_ps(EIi,t0);
+                         cmul_zmm16r4(t0r,t0i,t1r,t1i,*ESr,*ESi);
+                }
 
 
 
