@@ -9698,6 +9698,61 @@ namespace gms {
                    */
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f4320_zmm16r4(const __m512 EIr,
+                                         const __m512 EIi,
+                                         const __m512 k0,
+                                         const __m512 r,
+                                         const __m512 psis,
+                                         const __m512 phi,
+                                         const __m512 a,
+                                         __m512 * __restrict ESr,
+                                         __m512 * __restrict ESi) {
+                      
+                        ES_f4319_zmm16r4(EIr,EIi,k0,r,psis,phi,a,&ESr,&ESi);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f4320_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64)  pEIr,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pEIi,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pr,
+                                           const float * __restrict __ATTR_ALIGN__(64)  ppsis,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pphi,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pa,
+                                           float * __restrict __ATTR_ALIGN__(64) ESr,
+                                           float * __restrict __ATTR_ALIGN__(64)  ESi) {
+
+                      ES_f4319_zmm16r4_a(pEIr,pEIi,pk0,pr,ppsis,pphi,ESr,ESi);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f4320_zmm16r4_u(const float * __restrict   pEIr,
+                                           const float * __restrict   pEIi,
+                                           const float * __restrict   pk0,
+                                           const float * __restrict   pr,
+                                           const float * __restrict   ppsis,
+                                           const float * __restrict   pphi,
+                                           const float * __restrict   pa,
+                                           float * __restrict  ESr,
+                                           float * __restrict  ESi) {
+
+                      ES_f4319_zmm16r4_u(pEIr,pEIi,pk0,pr,ppsis,pphi,ESr,ESi);
+              }
 
 
 
