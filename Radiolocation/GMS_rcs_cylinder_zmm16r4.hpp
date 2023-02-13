@@ -9383,6 +9383,42 @@ namespace gms {
                }
 
 
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4311_zmm16r4_u(const float * __restrict  pk0,
+                                              const float * __restrict  ph,
+                                              const float * __restrict  pln4h) {
+
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 h   = _mm512_loadu_ps(&ph[0]);
+                          register __m512 ln4h= _mm512_loadu_ps(&pln4h[0]);
+                          const __m512 _4pi45 = _mm512_set1_ps(0.279252680319092732307790522958f);
+                          const __m512 _1     = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,den,inv,k04,h6,h2,t0,t1;
+                          h2     = _mm512_mul_ps(h,h);
+                          k04    = _mm512_mul_ps(_mm512_mul_ps(k0,k0),
+                                              _mm512_mul_ps(k0,k0));
+                          t0     = _mm512_sub_ps(ln4h,_1);
+                          t1     = _mm512_mul_ps(h,h2);
+                          h6     = _mm512_mul_ps(t1,h2);
+                          den    = _mm512_mul_ps(t0,t0);
+                          inv    = _mm512_div_ps(_1,den);
+                          t0     = _mm512_mul_ps(_4pi45,_mm512_mul_ps(k04,h6));
+                          rcs    = _mm512_mul_ps(t0,inv);
+                          return (rcs);
+               }
+
+
+                  /*
+                           Disc limit of cylinder (h<<a).
+                           Scattered fields from the cylinder in the disc limit
+                           Formula 4.3-18
+                      */
+
+
 
 
 
