@@ -10015,6 +10015,42 @@ namespace gms {
                 }
 
 
+                    /*
+                           Disc limit of cylinder (h<<a).
+                           Bistatic scattering RCS for cylinder in the disc limit
+                           Formula 4.3-23
+                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4323_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 psii,
+                                            const __m512 phi) {
+
+                          const __m512 _64pi9 = _mm512_set1_ps(2.263536968418066997601902412409f);
+                          register __m512 rcs,k04,a6,t0,t1,spsii,sinp;
+                          register __m512 s2psii,sin2p,t2;
+                          sinp  = xsinf(phi);
+                          t0    = _mm512_mul_ps(k0,k0);
+                          sin2p = _mm512_mul_ps(sinp,sinp);
+                          t1    = _mm512_mul_ps(a,a);
+                          spsii = xsinf(psii);
+                          k04   = _mm512_mul_ps(t0,t0);
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          s2psii= _mm512_mul_ps(spsii,spsii);
+                          a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
+                          t3    = _mm512_mul_ps(s2psii,sin2p);
+                          rcs   = _mm512_mul_ps(t2,t3);
+                          return (rcs);
+                }
+
+
+
 
 
 
