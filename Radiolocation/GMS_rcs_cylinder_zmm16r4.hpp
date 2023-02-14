@@ -10197,12 +10197,12 @@ namespace gms {
                           cpsii = xcosf(psii);
                           cpsii = _mm512_mul_ps(hlf,cpsii);
                           k04   = _mm512_mul_ps(t0,t0);
-                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,k04));
                           a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
                           cpsis = xcosf(psis);
                           term  = _mm512_fmadd_ps(cpsis,cpsii,cosp);
-                          t3    = _mm512_mul_ps(s2psii,_mm512_mul_ps(s2psis,cosp));
-                          rcs   = _mm512_mul_ps(t2,t3);
+                          term  = _mm512_mul_ps(term,term);
+                          rcs   = _mm512_mul_ps(t2,_mm512_mul_ps(a6,term));
                           return (rcs);
                 }
 
