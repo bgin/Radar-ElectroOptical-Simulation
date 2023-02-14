@@ -10041,11 +10041,11 @@ namespace gms {
                           t1    = _mm512_mul_ps(a,a);
                           spsii = xsinf(psii);
                           k04   = _mm512_mul_ps(t0,t0);
-                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,k04));
                           s2psii= _mm512_mul_ps(spsii,spsii);
                           a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
                           t3    = _mm512_mul_ps(s2psii,sin2p);
-                          rcs   = _mm512_mul_ps(t2,t3);
+                          rcs   = _mm512_mul_ps(t2,_mm512_mul_ps(a6,t3));
                           return (rcs);
                 }
 
@@ -10073,11 +10073,11 @@ namespace gms {
                           t1    = _mm512_mul_ps(a,a);
                           spsii = xsinf(psii);
                           k04   = _mm512_mul_ps(t0,t0);
-                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,k04));
                           s2psii= _mm512_mul_ps(spsii,spsii);
                           a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
                           t3    = _mm512_mul_ps(s2psii,sin2p);
-                          rcs   = _mm512_mul_ps(t2,t3);
+                          rcs   = _mm512_mul_ps(t2,_mm512_mul_ps(a6,t3));
                           return (rcs);
                 }
 
@@ -10105,11 +10105,11 @@ namespace gms {
                           t1    = _mm512_mul_ps(a,a);
                           spsii = xsinf(psii);
                           k04   = _mm512_mul_ps(t0,t0);
-                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,k04));
                           s2psii= _mm512_mul_ps(spsii,spsii);
                           a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
                           t3    = _mm512_mul_ps(s2psii,sin2p);
-                          rcs   = _mm512_mul_ps(t2,t3);
+                          rcs   = _mm512_mul_ps(t2,_mm512_mul_ps(a6,t3));
                           return (rcs);
                 }
 
