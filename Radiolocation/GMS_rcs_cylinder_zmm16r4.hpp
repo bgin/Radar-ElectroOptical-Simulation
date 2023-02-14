@@ -9803,7 +9803,114 @@ namespace gms {
               }
 
 
-               
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f4321_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64)  pEIr,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pEIi,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pr,
+                                           const float * __restrict __ATTR_ALIGN__(64)  ppsii,
+                                           const float * __restrict __ATTR_ALIGN__(64)  ppsis,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pphi,
+                                           const float * __restrict __ATTR_ALIGN__(64)  pa,
+                                           float * __restrict __ATTR_ALIGN__(64) ESr,
+                                           float * __restrict __ATTR_ALIGN__(64)  ESi) {
+
+                         register __m512 EIr  = _mm512_load_ps(&pEIr[0]);
+                         register __m512 EIi  = _mm512_load_ps(&pEIi[0]);
+                         register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                         register __m512 r    = _mm512_load_ps(&pr[0]);
+                         register __m512 psii = _mm512_load_ps(&ppsii[0]);
+                         register __m512 psis = _mm512_load_ps(&ppsis[0]);
+                         register __m512 phi  = _mm512_load_ps(&pphi[0]);
+                         register __m512 a    = _mm512_load_ps(&a[0]);
+                         const __m512 _43pi = _mm512_set1_ps(0.424413181578387562050356702327f);
+                         const __m512 hlf   = _mm512_set1_ps(0.5f);
+                         register __m512 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
+                         register __m512 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
+                         a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                         ir   = _mm512_rcp14_ps(r);
+                         cpsis= xcosf(psis);
+                         k02  = _mm512_mul_ps(k0,k0);
+                         ear  = _mm512_mul_ps(k0,r);
+                         cosp = xcosf(phi); 
+                         eai  = Ir;
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         t0   = _mm512_mul_ps(_43pi,k02);
+                         cpsii= xcosf(psii);
+                         cpsii= _mm512_mul_ps(hlf,cpsii);
+                         t0r  = _mm512_mul_ps(t0,_mm512_mul_ps(cer,ir));
+                         t0i  = _mm512_mul_ps(t0,_mm512_mul_ps(cei,ir)); 
+                         t1   = _mm512_fmadd_ps(cpsii,cpsis,cosp);
+                         t0   = _mm512_mul_ps(a3,t1);
+                         t1r  = _mm512_mul_ps(EIr,t0);
+                         t1i  = _mm512_mul_ps(EIi,t0);
+                         cmul_zmm16r4(t0r,t0i,t1r,t1i,&resr,&resi);
+                         _mm512_store_ps(&ESr[0], resr);
+                         _mm512_store_ps(&ESi[0], resi);
+              }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f4321_zmm16r4_u(const float * __restrict   pEIr,
+                                           const float * __restrict   pEIi,
+                                           const float * __restrict   pk0,
+                                           const float * __restrict   pr,
+                                           const float * __restrict   ppsii,
+                                           const float * __restrict   ppsis,
+                                           const float * __restrict   pphi,
+                                           const float * __restrict   pa,
+                                           float * __restrict  ESr,
+                                           float * __restrict  ESi) {
+
+                         register __m512 EIr  = _mm512_loadu_ps(&pEIr[0]);
+                         register __m512 EIi  = _mm512_loadu_ps(&pEIi[0]);
+                         register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
+                         register __m512 r    = _mm512_loadu_ps(&pr[0]);
+                         register __m512 psii = _mm512_loadu_ps(&ppsii[0]);
+                         register __m512 psis = _mm512_loadu_ps(&ppsis[0]);
+                         register __m512 phi  = _mm512_loadu_ps(&pphi[0]);
+                         register __m512 a    = _mm512_loadu_ps(&a[0]);
+                         const __m512 _43pi = _mm512_set1_ps(0.424413181578387562050356702327f);
+                         const __m512 hlf   = _mm512_set1_ps(0.5f);
+                         register __m512 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
+                         register __m512 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
+                         a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                         ir   = _mm512_rcp14_ps(r);
+                         cpsis= xcosf(psis);
+                         k02  = _mm512_mul_ps(k0,k0);
+                         ear  = _mm512_mul_ps(k0,r);
+                         cosp = xcosf(phi); 
+                         eai  = Ir;
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         t0   = _mm512_mul_ps(_43pi,k02);
+                         cpsii= xcosf(psii);
+                         cpsii= _mm512_mul_ps(hlf,cpsii);
+                         t0r  = _mm512_mul_ps(t0,_mm512_mul_ps(cer,ir));
+                         t0i  = _mm512_mul_ps(t0,_mm512_mul_ps(cei,ir)); 
+                         t1   = _mm512_fmadd_ps(cpsii,cpsis,cosp);
+                         t0   = _mm512_mul_ps(a3,t1);
+                         t1r  = _mm512_mul_ps(EIr,t0);
+                         t1i  = _mm512_mul_ps(EIi,t0);
+                         cmul_zmm16r4(t0r,t0i,t1r,t1i,&resr,&resi);
+                         _mm512_storeu_ps(&ESr[0], resr);
+                         _mm512_storeu_ps(&ESi[0], resi);
+              }
+
+
+                 /*
+                           Disc limit of cylinder (h<<a).
+                           Bistatic scattering RCS for cylinder in the disc limit
+                           Formula 4.3-22
+                      */
+
 
 
 
