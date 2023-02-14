@@ -9932,13 +9932,13 @@ namespace gms {
                           t1    = _mm512_mul_ps(a,a);
                           spsii = xsinf(psii);
                           k04   = _mm512_mul_ps(t0,t0);
-                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,k04));
                           s2psii= _mm512_mul_ps(spsii,spsii);
                           a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
                           spsis = xsinf(psis);
                           s2psis= _mm512_mul_ps(psis,psis);
                           t3    = _mm512_mul_ps(s2psii,_mm512_mul_ps(s2psis,cosp));
-                          rcs   = _mm512_mul_ps(t2,t3);
+                          rcs   = _mm512_mul_ps(t2,_mm512_mul_ps(a6,t3));
                           return (rcs);
                 }
 
@@ -10169,7 +10169,42 @@ namespace gms {
                 }
 
 
+                  /*
+                           Disc limit of cylinder (h<<a).
+                           Bistatic scattering RCS for cylinder in the disc limit
+                           Formula 4.3-25
+                   */
 
+  
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4325_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 psii,
+                                            const __m512 psis,
+                                            const __m512 phi) {
+
+                          const __m512 _64pi9 = _mm512_set1_ps(2.263536968418066997601902412409f);
+                          const __m512 hlf    = _mm512_set1_ps(0.5f);
+                          register __m512 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
+                          register __m512 t2,term;
+                          cosp  = xcosf(phi);
+                          t0    = _mm512_mul_ps(k0,k0);
+                          t1    = _mm512_mul_ps(a,a);
+                          cpsii = xcosf(psii);
+                          cpsii = _mm512_mul_ps(hlf,cpsii);
+                          k04   = _mm512_mul_ps(t0,t0);
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
+                          cpsis = xcosf(psis);
+                          term  = _mm512_fmadd_ps(cpsis,cpsii,cosp);
+                          t3    = _mm512_mul_ps(s2psii,_mm512_mul_ps(s2psis,cosp));
+                          rcs   = _mm512_mul_ps(t2,t3);
+                          return (rcs);
+                }
 
 
 
