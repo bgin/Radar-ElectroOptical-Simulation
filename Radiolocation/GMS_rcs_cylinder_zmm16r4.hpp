@@ -9912,8 +9912,71 @@ namespace gms {
                       */
 
 
-                    
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4322_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 psii,
+                                            const __m512 psis,
+                                            const __m512 phi) {
 
+                          const __m512 _64pi9 = _mm512_set1_ps(2.263536968418066997601902412409f);
+                          register __m512 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
+                          register __m512 s2psii,s2psis,cos2p,t2;
+                          cosp  = xcosf(phi);
+                          t0    = _mm512_mul_ps(k0,k0);
+                          cos2p = _mm512_mul_ps(cosp,cosp);
+                          t1    = _mm512_mul_ps(a,a);
+                          spsii = xsinf(psii);
+                          k04   = _mm512_mul_ps(t0,t0);
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          s2psii= _mm512_mul_ps(spsii,spsii);
+                          a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
+                          spsis = xsinf(psis);
+                          s2psis= _mm512_mul_ps(psis,psis);
+                          t3    = _mm512_mul_ps(s2psii,_mm512_mul_ps(s2psis,cosp));
+                          rcs   = _mm512_mul_ps(t2,t3);
+                          return (rcs);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4322_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) ppsii,
+                                              const float * __restrict __ATTR_ALIGN__(64) ppsis,
+                                              const float * __restrict __ATTR_ALIGN__(64) pphi) {
+
+                          register __m512  k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512  a   = _mm512_load_ps(&pa[0]);
+                          register __m512  psii= _mm512_load_ps(&ppsii[0]);
+                          register __m512  psis= _mm512_load_ps(&ppsis[0]);
+                          register __m512  phi = _mm512_load_ps(&pphi[0]);
+                          const __m512 _64pi9 = _mm512_set1_ps(2.263536968418066997601902412409f);
+                          register __m512 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
+                          register __m512 s2psii,s2psis,cos2p,t2;
+                          cosp  = xcosf(phi);
+                          t0    = _mm512_mul_ps(k0,k0);
+                          cos2p = _mm512_mul_ps(cosp,cosp);
+                          t1    = _mm512_mul_ps(a,a);
+                          spsii = xsinf(psii);
+                          k04   = _mm512_mul_ps(t0,t0);
+                          t2    = _mm512_mul_ps(_64pi9,_mm512_mul_ps(k04,a6));
+                          s2psii= _mm512_mul_ps(spsii,spsii);
+                          a6    = _mm512_mul_ps(t1,_mm512_mul_ps(t1,t1));
+                          spsis = xsinf(psis);
+                          s2psis= _mm512_mul_ps(psis,psis);
+                          t3    = _mm512_mul_ps(s2psii,_mm512_mul_ps(s2psis,cosp));
+                          rcs   = _mm512_mul_ps(t2,t3);
+                          return (rcs);
+                }
 
 
 
