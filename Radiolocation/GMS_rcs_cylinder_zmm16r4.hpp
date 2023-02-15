@@ -10312,6 +10312,130 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a1_f4330_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0h,
+                                             const float * __restrict __ATTR_ALIGN__(64) ppsi) {
+
+                          register __m512 k0h = _mm512_load_ps(&pk0h[0]);
+                          register __m512 psi = _mm512_load_ps(&ppsi[0]);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          register __m512 a1,_2k0h,spsi,arg,_2spsi,sarg;
+                          _2k0h = _mm512_add_ps(k0h,k0h);
+                          spsi  = xsinf(psi);
+                          arg  = _mm512_mul_ps(_2k0h,spsi);
+                          _2spsi = _mm512_add_ps(spsi,spsi); 
+                          sarg   = xsinf(arg);
+                          a1 = _mm512_div_ps(sarg,_2spsi);
+                          return (a1); 
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a1_f4330_zmm16r4_u(const float * __restrict  pk0h,
+                                             const float * __restrict  ppsi) {
+
+                          register __m512 k0h = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 psi = _mm512_loadu_ps(&ppsi[0]);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          register __m512 a1,_2k0h,spsi,arg,_2spsi,sarg;
+                          _2k0h = _mm512_add_ps(k0h,k0h);
+                          spsi  = xsinf(psi);
+                          arg  = _mm512_mul_ps(_2k0h,spsi);
+                          _2spsi = _mm512_add_ps(spsi,spsi); 
+                          sarg   = xsinf(arg);
+                          a1 = _mm512_div_ps(sarg,_2spsi);
+                          return (a1); 
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a2_f4330_zmm16r4(const __m512 k0h,
+                                           const __m512 psi) {
+
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 a2,spsi,_1msp,arg,sarg;
+                          spsi = xsinf(psi);
+                          _1msp= _mm512_sub_ps(_1,spsi);
+                          arg  = _mm512_mul_ps(k0h,_1msp);
+                          sarg = xsinf(arg);
+                          a2   = _mm512_div_ps(sarg,_1map);
+                          return (a2);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a2_f4330_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0h,
+                                             const float * __restrict __ATTR_ALIGN__(64) ppsi) {
+   
+                          register __m512 k0h = _mm512_load_ps(&pk0h[0]);
+                          register __m512 psi = _mm512_load_ps(&ppsi[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 a2,spsi,_1msp,arg,sarg;
+                          spsi = xsinf(psi);
+                          _1msp= _mm512_sub_ps(_1,spsi);
+                          arg  = _mm512_mul_ps(k0h,_1msp);
+                          sarg = xsinf(arg);
+                          a2   = _mm512_div_ps(sarg,_1map);
+                          return (a2);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a2_f4330_zmm16r4_u(const float * __restrict  pk0h,
+                                             const float * __restrict  ppsi) {
+   
+                          register __m512 k0h = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 psi = _mm512_loadu_ps(&ppsi[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 a2,spsi,_1msp,arg,sarg;
+                          spsi = xsinf(psi);
+                          _1msp= _mm512_sub_ps(_1,spsi);
+                          arg  = _mm512_mul_ps(k0h,_1msp);
+                          sarg = xsinf(arg);
+                          a2   = _mm512_div_ps(sarg,_1map);
+                          return (a2);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a3_f4330_zmm16r4(const __m512 k0h,
+                                           const __m512 psi) {
+
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 a2,spsi,_1msp,arg,sarg;
+                          spsi = xsinf(psi);
+                          _1msp= _mm512_add_ps(_1,spsi);
+                          arg  = _mm512_mul_ps(k0h,_1msp);
+                          sarg = xsinf(arg);
+                          a2   = _mm512_div_ps(sarg,_1map);
+                          return (a2);
+                }
+
+
 
 
 
