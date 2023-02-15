@@ -10457,6 +10457,43 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a3_f4330_zmm16r4_u(const float * __restrict  pk0h,
+                                             const float * __restrict  ppsi) {
+   
+                          register __m512 k0h = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 psi = _mm512_loadu_ps(&ppsi[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 a2,spsi,_1msp,arg,sarg;
+                          spsi = xsinf(psi);
+                          _1msp= _mm512_add_ps(_1,spsi);
+                          arg  = _mm512_mul_ps(k0h,_1msp);
+                          sarg = xsinf(arg);
+                          a2   = _mm512_div_ps(sarg,_1map);
+                          return (a2);
+                }
+
+
+                    /*
+                          Parameter F1,F2 of equation 4.3-29
+                          Formula 4.3-31
+                      */
+
+                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 F1_f4331_zmm16r4(const __m512 k0a) {
+
+                          
+                }
+
+
 
 
 
