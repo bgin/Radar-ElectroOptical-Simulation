@@ -10436,6 +10436,28 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 a3_f4330_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0h,
+                                             const float * __restrict __ATTR_ALIGN__(64) ppsi) {
+   
+                          register __m512 k0h = _mm512_load_ps(&pk0h[0]);
+                          register __m512 psi = _mm512_load_ps(&ppsi[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 a2,spsi,_1msp,arg,sarg;
+                          spsi = xsinf(psi);
+                          _1msp= _mm512_add_ps(_1,spsi);
+                          arg  = _mm512_mul_ps(k0h,_1msp);
+                          sarg = xsinf(arg);
+                          a2   = _mm512_div_ps(sarg,_1map);
+                          return (a2);
+                }
+
+
+
 
 
 
