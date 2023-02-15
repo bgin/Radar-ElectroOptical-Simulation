@@ -10279,6 +10279,18 @@ namespace gms {
                 }
 
 
+                   /*
+                          Backscattering RCS for perfectly conducting wire.
+                          (2*h>gamma/4)
+                          Formula 4.3-29
+
+                     */
+
+                     /*
+                          Parameter a1,a2,a3 of equation 4.3-29
+                          Formula 4.3-30
+                      */
+
 
 
 
