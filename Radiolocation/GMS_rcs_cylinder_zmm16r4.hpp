@@ -10789,6 +10789,52 @@ namespace gms {
                 }
 
 
+                  /*
+
+                           Parameter G1,G2 of equation 4.3-29
+                           Formula 4.3-32
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 G2_f4332_zmm16r4(const __m512 k0h,
+                                           const __m512 k0a) {
+
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          register __m512 G2,L,S,num,den;
+                          L = L_f4334_zmm16r4(k0h,k0a);
+                          S = S_f4335_zmm16r4(k0a,k0h);
+                          num = _mm512_mul_ps(hlf,S);
+                          den = _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
+                          G2  = _mm512_div_ps(num,den);
+                          return (G2);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 G2_f4332_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0h,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          register __m512 G2,L,S,num,den;
+                          L = L_f4334_zmm16r4_a(pk0h,pk0a);
+                          S = S_f4335_zmm16r4_a(pk0a,pk0h);
+                          num = _mm512_mul_ps(hlf,S);
+                          den = _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
+                          G2  = _mm512_div_ps(num,den);
+                          return (G2);
+                 }
+
+
+
 
 
 
