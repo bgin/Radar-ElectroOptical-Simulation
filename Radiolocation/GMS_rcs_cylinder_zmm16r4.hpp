@@ -10737,7 +10737,56 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 S_f4335_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                            const float * __restrict __ATTR_ALIGN__(64) pk0h) {
 
+                          register __m512 k0h = _mm512_load_ps(&pk0h[0]);
+                          register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          const __m512 c0  = _mm512_set1_ps(7.12f);
+                          register __m512 ar,lar,sk0h,ck0h;
+                          register __m512 S,t0;
+                          ar  = _mm512_mul_ps(c0,k0a);
+                          lar = xlogf(ar);
+                          sk0h= xsinf(k0h);
+                          ck0h= xcosf(k0h);
+                          t0  = _mm512_mul_ps(hlf,lar);
+                          S   = _mm512_fmsub_ps(t0,sk0h,
+                                            _mm512_mul_ps(pi4,ck0h));
+                          return (S);
+                }
+
+
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 S_f4335_zmm16r4_u(const float * __restrict  pk0a,
+                                            const float * __restrict  pk0h) {
+
+                          register __m512 k0h = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                          const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          const __m512 c0  = _mm512_set1_ps(7.12f);
+                          register __m512 ar,lar,sk0h,ck0h;
+                          register __m512 S,t0;
+                          ar  = _mm512_mul_ps(c0,k0a);
+                          lar = xlogf(ar);
+                          sk0h= xsinf(k0h);
+                          ck0h= xcosf(k0h);
+                          t0  = _mm512_mul_ps(hlf,lar);
+                          S   = _mm512_fmsub_ps(t0,sk0h,
+                                            _mm512_mul_ps(pi4,ck0h));
+                          return (S);
+                }
 
 
 
