@@ -10853,6 +10853,64 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 G1_f4332_zmm16r4(const __m512 k0h,
+                                           const __m512 k0a) {
+
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         const __m512 n2  = _mm512_set1_ps(-2.0f);
+                         const __m512 c0  = _mm512_set1_ps(0.8905f);
+                         register __m512 G1,L,S,om,G1,ln,num,den,om2,t0,rat;
+                         L = L_f4334_zmm16r4(k0h,k0a);
+                         S = S_f4335_zmm16r4(k0a,k0h);
+                         ln= xlogf(_mm512_mul_ps(k0a,c0));
+                         om= _mm512_mul_ps(m2,ln); 
+                         G2= G2_f4332_zmm16r4(k0h,k0a);
+                         om2= _mm512_add_ps(om,om);
+                         num= _mm512_mul_ps(hlf,L);
+                         t0 = _mm512_mul_ps(PI,G2);
+                         ln = _mm512_div_ps(t0,om2);
+                         den= _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
+                         rat= _mm512_div_ps(num,den);
+                         G1 = _mm512_sub_ps(rat,ln);
+                         return (G1);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 G1_f4332_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0h,
+                                             const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                         register __m512 k0h  = _mm512_load_ps(&pk0h[0]);
+                         register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         const __m512 n2  = _mm512_set1_ps(-2.0f);
+                         const __m512 c0  = _mm512_set1_ps(0.8905f);
+                         register __m512 G1,L,S,om,G1,ln,num,den,om2,t0,rat;
+                         L = L_f4334_zmm16r4(k0h,k0a);
+                         S = S_f4335_zmm16r4(k0a,k0h);
+                         ln= xlogf(_mm512_mul_ps(k0a,c0));
+                         om= _mm512_mul_ps(m2,ln); 
+                         G2= G2_f4332_zmm16r4(k0h,k0a);
+                         om2= _mm512_add_ps(om,om);
+                         num= _mm512_mul_ps(hlf,L);
+                         t0 = _mm512_mul_ps(PI,G2);
+                         ln = _mm512_div_ps(t0,om2);
+                         den= _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
+                         rat= _mm512_div_ps(num,den);
+                         G1 = _mm512_sub_ps(rat,ln);
+                         return (G1);
+                 }
+
+
 
 
 
