@@ -11451,6 +11451,46 @@ namespace gms {
                     */
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4340_zmm16r4(const __m512 gammi,
+                                            const __m512 gamms,
+                                            const __m512 psii,
+                                            const __m512 psis,
+                                            const __m512 g0 )  {//wavelength coeff
+
+                         
+                          register __m512 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                          register __m512 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = xsinf(psii);
+                          spsis = xsinf(psis);
+                          cpsii = xcosf(psii);
+                          carg1 = _mm512_mul_ps(PI,spsii);
+                          cpsii = _mm512_mul_ps(cpsii,cpsii);
+                          cpsis = xcosf(psis);
+                          carg2 = _mm512_mul_ps(PI,spsis);
+                          cpsis = _mm512_mul_ps(cpsis,cpsis);
+                          cgams = xcosf(gamms);
+                          c2gams= _mm512_mul_ps(cgams,cgams);
+                          cgami = xcosf(gammi);
+                          c2gami= _mm512_mul_ps(cgami,cgami);
+                          t0    = _mm512_mul_ps(g0,_mm512_mul_ps(c2gami,c2gams));
+                          c1    = xsinf(carg1);
+                          rat1  = _mm512_div_ps(c1,cpsii);
+                          tmp0  = _mm512_mul_ps(rat1,rat1);
+                          c2    = xsinf(carg2);
+                          rat2  = _mm512_div_ps(c2,cpsis);
+                          tmp1  = _mm512_mul_ps(rat2,rat2);
+                          t1    = _mm512_mul_ps(tmp0,tmp1);
+                          rcs   = _mm512_mul_ps(t0,t1);
+                          return (rcs);
+                 }
+
+
+
                  
 
 
