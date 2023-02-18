@@ -11020,16 +11020,147 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 H1_f4333_zmm16r4(const __m512 k0a,
-                                           const __m512 k0h) {
+                   __m512 H1_f4333_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                             const float * __restrict __ATTR_ALIGN__(64) pk0h) {
 
+                          register __m512 k0h  = _mm512_load_ps(&pk0h[0]);
+                          register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
                           const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
                           const __m512 hlf = _mm512_set1_ps(0.5f);
                           const __m512 n2  = _mm512_set1_ps(-2.0f);
                           const __m512 c0  = _mm512_set1_ps(0.8905f);
                           register __m512 H1,H2,om,ar,lar,L,S,num,den;
-                          register __m512 
+                          register __m512 om2,t0,arg;
+                          ar = _mm512_mul_ps(k0a,c0);
+                          arg= _mm512_mul_ps(k0h,pi2);
+                          lar= xlogf(ar);
+                          om = _mm512_mul_ps(n2,lar);
+                          L  = L_f4334_zmm16r4(k0h,k0a);
+                          om2= _mm512_add_ps(om,om);
+                          S  = S_f4335_zmm16r4(k0a,k0h);
+                          H1 = H1_f4333_zmm16r4(k0h,k0a);
+                          num= _mm512_mul_ps(hlf,L);
+                          t0 = _mm512_div_ps(_mm512_mul_ps(PI,H1),om2);
+                          den= _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
+                          ar = _mm512_div_ps(num,den);
+                          H1 = _mm512_sub_ps(ar,t0);
+                          return (H1);
                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 H1_f4333_zmm16r4_u(const float * __restrict  pk0a,
+                                             const float * __restrict  pk0h) {
+
+                          register __m512 k0h  = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
+                          const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          const __m512 n2  = _mm512_set1_ps(-2.0f);
+                          const __m512 c0  = _mm512_set1_ps(0.8905f);
+                          register __m512 H1,H2,om,ar,lar,L,S,num,den;
+                          register __m512 om2,t0,arg;
+                          ar = _mm512_mul_ps(k0a,c0);
+                          arg= _mm512_mul_ps(k0h,pi2);
+                          lar= xlogf(ar);
+                          om = _mm512_mul_ps(n2,lar);
+                          L  = L_f4334_zmm16r4(k0h,k0a);
+                          om2= _mm512_add_ps(om,om);
+                          S  = S_f4335_zmm16r4(k0a,k0h);
+                          H1 = H1_f4333_zmm16r4(k0h,k0a);
+                          num= _mm512_mul_ps(hlf,L);
+                          t0 = _mm512_div_ps(_mm512_mul_ps(PI,H1),om2);
+                          den= _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
+                          ar = _mm512_div_ps(num,den);
+                          H1 = _mm512_sub_ps(ar,t0);
+                          return (H1);
+               }
+
+
+                 /*
+                          Backscattering RCS for perfectly conducting wire.
+                          (2*h>gamma/4)
+                          Formula 4.3-29
+
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4329_zmm16r4(const __m512 k0,
+                                            const __m512 gami,
+                                            const __m512 gams,
+                                            const __m512 k0h,
+                                            const __m512 k0a,
+                                            const __m512 psi) {
+
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          const __m512 _2    = _mm512_set1_ps(2.0f);
+                          register __m512 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
+                          register __m512 cgami,cgams,c2gami,c2gams,sinps;
+                          register __m512 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
+                          register __m512 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
+                          register __m512 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
+                          b0     = _mm512_div_ps(_16pi,_mm512_mul_ps(k0,k0));
+                          a1     = a1_f4330_zmm16r4(k0h,psi);
+                          _2a1   = _mm512_add_ps(a1,a1);
+                          cgami  = xcosf(gami);
+                          F1     = F1_f4331_zmm16r4(k0a);
+                          c2gami = _mm512_mul_ps(cgami,cgami);
+                          F2     = F2_f4331_zmm16r4(k0a);
+                          cgams  = xcosf(gams);
+                          G1     = G1_f4332_zmm16r4(k0h,k0a);
+                          c2gams = _mm512_mul_ps(cgams,cgams);
+                          a2     = a2_f4330_zmm16r4(k0h,psi);
+                          first  = _mm512_mul_ps(b0,_mm512_mul_ps(c2gami,c2gams));
+                          G2     = G1_f4332_zmm16r4(k0h,k0a);
+                          sinps  = xsinf(psi);
+                          a3     = a3_f4330_zmm16r4(k0h,psi);
+                          H1     = H1_f4333_zmm16r4(k0h,k0a);
+                          arg    = _mm512_mul_ps(k0h,sinps);
+                          H2     = H2_f4333_zmm16r4(k0h,k0a);
+                          sarg   = xsinf(arg);
+                          a1s    = _mm512_mul_ps(a1,a1);
+                          carg   = xcosf(arg);
+                          x0     = _mm512_add_ps(a2,a3);
+                          a2pa3  = _mm512_mul_ps(x0,x0);
+                          F1F2   = _mm512_fmadd_ps(F1,F1,_mm512_mul_ps(F2,F2));
+                          x1     = _mm512_sub_ps(a2,a3);
+                          t0     = _mm512_mul_ps(a1s,F1F2);
+                          a2ma3  = _mm512_mul_ps(x1,x1);
+                          G1G2   = _mm512_fmadd_ps(G1,G1,_mm512_mul_ps(G2,G2));
+                          t1     = _mm512_mul_ps(a2pa3,_mm512_mul_ps(G1G2,carg));
+                          x0     = _mm512_mul_ps(sarg,sarg);
+                          H1H2   = _mm512_fmadd_ps(H1,H1,_mm512_mul_ps(H2,H2));
+                          t2     = _mm512_mul_ps(a2ma3,_mm512_mul_ps(H1H2,x0));
+                          a2sma3s= _mm512_mul_ps(_2,_mm512_fmsub_ps(a2,a2,
+                                                                _mm512_mul_ps(a3,a3)));
+                          GHGH   = _mm512_fmadd_ps(G1,H1,_mm512_mul_ps(G2,H2));
+                          x1     = _mm512_mul_ps(carg,sarg);
+                          t3     = _mm512_mul_ps(a2sma3s,_mm512_mul_ps(GHGH,x1));
+                          x0     = _mm512_mul_ps(_2a1,a2pa3);
+                          FGFG   = _mm512_fmadd_ps(F1,G1,_mm512_mul_ps(F2,G2));
+                          t4     = _mm512_mul_ps(x0,_mm512_mul_ps(FGFG,carg);
+                          x1     = _mm512_mul_ps(_2a1,a2ma3);
+                          FHFH   = _mm512_fmadd_ps(F1,H1,_mm512_mul_ps(F2,H2));
+                          t5     = _mm512_mul_ps(x1,_mm512_mul_ps(FHFH,sarg));
+                          tmp1   = _mm512_add_ps(t0,_mm512_add_ps(t1,t2));
+                          tmp2   = _mm512_sub_ps(_mm512_add_ps(t3,t4),t5);
+                          tmp3   = _mm512_sub_ps(tmp1,tmp2);
+                          rcs    = _mm512_mul_ps(first,tmp3);
+                          return (rcs);
+               }
+
+
+
+                 
 
 
 
