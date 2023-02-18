@@ -11236,6 +11236,130 @@ namespace gms {
                }
 
 
+                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4329_zmm16r4_u(const float * __restrict pk0,
+                                              const float * __restrict  pgami,
+                                              const float * __restrict  pgams,
+                                              const float * __restrict  pk0h,
+                                              const float * __restrict  pk0a,
+                                              const float * __restrict  ppsi) {
+
+
+                          register __m512 k0     = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 gami   = _mm512_loadu_ps(&pgami[0]);
+                          register __m512 gams   = _mm512_loadu_ps(&pgams[0]);
+                          register __m512 k0h    = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 k0a    = _mm512_loadu_ps(&pk0a[0]);
+                          register __m512 psi    = _mm512_loadu_ps(&ppsi[0]);  
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          const __m512 _2    = _mm512_set1_ps(2.0f);
+                          register __m512 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
+                          register __m512 cgami,cgams,c2gami,c2gams,sinps;
+                          register __m512 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
+                          register __m512 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
+                          register __m512 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
+                          b0     = _mm512_div_ps(_16pi,_mm512_mul_ps(k0,k0));
+                          a1     = a1_f4330_zmm16r4(k0h,psi);
+                          _2a1   = _mm512_add_ps(a1,a1);
+                          cgami  = xcosf(gami);
+                          F1     = F1_f4331_zmm16r4(k0a);
+                          c2gami = _mm512_mul_ps(cgami,cgami);
+                          F2     = F2_f4331_zmm16r4(k0a);
+                          cgams  = xcosf(gams);
+                          G1     = G1_f4332_zmm16r4(k0h,k0a);
+                          c2gams = _mm512_mul_ps(cgams,cgams);
+                          a2     = a2_f4330_zmm16r4(k0h,psi);
+                          first  = _mm512_mul_ps(b0,_mm512_mul_ps(c2gami,c2gams));
+                          G2     = G1_f4332_zmm16r4(k0h,k0a);
+                          sinps  = xsinf(psi);
+                          a3     = a3_f4330_zmm16r4(k0h,psi);
+                          H1     = H1_f4333_zmm16r4(k0h,k0a);
+                          arg    = _mm512_mul_ps(k0h,sinps);
+                          H2     = H2_f4333_zmm16r4(k0h,k0a);
+                          sarg   = xsinf(arg);
+                          a1s    = _mm512_mul_ps(a1,a1);
+                          carg   = xcosf(arg);
+                          x0     = _mm512_add_ps(a2,a3);
+                          a2pa3  = _mm512_mul_ps(x0,x0);
+                          F1F2   = _mm512_fmadd_ps(F1,F1,_mm512_mul_ps(F2,F2));
+                          x1     = _mm512_sub_ps(a2,a3);
+                          t0     = _mm512_mul_ps(a1s,F1F2);
+                          a2ma3  = _mm512_mul_ps(x1,x1);
+                          G1G2   = _mm512_fmadd_ps(G1,G1,_mm512_mul_ps(G2,G2));
+                          t1     = _mm512_mul_ps(a2pa3,_mm512_mul_ps(G1G2,carg));
+                          x0     = _mm512_mul_ps(sarg,sarg);
+                          H1H2   = _mm512_fmadd_ps(H1,H1,_mm512_mul_ps(H2,H2));
+                          t2     = _mm512_mul_ps(a2ma3,_mm512_mul_ps(H1H2,x0));
+                          a2sma3s= _mm512_mul_ps(_2,_mm512_fmsub_ps(a2,a2,
+                                                                _mm512_mul_ps(a3,a3)));
+                          GHGH   = _mm512_fmadd_ps(G1,H1,_mm512_mul_ps(G2,H2));
+                          x1     = _mm512_mul_ps(carg,sarg);
+                          t3     = _mm512_mul_ps(a2sma3s,_mm512_mul_ps(GHGH,x1));
+                          x0     = _mm512_mul_ps(_2a1,a2pa3);
+                          FGFG   = _mm512_fmadd_ps(F1,G1,_mm512_mul_ps(F2,G2));
+                          t4     = _mm512_mul_ps(x0,_mm512_mul_ps(FGFG,carg);
+                          x1     = _mm512_mul_ps(_2a1,a2ma3);
+                          FHFH   = _mm512_fmadd_ps(F1,H1,_mm512_mul_ps(F2,H2));
+                          t5     = _mm512_mul_ps(x1,_mm512_mul_ps(FHFH,sarg));
+                          tmp1   = _mm512_add_ps(t0,_mm512_add_ps(t1,t2));
+                          tmp2   = _mm512_sub_ps(_mm512_add_ps(t3,t4),t5);
+                          tmp3   = _mm512_sub_ps(tmp1,tmp2);
+                          rcs    = _mm512_mul_ps(first,tmp3);
+                          return (rcs);
+               }
+
+
+                  /*
+
+                         Simplified back and bistatic scattering RCS for
+                         half and full-wave dipole (2*h == gam0/2, and gam0)
+                         gam0 -- wavelength.
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4337_zmm16r4(const __m512 gammi,
+                                            const __m512 gamms,
+                                            const __m512 psii,
+                                            const __m512 psis,
+                                            const __m512 g0 )  {//wavelength coeff
+
+                          const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                          register __m512 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                          register __m512 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = xsinf(psii);
+                          spsis = xsinf(psis);
+                          cpsii = xcosf(psii);
+                          carg1 = _mm512_mul_ps(pi2,spsii);
+                          cpsis = xcosf(psis);
+                          carg2 = _mm512_mul_ps(pi2,spsis);
+                          cgams = xcosf(gamms);
+                          c2gams= _mm512_mul_ps(cgams,cgams);
+                          cgami = xcosf(gammi);
+                          c2gami= _mm512_mul_ps(cgami,cgami);
+                          t0    = _mm512_mul_ps(g0,_mm512_mul_ps(c2gami,c2gams));
+                          c1    = xcosf(carg1);
+                          rat1  = _mm512_div_ps(c1,cpsii);
+                          tmp0  = _mm512_mul_ps(rat1,rat1);
+                          c2    = xcosf(carg2);
+                          rat2  = _mm512_div_ps(c2,cpsis);
+                          tmp1  = _mm512_mul_ps(rat2,rat2);
+                          t1    = _mm512_mul_ps(tmp0,tmp1);
+                          rcs   = _mm512_mul_ps(t0,t1);
+                          return (rcs);
+                 }
+      
+
+
+
 
 
                  
