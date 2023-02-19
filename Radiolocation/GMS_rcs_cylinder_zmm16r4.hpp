@@ -11948,6 +11948,53 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4345_zmm16r4_u(const float * __restrict   ph,
+                                              const float * __restrict   pk0,
+                                              const float * __restrict   pk0a,
+                                              const float * __restrict   pgams,
+                                              const float * __restrict   pgami,
+                                              const float * __restrict   ppsi) {
+
+                         register __m512 h    = _mm512_loadu_ps(&ph[0]);
+                         register __m512 k0   = _mm512_loadu_ps(&pk0[0]); 
+                         register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
+                         register __m512 psi  = _mm512_loadu_ps(&ppsi[0]);
+                         register __m512 gams = _mm512_loadu_ps(&pgams[0]);
+                         register __m512 gami = _mm512_loadu_ps(&pgami[0]);
+                         const __m512 pi24 = _mm512_set1_ps(2.467401100272339654708622749969f);
+                         const __m512 _2pi = _mm512_set1_ps(6.283185307179586476925286766559f);
+                         const __m512 c0   = _mm512_set1_ps(0.8905f);
+                         register __m512 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
+                         register __m512 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
+                         register __m512 x0,x1;
+                         k0h   = _mm512_mul_ps(k0,h);
+                         t0    = _mm512_mul_ps(_2pi,_mm512_mul_ps(h,h));
+                         x0    = _mm512_add_ps(k0h,k0h);
+                         spsi  = xsinf(psi);
+                         arg   = _mm512_mul_ps(x0,spsi);
+                         cpsi  = xcosf(psi);
+                         arg2  = _mm512_mul_ps(cpsi,_mm512_mul_ps(k0a,c0));
+                         larg  = _mm512_fmadd_ps(arg2,arg2,pi24);
+                         sarg  = xsinf(arg);
+                         cgams = xcosf(gams);
+                         rat   = _mm512_div_ps(sarg,arg);
+                         cgami = xcosf(gami);
+                         x1    = _mm512_mul_ps(rat,rat);
+                         c2gams= _mm512_mul_ps(cgams,cgams);
+                         c2gami= _mm512_mul_ps(cgami,cgami);
+                         x0    = _mm512_mul_ps(t0,_mm512_mul_ps(c2gams,c2gami));
+                         rat1  = _mm512_div_ps(x0,larg);
+                         rcs   = _mm512_mul_ps(rat1,x1);
+                         return (rcs);
+                }
+
+
+
       } // radiolocation
 
 
