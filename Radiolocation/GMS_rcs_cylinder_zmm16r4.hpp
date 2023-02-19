@@ -11616,6 +11616,80 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4343_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) prcs_inf, // rcs of inifnitely long cylinder (section 4.2)
+                                              const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) ph,
+                                              const float * __restrict __ATTR_ALIGN__(64) ppsis,
+                                              const float * __restrict __ATTR_ALIGN__(64) ppsii) {
+
+                           register __m512 prcs_inf  = _mm512_load_ps(&prcs_inf[0]);
+                           register __m512 k0        = _mm512_load_ps(&pk0[0]);
+                           register __m512 ph        = _mm512_load_ps(&ph[0]);
+                           register __m512 psis      = _mm512_load_ps(&ppsis[0]);
+                           register __m512 ppsis     = _mm512_load_ps(&ppsii[0]);
+                           const __m512 _4 = _mm512_set1_ps(4.0f);
+                           register __m512 k0h,x0,term1,cpsis,c2psis,rcs;
+                           register __m512 term2,spsii,spsis,arg,sarg,rat;
+                           k0h   = _mm512_mul_ps(_4,_mm512_mul_ps(k0,h));
+                           x0    = _mm512_mul_ps(k0h,k0h);
+                           cpsis = xcosf(psis);
+                           term1 = _mm512_div_ps(x0,PI);
+                           c2psis= _mm512_mul_ps(cpsis,cpsis);
+                           term1 = _mm512_mul_ps(term1,_mm512_mul_ps(c2psis,rcs_inf));
+                           spsis = xsinf(psis);
+                           spsii = xsinf(psii);
+                           x0    = _mm512_add_ps(spsis,spsii);
+                           arg   = _mm512_mul_ps(k0,_mm512_mul_ps(x0,h));
+                           sarg  = xsinf(arg);
+                           rat   = _mm512_div_ps(sarg,arg);
+                           term2 = _mm512_mul_ps(rat,rat);
+                           rcs   = _mm512_mul_ps(term1,term2);
+                           return (rcs);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4343_zmm16r4_u(const float * __restrict  prcs_inf, // rcs of inifnitely long cylinder (section 4.2)
+                                              const float * __restrict  pk0,
+                                              const float * __restrict  ph,
+                                              const float * __restrict  ppsis,
+                                              const float * __restrict  ppsii) {
+
+                           register __m512 prcs_inf  = _mm512_loadu_ps(&prcs_inf[0]);
+                           register __m512 k0        = _mm512_loadu_ps(&pk0[0]);
+                           register __m512 ph        = _mm512_loadu_ps(&ph[0]);
+                           register __m512 psis      = _mm512_loadu_ps(&ppsis[0]);
+                           register __m512 ppsis     = _mm512_loadu_ps(&ppsii[0]);
+                           const __m512 _4 = _mm512_set1_ps(4.0f);
+                           register __m512 k0h,x0,term1,cpsis,c2psis,rcs;
+                           register __m512 term2,spsii,spsis,arg,sarg,rat;
+                           k0h   = _mm512_mul_ps(_4,_mm512_mul_ps(k0,h));
+                           x0    = _mm512_mul_ps(k0h,k0h);
+                           cpsis = xcosf(psis);
+                           term1 = _mm512_div_ps(x0,PI);
+                           c2psis= _mm512_mul_ps(cpsis,cpsis);
+                           term1 = _mm512_mul_ps(term1,_mm512_mul_ps(c2psis,rcs_inf));
+                           spsis = xsinf(psis);
+                           spsii = xsinf(psii);
+                           x0    = _mm512_add_ps(spsis,spsii);
+                           arg   = _mm512_mul_ps(k0,_mm512_mul_ps(x0,h));
+                           sarg  = xsinf(arg);
+                           rat   = _mm512_div_ps(sarg,arg);
+                           term2 = _mm512_mul_ps(rat,rat);
+                           rcs   = _mm512_mul_ps(term1,term2);
+                           return (rcs);
+                }
+
+
       } // radiolocation
 
 
