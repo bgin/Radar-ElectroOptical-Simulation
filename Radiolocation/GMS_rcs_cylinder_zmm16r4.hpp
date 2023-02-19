@@ -11690,6 +11690,48 @@ namespace gms {
                 }
 
 
+                  /*
+                         General bistatic scattering RCS from long thin wire.
+                         Formula 4.3-44
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4344_zmm16r4(const __m512 h,
+                                            const __m512 k0,
+                                            const __m512 k0a,
+                                            const __m512 psii,
+                                            const __m512 psis,
+                                            const __m512 gams,
+                                            const __m512 gami) {
+
+                          const __m512 c0 = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 c1 = _mm512_set1_ps(2.467401100272339654708622749969f);
+                          const __m512 c2 = _mm512_set1_ps(0.8905f);
+                          register __m512 term1,term2,term3,cgami,cgams,c2gami,c2gams;
+                          register __m512 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
+                          register __m512 cpsii,cpsis,fac,c2psii,c2psis;
+                          fac    = _mm512_mul_ps(c0,_mm512_mul_ps(h,h));
+                          arg2   = _mm512_mul_ps(k0a,c2);
+                          cpsii  = xcosf(psii);
+                          cpsis  = xcosf(psis);
+                          c2psii = _mm512_mul_ps(cpsii,cpsii);
+                          c2psis = _mm512_mul_ps(cpsis,cpsis);
+                          arg2   = _mm512_mul_ps(cpsii,arg2);
+                          rat1   = _mm512_div_ps(c2psis,c2psii);
+                          cgami  = xcosf(gami);
+                          c2gami = _mm512_mul_ps(cgami,cgami);
+                          cgams  = xcosf(gams);
+                          c2gams = _mm512_mul_ps(cgams,cgams);
+                          x0     = _mm512_mul_ps(c2gams,c2gami);
+                          term1  = _mm512_mul_ps(fac,_mm512_mul_ps(rat1,x0));
+                }
+
+
       } // radiolocation
 
 
