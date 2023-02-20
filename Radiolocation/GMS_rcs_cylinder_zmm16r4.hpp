@@ -12185,6 +12185,76 @@ namespace gms {
                  }
 
 
+                    /*
+                        Backscattering From a Perfectly Conducting Cylinder With Flat Ends.
+                        Helper functions, M1,M2 for the main formula 4.3-48
+                        Formula 4.3-51
+
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 N1_f4351_zmm16r4(const __m512 psi) {
+
+                          const __m512 c0 = _mm512_set1_ps(0.333333333333333333333333333333333333333333f);
+                          const __m512 c1 = _mm512_set1_ps(0.5f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          const __m512 n4 = _mm512_set1_ps(-4.0f);
+                          const __m512 n1 = _mm512_set1_ps(-1.0f);
+                          const __m512 c2 = _mm512_set1_ps(0.577350269189625764509148780502f);
+                          const __m512 c3 = _mm512_set1_ps(0.666666666666666666666666666667f);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          register __m512 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
+                          arg1 = _mm512_mul_ps(_mm512_mul_ps(_4,psi),c0);
+                          carg1= xcosf(arg1);
+                          x0   = _mm512_fmadd_ps(_2,psi,PI);
+                          carg1= _mm512_add_ps(c1,carg1);
+                          arg2 = _mm512_mul_ps(c3,x0);
+                          inv1 = _mm512_rcp14_ps(carg1);
+                          carg2= xcosf(arg2);
+                          x1   = _mm512_add_ps(c1,carg2);
+                          inv2 = _mm512_rcp14_ps(x1);
+                          x0   = _mm512_mul_ps(n1,inv1);
+                          N1   = _mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2));
+                          return (N1);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 N1_f4351_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ppsi) {
+
+                          register __m512 psi = _mm512_load_ps(&ppsi[0]);
+                          const __m512 c0 = _mm512_set1_ps(0.333333333333333333333333333333333333333333f);
+                          const __m512 c1 = _mm512_set1_ps(0.5f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          const __m512 n4 = _mm512_set1_ps(-4.0f);
+                          const __m512 n1 = _mm512_set1_ps(-1.0f);
+                          const __m512 c2 = _mm512_set1_ps(0.577350269189625764509148780502f);
+                          const __m512 c3 = _mm512_set1_ps(0.666666666666666666666666666667f);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          register __m512 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
+                          arg1 = _mm512_mul_ps(_mm512_mul_ps(_4,psi),c0);
+                          carg1= xcosf(arg1);
+                          x0   = _mm512_fmadd_ps(_2,psi,PI);
+                          carg1= _mm512_add_ps(c1,carg1);
+                          arg2 = _mm512_mul_ps(c3,x0);
+                          inv1 = _mm512_rcp14_ps(carg1);
+                          carg2= xcosf(arg2);
+                          x1   = _mm512_add_ps(c1,carg2);
+                          inv2 = _mm512_rcp14_ps(x1);
+                          x0   = _mm512_mul_ps(n1,inv1);
+                          N1   = _mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2));
+                          return (N1);
+                }
+
+
                    
 
 
