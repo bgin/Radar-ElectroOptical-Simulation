@@ -12314,7 +12314,7 @@ namespace gms {
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
                           N2   = _mm512_add_ps(n4,_mm512_add_ps(x0,inv2));
-                          return (N1);
+                          return (N2);
                 }
 
 
