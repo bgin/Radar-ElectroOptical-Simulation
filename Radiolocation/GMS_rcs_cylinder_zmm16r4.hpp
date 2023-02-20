@@ -12118,7 +12118,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          M2   = _mm512_sub_ps(x0,inv2);
+                          M2   = _mm512_mul_ps(c2,_mm512_sub_ps(x0,inv2));
                           return (M2);
                  }
 
@@ -12149,7 +12149,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          M2   = _mm512_sub_ps(x0,inv2);
+                          M2   = _mm512_mul_ps(c2,_mm512_sub_ps(x0,inv2));
                           return (M2);
                  }
 
@@ -12180,7 +12180,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          M2   = _mm512_sub_ps(x0,inv2);
+                          M2   = _mm512_mul_ps(c2,_mm512_sub_ps(x0,inv2));
                           return (M2);
                  }
 
@@ -12218,7 +12218,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          N1   = _mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2));
+                          N1   = _mm512_mul_ps(c2,_mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2)));
                           return (N1);
                 }
 
@@ -12250,7 +12250,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          N1   = _mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2));
+                          N1   = _mm512_mul_ps(c2,_mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2)));
                           return (N1);
                 }
 
@@ -12282,7 +12282,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          N1   = _mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2));
+                          N1   = _mm512_mul_ps(c2,_mm512_sub_ps(n4,_mm512_sub_ps(x0,inv2)));
                           return (N1);
                 }
 
@@ -12313,7 +12313,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          N2   = _mm512_add_ps(n4,_mm512_add_ps(x0,inv2));
+                          N2   = _mm512_mul_ps(c2,_mm512_add_ps(n4,_mm512_add_ps(x0,inv2)));
                           return (N2);
                 }
 
@@ -12345,7 +12345,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          N2   = _mm512_add_ps(n4,_mm512_add_ps(x0,inv2));
+                          N2   = _mm512_mul_ps(c2,_mm512_add_ps(n4,_mm512_add_ps(x0,inv2)));
                           return (N2);
                 }
 
@@ -12377,7 +12377,7 @@ namespace gms {
                           x1   = _mm512_add_ps(c1,carg2);
                           inv2 = _mm512_rcp14_ps(x1);
                           x0   = _mm512_mul_ps(n1,inv1);
-                          N2   = _mm512_add_ps(n4,_mm512_add_ps(x0,inv2));
+                          N2   = _mm512_mul_ps(c2,_mm512_add_ps(n4,_mm512_add_ps(x0,inv2)));
                           return (N2);
                 }
 
@@ -12401,12 +12401,13 @@ namespace gms {
                           const __m512 _2 = _mm512_set1_ps(-2.0f);
                           const __m512 c1 = _mm512_set1_ps(0.5f);
                           const __m512 _4 = _mm512_set1_ps(4.0f);
+                          const __m512 c2 = _mm512_set1_ps(0.577350269189625764509148780502f);
                           register __m512 G,inv,arg,carg,x0;
                           arg = _mm512_mul_ps(_mm512_mul_ps(_4,psi),c0);
                           carg= xcosf(arg);
                           x0  = _mm512_add_ps(c1,carg);
                           inv = _mm512_rcp14_ps(x0);
-                          G   = _mm512_sub_ps(n2,inv);
+                          G   = _mm512_mul_ps(c2,_mm512_sub_ps(n2,inv));
                           return (G);
                   }
 
