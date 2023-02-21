@@ -12503,6 +12503,73 @@ namespace gms {
                   }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 F_f4352_zmm16r4_u(const float * __restrict ppsi) {
+
+                          register __m512 psi = _mm512_loadu_ps(&ppsi[0]);
+                          const __m512 c0 = _mm512_set1_ps(0.333333333333333333333333333333333333333333f);
+                          const __m512 _2 = _mm512_set1_ps(-2.0f);
+                          const __m512 c1 = _mm512_set1_ps(0.5f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          const __m512 c2 = _mm512_set1_ps(0.577350269189625764509148780502f);
+                          register __m512 F,inv,arg,carg,x0;
+                          arg = _mm512_mul_ps(_mm512_mul_ps(_4,psi),c0);
+                          carg= xcosf(arg);
+                          x0  = _mm512_add_ps(c1,carg);
+                          inv = _mm512_rcp14_ps(x0);
+                          G   = _mm512_mul_ps(c2,_mm512_add_ps(n2,inv));
+                          return (F);
+                  }
+
+
+                    /*
+                           Scattering From Cylinder Near the Specular Direction.
+                           Formula 4.3-53
+                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4353_zmm16r4(const __m512 k0a,
+                                            const __m512 k0,
+                                            const __m512 h,
+                                            const __m512 phi,
+                                            const __m512 psii,
+                                            const __m512 psis) {
+
+                          const __m512 c1 = _mm512_set1_ps(0.5f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          register __m512 rcs,trm1,trm2,trm3;
+                          register __m512 cphi,cpsis,c2psis,cpsii,c2psii;
+                          register __m512 spsii,spsis,arg,sarg,x0,x1;
+                          x0    = _mm512_mul_ps(h,h);
+                          x1    = _mm512_mul_ps(c1,phi);
+                          trm1  = _mm512_mul_ps(_4,_mm512_mul_ps(k0a,x0));
+                          cpsii = xcosf(psi);
+                          cphi  = xcosf(x1);
+                          spsii = xsinf(psii);
+                          spsis = xsinf(psis);
+                          x0    = _mm512_add_ps(spsii,spsis);
+                          c2psis= _mm512_mul_ps(cpsis,cpsis);
+                          arg   = _mm512_mul_ps(k0,_mm512_mul_ps(x0,h));
+                          x1    = _mm512_mul_ps(c2psis,cphi);
+                          sarg  = xsinf(arg);
+                          trm2  = _mm512_div_ps(x1,cpsii);
+                          trm3  = _mm512_div_ps(sarg,arg);
+                          x1    = _mm512_mul_ps(trm1,trm2);
+                          x0    = _mm512_mul_ps(trm3,trm3)
+                          rcs   = _mm512_mul_ps(x1,x0);
+                          return (rcs);
+                 }
+
+
 
 
 
