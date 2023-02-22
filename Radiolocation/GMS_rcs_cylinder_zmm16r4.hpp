@@ -13097,11 +13097,11 @@ namespace gms {
                                            __m512 * __restrict TEr,
                                            __m512 * __restrict TEi) {
 
-                        register __m512 a    = _mm512_load_ps(&pa[0]);
-                        register __m512 b    = _mm512_load_ps(&pb[0]);
-                        register __m512 k0   = _mm512_load_ps(&pk0[0]);
-                        register __m512 phi1 = _mm512_load_ps(&phi1[0]);
-                        register __m512 phi2 = _mm512_load_ps(&phi2[0]);
+                        register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                        register __m512 b    = _mm512_loadu_ps(&pb[0]);
+                        register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 phi1 = _mm512_loadu_ps(&phi1[0]);
+                        register __m512 phi2 = _mm512_loadu_ps(&phi2[0]);
                         const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
                         const __m512 _1  = _mm512_set1_ps(1.0f);
                         register __m512 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
@@ -13123,6 +13123,29 @@ namespace gms {
                         _mm512_store_ps(&TEi[0], _mm512_mul_ps(nIi,x1));
                 }
 
+
+                 /*
+                       TM-case, RCS.
+                       Formula 4.4-13
+                  */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4413_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 k0) {
+
+                          const __m512 pi2 = _mm512_set1_ps(9.869604401089358618834490999876f);
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          const __m512 c0  = _mm512_set1_ps(0.8905f);
+                          const __m512 pi24= _mm512_set1_ps(2.467401100272339654708622749969f);
+                          
+                }
+                                            
 
 
                   
