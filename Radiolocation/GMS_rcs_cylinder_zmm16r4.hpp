@@ -13119,8 +13119,8 @@ namespace gms {
                         x0    = _mm512_fmadd_ps(cphi2,cphi1,_mm512_mul_ps(sphi2,sphi1));
                         trm2  = _mm512_mul_ps(ba,x0);
                         x1    = _mm512_mul_ps(trm1,trm2);
-                        *TEr  = nIi;
-                        *TEi  = _mm512_mul_ps(nIi,x1);
+                        _mm512_store_ps(&TEr[0], nIi);
+                        _mm512_store_ps(&TEi[0], _mm512_mul_ps(nIi,x1));
                 }
 
 
