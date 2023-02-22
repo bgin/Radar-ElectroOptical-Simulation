@@ -12914,6 +12914,38 @@ namespace gms {
                    */
 
 
+                   /*
+                         Low-frequency approximations (k0a<0.5, k0b<0.5)
+                         TM-case,formula 4.4-11
+                    */
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TM_f4411_zmm16r4(const __m512 a,
+                                         const __m512 b,
+                                         const __m512 k0,
+                                         __m512 * __restrict TMr,
+                                         __m512 * __restrict TMi) {
+
+                         const __m512 hlf  = _mm512_set1_ps(0.5f);
+                         const __m512 imn  = _mm512_set1_ps(-1.57079632679489661923132169164f);
+                         const __m512 imp  = _mm512_set1_ps(1.57079632679489661923132169164f);
+                         const __m512 c0   = _mm512_set1_ps(0.8905f);
+                         const __m512 _1   = _mm512_set1_ps(1.0f);
+                         register __m512 ab2,c0k0,arg,larg;
+                         register __m512 invr,invi;
+                         ab2  = _mm512_mul_ps(_mm512_add_ps(a,b),hlf);
+                         c0k0 = _mm512_mul_ps(c0,k0);
+                         arg  = _mm512_mul_ps(ab2,c0k0);
+                         larg = xlogf(arg);
+                         cdiv_zmm16r4(_1,_1,larg,imn,&invr,&invi);
+                         *TMr = _mm512_mul_ps(imp,invr);
+                         *TMi = _mm512_mul_ps(imp,invi);
+                }
+
 
                   
 
