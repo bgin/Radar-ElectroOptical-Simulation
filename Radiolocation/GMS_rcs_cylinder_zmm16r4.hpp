@@ -13054,6 +13054,46 @@ namespace gms {
                                            const float * __restrict __ATTR_ALIGN__(64) pb,
                                            const float * __restrict __ATTR_ALIGN__(64) pphi1,
                                            const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                           float * __restrict __ATTR_ALIGN__(64) TEr,
+                                           float * __restrict __ATTR_ALIGN__(64) TEi) {
+
+                        register __m512 a    = _mm512_load_ps(&pa[0]);
+                        register __m512 b    = _mm512_load_ps(&pb[0]);
+                        register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        register __m512 phi1 = _mm512_load_ps(&phi1[0]);
+                        register __m512 phi2 = _mm512_load_ps(&phi2[0]);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 _1  = _mm512_set1_ps(1.0f);
+                        register __m512 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
+                        register __m512 cphi2,sphi2;
+                        k0a2  = _mm512_mul_ps(k0a,k0a);
+                        ba    = _mm512_div_ps(b,a);
+                        cphi1 = xcosf(phi1);
+                        _1ba  = _mm512_add_ps(_1,ba);
+                        sphi1 = xsinf(phi1);
+                        x0    = _mm512_mul_ps(pi4,k0a2);
+                        cphi2 = xcosf(phi2);
+                        x1    = _mm512_add_ps(ba,_1ba);
+                        sphi2 = xsinf(phi2);
+                        trm1  = _mm512_mul_ps(x0,x1);
+                        x0    = _mm512_fmadd_ps(cphi2,cphi1,_mm512_mul_ps(sphi2,sphi1));
+                        trm2  = _mm512_mul_ps(ba,x0);
+                        x1    = _mm512_mul_ps(trm1,trm2);
+                        _mm512_store_ps(&TEr[0] ,nIi);
+                        _mm512_store_ps(&TEi[0] ,_mm512_mul_ps(nIi,x1));
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TE_f4412_zmm16r4_u(const float * __restrict  pk0a,
+                                           const float * __restrict  pa,
+                                           const float * __restrict  pb,
+                                           const float * __restrict  pphi1,
+                                           const float * __restrict  pphi2,
                                            __m512 * __restrict TEr,
                                            __m512 * __restrict TEi) {
 
