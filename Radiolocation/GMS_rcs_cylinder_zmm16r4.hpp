@@ -13143,7 +13143,19 @@ namespace gms {
                           const __m512 hlf = _mm512_set1_ps(0.5f);
                           const __m512 c0  = _mm512_set1_ps(0.8905f);
                           const __m512 pi24= _mm512_set1_ps(2.467401100272339654708622749969f);
-                          
+                          register __m512 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
+                          abh = _mm512_mul_ps(_mm512_add_ps(a,b),hlf);
+                          c0k0= _mm512_mul_ps(c0,k0);
+                          num = _mm512_mul_ps(pi2,abh);
+                          arg = _mm512_mul_ps(c0k0,abh);
+                          larg= xlogf(arg);
+                          x0  = _mm512_fmadd_ps(larg,larg,pi24);
+                          sqr1= _mm512_sqrt_ps(_mm512_mul_ps(k0,abh));
+                          sqr2= _mm512_sqrt_ps(x0);
+                          den = _mm512_mul_ps(sqr1,sqr2);
+                          x1  = _mm512_mul_ps(den,den);
+                          rcs = _mm512_div_ps(num,x1);
+                          return (rcs);
                 }
                                             
 
