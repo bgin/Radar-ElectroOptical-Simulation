@@ -13512,7 +13512,7 @@ namespace gms {
                         if(!status) {
                            return;
                         }
-                         else
+                         else {
                            *TEr = resr;
                            *TEi = resi;
                         }
