@@ -13539,8 +13539,8 @@ namespace gms {
                            return;
                         }
                          else {
-                           _mm512_store_ps(&TEr[0] ,resr);
-                           _mm512_store_ps(&TEi[0] ,resi);
+                           _mm512_store_ps(&TEr[0] ,_mm512_mul_ps(nIi,resr));
+                           _mm512_store_ps(&TEi[0] ,_mm512_mul_ps(nIi,resi));
                         }
                }
 
