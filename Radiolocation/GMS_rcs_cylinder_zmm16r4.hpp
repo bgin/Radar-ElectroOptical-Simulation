@@ -13533,20 +13533,43 @@ namespace gms {
                                          float * __restrict __ATTR_ALIGN__(64) TEi,
                                          bool & status) {
 
-                        __m512 resr,resi;
-                        TM_f4415_zmm16r4(phi1,phi2,a,b,k0,&resr,&resi,status);
+                        
+                        TM_f4415_zmm16r4_a(phi1,phi2,a,b,k0,TEr,TEi,status);
                         if(!status) {
                            return;
                         }
                          else {
-                           _mm512_store_ps(&TEr[0] ,_mm512_mul_ps(nIi,resr));
-                           _mm512_store_ps(&TEi[0] ,_mm512_mul_ps(nIi,resi));
+                           _mm512_store_ps(&TEr[0] ,_mm512_mul_ps(nIi,_mm512_load_ps(&TEr[0])));
+                           _mm512_store_ps(&TEi[0] ,_mm512_mul_ps(nIi,_mm512_load_ps(&TEi[0])));
                         }
                }
 
 
 
-                  
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TE_f4416_zmm16r4_u(const float * __restrict  pphi1,
+                                         const float * __restrict  pphi2,
+                                         const float * __restrict  pa,
+                                         const float * __restrict  pb,
+                                         const float * __restrict  pk0,
+                                         float * __restrict  TEr,
+                                         float * __restrict  TEi,
+                                         bool & status) {
+
+                       
+                        TM_f4415_zmm16r4_u(phi1,phi2,a,b,k0,TEr,TEi,status);
+                        if(!status) {
+                           return;
+                        }
+                         else {
+                           _mm512_storeu_ps(&TEr[0] ,_mm512_mul_ps(nIi,_mm512_loadu_ps(&TEr[0])));
+                           _mm512_storeu_ps(&TEi[0] ,_mm512_mul_ps(nIi,_mm512_loadu_ps(&TEr[0])));
+                        }
+               }
 
 
 
