@@ -13293,6 +13293,74 @@ namespace gms {
                         *TMi = _mm512_mul_ps(x1,cei);
                  }
 
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TM_f4415_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pphi1,
+                                         const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                         const float * __restrict __ATTR_ALIGN__(64) pa,
+                                         const float * __restrict __ATTR_ALIGN__(64) pb,
+                                         const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                         float * __restrict __ATTR_ALIGN__(64) TMr,
+                                         float * __restrict __ATTR_ALIGN__(64) TMi) {
+
+                        using namespace gms::math;
+
+                        register __m512 phi1 = _mm512_load_ps(&phi1[0]);
+                        register __m512 phi2 = _mm512_load_ps(&phi2[0]);
+                        register __m512 a    = _mm512_load_ps(&pa[0]);
+                        register __m512 b    = _mm512_load_ps(&pb[0]);
+                        register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        const __m512 hlf = _mm512_set1_ps(0.5f);
+                        const __m512 ip4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
+                        register __m512 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
+                        register __m512 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
+                        arg1  = _mm512_mul_ps(_mm512_sub_ps(phi2,phi1),hlf);
+                        a2    = _mm512_mul_ps(a,a);
+                        b2    = _mm512_mul_ps(b,b);
+                        k0a   = _mm512_mul_ps(k0,a);
+                        arg2  = _mm512_mul_ps(_mm512_add_ps(phi2,phi1),hlf);
+                        carg1 = xcosf(arg1);
+                        a2b2  = _mm512_mul_ps(a2,b2);
+                        b2a2  = _mm512_div_ps(b2,a2);
+                        cphi1 = xcosf(phi1);
+                        sphi1 = xsinf(phi1);
+                        trm1  = _mm512_sqrt_ps(_mm512_mul_ps(PI,carg1));
+                        cphi2 = xcosf(phi2);
+                        sphi2 = xsinf(phi2);
+                        cphis = _mm512_add_ps(cphi1,cphi2);
+                        carg2 = xcosf(arg2);
+                        sphis = _mm512_add_ps(sphi1,sphi2);
+                        sarg2 = xsinf(arg2);
+                        x0    = _mm512_mul_ps(carg2,carg2);
+                        x1    = _mm512_mul_ps(sarg2,sarg2);
+                        rhod  = _mm512_fmadd_ps(a2,x0,_mm512_mul_ps(b2,x1));
+                        b2a2s = _mm512_mul_ps(b2a2,sphis);
+                        tmp1  = _mm512_pow_ps(rhod,_mm512_set1_ps(1.5f));
+                        rhorat= _mm512_div_ps(a2b2,tmp1);
+                        x0    = _mm512_fmadd_ps(sarg2,b2a2s,carg2);
+                        carg2s= _mm512_mul_ps(carg2,carg2)
+                        tmp2  = _mm512_mul_ps(cphis,x0);
+                        sarg2s= _mm512_mul_ps(sarg2,sarg2);
+                        x1    = _mm512_fmadd_ps(b2a2,sarg2s,carg2s);
+                        tmp1  = _mm512_sqrt_ps(x1);
+                        frat  = _mm512_div_ps(tmp2,tmp1);
+                        trm1  = zmm16r4_negate(trm1);
+                        ear   = _mm512_add_ps(nIr,ip4);
+                        x0    = _mm512_mul_ps(_mm512_sqrt_ps(_mm512_mul_ps(k0,rhorat)),hlf);
+                        eai   = _mm512_mul_ps(nIi,_mm512_mul_ps(k0a,frat));
+                        eai   = _mm512_add_ps(eai,ip4);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        x1    = _mm512_mul_ps(trm1,x0);
+                        _mm512_store_ps(&TMr[0] ,_mm512_mul_ps(x1,cer));
+                        _mm512_store_ps(&TMi[0] ,_mm512_mul_ps(x1,cei));
+                 }
+
+
                    
 
 
