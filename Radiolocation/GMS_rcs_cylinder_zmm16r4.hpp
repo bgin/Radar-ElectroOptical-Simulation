@@ -13504,12 +13504,18 @@ namespace gms {
                                          const __m512 b,
                                          const __m512 k0,
                                          __m512 * __restrict TEr,
-                                         __m512 * __restrict TEi) {
+                                         __m512 * __restrict TEi,
+                                         bool & status) {
 
                         __m512 resr,resi;
-                        TM_f4415_zmm16r4(phi1,phi2,a,b,k0,&resr,&resi);
-                        *TEr = resr;
-                        *TEi = resi;
+                        TM_f4415_zmm16r4(phi1,phi2,a,b,k0,&resr,&resi,status);
+                        if(!status) {
+                           return;
+                        }
+                         else
+                           *TEr = resr;
+                           *TEi = resi;
+                        }
                 }
 
 
