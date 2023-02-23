@@ -13418,12 +13418,13 @@ namespace gms {
                                          float * __restrict  TMi) {
 
                         using namespace gms::math;
-                        __mmask16 res = 
                         register __m512 phi1 = _mm512_loadu_ps(&phi1[0]);
                         register __m512 phi2 = _mm512_loadu_ps(&phi2[0]);
                         register __m512 a    = _mm512_loadu_ps(&pa[0]);
                         register __m512 b    = _mm512_loadu_ps(&pb[0]);
                         register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
+                        __mmask16 m = TM_f4415_helper_zmm16r4(k0,a,phi1,phi2,b);
+                        if(!m) {return;}
                         const __m512 hlf = _mm512_set1_ps(0.5f);
                         const __m512 ip4 = _mm512_set1_ps(0.78539816339744830961566084582f);
                         register __m512 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
