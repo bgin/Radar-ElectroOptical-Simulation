@@ -13513,10 +13513,36 @@ namespace gms {
                            return;
                         }
                          else {
-                           *TEr = resr;
-                           *TEi = resi;
+                           *TEr = _mm512_mul_ps(nIi,resr);
+                           *TEi = _mm512_mul_ps(nIi,resi);
                         }
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TE_f4416_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphi1,
+                                         const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                         const float * __restrict __ATTR_ALIGN__(64) pa,
+                                         const float * __restrict __ATTR_ALIGN__(64) pb,
+                                         const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                         float * __restrict __ATTR_ALIGN__(64) TEr,
+                                         float * __restrict __ATTR_ALIGN__(64) TEi,
+                                         bool & status) {
+
+                        __m512 resr,resi;
+                        TM_f4415_zmm16r4(phi1,phi2,a,b,k0,&resr,&resi,status);
+                        if(!status) {
+                           return;
+                        }
+                         else {
+                           _mm512_store_ps(&TEr[0] ,resr);
+                           _mm512_store_ps(&TEi[0] ,resi);
+                        }
+               }
 
 
 
