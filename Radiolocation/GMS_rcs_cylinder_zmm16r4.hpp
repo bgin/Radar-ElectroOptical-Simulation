@@ -13425,7 +13425,8 @@ namespace gms {
                                          const float * __restrict  pb,
                                          const float * __restrict  pk0,
                                          float * __restrict  TMr,
-                                         float * __restrict  TMi) {
+                                         float * __restrict  TMi,
+                                         bool & status) {
 
                         using namespace gms::math;
                         register __m512 phi1 = _mm512_loadu_ps(&phi1[0]);
@@ -13434,7 +13435,10 @@ namespace gms {
                         register __m512 b    = _mm512_loadu_ps(&pb[0]);
                         register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
                         __mmask16 m = TM_f4415_helper_zmm16r4(k0,a,phi1,phi2,b);
-                        if(!m) {return;}
+                        if(!m) {
+                           status = false;
+                           return;
+                        }
                         const __m512 hlf = _mm512_set1_ps(0.5f);
                         const __m512 ip4 = _mm512_set1_ps(0.78539816339744830961566084582f);
                         register __m512 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
@@ -13479,6 +13483,7 @@ namespace gms {
                         x1    = _mm512_mul_ps(trm1,x0);
                         _mm512_storeu_ps(&TMr[0] ,_mm512_mul_ps(x1,cer));
                         _mm512_storeu_ps(&TMi[0] ,_mm512_mul_ps(x1,cei));
+                        status = true;
                  }
 
 
