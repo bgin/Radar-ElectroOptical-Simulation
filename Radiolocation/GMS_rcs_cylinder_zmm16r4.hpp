@@ -13641,6 +13641,47 @@ namespace gms {
                           rcs  = _mm512_div_ps(num,pow32);
                           return (rcs);
                  }
+
+
+                     __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4419_zmm16r4_u(const float * __restrict  pphi1,
+                                              const float * __restrict  pphi2,
+                                              const float * __restrict  pa,
+                                              const float * __restrict  pb) {
+
+                          register __m512 phi1 = _mm512_loadu_ps(&pphi1[0]);
+                          register __m512 phi2 = _mm512_loadu_ps(&pphi2[0]);
+                          register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                          register __m512 b    = _mm512_loadu_ps(&pb[0]);
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          const __m512 c0  = _mm512_set1_ps(1.5f);
+                          register __m512 rcs,a2,b2,a2b2,num;
+                          register __m512 arg,carg,carg2,sarg,sarg2;
+                          register __m512 pow32,x0;
+                          a2   = _mm512_mul_ps(a,a);
+                          arg  = _mm512_mul_ps(_mm512_add_ps(phi2,phi1),hlf);
+                          b2   = _mm512_mul_ps(b,b);
+                          carg = xcosf(arg);
+                          num  = _mm512_mul_ps(PI,_mm512_mul_ps(a2,b2));
+                          sarg = xsinf(arg);
+                          carg2= _mm512_mul_ps(carg,carg);
+                          sarg2= _mm512_mul_ps(sarg,sarg);
+                          x0   = _mm512_fmadd_ps(a2,carg2,_mm512_mul_ps(b2,sarg2));
+                          pow32= _mm512_pow_ps(x0,c0);
+                          rcs  = _mm512_div_ps(num,pow32);
+                          return (rcs);
+                 }
+
+
+                   /*
+
+                          Backscattering width, for phi2 == phi1.
+                          Formula 4.4-20
+                      */
                   
 
 
