@@ -13784,6 +13784,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+                   __mmask16 
+                   T_f4423_helper_zmm16r4( const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 phi1,
+                                           const __m512 phi2,
+                                           const __m512 b) {
+                      const __m512 c0 = _mm512_set1_ps(0.166666666666666666666666666667f);
+                      register __m512 a2,b2,sphi1,cphi1,trm1,trm2,root6;
+                      register __m512 k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
+                      __mmask16 m;
+                      k02  = _mm512_mul_ps(k0,k0);
+                      a2   = _mm512_mul_ps(a,a);
+                      k0a2 = _mm512_mul_ps(k02,a2);
+                      b2   = _mm512_mul_ps(b,b);
+                      k0b2 = _mm512_mul_ps(k02,b2);
+                      cphi1= xcosf(phi1);
+                      trm1 = _mm512_sub_ps(phi1,phi2);
+                      cphi1s = _mm512_add_ps(PI,_mm512_mul_ps(cphi1,cphi1));
+                      sphi1= xsinf(phi1);
+                      sphi1s = _mm512_mul_ps(sphi1,sphi1);
+                      trm2 = _mm512_fmadd_ps(k02a2,sphi1s,_mm512_mul_ps(k02b2,cphi1s));
+                      x0   = _mm512_pow_ps(trm2,c0);
+                      root6= _mm512_rcp14_ps(x0);
+                      m    = _mm512_cmp_mask_ps(_mm512_abs_ps(trm1),root6,_CMP_LT_OQ);
+                      return (m);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
                    __m512 T_f4423_zmm16r4(const __m512 a,
                                           const __m512 b,
                                           const __m512 phi1,
