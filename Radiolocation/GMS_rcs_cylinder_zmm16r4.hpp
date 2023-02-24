@@ -13682,7 +13682,64 @@ namespace gms {
                           Backscattering width, for phi2 == phi1.
                           Formula 4.4-20
                       */
-                  
+
+
+                     
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4420_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 phi) {
+
+                          const __m512 c0  = _mm512_set1_ps(1.5f);
+                          register __m512 rcs,a2,b2,a2b2,num;
+                          register __m512 carg,carg2,sarg,sarg2;
+                          register __m512 pow32,x0;
+                          a2   = _mm512_mul_ps(a,a);
+                          carg = xcosf(phi);
+                          b2   = _mm512_mul_ps(b,b);
+                          carg2= _mm512_mul_ps(carg,carg);
+                          num  = _mm512_mul_ps(PI,_mm512_mul_ps(a2,b2));
+                          sarg = xsinf(phi);
+                          sarg2= _mm512_mul_ps(sarg,sarg);
+                          x0   = _mm512_fmadd_ps(a2,carg2,_mm512_mul_ps(b2,sarg2));
+                          pow32= _mm512_pow_ps(x0,c0);
+                          rcs  = _mm512_div_ps(num,pow32);
+                          return (rcs);
+                 }
+
+
+                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4420_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) pb,
+                                              const float * __restrict __ATTR_ALIGN__(64) pphi) {
+
+                          register __m512 phi2 = _mm512_loadu_ps(&pphi[0]);
+                          register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                          register __m512 b    = _mm512_loadu_ps(&pb[0]);
+                          const __m512 c0  = _mm512_set1_ps(1.5f);
+                          register __m512 rcs,a2,b2,a2b2,num;
+                          register __m512 carg,carg2,sarg,sarg2;
+                          register __m512 pow32,x0;
+                          a2   = _mm512_mul_ps(a,a);
+                          carg = xcosf(phi);
+                          b2   = _mm512_mul_ps(b,b);
+                          carg2= _mm512_mul_ps(carg,carg);
+                          num  = _mm512_mul_ps(PI,_mm512_mul_ps(a2,b2));
+                          sarg = xsinf(phi);
+                          sarg2= _mm512_mul_ps(sarg,sarg);
+                          x0   = _mm512_fmadd_ps(a2,carg2,_mm512_mul_ps(b2,sarg2));
+                          pow32= _mm512_pow_ps(x0,c0);
+                          rcs  = _mm512_div_ps(num,pow32);
+                          return (rcs);
+                 }
 
 
 
