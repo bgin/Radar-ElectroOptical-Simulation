@@ -13575,11 +13575,35 @@ namespace gms {
                  /*
 
                         Bistatic scattering width.
+                        Formula 4.4-19
                    */
 
 
-                 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4419_zmm16r4(const __m512 phi1,
+                                            const __m512 phi2,
+                                            const __m512 a,
+                                            const __m512 b) {
 
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          register __m512 rcs,a2,b2,a2b2,num;
+                          register __m512 arg,carg,carg2,sarg,sarg2;
+                          register __m512 pow32,x0;
+                          a2   = _mm512_mul_ps(a,a);
+                          arg  = _mm512_mul_ps(_mm512_add_ps(phi2,phi1),hlf);
+                          b2   = _mm512_mul_ps(b,b);
+                          carg = xcosf(arg);
+                          num  = _mm512_mul_ps(PI,_mm512_mul_ps(a2,b2));
+                          sarg = xsinf(arg);
+                          carg2= _mm512_mul_ps(carg,carg);
+                          sarg2= _mm512_mul_ps(sarg,sarg);
+                          x0   = _mm512_fmadd_ps(a2,carg2,_mm512_mul_ps(b2,sarg2));
+                          
+                 }
                   
 
 
