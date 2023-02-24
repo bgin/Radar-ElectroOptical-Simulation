@@ -13572,6 +13572,16 @@ namespace gms {
                }
 
 
+                 /*
+
+                        Bistatic scattering width.
+                   */
+
+
+                 
+
+                  
+
 
 
       } // radiolocation
