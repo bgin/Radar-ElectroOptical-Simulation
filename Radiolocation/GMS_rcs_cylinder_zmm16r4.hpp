@@ -13945,6 +13945,54 @@ namespace gms {
                  }
 
 
+                   /*
+                          Scattering width near the forward direction.
+                          Formula 4.4-24
+
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 T_f4423_zmm16r4(const __m512 a,
+                                          const __m512 b,
+                                          const __m512 phi1,
+                                          const __m512 phi2,
+                                          const __m512 k0,
+                                          bool & status) {
+
+                          using namespace gms::math;
+                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          if(!m) {
+                             status = false;
+                             return;
+                          }
+                          register __m512 T,k0c,c,alp,a2,b2;
+                          register __m512 sphi,sphi2,cphi,cphi2;
+                          register __m512 arg,sarg,rat,x0;
+                          a2   = _mm512_mul_ps(a,a);
+                          alp  = _mm512_add_ps(PI,_mm512_sub_ps(phi2,phi1));
+                          b2   = _mm512_mul_ps(b,b);
+                          sphi = xsinf(phi1);
+                          cphi = xcosf(phi1);
+                          sphi2= _mm512_mul_ps(sphi,sphi);
+                          cphi2= _mm512_mul_ps(cphi,cphi);
+                          x0   = _mm512_fmadd_ps(a2,cphi2,_mm512_mul_ps(b2,sphi2));
+                          c    = _mm512_sqrt_ps(x0);
+                          k0c  = _mm512_mul_ps(k0,c);
+                          arg  = _mm512_mul_ps(k0c,alp);
+                          sarg = xsinf(arg);
+                          k0c  = negate_zmm16r4(k0c);
+                          rat  = _mm512_div_ps(sarg,arg);
+                          T    = _mm512_mul_ps(k0c,rat);
+                          status = true;
+                          return (T);
+                 }
+
+
                    
 
  
