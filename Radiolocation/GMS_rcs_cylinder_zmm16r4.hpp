@@ -14091,6 +14091,38 @@ namespace gms {
                  }
 
 
+                   /*
+                         Scattering width in the exact forward direction (alpha == 0).
+                         Formula 4.4-25
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4425_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 b,
+                                            const __m512 phi) {
+
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          register __m512 rcs,_4k0,a2,b2,sphi,sphi2;
+                          register __m512 cphi,cphi2;
+                          a2   = _mm512_mul_ps(a,a);
+                          sphi = xsinf(phi);
+                          b2   = _mm512_mul_ps(b,b);
+                          cphi = xcosf(phi);
+                          _4k0 = _mm512_mul_ps(_4,k0);
+                          cphi2= _mm512_mul_ps(cphi,cphi);
+                          sphi2= _mm512_mul_ps(sphi,sphi);
+                          x0   = _mm512_fmadd_ps(a2,sphi2,_mm512_mul_ps(b2,cphi2));
+                          rcs  = _mm512_mul_ps(_4k0,x0);
+                          return (rcs);
+                 }
+
+
                   
 
 
