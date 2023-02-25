@@ -14313,6 +14313,73 @@ namespace gms {
                 }
 
 
+                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TM_f4426_zmm16r4_u(const float * __restrict  pk0,
+                                         const float * __restrict  pa,
+                                         const float * __restrict  pb,
+                                         const float * __restrict  pphi1,
+                                         const float * __restrict pphi2,
+                                         const float * __restrict  pepsr,
+                                         const float * __restrict  pepsi,
+                                         const float * __restrict  pmur,
+                                         const float * __restrict  pmui,
+                                         float * __restrict  TMr,
+                                         float * __restrict  TMi) {
+
+                        register __m512 k0    = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 a     = _mm512_loadu_ps(&pa[0]);
+                        register __m512 b     = _mm512_loadu_ps(&pb[0]);
+                        register __m512 phi1  = _mm512_loadu_ps(&pphi1[0]);
+                        register __m512 phi2  = _mm512_loadu_ps(&pphi2[0]);
+                        register __m512 epsr  = _mm512_loadu_ps(&pepsr[0]);
+                        register __m512 epsi  = _mm512_loadu_ps(&pepsi[0]);
+                        register __m512 mur   = _mm512_loadu_ps(&pmur[0]);
+                        register __m512 mui   = _mm512_loadu_ps(&pmui[0]);
+                        const __m512 _1  = _mm512_set1_ps(1.0f);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                        register __m512 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
+                        register __m512 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                        register __m512 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                        k0a    = _mm512_mul_ps(k0,a);
+                        cphi1  = xcosf(phi1);
+                        ba     = _mm512_div_ps(b,a);
+                        epsrm1 = _mm512_sub_ps(epsr,_1);
+                        sphi1  = xsinf(phi1)
+                        k0a2   = _mm512_mul_ps(k0a,k0a);
+                        epsim1 = _mm512_sub_ps(epsi,_1);
+                        cphi2  = xcosf(phi2);
+                        cphit  = _mm512_mul_ps(cphi2,cphi1);
+                        murm1  = _mm512_sub_ps(mur,_1);
+                        muim1  = _mm512_sub_ps(mui,_1);
+                        _1ba   = _mm512_add_ps(_1,ba);
+                        t0r    = _mm512_sub_ps(epsrm1,murm1);
+                        sphi2  = xsinf(phi2);
+                        t0i    = _mm512_sub_ps(epsim1,muim1);
+                        facr   = Ir;
+                        sphit  = _mm512_mul_ps(sphi2,sphi1);
+                        faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
+                        murpba = _mm512_add_ps(mur,ba);
+                        muipba = _mm512_add_ps(mui,ba);
+                        t1r    = _mm512_div_ps(cphit,murpba);
+                        t1i    = _mm512_div_ps(cphit,muipba);
+                        murmba = _mm512_fmadd_ps(mur,ba,_1);
+                        muimba = _mm512_fmadd_ps(mui,ba,_1);
+                        t2r    = _mm512_div_ps(sphit,murmba);
+                        t2i    = _mm512_div_ps(sphit,muimba);
+                        t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
+                        t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
+                        cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
+                        _mm512_storeu_ps(&TMr[0]  ,_mm512_mul_ps(facr,tmpr));
+                        _mm512_storeu_ps(&TMi[0]  ,_mm512_mul_ps(faci,tmpi));
+                }
+
+
+
 
                    
 
