@@ -14387,6 +14387,64 @@ namespace gms {
                      */
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TE_f4427_zmm16r4(const __m512 k0,
+                                         const __m512 a,
+                                         const __m512 b,
+                                         const __m512 phi1,
+                                         const __m512 phi2,
+                                         const __m512 epsr,
+                                         const __m512 epsi,
+                                         const __m512 mur,
+                                         const __m512 mui,
+                                         __m512 * __restrict TEr,
+                                         __m512 * __restrict TEi) {
+
+                        const __m512 _1  = _mm512_set1_ps(1.0f);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                        register __m512 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
+                        register __m512 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                        register __m512 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                        k0a    = _mm512_mul_ps(k0,a);
+                        cphi1  = xcosf(phi1);
+                        ba     = _mm512_div_ps(b,a);
+                        epsrm1 = _mm512_sub_ps(epsr,_1);
+                        sphi1  = xsinf(phi1)
+                        k0a2   = _mm512_mul_ps(k0a,k0a);
+                        epsim1 = _mm512_sub_ps(epsi,_1);
+                        cphi2  = xcosf(phi2);
+                        cphit  = _mm512_mul_ps(cphi2,cphi1);
+                        murm1  = _mm512_sub_ps(mur,_1);
+                        muim1  = _mm512_sub_ps(mui,_1);
+                        _1ba   = _mm512_add_ps(_1,ba);
+                        t0r    = _mm512_sub_ps(murm1,epsrm1);
+                        sphi2  = xsinf(phi2);
+                        t0i    = _mm512_sub_ps(muim1,epsim1);
+                        facr   = Ir;
+                        sphit  = _mm512_mul_ps(sphi2,sphi1);
+                        faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
+                        epsrpba= _mm512_add_ps(epsr,ba);
+                        epsipba= _mm512_add_ps(epsi,ba);
+                        t1r    = _mm512_div_ps(cphit,murpba);
+                        t1i    = _mm512_div_ps(cphit,muipba);
+                        epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
+                        epsimba= _mm512_fmadd_ps(epsi,ba,_1);
+                        t2r    = _mm512_div_ps(sphit,murmba);
+                        t2i    = _mm512_div_ps(sphit,muimba);
+                        t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
+                        t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
+                        cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
+                        *TEr   = _mm512_mul_ps(facr,tmpr);
+                        *TEi   = _mm512_mul_ps(faci,tmpi);
+                }
+
+
+
 
 
                    
