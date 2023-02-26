@@ -14379,6 +14379,14 @@ namespace gms {
                 }
 
 
+                   /*
+                          Infinitely long homogenous cylinder at normal
+                          incidence.
+                          Low frequency approximation (k0a<0.5,k0b<0.5,k1a<0.5,k1b<0.5)
+                          TE-case, formula 4.4-27
+                     */
+
+
 
 
                    
