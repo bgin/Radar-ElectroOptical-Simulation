@@ -14722,15 +14722,15 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f4428_zmm16r4_u(const float * __restrict __AATR_ALIGN__(64) pk0,
-                                              const float * __restrict __AATR_ALIGN__(64) pa,
-                                              const float * __restrict __AATR_ALIGN__(64) pb,
-                                              const float * __restrict __AATR_ALIGN__(64) pphi1,
-                                              const float * __restrict __AATR_ALIGN__(64) pphi2,
-                                              const float * __restrict __AATR_ALIGN__(64) pepsr,
-                                              const float * __restrict __AATR_ALIGN__(64) pepsi,
-                                              const float * __restrict __AATR_ALIGN__(64) pmur,
-                                              const float * __restrict __AATR_ALIGN__(64) pmui) {
+                   __m512 rcs_f4428_zmm16r4_u(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) pb,
+                                              const float * __restrict __ATTR_ALIGN__(64) pphi1,
+                                              const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                              const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                              const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                              const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                              const float * __restrict __ATTR_ALIGN__(64) pmui) {
                                         
                         register __m512  k0   = _mm512_loadu_ps(&pk0[0]);
                         register __m512  a    = _mm512_loadu_ps(&pa[0]);
