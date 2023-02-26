@@ -14444,6 +14444,143 @@ namespace gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TE_f4427_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                         const float * __restrict __ATTR_ALIGN__(64) pa,
+                                         const float * __restrict __ATTR_ALIGN__(64) pb,
+                                         const float * __restrict __ATTR_ALIGN__(64) pphi1,
+                                         const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                         const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                         const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                         const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                         const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                         float * __restrict __ATTR_ALIGN__(64) TEr,
+                                         float * __restrict __ATTR_ALIGN__(64) TEi) {
+
+                        register __m512 k0    = _mm512_load_ps(&pk0[0]);
+                        register __m512 a     = _mm512_load_ps(&pa[0]);
+                        register __m512 b     = _mm512_load_ps(&pb[0]);
+                        register __m512 phi1  = _mm512_load_ps(&pphi1[0]);
+                        register __m512 phi2  = _mm512_load_ps(&pphi2[0]);
+                        register __m512 epsr  = _mm512_load_ps(&pepsr[0]);
+                        register __m512 epsi  = _mm512_load_ps(&pepsi[0]);
+                        register __m512 mur   = _mm512_load_ps(&pmur[0]);
+                        register __m512 mui   = _mm512_load_ps(&pmui[0]);
+                        const __m512 _1  = _mm512_set1_ps(1.0f);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                        register __m512 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
+                        register __m512 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                        register __m512 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                        k0a    = _mm512_mul_ps(k0,a);
+                        cphi1  = xcosf(phi1);
+                        ba     = _mm512_div_ps(b,a);
+                        epsrm1 = _mm512_sub_ps(epsr,_1);
+                        sphi1  = xsinf(phi1)
+                        k0a2   = _mm512_mul_ps(k0a,k0a);
+                        epsim1 = _mm512_sub_ps(epsi,_1);
+                        cphi2  = xcosf(phi2);
+                        cphit  = _mm512_mul_ps(cphi2,cphi1);
+                        murm1  = _mm512_sub_ps(mur,_1);
+                        muim1  = _mm512_sub_ps(mui,_1);
+                        _1ba   = _mm512_add_ps(_1,ba);
+                        t0r    = _mm512_sub_ps(murm1,epsrm1);
+                        sphi2  = xsinf(phi2);
+                        t0i    = _mm512_sub_ps(muim1,epsim1);
+                        facr   = Ir;
+                        sphit  = _mm512_mul_ps(sphi2,sphi1);
+                        faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
+                        epsrpba= _mm512_add_ps(epsr,ba);
+                        epsipba= _mm512_add_ps(epsi,ba);
+                        t1r    = _mm512_div_ps(cphit,murpba);
+                        t1i    = _mm512_div_ps(cphit,muipba);
+                        epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
+                        epsimba= _mm512_fmadd_ps(epsi,ba,_1);
+                        t2r    = _mm512_div_ps(sphit,murmba);
+                        t2i    = _mm512_div_ps(sphit,muimba);
+                        t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
+                        t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
+                        cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
+                        _mm512_store_ps(&TEr[0] ,_mm512_mul_ps(facr,tmpr));
+                        _mm512_store_ps(&TEi[0] ,_mm512_mul_ps(faci,tmpi));
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void TE_f4427_zmm16r4_u(const float * __restrict  pk0,
+                                         const float * __restrict  pa,
+                                         const float * __restrict  pb,
+                                         const float * __restrict  pphi1,
+                                         const float * __restrict pphi2,
+                                         const float * __restrict  pepsr,
+                                         const float * __restrict  pepsi,
+                                         const float * __restrict pmur,
+                                         const float * __restrict  pmui,
+                                         float * __restrict  TEr,
+                                         float * __restrict  TEi) {
+
+                        register __m512 k0    = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 a     = _mm512_loadu_ps(&pa[0]);
+                        register __m512 b     = _mm512_loadu_ps(&pb[0]);
+                        register __m512 phi1  = _mm512_loadu_ps(&pphi1[0]);
+                        register __m512 phi2  = _mm512_loadu_ps(&pphi2[0]);
+                        register __m512 epsr  = _mm512_loadu_ps(&pepsr[0]);
+                        register __m512 epsi  = _mm512_loadu_ps(&pepsi[0]);
+                        register __m512 mur   = _mm512_loadu_ps(&pmur[0]);
+                        register __m512 mui   = _mm512_loadu_ps(&pmui[0]);
+                        const __m512 _1  = _mm512_set1_ps(1.0f);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        register __m512 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                        register __m512 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
+                        register __m512 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                        register __m512 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                        k0a    = _mm512_mul_ps(k0,a);
+                        cphi1  = xcosf(phi1);
+                        ba     = _mm512_div_ps(b,a);
+                        epsrm1 = _mm512_sub_ps(epsr,_1);
+                        sphi1  = xsinf(phi1)
+                        k0a2   = _mm512_mul_ps(k0a,k0a);
+                        epsim1 = _mm512_sub_ps(epsi,_1);
+                        cphi2  = xcosf(phi2);
+                        cphit  = _mm512_mul_ps(cphi2,cphi1);
+                        murm1  = _mm512_sub_ps(mur,_1);
+                        muim1  = _mm512_sub_ps(mui,_1);
+                        _1ba   = _mm512_add_ps(_1,ba);
+                        t0r    = _mm512_sub_ps(murm1,epsrm1);
+                        sphi2  = xsinf(phi2);
+                        t0i    = _mm512_sub_ps(muim1,epsim1);
+                        facr   = Ir;
+                        sphit  = _mm512_mul_ps(sphi2,sphi1);
+                        faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
+                        epsrpba= _mm512_add_ps(epsr,ba);
+                        epsipba= _mm512_add_ps(epsi,ba);
+                        t1r    = _mm512_div_ps(cphit,murpba);
+                        t1i    = _mm512_div_ps(cphit,muipba);
+                        epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
+                        epsimba= _mm512_fmadd_ps(epsi,ba,_1);
+                        t2r    = _mm512_div_ps(sphit,murmba);
+                        t2i    = _mm512_div_ps(sphit,muimba);
+                        t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
+                        t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
+                        cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
+                        _mm512_storeu_ps(&TEr[0] ,_mm512_mul_ps(facr,tmpr));
+                        _mm512_storeu_ps(&TEi[0] ,_mm512_mul_ps(faci,tmpi));
+                }
+
+
+
+                   
+
+
+
 
 
 
