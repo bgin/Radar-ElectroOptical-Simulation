@@ -15449,7 +15449,23 @@ namespace gms {
                }
 
 
-                     
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4432_zmm16r4_u(const float * __restrict  pk0,
+                                              const float * __restrict  pa,
+                                              const float * __restrict  pb,
+                                              const float * __restrict  pphi1,
+                                              const float * __restrict  pepsr,
+                                              const float * __restrict  pepsi,
+                                              const float * __restrict  pmur,
+                                              const float * __restrict  pmui) {
+
+                           return (rcs_f4430_zmm16r4_u(pk0,pa,pb,pphi1,
+                                                       pepsr,pepsi,pmur,pmui));
+               } 
 
 
 
