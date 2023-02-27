@@ -15006,7 +15006,7 @@ namespace gms {
                           Low frequency approximation (k0a<0.5,k0b<0.5,k1a<0.5,k1b<0.5)
                           Backscattering  width (RCS).
                           TM-case.
-                          Formula 4.4-29
+                          Formula 4.4-30
                     */
 
 
