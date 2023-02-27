@@ -15479,6 +15479,65 @@ namespace gms {
                    */
 
 
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4433_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 b,
+                                            const __m512 phi1,
+                                            const __m512 epsr,
+                                            const __m512 epsi,
+                                            const __m512 mur,
+                                            const __m512 mui) {
+
+                           return (rcs_f4431_zmm16r4(k0,a,b,phi1,epsr,epsi,mur,mui));
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4433_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) pb,
+                                              const float * __restrict __ATTR_ALIGN__(64) pphi1,
+                                              const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                              const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                              const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                              const float * __restrict __ATTR_ALIGN__(64) pmui) {
+
+                           return (rcs_f4431_zmm16r4_a(pk0,pa,pb,pphi1,
+                                                       pepsr,pepsi,pmur,pmui));
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4433_zmm16r4_u(const float * __restrict  pk0,
+                                              const float * __restrict  pa,
+                                              const float * __restrict  pb,
+                                              const float * __restrict  pphi1,
+                                              const float * __restrict  pepsr,
+                                              const float * __restrict  pepsi,
+                                              const float * __restrict  pmur,
+                                              const float * __restrict  pmui) {
+
+                           return (rcs_f4431_zmm16r4_u(pk0,pa,pb,pphi1,
+                                                       pepsr,pepsi,pmur,pmui));
+               }
+
+
+                
+
+
 
 
 
