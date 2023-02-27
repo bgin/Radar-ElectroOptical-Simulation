@@ -15468,6 +15468,17 @@ namespace gms {
                } 
 
 
+                 /*
+                          Infinitely long homogenous cylinder at normal
+                          incidence.
+                          Low frequency approximation (k0a<0.5,k0b<0.5,k1a<0.5,k1b<0.5)
+                          Forward scattering (phi2 = pi+phi1)  width (RCS).
+                          TE-case.
+                          Formula 4.4-33
+
+                   */
+
+
 
 
 
