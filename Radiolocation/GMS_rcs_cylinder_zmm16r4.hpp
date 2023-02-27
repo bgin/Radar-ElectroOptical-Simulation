@@ -15408,8 +15408,29 @@ namespace gms {
                           Low frequency approximation (k0a<0.5,k0b<0.5,k1a<0.5,k1b<0.5)
                           Forward scattering (phi2 = pi+phi1)  width (RCS).
                           TM-case.
-                          Formula 4.4-33
+                          Formula 4.4-32
                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f4432_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 b,
+                                            const __m512 phi1,
+                                            const __m512 epsr,
+                                            const __m512 epsi,
+                                            const __m512 mur,
+                                            const __m512 mui) {
+
+                           return (rcs_f4430_zmm16r4(k0,a,b,phi1,epsr,epsi,mur,mui));
+               }
+
+
+                     
 
 
 
