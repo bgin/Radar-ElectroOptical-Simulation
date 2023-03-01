@@ -51,6 +51,14 @@ namespace gms {
           namespace radiolocation {
 
 
+                      /*
+                            High-frequency cross-section of perfectly
+                            conducting ellipsoid.
+                            Formula 5.1.54
+                        */
+
+
+                  
 
        }
 
