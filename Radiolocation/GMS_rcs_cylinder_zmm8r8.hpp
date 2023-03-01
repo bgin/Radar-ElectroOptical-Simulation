@@ -34,7 +34,7 @@ namespace file_version {
     const char * const GMS_RCS_CYLINDER_ZMM8R8_CREATION_DATE = "28-02-2023 13:04 PM +00200 (TUE 28 FEB 2023 GMT+2)";
     const char * const GMS_RCS_CYLINDER_ZMM8R8_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_RCS_CYLINDER_ZMM8R8_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_RCS_CYLINDER_ZMM8R8_DESCRIPTION   = "AVX512 optimized Cylinder Radar Cross Section (analytic) functionality."
+    const char * const GMS_RCS_CYLINDER_ZMM8R8_DESCRIPTION   = "AVX512 optimized Cylinder Radar Cross Section (analytic) functionality.";
 
 }
 
