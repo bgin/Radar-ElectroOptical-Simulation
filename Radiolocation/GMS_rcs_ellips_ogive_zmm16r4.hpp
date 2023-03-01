@@ -146,6 +146,54 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5154_zmm16r4_u(const float * __restrict  pa,
+                                            const float * __restrict  pb,
+                                            const float * __restrict  pc,
+                                            const float * __restrict  pth1,
+                                            const float * __restrict  pphi1,
+                                            const float * __restrict  pth2,
+                                            const float * __restrict  pphi2) {
+
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 b   = _mm512_loadu_ps(&pb[0]);
+                          register __m512 c   = _mm512_loadu_ps(&pc[0]);
+                          register __m512 th1 = _mm512_loadu_ps(&pth1[0]);
+                          register __m512 phi1= _mm512_loadu_ps(&pphi1[0]);
+                          register __m512 th2 = _mm512_loadu_ps(&pth2[0]);
+                          register __m512 phi2= _mm512_loadu_ps(&pphi2[0]);
+                          const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 rcs,a2,b2,c2,sth1,cphi1,sth2,cphi2,cth1,cth2;
+                          register __m512 trm1,trm2,trm3,num,den,x0,strm1,strm2,strm3;
+                          a2   = _mm512_mul_ps(a,a);
+                          sth1 = xsinf(phi1);
+                          b2   = _mm512_mul_ps(b,b);
+                          cphi1= xcosf(phi1);
+                          c2   = _mm512_mul_ps(c,c);
+                          sth2 = xsinf(th2);
+                          x0   = _mm512_mul_ps(a2,_mm512_mul_ps(b2,c2));
+                          cphi2= xcosf(phi2);
+                          num  = _mm512_mul_ps(_4pi,x0);
+                          cth1 = xcosf(th1);
+                          trm1 = _mm512_fmadd_ps(sth1,cphi1,_mm512_mul_ps(sth2,cphi2));
+                          strm1= _mm512_mul_ps(a2,_mm512_mul_ps(trm1,trm1));
+                          cth2 = xcosf(th2);
+                          trm2 = _mm512_fmadd_ps(sth1,sphi1,_mm512_mul_ps(sth2,sphi2));
+                          strm2= _mm512_mul_ps(b2,_mm512_mul_ps(trm2,trm2));
+                          trm3 = _mm512_mul_ps(cth1,cth2);
+                          strm3= _mm512_mul_ps(c2,_mm512_mul_ps(trm3,trm3));
+                          x0   = _mm512_add_ps(strm1,_mm512_add_ps(strm2,strm3));
+                          den  = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_div_ps(num,den);
+                          return (rcs);
+                 }
+
+
+
                    
 
        }
