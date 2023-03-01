@@ -54,11 +54,42 @@ namespace gms {
                       /*
                             High-frequency cross-section of perfectly
                             conducting ellipsoid.
+                            Bistatic case.
                             Formula 5.1.54
                         */
 
 
-                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5154_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 c,
+                                            const __m512 th1,
+                                            const __m512 phi1,
+                                            const __m512 th2,
+                                            const __m512 phi2) {
+
+                          const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 rcs,a2,b2,c2,sth1,cphi1,sth2,cphi2,cth1,cth2;
+                          register __m512 trm1,trm2,trm3,num,den,x0,strm1,strm2,strm3;
+                          a2   = _mm512_mul_ps(a,a);
+                          sth1 = xsinf(phi1);
+                          b2   = _mm512_mul_ps(b,b);
+                          cphi1= xcosf(phi1);
+                          c2   = _mm512_mul_ps(c,c);
+                          sth2 = xsinf(th2);
+                          x0   = _mm512_mul_ps(a2,_mm512_mul_ps(b2,c2));
+                          cphi2= xcosf(phi2);
+                          num  = _mm512_mul_ps(_4pi,x0);
+                          cth1 = xcosf(th1);
+                          trm1 = _mm512_fmadd_ps(sth1,cphi1,_mm512_mul_ps(sth2,cphi2));
+                          str1 = _mm512_mul_ps(a2,_mm512_mul_ps(trm1,trm1));
+                          cth2 = xcosf(th2);
+                          
+                 }
 
        }
 
