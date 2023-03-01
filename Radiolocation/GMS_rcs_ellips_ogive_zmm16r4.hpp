@@ -193,6 +193,14 @@ namespace gms {
                  }
 
 
+                       /*
+                            High-frequency cross-section of perfectly
+                            conducting ellipsoid.
+                            Backscattering case.
+                            Formula 5.1.55
+                        */ 
+
+
 
                    
 
