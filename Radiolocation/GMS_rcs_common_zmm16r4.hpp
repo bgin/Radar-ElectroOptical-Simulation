@@ -49,6 +49,10 @@ namespace  gms {
         namespace radiolocation {
 
 
+                   /*
+                        Complex wavenumber, vector of 16 varying values of
+                        complex permeability and permitivity.
+                    */
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -71,6 +75,76 @@ namespace  gms {
                         *kr = _mm512_mul_ps(om,sqrr);
                         *ki = _mm512_mul_ps(om,sqri);
                }
+
+
+                 /*
+
+c*********************************************************************72
+c
+cc RC computes the elementary integral RC(X,Y).
+c
+c  Discussion:
+c
+c    This function computes the elementary integral
+c
+c      RC(X,Y) = Integral ( 0 <= T < oo )
+c
+c                              -1/2     -1
+c                    (1/2)(T+X)    (T+Y)  DT,
+c
+c    where X is nonnegative and Y is positive.  The duplication
+c    theorem is iterated until the variables are nearly equal,
+c    and the function is then expanded in Taylor series to fifth
+c    order.  
+c
+c    Logarithmic, inverse circular, and inverse hyperbolic 
+c    functions can be expressed in terms of RC.  
+c
+c    Check by addition theorem: 
+c
+c      RC(X,X+Z) + RC(Y,Y+Z) = RC(0,Z),
+c      where X, Y, and Z are positive and X * Y = Z * Z.
+c
+c  Modified:
+c
+c    27 May 2018
+c
+c  Author:
+c
+c    Bille Carlson, Elaine Notis
+c
+c  Reference:
+c
+c    Bille Carlson,
+c    Computing Elliptic Integrals by Duplication,
+c    Numerische Mathematik,
+c    Volume 33, 1979, pages 1-16.
+c
+c    Bille Carlson, Elaine Notis,
+c    Algorithm 577, Algorithms for Incomplete Elliptic Integrals,
+c    ACM Transactions on Mathematical Software,
+c    Volume 7, Number 3, pages 398-403, September 1981.
+c
+c  Parameters:
+c
+c    Input, double precision X, Y, the arguments in the integral.
+c
+c    Input, double precision ERRTOL, the error tolerance.
+c    Relative error due to truncation is less than
+c      16 * ERRTOL ^ 6 / (1 - 2 * ERRTOL).
+c    Sample choices:  
+c      ERRTOL   Relative truncation error less than
+c      1.D-3    2.D-17
+c      3.D-3    2.D-14
+c      1.D-2    2.D-11
+c      3.D-2    2.D-8
+c      1.D-1    2.D-5
+c
+c    Output, integer IERR, the error flag.
+c    0, no error occurred.
+c    1, abnormal termination.
+c
+                    */
 
      }
 
