@@ -262,6 +262,86 @@ c    1, abnormal termination.
 c
                    */  
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rd_zmm16r4(const __m512 x,
+                                     const __m512 y,
+                                     const __m512 z,
+                                     const __m512 errtot) {
+
+                          const register __m512 _3 = _mm512_set1_ps(3.0f);
+                          const register __m512 _1 = _mm512_set1_ps(1.0f);
+                          const register __m512 c1 = _mm512_set1_ps(-0.214285714285714285714285714286f);
+                          const register __m512 c2 = _mm512_set1_ps(0.166666666666666666666666666667f);
+                          const register __m512 c3 = _mm512_set1_ps(-0.409090909090909090909090909091f);
+                          const register __m512 c4 = _mm512_set1_ps(0.115384615384615384615384615385f);
+                          const register __m512 c5 = _mm512_set1_ps(6.0f);
+                          const register __m512 c6 = _mm512_set1_ps(1.5f);
+                          const register __m512 c7 = _mm512_set1_ps(0.2f);
+                          const register __m512 c8 = _mm512_set1_ps(0.25f);
+                          register __m512 rd,xn,yn,zn,epslon,sigma,pow4,mu;
+                          register __m512 xndev,yndev,zndev,ea,eb,ec,ed,ef;
+                          register __m512 s1,s2,xnroot,ynroot,znroot,lamda;
+                          register __m512 x0,x1,x2,x3,x4,x5;
+
+                          xn    = x;
+                          yn    = y;
+                          zn    = z;
+                          sigma = _mm512_setzero_ps();
+                          pow4  = _1; 
+                          while(true) {
+                                mu    = _mm512_mul_ps(c7,_mm512_fmadd_ps(zn,_3,
+                                                          _mm512_add_ps(xn,yn));
+                                xndev = _mm512_div_ps(_mm512_sub_ps(mu,xn),mu);
+                                yndev = _mm512_div_ps(_mm512_sub_ps(mu,yn),mu);
+                                zndev = _mm512_div_ps(_mm512_sub_ps(mu,zn),mu);
+                                epslon= _mm512_abs_ps(xndev);
+                                epslon= _mm512_max_ps(epslon,_mm512_abs_ps(yndev));
+                                epslon= _mm512_max_ps(epslon,_mm512_abs_ps(zndev));
+
+                                if(_mm512_cmp_mask_ps(epslon,errtot,_CMP_LT_OQ)) {
+                                   ea = _mm512_mul_ps(xndev,yndev);
+                                   eb = _mm512_mul_ps(zndev,zndev);
+                                   ec = _mm512_sub_ps(ea,eb);
+                                   ed = _mm512_sub_ps(ea,_mm512_mul_ps(c5,eb));
+                                   ef = _mm512_add_ps(ed,_mm512_add_ps(ec,ec));
+                                   x0 = _mm512_fmadd_ps(c3,c8,c1);
+                                   x1 = _mm512_sub_ps(ed,_mm512_sub_ps(c6,c4));
+                                   x2 = _mm512_mul_ps(zndev,ef);
+                                   s1 = _mm512_mul_ps(ed,_mm512_mul_ps(x0,
+                                                               _mm512_mul_ps(x1,x2)));
+                                   x3 = _mm512_fmadd_ps(c3,ec,_mm512_mul_ps(zndev,
+                                                               _mm512_mul_ps(c4,ea)));
+                                   x4 = _mm512_fmadd_ps(x3,zndev,_mm512_mul_ps(ef,c2));
+                                   s2 = _mm512_mul_ps(zndev,x4);
+                                   x0 = _mm512_fmadd_ps(_3,sigma,pow4);
+                                   x1 = _mm512_add_ps(_1,_mm512_add_ps(s1,s2));
+                                   x2 = _mm512_mul_ps(mu,_mm512_sqrt_ps(mu));
+                                   rd = _mm512_div_ps(_mm512_mul_ps(x0,x1),x2);
+                                   return (rd);
+                                } 
+
+                                xnroot = _mm512_sqrt_ps(xn);
+                                ynroot = _mm512_sqrt_ps(yn);
+                                znroot = _mm512_sqrt_ps(zn);
+                                x0     = _mm512_fmadd_ps(ynroot,znroot,_mm512_add_ps(ynroot,znroot));
+                                lamda  = _mm512_mul_ps(xnroot,x0);
+                                sigma  = _mm512_div_ps(_mm512_add_ps(sigma,pow4),
+                                                       _mm512_mul_ps(znroot,_mm512_add_ps(zn,lamda)));
+                                pow4   = _mm512_mul_ps(pow4,c8);
+                                xn     = _mm512_mul_ps(_mm512_add_ps(xn,lamda),c8);
+                                yn     = _mm512_mul_ps(_mm512_add_ps(yn,lamda),c8);
+                                zn     = _mm512_mul_ps(_mm512_add_ps(zn,lamda),c8);
+                         }
+                 }
+
+
+
+
      } // radiolocation
 
 } // gms
