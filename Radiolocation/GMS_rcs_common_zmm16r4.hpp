@@ -193,7 +193,74 @@ c
                 }
 
 
-                   
+                 /*
+
+c*********************************************************************72
+c
+cc RD computes an incomplete elliptic integral of the second kind, RD(X,Y,Z).
+c
+c  Discussion:
+c
+c    This function computes an incomplete elliptic integral of the second kind.
+c
+c    RD(X,Y,Z) = Integral ( 0 <= T < oo )
+c
+c                                -1/2     -1/2     -3/2
+c                      (3/2)(T+X)    (T+Y)    (T+Z)    DT,
+c
+c    where X and Y are nonnegative, X + Y is positive, and Z is positive.
+c
+c    If X or Y is zero, the integral is complete.
+c
+c    The duplication theorem is iterated until the variables are
+c    nearly equal, and the function is then expanded in Taylor
+c    series to fifth order.  
+c
+c    Check: 
+c
+c      RD(X,Y,Z) + RD(Y,Z,X) + RD(Z,X,Y) = 3 / sqrt ( X * Y * Z ), 
+c      where X, Y, and Z are positive.
+c
+c  Modified:
+c
+c    27 May 2018
+c
+c  Author:
+c
+c    Bille Carlson, Elaine Notis
+c
+c  Reference:
+c
+c    Bille Carlson,
+c    Computing Elliptic Integrals by Duplication,
+c    Numerische Mathematik,
+c    Volume 33, 1979, pages 1-16.
+c
+c    Bille Carlson, Elaine Notis,
+c    Algorithm 577, Algorithms for Incomplete Elliptic Integrals,
+c    ACM Transactions on Mathematical Software,
+c    Volume 7, Number 3, pages 398-403, September 1981.
+c
+c  Parameters:
+c
+c    Input, double precision X, Y, Z, the arguments in the integral.
+c
+c    Input, double precision ERRTOL, the error tolerance.
+c    The relative error due to truncation is less than
+c      3 * ERRTOL ^ 6 / (1-ERRTOL) ^ 3/2.
+c    Sample choices:
+c      ERRTOL   Relative truncation error less than
+c      1.D-3    4.D-18
+c      3.D-3    3.D-15
+c      1.D-2    4.D-12
+c      3.D-2    3.D-9
+c      1.D-1    4.D-6
+c
+c    Output, integer IERR, the error flag.
+c    0, no error occurred.
+c    1, abnormal termination.
+c
+                   */  
 
      } // radiolocation
 
