@@ -452,6 +452,14 @@ namespace gms {
                  }
 
 
+                  /*
+                           High frequency solutions.
+                           Perfectly conducting spheroids.
+                           Backscatter case.
+                           Formula 5.1-68
+                     */
+
+
 
 
                    
