@@ -555,6 +555,35 @@ namespace gms {
                      */
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5169_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 k0) {
+
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,a2,b2,b4,k0a,k02a2,arg,sarg;
+                          register __m512 trm1,trm2,trm3,x0;  
+                          a2   = _mm512_mul_ps(a,a);
+                          k0a  = _mm512_mul_ps(k0,a);
+                          arg  = _mm512_add_ps(k0a,k0a);
+                          b2   = _mm512_mul_ps(b,b);
+                          k02a2= _mm512_mul_ps(a2,_mm512_mul_ps(k0,k0));
+                          sarg = xsinf(arg);
+                          b4   = _mm512_mul_ps(b2,b2);
+                          trm1 = _mm512_div_ps(_mm512_mul_ps(pi,b4),a2);
+                          x0   = _mm512_mul_ps(sarg,sarg);
+                          trm2 = _mm512_sub_ps(_1,_mm512_div_ps(sarg,arg));
+                          trm3 = _mm512_div_ps(x0,k02a2);
+                          rcs  = _mm512_mul_ps(trm1,_mm512_add_ps(trm2,trm3));
+                          return (rcs);
+                }
+
+
 
 
                    
