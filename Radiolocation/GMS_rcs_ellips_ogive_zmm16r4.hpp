@@ -747,6 +747,14 @@ namespace gms {
                 }
 
 
+                   /*
+                         Oblate spheroids.
+                         Low frequency solutions.
+                         Helper parameters: Ia,Ib
+                         Formula 5.1-91
+                     */
+
+
 
 
                    
