@@ -1075,6 +1075,14 @@ namespace gms {
                  }
 
 
+                     /*
+                         Oblate spheroids (perfectly conducting);
+                         Low frequency solutions.
+                         Backscatter RCS.
+                         Formula 5.1-90
+                     */
+
+
 
 
                    
