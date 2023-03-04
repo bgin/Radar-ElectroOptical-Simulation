@@ -890,6 +890,113 @@ namespace gms {
                  }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 Ic_f5192_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) pc) {
+
+                          register __m512 a = _mm512_load_ps(&pa[0]);
+                          register __m512 c = _mm512_load_ps(&pc[0]);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 Ic,e,a2c,arg,asarg,e2m1s;
+                          register __m512 trm1,trm2,trm3,e2m1,x0,x1;
+                          e    = _mm512_div_ps(a,c);
+                          a2c  = _mm512_mul_ps(c,_mm512_mul_ps(a,a));
+                          e2   = _mm512_mul_ps(e,e);
+                          trm1 = _mm512_div_ps(_2,a2c);
+                          e2m1 = _mm512_sub_ps(e2,_1);
+                          trm2 = _mm512_div_ps(e2,e2m1,e2m1);
+                          x0   = _mm512_sub_ps(_1,e2m1);
+                          e2m1s= _mm512_sqrt_ps(e2m1);
+                          arg  = _mm512_div_ps(e2m1s,e);
+                          x1   = _mm512_sqrt_ps(x0);
+                          asarg= _mm512_asin_ps(arg);
+                          trm3 = _mm512_rcp14_ps(x1);
+                          Ic   = _mm512_mul_ps(_mm512_mul_ps(trm1,trm2),
+                                               _mm512_mul_ps(trm3,asarg));
+                          return (Ic);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 Ic_f5192_zmm16r4_u(const float * __restrict  pa,
+                                           const float * __restrict  pc) {
+
+                          register __m512 a = _mm512_loadu_ps(&pa[0]);
+                          register __m512 c = _mm512_loadu_ps(&pc[0]);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 Ic,e,a2c,arg,asarg,e2m1s;
+                          register __m512 trm1,trm2,trm3,e2m1,x0,x1;
+                          e    = _mm512_div_ps(a,c);
+                          a2c  = _mm512_mul_ps(c,_mm512_mul_ps(a,a));
+                          e2   = _mm512_mul_ps(e,e);
+                          trm1 = _mm512_div_ps(_2,a2c);
+                          e2m1 = _mm512_sub_ps(e2,_1);
+                          trm2 = _mm512_div_ps(e2,e2m1,e2m1);
+                          x0   = _mm512_sub_ps(_1,e2m1);
+                          e2m1s= _mm512_sqrt_ps(e2m1);
+                          arg  = _mm512_div_ps(e2m1s,e);
+                          x1   = _mm512_sqrt_ps(x0);
+                          asarg= _mm512_asin_ps(arg);
+                          trm3 = _mm512_rcp14_ps(x1);
+                          Ic   = _mm512_mul_ps(_mm512_mul_ps(trm1,trm2),
+                                               _mm512_mul_ps(trm3,asarg));
+                          return (Ic);
+                 }
+
+
+                   /*
+                         Oblate spheroids (perfectly conducting);
+                         Low frequency solutions.
+                         Backscatter RCS.
+                         Formula 5.1-89
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5189_zmm16r4(const __m512 a,
+                                            const __m512 c,
+                                            const __m512 tht,
+                                            const __m512 k0) {
+
+                          const __m512 _1  = _mm512_set1_ps(1.0f);
+                          const __m512 hlf = _mm512_set1_ps(0.5f);
+                          const __m512 ptrm= _mm512_set1_ps(5.585053606381854646155810459164f);
+                          register __m512 rcs,Ia,Ic,k04,x0,stht,ctht,stht2,ctht2,trm1;
+                          register __m512 trm2,trm3,trm23,trm1,IaIc,x1;
+                          x0   = _mm512_mul_ps(k0,k0);
+                          Ia   = IaIb_f5191_zmm16r4(a,c);
+                          k04  = _mm512_mul_ps(x0,x0);
+                          Ic   = Ic_f5192_zmm16r4(a,c);
+                          trm1 = _mm512_mul_ps(k04,ptrm);
+                          stht = xsinf(tht); 
+                          IaIc = _mm512_add_ps(Ia,Ic);
+                          ctht = xcosf(tht);
+                          stht2= _mm512_mul_ps(stht,stht);
+                          ctht2= _mm512_mul_ps(ctht,ctht);
+                          x0   = _mm512_fmadd_ps(stht2,hlf,_1);
+                          trm3 = _mm512_div_ps(ctht2,IaIc);
+                          trm2 = _mm512_div_ps(x0,Ia);
+                          x1   = _mm512_add_ps(trm2,trm3);
+                          trm23= _mm512_mul_ps(x1,x1);
+                          rcs  = _mm512_mul_ps(trm1,trm23);
+                          return (rcs);
+                 }
+
+
 
 
                    
