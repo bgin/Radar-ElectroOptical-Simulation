@@ -819,6 +819,39 @@ namespace gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 IaIb_f5191_zmm16r4_u(const float * __restrict  pa,
+                                               const float * __restrict  pc) {
+
+                          register __m512 a = _mm512_loadu_ps(&pa[0]);
+                          register __m512 c = _mm512_loadu_ps(&pc[0]);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 IaIb,e,a2c,arg,asarg,e2m1s;
+                          register __m512 trm1,trm2,trm3,e2m1,x0,x1;
+                          e    = _mm512_div_ps(a,c);
+                          a2c  = _mm512_mul_ps(c,_mm512_mul_ps(a,a));
+                          e2   = _mm512_mul_ps(e,e);
+                          trm1 = _mm512_div_ps(_2,a2c);
+                          e2m1 = _mm512_sub_ps(e2,_1);
+                          trm2 = _mm512_div_ps(_1,_mm512_add_ps(e2m1,e2m1));
+                          x0   = _mm512_mul_ps(e2,e2m1);
+                          e2m1s= _mm512_sqrt_ps(e2m1);
+                          arg  = _mm512_div_ps(e2m1s,e);
+                          x1   = _mm512_sqrt_ps(x0);
+                          asarg= _mm512_asin_ps(arg);
+                          trm3 = _mm512_rcp14_ps(x1);
+                          asarg= _mm512_sub_ps(asarg,_1);
+                          IaIb = _mm512_mul_ps(_mm512_mul_ps(trm1,trm2),
+                                               _mm512_mul_ps(trm3,asarg));
+                          return (IaIb);
+                 }
+
+
 
 
                    
