@@ -1458,6 +1458,14 @@ namespace gms {
                 }
 
 
+                 /*
+                          Low-frequency oblate spheroid Rayleigh
+                          bistatic scattered fields.
+                          E-field (phi), formula 5.1-84
+
+                    */
+
+
               
 
 
