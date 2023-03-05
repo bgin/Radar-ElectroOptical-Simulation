@@ -1434,6 +1434,30 @@ namespace gms {
                 }
 
 
+                 __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HSph_f5183_zmm16r4_u(const float * __restrict  pk0,
+                                          const float * __restrict  pr,
+                                          const float * __restrict  pepsr,
+                                          const float * __restrict  pepsi,
+                                          const float * __restrict pmur,
+                                          const float * __restrict  pmui,
+                                          const float * __restrict  pa,
+                                          const float * __restrict  pc,
+                                          const float * __restrict  ptht1,
+                                          const float * __restrict  ptht2,
+                                          const float * __restrict  pphi2,
+                                          float * __restrict  HSr,
+                                          float * __restrict  HSi) {
+
+                         ESth_f5183_zmm16r4_u(pk0,pr,pepsr,pepsi,pmur,pmui,
+                                              pa,pc,ptht1,ptht2,pphi2,HSr,HSi);
+                }
+
+
               
 
 
