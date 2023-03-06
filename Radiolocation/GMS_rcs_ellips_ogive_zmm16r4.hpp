@@ -2046,7 +2046,28 @@ namespace gms {
 
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HSph_f5185_zmm16r4(const __m512 k0,
+                                          const __m512 r,
+                                          const __m512 epsr,
+                                          const __m512 epsi,
+                                          const __m512 mur,
+                                          const __m512 mui,
+                                          const __m512 a,
+                                          const __m512 c,
+                                          const __m512 tht1,
+                                          const __m512 tht2,
+                                          const __m512 phi2,
+                                          __m512 * __restrict HSr,
+                                          __m512 * __restrict HSi) {
 
+                        ESth_f5185_zmm16r4(k0,r,epsr,epsi,mur,mui,
+                                           a,c,tht1,tht2,phi2,HSr,HSi);
+               }
 
 
 
