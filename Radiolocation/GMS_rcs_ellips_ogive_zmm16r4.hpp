@@ -1861,8 +1861,8 @@ namespace gms {
                        den3i  = _mm512_fmadd_ps(muim1,Ia,_2a2c);
                        t2i    = _mm512_div_ps(cphi2,den3i);
                        cmul_zmm16r4(murm1,muim1,t2r,t2i,&mul3r,&mul3i);
-                       t0r = _mm512_mul_ps(mul1r,_mm512_sub_ps(mul2r,mul3r));
-                       t0i = _mm512_mul_ps(mul1i,_mm512_sub_ps(mul2i,mul3i));
+                       t0r = _mm512_add_ps(mul1r,_mm512_sub_ps(mul2r,mul3r));
+                       t0i = _mm512_add_ps(mul1i,_mm512_sub_ps(mul2i,mul3i));
                        cmul_zmm16r4(facr,faci,t0r,t0i,*ESr,*ESi);
                 }
 
