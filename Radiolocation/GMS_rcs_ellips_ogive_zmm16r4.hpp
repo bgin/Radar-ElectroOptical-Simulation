@@ -1572,7 +1572,7 @@ namespace gms {
                        const __m512 _1  = _mm512_set1_ps(1.0f);
                        const __m512 _2  = _mm512_set1_ps(2.0f);
                        const __m512 _0  = _mm512_setzero_ps();
-                       register __m512 k02,a2,invr,Ia,Ic,a2c,ctht1,ctht2,facr,faci;
+                       register __m512 k02,a2,invr,Ia,Ic,a2c,ctht1,ctht2,facr,faci,resr,resi;
                        register __m512 sth2,sth1,ear,eai,cer,cei,epsrm1,epsim1,cphi2,t2r,t2i;
                        register __m512 murm1,muim1,x0,x1,t0r,t0i,t1r,t1i,_2a2c,den3r,den3i;
                        register __m512 den1r,den1i,den2r,den2i,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
@@ -1617,7 +1617,9 @@ namespace gms {
                        cmul_zmm16r4(murm1,muim1,t2r,t2i,&mul3r,&mul3i);
                        t0r = _mm512_mul_ps(mul1r,_mm512_sub_ps(mul2r,mul3r));
                        t0i = _mm512_mul_ps(mul1i,_mm512_sub_ps(mul2i,mul3i));
-                       cmul_zmm16r4(facr,faci,t0r,t0i,*ESr,*ESi);
+                       cmul_zmm16r4(facr,faci,t0r,t0i,&resr,&resi);
+                       _mm512_store_ps(&ESr[0], resr);
+                       _mm512_store_ps(&ESi[0], resi);
                 }
 
 
