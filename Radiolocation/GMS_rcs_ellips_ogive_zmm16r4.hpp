@@ -1158,7 +1158,7 @@ namespace gms {
                    /*
                           Low-frequency oblate spheroid Rayleigh
                           bistatic scattered fields.
-                          E-field (theta), formula 5.1-83
+                          E-field (theta), perpendicular, formula 5.1-83
                     */
 
                    __ATTR_ALWAYS_INLINE__
@@ -1382,7 +1382,7 @@ namespace gms {
                   /*
                           Low-frequency oblate spheroid Rayleigh
                           bistatic scattered fields.
-                          H-field (phi), formula 5.1-83
+                          H-field (phi), perpendicular formula 5.1-83
                     */
 
 
@@ -1461,7 +1461,7 @@ namespace gms {
                  /*
                           Low-frequency oblate spheroid Rayleigh
                           bistatic scattered fields.
-                          E-field (phi), formula 5.1-84
+                          E-field (phi), perpendicular formula 5.1-84
 
                     */
 
@@ -1711,7 +1711,7 @@ namespace gms {
                   /*
                           Low-frequency oblate spheroid Rayleigh
                           bistatic scattered fields.
-                          H-field (theta), formula 5.1-84
+                          H-field (theta), perpendicular formula 5.1-84
                     */
 
 
@@ -1737,6 +1737,57 @@ namespace gms {
                         ESph_f5184_zmm16r4(k0,r,epsr,epsi,mur,mui,
                                            a,c,tht1,tht2,phi2,*HSr,*HSi);
                   }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HSph_f5184_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                          const float * __restrict __ATTR_ALIGN__(64) pr,
+                                          const float * __restrict __ATTR_ALIGN__(64) pepsr,
+                                          const float * __restrict __ATTR_ALIGN__(64) pepsi,
+                                          const float * __restrict __ATTR_ALIGN__(64) pmur,
+                                          const float * __restrict __ATTR_ALIGN__(64) pmui,
+                                          const float * __restrict __ATTR_ALIGN__(64) pa,
+                                          const float * __restrict __ATTR_ALIGN__(64) pc,
+                                          const float * __restrict __ATTR_ALIGN__(64) ptht1,
+                                          const float * __restrict __ATTR_ALIGN__(64) ptht2,
+                                          const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                          float * __restrict __ATTR_ALIGN__(64) HSr,
+                                          float * __restrict __ATTR_ALIGN__(64) HSi) {
+
+                         ESph_f5184_zmm16r4_a(pk0,pr,pepsr,pepsi,pmur,pmui,
+                                              pa,pc,ptht1,ptht2,pphi2,HSr,HSi);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HSph_f5184_zmm16r4_u(const float * __restrict pk0,
+                                          const float * __restrict  pr,
+                                          const float * __restrict  pepsr,
+                                          const float * __restrict  pepsi,
+                                          const float * __restrict  pmur,
+                                          const float * __restrict  pmui,
+                                          const float * __restrict  pa,
+                                          const float * __restrict  pc,
+                                          const float * __restrict  ptht1,
+                                          const float * __restrict  ptht2,
+                                          const float * __restrict  pphi2,
+                                          float * __restrict  HSr,
+                                          float * __restrict  HSi) {
+
+                         ESph_f5184_zmm16r4_u(pk0,pr,pepsr,pepsi,pmur,pmui,
+                                              pa,pc,ptht1,ptht2,pphi2,HSr,HSi);
+                }
+
+
+                  
 
 
               
