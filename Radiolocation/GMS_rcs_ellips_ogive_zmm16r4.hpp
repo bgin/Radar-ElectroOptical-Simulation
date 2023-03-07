@@ -2426,6 +2426,14 @@ namespace gms {
                }
 
 
+                    /*
+                          Low-frequency oblate spheroid Rayleigh
+                          Backscattered fields.
+                          E-field (theta), parallel, formula 5.1-87         
+ 
+                     */
+
+
 
               
 
