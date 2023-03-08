@@ -2495,9 +2495,12 @@ namespace gms {
                        cdiv_zmm16r4(num1r,num1i,den2r,den2i,&div2r,&div2i);
                        cdiv_zmm16r4(num2r,num2i,den3r,den3i,&div2r,&div2i);
                        t0r = _mm512_sub_ps(div1r,_mm512_sub_ps(div2r,div3r));
-                       t1r = _mm512_sub_ps(div1i,_mm512_sub_ps(div2i,div3i));
+                       t0r = _mm512_sub_ps(div1i,_mm512_sub_ps(div2i,div3i));
                        cexp_zmm16r4(facr,faci,t0r,t0i,*ESr,*ESi);
                }
+
+
+                   
               
 
 
