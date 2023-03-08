@@ -2663,6 +2663,71 @@ namespace gms {
                      */
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ESth_f5188_zmm16r4(const __m512 k0,
+                                          const __m512 r,
+                                          const __m512 epsr,
+                                          const __m512 epsi,
+                                          const __m512 mur,
+                                          const __m512 mui,
+                                          const __m512 a,
+                                          const __m512 c,
+                                          const __m512 tht,
+                                          __m512 * __restrict ESr,
+                                          __m512 * __restrict ESi) {
+
+                       const __m512 _23 = _mm512_set1_ps(-0.666666666666666666666666666667f);
+                       const __m512 _1  = _mm512_set1_ps(1.0f);
+                       const __m512 _2  = _mm512_set1_ps(2.0f);
+                       const __m512 _0  = _mm512_setzero_ps();
+                       register __m512 k02,a2,invr,Ia,Ic,a2c,ctht,stht,facr,faci;
+                       register __m512 ear,eai,cer,cei,epsrm1,epsim1,t2r,t2i,den3r,den3i;
+                       register __m512 murm1,muim1,x0,t0r,t0i,_2a2c;
+                       register __m512 den1r,den1i,den2r,den2i,div1r,div1i,div2r,div2i,div3r,div3i;
+                       register __m512 num1r,num1i,num2r,num2i,ctht2,stht2;
+                       epsrm1 = _mm512_sub_ps(epsr,_1);
+                       k02    = _mm512_mul_ps(k0,k0);
+                       ctht   = xcosf(tht);
+                       murm1  = _mm512_sub_ps(mur,_1)
+                       ctht2  = _mm512_mul_ps(ctht,ctht);
+                       invr   = _mm512_rcp14_ps(r);
+                       epsim1 = _mm512_sub_ps(epsi,_1);
+                       stht   = xsinf(tht);
+                       k0r    = _mm512_mul_ps(k0,r);
+                       stht2  = _mm512_mul_ps(stht,stht);
+                       muim1  = _mm512_sub_ps(mui,_1);
+                       ear    = _0;
+                       x0     = _mm512_mul_ps(_23,k02);
+                       eai    = k0r;
+                       cexp_zmm16r4(ear,eai,&cer,&cei);
+                       Ia     = IaIb_f5191_zmm16r4(a,c);
+                       facr   = _mm512_mul_ps(x0,_mm512_mul_ps(invr,cer));
+                       a2c    = _mm512_mul_ps(c,_mm512_mul_ps(a,a));
+                       faci   = _mm512_mul_ps(x0,_mm512_mul_ps(invr,cei));
+                       _2a2c  = _mm512_div_ps(_2,a2c);
+                       Ic     = Ic_f5192_zmm16r4(a,c);
+                       num1r  = _mm512_mul_ps(epsrm1,ctht2);
+                       den1r  = _mm512_fmadd_ps(epsrm1,Ia,_2a2c);
+                       num2r  = _mm512_mul_ps(epsrm1,stht2);
+                       den2r  = _mm512_fmadd_ps(epsrm1,Ic,_2a2c);
+                       den3r  = _mm512_fmadd_ps(murm1,Ia,_2a2c);
+                       num1i  = _mm512_mul_ps(epsim1,ctht2);
+                       den1i  = _mm512_fmadd_ps(epsim1,Ia,_2a2c);
+                       num2i  = _mm512_mul_ps(epsim1,stht2);
+                       den2i  = _mm512_fmadd_ps(epsim1,Ic,_2a2c);
+                       den3i  = _mm512_fmadd_ps(muim1,Ia,_2a2c);
+                       cdiv_zmm16r4(num1r,num1i,den1r,den1i,&div1r,&div1i);
+                       cdiv_zmm16r4(num2r,num2i,den2r,den2i,&div2r,&div2i);
+                       cdiv_zmm16r4(murm1,muim1,den3r,den3i,&div2r,&div2i);
+                       t0r = _mm512_add_ps(div1r,_mm512_sub_ps(div2r,div3r));
+                       t0r = _mm512_add_ps(div1i,_mm512_sub_ps(div2i,div3i));
+                       cexp_zmm16r4(facr,faci,t0r,t0i,*ESr,*ESi);
+               }
+
                    
 
        }
