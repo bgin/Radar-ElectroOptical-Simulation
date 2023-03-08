@@ -2603,7 +2603,7 @@ namespace gms {
                        register __m512  a     = _mm512_loadu_ps(&pa[0]);
                        register __m512  c     = _mm512_loadu_ps(&pc[0]);
                        register __m512  tht1  = _mm512_loadu_ps(&ptht[0]); 
-                       const __m512 _23 = _mm512_set1_ps(-0.666666666666666666666666666667f);
+                       const __m512 _23 = _mm512_set1_ps(0.666666666666666666666666666667f);
                        const __m512 _1  = _mm512_set1_ps(1.0f);
                        const __m512 _2  = _mm512_set1_ps(2.0f);
                        const __m512 _0  = _mm512_setzero_ps();
