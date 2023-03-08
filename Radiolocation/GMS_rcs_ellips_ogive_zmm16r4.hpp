@@ -2680,7 +2680,7 @@ namespace gms {
                                           __m512 * __restrict ESr,
                                           __m512 * __restrict ESi) {
 
-                       const __m512 _23 = _mm512_set1_ps(-0.666666666666666666666666666667f);
+                       const __m512 _23 = _mm512_set1_ps(0.666666666666666666666666666667f);
                        const __m512 _1  = _mm512_set1_ps(1.0f);
                        const __m512 _2  = _mm512_set1_ps(2.0f);
                        const __m512 _0  = _mm512_setzero_ps();
@@ -2755,13 +2755,13 @@ namespace gms {
                        register __m512  a     = _mm512_load_ps(&pa[0]);
                        register __m512  c     = _mm512_load_ps(&pc[0]);
                        register __m512  tht1  = _mm512_load_ps(&ptht[0]); 
-                       const __m512 _23 = _mm512_set1_ps(-0.666666666666666666666666666667f);
+                       const __m512 _23 = _mm512_set1_ps(0.666666666666666666666666666667f);
                        const __m512 _1  = _mm512_set1_ps(1.0f);
                        const __m512 _2  = _mm512_set1_ps(2.0f);
                        const __m512 _0  = _mm512_setzero_ps();
                        register __m512 k02,a2,invr,Ia,Ic,a2c,ctht,stht,facr,faci;
                        register __m512 ear,eai,cer,cei,epsrm1,epsim1,t2r,t2i,den3r,den3i;
-                       register __m512 murm1,muim1,x0,t0r,t0i,_2a2c;
+                       register __m512 murm1,muim1,x0,t0r,t0i,_2a2c,resr,resi;
                        register __m512 den1r,den1i,den2r,den2i,div1r,div1i,div2r,div2i,div3r,div3i;
                        register __m512 num1r,num1i,num2r,num2i,ctht2,stht2;
                        epsrm1 = _mm512_sub_ps(epsr,_1);
@@ -2800,7 +2800,9 @@ namespace gms {
                        cdiv_zmm16r4(murm1,muim1,den3r,den3i,&div2r,&div2i);
                        t0r = _mm512_add_ps(div1r,_mm512_sub_ps(div2r,div3r));
                        t0r = _mm512_add_ps(div1i,_mm512_sub_ps(div2i,div3i));
-                       cexp_zmm16r4(facr,faci,t0r,t0i,*ESr,*ESi);
+                       cexp_zmm16r4(facr,faci,t0r,t0i,&resr,&resi);
+                       _mm512_store_ps(&ESr[0], resr);
+                       _mm512_store_ps(&ESi[0], resi);
                }
 
 
