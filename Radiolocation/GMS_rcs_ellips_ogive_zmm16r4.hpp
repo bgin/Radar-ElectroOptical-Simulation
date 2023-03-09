@@ -3087,7 +3087,7 @@ namespace gms {
                           register __m512  a     = _mm512_loadu_ps(&pa[0]);
                           register __m512  c     = _mm512_loadu_ps(&pc[0]);
                           register __m512  tht  = _mm512_loadu_ps(&ptht[0]); 
-                          const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
                           register __m512 rcs,a4,a2,c2,num,den,sden;
                           register __m512 stht,ctht,stht2,ctht2;
                           stht = xsinf(tht);
@@ -3097,7 +3097,7 @@ namespace gms {
                           stht2= _mm512_mul_ps(stht,stht);
                           a4   = _mm512_mul_ps(a2,a2);
                           ctht2= _mm512_mul_ps(ctht,ctht);
-                          num  = _mm512_mul_ps(_4pi,_mm512_mul_ps(a4,c2));
+                          num  = _mm512_mul_ps(pi,_mm512_mul_ps(a4,c2));
                           den  = _mm512_fmadd_ps(a2,stht2,_mm512_mul_ps(c2,ctht2));
                           sden = _mm512_mul_ps(den,den);
                           rcs  = _mm512_div_ps(num,sden);
