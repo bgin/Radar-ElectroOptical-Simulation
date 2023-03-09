@@ -2890,8 +2890,41 @@ namespace gms {
                       */
 
 
-                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5193_zmm16r4(const __m512 a,
+                                            const __m512 c,
+                                            const __m512 tht1,
+                                            const __m512 tht2,
+                                            const __m512 phi2) {
 
+                          const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 rcs,num,a4,a2,c2,den,sden,trm1,trm2,trm3;
+                          register __m512 stht1,stht2,cphi2,ctht1,ctht2,sphi2,strm1,strm2,strm3;
+                          stht1 = xsinf(tht1);
+                          a2    = _mm512_mul_ps(a,a);
+                          cphi2 = xcosf(phi2);
+                          c2    = _mm512_mul_ps(c,c);
+                          ctht1 = xcosf(tht1);
+                          a4    = _mm512_mul_ps(a2,a2);
+                          ctht2 = xcosf(tht2);
+                          num   = _mm512_mul_ps(_4pi,_mm512_mul_ps(a4,c2));
+                          sphi2 = xsinf(phi2);
+                          stht2 = xsinf(tht2);
+                          trm1  = _mm512_fmadd_ps(stht2,cphi2,stht1);
+                          strm1 = _mm512_mul_ps(a2,_mm512_mul_ps(trm1,trm1));
+                          trm2  = _mm512_mul_ps(stht2,sphi2);
+                          strm2 = _mm512_mul_ps(a2,_mm512_mul_ps(trm2,trm2));
+                          trm3  = _mm512_mul_ps(ctht1,ctht2);
+                          strm3 = _mm512_mul_ps(c2,_mm512_mul_ps(trm3,trm3));
+                          den   = _mm512_add_ps(strm1,_mm512_add_ps(strm2,strm3));
+                          sden  = _mm512_mul_ps(den,den);
+                          rcs   = _mm512_div_ps(num,sden);
+                          return (rcs);
+                } 
 
        }
 
