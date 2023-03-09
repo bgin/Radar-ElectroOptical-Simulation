@@ -3027,6 +3027,36 @@ namespace gms {
                                             const __m512 c,
                                             const __m512 tht) {
 
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          register __m512 rcs,a4,a2,c2,num,den,sden;
+                          register __m512 stht,ctht,stht2,ctht2;
+                          stht = xsinf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          ctht = xcosf(tht);
+                          c2   = _mm512_mul_ps(c,c);
+                          stht2= _mm512_mul_ps(stht,stht);
+                          a4   = _mm512_mul_ps(a2,a2);
+                          ctht2= _mm512_mul_ps(ctht,ctht);
+                          num  = _mm512_mul_ps(pi,_mm512_mul_ps(a4,c2));
+                          den  = _mm512_fmadd_ps(a2,stht2,_mm512_mul_ps(c2,ctht2));
+                          sden = _mm512_mul_ps(den,den);
+                          rcs  = _mm512_div_ps(num,sden);
+                          return (rcs):
+                 }
+
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5194_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) pc,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht) {
+
+                          register __m512  a     = _mm512_load_ps(&pa[0]);
+                          register __m512  c     = _mm512_load_ps(&pc[0]);
+                          register __m512  tht  = _mm512_load_ps(&ptht[0]); 
                           const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
                           register __m512 rcs,a4,a2,c2,num,den,sden;
                           register __m512 stht,ctht,stht2,ctht2;
@@ -3042,6 +3072,56 @@ namespace gms {
                           sden = _mm512_mul_ps(den,den);
                           rcs  = _mm512_div_ps(num,sden);
                           return (rcs):
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5194_zmm16r4_u(const float * __restrict  pa,
+                                             const float * __restrict  pc,
+                                             const float * __restrict  ptht) {
+
+                          register __m512  a     = _mm512_loadu_ps(&pa[0]);
+                          register __m512  c     = _mm512_loadu_ps(&pc[0]);
+                          register __m512  tht  = _mm512_loadu_ps(&ptht[0]); 
+                          const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 rcs,a4,a2,c2,num,den,sden;
+                          register __m512 stht,ctht,stht2,ctht2;
+                          stht = xsinf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          ctht = xcosf(tht);
+                          c2   = _mm512_mul_ps(c,c);
+                          stht2= _mm512_mul_ps(stht,stht);
+                          a4   = _mm512_mul_ps(a2,a2);
+                          ctht2= _mm512_mul_ps(ctht,ctht);
+                          num  = _mm512_mul_ps(_4pi,_mm512_mul_ps(a4,c2));
+                          den  = _mm512_fmadd_ps(a2,stht2,_mm512_mul_ps(c2,ctht2));
+                          sden = _mm512_mul_ps(den,den);
+                          rcs  = _mm512_div_ps(num,sden);
+                          return (rcs):
+                 }
+
+
+                    /*
+                           Prolate spheroid.
+                           Axial incidence "Physical Optics" backscatter RCS.
+                           Formula 5.1-95
+                      */
+
+ 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5195_zmm16r4(const __m512 a,
+                                            const __m512 c,
+                                            const __m512 k0) {
+
+                          
                  }
 
        }
