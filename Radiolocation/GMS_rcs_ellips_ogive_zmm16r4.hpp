@@ -2811,7 +2811,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ESth_f5188_zmm16r4_u(const float * __restrict  pk0,
+                   voidESth_f5188_zmm16r4_u(const float * __restrict  pk0,
                                           const float * __restrict  pr,
                                           const float * __restrict  pepsr,
                                           const float * __restrict pepsi,
@@ -2878,9 +2878,16 @@ namespace gms {
                        t0r = _mm512_add_ps(div1r,_mm512_sub_ps(div2r,div3r));
                        t0r = _mm512_add_ps(div1i,_mm512_sub_ps(div2i,div3i));
                        cexp_zmm16r4(facr,faci,t0r,t0i,&resr,&resi);
-                       _mm512_store_ps(&ESr[0], resr);
-                       _mm512_store_ps(&ESi[0], resi);
+                       _mm512_storeu_ps(&ESr[0], resr);
+                       _mm512_storeu_ps(&ESi[0], resi);
                }
+
+
+                    /*
+                          High-frequency solutions.
+                          Bistatic case RCS of oblate spheroid.
+                          Formula 5.1-93
+                      */
 
 
        }
