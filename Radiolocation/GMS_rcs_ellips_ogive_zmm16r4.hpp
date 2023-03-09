@@ -3017,6 +3017,33 @@ namespace gms {
                           Formula 5.1-94
                       */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5194_zmm16r4(const __m512 a,
+                                            const __m512 c,
+                                            const __m512 tht) {
+
+                          const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          register __m512 rcs,a4,a2,c2,num,den,sden;
+                          register __m512 stht,ctht,stht2,ctht2;
+                          stht = xsinf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          ctht = xcosf(tht);
+                          c2   = _mm512_mul_ps(c,c);
+                          stht2= _mm512_mul_ps(stht,stht);
+                          a4   = _mm512_mul_ps(a2,a2);
+                          ctht2= _mm512_mul_ps(ctht,ctht);
+                          num  = _mm512_mul_ps(_4pi,_mm512_mul_ps(a4,c2));
+                          den  = _mm512_fmadd_ps(a2,stht2,_mm512_mul_ps(c2,ctht2));
+                          sden = _mm512_mul_ps(den,den);
+                          rcs  = _mm512_div_ps(num,sden);
+                          return (rcs):
+                 }
+
        }
 
 
