@@ -3205,6 +3205,15 @@ namespace gms {
                  }
 
 
+                  /*
+                           Prolate spheroid.
+                           Incidence perpendicular to the axis. 
+                           "Physical Optics" backscatter RCS.
+                           Formula 5.1-96
+                      */
+
+
+
                     
 
        }
