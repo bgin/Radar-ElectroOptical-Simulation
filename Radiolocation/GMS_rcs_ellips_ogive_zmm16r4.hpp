@@ -3010,6 +3010,13 @@ namespace gms {
                           return (rcs);
                 } 
 
+
+                   /*
+                          High-frequency solutions.
+                          Backscatter case RCS of oblate spheroid.
+                          Formula 5.1-94
+                      */
+
        }
 
 
