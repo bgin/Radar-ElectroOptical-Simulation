@@ -3121,7 +3121,23 @@ namespace gms {
                                             const __m512 c,
                                             const __m512 k0) {
 
-                          
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,k0c,a4,a2,c2,_2k0c,k0cs;
+                          register __m512 sarg,trm1,trm2,trm3,x0;
+                          k0c  = _mm512_mul_ps(k0,c);
+                          a2   = _mm512_mul_ps(a,a);
+                          _2k0c= _mm512_add_ps(k0c,k0c);
+                          c2   = _mm512_mul_ps(c,c);
+                          sarg = xsinf(_2k0c);
+                          trm2 = _mm512_div_ps(sarg,k0c);
+                          a4   = _mm512_mul_ps(a2,a2);
+                          k0cs = _mm512_mul_ps(k0c,k0c);
+                          trm1 = _mm512_div_ps(_mm512_mul_ps(pi,ar),c2);
+                          trm3 = _mm512_div_ps(sarg,k0cs);
+                          x0   = _mm512_add_ps(_mm512_sub_ps(_1,trm2),trm3);
+                          rcs  = _mm512_mul_ps(trm1,x0);
+                          return (rcs);
                  }
 
        }
