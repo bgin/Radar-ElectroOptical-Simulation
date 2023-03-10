@@ -3301,6 +3301,14 @@ namespace gms {
                           rcs  = _mm512_mul_ps(trm1,x0);
                           return (rcs);
                  }
+
+
+                   /*
+                        Perfectly conducting ogive.
+                        Backscatter RCS, axial incidence.
+                        Parabolic ogive.
+                        Formula 5.2-1
+                    */
                     
 
        }
