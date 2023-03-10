@@ -3596,6 +3596,43 @@ namespace gms {
                           return (rcs);
                 }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f529_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pgam0,
+                                              const float * __restrict __ATTR_ALIGN__(64) palp,
+                                              const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          register __m512  gam0   = _mm512_load_ps(&pgam0[0]);
+                          register __m512  alp    = _mm512_load_ps(&palp[0]);
+                          register __m512  k0a    = _mm512_load_ps(&pk0a[0]); 
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,trm1,trm2,trm3,talp,calp,_2k0a,tan2,x0;
+                          register __m512 gam2,tan4,calp4,den1,num,carg,den2;
+                          talp   = xtanf(alp);
+                          gam2   = _mm512_mul_ps(gam0,gam0);
+                          calp   = xcosf(alp);
+                          _2k0a  = _mm512_add_ps(k0a,k0a);
+                          den1   = _mm512_add_ps(_1,calp);
+                          tan2   = _mm512_mul_ps(talp,talp);
+                          den2   = _mm512_mul_ps(den1,den1);
+                          tan4   = _mm512_mul_ps(tan2,tan2);
+                          x0     = _mm512_mul_ps(calp,calp);
+                          trm1   = _mm512_div_ps(_mm512_mul_ps(gam2,tan4),_16pi);
+                          calp4  = _mm512_mul_ps(x0,x0);
+                          carg   = xcosf(_2k0a);
+                          trm3   = _mm512_div_ps(calp4,den2);
+                          num    = _mm512_mul_ps(x0,carg);
+                          trm2   = _mm512_div_ps(num,den1);
+                          x0     = _mm512_add_ps(_1,_mm512_add_ps(trm2,trm3));
+                          rcs    = _mm512_mul_ps(trm1,x0);
+                          return (rcs);
+                }
+
                     
 
        }
