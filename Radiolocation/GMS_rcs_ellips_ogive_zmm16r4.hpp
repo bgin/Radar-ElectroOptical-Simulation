@@ -3429,6 +3429,89 @@ namespace gms {
                         Formula 5.2-4
                     */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f524_zmm16r4(const __m512 alp,
+                                           const __m512 r0,
+                                           const __m512 k0) {
+
+                          const __m512 tpi   = _mm512_set1_ps(2.0f*3.14159265358979323846264338328f);
+                          const __m512 _4pi  = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          const __m512 c0    = _mm512_set1_ps(0.33333333333333333333333333333333333f);
+                          const __m512 c1    = _mm512_set1_ps(1.5f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,rho,V,V2,k04,salp,calp,trm2,trm3;
+                          register __m512 num,den,expr,invr,inve,x0,x1,x2,trm1,x3;
+                          x0  = _mm512_mul_ps(k0,k0);
+                          x1  = _mm512_mul_ps(tpi,_mm512_mul_ps(r0,r0));
+                          salp= xsinf(alp);
+                          k04 = _mm512_mul_ps(x0,x0);
+                          calp= xcosf(alp);
+                          trm1= _mm512_mul_ps(_4pi,k04);
+                          x0  = _mm512_mul_ps(salp,_mm512_mul_ps(salp,salp));
+                          x3  = _mm512_sub_ps(_1,calp);
+                          x2  = _mm512_mul_ps(c0,x0);
+                          den = _mm512_mul_ps(x3,_mm512_mul_ps(x3,x3));
+                          num = _mm512_sub_ps(salp,_mm512_fmsub_ps(alp,calp,x2));
+                          rho = _mm512_mul_ps(c1,_mm512_div_ps(num,den));
+                          invr= _mm512_rcp14_ps(rho);
+                          V   = _mm512_mul_ps(x1,num);
+                          expr= xexpf(rho);
+                          V2  = _mm512_mul_ps(V,V);
+                          inve= _mm512_rcp14_ps(expr);
+                          trm2= _mm512_mul_ps(trm1,V2);
+                          trm3= _mm512_fmadd_ps(inve,invr,_1);
+                          rcs = _mm512_mul_ps(trm2,trm3);
+                          return (rcs);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f524_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) palp,
+                                              const float * __restrict __ATTR_ALIGN__(64) pr0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pk0) {
+
+                          register __m512  alp   = _mm512_load_ps(&palp[0]);
+                          register __m512  r0    = _mm512_load_ps(&pr0[0]);
+                          register __m512  k0    = _mm512_load_ps(&pk0[0]); 
+                          const __m512 tpi   = _mm512_set1_ps(2.0f*3.14159265358979323846264338328f);
+                          const __m512 _4pi  = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          const __m512 c0    = _mm512_set1_ps(0.33333333333333333333333333333333333f);
+                          const __m512 c1    = _mm512_set1_ps(1.5f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,rho,V,V2,k04,salp,calp,trm2,trm3;
+                          register __m512 num,den,expr,invr,inve,x0,x1,x2,trm1,x3;
+                          x0  = _mm512_mul_ps(k0,k0);
+                          x1  = _mm512_mul_ps(tpi,_mm512_mul_ps(r0,r0));
+                          salp= xsinf(alp);
+                          k04 = _mm512_mul_ps(x0,x0);
+                          calp= xcosf(alp);
+                          trm1= _mm512_mul_ps(_4pi,k04);
+                          x0  = _mm512_mul_ps(salp,_mm512_mul_ps(salp,salp));
+                          x3  = _mm512_sub_ps(_1,calp);
+                          x2  = _mm512_mul_ps(c0,x0);
+                          den = _mm512_mul_ps(x3,_mm512_mul_ps(x3,x3));
+                          num = _mm512_sub_ps(salp,_mm512_fmsub_ps(alp,calp,x2));
+                          rho = _mm512_mul_ps(c1,_mm512_div_ps(num,den));
+                          invr= _mm512_rcp14_ps(rho);
+                          V   = _mm512_mul_ps(x1,num);
+                          expr= xexpf(rho);
+                          V2  = _mm512_mul_ps(V,V);
+                          inve= _mm512_rcp14_ps(expr);
+                          trm2= _mm512_mul_ps(trm1,V2);
+                          trm3= _mm512_fmadd_ps(inve,invr,_1);
+                          rcs = _mm512_mul_ps(trm2,trm3);
+                          return (rcs);
+                }
+
                     
 
        }
