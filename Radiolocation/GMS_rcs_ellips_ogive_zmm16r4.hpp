@@ -3309,6 +3309,31 @@ namespace gms {
                         Parabolic ogive.
                         Formula 5.2-1
                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f521_zmm16r4(const __m512 a,
+                                           const __m512 b,
+                                           const __m512 k0) {
+
+                          const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _4pi = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          const __m512 _1   = _mm512_set1_ps(1.0f);
+                          const __m512 c0   = _mm512_set1_ps(0.8f);
+                          const __m512 c1   = _mm512_set1_ps(1.066666666666666666666666666667f);
+                          register __m512 rcs,V,rho,V2,k04,k02,expr;
+                          register __m512 trm1,trm2,b2,invr,x0;
+                          k02  = _mm512_mul_ps(k0,k0);
+                          rho  = _mm512_mul_ps(c0,_mm512_div_ps(a,b));
+                          k04  = _mm512_mul_ps(k02,k02);
+                          b2   = _mm512_mul_ps(b,b);
+                          x0   = _mm512_mul_ps(pi,rho);
+                          
+                }
                     
 
        }
