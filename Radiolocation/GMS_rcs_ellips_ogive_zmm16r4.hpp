@@ -3965,6 +3965,31 @@ namespace gms {
                           if(m4 && m5) return (rcs_f528_zmm16r4(b,r0,tht)); 
                 }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f52678_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pgam0,
+                                               const float * __restrict __ATTR_ALIGN__(64) palp,
+                                               const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                               const float * __restrict __ATTR_ALIGN__(64) pb,
+                                               const float * __restrict __ATTR_ALIGN__(64) pr0) {
+
+                          const __m512 _90        = _mm512_set1_ps(90.0f);
+                          const __m512 _0         = _mm512_setzero_ps();
+                          const __m512 dif        = _mm512_sub_ps(_90,alp);
+                          const __mmask16 m1      = _mm512_cmp_ps_mask(_0,tht,_CMP_LE_OQ);
+                          const __mmask16 m2      = _mm512_cmp_ps_mask(tht,dif,_CMP_LT_OQ);
+                          const __mmask16 m3      = _mm512_cmp_ps_mask(tht,dif,_CMP_EQ_OQ);
+                          const __mmask16 m4      = _mm512_cmp_ps_mask(dif,tht,_CMP_LT_OQ);
+                          const __mmask16 m5      = _mm512_cmp_ps_mask(tht,_90,_CMP_LE_OQ);
+                          if(m1 && m2) return (rcs_f526_zmm16r4_a(pgam0,palp,ptht));
+                          if(m3)       return (rcs_f527_zmm16r4_a(pb,palp));
+                          if(m4 && m5) return (rcs_f528_zmm16r4_a(pb,pr0,ptht)); 
+                }
+
        }
 
 
