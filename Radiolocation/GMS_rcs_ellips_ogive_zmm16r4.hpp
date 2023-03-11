@@ -3888,7 +3888,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f528_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pb,
+                   __m512 rcs_f528_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pb,
                                            const float * __restrict __ATTR_ALIGN__(64) pr0,
                                            const float * __restrict __ATTR_ALIGN__(64) ptht ) {
 
@@ -3907,6 +3907,63 @@ namespace gms {
                           rcs  = _mm512_mul_ps(x0,_mm512_sub_ps(_1,rat));
                           return (rat);
                  }
+
+
+                     __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f528_zmm16r4_u(const float * __restrict  pb,
+                                           const float * __restrict  pr0,
+                                           const float * __restrict  ptht ) {
+
+                          register __m512  b     = _mm512_loadu_ps(&pb[0]);
+                          register __m512  r0    = _mm512_loadu_ps(&pr0[0]);
+                          register __m512  tht   = _mm512_loadu_ps(&ptht[0]);    
+                          const __m512 pi  = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _1  = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,num,den,r02,stht,x0,rat;
+                          r02  = _mm512_mul_ps(r0,r0);
+                          stht = xsinf(tht);
+                          x0   = _mm512_mul_ps(pi,r02);
+                          num  = _mm512_sub_ps(r0,b);
+                          den  = _mm512_mul_ps(r0,stht);
+                          rat  = _mm512_div_ps(num,den);
+                          rcs  = _mm512_mul_ps(x0,_mm512_sub_ps(_1,rat));
+                          return (rat);
+                 }
+
+
+                  /*
+                       Dispatch kernel for Circular ogive RCS.
+                       Formulae: 5.2-6, 5.2-7, 5.2-8
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f52678_zmm16r4(const __m512 gam0,
+                                             const __m512 alp,
+                                             const __m512 tht,
+                                             const __m512 b,
+                                             const __m512 r0) {
+
+                          const __m512 _90        = _mm512_set1_ps(90.0f);
+                          const __m512 _0         = _mm512_setzero_ps();
+                          const __m512 dif        = _mm512_sub_ps(_90,alp);
+                          const __mmask16 m1      = _mm512_cmp_ps_mask(_0,tht,_CMP_LE_OQ);
+                          const __mmask16 m2      = _mm512_cmp_ps_mask(tht,dif,_CMP_LT_OQ);
+                          const __mmask16 m3      = _mm512_cmp_ps_mask(tht,dif,_CMP_EQ_OQ);
+                          const __mmask16 m4      = _mm512_cmp_ps_mask(dif,tht,_CMP_LT_OQ);
+                          const __mmask16 m5      = _mm512_cmp_ps_mask(tht,_90,_CMP_LE_OQ);
+                          if(m1 && m2) return (rcs_f526_zmm16r4(gam0,alp,tht));
+                          if(m3)       return (rcs_f527_zmm16r4(b,alp));
+                          if(m4 && m5) return (rcs_f528_zmm16r4(b,r0,tht)); 
+                }
 
        }
 
