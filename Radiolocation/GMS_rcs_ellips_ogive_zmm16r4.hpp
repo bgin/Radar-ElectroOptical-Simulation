@@ -3960,9 +3960,15 @@ namespace gms {
                           const __mmask16 m3      = _mm512_cmp_ps_mask(tht,dif,_CMP_EQ_OQ);
                           const __mmask16 m4      = _mm512_cmp_ps_mask(dif,tht,_CMP_LT_OQ);
                           const __mmask16 m5      = _mm512_cmp_ps_mask(tht,_90,_CMP_LE_OQ);
-                          if(m1 && m2) return (rcs_f526_zmm16r4(gam0,alp,tht));
-                          if(m3)       return (rcs_f527_zmm16r4(b,alp));
-                          if(m4 && m5) return (rcs_f528_zmm16r4(b,r0,tht)); 
+                          if(m1 && m2) {
+                              return (rcs_f526_zmm16r4(gam0,alp,tht));
+                          }
+                          else if(m3) {
+                              return (rcs_f527_zmm16r4(b,alp));
+                          }
+                          else(m4 && m5) {
+                               return (rcs_f528_zmm16r4(b,r0,tht)); 
+                          }
                 }
 
 
