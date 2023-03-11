@@ -3633,6 +3633,73 @@ namespace gms {
                           return (rcs);
                 }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f529_zmm16r4_u( const float * __restrict pgam0,
+                                              const float * __restrict  palp,
+                                              const float * __restrict  pk0a) {
+
+                          register __m512  gam0   = _mm512_loadu_ps(&pgam0[0]);
+                          register __m512  alp    = _mm512_loadu_ps(&palp[0]);
+                          register __m512  k0a    = _mm512_loadu_ps(&pk0a[0]); 
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          register __m512 rcs,trm1,trm2,trm3,talp,calp,_2k0a,tan2,x0;
+                          register __m512 gam2,tan4,calp4,den1,num,carg,den2;
+                          talp   = xtanf(alp);
+                          gam2   = _mm512_mul_ps(gam0,gam0);
+                          calp   = xcosf(alp);
+                          _2k0a  = _mm512_add_ps(k0a,k0a);
+                          den1   = _mm512_add_ps(_1,calp);
+                          tan2   = _mm512_mul_ps(talp,talp);
+                          den2   = _mm512_mul_ps(den1,den1);
+                          tan4   = _mm512_mul_ps(tan2,tan2);
+                          x0     = _mm512_mul_ps(calp,calp);
+                          trm1   = _mm512_div_ps(_mm512_mul_ps(gam2,tan4),_16pi);
+                          calp4  = _mm512_mul_ps(x0,x0);
+                          carg   = xcosf(_2k0a);
+                          trm3   = _mm512_div_ps(calp4,den2);
+                          num    = _mm512_mul_ps(x0,carg);
+                          trm2   = _mm512_div_ps(num,den1);
+                          x0     = _mm512_add_ps(_1,_mm512_add_ps(trm2,trm3));
+                          rcs    = _mm512_mul_ps(trm1,x0);
+                          return (rcs);
+                }
+
+
+                   /*
+                           Circular ogive.
+                           RCS as function of theta angle.
+                           Formula 5.2-6
+                     */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f526_zmm16r4(const __m512 gam0,
+                                           const __m512 alp,
+                                           const __m512 tht, // in degrees.
+                                           const __m512 b,
+                                           const __m512 r0) {
+
+                          const __m512 _90    = _mm512_set1_ps(90.0f);
+                          const __m512 _1     = _mm512_set1_ps(1.0f);
+                          const __m512 _0     = _mm512_setzero_ps();
+                          register __m512 dif = _mm512_sub_ps(_90,alp);
+                          const __mmask16 m1  = _mm512_cmp_ps_mask(_0,alp,_CMP_LE_OQ);
+                          const __mmask16 m2  = _mm512_cmp_ps_mask(alp,dif,_CMP_LT_OQ);
+                          if(m1 && m2) {
+
+                          } 
+                         
+                }
+
                     
 
        }
