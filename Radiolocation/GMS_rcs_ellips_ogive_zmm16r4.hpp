@@ -3781,6 +3781,55 @@ namespace gms {
                           return (rcs);
                 }
 
+
+                    /*
+                           Circular ogive.
+                           RCS as function of theta angle, i.e. theta = 90-alpha
+                           Formula 5.2-7
+                     */
+
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f527_zmm16r4(const __m512 b,
+                                           const __m512 alp) {
+
+                          const __m512 _4pi  = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 hlf   = _mm512_set1_ps(0.5f);
+                          register __m512 rcs,b2,alp2,talp,x0;
+                          b2  = _mm512_mul_ps(b,b);
+                          alp2= _mm512_mul_ps(alp,hlf);
+                          talp= xtanf(alp2);
+                          x0  = _mm512_mul_ps(_4pi,_mm512_mul_ps(talp,talp));
+                          rcs = _mm512_div_ps(b2,x0);
+                          return (rcs);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f527_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pb,
+                                              const float * __restrict __ATTR_ALIGN__(64) palp) {
+
+                          register __m512  b    = _mm512_load_ps(&pb[0]);
+                          register __m512  alp  = _mm512_load_ps(&palp[0]);    
+                          const __m512 _4pi  = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 hlf   = _mm512_set1_ps(0.5f);
+                          register __m512 rcs,b2,alp2,talp,x0;
+                          b2  = _mm512_mul_ps(b,b);
+                          alp2= _mm512_mul_ps(alp,hlf);
+                          talp= xtanf(alp2);
+                          x0  = _mm512_mul_ps(_4pi,_mm512_mul_ps(talp,talp));
+                          rcs = _mm512_div_ps(b2,x0);
+                          return (rcs);
+                 }
+
                     
 
        }
