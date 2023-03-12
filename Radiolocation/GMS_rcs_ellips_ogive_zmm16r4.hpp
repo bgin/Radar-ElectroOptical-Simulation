@@ -4090,7 +4090,7 @@ namespace gms {
 	           static inline
                    __m512 rcs_f5210_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pgam0,
                                                const float * __restrict __ATTR_ALIGN__(64) palp,
-                                               const float * __restrict __ATTR_ALIGN__(64) pk0a,) {
+                                               const float * __restrict __ATTR_ALIGN__(64) pk0a) {
 
                         register __m512  gam0     = _mm512_load_ps(&pgam0[0]);
                         register __m512  alp      = _mm512_load_ps(&palp[0]);
@@ -4180,6 +4180,61 @@ namespace gms {
                       Long thin parabolic ogive - MISSILE NOISE CONE.
                       Formula 5.2-12
                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5212_zmm16r4(const __m512 gam0,
+                                            const __m512 alp,
+                                            const __m512 k0a) {
+
+                          const __m512 _1     = _mm512_set1_ps(1.0f);  
+                          const __m512 _4     = _mm512_set1_ps(4.0f);
+                          const __m512 _8pi   = _mm512_set1_ps(25.132741228718345907701147066236f);
+                          register __m512 rcs,gam2,talp,talp2,talp4,arg,carg,x0,rat;
+                          gam2 = _mm512_mul_ps(gam0,gam0);
+                          arg = _mm512_mul_ps(_4,k0a);
+                          talp = xtanf(alp);
+                          carg = xcosf(arg);
+                          talp2= _mm512_mul_ps(talp,talp);
+                          x0   = _mm512_add_ps(_1,carg);
+                          talp4= _mm512_mul_ps(talp2,talp2);
+                          rat  = _mm512_div_ps(_mm512_mul_ps(gam2,talp4),_8pi);
+                          rcs  = _mm512_mul_ps(rat,x0);
+                          return (rcs);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5212_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pgam0,
+                                               const float * __restrict __ATTR_ALIGN__(64) palp,
+                                               const float * __restrict __ATTR_ALIGN__(64) pk0a) {
+
+                          register __m512  gam0     = _mm512_load_ps(&pgam0[0]);
+                          register __m512  alp      = _mm512_load_ps(&palp[0]);
+                          register __m512  k0s      = _mm512_load_ps(&pk0a[0]); 
+                          const __m512 _1     = _mm512_set1_ps(1.0f);  
+                          const __m512 _4     = _mm512_set1_ps(4.0f);
+                          const __m512 _8pi   = _mm512_set1_ps(25.132741228718345907701147066236f);
+                          register __m512 rcs,gam2,talp,talp2,talp4,arg,carg,x0,rat;
+                          gam2 = _mm512_mul_ps(gam0,gam0);
+                          arg = _mm512_mul_ps(_4,k0a);
+                          talp = xtanf(alp);
+                          carg = xcosf(arg);
+                          talp2= _mm512_mul_ps(talp,talp);
+                          x0   = _mm512_add_ps(_1,carg);
+                          talp4= _mm512_mul_ps(talp2,talp2);
+                          rat  = _mm512_div_ps(_mm512_mul_ps(gam2,talp4),_8pi);
+                          rcs  = _mm512_mul_ps(rat,x0);
+                          return (rcs);
+                 }
 
 
                   
