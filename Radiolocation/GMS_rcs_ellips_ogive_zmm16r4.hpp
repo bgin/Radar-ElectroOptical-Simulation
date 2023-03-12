@@ -4034,6 +4034,29 @@ namespace gms {
                 }
 
 
+                  /*
+                      Long thin bodies of revolution.
+                      Axial-incidence backscatter RCS.
+                      Long thin parabolic ogive - MISSILE NOISE CONE.
+                      Formula 5.2-10
+                  */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5210_zmm16r4(const __m512 gam0,
+                                            const __m512 alp,
+                                            const __m512 k0a) {
+
+                        const __m512 _16pi  = _mm512_set1_ps(50.265482457436691815402294132472f);
+                        const __m512 _1     = _mm512_set1_ps(1.0f);  
+                        const __m512 _3     = _mm512_set1_ps(3.0f);
+                        
+                }
+
+
        }
 
 
