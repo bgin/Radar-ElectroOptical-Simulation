@@ -4237,7 +4237,7 @@ namespace gms {
                  }
 
 
-                      __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -4270,6 +4270,40 @@ namespace gms {
                          Circular ogive nose-on RCS (en emprical solution).
                          Formula 5.2-14
                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5214_zmm16r4(const __m512 gam0,
+                                            const __m512 alp,
+                                            const __m512 k0a) {
+
+                          const __m512 _1     = _mm512_set1_ps(1.0f);  
+                          const __m512 _4     = _mm512_set1_ps(4.0f);
+                          const __m512 _2pi   = _mm512_set1_ps(6.283185307179586476925286766559f);
+                          const __m512 pi     = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 c0     = _mm512_set1_ps(20000000000.0f);
+                          const __m512 c1     = _mm512_set1_ps(4.3f);
+                          const __m512 c2     = _mm512_set1_ps(1.25f);
+                          register __m512 rcs,gam2,alp2,alp2p,s2alp,arg,sarg;
+                          register __m512 num,den,rat,num1,den1;
+                          gam2  = _mm512_mul_ps(gam0,gam0);
+                          alp2  = _mm512_add_ps(alp,alp);
+                          s2alp = xsinf(alp2);
+                          num   = _mm512_mul_ps(_mm512_mul_ps(_4,k0a),alp);
+                          den   = _mm512_mul_ps(pi,s2alp);
+                          alp2p = _mm512_pow_ps(alp2,c1);
+                          rat   = _mm512_sub_ps(_mm512_div_ps(num,den),c2);
+                          num1  = _mm512_mul_ps(pi,_mm512_mul_ps(gam2,alp2p));
+                          arg   = _mm512_mul_ps(_2pi,rat);
+                          den1  = _mm512_div_ps(num1,c0);
+                          sarg  = xsinf(arg);
+                          rcs   = _mm512_mul_ps(den1,_mm512_add_ps(_1,sarg));
+                          return (rcs);
+                 }
 
 
 
