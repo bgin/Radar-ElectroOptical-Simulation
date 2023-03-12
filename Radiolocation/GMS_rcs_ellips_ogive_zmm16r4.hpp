@@ -4128,6 +4128,63 @@ namespace gms {
                 }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f5210_zmm16r4_u( const float * __restrict  pgam0,
+                                               const float * __restrict  palp,
+                                               const float * __restrict  pk0a,) {
+
+                        register __m512  gam0     = _mm512_loadu_ps(&pgam0[0]);
+                        register __m512  alp      = _mm512_loadu_ps(&palp[0]);
+                        register __m512  k0s      = _mm512_loadu_ps(&pk0a[0]); 
+                        const __m512 _16pi  = _mm512_set1_ps(50.265482457436691815402294132472f);
+                        const __m512 _1     = _mm512_set1_ps(1.0f);  
+                        const __m512 _3     = _mm512_set1_ps(3.0f);
+                        const __m512 _4     = _mm512_set1_ps(4.0f);
+                        register __m512 rcs,gam2,talp,talp2,talp4,_2k0a;
+                        register __m512 k0as,ear,eai,cer,cei,cabs,x0,x1;
+                        register __m512 trm1,t0r,t0i,t1r,t1i,t2r,t2i,trm2r,trm2i;
+                        gam2  = _mm512_mul_ps(gam0,gam0);
+                        talp  = xtanf(alp);
+                        _2k0a = _mm512_add_ps(k0a,k0a);
+                        k0as  = _mm512_mul_ps(_4,_mm512_mul_ps(k0a,k0a));
+                        talp2 = _mm512_mul_ps(talp,talp);
+                        ear   = _mm512_setzero_ps();
+                        talp4 = _mm512_mul_ps(talp2,talp2);
+                        x0    = _mm512_div_ps(_3,_2k0a);
+                        eai   = _mm512_add_ps(_2k0a,_2k0a);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        trm1  = _mm512_div_ps(_mm512_mul_ps(gam2,talp4),_16pi);
+                        t0r   = _mm512_sub_ps(_1,cer);
+                        t0i   = _mm512_sub_ps(_1,cei);
+                        x1    = _mm512_div_ps(_3,k0as);
+                        t2r   = _mm512_mul_ps(x1,t0r);
+                        t1r   = _mm512_mul_ps(x0,_mm512_add_ps(_1,cer));
+                        t2i   = _mm512_mul_ps(x1,t0i);
+                        t1i   = _mm512_mul_ps(x0,_mm512_add_ps(_1,cei));
+                        trm2r = _mm512_sub_ps(t0r,_mm512_sub_ps(t1r,t2r));
+                        trm2i = _mm512_sub_ps(t0i,_mm512_sub_ps(t1i,t2i));
+                        cabs  = cabs_zmm16r4(trm2r,trm2i);
+                        rcs   = _mm512_mul_ps(trm1,cabs);
+                        return (rcs);                 
+                }
+
+
+                 /*
+                      Long thin bodies of revolution.
+                      Axial-incidence backscatter RCS.
+                      High-frequency limit.
+                      Long thin parabolic ogive - MISSILE NOISE CONE.
+                      Formula 5.2-12
+                  */
+
+
+                  
+
+
 
        }
 
