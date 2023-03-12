@@ -4266,6 +4266,12 @@ namespace gms {
                  }
 
 
+                    /*
+                         Circular ogive nose-on RCS (en emprical solution).
+                         Formula 5.2-14
+                     */
+
+
 
                   
 
