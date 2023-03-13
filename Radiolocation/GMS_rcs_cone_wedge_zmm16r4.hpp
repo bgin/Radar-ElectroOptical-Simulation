@@ -53,8 +53,13 @@ namespace  gms {
         namespace radiolocation {
 
 
+                   /*
+                       Small-angle cone (alpha ~ 0).
+                       Backscattered RCS.
+                       Formula 6.2-12
+                   */
 
-}
+          }
 
 
 }
