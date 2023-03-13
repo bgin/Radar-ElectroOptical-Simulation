@@ -43,7 +43,7 @@ namespace file_version {
 #include <immintrin.h>
 #include "GMS_config.h"
 #include "GMS_sleefsimdsp.hpp"
-
+#include "GMS_complex_zmm16r4.hpp"
 
 namespace gms {
 
@@ -4378,6 +4378,9 @@ namespace gms {
                           rcs   = _mm512_mul_ps(den1,_mm512_add_ps(_1,sarg));
                           return (rcs);
                  }
+
+
+                 
 
 
 
