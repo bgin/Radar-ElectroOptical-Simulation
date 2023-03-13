@@ -59,6 +59,86 @@ namespace  gms {
                        Formula 6.2-12
                    */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6212_zmm16r4(const __m512 gam0,
+                                            const __m512 alp) {
+
+                          const __m512 _4pi  = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          const __m512 _3    = _mm512_set1_ps(3.0f);
+                          register __m512 rcs,gam2,calp,trm1,trm2,trm3,x0;
+                          gam2  = _mm512_mul_ps(gam0,gam0);
+                          calp  = xcosf(alp);
+                          trm1  = _mm512_div_ps(gam2,_4pi);
+                          x0    = _mm512_sub_ps(_1,calp);
+                          trm3  = _mm512_fmadd_ps(_3,x0,_1);
+                          trm2  = _mm512_mul_ps(x0,x0);
+                          rcs   = _mm512_mul_ps(trm1,_mm512_mul_ps(trm2,trm3));
+                          return (rcs);
+                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6212_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pgam0,
+                                              const float * __restrict __ATTR_ALIGN__(64) palp) {
+
+                          register __m512 gam0 = _mm512_load_ps(&pgam0[0]);
+                          register __m512 alp  = _mm512_load_ps(&palp[0]);
+                          const __m512 _4pi  = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          const __m512 _3    = _mm512_set1_ps(3.0f);
+                          register __m512 rcs,gam2,calp,trm1,trm2,trm3,x0;
+                          gam2  = _mm512_mul_ps(gam0,gam0);
+                          calp  = xcosf(alp);
+                          trm1  = _mm512_div_ps(gam2,_4pi);
+                          x0    = _mm512_sub_ps(_1,calp);
+                          trm3  = _mm512_fmadd_ps(_3,x0,_1);
+                          trm2  = _mm512_mul_ps(x0,x0);
+                          rcs   = _mm512_mul_ps(trm1,_mm512_mul_ps(trm2,trm3));
+                          return (rcs);
+                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6212_zmm16r4_u(const float * __restrict  pgam0,
+                                              const float * __restrict  palp) {
+
+                          register __m512 gam0 = _mm512_loadu_ps(&pgam0[0]);
+                          register __m512 alp  = _mm512_loadu_ps(&palp[0]);
+                          const __m512 _4pi  = _mm512_set1_ps(12.566370614359172953850573533118f);
+                          const __m512 _1    = _mm512_set1_ps(1.0f);
+                          const __m512 _3    = _mm512_set1_ps(3.0f);
+                          register __m512 rcs,gam2,calp,trm1,trm2,trm3,x0;
+                          gam2  = _mm512_mul_ps(gam0,gam0);
+                          calp  = xcosf(alp);
+                          trm1  = _mm512_div_ps(gam2,_4pi);
+                          x0    = _mm512_sub_ps(_1,calp);
+                          trm3  = _mm512_fmadd_ps(_3,x0,_1);
+                          trm2  = _mm512_mul_ps(x0,x0);
+                          rcs   = _mm512_mul_ps(trm1,_mm512_mul_ps(trm2,trm3));
+                          return (rcs);
+                  }
+
+
+                     /*
+                           Small-angle cone (alpha ~ pi/2).
+                           Backscattered RCS.
+                           Formula 6.2-13
+                       */
+
           }
 
 
