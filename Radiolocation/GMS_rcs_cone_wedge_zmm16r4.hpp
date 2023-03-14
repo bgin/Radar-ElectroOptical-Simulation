@@ -340,6 +340,13 @@ namespace  gms {
                         _mm512_storeu_ps(&ESi[0] ,_mm512_mul_ps(t0i,alphs));
                  }
 
+
+                   /*
+                         Bistatic RCS case.
+                         E-field scattered for (theta component).
+                         Formula 6.2-14
+                    */
+
           }
 
 
