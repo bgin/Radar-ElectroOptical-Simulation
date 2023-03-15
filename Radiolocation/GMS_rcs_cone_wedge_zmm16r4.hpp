@@ -486,7 +486,7 @@ namespace  gms {
                                            const float * __restrict  pr,
                                            const float * __restrict  palp,
                                            const float * __restrict  ptht1,
-                                           const float * __restrict ptht2,
+                                           const float * __restrict  ptht2,
                                            const float * __restrict  pphi1,
                                            const float * __restrict  pphi2,
                                            float * __restrict  ESr,
@@ -540,9 +540,16 @@ namespace  gms {
                         den2   = _mm512_mul_ps(x1,sect2);
                         cei    = _mm512_mul_ps(t0i,x0);
                         rat2   = _mm512_div_ps(num2,den2);
-                        _mm512_store_ps(&ESr[0] ,_mm512_fmadd_ps(cer,rat1,rat2));
-                        _mm512_store_ps(&ESi[0] ,_mm512_fmadd_ps(cei,rat1,rat2));
+                        _mm512_storeu_ps(&ESr[0] ,_mm512_fmadd_ps(cer,rat1,rat2));
+                        _mm512_storeu_ps(&ESi[0] ,_mm512_fmadd_ps(cei,rat1,rat2));
                 }
+
+
+                    /*
+                           Bistatic RCS case.
+                           E-field scattered for (phi component).
+                           Formula 6.2-15
+                      */
 
 
 
