@@ -832,6 +832,57 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ESth_f6217_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64) pr,
+                                           const float * __restrict __ATTR_ALIGN__(64) palp,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           const float * __restrict __ATTR_ALIGN__(64) pphi,
+                                           float * __restrict __ATTR_ALIGN__(64) ESr,
+                                           float * __restrict __ATTR_ALIGN__(64) ESi) {
+
+                         register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                         register __m512 r    = _mm512_load_ps(&pr[0]);
+                         register __m512 alp  = _mm512_load_ps(&palp[0]);
+                         register __m512 tht  = _mm512_load_ps(&ptht[0]);
+                         register __m512 pphi = _mm512_load_ps(&pphi[0]);
+                         const __m512 hlf = _mm512_set1_ps(0.5f);
+                         const __m512 _4  = _mm512_set1_ps(4.0f);
+                         const __m512 c0  = _mm512_set1_ps(1.5f);
+                         register __m512 k0r,ear,eai,cer,cei,t0r,t0i,inv,x0,chtht;
+                         register __m512 L,cphi,cosa,sina,htht,argm,argp,num,den;
+                         k0r   = _mm512_mul_ps(k0,r);
+                         cphi  = xcosf(phi);
+                         htht  = _mm512_mul_ps(tht,hlf);
+                         cosa  = xcosf(alp);
+                         ear   = _mm512_setzero_ps();
+                         inv   = _mm512_rcp14_ps(k0r);
+                         eai   = k0r;
+                         argm  = _mm512_add_ps(alp,htht);
+                         cexp_zmm16r4(ear,eai,&t0r,&t0i);
+                         argp  = _mm512_sub_ps(alp,htht);
+                         sina  = xsinf(alp);
+                         x0    = _mm512_mul_ps(sina,sina);
+                         chtht = xcosf(htht);
+                         cer   = _mm512_mul_ps(t0r,inv);
+                         num   = _mm512_mul_ps(negate_zmm16r4(x0),cosa);
+                         cei   = _mm512_mul_ps(t0i,inv);
+                         ear   = xcosf(argp);
+                         eai   = xcosf(argm);
+                         x0    = _mm512_pow_ps(_mm512_add_ps(ear,eai),c0);
+                         den   = _mm512_mul_ps(_mm512_mul_ps(_4,chtht),x0);
+                         L     = _mm512_div_ps(num,den);
+                         t0i   = _mm512_mul_ps(L,cphi);
+                         _mm512_store_ps(&ESr[0] ,_mm512_mul_ps(cer,t0i));
+                         _mm512_store_ps(&ESi[0] ,_mm512_mul_ps(cei,t0i));
+                }
+
+
+
           }
 
 
