@@ -899,7 +899,7 @@ namespace  gms {
                          register __m512 r    = _mm512_loadu_ps(&pr[0]);
                          register __m512 alp  = _mm512_loadu_ps(&palp[0]);
                          register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
-                         register __m512 phi = _mm512_loadu_ps(&pphi[0]);
+                         register __m512 phi  = _mm512_loadu_ps(&pphi[0]);
                          const __m512 hlf = _mm512_set1_ps(0.5f);
                          const __m512 _4  = _mm512_set1_ps(4.0f);
                          const __m512 c0  = _mm512_set1_ps(1.5f);
@@ -951,7 +951,11 @@ namespace  gms {
                                            const __m512 phi,
                                            __m512 * __restrict ESr,
                                            __m512 * __restrict ESi) {
-
+                         register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                         register __m512 r    = _mm512_load_ps(&pr[0]);
+                         register __m512 alp  = _mm512_load_ps(&palp[0]);
+                         register __m512 tht  = _mm512_load_ps(&ptht[0]);
+                         register __m512 phi = _mm512_load_ps(&pphi[0]);
                          const __m512 hlf = _mm512_set1_ps(0.5f);
                          const __m512 _4  = _mm512_set1_ps(4.0f);
                          const __m512 c0  = _mm512_set1_ps(1.5f);
@@ -980,8 +984,8 @@ namespace  gms {
                          den   = _mm512_mul_ps(_mm512_mul_ps(_4,chtht),x0);
                          L     = _mm512_div_ps(num,den);
                          t0i   = _mm512_mul_ps(L,cphi);
-                         *ESr  = _mm512_mul_ps(n1,_mm512_mul_ps(cer,t0i));
-                         *ESi  = _mm512_mul_ps(n1,_mm512_mul_ps(cei,t0i));
+                         _mm512_store_ps(&ESr[0]  ,_mm512_mul_ps(n1,_mm512_mul_ps(cer,t0i)));
+                         _mm512_store_ps(&ESi[0]  ,_mm512_mul_ps(n1,_mm512_mul_ps(cei,t0i)));
                 }
 
 
