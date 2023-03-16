@@ -1088,8 +1088,28 @@ namespace  gms {
 
 
 
-                    
+                    /*
+                           Physical-Optics axial-incidence bistatic RCS
+                           function of theta for (0 << theta < PI-2*alpha)
+                           Formula 6.2-20
+                      */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6220_zmm16r4(const __m512 gam0,
+                                            const __m512 alp,
+                                            const __m512 tht) {
+
+                           const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                           const __m512 _1    = _mm512_set1_ps(1.0f);
+                           register __m512 rcs,gam2,tana,tan4,x0,x1,trm1;
+                           register __m512 alp2,calp2,ctht,trm2;
+                          
+                  }
 
 
 
