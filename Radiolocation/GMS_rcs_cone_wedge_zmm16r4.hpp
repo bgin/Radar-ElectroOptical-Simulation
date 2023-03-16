@@ -1203,6 +1203,54 @@ namespace  gms {
                   }
 
 
+                     /*
+                           Axial incidence backscattering (theta = 0)
+                           RCS (Spencer equation).
+                           Formula 6.2-22
+                       */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6222_zmm16r4(const __m512 gam0,
+                                        const __m512 alp) {
+
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          register __m512 rcs,gam2,trm1,tana,x0,x1;
+                          gam2 = _mm512_mul_ps(gam0,gam00;
+                          tana = xtanf(alp);
+                          trm1 = _mm512_div_ps(gam2,_16pi);
+                          x0   = _mm512_mul_ps(tana,tana);
+                          x1   = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_mul_ps(trm1,x1);
+                          return (rcs);
+                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6222_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pgam0,
+                                            const float * __restrict __ATTR_ALIGN__(64) palp) {
+
+                          register __m512  gam0  = _mm512_load_ps(&pgam0[0]);
+                          register __m512  alp   = _mm512_load_ps(&palp[0]);
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          register __m512 rcs,gam2,trm1,tana,x0,x1;
+                          gam2 = _mm512_mul_ps(gam0,gam00;
+                          tana = xtanf(alp);
+                          trm1 = _mm512_div_ps(gam2,_16pi);
+                          x0   = _mm512_mul_ps(tana,tana);
+                          x1   = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_mul_ps(trm1,x1);
+                          return (rcs);
+                 }
+
+
 
 
           }
