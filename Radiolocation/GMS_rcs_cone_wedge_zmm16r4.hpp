@@ -1280,6 +1280,46 @@ namespace  gms {
                        */
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f6224_zmm16r4(const __m512 k0,
+                                         const __m512 z,
+                                         const __m512 alp,
+                                         const __m512 x,
+                                         const __m512 y,
+                                         const __m512 z,
+                                         __m512 * __restrict xre,
+                                         __m512 * __restrict xim,
+                                         __m512 * __restrict yre,
+                                         __m512 * __restrict yim,
+                                         __m512 * __restrict zre,
+                                         __m512 * __restrict zim) {
+
+                        const __m512 hlf = _mm512_set1_ps(0.5f);
+                        register __m512 alph,x0,k0z,inv,ear,eai,cer,cei;
+                        register __m512 t0r,t0i;
+                        register __m512 a = *xim;
+                        register __m512 b = *yim;
+                        register __m512 c = *zim;
+                        alph = _mm512_mul_ps(alp,hlf);
+                        k0z  = _mm512_mul_ps(k0,z);
+                        ear  = _mm512_setzero_ps();
+                        inv  = _mm512_rcp14_ps(k0z);
+                        eai  = k0z;
+                        x0   = _mm512_mul_ps(alph,alph);
+                        cexp_zmm16r4(ear,eai,&t0r,&t0i);
+                        cer  = _mm512_setzero_ps();
+                        cei  = _mm512_mul_ps(alph,_mm512_mul_ps(t0i,inv));
+                        *xre  = _mm512_setzero_ps();
+                        *yre  = *xre;
+                        *zre  = *xre;
+                        *xim  = _mm512_mul_ps(a,cei);
+                        *yim  = _mm512_mul_ps(b,cei);
+                        *zim  = _mm512_mul_ps(c,cei);
+                 }
 
 
           }
