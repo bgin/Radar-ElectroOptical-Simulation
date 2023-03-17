@@ -1755,6 +1755,57 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6229_zmm16r4_u(const float * __restrict  pk0,
+                                              const float * __restrict  palp,
+                                              const float * __restrict  pR) {
+
+                           register __m512 k0     = _mm512_loadu_ps(&pk0[0]);
+                           register __m512 alp    = _mm512_loadu_ps(&palp[0]);
+                           register __m512 R      = _mm512_loadu_ps(&pR[0]);
+                           const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
+                           const __m512 _2   = _mm512_set1_ps(2.0f);
+                           const __m512 _1   = _mm512_set1_ps(1.0f);
+                           register __m512 rcs,trm1,ear1,eai1,ear2,eai2;
+                           register __m512 cer1,cei1,cer2,cei2,inv1,inv2;
+                           register __m512 t0r,t0i,x0,x1,k0R,k0R2,R2,calp,x2,x3,t1r,t1i,cabs;
+                           R2   = _m512_mul_ps(R,R);
+                           x1   = _mm512_mul_ps(k0,k0);
+                           calp = xcosf(alp);
+                           k0R  = _mm512_mul_ps(k0,R);
+                           x0   = _mm512_mul_ps(R2,R2);
+                           ear1 = _mm512_setzero_ps();
+                           trm1 = _mm512_mul_ps(_mm512_mul_ps(_4pi,x1),x0);
+                           eai1 = _mm512_add_ps(k0R,k0R);
+                           x0   = _mm512_mul_ps(eai1,eai1);
+                           x1   = _mm512_sub_ps(eai1,_1);
+                           inv1 = _mm512_rcp14_ps(x0);
+                           cexp_zmm16r4(ear1,eai1,t0r,t0i);
+                           x2   = _mm512_sub_ps(calp,_1);
+                           cmul_zmm16r4(ear1,x1,t0r,t0i,&cer1,&cei1);
+                           cer1 = _mm512_mul_ps(cer1,inv1);
+                           cei1 = _mm512_mul_ps(cei1,inv1);
+                           ear2 = ear1;
+                           eai2 = _mm512_mul_ps(eai1,calp);
+                           inv2 = _mm512_rcp14_ps(_mm512_mul_ps(eai2,eai2));
+                           x3   = _mm512_mul_ps(eai1,x2); 
+                           cexp_zmm16r4(ear2,eai2,t0r,t0i);
+                           cmul_zmm16r4(ear2,x3,t0r,t0i,&cer2,&cei2);
+                           cer2 = _mm512_mul_ps(cer2,inv2);
+                           cei2 = _mm512_mul_ps(cei2,inv2);
+                           t1r  = _mm512_sub_ps(cer1,cer2);
+                           t1i  = _mm512_sub_ps(cei1,cei2);
+                           cabs = cabs_zmm16r4(t1r,t1i);
+                           rcs  = _mm512_mul_ps(trm1,cabs);
+                           return (rcs);
+                 }
+
+
+
 
 
           }// radiolocation
