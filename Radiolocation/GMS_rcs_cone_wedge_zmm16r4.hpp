@@ -1710,8 +1710,13 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6229_zmm16r4_a() {
+                   __m512 rcs_f6229_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) palp,
+                                              const float * __restrict __ATTR_ALIGN__(64) pR) {
 
+                           register __m512 k0     = _mm512_load_ps(&pk0[0]);
+                           register __m512 alp    = _mm512_load_ps(&palp[0]);
+                           register __m512 R      = _mm512_load_ps(&pR[0]);
                            const __m512 _4pi = _mm512_set1_ps(12.566370614359172953850573533118f);
                            const __m512 _2   = _mm512_set1_ps(2.0f);
                            const __m512 _1   = _mm512_set1_ps(1.0f);
@@ -1719,7 +1724,7 @@ namespace  gms {
                            register __m512 cer1,cei1,cer2,cei2,inv1,inv2;
                            register __m512 t0r,t0i,x0,x1,k0R,k0R2,R2,calp,x2,x3,t1r,t1i,cabs;
                            R2   = _m512_mul_ps(R,R);
-                           x1   = _mm512_mul_ps(k,k);
+                           x1   = _mm512_mul_ps(k0,k0);
                            calp = xcosf(alp);
                            k0R  = _mm512_mul_ps(k0,R);
                            x0   = _mm512_mul_ps(R2,R2);
