@@ -1455,11 +1455,11 @@ namespace  gms {
                         
                         pima = _mm512_sub_ps(pi2,alp);
                         k0z  = _mm512_mul_ps(k0,z);
-                        ear  = _mm512_setzero_ps();
                         pimas= _mm512_mul_ps(pima,pima);
-                        inv  = _mm512_rcp14_ps();
+                        ear  = _mm512_setzero_ps();
+                        x0   = _mm512_mul_ps(_mm512_mul_ps(_4,k0z),pimas);
+                        inv  = _mm512_rcp14_ps(x0);
                         eai  = k0z;
-                        x0   = _mm512_mul_ps(alph,alph);
                         cexp_zmm16r4(ear,eai,&t0r,&t0i);
                         cmul_zmm16r4(t0r,t0i,cr,ci,&cer,&cei);
                         cer  = _mm512_mul_ps(alph,_mm512_mul_ps(cer,inv));
