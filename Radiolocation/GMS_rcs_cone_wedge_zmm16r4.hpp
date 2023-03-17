@@ -1312,8 +1312,8 @@ namespace  gms {
                         x0   = _mm512_mul_ps(alph,alph);
                         cexp_zmm16r4(ear,eai,&t0r,&t0i);
                         cmul_zmm16r4(t0r,t0i,cr,ci,&cer,&cei);
-                        cer  = _mm512_mul_ps(alph,_mm512_mul_ps(cer,inv));
-                        cei  = _mm512_mul_ps(alph,_mm512_mul_ps(cei,inv));
+                        cer  = _mm512_mul_ps(x0,_mm512_mul_ps(cer,inv));
+                        cei  = _mm512_mul_ps(x0,_mm512_mul_ps(cei,inv));
                         *xre  = _mm512_mul_ps(x,cer);
                         *xim  = _mm512_mul_ps(x,cei);
                         *yre  = _mm512_mul_ps(y,cer);
@@ -1426,6 +1426,51 @@ namespace  gms {
                            Scattered E-field.
                            Formula 6.2-25
                        */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f6225_zmm16r4(const __m512 k0,
+                                         const __m512 z,
+                                         const __m512 alp,
+                                         const __m512 x,
+                                         const __m512 y,
+                                         const __m512 z,
+                                         __m512 * __restrict xre,
+                                         __m512 * __restrict xim,
+                                         __m512 * __restrict yre,
+                                         __m512 * __restrict yim,
+                                         __m512 * __restrict zre,
+                                         __m512 * __restrict zim) {
+
+                        const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                        const __m512 _4  = _mm512_set1_ps(4.0f);
+                        const __m512 cr  = _mm512_set1_ps(0.0f);
+                        const __m512 ci  = _mm512_set1_ps(1.0f);
+                        register __m512 pima,x0,pimas,k0z,inv,ear,eai,cer,cei;
+                        register __m512 t0r,t0i;
+                        
+                        pima = _mm512_sub_ps(pi2,alp);
+                        k0z  = _mm512_mul_ps(k0,z);
+                        ear  = _mm512_setzero_ps();
+                        pimas= _mm512_mul_ps(pima,pima);
+                        inv  = _mm512_rcp14_ps();
+                        eai  = k0z;
+                        x0   = _mm512_mul_ps(alph,alph);
+                        cexp_zmm16r4(ear,eai,&t0r,&t0i);
+                        cmul_zmm16r4(t0r,t0i,cr,ci,&cer,&cei);
+                        cer  = _mm512_mul_ps(alph,_mm512_mul_ps(cer,inv));
+                        cei  = _mm512_mul_ps(alph,_mm512_mul_ps(cei,inv));
+                        *xre  = _mm512_mul_ps(x,cer);
+                        *xim  = _mm512_mul_ps(x,cei);
+                        *yre  = _mm512_mul_ps(y,cer);
+                        *yim  = _mm512_mul_ps(y,cei);
+                        *zre  = _mm512_mul_ps(z,cer);
+                        *zim  = _mm512_mul_ps(z,cei);
+                 }
 
 
           }
