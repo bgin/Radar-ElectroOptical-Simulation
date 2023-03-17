@@ -1410,8 +1410,8 @@ namespace  gms {
                         x0   = _mm512_mul_ps(alph,alph);
                         cexp_zmm16r4(ear,eai,&t0r,&t0i);
                         cmul_zmm16r4(t0r,t0i,cr,ci,&cer,&cei);
-                        cer  = _mm512_mul_ps(alph,_mm512_mul_ps(cer,inv));
-                        cei  = _mm512_mul_ps(alph,_mm512_mul_ps(cei,inv));
+                        cer  = _mm512_mul_ps(x0,_mm512_mul_ps(cer,inv));
+                        cei  = _mm512_mul_ps(x0,_mm512_mul_ps(cei,inv));
                         _mm512_storeu_ps(&xre[0] ,_mm512_mul_ps(x,cer));
                         _mm512_storeu_ps(&xim[0] ,_mm512_mul_ps(x,cei));
                         _mm512_storeu_ps(&yre[0] ,_mm512_mul_ps(y,cer));
