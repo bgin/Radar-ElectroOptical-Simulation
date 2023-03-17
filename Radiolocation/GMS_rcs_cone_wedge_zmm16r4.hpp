@@ -1421,7 +1421,11 @@ namespace  gms {
                  }
 
 
-                   
+                     /*
+                           Wide-angle cone.
+                           Scattered E-field.
+                           Formula 6.2-25
+                       */
 
 
           }
