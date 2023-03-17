@@ -1524,6 +1524,58 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ES_f6225_zmm16r4_u(const float * __restrict  pk0,
+                                           const float * __restrict  pz,
+                                           const float * __restrict  palp,
+                                           const float * __restrict  px,
+                                           const float * __restrict  py,
+                                           const float * __restrict  pz,
+                                           float * __restrict  xre,
+                                           float * __restrict  xim,
+                                           float * __restrict  yre,
+                                           float * __restrict  yim,
+                                           float * __restrict  zre,
+                                           float * __restrict  zim) {
+
+                        register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 z   = _mm512_loadu_ps(&pz[0]);
+                        register __m512 alp = _mm512_loadu_ps(&palp[0]);
+                        register __m512 x   = _mm512_loadu_ps(&px[0]);
+                        register __m512 y   = _mm512_loadu_ps(&py[0]);
+                        register __m512 z   = _mm512_loadu_ps(&pz[0]);
+                        const __m512 pi2 = _mm512_set1_ps(1.57079632679489661923132169164f);
+                        const __m512 _4  = _mm512_set1_ps(4.0f);
+                        const __m512 cr  = _mm512_set1_ps(0.0f);
+                        const __m512 ci  = _mm512_set1_ps(1.0f);
+                        register __m512 pima,x0,pimas,k0z,inv,ear,eai,cer,cei;
+                        register __m512 t0r,t0i;
+                        
+                        pima = _mm512_sub_ps(pi2,alp);
+                        k0z  = _mm512_mul_ps(k0,z);
+                        pimas= _mm512_mul_ps(pima,pima);
+                        ear  = _mm512_setzero_ps();
+                        x0   = _mm512_mul_ps(_mm512_mul_ps(_4,k0z),pimas);
+                        inv  = _mm512_rcp14_ps(x0);
+                        eai  = k0z;
+                        cexp_zmm16r4(ear,eai,&t0r,&t0i);
+                        cmul_zmm16r4(t0r,t0i,cr,ci,&cer,&cei);
+                        cer  = _mm512_mul_ps(alph,_mm512_mul_ps(cer,inv));
+                        cei  = _mm512_mul_ps(alph,_mm512_mul_ps(cei,inv));
+                        _mm512_storeu_ps(&xre[0] ,_mm512_mul_ps(x,cer));
+                        _mm512_storeu_ps(&xim[0] ,_mm512_mul_ps(x,cei));
+                        _mm512_storeu_ps(&yre[0] ,_mm512_mul_ps(y,cer));
+                        _mm512_storeu_ps(&yim[0] ,_mm512_mul_ps(y,cei));
+                        _mm512_storeu_ps(&zre[0] ,_mm512_mul_ps(z,cer));
+                        _mm512_storeu_ps(&zim[0] ,_mm512_mul_ps(z,cei));
+                 }
+
+
+
           }// radiolocation
 
 
