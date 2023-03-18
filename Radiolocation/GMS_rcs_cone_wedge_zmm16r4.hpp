@@ -1982,9 +1982,9 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6231_zmm16r4_u(const float * __restrict __ATTR_ALIGN__(64) palp,
-                                            const float * __restrict __ATTR_ALIGN__(64) pk0,
-                                            const float * __restrict __ATTR_ALIGN__(64) pb) {
+                   __m512 rcs_f6231_zmm16r4_u(const float * __restrict  palp,
+                                            const float * __restrict  pk0,
+                                            const float * __restrict  pb) {
 
                           register __m512 alp= _mm512_loadu_ps(&palp[0]);
                           register __m512 b  = _mm512_loadu_ps(&pb[0]);
