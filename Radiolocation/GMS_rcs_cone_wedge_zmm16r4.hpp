@@ -2020,6 +2020,11 @@ namespace  gms {
                  }
 
 
+                   /*
+                          Not nose-one incidence, for theta << alpha -- 
+                          PO approximation for rounded-tip cones.
+                          Formula 6.2-23
+                      */
 
 
 
