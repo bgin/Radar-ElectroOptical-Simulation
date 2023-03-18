@@ -1805,6 +1805,15 @@ namespace  gms {
                  }
 
 
+                    /*
+                           RCS of pointed cone and flat plate of radius b.
+                           Formula 6.2-30
+                      */
+
+
+                    
+
+
 
 
 
