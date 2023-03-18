@@ -1887,6 +1887,53 @@ namespace  gms {
                 }
 
 
+                  /*
+                       Physical-Optics approximation of rounded-tip cone,
+                       for axial incidence.
+                       Formula 6.2-31
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6231_zmm16r4(const __m512 alp,
+                                            const __m512 k0,
+                                            const __m512 b) {
+
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          register __m512 b2,k0b,_2k0b,k0b2,arg;
+                          register __m512 sarg,carg,salp,calp,calp2,calp4;
+                          register __m512 rcs,trm1,trm2,trm3,x0,x1;
+                          b2   = _mm512_mul_ps(b,b);
+                          calp = xcosf(alp);
+                          k0b  = _mm512_mul_ps(k0,b);
+                          calp2= _mm512_mul_ps(calp,calp);
+                          _2k0b= _mm512_add_ps(k0b,k0b);
+                          calp4= _mm512_mul_ps(calp2,calp2);
+                          k0b2 = _mm512_mul_ps(k0b,k0b);
+                          salp = xsinf(alp);
+                          arg  = _mm512_mul_ps(_2k0b,_mm512_sub_ps(_1,salp));
+                          x0   = _mm512_mul_ps(k0b,calp2);
+                          sarg = xsinf(arg);
+                          x1   = _mm512_add_ps(_1,calp4);
+                          trm1 = _mm512_div_ps(sarg,x0);
+                          x0   = _mm512_mul_ps(_mm512_mul_ps(_4,k0b2),calp4);
+                          trm2 = _mm512_div_ps(x1,x0);
+                          carg = xcosf(arg);
+                          x0   = _mm512_mul_ps(_mm512_add_ps(k0b2,k0b2),calp2);
+                          trm3 = _mm512_div_ps(carg,x0);
+                          x1   = _mm512_mul_ps(pi,b2);
+                          x0   = _mm512_add_ps(_mm512_sub_ps(_1,trm1),trm2);
+                          rcs  = _mm512_mul_ps(x0,_mm512_sub_ps(x0,trm3));
+                          return (rcs);
+                 }
+
+
 
 
 
