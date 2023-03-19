@@ -2338,8 +2338,31 @@ namespace  gms {
                          Formula 6.3-4
                      */
 
-                     
+#include "GMS_simd_utils.hpp"   
 
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f634_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 h) {
+
+                          const __m512 c0 = _mm512_set1_ps(1.396263401595463661538952614791f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          register __m512 k04,a4,h2,_4a,arg,earg,pih,x0,x1,nh;
+                          register __m512 rcs,trm1,trm2;
+                          h2  = _mm512_mul_ps(h,h);
+                          x0  = _mm512_mul_ps(k0,k0);
+                          x1  = _mm512_mul_ps(a,a);
+                          _4a = _mm512_mul_ps(_4,a);
+                          pih = _mm512_mul_ps(_mm512_set1_ps(3.14159265358979323846264338328f),h);
+                          nh  = negate_zmm16r4(h);
+                          
+                 }
 
 
           }// radiolocation
