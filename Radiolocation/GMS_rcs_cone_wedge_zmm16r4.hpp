@@ -2691,9 +2691,9 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f636_zmm16r4_u(const float * __restrict __ATTR_ALIGN__(64) pk0,
-                                             const float * __restrict __ATTR_ALIGN__(64) pa,
-                                             const float * __restrict __ATTR_ALIGN__(64) ph) {
+                   __m512 rcs_f636_zmm16r4_u(const float * __restrict  pk0,
+                                             const float * __restrict  pa,
+                                             const float * __restrict  ph) {
 
                           using namespace gms::math;
                           register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
