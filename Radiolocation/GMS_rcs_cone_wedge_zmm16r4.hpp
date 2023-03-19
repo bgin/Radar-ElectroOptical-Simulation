@@ -2331,15 +2331,14 @@ namespace  gms {
                  }
 
 
-                   /*
-                          Semi-infinte, perfectly conducting cone.
-                          Weak scattering layer coated.
-                          Backscattering RCS by Physical-Optics method.
-                          Parameter S.
-                          Formula 6.2-34
+                  /*
+                         Finite cones, approximated solutions.
+                         Rayleigh region.
+                         RCS.
+                         Formula 6.3-4
                      */
 
-
+                     
 
 
 
