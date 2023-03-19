@@ -2425,7 +2425,7 @@ namespace  gms {
 
                           using namespace gms::math;
                           register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
-                          register __m512 a   = _mm512_loadu_ps((pa[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
                           register __m512 h   = _mm512_loadu_ps(&ph[0]);
                           const __m512 c0 = _mm512_set1_ps(1.396263401595463661538952614791f);
                           const __m512 _1 = _mm512_set1_ps(1.0f);
