@@ -2414,6 +2414,44 @@ namespace  gms {
                  }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f634_zmm16r4_u(const float * __restrict pk0,
+                                             const float * __restrict  pa,
+                                             const float * __restrict ph) {
+
+                          using namespace gms::math;
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps((pa[0]);
+                          register __m512 h   = _mm512_loadu_ps(&ph[0]);
+                          const __m512 c0 = _mm512_set1_ps(1.396263401595463661538952614791f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          register __m512 k04,a4,h2,_4a,arg,earg,pih,x0,x1,nh;
+                          register __m512 rcs,trm1,trm2;
+                          h2  = _mm512_mul_ps(h,h);
+                          x0  = _mm512_mul_ps(k0,k0);
+                          x1  = _mm512_mul_ps(a,a);
+                          _4a = _mm512_mul_ps(_4,a);
+                          pih = _mm512_mul_ps(_mm512_set1_ps(3.14159265358979323846264338328f),h);
+                          nh  = negate_zmm16r4(h);
+                          k04 = _mm512_mul_ps(x0,x0);
+                          arg = _mm512_div_ps(nh,_4a);
+                          a4  = _mm512_mul_ps(x1,x1);
+                          earg= xexpf(arg);
+                          trm1= _mm512_mul_ps(_mm512_mul_ps(k04,a4),h2);
+                          x0  = _mm512_div_ps(_mm512_mul_ps(_4,earg),pih);
+                          trm1= _mm512_mul_ps(c0,trm1);
+                          x1  = _mm512_add_ps(_1,x0);
+                          trm2= _mm512_mul_ps(x1,x1);
+                          rcs = _mm512_mul_ps(trm1,trm2);
+                          return (rcs);
+                 }
+
+
           }// radiolocation
 
 
