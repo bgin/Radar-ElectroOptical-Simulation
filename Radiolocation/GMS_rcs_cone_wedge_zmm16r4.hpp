@@ -2452,6 +2452,15 @@ namespace  gms {
                  }
 
 
+                   /*
+                          Rayleigh RCS of cone-hemispheroid.
+                          Formula 6.3-5
+                     */
+
+
+                   
+
+
           }// radiolocation
 
 
