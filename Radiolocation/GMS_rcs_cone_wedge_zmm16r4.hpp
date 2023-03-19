@@ -2546,6 +2546,101 @@ namespace  gms {
                 }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f635_zmm16r4_u(const float * __restrict  pk0,
+                                             const float * __restrict  pa,
+                                             const float * __restrict  pb,
+                                             const float * __restrict  ph) {
+                                             
+                          using namespace gms::math;
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 b   = _mm512_loadu_ps(&pb[0]);
+                          register __m512 h   = _mm512_loadu_ps(&ph[0]);
+                          const __m512 _4pi = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 c0   = _mm512_set1_ps(0.33333333333333333333333333333f);
+                          const __m512 c1   = _mm512_set1_ps(0.666666666666666666666666666667f);
+                          const __m512 _4   = _mm512_set1_ps(4.0f);
+                          const __m512 _2   = _mm512_set1_ps(2.0f);
+                          const __m512 _1   = _mm512_set1_ps(1.0f);
+                          register __m512 k04,a2,_4a,h2b,nh2b,pia2,arg,earg,x0,x1,x2;
+                          register __m512 rcs,trm1,trm2,trm3;
+                          x0  = _mm512_mul_ps(k0,k0);
+                          a2  = _mm512_mul_ps(a,a);
+                          h2b = _mm512_fmadd_ps(b,_2,h);
+                          k04 = _mm512_mul_ps(x0,x0);
+                          _4a = _mm512_mul_ps(_4,a);
+                          trm1= _mm512_mul_ps(_4pi,k04);
+                          pia2= _mm512_mul_ps(pi,a2);
+                          nh2b= negate_zmm16r4(h2b);
+                          x0  = _mm512_mul_ps(c0,_mm512_mul_ps(pia2,h));
+                          arg = _mm512_div_ps(nh2b,_4a);
+                          x1  = _mm512_mul_ps(c1,_mm512_mul_ps(pia2,b));
+                          earg= xexpf(arg);
+                          x2  = _mm512_add_ps(x0,x1);
+                          trm2= _mm512_mul_ps(x2,x2);
+                          x0  = _mm512_div_ps(_mm512_mul_ps(pi,h2b),_4a);
+                          x1  = _mm512_add_ps(_1, _mm512_div_ps(earg,x0));
+                          trm2= _mm512_mul_ps(x1,x1);
+                          rcs = _mm512_mul_ps(trm1,_mm512_mul_ps(trm2,trm3));
+                          return (rcs);
+                }
+
+
+                  /*
+                          Rayleigh RCS of cone-hemispheroid (b == a)
+                          Formula 6.3-6
+                      */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f636_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 h) {
+
+                          using namespace gms::math;
+                          const __m512 _4pi = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 c0   = _mm512_set1_ps(0.33333333333333333333333333333f);
+                          const __m512 c1   = _mm512_set1_ps(0.666666666666666666666666666667f);
+                          const __m512 _4   = _mm512_set1_ps(4.0f);
+                          const __m512 _2   = _mm512_set1_ps(2.0f);
+                          const __m512 _1   = _mm512_set1_ps(1.0f);
+                          register __m512 k04,a2,_4a,a3,h2a,nh2a,pia2,pia3,arg,earg,x0,x1,x2;
+                          register __m512 rcs,trm1,trm2,trm3;
+                          x0  = _mm512_mul_ps(k0,k0);
+                          a2  = _mm512_mul_ps(a,a);
+                          h2a = _mm512_fmadd_ps(a,_2,h);
+                          a3  = _mm512_mul_ps(a2,a);
+                          k04 = _mm512_mul_ps(x0,x0);
+                          _4a = _mm512_mul_ps(_4,a);
+                          trm1= _mm512_mul_ps(_4pi,k04);
+                          pia2= _mm512_mul_ps(pi,a2);
+                          nh2a= negate_zmm16r4(h2a);
+                          x0  = _mm512_mul_ps(c0,_mm512_mul_ps(pia2,h));
+                          pia3= _mm512_mul_ps(pi,a3);
+                          arg = _mm512_div_ps(nh2a,_4a);
+                          x1  = _mm512_mul_ps(c1,pia3);
+                          earg= xexpf(arg);
+                          x2  = _mm512_add_ps(x0,x1);
+                          trm2= _mm512_mul_ps(x2,x2);
+                          x0  = _mm512_div_ps(_mm512_mul_ps(pi,h2a),_4a);
+                          x1  = _mm512_add_ps(_1, _mm512_div_ps(earg,x0));
+                          trm2= _mm512_mul_ps(x1,x1);
+                          rcs = _mm512_mul_ps(trm1,_mm512_mul_ps(trm2,trm3));
+                          return (rcs);
+                }
+
+
+
                   
 
 
