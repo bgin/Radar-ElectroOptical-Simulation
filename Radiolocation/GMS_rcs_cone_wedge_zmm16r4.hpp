@@ -2228,6 +2228,119 @@ namespace  gms {
                  }
 
 
+                     __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6223_zmm16r4_u(const float * __restrict  ptht,
+                                            const float * __restrict  pk0,
+                                            const float * __restrict  pb,
+                                            const float * __restrict  pa,
+                                            const float * __restrict  palp) {
+
+                          register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
+                          register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 b    = _mm512_loadu_ps(&pb[0]);
+                          register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                          register __m512 alp  = _mm512_loadu_ps(&palp[0]);
+                          const __m512 hlf= _mm512_set1_ps(0.5f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 _4 = _mm512_set1_ps(4.0f);
+                          const __m512 n4 = _mm512_set1_ps(-4.0f);
+                          const __m512 _3 = _mm512_set1_ps(3.0f);
+                          const __m512 _2 = _mm512_set1_ps(2.0f);
+                          const __m512 n2 = _mm512_set1_ps(-2.0f);
+                          const __m512 _6 = _mm512_set1_ps(6.0f);
+                          const __m512 _8 = _mm512_set1_ps(8.0f);
+                          const __m512 _13= _mm512_set1_ps(13.0f);
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          register __m512 k0b,salp,arg,_2k0,b2,sarg,carg,ctht,a2,salp1,tht3;
+                          register __m512 trm1,trm2,trm3;
+                          register __m512 rcs,A1,A2,A3;
+                          __m512 alp2,tht2,alp4,tht4,k0b2,k0b3,k0b4,a2,k0bt,k0a;
+                          __m512 t0,t1,t2,t3,t4,t5,t6,t7,t8,t9;
+                          __m512 t10,t11,t12,t13,t14,t15,t16,t17,t18,t19;
+                          __m512 x0,x1,x2,x3,x4;
+                          k0b  = _mm512_mul_ps(k0,b);
+                          tht2 = _mm512_mul_ps(tht,tht);
+                          _2k0 = _mm512_add_ps(k0,k0);
+                          salp = xsinf(alp);
+                          k0b2 = _mm512_mul_ps(k0b,k0b);
+                          ctht = xcosf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          salp1= _mm512_sub_ps(_1,salp);
+                          k0a  = _mm512_mul_ps(k0,a);
+                          alp2 = _mm512_mul_ps(alp,alp);
+                          tht3 = _mm512_mul_ps(tht2,tht);
+                          arg  = _mm512_mul_ps(_2k0,_mm512_mul_ps(calp,salp1));
+                          tht4 = _mm512_mul_ps(tht2,tht2);
+                          alp4 = _mm512_mul_ps(alp2,alp2);
+                          k0b3 = _mm512_mul_ps(k0b2,k0b);
+                          k0b4 = _mm512_mul_ps(k0b2,k0b2);
+                          trm1 = _mm512_div_ps(_mm512_add_ps(_1,tht2),
+                                               _mm512_mul_ps(_4,k0b2));
+                          a2   = _mm512_mul_ps(a,a);
+                          k0bt = _mm512_mul_ps(k0b,tht);
+                          t0   = _mm512_add_ps(alp2,alp2); //2alp^2
+                          t1   = _mm512_add_ps(tht2,tht2); //2tht^2
+                          t2   = _mm512_mul_ps(alp2,tht2);//alp2*tht2
+                          t3   = _mm512_mul_ps(tht4,hlf); //tht4*0.5
+                          t4   = _mm512_mul_ps(_mm512_mul_ps(_2,alp4),tht2);//2*alp4*tht2
+                          t5   = _mm512_mul_ps(_4,k0b2);//4*k0b2
+                          t6   = _mm512_mul_ps(_mm512_mul_ps(_2,k0b2),tht2);//2*k0b2*tht2
+                          t7   = _mm512_mul_ps(_mm512_mul_ps(_8,k0b3),tht2);//8*k0b3*tht2
+                          t8   = _mm512_mul_ps(k0b2,tht4);//k0b2*tht4
+                          t9   = _mm512_mul_ps(_mm512_mul_ps(_6,k0b2),
+                                               _mm512_mul_ps(a2,tht2));//6*k0b2*a2*tht2
+                          t10  = _mm512_mul_ps(_mm512_mul_ps(_8,k0b3),tht4);//8*k0b3*tht4
+                          t11  = _mm512_mul_ps(_mm512_mul_ps(_13,k0b4),tht4);//13*k0b4*tht4
+                          sarg = xsinf(arg);
+                          x0   = _mm512_sub_ps(_mm512_add_ps(_2,t0),
+                                               _mm512_add_ps(t1,alp4));
+                          x1   = _mm512_add_ps(_mm512_add_ps(t2,t3),
+                                               _mm512_add_ps(t4,t5));
+                          x2   = _mm512_add_ps(_mm512_sub_ps(t6,t7),
+                                               _mm512_add_ps(t8,t9));
+                          x3   = _mm512_add_ps(t10,t11);
+                          x4   = _mm512_sub_ps(x0,x1);
+                          carg = xcosf(arg);
+                          t9   = _mm512_mul_ps(_mm512_mul_ps(_6,k0b2),tht2);
+                          A1   = _mm512_sub_ps(_mm512_sub_ps(x0,x1),
+                                               _mm512_add_ps(x2,x3));
+                          t7   = _mm512_mul_ps(_mm512_mul_ps(_8,k0b4),tht3);
+                          x0   = _mm512_sub_ps(_mm512_sub_ps(n2,t0),
+                                               _mm512_add_ps(t1,t2));
+                          t8   = _mm512_mul_ps(_mm512_mul_ps(_3,k0b2),tht4);
+                          x1   = _mm512_add_ps(_mm512_sub_ps(t3,t9),
+                                               _mm512_add_ps(t7,t8));
+                          A2   = _mm512_sub_ps(x0,x1);
+                          t11  = _mm512_mul_ps(k0bt,k0bt);
+                          t10  = _mm512_mul_ps(t11,k0bt);
+                          t9   = _mm512_mul_ps(k0b,tht2);
+                          t8   = _mm512_mul_ps(_3,_mm512_mul_ps(k0a,k0a));
+                          x0   = _mm512_sub_ps(_mm512_add_ps(_1,alp2),
+                                               _mm512_add_ps(t2,t8));
+                          x1   = _mm512_sub_ps(k0b,_mm512_sub_ps(t9,t11));
+                          A3   = _mm512_mul_ps(_mm512_mul_ps(n4,x0),
+                                               _mm512_sub_ps(x1,_mm512_mul_ps(_4,t10)));
+                          trm2 = _mm512_fmadd_ps(carg,A2,A1);
+                          trm3 = _mm512_fmadd_ps(sarg,A3,trm2);
+                          rcs  = _mm512_mul_ps(trm1,trm3);
+                          return (rcs);
+                 }
+
+
+                   /*
+                          Semi-infinte, perfectly conducting cone.
+                          Weak scattering layer coated.
+                          Backscattering RCS by Physical-Optics method.
+                          Parameter S.
+                          Formula 6.2-34
+                     */
+
+
+
 
 
           }// radiolocation
