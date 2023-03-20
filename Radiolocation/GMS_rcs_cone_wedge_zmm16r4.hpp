@@ -2863,6 +2863,32 @@ namespace  gms {
                  }
 
 
+                   /*
+                        Cone tip scattering RCS.
+                        Formula 6.3-10
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6310_zmm16r4(const __m512 gam0,
+                                            const __m512 alp) {
+
+                          const __m512 _16pi = _mm512_set1_ps(50.265482457436691815402294132472f);
+                          register __m512 gam2,tana,x0,tan4,trm1;
+                          gam2 = _mm512_mul_ps(gam0,gam0);
+                          tana = xtanf(alp);
+                          trm1 = _mm512_div_ps(gam2,_16pi);
+                          x0   = _mm512_mul_ps(tana,tana);
+                          tan4 = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_mul_ps(trm1,tan4);
+                          return (rcs);
+                 }
+
+
 
 
 
