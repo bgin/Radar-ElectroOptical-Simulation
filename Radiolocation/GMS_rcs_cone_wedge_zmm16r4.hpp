@@ -2734,7 +2734,7 @@ namespace  gms {
 
                    /*
                          Flat-back cone, backscatter RCS.
-                         Formula 6.3-8
+                         Formula 6.3-9
                    */
 
 
@@ -2743,7 +2743,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f638_zmm16r4(const __m512 gam0,
+                   __m512 rcs_f639_zmm16r4(const __m512 gam0,
                                            const __m512 alp,
                                            const __m512 k0,
                                            const __m512 h) {
