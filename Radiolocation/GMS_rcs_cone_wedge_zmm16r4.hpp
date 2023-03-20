@@ -2732,6 +2732,51 @@ namespace  gms {
                 }
 
 
+                   /*
+                         Flat-back cone, backscatter RCS.
+                         Formula 6.3-8
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f638_zmm16r4(const __m512 gam0,
+                                           const __m512 alp,
+                                           const __m512 k0,
+                                           const __m512 h) {
+
+                          using namespace gms::math;
+                          const __m512 c0 = _mm512_set1_ps(-0.25f);
+                          const __m512 _0 = _mm512_set1_ps(-0.0f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          const __m512 n1 = _mm512_set1_ps(-1.0f);
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          register __m512 gam2,talp,k0h,x0,ear,eai,cer,cei;
+                          register __m512 t0r,t0i,trm2r,trm2i,trm1r,trm1i,t1r,t1i;
+                          gam2  = _mm512_div_ps(_mm512_mul_ps(gam0,gam0),pi);
+                          talp  = xtanf(alp);
+                          k0h   = _mm512_mul_ps(k0,h);
+                          x0    = _mm512_mul_ps(talp,talp);
+                          ear   = _mm512_setzero_ps();
+                          t0r   = n1
+                          eai   = _mm512_add_ps(k0h,k0h);
+                          t0i   = _mm512_sub_ps(eai,_1);
+                          cexp_zmm16r4(eai,ear,&cer,&cei);
+                          trm1r = ear;
+                          trm1i = negate_zmm16r4(x0);
+                          cmul_zmm16r4(t0r,t0i,cer,cei,&trm2r,&trm2i);
+                          trm2r = _mm512_add_ps(_1,trm2r);
+                          trm2i = _mm512_add_ps(_1,trm2i);
+                          cmul_zmm16r4(trm1r,trm1i,trm2r,&t0r,&t0i);
+                          cabs = cabs_zmm16r4(t0r,t0i);
+                          rcs  = _mm512_mul_ps(gam2,cabs);
+                          return (rcs);
+                 }
+
+
 
 
                   
