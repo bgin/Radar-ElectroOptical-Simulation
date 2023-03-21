@@ -3100,6 +3100,12 @@ namespace  gms {
                   }
 
 
+                    /*
+                          Flat-back cone backscattering RCS.
+                          Formula 6.3-14
+                     */
+
+
 
                     
 
