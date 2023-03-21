@@ -769,13 +769,14 @@ static const __m512 gd[11] = {
                         const __m512 pio2 = _mm512_set1_ps(1.57079632679489661923132169164f);
                         register __m512 f,g,cc,ss,c,s,t,u,t0,t1;
                         register __m512 x,x2,acc1,acc2,acc3,acc4;
-                        volatile __m512 prefsn = _mm_prefetch((const char*)&sn[0+5],_MM_HINT_T0);
-                        volatile __m512 prefsd = _mm_prefetch((const char*)&sd[0+5],_MM_HINT_T0);
-                        volatile __m512 prefcn = _mm_prefetch((const char*)&cn[0+5],_MM_HINT_T0);
-                        volatile __m512 prefcd = _mm_prefetch((const char*)&cd[0+6],_MM_HINT_T0);
+                       
                         x   = _mm512_abs_ps(xxa);
                         x2  = _mm512_mul_ps(x,x);
                         if(_mm512_cmp_ps_mask(x,c0,_CMP_LT_OQ)) {
+			   volatile __m512 prefsn = _mm_prefetch((const char*)&sn[0],_MM_HINT_T0);
+                           volatile __m512 prefsd = _mm_prefetch((const char*)&sd[0],_MM_HINT_T0);
+                           volatile __m512 prefcn = _mm_prefetch((const char*)&cn[0],_MM_HINT_T0);
+                           volatile __m512 prefcd = _mm_prefetch((const char*)&cd[0],_MM_HINT_T0);
                            t = _mm512_mul_ps(x2,x2);
                            acc1 = sn[0]; 
                            acc2 = _mm512_add_ps(t,sd[0]);
@@ -816,7 +817,10 @@ static const __m512 gd[11] = {
                        *		for large argument
                        */
 
-                        
+                        volatile __m512 prefsn = _mm_prefetch((const char*)&fn[0],_MM_HINT_T0);
+                        volatile __m512 prefsd = _mm_prefetch((const char*)&fd[0],_MM_HINT_T0);
+                        volatile __m512 prefcn = _mm_prefetch((const char*)&gn[0],_MM_HINT_T0);
+                        volatile __m512 prefcd = _mm_prefetch((const char*)&gd[0],_MM_HINT_T0);
                         t = _mm512_mul_ps(pi,x2);
                         u = _mm512_div_ps(_1,_mm512_mul_ps(t,t));
                         acc1 = fn[0];
@@ -843,24 +847,24 @@ static const __m512 gd[11] = {
                         acc2 = _mm512_fmadd_ps(acc2,u,fd[9]);
                         t0   = _mm512_div_ps(acc1,acc2);
                         f    = _mm512_sub_ps(_1,_mm512_mul_ps(u,t0));
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[1]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[1]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[2]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[2]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[3]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[3]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[4]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[4]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[5]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[5]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[6]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[6]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[7]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[7]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fn[8]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[8]);
-                        acc3 = _mm512_fmadd_ps(acc3,u,fd[9]);
-                        acc4 = _mm512_fmadd_ps(acc4,u,fd[10]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[1]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[1]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[2]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[2]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[3]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[3]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[4]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[4]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[5]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[5]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[6]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[6]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[7]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[7]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gn[8]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[8]);
+                        acc3 = _mm512_fmadd_ps(acc3,u,gd[9]);
+                        acc4 = _mm512_fmadd_ps(acc4,u,gd[10]);
                         t1   = _mm512_div_ps(acc3,acc4);
                         g    = _mm512_mul_ps(t,t1);
                         
