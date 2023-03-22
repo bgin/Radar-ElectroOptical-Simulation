@@ -3236,7 +3236,42 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6318_zmm16r4_a(const float * __restrict  pgam0, 
+                   __m512 rcs_f6318_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pgam0, 
+                                             const float * __restrict __ATTR_ALIGN__(64) pk0h,
+                                             const float * __restrict __ATTR_ALIGN__(64) palp) {
+
+                          register __m512 gam0 = _mm512_load_ps(&pgam0[0]);
+                          register __m512 k0h  = _mm512_load_ps(&pk0[0]);
+                          register __m512 alp  = _mm512_load_ps(&palp[0]);
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 c0 = _mm512_set1_ps(0.33333333333333333333333333333f);
+                          register __m512 rcs,gam2,k0h3,x0,salp,calp,seca,sqr,x1,sabs;
+                          x0   = _mm512_mul_ps(gam0,gam0);
+                          k0h3 = _mm512_mul_ps(k0h,c0);
+                          gam2 = _mm512_div_ps(x0,pi);
+                          salp = xsinf(alp);
+                          calp = xcosf(alp);
+                          x1   = _mm512_mul_ps(k0h,salp);
+                          x0   = _mm512_div_ps(x1,pi);
+                          seca = _mm512_rcp14_ps(calp);
+                          sqr  = _mm512_sqrt_ps(x0);
+                          x1   = _mm512_mul_ps(seca,seca);
+                          x0   = _mm512_mul_ps(k0h3,_mm512_mul_ps(sqr,x1));
+                          sabs = _mm512_abs_ps(x0);
+                          x1   = _mm512_mul_ps(sabs,sabs);
+                          rcs  = _mm512_mul_ps(gam2,x1);
+                          return (rcs);
+                 }
+                                            
+
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6318_zmm16r4_u(const float * __restrict  pgam0, 
                                              const float * __restrict  pk0h,
                                              const float * __restrict  palp) {
 
@@ -3262,11 +3297,6 @@ namespace  gms {
                           rcs  = _mm512_mul_ps(gam2,x1);
                           return (rcs);
                  }
-                                            
-
-
-
-                    
 
 
 
