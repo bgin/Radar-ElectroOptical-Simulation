@@ -3191,6 +3191,9 @@ namespace  gms {
                           rcs  = _mm512_mul_ps(arg,x0);
                           return (rcs);
                 }
+
+
+                   
                                             
 
 
