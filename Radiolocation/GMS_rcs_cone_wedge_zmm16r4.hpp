@@ -3299,6 +3299,12 @@ namespace  gms {
                  }
 
 
+                 /*
+                     Fresnel integral component.
+                     Formula 6.3-16
+                  */
+
+
 
 
                   
