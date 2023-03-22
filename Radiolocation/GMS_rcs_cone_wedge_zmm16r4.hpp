@@ -3131,6 +3131,36 @@ namespace  gms {
                           rcs  = _mm512_mul_ps(arg,x0);
                           return (rcs);
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6314_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) palp) {
+
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 alp = _mm512_load_ps(&palp[0]);
+                          const __m512 pi3   = _mm512_set1_ps(31.006276680299820175476315067101f);
+                          const __m512 _4pi2 = _mm512_set1_ps(39.478417604357434475337963999505f);
+                          const __m512 _3pi  = _mm512_set1_ps(9.424777960769379715387930149839f);
+                          const __m512 _3pi2 = _mm512_set1_ps(4.712388980384689857693965074919f)
+                          register __m512 rcs,a2,num1,den1,arg,sarg,csc,x0,alp2;
+                          a2   = _mm512_mul_ps(a,a);
+                          alp2 = _mm512_add_ps(alp,alp);
+                          num1 = _mm512_mul_ps(pi3,a2);
+                          arg  = _mm512_div_ps(_4pi2,_mm512_add_ps(_3pi,alp2));
+                          x0   = _mm512_add_ps(alp,_3pi2);
+                          sarg = xsinf(arg);
+                          den1 = _mm512_mul_ps(x0,x0);
+                          csc  = _mm512_rcp14_ps(sarg);
+                          x0   = _mm512_mul_ps(csc,csc);
+                          arg  = _mm512_div_ps(num1,den1);
+                          rcs  = _mm512_mul_ps(arg,x0);
+                          return (rcs);
+                }
                                             
 
 
