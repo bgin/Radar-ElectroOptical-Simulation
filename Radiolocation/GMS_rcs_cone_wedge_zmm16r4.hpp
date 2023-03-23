@@ -3700,6 +3700,14 @@ namespace  gms {
                 }
 
 
+                  /*
+                          Cylindrical current approximation of
+                          flat based truncated cone RCS for
+                          perpendicular polarization.
+                          Formula 6.3.41 
+                    */
+
+
 
 
                   
