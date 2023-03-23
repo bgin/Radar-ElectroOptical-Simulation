@@ -3562,6 +3562,29 @@ namespace  gms {
                       */
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6319_zmm16r4(const __m512 k0h,
+                                            const __m512 alp,
+                                            const __m512 a) {
+
+                          const __m512 c0 = _mm512_set1_ps(0.333333333333333333333333333333333f);
+                          register __m512 k0h2,a2o3,cosa,seca,trm1,trm2,rcs,x0; 
+                          a2o3 = _mm512_mul_ps(_mm512_mul_ps(a,a),c0);
+                          cosa = xcosf(alp);
+                          k0h2 = _mm512_mul_ps(k0h,k0h);
+                          seca = _mm512_rcp14_ps(cosa);
+                          x0   = _mm512_mul_ps(a2o3,cosa);
+                          trm1 = _mm512_mul_ps(k0h2,_mm512_mul_ps(seca,seca));
+                          trm2 = _mm512_sqrt_ps(x0);
+                          rcs  = _mm512_mul_ps(trm1,trm2);
+                          return (rcs);
+                 }
+
+
 
                   
 
