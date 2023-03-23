@@ -3660,6 +3660,26 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 dpsi_f6320_zmm16r4_a(const float * __ATTR_ALIGN__(64) pgam0,
+                                               const float * __ATTR_ALIGN__(64) ph,
+                                               const float * __ATTR_ALIGN__(64) palp) {
+
+                          register __m512 gam0 = _mm512_load_ps(&pgam0[0]);
+                          register __m512 h    = _mm512_load_ps(&ph[0]);
+                          register __m512 alp  = _mm512_load_ps(&palp[0]);
+                          register __m512 dpsi,cosa,seca;
+                          cosa = xcosf(alp);
+                          seca = _mm512_rcp14_ps(cosa);
+                          dpsi = _mm512_div_ps(gam0,_mm512_mul_ps(h,seca));
+                          return (dpsi);
+                }
+
+
 
                   
 
