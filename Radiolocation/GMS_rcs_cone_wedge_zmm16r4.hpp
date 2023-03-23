@@ -3499,6 +3499,63 @@ namespace  gms {
                    }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6315_zmm16r4_u(const float * __restrict  prho,
+                                              const float * __restrict  pgam0,
+                                              const float * __restrict  pk0h,
+                                              const float * __restrict  ptht,
+                                              const float * __restrict  palp) {
+
+                          register __m512 rho  = _mm512_loadu_ps(&prho[0]);
+                          register __m512 gam0 = _mm512_loadu_ps(&pgam0[0]);
+                          register __m512 k0h  = _mm512_loadu_ps(&pk0h[0]);
+                          register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
+                          register __m512 alp  = _mm512_loadu_ps(&alp[0]);
+                          const __m512 pi = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 pi4= _mm512_set1_ps(0.78539816339744830961566084582f);
+                          const __m512 c0 = _mm512_set1_ps(0.25f);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 ssa,cca,gam2,ear,eai,cer,cei,thalp,ir,ii,num,den,rat;
+                          register __m512 rcs,tana,tanta,costa,xxa,_2k0h,cosa,x0,x1,sth,seca,trm1;
+                          register __m512 t0r,t0i,t1r,t1i,cabs;
+                          thalp = _mm512_add_ps(tht,alp);
+                          cosa   = xcosf(alp);
+                          ir    = _mm512_setzero_ps();
+                          gam2  = _mm512_div_ps(_mm512_mul_ps(gam0,gam0),pi);
+                          ii    = pi4;
+                          seca  = _mm512_rcp14_ps(cosa);
+                          tanta = xtanf(thalp);
+                          _2k0h = _mm512_add_ps(k0h,k0h);
+                          tana  = xtanf(alp);
+                          costa = xcosf(thalp);
+                          x0    = _mm512_mul_ps(_2k0h,_mm512_mul_ps(costa,seca));
+                          sth   = xsinf(tht);
+                          ear   = ir;
+                          num   = _mm512_mul_ps(k0h,tana);
+                          xxa   = _mm512_sqrt_ps(x0);
+                          den   = _mm512_mul_ps(pi,sth);
+                          Frho_f6316_zmm16r4(rho,xxa,&ssa,&cca);
+                          eai   = _mm512_add_ps(ii,x0);
+                          trm1  = _mm512_mul_ps(_mm512_sqrt_ps(den),tanta);
+                          t0r   = _mm512_sub_ps(_1,ssa);
+                          t0i   = _mm512_sub_ps(_1,cca);
+                          cexp_zmm16r4(ear,eai,&cer,&cei);
+                          cer   = _mm512_mul_ps(cer,c0);
+                          cei   = _mm512_mul_ps(cei,c0);
+                          x0    = _mm512_mul_ps(trm1,t0r);
+                          x1    = _mm512_mul_ps(trm1,t0i);
+                          cmul_zmm16r4(cer,cei,t0r,t0i,&t1r,&t1i);
+                          cabs  = cabs_zmm16r4(t1r,t1i);
+                          rcs   = _mm512_mul_ps(gam2,cabs);
+                          return (rcs);
+                   }
+
+
+
                   
 
 
