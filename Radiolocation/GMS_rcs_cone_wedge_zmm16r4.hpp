@@ -3555,6 +3555,13 @@ namespace  gms {
                    }
 
 
+                      /*
+                          Specular return (RCS) of equivalent cylinder
+                          to cone sphere.
+                          Formula 6.3-19
+                      */
+
+
 
                   
 
