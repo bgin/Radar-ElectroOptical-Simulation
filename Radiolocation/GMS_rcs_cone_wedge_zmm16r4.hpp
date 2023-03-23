@@ -3790,6 +3790,41 @@ namespace  gms {
                   }
 
 
+                   /*
+                          Helper argument K1 for calculation
+                          of 6.3-41.
+                          Formula 6.3-43
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 K2_f6343_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 Ls,
+                                           const __m512 tht,
+                                           const __m512 alp) {
+                          
+                          const __m512 _4opi = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          register __m512 sth,cth,cota,trm1,trm2,calp,salp;
+                          register __m512 tana,x0,K2;
+                          sth = xsinf(tht);
+                          calp= xcosf(alp);
+                          cth = xcosf(tht);
+                          tana= xtanf(alp);
+                          salp= xsinf(alp);
+                          cota= _mm512_div_ps(calp,salp);
+                          trm2= _mm512_sub_ps(sth,_mm512_mul_ps(cota,cth));
+                          trm1= _mm512_sub_ps(a,_mm512_mul_ps(Ls,tana));
+                          x0  = _mm512_mul_ps(k0,trm1);
+                          K2  = _mm512_mul_ps(_4opi,_mm512_mul_ps(trm1,trm2));
+                          return (K2);
+                  }
+
+
 
 
 
