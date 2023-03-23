@@ -3352,8 +3352,47 @@ namespace  gms {
                         fresnel_zmm16r4(xxa,&resr,&resi);
                         cer = _mm512_mul_ps(cer,irho);
                         cei = _mm512_mul_ps(cei,irho);
-                        cmul_zmm16r4(cer,cei,resr,resi,*ssa,*cca);
+                        cmul_zmm16r4(cer,cei,resr,resi,&t0r,&t0i);
+                        _mm512_store_ps(&ssa[0], t0i);
+                        _mm512_store_ps(&cca[0], t0r);
                 }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Frho_f6316_zmm16r4_u(const float * __restrict  pxxa,
+                                             const float * __restrict  prho,
+                                             float * __restrict __ATTR_ALIGN__(64) ssa,
+                                             float * __restrict __ATTR_ALIGN__(64) cca) {
+
+                        register __m512 xxa = _mm512_loadu_ps(&pxxa[0]);
+                        register __m512 rho = _mm512_loadu_ps(&prho[0]);
+                        const __m512 n1 = _mm512_set1_ps(-1.0f);
+                        register __m512 irho,rho2,ear,eai,cer,cei,t0r,t0i,resr,resi;
+                        rho2 = _mm512_mul_ps(rho,rho);
+                        ear  = _mm512_setzero_ps();
+                        irho = _mm512_rcp14_ps(rho);
+                        eai  = _mm512_mul_ps(n1,rho2);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        fresnel_zmm16r4(xxa,&resr,&resi);
+                        cer = _mm512_mul_ps(cer,irho);
+                        cei = _mm512_mul_ps(cei,irho);
+                        cmul_zmm16r4(cer,cei,resr,resi,&t0r,&t0i);
+                        _mm512_storeu_ps(&ssa[0], t0i);
+                        _mm512_storeu_ps(&cca[0], t0r);
+                }
+
+
+                   /*
+                          Incidence near broadside to the cone - backscatter RCS.
+                          Formula 6.3-15
+                      */
+
+
+        
 
 
 
