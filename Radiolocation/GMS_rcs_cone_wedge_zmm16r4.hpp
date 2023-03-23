@@ -3637,6 +3637,29 @@ namespace  gms {
                  }
 
 
+                  /*
+                          Width of specular lobe of cylinder formula 6.3-19
+                          Formula 6.3-20 
+                     */
+
+                    
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 dpsi_f6320_zmm16r4(const __m512 gam0,
+                                             const __m512 h,
+                                             const __m512 alp) {
+
+                          register __m512 dpsi,cosa,seca;
+                          cosa = xcosf(alp);
+                          seca = _mm512_rcp14_ps(cosa);
+                          dpsi = _mm512_div_ps(gam0,_mm512_mul_ps(h,seca));
+                          return (dpsi);
+                }
+
+
 
                   
 
