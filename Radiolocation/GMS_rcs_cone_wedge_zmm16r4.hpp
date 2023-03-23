@@ -3825,6 +3825,40 @@ namespace  gms {
                   }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 K2_f6343_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) pLs,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                             const float * __restrict __ATTR_ALIGN__(64) palp) {
+                          
+                          register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 Ls  = _mm512_load_ps(&pLs[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          register __m512 alp = _mm512_load_ps(&palp[0]);
+                          const __m512 _4opi = _mm512_set1_ps(1.27323954473516268615107010698f);
+                          register __m512 sth,cth,cota,trm1,trm2,calp,salp;
+                          register __m512 tana,x0,K2;
+                          sth = xsinf(tht);
+                          calp= xcosf(alp);
+                          cth = xcosf(tht);
+                          tana= xtanf(alp);
+                          salp= xsinf(alp);
+                          cota= _mm512_div_ps(calp,salp);
+                          trm2= _mm512_sub_ps(sth,_mm512_mul_ps(cota,cth));
+                          trm1= _mm512_sub_ps(a,_mm512_mul_ps(Ls,tana));
+                          x0  = _mm512_mul_ps(k0,trm1);
+                          K2  = _mm512_mul_ps(_4opi,_mm512_mul_ps(trm1,trm2));
+                          return (K2);
+                  }
+
+
+
 
 
 
