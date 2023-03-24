@@ -899,10 +899,8 @@ done:
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 fresnel_C_zmm16r4(const __m512 xxa,
-                                        __m512 * __restrict ssa,
-                                        __m512 * __restrict cca) {
-
+                   __m512 fresnel_C_zmm16r4(const __m512 xxa) {
+                                        
                         using namespace gms::math;
                         const __m512 c0   = _mm512_set1_ps(2.5625f);
                         const __m512 c1   = _mm512_set1_ps(36974.0f);
@@ -911,7 +909,7 @@ done:
                         const __m512 _1   = _mm512_set1_ps(1.0f); 
                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
                         const __m512 pio2 = _mm512_set1_ps(1.57079632679489661923132169164f);
-                        register __m512 f,g,cc,ss,c,s,t,u,t0,t1;
+                        register __m512 f,g,cc,c,t,u,t0,t1;
                         register __m512 cca,x,x2,acc1,acc2,acc3,acc4;
                        
                         x   = _mm512_abs_ps(xxa);
@@ -919,8 +917,7 @@ done:
                         if(_mm512_cmp_ps_mask(x,c0,_CMP_LT_OQ)) {
 			   volatile __m512 prefsn = _mm_prefetch((const char*)&sn[0],_MM_HINT_T0);
                            volatile __m512 prefsd = _mm_prefetch((const char*)&sd[0],_MM_HINT_T0);
-                           //volatile __m512 prefcn = _mm_prefetch((const char*)&cn[0],_MM_HINT_T0);
-                           //volatile __m512 prefcd = _mm_prefetch((const char*)&cd[0],_MM_HINT_T0);
+                          
                            t = _mm512_mul_ps(x2,x2);
                            acc1 = sn[0]; 
                            acc2 = _mm512_add_ps(t,sd[0]);
@@ -937,23 +934,12 @@ done:
                            acc2 = _mm512_fmadd_ps(acc2,t,sd[5]);
                            t0   = _mm512_div_ps(acc1,acc2);
                            ss   = _mm512_mul_ps(_mm512_mul_ps(x,x2),t0);
-                          /* acc3 = _mm512_fmadd_ps(acc3,t,cn[1]);
-                           acc4 = _mm512_fmadd_ps(acc4,t,cd[1]);
-                           acc3 = _mm512_fmadd_ps(acc3,t,cn[2]);
-                           acc4 = _mm512_fmadd_ps(acc4,t,cd[2]);
-                           acc3 = _mm512_fmadd_ps(acc3,t,cn[3]);
-                           acc4 = _mm512_fmadd_ps(acc4,t,cd[3]);
-                           acc3 = _mm512_fmadd_ps(acc3,t,cn[4]);
-                           acc4 = _mm512_fmadd_ps(acc4,t,cd[5]);
-                           acc4 = _mm512_fmadd_ps(acc4,t,cd[6]);
-                           t1   = _mm512_div_ps(acc3,acc4);
-                           cc   = _mm512_mul_ps(x,t1);*/
+                           
                            goto done;
                         }
 
                        if(_mm512_cmp_ps_mask(x,c1,_CMP_GT_OQ)) {
                           cc = hlf;
-                          //ss = hlf;
                           goto done;
                       }
 
@@ -1014,22 +1000,17 @@ done:
                         
                         t    = _mm512_mul_ps(pio2,x2);
                         c    = xcosf(t);
-                        //s    = xsinf(t);
                         t    = _mm512_mul_ps(pi,x);
                         t0   = _mm512_fmsub_ps(f,s,_mm512_mul_ps(g,c));
                         cc   = _mm512_add_ps(hlf,_mm512_div_ps(t0,t));
-                        //t1   = _mm512_fmadd_ps(f,c,_mm512_mul_ps(g,s));
-                       // ss   = _mm512_sub_ps(hlf,_mm512_div_ps(t1,t));
 done:
                      if(_mm512_cmp_ps_mask(xxa,
                                      _mm512_setzero_ps(),_CMP_LT_OQ)) {
                          cc = negate_zmm16r4(cc);
-                         //ss = negate_zmm16r4(ss);
                      }
                      
                      cca = cc;
                      return (cca);
-                     //*ssa = ss;
               }
 
                    
