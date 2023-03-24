@@ -888,7 +888,10 @@ done:
               }
 
 
-                  
+                  /*
+                           Same as above -- divided into Fresnel 'C' integral
+                           and Fresnel 'S' integral.
+                     */
                    
 
 
