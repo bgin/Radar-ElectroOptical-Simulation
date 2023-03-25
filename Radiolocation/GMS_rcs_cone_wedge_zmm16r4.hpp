@@ -4368,6 +4368,13 @@ namespace  gms {
                 }
 
 
+                   /*
+                        Geometrical Diffraction.
+                        Flat-backed cone, backscattered RCS.
+                        Formula 6.3-49
+                    */
+
+
 
 
 
