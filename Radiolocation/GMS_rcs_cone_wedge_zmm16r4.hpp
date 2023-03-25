@@ -3899,7 +3899,8 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6341_zmm16r4(const __m512 tht,
+                   __m512 rcs_f6341_zmm16r4(const __m512 gam0,
+                                            const __m512 tht,
                                             const __m512 alp,
                                             const __m512 Ls,
                                             const __m512 k0,
@@ -3933,6 +3934,22 @@ namespace  gms {
                               x1   = _mm512_mul_ps(cotas,_mm512_mul_ps(diff,diff));
                               rcs  = _mm512_mul_ps(x0,x1);
                               return (rcs);
+                          }
+                          else if(_mm512_cmp_ps_mask(a1,
+                                            _mm512_setzero_ps(),_CMP_EQ_OQ)) {
+                                  const __m512 _8pi = _mm512_set1_ps(25.132741228718345907701147066236f);
+                                  const __m512 _9   = _mm512_set1_ps(9.0f);
+                                  register __m512 rat,a3,num,den,cosa,sina,cota,cotas;
+                                  a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a))'
+                                  cosa = xcosf(alp);
+                                  sina = xsinf(alp);
+                                  num  = _mm512_mul_ps(_8pi,a3);
+                                  cota = _mm512_div_ps(cosa,sina); 
+                                  den  = _mm512_mul_ps(_9,gam0);
+                                  cotas= _mm512_mul_ps(cota,cota);
+                                  rat  = _mm512_div_ps(num,den);
+                                  rcs  = _mm512_mul_ps(rat,_mm512_mul_ps(cosa,cotas));
+                                  return (rcs);
                           }
 
                           k02  = _mm512_mul_ps(_16,_mm512_mul_ps(k0,k0));
@@ -3979,13 +3996,15 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6341_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+                   __m512 rcs_f6341_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pgam0,
+                                              const float * __restrict __ATTR_ALIGN__(64) ptht,
                                               const float * __restrict __ATTR_ALIGN__(64) palp,
                                               const float * __restrict __ATTR_ALIGN__(64) pLs,
                                               const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
                                               const float * __restrict __ATTR_ALIGN__(64) pa1) {
 
+                          register __m512 gam0= _mm512_load_ps(&pgam0[0]);
                           register __m512 tht = _mm512_load_ps(&ptht[0]);
                           register __m512 alp = _mm512_load_ps(&palp[0]);
                           register __m512 Ls  = _mm512_load_ps(&pLs[0]);
@@ -4019,7 +4038,22 @@ namespace  gms {
                               rcs  = _mm512_mul_ps(x0,x1);
                               return (rcs);
                           } 
-                          
+                          else if(_mm512_cmp_ps_mask(a1,
+                                            _mm512_setzero_ps(),_CMP_EQ_OQ)) {
+                                  const __m512 _8pi = _mm512_set1_ps(25.132741228718345907701147066236f);
+                                  const __m512 _9   = _mm512_set1_ps(9.0f);
+                                  register __m512 rat,a3,num,den,cosa,sina,cota,cotas;
+                                  a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a))'
+                                  cosa = xcosf(alp);
+                                  sina = xsinf(alp);
+                                  num  = _mm512_mul_ps(_8pi,a3);
+                                  cota = _mm512_div_ps(cosa,sina); 
+                                  den  = _mm512_mul_ps(_9,gam0);
+                                  cotas= _mm512_mul_ps(cota,cota);
+                                  rat  = _mm512_div_ps(num,den);
+                                  rcs  = _mm512_mul_ps(rat,_mm512_mul_ps(cosa,cotas));
+                                  return (rcs);
+                          }
 
                           k02  = _mm512_mul_ps(_16,_mm512_mul_ps(k0,k0));
                           k0a  = _mm512_mul_ps(k0,a);
