@@ -4518,6 +4518,42 @@ namespace  gms {
                         cexp_zmm16r4(ear,eai,*cer,*cei);
                  }
 
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void expj_f6358_zmm16_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64) pbeta,
+                                           const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) ph,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           float * __restrict __ATTR_ALIGN__(64) cer,
+                                           float * __restrict __ATTR_ALIGN__(64) cei) {
+
+                        using gms::math;
+                        register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        register __m512 beta = _mm512_load_ps(&pbeta[0]);
+                        register __m512 a    = _mm512_load_ps(&pa[0]);
+                        register __m512 h    = _mm512_load_ps(&ph[0]);
+                        register __m512 tht  = _mm512_load_ps(&ptht[0]);
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 hlf = _mm512_set1_ps(0.5f);
+                        register __m512 _2k0,b2,sint,cost,cosb,negt,x0;
+                        register __m512 ear,eai;
+                        b2   = _mm512_mul_ps(beta,hlf);
+                        sint = xsinf(tht);
+                        _2k0 = _mm512_add_ps(k0,k0);
+                        cost = xcosf(tht);
+                        ear  = _mm512_setzero_ps();
+                        cosb = xcosf(b2);
+                        negt = negate_zmm16r4( _mm512_mul_ps(_2k0,cosb));
+                        x0   = _mm512_fmadd_ps(a,sint,_mm512_mul_ps(h,cost));
+                        eai  = _mm512_fmadd_ps(negt,x0,pi4);
+                        cexp_zmm16r4(ear,eai,*cer,*cei);
+                 }
+
                        
 
 
