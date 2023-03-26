@@ -4601,6 +4601,50 @@ namespace  gms {
                          Formula 6.3-57
                      */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6357_zmm16r4(const __m512 alp,
+                                            const __m512 tht,
+                                            const __m512 beta,
+                                            const __m512 beta1,
+                                            const __m512 a,
+                                            const __m512 k0) {
+
+                          const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _3o2 = _mm512_set1_ps(1.5f);
+                          const __m512 hlf  = _mm512_set1_ps(0.5f);
+                          const __m512 _2   = _mm512_set1_ps(2.0f);
+                          register __m512 b1,n,arg1,psi1,sarg1,carg1,arg2,carg2,x2;
+                          register __m512 rcs,invn,cosb2,x0,x1,trm1,trm2,trm3,sint,trm4;
+                          n    = _mm512_add_ps(_3o2,_mm512_div_ps(alp,pi));
+                          arg2 = _mm512_fmadd_ps(_2,beta,pi);
+                          b1   = _mm512_mul_ps(beta1,hlf);
+                          arg2 = _mm512_div_ps(arg2,n);
+                          arg1 = _mm512_div_ps(pi,n);
+                          psi1 = _mm512_add_ps(tht,b1);
+                          sarg1= xsinf(arg1);
+                          sint = xsinf(psi1);
+                          invn = _mm512_rcp14_ps(n);
+                          cosb2= xcosf(_mm512_mul_ps(beta,hlf));
+                          trm1 = _mm512_mul_ps(sarg1,invn);
+                          x2   = _mm512_div_ps(beta1,n);
+                          carg1= xcosf(arg1);
+                          x0   = _mm512_mul_ps(a,_mm512_rcp14_ps(sint));
+                          carg2= xcosf(arg2);
+                          x1   = _mm512_mul_ps(k0,cosb2);
+                          sarg1= xcosf(x2);
+                          trm2 = _mm512_div_ps(x0,x1);
+                          trm3 = _mm512_rcp14_ps(_mm512_sub_ps(carg1,carg2));
+                          trm4 = _mm512_rcp14_ps(_mm512_sub_ps(carg1,sarg1));
+                          x0   = _mm512_sqrt_ps(trm2);
+                          x1   = _mm512_add_ps(trm3,trm4);
+                          rcs  = _mm512_mul_ps(_mm512_mul_ps(trm1,x0),x1);
+                          return (rcs);
+                 }
                        
 
 
