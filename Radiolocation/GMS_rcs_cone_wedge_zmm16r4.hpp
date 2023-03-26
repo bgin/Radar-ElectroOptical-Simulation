@@ -4482,6 +4482,42 @@ namespace  gms {
                     */
 
 
+                  /*
+                         Complex 'j' phase associated with each 'j' amplitude.
+                         Formula 6.3-58, 6.3-56 (complex exponent term only).
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void expj_f6358_zmm16(const __m512 k0,
+                                       const __m512 beta,
+                                       const __m512 a,
+                                       const __m512 h,
+                                       const __m512 tht,
+                                       __m512 * __restrict cer,
+                                       __m512 * __restrict cei) {
+
+                        using gms::math;
+                        const __m512 pi4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 hlf = _mm512_set1_ps(0.5f);
+                        register __m512 _2k0,b2,sint,cost,cosb,negt,x0;
+                        register __m512 ear,eai;
+                        b2   = _mm512_mul_ps(beta,hlf);
+                        sint = xsinf(tht);
+                        _2k0 = _mm512_add_ps(k0,k0);
+                        cost = xcosf(tht);
+                        ear  = _mm512_setzero_ps();
+                        cosb = xcosf(b2);
+                        negt = negate_zmm16r4( _mm512_mul_ps(_2k0,cosb));
+                        x0   = _mm512_fmadd_ps(a,sint,_mm512_mul_ps(h,cost));
+                        eai  = _mm512_fmadd_ps(negt,x0,pi4);
+                        cexp_zmm16r4(ear,eai,*cer,*cei);
+                 }
+
                        
 
 
