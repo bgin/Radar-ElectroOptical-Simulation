@@ -4758,7 +4758,7 @@ namespace  gms {
                        /*
                          Geometrical Theory of Diffraction
                          RCS by amplitude series summing convergence.
-                         Formula 6.3-56 -- single term on;y
+                         Formula 6.3-56 -- single term only
                     */
 
 
@@ -4780,8 +4780,8 @@ namespace  gms {
                           expj_f6358_zmm16(k0,beta,a,h,tht,&cer,&cei);
                           rcs6357 = rcs_f6357_zmm16r4(alp,tht,beta,beta1,
                                                       a,k0,ver);
-                          t0r = _mm512_mul_ps(cer,t0r);
-                          t0i = _mm512_mul_ps(cei,t0i);
+                          t0r = _mm512_mul_ps(cer,rcs6357);
+                          t0i = _mm512_mul_ps(cei,rcs6357);
                           cabs= cabs_zmm16r4(t0r,t0i);
                           rcs = cabs;
                           return (rcs);
@@ -4813,8 +4813,8 @@ namespace  gms {
                           expj_f6358_zmm16(k0,beta,a,h,tht,&cer,&cei);
                           rcs6357 = rcs_f6357_zmm16r4(alp,tht,beta,beta1,
                                                       a,k0,ver);
-                          t0r = _mm512_mul_ps(cer,t0r);
-                          t0i = _mm512_mul_ps(cei,t0i);
+                          t0r = _mm512_mul_ps(cer,rcs6357);
+                          t0i = _mm512_mul_ps(cei,rcs6357);
                           cabs= cabs_zmm16r4(t0r,t0i);
                           rcs = cabs;
                           return (rcs);
@@ -4846,12 +4846,66 @@ namespace  gms {
                           expj_f6358_zmm16(k0,beta,a,h,tht,&cer,&cei);
                           rcs6357 = rcs_f6357_zmm16r4(alp,tht,beta,beta1,
                                                       a,k0,ver);
-                          t0r = _mm512_mul_ps(cer,t0r);
-                          t0i = _mm512_mul_ps(cei,t0i);
+                          t0r = _mm512_mul_ps(cer,rcs6357);
+                          t0i = _mm512_mul_ps(cei,rcs6357);
                           cabs= cabs_zmm16r4(t0r,t0i);
                           rcs = cabs;
                           return (rcs);
                  } 
+
+
+                     /*
+                         Geometrical Theory of Diffraction
+                         RCS by amplitude series summing convergence.
+                         Formula 6.3-56 -- multiple terms.
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6356_nterm_zmm16r4_a(const __m512 * __restrict __ATTR_ALIGN__(64) palp,
+                                                    const __m512 h,
+                                                    const __m512 * __restrict __ATTR_ALIGN__(64) pbeta,
+                                                    const __m512 * __restrict __ATTR_ALIGN__(64) pbeta1,
+                                                    const __m512 a,
+                                                    const __m512 k0,
+                                                    const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+                                                    const int32_t n,
+                                                    const bool ver) {
+
+                       
+
+                         if(__builtin_expect(n<=0,0)) { return _mm512_setzero_ps();}
+                         if(__builtin_expect(n==1,0)) { 
+                             return (rcs_f6356_term1_zmm16r4(palp[0],h,pbeta[0],pbeta1[0],
+                                                            a,k0,ptht[0],ver);)
+                         }
+                         
+                         register __m512 cer,cei,rcs6357,t0r,t0i,cabs,rcs;
+                         register __m512 accr,acci;
+                         int32_t j; 
+                         accr = _mm512_setzero_ps();
+                         acci = accr;
+                         for(j = 0; j != n; ++j) {
+                             register __m512 al = palp[j];
+                             register __m512 b = pbeta[j];
+                             register __m512 b1= pbeta1[j];
+                             register __m512 t = ptht[j];
+                             expj_f6358_zmm16(k0,b,a,h,t,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al,t,b,b1,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                         }
+                         cabs = cabs_zmm16r4(accr,acci);
+                         rcs  = cabs;
+                         return (rcs);
+                 }
 
 
                    
