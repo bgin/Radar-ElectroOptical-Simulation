@@ -4939,8 +4939,8 @@ namespace  gms {
                         // register __m512 b0,b1,b2,b3,b4,b,b6,b7;
                         // register __m512 b10,b11,b12,b13,b14,b1,b16,b17;
                         // register __m512 t0,t1,t2,t3,t4,t5,t6,t7;
-                        // register __m512 accr,acci;
-                         int32_t j,m,m1; 
+                         register __m512 accr,acci;
+                         int32_t j,m,m1;  
                          accr = _mm512_setzero_ps();
                          acci = accr;
                          m = n%8;
