@@ -4659,7 +4659,8 @@ namespace  gms {
                                               const float * __restrict __ATTR_ALIGN__(64) pbeta,
                                               const float * __restrict __ATTR_ALIGN__(64) pbeta1,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
-                                              const float * __restrict __ATTR_ALIGN__(64) pk0) {
+                                              const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const bool ver) { // addition (true) or subtraction (false) of cosine terms in 6.3-57
 
                           register __m512 alp   = _mm512_load_ps(&palp[0]);
                           register __m512 tht   = _mm512_load_ps(&ptht[0]);
@@ -4694,7 +4695,8 @@ namespace  gms {
                           trm3 = _mm512_rcp14_ps(_mm512_sub_ps(carg1,carg2));
                           trm4 = _mm512_rcp14_ps(_mm512_sub_ps(carg1,sarg1));
                           x0   = _mm512_sqrt_ps(trm2);
-                          x1   = _mm512_add_ps(trm3,trm4);
+                          (ver == true) ? x1   = _mm512_add_ps(trm3,trm4) : 
+                                          x1   = _mm512_sub_ps(trm3,trm4);
                           rcs  = _mm512_mul_ps(_mm512_mul_ps(trm1,x0),x1);
                           return (rcs);
                  }
