@@ -4788,7 +4788,37 @@ namespace  gms {
                  } 
 
 
-               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6356_term1_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) palp,
+                                                  const float * __restrict __ATTR_ALIGN__(64) ph,
+                                                  const float * __restrict __ATTR_ALIGN__(64) pbeta,
+                                                  const float * __restrict __ATTR_ALIGN__(64) pbeta1,
+                                                  const float * __restrict __ATTR_ALIGN__(64) pa,
+                                                  const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                                  const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                                  const bool ver) {
+
+                          register __m512 alp   = _mm512_load_ps(&palp[0]);
+                          register __m512 h     = _mm512_load_ps(&ph[0]);
+                          register __m512 beta  = _mm512_load_ps(&pbeta[0]);
+                          register __m512 beta1 = _mm512_load_ps(&pbeta1[0]);
+                          register __m512 a     = _mm512_load_ps(&pa[0]);
+                          register __m512 k0    = _mm512_load_ps(&pk0[0]);
+                          register __m512 tht   = _mm512_load_ps(&ptht[0]);
+                          register __m512 cer,cei,rcs6357,t0r,t0i,cabs,rcs;
+                          expj_f6358_zmm16(k0,beta,a,h,tht,&cer,&cei);
+                          rcs6357 = rcs_f6357_zmm16r4(alp,tht,beta,beta1,
+                                                      a,k0,ver);
+                          t0r = _mm512_mul_ps(cer,t0r);
+                          t0i = _mm512_mul_ps(cei,t0i);
+                          cabs= cabs_zmm16r4(t0r,t0i);
+                          rcs = cabs;
+                          return (rcs);
+                 } 
 
 
                    
