@@ -4654,7 +4654,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6357v1_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) palp,
+                   __m512 rcs_f6357_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) palp,
                                               const float * __restrict __ATTR_ALIGN__(64) ptht,
                                               const float * __restrict __ATTR_ALIGN__(64) pbeta,
                                               const float * __restrict __ATTR_ALIGN__(64) pbeta1,
@@ -4707,12 +4707,13 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6357v1_zmm16r4_u(const float * __restrict  palp,
+                   __m512 rcs_f6357_zmm16r4_u(const float * __restrict  palp,
                                               const float * __restrict  ptht,
                                               const float * __restrict  pbeta,
                                               const float * __restrict  pbeta1,
                                               const float * __restrict  pa,
-                                              const float * __restrict  pk0) {
+                                              const float * __restrict  pk0,
+                                              const bool ver) { // addition (true) or subtraction (false) of cosine terms in 6.3-57
 
                           register __m512 alp   = _mm512_loadu_ps(&palp[0]);
                           register __m512 tht   = _mm512_loadu_ps(&ptht[0]);
@@ -4747,7 +4748,8 @@ namespace  gms {
                           trm3 = _mm512_rcp14_ps(_mm512_sub_ps(carg1,carg2));
                           trm4 = _mm512_rcp14_ps(_mm512_sub_ps(carg1,sarg1));
                           x0   = _mm512_sqrt_ps(trm2);
-                          x1   = _mm512_add_ps(trm3,trm4);
+                          (ver == true) ? x1   = _mm512_add_ps(trm3,trm4) : 
+                                          x1   = _mm512_sub_ps(trm3,trm4);
                           rcs  = _mm512_mul_ps(_mm512_mul_ps(trm1,x0),x1);
                           return (rcs);
                  }
