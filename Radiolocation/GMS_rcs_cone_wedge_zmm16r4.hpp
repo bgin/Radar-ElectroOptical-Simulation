@@ -4866,7 +4866,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6356_nterm_zmm16r4_a(const __m512 * __restrict __ATTR_ALIGN__(64) palp,
+                   __m512 rcs_f6356_nterm_zmm16r4(  const __m512 * __restrict __ATTR_ALIGN__(64) palp,
                                                     const __m512 h,
                                                     const __m512 * __restrict __ATTR_ALIGN__(64) pbeta,
                                                     const __m512 * __restrict __ATTR_ALIGN__(64) pbeta1,
@@ -4907,6 +4907,158 @@ namespace  gms {
                          return (rcs);
                  }
 
+
+                   /*
+                         Geometrical Theory of Diffraction
+                         RCS by amplitude series summing convergence.
+                         Formula 6.3-56 -- multiple terms, unrolled 16x.
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6356_nterm_u8x_zmm16r4(  const __m512 * __restrict __ATTR_ALIGN__(64) palp,
+                                                         const __m512 h,
+                                                         const __m512 * __restrict __ATTR_ALIGN__(64) pbeta,
+                                                         const __m512 * __restrict __ATTR_ALIGN__(64) pbeta1,
+                                                         const __m512 a,
+                                                         const __m512 k0,
+                                                         const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+                                                         const int32_t n,
+                                                         const bool ver) {
+
+                       
+
+                         if(__builtin_expect(n<=0,0)) { return _mm512_setzero_ps();}
+                                                  
+                         __m512 cer,cei,rcs6357,t0r,t0i,cabs,rcs;
+                        // register __m512 al0,al1,al2,al3,al4,al5,al6,al7
+                        // register __m512 b0,b1,b2,b3,b4,b,b6,b7;
+                        // register __m512 b10,b11,b12,b13,b14,b1,b16,b17;
+                        // register __m512 t0,t1,t2,t3,t4,t5,t6,t7;
+                        // register __m512 accr,acci;
+                         int32_t j,m,m1; 
+                         accr = _mm512_setzero_ps();
+                         acci = accr;
+                         m = n%8;
+                         if(m != 0) {
+                            for(j = 0; j != m; ++j) {
+                                register __m512 al = palp[j];
+                                register __m512 b = pbeta[j];
+                                register __m512 b1= pbeta1[j];
+                                register __m512 t = ptht[j];
+                                expj_f6358_zmm16(k0,b,a,h,t,&cer,&cei);
+                                rcs6357 = rcs_f6357_zmm16r4(al,t,b,b1,
+                                                         a,k0,ver);
+                                t0r     = _mm512_mul_ps(cer,rcs6357);
+                                accr    = _mm512_add_ps(accr,t0r);
+                                t0i     = _mm512_mul_ps(cei,rcs6357);
+                                acci    = _mm512_add_ps(acci,t0i);
+                            }
+                             if(n<8) {
+                                cabs = cabs_zmm16r4(accr,acci);
+                                rcs  = cabs;
+                                return (rcs);
+                             }
+                         }
+                         m1 = m+1;
+                         for(j = m1; j != n; j += 8) {
+                             register __m512 al0 = palp[j+0];
+                             register __m512 b0 = pbeta[j+0];
+                             register __m512 b10= pbeta1[j+0];
+                             register __m512 t0 = ptht[j+0];
+                             expj_f6358_zmm16(k0,b0,a,h,t0,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al0,t0,b0,b10,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al1 = palp[j+1];
+                             register __m512 b1 = pbeta[j+1];
+                             register __m512 b11= pbeta1[j+1];
+                             register __m512 t1 = ptht[j+1];
+                             expj_f6358_zmm16(k0,b1,a,h,t1,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al1,t1,b1,b11,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al2 = palp[j+2];
+                             register __m512 b2 = pbeta[j+2];
+                             register __m512 b12= pbeta1[j+2];
+                             register __m512 t2 = ptht[j+2];
+                             expj_f6358_zmm16(k0,b2,a,h,t2,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al2,t2,b2,b12,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al3 = palp[j+3];
+                             register __m512 b3 = pbeta[j+3];
+                             register __m512 b13= pbeta1[j+3];
+                             register __m512 t3 = ptht[j+3];
+                             expj_f6358_zmm16(k0,b3,a,h,t3,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al3,t3,b3,b13,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al4 = palp[j+4];
+                             register __m512 b4 = pbeta[j+4];
+                             register __m512 b14= pbeta1[j+4];
+                             register __m512 t4 = ptht[j+4];
+                             expj_f6358_zmm16(k0,b4,a,h,t4,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al4,t4,b4,b14,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al5 = palp[j+5];
+                             register __m512 b5 = pbeta[j+5];
+                             register __m512 b15= pbeta1[j+5];
+                             register __m512 t5 = ptht[j+5];
+                             expj_f6358_zmm16(k0,b5,a,h,t5,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al5,t5,b5,b15,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al6 = palp[j+6];
+                             register __m512 b6 = pbeta[j+6];
+                             register __m512 b16= pbeta1[j+6];
+                             register __m512 t6 = ptht[j+6];
+                             expj_f6358_zmm16(k0,b6,a,h,t6,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al6,t6,b6,b16,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                             register __m512 al7 = palp[j+7];
+                             register __m512 b7 = pbeta[j+7];
+                             register __m512 b17= pbeta1[j+7];
+                             register __m512 t7 = ptht[j+7];
+                             expj_f6358_zmm16(k0,b7,a,h,t7,&cer,&cei);
+                             rcs6357 = rcs_f6357_zmm16r4(al7,t7,b7,b17,
+                                                         a,k0,ver);
+                             t0r     = _mm512_mul_ps(cer,rcs6357);
+                             accr    = _mm512_add_ps(accr,t0r);
+                             t0i     = _mm512_mul_ps(cei,rcs6357);
+                             acci    = _mm512_add_ps(acci,t0i);
+                         }
+                         cabs = cabs_zmm16r4(accr,acci);
+                         rcs  = cabs;
+                         return (rcs);
+                 }
 
                    
 
