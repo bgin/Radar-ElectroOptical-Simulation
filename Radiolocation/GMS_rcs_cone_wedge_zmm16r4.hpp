@@ -4755,6 +4755,16 @@ namespace  gms {
                  }
 
 
+                       /*
+                         Geometrical Theory of Diffraction
+                         RCS by amplitude series convergence.
+                         Formula 6.3-56
+                    */
+
+
+                       
+
+
                    
 
                        
