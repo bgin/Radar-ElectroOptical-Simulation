@@ -4757,8 +4757,8 @@ namespace  gms {
 
                        /*
                          Geometrical Theory of Diffraction
-                         RCS by amplitude series convergence.
-                         Formula 6.3-56
+                         RCS by amplitude series summing convergence.
+                         Formula 6.3-56 -- single term on;y
                     */
 
 
@@ -4767,7 +4767,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6356_sum1_zmm16r4(const __m512 alp,
+                   __m512 rcs_f6356_term1_zmm16r4(const __m512 alp,
                                               const __m512 h,
                                               const __m512 beta,
                                               const __m512 beta1,
@@ -4786,6 +4786,9 @@ namespace  gms {
                           rcs = cabs;
                           return (rcs);
                  } 
+
+
+               
 
 
                    
