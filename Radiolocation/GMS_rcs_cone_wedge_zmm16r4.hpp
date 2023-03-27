@@ -4494,10 +4494,10 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    void expj_f6358_zmm16(const __m512 k0,
-                                       const __m512 beta,
-                                       const __m512 a,
-                                       const __m512 h,
-                                       const __m512 tht,
+                                         const __m512 beta,
+                                         const __m512 a,
+                                         const __m512 h,
+                                         const __m512 tht,
                                        __m512 * __restrict cer,
                                        __m512 * __restrict cei) {
 
@@ -4762,7 +4762,30 @@ namespace  gms {
                     */
 
 
-                       
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6356_sum1_zmm16r4(const __m512 alp,
+                                              const __m512 h,
+                                              const __m512 beta,
+                                              const __m512 beta1,
+                                              const __m512 a,
+                                              const __m512 k0,
+                                              const __m512 tht,
+                                              const bool ver) {
+
+                          register __m512 cer,cei,rcs6357,t0r,t0i,cabs,rcs;
+                          expj_f6358_zmm16(k0,beta,a,h,tht,&cer,&cei);
+                          rcs6357 = rcs_f6357_zmm16r4(alp,tht,beta,beta1,
+                                                      a,k0,ver);
+                          t0r = _mm512_mul_ps(cer,t0r);
+                          t0i = _mm512_mul_ps(cei,t0i);
+                          cabs= cabs_zmm16r4(t0r,t0i);
+                          rcs = cabs;
+                          return (rcs);
+                 } 
 
 
                    
