@@ -5547,7 +5547,9 @@ namespace  gms {
                                             const float * __restrict __ATTR_ALIGN__(64) pa,
                                             const float * __restrict __ATTR_ALIGN__(64) pb) {
 
-                          register __m512
+                          register __m512 k0 = _mm512_load_ps(&pk0[0]);
+                          register __m512 a  = _mm512_load_ps(&pa[0]);
+                          register __m512 b  = _mm512_load_ps(&pb[0]);
                           const __m512 pi  = _mm512_set1_ps(3.14159265358979323846264338328f);
                           const __m512 _2pi= _mm512_set1_ps(9.869604401089358618834490999876f);
                           const __m512 _2  = _mm512_set1_ps(2.0f);
