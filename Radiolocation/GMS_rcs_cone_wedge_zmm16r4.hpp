@@ -4920,7 +4920,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6356_nterm_u8x_zmm16r4(  const __m512 * __restrict __ATTR_ALIGN__(64) palp,
+                   float rcs_f6356_nterm_u8x_zmm16r4(    const __m512 * __restrict __ATTR_ALIGN__(64) palp,
                                                          const __m512 h,
                                                          const __m512 * __restrict __ATTR_ALIGN__(64) pbeta,
                                                          const __m512 * __restrict __ATTR_ALIGN__(64) pbeta1,
@@ -4934,13 +4934,14 @@ namespace  gms {
 
                          if(__builtin_expect(n<=0,0)) { return _mm512_setzero_ps();}
                                                   
-                         __m512 cer,cei,rcs6357,t0r,t0i,cabs,rcs;
+                         __m512 cer,cei,rcs6357,t0r,t0i,cabs;
+                         float rcs = 0.0f;
                         // register __m512 al0,al1,al2,al3,al4,al5,al6,al7
                         // register __m512 b0,b1,b2,b3,b4,b,b6,b7;
                         // register __m512 b10,b11,b12,b13,b14,b1,b16,b17;
                         // register __m512 t0,t1,t2,t3,t4,t5,t6,t7;
-                         register __m512 accr,acci;
-                         int32_t j,m,m1;  
+                        // register __m512 accr,acci;
+                         int32_t j,m,m1; 
                          accr = _mm512_setzero_ps();
                          acci = accr;
                          m = n%8;
@@ -4960,7 +4961,7 @@ namespace  gms {
                             }
                              if(n<8) {
                                 cabs = cabs_zmm16r4(accr,acci);
-                                rcs  = cabs;
+                                rcs  = _mm512_reduce_add_ps(cabs);
                                 return (rcs);
                              }
                          }
@@ -5056,9 +5057,12 @@ namespace  gms {
                              acci    = _mm512_add_ps(acci,t0i);
                          }
                          cabs = cabs_zmm16r4(accr,acci);
-                         rcs  = cabs;
+                         rcs  = _mm512_reduce_add_ps(cabs);
                          return (rcs);
                  }
+
+
+                    
 
                    
 
