@@ -5506,6 +5506,13 @@ namespace  gms {
                  }
 
 
+                   /*
+                          Small loop k0a << 1 backacattering
+                          The far-zone amplitude TE-case.
+                          Formula 6.4-11
+                      */
+
+
                        
 
 
