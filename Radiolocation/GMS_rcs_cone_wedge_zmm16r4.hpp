@@ -5543,13 +5543,42 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 rcs_f6410_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                   __m512 rcs_f6410_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                             const float * __restrict __ATTR_ALIGN__(64) pa,
                                             const float * __restrict __ATTR_ALIGN__(64) pb) {
 
                           register __m512 k0 = _mm512_load_ps(&pk0[0]);
                           register __m512 a  = _mm512_load_ps(&pa[0]);
                           register __m512 b  = _mm512_load_ps(&pb[0]);
+                          const __m512 pi  = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _2pi= _mm512_set1_ps(9.869604401089358618834490999876f);
+                          const __m512 _2  = _mm512_set1_ps(2.0f);
+                          register __m512 num,k0a,k0a2,k0b,arg,larg,den,rcs,x0;
+                          k0a = _mm512_mul_ps(k0,a);
+                          k0b = _mm512_mul_ps(k0,b);
+                          k0a2= _mm512_mul_ps(k0a,k0a);
+                          arg = _mm512_div_ps(_2,k0b);
+                          num = _mm512_mul_ps(pi,k0a2);
+                          larg= xlogf(arg);
+                          x0  = _mm512_add_ps(larg,larg);
+                          den = _mm512_fmadd_ps(x0,x0,pi2);
+                          rcs = _mm512_div_ps(num,den);
+                          return (rcs);
+                   }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6410_zmm16r4_u(const float * __restrict  pk0,
+                                            const float * __restrict  pa,
+                                            const float * __restrict  pb) {
+
+                          register __m512 k0 = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a  = _mm512_loadu_ps(&pa[0]);
+                          register __m512 b  = _mm512_loadu_ps(&pb[0]);
                           const __m512 pi  = _mm512_set1_ps(3.14159265358979323846264338328f);
                           const __m512 _2pi= _mm512_set1_ps(9.869604401089358618834490999876f);
                           const __m512 _2  = _mm512_set1_ps(2.0f);
