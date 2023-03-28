@@ -5304,6 +5304,13 @@ namespace  gms {
                  }
 
 
+                   /*
+                          Geometrical Theory of Difraction double
+                          truncated cone (frustum) scattering.
+                          Formula 6.3-60
+                      */
+
+
                     
 
                    
