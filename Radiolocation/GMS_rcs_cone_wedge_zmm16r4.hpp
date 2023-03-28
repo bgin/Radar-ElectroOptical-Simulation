@@ -5507,11 +5507,34 @@ namespace  gms {
 
 
                    /*
-                          Small loop k0a << 1 backacattering
-                          The far-zone amplitude TE-case.
-                          Formula 6.4-11
+                          Large loop k0a >> 1 , for theta = 0 degree.
+                          Formula 6.4-10
                       */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6410_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 b) {
+
+                          const __m512 pi  = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 _2pi= _mm512_set1_ps(9.869604401089358618834490999876f);
+                          const __m512 _2  = _mm512_set1_ps(2.0f);
+                          register __m512 num,k0a,k0a2,k0b,arg,larg,den,rcs;
+                          k0a = _mm512_mul_ps(k0,a);
+                          k0b = _mm512_mul_ps(k0,b);
+                          k0a2= _mm512_mul_ps(k0a,k0a);
+                          arg = _mm512_div_ps(_2,k0b);
+                          num = _mm512_mul_ps(pi,k0a2);
+                          larg= xlogf(arg);
+                          den = _mm512_fmadd_ps(larg,larg,pi2);
+                          rcs = _mm512_div_ps(num,den);
+                          return (rcs);
+                   }
 
                        
 
