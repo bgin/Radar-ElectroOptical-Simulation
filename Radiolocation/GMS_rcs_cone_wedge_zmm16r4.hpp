@@ -5603,6 +5603,37 @@ namespace  gms {
                       */
 
                        
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uv_f6411_zmm16r4(const __m512 a,
+                                         const __m512 k0,
+                                         const __m512 b,
+                                         const __m512 tht,
+                                         __m512 *  __restrict Uvr,
+                                         __m512 *  __restrict Uvi) {
+
+                        const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f);
+                        const __m512 _2  = _mm512_set1_ps(2.0f);
+                        const __m512 _8  = _mm512_set1_ps(8.0f);
+                        const __m512 sme0= _mm512_set1_ps(376.991118430775188623669955550061f);
+                        register __m512 ir,ii,a2,k0a,sint,num,x0;
+                        register __m512 arg,larg,den;
+                        ir   = _mm512_setzero_ps();
+                        a2   = _mm512_mul_ps(a,a);
+                        sint = xsinf(tht);
+                        k0a  = _mm512_mul_ps(a2,_mm512_mul_ps(k0,a));
+                        arg  = _mm512_mul_ps(_8,_mm512_div_ps(a,b));
+                        x0   = _mm512_fmadd_ps(sint,sint,_2);
+                        larg = xlogf(arg);
+                        num  = _mm512_mul_ps(pis,_mm512_mul_ps(k0a,x0));
+                        den  = _mm512_mul_ps(sme0,_mm512_sub_ps(larg,_2));
+                        ii   = num;
+                        *Uvr = ir;
+                        *Uvi = _mm512_div_ps(ii,den); 
+                 }
 
 
 
