@@ -5595,6 +5595,13 @@ namespace  gms {
                           return (rcs);
                    }
 
+
+                     /*
+                         THe far-zone amplitude for TE-case.
+                         For small loop k0a<<1
+                         Formula 6.4-11
+                      */
+
                        
 
 
