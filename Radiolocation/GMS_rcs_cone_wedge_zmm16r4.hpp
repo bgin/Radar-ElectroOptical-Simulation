@@ -5804,7 +5804,7 @@ namespace  gms {
 
 
 
-                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -5842,7 +5842,7 @@ namespace  gms {
                  }
 
 
-                    __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -5878,6 +5878,26 @@ namespace  gms {
                         _mm512_storeu_ps(&Uvr[0] ,ir);
                         _mm512_storeu_ps(&Uvi[0] ,_mm512_div_ps(ii,den)); 
                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6412_zmm16(const __m512 a,
+                                          const __m512 b,
+                                          const __m512 k0,
+                                          const __m512 tht) {
+
+                        const __m512 pi34 = _mm512_set1_ps(7.751569170074955043869078766775f);
+                        const __m512 _2   = _mm512_set1_ps(2.0f);
+                        const __m512 _8   = _mm512_set1_ps(8.0f);
+                        
+                }
+                                          
+
+                    
 
 
                     
