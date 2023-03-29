@@ -5636,6 +5636,106 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uv_f6411_u16x_zmm16r4(const __m512 a,
+                                              const __m512 k0,
+                                              const __m512 b,
+                                              const __m512 * __restrict __ATTR_ALIGN__(64) tht,
+                                              __m512 * __restrict __ATTR_ALIGN__(64) Uvr,
+                                              __m512 * __restrict __ATTR_ALIGN__(64) Uvi,
+                                              const int32_t n) {
+
+                        if(__builtin_expect(n<=0,0)) { return;}
+                        register __m512 t0,t1,t2,t3,t4,t5,t6,t7;
+                        register __m512 t8,t9,t10,t11,t12,t13,t14,t15;
+                        register __m512 resr,resi;
+                        int32_t j,m1,m;
+                        m = n%16;
+
+                        if(m != 0) {
+                           for(j = 0; j != m; ++j) {
+                               t0 = tht[j];
+                               Uv_f6411_zmm16r4(a,k0,b,t0,&resr,&resi);
+                               _mm512_store_ps(&Uvr[j],resr);
+                               _mm512_store_ps(&Uvi[j],resi);
+                           }
+                           if(n<16) { return;}
+                        }
+
+                        m1 = m+1;
+                        for(j = m1; j != n; j += 16) {
+                             t0 = tht[j+0];
+                             Uv_f6411_zmm16r4(a,k0,b,t0,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+0],resr);
+                             _mm512_store_ps(&Uvi[j+0],resi);
+                             t1 = tht[j+1];
+                             Uv_f6411_zmm16r4(a,k0,b,t1,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+1],resr);
+                             _mm512_store_ps(&Uvi[j+1],resi);
+                             t2 = tht[j+2];
+                             Uv_f6411_zmm16r4(a,k0,b,t2,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+2],resr);
+                             _mm512_store_ps(&Uvi[j+2],resi);
+                             t3 = tht[j+3];
+                             Uv_f6411_zmm16r4(a,k0,b,t3,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+3],resr);
+                             _mm512_store_ps(&Uvi[j+3],resi);
+                             t4 = tht[j+4];
+                             Uv_f6411_zmm16r4(a,k0,b,t4,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+4],resr);
+                             _mm512_store_ps(&Uvi[j+4],resi);
+                             t5 = tht[j+5];
+                             Uv_f6411_zmm16r4(a,k0,b,t5,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+5],resr);
+                             _mm512_store_ps(&Uvi[j+5],resi);
+                             t6 = tht[j+6];
+                             Uv_f6411_zmm16r4(a,k0,b,t6,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+6],resr);
+                             _mm512_store_ps(&Uvi[j+6],resi);
+                             t7 = tht[j+7];
+                             Uv_f6411_zmm16r4(a,k0,b,t7,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+7],resr);
+                             _mm512_store_ps(&Uvi[j+7],resi);
+                             t8 = tht[j+8];
+                             Uv_f6411_zmm16r4(a,k0,b,t8,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+8],resr);
+                             _mm512_store_ps(&Uvi[j+8],resi);
+                             t9 = tht[j+9];
+                             Uv_f6411_zmm16r4(a,k0,b,t9,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+9],resr);
+                             _mm512_store_ps(&Uvi[j+9],resi);
+                             t10 = tht[j+10];
+                             Uv_f6411_zmm16r4(a,k0,b,t10,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+10],resr);
+                             _mm512_store_ps(&Uvi[j+10],resi);
+                             t11 = tht[j+11];
+                             Uv_f6411_zmm16r4(a,k0,b,t11,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+11],resr);
+                             _mm512_store_ps(&Uvi[j+11],resi);
+                             t12 = tht[j+12];
+                             Uv_f6411_zmm16r4(a,k0,b,t12,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+12],resr);
+                             _mm512_store_ps(&Uvi[j+12],resi); 
+                             t13 = tht[j+13];
+                             Uv_f6411_zmm16r4(a,k0,b,t13,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+13],resr);
+                             _mm512_store_ps(&Uvi[j+13],resi);
+                             t14 = tht[j+14];
+                             Uv_f6411_zmm16r4(a,k0,b,t14,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+14],resr);
+                             _mm512_store_ps(&Uvi[j+14],resi);
+                             t15 = tht[j+15];
+                             Uv_f6411_zmm16r4(a,k0,b,t15,&resr,&resi);
+                             _mm512_store_ps(&Uvr[j+15],resr);
+                             _mm512_store_ps(&Uvi[j+15],resi);
+                        }
+                 }
+
+
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -5674,7 +5774,45 @@ namespace  gms {
                  }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uv_f6411_zmm16r4_u(const float * __restrict  pa,
+                                           const float * __restrict  pk0,
+                                           const float * __restrict  pb,
+                                           const float * __restrict  ptht,
+                                           float * __restrict  Uvr,
+                                           float * __restrict  Uvi) {
+  
+                        register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                        register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 b   = _mm512_loadu_ps(&pb[0]);
+                        register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                        
+                        const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f);
+                        const __m512 _2  = _mm512_set1_ps(2.0f);
+                        const __m512 _8  = _mm512_set1_ps(8.0f);
+                        const __m512 sme0= _mm512_set1_ps(376.991118430775188623669955550061f);
+                        register __m512 ir,ii,a2,k0a,sint,num,x0;
+                        register __m512 arg,larg,den;
+                        ir   = _mm512_setzero_ps();
+                        a2   = _mm512_mul_ps(a,a);
+                        sint = xsinf(tht);
+                        k0a  = _mm512_mul_ps(a2,_mm512_mul_ps(k0,a));
+                        arg  = _mm512_mul_ps(_8,_mm512_div_ps(a,b));
+                        x0   = _mm512_fmadd_ps(sint,sint,_2);
+                        larg = xlogf(arg);
+                        num  = _mm512_mul_ps(pis,_mm512_mul_ps(k0a,x0));
+                        den  = _mm512_mul_ps(sme0,_mm512_sub_ps(larg,_2));
+                        ii   = num;
+                        _mm512_storeu_ps(&Uvr[0] ,ir);
+                        _mm512_storeu_ps(&Uvi[0] ,_mm512_div_ps(ii,den)); 
+                 }
 
+
+                    
 
 
 
