@@ -5636,6 +5636,44 @@ namespace  gms {
                  }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uv_f6411_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64) pb,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           float * __restrict __ATTR_ALIGN__(64) Uvr,
+                                           float * __restrict __ATTR_ALIGN__(64) Uvi) {
+  
+                        register __m512 a   = _mm512_load_ps(&pa[0]);
+                        register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                        register __m512 b   = _mm512_load_ps(&pb[0]);
+                        register __m512 tht = _mm512_load_ps(&ptht[0]);
+                        
+                        const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f);
+                        const __m512 _2  = _mm512_set1_ps(2.0f);
+                        const __m512 _8  = _mm512_set1_ps(8.0f);
+                        const __m512 sme0= _mm512_set1_ps(376.991118430775188623669955550061f);
+                        register __m512 ir,ii,a2,k0a,sint,num,x0;
+                        register __m512 arg,larg,den;
+                        ir   = _mm512_setzero_ps();
+                        a2   = _mm512_mul_ps(a,a);
+                        sint = xsinf(tht);
+                        k0a  = _mm512_mul_ps(a2,_mm512_mul_ps(k0,a));
+                        arg  = _mm512_mul_ps(_8,_mm512_div_ps(a,b));
+                        x0   = _mm512_fmadd_ps(sint,sint,_2);
+                        larg = xlogf(arg);
+                        num  = _mm512_mul_ps(pis,_mm512_mul_ps(k0a,x0));
+                        den  = _mm512_mul_ps(sme0,_mm512_sub_ps(larg,_2));
+                        ii   = num;
+                        _mm512_store_ps(&Uvr[0] ,ir);
+                        _mm512_store_ps(&Uvi[0] ,_mm512_div_ps(ii,den)); 
+                 }
+
+
 
 
 
