@@ -1258,6 +1258,7 @@ namespace gms {
                }
 
 
+
                    /*
                         Low frequency region (k0a < 0.4) i.e. Rayleigh-region complex scattering
                         amplitudes.
@@ -2278,7 +2279,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void (const float * __restrict  pk0a,
+                   void F_f3233_zmm16r4_u(const float * __restrict  pk0a,
                                           float * __restrict  Fr,
                                           float * __restrict  Fi) {
 
@@ -3571,6 +3572,9 @@ namespace gms {
                         _mm512_storeu_ps(&S1r[0], _mm512_mul_ps(facr,t1));
                         _mm512_storeu_ps(&S1i[0], _mm512_mul_ps(faci,t1));
                  }
+
+
+                  
 
      } // radiolocation
 
