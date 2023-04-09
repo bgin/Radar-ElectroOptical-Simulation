@@ -81,7 +81,7 @@ namespace  gms {
                           cabsv_zmm16r4_unroll_16x_u(re,im,wrk2,n);
                           // wrk1 -- cabs
                           // wrk2 -- carg
-                        for(; (i+255) < n; i += 256) {
+                        for(i = 0; (i+255) < n; i += 256) {
                             _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
                             _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
                             zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
@@ -394,7 +394,7 @@ namespace  gms {
                           cabsv_zmm16r4_unroll_16x_a(re,im,wrk2,n);
                           // wrk1 -- cabs
                           // wrk2 -- carg
-                        for(; (i+255) < n; i += 256) {
+                        for(i = 0; (i+255) < n; i += 256) {
                             _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
                             _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
                             zmm0 = _mm512_load_ps(&wrk1[i+0]);
@@ -708,7 +708,7 @@ namespace  gms {
                           cabsv_zmm16r4_unroll_10x_u(re,im,wrk2,n);
                           // wrk1 -- cabs
                           // wrk2 -- carg
-                        for(; (i+159) < n; i += 160) {
+                        for(i = 0; (i+159) < n; i += 160) {
                             _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
                             _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
                             zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
@@ -925,7 +925,7 @@ namespace  gms {
                           cabsv_zmm16r4_unroll_10x_a(re,im,wrk2,n);
                           // wrk1 -- cabs
                           // wrk2 -- carg
-                        for(; (i+159) < n; i += 160) {
+                        for(i = 0; (i+159) < n; i += 160) {
                             _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
                             _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
                             zmm0 = _mm512_load_ps(&wrk1[i+0]);
@@ -1138,7 +1138,7 @@ namespace  gms {
                           cabsv_zmm16r4_unroll_6x_u(re,im,wrk2,n);
                           // wrk1 -- cabs
                           // wrk2 -- carg
-                        for(; (i+95) < n; i += 96) {
+                        for(i = 0; (i+95) < n; i += 96) {
                             _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
                             _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
                             zmm0 = _mm512_loadu_ps(&wrk1[i+0]);
@@ -1283,7 +1283,7 @@ namespace  gms {
                           cabsv_zmm16r4_unroll_6x_a(re,im,wrk2,n);
                           // wrk1 -- cabs
                           // wrk2 -- carg
-                        for(; (i+95) < n; i += 96) {
+                        for(i = 0; (i+95) < n; i += 96) {
                             _mm_prefetch((const char*)&wrk1[i+32],_MM_HINT_T0);
                             _mm_prefetch((const char*)&wrk2[i+32],_MM_HINT_T0);
                             zmm0 = _mm512_load_ps(&wrk1[i+0]);
