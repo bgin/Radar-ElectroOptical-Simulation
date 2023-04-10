@@ -1498,12 +1498,12 @@ namespace  gms {
                         sre = 0.0f;
                         rep  = _mm512_fmsub_ps(zmm0,zmm1,
                                                _mm512_mul_ps(zmm2,zmm3));
-                        sre  = _mm512_reduce_ps(rep);
+                        sre  = _mm512_reduce_add_ps(rep);
                         *mre = sre*inv16;
                         sim  = 0.0f;
                         imp  = _mm512_fmadd_ps(zmm2,zmm1,
                                                _mm512_mul_ps(zmm0,zmm3));
-                        sim  = _mm512_reduce_ps(imp);
+                        sim  = _mm512_reduce_add_ps(imp);
                         *mim = sim*inv16;
               }
 
@@ -1531,12 +1531,12 @@ namespace  gms {
                         sre = 0.0f;
                         rep  = _mm512_fmsub_ps(zmm0,zmm1,
                                                _mm512_mul_ps(zmm2,zmm3));
-                        sre  = _mm512_reduce_ps(rep);
+                        sre  = _mm512_reduce_add_ps(rep);
                         *mre = sre*inv16;
                         sim  = 0.0f;
                         imp  = _mm512_fmadd_ps(zmm2,zmm1,
                                                _mm512_mul_ps(zmm0,zmm3));
-                        sim  = _mm512_reduce_ps(imp);
+                        sim  = _mm512_reduce_add_ps(imp);
                         *mim = sim*inv16;
               } 
 
@@ -1559,12 +1559,12 @@ namespace  gms {
                         sre = 0.0f;
                         rep  = _mm512_fmsub_ps(xre,yre,
                                                _mm512_mul_ps(xim,yim));
-                        sre  = _mm512_reduce_ps(rep);
+                        sre  = _mm512_reduce_add_ps(rep);
                         *mre = sre*inv16;
                         sim  = 0.0f;
                         imp  = _mm512_fmadd_ps(xim,yre,
                                                _mm512_mul_ps(xre,yim));
-                        sim  = _mm512_reduce_ps(imp);
+                        sim  = _mm512_reduce_add_ps(imp);
                         *mim = sim*inv16;
              }
 
@@ -1599,10 +1599,10 @@ namespace  gms {
                         den  = _mm512_fmadd_ps(zmm1,zmm1,
                                                _mm512_mul_ps(zmm3,zmm3));
                         rquot = _mm512_div_ps(rep,den);
-                        sre   = _mm512_reduce_ps(rquot);
+                        sre   = _mm512_reduce_add_ps(rquot);
                         *mre  = sre*inv16;
                         iquot = _mm512_div_ps(imp,den);
-                        sim   = _mm512_reduce_ps(iquot);
+                        sim   = _mm512_reduce_add_ps(iquot);
                         *mim  = sre*inv16;
               }  
 
@@ -1636,10 +1636,10 @@ namespace  gms {
                         den  = _mm512_fmadd_ps(zmm1,zmm1,
                                                _mm512_mul_ps(zmm3,zmm3));
                         rquot = _mm512_div_ps(rep,den);
-                        sre   = _mm512_reduce_ps(rquot);
+                        sre   = _mm512_reduce_add_ps(rquot);
                         *mre  = sre*inv16;
                         iquot = _mm512_div_ps(imp,den);
-                        sim   = _mm512_reduce_ps(iquot);
+                        sim   = _mm512_reduce_add_ps(iquot);
                         *mim  = sre*inv16;
               }  
 
@@ -1668,10 +1668,10 @@ namespace  gms {
                         den  = _mm512_fmadd_ps(yre,yre,
                                                _mm512_mul_ps(yim,yim));
                         rquot = _mm512_div_ps(rep,den);
-                        sre   = _mm512_reduce_ps(rquot);
+                        sre   = _mm512_reduce_add_ps(rquot);
                         *mre  = sre*inv16;
                         iquot = _mm512_div_ps(imp,den);
-                        sim   = _mm512_reduce_ps(iquot);
+                        sim   = _mm512_reduce_add_ps(iquot);
                         *mim  = sre*inv16;
               }  
 
@@ -1783,11 +1783,11 @@ namespace  gms {
                         zmm3 = _mm512_loadu_ps(&yim[0]);
                         re   = _mm512_fmadd_ps(zmm0,zmm1,
                                                _mm512_mul_ps(zmm2,zmm3));
-                        sre  = _mm512_reduce_ps(re);
+                        sre  = _mm512_reduce_add_ps(re);
                         *mre = sre*inv16;
                         im   = _mm512_fmsub_ps(zmm2,zmm1,
                                                _mm512_mul_ps(zmm0,zmm3));
-                        sim  = _mm512_reduce_ps(im);
+                        sim  = _mm512_reduce_add_ps(im);
                         *mim = sim*inv16;
              }
 
@@ -1814,11 +1814,11 @@ namespace  gms {
                         zmm3 = _mm512_load_ps(&yim[0]);
                         re   = _mm512_fmadd_ps(zmm0,zmm1,
                                                _mm512_mul_ps(zmm2,zmm3));
-                        sre  = _mm512_reduce_ps(re);
+                        sre  = _mm512_reduce_add_ps(re);
                         *mre = sre*inv16;
                         im   = _mm512_fmsub_ps(zmm2,zmm1,
                                                _mm512_mul_ps(zmm0,zmm3));
-                        sim  = _mm512_reduce_ps(im);
+                        sim  = _mm512_reduce_add_ps(im);
                         *mim = sim*inv16;
              }
 
@@ -1840,11 +1840,11 @@ namespace  gms {
                         float sre,sim;
                         re   = _mm512_fmadd_ps(xre,yre,
                                                _mm512_mul_ps(xim,yim));
-                        sre  = _mm512_reduce_ps(re);
+                        sre  = _mm512_reduce_add_ps(re);
                         *mre = sre*inv16;
                         im   = _mm512_fmsub_ps(xim,yre,
                                                _mm512_mul_ps(xre,yim));
-                        sim  = _mm512_reduce_ps(im);
+                        sim  = _mm512_reduce_add_ps(im);
                         *mim = sim*inv16;
              }
 
@@ -1863,10 +1863,10 @@ namespace  gms {
                         constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         re   = _mm512_loadu_ps(&xre[0]);
-                        sre  = _mm512_reduce_ps(re);
+                        sre  = _mm512_reduce_add_ps(re);
                         *mre = sre*inv16;
                         im   = _mm512_loadu_ps(&xim[0]);
-                        sim  = _mm512_reduce_ps(im);
+                        sim  = _mm512_reduce_add_ps(im);
                         *mim = sim*inv16; 
              }
 
@@ -1876,7 +1876,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void arith_cmean_zmm16r4_u(const float * __restrict __ATTR_ALIGN__(64) xre,
+                   void arith_cmean_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) xre,
                                               const float * __restrict __ATTR_ALIGN__(64) xim,
                                               float * __restrict mre,
                                               float * __restrict min) {
@@ -1885,10 +1885,10 @@ namespace  gms {
                         constexpr float inv16 = 0.0625f;
                         float sre,sim;
                         re   = _mm512_load_ps(&xre[0]);
-                        sre  = _mm512_reduce_ps(re);
+                        sre  = _mm512_reduce_add_ps(re);
                         *mre = sre*inv16;
                         im   = _mm512_load_ps(&xim[0]);
-                        sim  = _mm512_reduce_ps(im);
+                        sim  = _mm512_reduce_add_ps(im);
                         *mim = sim*inv16; 
              }
 
@@ -1905,9 +1905,9 @@ namespace  gms {
 
                         constexpr float inv16 = 0.0625f;
                         float sre,sim;
-                        sre  = _mm512_reduce_ps(xre);
+                        sre  = _mm512_reduce_add_ps(xre);
                         *mre = sre*inv16;
-                        sim  = _mm512_reduce_ps(xim);
+                        sim  = _mm512_reduce_add_ps(xim);
                         *mim = sim*inv16; 
              }
 
