@@ -354,8 +354,8 @@ namespace  gms {
                              const float xi = xim[i];
                              const float yi = yim[i];
                              const float den= (yr*yr)+(yi*yi);
-                             re             +=(xr*yr)-(xi*yi);
-                             im             +=(xi*yr)+(xr*yi);
+                             re             +=((xr*yr)-(xi*yi))/den;
+                             im             +=((xi*yr)+(xr*yi))/den;
                        }
                        
                        re   += _mm512_reduce_add_ps(redr[0]);
@@ -669,8 +669,8 @@ namespace  gms {
                              const float xi = xim[i];
                              const float yi = yim[i];
                              const float den= (yr*yr)+(yi*yi);
-                             re             +=(xr*yr)-(xi*yi);
-                             im             +=(xi*yr)+(xr*yi);
+                             re             +=((xr*yr)-(xi*yi))/den;
+                             im             +=((xi*yr)+(xr*yi))/den;
                        }
                        
                        re   += _mm512_reduce_add_ps(redr[0]);
