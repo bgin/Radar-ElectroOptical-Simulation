@@ -5880,6 +5880,12 @@ namespace  gms {
                  }
 
 
+                  /*
+                       RCS seen by the radar y-direction polarized:
+                       Formula 6.4-12
+                   */
+
+
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -5977,6 +5983,47 @@ namespace  gms {
                         return (rcs);
                 }
 
+
+              
+                     /*
+                         The far-zone amplitude for TM-case.
+                         For small loop k0a<<1
+                         Formula 6.4-12
+                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uth_f6413_zmm16r4(const __m512 a,
+                                          const __m512 k0,
+                                          const __m512 b,
+                                          const __m512 tht,
+                                         __m512 *  __restrict Uthr,
+                                         __m512 *  __restrict Uthi) {
+
+                        const __m512 pis = _mm512_set1_ps(2.0f*9.869604401089358618834490999876f);
+                        const __m512 _2  = _mm512_set1_ps(2.0f);
+                        const __m512 _8  = _mm512_set1_ps(8.0f);
+                        const __m512 sme0= _mm512_set1_ps(376.991118430775188623669955550061f); 
+                        register __m512 a2,k0a,cost,costs;
+                        register __m512 ii,ir,arg,larg,num,den,div;
+                        ir   = _mm512_setzero_ps();
+                        a2   = _mm512_mul_ps(a,a);
+                        cost = xcosf(tht);
+                        k0a  = _mm512_mul_ps(a2,_mm512_mul_ps(k0,a));
+                        arg  = _mm512_div_ps(_mm512_mul_ps(_8,a),b);
+                        costs= _mm512_mul_ps(cost,cost);
+                        larg = xlogf(arg);
+                        num  = _mm512_mul_ps(pis,_mm512_mul_ps(k0a,costs));
+                        den  = _mm512_mul_ps(_mm512_sub_ps(larg,_2);
+                        div  = _mm512_div_ps(num,den);
+                        ii   = div;
+                        *Uthr = ir;
+                        *Uthi = ii;
+             }
 
                  
                                           
