@@ -6379,8 +6379,53 @@ namespace  gms {
                    /*
                          Infinte wedges
                          Plane wave incident perpendicular to wedge edge.
-                         Formula 6.5-6 
+                         
                     */
+
+                     
+                   
+                   /*
+                         Infinte wedges
+                         Plane wave incident perpendicular to wedge edge.
+                         Quantity Va, formula 6.5-6
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Va_f656_zmm16r4(const __m512 k0,
+                                        const __m512 r,
+                                        const __m512 psi,
+                                        const __m512 arg2, //2pinN
+                                        __m512 * __restrict Var,
+                                        __m512 * __restrict Vai) {
+
+                       const __m512 npi    = _mm512_set1_ps(-3.14159265358979323846264338328f);
+                       const __m512 pi     = _mm512_set1_ps(3.14159265358979323846264338328f);
+                       register __m512 arg1= _mm512_add_ps(psi,arg2);
+                       const __m512 n1     = _mm512_set1_ps(-1.0f);
+                       const __mmask16 m1  = _mm512_cmp_ps_mask(npi,arg1,_CMP_LT_OQ);
+                       const __mmask16 m2  = _mm512_cmp_ps_mask(arg1,pi,_CMP_LT_OQ);
+                       if(m1 && m2) {
+                           register __m512 ear,eai,cer,cei,k0r;
+                           register __m512 arg1,carg;
+                           k0r = _mm512_mul_ps(k0,r);
+                           ear = _mm512_setzero_ps();
+                           carg= xcosf(arg1);
+                           eai = _mm512_mul_ps(k0r,carg);
+                           cexp_zmm16r4(ear,eai,&cer,&cei);
+                           *Var = cer;
+                           *Vai = cei;
+                       }
+                       else {  
+                           *Var = _mm512_setzero_ps();
+                           *Vai = _mm512_setzero_ps();
+                       }
+                }
+
 
 
 
