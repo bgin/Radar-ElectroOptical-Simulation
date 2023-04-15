@@ -6202,6 +6202,74 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uth_f6412_u8x_zmm16r4( const __m512 a,
+                                              const __m512 k0,
+                                              const __m512 b,
+                                              const __m512 * __restrict __ATTR_ALIGN__(64) tht,
+                                              __m512 * __restrict __ATTR_ALIGN__(64) Uthr,
+                                              __m512 * __restrict __ATTR_ALIGN__(64) Uthi,
+                                              const int32_t n) {
+
+                        if(__builtin_expect(n<=0,0)) { return;}
+                        register __m512 t0,t1,t2,t3,t4,t5,t6,t7;
+                        register __m512 resr,resi;
+                        int32_t j,m1,m;
+                        m = n%8;
+
+                        if(m != 0) {
+                           for(j = 0; j != m; ++j) {
+                               t0 = tht[j];
+                               Uv_f6412_zmm16r4(a,k0,b,t0,&resr,&resi);
+                               _mm512_store_ps(&Uthr[j],resr);
+                               _mm512_store_ps(&Uthi[j],resi);
+                           }
+                           if(n<8) { return;}
+                        }
+
+                        m1 = m+1;
+                        for(j = m1; j != n; j += 8) {
+                             t0 = tht[j+0];
+                             Uv_f6412_zmm16r4(a,k0,b,t0,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+0],resr);
+                             _mm512_store_ps(&Uthi[j+0],resi);
+                             t1 = tht[j+1];
+                             Uv_f6412_zmm16r4(a,k0,b,t1,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+1],resr);
+                             _mm512_store_ps(&Uthi[j+1],resi);
+                             t2 = tht[j+2];
+                             Uv_f6412_zmm16r4(a,k0,b,t2,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+2],resr);
+                             _mm512_store_ps(&Uthi[j+2],resi);
+                             t3 = tht[j+3];
+                             Uv_f6412_zmm16r4(a,k0,b,t3,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+3],resr);
+                             _mm512_store_ps(&Uthi[j+3],resi);
+                             t4 = tht[j+4];
+                             Uv_f6412_zmm16r4(a,k0,b,t4,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+4],resr);
+                             _mm512_store_ps(&Uthi[j+4],resi);
+                             t5 = tht[j+5];
+                             Uv_f6412_zmm16r4(a,k0,b,t5,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+5],resr);
+                             _mm512_store_ps(&Uthi[j+5],resi);
+                             t6 = tht[j+6];
+                             Uv_f6412_zmm16r4(a,k0,b,t6,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+6],resr);
+                             _mm512_store_ps(&Uthi[j+6],resi);
+                             t7 = tht[j+7];
+                             Uv_f6412_zmm16r4(a,k0,b,t7,&resr,&resi);
+                             _mm512_store_ps(&Uthr[j+7],resr);
+                             _mm512_store_ps(&Uthi[j+7],resi);
+                      }
+                 }
+
+
+
                 
 
                  
