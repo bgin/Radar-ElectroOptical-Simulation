@@ -6064,6 +6064,44 @@ namespace  gms {
              }
 
 
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Uth_f6413_zmm16r4_u(const float * __restrict  pa,
+                                            const float * __restrict  pk0,
+                                            const float * __restrict  pb,
+                                            const float * __restrict  ptht,
+                                            float *  __restrict  Uthr,
+                                            float *  __restrict Uthi) {
+
+                        register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                        register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 b   = _mm512_loadu_ps(&pb[0]);
+                        register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                        const __m512 pis = _mm512_set1_ps(2.0f*9.869604401089358618834490999876f);
+                        const __m512 _2  = _mm512_set1_ps(2.0f);
+                        const __m512 _8  = _mm512_set1_ps(8.0f);
+                        const __m512 sme0= _mm512_set1_ps(376.991118430775188623669955550061f); 
+                        register __m512 a2,k0a,cost,costs;
+                        register __m512 ii,ir,arg,larg,num,den,div;
+                        ir   = _mm512_setzero_ps();
+                        a2   = _mm512_mul_ps(a,a);
+                        cost = xcosf(tht);
+                        k0a  = _mm512_mul_ps(a2,_mm512_mul_ps(k0,a));
+                        arg  = _mm512_div_ps(_mm512_mul_ps(_8,a),b);
+                        costs= _mm512_mul_ps(cost,cost);
+                        larg = xlogf(arg);
+                        num  = _mm512_mul_ps(pis,_mm512_mul_ps(k0a,costs));
+                        den  = _mm512_mul_ps(_mm512_sub_ps(larg,_2);
+                        div  = _mm512_div_ps(num,den);
+                        ii   = div;
+                        _mm512_storeu_ps(&Uthr[0], ir);
+                        _mm512_storeu_ps(&Uthi[0], ii);
+             }
+
+
                 
 
                  
