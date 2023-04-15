@@ -6269,6 +6269,43 @@ namespace  gms {
                  }
 
 
+                    /*
+                       Resulting RCS (of 6.4-13)
+                       Formula 6.4-14
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f6414_zmm16(const __m512 a,
+                                          const __m512 b,
+                                          const __m512 k0,
+                                          const __m512 tht) {
+
+                         const __m512 pi3 = _mm512_set1_ps(31.006276680299820175476315067101f);
+                         const __m512 _2  = _mm512_set1_ps(2.0f);
+                         const __m512 _8  = _mm512_set1_ps(8.0f);
+                         register __m512 a2,k0a,k0a4,x0,x1,cost,cost4;
+                         register __m512 rcs,arg,larg,largs;
+                         a2   = _mm512_mul_ps(pi3,_mm512_mul_ps(a,a));
+                         cost = xcosf(tht);
+                         k0a  = _mm512_mul_ps(k0,a);
+                         x1   = _mm512_mul_ps(cost,cost);
+                         arg  = _mm512_div_ps(_mm512_mul_ps(_8,a),b);
+                         x0   = _mm512_mul_ps(k0a,k0a);
+                         larg = _mm512_sub_ps(xlogf(arg),_2);
+                         cost4= _mm512_mul_ps(x1,x1);
+                         k0a4 = _mm512_mul_ps(x0,x0);
+                         largs= _mm512_mul_ps(larg,larg);
+                         x1   = _mm512_mul_ps(_mm512_mul_ps(a2,k0a4),cost4);
+                         rcs  = _mm512_div_ps(x1,largs);
+                         return (rcs);
+                 }
+
+
 
                 
 
