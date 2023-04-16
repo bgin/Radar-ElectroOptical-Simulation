@@ -6507,6 +6507,13 @@ namespace  gms {
                 }
 
 
+                   
+                 /*
+                         Equation 6.5-8 for large values of k0r.
+                         Formula 6.5-14
+                    */ 
+
+
                
 
 
