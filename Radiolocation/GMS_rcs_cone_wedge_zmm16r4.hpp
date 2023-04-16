@@ -6814,6 +6814,7 @@ namespace  gms {
                                            __m512 * __restrict Urpi) {
 
                      register __m512 Var,Vai,Vbr,Vbi;
+                     register __m512 k0r = _mm512_mul_ps(k0,r);
                      if(shadow) {
                         Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
                         Vb_f6515_zmm16r4(k0r,n,&Vbr,&Vbi,sign);
@@ -6825,6 +6826,43 @@ namespace  gms {
                         Vb_f6514_zmm16r4(k0r,n,&Vbr,&Vbi);
                         *Urpr = _mm512_add_ps(Var,Vbr);
                         *Urpi = _mm512_add_ps(Vai,Vbi);
+                     }  
+               }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Urp_f655_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pr,
+                                             const float * __restrict __ATTR_ALIGN__(64) ppsi,
+                                             const float * __restrict __ATTR_ALIGN__(64) parg2, //2pinN
+                                             const float * __restrict __ATTR_ALIGN__(64) pn,
+                                             const bool shadow,
+                                             const bool sign,
+                                             float * __restrict __ATTR_ALIGN__(64) Urpr,
+                                             float * __restrict __ATTR_ALIGN__(64) Urpi) {
+
+                     register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                     register __m512 r   = _mm512_load_ps(&pr[0]);
+                     register __m512 psi = _mm512_load_ps(&psi[0]);
+                     register __m512 arg2= _mm512_load_ps(&parg2[0]);
+                     register __m512 n   = _mm512_load_ps(&pn[0]);
+                     register __m512 k0r = _mm512_mul_ps(k0,r);
+                     register __m512 Var,Vai,Vbr,Vbi;
+                     if(shadow) {
+                        Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
+                        Vb_f6515_zmm16r4(k0r,n,&Vbr,&Vbi,sign);
+                        _mm512_store_ps(&Urpr[0], _mm512_add_ps(Var,Vbr));
+                        _mm512_store_ps(&Urpi[0], _mm512_add_ps(Vai,Vbi));
+                     } 
+                      else {
+                        Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
+                        Vb_f6514_zmm16r4(k0r,n,&Vbr,&Vbi);
+                        _mm512_store_ps(&Urpr[0], _mm512_add_ps(Var,Vbr));
+                        _mm512_store_ps(&Urpi[0], _mm512_add_ps(Vai,Vbi));
                      }  
                }
 
