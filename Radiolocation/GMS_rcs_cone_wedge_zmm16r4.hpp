@@ -6867,10 +6867,87 @@ namespace  gms {
                }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Urp_f655_zmm16r4_u(  const float * __restrict  pk0,
+                                             const float * __restrict  pr,
+                                             const float * __restrict  ppsi,
+                                             const float * __restrict  parg2, //2pinN
+                                             const float * __restrict  pn,
+                                             const bool shadow,
+                                             const bool sign,
+                                             float * __restrict  Urpr,
+                                             float * __restrict  Urpi) {
 
+                     register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                     register __m512 r   = _mm512_loadu_ps(&pr[0]);
+                     register __m512 psi = _mm512_loadu_ps(&psi[0]);
+                     register __m512 arg2= _mm512_loadu_ps(&parg2[0]);
+                     register __m512 n   = _mm512_loadu_ps(&pn[0]);
+                     register __m512 k0r = _mm512_mul_ps(k0,r);
+                     register __m512 Var,Vai,Vbr,Vbi;
+                     if(shadow) {
+                        Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
+                        Vb_f6515_zmm16r4(k0r,n,&Vbr,&Vbi,sign);
+                        _mm512_storeu_ps(&Urpr[0], _mm512_add_ps(Var,Vbr));
+                        _mm512_storeu_ps(&Urpi[0], _mm512_add_ps(Vai,Vbi));
+                     } 
+                      else {
+                        Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
+                        Vb_f6514_zmm16r4(k0r,n,&Vbr,&Vbi);
+                        _mm512_storeu_ps(&Urpr[0], _mm512_add_ps(Var,Vbr));
+                        _mm512_storeu_ps(&Urpi[0], _mm512_add_ps(Vai,Vbi));
+                     }  
+               }
+
+
+                 /*
+                      Total Electric field.
+                      Formula 6.5-3
+                  */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EsT_f653_zmm16r4(const __m512 Urp1r,
+                                         const __m512 Urp1i,
+                                         const __m512 Urp2r,
+                                         const __m512 Urp2i,
+                                         __m512 * __restrict Esr,
+                                         __m512 * __restrict Esi) {
+
+                        *Esr = _mm512_sub_ps(Urp1r,Urp2r);
+                        *Esi = _mm512_sub_ps(Urp1i,Urp2i);
+                }
+
+
+               /*
+                      Total Magnetic field.
+                      Formula 6.5-4
+                  */
                 
 
-                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void HsT_f654_zmm16r4(const __m512 Urp1r,
+                                         const __m512 Urp1i,
+                                         const __m512 Urp2r,
+                                         const __m512 Urp2i,
+                                         __m512 * __restrict Hsr,
+                                         __m512 * __restrict Hsi) {
+
+                        *Hsr = _mm512_add_ps(Urp1r,Urp2r);
+                        *Hsi = _mm512_add_ps(Urp1i,Urp2i);
+                }
                                           
 
                     
