@@ -6514,6 +6514,42 @@ namespace  gms {
                     */ 
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Vb_f6514_zmm16r4(const __m512 k0r,
+                                         const __m512 psi,
+                                         const __m512 n,
+                                         __m512 * __restrict Vbr,
+                                         __m512 * __restrict Vbi) {
+
+                         const __m512 pio4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                         const __m512 _2pi = _mm512_set1_ps(2.0f*3.14159265358979323846264338328f);
+                         register __m512 ear,eai,cer,cei,inv,pin,psin,spin,cpin,cpsin;
+                         register __m512 x0,x1,rat,den,t0r,t0i;
+                         x0   = _mm512_mul_ps(_2pi,k0r);
+                         invn = _mm512_rcp14_ps(n);
+                         ear = _mm512_setzero_ps();
+                         eai = _mm512_add_ps(k0r,pio4);
+                         pin = _mm512_div_ps(pi,n);
+                         den = _mm512_sqrt_ps(x0);
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         spin = xsinf(pin);
+                         cpin = xcosf(pin);
+                         x0   = _mm512_mul_ps(invn,spin);
+                         cpsin= xcosf(psin);
+                         t0r = _mm512_div_ps(cer,den);
+                         x1  = _mm512_sub_ps(cpin,cpsin);
+                         t0i = _mm512_div_ps(cei,den);
+                         rat = _mm512_div_ps(x0,x1);
+                         *Vbr= _mm512_mul_ps(t0r,rat);
+                         *Vbi= _mm512_mul_ps(t0i,rat);
+                 }
+
+
                
 
 
