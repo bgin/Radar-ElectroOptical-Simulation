@@ -6590,7 +6590,100 @@ namespace  gms {
                  }
 
 
-               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Vb_f6514_zmm16r4_u(const float * __restrict  pk0r,
+                                           const float * __restrict  ppsi,
+                                           const float * __restrict  pn,
+                                           float * __restrict  Vbr,
+                                           float * __restrict  Vbi) {
+
+                         
+                         register __m512 k0r = _mm512_loadu_ps(&pk0r[0]);
+                         register __m512 psi = _mm512_loadu_ps(&psi[0]);
+                         register __m512 n   = _mm512_loadu_ps(&pn[0]);
+                         const __m512 pio4 = _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                         const __m512 _2pi = _mm512_set1_ps(2.0f*3.14159265358979323846264338328f);
+                         register __m512 ear,eai,cer,cei,inv,pin,psin,spin,cpin,cpsin;
+                         register __m512 x0,x1,rat,den,t0r,t0i;
+                         x0   = _mm512_mul_ps(_2pi,k0r);
+                         invn = _mm512_rcp14_ps(n);
+                         ear = _mm512_setzero_ps();
+                         eai = _mm512_add_ps(k0r,pio4);
+                         pin = _mm512_div_ps(pi,n);
+                         den = _mm512_sqrt_ps(x0);
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         spin = xsinf(pin);
+                         cpin = xcosf(pin);
+                         x0   = _mm512_mul_ps(invn,spin);
+                         cpsin= xcosf(psin);
+                         t0r = _mm512_div_ps(cer,den);
+                         x1  = _mm512_sub_ps(cpin,cpsin);
+                         t0i = _mm512_div_ps(cei,den);
+                         rat = _mm512_div_ps(x0,x1);
+                         _mm512_storeu_ps(&Vbr[0], _mm512_mul_ps(t0r,rat));
+                         _mm512_storeu_ps(&Vbi[0], _mm512_mul_ps(t0i,rat));
+                 }
+
+
+                  /*
+                        Equation 6.5-8 'Vb' at the shadow boundary.
+                        Formula 6.5-15
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Vb_f6514_zmm16r4(const __m512 k0r,
+                                         const __m512 n,
+                                         __m512 * __restrict Vbr,
+                                         __m512 * __restrict Vbi,
+                                         const bool sign) { // positive == true, negative == false
+
+                        const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                        const __m512 hlf  = _mm512_set1_ps(0.5f);
+                        const __m512 nhlf = _mm512_set1_ps(-0.5f);
+                        const __m512 _1   = _mm512_set1_ps(1.0f);
+                        register __m512 ear,eai,cer,cer,ir,ii;
+                        register __m512 t0r,t0i,pin,spin,cpin,cot;
+                        register __m512 den,x0,x1,t1r,t1i;
+                        x0   = _mm512_add_ps(n,n);
+                        ir   = _mm512_setzero_ps();
+                        pin  = _mm512_mul_ps(pi,n);
+                        ii   = _mm512_div_ps(_1,x0);
+                        x1   = _mm512_add_ps(k0r,k0r);
+                        spin = xsinf(pin);
+                        ear  = ir;
+                        eai  = k0r;
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        den  = _mm512_sqrt_ps(x1);
+                        cpin = xcosf(pin);
+                        cot  = _mm512_div_ps(cpin,spin);
+                        ear  = _mm512_mul_ps(cot,cer);
+                        eai  = _mm512_mul_ps(cot,cei);
+                        x0   = _mm512_div_ps(ear,den);
+                        x1   = _mm512_div_ps(eai,den);
+                        cmul_zmm16r4(ir,ii,x0,x1,&t1r,&t1i);
+                        if(!sign) {
+                             t0r   = _mm512_mul_ps(nhlf,cer);
+                             *Vbr  = _mm512_sub_ps(t0r,t1r);
+                             t0i   = _mm512_mul_ps(nhlf,cei);
+                             *Vbi  = _mm512_sub_ps(t0i,t1i);
+                        }
+                        else {
+                             t0r   = _mm512_mul_ps(hlf,cer);
+                             *Vbr  = _mm512_sub_ps(t0r,t1r);
+                             t0i   = _mm512_mul_ps(hlf,cei);
+                             *Vbi  = _mm512_sub_ps(t0i,t1i);
+                        }
+                }
 
 
 
