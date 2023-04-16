@@ -6789,6 +6789,13 @@ namespace  gms {
                              _mm512_storeu_ps(&Vbi[0], _mm512_sub_ps(t0i,t1i));
                         }
                 }
+
+
+                   /*
+                          The function 'U(t,psi) as defined by 
+                          the formula 6.5-5
+                          Formula 6.5-5
+                     */
   
 
 
