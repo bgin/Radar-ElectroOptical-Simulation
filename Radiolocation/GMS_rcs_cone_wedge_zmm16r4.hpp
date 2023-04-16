@@ -6739,7 +6739,57 @@ namespace  gms {
   
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Vb_f6514_zmm16r4_u(const float * __restrict  pk0r,
+                                           const float * __restrict  pn,
+                                           float * __restrict  Vbr,
+                                           float * __restrict  Vbi,
+                                           const bool sign) { // positive == true, negative == false
 
+                        register __m512 k0r = _mm512_loadu_ps(&pk0r[0]);
+                        register __m512 n   = _mm512_loadu_ps(&pn[0]);
+                        const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                        const __m512 hlf  = _mm512_set1_ps(0.5f);
+                        const __m512 nhlf = _mm512_set1_ps(-0.5f);
+                        const __m512 _1   = _mm512_set1_ps(1.0f);
+                        register __m512 ear,eai,cer,cer,ir,ii;
+                        register __m512 t0r,t0i,pin,spin,cpin,cot;
+                        register __m512 den,x0,x1,t1r,t1i;
+                        x0   = _mm512_add_ps(n,n);
+                        ir   = _mm512_setzero_ps();
+                        pin  = _mm512_mul_ps(pi,n);
+                        ii   = _mm512_div_ps(_1,x0);
+                        x1   = _mm512_add_ps(k0r,k0r);
+                        spin = xsinf(pin);
+                        ear  = ir;
+                        eai  = k0r;
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        den  = _mm512_sqrt_ps(x1);
+                        cpin = xcosf(pin);
+                        cot  = _mm512_div_ps(cpin,spin);
+                        ear  = _mm512_mul_ps(cot,cer);
+                        eai  = _mm512_mul_ps(cot,cei);
+                        x0   = _mm512_div_ps(ear,den);
+                        x1   = _mm512_div_ps(eai,den);
+                        cmul_zmm16r4(ir,ii,x0,x1,&t1r,&t1i);
+                        if(!sign) {
+                             t0r   = _mm512_mul_ps(nhlf,cer);
+                             _mm512_storeu_ps(&Vbr[0], _mm512_sub_ps(t0r,t1r));
+                             t0i   = _mm512_mul_ps(nhlf,cei);
+                             _mm512_storeu_ps(&Vbi[0], _mm512_sub_ps(t0i,t1i));
+                        }
+                        else {
+                             t0r   = _mm512_mul_ps(hlf,cer);
+                             _mm512_storeu_ps(&Vbr[0], _mm512_sub_ps(t0r,t1r));
+                             t0i   = _mm512_mul_ps(hlf,cei);
+                             _mm512_storeu_ps(&Vbi[0], _mm512_sub_ps(t0i,t1i));
+                        }
+                }
+  
 
 
 
