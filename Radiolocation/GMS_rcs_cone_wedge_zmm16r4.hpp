@@ -6641,7 +6641,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Vb_f6514_zmm16r4(const __m512 k0r,
+                   void Vb_f6515_zmm16r4(const __m512 k0r,
                                          const __m512 n,
                                          __m512 * __restrict Vbr,
                                          __m512 * __restrict Vbi,
@@ -6691,7 +6691,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Vb_f6514_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0r,
+                   void Vb_f6515_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0r,
                                            const float * __restrict __ATTR_ALIGN__(64) pn,
                                            float * __restrict __ATTR_ALIGN__(64) Vbr,
                                            float * __restrict __ATTR_ALIGN__(64) Vbi,
@@ -6744,7 +6744,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Vb_f6514_zmm16r4_u(const float * __restrict  pk0r,
+                   void Vb_f6515_zmm16r4_u(const float * __restrict  pk0r,
                                            const float * __restrict  pn,
                                            float * __restrict  Vbr,
                                            float * __restrict  Vbi,
@@ -6796,7 +6796,37 @@ namespace  gms {
                           the formula 6.5-5
                           Formula 6.5-5
                      */
-  
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Urp_f655_zmm16r4(  const __m512 k0,
+                                           const __m512 r,
+                                           const __m512 psi,
+                                           const __m512 arg2, //2pinN
+                                           const __m512 n,
+                                           const bool shadow,
+                                           const bool sign,
+                                           __m512 * __restrict Urpr,
+                                           __m512 * __restrict Urpi) {
+
+                     register __m512 Var,Vai,Vbr,Vbi;
+                     if(shadow) {
+                        Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
+                        Vb_f6515_zmm16r4(k0r,n,&Vbr,&Vbi,sign);
+                        *Urpr = _mm512_add_ps(Var,Vbr);
+                        *Urpi = _mm512_add_ps(Vai,Vbi);
+                     } 
+                      else {
+                        Va_f656_zmm16r4(k0,r,psi,arg2,&Var,&Vai);
+                        Vb_f6514_zmm16r4(k0r,n,&Vbr,&Vbi);
+                        *Urpr = _mm512_add_ps(Var,Vbr);
+                        *Urpi = _mm512_add_ps(Vai,Vbi);
+                     }  
+               }
 
 
 
