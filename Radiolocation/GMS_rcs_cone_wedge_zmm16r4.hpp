@@ -6927,6 +6927,27 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EsT_f653_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pUrp1r,
+                                           const float * __restrict __ATTR_ALIGN__(64) pUrp1i,
+                                           const float * __restrict __ATTR_ALIGN__(64) pUrp2r,
+                                           const float * __restrict __ATTR_ALIGN__(64) pUrp2i,
+                                           float * __restrict __ATTR_ALIGN__(64) Esr,
+                                           float * __restrict __ATTR_ALIGN__(64) Esi) {
+
+                         register __m512 Urp1r = _mm512_load_ps(&pUrp1r[0]);
+                         register __m512 Urp1i = _mm512_load_ps(&pUrp1i[0]);
+                         register __m512 Urp2r = _mm512_load_ps(&pUrp2r[0]);
+                         register __m512 Urp2i = _mm512_load_ps(&pUrp2i[0]);
+                         _mm512_store_ps(&Esr[0] ,_mm512_sub_ps(Urp1r,Urp2r));
+                         _mm512_store_ps(&Esi[0] ,_mm512_sub_ps(Urp1i,Urp2i));
+                }
+
+
                /*
                       Total Magnetic field.
                       Formula 6.5-4
@@ -6948,6 +6969,9 @@ namespace  gms {
                         *Hsr = _mm512_add_ps(Urp1r,Urp2r);
                         *Hsi = _mm512_add_ps(Urp1i,Urp2i);
                 }
+
+
+                  
                                           
 
                     
