@@ -45,7 +45,7 @@ namespace file_version {
 #include "GMS_config.h"
 #include "GMS_sleefsimdsp.hpp"
 #include "GMS_complex_zmm16r4.hpp"
-
+#include "GMS_simd_utils.hpp"
 
 
 namespace  gms {
@@ -142,7 +142,43 @@ namespace  gms {
                 }
 
 
+                 /*
+                          Equivalent complex impedances.
+                          Formula 7.1-4
+                     */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f714_zmm16r4( const __m512 tht1,
+                                        const __m512 mur1,
+                                        const __m512 mui1,
+                                        const __m512 epsr1,
+                                        const __m512 epsi1,
+                                        const __m512 tht2,
+                                        const __m512 mur2,
+                                        const __m512 mui2,
+                                        const __m512 epsr2,
+                                        const __m512 epsi2,
+                                        __m512 * __restrict Rr,
+                                        __m512 * __restrict Ri) {
+
+                     using namespace gms::math;
+                     register __m512 z1r,z1i,z2r,z2i;
+                     register __m512 t0r,t0i,t1r,t1i;
+                     zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                     zi_f716_zmm16r4(tht2,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                     t0r = _mm512_sub_ps(z1r,z2r);
+                     t1r = _mm512_add_ps(z1r,z2r);
+                     t0i = _mm512_sub_ps(z1i,z2i);
+                     t1i = _mm512_add_ps(z1i,z2i);
+                     t0r = negate_zmm16r4(t0r);
+                     t0i = negate_zmm16r4(t0i);
+                     cdiv_zmm16r4(t0r,t0i,t1r,t1i,*Rr,*Ri);
+                }
 
 
 
