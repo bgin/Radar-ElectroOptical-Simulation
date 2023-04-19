@@ -181,6 +181,51 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f714_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) ptht1,
+                                        const float * __restrict __ATTR_ALIGN__(64) pmur1,
+                                        const float * __restrict __ATTR_ALIGN__(64) pmui1,
+                                        const float * __restrict __ATTR_ALIGN__(64) pepsr1,
+                                        const float * __restrict __ATTR_ALIGN__(64) pepsi1,
+                                        const float * __restrict __ATTR_ALIGN__(64) ptht2,
+                                        const float * __restrict __ATTR_ALIGN__(64) pmur2,
+                                        const float * __restrict __ATTR_ALIGN__(64) pmui2,
+                                        const float * __restrict __ATTR_ALIGN__(64) pepsr2,
+                                        const float * __restrict __ATTR_ALIGN__(64) pepsi2,
+                                        float * __restrict __ATTR_ALIGN__(64) Rr,
+                                        float * __restrict __ATTR_ALIGN__(64) Ri) {
+
+                     using namespace gms::math;
+                     register __m512 tht1  = _mm512_load_ps(&ptht1[0]);
+                     register __m512 mur1  = _mm512_load_ps(&pmur1[0]);
+                     register __m512 mui1  = _mm512_load_ps(&pmui1[0]);
+                     register __m512 epsr1 = _mm512_load_ps(&pepsr1[0]);
+                     register __m512 epsi1 = _mm512_load_ps(&pepsi1[0]);
+                     register __m512 tht2  = _mm512_load_ps(&ptht2[0]);
+                     register __m512 mur2  = _mm512_load_ps(&pmur2[0]);
+                     register __m512 mui2  = _mm512_load_ps(&pmui2[0]);
+                     register __m512 epsr2 = _mm512_load_ps(&pepsr2[0]);
+                     register __m512 epsi2 = _mm512_load_ps(&pepsi2[0]);
+                     register __m512 z1r,z1i,z2r,z2i;
+                     register __m512 t0r,t0i,t1r,t1i,resr,resi;
+                     zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                     zi_f716_zmm16r4(tht2,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                     t0r = _mm512_sub_ps(z1r,z2r);
+                     t1r = _mm512_add_ps(z1r,z2r);
+                     t0i = _mm512_sub_ps(z1i,z2i);
+                     t1i = _mm512_add_ps(z1i,z2i);
+                     t0r = negate_zmm16r4(t0r);
+                     t0i = negate_zmm16r4(t0i);
+                     cdiv_zmm16r4(t0r,t0i,t1r,t1i,&resr,&resi);
+                     _mm512_store_ps(&Rr[0], resr);
+                     _mm512_store_ps(&Ri[0], resi);
+                }
+
+
 
       } // radiolocation
 
