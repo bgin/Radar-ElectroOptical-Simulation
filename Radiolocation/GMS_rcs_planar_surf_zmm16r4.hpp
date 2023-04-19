@@ -226,6 +226,89 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f714_zmm16r4_u( const float * __restrict  ptht1,
+                                        const float * __restrict  pmur1,
+                                        const float * __restrict  pmui1,
+                                        const float * __restrict  pepsr1,
+                                        const float * __restrict  pepsi1,
+                                        const float * __restrict  ptht2,
+                                        const float * __restrict  pmur2,
+                                        const float * __restrict  pmui2,
+                                        const float * __restrict  pepsr2,
+                                        const float * __restrict  pepsi2,
+                                        float * __restrict  Rr,
+                                        float * __restrict  Ri) {
+
+                     using namespace gms::math;
+                     register __m512 tht1  = _mm512_loadu_ps(&ptht1[0]);
+                     register __m512 mur1  = _mm512_loadu_ps(&pmur1[0]);
+                     register __m512 mui1  = _mm512_loadu_ps(&pmui1[0]);
+                     register __m512 epsr1 = _mm512_loadu_ps(&pepsr1[0]);
+                     register __m512 epsi1 = _mm512_loadu_ps(&pepsi1[0]);
+                     register __m512 tht2  = _mm512_loadu_ps(&ptht2[0]);
+                     register __m512 mur2  = _mm512_loadu_ps(&pmur2[0]);
+                     register __m512 mui2  = _mm512_loadu_ps(&pmui2[0]);
+                     register __m512 epsr2 = _mm512_loadu_ps(&pepsr2[0]);
+                     register __m512 epsi2 = _mm512_loadu_ps(&pepsi2[0]);
+                     register __m512 z1r,z1i,z2r,z2i;
+                     register __m512 t0r,t0i,t1r,t1i,resr,resi;
+                     zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                     zi_f716_zmm16r4(tht2,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                     t0r = _mm512_sub_ps(z1r,z2r);
+                     t1r = _mm512_add_ps(z1r,z2r);
+                     t0i = _mm512_sub_ps(z1i,z2i);
+                     t1i = _mm512_add_ps(z1i,z2i);
+                     t0r = negate_zmm16r4(t0r);
+                     t0i = negate_zmm16r4(t0i);
+                     cdiv_zmm16r4(t0r,t0i,t1r,t1i,&resr,&resi);
+                     _mm512_storeu_ps(&Rr[0], resr);
+                     _mm512_storeu_ps(&Ri[0], resi);
+                }
+
+
+                  /*
+                        Transmission coefficient components.
+                        Formula 7.1-5
+                    */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void T_f715_zmm16r4( const __m512 tht1,
+                                        const __m512 mur1,
+                                        const __m512 mui1,
+                                        const __m512 epsr1,
+                                        const __m512 epsi1,
+                                        const __m512 tht2,
+                                        const __m512 mur2,
+                                        const __m512 mui2,
+                                        const __m512 epsr2,
+                                        const __m512 epsi2,
+                                        __m512 * __restrict Tr,
+                                        __m512 * __restrict Ti) {
+
+                     const __m512 _2 = _mm512_set1_ps(2.0f);
+                     register __m512 z1r,z1i,z2r,z2i;
+                     register __m512 t0r,t0i,t1r,t1i;
+                     zi_f716_zmm16r4(tht2,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                     zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                     t0r = _mm512_mul_ps(_2,z2r);
+                     t1r = _mm512_add_ps(z1r,z2r);
+                     t0i = _mm512_mul_ps(_2,z2i);
+                     t1i = _mm512_add_ps(z1i,z2i);
+                     cdiv_zmm16r4(t0r,t0i,t1r,t1i,*Tr,*Ti);
+             }
+
+
+
 
       } // radiolocation
 
