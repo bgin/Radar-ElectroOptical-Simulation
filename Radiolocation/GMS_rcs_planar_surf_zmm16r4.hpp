@@ -342,6 +342,69 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 R_f7117_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                            const float * __restrict __ATTR_ALIGN__(64) peps1,
+                                            const float * __restrict __ATTR_ALIGN__(64) peps2) {
+
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          register __m512 eps1= _mm512_load_ps(&peps1[0]);
+                          register __m512 eps2= _mm512_load_ps(&peps2[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 e1e2,sqr1,sqr2,num,den,R;
+                          register __m512 cost,sint,x0,x1;
+                          e1e2 = _mm512_div_ps(eps1,eps2);
+                          cost = xcosf(tht);
+                          sqr1 = _mm512_sqrt_ps(e1e2);
+                          sint = xsinf(tht);
+                          x0   = _mm512_mul_ps(sqr1,cost);
+                          x1   = _mm512_mul_ps(_mm512_sub_ps(_1,e1e2),
+                                                     _mm512_mul_ps(sint,sint));
+                          sqr2 = _mm512_sqrt_ps(x1);
+                          num  = _mm512_sub_ps(x0,x1);
+                          den  = _mm512_add_ps(x0,x1);
+                          R    = _mm512_div_ps(num,den);
+                          return (R);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 R_f7117_zmm16r4_u(const float * __restrict  ptht,
+                                            const float * __restrict  peps1,
+                                            const float * __restrict  peps2) {
+
+                          register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                          register __m512 eps1= _mm512_loadu_ps(&peps1[0]);
+                          register __m512 eps2= _mm512_loadu_ps(&peps2[0]);
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 e1e2,sqr1,sqr2,num,den,R;
+                          register __m512 cost,sint,x0,x1;
+                          e1e2 = _mm512_div_ps(eps1,eps2);
+                          cost = xcosf(tht);
+                          sqr1 = _mm512_sqrt_ps(e1e2);
+                          sint = xsinf(tht);
+                          x0   = _mm512_mul_ps(sqr1,cost);
+                          x1   = _mm512_mul_ps(_mm512_sub_ps(_1,e1e2),
+                                                     _mm512_mul_ps(sint,sint));
+                          sqr2 = _mm512_sqrt_ps(x1);
+                          num  = _mm512_sub_ps(x0,x1);
+                          den  = _mm512_add_ps(x0,x1);
+                          R    = _mm512_div_ps(num,den);
+                          return (R);
+                }
+
+
+
+
+
 
       } // radiolocation
 
