@@ -497,6 +497,43 @@ namespace  gms {
 
 
 
+                    /*
+                        Reflection coefficient special cases:
+                        2) k2<k1, eps1,eps2 (real), mu1 = mu2 = mu0
+                        Formula 7.1-21
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f7123_zmm16r4(const __m512 tht,
+                                        const __m512 eps2,
+                                        const __m512 eps1,
+                                        __m512 * __restrict Rr,
+                                        __m512 * __restrict Ri) {
+
+                        const __m512 n2 = _mm512_set1_ps(-2.0f);
+                        register __m512 ear,eai,cer,cei;
+                        register __m512 sint,cost,e2e1,rat,arg,atarg;
+                        register __m512 x0,x1;
+                        e2e1 = _mm512_div_ps(eps2,eps1);
+                        cost = xcosf(tht);
+                        ear  = _mm512_setzero_ps();
+                        sint = xsinf(tht);
+                        x0   = _mm512_mul_ps(cost,cost);
+                        x1   = _mm512_sub_ps(_mm512_mul_ps(sint,sint),e2e1);
+                        rat  = _mm512_div_ps(x1,x0);
+                        arg  = _mm512_sqrt_ps(rat);
+                        atarg= xatanf(arg);
+                        eai  = _mm512_mul_ps(n2,atarg);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        *Rr = cer;
+                        *Ri = cei;
+                }
+
 
 
 
