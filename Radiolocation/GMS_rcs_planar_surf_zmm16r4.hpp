@@ -308,6 +308,39 @@ namespace  gms {
              }
 
 
+                /*
+                        Reflection coefficient special cases:
+                        1) k1<k2, eps1,eps2 (real), mu1 = m2 = mu0
+                        Formula 7.1-17
+                   */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 R_f7117_zmm16r4(const __m512 tht,
+                                          const __m512 eps1,
+                                          const __m512 eps2) {
+
+                          const __m512 _1 = _mm512_set1_ps(1.0f);
+                          register __m512 e1e2,sqr1,sqr2,num,den,R;
+                          register __m512 cost,sint,x0,x1;
+                          e1e2 = _mm512_div_ps(eps1,eps2);
+                          cost = xcosf(tht);
+                          sqr1 = _mm512_sqrt_ps(e1e2);
+                          sint = xsinf(tht);
+                          x0   = _mm512_mul_ps(sqr1,cost);
+                          x1   = _mm512_mul_ps(_mm512_sub_ps(_1,e1e2),
+                                                     _mm512_mul_ps(sint,sint));
+                          sqr2 = _mm512_sqrt_ps(x1);
+                          num  = _mm512_sub_ps(x0,x1);
+                          den  = _mm512_add_ps(x0,x1);
+                          R    = _mm512_div_ps(num,den);
+                          return (R);
+                }
+
 
 
       } // radiolocation
