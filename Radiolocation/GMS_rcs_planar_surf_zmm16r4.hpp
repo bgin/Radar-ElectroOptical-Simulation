@@ -832,6 +832,35 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 D_f7128_zmm16r4_a(    const float * __restrict __ATTR_ALIGN__(64)  pgam0,
+                                                const float * __restrict __ATTR_ALIGN__(64)  ptht,
+                                                const float * __restrict __ATTR_ALIGN__(64)  peps2,
+                                                const float * __restrict __ATTR_ALIGN__(64)  peps1) {
+
+                         register __m512 gam0= _mm512_load_ps(&pgam0[0]);
+                         register __m512 tht = _mm512_load_ps(&ptht[0]);
+                         register __m512 eps1= _mm512_load_ps(&peps1[0]);
+                         register __m512 eps2= _mm512_load_ps(&peps2[0]);
+                         const __m512 invpi = _mm512_set1_ps(0.318309886183790671537767526745f);
+                         register __m512 g0pi,ttht,sint,e2e1,e1e2,sqr,rat;
+                         register __m512 D;
+                         g0pi = _mm512_mul_ps(gam0,invpi);
+                         e2e1 = _mm512_div_ps(eps2,eps1);
+                         ttht = xtanf(tht);
+                         sint = _mm512_fmsub_ps(sint,sint,e2e1);
+                         e1e2 = _mm512_div_ps(eps1,eps2);
+                         sqr  = _mm512_sqrt_ps(sint);
+                         rat  = _mm512_div_ps(ttht,sqr);
+                         D    = _mm512_mul_ps(g0pi,_mm512_mul_ps(e1e2,rat));
+                         return (D);
+                }
+
+
       } // radiolocation
 
 
