@@ -643,6 +643,43 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f7124_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                            const float * __restrict __ATTR_ALIGN__(64) peps1,
+                                            const float * __restrict __ATTR_ALIGN__(64) peps2
+                                            float * __restrict __ATTR_ALIGN__(64) Rr,
+                                            float * __restrict __ATTR_ALIGN__(64) Ri) {
+
+                        register __m512 tht = _mm512_load_ps(&ptht[0]);
+                        register __m512 eps1= _mm512_load_ps(&peps1[0]);
+                        register __m512 eps2= _mm512_load_ps(&peps2[0]);
+                        const __m512 n2 = _mm512_set1_ps(-2.0f);
+                        const __m512 _1 = _mm512_set1_ps(1.0f);
+                        register __m512 ear,eai,cer,cei;
+                        register __m512 sint,cost,e2e1,e1e2,rat,arg,atarg;
+                        register __m512 x0,x1;
+                        e2e1 = _mm512_div_ps(eps2,eps1);
+                        sint = xsinf(tht);
+                        ear  = _mm512_setzero_ps();
+                        cost = xcosf(tht);
+                        x0   = _mm512_mul_ps(e2e1,_mm512_fmsub_ps(sint,sint,_1));
+                        e1e2 = _mm512_div_ps(eps1,eps2);
+                        x1   = _mm512_mul_ps(e1e2,_mm512_mul_ps(cost,cost));
+                        rat  = _mm512_div_ps(x0,x1);
+                        arg  = _mm512_sqrt_ps(rat);
+                        atarg= xatanf(arg);
+                        eai  = _mm512_mul_ps(n2,atarg);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        _mm512_store_ps(&Rr[0] ,cer);
+                        _mm512_store_ps(&Ri[0] ,cei);
+                }
+
+
+
 
 
 
