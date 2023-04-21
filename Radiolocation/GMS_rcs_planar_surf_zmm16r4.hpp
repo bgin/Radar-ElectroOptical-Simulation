@@ -716,6 +716,34 @@ namespace  gms {
                 }
 
 
+                  /*
+                       Lateral displacement of the incident ray.
+                       Formula 7.1-27
+                   */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 D_f7127_zmm16r4(    const __m512 gam0,
+                                              const __m512 tht,
+                                              const __m512 eps2,
+                                              const __m512 eps1) {
+
+                         const __m512 invpi = _mm512_set1_ps(0.318309886183790671537767526745f);
+                         register __m512 g0pi,ttht,sint,e2e1,sqr,rat;
+                         register __m512 D;
+                         g0pi = _mm512_mul_ps(gam0,invpi);
+                         e2e1 = _mm512_div_ps(eps2,eps1);
+                         ttht = xtanf(tht);
+                         sint = _mm512_fmsub_ps(sint,sint,e2e1);
+                         sqr  = _mm512_sqrt_ps(sint);
+                         rat  = _mm512_div_ps(ttht,sqr);
+                         D    = _mm512_mul_ps(g0pi,rat);
+                         return (D);
+                }
+
 
       } // radiolocation
 
