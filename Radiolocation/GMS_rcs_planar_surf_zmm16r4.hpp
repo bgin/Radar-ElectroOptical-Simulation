@@ -936,7 +936,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void R_f7129_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht1,
+                   void R_f7129_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
                                           const float * __restrict __ATTR_ALIGN__(64) pmur1,
                                           const float * __restrict __ATTR_ALIGN__(64) pmui1,
                                           const float * __restrict __ATTR_ALIGN__(64) pepsr1,
@@ -948,7 +948,7 @@ namespace  gms {
                                           float * __restrict __ATTR_ALIGN__(64) Rr,
                                           float * __restrict __ATTR_ALIGN__(64) Ri) {
 
-                       register __m512 tht1  = _mm512_load_ps(&ptht1[0]);
+                       register __m512 tht  = _mm512_load_ps(&ptht[0]);
                        register __m512 mur1  = _mm512_load_ps(&pmur1[0]);
                        register __m512 mui1  = _mm512_load_ps(&pmui1[0]);
                        register __m512 epsr1 = _mm512_load_ps(&pepsr1[0]);
@@ -957,6 +957,48 @@ namespace  gms {
                        register __m512 mui2  = _mm512_load_ps(&pmui2[0]);
                        register __m512 epsr2 = _mm512_load_ps(&pepsr2[0]);
                        register __m512 epsi2 = _mm512_load_ps(&pepsi2[0]);
+                       register __m512 z1r,z1i,z2r,z2i;
+                       register __m512 cost,numr,numi,denr,deni;
+                       register __m512 resr,resi;
+                       zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                       cost = xcosf(tht);
+                       zi_f716_zmm16r4(tht1,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                       numr = _mm512_fmsub_ps(z2r,cost,z1r);
+                       denr = _mm512_fmadd_ps(z2r,cost,z2r);
+                       numi = _mm512_fmsub_ps(z2i,cost,z1i);
+                       deni = _mm512_fmadd_ps(z2i,cost,z2i);
+                       cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
+                       *Rr = resr;
+                       *Ri = resi;
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f7129_zmm16r4_u(const float * __restrict  ptht,
+                                          const float * __restrict  pmur1,
+                                          const float * __restrict  pmui1,
+                                          const float * __restrict  pepsr1,
+                                          const float * __restrict  pepsi1,
+                                          const float * __restrict  pmur2,
+                                          const float * __restrict  pmui2,
+                                          const float * __restrict  pepsr2,
+                                          const float * __restrict  pepsi2,
+                                          float * __restrict  Rr,
+                                          float * __restrict  Ri) {
+
+                       register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
+                       register __m512 mur1  = _mm512_loadu_ps(&pmur1[0]);
+                       register __m512 mui1  = _mm512_loadu_ps(&pmui1[0]);
+                       register __m512 epsr1 = _mm512_loadu_ps(&pepsr1[0]);
+                       register __m512 epsi1 = _mm512_loadu_ps(&pepsi1[0]);
+                       register __m512 mur2  = _mm512_loadu_ps(&pmur2[0]);
+                       register __m512 mui2  = _mm512_loadu_ps(&pmui2[0]);
+                       register __m512 epsr2 = _mm512_loadu_ps(&pepsr2[0]);
+                       register __m512 epsi2 = _mm512_loadu_ps(&pepsi2[0]);
                        register __m512 z1r,z1i,z2r,z2i;
                        register __m512 cost,numr,numi,denr,deni;
                        register __m512 resr,resi;
