@@ -1250,6 +1250,111 @@ namespace  gms {
                   }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 R_f7215_f7216_zmm16r4_u(const float * __restrict  pd,
+                                                  const float * __restrict  pk0,
+                                                  const float * __restrict  palp,
+                                                  const float * __restrict  ptht) {
+
+                         register __m512 d   = _mm512_loadu_ps(&pd[0]);
+                         register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                         register __m512 alp = _mm512_loadu_ps(&palp[0]);
+                         register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                         const __m512 vmin = _mm512_set1_ps(1.17549e-38);
+                         const __m512 hlf  = _mm512_set1_ps(0.5f);
+                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                         const __mmask16 m = _mm512_cmp_ps_mask(d,vmin,_CMP_EQ_OQ);
+                         register __m512 pid2,cost,cos2t,num,den,x0,x1,x2;
+                         register __m512 k,k01a,sin2t,k02k,sqr;
+                         register __m512 R;
+                         if(!m) {
+                            pid2 = _mm512_mul_ps(pi,_mm512_mul_ps(d,hlf));
+                            cost = xcosf(tht);
+                            cos2t= _mm512_fmadd_ps(cost,cost,alp);
+                            x0   = _mm512_sqrt_ps(cos2t);
+                            x1   = _mm512_fmsub_ps(pid2,cost,x0);
+                            num  = _mm512_sinh_ps(x1);
+                            x2   = _mm512_fmadd_ps(pid2,cost,x0);
+                            den  = _mm512_sinh_ps(x2);
+                            R    = _mm512_div_ps(num,den);
+                            return (R);
+                        }
+                        else {
+                            const __m512 _1 = _mm512_sqrt_ps(1.0f);
+                            k    = _mm512_sqrt_ps(_mm512_sub_ps(_1,alp));
+                            cost = xcosf(tht);
+                            k02k = _mm512_div_ps(_mm512_mul_ps(k0,k0),k);
+                            sint = xsinf(tht);
+                            sin2t= _mm512_mul_ps(sint,sint);
+                            x0   = _mm512_sub_ps(_1,_mm512_mul_ps(k02k,sin2t));
+                            sqr  = _mm512_sqrt_ps(x0);
+                            x1   = _mm512_mul_ps(k,sqr);
+                            num  = _mm512_fmsub_ps(k0,cost,x1);
+                            den  = _mm512_fmadd_ps(k0,cost,x1);
+                            R    = _mm512_div_ps(num,den);
+                            return (R);
+                        }
+                  }
+
+
+                    /*
+                            Infinite strips, low frequency region.
+                            E-field (scattered) along 'z'.
+                            Formula 7.4-1
+                        */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void Esz_f741_zmm16r4(const __m512 k0,
+                                         const __m512 r,
+                                         const __m512 a,
+                                         const __m512 tht,
+                                         const __m512 Eir,
+                                         const __m512 Eii,
+                                         __m512 * __restrict Esr,
+                                         __m512 * __restrict Esi) {
+
+                        const __m512 _1   = _mm512_set1_ps(1.0f);
+                        const __m512 gam  = _mm512_set1_ps(1.7811f);
+                        const __m512 qtr  = _mm512_set1_ps(0.25f);
+                        const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                        const __m512 pi2  = _mm512_set1_ps(0.5f*3.14159265358979323846264338328f);
+                        const __m512 _4   = _mm512_set1_ps(4.0f);
+                        const __m512 pi4  = _mm512_set1_ps(0.25f*3.14159265358979323846264338328f);
+                        register __m512 denr,deni,ear,eai,cer,cei,arg;
+                        register __m512 t0r,t0i,num,k02,a2,k0a,k0r,cost,trm;
+                        register __m512 x0,x1,t1r,t1i;
+                        deni = pi2;
+                        cost = xcosf(tht);
+                        k0r  = _mm512_mul_ps(k0,r);
+                        a2   = _mm512_mul_ps(a,a);
+                        ear  = _mm512_setzero_ps();
+                        k0a  = _mm512_mul_ps(k0,a);
+                        eai  = _mm512_add_ps(k0r,pi4);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        x0   = _mm512_div_ps(pi,_mm512_add_ps(k0r,k0r));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        arg  = _mm512_div_ps(_4,_mm512_mul_ps(gam,k0a));
+                        trm  = _mm512_sqrt_ps(x0);
+                        x1   = _mm512_mul_ps(cost,cost);
+                        denr = xlogf(arg);
+                        x0   = _mm512_fmadd_ps(k02,_mm512_mul_ps(a2,qtr),_1);
+                        num  = _mm512_mul_ps(x0,x1);
+                        t0r  = _mm512_mul_ps(_mm512_div_ps(num,denr),trm);
+                        t0i  = _mm512_mul_ps(_mm512_div_ps(num,deni),trm);
+                        cmul_zmm16r4(t0r,t0i,cer,cei,&t1r,&t1i);
+                        cmul_zmm16r4(Eir,Eii,t1r,t1i,*Esr,*Esi);
+                 }
+
+
       } // radiolocation
 
 
