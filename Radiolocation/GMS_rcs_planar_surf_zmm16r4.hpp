@@ -861,6 +861,75 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 D_f7128_zmm16r4_u(    const float * __restrict   pgam0,
+                                                const float * __restrict   ptht,
+                                                const float * __restrict   peps2,
+                                                const float * __restrict   peps1) {
+
+                         register __m512 gam0= _mm512_loadu_ps(&pgam0[0]);
+                         register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                         register __m512 eps1= _mm512_loadu_ps(&peps1[0]);
+                         register __m512 eps2= _mm512_loadu_ps(&peps2[0]);
+                         const __m512 invpi = _mm512_set1_ps(0.318309886183790671537767526745f);
+                         register __m512 g0pi,ttht,sint,e2e1,e1e2,sqr,rat;
+                         register __m512 D;
+                         g0pi = _mm512_mul_ps(gam0,invpi);
+                         e2e1 = _mm512_div_ps(eps2,eps1);
+                         ttht = xtanf(tht);
+                         sint = _mm512_fmsub_ps(sint,sint,e2e1);
+                         e1e2 = _mm512_div_ps(eps1,eps2);
+                         sqr  = _mm512_sqrt_ps(sint);
+                         rat  = _mm512_div_ps(ttht,sqr);
+                         D    = _mm512_mul_ps(g0pi,_mm512_mul_ps(e1e2,rat));
+                         return (D);
+                }
+
+
+                      /*
+                             For (k1/k2)^2*sin^2(theta)<<1 (Simplification
+                             of formulae 7.1-9 and 7.1-10).
+                             Formula 7.1-29
+                        */
+
+
+                    
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f7129_zmm16r4(const __m512 tht,
+                                        const __m512 mur1,
+                                        const __m512 mui1,
+                                        const __m512 epsr1,
+                                        const __m512 epsi1,
+                                        const __m512 mur2,
+                                        const __m512 mui2,
+                                        const __m512 epsr2,
+                                        const __m512 epsi2,
+                                        __m512 * __restrict Rr,
+                                        __m512 * __restrict Ri) {
+
+                       register __m512 z1r,z1i,z2r,z2i;
+                       register __m512 cost,numr,numi,denr,deni;
+                       register __m512 resr,resi;
+                       zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                       cost = xcosf(tht);
+                       zi_f716_zmm16r4(tht1,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                       numr = _mm512_fmsub_ps(z2r,cost,z1r);
+                       denr = _mm512_fmadd_ps(z2r,cost,z2r);
+                       numi = _mm512_fmsub_ps(z2i,cost,z1i);
+                       deni = _mm512_fmadd_ps(z2i,cost,z2i);
+                       cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
+                       *Rr = resr;
+                       *Ri = resi;
+                }
+
       } // radiolocation
 
 
