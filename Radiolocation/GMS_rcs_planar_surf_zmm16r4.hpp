@@ -1107,7 +1107,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void R_f7130_zmm16r4_a(const float * __restrict  ptht,
+                   void R_f7130_zmm16r4_u(const float * __restrict  ptht,
                                           const float * __restrict  pmur1,
                                           const float * __restrict  pmui1,
                                           const float * __restrict  pepsr1,
@@ -1145,6 +1145,58 @@ namespace  gms {
                        _mm512_storeu_ps(&Ri[0] ,resi);
                }
 
+
+                 /*
+                       Reflection coefficients for (alpha<cos^2(theta)).
+                       Formula 7.2-15
+                  */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 R_f7215_f7216_zmm16r4(const __m512 d,
+                                                const __m512 k0,
+                                                const __m512 alp,
+                                                const __m512 tht) {
+
+                         const __m512 vmin = _mm512_set1_ps(1.17549e-38);
+                         const __m512 hlf  = _mm512_set1_ps(0.5f);
+                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                         const __mmask16 m = _mm512_cmp_ps_mask(d,vmin,_CMP_EQ_OQ);
+                         register __m512 pid2,cost,cos2t,num,den,x0,x1,x2;
+                         register __m512 k,k01a,sin2t,k02k,sqr;
+                         register __m512 R;
+                         if(!m) {
+                            pid2 = _mm512_mul_ps(pi,_mm512_mul_ps(d,hlf));
+                            cost = xcosf(tht);
+                            cos2t= _mm512_fmadd_ps(cost,cost,alp);
+                            x0   = _mm512_sqrt_ps(cos2t);
+                            x1   = _mm512_fmsub_ps(pid2,cost,x0);
+                            num  = _mm512_sinh_ps(x1);
+                            x2   = _mm512_fmadd_ps(pid2,cost,x0);
+                            den  = _mm512_sinh_ps(x2);
+                            R    = _mm512_div_ps(num,den);
+                            return (R);
+                        }
+                        else {
+                            const __m512 _1 = _mm512_sqrt_ps(1.0f);
+                            k    = _mm512_sqrt_ps(_mm512_sub_ps(_1,alp));
+                            cost = xcosf(tht);
+                            k02k = _mm512_div_ps(_mm512_mul_ps(k0,k0),k);
+                            sint = xsinf(tht);
+                            sin2t= _mm512_mul_ps(sint,sint);
+                            x0   = _mm512_sub_ps(_1,_mm512_mul_ps(k02k,sin2t));
+                            sqr  = _mm512_sqrt_ps(x0);
+                            x1   = _mm512_mul_ps(k,sqr);
+                            num  = _mm512_fmsub_ps(k0,cost,x1);
+                            den  = _mm512_fmadd_ps(k0,cost,x1);
+                            R    = _mm512_div_ps(num,den);
+                            return (R);
+                        }
+                  }
 
 
       } // radiolocation
