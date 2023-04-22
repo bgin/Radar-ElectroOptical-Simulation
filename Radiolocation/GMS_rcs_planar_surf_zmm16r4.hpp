@@ -1384,7 +1384,7 @@ namespace  gms {
                         const __m512 pi4  = _mm512_set1_ps(0.25f*3.14159265358979323846264338328f);
                         register __m512 denr,deni,ear,eai,cer,cei,arg;
                         register __m512 t0r,t0i,num,k02,a2,k0a,k0r,cost,trm;
-                        register __m512 x0,x1,t1r,t1i;
+                        register __m512 x0,x1,t1r,t1i,resr,resi;
                         deni = pi2;
                         cost = xcosf(tht);
                         k0r  = _mm512_mul_ps(k0,r);
@@ -1404,7 +1404,9 @@ namespace  gms {
                         t0r  = _mm512_mul_ps(_mm512_div_ps(num,denr),trm);
                         t0i  = _mm512_mul_ps(_mm512_div_ps(num,deni),trm);
                         cmul_zmm16r4(t0r,t0i,cer,cei,&t1r,&t1i);
-                        cmul_zmm16r4(Eir,Eii,t1r,t1i,*Esr,*Esi);
+                        cmul_zmm16r4(Eir,Eii,t1r,t1i,&resr,&resi);
+			_mm512_store_ps(&Esr[0], resr);
+			_mm512_store_ps(&Esi[0], resi);
                  }
 
 
