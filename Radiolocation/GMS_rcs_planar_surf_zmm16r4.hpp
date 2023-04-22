@@ -1084,7 +1084,6 @@ namespace  gms {
                        register __m512 mui2  = _mm512_load_ps(&pmui2[0]);
                        register __m512 epsr2 = _mm512_load_ps(&pepsr2[0]);
                        register __m512 epsi2 = _mm512_load_ps(&pepsi2[0]);
-
                        register __m512 z1r,z1i,z2r,z2i;
                        register __m512 cost,numr,numi,denr,deni;
                        register __m512 resr,resi,t0r,t0i;
@@ -1100,6 +1099,50 @@ namespace  gms {
                        cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
                        _mm512_store_ps(&Rr[0] ,resr);
                        _mm512_store_ps(&Ri[0] ,resi);
+               }
+
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void R_f7130_zmm16r4_a(const float * __restrict  ptht,
+                                          const float * __restrict  pmur1,
+                                          const float * __restrict  pmui1,
+                                          const float * __restrict  pepsr1,
+                                          const float * __restrict  pepsi1,
+                                          const float * __restrict  pmur2,
+                                          const float * __restrict  pmui2,
+                                          const float * __restrict  pepsr2,
+                                          const float * __restrict  pepsi2,
+                                          float * __restrict  Rr,
+                                          float * __restrict  Ri) {
+
+                       register __m512 tht   = _mm512_loadu_ps(&ptht[0]);
+                       register __m512 mur1  = _mm512_loadu_ps(&pmur1[0]);
+                       register __m512 mui1  = _mm512_loadu_ps(&pmui1[0]);
+                       register __m512 epsr1 = _mm512_loadu_ps(&pepsr1[0]);
+                       register __m512 epsi1 = _mm512_loadu_ps(&pepsi1[0]);
+                       register __m512 mur2  = _mm512_loadu_ps(&pmur2[0]);
+                       register __m512 mui2  = _mm512_loadu_ps(&pmui2[0]);
+                       register __m512 epsr2 = _mm512_loadu_ps(&pepsr2[0]);
+                       register __m512 epsi2 = _mm512_loadu_ps(&pepsi2[0]);
+                       register __m512 z1r,z1i,z2r,z2i;
+                       register __m512 cost,numr,numi,denr,deni;
+                       register __m512 resr,resi,t0r,t0i;
+                       zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                       cost = xcosf(tht);
+                       t0r  = _mm512_mul_ps(z1r,cost);
+                       t0i  = _mm512_mul_ps(z1i,cost);
+                       zi_f716_zmm16r4(tht1,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                       numr = _mm512_sub_ps(z2r,t0r);
+                       denr = _mm512_add_ps(z2r,t0r);
+                       numi = _mm512_sub_ps(z2i,t0i);
+                       deni = _mm512_add_ps(z2i,t0i);
+                       cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
+                       _mm512_storeu_ps(&Rr[0] ,resr);
+                       _mm512_storeu_ps(&Ri[0] ,resi);
                }
 
 
