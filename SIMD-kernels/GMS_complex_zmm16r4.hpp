@@ -2046,6 +2046,98 @@ namespace  gms {
              }
 
 
+#include <complex>
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32) 
+                   static inline
+                   void copy_2xr4_c4_unroll16x(float * __restrict __ATTR_ALIGN__(64) xre,
+                                               float * __restrict __ATTR_ALIGN__(64) xim,
+                                               std::complex<float> * __restrict __ATTR_ALIGN__(64) vc,
+                                               const int32_t n) {
+
+                        if(__builtin_expect(0<=n,0)) { return;}
+                        register std::complex<float> c0,c1,c2,c3;
+                        register std::complex<float> c4,c5,c6,c7;
+                        register float re0,im0,re1,im1,re2,im2;
+                        register float re3,im3,re4,im4,re5,im5;
+                        register float re6,im6,re7,im7,re8,im8;
+                        int32_t j,m,m1;
+                        m = n%16;
+#if defined(__INTEL_COMPILER)
+                        __assume_aligned(xre,64);
+                        __assume_aligned(xim,64);
+                        __assume_aligned(c,64);
+#elif defined(__GNUC__) && (!defined __INTEL_COMPILER)
+                        xre = (float*)__builtin_assume_aligned(xre,64);
+                        xim = (float*)__builtin_assume_aligned(xim,64);
+                        vc   = (std::complex<float>*)__builtin_assume_aligned(vc,64);
+#endif
+                        if(n != 0) {
+#pragma omp simd aligned(xre:64) aligned(xim:64) aligned(c:64)
+                           for(j = 0; j != m; ++j) {
+                               const float re = xre[j];
+                               const float im = xim[j];
+                               const std::complex<float> tj{re,im};
+                               vc[i] = tj;
+                           }
+                            
+                            if(n<16) {return;}
+                       }
+
+                       m1 = m+1;
+#pragma omp simd aligned(xre:64) aligned(xim:64) aligned(vc:64)
+                       for(j = m1; j != n; j += 16) {
+                           re0     = xre[i+0];
+                           im0     = xim[i+0];
+                           vc[i+0] = {re0,im0};
+                           re1     = xre[i+1];
+                           im1     = xim[i+1];
+                           vc[i+1] = {re1,im1}; 
+                           re2     = xre[i+2];
+                           im2     = xim[i+2];
+                           vc[i+2] = {re2,im2};
+                           re3     = xre[i+3];
+                           im3     = xim[i+3];
+                           vc[i+3] = {re3,im3};
+                           re4     = xre[i+4];
+                           im4     = xim[i+4];
+                           vc[i+4] = {re4,im4};
+                           re5     = xre[i+5];
+                           im5     = xim[i+5];
+                           vc[i+5] = {re5,im5}; 
+                           re6     = xre[i+6];
+                           im6     = xim[i+6];
+                           vc[i+6] = {re6,im6};
+                           re7     = xre[i+7];
+                           im7     = xim[i+7];
+                           vc[i+7] = {re7,im7};
+                           re0     = xre[i+8];
+                           im0     = xim[i+8];
+                           vc[i+8] = {re0,im0};
+                           re1     = xre[i+9];
+                           im1     = xim[i+9];
+                           vc[i+9] = {re1,im1}; 
+                           re2     = xre[i+10];
+                           im2     = xim[i+10];
+                           vc[i+10]= {re2,im2};
+                           re3     = xre[i+11];
+                           im3     = xim[i+11];
+                           vc[i+11]= {re3,im3};
+                           re4     = xre[i+12];
+                           im4     = xim[i+12];
+                           vc[i+12]= {re4,im4};
+                           re5     = xre[i+13];
+                           im5     = xim[i+13];
+                           vc[i+13]= {re5,im5}; 
+                           re6     = xre[i+14];
+                           im6     = xim[i+14];
+                           vc[i+14]= {re6,im6};
+                           re7     = xre[i+15];
+                           im7     = xim[i+15];
+                           vc[i+15]= {re7,im7};
+                      }
+                 }
 
 
 
