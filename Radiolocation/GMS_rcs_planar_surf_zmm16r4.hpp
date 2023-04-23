@@ -1666,7 +1666,7 @@ namespace  gms {
                           num  = _mm512_mul_ps(x1,x1);
                           den  = _mm512_fmadd_ps(larg,larg,pisq);
                           rat  = _mm512_div_ps(num,den);
-                          rcs  = _mm512mul_ps(fac,rat);
+                          rcs  = _mm512_mul_ps(fac,rat);
                           return (rcs);
                 }
 
@@ -1676,7 +1676,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline 
-                   __m512 rcs_f743_zmm16r4_a(const float * __restrict  pk0,
+                   __m512 rcs_f743_zmm16r4_u(const float * __restrict  pk0,
                                              const float * __restrict  pa,
                                              const float * __restrict  ptht) {
 
@@ -1702,7 +1702,7 @@ namespace  gms {
                           num  = _mm512_mul_ps(x1,x1);
                           den  = _mm512_fmadd_ps(larg,larg,pisq);
                           rat  = _mm512_div_ps(num,den);
-                          rcs  = _mm512mul_ps(fac,rat);
+                          rcs  = _mm512_mul_ps(fac,rat);
                           return (rcs);
                 }
 
