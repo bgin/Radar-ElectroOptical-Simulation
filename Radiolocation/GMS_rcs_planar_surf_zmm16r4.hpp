@@ -1405,9 +1405,65 @@ namespace  gms {
                         t0i  = _mm512_mul_ps(_mm512_div_ps(num,deni),trm);
                         cmul_zmm16r4(t0r,t0i,cer,cei,&t1r,&t1i);
                         cmul_zmm16r4(Eir,Eii,t1r,t1i,&resr,&resi);
-			_mm512_store_ps(&Esr[0], resr);
-			_mm512_store_ps(&Esi[0], resi);
+                        _mm512_store_ps(&Esr[0], resr);
+                        _mm512_store_ps(&Esi[0], resi);
                  }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void Esz_f741_zmm16r4_u(const float * __restrict  pk0,
+                                           const float * __restrict  pr,
+                                           const float * __restrict  pa,
+                                           const float * __restrict  ptht,
+                                           const float * __restrict  pEir,
+                                           const float * __restrict  pEii,
+                                           float * __restrict  Esr,
+                                           float * __restrict  Esi) {
+
+                        register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 r   = _mm512_loadu_ps(&pr[0]);
+                        register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                        register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                        register __m512 Eir = _mm512_loadu_ps(&pEir[0]); 
+                        register __m512 Eii = _mm512_loadu_ps(&pEii[0]);
+                        const __m512 _1   = _mm512_set1_ps(1.0f);
+                        const __m512 gam  = _mm512_set1_ps(1.7811f);
+                        const __m512 qtr  = _mm512_set1_ps(0.25f);
+                        const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                        const __m512 pi2  = _mm512_set1_ps(0.5f*3.14159265358979323846264338328f);
+                        const __m512 _4   = _mm512_set1_ps(4.0f);
+                        const __m512 pi4  = _mm512_set1_ps(0.25f*3.14159265358979323846264338328f);
+                        register __m512 denr,deni,ear,eai,cer,cei,arg;
+                        register __m512 t0r,t0i,num,k02,a2,k0a,k0r,cost,trm;
+                        register __m512 x0,x1,t1r,t1i,resr,resi;
+                        deni = pi2;
+                        cost = xcosf(tht);
+                        k0r  = _mm512_mul_ps(k0,r);
+                        a2   = _mm512_mul_ps(a,a);
+                        ear  = _mm512_setzero_ps();
+                        k0a  = _mm512_mul_ps(k0,a);
+                        eai  = _mm512_add_ps(k0r,pi4);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        x0   = _mm512_div_ps(pi,_mm512_add_ps(k0r,k0r));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        arg  = _mm512_div_ps(_4,_mm512_mul_ps(gam,k0a));
+                        trm  = _mm512_sqrt_ps(x0);
+                        x1   = _mm512_mul_ps(cost,cost);
+                        denr = xlogf(arg);
+                        x0   = _mm512_fmadd_ps(k02,_mm512_mul_ps(a2,qtr),_1);
+                        num  = _mm512_mul_ps(x0,x1);
+                        t0r  = _mm512_mul_ps(_mm512_div_ps(num,denr),trm);
+                        t0i  = _mm512_mul_ps(_mm512_div_ps(num,deni),trm);
+                        cmul_zmm16r4(t0r,t0i,cer,cei,&t1r,&t1i);
+                        cmul_zmm16r4(Eir,Eii,t1r,t1i,&resr,&resi);
+                        _mm512_storeu_ps(&Esr[0], resr);
+                        _mm512_storeu_ps(&Esi[0], resi);
+                 }
+
 
 
       } // radiolocation
