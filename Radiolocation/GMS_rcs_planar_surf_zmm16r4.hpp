@@ -1707,6 +1707,41 @@ namespace  gms {
                 }
 
 
+                  /*
+                        
+                       The resultant backscatter RCS of parallel
+                       polarization.
+                       Formula 7.4-4  
+
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f743_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 tht) {
+
+                          const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f); 
+                          const __m512 1o64= _mm512_set1_ps(0.015625f);
+                          register __m512 k0a,k0a2,cost,cos2t,fac;
+                          register __m512 rcs,x0,x1,num,x2;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          cost = xcosf(tht);
+                          k0a2 = _mm512_add_ps(k0a,k0a);
+                          fac  = _mm512_div_ps(pis,k0);
+                          x2   = _mm512_mul_ps(cos2t,cos2t);
+                          x0   = _mm512_mul_ps(k0a2,k0a2);
+                          x1   = _mm512_mul_ps(x0,x0);
+                          num  = _mm512_mul_ps(_mm512_mul_ps(x1,x2),1o64);
+                          rcs  = _mm512_mul_ps(fac,num);
+                          return (rcs);
+                }
+
+
 
       } // radiolocation
 
