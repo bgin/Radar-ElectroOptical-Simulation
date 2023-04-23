@@ -1509,6 +1509,47 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void Hsz_f742_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0r,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           const float * __restrict __ATTR_ALIGN__(64) pHir,
+                                           const float * __restrict __ATTR_ALIGN__(64) pHii,
+                                           float * __restrict __ATTR_ALIGN__(64) Hsr,
+                                           float * __restrict __ATTR_ALIGN__(64) Hsi) {
+
+                         register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                         register __m512 k0r = _mm512_load_ps(&pk0r[0]);
+                         register __m512 tht = _mm512_load_ps(&ptht[0]);
+                         register __m512 Hir = _mm512_load_ps(&pHir[0]);
+                         register __m512 Hii = _mm512_load_ps(&pHii[0]);
+                         const __m512 _1o8 = _mm512_set1_ps(0.125f);
+                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                         const __m512 pi4  = _mm512_set1_ps(0.25f*3.14159265358979323846264338328f);
+                         register __m512 ear,eai,cer,cei;
+                         register __m512 trm,t0r,t0i,num,cost,x0,x1;
+                         ear  = _mm512_setzero_ps();
+                         cost = xcosf(tht);
+                         eai  = _mm512_add_ps(k0r,pi4);
+                         x0   = _mm512_div_ps(pi,_mm512_add_ps(k0r,k0r));
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         trm  = _mm512_sqrt_ps(x0);
+                         x1   = _mm512_add_ps(k0a,k0a);
+                         x0   = _mm512_mul_ps(cost,cost);
+                         num  = _mm512_mul_ps(_mm512_mul_ps(x1,x1),x0);
+                         t0r  = _mm512_mul_ps(trm,cer);
+                         t0i  = _mm512_mul_ps(trm,cei);
+                         num  = _mm512_mul_ps(_1o8,num);
+                         x0   = _mm512_mul_ps(Hsr,num);
+                         x1   = _mm512_mul_ps(Hsi,num);
+                         cmul_zmm16r4(x0,x1,t0r,t0i,*Hsr,*Hsi);
+                }
+
+
 
       } // radiolocation
 
