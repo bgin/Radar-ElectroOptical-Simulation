@@ -2237,6 +2237,117 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32) 
+                   static inline
+                   void copy_c4_2x4_unroll16x( float * __restrict __ATTR_ALIGN__(64) xre,
+                                               float * __restrict __ATTR_ALIGN__(64) xim,
+                                               std::complex<float> * __restrict __ATTR_ALIGN__(64) vc,
+                                               const int32_t n) {
+
+                        if(__builtin_expect(0<=n,0)) { return;}
+                        register float re0,im0,re1,im1,re2,im2;
+                        register float re3,im3,re4,im4,re5,im5;
+                        register float re6,im6,re7,im7,re8,im8;
+                        int32_t j,m,m1;
+                        m = n%16;
+#if defined(__INTEL_COMPILER)
+                        __assume_aligned(xre,64);
+                        __assume_aligned(xim,64);
+                        __assume_aligned(c,64);
+#elif defined(__GNUC__) && (!defined __INTEL_COMPILER)
+                        xre = (float*)__builtin_assume_aligned(xre,64);
+                        xim = (float*)__builtin_assume_aligned(xim,64);
+                        vc   = (std::complex<float>*)__builtin_assume_aligned(vc,64);
+#endif
+                        if(n != 0) {
+#pragma omp simd aligned(xre:64) aligned(xim:64) aligned(c:64)
+                           for(j = 0; j != m; ++j) {
+                               const float re = vc[j].real();
+                               const float im = vc[j].imag();
+                               xre[j]         = re;
+                               xim[j]         = im;
+                           }
+                            
+                            if(n<16) {return;}
+                       }
+
+                       m1 = m+1;
+#if defined(__INTEL_COMPILER)
+#pragma code_align(32)
+#endif
+#pragma omp simd aligned(xre:64) aligned(xim:64) aligned(vc:64)
+                       for(j = m1; j != n; j += 16) {
+                           re0    = vc[j+0].real();
+                           xre[j+0] = re0;
+                           im0    = vc[j+0].imag();
+                           xim[j+0] = im0;
+                           re1    = vc[j+1].real();
+                           xre[j+1] = re1;
+                           im1    = vc[j+1].imag();
+                           xim[j+1] = im1;
+                           re2    = vc[j+2].real();
+                           xre[j+2] = re2;
+                           im2    = vc[j+2].imag();
+                           xim[j+2] = im2;
+                           re3    = vc[j+3].real();
+                           xre[j+3] = re3;
+                           im3    = vc[j+3].imag();
+                           xim[j+3] = im3;
+                           re4    = vc[j+4].real();
+                           xre[j+4] = re4;
+                           im4    = vc[j+4].imag();
+                           xim[j+4] = im4;
+                           re5    = vc[j+5].real();
+                           xre[j+5] = re5;
+                           im5    = vc[j+5].imag();
+                           xim[j+5] = im5;
+                           re6    = vc[j+6].real();
+                           xre[j+6] = re6;
+                           im6    = vc[j+6].imag();
+                           xim[j+6] = im6;
+                           re7    = vc[j+7].real();
+                           xre[j+7] = re7;
+                           im7    = vc[j+7].imag();
+                           xim[j+7] = im7;
+                           re0    = vc[j+8].real();
+                           xre[j+8] = re0;
+                           im0    = vc[j+8].imag();
+                           xim[j+8] = im0;
+                           re1    = vc[j+9].real();
+                           xre[j+9] = re1;
+                           im1    = vc[j+9].imag();
+                           xim[j+9] = im1;
+                           re2    = vc[j+10].real();
+                           xre[j+10] = re2;
+                           im2    = vc[j+10].imag();
+                           xim[j+10] = im2;
+                           re3    = vc[j+11].real();
+                           xre[j+11] = re3;
+                           im3    = vc[j+11].imag();
+                           xim[j+11] = im3;
+                           re4    = vc[j+12].real();
+                           xre[j+12] = re4;
+                           im4    = vc[j+12].imag();
+                           xim[j+12] = im4;
+                           re5    = vc[j+13].real();
+                           xre[j+13] = re5;
+                           im5    = vc[j+13].imag();
+                           xim[j+13] = im5;
+                           re6    = vc[j+14].real();
+                           xre[j+14] = re6;
+                           im6    = vc[j+14].imag();
+                           xim[j+14] = im6;
+                           re7    = vc[j+7].real();
+                           xre[j+7] = re7;
+                           im7    = vc[j+7].imag();
+                           xim[j+7] = im7;
+                      }
+                 }
+
+
+
 
 
 
