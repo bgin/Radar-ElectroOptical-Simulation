@@ -1465,6 +1465,50 @@ namespace  gms {
                  }
 
 
+                     
+                    /*
+                            Infinite strips, low frequency region.
+                            H-field (scattered) along 'z'.
+                            Formula 7.4-2
+                        */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void Hsz_f742_zmm16r4(const __m512 k0a,
+                                         const __m512 k0r,
+                                         const __m512 tht,
+                                         const __m512 Hir,
+                                         const __m512 Hii,
+                                         __m512 * __restrict Hsr,
+                                         __m512 * __restrict Hsi) {
+
+                         const __m512 _1o8 = _mm512_set1_ps(0.125f);
+                         const __m512 pi   = _mm512_set1_ps(3.14159265358979323846264338328f);
+                         const __m512 pi4  = _mm512_set1_ps(0.25f*3.14159265358979323846264338328f);
+                         register __m512 ear,eai,cer,cei;
+                         register __m512 trm,t0r,t0i,num,cost,x0,x1;
+                         ear  = _mm512_setzero_ps();
+                         cost = xcosf(tht);
+                         eai  = _mm512_add_ps(k0r,pi4);
+                         x0   = _mm512_div_ps(pi,_mm512_add_ps(k0r,k0r));
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         trm  = _mm512_sqrt_ps(x0);
+                         x1   = _mm512_add_ps(k0a,k0a);
+                         x0   = _mm512_mul_ps(cost,cost);
+                         num  = _mm512_mul_ps(_mm512_mul_ps(x1,x1),x0);
+                         t0r  = _mm512_mul_ps(trm,cer);
+                         t0i  = _mm512_mul_ps(trm,cei);
+                         num  = _mm512_mul_ps(_1o8,num);
+                         x0   = _mm512_mul_ps(Hsr,num);
+                         x1   = _mm512_mul_ps(Hsi,num);
+                         cmul_zmm16r4(x0,x1,t0r,t0i,*Hsr,*Hsi);
+                }
+
+
 
       } // radiolocation
 
