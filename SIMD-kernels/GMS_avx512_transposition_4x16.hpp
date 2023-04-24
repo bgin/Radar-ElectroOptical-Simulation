@@ -123,25 +123,28 @@ namespace gms {
 		      static inline
 		      void transpose_zmm16r4_4x16_u(float * __restrict inout) {
 
-                           _mm_prefetch((const char*)&inout[0],_MM_HINT_T0);
-                            __
-                            __m512 x0 = _mm512_unpacklo_ps(inout[0],inout[1]);
-                            __m512 x1 = _mm512_unpackhi_ps(inout[0],inout[1]);
-                           _mm_prefetch((const char*)&inout[2],_MM_HINT_T0);
-                           __m512 x2 = _mm512_unpacklo_ps(inout[2],inout[3]);
-                           __m512 x3 = _mm512_unpackhi_ps(inout[2],inout[3]);
-                           __m512 y0       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
-                           __m512 y1       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
-                           __m512 y2       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
-                           __m512 y3       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                           _mm_prefetch((const char*)&inout[0*16],_MM_HINT_T0);
+                           register __m512 zmm0 = _mm512_loadu_ps(&inout[0*16]);
+                           register __m512 zmm1 = _mm512_loadu_ps(&inout[1*16]);
+                           register __m512   x0 = _mm512_unpacklo_ps(zmm0,zmm1);
+                           register __m512   x1 = _mm512_unpackhi_ps(zmm0,zmm1);
+                           _mm_prefetch((const char*)&inout[2*16],_MM_HINT_T0);
+                           register __m512 zmm2 = _mm512_loadu_ps(&inout[2*16]);
+                           register __m512 zmm3 = _mm512_loadu_ps(&inout[3*16]);
+                           register __m512 x2 = _mm512_unpacklo_ps(zmm2,zmm3);
+                           register __m512 x3 = _mm512_unpackhi_ps(zmm2,zmm3);
+                           register __m512 y0       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                           register __m512 y1       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                           register __m512 y2       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                           register __m512 y3       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
                                   x0       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
                                   x1       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
                                   x2       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
                                   x3       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
-                           inout[0]        = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0));
-                           inout[1]        = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0));
-                           inout[2]        = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1));
-                           inout[3]        = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1));
+                           _mm512_storeu_ps(&inout[0*16] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                           _mm512_storeu_ps(&inout[1*16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                           _mm512_storeu_ps(&inout[2*16] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                           _mm512_storeu_ps(&inout[3*16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
                     }
 
 
