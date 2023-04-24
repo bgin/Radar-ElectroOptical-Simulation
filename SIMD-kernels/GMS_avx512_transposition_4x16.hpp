@@ -94,9 +94,9 @@ namespace gms {
                            _mm_prefetch((const char*)&in[0],_MM_HINT_T0);
                             __m512 x0 = _mm512_unpacklo_ps(in[0],in[1]);
                             __m512 x1 = _mm512_unpackhi_ps(in[0],in[1]);
-                           _mm_prefetch((const char*)&data[2],_MM_HINT_T0);
-                           __m512 x2 = _mm512_unpacklo_ps(data[2],data[3]);
-                           __m512 x3 = _mm512_unpackhi_ps(data[2],data[3]);
+                           _mm_prefetch((const char*)&in[2],_MM_HINT_T0);
+                           __m512 x2 = _mm512_unpacklo_ps(in[2],in[3]);
+                           __m512 x3 = _mm512_unpackhi_ps(in[2],in[3]);
                            __m512 y0       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
                            __m512 y1       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
                            __m512 y2       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
@@ -105,10 +105,10 @@ namespace gms {
                                   x1       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
                                   x2       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
                                   x3       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
-                           data[0]         = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0));
-                           data[1]         = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0));
-                           data[2]         = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1));
-                           data[3]         = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1));
+                           out[0]         = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0));
+                           out[1]         = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0));
+                           out[2]         = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1));
+                           out[3]         = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1));
                     }
                                                       
 
