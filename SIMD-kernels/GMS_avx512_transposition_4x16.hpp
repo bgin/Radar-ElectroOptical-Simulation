@@ -60,11 +60,40 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
-		      void transpose_zmm16r4_4x16(__m512 * __restrict data) {
+		      void transpose_zmm16r4_4x16(__m512 * __restrict inout) {
 
-                           _mm_prefetch((const char*)&data[0],_MM_HINT_T0);
-                            __m512 x0 = _mm512_unpacklo_ps(data[0],data[1]);
-                            __m512 x1 = _mm512_unpackhi_ps(data[0],data[1]);
+                           _mm_prefetch((const char*)&inout[0],_MM_HINT_T0);
+                            __m512 x0 = _mm512_unpacklo_ps(inout[0],inout[1]);
+                            __m512 x1 = _mm512_unpackhi_ps(inout[0],inout[1]);
+                           _mm_prefetch((const char*)&inout[2],_MM_HINT_T0);
+                           __m512 x2 = _mm512_unpacklo_ps(inout[2],inout[3]);
+                           __m512 x3 = _mm512_unpackhi_ps(inout[2],inout[3]);
+                           __m512 y0       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                           __m512 y1       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                           __m512 y2       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                           __m512 y3       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                                  x0       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                                  x1       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                                  x2       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                                  x3       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                           inout[0]        = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0));
+                           inout[1]        = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0));
+                           inout[2]        = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1));
+                           inout[3]        = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1));
+                    }
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void transpose_zmm16r4_4x16(const __m512 * __restrict in,
+                                                  __m512 * __restrict out) {
+
+                           _mm_prefetch((const char*)&in[0],_MM_HINT_T0);
+                            __m512 x0 = _mm512_unpacklo_ps(in[0],in[1]);
+                            __m512 x1 = _mm512_unpackhi_ps(in[0],in[1]);
                            _mm_prefetch((const char*)&data[2],_MM_HINT_T0);
                            __m512 x2 = _mm512_unpacklo_ps(data[2],data[3]);
                            __m512 x3 = _mm512_unpackhi_ps(data[2],data[3]);
@@ -83,12 +112,12 @@ namespace gms {
                     }
                                                       
 
-       }
+       } // math
 
 
 
 
-} 
+} // gms
 
 
 
