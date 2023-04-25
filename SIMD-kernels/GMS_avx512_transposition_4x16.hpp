@@ -899,6 +899,221 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline
+		      void transpose_zmm16r4_4x16_u4x_u(float * __restrict in,
+                                                        float * __restrict out,
+                                                        const int32_t n,
+                                                        const int32_t m) {
+
+                           if(__builtin_expect(0<=n,0) || 
+                              __builtin_expect(0<=m,0)) { return;} 
+                             
+                           register __m512 zmm0,zmm1,zmm2,zmm3;
+                           register __m512 x0,x1,x2,x3;
+                           register __m512 y0,y1,y2,y3;
+                           int32_t i,j;
+
+                           for(i = 0; (i+255) < n; i += 256) {
+                               _mm_prefetch((const char*)&in[i+0],_MM_HINT_T0);
+                               zmm0 = _mm512_loadu_ps(&in[i+0]);
+                               zmm1 = _mm512_loadu_ps(&in[i+16]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+32]);
+                               zmm3 = _mm512_loadu_ps(&in[i+48]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+0] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+32] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+48] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                               _mm_prefetch((const char*)&in[i+64],_MM_HINT_T0);
+                               zmm0 = _mm512_loadu_ps(&in[i+64]);
+                               zmm1 = _mm512_loadu_ps(&in[i+80]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+96]);
+                               zmm3 = _mm512_loadu_ps(&in[i+112]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+64] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+80] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+96] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+112] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                               _mm_prefetch((const char*)&in[i+128],_MM_HINT_T0);
+                               zmm0 = _mm512_loadu_ps(&in[i+128]);
+                               zmm1 = _mm512_loadu_ps(&in[i+144]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+160]);
+                               zmm3 = _mm512_loadu_ps(&in[i+176]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+128] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+144] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+160] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+176] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                               _mm_prefetch((const char*)&in[i+192],_MM_HINT_T0);
+                               zmm0 = _mm512_loadu_ps(&in[i+192]);
+                               zmm1 = _mm512_loadu_ps(&in[i+208]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+224]);
+                               zmm3 = _mm512_loadu_ps(&in[i+240]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+192] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+208] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+224] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+240] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                          }
+
+                            for(; (i+191) < n; i += 192) {
+                               zmm0 = _mm512_loadu_ps(&in[i+0]);
+                               zmm1 = _mm512_loadu_ps(&in[i+16]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+32]);
+                               zmm3 = _mm512_loadu_ps(&in[i+48]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+0] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+32] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+48] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                               zmm0 = _mm512_loadu_ps(&in[i+64]);
+                               zmm1 = _mm512_loadu_ps(&in[i+80]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+96]);
+                               zmm3 = _mm512_loadu_ps(&in[i+112]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+64] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+80] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+96] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+112] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                               zmm0 = _mm512_loadu_ps(&in[i+128]);
+                               zmm1 = _mm512_loadu_ps(&in[i+144]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+160]);
+                               zmm3 = _mm512_loadu_ps(&in[i+176]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+128] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+144] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+160] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+176] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                           }
+
+                            for(; (i+127) < n; i += 128) {
+                               zmm0 = _mm512_loadu_ps(&in[i+0]);
+                               zmm1 = _mm512_loadu_ps(&in[i+16]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+32]);
+                               zmm3 = _mm512_loadu_ps(&in[i+48]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+0] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+32] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+48] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                               zmm0 = _mm512_loadu_ps(&in[i+64]);
+                               zmm1 = _mm512_loadu_ps(&in[i+80]);
+                               x0   = _mm512_unpacklo_ps(zmm0,zmm1);
+                               x1   = _mm512_unpackhi_ps(zmm0,zmm1);
+                               zmm2 = _mm512_loadu_ps(&in[i+96]);
+                               zmm3 = _mm512_loadu_ps(&in[i+112]);
+                               x2   = _mm512_unpacklo_ps(zmm2,zmm3);
+                               x3   = _mm512_unpackhi_ps(zmm2,zmm3);
+                               y0   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                               y1   = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                               y2   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                               y3   = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                               x0   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                               x1   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                               x2   = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                               x3   = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                               _mm512_storeu_ps(&out[i+64] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+80] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
+                               _mm512_storeu_ps(&out[i+96] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
+                               _mm512_storeu_ps(&out[i+112] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1))); 
+
+                           }
+
+
+                    }
+
+
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
 		      void transpose_zmm16r4_4x16_u8x_a(float * __restrict __ATTR_ALIGN__(64) in,
                                                         float * __restrict __ATTR_ALIGN__(64) out,
                                                         const int32_t n,
