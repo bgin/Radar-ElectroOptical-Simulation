@@ -213,7 +213,7 @@ namespace gms {
                     }
 
 
-                      __ATTR_REGCALL__
+                      
                       __ATTR_ALWAYS_INLINE__
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
@@ -243,6 +243,67 @@ namespace gms {
                            _mm512_store_ps(&out[1*16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0)));
                            _mm512_store_ps(&out[2*16] ,_mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1)));
                            _mm512_store_ps(&out[3*16] ,_mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1)));
+                    }
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void transpose_zmm16r4_4x16(const __m512 in0,
+                                                  const __m512 in1,
+                                                  const __m512 in2,
+                                                  const __m512 in3,
+                                                  __m512 * __restrict out0,
+                                                  __m512 * __restrict out1,
+                                                  __m512 * __restrict out2,
+                                                  __m512 * __restrict out3) {
+
+                           //_mm_prefetch((const char*)&in[0*16],_MM_HINT_T0);
+                           //register __m512 zmm0 = _mm512_load_ps(&in[0*16]);
+                           //register __m512 zmm1 = _mm512_load_ps(&in[1*16]);
+                           register __m512   x0 = _mm512_unpacklo_ps(in0,in1);
+                           register __m512   x1 = _mm512_unpackhi_ps(in0,in1);
+                           //_mm_prefetch((const char*)&in[2*16],_MM_HINT_T0);
+                           //register __m512 zmm2 = _mm512_load_ps(&in[2*16]);
+                           //register __m512 zmm3 = _mm512_load_ps(&in[3*16]);
+                           register __m512 x2 = _mm512_unpacklo_ps(in2,in3);
+                           register __m512 x3 = _mm512_unpackhi_ps(in2,in3);
+                           register __m512 y0       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(1,0,1,0));
+                           register __m512 y1       = _mm512_shuffle_ps(x0,x2,_MM_SHUFFLE(3,2,3,2));
+                           register __m512 y2       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(1,0,1,0));
+                           register __m512 y3       = _mm512_shuffle_ps(x1,x3,_MM_SHUFFLE(3,2,3,2));
+                                  x0       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(2,0,2,0));
+                                  x1       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(2,0,2,0));
+                                  x2       = _mm512_shuffle_f32x4(y0,y1,_MM_SHUFFLE(3,1,3,1));
+                                  x3       = _mm512_shuffle_f32x4(y2,y3,_MM_SHUFFLE(3,1,3,1));
+                           *out0           = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(2,0,2,0));
+                           *out1           = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(2,0,2,0));
+                           *out2           = _mm512_shuffle_f32x4(x0,x1,_MM_SHUFFLE(3,1,3,1));
+                           *out3           = _mm512_shuffle_f32x4(x2,x3,_MM_SHUFFLE(3,1,3,1));
+                  }
+
+#include <cstdint>
+
+
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      void transpose_zmm16r4_4x16_u8x_u(float * __restrict in,
+                                                        float * __restrict out,
+                                                        const int32_t n) {
+
+                           if(__builtin_expect(0<=n,0)) { return;}
+                           register __m512 zmm0,zmm1,zmm2,zmm3;
+                           register __m512 zmm4,zmm5,zmm6,zmm7;
+                           register __m512 x0,x1,x2,x3;
+                           register __m512 x4,x5,x6,x7;
+                           register __m512 y0,y1,y2,y3;
+                           register __m512 y4,y5,y6,y7;
+                           int32_t i;
+                           
                     }
 
 
