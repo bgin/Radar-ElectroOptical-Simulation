@@ -2480,6 +2480,29 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void copy_2xr4_c4_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                               const float * __restrict __ATTR_ALIGN__(64) xim,
+                                               std::complex<float> * __restrict __ATTR_ALIGN__(64) yc) {
+
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        register __m512 zmm4,zmm5;
+                        float * __restrict pyc = reinterpret_cast<float*>(&yc[0]);
+                        zmm0 = _mm512_load_ps(&xre[0]);
+                        zmm2 = _mm512_unpacklo_ps(zmm0,zmm1);
+                        zmm1 = _mm512_load_ps(&xim[0]);
+                        zmm3 = _mm512_unpackhi_ps(zmm0,zmm1);
+                        zmm4 = _mm512_shuffle_f32x4(zmm2,zmm3,0x0);
+                        _mm512_store_ps(&pyc[0],zmm4);
+                        zmm5 = _mm512_shuffle_f32x4(zmm2,zmm3,0x3);
+                        _mm512_store_ps(&pyc[15],zmm5);
+                 }
+
+
 
       } // math
 
