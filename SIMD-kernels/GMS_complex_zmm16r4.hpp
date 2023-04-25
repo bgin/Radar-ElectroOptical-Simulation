@@ -2473,10 +2473,10 @@ namespace  gms {
                         zmm2 = _mm512_unpacklo_ps(zmm0,zmm1);
                         zmm1 = _mm512_loadu_ps(&xim[0]);
                         zmm3 = _mm512_unpackhi_ps(zmm0,zmm1);
-                        zmm4 = _mm512_shuff32x4_ps(zmm2,zmm3,0x0);
+                        zmm4 = _mm512_shuffle_f32x4(zmm2,zmm3,0x0);
                         _mm512_storeu_ps(&pyc[0],zmm4);
-                        zmm5 = _mm512_shuff32x4_ps(zmm2,zmm3,0x3);
-                        _mm512_storeu_ps(&pyc[15]);
+                        zmm5 = _mm512_shuffle_f32x4(zmm2,zmm3,0x3);
+                        _mm512_storeu_ps(&pyc[15],zmm5);
                  }
 
 
