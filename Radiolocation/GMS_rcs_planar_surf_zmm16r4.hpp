@@ -2147,6 +2147,35 @@ namespace  gms {
                 }
 
 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void coefg12_f7415_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                                const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                                float * __restrict __ATTR_ALIGN__(64) gamm1,
+                                                float * __restrict __ATTR_ALIGN__(64) gamm2){
+                                
+                          register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);                 
+                          const __m512 C0318309886183790671537767526745 = _mm512_set1_ps(0.318309886183790671537767526745f);
+                          const __m512 C078539816339744830961566084582  = _mm512_set1_ps(0.78539816339744830961566084582f);
+                          const __m512 C05   = _mm512_set1_ps(0.5f);
+                          register __m512 thth,arg1,arg2,carg1,carg2,sqr,x0;
+                          x0   = _mm512_add_ps(k0a,k0a);
+                          thth = _mm512_mul_ps(C05,tht);
+                          sqr  = _mm512_sqrt_ps(_mm512_mul_ps(x0,C0318309886183790671537767526745));
+                          arg1 = _mm512_add_ps(C078539816339744830961566084582,thth);
+                          carg1= xcosf(arg1);
+                          x0   = _mm512_add_ps(sqr,sqr);
+                          arg2 = _mm512_sub_ps(C078539816339744830961566084582,thth);
+                          carg2= xcosf(arg2);
+                          _mm512_store_ps(&gamm1[0] ,_mm512_mul_ps(x0,_mm512_abs_ps(carg1)));
+                          _mm512_store_ps(&gamm2[0] ,_mm512_mul_ps(x0,_mm512_abs_ps(carg2)));
+                }
+
+
                   
                   
 
