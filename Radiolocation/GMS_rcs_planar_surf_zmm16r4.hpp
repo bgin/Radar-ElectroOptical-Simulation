@@ -2029,6 +2029,19 @@ namespace  gms {
                          For k0a>>1, PO solution of backscatter RCS.
                          Formula 7.4-7
                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f747_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 tht) {
+
+                          
+                }
                   
 
 
