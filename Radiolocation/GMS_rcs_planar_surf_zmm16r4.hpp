@@ -2112,6 +2112,14 @@ namespace  gms {
                 }
 
 
+                 /*
+                       Backscattered fields from the edges of strips.
+                       Helper function for the formula 7.4-9
+                       Electric-field (over z).
+                       Formula 7.4-15
+                  */
+
+
                   
                   
 
