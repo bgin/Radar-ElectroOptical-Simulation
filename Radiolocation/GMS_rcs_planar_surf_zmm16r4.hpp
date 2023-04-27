@@ -2040,8 +2040,79 @@ namespace  gms {
                                            const __m512 a,
                                            const __m512 tht) {
 
-                          
+                          register __m512 invk0,k0a,cost,sint,arg,sarg;
+                          register __m512 rcs,num,sqr,x0;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          cost = xcosf(tht);
+                          invk0= _mm512_rcp14_ps(k0);
+                          sint = xsinf(tht);
+                          arg  = _mm512_mul_ps(_mm512_add_ps(k0a,k0a),sint);
+                          sarg = xsinf(arg);
+                          num  = _mm512_mul_ps(cost,sarg);
+                          x0   = _mm512_div_ps(num,sint);
+                          sqr  = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_mul_ps(invk0,sqr);
+                          return (rcs); 
                 }
+
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f747_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht) {
+
+                          register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          register __m512 invk0,k0a,cost,sint,arg,sarg;
+                          register __m512 rcs,num,sqr,x0;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          cost = xcosf(tht);
+                          invk0= _mm512_rcp14_ps(k0);
+                          sint = xsinf(tht);
+                          arg  = _mm512_mul_ps(_mm512_add_ps(k0a,k0a),sint);
+                          sarg = xsinf(arg);
+                          num  = _mm512_mul_ps(cost,sarg);
+                          x0   = _mm512_div_ps(num,sint);
+                          sqr  = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_mul_ps(invk0,sqr);
+                          return (rcs); 
+                }
+
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f747_zmm16r4_u(const float * __restrict  pk0,
+                                             const float * __restrict  pa,
+                                             const float * __restrict  ptht) {
+
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                          register __m512 invk0,k0a,cost,sint,arg,sarg;
+                          register __m512 rcs,num,sqr,x0;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          cost = xcosf(tht);
+                          invk0= _mm512_rcp14_ps(k0);
+                          sint = xsinf(tht);
+                          arg  = _mm512_mul_ps(_mm512_add_ps(k0a,k0a),sint);
+                          sarg = xsinf(arg);
+                          num  = _mm512_mul_ps(cost,sarg);
+                          x0   = _mm512_div_ps(num,sint);
+                          sqr  = _mm512_mul_ps(x0,x0);
+                          rcs  = _mm512_mul_ps(invk0,sqr);
+                          return (rcs); 
+                }
+
+
+                  
                   
 
 
