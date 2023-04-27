@@ -1721,7 +1721,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline 
-                   __m512 rcs_f743_zmm16r4(const __m512 k0,
+                   __m512 rcs_f744_zmm16r4(const __m512 k0,
                                            const __m512 a,
                                            const __m512 tht) {
 
@@ -1747,7 +1747,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline 
-                   __m512 rcs_f743_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                   __m512 rcs_f744_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                              const float * __restrict __ATTR_ALIGN__(64) pa,
                                              const float * __restrict __ATTR_ALIGN__(64) ptht) {
 
@@ -1776,7 +1776,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline 
-                   __m512 rcs_f743_zmm16r4_u(const float * __restrict  pk0,
+                   __m512 rcs_f744_zmm16r4_u(const float * __restrict  pk0,
                                              const float * __restrict  pa,
                                              const float * __restrict  ptht) {
 
@@ -1927,6 +1927,69 @@ namespace  gms {
                           Plane-parallel.
                           Formula 7.4-6
                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f746_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 tht,
+                                           const __m512 tht2) {
+
+                          const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f); 
+                          const __m512 1o64= _mm512_set1_ps(0.015625f);
+                          register __m512 k0a,k0a2,cost,cos2t,fac,cost2;
+                          register __m512 rcs,x0,x1,num,x2;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          cost = xcosf(tht);
+                          k0a2 = _mm512_add_ps(k0a,k0a);
+                          cost2= xcosf(tht2);
+                          fac  = _mm512_div_ps(pis,k0);
+                          x2   = _mm512_mul_ps(_mm512_mul_ps(cost2.cost2),
+                                 _mm512_mul_ps(cos2t,cos2t));
+                          x0   = _mm512_mul_ps(k0a2,k0a2);
+                          x1   = _mm512_mul_ps(x0,x0);
+                          num  = _mm512_mul_ps(_mm512_mul_ps(x1,x2),1o64);
+                          rcs  = _mm512_mul_ps(fac,num);
+                          return (rcs);
+                }
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f746_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht2) {
+
+                          register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          register __m512 tht2= _mm512_load_ps(&ptht2[0]);
+                          const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f); 
+                          const __m512 1o64= _mm512_set1_ps(0.015625f);
+                          register __m512 k0a,k0a2,cost,cos2t,fac,cost2;
+                          register __m512 rcs,x0,x1,num,x2;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          cost = xcosf(tht);
+                          k0a2 = _mm512_add_ps(k0a,k0a);
+                          cost2= xcosf(tht2);
+                          fac  = _mm512_div_ps(pis,k0);
+                          x2   = _mm512_mul_ps(_mm512_mul_ps(cost2.cost2),
+                                 _mm512_mul_ps(cos2t,cos2t));
+                          x0   = _mm512_mul_ps(k0a2,k0a2);
+                          x1   = _mm512_mul_ps(x0,x0);
+                          num  = _mm512_mul_ps(_mm512_mul_ps(x1,x2),1o64);
+                          rcs  = _mm512_mul_ps(fac,num);
+                          return (rcs);
+                }
+                  
 
 
 
