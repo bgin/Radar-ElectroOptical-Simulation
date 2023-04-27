@@ -2022,6 +2022,13 @@ namespace  gms {
                           rcs  = _mm512_mul_ps(fac,num);
                           return (rcs);
                 }
+
+
+                  /*
+                         High Frequency Region.
+                         For k0a>>1, PO solution of backscatter RCS.
+                         Formula 7.4-7
+                     */
                   
 
 
