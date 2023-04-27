@@ -1800,6 +1800,14 @@ namespace  gms {
                 }
 
 
+                  /*
+                          General bistatic case.
+                          The Rayleigh scattering results.
+                          Plane-perpendicular.
+                          Formula 7.4-5
+                     */
+
+
 
       } // radiolocation
 
