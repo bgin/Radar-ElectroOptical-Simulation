@@ -1843,6 +1843,45 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f745_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           const float * __restrict __ATTR_ALIGN__(64) ptht2) {
+
+                          register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          register __m512 tht2= _mm512_load_ps(&ptht2[0]);  
+                          const __m512 pis = _mm512_set1_ps(9.869604401089358618834490999876f);
+                          const __m512 pisq= _mm512_set1_ps(0.25f*9.869604401089358618834490999876f);
+                          const __m512 _1  = _mm512_set1_ps(1.0f);
+                          const __m512 qtr = _mm512_set1_ps(0.25f);
+                          const __m512 c0  = _mm512_set1_ps(4.48f);
+                          register __m512 fac,num,den,cost,k02,a2,k0a;
+                          register __m512 rcs,x0,x1,arg,larg,rat,cost2;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          fac  = _mm512_div_ps(pis,k0);
+                          k02  = _mm512_mul_ps(k0,k0);
+                          a2   = _mm512_mul_ps(a,a);
+                          cost = xcosf(tht);
+                          x0   = _mm512_fmadd_ps(k02,_mm512_mul_ps(a2,qtr),_1);
+                          cost2= xcosf(tht2);
+                          arg  = _mm512_div_ps(c0,_mm512_add_ps(k0a,k0a));
+                          x1   = _mm512_mul_ps(x0,_mm512_mul_ps(cost,cost2));
+                          larg = xlogf(arg);
+                          num  = _mm512_mul_ps(x1,x1);
+                          den  = _mm512_fmadd_ps(larg,larg,pisq);
+                          rat  = _mm512_div_ps(num,den);
+                          rcs  = _mm512mul_ps(fac,rat);
+                          return (rcs);
+                }
+
+
 
       } // radiolocation
 
