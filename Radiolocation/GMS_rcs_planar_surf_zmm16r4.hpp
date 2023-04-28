@@ -2245,6 +2245,43 @@ namespace  gms {
                         cmul_zmm16r4(cer,cei,Cr2,Si2,*A2r,*A2i);
                }
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void coefA12_f7413_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
+                                              const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                              float * __restrict __ATTR_ALIGN__(64) A1r,
+                                              float * __restrict __ATTR_ALIGN__(64) A1i,
+                                              float * __restrict __ATTR_ALIGN__(64) A2r,
+                                              float * __restrict __ATTR_ALIGN__(64) A2i) {
+
+                        register __m512 k0a = _mm512_load_ps(&pk0a[0]);
+                        register __m512 tht = _mm512_load_ps(&ptht[0]);
+                        const __m512 C078539816339744830961566084582  = _mm512_set1_ps(-0.78539816339744830961566084582f);
+                        const __m512 C141421356237309504880168872421  = _mm512_set1_ps(1.41421356237309504880168872421f);
+                        register __m512 ear,eai,cer,cei,Cr1,Si1,Cr2,Si2;
+                        register __m512 gam1,gam2,res1r,res1i,res2r,res2i;
+                        ear = _mm512_setzero_ps();
+                        eai = C078539816339744830961566084582;
+                        coefg12_f7415_zmm16r4(k0a,tht,&gam1,&gam2); 
+                        Cr1 = fresnel_C_zmm16r4(gam1);
+                        Si1 = fresnel_S_zmm16r4(gam1);
+                        Cr2 = fresnel_C_zmm16r4(gam2);
+                        Si2 = fresnel_S_zmm16r4(gam2);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cer = _mm512_mul_ps(C141421356237309504880168872421,cer);
+                        cei = _mm512_mul_ps(C141421356237309504880168872421,cei);
+                        cmul_zmm16r4(cer,cei,Cr1,Si1,&res1r,&res1i);
+                        cmul_zmm16r4(cer,cei,Cr2,Si2,&res2r,&res2i);
+                        __m512_store_ps(&A1r[0], res1r);
+                        __m512_store_ps(&A2r[0], res2r);
+                        __m512_store_ps(&A1i[0], res1i);
+                        __m512_store_ps(&A2i[0], res2i);
+               }
+
                   
                   
 
