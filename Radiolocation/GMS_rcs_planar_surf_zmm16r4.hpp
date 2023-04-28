@@ -2176,6 +2176,75 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void coefg12_f7415_zmm16r4_u(  const float * __restrict  pk0a,
+                                                const float * __restrict  ptht,
+                                                float * __restrict  gamm1,
+                                                float * __restrict  gamm2){
+                                
+                          register __m512 k0a = _mm512_loadu_ps(&pk0a[0]);
+                          register __m512 tht = _mm512_loadu_ps(&ptht[0]);                 
+                          const __m512 C0318309886183790671537767526745 = _mm512_set1_ps(0.318309886183790671537767526745f);
+                          const __m512 C078539816339744830961566084582  = _mm512_set1_ps(0.78539816339744830961566084582f);
+                          const __m512 C05   = _mm512_set1_ps(0.5f);
+                          register __m512 thth,arg1,arg2,carg1,carg2,sqr,x0;
+                          x0   = _mm512_add_ps(k0a,k0a);
+                          thth = _mm512_mul_ps(C05,tht);
+                          sqr  = _mm512_sqrt_ps(_mm512_mul_ps(x0,C0318309886183790671537767526745));
+                          arg1 = _mm512_add_ps(C078539816339744830961566084582,thth);
+                          carg1= xcosf(arg1);
+                          x0   = _mm512_add_ps(sqr,sqr);
+                          arg2 = _mm512_sub_ps(C078539816339744830961566084582,thth);
+                          carg2= xcosf(arg2);
+                          _mm512_storeu_ps(&gamm1[0] ,_mm512_mul_ps(x0,_mm512_abs_ps(carg1)));
+                          _mm512_storeu_ps(&gamm2[0] ,_mm512_mul_ps(x0,_mm512_abs_ps(carg2)));
+                }
+
+
+
+                      /*
+                       Backscattered fields from the edges of strips.
+                       Helper function for the formula 7.4-9
+                       Electric-field (over z).
+                       Formula 7.4-13
+                  */
+
+#include "GMS_rcs_common_zmm16r4.hpp"
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   void coefA12_f7413_zmm16r4(const __m512 k0a,
+                                              const __m512 tht,
+                                              __m512 * __restrict A1r,
+                                              __m512 * __restrict A1i,
+                                              __m512 * __restrict A2r,
+                                              __m512 * __restrict A2i) {
+
+                        const __m512 C078539816339744830961566084582  = _mm512_set1_ps(-0.78539816339744830961566084582f);
+                        const __m512 C141421356237309504880168872421  = _mm512_set1_ps(1.41421356237309504880168872421f);
+                        register __m512 ear,eai,cer,cei,Cr1,Si1,Cr2,Si2;
+                        register __m512 gam1,gam2;
+                        ear = _mm512_setzero_ps();
+                        eai = C078539816339744830961566084582;
+                        coefg12_f7415_zmm16r4(k0a,tht,&gam1,&gam2); 
+                        Cr1 = fresnel_C_zmm16r4(gam1);
+                        Si1 = fresnel_S_zmm16r4(gam1);
+                        Cr2 = fresnel_C_zmm16r4(gam2);
+                        Si2 = fresnel_S_zmm16r4(gam2);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cer = _mm512_mul_ps(C141421356237309504880168872421,cer);
+                        cei = _mm512_mul_ps(C141421356237309504880168872421,cei);
+                        cmul_zmm16r4(cer,cei,Cr1,Si1,*A1r,*A1i);
+                        cmul_zmm16r4(cer,cei,Cr2,Si2,*A2r,*A2i);
+               }
+
                   
                   
 
