@@ -2855,6 +2855,53 @@ namespace  gms {
                  }
 
 
+                       /*
+                       Very Important!!
+                       Resultant RCS of backscattered fields from the edges of strips.
+                       Perpendicular RCS.
+                       See: formula 7.4-10, 7.4-9   
+                       Formula: 7.4-11
+                 */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7411_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 tht) {
+
+                          const __m512 C10   = _mm512_set1_ps(1.0f);
+                          register __m512 ink0,k0a,sint,sin2t,sin1,sin2;
+                          register __m512 B1r,B1i,B2r,B2i,B1rs,B1is,B2rs,B2is;
+                          register __m512 ear1,eai1,cer1,cei1,ear2,eai2,cer2,cei2;
+                          register __m512 t0r,t0i,t1r,t1i,cabs,rcs,x0,x1;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          ink0 = _mm512_rcp14_ps(k0);
+                          sint = xsinf(tht);
+                          coefB12_f7414_zmm16r4(k0a,tht,&B1r,&B1i,&B2r,&B2i);
+                          sin2t = _mm512_add_ps(sint,sint);
+                          ear1  = _mm512_setzero_ps();
+                          x0    = _mm512_mul_ps(_mm512_add_ps(k0a,k0a),sint);
+                          eai1  = x0;
+                          cmul_zmm16r4(B1r,B1i,B1r,B1i,&B1rs,&B1is);
+                          ear2  = ear1;
+                          eai2  = gms::math::negate_zmm16r4(x0);
+                          cmul_zmm16r4(B2r,B2i,B2r,B2i,&B2rs,&B2is);
+                          sin1  = _mm512_div_ps(_mm512_sub_ps(C10,sint),sin2t);
+                          cexp_zmm16r4(ear1,eai1,&cer1,&cei1);
+                          cer1  = _mm512_mul_ps(sin1,cer1);
+                          cei1  = _mm512_mul_ps(sin1,cei1);
+                          cmul_zmm16r4(
+                          sin2  = _mm512_div_ps(_mm512_add_ps(C10,sint),sin2t);
+                          cexp_zmm16r4(ear2,eai2,&cer2,&cei2);
+                          cer2  = _mm512_mul_ps(sin2,cer2);
+                          cei2  = _mm512_mul_ps(sin2,cei2);
+                          
+                }
+
 
 
 
