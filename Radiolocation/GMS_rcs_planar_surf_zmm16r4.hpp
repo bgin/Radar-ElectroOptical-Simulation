@@ -2436,7 +2436,7 @@ namespace  gms {
                }
 
 
-                  __ATTR_ALWAYS_INLINE__
+                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -2489,6 +2489,15 @@ namespace  gms {
                          _mm512_storeu_ps(&B1i[0], _mm512_add_ps(A1i,x3));
                          _mm512_storeu_ps(&B2i[0], _mm512_add_ps(A2i,x5));
                }
+
+
+                  /*
+                       Very Important!!
+                       Backscattered fields from the edges of strips.
+                       Ufimtsev derivation.
+                       Electric-field (over z).
+                       Formula 7.4-9
+                 */
 
 
                   
