@@ -3060,6 +3060,53 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7412_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa,
+                                              const float * __restrict __ATTR_ALIGN__(64) ptht) {
+
+                          register __m512 k0 = _mm512_load_ps(&pk0[0]);
+                          register __m512 a  = _mm512_load_ps(&pa[0]);
+                          register __m512 tht= _mm512_load_ps(&ptht[0]);
+                          const __m512 C10   = _mm512_set1_ps(1.0f);
+                          register __m512 ink0,k0a,sint,sin2t,sin1,sin2;
+                          register __m512 A1r,A1i,A2r,A2i,A1rs,A1is,A2rs,A2is;
+                          register __m512 ear1,eai1,cer1,cei1,ear2,eai2,cer2,cei2;
+                          register __m512 t0r,t0i,t1r,t1i,cabs,rcs,x0,x1;
+                          k0a  = _mm512_mul_ps(k0,a);
+                          ink0 = _mm512_rcp14_ps(k0);
+                          sint = xsinf(tht);
+                          coefA12_f7413_zmm16r4(k0a,tht,&A1r,&A1i,&A2r,&A2i);
+                          sin2t = _mm512_add_ps(sint,sint);
+                          ear1  = _mm512_setzero_ps();
+                          x0    = _mm512_mul_ps(_mm512_add_ps(k0a,k0a),sint);
+                          eai1  = x0;
+                          cmul_zmm16r4(A1r,A1i,A1r,A1i,&A1rs,&A1is);
+                          ear2  = ear1;
+                          eai2  = gms::math::negate_zmm16r4(x0);
+                          cmul_zmm16r4(A2r,A2i,A2r,A2i,&A2rs,&A2is);
+                          sin1  = _mm512_div_ps(_mm512_sub_ps(C10,sint),sin2t);
+                          cexp_zmm16r4(ear1,eai1,&cer1,&cei1);
+                          sin2  = _mm512_div_ps(_mm512_add_ps(C10,sint),sin2t);
+                          cer1  = _mm512_mul_ps(sin2,cer1);
+                          cei1  = _mm512_mul_ps(sin2,cei1);
+                          cmul_zmm16r4(A2rs,A2is,cer1,cei1,&t0r,&t0i);
+                          cexp_zmm16r4(ear2,eai2,&cer2,&cei2);
+                          cer2  = _mm512_mul_ps(sin1,cer2);
+                          cei2  = _mm512_mul_ps(sin1,cei2);
+                          cmul_zmm16r4(A1rs,A1is,cer2,cei2,&t1r,&t1i);
+                          x0    = _mm512_sub_ps(t0r,t1r);
+                          x1    = _mm512_sub_ps(t0i,t1i);
+                          cabs  = cabs_zmm16r4(x0,x1);
+                          rcs   = _mm512_mul_ps(ink0,cabs);
+                          return (rcs);
+                }
+
+
                   
                   
 
