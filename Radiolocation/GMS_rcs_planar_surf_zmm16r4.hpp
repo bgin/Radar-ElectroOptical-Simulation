@@ -3464,7 +3464,8 @@ namespace  gms {
                    __m512 rcs_f7420_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) ptht) {
 
-                          register
+                          register __m512 k0 = _mm512_load_ps(&pk0[0]);
+                          register __m512 tht= _mm512_load_ps(&ptht[0]); 
                           const __m512 C0001                            = _mm512_set1_ps(0.0001f); 
                           const __m512 C157079632679489661923132169164  = _mm512_set1_ps(1.57079632679489661923132169164f);
                           const __m512 C10                              = _mm512_set1_ps(1.0f);
@@ -3487,6 +3488,51 @@ namespace  gms {
                              return (NAN);
                          }
                   }
+
+
+                     __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7420_zmm16r4_u(const float * __restrict  pk0,
+                                              const float * __restrict  ptht) {
+
+                          register __m512 k0 = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 tht= _mm512_loadu_ps(&ptht[0]); 
+                          const __m512 C0001                            = _mm512_set1_ps(0.0001f); 
+                          const __m512 C157079632679489661923132169164  = _mm512_set1_ps(1.57079632679489661923132169164f);
+                          const __m512 C10                              = _mm512_set1_ps(1.0f);
+                          const __m512 diff  = _mm512_sub_ps(C157079632679489661923132169164,
+                                                             _mm512_abs_ps(tht));
+                          const __mmask16 m1 = _mm512_cmp_ps_mask(C0001,diff,_CMP_LE_OQ);
+                          if(m1) {
+                             register __m512 ink0,sint,sin2t,abs,sqr,x0;
+                             register __m512 rcs;
+                             ink0   = _mm512_rcp14_ps(k0);
+                             sint   = xsinf(tht);
+                             sint2t = _mm512_mul_ps(sint,sint);
+                             x0     = _mm512_add_ps(C10,_mm512_abs_ps(sint));
+                             sqr    = _mm512_div_ps(x0,sin2t);
+                             rcs    = _mm512_mul_ps(ink0,_mm512_mul_ps(sqr,sqr));
+                             return (rcs);
+                         }
+                          else {
+                             __m512 NAN = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+                             return (NAN);
+                         }
+                  }
+
+
+                      /*
+                          
+                       Very Important!!
+                       Resultant RCS of backscattered fields from the edges of strips.
+                       Incident angle at theta near PI/2
+                       See: formula 7.4-10, 7.4-9   
+                       Formula: 7.4-21 (parallel)
+              
+                     */
 
                   
 
