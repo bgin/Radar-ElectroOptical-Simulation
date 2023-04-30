@@ -3154,6 +3154,17 @@ namespace  gms {
                 }
 
 
+                   /*
+                          
+                       Very Important!!
+                       Resultant RCS of backscattered fields from the edges of strips.
+                       Incident angle very close to zero.
+                       See: formula 7.4-10, 7.4-9   
+                       Formula: 7.4-16, 7.4-17
+              
+                     */
+
+
                   
                   
 
