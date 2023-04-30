@@ -3392,6 +3392,26 @@ namespace  gms {
                           rcs  = _mm512_mul_ps(ink0,_mm512_add_ps(C10,rat));
                           return (rcs);
                  }
+
+
+                    /*
+                          
+                       Very Important!!
+                       Resultant RCS of backscattered fields from the edges of strips.
+                       Incident angle at theta = PI/2
+                       See: formula 7.4-10, 7.4-9   
+                       Formula: 7.4-19 (parallel)
+              
+                     */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7419_zmm16r4() { return (_mm512_setzero_ps();)}
+
                   
 
 
