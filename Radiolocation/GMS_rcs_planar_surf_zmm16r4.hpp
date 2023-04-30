@@ -3257,7 +3257,62 @@ namespace  gms {
                   }
 
 
-                    
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7416_f7417_zmm16r4_u(const float * __restrict  pk0,
+                                                    const float * __restrict  pa,
+                                                    const float * __restrict  ptht) {
+
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                          const __m512 C0001  = _mm512_set1_ps(0.0001f); //very close value to zero incidence (rad)
+                          const __m512 C00    = _mm512_setzero_ps();
+                          const __m512 C10    = _mm512_set1_ps(1.0f);
+                          const __mmask16 m1  = _mm512_cmp_ps_mask(tht,C0001,_CMP_LE_OQ);
+                          const __mmask16 m2  = _mm512_cmp_ps_mask(tht,C00,_CMPEQ_OQ);
+                          register __m512 k0a,ink0,rcs;
+                          
+                          if(m1) {
+                              register __m512 k0a2,sint,arg,sarg,carg,sints,x0,x1,rat;
+                              k0a  = _mm512_mul_ps(k0,a);
+                              sint = xsinf(tht);
+                              k0a2 = _mm512_add_ps(k0a,k0a);
+                              arg  = _mm512_mul_ps(k0a2,sint);
+                              ink0 = _mm512_rcp14_ps(k0);
+                              sarg = xsinf(arg);
+                              sints= _mm512_mul_ps(sint,sint);
+                              x0   = _mm512_mul_ps(carg,carg);
+                              x1   = _mm512_mul_ps(sarg,sarg);
+                              rat  = _mm512_div_ps(x1,sints);
+                              rcs  = _mm512_mul_ps(ink0, _mm512_add_ps(rat,carg));
+                              return (rcs);
+                          }
+                          else if(m2) {
+                              register __m512 x0,k0a2;
+                              k0a  = _mm512_mul_ps(k0,a);
+                              ink0 = _mm512_rcp14_ps(k0);
+                              k0a2 = _mm512_add_ps(k0a,k0a);
+                              x0   = _mm512_fmadd_ps(k0a2,k0a2,C10);
+                              rcs  = _mm512_mul_ps(ink0,x0);
+                              return (rcs);
+                          }
+                         
+                  }
+
+
+                       /*
+                          
+                       Very Important!!
+                       Resultant RCS of backscattered fields from the edges of strips.
+                       Incident angle at theta = PI/2
+                       See: formula 7.4-10, 7.4-9   
+                       Formula: 7.4-18, 7.4-19
+              
+                     */
                   
 
 
