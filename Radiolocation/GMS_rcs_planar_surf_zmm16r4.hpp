@@ -3534,6 +3534,45 @@ namespace  gms {
               
                      */
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7421_zmm16r4(const __m512 k0,
+                                            const __m512 a,
+                                            const __m512 tht) {
+
+                          const __m512 C0001                            = _mm512_set1_ps(0.0001f); 
+                          const __m512 C0318309886183790671537767526745 = _mm512_set1_ps(0.318309886183790671537767526745f);
+                          const __m512 C314159265358979323846264338328  = _mm512_set1_ps(3.14159265358979323846264338328f);
+                          const __m512 C10                              = _mm512_set1_ps(1.0f);
+                          const __m512 diff  = _mm512_sub_ps(C157079632679489661923132169164,
+                                                             _mm512_abs_ps(tht));
+                          const __mmask16 m1 = _mm512_cmp_ps_mask(C0001,diff,_CMP_LE_OQ);
+                          if(m1) {
+                              register __m512 ink0,k0a,k0a2,sint,sin2t,x0,x1;
+                              register __m512 rcs,;
+                              k0a  = _mm512_mul_ps(k0,a);
+                              sint = xsinf(tht);
+                              k0a2 = _mm512_mul_ps(k0a,k0a);
+                              sin2t= xsinf(sint,sint);
+                              ink0 = _mm512_rcp14_ps(k0);
+                              x0   = _mm512_mul_ps(_mm512_mul_ps(k0a2,k0a2),
+                                                          C0318309886183790671537767526745);
+                              x1   = _mm512_div_ps(_mm512_sub_ps(C10,sin2t),sint);
+                              x0   = _mm512_mul_ps(x0,x1);
+                              rcs  = _mm512_mul_ps(ink0,_mm512_mul_ps(x0,x0));
+                              return (rcs);
+                       }
+                       else {
+                             __m512 NAN = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+                             return (NAN);
+                      }
+
+                 }
+
                   
 
 
