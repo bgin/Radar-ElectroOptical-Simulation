@@ -4032,6 +4032,25 @@ namespace  gms {
                 }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   void rcs_f7422_f7423_zmm16r4(const __m512 tht1,
+                                                const __m512 tht2,
+                                                const __m512 k0,
+                                                const __m512 a,
+                                                __m512 * __restrict rcsx1,
+                                                __m512 * __restrict rcsx2,
+                                                __m512 * __restrict rcsy1,
+                                                __m512 * __restrict rcsy2) {
+
+                        rcs_f7422_zmm16r4(tht1,tht2,k0,a,*rcsx1,*rcsx2);
+                        rcs_f7423_zmm16r4(tht1,tht2,k0,a,*rcsy1,*rcsy2);
+               }
+
+
 
 
                   
