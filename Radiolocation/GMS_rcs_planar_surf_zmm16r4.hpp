@@ -3658,6 +3658,15 @@ namespace  gms {
                  }
 
 
+                   /*
+                          Bistatic RCS at high frequencies.
+                          Approximation by Sommerfeld-MacDonald technique.
+                          Case of parallel RCS.
+                          Formula 7.4-22
+
+                      */
+
+
                   
 
                   
