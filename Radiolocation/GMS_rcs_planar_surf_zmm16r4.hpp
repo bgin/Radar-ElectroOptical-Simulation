@@ -4195,12 +4195,12 @@ namespace  gms {
                           sintp= xsinf(thtp);
                           thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
                           sarg =  xsinf(arg);
-                          sqr1 = _mm512_mul_ps(sarg,darg);
+                          sqr1 = _mm512_mul_ps(sarg,sarg);
                           costm=  xcosf(thtm);
-                          thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(costm,costm));
+                          thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(sintp,sintp));
                           carg =  xcosf(arg);
                           sqr2 = _mm512_mul_ps(carg,carg);
-                          thtm = _mm512_div_ps(sqr2,_mm512_mul_ps(sintp,sintp));
+                          thtm = _mm512_div_ps(sqr2,_mm512_mul_ps(costm,costm));
                           rcs  = _mm512_mul_ps(ink0,_mm512_add_ps(thtp,thtm));
                           return (rcs);
                  }
