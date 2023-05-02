@@ -4287,6 +4287,8 @@ namespace  gms {
                              Low-frequency approximations for k0a<<1,
                              plane wave unit amplitude xz-plane propagating
                              at angle 'theta'.
+                             Perpendicular polarization.
+                             Theta component.
                              Formula 7.5-1
                         */
 
@@ -4371,7 +4373,98 @@ namespace  gms {
 
 
 
-                  
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   void Eth_f751_zmm16r4_u(const float * __restrict ptht,
+                                         const float * __restrict  pphi,
+                                         const float * __restrict  pk0,
+                                         const float * __restrict  pr,
+                                         const float * __restrict  pa,
+                                         float * __restrict  Esr,
+                                         float * __restrict  Esi) {
+
+                        register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                        register __m512 phi = _mm512_loadu_ps(&pphi[0]);
+                        register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 r   = _mm512_loadu_ps(&pr[0]);
+                        register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                        const __m512 C0424413181578387562050356702327 = 
+                                              _mm512_set1_ps(0.424413181578387562050356702327f);
+                        register __m512 ear,eai,cer,cei,k0r,k02,a3;
+                        register __m512 cost,sinp,x0,x1,inr;
+                        k0r  = _mm512_mul_ps(k0,r);
+                        sinp = xsinf(phi);
+                        ear  = _mm512_setzero_ps();
+                        eai  = k0r;
+                        cost = xcosf(tht);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        inr  = _mm512_rcp14_ps(r);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                        k02  = gms::math::negate_zmm16r4(k02);
+                        x0   = _mm512_mul_ps(C0424413181578387562050356702327,
+                                                         _mm512_mul_ps(sinp,cost));
+                        x1   = _mm512_mul_ps(k02,a3);
+                        cer  = _mm512_mul_ps(x0,cer);
+                        _mm512_storeu_ps(&Esr[0] ,_mm512_mul_ps(x1,cer));
+                        cei  = _mm512_mul_ps(x0,cei);
+                        _mm512_storeu_ps(&Esi[0] ,_mm512_mul_ps(x1,cei));
+                 }
+
+
+                   /*
+                             Flat plates approximations.
+                             Low-frequency approximations for k0a<<1,
+                             plane wave unit amplitude xz-plane propagating
+                             at angle 'theta'.
+                             Perpendicular polarization.
+                             Phi component.
+                             Formula 7.5-1
+                      */
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   void Eph_f751_zmm16r4(const __m512 tht,
+                                         const __m512 tht2
+                                         const __m512 phi,
+                                         const __m512 k0,
+                                         const __m512 r,
+                                         const __m512 a,
+                                         __m512 * __restrict Esr,
+                                         __m512 * __restrict Esi) {
+
+                        const __m512 C0424413181578387562050356702327 = 
+                                              _mm512_set1_ps(0.424413181578387562050356702327f);
+                        const __m512 C0212206590789193781025178351163 = 
+                                              _mm512_set1_ps(0.212206590789193781025178351163f);
+                        register __m512 ear,eai,cer,cei,k0r,k02,a3;
+                        register __m512 cosp,sint,x0,x1,inr,sint2;
+                        k0r  = _mm512_mul_ps(k0,r);
+                        sint = xsinf(tht);
+                        ear  = _mm512_setzero_ps();
+                        eai  = k0r;
+                        cosp = xcosf(phi);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        sint2= xsinf(tht2);
+                        inr  = _mm512_rcp14_ps(r);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                        k02  = gms::math::negate_zmm16r4(k02);
+                        x0   = _mm512_fmadd_ps(_mm512_mul_ps(C0212206590789193781025178351163,
+                                         sint),sint2,_mm512_mul_ps(C0424413181578387562050356702327,cosp));
+                        x1   = _mm512_mul_ps(k02,a3);
+                        cer  = _mm512_mul_ps(x0,cer);
+                        *Esr = _mm512_mul_ps(x1,cer);
+                        cei  = _mm512_mul_ps(x0,cei);
+                        *Esi = _mm512_mul_ps(x1,cei);
+                 }
 
 
       } // radiolocation
