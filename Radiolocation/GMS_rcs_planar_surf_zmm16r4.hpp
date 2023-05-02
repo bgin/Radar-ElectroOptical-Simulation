@@ -4206,6 +4206,80 @@ namespace  gms {
                  }
 
 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7427_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) ptht1,
+                                              const float * __restrict __ATTR_ALIGN__(64) ptht2,
+                                              const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pa) {
+
+                          register __m512 tht1  = _mm512_load_ps(&ptht1[0]);
+                          register __m512 tht2  = _mm512_load_ps(&ptht2[0]);
+                          register __m512 k0    = _mm512_load_ps(&pk0[0]);
+                          register __m512 a     = _mm512_load_ps(&pa[0]);
+
+                          const __m512 C05 = _mm512_set1_ps(0.5f);
+                          register __m512 thtp,thtm,sint1,sint2,k0a,ink0;
+                          register __m512 rcs,sintp,costm,arg,sarg,carg,sqr1,sqr2;
+                          k0a  =  _mm512_mul_ps(k0,a);
+                          thtp =  _mm512_mul_ps(_mm512_add_ps(tht1,tht2),C05);
+                          sint1=  xsinf(tht1);
+                          ink0 =  _mm512_rcp14_ps(k0);
+                          sint2=  xsinf(tht2);
+                          arg  = _mm512_mul_ps(k0a,_mm512_add_ps(sint1,sint2));
+                          sintp= xsinf(thtp);
+                          thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
+                          sarg =  xsinf(arg);
+                          sqr1 = _mm512_mul_ps(sarg,sarg);
+                          costm=  xcosf(thtm);
+                          thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(sintp,sintp));
+                          carg =  xcosf(arg);
+                          sqr2 = _mm512_mul_ps(carg,carg);
+                          thtm = _mm512_div_ps(sqr2,_mm512_mul_ps(costm,costm));
+                          rcs  = _mm512_mul_ps(ink0,_mm512_add_ps(thtp,thtm));
+                          return (rcs);
+                 }
+
+
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7427_zmm16r4_u(  const float * __restrict  ptht1,
+                                                const float * __restrict  ptht2,
+                                                const float * __restrict  pk0,
+                                                const float * __restrict  pa) {
+
+                          register __m512 tht1  = _mm512_loadu_ps(&ptht1[0]);
+                          register __m512 tht2  = _mm512_loadu_ps(&ptht2[0]);
+                          register __m512 k0    = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a     = _mm512_loadu_ps(&pa[0]);
+
+                          const __m512 C05 = _mm512_set1_ps(0.5f);
+                          register __m512 thtp,thtm,sint1,sint2,k0a,ink0;
+                          register __m512 rcs,sintp,costm,arg,sarg,carg,sqr1,sqr2;
+                          k0a  =  _mm512_mul_ps(k0,a);
+                          thtp =  _mm512_mul_ps(_mm512_add_ps(tht1,tht2),C05);
+                          sint1=  xsinf(tht1);
+                          ink0 =  _mm512_rcp14_ps(k0);
+                          sint2=  xsinf(tht2);
+                          arg  = _mm512_mul_ps(k0a,_mm512_add_ps(sint1,sint2));
+                          sintp= xsinf(thtp);
+                          thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
+                          sarg =  xsinf(arg);
+                          sqr1 = _mm512_mul_ps(sarg,sarg);
+                          costm=  xcosf(thtm);
+                          thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(sintp,sintp));
+                          carg =  xcosf(arg);
+                          sqr2 = _mm512_mul_ps(carg,carg);
+                          thtm = _mm512_div_ps(sqr2,_mm512_mul_ps(costm,costm));
+                          rcs  = _mm512_mul_ps(ink0,_mm512_add_ps(thtp,thtm));
+                          return (rcs);
+                 }
 
 
 
