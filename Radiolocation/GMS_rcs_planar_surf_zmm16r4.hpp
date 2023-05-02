@@ -4472,7 +4472,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline   
-                   void Eph_f751_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) ptht,
+                   void Eph_f751_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
                                          const float * __restrict __ATTR_ALIGN__(64) ptht2
                                          const float * __restrict __ATTR_ALIGN__(64) pphi,
                                          const float * __restrict __ATTR_ALIGN__(64) pk0,
@@ -4508,10 +4508,11 @@ namespace  gms {
                                          sint),sint2,_mm512_mul_ps(C0424413181578387562050356702327,cosp));
                         x1   = _mm512_mul_ps(k02,a3);
                         cer  = _mm512_mul_ps(x0,cer);
-                        *Esr = _mm512_mul_ps(x1,cer);
+                        _mm512_store_ps(&Esr[0] ,_mm512_mul_ps(x1,cer));
                         cei  = _mm512_mul_ps(x0,cei);
-                        *Esi = _mm512_mul_ps(x1,cei);
+                        _mm512_store_ps(&Esi[0] ,_mm512_mul_ps(x1,cei));
                  }
+
 
 
       } // radiolocation
