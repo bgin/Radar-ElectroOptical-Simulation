@@ -4082,7 +4082,7 @@ namespace  gms {
                           sintp= xsinf(thtp);
                           thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
                           sarg =  xsinf(arg);
-                          sqr1 = _mm512_mul_ps(sarg,darg);
+                          sqr1 = _mm512_mul_ps(sarg,sarg);
                           costm=  xcosf(thtm);
                           thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(costm,costm));
                           carg =  xcosf(arg);
@@ -4119,7 +4119,7 @@ namespace  gms {
                           sintp= xsinf(thtp);
                           thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
                           sarg =  xsinf(arg);
-                          sqr1 = _mm512_mul_ps(sarg,darg);
+                          sqr1 = _mm512_mul_ps(sarg,sarg);
                           costm=  xcosf(thtm);
                           thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(costm,costm));
                           carg =  xcosf(arg);
@@ -4156,7 +4156,7 @@ namespace  gms {
                           sintp= xsinf(thtp);
                           thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
                           sarg =  xsinf(arg);
-                          sqr1 = _mm512_mul_ps(sarg,darg);
+                          sqr1 = _mm512_mul_ps(sarg,sarg);
                           costm=  xcosf(thtm);
                           thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(costm,costm));
                           carg =  xcosf(arg);
@@ -4172,6 +4172,40 @@ namespace  gms {
                            theta1 != PI/2 (edges interaction neglected).
                            Formula 7.4-27
                      */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f7427_zmm16r4(const __m512 tht1,
+                                            const __m512 tht2,
+                                            const __m512 k0,
+                                            const __m512 a) {
+
+                          const __m512 C05 = _mm512_set1_ps(0.5f);
+                          register __m512 thtp,thtm,sint1,sint2,k0a,ink0;
+                          register __m512 rcs,sintp,costm,arg,sarg,carg,sqr1,sqr2;
+                          k0a  =  _mm512_mul_ps(k0,a);
+                          thtp =  _mm512_mul_ps(_mm512_add_ps(tht1,tht2),C05);
+                          sint1=  xsinf(tht1);
+                          ink0 =  _mm512_rcp14_ps(k0);
+                          sint2=  xsinf(tht2);
+                          arg  = _mm512_mul_ps(k0a,_mm512_add_ps(sint1,sint2));
+                          sintp= xsinf(thtp);
+                          thtm =  _mm512_mul_ps(_mm512_sub_ps(tht1,tht2),C05);
+                          sarg =  xsinf(arg);
+                          sqr1 = _mm512_mul_ps(sarg,darg);
+                          costm=  xcosf(thtm);
+                          thtp = _mm512_div_ps(sqr1,_mm512_mul_ps(costm,costm));
+                          carg =  xcosf(arg);
+                          sqr2 = _mm512_mul_ps(carg,carg);
+                          thtm = _mm512_div_ps(sqr2,_mm512_mul_ps(sintp,sintp));
+                          rcs  = _mm512_mul_ps(ink0,_mm512_add_ps(thtp,thtm));
+                          return (rcs);
+                 }
+
+
 
 
 
