@@ -4790,9 +4790,9 @@ namespace  gms {
                                                          _mm512_mul_ps(sinp,cost));
                         x1   = _mm512_mul_ps(k02,a3);
                         cer  = _mm512_mul_ps(x0,cer);
-                        *Esr = _mm512_mul_ps(x1,cer);
+                        _mm512_store_ps(&Esr[0] ,_mm512_mul_ps(x1,cer));
                         cei  = _mm512_mul_ps(x0,cei);
-                        *Esi = _mm512_mul_ps(x1,cei);       
+                        _mm512_store_ps(&Esi[0] ,_mm512_mul_ps(x1,cei));       
                  }
                  
                  
@@ -4810,6 +4810,11 @@ namespace  gms {
                                            float * __restrict Esi) {
                         
                         
+                        register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
+                        register __m512 phi2 = _mm512_loadu_ps(&pphi2[0]);
+                        register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 r    = _mm512_loadu_ps(&pr[0]);
+                        register __m512 a    = _mm512_loadu_ps(&pa[0]);
                         const __m512 C0424413181578387562050356702327 = 
                                               _mm512_set1_ps(0.424413181578387562050356702327f);
                         register __m512 ear,eai,cer,cei,k0r,k02,a3;
@@ -4828,9 +4833,9 @@ namespace  gms {
                                                          _mm512_mul_ps(sinp,cost));
                         x1   = _mm512_mul_ps(k02,a3);
                         cer  = _mm512_mul_ps(x0,cer);
-                        *Esr = _mm512_mul_ps(x1,cer);
+                        _mm512_storeu_ps(&Esr[0] ,_mm512_mul_ps(x1,cer));
                         cei  = _mm512_mul_ps(x0,cei);
-                        *Esi = _mm512_mul_ps(x1,cei);       
+                        _mm512_storeu_ps(&Esi[0] ,_mm512_mul_ps(x1,cei));       
                  }
                  
 
