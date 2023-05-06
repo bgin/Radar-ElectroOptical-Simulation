@@ -4966,6 +4966,68 @@ namespace  gms {
                                                                  _mm512_mul_ps(x0,cos4t));
                           return (rcs);                   
                }
+               
+               
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f754_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht) {
+                  
+                          register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                                           
+                          const __m512 C2263536968418066997601902412409 = 
+                                          _mm512_set1_ps(2.263536968418066997601902412409f);
+                          register __m512 k02,k04,a2,a6,cost,cost2t,cost4t,x0;
+                          register __m512 rcs;
+                          k02  = _mm512_mul_ps(k0,k0);
+                          cost = xcosf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          cos2t= _mm512_mul_ps(cost,cost);
+                          k04  = _mm512_mul_ps(k02,k02);
+                          a6   = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));  
+                          x0   = _mm512_mul_ps(k04,a6);
+                          cos4t= _mm512_mul_ps(cos2t,cos2t);
+                          rcs  = _mm512_mul_ps(C2263536968418066997601902412409,
+                                                                 _mm512_mul_ps(x0,cos4t));
+                          return (rcs);                   
+               }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f754_zmm16r4_u(const float * __restrict  pk0,
+                                             const float * __restrict  pa,
+                                             const float * __restrict  ptht) {
+                  
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                                           
+                          const __m512 C2263536968418066997601902412409 = 
+                                          _mm512_set1_ps(2.263536968418066997601902412409f);
+                          register __m512 k02,k04,a2,a6,cost,cost2t,cost4t,x0;
+                          register __m512 rcs;
+                          k02  = _mm512_mul_ps(k0,k0);
+                          cost = xcosf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          cos2t= _mm512_mul_ps(cost,cost);
+                          k04  = _mm512_mul_ps(k02,k02);
+                          a6   = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));  
+                          x0   = _mm512_mul_ps(k04,a6);
+                          cos4t= _mm512_mul_ps(cos2t,cos2t);
+                          rcs  = _mm512_mul_ps(C2263536968418066997601902412409,
+                                                                 _mm512_mul_ps(x0,cos4t));
+                          return (rcs);                   
+               }
 
 
 
