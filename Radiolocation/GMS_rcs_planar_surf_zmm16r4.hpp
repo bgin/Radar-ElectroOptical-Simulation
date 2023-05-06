@@ -4753,6 +4753,86 @@ namespace  gms {
                         *Esi = _mm512_mul_ps(x1,cei);       
                  }
                  
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   void Eph_f752_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                           const float * __restrict __ATTR_ALIGN__(64) pphi2,
+                                           const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                           const float * __restrict __ATTR_ALIGN__(64) pr,
+                                           const float * __restrict __ATTR_ALIGN__(64) pa,
+                                           float * __restrict __ATTR_ALIGN__(64) Esr,
+                                           float * __restrict __ATTR_ALIGN__(64) Esi) {
+                        
+                        register __m512 tht  = _mm512_load_ps(&ptht[0]);
+                        register __m512 phi2 = _mm512_load_ps(&pphi2[0]);
+                        register __m512 k0   = _mm512_load_ps(&pk0[0]);
+                        register __m512 r    = _mm512_load_ps(&pr[0]);
+                        register __m512 a    = _mm512_load_ps(&pa[0]);
+                        const __m512 C0424413181578387562050356702327 = 
+                                              _mm512_set1_ps(0.424413181578387562050356702327f);
+                        register __m512 ear,eai,cer,cei,k0r,k02,a3;
+                        register __m512 cost,sinp,x0,x1,inr;
+                        k0r  = _mm512_mul_ps(k0,r);
+                        sinp = xsinf(phi2);
+                        ear  = _mm512_setzero_ps();
+                        eai  = k0r;
+                        cost = xcosf(tht);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        inr  = _mm512_rcp14_ps(r);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                        k02  = gms::math::negate_zmm16r4(k02);
+                        x0   = _mm512_mul_ps(C0424413181578387562050356702327,
+                                                         _mm512_mul_ps(sinp,cost));
+                        x1   = _mm512_mul_ps(k02,a3);
+                        cer  = _mm512_mul_ps(x0,cer);
+                        *Esr = _mm512_mul_ps(x1,cer);
+                        cei  = _mm512_mul_ps(x0,cei);
+                        *Esi = _mm512_mul_ps(x1,cei);       
+                 }
+                 
+                 
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   void Eph_f752_zmm16r4_u(const float * __restrict  ptht,
+                                           const float * __restrict  pphi2,
+                                           const float * __restrict  pk0,
+                                           const float * __restrict  pr,
+                                           const float * __restrict pa,
+                                           float * __restrict Esr,
+                                           float * __restrict Esi) {
+                        
+                        
+                        const __m512 C0424413181578387562050356702327 = 
+                                              _mm512_set1_ps(0.424413181578387562050356702327f);
+                        register __m512 ear,eai,cer,cei,k0r,k02,a3;
+                        register __m512 cost,sinp,x0,x1,inr;
+                        k0r  = _mm512_mul_ps(k0,r);
+                        sinp = xsinf(phi2);
+                        ear  = _mm512_setzero_ps();
+                        eai  = k0r;
+                        cost = xcosf(tht);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        inr  = _mm512_rcp14_ps(r);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                        k02  = gms::math::negate_zmm16r4(k02);
+                        x0   = _mm512_mul_ps(C0424413181578387562050356702327,
+                                                         _mm512_mul_ps(sinp,cost));
+                        x1   = _mm512_mul_ps(k02,a3);
+                        cer  = _mm512_mul_ps(x0,cer);
+                        *Esr = _mm512_mul_ps(x1,cer);
+                        cei  = _mm512_mul_ps(x0,cei);
+                        *Esi = _mm512_mul_ps(x1,cei);       
+                 }
+                 
 
                     
 
