@@ -4578,6 +4578,7 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline   
                    void Eth_f752_zmm16r4(const __m512 tht,
+                                         const __m512 tht2,
                                          const __m512 phi,
                                          const __m512 k0,
                                          const __m512 r,
@@ -4609,7 +4610,53 @@ namespace  gms {
                         cei  = _mm512_mul_ps(x0,cei);
                         *Esi = _mm512_mul_ps(x1,cei);
                  }
-                      
+                 
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   void Eth_f752_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) ptht,
+                                         const float * __restrict __ATTR_ALIGN__(64) ptht2
+                                         const float * __restrict __ATTR_ALIGN__(64) pphi,
+                                         const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                         const float * __restrict __ATTR_ALIGN__(64) pr,
+                                         const float * __restrict __ATTR_ALIGN__(64) pa,
+                                         float * __restrict __ATTR_ALIGN__(64) Esr,
+                                         float * __restrict __ATTR_ALIGN__(64) Esi) {
+
+                        register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                        register __m512 tht2= _mm512_loadu_ps(&ptht2[0]);
+                        register __m512 phi = _mm512_loadu_ps(&pphi[0]);
+                        register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                        register __m512 r   = _mm512_loadu_ps(&pr[0]);
+                        register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                        const __m512 C0424413181578387562050356702327 = 
+                                              _mm512_set1_ps(0.424413181578387562050356702327f);
+                        register __m512 ear,eai,cer,cei,k0r,k02,a3;
+                        register __m512 cost,cosp,cost2,x0,x1,inr,t0;
+                        k0r  = _mm512_mul_ps(k0,r);
+                        cosp = xcosf(phi);
+                        ear  = _mm512_setzero_ps();
+                        eai  = k0r;
+                        cost = xcosf(tht);
+                        k02  = _mm512_mul_ps(k0,k0);
+                        inr  = _mm512_rcp14_ps(r);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        a3   = _mm512_mul_ps(a,_mm512_mul_ps(a,a));
+                        cost2= xcosf(tht2);
+                        t0   = _mm512_mul_ps(cost,cost2);
+                        k02  = gms::math::negate_zmm16r4(k02);
+                        x0   = _mm512_mul_ps(C0424413181578387562050356702327,
+                                                         _mm512_mul_ps(cosp,t0));
+                        x1   = _mm512_mul_ps(k02,a3);
+                        cer  = _mm512_mul_ps(x0,cer);
+                        _mm512_store_ps(&Esr[0] ,_mm512_mul_ps(x1,cer));
+                        cei  = _mm512_mul_ps(x0,cei);
+                        _mm512_store_ps(&Esi[0] ,_mm512_mul_ps(x1,cei));
+                 }
                      
                  
 
