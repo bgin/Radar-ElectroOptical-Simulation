@@ -4561,17 +4561,19 @@ namespace  gms {
                  }   
                  
                  
-                   /*
+                    /*
                              Flat plates approximations.
                              Low-frequency approximations for k0a<<1,
                              plane wave unit amplitude xz-plane propagating
                              at angle 'theta'.
                              Parallel polarization.
-                             Phi component.
-                             Formula 7.5-2
-                      */
-                  
+                             Theta component.
+                             Formula 7.5-1
+                        */
 
+                      
+                     
+                 
 
                     
 
