@@ -4902,6 +4902,70 @@ namespace  gms {
                                                                _mm512_mul_ps(x1,sqr));
                           return (rcs);                  
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f753_zmm16r4_u(const float * __restrict pk0,
+                                             const float * __restrict pa,
+                                             const float * __restrict  ptht) {
+                  
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+                          const __m512 C0565884242104516749400475603102 = 
+                                        _mm512_set1_ps(0.565884242104516749400475603102f);
+                          const __m512 C20 = _mm512_set1_ps(2.0f);
+                          register __m512 k02,k04,a2,a6,sint,sqr,x0,x1;
+                          register __m512 rcs;
+                          k02   = _mm512_mul_ps(k0,k0);
+                          a2    = _mm512_mul_ps(a,a);
+                          sint  = xsinf(tht);
+                          k04   = _mm512_mul_ps(k02,k02);
+                          x0    = _mm512_fmadd_ps(sint,sint,C20);
+                          a6    = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));
+                          sqr   = _mm512_mul_ps(x0,x0);
+                          x1    = _mm512_mul_ps(k04,a6);
+                          rcs   = _mm512_mul_ps(C0565884242104516749400475603102,
+                                                               _mm512_mul_ps(x1,sqr));
+                          return (rcs);                  
+                 }
+                 
+                 
+                   /*
+                         Backscatter RCS (of 7.5-,7.5-2)
+                         Formula: 7.5-4 (paralell)
+                 */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f754_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 tht) {
+                                           
+                          const __m512 C2263536968418066997601902412409 = 
+                                          _mm512_set1_ps(2.263536968418066997601902412409f);
+                          register __m512 k02,k04,a2,a6,cost,cost2t,cost4t,x0;
+                          register __m512 rcs;
+                          k02  = _mm512_mul_ps(k0,k0);
+                          cost = xcosf(tht);
+                          a2   = _mm512_mul_ps(a,a);
+                          cos2t= _mm512_mul_ps(cost,cost);
+                          k04  = _mm512_mul_ps(k02,k02);
+                          a6   = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));  
+                          x0   = _mm512_mul_ps(k04,a6);
+                          cos4t= _mm512_mul_ps(cos2t,cos2t);
+                          rcs  = _mm512_mul_ps(C2263536968418066997601902412409,
+                                                                 _mm512_mul_ps(x0,cos4t));
+                          return (rcs);                   
+               }
 
 
 
