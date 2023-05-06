@@ -4871,6 +4871,37 @@ namespace  gms {
                                                                _mm512_mul_ps(x1,sqr));
                           return (rcs);                  
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f753_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) ptht) {
+                  
+                          register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
+                          register __m512 tht = _mm512_load_ps(&ptht[0]);
+                          const __m512 C0565884242104516749400475603102 = 
+                                        _mm512_set1_ps(0.565884242104516749400475603102f);
+                          const __m512 C20 = _mm512_set1_ps(2.0f);
+                          register __m512 k02,k04,a2,a6,sint,sqr,x0,x1;
+                          register __m512 rcs;
+                          k02   = _mm512_mul_ps(k0,k0);
+                          a2    = _mm512_mul_ps(a,a);
+                          sint  = xsinf(tht);
+                          k04   = _mm512_mul_ps(k02,k02);
+                          x0    = _mm512_fmadd_ps(sint,sint,C20);
+                          a6    = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));
+                          sqr   = _mm512_mul_ps(x0,x0);
+                          x1    = _mm512_mul_ps(k04,a6);
+                          rcs   = _mm512_mul_ps(C0565884242104516749400475603102,
+                                                               _mm512_mul_ps(x1,sqr));
+                          return (rcs);                  
+                 }
 
 
 
