@@ -5192,6 +5192,13 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline   
                    __m512 rcs_f757_zmm16r4() { return (_mm512_setzero_ps());}
+                   
+                   
+                  /*
+                          Low-frequency forward scatter RCS for theta2=PI-theta1
+                          phi2=PI
+                          Formula 7.5-8
+                  */
 
       } // radiolocation
 
