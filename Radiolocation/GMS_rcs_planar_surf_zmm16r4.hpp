@@ -5109,6 +5109,26 @@ namespace  gms {
                        Formula: 7.5-6
                  */
                  
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f756_zmm16r4(const __m512 k0,
+                                           const __m512 a) {
+                                           
+                          const __m512 C509295817894065074460428042792 = 
+                                                      _mm512_set1_ps(5.09295817894065074460428042792f);
+                          register __m512 rcs,k02,k04,a2,a6;
+                          k02 = _mm512_mul_ps(k0,k0);
+                          a2  = _mm512_mul_ps(a,a);
+                          k04 = _mm512_mul_ps(k02,k02);
+                          a6  = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));
+                          rcs = _mm512_mul_ps(C509295817894065074460428042792,
+                                                               _mm512_mul_ps(k04,a6));
+                          return (rcs);                        
+                  }
 
 
 
