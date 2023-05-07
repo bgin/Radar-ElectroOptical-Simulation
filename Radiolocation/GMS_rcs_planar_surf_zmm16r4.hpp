@@ -5106,6 +5106,7 @@ namespace  gms {
                  
                  /*
                        Wedge-on incidence.
+                       RCS (perpendicular)
                        Formula: 7.5-6
                  */
                  
@@ -5139,9 +5140,8 @@ namespace  gms {
                    __m512 rcs_f756_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                              const float * __restrict __ATTR_ALIGN__(64) pa) {
                                          
-                         register __m512 k0  = _mm512_load_ps(&pk0[0]);
-                         register __m512 a   = _mm512_load_ps(&pa[0]);
-                                           
+                          register __m512 k0  = _mm512_load_ps(&pk0[0]);
+                          register __m512 a   = _mm512_load_ps(&pa[0]);
                           const __m512 C509295817894065074460428042792 = 
                                                       _mm512_set1_ps(5.09295817894065074460428042792f);
                           register __m512 rcs,k02,k04,a2,a6;
@@ -5155,7 +5155,43 @@ namespace  gms {
                   }
                   
 
-
+                    
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f756_zmm16r4_u(const float * __restrict  pk0,
+                                             const float * __restrict  pa) {
+                                         
+                          register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+                          register __m512 a   = _mm512_loadu_ps(&pa[0]);
+                          const __m512 C509295817894065074460428042792 = 
+                                                      _mm512_set1_ps(5.09295817894065074460428042792f);
+                          register __m512 rcs,k02,k04,a2,a6;
+                          k02 = _mm512_mul_ps(k0,k0);
+                          a2  = _mm512_mul_ps(a,a);
+                          k04 = _mm512_mul_ps(k02,k02);
+                          a6  = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));
+                          rcs = _mm512_mul_ps(C509295817894065074460428042792,
+                                                               _mm512_mul_ps(k04,a6));
+                          return (rcs);                        
+                  }
+                  
+                  
+                    /*
+                       Wedge-on incidence.
+                       RCS (parallel)
+                       Formula: 7.5-7
+                  */
+                  
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f757_zmm16r4() { return (_mm512_setzero_ps());}
 
       } // radiolocation
 
