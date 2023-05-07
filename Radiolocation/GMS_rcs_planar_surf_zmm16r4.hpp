@@ -5418,6 +5418,28 @@ namespace  gms {
                          rcs  = _mm512_mul_ps(x0,_mm512_add_ps(c2,s2));
                          return (rcs);
                  }
+                 
+                 
+                 /*
+                     Rectangular plates.
+                     Backscatter RCS of perfectly conducting square.
+                     Normal incidence.
+                     Formula: 7.5-31
+                 */
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7531_zmm16r4(const __m512 a, // side length of plate
+                                            const __m512 gam0) {
+                                            
+                                            
+                 }
+                 
+                 
+                 
 
       } // radiolocation
 
