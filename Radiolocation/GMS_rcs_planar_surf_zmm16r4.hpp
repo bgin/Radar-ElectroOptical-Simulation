@@ -5196,7 +5196,7 @@ namespace  gms {
                    
                   /*
                           Low-frequency forward scatter RCS for theta2=PI-theta1
-                          phi2=PI
+                          phi2=PI, perpendicular
                           Formula 7.5-8
                   */
                   
@@ -5233,11 +5233,48 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline   
                    __m512 rcs_f758_zmm16r4_u(const float * __restrict  pk0,
-                                             const float * __restrict __ATTR_ALIGN__(64)  a,
-                                             const float * __restrict __ATTR_ALIGN__(64)  tht2) {
+                                             const float * __restrict  pa,
+                                             const float * __restrict  ptht2) {
                                            
-                          return (rcs_f753_zmm16r4_a(k0,a,tht2));                         
+                          return (rcs_f753_zmm16r4_u(pk0,pa,ptht2));                         
                  }
+                 
+                 
+                 
+                   /*
+                          Low-frequency forward scatter RCS for theta2=PI-theta1
+                          phi2=PI, parallel
+                          Formula 7.5-9
+                  */ 
+                  
+                  
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f759_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 tht2) {
+                                           
+                          return (rcs_f754_zmm16r4(k0,a,tht2));                         
+                 }
+                 
+                 
+                 
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f759_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64)  pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64)  pa,
+                                             const float * __restrict __ATTR_ALIGN__(64)  ptht2) {
+                                           
+                          return (rcs_f754_zmm16r4_a(pk0,pa,ptht2));                         
+                 }
+                 
+                 
 
       } // radiolocation
 
