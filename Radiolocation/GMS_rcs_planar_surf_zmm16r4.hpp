@@ -5435,7 +5435,37 @@ namespace  gms {
                    __m512 rcs_f7531_zmm16r4(const __m512 a, // side length of plate
                                             const __m512 gam0) {
                                             
-                                            
+                          const __m512 C1140 = _mm512_set1_ps(114.0f);
+                          register __m512 a2,a6,gam2,gam4;
+                          register __m512 rcs;
+                          a2   = _mm512_mul_ps(a,a);
+                          gam2 = _mm512_mul_ps(gam0,gam0);
+                          a6   = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));
+                          gam4 = _mm512_mul_ps(gam2,gam2);
+                          rcs  = _mm512_mul_ps(C1140,_mm512_mul_ps(a6,gam4));
+                          return (rcs);                  
+                 }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7531_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa, // side length of plate
+                                              const float * __restrict __ATTR_ALIGN__(64)  pgam0) {
+                                     
+                          register __m512 a    = _mm512_load_ps(&pa[0]);
+                          register __m512 gam0 = _mm512_load_ps(&pgam0[0]);      
+                          const __m512 C1140 = _mm512_set1_ps(114.0f);
+                          register __m512 a2,a6,gam2,gam4;
+                          register __m512 rcs;
+                          a2   = _mm512_mul_ps(a,a);
+                          gam2 = _mm512_mul_ps(gam0,gam0);
+                          a6   = _mm512_mul_ps(a2,_mm512_mul_ps(a2,a2));
+                          gam4 = _mm512_mul_ps(gam2,gam2);
+                          rcs  = _mm512_mul_ps(C1140,_mm512_mul_ps(a6,gam4));
+                          return (rcs);                  
                  }
                  
                  
