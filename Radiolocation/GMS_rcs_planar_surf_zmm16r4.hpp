@@ -5293,10 +5293,48 @@ namespace  gms {
                        Perfectly conducting disc.
                        Geometrical Diifraction backscatter RCS,
                        for 0<|theta|<PI.
+                       !!NOT VALID FOR: theta==0, theta==PI/2!!
                        Formula: 7.5-13
                  */
                  
                  
+                  // Input argument surpessed for this kernel.
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7513_zmm16r4(const __m512 k0a,
+                                            const __m512 tht) {
+                              
+                                        
+                         /* const __m512 C157079632679489661923132169164 = 
+                                                _mm512_set1_ps(1.57079632679489661923132169164f);
+                          const __m512 C00                             = _mm512_setzero_ps();
+                          const __mmask16 m1 = _mm512_cmp_ps_mask(tht,C00,_CMP_EQ_OQ);
+                          const __mmask16 m2 = _mm512_cmp_ps_mask(_mm512_abs_ps(tht),
+                                                                      C157079632679489661923132169164,_CMP_EQ_OQ);
+                          if(m1 || m2) {
+                             __m512 NAN = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+                             return (NAN);
+                          }   */ 
+                         const __m512 C39478417604357434475337963999505 = 
+                                                              _mm512_set1_ps(39.478417604357434475337963999505f);
+                         register __m512 k0a2,sint,arg,carg,sarg,sin2t,x0,c2,s2;
+                         register __m512 rcs;
+                         k0a2 = _mm512_add_ps(k0a,k0a);
+                         sint = xsinf(tht);
+                         arg  = _mm512_mul_ps(k0a2,sint);
+                         x0   = _mm512_div_ps(k0a,
+                                              _mm512_mul_ps(C39478417604357434475337963999505,sint));
+                         sin2t= _mm512_mul_ps(sint,sint);
+                         carg = xcosf(arg);
+                         sarg = xsinf(arg);
+                         c2   = _mm512_mul_ps(carg,carg);
+                         s2   = _mm512_div_ps(_mm512_mul_ps(sarg,sarg),sint2t);
+                         rcs  = _mm512_mul_ps(x0,_mm512_add_ps(c2,s2));
+                         return (rcs);
+                 }
 
       } // radiolocation
 
