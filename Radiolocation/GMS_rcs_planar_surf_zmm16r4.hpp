@@ -5199,6 +5199,19 @@ namespace  gms {
                           phi2=PI
                           Formula 7.5-8
                   */
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f758_zmm16r4(const __m512 k0,
+                                           const __m512 a,
+                                           const __m512 tht2) {
+                                           
+                          return (rcs_f753_zmm16r4(k0,a,tht2));                         
+                 }
+                  
 
       } // radiolocation
 
