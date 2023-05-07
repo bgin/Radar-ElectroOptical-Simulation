@@ -5275,6 +5275,28 @@ namespace  gms {
                  }
                  
                  
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline   
+                   __m512 rcs_f759_zmm16r4_u(const float * __restrict   pk0,
+                                             const float * __restrict   pa,
+                                             const float * __restrict   ptht2) {
+                                           
+                          return (rcs_f754_zmm16r4_u(pk0,pa,ptht2));                         
+                 }
+                 
+                 
+                 /*
+                       High frequency approximations.
+                       Perfectly conducting disc.
+                       Geometrical Diifraction backscatter RCS,
+                       for 0<|theta|<PI.
+                       Formula: 7.5-13
+                 */
+                 
+                 
 
       } // radiolocation
 
