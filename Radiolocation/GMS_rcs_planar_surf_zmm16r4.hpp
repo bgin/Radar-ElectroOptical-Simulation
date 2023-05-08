@@ -5877,6 +5877,59 @@ namespace  gms {
                          return (rcs);
                   }
                   
+                  
+                   /*
+                      Triangular plates.
+                      High-frequency backscatter RCS by methods of 
+                      Physical Optics (wave incident in plane phi = 0).
+                      Formula 7.5-60
+                 */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7560_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 gam0,
+                                            const __m512 tht,
+                                            const __m512 phi,
+                                            const __m512 k0a) {
+                                            
+                         const __m512 C12566370614359172953850573533118 = 
+                                                       _mm512_set1_ps(12.566370614359172953850573533118f);
+                         const __m512 C05                               = _mm512_set1_ps(0.5f);
+                         const __m512 C40                               = _mm512_set1_ps(4.0f);
+                         register __m512 A2,gam02,cost,alp,fac,sina,sina4,alp4;
+                         register __m512 rcs,sin2a,alp2,falp4,x0,x1;
+                         x0   = _mm512_mul_ps(_mm512_mul_ps(a,b),C05);
+                         cost = xcosf(tht);
+                         gam02= _mm512_mul_ps(gam0,gam0);
+                         A2   = _mm512_mul_ps(x0,x0);
+                         sint = xsinf(tht);
+                         cosp = xcosf(phi);
+                         fac  = _mm512_div_ps(_mm512_mul_ps(C12566370614359172953850573533118,A2),gam02);
+                         alp  = _mm512_mul_ps(k0a,_mm512_mul_ps(sint,cosp));
+                         x1   = _mm512_mul_ps(alp,alp);
+                         sina = xsinf(alp);
+                         alp4 = _mm512_mul_ps(x1,x1);
+                         falp4= _mm512_mul_ps(C40,alp4);
+                         alp2 = _mm512_add_ps(alp,alp);
+                         sin2a= xsinf(alp2);
+                         x0   = _mm512_sub_ps(sin2a,alp2);
+                         fac  = _mm512_mul_ps(fac,_mm512_mul_ps(cost,cost));
+                         x1   = _mm512_mul_ps(x0,x0);
+                         A2   = _mm512_mul_ps(sina,sina);
+                         gam02= _mm512_div_ps(x1,falp4);
+                         x0   = _mm512_mul_ps(A2,A2);
+                         x1   = _mm512_div_ps(x0,alp4);
+                         rcs  = _mm512_mul_ps(fac,_mm512_add_ps(x1,gam02));
+                         return (rcs);                        
+                }
+                                            
+                  
                 
 
       } // radiolocation
