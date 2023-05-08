@@ -5776,7 +5776,7 @@ namespace  gms {
                          register __m512 k0a  = _mm512_load_ps(&pk0a[0]);
                          register __m512 tht  = _mm512_load_ps(&ptht[0]);
                          register __m512 k0b  = _mm512_load_ps(&pk0b[0]);
-                         register __m512 phi  = _mm512_loasd_ps(&pphi[0]);             
+                         register __m512 phi  = _mm512_load_ps(&pphi[0]);             
                          const __m512 C12566370614359172953850573533118 = 
                                                        _mm512_set1_ps(12.566370614359172953850573533118f);
                          const __m512 C05                               = _mm512_set1_ps(0.5f);
@@ -5815,7 +5815,68 @@ namespace  gms {
                          rcs   = _mm512_mul_ps(fac,beta);
                          return (rcs);
                   }
-                
+                  
+                  
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7559_zmm16r4_u(const float * __restrict  pa,
+                                              const float * __restrict  pb,
+                                              const float * __restrict  pgam0,
+                                              const float * __restrict  pk0a,
+                                              const float * __restrict  ptht,
+                                              const float * __restrict  pk0b,
+                                              const float * __restrict  pphi) {
+                              
+                         register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                         register __m512 b    = _mm512_loadu_ps(&pb[0]);
+                         register __m512 gam0 = _mm512_loadu_ps(&pgam0[0]);
+                         register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
+                         register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
+                         register __m512 k0b  = _mm512_loadu_ps(&pk0b[0]);
+                         register __m512 phi  = _mm512_loadu_ps(&pphi[0]);             
+                         const __m512 C12566370614359172953850573533118 = 
+                                                       _mm512_set1_ps(12.566370614359172953850573533118f);
+                         const __m512 C05                               = _mm512_set1_ps(0.5f);
+                         const __m512 C025                              = _mm512_set1_ps(0.25f);
+                         register __m512 A2,alp,beta,sint,beta2,sinp,cosp,sin2a,x0,x1,cost;
+                         register __m512 rcs,sinb,sina,sinb2,alp2,fac,gam02,aab,den,trm1,trm2,trm3;
+                         x0    = _mm512_mul_ps(_mm512_mul_ps(a,b),C05);
+                         sint  = xsinf(tht);
+                         A2    = _mm512_mul_ps(x0,x0);
+                         cosp  = xcosf(phi);
+                         gam02 = _mm512_mul_ps(gam0,gam0);
+                         alp   = _mm512_mul_ps(k0a,_mm512_mul_ps(sint,cosp));
+                         fac   = _mm512_div_ps(_mm512_mul_ps(C12566370614359172953850573533118,A2),gam02);
+                         sinp  = xsinf(phi);
+                         beta  = _mm512_mul_ps(k0b,_mm512_mul_ps(sint,sinp));
+                         cost  = xcosf(tht);
+                         sinb  = xsinf(beta);
+                         beta2 = _mm512_mul_ps(beta,C05);
+                         fac   = _mm512_mul_ps(fac,_mm512_mul_ps(cost,cost));
+                         sina  = xsinf(alp);
+                         aab   = _mm512_div_ps(_mm512_add_ps(a,a),b);
+                         sinb2 = xsinf(beta2);
+                         trm1  = _mm512_fmsub_ps(sina,sina,
+                                             _mm512_mul_ps(sinb2,sinb2));
+                         x1    = xsinf(_mm512_add_ps(alp,alp));
+                         den   = _mm512_fmsub_ps(alp,alp,
+                                             _mm512_mul_ps(beta2,beta2));
+                         trm3  = _mm512_fmsub_ps(cosp,sinb,
+                                             _mm512_mul_ps(sinp,x1));
+                         trm2  = _mm512_mul_ps(C025,_mm512_mul_ps(sinp,sinp));
+                         trm3  = _mm512_mul_ps(aab,trm3);
+                         x0    = _mm512_mul_ps(trm1,trm1);
+                         x1    = _mm512_mul_ps(trm3,trm3);
+                         alp   = _mm512_fmadd_ps(trm2,x1,x0);
+                         beta  = _mm512_div_ps(alp,den);
+                         rcs   = _mm512_mul_ps(fac,beta);
+                         return (rcs);
+                  }
+                  
                 
 
       } // radiolocation
