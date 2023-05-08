@@ -5928,6 +5928,60 @@ namespace  gms {
                          rcs  = _mm512_mul_ps(fac,_mm512_add_ps(x1,gam02));
                          return (rcs);                        
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7560_zmm16r4_u(const float * __restrict  pa,
+                                              const float * __restrict  pb,
+                                              const float * __restrict  pgam0,
+                                              const float * __restrict  pk0a,
+                                              const float * __restrict  ptht,
+                                              const float * __restrict  pphi) {
+                              
+                         register __m512 a    = _mm512_loadu_ps(&pa[0]);
+                         register __m512 b    = _mm512_loadu_ps(&pb[0]);
+                         register __m512 gam0 = _mm512_loadu_ps(&pgam0[0]);
+                         register __m512 k0a  = _mm512_loadu_ps(&pk0a[0]);
+                         register __m512 tht  = _mm512_loadu_ps(&ptht[0]);
+                         register __m512 phi  = _mm512_loadu_ps(&pphi[0]); 
+                                            
+                         const __m512 C12566370614359172953850573533118 = 
+                                                       _mm512_set1_ps(12.566370614359172953850573533118f);
+                         const __m512 C05                               = _mm512_set1_ps(0.5f);
+                         const __m512 C40                               = _mm512_set1_ps(4.0f);
+                         register __m512 A2,gam02,cost,alp,fac,sina,sina4,alp4;
+                         register __m512 rcs,sin2a,alp2,falp4,x0,x1;
+                         x0   = _mm512_mul_ps(_mm512_mul_ps(a,b),C05);
+                         cost = xcosf(tht);
+                         gam02= _mm512_mul_ps(gam0,gam0);
+                         A2   = _mm512_mul_ps(x0,x0);
+                         sint = xsinf(tht);
+                         cosp = xcosf(phi);
+                         fac  = _mm512_div_ps(_mm512_mul_ps(C12566370614359172953850573533118,A2),gam02);
+                         alp  = _mm512_mul_ps(k0a,_mm512_mul_ps(sint,cosp));
+                         x1   = _mm512_mul_ps(alp,alp);
+                         sina = xsinf(alp);
+                         alp4 = _mm512_mul_ps(x1,x1);
+                         falp4= _mm512_mul_ps(C40,alp4);
+                         alp2 = _mm512_add_ps(alp,alp);
+                         sin2a= xsinf(alp2);
+                         x0   = _mm512_sub_ps(sin2a,alp2);
+                         fac  = _mm512_mul_ps(fac,_mm512_mul_ps(cost,cost));
+                         x1   = _mm512_mul_ps(x0,x0);
+                         A2   = _mm512_mul_ps(sina,sina);
+                         gam02= _mm512_div_ps(x1,falp4);
+                         x0   = _mm512_mul_ps(A2,A2);
+                         x1   = _mm512_div_ps(x0,alp4);
+                         rcs  = _mm512_mul_ps(fac,_mm512_add_ps(x1,gam02));
+                         return (rcs);                        
+                }
+                
+                
+                
                                             
                   
                 
