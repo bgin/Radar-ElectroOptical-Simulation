@@ -6032,6 +6032,14 @@ namespace  gms {
                 }
                 
                 
+                /*
+                      Triangular plates.
+                      High-frequency backscatter RCS by methods of 
+                      Physical Optics (wave incident in plane phi = PI/2).
+                      Formula 7.5-61 
+                */
+                
+                
                 
                                             
                   
