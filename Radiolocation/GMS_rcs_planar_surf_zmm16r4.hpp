@@ -6040,6 +6040,42 @@ namespace  gms {
                 */
                 
                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline 
+                   __m512 rcs_f7561_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 k0b,
+                                            const __m512 tht,
+                                            const __m512 phi,
+                                            const __m512 gam0) {
+                                            
+                        const __m512 C12566370614359172953850573533118 = 
+                                                       _mm512_set1_ps(12.566370614359172953850573533118f);
+                        
+                        register __m512 A2,gam02,fac,cost,x0,x1,sint,sinp,beta2,sbeta,sbeta4,beta4;
+                        register __m512 rcs;
+                        x0    = _mm512_mul_ps(_mm512_mul_ps(a,b),C05);
+                        cost  = xcosf(tht);
+                        gam02 = _mm512_mul_ps(gam0,gam0);
+                        sint  = xsinf(tht);
+                        A2    = _mm512_mul_ps(x0,x0);
+                        sinp  = xsinf(phi);
+                        fac   = _mm512_div_ps(_mm512_mul_ps(C12566370614359172953850573533118,A2),gam02);
+                        x0    = _mm512_mul_ps(k0b,_mm512_mul_ps(sint,sinp));
+                        fac   = _mm512_mul_ps(fac,_mm512_mul_ps(cost,cost));
+                        beta2 = _mm512_mul_ps(x0,C05);
+                        sbeta = xsinf(beta2);
+                        x0    = _mm512_mul_ps(beta2,beta2);
+                        x1    = _mm512_mul_ps(sbeta,sbeta);
+                        beta4 = _mm512_mul_ps(x0,x0);   
+                        sbeta4= _mm512_mul_ps(x1,x1);
+                        sint  = _mm512_div_ps(sbeta4,beta4);
+                        rcs   = _mm512_mul_ps(fac,sint);
+                        return (rcs);       
+               }
                 
                                             
                   
