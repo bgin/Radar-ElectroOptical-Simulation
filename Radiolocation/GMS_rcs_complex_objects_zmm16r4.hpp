@@ -228,6 +228,48 @@ namespace  gms {
                 
                 */
                 
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EsHs_f811920_zmm16r4(    const __m512 betai,
+                                                 const __m512 betas,
+                                                 const __m512 gam,
+                                                 const __m512 phi,
+                                                 const __m512 k0,
+                                                 const __m512 r,
+                                                 const __m512 rho,
+                                                 const __m512 psi,
+                                                 __m512 * __restrict Esr,
+                                                 __m512 * __restrict Esi,
+                                                 __m512 * __restrict Hsr,
+                                                 __m512 * __restrict Hsi) {
+                                                 
+                       register __m512 ear,eai,cer,cei;
+                       register __m512 D1r,D1i,D2r,D2i,x0,x1;
+                       register __m512 rhos,cosb1,cosbs,sqrho,k0rp,invr;
+                       k0rp  = _mm512_fmadd_ps(k0,r,psi);
+                       coef_D12_f8121_zmm16r4(gam,phi,k0,&D1r,&D1i,&D2r,&D2i);
+                       invr  = _mm512_rcp14_ps(r);
+                       ear   = _mm512_setzero_ps();
+                       cosbi = xcosf(betai);
+                       eai   = k0rp;
+                       cosbs = xcosf(betas);
+                       cexp_zmm16r4(ear,eai,&cer,&cei);
+                       cer   = _mm512_mul_ps(cer,invr);    
+                       rhos  = _mm512_div_ps(rho,_mm512_add_ps(cosbi,cosbs));
+                       cei   = _mm512_mul_ps(cei,invr);
+                       sqrho = _mm512_sqrt_ps(rhos);
+                       x0    = _mm512_mul_ps(sqrho,cer);
+                       x1    = _mm512_mul_ps(sqrho,cei);
+                       *Esr  = _mm512_mul_ps(D1r,x0);
+                       *Hsr  = _mm512_mul_ps(D2r,x0);
+                       *Esi  = _mm512_mul_ps(D1i,x1);
+                       *Hsi  = _mm512_mul_ps(D2i,x1);                               
+            }
+                
          
      } // radiolocation
 
