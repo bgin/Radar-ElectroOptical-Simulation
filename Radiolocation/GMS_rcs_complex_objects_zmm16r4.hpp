@@ -318,6 +318,55 @@ namespace  gms {
                        _mm512_store_ps(&Esi[0] ,_mm512_mul_ps(D1i,x1));
                        _mm512_store_ps(&Hsi[0] ,_mm512_mul_ps(D2i,x1));                               
             }
+            
+            
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EsHs_f811920_zmm16r4_u(  const float * __restrict  pbetai,
+                                                 const float * __restrict  pbetas,
+                                                 const float * __restrict  pgam,
+                                                 const float * __restrict  pphi,
+                                                 const float * __restrict  pk0,
+                                                 const float * __restrict  pr,
+                                                 const float * __restrict  prho,
+                                                 const float * __restrict ppsi,
+                                                 float * __restrict  Esr,
+                                                 float * __restrict  Esi,
+                                                 float * __restrict  Hsr,
+                                                 float * __restrict  Hsi) {
+                              
+                       register __m512 betai = _mm512_load_ps(&pbetai[0]);
+                       register __m512 betas = _mm512_load_ps(&pbetas[0]); 
+                       register __m512 gam   = _mm512_load_ps(&pgam[0]);   
+                       register __m512 k0    = _mm512_load_ps(&pk0[0]); 
+                       register __m512 r     = _mm512_load_ps(&pr[0]);
+                       register __m512 rho   = _mm512_load_ps(&prho[0]); 
+                       register __m512 psi   = _mm512_load_ps(&ppsi[0]);             
+                       register __m512 ear,eai,cer,cei;
+                       register __m512 D1r,D1i,D2r,D2i,x0,x1;
+                       register __m512 rhos,cosb1,cosbs,sqrho,k0rp,invr;
+                       k0rp  = _mm512_fmadd_ps(k0,r,psi);
+                       coef_D12_f8121_zmm16r4(gam,phi,k0,&D1r,&D1i,&D2r,&D2i);
+                       invr  = _mm512_rcp14_ps(r);
+                       ear   = _mm512_setzero_ps();
+                       cosbi = xcosf(betai);
+                       eai   = k0rp;
+                       cosbs = xcosf(betas);
+                       cexp_zmm16r4(ear,eai,&cer,&cei);
+                       cer   = _mm512_mul_ps(cer,invr);    
+                       rhos  = _mm512_div_ps(rho,_mm512_add_ps(cosbi,cosbs));
+                       cei   = _mm512_mul_ps(cei,invr);
+                       sqrho = _mm512_sqrt_ps(rhos);
+                       x0    = _mm512_mul_ps(sqrho,cer);
+                       x1    = _mm512_mul_ps(sqrho,cei);
+                       _mm512_store_ps(&Esr[0] ,_mm512_mul_ps(D1r,x0));
+                       _mm512_store_ps(&Hsr[0] ,_mm512_mul_ps(D2r,x0));
+                       _mm512_store_ps(&Esi[0] ,_mm512_mul_ps(D1i,x1));
+                       _mm512_store_ps(&Hsi[0] ,_mm512_mul_ps(D2i,x1));                               
+            }
                 
          
      } // radiolocation
