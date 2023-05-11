@@ -219,6 +219,15 @@ namespace  gms {
                         _mm512_storeu_ps(&D2i[0] ,_mm512_mul_ps(eai,x1));
                 }
                 
+                
+                /*
+                    Surface discontinuities.
+                    General perfectly conducting convex edge.
+                    Backscatter singly diffracted far-zone fields (E,H).
+                    Formula: 8.1-19, 8.1-20
+                
+                */
+                
          
      } // radiolocation
 
