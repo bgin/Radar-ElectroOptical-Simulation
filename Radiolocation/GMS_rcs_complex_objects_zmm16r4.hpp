@@ -678,6 +678,16 @@ namespace  gms {
                         _mm512_storeu_ps(&Di[0] ,_mm512_mul_ps(cei,n));
                 }
                 
+                
+                   /*
+                    Surface discontinuities.
+                    General perfectly conducting convex edge.
+                    Backscatter diffraction coefficient 'D'.
+                    Backscatter direction axial caustic (for slightly diffracted rays).
+                    Scattered Electric and Magnetic fields.
+                    Formula: 8.1-25
+                */
+                
             
                 
          
