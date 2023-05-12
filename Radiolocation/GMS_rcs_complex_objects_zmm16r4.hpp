@@ -542,6 +542,49 @@ namespace  gms {
                     Formula: 8.1-26
                 */
                 
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void coef_D_f8126_zmm16r4(const __m512 gam,
+                                             const __m512 phi,
+                                             const __m512 k0,
+                                             __m512 * __restrict Dr,
+                                             __m512 * __restrict Di) {
+                                             
+                        const __m512 C078539816339744830961566084582  = 
+                                                     _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 C6283185307179586476925286766559 = 
+                                                     _mm512_set1_ps(6.283185307179586476925286766559f);
+                        const __m512 C314159265358979323846264338328  = 
+                                                     _mm512_set1_ps(3.14159265358979323846264338328f);  
+                        const __m512 C20                              = 
+                                                     _mm512_set1_ps(2.0f);
+                        register __m512 ear,eai,cer,cei;
+                        register __m512 invn,n,phi2,pin,spin,cpin,cphin,sqr,x0;
+                        phi2 = _mm512_add_ps(phi,phi);
+                        x0   = _mm512_mul_ps(C6283185307179586476925286766559,k0);
+                        ear  = _mm512_setzero_ps();
+                        n    = _mm512_div_ps(gam,C314159265358979323846264338328);
+                        eai  = C078539816339744830961566084582;
+                        invn = _mm512_rcp14_ps(n); 
+                        sqr  = _mm512_sqrt_ps(x0);
+                        pin  = _mm512_mul_ps(C314159265358979323846264338328,invn);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        spin = xsinf(pin);
+                        cer  = _mm512_div_ps(cer,sqr);
+                        cpin = xcosf(pin);
+                        cei  = _mm512_div_ps(cei,sqr);
+                        cphin= xcosf(_mm512_mul_ps(phi2,invn));
+                        x0   = _mm512_mul_ps(_mm512_mul_ps(C20,invn),spin);
+                        x1   = _mm512_sub_ps(cpin,cphin);
+                        n    = _mm512_div_ps(x0,x1);
+                        *Dr  = _mm512_mul_ps(cer,n);
+                        *Di  = _mm512_mul_ps(cei,n);
+                }
+                
             
                 
          
