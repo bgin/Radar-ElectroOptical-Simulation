@@ -376,6 +376,57 @@ namespace  gms {
                     Ray normal-incidence to one of edge faces.
                     Formula: 8.1-24
             */
+            
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void coef_D12_f8124_zmm16r4(const __m512 k0,
+                                               const __m512 gam,
+                                               __m512 * __restrict D1r,
+                                               __m512 * __restrict D1i,
+                                               __m512 * __restrict D2r,
+                                               __m512 * __restrict D2i) {
+                                               
+                        const __m512 C078539816339744830961566084582  = 
+                                                     _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 C6283185307179586476925286766559 = 
+                                                     _mm512_set1_ps(6.283185307179586476925286766559f);
+                        const __m512 C314159265358979323846264338328  = 
+                                                     _mm512_set1_ps(3.14159265358979323846264338328f);
+                        const __m512 C10                              = _mm512_set1_ps(1.0f);  
+                        register __m512 ear,eai,cer,cei,t0r,t0i;
+                        register __m512 x0,invn,x1,sin1,cos1,sin2,cos2,x2,invn2,arg1,arg2;
+                        ear  = _mm512_setzero_ps();
+                        eai  = C078539816339744830961566084582; 
+                        x0   = _mm512_div_ps(gam,C314159265358979323846264338328);  
+                        x1   = _mm512_mul_ps(k0,C6283185307179586476925286766559);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        invn = _mm512_rcp14_ps(x0);
+                        cer  = gms::math::negate_zmm16r4(cer);
+                        invn2= _mm512_add_ps(invn,invn);      
+                        cei  = gms::math::negate_zmm16r4(cei);
+                        arg1 = _mm512_mul_ps(C314159265358979323846264338328,invn2)
+                        sin1 = xsinf(arg1);
+                        arg2 = _mm512_mul_ps(C314159265358979323846264338328,invn);
+                        t0r  = _mm512_div_ps(cer,x1);
+                        cos1 = xcosf(arg1);
+                        x0   = _mm512_div_ps(cos1,sin1);
+                        t0i  = _mm512_div_ps(cei,x1);   
+                        sin2 = xsinf(arg2);
+                        cos2 = xcosf(arg2);   
+                        x1   = _mm512_div_ps(cos2,sin2);
+                        ear  = _mm512_fmsub_ps(invn,x0,_mm512_mul_ps(invn2,x1));
+                        eai  = _mm512_fmadd_ps(invn,x0,_mm512_mul_ps(invn2,x1));
+                        cer  = _mm512_mul_ps(t0r,ear);
+                        cei  = _mm512_mul_ps(t0i,eai);
+                        *D1r = cer;
+                        *D2r = cer;
+                        *D1i = cei;
+                        *D2i = cei;       
+                }
+            
                 
          
      } // radiolocation
