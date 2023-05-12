@@ -734,7 +734,62 @@ namespace  gms {
                         *Esi = gms::math::negate_zmm16r4(x1); 
                         *Hsr = x0;
                         *Hsi = x1;             
-                                    
+                      
+                }
+                
+                
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void EsHs_f8125_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
+                                             const float * __restrict __ATTR_ALIGN__(64) pk0,
+                                             const float * __restrict __ATTR_ALIGN__(64) pr,
+                                             const float * __restrict __ATTR_ALIGN__(64) pgam,
+                                             const float * __restrict __ATTR_ALIGN__(64) pphi,
+                                             const float * __restrict __ATTR_ALIGN__(64) ppsi,
+                                             float * __restrict __ATTR_ALIGN__(64) Esr,
+                                             float * __restrict __ATTR_ALIGN__(64) Esi,
+                                             float * __restrict __ATTR_ALIGN__(64) Hsr,
+                                             float * __restrict __ATTR_ALIGN__(64) Hsi) {
+                            
+                        register __m512 a   = _mm512_load_ps(&pa[0]);
+                        register __m512 k0  = _mm512_load_ps(&pk0[0]);   
+                        register __m512 r   = _mm512_load_ps(&pr[0]);   
+                        register __m512 gam = _mm512_load_ps(&pgam[0]);   
+                        register __m512 phi = _mm512_load_ps(&pphi[0]); 
+                        register __m512 psi = _mm512_load_ps(&ppsi[0]);     
+                        const __m512 C078539816339744830961566084582  = 
+                                                     _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 C6283185307179586476925286766559 = 
+                                                     _mm512_set1_ps(6.283185307179586476925286766559f); 
+                        const __m512 C05                              = 
+                                                     _mm512_set1_ps(0.5f);
+                        register __m512 Dr,Di,x0,x1;
+                        register __m512 ear,eai,cer,cei;
+                        register __m512 k0r,invr,t0r,t0i;
+                        register __m512 sqr;
+                        k0r  = _mm512_mul_ps(k0,r);
+                        ear  = _mm512_setzero_ps();
+                        eai  = _mm512_add_ps(k0r,_mm512_sub_ps(psi,
+                                                   C078539816339744830961566084582));
+                        coef_Ddiff_f8126_zmm16r4(gam,phi,k0,Dr,Di); 
+                        invr = _mm512_rcp_ps(r);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        sqr  = _mm512_sqrt_ps(_mm512_mul_ps(C6283185307179586476925286766559,k0));
+                        t0r  = _mm512_mul_ps(Dr,C05);
+                        cer  = _mm512_mul_ps(cer,invr);
+                        sqr  = _mm512_mul_ps(a,sqr);
+                        t0i  = _mm512_mul_ps(Di,C05);  
+                        cei  = _mm512_mul_ps(cei,invr);
+                        x0   = _mm512_mul_ps(t0r,_mm512_mul_ps(sqr,cer));
+                        x1   = _mm512_mul_ps(t0i,_mm512_mul_ps(sqr,cei));
+                        _mm512_store_ps(&Esr[0] ,gms::math::negate_zmm16r4(x0));
+                        _mm512_store_ps(&Esi[0] ,gms::math::negate_zmm16r4(x1)); 
+                        _mm512_store_ps(&Hsr[0] ,x0);
+                        _mm512_store_ps(&Hsi[0] ,x1);             
+                      
                 }
                 
             
