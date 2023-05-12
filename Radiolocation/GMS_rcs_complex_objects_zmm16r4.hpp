@@ -338,13 +338,13 @@ namespace  gms {
                                                  float * __restrict  Hsr,
                                                  float * __restrict  Hsi) {
                               
-                       register __m512 betai = _mm512_load_ps(&pbetai[0]);
-                       register __m512 betas = _mm512_load_ps(&pbetas[0]); 
-                       register __m512 gam   = _mm512_load_ps(&pgam[0]);   
-                       register __m512 k0    = _mm512_load_ps(&pk0[0]); 
-                       register __m512 r     = _mm512_load_ps(&pr[0]);
-                       register __m512 rho   = _mm512_load_ps(&prho[0]); 
-                       register __m512 psi   = _mm512_load_ps(&ppsi[0]);             
+                       register __m512 betai = _mm512_loadu_ps(&pbetai[0]);
+                       register __m512 betas = _mm512_loadu_ps(&pbetas[0]); 
+                       register __m512 gam   = _mm512_loadu_ps(&pgam[0]);   
+                       register __m512 k0    = _mm512_loadu_ps(&pk0[0]); 
+                       register __m512 r     = _mm512_loadu_ps(&pr[0]);
+                       register __m512 rho   = _mm512_loadu_ps(&prho[0]); 
+                       register __m512 psi   = _mm512_loadu_ps(&ppsi[0]);             
                        register __m512 ear,eai,cer,cei;
                        register __m512 D1r,D1i,D2r,D2i,x0,x1;
                        register __m512 rhos,cosb1,cosbs,sqrho,k0rp,invr;
@@ -362,11 +362,20 @@ namespace  gms {
                        sqrho = _mm512_sqrt_ps(rhos);
                        x0    = _mm512_mul_ps(sqrho,cer);
                        x1    = _mm512_mul_ps(sqrho,cei);
-                       _mm512_store_ps(&Esr[0] ,_mm512_mul_ps(D1r,x0));
-                       _mm512_store_ps(&Hsr[0] ,_mm512_mul_ps(D2r,x0));
-                       _mm512_store_ps(&Esi[0] ,_mm512_mul_ps(D1i,x1));
-                       _mm512_store_ps(&Hsi[0] ,_mm512_mul_ps(D2i,x1));                               
+                       _mm512_storeu_ps(&Esr[0] ,_mm512_mul_ps(D1r,x0));
+                       _mm512_storeu_ps(&Hsr[0] ,_mm512_mul_ps(D2r,x0));
+                       _mm512_storeu_ps(&Esi[0] ,_mm512_mul_ps(D1i,x1));
+                       _mm512_storeu_ps(&Hsi[0] ,_mm512_mul_ps(D2i,x1));                               
             }
+            
+            
+            /*
+                    Surface discontinuities.
+                    General perfectly conducting convex edge.
+                    Backscatter diffraction coefficient 'D'.
+                    Ray normal-incidence to one of edge faces.
+                    Formula: 8.1-24
+            */
                 
          
      } // radiolocation
