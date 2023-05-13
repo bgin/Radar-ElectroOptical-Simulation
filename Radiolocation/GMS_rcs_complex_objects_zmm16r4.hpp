@@ -858,6 +858,58 @@ namespace  gms {
                 
                 */
                 
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void coef_D12_f8127_zmm16r4(const __m512 k0,
+                                               const __m512 gam,
+                                               const __m512 phi1,
+                                               const __m512 phi2,
+                                               __m512 * __restrict D1r,
+                                               __m512 * __restrict D1i,
+                                               __m512 * __restrict D2r,
+                                               __m512 * __restrict D2i) {
+                                               
+                        const __m512 C078539816339744830961566084582  = 
+                                                     _mm512_set1_ps(0.78539816339744830961566084582f);
+                        const __m512 C6283185307179586476925286766559 = 
+                                                     _mm512_set1_ps(6.283185307179586476925286766559f);
+                        const __m512 C314159265358979323846264338328  = 
+                                                     _mm512_set1_ps(3.14159265358979323846264338328f); 
+                        register __m512 invn,x0,x1,ear,eai,cer,cei;
+                        register __m512 sqr,pin,spin,cpin,phis,phid,invc1,invc2;
+                        x0   = _mm512_div_ps(gam,C314159265358979323846264338328);
+                        phid = _mm512_mul_ps(_mm512_sub_ps(phi1,phi2),invn);
+                        sqr  = _mm512_sqrt_ps(_mm512_mul_ps(
+                                             C6283185307179586476925286766559,k0)); 
+                        ear  = _mm512_setzero_ps();
+                        phis = _mm512_mul_ps(_mm512_add_ps(phi1,phi2),invn);
+                        invn = _mm512_rcp14_ps(x0);
+                        eai  = C078539816339744830961566084582;
+                        pin  = _mm512_mul_ps(C314159265358979323846264338328,invn);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        x0   = xsinf(pin);
+                        cer  = _mm512_div_ps(cer,sqr);
+                        spin = _mm512_mul_ps(x0,invn);
+                        cei  = _mm512_div_ps(cei,sqr);
+                        cpin = xcosf(pin);
+                        x0   = xcosf(phid);
+                        invc1= _mm512_rcp14_ps(_mm512_sub_ps(cpin,x0));
+                        x1   = xcosf(phis);
+                        invc2= _mm512_rcp14_ps(_mm512_sub_ps(cpin,x1));
+                        ear  = _mm512_mul_ps(cer,spin);
+                        phis = _mm512_sub_ps(invc1,invc2);
+                        eai  = _mm512_mul_ps(cei,spin);
+                        phid = _mm512_add_ps(invc1,invc2);
+                        *D1r = _mm512_mul_ps(ear,phis);
+                        *D1i = _mm512_mul_ps(eai,phis);
+                        *D2r = _mm512_mul_ps(ear,phid);
+                        *D2i = _mm512_mul_ps(eai,phid);
+                }
+                
          
      } // radiolocation
 
