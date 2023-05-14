@@ -1027,6 +1027,8 @@ namespace  gms {
                 /*
                        Adachi expression for axial-incidence
                        of backscatter RCS for entire scatterer length.
+                       Shall be used in case of thin long axially symetric 
+                       bodies e.g. 'ogives,double-cones, etc.,'
                        Vectorization of an integrand.
                        Formula 8.1-62
                 */
@@ -1135,6 +1137,17 @@ namespace  gms {
                          rcs   = frac*std::abs(c);
                          return (rcs);                         
                   }
+                  
+                  
+                   /*
+                       Adachi expression for axial-incidence
+                       of backscatter RCS for entire scatterer length.
+                       Shall be used in case of thin long axially symetric 
+                       bodies e.g. 'ogives,double-cones, etc.,'
+                       Vectorization of an integrand.
+                       Case of large integrand -- single-threaded execution.
+                       Formula 8.1-62
+                */
                 
                 
                 
