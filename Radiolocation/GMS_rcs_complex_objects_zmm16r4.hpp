@@ -53,6 +53,25 @@ namespace  gms {
 
          namespace radiolocation {
          
+         
+               /*
+                   Work (input) arrays for kernel rcs_f8162_zmm16r4_2t_u and
+                   rcs_f8162_zmm16r4_2t_a.
+               */
+               __ATTR_ALIGN__(64) struct RCS_F8162_DATA {
+               
+                       float * __restrict  Ya1; 
+                       float * __restrict  Ya2; 
+                       float * __restrict  Ya3; 
+                       float * __restrict  Ea;  
+                       float * __restrict  WRKa; 
+                       float * __restrict  Yb1;
+                       float * __restrict  Yb2; 
+                       float * __restrict  Yb3; 
+                       float * __restrict  Eb; 
+                       float * __restrict  WRKb;  
+               };
+         
               
               /*
                     Surface discontinuities.
@@ -1280,6 +1299,101 @@ namespace  gms {
                       rcs   = frac*std::abs(c);
                       return (rcs);               
                }
+               
+               
+                 /*
+                       Adachi expression for axial-incidence
+                       of backscatter RCS for entire scatterer length.
+                       Shall be used in case of thin long axially symetric 
+                       bodies e.g. 'ogives,double-cones, etc.,'
+                       Vectorization of an integrand.
+                       Case of large integrand -- two-threaded execution of integrator.
+                       Formula 8.1-62
+                */
+                
+#include <omp.h>
+    
+                
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float rcs_f8162_zmm16r4_2t_u(const float * __restrict  pdAdl,
+                                                const float * __restrict  pdl,
+                                                float * __restrict  intr,
+                                                float * __restrict  inti,
+                                                struct RCS_F8162_DATA w,
+                                                const float   k0,
+                                                const float   l,
+                                                const int32_t NTAB) {
+                                             
+                        if(__builtin_expect(NTAB==16,0)) {
+                            float rcs = 0.0f;
+                            rcs = rcs_f8162_zmm16r4_u(pdAdl,pdl,k0,l);
+                            return (rcs);
+                        }    
+                        
+                        constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                        register __m512 vk0,k0l,ear,eai,cer,cei;
+                        float * __restrict px1 = w.Ya1;
+                        float * __restrict py1 = w.Yb1;
+                        float * __restrict px2 = w.Ya2;
+                        float * __restrict py2 = w.Yb2;
+                        float * __restrict px3 = w.Ya3;
+                        float * __restrict py3 = w.Yb3;
+                        float * __restrict px4 = w.Ea;
+                        float * __restrict py4 = w.Eb;
+                        float * __restrict px5 = w.WRKa;
+                        float * __restrict py5 = w.WRKb;
+                        std::complex<float> c;
+                        register float rcs,k02,frac,sumr,sumi; 
+                        int32_t i; 
+                        vk0  = _mm512_set1_ps(k0);
+                        ear  = _mm512_setzero_ps();
+                        for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
+                             _mm_prefetch((const char*)&pdAdl[i],_MM_NTA_T0);
+                             _mm_prefetch((const char*)&pdl[i],  _MM_NTA_T0);
+                             register __m512 x = _mm512_loadu_ps(&pdAdl[i]);
+                             register __m512 y = _mm512_loadu_ps(&pdl[i]);
+                             k0l               = _mm512_mul_ps(vk0,y);
+                             eai               = _mm512_add_ps(k0l,k0l);
+                             cexp_zmm16r4(ear,eai,&cer,&cei);
+                             register __m512 t0 = cer;
+                             register __m512 t1 = cei;
+                             _mm512_storeu_ps(&intr[i], _mm512_mul_ps(t0,x));
+                             _mm512_storeu_ps(&inti[i], _mm512_mul_ps(t1,x));
+                       } 
+                       sumr = 0.0f;
+                       sumi = 0.0f;
+                       for(; i != NTAB; ++i) {
+                           const float x  = pdAdl[i];
+                           const float y  = pdl[i];
+                           const float k0l= k0*y;
+                           const float eai= k0l+k0l;
+                           const std::complex<float> c = std::exp({0.0f,eai});
+                           intr[i]        = c.real()*x;
+                           inti[i]        = c.imag()*x;
+                      }   
+   #pragma omp parallel sctions
+                {
+                     #pragma omp section
+                       {
+                             cspint(NTAB,pdl,intr,0.0f,l,px1,px2,px3,px4,px5,sumr); 
+                       }
+                     #pragma omp section
+                       {
+                             cspint(NTAB,pdl,inti,0.0f,l,py1,py2,py3,py4,py5,sumi); 
+                       }
+                } 
+                      c = {sumr,sumi};
+                      k02   = k0*k0;   
+                      frac  = k02/C314159265358979323846264338328;
+                      rcs   = frac*std::abs(c);
+                      return (rcs);               
+               }
+               
                
                
                
