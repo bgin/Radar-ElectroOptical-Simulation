@@ -1301,6 +1301,80 @@ namespace  gms {
                }
                
                
+                   /*
+                       Adachi expression for axial-incidence
+                       of backscatter RCS for entire scatterer length.
+                       Shall be used in case of thin long axially symetric 
+                       bodies e.g. 'ogives,double-cones, etc.,'
+                       Vectorization of an integrand.
+                       Case of large integrand -- two-threaded execution of integrator.
+                       Integrator 'avint' i.e. irregular abscissas
+                       Formula 8.1-62
+                */
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float rcs_f8162_zmm16r4_avint_u(const float * __restrict  pdAdl,
+                                                   const float * __restrict  pdl,
+                                                   float * __restrict  intr,
+                                                   float * __restrict  inti,
+                                                   const float   k0,
+                                                   const float   l,
+                                                   int32_t ierr,
+                                                   int32_t ieri,
+                                                   const int32_t NTAB) {
+                                             
+                                                
+                        constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                        register __m512 vk0,k0l,ear,eai,cer,cei;
+                        std::complex<float> c;
+                        register float rcs,k02,frac,sumr,sumi; 
+                        int32_t i; 
+                        vk0  = _mm512_set1_ps(k0);
+                        ear  = _mm512_setzero_ps();
+                        for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
+                             _mm_prefetch((const char*)&pdAdl[i],_MM_NTA_T0);
+                             _mm_prefetch((const char*)&pdl[i],  _MM_NTA_T0);
+                             register __m512 x = _mm512_loadu_ps(&pdAdl[i]);
+                             register __m512 y = _mm512_loadu_ps(&pdl[i]);
+                             k0l               = _mm512_mul_ps(vk0,y);
+                             eai               = _mm512_add_ps(k0l,k0l);
+                             cexp_zmm16r4(ear,eai,&cer,&cei);
+                             register __m512 t0 = cer;
+                             register __m512 t1 = cei;
+                             _mm512_storeu_ps(&intr[i], _mm512_mul_ps(t0,x));
+                             _mm512_storeu_ps(&inti[i], _mm512_mul_ps(t1,x));
+                       } 
+                       sumr = 0.0f;
+                       sumi = 0.0f;
+                       for(; i != NTAB; ++i) {
+                           const float x  = pdAdl[i];
+                           const float y  = pdl[i];
+                           const float k0l= k0*y;
+                           const float eai= k0l+k0l;
+                           const std::complex<float> c = std::exp({0.0f,eai});
+                           intr[i]        = c.real()*x;
+                           inti[i]        = c.imag()*x;
+                      }   
+                      sumr = avint(pdl,intr,NTAB,0.0f,l,ierr); 
+                      sumi = avint(pdl,inti,NTAB,0.0f,l,ieri); 
+                      if(ierr == 3 || ieri == 3) {
+                         return std::numerical_limits<float>::quiet_NaN();
+                      } 
+                      c = {sumr,sumi};
+                      k02   = k0*k0;   
+                      frac  = k02/C314159265358979323846264338328;
+                      rcs   = frac*std::abs(c);
+                      return (rcs);               
+               }
+               
+               
+               
                  /*
                        Adachi expression for axial-incidence
                        of backscatter RCS for entire scatterer length.
@@ -1308,6 +1382,7 @@ namespace  gms {
                        bodies e.g. 'ogives,double-cones, etc.,'
                        Vectorization of an integrand.
                        Case of large integrand -- two-threaded execution of integrator.
+                       Integrator 'cspint'
                        Formula 8.1-62
                 */
                 
@@ -1476,6 +1551,41 @@ namespace  gms {
                       return (rcs);               
                }
                
+               
+               
+               
+               
+               /*
+                     High frequency approximations.
+                     Rounded-tip cone total nose-on
+                     backscatter RCS.
+                     Formula 8.1-93
+               */
+               
+               
+               /*    __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f8193_zmm16r4(const __m512 b,
+                                            const __m512 a,
+                                            const __m512 k0,
+                                            const __m512 alp,
+                                            const __m512 l) {
+                                            
+                         const __m512 C314159265358979323846264338328  = 
+                                                     _mm512_set1_ps(3.14159265358979323846264338328f); 
+                         const __m512 C1772453850905516027298167483341 = 
+                                                     _mm512_set1_ps(1.772453850905516027298167483341f);
+                         const __m512 C10                              = 
+                                                     _mm512_set1_ps(1.0f);
+                         register __m512 sina,pin,n,invn,x0,x1;
+                         register __m512 ear,eai,cer,cei;
+                         register __m512 cpin,cos2a,den,k0b,arg,sarg;
+                         k0b  = _mm512_mul_ps(k0,b);
+                                                    
+                 }*/
                
                
                
