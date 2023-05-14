@@ -1054,6 +1054,7 @@ namespace  gms {
 #include <cstdint>                
 #include <complex>               
 #include "GMS_cspint_quad.hpp"
+#include "GMS_avint_quad.hpp"
 
                  
                    __ATTR_ALWAYS_INLINE__
@@ -1092,12 +1093,6 @@ namespace  gms {
                          sumr = 0.0f;
                          sumi = 0.0f;
                          cspint(NTAB,pdl,&intr[0],0.0f,l,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumr);
-                         // zero the arrays
-                         _mm512_store_ps(&Y1[0], _mm512_setzero_ps());
-                         _mm512_store_ps(&Y2[0], _mm512_setzero_ps());
-                         _mm512_store_ps(&Y3[0], _mm512_setzero_ps());
-                         _mm512_store_ps(&E[0],  _mm512_setzero_ps());
-                         _mm512_store_ps(&WRK[0],_mm512_setzero_ps());
                          cspint(NTAB,pdl,&inti[0],0.0f,l,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumi);
                          c = {sumr,sumi};
                          k02   = k0*k0;   
@@ -1143,12 +1138,6 @@ namespace  gms {
                          sumr = 0.0f;
                          sumi = 0.0f;
                          cspint(NTAB,pdl,&intr[0],0.0f,l,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumr);
-                         // zero the arrays
-                         _mm512_store_ps(&Y1[0], _mm512_setzero_ps());
-                         _mm512_store_ps(&Y2[0], _mm512_setzero_ps());
-                         _mm512_store_ps(&Y3[0], _mm512_setzero_ps());
-                         _mm512_store_ps(&E[0],  _mm512_setzero_ps());
-                         _mm512_store_ps(&WRK[0],_mm512_setzero_ps());
                          cspint(NTAB,pdl,&inti[0],0.0f,l,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumi);
                          c = {sumr,sumi};
                          k02   = k0*k0;   
