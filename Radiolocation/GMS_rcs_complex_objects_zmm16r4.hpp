@@ -1206,6 +1206,57 @@ namespace  gms {
                   }
                   
                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float rcs_f8162_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) pdAdl,
+                                                   const float * __restrict __ATTR_ALIGN__(64) pdl,
+                                                   const float   k0,
+                                                   const float   l,
+                                                   int32_t & ierr,
+                                                   int32_t & ieri) {
+                          
+                         __ATTR_ALIGN__(64) float intr[16] = {};
+                         __ATTR_ALIGN__(64) float inti[16] = {}; 
+                                         
+                         constexpr int32_t NTAB = 16;               
+                         constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                         register __m512 dAdl = _mm512_load_ps(&pdAdl[0]);
+                         register __m512 dl   = _mm512_load_ps(&pdl[0]);                                 
+                         register __m512 vk0,k0l,ear,eai,cer,cei;
+                         std::complex<float> c;
+                         register float rcs,k02,frac,sumr,sumi;
+                         int32_t err,eri;
+                         vk0  = _mm512_set1_ps(k0);
+                         k0l  = _mm512_mul_ps(vk0,dl);
+                         ear  = _mm512_setzero_ps();
+                         eai  = _mm512_add_ps(k0l,k0l);
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         _mm512_stor_ps(&intr[0], _mm512_mul_ps(cer,dAdl);
+                         _mm512_stor_ps(&inti[0], _mm512_mul_ps(cei,dAdl);
+                         sumr = 0.0f;
+                         sumi = 0.0f;
+                         sumr = avint(pdl,&intr[0],0.0f,l,err);
+                         sumi = avint(pdl,&inti[0],0.0f,l,eri);
+                         ierr = err;
+                         ieri = eri;
+                         if(ierr == 3 || ieri == 3) {
+                            std::numeric_limits<float>::quiet_NaN();
+                         }
+                         c = {sumr,sumi};
+                         k02   = k0*k0;   
+                         frac  = k02/C314159265358979323846264338328;
+                         rcs   = frac*std::abs(c);
+                         return (rcs);                         
+                  }
+                  
+                  
+                  
+                  
+                  
                    /*
                        Adachi expression for axial-incidence
                        of backscatter RCS for entire scatterer length.
