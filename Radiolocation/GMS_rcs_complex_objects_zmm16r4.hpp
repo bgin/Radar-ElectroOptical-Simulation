@@ -1738,8 +1738,8 @@ namespace  gms {
                                                      const float * __restrict  pdl,
                                                      float * __restrict  intr,
                                                      float * __restrict  inti,
-                                                     int32_t ierr,
-                                                     int32_t ieri,
+                                                     int32_t & ierr,
+                                                     int32_t & ieri,
                                                      const float   k0,
                                                      const float   l,
                                                      const int32_t NTAB) {
@@ -1750,7 +1750,7 @@ namespace  gms {
                         register __m512 vk0,k0l,ear,eai,cer,cei;
                         std::complex<float> c;
                         register float rcs,k02,frac,sumr,sumi; 
-                        int32_t i; 
+                        int32_t i,err,eri; 
                         vk0  = _mm512_set1_ps(k0);
                         ear  = _mm512_setzero_ps();
                         for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
@@ -1781,13 +1781,18 @@ namespace  gms {
                 {
                      #pragma omp section
                        {
-                            sumr = avint(pdl,intr,0.0f,l,px1,px2,px3,px4,px5,sumr); 
+                            sumr = avint(pdl,intr,NTAB,0.0f,l,err); 
                        }
                      #pragma omp section
                        {
-                             cspint(NTAB,pdl,inti,0.0f,l,py1,py2,py3,py4,py5,sumi); 
+                            sumi = avint(pdl,inti,NTAB,0.0f,l,eri); 
                        }
                 } 
+                      ierr = err;
+                      ieri = eri
+                      if(ierr == 3 || ieri == 3) {
+                          return std::numeric_limits<float>::quiet_NaN();
+                      }
                       c = {sumr,sumi};
                       k02   = k0*k0;   
                       frac  = k02/C314159265358979323846264338328;
