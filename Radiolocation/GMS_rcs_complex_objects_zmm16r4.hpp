@@ -1885,7 +1885,7 @@ namespace  gms {
                */
                
                
-               /*    __ATTR_ALWAYS_INLINE__
+                  __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -1902,12 +1902,44 @@ namespace  gms {
                                                      _mm512_set1_ps(1.772453850905516027298167483341f);
                          const __m512 C10                              = 
                                                      _mm512_set1_ps(1.0f);
-                         register __m512 sina,pin,n,invn,x0,x1;
-                         register __m512 ear,eai,cer,cei;
-                         register __m512 cpin,cos2a,den,k0b,arg,sarg;
+                         const __m512 C15                              =
+                                                     _mm512_set1_ps(1.5f);
+                         register __m512 sina,pin,n,invn,x0,x1,k0l,sqr;
+                         register __m512 ear,eai,cer,cei,cosa;
+                         register __m512 rcs,cpin,cos2a,k0b,t0,t1;
                          k0b  = _mm512_mul_ps(k0,b);
-                                                    
-                 }*/
+                         ear  = _mm512_setzero_ps();
+                         n    = _mm512_add_ps(C15,_mm512_div_ps(alp,   
+                                                          C314159265358979323846264338328));
+                         k0l  = _mm512_mul_ps(k0,l);
+                         eai  = _mm512_add_ps(k0l,k0l);
+                         invn = _mm512_rcp14_ps(n);
+                         sina = _mm512_sub_ps(C10,xsinf(alp));
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         cosa = xcosf(alp);
+                         x0   = xsinf(_mm512_mul_ps(
+                                              _mm512_add_ps(k0b,k0b),sina));
+                         x1   = _mm512_mul_ps(k0b,_mm512_mul_ps(cosa,cosa));
+                         sqr  = _mm512_sub_ps(C10,_mm512_div_ps(x0,x1));
+                         pin  = _mm512_mul_ps(C314159265358979323846264338328,invn);
+                         x0   = _mm512_sqrt_ps(sqr);
+                         spin = _mm512_mul_ps(xsinf(pin),invn);
+                         cpin = xcosf(pin);
+                         x1   = _mm512_mul_ps(_mm512_add_ps(alp,alp),invn);
+                         cos2a= xcosf(x1);
+                         t0   = _mm512_mul_ps(C1772453850905516027298167483341,
+                                                              _mm512_mul_ps(b,x0)); // keep
+                         x1   = _mm512_sub_ps(cpin,cos2a);
+                         t1   = _mm512_mul_ps(_mm512_add_ps(C1772453850905516027298167483341,
+                                                            C1772453850905516027298167483341),
+                                                                           _mm512_mul_ps(a,spin)); // keep
+                         x0   = _mm512_rcp14_ps(x1); // keep
+                         ear  = _mm512_mul_ps(_mm512_add_ps(t0,t1),x0);
+                         t0   = _mm512_mul_ps(ear,cer);
+                         t1   = _mm512_mul_ps(ear,cei);
+                         rcs  = cabs_zmm16r4(t0,t1);
+                         return (rcs);                      
+                 }
                
                
                
