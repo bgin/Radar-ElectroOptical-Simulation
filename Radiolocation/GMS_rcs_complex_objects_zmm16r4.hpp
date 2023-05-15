@@ -1423,8 +1423,8 @@ namespace  gms {
                                                    float * __restrict  inti,
                                                    const float   k0,
                                                    const float   l,
-                                                   int32_t ierr,
-                                                   int32_t ieri,
+                                                   int32_t & ierr,
+                                                   int32_t & ieri,
                                                    const int32_t NTAB) {
                                              
                                                 
@@ -1433,7 +1433,7 @@ namespace  gms {
                         register __m512 vk0,k0l,ear,eai,cer,cei;
                         std::complex<float> c;
                         register float rcs,k02,frac,sumr,sumi; 
-                        int32_t i; 
+                        int32_t i,err,eri; 
                         vk0  = _mm512_set1_ps(k0);
                         ear  = _mm512_setzero_ps();
                         for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
@@ -1460,8 +1460,10 @@ namespace  gms {
                            intr[i]        = c.real()*x;
                            inti[i]        = c.imag()*x;
                       }   
-                      sumr = avint(pdl,intr,NTAB,0.0f,l,ierr); 
-                      sumi = avint(pdl,inti,NTAB,0.0f,l,ieri); 
+                      sumr = avint(pdl,intr,NTAB,0.0f,l,err); 
+                      sumi = avint(pdl,inti,NTAB,0.0f,l,eri); 
+                      ierr = err;
+                      ieri = eri;
                       if(ierr == 3 || ieri == 3) {
                          return std::numerical_limits<float>::quiet_NaN();
                       } 
