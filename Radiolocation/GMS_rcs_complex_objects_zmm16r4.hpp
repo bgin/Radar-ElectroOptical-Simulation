@@ -2068,6 +2068,43 @@ namespace  gms {
                  }
                  
                  
+                 /*
+                     High frequency approximations.
+                     Backscatter RCS of conical frustum
+                     for |theta| = PI/2-alpha
+                     Formula 8.1-96
+                 */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 rcs_f8196_zmm16r4(const __m512 k0,
+                                            const __m512 alp,
+                                            const __m512 a,
+                                            const __m512 b) {
+                                            
+                         
+                          const __m512 C0444444444444444444444444444444 = 
+                                                        _mm512_set1_ps(0.444444444444444444444444444444f);
+                          register __m512 rcs,t0,cosa,cota,x0,x1,a32,bca32,sina,t1;
+                          t0    = _mm512_mul_ps(C0444444444444444444444444444444,k0);
+                          cosa  = xcosf(alp);
+                          a32   = _mm512_mul_ps(a,_mm512_sqrt_ps(a));
+                          x0    = _mm512_mul_ps(b,cosa);
+                          sina  = xsinf(alp);
+                          bca32 = _mm512_mul_ps(x0,_mm512_sqrt_ps(x0));
+                          x1    = _mm512_div_ps(cosa,sina);
+                          cota  = _mm512_mul_ps(x1,x1);
+                          t1    = _mm512_mul_ps(t0,_mm512_mul_ps(cosa,cota));
+                          x0    = _mm512_sub_ps(a32,bca32);
+                          rcs   = _mm512_mul_ps(t1,_mm512_mul_ps(x0,x0));
+                          return (rcs);
+                 }
+                 
+                 
                  
                  
                
