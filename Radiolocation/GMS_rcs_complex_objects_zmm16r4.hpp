@@ -1555,14 +1555,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   float rcs_f8162_zmm16r4_2t_u(const float * __restrict  pdAdl,
-                                                const float * __restrict  pdl,
-                                                float * __restrict  intr,
-                                                float * __restrict  inti,
-                                                struct RCS_F8162_DATA w,
-                                                const float   k0,
-                                                const float   l,
-                                                const int32_t NTAB) {
+                   float rcs_f8162_zmm16r4_avint2t_u(const float * __restrict  pdAdl,
+                                                     const float * __restrict  pdl,
+                                                     float * __restrict  intr,
+                                                     float * __restrict  inti,
+                                                     struct RCS_F8162_DATA w,
+                                                     const float   k0,
+                                                     const float   l,
+                                                     const int32_t NTAB) {
                                              
                         if(__builtin_expect(NTAB==16,0)) {
                             float rcs = 0.0f;
@@ -1637,14 +1637,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   float rcs_f8162_zmm16r4_2t_a(const float * __restrict __ATTR_ALIGN__(64) pdAdl,
-                                                const float * __restrict __ATTR_ALIGN__(64) pdl,
-                                                float * __restrict __ATTR_ALIGN__(64) intr,
-                                                float * __restrict __ATTR_ALIGN__(64) inti,
-                                                struct RCS_F8162_DATA w,
-                                                const float   k0,
-                                                const float   l,
-                                                const int32_t NTAB) {
+                   float rcs_f8162_zmm16r4_avint2t_a(const float * __restrict __ATTR_ALIGN__(64) pdAdl,
+                                                     const float * __restrict __ATTR_ALIGN__(64) pdl,
+                                                     float * __restrict __ATTR_ALIGN__(64) intr,
+                                                     float * __restrict __ATTR_ALIGN__(64) inti,
+                                                     struct RCS_F8162_DATA w,
+                                                     const float   k0,
+                                                     const float   l,
+                                                     const int32_t NTAB) {
                                              
                         if(__builtin_expect(NTAB==16,0)) {
                             float rcs = 0.0f;
@@ -1711,6 +1711,18 @@ namespace  gms {
                       rcs   = frac*std::abs(c);
                       return (rcs);               
                }
+               
+               
+                /*
+                       Adachi expression for axial-incidence
+                       of backscatter RCS for entire scatterer length.
+                       Shall be used in case of thin long axially symetric 
+                       bodies e.g. 'ogives,double-cones, etc.,'
+                       Vectorization of an integrand.
+                       Case of large integrand -- two-threaded execution of integrator.
+                       Integrator 'avint' (irregular abscissas).
+                       Formula 8.1-62
+                */
                
                
                
