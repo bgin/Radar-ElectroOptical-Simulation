@@ -1484,8 +1484,8 @@ namespace  gms {
                                                    float * __restrict __ATTR_ALIGN__(64) inti,
                                                    const float   k0,
                                                    const float   l,
-                                                   int32_t ierr,
-                                                   int32_t ieri,
+                                                   int32_t & ierr,
+                                                   int32_t & ieri,
                                                    const int32_t NTAB) {
                                              
                                                 
@@ -1494,7 +1494,7 @@ namespace  gms {
                         register __m512 vk0,k0l,ear,eai,cer,cei;
                         std::complex<float> c;
                         register float rcs,k02,frac,sumr,sumi; 
-                        int32_t i; 
+                        int32_t i,err,eri; 
                         vk0  = _mm512_set1_ps(k0);
                         ear  = _mm512_setzero_ps();
                         for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
@@ -1521,8 +1521,10 @@ namespace  gms {
                            intr[i]        = c.real()*x;
                            inti[i]        = c.imag()*x;
                       }   
-                      sumr = avint(pdl,intr,NTAB,0.0f,l,ierr); 
-                      sumi = avint(pdl,inti,NTAB,0.0f,l,ieri); 
+                      sumr = avint(pdl,intr,NTAB,0.0f,l,err); 
+                      sumi = avint(pdl,inti,NTAB,0.0f,l,eri); 
+                      ierr = err;
+                      ieri = eri;
                       if(ierr == 3 || ieri == 3) {
                          return std::numerical_limits<float>::quiet_NaN();
                       } 
@@ -1725,7 +1727,72 @@ namespace  gms {
                 */
                 
                 
-                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float rcs_f8162_zmm16r4_avint2t_u(const float * __restrict  pdAdl,
+                                                     const float * __restrict  pdl,
+                                                     float * __restrict  intr,
+                                                     float * __restrict  inti,
+                                                     int32_t ierr,
+                                                     int32_t ieri,
+                                                     const float   k0,
+                                                     const float   l,
+                                                     const int32_t NTAB) {
+                                             
+                                              
+                        constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                        register __m512 vk0,k0l,ear,eai,cer,cei;
+                        std::complex<float> c;
+                        register float rcs,k02,frac,sumr,sumi; 
+                        int32_t i; 
+                        vk0  = _mm512_set1_ps(k0);
+                        ear  = _mm512_setzero_ps();
+                        for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
+                             _mm_prefetch((const char*)&pdAdl[i],_MM_NTA_T0);
+                             _mm_prefetch((const char*)&pdl[i],  _MM_NTA_T0);
+                             register __m512 x = _mm512_loadu_ps(&pdAdl[i]);
+                             register __m512 y = _mm512_loadu_ps(&pdl[i]);
+                             k0l               = _mm512_mul_ps(vk0,y);
+                             eai               = _mm512_add_ps(k0l,k0l);
+                             cexp_zmm16r4(ear,eai,&cer,&cei);
+                             register __m512 t0 = cer;
+                             register __m512 t1 = cei;
+                             _mm512_storeu_ps(&intr[i], _mm512_mul_ps(t0,x));
+                             _mm512_storeu_ps(&inti[i], _mm512_mul_ps(t1,x));
+                       } 
+                       sumr = 0.0f;
+                       sumi = 0.0f;
+                       for(; i != NTAB; ++i) {
+                           const float x  = pdAdl[i];
+                           const float y  = pdl[i];
+                           const float k0l= k0*y;
+                           const float eai= k0l+k0l;
+                           const std::complex<float> c = std::exp({0.0f,eai});
+                           intr[i]        = c.real()*x;
+                           inti[i]        = c.imag()*x;
+                      }   
+   #pragma omp parallel sctions
+                {
+                     #pragma omp section
+                       {
+                            sumr = avint(pdl,intr,0.0f,l,px1,px2,px3,px4,px5,sumr); 
+                       }
+                     #pragma omp section
+                       {
+                             cspint(NTAB,pdl,inti,0.0f,l,py1,py2,py3,py4,py5,sumi); 
+                       }
+                } 
+                      c = {sumr,sumi};
+                      k02   = k0*k0;   
+                      frac  = k02/C314159265358979323846264338328;
+                      rcs   = frac*std::abs(c);
+                      return (rcs);               
+               }
+               
                
                
                
