@@ -1555,7 +1555,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   float rcs_f8162_zmm16r4_avint2t_u(const float * __restrict  pdAdl,
+                   float rcs_f8162_zmm16r4_cspint2t_u(const float * __restrict  pdAdl,
                                                      const float * __restrict  pdl,
                                                      float * __restrict  intr,
                                                      float * __restrict  inti,
@@ -1637,7 +1637,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   float rcs_f8162_zmm16r4_avint2t_a(const float * __restrict __ATTR_ALIGN__(64) pdAdl,
+                   float rcs_f8162_zmm16r4_cspint2t_a(const float * __restrict __ATTR_ALIGN__(64) pdAdl,
                                                      const float * __restrict __ATTR_ALIGN__(64) pdl,
                                                      float * __restrict __ATTR_ALIGN__(64) intr,
                                                      float * __restrict __ATTR_ALIGN__(64) inti,
@@ -1723,6 +1723,9 @@ namespace  gms {
                        Integrator 'avint' (irregular abscissas).
                        Formula 8.1-62
                 */
+                
+                
+                
                
                
                
