@@ -2175,8 +2175,102 @@ namespace  gms {
                      High frequency approximations.
                      Backscatter RCS of conical frustum
                      for 0<|theta|<alpha
+                     Perpendicular RCS.
                      Formula 8.1-94
                  */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcsper_f8194_zmm16r4(const __m512 h,
+	                                        const __m512 l,
+	                                        const __m512 b,
+	                                        const __m512 a,
+	                                        const __m512 k0,
+	                                        const __m512 tht,
+	                                        const __m512 alp) {
+	                                 
+	                                  
+	                 const __m512 C314159265358979323846264338328  = 
+                                                     _mm512_set1_ps(3.14159265358979323846264338328f); 
+                         const __m512 C1772453850905516027298167483341 = 
+                                                     _mm512_set1_ps(1.772453850905516027298167483341f);
+                         const __m512 C078539816339744830961566084582  = 
+                                                     _mm512_set1_ps(0.78539816339744830961566084582f);
+                         const __m512 C10                              = 
+                                                     _mm512_set1_ps(1.0f);  
+                         const __m512 C15                              = 
+                                                     _mm512_set1_ps(1.5f); 
+                         const __m512 C05                              = 
+                                                     _mm512_set1_ps(0.5f);
+                         const __m512 C20                              =
+                                                     _mm512_set1_ps(2.0f);
+                         register __m512 pin,n,invn,spin,cos1,k02,cos2,sint,cost;
+                         register __m512 ear,eai1,eai2,eai3,cer1,cei1,sk02,sacs;
+                         register __m512 cer2,cei2,cer3,cei3,x0,x1,x2,x3,atant;
+                         register __m512 cpin1,cpin2,trm1,trm2,rcs;
+                         __m512 t0r,t0i,t1r,t1i,a2;
+                         hlb  = _mm512_sub_ps(h,_mm512_add_ps(l,b));
+                         sint = xsinf(tht);
+                         k02  = _mm512_add_ps(k0,k0);
+                         n    = _mm512_mul_ps(C15,_mm512_div_ps(alp,  
+                                                           C314159265358979323846264338328));   
+                         csct = _mm512_rcp14_ps(sint);
+                         a2   = _mm512_mul_ps(a,C05);
+                         ear  = _mm512_setzero_ps();
+                         sk02 = _mm512_sqrt_ps(_mm512_mul_ps(k0,C05));
+                         x0   = _mm512_mul_ps(hlb,_mm512_sub_ps(cost,b));
+                         invn = _mm512_rcp14_ps(n);
+                         //x2   = _mm512_mul_ps(a,C05);
+                         eai  = _mm512_mul_ps(k02,x0);
+                         tant = xtanf(tht);
+                         pin  = _mm512_mul_ps(C314159265358979323846264338328,invn);
+                         sacs = _mm512_sqrt_ps(_mm512_mul_ps(a2,csct));
+                         atant= _mm512_mul_ps(a,tant);
+                         cost = xcosf(tht);
+                         x0   = _mm512_mul_ps(b,C1772453850905516027298167483341);
+                         cexp_zmm16r4(ear,eai,&cer1,&cei1);
+                         cer1 = _mm512_mul_ps(x0,cer1);
+                         spin = xsinf(pin);
+                         cei1 = _mm512_mul_ps(x0,cei1);
+                         cpin = xcosf(pin);
+                         x1   = _mm512_mul_ps(_mm512_sub_ps(h,atant),cost);
+                         eai2 = _mm512_fmadd_ps(k02,x1,C078539816339744830961566084582);
+                         cexp_zmm16r4(ear,eai2,&cer2,&cei);
+                         x0   = _mm512_div_ps(spin,_mm512_mul_ps(n,sk02));
+                         x1   = _mm512_mul_ps(x0,sacs);
+                         cer2 = _mm512_mul_ps(cer2,x1);
+                         cei2 = _mm512_mul_ps(cei2,x1);
+                         cpin1= _mm512_rcp14_ps(_mm512_sub_ps(cpin,C10));
+                         x2   = _mm512_mul_ps(C20,_mm512_add_ps(alp,tht));
+                         cpin2= xcosf(_mm512_mul_ps(x2,invn));
+                         x3   = _mm512_rcp14_ps(_mm512_sub_ps(cpin,cpin2));
+                         trm1 = _mm512_sub_ps(cpin1,x3);
+                         cmul_zmm16r4(cer1,cei1,cer2,cei2,&t0r,&t0i);
+                         t0r  = _mm512_mul_ps(t0r,trm1);
+                         t0i  = _mm512_mul_ps(t0i,trm1);
+                         x0   = _mm512_mul_ps(C20,_mm512_sub_ps(alp,tht));
+                         cpin2= xcosf(_mm512_mul_ps(x0,invn));
+                         x1   = _mm512_rcp14_ps(cpin2);
+                         trm2 = _mm512_sub_ps(cpin1,x1);
+                         x2   = _mm512_fmadd_ps(cost,_mm512_mul_ps(k02,
+                                                               _mm512_add_ps(h,atant)));
+                         eai3 = _mm512_add_ps(C078539816339744830961566084582,x2);
+                         cexp_zmm16r4(ear,ea3,&cer3,&cei3);
+                         x0   = _mm512_div_ps(spin,_mm512_mul_ps(n,sk02));
+                         x1   = _mm512_sqrt_ps(_mm512_mul_ps(gms::math::
+                                                                  negate_zmm16r4(a2),csct));
+                         x2   = _mm512_mul_ps(x0,x1);
+                         cer3 = _mm512_mul_ps(_mm512_mul_ps(cer3,x2),trm2);
+                         cei3 = _mm512_mul_ps(_mm512_mul_ps(cei3,x2),trm2);
+                         cmul_zmm16r4(t0r,t0i,cer3,cei3,&t1r,&t1i);
+                         rcs  = cabs_zmm16r4(t1r,t1i);
+                         return (rcs);
+	        }
+	                                  
                  
                  
                  
