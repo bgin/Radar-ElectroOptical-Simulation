@@ -2580,9 +2580,80 @@ namespace  gms {
 	             Model 9B4 (Peake's Model)
 	             Model resembling many natural grass-like structures like
 	             forests,grass,wheat fields, etc.
-	             Bistatic RCS per unit surface area.
-	             Formula 9.1-33
+	             Helper formula coefficient B(gamma).
+	             Formula 9.1-37
 	        */
+	        
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 coef_Bg_f9137_zmm16r4(const __m512 A,
+	                                        const __m512 N,
+	                                        const __m512 k0,
+	                                        const __m512 epsr,
+	                                        const __m512 epsi,
+	                                        const __m512 thti,
+	                                        const __m512 thts,
+	                                        const __m512 phis
+	                                        const int pol) {
+	                                        
+	                  const __m512 C06          = _mm512_set1_ps(0.6f);
+	                  const __m512 C01875       = _mm512_set1_ps(0.1875f); // 3/16
+	                  const __m512 C87964594300514210676954014731826 = 
+	                                            = _mm512_set1_ps(87.964594300514210676954014731826f);
+	                  const __m512 C20          = _mm512_set1_ps(2.0f);
+	                  const __m512 C10          = _mm512_set1_ps(1.0f);
+	                  const __m512 C30          = _mm512_set1_ps(3.0f);
+	                  register __m512 Bg,t,t2,cthti,cthts,sthti,sthts,cphis;
+	                  register __m512 AN,Ak0,num,den,alp,x0,x1,x2,x3,x4,secti;
+	                  AN    = _mm512_mul_ps(A,N);
+	                  t     = _mm512_div_ps(C20,_mm512_add_ps(C10,epsr));
+	                  x1    = _mm512_sub_ps(epsr,C10);
+	                  cthti = xcosf(thti);
+	                  x2    = _mm512_fmadd_ps(epsi,epsi,
+	                                               _mm512_mul_ps(x1,x1));
+	                  t2    = _mm512_mul_ps(t,t);
+	                  secti = _mm512_rcp14_ps(cthti);
+	                  sthti = xsinf(thti);
+	                  x0    = _mm512_fmadd_ps(t2,C30,C10);
+	                  cthts = xcosf(thts);
+	                  Ak0   = _mm512_mul_ps(A,k0);
+	                  x1    = _mm512_mul_ps(AN,_mm512_mul_ps(Ak0,AK0));
+	                  num   = _mm512_mul_ps(x1,x2);
+	                  if(pol == 0) {
+	                     x1 = _mm512_mul_ps(_mm512_mul_ps(C01875,AN),
+	                                                  _mm512_mul_ps(epsi,secti));
+	                     x2 = _mm512_mul_ps(x1,x0);
+	                     alp= _mm512_mul_ps(k0,x2);
+	                  }
+	                  else if(pol == 1) {
+	                     x1 = mm512_mul_ps(_mm512_mul_ps(C01875,AN),
+	                                                  _mm512_mul_ps(epsi,secti));
+	                     x2 = _mm512_mul_ps(sthti,sthti);
+	                     x3 = _mm512_sub_ps(c10,t2);
+	                     alp= _mm512_fmadd_ps(x1,x0,_mm512_mul_ps(x2,x3));
+	                     alp= _mm512_mul_ps(k0,alp);
+	                  }
+	                  x0 = _mm512_div_ps(alp,k0);
+	                  x2 = _mm512_add_ps(cthti,cthts);
+	                  x1 = _mm512_fmadd_ps(C06,_mm512_mul_ps(x0,x0),
+	                                                     _mm512_mul_ps(C30,
+	                                                                   _mm512_mul_ps(x2,x2)));
+	                  x3 = _mm512_fmadd_ps(sthti,sthti,_mm512_mul_ps(sthts,sthts));
+	                  x4 = _mm512_mul_ps(C20,_mm512_mul_ps(sthti,sthts));
+	                  x0 = _mm512_mul_ps(x4,cthts);
+	                  den= _mm512_mul_ps(C87964594300514210676954014731826,
+	                                                             _mm512_add_ps(x1,x0));
+	                  
+	                  Bg = _mm512_div_ps(num,den);
+	                  return (Bg);
+	       }
+	                                        
+	        
                  
                  
                  
