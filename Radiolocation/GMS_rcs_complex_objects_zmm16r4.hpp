@@ -2171,6 +2171,14 @@ namespace  gms {
                  }
                  
                  
+                 /*
+                     High frequency approximations.
+                     Backscatter RCS of conical frustum
+                     for 0<|theta|<alpha
+                     Formula 8.1-94
+                 */
+                 
+                 
                  
                  
                
