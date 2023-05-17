@@ -2746,14 +2746,14 @@ namespace  gms {
 	                                          const float * __restrict  pphis
 	                                          const int pol) {
 	                         
-	                  register __m512 A   = _mm512_load_ps(&pA[0]);
-	                  register __m512 N   = _mm512_load_ps(&pN[0]); 
-	                  register __m512 k0  = _mm512_load_ps(&pk0[0]);
-	                  register __m512 epsr= _mm512_load_ps(&pepsr[0]);
-	                  register __m512 epsi= _mm512_load_ps(&pepsi[0]);
-	                  register __m512 thti= _mm512_load_ps(&pthti[0]);
-	                  register __m512 thts= _mm512_load_ps(&pthts[0]);
-	                  register __m512 phis= _mm512_load_ps(&pphis[0]);              
+	                  register __m512 A   = _mm512_loadu_ps(&pA[0]);
+	                  register __m512 N   = _mm512_loadu_ps(&pN[0]); 
+	                  register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+	                  register __m512 epsr= _mm512_loadu_ps(&pepsr[0]);
+	                  register __m512 epsi= _mm512_loadu_ps(&pepsi[0]);
+	                  register __m512 thti= _mm512_loadu_ps(&pthti[0]);
+	                  register __m512 thts= _mm512_loadu_ps(&pthts[0]);
+	                  register __m512 phis= _mm512_loadu_ps(&pphis[0]);              
 	                  const __m512 C06          = _mm512_set1_ps(0.6f);
 	                  const __m512 C01875       = _mm512_set1_ps(0.1875f); // 3/16
 	                  const __m512 C87964594300514210676954014731826 = 
@@ -2805,6 +2805,16 @@ namespace  gms {
 	                  Bg = _mm512_div_ps(num,den);
 	                  return (Bg);
 	       }
+	       
+	       
+	       /*
+	             Model 9B4 (Peake's Model)
+	             Model resembling many natural grass-like structures like
+	             forests,grass,wheat fields, etc.
+	             Bistatic RCS (hh) polarized per unit surface area.
+	             Formula 9.1-33
+	       
+	       */
 	       
 	       
 	       
