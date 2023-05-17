@@ -3239,6 +3239,63 @@ namespace  gms {
 	         }
 	         
 	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512  rcs_hv_f9135_zmm16r4_u(const float * __restrict pA,
+	                                          const float * __restrict  pN,
+	                                          const float * __restrict  pk0,
+	                                          const float * __restrict  pepsr,
+	                                          const float * __restrict  pepsi,
+	                                          const float * __restrict  pthti,
+	                                          const float * __restrict  pthts,
+	                                          const float * __restrict  pphis
+	                                          const int pol) {
+	                         
+	                    register __m512 A   = _mm512_loadu_ps(&pA[0]);
+	                    register __m512 N   = _mm512_loadu_ps(&pN[0]); 
+	                    register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+	                    register __m512 epsr= _mm512_loadu_ps(&pepsr[0]);
+	                    register __m512 epsi= _mm512_loadu_ps(&pepsi[0]);
+	                    register __m512 thti= _mm512_loadu_ps(&pthti[0]);
+	                    register __m512 thts= _mm512_loadu_ps(&pthts[0]);
+	                    register __m512 phis= _mm512_loadu_ps(&pphis[0]); 
+	                     
+	                    const __m512 C10 = _mm512_set1_ps(1.0f);                             
+	                    const __m512 C100= _mm512_set1_ps(10.0f);
+	                    const __m512 C20 = _mm512_set1_ps(2.0f);   
+	                    const __m512 C230= _mm512_set1_ps(23.0f); 
+	                    register __m512 rcs,trm1,trm2,trm3,trm4;
+	                    register __m512 Bg,sthts,cthts,sphis,x0,x1,t,t2;
+	                    t     = _mm512_div_ps(C20,_mm512_add_ps(C10,epsr));
+	                    x0    = xsinf(phis);
+	                    Bg    = coef_Bg_f9137_zmm16r4(A,N,k0,epsr,epsi,thti,thts,phis,pol);
+	                    t2    = _mm512_mul_ps(t,t);  
+	                    x1    = xcosf(thti);
+	                    sphis = _mm512_mul_ps(x0,x0); 
+	                    cthts = _mm512_mul_ps(x1,x1);
+	                    x0    = xsinf(thti);
+	                    sthts = _mm512_mul_ps(x0,x0);
+	                    x1  = _mm512_fmadd_ps(sthts,C20,C10);  
+	                    trm1= _mm512_fmadd_ps(sthts,_mm512_mul_ps(C20,cthts),x1);
+	                    x0  = _mm512_sub_ps(gms::math::negate_zmm16r4(C20),
+	                                                          _mm512_mul_ps(C40,sthts));
+	                    trm2= _mm512_mul_ps(t,
+	                                     _mm512_fmadd_ps(sphis,
+	                                                    _mm512_mul_ps(C100,cthts),x0));
+	                    x1  = _mm512_fmadd_ps(sthts,C20,C10);
+	                    trm3= _mm512_mul_ps(t2,
+	                                      _mm512_fmadd_ps(sphis,
+	                                                     _mm512_mul_ps(cthts,C230),x1));
+	                    trm4= _mm512_add_ps(trm1,_mm512_add_ps(trm2,trm3));
+	                    rcs = _mm512_mul_ps(Bg,trm4);
+	                    return (rcs);                
+	         }
+	         
+	         
+	         
 	       
 	       
 	       
