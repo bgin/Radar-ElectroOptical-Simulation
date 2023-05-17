@@ -2817,6 +2817,45 @@ namespace  gms {
 	       */
 	       
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_hh_f9133_zmm16r4( const __m512 A,
+	                                        const __m512 N,
+	                                        const __m512 k0,
+	                                        const __m512 epsr,
+	                                        const __m512 epsi,
+	                                        const __m512 thti,
+	                                        const __m512 thts,
+	                                        const __m512 phis
+	                                        const int pol) {
+	                    
+	                  const __m512 C10 = _mm512_set1_ps(1.0f);                    
+	                  const __m512 C30 = _mm512_set1_ps(3.0f);
+	                  const __m512 C20 = _mm512_set1_ps(2.0f);
+	                  const __m512 C80 = _mm512_set1_ps(8.0f);
+	                  const __m512 C100= _mm512_set1_ps(10.0f);
+	                  const __m512 C240= _mm512_set1_ps(24.0f);
+	                  const __m512 C230= _mm512_set1_ps(23.0f);
+	                  register rcs,Bg,sphis,x0,t,t2,trm1,trm2,trm3;
+	                  t     = _mm512_div_ps(C20,_mm512_add_ps(C10,epsr));
+	                  x0    = xsinf(phis);
+	                  Bg    = coef_Bg_f9137_zmm16r4(A,N,k0,epsr,epsi,thti,thts,phis,pol);
+	                  t2    = _mm512_mul_ps(t,t);
+	                  sphis = _mm512_mul_ps(x0,x0); 
+	                  trm1  = _mm512_sub_ps(C30,_mm512_mul_ps(C20,sphis));
+	                  trm2  = _mm512_mul_ps(t,_mm512_sub_ps(C80,
+	                                                      _mm512_mul_ps(C100,sphis)));
+	                  trm3  = _mm512_mul_ps(t2,_mm512_sub_ps(C240,
+	                                                      _mm512_mul_ps(C230,sphis)));
+	                  x0    = _mm512_add_ps(trm1,_mm512_add_ps(trm2,trm3));
+	                  rcs   = _mm512_mul_ps(Bg,x0);
+	                  return (rcs);                             
+	       }
+	       
+	       
 	       
 	       
 	                                    
