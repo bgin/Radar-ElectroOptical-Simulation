@@ -3125,6 +3125,16 @@ namespace  gms {
 	         }
 	         
 	         
+	           /*
+	             Model 9B4 (Peake's Model)
+	             Model resembling many natural grass-like structures like
+	             forests,grass,wheat fields, etc.
+	             Bistatic RCS (hv) polarized per unit surface area.
+	             Formula 9.1-35
+	       
+	       */
+	         
+	         
 	       
 	       
 	       
