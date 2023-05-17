@@ -2598,7 +2598,7 @@ namespace  gms {
 	                                        const __m512 epsi,
 	                                        const __m512 thti,
 	                                        const __m512 thts,
-	                                        const __m512 phis
+	                                        const __m512 phis,
 	                                        const int pol) {
 	                                        
 	                  const __m512 C06          = _mm512_set1_ps(0.6f);
@@ -2667,7 +2667,7 @@ namespace  gms {
 	                                          const float * __restrict __ATTR_ALIGN__(64) pepsi,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthti,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthts,
-	                                          const float * __restrict __ATTR_ALIGN__(64) pphis
+	                                          const float * __restrict __ATTR_ALIGN__(64) pphis,
 	                                          const int pol) {
 	                         
 	                  register __m512 A   = _mm512_load_ps(&pA[0]);
@@ -2743,7 +2743,7 @@ namespace  gms {
 	                                          const float * __restrict  pepsi,
 	                                          const float * __restrict  pthti,
 	                                          const float * __restrict  pthts,
-	                                          const float * __restrict  pphis
+	                                          const float * __restrict  pphis,
 	                                          const int pol) {
 	                         
 	                  register __m512 A   = _mm512_loadu_ps(&pA[0]);
@@ -2829,7 +2829,7 @@ namespace  gms {
 	                                        const __m512 epsi,
 	                                        const __m512 thti,
 	                                        const __m512 thts,
-	                                        const __m512 phis
+	                                        const __m512 phis,
 	                                        const int pol) {
 	                    
 	                  const __m512 C10 = _mm512_set1_ps(1.0f);                    
@@ -2869,7 +2869,7 @@ namespace  gms {
 	                                          const float * __restrict __ATTR_ALIGN__(64) pepsi,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthti,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthts,
-	                                          const float * __restrict __ATTR_ALIGN__(64) pphis
+	                                          const float * __restrict __ATTR_ALIGN__(64) pphis,
 	                                          const int pol) {
 	                         
 	                  register __m512 A   = _mm512_load_ps(&pA[0]);
@@ -2918,7 +2918,7 @@ namespace  gms {
 	                                          const float * __restrict pepsi,
 	                                          const float * __restrict pthti,
 	                                          const float * __restrict pthts,
-	                                          const float * __restrict pphis
+	                                          const float * __restrict pphis,
 	                                          const int pol) {
 	                         
 	                  register __m512 A   = _mm512_loadu_ps(&pA[0]);
@@ -2977,7 +2977,7 @@ namespace  gms {
 	                                        const __m512 epsi,
 	                                        const __m512 thti,
 	                                        const __m512 thts,
-	                                        const __m512 phis
+	                                        const __m512 phis,
 	                                        const int pol) {
 	                     
 	                    const __m512 C10 = _mm512_set1_ps(1.0f);                             
@@ -3025,7 +3025,7 @@ namespace  gms {
 	                                          const float * __restrict __ATTR_ALIGN__(64) pepsi,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthti,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthts,
-	                                          const float * __restrict __ATTR_ALIGN__(64) pphis
+	                                          const float * __restrict __ATTR_ALIGN__(64) pphis,
 	                                          const int pol) {
 	                         
 	                    register __m512 A   = _mm512_load_ps(&pA[0]);
@@ -3081,7 +3081,7 @@ namespace  gms {
 	                                          const float * __restrict  pepsi,
 	                                          const float * __restrict  pthti,
 	                                          const float * __restrict  pthts,
-	                                          const float * __restrict  pphis
+	                                          const float * __restrict  pphis,
 	                                          const int pol) {
 	                         
 	                    register __m512 A   = _mm512_loadu_ps(&pA[0]);
@@ -3147,7 +3147,7 @@ namespace  gms {
 	                                        const __m512 epsi,
 	                                        const __m512 thti,
 	                                        const __m512 thts,
-	                                        const __m512 phis
+	                                        const __m512 phis,
 	                                        const int pol) {
 	                     
 	                    const __m512 C10 = _mm512_set1_ps(1.0f);                             
@@ -3195,7 +3195,7 @@ namespace  gms {
 	                                          const float * __restrict __ATTR_ALIGN__(64) pepsi,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthti,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthts,
-	                                          const float * __restrict __ATTR_ALIGN__(64) pphis
+	                                          const float * __restrict __ATTR_ALIGN__(64) pphis,
 	                                          const int pol) {
 	                         
 	                    register __m512 A   = _mm512_load_ps(&pA[0]);
@@ -3251,7 +3251,7 @@ namespace  gms {
 	                                          const float * __restrict  pepsi,
 	                                          const float * __restrict  pthti,
 	                                          const float * __restrict  pthts,
-	                                          const float * __restrict  pphis
+	                                          const float * __restrict  pphis,
 	                                          const int pol) {
 	                         
 	                    register __m512 A   = _mm512_loadu_ps(&pA[0]);
@@ -3317,7 +3317,7 @@ namespace  gms {
 	                                        const __m512 epsi,
 	                                        const __m512 thti,
 	                                        const __m512 thts,
-	                                        const __m512 phis
+	                                        const __m512 phis,
 	                                        const int pol) {
 	                                        
 	                const __m512 C10 = _mm512_set1_ps(1.0f);     
@@ -3373,7 +3373,7 @@ namespace  gms {
 	                                          const float * __restrict __ATTR_ALIGN__(64) pepsi,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthti,
 	                                          const float * __restrict __ATTR_ALIGN__(64) pthts,
-	                                          const float * __restrict __ATTR_ALIGN__(64) pphis
+	                                          const float * __restrict __ATTR_ALIGN__(64) pphis,
 	                                          const int pol ) {
 	                                      
 	                register __m512 A   = _mm512_load_ps(&pA[0]);
@@ -3422,7 +3422,71 @@ namespace  gms {
 	                rcs    = _mm512_mul_ps(Bg,x2);
 	                return (rcs);
 	         }
-	                  
+	         
+	         
+	         
+	              __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_vv_f9136_zmm16r4_u( const float * __restrict  pA,
+	                                          const float * __restrict  pN,
+	                                          const float * __restrict  pk0,
+	                                          const float * __restrict  pepsr,
+	                                          const float * __restrict  pepsi,
+	                                          const float * __restrict  pthti,
+	                                          const float * __restrict  pthts,
+	                                          const float * __restrict  pphis,
+	                                          const int pol ) {
+	                                      
+	                register __m512 A   = _mm512_loadu_ps(&pA[0]);
+	                register __m512 N   = _mm512_loadu_ps(&pN[0]); 
+	                register __m512 k0  = _mm512_loadu_ps(&pk0[0]);
+	                register __m512 epsr= _mm512_loadu_ps(&pepsr[0]);
+	                register __m512 epsi= _mm512_loadu_ps(&pepsi[0]);
+	                register __m512 thti= _mm512_loadu_ps(&pthti[0]);
+	                register __m512 thts= _mm512_loadu_ps(&pthts[0]);
+	                register __m512 phis= _mm512_loadu_ps(&pphis[0]);   
+	                const __m512 C10 = _mm512_set1_ps(1.0f);     
+	                const __m512 C20 = _mm512_set1_ps(2.0f);   
+	                const __m512 C30 = _mm512_set1_ps(3.0f);
+	                const __m512 C120= _mm512_set1_ps(12.0f);
+	                const __m512 C140= _mm512_set1_ps(14.0f);
+	                const __m512 C350= _mm512_set1_ps(35.0f);
+	                register __m512 t,t2,x0,x1,x2,x3,cthti,cthts;
+	                register __m512 sphis,cphis,sthts,cthts;
+	                register __m512 trm1,trm2,trm3,trm4;
+	                register __m512 rcs,Bg,cterm,sterm,sctrm;
+	                x0     = _mm512_div_ps(C20,_mm512_add_ps(C10,epsr));   
+	                t      = _mm512_sub_ps(C10,x0);
+	                t2     = _mm512_sub_ps(C10,_mm512_mul_ps(x0,x0));
+	                Bg     = coef_Bg_f9137_zmm16r4(A,N,k0,epsr,epsi,thti,thts,phis,pol); 
+	                sphis  = xsinf(phis);
+	                cphis  = xcosf(phis);
+	                cthti  = xcosf(thti);
+	                sthti  = xsinf(thti);
+	                cthts  = xcosf(thts);
+	                cterm  = _mm512_mul_ps(cthti,_mm512_mul_ps(cthts,cphis));
+	                sthts  = xsinf(thts);
+	                sterm  = _mm512_mul_ps(sthti,sthts);
+	                sctrm  = _mm512_sub_ps(sterm,cterm);
+	                x0     = _mm512_mul_ps(sphis,sphis);
+	                x1     = _mm512_mul_ps(cthts,cthts);
+	                x2     = _mm512_mul_ps(C30,_mm512_mul_ps(cthti,cthti));
+	                x3     = _mm512_sub_ps(C30,_mm512_mul_ps(x0,
+	                                                    _mm512_mul_ps(x1,x2)));
+	                trm1   = _mm512_fmadd_ps(t2,x3,sctrm);
+	                trm2   = _mm512_mul_ps(C120,_mm512_mul_ps(t2,sterm));
+	                x0     = _mm512_fmsub_ps(C30,sterm,cterm);
+	                trm3   = _mm512_mul_ps(C140,_mm512_mul_ps(t,x0));
+	                trm4   = _mm512_mul_ps(_mm512_mul_ps(C350,t2),sctrm);
+	                x1     = _mm512_mul_ps(trm1,trm2);
+	                x2     = _mm512_add_ps(x1,_mm512_add_ps(trm3,trm4));
+	                rcs    = _mm512_mul_ps(Bg,x2);
+	                return (rcs);
+	         }
+	                
 	         
 	         
 	         
