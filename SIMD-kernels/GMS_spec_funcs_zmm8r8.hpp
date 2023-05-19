@@ -92,7 +92,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 besei0_zmm8r8(const __m512d x) {
+	           __m512d besei0_zmm8r8(const __m512d x) {
 	           
 	                  __m512d result;
 	                  int32_t jint;
@@ -107,9 +107,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 besei0_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) px) {
+	           __m512d besei0_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) px) {
 	           
 	                  register __m512d x = _mm512_load_pd(&px[0]);
+	                  register __m512d result;
+	                  int32_t jint;
+	                  jint = 2;
+	                  result = calci0_zmm8r8(x,jint);
+	                  return (result); 
+	         }  
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besei0_zmm8r8_u(const double * __restrict  px) {
+	           
+	                  register __m512d x = _mm512_loadu_pd(&px[0]);
 	                  register __m512d result;
 	                  int32_t jint;
 	                  jint = 2;
