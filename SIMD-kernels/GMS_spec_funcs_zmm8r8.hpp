@@ -197,6 +197,70 @@ namespace gms {
 	         }  
 	         
 	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besei1_zmm8r8_u(const double * __restrict  px) {
+	           
+	                  register __m512d x = _mm512_loadu_pd(&px[0]);
+	                  register __m512d result;
+	                  int32_t jint;
+	                  jint = 2;
+	                  result = calci1_zmm8r8(x,jint);
+	                  return (result); 
+	         }  
+	         
+	     
+/*
+   !*****************************************************************************80
+!
+!! BESEK0 evaluates the exponentially scaled Bessel K0(X) function.
+!
+!  Discussion:
+!
+!    This routine computes approximate values for the
+!    modified Bessel function of the second kind of order zero
+!    multiplied by the exponential function.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody, Laura Stoltz.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the function.
+!    0 < X.
+!
+!    Output, real ( kind = 8 ) BESK0, the value of the function.
+*/
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besek0_zmm8r8(const __m512d x) {
+	           
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 2;
+	                   result = calck0_zmm8r8(x,jint);
+	                   return (result);
+	          }
+	         
+	         
 	         
         
        } // math
