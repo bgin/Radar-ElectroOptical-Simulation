@@ -92,7 +92,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 besei0_zmm8r8(const __m512 x) {
+	           __m512 besei0_zmm8r8(const __m512d x) {
 	           
 	                  __m512d result;
 	                  int32_t jint;
@@ -100,7 +100,69 @@ namespace gms {
 	                  result = calci0_zmm8r8(x,jint);
 	                  return (result); 
 	         }  
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 besei0_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) px) {
+	           
+	                  register __m512d x = _mm512_load_pd(&px[0]);
+	                  register __m512d result;
+	                  int32_t jint;
+	                  jint = 2;
+	                  result = calci0_zmm8r8(x,jint);
+	                  return (result); 
+	         }  
+	         
+	         
+/*
+!*****************************************************************************80
+!
+!! BESEI1 evaluates the exponentially scaled Bessel I1(X) function.
+!
+!  Discussion:
+!
+!    This routine computes approximate values for the
+!    modified Bessel function of the first kind of order one
+!    multiplied by EXP(-ABS(X)).
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the function.
+!
+!    Output, real ( kind = 8 ) BESEI1, the value of the function.
+*/	         
 
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 besei1_zmm8r8(const __m512 x) {
+	           
+	                  __m512d result;
+	                  int32_t jint;
+	                  jint = 2;
+	                  result = calci1_zmm8r8(x,jint);
+	                  return (result); 
+	         }  
         
        } // math
 
