@@ -205,12 +205,12 @@ namespace gms {
                    __ATTR_VECTORCALL__
 	           static inline
 	           int32_t zairy_zmm8r8(const __m512 zr,
-	                             const __m512 zi,
-	                             const int32_t id,
-	                             const int32_t kode,
-	                             __m512  * __restrict air,
-	                             __m512  * __restrict aii,
-	                             int32_t * __restrict nz) {
+	                                const __m512 zi,
+	                                const int32_t id,
+	                                const int32_t kode,
+	                                __m512  * __restrict air,
+	                                __m512  * __restrict aii,
+	                                int32_t * __restrict nz) {
 	                             
 	               const __m512d R1M5 = _mm512_set1_ps(std::log10(
 	                                                        std::numerical_limits<double>::radix));
@@ -218,8 +218,8 @@ namespace gms {
 	                                   _mm512_set1_ps(0.666666666666666666666666666667); //2/3
 	               const __m512d C035502805388781724              =            
 	                                   _mm512_set1_ps(0.35502805388781724); //  const double c1 = .35502805388781724;
-	               const __m512d C02588194037   	             =
-	                                   _mm512_set1_ps(0.2588194037); //  const double c2 = .258819403792806799;
+	               const __m512d C0258819403792806799   	             =
+	                                   _mm512_set1_ps(0.258819403792806799); //  const double c2 = .258819403792806799;
 	               const __m512d C0183776298473930683             = 
 	                                   _mm512_set1_ps(0.183776298473930683); // const double coef = .183776298473930683;
 	               const __m512d C00                              =
@@ -484,6 +484,139 @@ namespace gms {
                            /* ----------------------------------------------------------------------- */
                            /*     OVERFLOW TEST */
                            /* ----------------------------------------------------------------------- */ 
+                           if(_mm512_cmp_pd_mask(aa,
+                                                  negate_zmm8r8(alim),_CMP_GT_OQ)) {
+                               goto L100;                      
+                           }
+                           aa    = _mm512_fmadd_pd(C025,alaz,negate_zmm8r8(aa));
+                           iflag = -1;
+                           sfac  = tol;
+                           if(_mm512_cmp_pd_mask(aa,elim,_CMP_GT_OQ)) {
+                              goto L270;
+                           }
+                      L100:  
+                           /* ----------------------------------------------------------------------- */
+                             /*     CBKNU AND CACON RETURN EXP(ZTA)*K(FNU,ZTA) ON KODE=2 */
+                           /* ----------------------------------------------------------------------- */
+                           mr = 1;
+                           if(_mm512_cmp_pd_mask(zi,C00,_CMP_LT_OQ)) {
+                               mr = -1;
+                           }
+                           zacai_zmm8r8(ztar,ztai,fnu,kode,mr,1,cyr,cyi,&nn,r1,tol,elim,alim);
+                           if(nn < 0) {
+                              goto L280;
+                           }
+                           *nz += nn;
+                           goto L130;
+                      L110:
+                           if(kode == 2) {
+                              goto L120;
+                           }
+                            /* ----------------------------------------------------------------------- */
+                            /*     UNDERFLOW TEST */
+                            /* ----------------------------------------------------------------------- */
+                           if(_mm512_cmp_pd_mask(aa,alim,_CMP_LT_OQ)) {
+                               goto L120;
+                           }
+                           aa = _mm512_sub_pd(negate_zmm8r8(aa),
+                                                       _mm512_mul_pd(alaz,C025));
+                           iflag = 2;
+                           sfac  = _mm512_div_pd(C10,tol);
+                           if(_mm512_cmp_pd_mask(aa,
+                                           negate_zmm8r8(elim),_CMP_LT_OQ)) {
+                               goto L210;               
+                           }
+                     L120:
+                           zbknu_zmm8r8(ztar,ztai,fnu,kode,1,cyr,cyi,nz,tol,elim,alim);
+                     L130:
+                           s1r = _mm512_mul_pd(cyr[0],C0183776298473930683);
+                           s1i = _mm512_mul_pd(cyi[0],C0183776298473930683);
+                           if(iflag!=0) {
+                              goto L150;
+                           }     
+                           if(id == 1) {
+                              goto L140;
+                           }
+                           *air = _mm512_fmsub_pd(csqr,s1r,_mm512_mul_pd(csqi,s1i));
+                           *aii = _mm512_fmadd_pd(csqr,s1i,_mm512_mul_pd(csqi,s1r));
+                           return ierr;
+                     L140:
+                           *air = negate_zmm8r8(_mm512_fmsub_pd(zr,s1r,
+                                                             _mm512_mul_pd(csqi,s1i)));
+                           *aii = negate_zmm8r8(_mm512_fmadd_pd(zr,s1i,
+                                                             _mm512_mul_pd(zi,s1r)));
+                           return ierr;
+                     L150:
+                           s1r  = _mm512_mul_pd(s1r,sfac);
+                           s1i  = _mm512_mul_pd(s1i,sfac);
+                           if(id == 1) {
+                              goto L160;
+                           }
+                           str  = _mm512_fmsub_pd(s1r,csqr,_mm512_mul_pd(s1i,csqi));
+                           s1i  = _mm512_fmadd_pd(s1r,csqi,_mm512_mul_pd(s1i,csqr));
+                           s1r  = str;
+                           *air = _mm512_div_pd(s1r,sfac);
+                           *aii = _mm512_div_pd(s1i,sfac);
+                           return ierr;
+                     L160:
+                           str  = negate_zmm8r8(_mm512_fmsub_pd(s1r,zr,
+                                                            _mm512_mul_pd(s1i,zi)));
+                           s1i  = negate_zmm8r8(_mm512_fmadd_pd(s1r,zi,
+                                                            _mm512_mul_pd(s1i,zr)));
+                           s1r  = str;
+                           *air = _mm512_div_pd(s1r,sfac);
+                           *aii = _mm512_div_pd(s1i,sfac);
+                           return ierr;
+                     L170:
+                           aa   = _mm512_set1_pd(std::numeric_limits<double>::min()*1e3);
+                           s1r  = C00;
+                           s1i  = C00;
+                           if(id == 1) {
+                              goto L190;
+                           }
+                           if(_mm512_cmp_pd_mask(az,aa,_CMP_LE_OQ)) {
+                              goto L180;
+                           }
+                           s1r = _mm512_mul_pd(C0258819403792806799,zr);
+                           s1i = _mm512_mul_pd(C0258819403792806799,zi);
+                     L180:
+                           *air= _mm512_sub_pd(C035502805388781724,s1r);
+                           *aii= negate_zmm8r8(s1i);
+                           return ierr;
+                     L190:
+                           *air= negate_zmm8r8(C0258819403792806799);
+                           *aii= C00;
+                           aa  = _mm512_sqrt_ps(aa);
+                           if(_mm512_cmp_pd_mask(az,aa,_CMP_LE_OQ)) {
+                              goto L200;
+                           }
+                           s1r = _mm512_mul_pd(_mm512_fmsub_pd(zr,zr,
+                                                           _mm512_mul_pd(zi,zi)),C05);
+                           s1i = _mm512_mul_pd(zr,zi);
+                     L200:
+                           *air= _mm512_fmadd_pd(C035502805388781724,s1r,*air);
+                           *aii= _mm512_fmadd_pd(C035502805388781724,s1i,*aii);
+                           return ierr;
+                     L210:
+                           *nz = 1;
+                           *air= C00;
+                           *aii= C00;
+                           return ierr;
+                     L270:
+                           *nz = 0;
+                           ierr= 2;
+                           return ierr;
+                     L280:
+                           if(nn == -1) {
+                              goto L270;
+                           }
+                           *nz = 0;
+                           ierr= 5;
+                           return ierr;
+                     L260:
+                           ierr = 4;
+                           *nz  = 0;
+                           return ierr;
 	       }
         
         
