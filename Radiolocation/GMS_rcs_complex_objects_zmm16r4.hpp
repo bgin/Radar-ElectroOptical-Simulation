@@ -3933,7 +3933,16 @@ namespace  gms {
 	           
 	                return _mm512_setzero_ps();
 	         } 
-	        
+	         
+	         
+	         
+	         /*
+	            Exponential surface-height correlation
+	            coefficient of average backscattering RCS 
+	            per unit area.
+	            RCS (vv) polarization.
+	            Formula 9.1-77
+	        */
 	       
 	       
 	       
