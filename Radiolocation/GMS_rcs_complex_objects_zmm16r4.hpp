@@ -3701,6 +3701,15 @@ namespace  gms {
 	       }
 	       
 	       
+	        /*
+	            Gaussian surface-height correlation
+	            coefficient of average backscattering RCS 
+	            per unit area.
+	            RCS (hh) polarization.
+	            Formula 9.1-74
+	        */
+	       
+	       
 	       
 	       
 	       
