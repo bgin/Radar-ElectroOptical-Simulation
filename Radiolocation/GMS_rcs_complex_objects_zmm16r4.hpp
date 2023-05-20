@@ -3960,12 +3960,14 @@ namespace  gms {
 	                                       const __m512 mui) {
 	                                       
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
+	                  const __m512 C80  = _mm512_set1_ps(8.0f);
+	                  const __m512 C150 = _mm512_set1_ps(1.5f);
 	                  register __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 epsrm1,epsim1;
 	                  register __m512 epsr2,epsi2,t0r,t0i,t1r,t1i;
 	                  register __m512 t2r,t2i,murm1,muim1,inve,t3r,t3i;
-	                  register __m512 rcs,cabs,arg,earg,frac;
+	                  register __m512 rcs,cabs,arg,frac;
 	                  h2    = _mm512_mul_ps(h,h);
 	                  t0r   = _mm512_sub_ps(epsr,C10);
 	                  cthti = xcosf(thti);
@@ -3978,11 +3980,13 @@ namespace  gms {
 	                  k04   = _mm512_mul_ps(x0,x0);
 	                  sthti = _mm512_mul_ps(sthti,sthti);
 	                  cmul_zmm16r4(t0r,t0i,t0r,t0i,epsrm1,epsim1);
-	                  arg   = _mm512_mul_ps(k02,_mm512_mul_ps(l2,sthti));   
+	                  arg   = _mm512_fmadd_pd(_mm512_mul_pd(sthti,l2),
+	                                          _mm512_mul_pd(k0,C40),C10);
 	                  x0    = _mm512_mul_ps(cthti,cthti);
-	                  earg  = xexpf(arg);
+	                  x3    = _mm512_mul_ps(arg,_mm512_sqrt_ps(arg));
+	                  inve  = _mm512_rcp14_ps(x3);
 	                  x1    = _mm512_mul_ps(x0,x0);
-	                  x2    = _mm512_mul_ps(C40,k04);
+	                  x2    = _mm512_mul_ps(C80,k04);
 	                  frac  = _mm512_mul_ps(_mm512_mul_ps(x2,h2),
 	                                        _mm512_mul_ps(l2,x1));
 	                  cmul_zmm16r4(epsr,epsi,mur,mui,&t1r,&t1i);
@@ -3993,7 +3997,6 @@ namespace  gms {
 	                  csqrt_zmm16r4(t1r,t1i,&t2r,&t2i);
 	                  x0    = _mm512_mul_ps(epsr,cthti);
 	                  x1    = _mm512_mul_ps(epsi,cthti);
-	                  inve  = _mm512_rcp14_ps(earg);
 	                  cmul_zmm16r4(epsr,epsi,epsr,epsi,&epsr2,&epsi2);
 	                  x0    = _mm512_add_ps(x0,t2r);
 	                  x1    = _mm512_add_ps(x1,t2i);
