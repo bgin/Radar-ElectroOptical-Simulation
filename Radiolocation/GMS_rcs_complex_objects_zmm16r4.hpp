@@ -3580,7 +3580,7 @@ namespace  gms {
 	                  register __m512 epsr= _mm512_load_ps(&pepsr[0]);
 	                  register __m512 epsi= _mm512_load_ps(&pepsi[0]);
 	                  register __m512 mur = _mm512_load_ps(&pmur[0]);
-	                  register __m512 mui = _mm512_load_ps(7pmui[0]);               
+	                  register __m512 mui = _mm512_load_ps(&pmui[0]);               
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
 	                  const __m512 C20  = _mm512_set1_ps(2.0f);
 	                   __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
@@ -3651,7 +3651,7 @@ namespace  gms {
 	                  register __m512 epsr= _mm512_loadu_ps(&pepsr[0]);
 	                  register __m512 epsi= _mm512_loadu_ps(&pepsi[0]);
 	                  register __m512 mur = _mm512_loadu_ps(&pmur[0]);
-	                  register __m512 mui = _mm512_loadu_ps(7pmui[0]);               
+	                  register __m512 mui = _mm512_loadu_ps(&pmui[0]);               
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
 	                  const __m512 C20  = _mm512_set1_ps(2.0f);
 	                   __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
@@ -3771,6 +3771,78 @@ namespace  gms {
 	                  rcs  = _mm512_mul_ps(frac,_mm512_mul_ps(cabs,inve));
 	                  return (rcs);
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_hh_f9175_zmm16r4(  const float * __restrict __ATTR_ALIGN__(64) pk0,
+	                                         const float * __restrict __ATTR_ALIGN__(64) ph,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pl,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pthti,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pepsr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pepsi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pmur,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pmui) {
+	                        
+	                  register __m512 k0  = _mm512_load_ps(&pk0[0]);
+	                  register __m512 h   = _mm512_load_ps(&ph[0]);
+	                  register __m512 l   = _mm512_load_ps(&pl[0]);
+	                  register __m512 epsr= _mm512_load_ps(&pepsr[0]);
+	                  register __m512 epsi= _mm512_load_ps(&pepsi[0]);
+	                  register __m512 mur = _mm512_load_ps(&pmur[0]);
+	                  register __m512 mui = _mm512_load_ps(&pmui[0]);  
+	                                       
+	                  const __m512 C10  = _mm512_set1_ps(1.0f);
+	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
+	                  register __m512 murm1,muim1,murm1s,muim1s;
+	                  register __m512 mur2,mui2,t0r,t0i,t1r,t1i;
+	                  register __m512 t2r,t2i,inve,t3r,t3i;
+	                  register __m512 rcs,cabs,arg,earg,frac;
+	                  h2    = _mm512_mul_ps(h,h);
+	                  t0r   = _mm512_sub_ps(epsi,C10);
+	                  cthti = xcosf(thti);
+	                  t0i   = _mm512_sub_ps(epsr,C10);
+	                  murm1 = _mm512_sub_ps(mur,C10);
+	                  x0    = _mm512_mul_ps(k0,k0);
+	                  muim1 = _mm512_mul_ps(mui,C10);
+	                  l2    = _mm512_mul_ps(l,l);
+	                  sthti = xsinf(thti);
+	                  k04   = _mm512_mul_ps(x0,x0);
+	                  sthti = _mm512_mul_ps(sthti,sthti);
+	                  cmul_zmm16r4(murm1,muim1,murm1,muim1,&murm1s,&muim1s);
+	                  arg   = _mm512_mul_ps(k02,_mm512_mul_ps(l2,sthti));   
+	                  x0    = _mm512_mul_ps(cthti,cthti);
+	                  earg  = xexpf(arg);
+	                  x1    = _mm512_mul_ps(x0,x0);
+	                  x2    = _mm512_mul_ps(C40,k04);
+	                  frac  = _mm512_mul_ps(_mm512_mul_ps(x2,h2),
+	                                        _mm512_mul_ps(l2,x1));
+	                  cmul_zmm16r4(epsr,epsi,mur,mui,&t1r,&t1i);
+	                  murm1s= _mm512_fmadd_ps(murm1s,sthti,t1r);
+	                  muim1s= _mm512_fmadd_ps(muim1s,sthti,t1i);
+	                  t1r   = _mm512_sub_ps(t1r,sthti);
+	                  t1i   = _mm512_sub_ps(t1i,sthti);
+	                  csqrt_zmm16r4(t1r,t1i,&t2r,&t2i);
+	                  x0    = _mm512_mul_ps(mur,cthti);
+	                  x1    = _mm512_mul_ps(mui,cthti);
+	                  inve  = _mm512_rcp14_ps(earg);
+	                  cmul_zmm16r4(mur,mui,mur,mui,&mur2,&mui2);
+	                  x0    = _mm512_add_ps(x0,t2r);
+	                  x1    = _mm512_add_ps(x1,t2i);
+	                  cmul_zmm16r4(x0,x1,x0,x1,&t3r,&t3i);//denom
+	                  cmul_zmm16r4(mur2,mui2,t0r,t0i,&x2,&x3);
+	                  murm1 = _mm512_sub_ps(murm1,x2);
+	                  muim1 = _mm512_sub_ps(muim1,x3);
+	                  cdiv_zmm16r4(murm1,muim1,t3r,t3i,&t0r,&t0i); // ratio (complex).
+	                  cabs = cabs_zmm16r4(t0r,t0i);
+	                  rcs  = _mm512_mul_ps(frac,_mm512_mul_ps(cabs,inve));
+	                  return (rcs);
+	       }
+	       
 	       
 	        
 	        
