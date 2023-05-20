@@ -3915,6 +3915,27 @@ namespace  gms {
 	       }
 	       
 	       
+	         /*
+	            Gaussian surface-height correlation
+	            coefficient of average backscattering RCS 
+	            per unit area.
+	            RCS (hv) polarization.
+	            Formula 9.1-76
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_hv_f9176_zmm16r4() { 
+	           
+	                return _mm512_setzero_ps();
+	         } 
+	        
+	       
+	       
 	       
 	        
 	        
