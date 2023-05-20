@@ -3512,7 +3512,7 @@ namespace  gms {
 	                                       const __m512 mui) {
 	                                       
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
 	                  register __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 epsrm1,epsim1;
 	                  register __m512 epsr2,epsi2,t0r,t0i,t1r,t1i;
@@ -3582,7 +3582,7 @@ namespace  gms {
 	                  register __m512 mur = _mm512_load_ps(&pmur[0]);
 	                  register __m512 mui = _mm512_load_ps(&pmui[0]);               
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
 	                   __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 epsrm1,epsim1;
 	                  register __m512 epsr2,epsi2,t0r,t0i,t1r,t1i;
@@ -3653,7 +3653,7 @@ namespace  gms {
 	                  register __m512 mur = _mm512_loadu_ps(&pmur[0]);
 	                  register __m512 mui = _mm512_loadu_ps(&pmui[0]);               
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
 	                   __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 epsrm1,epsim1;
 	                  register __m512 epsr2,epsi2,t0r,t0i,t1r,t1i;
@@ -3725,7 +3725,7 @@ namespace  gms {
 	                                       const __m512 mui) {
 	                                       
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
 	                  register __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 murm1,muim1,murm1s,muim1s;
 	                  register __m512 mur2,mui2,t0r,t0i,t1r,t1i;
@@ -3796,7 +3796,7 @@ namespace  gms {
 	                  register __m512 mui = _mm512_load_ps(&pmui[0]);  
 	                                       
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
 	                  __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 murm1,muim1,murm1s,muim1s;
 	                  register __m512 mur2,mui2,t0r,t0i,t1r,t1i;
@@ -3867,7 +3867,7 @@ namespace  gms {
 	                  register __m512 mui = _mm512_loadu_ps(&pmui[0]);  
 	                                       
 	                  const __m512 C10  = _mm512_set1_ps(1.0f);
-	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  const __m512 C40  = _mm512_set1_ps(4.0f);
 	                  __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
 	                  register __m512 murm1,muim1,murm1s,muim1s;
 	                  register __m512 mur2,mui2,t0r,t0i,t1r,t1i;
@@ -3943,6 +3943,70 @@ namespace  gms {
 	            RCS (vv) polarization.
 	            Formula 9.1-77
 	        */
+	        
+	        
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_vv_f9177_zmm16r4(const __m512 k0,
+	                                       const __m512 h,
+	                                       const __m512 l,
+	                                       const __m512 thti,
+	                                       const __m512 epsr,
+	                                       const __m512 epsi,
+	                                       const __m512 mur,
+	                                       const __m512 mui) {
+	                                       
+	                  const __m512 C10  = _mm512_set1_ps(1.0f);
+	                  const __m512 C20  = _mm512_set1_ps(2.0f);
+	                  register __m512 k04,h2,l2,x0,x1,x2,x3,cthti,sthti;
+	                  register __m512 epsrm1,epsim1;
+	                  register __m512 epsr2,epsi2,t0r,t0i,t1r,t1i;
+	                  register __m512 t2r,t2i,murm1,muim1,inve,t3r,t3i;
+	                  register __m512 rcs,cabs,arg,earg,frac;
+	                  h2    = _mm512_mul_ps(h,h);
+	                  t0r   = _mm512_sub_ps(epsr,C10);
+	                  cthti = xcosf(thti);
+	                  t0i   = _mm512_sub_ps(epsi,C10);
+	                  murm1 = _mm512_sub_ps(mur,C10);
+	                  x0    = _mm512_mul_ps(k0,k0);
+	                  muim1 = _mm512_mul_ps(mui,C10);
+	                  l2    = _mm512_mul_ps(l,l);
+	                  sthti = xsinf(thti);
+	                  k04   = _mm512_mul_ps(x0,x0);
+	                  sthti = _mm512_mul_ps(sthti,sthti);
+	                  cmul_zmm16r4(t0r,t0i,t0r,t0i,epsrm1,epsim1);
+	                  arg   = _mm512_mul_ps(k02,_mm512_mul_ps(l2,sthti));   
+	                  x0    = _mm512_mul_ps(cthti,cthti);
+	                  earg  = xexpf(arg);
+	                  x1    = _mm512_mul_ps(x0,x0);
+	                  x2    = _mm512_mul_ps(C40,k04);
+	                  frac  = _mm512_mul_ps(_mm512_mul_ps(x2,h2),
+	                                        _mm512_mul_ps(l2,x1));
+	                  cmul_zmm16r4(epsr,epsi,mur,mui,&t1r,&t1i);
+	                  epsrm1= _mm512_fmadd_ps(epsrm1,sthti,t1r);
+	                  epsim1= _mm512_fmadd_ps(epsim1,sthti,t1i);
+	                  t1r   = _mm512_sub_ps(t1r,sthti);
+	                  t1i   = _mm512_sub_ps(t1i,sthti);
+	                  csqrt_zmm16r4(t1r,t1i,&t2r,&t2i);
+	                  x0    = _mm512_mul_ps(epsr,cthti);
+	                  x1    = _mm512_mul_ps(epsi,cthti);
+	                  inve  = _mm512_rcp14_ps(earg);
+	                  cmul_zmm16r4(epsr,epsi,epsr,epsi,&epsr2,&epsi2);
+	                  x0    = _mm512_add_ps(x0,t2r);
+	                  x1    = _mm512_add_ps(x1,t2i);
+	                  cmul_zmm16r4(x0,x1,x0,x1,&t3r,&t3i);//denom
+	                  cmul_zmm16r4(epsr2,epsi2,murm1,muim1,&x2,&x3);
+	                  epsrm1 = _mm512_sub_ps(epsrm1,x2);
+	                  epsim1 = _mm512_sub_ps(epsim1,x3);
+	                  cdiv_zmm16r4(epsrm1,epsim1,t3r,t3i,&t0r,&t0i); // ratio (complex).
+	                  cabs = cabs_zmm16r4(t0r,t0i);
+	                  rcs  = _mm512_mul_ps(frac,_mm512_mul_ps(cabs,inve));
+	                  return (rcs);
+	       }
+	       
 	       
 	       
 	       
