@@ -3486,6 +3486,18 @@ namespace  gms {
 	                rcs    = _mm512_mul_ps(Bg,x2);
 	                return (rcs);
 	         }
+	         
+	         
+	         
+	            /*
+	             Model 9B4 (Peake's Model)
+	             Model resembling many natural grass-like structures like
+	             forests,grass,wheat fields, etc.
+	             Bistatic RCS (hh) polarized per unit surface area.
+	             Case of theta (inc) == theta (scat) and phi == PI
+	             Formula 9.1-43
+	       
+	       */
 	                
 	         
 	         
