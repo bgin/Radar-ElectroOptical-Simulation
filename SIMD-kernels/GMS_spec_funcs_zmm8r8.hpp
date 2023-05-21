@@ -422,6 +422,87 @@ namespace gms {
 	                   result = calci0_zmm8r8(x,jint);
 	                   return (result);
 	          }
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besi0_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) px) {
+	           
+	                   register __m512d x = _mm512_load_pd(&px[0]);
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 1;
+	                   result = calci0_zmm8r8(x,jint);
+	                   return (result);
+	          }
+	          
+	          
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besi0_zmm8r8_u(const double * __restrict  px) {
+	           
+	                   register __m512 x = _mm512_loadu_pd(&px[0]);
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 1;
+	                   result = calci0_zmm8r8(x,jint);
+	                   return (result);
+	          }
+	          
+	          
+/*
+    !*****************************************************************************80
+!
+!! BESI1 evaluates the Bessel I1(X) function.
+!
+!  Discussion:
+!
+!    This routine computes approximate values for
+!    modified Bessel functions of the first kind of order one for
+!    arguments ABS(ARG) <= XMAX.
+!
+!    See comments heading CALCI1.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the function.
+!
+!    Output, real ( kind = 8 ) BESI1, the value of the function.        
+*/
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besi1_zmm8r8(const __m512d x) {
+	           
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 1;
+	                   result = calci1_zmm8r8(x,jint);
+	                   return (result);
+	          }
 	         
 	         
         
