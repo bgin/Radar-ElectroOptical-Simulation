@@ -341,6 +341,22 @@ namespace gms {
 	                   return (result);
 	          }
 	          
+	          
+	          
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besek1_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) px) {
+	           
+	                   register __m512d x = _mm512_load_pd(&px[0]);
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 2;
+	                   result = calck1_zmm8r8(x,jint);
+	                   return (result);
+	          }
 	         
 	         
         
