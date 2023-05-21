@@ -1003,7 +1003,23 @@ namespace gms {
 	                   jint = 1;
 	                   result = caljy1_zmm8r8(x,jint);
 	                   return (result);
-	          }    
+	          }   
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besy1_zmm8r8_u(const double * __restrict  px) {
+	           
+	                   register __m512d x = _mm512_loadu_pd(&px[0]);
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 1;
+	                   result = caljy1_zmm8r8(x,jint);
+	                   return (result);
+	          }   
 	                   
 	         
         
