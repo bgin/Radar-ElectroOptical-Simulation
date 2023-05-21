@@ -291,7 +291,56 @@ namespace gms {
 	                   result = calck0_zmm8r8(x,jint);
 	                   return (result);
 	          }
-	         
+	          
+	          
+/*
+!*****************************************************************************80
+!
+!! BESEK1 evaluates the exponentially scaled Bessel K1(X) function.
+!
+!  Discussion:
+!
+!    This routine computes approximate values for the
+!    modified Bessel function of the second kind of order one
+!    multiplied by the exponential function, for arguments
+!    XLEAST <= ARG <= XMAX.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the function.
+!
+!    Output, real ( kind = 8 ) BESEK1, the value of the function.
+*/	  
+
+
+                   
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besek1_zmm8r8(const __m512d x) {
+	           
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 2;
+	                   result = calck1_zmm8r8(x,jint);
+	                   return (result);
+	          }
+	          
 	         
 	         
         
