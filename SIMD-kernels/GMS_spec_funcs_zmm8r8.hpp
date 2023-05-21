@@ -373,6 +373,55 @@ namespace gms {
 	                   result = calck1_zmm8r8(x,jint);
 	                   return (result);
 	          }
+	          
+	         
+/*
+     !*****************************************************************************80
+!
+!! BESI0 evaluates the Bessel I0(X) function.
+!
+!  Discussion:
+!
+!    This routine computes approximate values for
+!    modified Bessel functions of the first kind of order zero for
+!    arguments ABS(ARG) <= XMAX.
+!
+!    See comments heading CALCI0.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the function.
+!
+!    Output, real ( kind = 8 ) BESI0, the value of the function.
+*/
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d besi0_zmm8r8(const __m512d x) {
+	           
+	                   register __m512d result;
+	                   int32_t jint;
+	                   jint = 1;
+	                   result = calci0_zmm8r8(x,jint);
+	                   return (result);
+	          }
 	         
 	         
         
