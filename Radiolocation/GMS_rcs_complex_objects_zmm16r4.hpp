@@ -4570,9 +4570,60 @@ namespace  gms {
 	                  ahh   = negate_zmm16r4(cphis);
 	                  return (ahh);
 	          }
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hh_f9182_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphis) {
+	                 
+	                  register __m512 phis = _mm512_load_ps(&pphis[0]);
+	                  register __m512 cphis,ahh;
+	                  cphis = xcosf(phis);
+	                  ahh   = negate_zmm16r4(cphis);
+	                  return (ahh);
+	          }
 	        
 	       
-	       
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hh_f9182_zmm16r4_u(const float * __restrict  pphis) {
+	                 
+	                  register __m512 phis = _mm512_loadu_ps(&pphis[0]);
+	                  register __m512 cphis,ahh;
+	                  cphis = xcosf(phis);
+	                  ahh   = negate_zmm16r4(cphis);
+	                  return (ahh);
+	          }
+	          
+	          
+	             /*
+	                Scattering matrix elements for
+	                a perfectly conducting surface.
+	                Formula: 9.1-83
+	         */
+	         
+	         
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hv_f9181_zmm16r4(const __m512 phis,
+	                                     const __m512 thts) {
+	                                     
+	                  register __m512 sphis,cthts;
+	                  register __m512 ahv;
+	                  sphis = xsinf(phis);
+	                  cthts = xcosf(thti);
+	                  ahv   = gms::math::negate_zmm16r4(_mm512_div_ps(sphis,cthti));
+	                  return (ahv);                           
+	         }
 	       
 	       
 	       
