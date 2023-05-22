@@ -4402,6 +4402,15 @@ namespace  gms {
 	           
 	                return _mm512_setzero_ps();
 	         } 
+	         
+	         
+	         /*
+	                Scattering matrix elements for
+	                a perfectly conducting surface.
+	                Formula: 9.1-80
+	         */
+	         
+	         
 	       
 	       
 	       
