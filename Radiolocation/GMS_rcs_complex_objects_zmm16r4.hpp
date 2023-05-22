@@ -4487,6 +4487,30 @@ namespace  gms {
 	                  return (avv);        
 	          }
 	          
+	          
+	          /*
+	                Scattering matrix elements for
+	                a perfectly conducting surface.
+	                Formula: 9.1-81
+	         */
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hv_f9181_zmm16r4(const __m512 phis,
+	                                     const __m512 thti) {
+	                                     
+	                  register __m512 sphis,cthti;
+	                  register __m512 ahv;
+	                  sphis = xsinf(phis);
+	                  cthti = xcosf(thti);
+	                  ahv   = _mm512_div_ps(sphis,cthti);
+	                  return (ahv);                           
+	         }
+	          
 	       
 	        
 	        
