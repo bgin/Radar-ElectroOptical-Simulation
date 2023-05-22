@@ -4517,7 +4517,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 a_hv_f9181_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) pphis,
+	           __m512 a_hv_f9181_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pphis,
 	                                     const float * __restrict __ATTR_ALIGN__(64) pthti) {
 	                                     
 	                  register __m512 thti = _mm512_load_ps(&pthti[0]);
@@ -4532,7 +4532,44 @@ namespace  gms {
 	          
 	       
 	        
-	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hv_f9181_zmm16r4_u(const float * __restrict pphis,
+	                                     const float * __restrict  pthti) {
+	                                     
+	                  register __m512 thti = _mm512_loadu_ps(&pthti[0]);
+	                  register __m512 phis = _mm512_loadu_ps(&phis[0]); 
+	                  register __m512 sphis,cthti;
+	                  register __m512 ahv;
+	                  sphis = xsinf(phis);
+	                  cthti = xcosf(thti);
+	                  ahv   = _mm512_div_ps(sphis,cthti);
+	                  return (ahv);                           
+	         }
+	         
+	         
+	            /*
+	                Scattering matrix elements for
+	                a perfectly conducting surface.
+	                Formula: 9.1-82
+	         */
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hh_f9182_zmm16r4(const __m512 phis) {
+	                 
+	                  register __m512 cphis,ahh;
+	                  cphis = xcosf(phis);
+	                  ahh   = negate_zmm16r4(cphis);
+	                  return (ahh);
+	          }
 	        
 	       
 	       
