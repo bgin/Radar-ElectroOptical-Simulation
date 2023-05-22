@@ -4411,7 +4411,27 @@ namespace  gms {
 	         */
 	         
 	         
-	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_vv_f9180_zmm16r4(const __m512 thti,
+	                                         const __m512 thts,
+	                                         const __m512 phis) {
+	                                         
+	                  register __m512 sthti,sthts,cthti,cthts,cphis;
+	                  register __m512 num,den,avv;  
+	                  sthti = xsinf(thti);
+	                  cthti = xcosf(thti);
+	                  cphis = xcosf(phis);
+	                  cthts = xcosf(thts);
+	                  sthts = xsinf(thts);
+	                  num   = _mm512_fmsub_ps(sthti,sthts,cphis);
+	                  den   = _mm512_mul_ps(cthti,cthts);
+	                  avv   = _mm512_div_ps(num,den);
+	                  return (avv);        
+	          }
 	       
 	       
 	       
