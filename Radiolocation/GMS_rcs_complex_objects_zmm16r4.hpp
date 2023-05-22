@@ -4459,7 +4459,34 @@ namespace  gms {
 	                  avv   = _mm512_div_ps(num,den);
 	                  return (avv);        
 	          }
-	       
+	          
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_vv_f9180_zmm16r4_u(  const float * __restrict  pthti,
+	                                         const float * __restrict  pthts,
+	                                         const float * __restrict  pphis) {
+	                     
+	                  register __m512 thti = _mm512_loadu_ps(&pthti[0]);
+	                  register __m512 thts = _mm512_loadu_ps(&pthts[0]);
+	                  register __m512 phis = _mm512_loadu_ps(&phis[0]);                    
+	                  register __m512 sthti,sthts,cthti,cthts,cphis;
+	                  register __m512 num,den,avv;  
+	                  sthti = xsinf(thti);
+	                  cthti = xcosf(thti);
+	                  cphis = xcosf(phis);
+	                  cthts = xcosf(thts);
+	                  sthts = xsinf(thts);
+	                  num   = _mm512_fmsub_ps(sthti,sthts,cphis);
+	                  den   = _mm512_mul_ps(cthti,cthts);
+	                  avv   = _mm512_div_ps(num,den);
+	                  return (avv);        
+	          }
+	          
 	       
 	        
 	        
