@@ -4316,7 +4316,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 rcs_hh_f9178_zmm16r4_a(const float * __restrict  pk0,
+	           __m512 rcs_hh_f9178_zmm16r4_u(const float * __restrict  pk0,
 	                                         const float * __restrict  ph,
 	                                         const float * __restrict  pl,
 	                                         const float * __restrict  pthti,
@@ -4382,6 +4382,26 @@ namespace  gms {
 	                  rcs  = _mm512_mul_ps(frac,_mm512_mul_ps(cabs,inve));
 	                  return (rcs);
 	       }
+	       
+	       
+	         /*
+	            Gaussian surface-height correlation
+	            coefficient of average backscattering RCS 
+	            per unit area.
+	            RCS (hv) polarization.
+	            Formula 9.1-79
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_hv_f9179_zmm16r4() { 
+	           
+	                return _mm512_setzero_ps();
+	         } 
 	       
 	       
 	       
