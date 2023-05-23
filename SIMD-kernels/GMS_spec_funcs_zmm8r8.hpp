@@ -1020,6 +1020,264 @@ namespace gms {
 	                   result = caljy1_zmm8r8(x,jint);
 	                   return (result);
 	          }   
+	          
+	         
+/*
+         !*****************************************************************************80
+!
+!! CALCEI computes various exponential integrals.
+!
+!  Discussion:
+!
+!    This routine computes the exponential integrals Ei(x),
+!    E1(x), and  exp(-x)*Ei(x) for real arguments x where
+!
+!           integral (from t=-oo to t=x) (exp(t)/t),  x > 0,
+!    Ei(x) =
+!          -integral (from t=-x to t=+oo) (exp(t)/t),  x < 0,
+!
+!    and where the first integral is a principal value integral.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody, Henry Thacher,
+!    Rational Chebyshev Approximations for the Exponential
+!    Integral E1(x),
+!    Mathematics of Computation,
+!    Volume 22, Number 103, July 1968, pages 641-649.
+!
+!    William Cody, Henry Thacher,
+!    Chebyshev Approximations for the Exponential
+!    Integral Ei(x),
+!    Mathematics of Computation,
+!    Volume 23, Number 106, April 1969, pages 289-303.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) ARG, the argument.  The argument must not
+!    be zero.  If JINT = 2, then the argument must be strictly positive.
+!
+!    Output, real ( kind = 8 ) RESULT, the value of the function,
+!    which depends on the input value of JINT:
+!    1, RESULT = EI ( ARG );
+!    2, RESULT = EONE ( ARG );
+!    3, RESULT = EXPEI ( ARG ).
+!
+!    Input, integer ( kind = 4 ) JINT, chooses the function to be computed.
+!    1, Ei(x);
+!    2, -Ei(-x);
+!    3, exp(-x)*Ei(x).
+!
+*/
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d calcei_zmm8r8(const __m512d arg,
+	                                 const int32_t jint) {
+	                                 
+	                                 
+	                   __ATTR_ALIGN__(64) static const __m512d a[7]  = {_mm512_set1_pd(1.1669552669734461083368e+2),
+	                                                       _mm512_set1_pd(2.1500672908092918123209e+3), 
+                                                               _mm512_set1_pd(1.5924175980637303639884e+4), 
+                                                               _mm512_set1_pd(8.9904972007457256553251e+4), 
+                                                               _mm512_set1_pd(1.5026059476436982420737e+5),
+                                                               _mm512_set1_pd(-1.4815102102575750838086e+5), 
+                                                               _mm512_set1_pd(5.0196785185439843791020e+0)};
+                           __ATTR_ALIGN__(64) static const __m512d b[6]  = {_mm512_set1_pd(4.0205465640027706061433e+1), 
+                                                               _mm512_set1_pd(7.5043163907103936624165e+2),
+                                                               _mm512_set1_pd(8.1258035174768735759855e+3), 
+                                                               _mm512_set1_pd(5.2440529172056355429883e+4), 
+                                                               _mm512_set1_pd(1.8434070063353677359298e+5), 
+                                                               _mm512_set1_pd(2.5666493484897117319268e+5)};
+                           __ATTR_ALIGN__(64) static const __m512d c[9]  = {_mm512_set1_pd(3.828573121022477169108e-1), 
+                                                               _mm512_set1_pd(1.107326627786831743809e+1), 
+                                                               _mm512_set1_pd(7.246689782858597021199e+1), 
+                                                               _mm512_set1_pd(1.700632978311516129328e+2), 
+                                                               _mm512_set1_pd(1.698106763764238382705e+2), 
+                                                               _mm512_set1_pd(7.633628843705946890896e+1), 
+                                                               _mm512_set1_pd(1.487967702840464066613e+1), 
+                                                               _mm512_set1_pd(9.999989642347613068437e-1), 
+                                                               _mm512_set1_pd(1.737331760720576030932e-8)};
+	                   __ATTR_ALIGN__(64) static const __m512d d[9]  =  {_mm512_set1_pd(8.258160008564488034698e-2), 
+	                                                        _mm512_set1_pd(4.344836335509282083360e+0), 
+                                                                _mm512_set1_pd(4.662179610356861756812e+1), 
+                                                                _mm512_set1_pd(1.775728186717289799677e+2), 
+                                                                _mm512_set1_pd(2.953136335677908517423e+2), 
+                                                                _mm512_set1_pd(2.342573504717625153053e+2), 
+                                                                _mm512_set1_pd(9.021658450529372642314e+1), 
+                                                                _mm512_set1_pd(1.587964570758947927903e+1), 
+                                                                _mm512_set1_pd(1.000000000000000000000e+0)};                                  
+	                   __ATTR_ALIGN__(64) static const __m512d e[10] = {_mm512_set1_pd(1.1669552669734461083368e+2),
+	                                                       _mm512_set1_pd(2.1500672908092918123209e+3),
+	                                                       _mm512_set1_pd(1.5924175980637303639884e+4),
+	                                                       _mm512_set1_pd(8.9904972007457256553251e+4),
+	                                                       _mm512_set1_pd(1.5026059476436982420737e+5),
+	                                                       _mm512_set1_pd(-1.4815102102575750838086e+5),
+	                                                       _mm512_set1_pd(5.0196785185439843791020e+0)};
+	                   __ATTR_ALIGN__(64) static const __m512d f[10] = {_mm512_set1_pd(3.9147856245556345627078e+4),
+	                                                       _mm512_set1_pd(2.5989762083608489777411e+5),
+	                                                       _mm512_set1_pd(5.5903756210022864003380e+5),
+	                                                       _mm512_set1_pd(5.4616842050691155735758e+5),
+	                                                       _mm512_set1_pd(2.7858134710520842139357e+5),
+	                                                       _mm512_set1_pd(7.9231787945279043698718e+4),
+	                                                       _mm512_set1_ps(1.2842808586627297365998e+4),
+	                                                       _mm512_set1_ps(1.1635769915320848035459e+3),
+	                                                       _mm512_set1_ps(5.4199632588522559414924e+1),
+	                                                       _mm512_set1_ps(1.0)};
+	                  __ATTR_ALIGN__(64) static const __m512d plg[4] = {_mm512_set1_pd(2.4562334077563243311e+01),
+	                                                       _mm512_set1_pd(2.3642701335621505212e+02), 
+                                                               _mm512_set1_pd(-5.4989956895857911039e+02),
+                                                               _mm512_set1_pd(3.5687548468071500413e+02)};
+	                  __ATTR_ALIGN__(64) static const __m512d qlg[4] = {_mm512_set1_pd(-3.5553900764052419184e+01),
+	                                                       _mm512_set1_pd(1.9400230218539473193e+02), 
+                                                               _mm512_set1_pd(-3.3442903192607538956e+02),
+                                                               _mm512_set1_pd(1.7843774234035750207e+02)};
+	                   __ATTR_ALIGN__(64) static const __m512d p[10]  = {_mm512_set1_pd(-1.2963702602474830028590e+1),
+	                                                        _mm512_set1_pd(-1.2831220659262000678155e+3),
+                                                                _mm512_set1_pd(-1.4287072500197005777376e+4),
+                                                                _mm512_set1_pd(-1.4299841572091610380064e+6), 
+                                                                _mm512_set1_pd(-3.1398660864247265862050e+5),
+                                                                _mm512_set1_pd(-3.5377809694431133484800e+8),
+                                                                _mm512_set1_pd(3.1984354235237738511048e+8),
+                                                                _mm512_set1_pd(-2.5301823984599019348858e+10),
+                                                                _mm512_set1_pd(1.2177698136199594677580e+10),
+                                                                _mm512_set1_pd(-2.0829040666802497120940e+11)};
+                           __ATTR_ALIGN__(64) static const __m512d q[10]  = {_mm512_set1_pd(7.6886718750000000000000e+1),
+                                                                _mm512_set1_pd(-5.5648470543369082846819e+3),
+                                                                _mm512_set1_pd(1.9418469440759880361415e+5),
+                                                                _mm512_set1_pd(-4.2648434812177161405483e+6), 
+                                                                _mm512_set1_pd(6.4698830956576428587653e+7),
+                                                                _mm512_set1_pd(-7.0108568774215954065376e+8), 
+                                                                _mm512_set1_pd(5.4229617984472955011862e+9),
+                                                                _mm512_set1_pd(-2.8986272696554495342658e+10,
+                                                                _mm512_set1_pd(9.8900934262481749439886e+10),
+                                                                _mm512_set1_pd(-8.9673749185755048616855e+10)};
+	                   __ATTR_ALIGN__(64) static const __m512d p1[10] = {_mm512_set1_pd(1.647721172463463140042e+0),
+	                                                        _mm512_set1_pd(-1.860092121726437582253e+1),
+                                                                _mm512_set1_pd(-1.000641913989284829961e+1),
+                                                                _mm512_set1_pd(-2.105740799548040450394e+1), 
+                                                                _mm512_set1_pd(-9.134835699998742552432e-1),
+                                                                _mm512_set1_pd(-3.323612579343962284333e+1),
+                                                                _mm512_set1_pd(2.495487730402059440626e+1), 
+                                                                _mm512_set1_pd(2.652575818452799819855e+1), 
+                                                                _mm512_set1_pd(-1.845086232391278674524e+0), 
+                                                                _mm512_set1_pd(9.999933106160568739091e-1)};
+                           __ATTR_ALIGN__(64) static const __m512d q1[9]  = {_mm512_set1_pd(9.792403599217290296840e+1), 
+                                                                _mm512_set1_pd(6.403800405352415551324e+1),
+                                                                _mm512_set1_pd(5.994932325667407355255e+1), 
+                                                                _mm512_set1_pd(2.538819315630708031713e+2),
+                                                                _mm512_set1_pd(4.429413178337928401161e+1), 
+                                                                _mm512_set1_pd(1.192832423968601006985e+3), 
+                                                                _mm512_set1_pd(1.991004470817742470726e+2),
+                                                                _mm512_set1_pd(-1.093556195391091143924e+1), 
+                                                                _mm512_set1_pd(1.001533852045342697818e+0)};
+	                   __ATTR_ALIGN__(64) static const __m512d p2[10]  = {_mm512_set1_pd(1.75338801265465972390e+2),
+	                                                         _mm512_set1_pd(-2.23127670777632409550e+2), 
+                                                                 _mm512_set1_pd(-1.81949664929868906455e+1),
+                                                                 _mm512_set1_pd(-2.79798528624305389340e+1), 
+                                                                 _mm512_set1_pd(-7.63147701620253630855e+0),
+                                                                 _mm512_set1_pd(-1.52856623636929636839e+1), 
+                                                                 _mm512_set1_pd(-7.06810977895029358836e+0),
+                                                                 _mm512_set1_pd(-5.00006640413131002475e+0),
+                                                                 _mm512_set1_pd(-3.00000000320981265753e+0), 
+                                                                 _mm512_set1_pd(1.00000000000000485503e+0)};
+                            __ATTR_ALIGN__(64) static const __m512d q2[9]  = {_mm512_set1_pd(3.97845977167414720840e+4), 
+                                                                 _mm512_set1_pd(3.97277109100414518365e+0), 
+                                                                 _mm512_set1_pd(1.37790390235747998793e+2), 
+                                                                 _mm512_set1_pd(1.17179220502086455287e+2), 
+                                                                 _mm512_set1_pd(7.04831847180424675988e+1),
+                                                                 _mm512_set1_pd(-1.20187763547154743238e+1), 
+                                                                 _mm512_set1_pd(-7.99243595776339741065e+0),
+                                                                 _mm512_set1_pd(-2.99999894040324959612e+0),
+                                                                 _mm512_set1_pd(1.99999999999048104167e+0)};   
+                            __ATTR_ALIGN__(64) static const __m512d r[10]  = {_mm512_set1_pd(2.645677793077147237806e+0),
+                                                                 _mm512_set1_pd(-2.378372882815725244124e+0), 
+                                                                 _mm512_set1_pd(-2.421106956980653511550e+1), 
+                                                                 _mm512_set1_pd(1.052976392459015155422e+1), 
+                                                                 _mm512_set1_pd(1.945603779539281810439e+1),
+                                                                 _mm512_set1_pd(-3.015761863840593359165e+1), 
+                                                                 _mm512_set1_pd(1.120011024227297451523e+1),
+                                                                 _mm512_set1_pd(-3.988850730390541057912e+0), 
+                                                                 _mm512_set1_pd(9.565134591978630774217e+0), 
+                                                                 _mm512_set1_pd(9.981193787537396413219e-1)};
+                           __ATTR_ALIGN__(64) static const __m512d s[9]    = {_mm512_set1_pd(1.598517957704779356479e-4), 
+                                                                 _mm512_set1_pd(4.644185932583286942650e+0), 
+                                                                 _mm512_set1_pd(3.697412299772985940785e+2),
+                                                                 _mm512_set1_pd(-8.791401054875438925029e+0), 
+                                                                 _mm512_set1_pd(7.608194509086645763123e+2), 
+                                                                 _mm512_set1_pd(2.852397548119248700147e+1), 
+                                                                 _mm512_set1_pd(4.731097187816050252967e+2),
+                                                                 _mm512_set1_pd(-2.369210235636181001661e+2), 
+                                                                 _mm512_set1_pd(1.249884822712447891440e+0)};  
+                           __ATTR_ALIGN__(64) __m512d q[10];
+	                   __ATTR_ALIGN__(64) __m512d qlq[10];
+	                   __ATTR_ALIGN__(64) __m512d qx[10];
+	                   __ATTR_ALIGN__(64) __m512d px[10];                                       
+                          const __m512d zero = _mm512_set1_pd(0.0e+0);
+                          const __m512d p037 = _mm512_set1_pd(0.037e+0);
+                          const __m512d half = _mm512_set1_pd(0.5);
+                          const __m512d one  = _mm512_set1_pd(1.0e+0);
+                          const __m512d two  = _mm512_set1_pd(2.0e+0);
+                          const __m512d three= _mm512_set1_pd(3.0e+0);
+                          const __m512d four = _mm512_set1_pd(4.0e+0);
+                          const __m512d six  = _mm512_set1_pd(6.0e+0);
+                          const __m512d twelve = _mm512_set1_pd(2.0e+0);
+                          const __m512d two4 = _mm512_set1_pd(24.0e+0);
+                          const __m512d fourty = _mm512_set1_pd(40.0e+0);
+                          const __m512d exp40 = _mm512_set1_pd(2.3538526683701998541e+17);
+                          const __m512d x01  = _mm512_set1_pd(381.5e+0);
+                          const __m512d x11  = _mm512_set1_pd(1024.0e+0);
+                          const __m512d x02  = _mm512_set1_pd(-5.1182968633365538008e-5);
+                          const __m512d x0   = _mm512_set1_pd(3.7250741078136663466e-1);   
+                          const __m512d xinf = _mm512_set1_pd(1.79e+308);
+                          const __m512d xmax = _mm512_set1_pd(716.351e+0);
+                          const __m512d xbig = _mm512_set1_pd(701.84e+0);                        
+	                  __m512d ei,frac,result,sump,sumq;
+	                  __m512d t,w,x;
+	                  __m512d mx0,y,ysq;
+	                 
+	                  x = arg;
+	                  if(__m512_cmp_pd_mask(x,zero,_CMP_EQ_OQ)) {
+	                      ei = negate_zmm8r8(xinf);
+	                      if(jint == 2) {
+	                          ei = negate_zmm8r8(ei);
+	                      }
+	                     /*
+	                        !
+                                 !  Calculate EI for negative argument or for E1.
+                                !   
+	                     */
+	                 }
+	                 else if(_mm512_cmp_pd_mask(x,zero,_CMP_LT_OQ) || 
+	                         jint == 2) {
+	                         y = _mm512_abs_pd(x);
+	                                 
+	                 }
+	                  
+	                  
+	                 
+	                 
+	                  
+	              
+	                              
+	         }
 	                   
 	         
         
