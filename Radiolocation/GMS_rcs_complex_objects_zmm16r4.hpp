@@ -4709,7 +4709,45 @@ namespace  gms {
 	                  avv   = _mm512_div_ps(num,den);
 	                  return (avv);
 	           }
-	                                     
+	           
+	           
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_vv_f9184_zmm16r4_u(const float * __restrict  pthti) {
+	           
+	                  register __m512 thti = _mm512_loadu_ps(&pthti[0]);
+	                  const __m512 C10 = _mm512_set1_ps(1.0f);
+	                  register __m512 sthti,cthti,num,den;
+	                  register __m512 avv;
+	                  sthti = xsinf(thti);
+	                  cthti = xcosf(thti);
+	                  num   = _mm512_fmadd_ps(sthti,sthti,C10);
+	                  den   = _mm512_mul_ps(cthti,cthti);
+	                  avv   = _mm512_div_ps(num,den);
+	                  return (avv);
+	           }
+	           
+	           
+	           
+	         /*
+	              Backscattering from a perfectly conducting surface
+	              Theta (inc) == theta (scat) , phi (scat) = 180 (grad).
+	              Formula: 9.1-85
+	         */                  
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_hh_f9185_zmm16r4() {
+	           
+	                  return _mm512_set1_ps(1.0f);
+	           }   
 	         
 	       
 	       
