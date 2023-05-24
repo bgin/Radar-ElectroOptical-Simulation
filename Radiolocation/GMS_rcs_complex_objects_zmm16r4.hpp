@@ -4775,6 +4775,40 @@ namespace  gms {
 	              Gaussian surface height correlation coefficient.
 	              Formula: 9.1-87
 	         */
+	         
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 rcs_vv_f9187_zmm16r4(const __m512 k0,
+	                                       const __m512 h,
+	                                       const __m512 l,
+	                                       const __m512 thti) {
+	                                       
+	                  const __m512 C40 = _mm512_set1_ps(4.0f);
+	                  const __m512 C10 = _mm512_set1_ps(1.0f);
+	                  register __m512 k04,x0,x1,l2,h2,sthti;
+	                  register __m512 rcs,arg,earg,inve,strm,trm;
+	                  x0    = _mm512_mul_ps(k0,k0);
+	                  l2    = _mm512_mul_ps(l,l);
+	                  k04   = _mm512_mul_ps(x0,x0);
+	                  h2    = _mm512_mul_ps(h,h);
+	                  x1    = xsinf(thti);
+	                  strm  = _mm512_fmadd_pd(x1,x1,C10);
+	                  x0    = _mm512_mul_ps(C40,k04);
+	                  sthti = _mm512_mul_ps(x1,x1);
+	                  arg   = _mm512_mul_ps(_mm512_mul_ps(k0,k0),
+	                                        _mm512_mul_ps(sthti,l2));
+	                  trm   = _mm512_mul_ps(_mm512_mul_ps(l2,h2,x0));
+	                  earg  = xexpf(arg);
+	                  x1    = _mm512_mul_ps(strm,strm);
+	                  inve  = _mm512_rcp14_ps(earg);
+	                  rcs   = _mm512_mul_ps(trm,_mm512_mul_ps(x1,inve));
+	                  return (rcs);
+	         }
 	           
 	           
 	            
