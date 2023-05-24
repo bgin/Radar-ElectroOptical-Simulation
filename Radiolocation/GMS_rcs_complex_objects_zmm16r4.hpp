@@ -4768,6 +4768,15 @@ namespace  gms {
 	           }  
 	           
 	           
+	         /*
+	              Backscattering from a perfectly conducting surface
+	              Theta (inc) == theta (scat) , phi (scat) = 180 (grad).
+	              Average backscattering RCS per unit area.
+	              Gaussian surface height correlation coefficient.
+	              Formula: 9.1-87
+	         */
+	           
+	           
 	            
 	         
 	       
