@@ -4747,7 +4747,28 @@ namespace  gms {
 	           __m512 a_hh_f9185_zmm16r4() {
 	           
 	                  return _mm512_set1_ps(1.0f);
-	           }   
+	           }  
+	           
+	           
+	            /*
+	              Backscattering from a perfectly conducting surface
+	              Theta (inc) == theta (scat) , phi (scat) = 180 (grad).
+	              Formula: 9.1-86
+	         */   
+	         
+	         
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 a_vh_f9186_zmm16r4() {
+	           
+	                  return _mm512_setzero_ps();
+	           }  
+	           
+	           
+	            
 	         
 	       
 	       
