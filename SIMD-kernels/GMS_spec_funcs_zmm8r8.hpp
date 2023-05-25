@@ -1585,6 +1585,511 @@ namespace gms {
 	                 return (result);
 	                                
 	         }
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d calcei_zmm8r8_a(const float * __restrict __ATTR_ALIGN__(64) parg,
+	                                   const int32_t jint) {
+	                                 
+	                                 
+	                   __ATTR_ALIGN__(64) static const __m512d a[7]  = {_mm512_set1_pd(1.1669552669734461083368e+2),
+	                                                       _mm512_set1_pd(2.1500672908092918123209e+3), 
+                                                               _mm512_set1_pd(1.5924175980637303639884e+4), 
+                                                               _mm512_set1_pd(8.9904972007457256553251e+4), 
+                                                               _mm512_set1_pd(1.5026059476436982420737e+5),
+                                                               _mm512_set1_pd(-1.4815102102575750838086e+5), 
+                                                               _mm512_set1_pd(5.0196785185439843791020e+0)};
+                           __ATTR_ALIGN__(64) static const __m512d b[6]  = {_mm512_set1_pd(4.0205465640027706061433e+1), 
+                                                               _mm512_set1_pd(7.5043163907103936624165e+2),
+                                                               _mm512_set1_pd(8.1258035174768735759855e+3), 
+                                                               _mm512_set1_pd(5.2440529172056355429883e+4), 
+                                                               _mm512_set1_pd(1.8434070063353677359298e+5), 
+                                                               _mm512_set1_pd(2.5666493484897117319268e+5)};
+                           __ATTR_ALIGN__(64) static const __m512d c[9]  = {_mm512_set1_pd(3.828573121022477169108e-1), 
+                                                               _mm512_set1_pd(1.107326627786831743809e+1), 
+                                                               _mm512_set1_pd(7.246689782858597021199e+1), 
+                                                               _mm512_set1_pd(1.700632978311516129328e+2), 
+                                                               _mm512_set1_pd(1.698106763764238382705e+2), 
+                                                               _mm512_set1_pd(7.633628843705946890896e+1), 
+                                                               _mm512_set1_pd(1.487967702840464066613e+1), 
+                                                               _mm512_set1_pd(9.999989642347613068437e-1), 
+                                                               _mm512_set1_pd(1.737331760720576030932e-8)};
+	                   __ATTR_ALIGN__(64) static const __m512d d[9]  =  {_mm512_set1_pd(8.258160008564488034698e-2), 
+	                                                        _mm512_set1_pd(4.344836335509282083360e+0), 
+                                                                _mm512_set1_pd(4.662179610356861756812e+1), 
+                                                                _mm512_set1_pd(1.775728186717289799677e+2), 
+                                                                _mm512_set1_pd(2.953136335677908517423e+2), 
+                                                                _mm512_set1_pd(2.342573504717625153053e+2), 
+                                                                _mm512_set1_pd(9.021658450529372642314e+1), 
+                                                                _mm512_set1_pd(1.587964570758947927903e+1), 
+                                                                _mm512_set1_pd(1.000000000000000000000e+0)};                                  
+	                   __ATTR_ALIGN__(64) static const __m512d e[10] = {_mm512_set1_pd(1.1669552669734461083368e+2),
+	                                                       _mm512_set1_pd(2.1500672908092918123209e+3),
+	                                                       _mm512_set1_pd(1.5924175980637303639884e+4),
+	                                                       _mm512_set1_pd(8.9904972007457256553251e+4),
+	                                                       _mm512_set1_pd(1.5026059476436982420737e+5),
+	                                                       _mm512_set1_pd(-1.4815102102575750838086e+5),
+	                                                       _mm512_set1_pd(5.0196785185439843791020e+0)};
+	                   __ATTR_ALIGN__(64) static const __m512d f[10] = {_mm512_set1_pd(3.9147856245556345627078e+4),
+	                                                       _mm512_set1_pd(2.5989762083608489777411e+5),
+	                                                       _mm512_set1_pd(5.5903756210022864003380e+5),
+	                                                       _mm512_set1_pd(5.4616842050691155735758e+5),
+	                                                       _mm512_set1_pd(2.7858134710520842139357e+5),
+	                                                       _mm512_set1_pd(7.9231787945279043698718e+4),
+	                                                       _mm512_set1_ps(1.2842808586627297365998e+4),
+	                                                       _mm512_set1_ps(1.1635769915320848035459e+3),
+	                                                       _mm512_set1_ps(5.4199632588522559414924e+1),
+	                                                       _mm512_set1_ps(1.0)};
+	                  __ATTR_ALIGN__(64) static const __m512d plg[4] = {_mm512_set1_pd(2.4562334077563243311e+01),
+	                                                       _mm512_set1_pd(2.3642701335621505212e+02), 
+                                                               _mm512_set1_pd(-5.4989956895857911039e+02),
+                                                               _mm512_set1_pd(3.5687548468071500413e+02)};
+	                  __ATTR_ALIGN__(64) static const __m512d qlg[4] = {_mm512_set1_pd(-3.5553900764052419184e+01),
+	                                                       _mm512_set1_pd(1.9400230218539473193e+02), 
+                                                               _mm512_set1_pd(-3.3442903192607538956e+02),
+                                                               _mm512_set1_pd(1.7843774234035750207e+02)};
+	                   __ATTR_ALIGN__(64) static const __m512d p[10]  = {_mm512_set1_pd(-1.2963702602474830028590e+1),
+	                                                        _mm512_set1_pd(-1.2831220659262000678155e+3),
+                                                                _mm512_set1_pd(-1.4287072500197005777376e+4),
+                                                                _mm512_set1_pd(-1.4299841572091610380064e+6), 
+                                                                _mm512_set1_pd(-3.1398660864247265862050e+5),
+                                                                _mm512_set1_pd(-3.5377809694431133484800e+8),
+                                                                _mm512_set1_pd(3.1984354235237738511048e+8),
+                                                                _mm512_set1_pd(-2.5301823984599019348858e+10),
+                                                                _mm512_set1_pd(1.2177698136199594677580e+10),
+                                                                _mm512_set1_pd(-2.0829040666802497120940e+11)};
+                           __ATTR_ALIGN__(64) static const __m512d q[10]  = {_mm512_set1_pd(7.6886718750000000000000e+1),
+                                                                _mm512_set1_pd(-5.5648470543369082846819e+3),
+                                                                _mm512_set1_pd(1.9418469440759880361415e+5),
+                                                                _mm512_set1_pd(-4.2648434812177161405483e+6), 
+                                                                _mm512_set1_pd(6.4698830956576428587653e+7),
+                                                                _mm512_set1_pd(-7.0108568774215954065376e+8), 
+                                                                _mm512_set1_pd(5.4229617984472955011862e+9),
+                                                                _mm512_set1_pd(-2.8986272696554495342658e+10,
+                                                                _mm512_set1_pd(9.8900934262481749439886e+10),
+                                                                _mm512_set1_pd(-8.9673749185755048616855e+10)};
+	                   __ATTR_ALIGN__(64) static const __m512d p1[10] = {_mm512_set1_pd(1.647721172463463140042e+0),
+	                                                        _mm512_set1_pd(-1.860092121726437582253e+1),
+                                                                _mm512_set1_pd(-1.000641913989284829961e+1),
+                                                                _mm512_set1_pd(-2.105740799548040450394e+1), 
+                                                                _mm512_set1_pd(-9.134835699998742552432e-1),
+                                                                _mm512_set1_pd(-3.323612579343962284333e+1),
+                                                                _mm512_set1_pd(2.495487730402059440626e+1), 
+                                                                _mm512_set1_pd(2.652575818452799819855e+1), 
+                                                                _mm512_set1_pd(-1.845086232391278674524e+0), 
+                                                                _mm512_set1_pd(9.999933106160568739091e-1)};
+                           __ATTR_ALIGN__(64) static const __m512d q1[9]  = {_mm512_set1_pd(9.792403599217290296840e+1), 
+                                                                _mm512_set1_pd(6.403800405352415551324e+1),
+                                                                _mm512_set1_pd(5.994932325667407355255e+1), 
+                                                                _mm512_set1_pd(2.538819315630708031713e+2),
+                                                                _mm512_set1_pd(4.429413178337928401161e+1), 
+                                                                _mm512_set1_pd(1.192832423968601006985e+3), 
+                                                                _mm512_set1_pd(1.991004470817742470726e+2),
+                                                                _mm512_set1_pd(-1.093556195391091143924e+1), 
+                                                                _mm512_set1_pd(1.001533852045342697818e+0)};
+	                   __ATTR_ALIGN__(64) static const __m512d p2[10]  = {_mm512_set1_pd(1.75338801265465972390e+2),
+	                                                         _mm512_set1_pd(-2.23127670777632409550e+2), 
+                                                                 _mm512_set1_pd(-1.81949664929868906455e+1),
+                                                                 _mm512_set1_pd(-2.79798528624305389340e+1), 
+                                                                 _mm512_set1_pd(-7.63147701620253630855e+0),
+                                                                 _mm512_set1_pd(-1.52856623636929636839e+1), 
+                                                                 _mm512_set1_pd(-7.06810977895029358836e+0),
+                                                                 _mm512_set1_pd(-5.00006640413131002475e+0),
+                                                                 _mm512_set1_pd(-3.00000000320981265753e+0), 
+                                                                 _mm512_set1_pd(1.00000000000000485503e+0)};
+                            __ATTR_ALIGN__(64) static const __m512d q2[9]  = {_mm512_set1_pd(3.97845977167414720840e+4), 
+                                                                 _mm512_set1_pd(3.97277109100414518365e+0), 
+                                                                 _mm512_set1_pd(1.37790390235747998793e+2), 
+                                                                 _mm512_set1_pd(1.17179220502086455287e+2), 
+                                                                 _mm512_set1_pd(7.04831847180424675988e+1),
+                                                                 _mm512_set1_pd(-1.20187763547154743238e+1), 
+                                                                 _mm512_set1_pd(-7.99243595776339741065e+0),
+                                                                 _mm512_set1_pd(-2.99999894040324959612e+0),
+                                                                 _mm512_set1_pd(1.99999999999048104167e+0)};   
+                            __ATTR_ALIGN__(64) static const __m512d r[10]  = {_mm512_set1_pd(2.645677793077147237806e+0),
+                                                                 _mm512_set1_pd(-2.378372882815725244124e+0), 
+                                                                 _mm512_set1_pd(-2.421106956980653511550e+1), 
+                                                                 _mm512_set1_pd(1.052976392459015155422e+1), 
+                                                                 _mm512_set1_pd(1.945603779539281810439e+1),
+                                                                 _mm512_set1_pd(-3.015761863840593359165e+1), 
+                                                                 _mm512_set1_pd(1.120011024227297451523e+1),
+                                                                 _mm512_set1_pd(-3.988850730390541057912e+0), 
+                                                                 _mm512_set1_pd(9.565134591978630774217e+0), 
+                                                                 _mm512_set1_pd(9.981193787537396413219e-1)};
+                           __ATTR_ALIGN__(64) static const __m512d s[9]    = {_mm512_set1_pd(1.598517957704779356479e-4), 
+                                                                 _mm512_set1_pd(4.644185932583286942650e+0), 
+                                                                 _mm512_set1_pd(3.697412299772985940785e+2),
+                                                                 _mm512_set1_pd(-8.791401054875438925029e+0), 
+                                                                 _mm512_set1_pd(7.608194509086645763123e+2), 
+                                                                 _mm512_set1_pd(2.852397548119248700147e+1), 
+                                                                 _mm512_set1_pd(4.731097187816050252967e+2),
+                                                                 _mm512_set1_pd(-2.369210235636181001661e+2), 
+                                                                 _mm512_set1_pd(1.249884822712447891440e+0)};  
+                           __ATTR_ALIGN__(64) __m512d q[10];
+	                   __ATTR_ALIGN__(64) __m512d qlq[10];
+	                   __ATTR_ALIGN__(64) __m512d qx[10];
+	                   __ATTR_ALIGN__(64) __m512d px[10];                                       
+                          const __m512d zero = _mm512_set1_pd(0.0e+0);
+                          const __m512d p037 = _mm512_set1_pd(0.037e+0);
+                          const __m512d half = _mm512_set1_pd(0.5);
+                          const __m512d one  = _mm512_set1_pd(1.0e+0);
+                          const __m512d two  = _mm512_set1_pd(2.0e+0);
+                          const __m512d three= _mm512_set1_pd(3.0e+0);
+                          const __m512d four = _mm512_set1_pd(4.0e+0);
+                          const __m512d six  = _mm512_set1_pd(6.0e+0);
+                          const __m512d twelve = _mm512_set1_pd(2.0e+0);
+                          const __m512d two4 = _mm512_set1_pd(24.0e+0);
+                          const __m512d fourty = _mm512_set1_pd(40.0e+0);
+                          const __m512d exp40 = _mm512_set1_pd(2.3538526683701998541e+17);
+                          const __m512d x01  = _mm512_set1_pd(381.5e+0);
+                          const __m512d x11  = _mm512_set1_pd(1024.0e+0);
+                          const __m512d x02  = _mm512_set1_pd(-5.1182968633365538008e-5);
+                          const __m512d x0   = _mm512_set1_pd(3.7250741078136663466e-1);   
+                          const __m512d xinf = _mm512_set1_pd(1.79e+308);
+                          const __m512d xmax = _mm512_set1_pd(716.351e+0);
+                          const __m512d xbig = _mm512_set1_pd(701.84e+0);                        
+	                  __m512d arg,ei,frac,result,sump,sumq;
+	                  __m512d t,w,x;
+	                  __m512d mx0,y,ysq;
+	                 
+	                  arg = _mm512_load_pd(&parg[0]);
+	                  x = arg;
+	                  if(__m512_cmp_pd_mask(x,zero,_CMP_EQ_OQ)) {
+	                  
+	                      ei = negate_zmm8r8(xinf);
+	                      if(jint == 2) {
+	                      
+	                          ei = negate_zmm8r8(ei);
+	                      }
+	                     /*
+	                        !
+                                 !  Calculate EI for negative argument or for E1.
+                                !   
+	                     */
+	                 }
+	                 else if(_mm512_cmp_pd_mask(x,zero,_CMP_LT_OQ) || 
+	                         jint == 2) {
+	                         
+	                         y = _mm512_abs_pd(x);
+	                         if(_mm512_cmp_pd_mask(y,one,_CMP_LT)) {
+	                         
+	                            sump = _mm512_fmadd_pd(a[6],y,a[0]);
+	                            sumq = _mm512_add_pd(y,b[0]);
+	                            
+	                            sump = _mm512_fmadd_pd(sump,y,a[1]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[1]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[2]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[2]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[3]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[3]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[4]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[4]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[5]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[5]);
+	                            
+	                            ei   = _mm512_sub_pd(xlog(y),
+	                                             _mm512_div_pd(sump,sumq));
+	                            if(jint==3) {
+	                               ei = _mm512_mul_pd(ei,xexp(y);
+	                            }
+	                            
+	                         }  
+	                         else if(_mm512_cmp_pd_mask(y,four,_CMP_LE_OQ)) {
+	                        
+	                                w    = _mm512_div_pd(one,y);
+	                                sump = c[0];
+	                                sumq = d[0];
+	                                
+	                                sump = _mm512_fmadd_pd(sump,w,c[1]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[1]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[2]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[2]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[3]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[3]);  
+	                                sump = _mm512_fmadd_pd(sump,w,c[4]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[4]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[5]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[5]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[6]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[6]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[7]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[7]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[8]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[8]);
+	                                
+	                                ei   = _mm512_div_pd(negate_zmm8r8(sump),sumq);
+	                                
+	                                if(jint!=3) {
+	                                    ei = _mm512_mul_pd(ei,
+	                                                    xexp(negate_zmm8r8(y)));
+	                                }
+	                        } 
+	                        else {
+	                                 
+	                                if(_mm512_cmp_pd_mask(xbig,y,_CMP_LT_OQ) &&
+	                                   jint<3) {
+	                                     ei = zero;  
+	                                }
+                                        else {
+                                           
+                                             w    = _mm512_div_pd(one,y);
+                                             sump = e[0];
+                                             sumq = f[0];
+                                             
+                                             sump = _mm512_fmadd_pd(sump,w,e[1]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[1]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[2]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[2]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[3]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[3]);  
+	                                     sump = _mm512_fmadd_pd(sump,w,e[4]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[4]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[5]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[5]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[6]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[6]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[7]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[7]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[8]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[8]); 
+	                                     sump = _mm512_fmadd_pd(sump,w,e[9]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[9]); 
+	                                     
+	                                     const __m512 x0 = _mm512_div_pd(sump,sumq);
+	                                     const __m512 x1 = _mm512_sub_pd(one,w);
+	                                     ei    = _mm512_mul_pd(negate_zmm8r8(w),
+	                                                       _mm512_mul_pd(x0,x1));
+	                                                       
+	                                     if(jint!=3) {
+	                                         ei = _mm512_mul_pd(ei,
+	                                                         negate_zmm8r8(y));
+	                                     }
+	                                }	                                
+	                                
+	                        }    
+	                        
+	                        if(jint==2) {
+	                           ei = negate_zmm8r8(ei);
+	                        } 
+	                        
+	                        /*
+	                           !
+                                   !  To improve conditioning, rational approximations are expressed
+                                   !  in terms of Chebyshev polynomials for 0 <= X < 6, and in
+                                   !  continued fraction form for larger X.
+                                   !
+	                        */
+	                        
+	                }
+	                else if(_mm512_cmp_pd_mask(x,six,_CMP_LT_OQ)) {
+	                       
+	                         t     = _mm512_add_pd(x,x);
+	                         t     = _mm512_sub_pd(_mm512_div_pd(t,three),two);
+	                         px[0] = zero;
+	                         qx[0] = zero;
+	                         px[1] = p[0];
+	                         qx[1] = q[0];
+	                         
+	                         px[2] = _mm512_fmsub_pd(t,px[1],_mm512_add_pd(px[0],p[1]));
+	                         qx[2] = _mm512_fmsub_pd(t,qx[1],_mm512_add_pd(qx[0],q[1]));
+	                         px[3] = _mm512_fmsub_pd(t,px[2],_mm512_add_pd(px[1],p[2]));
+	                         qx[3] = _mm512_fmsub_pd(t,qx[2],_mm512_add_pd(qx[1],q[2]));
+	                         px[4] = _mm512_fmsub_pd(t,px[3],_mm512_add_pd(px[2],p[3]));
+	                         qx[4] = _mm512_fmsub_pd(t,qx[3],_mm512_add_pd(qx[2],q[3]));
+	                         px[5] = _mm512_fmsub_pd(t,px[4],_mm512_add_pd(px[3],p[4]));
+	                         qx[5] = _mm512_fmsub_pd(t,qx[4],_mm512_add_pd(qx[3],q[4]));
+	                         px[6] = _mm512_fmsub_pd(t,px[5],_mm512_add_pd(px[4],p[5]));
+	                         qx[6] = _mm512_fmsub_pd(t,qx[5],_mm512_add_pd(qx[4],q[5]));
+	                         px[7] = _mm512_fmsub_pd(t,px[6],_mm512_add_pd(px[5],p[6]));
+	                         qx[7] = _mm512_fmsub_pd(t,qx[6],_mm512_add_pd(qx[5],q[6]));
+	                         px[8] = _mm512_fmsub_pd(t,px[7],_mm512_add_pd(px[6],p[7]));
+	                         qx[8] = _mm512_fmsub_pd(t,qx[7],_mm512_add_pd(qx[6],q[7]));
+	                         __m512 tmp = _mm512_mul_pd(half,t);
+	                         sump  = _mm512_fmsub_pd(tmp,px[9],_mm512_add_pd(px[8],p[9]));
+	                         sumq  = _mm512_fmsub_pd(tmp,qx[9],_mm512_add_pd(qx[8],q[9]));
+	                         frac  = _mm512_div_pd(sump,sumq);
+	                         tmp    = _mm512_div_sub_pd(x,_mm512_div_pd(x01,x11));
+	                         xmx0  = _mm512_sub_pd(tmp,x02);
+
+                                 if(_mm512_cmp_pd_mask(p037,
+                                                   _mm512_abs_pd(xmx0),_CMP_LE_OQ)) {
+                                     
+                                     __m512 tmp = _mm512_div_pd(x,x0);
+                                     ei         = _mm512_fmadd_pd(frac,xmx0,xlog(tmp));
+                                     if(jint==3) {
+                                        ei = _mm512_mul_pd(xexp(negate_zmm8r8(x),ei));
+                                     }                 
+                                 }
+                                 else {
+                                    
+                                      //Special approximation to ln(X/X0) for X close to X0. 
+                                      
+                                      y    = _mm512_div_pd(xmx0,_mm512_add_pd(x,x0));
+                                      ysq  = _mm512_mul_pd(y,y);
+                                      sump = plg[0]; 
+                                      sumq = _mm512_add_pd(ysq,qlg[0]);
+                                      
+                                      sump = _mm512_fmadd_pd(sump,ysq,plg[1]);
+                                      sumq = _mm512_fmadd_pd(sumq,ysq,qlg[1]);
+                                      sump = _mm512_fmadd_pd(sump,ysq,plg[2]);
+                                      sumq = _mm512_fmadd_pd(sumq,ysq,qlg[2]);
+                                      sump = _mm512_fmadd_pd(sump,ysq,plg[3]);
+                                      sumq = _mm512_fmadd_pd(sumq,ysq,qlg[3]);
+                                      
+                                      __m512 tmp = _mm512_fmadd_pd(sumq,
+                                                               _mm512_add_pd(x,x0),frac);
+                                      ei   = _mm512_mul_pd(_mm512_div_pd(sump,tmp),xmx0);
+                                      
+                                      if(jint==3) {
+                                         ei = _mm512_mul_pd(xexp(negate_zmm8r8(x),ei));
+                                      }
+                                 }
+	                }
+	                else if(_mm512_cmp_pd_mask(x,twelve,_CMP_LT_OQ)) {
+	                         
+	                         frac = zero;
+	                         
+	                         frac = _mm512_div_pd(s[0],
+	                                          _mm512_add_pd(r[0],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[1],
+	                                          _mm512_add_pd(r[1],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[2],
+	                                          _mm512_add_pd(r[2],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[3],
+	                                          _mm512_add_pd(r[3],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[4],
+	                                          _mm512_add_pd(r[4],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[5],
+	                                          _mm512_add_pd(r[5],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[6],
+	                                          _mm512_add_pd(r[6],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[7],
+	                                          _mm512_add_pd(r[7],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[8],
+	                                          _mm512_add_pd(r[8],
+	                                                    _mm512_add_pd(frac)));
+	                                                    
+	                         ei   = _mm512_div_pd(_mm512_add_pd(r[9],frac),x);
+	                         if(jint!=3) {
+	                            ei = _mm512_mul_pd(ei,xexp(x));
+	                         }
+	                         
+	                }
+	                else if(_mm512_cmp_pd_mask(x,two4,_CMP_LE_OQ)) {
+	                         
+	                         frac = zero;
+	                         
+	                         frac = _mm512_div_pd(q1[0],
+	                                          _mm512_add_pd(p1[0],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[1],
+	                                          _mm512_add_pd(p1[1],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[2],
+	                                          _mm512_add_pd(p1[2],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[3],
+	                                          _mm512_add_pd(p1[3],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[4],
+	                                          _mm512_add_pd(p1[4],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[5],
+	                                          _mm512_add_pd(p1[5],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[6],
+	                                          _mm512_add_pd(p1[6],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[7],
+	                                          _mm512_add_pd(p1[7],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[8],
+	                                          _mm512_add_pd(p1[8],
+	                                                    _mm512_add_pd(frac)));
+	                                                    
+	                         ei   = _mm512_div_pd(_mm512_add_pd(p1[9],frac),x);
+	                         if(jint!=3) {
+	                            ei = _mm512_mul_pd(ei,xexp(x));
+	                         }
+	                         
+	                }
+	                else {
+	                   
+	                       if(_mm512_cmp_pd_mask(xmax,x,_CMP_LE_OQ) &&
+	                          jint==3) {
+	                          
+	                           ei = xinf;  
+	                       }
+	                       else {
+	                          
+	                           y    = _mm512_div_pd(one,x);
+	                           frac = zero;
+	                           
+	                           frac = _mm512_div_pd(q2[0],
+	                                          _mm512_add_pd(p2[0],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[1],
+	                                          _mm512_add_pd(p2[1],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[2],
+	                                          _mm512_add_pd(p2[2],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[3],
+	                                          _mm512_add_pd(p2[3],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[4],
+	                                          _mm512_add_pd(p2[4],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[5],
+	                                          _mm512_add_pd(p2[5],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[6],
+	                                          _mm512_add_pd(p2[6],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[7],
+	                                          _mm512_add_pd(p2[7],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[8],
+	                                          _mm512_add_pd(p2[8],
+	                                                    _mm512_add_pd(frac)));
+	                                                    
+	                           frac = _mm512_add_pd(p2[9],frac);
+	                           ei   = _mm512_fmadd_pd(frac,
+	                                              _mm512_mul_pd(y,y),y);
+	                           if(jint!=3) {
+	                              
+	                              if(_mm512_cmp_pd_mask(x,
+	                                       _mm512_sub_pd(xmax,two4),_CMP_LE_OQ)) {
+	                                  
+	                                  ei = _mm512_mul_pd(ei,xexp(x));    
+	                                  // Calculation reformulated to avoid premature overflow.    
+	                              }
+	                              else {
+	                                 
+	                                  __m512 tmp = _mm512_sub_pd(x,fourty);
+	                                  ei  = _mm512_mul_pd(_mm512_mul_pd(ei,xexp(tmp),exp40));
+	                              }
+	                           }
+	                       }
+	                }
+	                 
+	                 result = ei;
+	                 return (result);
+	                                
+	         }
+	                   
 	                   
 	         
         
