@@ -1255,8 +1255,10 @@ namespace gms {
 	                 
 	                  x = arg;
 	                  if(__m512_cmp_pd_mask(x,zero,_CMP_EQ_OQ)) {
+	                  
 	                      ei = negate_zmm8r8(xinf);
 	                      if(jint == 2) {
+	                      
 	                          ei = negate_zmm8r8(ei);
 	                      }
 	                     /*
@@ -1267,16 +1269,321 @@ namespace gms {
 	                 }
 	                 else if(_mm512_cmp_pd_mask(x,zero,_CMP_LT_OQ) || 
 	                         jint == 2) {
+	                         
 	                         y = _mm512_abs_pd(x);
+	                         if(_mm512_cmp_pd_mask(y,one,_CMP_LT)) {
+	                         
+	                            sump = _mm512_fmadd_pd(a[6],y,a[0]);
+	                            sumq = _mm512_add_pd(y,b[0]);
+	                            
+	                            sump = _mm512_fmadd_pd(sump,y,a[1]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[1]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[2]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[2]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[3]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[3]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[4]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[4]);
+	                            sump = _mm512_fmadd_pd(sump,y,a[5]);
+	                            sumq = _mm512_fmadd_pd(sumq,y,b[5]);
+	                            
+	                            ei   = _mm512_sub_pd(xlog(y),
+	                                             _mm512_div_pd(sump,sumq));
+	                            if(jint==3) {
+	                               ei = _mm512_mul_pd(ei,xexp(y);
+	                            }
+	                            
+	                         }  
+	                         else if(_mm512_cmp_pd_mask(y,four,_CMP_LE_OQ)) {
+	                        
+	                                w    = _mm512_div_pd(one,y);
+	                                sump = c[0];
+	                                sumq = d[0];
+	                                
+	                                sump = _mm512_fmadd_pd(sump,w,c[1]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[1]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[2]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[2]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[3]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[3]);  
+	                                sump = _mm512_fmadd_pd(sump,w,c[4]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[4]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[5]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[5]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[6]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[6]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[7]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[7]);
+	                                sump = _mm512_fmadd_pd(sump,w,c[8]);
+	                                sumq = _mm512_fmadd_pd(sumq,w,d[8]);
+	                                
+	                                ei   = _mm512_div_pd(negate_zmm8r8(sump),sumq);
+	                                
+	                                if(jint!=3) {
+	                                    ei = _mm512_mul_pd(ei,
+	                                                    xexp(negate_zmm8r8(y)));
+	                                }
+	                        } 
+	                        else {
 	                                 
-	                 }
-	                  
-	                  
-	                 
-	                 
-	                  
-	              
+	                                if(_mm512_cmp_pd_mask(xbig,y,_CMP_LT_OQ) &&
+	                                   jint<3) {
+	                                     ei = zero;  
+	                                }
+                                        else {
+                                           
+                                             w    = _mm512_div_pd(one,y);
+                                             sump = e[0];
+                                             sumq = f[0];
+                                             
+                                             sump = _mm512_fmadd_pd(sump,w,e[1]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[1]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[2]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[2]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[3]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[3]);  
+	                                     sump = _mm512_fmadd_pd(sump,w,e[4]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[4]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[5]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[5]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[6]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[6]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[7]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[7]);
+	                                     sump = _mm512_fmadd_pd(sump,w,e[8]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[8]); 
+	                                     sump = _mm512_fmadd_pd(sump,w,e[9]);
+	                                     sumq = _mm512_fmadd_pd(sumq,w,f[9]); 
+	                                     
+	                                     const __m512 x0 = _mm512_div_pd(sump,sumq);
+	                                     const __m512 x1 = _mm512_sub_pd(one,w);
+	                                     ei    = _mm512_mul_pd(negate_zmm8r8(w),
+	                                                       _mm512_mul_pd(x0,x1));
+	                                                       
+	                                     if(jint!=3) {
+	                                         ei = _mm512_mul_pd(ei,
+	                                                         negate_zmm8r8(y));
+	                                     }
+	                                }	                                
+	                                
+	                        }    
+	                        
+	                        if(jint==2) {
+	                           ei = negate_zmm8r8(ei);
+	                        } 
+	                        
+	                        /*
+	                           !
+                                   !  To improve conditioning, rational approximations are expressed
+                                   !  in terms of Chebyshev polynomials for 0 <= X < 6, and in
+                                   !  continued fraction form for larger X.
+                                   !
+	                        */
+	                        
+	                }
+	                else if(_mm512_cmp_pd_mask(x,six,_CMP_LT_OQ)) {
+	                       
+	                         t     = _mm512_add_pd(x,x);
+	                         t     = _mm512_sub_pd(_mm512_div_pd(t,three),two);
+	                         px[0] = zero;
+	                         qx[0] = zero;
+	                         px[1] = p[0];
+	                         qx[1] = q[0];
+	                         
+	                         px[2] = _mm512_fmsub_pd(t,px[1],_mm512_add_pd(px[0],p[1]));
+	                         qx[2] = _mm512_fmsub_pd(t,qx[1],_mm512_add_pd(qx[0],q[1]));
+	                         px[3] = _mm512_fmsub_pd(t,px[2],_mm512_add_pd(px[1],p[2]));
+	                         qx[3] = _mm512_fmsub_pd(t,qx[2],_mm512_add_pd(qx[1],q[2]));
+	                         px[4] = _mm512_fmsub_pd(t,px[3],_mm512_add_pd(px[2],p[3]));
+	                         qx[4] = _mm512_fmsub_pd(t,qx[3],_mm512_add_pd(qx[2],q[3]));
+	                         px[5] = _mm512_fmsub_pd(t,px[4],_mm512_add_pd(px[3],p[4]));
+	                         qx[5] = _mm512_fmsub_pd(t,qx[4],_mm512_add_pd(qx[3],q[4]));
+	                         px[6] = _mm512_fmsub_pd(t,px[5],_mm512_add_pd(px[4],p[5]));
+	                         qx[6] = _mm512_fmsub_pd(t,qx[5],_mm512_add_pd(qx[4],q[5]));
+	                         px[7] = _mm512_fmsub_pd(t,px[6],_mm512_add_pd(px[5],p[6]));
+	                         qx[7] = _mm512_fmsub_pd(t,qx[6],_mm512_add_pd(qx[5],q[6]));
+	                         px[8] = _mm512_fmsub_pd(t,px[7],_mm512_add_pd(px[6],p[7]));
+	                         qx[8] = _mm512_fmsub_pd(t,qx[7],_mm512_add_pd(qx[6],q[7]));
+	                         __m512 tmp = _mm512_mul_pd(half,t);
+	                         sump  = _mm512_fmsub_pd(tmp,px[9],_mm512_add_pd(px[8],p[9]));
+	                         sumq  = _mm512_fmsub_pd(tmp,qx[9],_mm512_add_pd(qx[8],q[9]));
+	                         frac  = _mm512_div_pd(sump,sumq);
+	                         tmp    = _mm512_div_sub_pd(x,_mm512_div_pd(x01,x11));
+	                         xmx0  = _mm512_sub_pd(tmp,x02);
+
+                                 if(_mm512_cmp_pd_mask(p037,
+                                                   _mm512_abs_pd(xmx0),_CMP_LE_OQ)) {
+                                     
+                                     __m512 tmp = _mm512_div_pd(x,x0);
+                                     ei         = _mm512_fmadd_pd(frac,xmx0,xlog(tmp));
+                                     if(jint==3) {
+                                        ei = _mm512_mul_pd(xexp(negate_zmm8r8(x),ei));
+                                     }                 
+                                 }
+                                 else {
+                                    
+                                      //Special approximation to ln(X/X0) for X close to X0. 
+                                      
+                                      y    = _mm512_div_pd(xmx0,_mm512_add_pd(x,x0));
+                                      ysq  = _mm512_mul_pd(y,y);
+                                      sump = plg[0]; 
+                                      sumq = _mm512_add_pd(ysq,qlg[0]);
+                                      
+                                      sump = _mm512_fmadd_pd(sump,ysq,plg[1]);
+                                      sumq = _mm512_fmadd_pd(sumq,ysq,qlg[1]);
+                                      sump = _mm512_fmadd_pd(sump,ysq,plg[2]);
+                                      sumq = _mm512_fmadd_pd(sumq,ysq,qlg[2]);
+                                      sump = _mm512_fmadd_pd(sump,ysq,plg[3]);
+                                      sumq = _mm512_fmadd_pd(sumq,ysq,qlg[3]);
+                                      
+                                      __m512 tmp = _mm512_fmadd_pd(sumq,
+                                                               _mm512_add_pd(x,x0),frac);
+                                      ei   = _mm512_mul_pd(_mm512_div_pd(sump,tmp),xmx0);
+                                      
+                                      if(jint==3) {
+                                         ei = _mm512_mul_pd(xexp(negate_zmm8r8(x),ei));
+                                      }
+                                 }
+	                }
+	                else if(_mm512_cmp_pd_mask(x,twelve,_CMP_LT_OQ)) {
+	                         
+	                         frac = zero;
+	                         
+	                         frac = _mm512_div_pd(s[0],
+	                                          _mm512_add_pd(r[0],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[1],
+	                                          _mm512_add_pd(r[1],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[2],
+	                                          _mm512_add_pd(r[2],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[3],
+	                                          _mm512_add_pd(r[3],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[4],
+	                                          _mm512_add_pd(r[4],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[5],
+	                                          _mm512_add_pd(r[5],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[6],
+	                                          _mm512_add_pd(r[6],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[7],
+	                                          _mm512_add_pd(r[7],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(s[8],
+	                                          _mm512_add_pd(r[8],
+	                                                    _mm512_add_pd(frac)));
+	                                                    
+	                         ei   = _mm512_div_pd(_mm512_add_pd(r[9],frac),x);
+	                         if(jint!=3) {
+	                            ei = _mm512_mul_pd(ei,xexp(x));
+	                         }
+	                         
+	                }
+	                else if(_mm512_cmp_pd_mask(x,two4,_CMP_LE_OQ)) {
+	                         
+	                         frac = zero;
+	                         
+	                         frac = _mm512_div_pd(q1[0],
+	                                          _mm512_add_pd(p1[0],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[1],
+	                                          _mm512_add_pd(p1[1],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[2],
+	                                          _mm512_add_pd(p1[2],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[3],
+	                                          _mm512_add_pd(p1[3],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[4],
+	                                          _mm512_add_pd(p1[4],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[5],
+	                                          _mm512_add_pd(p1[5],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[6],
+	                                          _mm512_add_pd(p1[6],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[7],
+	                                          _mm512_add_pd(p1[7],
+	                                                    _mm512_add_pd(frac)));
+	                         frac = _mm512_div_pd(q1[8],
+	                                          _mm512_add_pd(p1[8],
+	                                                    _mm512_add_pd(frac)));
+	                                                    
+	                         ei   = _mm512_div_pd(_mm512_add_pd(p1[9],frac),x);
+	                         if(jint!=3) {
+	                            ei = _mm512_mul_pd(ei,xexp(x));
+	                         }
+	                         
+	                }
+	                else {
+	                   
+	                       if(_mm512_cmp_pd_mask(xmax,x,_CMP_LE_OQ) &&
+	                          jint==3) {
+	                          
+	                           ei = xinf;  
+	                       }
+	                       else {
+	                          
+	                           y    = _mm512_div_pd(one,x);
+	                           frac = zero;
+	                           
+	                           frac = _mm512_div_pd(q2[0],
+	                                          _mm512_add_pd(p2[0],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[1],
+	                                          _mm512_add_pd(p2[1],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[2],
+	                                          _mm512_add_pd(p2[2],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[3],
+	                                          _mm512_add_pd(p2[3],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[4],
+	                                          _mm512_add_pd(p2[4],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[5],
+	                                          _mm512_add_pd(p2[5],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[6],
+	                                          _mm512_add_pd(p2[6],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[7],
+	                                          _mm512_add_pd(p2[7],
+	                                                    _mm512_add_pd(frac)));
+	                           frac = _mm512_div_pd(q2[8],
+	                                          _mm512_add_pd(p2[8],
+	                                                    _mm512_add_pd(frac)));
+	                                                    
+	                           frac = _mm512_add_pd(p2[9],frac);
+	                           ei   = _mm512_fmadd_pd(frac,
+	                                              _mm512_mul_pd(y,y),y);
+	                           if(jint!=3) {
 	                              
+	                              if(_mm512_cmp_pd_mask(x,
+	                                       _mm512_sub_pd(xmax,two4),_CMP_LE_OQ)) {
+	                                  
+	                                  ei = _mm512_mul_pd(ei,xexp(x));    
+	                                  // Calculation reformulated to avoid premature overflow.    
+	                              }
+	                              else {
+	                                 
+	                                  __m512 tmp = _mm512_sub_pd(x,fourty);
+	                                  ei  = _mm512_mul_pd(_mm512_mul_pd(ei,xexp(tmp),exp40));
+	                              }
+	                           }
+	                       }
+	                }
+	                 
+	                 result = ei;
+	                 return (result);
+	                                
 	         }
 	                   
 	         
