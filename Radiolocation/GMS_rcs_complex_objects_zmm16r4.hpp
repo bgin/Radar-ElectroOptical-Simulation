@@ -1196,7 +1196,7 @@ namespace  gms {
                          ierr = err;
                          ieri = eri;
                          if(ierr == 3 || ieri == 3) {
-                            std::numeric_limits<float>::quiet_NaN();
+                            return std::numeric_limits<float>::quiet_NaN();
                          }
                          c = {sumr,sumi};
                          k02   = k0*k0;   
@@ -1244,7 +1244,7 @@ namespace  gms {
                          ierr = err;
                          ieri = eri;
                          if(ierr == 3 || ieri == 3) {
-                            std::numeric_limits<float>::quiet_NaN();
+                            return std::numeric_limits<float>::quiet_NaN();
                          }
                          c = {sumr,sumi};
                          k02   = k0*k0;   
@@ -5028,8 +5028,11 @@ namespace  gms {
 	           
 	                  return (_mm512_setzero_ps()); 
 	          }
-	       
-	       
+	          
+	          
+	          
+	           
+	      
 	                                    
 	        
                  
