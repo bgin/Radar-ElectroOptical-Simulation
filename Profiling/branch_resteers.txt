@@ -1,0 +1,5 @@
+-collect-with runsa 
+-knob event-config=CPU_CLK_UNHALTED.THREAD:sa=1000000:OS=no:USR=yes,CPU_CLK_UNHALTED.REF_TSC:sa=1000000:OS=no:USR=yes,INST_RETIRED.ANY:sa=1000000:OS=no:USR=yes,INT_MISC.CLEAR_RESTEER_CYCLES:sa=10000003:OS=no:USR=yes,BACLEARS.ANY:sa=100003:OS=no:USR=yes,RS_EVENTS.EMPTY_CYCLES:sa=1000003:OS=no:USR=yes,RS_EVENTS.EMPTY_END:sa=1000003:OS=no:USR=yes,ICACHE_16B.IFDATA_STALL:sa=1000003:OS=no:USR=yes,ICACHE_64B.IFTAG_STALL:sa=1000003:OS=no:USR=yes
+-knob event-mode=user 
+-knob sampling-interval=1 
+-run-pass-thru=--perf-threads=none
