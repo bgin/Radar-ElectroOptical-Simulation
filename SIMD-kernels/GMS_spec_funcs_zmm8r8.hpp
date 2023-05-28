@@ -3207,6 +3207,148 @@ namespace gms {
 !    1, K1(x);
 !    2, exp(x) * K1(x);
 */      
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d calck1_zmm8r8(const __m512d arg,
+	                                 const int32_t jint) {
+	                                 
+	                  __ATTR_ALIGN__(64) const static 
+	                  __m512d p[5]  = {_mm512_set1_pd(4.8127070456878442310e-1), 
+	                                   _mm512_set1_pd(9.9991373567429309922e+1), 
+                                           _mm512_set1_pd(7.1885382604084798576e+3), 
+                                           _mm512_set1_pd(1.7733324035147015630e+5), 
+                                           _mm512_set1_pd(7.1938920065420586101e+5)};
+                          __ATTR_ALIGN__(64) const static 
+	                  __m512d q[3]  = {_mm512_set1_pd(-2.8143915754538725829e+2), 
+	                                   _mm512_set1_pd(3.7264298672067697862e+4), 
+                                           _mm512_set1_pd(-2.2149374878243304548e+6)};
+                          __ATTR_ALIGN__(64) const static 
+	                  __m512d f[5]  = {_mm512_set1_pd(-2.2795590826955002390e-1),
+	                                   _mm512_set1_pd(-5.3103913335180275253e+1), 
+                                           _mm512_set1_pd(-4.5051623763436087023e+3),
+                                           _mm512_set1_pd(-1.4758069205414222471e+5), 
+                                           _mm512_set1_pd(-1.3531161492785421328e+6)};
+                          __ATTR_ALIGN__(64) const static 
+	                  __m512d g[3]  = {_mm512_set1_pd(-3.0507151578787595807e+2), 
+	                                   _mm512_set1_pd(4.3117653211351080007e+4), 
+                                           _mm512_set1_pd(-2.7062322985570842656e+6)};
+                          __ATTR_ALIGN__(64) const static 
+	                  __m512d pp[11] = {_mm512_set1_pd(6.4257745859173138767e-2),
+	                                    _mm512_set1_pd(7.5584584631176030810e+0), 
+                                            _mm512_set1_pd(1.3182609918569941308e+2), 
+                                            _mm512_set1_pd(8.1094256146537402173e+2),
+                                            _mm512_set1_pd(2.3123742209168871550e+3), 
+                                            _mm512_set1_pd(3.4540675585544584407e+3), 
+                                            _mm512_set1_pd(2.8590657697910288226e+3), 
+                                            _mm512_set1_pd(1.3319486433183221990e+3), 
+                                            _mm512_set1_pd(3.4122953486801312910e+2), 
+                                            _mm512_set1_pd(4.4137176114230414036e+1), 
+                                            _mm512_set1_pd(2.2196792496874548962e+0)};
+                          __ATTR_ALIGN__(64) const static 
+	                  __m512d qq[9] =  {_mm512_set1_pd(3.6001069306861518855e+1), 
+	                                    _mm512_set1_pd(3.3031020088765390854e+2), 
+                                            _mm512_set1_pd(1.2082692316002348638e+3), 
+                                            _mm512_set1_pd(2.1181000487171943810e+3), 
+                                            _mm512_set1_pd(1.9448440788918006154e+3), 
+                                            _mm512_set1_pd(9.6929165726802648634e+2), 
+                                            _mm512_set1_pd(2.5951223655579051357e+2), 
+                                            _mm512_set1_pd(3.4552228452758912848e+1), 
+                                            _mm512_set1_pd(1.7710478032601086579e+0)};
+                          const __m512d one   = _mm512_set1_pd(1.0e+0);
+                          const __m512d zero  = _mm512_set1_pd(0.0e+0);
+                          const __m512d xleast= _mm512_set1_pd(2.23e-308);
+                          const __m512d xsmall= _mm512_set1_pd(1.11e-16);
+                          const __m512d xinf  = _mm512_set1_pd(1.79e+308);
+                          const __m512d xmax  = _mm512_set1_pd(705.343e+0);
+                          register __m512d result,sumf,sumg,sump,sumq;
+                          register __m512d x,xx,t0,t1,t2;
+                          
+                          x = arg;
+                          if(_mm512_cmp_pd_mask(x,xleast,_CMP_LT_OQ)) {
+                             
+                              result = xinf;
+                          }
+                          else if(_mm512_cmp_pd_mask(x,one,_CMP_LE_OQ)) {
+                              
+                                if(_mm512_cmp_pd_mask(x,small,_CMP_LT_OQ)) {
+                                   
+                                    result = _mm512_div_pd(one,x);
+                                }
+                                else {
+                                    
+                                    xx   = _mm512_mul_pd(x,x);
+                                    sump = _mm512_fmadd_pd(p[0],xx,
+                                                      _mm512_fmadd_pd(p[1],xx,
+                                                            _mm512_fmadd_pd(p[2],xx,
+                                                                  _mm512_fmadd_pd(p[3],xx,
+                                                                        _mm512_fmadd_pd(p[4],xx,q[2])))));
+                                    sumq = _mm512_fmadd_pd(
+                                                      _mm512_add_pd(xx,q[0]),xx,
+                                                                _mm512_fmadd_pd(q[1],xx,q[2]));
+                                    sumf = _mm512_fmadd_pd(f[0],xx,
+                                                     _mm512_fmadd_pd(f[1],xx,
+                                                              _mm512_fmadd_pd(f[2],xx,
+                                                                       _mm512_fmadd_pd(f[3],xx,f[4]))));
+                                    sumg = _mm512_fmadd_pd(
+                                                      _mm512_add_pd(xx,g[0]),xx,
+                                                                _mm512_fmadd_pd(g[1],xx,g[2]));
+                                                                                  
+                                    t0     = _mm512_div_pd(sumf,sumg);
+                                    t2     = xlog(x);
+                                    t1     = _mm512_div_pd(sump,sumq);
+                                    result = _mm512_div_pd(_mm512_fmadd_pd(xx,t2,
+                                                                    _mm512_add_pd(t0,t1)),x);
+                                    if(jint==2) {
+                                       result = _mm512_mul_pd(result,xexp(x));
+                                    }                                             
+                                }
+                          } 
+                          else if(jint==1 &&
+                                  _mm512_cmp_pd_mask(xmamx,x,_CMP_LT_OQ)) {
+                                   
+                                     result = zero;
+                          }    
+                          else {
+                          
+                                 xx   = _mm512_div_pd(one,x);
+                                 sumq = xx;
+                                 sump = pp[0];
+                                 sump = _mm512_fmadd_pd(sump,xx,p[1]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[0]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[2]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[1]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[3]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[2]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[4]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[3]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[5]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[4]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[6]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[5]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[7]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[6]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[8]);
+                                 sumq = _mm512_mul_pd(_mm512_add_pd(sumq,qq[7]));
+                                 sump = _mm512_fmadd_pd(sump,xx,p[9]);
+                                 sump = _mm512_fmadd_pd(sump,xx,p[10]);
+                                 sumq = _mm512_add_pd(sumq,qq[8]);
+                                 t0   = _mm512_sqrt_pd(x);
+                                 t1   = _mm512_div_pd(sumq,sumq);
+                                 result= _mm512_div_pd(t1,t0);
+                                 
+                                 if(jint==1) {
+                                    result = _mm512_mul_pd(result,
+                                                  xexp(negate_zmm8r8(x)));
+                                 }
+                          } 
+                          
+                          return (result);                     
+	         }
 	              
 	         
         
