@@ -3989,6 +3989,59 @@ namespace gms {
                               return (result);
                                    
 	          }
+	          
+	          
+	          
+/*
+    !*****************************************************************************80
+!
+!! CALJY0 computes various J0 and Y0 Bessel functions.
+!
+!  Discussion:
+!
+!    This routine computes zero-order Bessel functions of the first and
+!    second kind (J0 and Y0), for real arguments X, where 0 < X <= XMAX
+!    for Y0, and |X| <= XMAX for J0.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    John Hart, Ward Cheney, Charles Lawson, Hans Maehly,
+!    Charles Mesztenyi, John Rice, Henry Thatcher,
+!    Christoph Witzgall,
+!    Computer Approximations,
+!    Wiley, 1968,
+!    LC: QA297.C64.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) ARG, the argument.  If JINT = 0, ARG
+!    must satisfy
+!     -XMAX < ARG < XMAX;
+!    If JINT = 1, then ARG must satisfy
+!      0 < ARG < XMAX.
+!
+!    Output, real ( kind = 8 ) RESULT, the value of the function,
+!    which depends on the input value of JINT:
+!    0, RESULT = J0(x);
+!    1, RESULT = Y0(x);
+!
+!    Input, integer ( kind = 4 ) JINT, chooses the function to be computed.
+!    0, J0(x);
+!    1, Y0(x);
+*/
 	            
 	         
         
