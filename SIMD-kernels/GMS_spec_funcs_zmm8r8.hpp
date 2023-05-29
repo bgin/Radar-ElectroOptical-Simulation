@@ -3493,6 +3493,55 @@ namespace gms {
                           
                           return (result);                     
 	         }
+	         
+	         
+/*
+  !*****************************************************************************80
+!
+!! CALERF computes various forms of the error function.
+!
+!  Discussion:
+!
+!    This routine evaluates erf(x), erfc(x), and exp(x*x)*erfc(x)
+!    for a real argument x.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody,
+!    Rational Chebyshev Approximations for the Error Function,
+!    Mathematics of Computation,
+!    Volume 23, Number 107, July 1969, pages 631-638.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) ARG, the argument.  If JINT is 1, the
+!    argument must be less than XBIG.  If JINT is 2, the argument
+!    must lie between XNEG and XMAX.
+!
+!    Output, real ( kind = 8 ) RESULT, the value of the function,
+!    which depends on the input value of JINT:
+!    0, RESULT = erf(x);
+!    1, RESULT = erfc(x) = 1 - erf(x);
+!    2, RESULT = exp(x*x)*erfc(x) = exp(x*x) - erf(x*x)*erf(x).
+!
+!    Input, integer ( kind = 4 ) JINT, chooses the function to be computed.
+!    0, erf(x);
+!    1, erfc(x);
+!    2, exp(x*x)*erfc(x).
+*/
 	             
 	         
         
