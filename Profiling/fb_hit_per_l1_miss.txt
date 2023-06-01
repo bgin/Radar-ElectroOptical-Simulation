@@ -1,0 +1,5 @@
+-collect-with runsa 
+-knob event-config=MEM_LOAD_RETIRED.FB_HIT:sa=1000000:OS=no:USR=yes,MEM_LOAD_RETIRED.L1_MISS:sa=100000:OS=no:USR=yes
+-knob event-mode=user 
+-knob sampling-interval=1 
+-run-pass-thru=--perf-threads=none

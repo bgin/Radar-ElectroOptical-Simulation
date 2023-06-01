@@ -1,0 +1,5 @@
+-collect-with runsa 
+-knob event-config=
+-knob event-mode=user 
+-knob sampling-interval=1 
+-run-pass-thru=--perf-threads=none
