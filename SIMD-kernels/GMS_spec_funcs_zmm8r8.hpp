@@ -5540,6 +5540,47 @@ namespace gms {
                           
                           return (result);
 	         }
+	         
+	         
+	         /*
+	         !*****************************************************************************80
+!
+!! DAW evaluates Dawson's integral function.
+!
+!  Discussion:
+!
+!    This routine evaluates Dawson's integral,
+!
+!      F(x) = exp ( - x * x ) * Integral ( 0 <= t <= x ) exp ( t * t ) dt
+!
+!    for a real argument x.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody, Kathleen Paciorek, Henry Thacher,
+!    Chebyshev Approximations for Dawson's Integral,
+!    Mathematics of Computation,
+!    Volume 24, Number 109, January 1970, pages 171-178.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) XX, the argument of the function.
+!
+!    Output, real ( kind = 8 ) DAW, the value of the function.
+	         */
 	          
 	            
 	         
