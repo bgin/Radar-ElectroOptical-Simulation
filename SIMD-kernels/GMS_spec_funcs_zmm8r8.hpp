@@ -5804,7 +5804,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512d dawson_zmm8r8(const double * __restrict __ATTR_ALIGN__(64) pxx) {
+	           __m512d dawson_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pxx) {
 	           
 	                 __ATTR_ALIGN__(64) const static 
 	                 __m512d p1[10]  = {_mm512_set1_pd(-2.69020398788704782410e-12), 
@@ -6014,6 +6014,41 @@ namespace gms {
                          
                          return (daw);
 	         }
+	         
+	        
+	        /*
+	        !*****************************************************************************80
+!
+!! CERF computes the error function and derivative for a complex argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    25 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex ( kind = 8 ), the argument.
+!
+!    Output, complex ( kind = 8 ) CER, CDER, the values of erf(z) and erf'(z).
+	        */
 	         
 	         
         
