@@ -6049,7 +6049,325 @@ namespace gms {
 !
 !    Output, complex ( kind = 8 ) CER, CDER, the values of erf(z) and erf'(z).
 	        */
-	         
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cerf_zmm8r8(const __m512d zr,
+	                            const __m512d zi,
+	                            __m512d * __restrict cerr,
+	                            __m512d * __restrict ceri,
+	                            __m512d * __restrict cderr,
+	                            __m512d * __restrict cderi) {
+	                     
+	                __ATTR_ALIGN__(64) const static
+	                __m512d LUT1[100] = {_mm512_set1_pd(1.50000000),
+	                                    _mm512_set1_pd(2.50000000),
+	                                    _mm512_set1_pd(3.50000000),
+	                                    _mm512_set1_pd(4.50000000),
+	                                    _mm512_set1_pd(5.50000000),
+	                                    _mm512_set1_pd(6.50000000),
+	                                    _mm512_set1_pd(7.50000000),    
+                                            _mm512_set1_pd(8.50000000),    
+                                            _mm512_set1_pd(9.50000000),    
+                                            _mm512_set1_pd(10.5000000),    
+                                            _mm512_set1_pd(11.5000000),    
+                                            _mm512_set1_pd(12.5000000),    
+                                            _mm512_set1_pd(13.5000000),    
+                                            _mm512_set1_pd(14.5000000),   
+                                            _mm512_set1_pd(15.5000000),    
+                                            _mm512_set1_pd(16.5000000),    
+                                            _mm512_set1_pd(17.5000000),    
+                                            _mm512_set1_pd(18.5000000),    
+                                            _mm512_set1_pd(19.5000000),    
+                                            _mm512_set1_pd(20.5000000),    
+                                            _mm512_set1_pd(21.5000000),    
+                                            _mm512_set1_pd(22.5000000),    
+                                            _mm512_set1_pd(23.5000000),   
+                                            _mm512_set1_pd(24.5000000),    
+                                            _mm512_set1_pd(25.5000000),   
+                                            _mm512_set1_pd(26.5000000),    
+                                            _mm512_set1_pd(27.5000000),    
+                                            _mm512_set1_pd(28.5000000),    
+                                            _mm512_set1_pd(29.5000000),    
+                                            _mm512_set1_pd(30.5000000),   
+                                            _mm512_set1_pd(31.5000000),    
+                                            _mm512_set1_pd(32.5000000),    
+                                            _mm512_set1_pd(33.5000000),    
+                                            _mm512_set1_pd(34.5000000),    
+                                            _mm512_set1_pd(35.5000000),   
+                                            _mm512_set1_pd(36.5000000),    
+                                            _mm512_set1_pd(37.5000000),    
+                                            _mm512_set1_pd(38.5000000),    
+                                            _mm512_set1_pd(39.5000000),
+                                            _mm512_set1_pd(40.5000000),    
+                                            _mm512_set1_pd(41.5000000),    
+                                            _mm512_set1_pd(42.5000000),    
+                                            _mm512_set1_pd(43.5000000),    
+                                            _mm512_set1_pd(44.5000000),    
+                                            _mm512_set1_pd(45.5000000),    
+                                            _mm512_set1_pd(46.5000000),    
+                                            _mm512_set1_pd(47.5000000),    
+                                            _mm512_set1_pd(48.5000000),    
+                                            _mm512_set1_pd(49.5000000),    
+                                            _mm512_set1_pd(50.5000000),    
+                                            _mm512_set1_pd(51.5000000),    
+                                            _mm512_set1_pd(52.5000000),    
+                                            _mm512_set1_pd(53.5000000),    
+                                            _mm512_set1_pd(54.5000000),    
+                                            _mm512_set1_pd(55.5000000),    
+                                            _mm512_set1_pd(56.5000000),   
+                                            _mm512_set1_pd(57.5000000),    
+                                            _mm512_set1_pd(58.5000000),    
+                                            _mm512_set1_pd(59.5000000),    
+                                            _mm512_set1_pd(60.5000000),    
+                                            _mm512_set1_pd(61.5000000),    
+                                            _mm512_set1_pd(62.5000000),    
+                                            _mm512_set1_pd(63.5000000),    
+                                            _mm512_set1_pd(64.5000000),    
+                                            _mm512_set1_pd(65.5000000),    
+                                            _mm512_set1_pd(66.5000000),    
+                                            _mm512_set1_pd(67.5000000),    
+                                            _mm512_set1_pd(68.5000000),    
+                                            _mm512_set1_pd(69.5000000),    
+                                            _mm512_set1_pd(70.5000000),    
+                                            _mm512_set1_pd(71.5000000),    
+                                            _mm512_set1_pd(72.5000000),    
+                                            _mm512_set1_pd(73.5000000),    
+                                            _mm512_set1_pd(74.5000000),    
+                                            _mm512_set1_pd(75.5000000),    
+                                            _mm512_set1_pd(76.5000000),    
+                                            _mm512_set1_pd(77.5000000),    
+                                            _mm512_set1_pd(78.5000000),    
+                                            _mm512_set1_pd(79.5000000),    
+                                            _mm512_set1_pd(80.5000000),    
+                                            _mm512_set1_pd(81.5000000),    
+                                            _mm512_set1_pd(82.5000000),    
+                                            _mm512_set1_pd(83.5000000),    
+                                            _mm512_set1_pd(84.5000000),    
+                                            _mm512_set1_pd(85.5000000),    
+                                            _mm512_set1_pd(86.5000000),    
+                                            _mm512_set1_pd(87.5000000),    
+                                            _mm512_set1_pd(88.5000000),    
+                                            _mm512_set1_pd(89.5000000),    
+                                            _mm512_set1_pd(90.5000000),    
+                                            _mm512_set1_pd(91.5000000),    
+                                            _mm512_set1_pd(92.5000000),    
+                                            _mm512_set1_pd(93.5000000),    
+                                            _mm512_set1_pd(94.5000000),    
+                                            _mm512_set1_pd(95.5000000),    
+                                            _mm512_set1_pd(96.5000000),    
+                                            _mm512_set1_pd(97.5000000),    
+                                            _mm512_set1_pd(98.5000000),    
+                                            _mm512_set1_pd(99.5000000),    
+                                            _mm512_set1_pd(100.500000)}; 
+                        __ATTR_ALIGN__(64) const static
+	                __m512d LUT2[100] = {_mm512_set1_pd(1.0000000),
+	                                    _mm512_set1_pd(2.0000000),
+	                                    _mm512_set1_pd(3.0000000),
+	                                    _mm512_set1_pd(4.0000000),
+	                                    _mm512_set1_pd(5.0000000),
+	                                    _mm512_set1_pd(6.0000000),
+	                                    _mm512_set1_pd(7.0000000),    
+                                            _mm512_set1_pd(8.0000000),    
+                                            _mm512_set1_pd(9.0000000),    
+                                            _mm512_set1_pd(10.000000),    
+                                            _mm512_set1_pd(11.000000),    
+                                            _mm512_set1_pd(12.000000),    
+                                            _mm512_set1_pd(13.000000),    
+                                            _mm512_set1_pd(14.000000),   
+                                            _mm512_set1_pd(15.000000),    
+                                            _mm512_set1_pd(16.000000),    
+                                            _mm512_set1_pd(17.000000),    
+                                            _mm512_set1_pd(18.000000),    
+                                            _mm512_set1_pd(19.000000),    
+                                            _mm512_set1_pd(20.000000),    
+                                            _mm512_set1_pd(21.000000),    
+                                            _mm512_set1_pd(22.000000),    
+                                            _mm512_set1_pd(23.000000),   
+                                            _mm512_set1_pd(24.000000),    
+                                            _mm512_set1_pd(25.000000),   
+                                            _mm512_set1_pd(26.000000),    
+                                            _mm512_set1_pd(27.000000),    
+                                            _mm512_set1_pd(28.000000),    
+                                            _mm512_set1_pd(29.000000),    
+                                            _mm512_set1_pd(30.000000),   
+                                            _mm512_set1_pd(31.000000),    
+                                            _mm512_set1_pd(32.000000),    
+                                            _mm512_set1_pd(33.000000),    
+                                            _mm512_set1_pd(34.000000),    
+                                            _mm512_set1_pd(35.000000),   
+                                            _mm512_set1_pd(36.000000),    
+                                            _mm512_set1_pd(37.000000),    
+                                            _mm512_set1_pd(38.000000),    
+                                            _mm512_set1_pd(39.000000),
+                                            _mm512_set1_pd(40.000000),    
+                                            _mm512_set1_pd(41.000000),    
+                                            _mm512_set1_pd(42.000000),    
+                                            _mm512_set1_pd(43.000000),    
+                                            _mm512_set1_pd(44.000000),    
+                                            _mm512_set1_pd(45.000000),    
+                                            _mm512_set1_pd(46.000000),    
+                                            _mm512_set1_pd(47.000000),    
+                                            _mm512_set1_pd(48.000000),    
+                                            _mm512_set1_pd(49.000000),    
+                                            _mm512_set1_pd(50.000000),    
+                                            _mm512_set1_pd(51.000000),    
+                                            _mm512_set1_pd(52.000000),    
+                                            _mm512_set1_pd(53.000000),    
+                                            _mm512_set1_pd(54.000000),    
+                                            _mm512_set1_pd(55.000000),    
+                                            _mm512_set1_pd(56.000000),   
+                                            _mm512_set1_pd(57.000000),    
+                                            _mm512_set1_pd(58.000000),    
+                                            _mm512_set1_pd(59.000000),    
+                                            _mm512_set1_pd(60.000000),    
+                                            _mm512_set1_pd(61.000000),    
+                                            _mm512_set1_pd(62.000000),    
+                                            _mm512_set1_pd(63.000000),    
+                                            _mm512_set1_pd(64.000000),    
+                                            _mm512_set1_pd(65.000000),    
+                                            _mm512_set1_pd(66.000000),    
+                                            _mm512_set1_pd(67.000000),    
+                                            _mm512_set1_pd(68.000000),    
+                                            _mm512_set1_pd(69.000000),    
+                                            _mm512_set1_pd(70.000000),    
+                                            _mm512_set1_pd(71.000000),    
+                                            _mm512_set1_pd(72.000000),    
+                                            _mm512_set1_pd(73.000000),    
+                                            _mm512_set1_pd(74.000000),    
+                                            _mm512_set1_pd(75.000000),    
+                                            _mm512_set1_pd(76.000000),    
+                                            _mm512_set1_pd(77.000000),    
+                                            _mm512_set1_pd(78.000000),    
+                                            _mm512_set1_pd(79.000000),    
+                                            _mm512_set1_pd(80.000000),    
+                                            _mm512_set1_pd(81.000000),    
+                                            _mm512_set1_pd(82.000000),    
+                                            _mm512_set1_pd(83.000000),    
+                                            _mm512_set1_pd(84.000000),    
+                                            _mm512_set1_pd(85.000000),    
+                                            _mm512_set1_pd(86.000000),    
+                                            _mm512_set1_pd(87.000000),    
+                                            _mm512_set1_pd(88.000000),    
+                                            _mm512_set1_pd(89.000000),    
+                                            _mm512_set1_pd(90.000000),    
+                                            _mm512_set1_pd(91.000000),    
+                                            _mm512_set1_pd(92.000000),    
+                                            _mm512_set1_pd(93.000000),    
+                                            _mm512_set1_pd(94.000000),    
+                                            _mm512_set1_pd(95.000000),    
+                                            _mm512_set1_pd(96.000000),    
+                                            _mm512_set1_pd(97.000000),    
+                                            _mm512_set1_pd(98.000000),    
+                                            _mm512_set1_pd(99.000000),    
+                                            _mm512_set1_pd(100.00000)};   
+	                const __m512d eps = _mm512_set1_pd(1.0e-12);
+	                const __m512d pi  = _mm512_set1_pd(3.141592653589793e+00);
+	                const __m512d C350= _mm512_set1_pd(3.5);
+	                const __m512d C00 = _mm512_setzero_pd();
+	                const __m512d C10 = _mm512_set1_pd(1.0);
+	                const __m512d C20 = _mm512_set1_pd(2.0);
+	                const __m512d C050= _mm512_set1_pd(0.5);
+	                const __m512d C025= _mm512_set1_pd(0.25);
+	                const __m512d C1772453850905516027298167483341 = 
+	                                    _mm512_set1_pd(1.772453850905516027298167483341); // sqrt(PI)
+	                register __m512d ei1,ei2,er,er0,er1,er2;
+	                register __m512d eri,err,r,ss,w,w1,w2,x2,t0,t1;
+	                register __m512d c0r,c0i,csr,csi;
+	                int32_t k,n;
+	                x2  = _mm512_mul_pd(zr,zr);
+	                ctx = C10;
+	                if(_mm512_cmp_pd_mask(zr,C350,_CMP_LE_OQ)) {
+	                    er = C10;
+	                    r  = er;
+	                    for(k = 1; k != 100; ++k) {
+	                        register __m512d ctx = LUT1[k];
+	                        r   = _mm512_div_pd(_mm512_mul_pd(r,x2),ctx);
+	                        er  = _mm512_add_pd(er,r);
+	                        t0  = _mm512_abs_pd(_mm512_sub_pd(er,w));
+	                        t1  = _mm512_mul_pd(eps,_mm512_abs_pd(er));
+	                        if(_mm512_cmp_pd_mask(t0,t1,_CMP_LE_OQ)) {
+	                           break;
+	                        }
+	                        w = er;
+	                    }
+	                    t0 = xexp(negate_zmm8r8(x2));
+	                    t1 = _mm512_mul_pd(C1772453850905516027298167483341,x);
+	                    c0r = _mm512_div_pd(C20,
+	                                   _mm512_mul_pd(t0,t1));
+	                    c0i = C00;
+	                    er0= _mm512_mul_pd(c0r,er);                                 
+	                }
+	                else {
+	                    er = C10;
+	                    r  = er;
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),C05),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[0]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[1]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[2]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[3]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[4]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[5]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[6]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[7]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[8]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[9]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    r  = _mm512_div_pd(_mm512_mul_pd(
+	                                             negate_zmm8r8(r),LUT1[10]),x2);
+	                    er = _mm512_add_pd(er,r);
+	                    t0 = xexp(negate_zmm8r8(x2));
+	                    t1 = _mm512_mul_pd(x,
+	                                   C1772453850905516027298167483341);
+	                    c0r= _mm512_div_pd(t0,t1);
+	                    c0i= C00;
+	                    er0= _mm512_sub_pd(C10,_mm512_mul_pd(c0r,er));
+	                }
+	                
+	                if(_mm512_cmp_pd_mask(y,C00,_CMP_EQ_OQ0)) {
+	                    err = er0;
+	                    eri = C00;
+	                }
+	                else {
+	                    t0 = _mm512_mul_pd(C20,_mm512_mul_pd(x,y));
+	                    csr= xcos(t0);
+	                    ss = xsin(t0);
+	                    t1 = _mm512_mul_pd(x,_mm512_mul_pd(C20,pi));
+	                    t0 = xexp(negate_zmm8r8(x2));
+	                    er1= _mm512_div_pd(_mm512_mul_pd(t0,
+	                                                _mm512_sub_pd(C10,csr)),t1);
+	                    ei1= _mm512_div_pd(_mm512_mul_pd(t0,ss),t1);
+	                    er2= C00;
+	                    for(n = 1; n != 100; ++n) {
+	                        
+	                    }
+	                }
+	         }
 	         
         
        } // math
