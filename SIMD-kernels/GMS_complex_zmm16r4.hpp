@@ -817,8 +817,10 @@ namespace  gms {
 	           static inline
                    void cconj_zmm16r4(__m512 * __restrict re,
                                       __m512 * __restrict im) {
-                                       
-                        *im = negate_zmm16r4(im);
+                         
+                        register __m512 c;              
+                        c = negate_zmm16r4(*im);
+                        *im = c;
                    } 
 
 
