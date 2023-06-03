@@ -6802,6 +6802,41 @@ namespace gms {
 	         }
 	         
 	         
+/*
+     !*****************************************************************************80
+!
+!! CERROR computes the error function for a complex argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    15 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex ( kind = 8 ) Z, the argument.
+!
+!    Output, complex ( kind = 8 ) CER, the function value.
+*/	         
+	         
+	         
         
        } // math
 
