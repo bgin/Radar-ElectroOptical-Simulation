@@ -791,7 +791,7 @@ namespace  gms {
                                         float * __restrict im) {
 
                         register __m512 c;
-                        c = negate_zmm8r8(im);
+                        c = negate_zmm8r8(_mm512_loadu_ps(&im[0]));
                         _mm512_storeu_ps(&im[0],c);
                }  
 
@@ -805,7 +805,7 @@ namespace  gms {
                                         float * __restrict __ATTR_ALIGN__(64) im) {
                                         
                         register __m512 c;
-                        c = negate_zmm8r8(im);
+                        c = negate_zmm8r8(_mm512_load_ps(&im[0]));
                         _mm512_store_ps(&im[0],c);
                }  
 
