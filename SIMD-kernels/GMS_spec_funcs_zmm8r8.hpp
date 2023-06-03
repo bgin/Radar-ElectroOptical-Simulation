@@ -6364,9 +6364,64 @@ namespace gms {
 	                    ei1= _mm512_div_pd(_mm512_mul_pd(t0,ss),t1);
 	                    er2= C00;
 	                    for(n = 1; n != 100; ++n) {
-	                        
+	                        register __m512d xn = LUT2[n];
+	                        t0                 = _mm512_mul_pd(xn,xn);
+	                        t1                 = _mm512_mul_pd(xn,y);
+	                        register __m512d zz1= xcosh(t1);
+	                        register __m512d zz2= xsinh(t1);
+	                        register __m512d zz3= xexp(negate_zmm8r8(
+	                                                  _mm512_mul_pd(C025,t0)));
+	                        register __m512d zz4= _mm512_fmadd_pd(xn,xn,
+	                                                  _mm512_mul_pd(C40,x2));
+	                        register __m512d zz5= _mm512_div_pd(zz3,zz4);
+	                        register __m512d zz6= _mm512_fmsub_pd(C20,x,
+	                                                       _mm512_mul_pd(C20,
+	                                                                _mm512_mul_pd(x,zz1)));
+	                        register __m512d zz7= _mm512_mul_pd(xn,
+	                                                       _mm512_mul_pd(zz2,ss));
+	                        register __m512d zz8= _mm512_fmadd_pd(zz5,zz6,zz7);
+	                        er2                 = _mm512_add_pd(er2,zz8);
+	                        register __m512d zz9= _mm512_abs_pd(
+	                                             _mm512_div_pd(_mm512_sub_pd(er2,w1),er2));
+	                        const __mmask8 m = _mm512_cmp_pd_mask(zz9,eps,_CMP_LT_OQ);
+	                        if(m) {break;}
+	                        w1 = er2;
 	                    }
+	                    c0r = _mm512_mul_pd(C20,_mm512_div_pd(xexp(negate_zmm8r8(x2))),pi);
+	                    t0  = _mm512_add_pd(er0,er1);
+	                    err = _mm512_fmadd_pd(er2,c0r,t0);
+	                    ei2 = C00;
+	                    for(n = 1; n != 100; ++n) {
+	                        register __m512d xn = LUT2[n];
+	                        t0                 = _mm512_mul_pd(xn,xn);
+	                        t1                 = _mm512_mul_pd(xn,y);
+	                        register __m512d zz1= xcosh(t1);
+	                        register __m512d zz2= xsinh(t1);
+	                        register __m512d zz3= xexp(negate_zmm8r8(
+	                                                  _mm512_mul_pd(C025,t0)));
+	                        register __m512d zz4= _mm512_fmadd_pd(xn,xn,
+	                                                  _mm512_mul_pd(C40,x2));
+	                        register __m512d zz5= _mm512_div_pd(zz3,zz4);
+	                        register __m512d zz6= _mm512_mul_pd(_mm512_mul_pd(C20,x),
+	                                                            _mm512_mul_pd(zz1,ss));
+	                        register __m512d zz7= _mm512_mul_pd(xn,
+	                                                        _mm512_mul_pd(zz2,csr));
+	                        register __m512d zz8= _mm512_fmadd_pd(zz5,zz6,zz7);
+	                        ei2                 = _mm512_add_pd(ei2,zz8);
+	                        register __m512d zz9= _mm512_abs_pd(
+	                                                 _mm512_div_pd(_mm512_sub_pd(ei2,w2),ei2));
+	                        const __mmask8 m = _mm512_cmp_pd_mask(zz9,eps,_CMP_LT_OQ);
+	                        if(m) {break;}
+	                        w2 = ei2;
+	                    }
+	                    eri = _mm512_fmadd_pd(ei1,c0r,ei2);
 	                }
+	                t0    = _mm512_mul_pd(negate_zmm8r8(z),z);
+	                t1    = xexp(t0);
+	                *cerr = err;
+	                *ceri = eri;
+	                *cderr= _mm512_mul_pd(_mm512_set1_pd(1.128379167095512573896158903122),t1);
+	                *cderi= C00;
 	         }
 	         
         
