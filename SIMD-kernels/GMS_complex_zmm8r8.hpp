@@ -788,13 +788,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cconj_zmm8r8_u(const double * __restrict im,
-                                        double * __restrict  conj) {
+                   void cconj_zmm8r8_u( double * __restrict re,
+                                        double * __restrict  im) {
 
-                        register __m512ddd zmm0;
-                        const register __m512ddd none = _mm512_set1_pd(-1.0f);
-                        zmm0 = _mm512_loadu_pd(&im[0]);
-                        _mm512_storeu_pd(&conj[0], _mm512_mul_pd(none,zmm0));
+                        register __m512d c;
+                        c = negate_zmm8r8(_mm512_loadu_pd(&im[0]));
+                        _mm512_storeu_pd(&im[0],c);
                }  
 
 
@@ -803,13 +802,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cconj_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) im,
-                                        double * __restrict  __ATTR_ALIGN__(64) conj) {
+                   void cconj_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64)  re,
+                                       double * __restrict  __ATTR_ALIGN__(64) im) {
 
-                        register __m512ddd zmm0;
-                        const register __m512ddd none = _mm512_set1_pd(-1.0f);
-                        zmm0 = _mm512_load_pd(&im[0]);
-                        _mm512_store_pd(&conj[0], _mm512_mul_pd(none,zmm0));
+                        register __m512d c;
+                        c = negate_zmm8r8(_mm512_load_pd(&im[0]));
+                        _mm512_store_pd(&im[0],c);
                }  
 
 
@@ -818,12 +816,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512ddd cconj_zmm8r8(const __m512ddd im) {
+                   __m512ddd cconj_zmm8r8( __m512d * __restrict re,
+                                           __m512d * __restrict im ) {
                           
-                         const register __m512ddd none = _mm512_set1_pd(-1.0f);
-                         register __m512ddd conj;
-                         conj = _mm512_mul_pd(none,im);
-                         return (conj); 
+                        register __m512d c;
+                        c = negate_zmm8r8(*im);
+                        *im = c;
                } 
 
 
