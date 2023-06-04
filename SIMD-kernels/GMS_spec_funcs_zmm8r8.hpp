@@ -7290,6 +7290,52 @@ namespace gms {
                          }
 	         
 	         
+/*
+!*****************************************************************************80
+!
+!! CGAMA computes the Gamma function for complex argument.
+!
+!  Discussion:
+!
+!    This procedcure computes the gamma function \E2(z) or ln[\E2(z)]
+!    for a complex argument
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    26 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, Y, the real and imaginary parts of 
+!    the argument Z.
+!
+!    Input, integer ( kind = 4 ) KF, the function code.
+!    0 for ln[\E2(z)]
+!    1 for \E2(z)
+!
+!    Output, real ( kind = 8 ) GR, GI, the real and imaginary parts of
+!    the selected function.
+!
+*/
+	         
 	         
         
        } // math
