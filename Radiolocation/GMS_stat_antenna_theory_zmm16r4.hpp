@@ -126,11 +126,63 @@ namespace  gms {
                          sumi= 0.0f;
                          cei = _mm512_mul_ps(Az,cei);
                          _mm512_store_ps(&inti[0],cei);
-                         cspint(NTAB,&pz[0],&intr[0],-L2,L2,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],&sumr);
-                         cspint(NTAB,&pz[0],&inti[0],-L2,L2,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],&sumi);
+                         cspint(NTAB,&pz[0],&intr[0],-L2,L2,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumr);
+                         cspint(NTAB,&pz[0],&inti[0],-L2,L2,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumi);
                          fth = {sumr,sumi};
                          return (fth);
                  }
+                 
+                 
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   std::complex<float> 
+                   f11_zmm16r4_cspint_16e_u(const float * __restrict  pAz,
+                                            const float * __restrict  pphiz,
+                                            const float * __restrict  pz,
+                                            const float tht,
+                                            const float gam,
+                                            const int32_t L2) {
+                                            
+                         __ATTR_ALIGN__(64) float intr[16] = {};
+                         __ATTR_ALIGN__(64) float inti[16] = {}; 
+                         __ATTR_ALIGN__(64) float Y1[16]   = {};
+                         __ATTR_ALIGN__(64) float Y2[16]   = {};
+                         __ATTR_ALIGN__(64) float Y3[16]   = {}; 
+                         __ATTR_ALIGN__(64) float E[16]    = {};
+                         __ATTR_ALIGN__(64) float WRK[16]  = {}; 
+                         constexpr int32_t NTAB = 16;               
+                         constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                         register __m512 Az    = _mm512_loadu_ps(&pAz[0]);
+                         register __m512 phiz  = _mm512_loadu_pd(&pphiz[0]);
+                         register __m512 z     = _mm512_loadu_pd(&pz[0]);
+                         register __m512 stht,ear,eai,cer,cei;
+                         register __m512 k,vtht;
+                         std::complex<float> fth;
+                         register float sumr,sumi;
+                         vtht= _mm512_set1_ps(tht);
+                         k   = _mm512_mul_ps(C314159265358979323846264338328,
+                                                          _mm512_set1_ps(gam));
+                         stht= xsinf(tht);
+                         ear = _mm512_setzero_ps();
+                         eai = _mm512_fmadd_pd(stht,
+                                           _mm12_mul_pd(k,z),phiz);
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         sumr= 0.0f;
+                         cer = _mm512_mul_ps(Az,cer);
+                         _mm512_storeu_ps(&intr[0],cer);
+                         sumi= 0.0f;
+                         cei = _mm512_mul_ps(Az,cei);
+                         _mm512_storeu_ps(&inti[0],cei);
+                         cspint(NTAB,&pz[0],&intr[0],-L2,L2,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumr);
+                         cspint(NTAB,&pz[0],&inti[0],-L2,L2,&Y1[0],&Y2[0],&Y3[0],&E[0],&WRK[0],sumi);
+                         fth = {sumr,sumi};
+                         return (fth);
+                 }
+      
       
       } // radiolocation
 
