@@ -115,7 +115,7 @@ namespace  gms {
                          vtht= _mm512_set1_ps(tht);
                          k   = _mm512_mul_ps(C314159265358979323846264338328,
                                                           _mm512_set1_ps(gam));
-                         stht= xsinf(tht);
+                         stht= xsinf(vtht);
                          ear = _mm512_setzero_ps();
                          eai = _mm512_fmadd_pd(stht,
                                            _mm12_mul_pd(k,z),phiz);
@@ -166,7 +166,7 @@ namespace  gms {
                          vtht= _mm512_set1_ps(tht);
                          k   = _mm512_mul_ps(C314159265358979323846264338328,
                                                           _mm512_set1_ps(gam));
-                         stht= xsinf(tht);
+                         stht= xsinf(vtht);
                          ear = _mm512_setzero_ps();
                          eai = _mm512_fmadd_pd(stht,
                                            _mm12_mul_pd(k,z),phiz);
