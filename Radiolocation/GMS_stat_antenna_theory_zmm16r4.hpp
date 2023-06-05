@@ -373,6 +373,26 @@ namespace  gms {
                           Bx  = xlogf(rat);
                           return (Bx);                    
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 f13_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pA0,
+                                        const float * __restrict __ATTR_ALIGN__(64) pA) {
+                              
+                          register __m512 A0 = _mm512_load_ps(&pA0[0]);
+                          register __m512 A  = _mm512_load_ps(&pA[0]);        
+                          register __m512 Bx,rat;
+                          rat = _mm512_div_ps(A,A0);
+                          Bx  = xlogf(rat);
+                          return (Bx);                    
+                 }
+                 
+                 
+                 
       
       } // radiolocation
 
