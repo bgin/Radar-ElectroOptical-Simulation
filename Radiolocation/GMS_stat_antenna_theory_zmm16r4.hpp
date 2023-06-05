@@ -279,6 +279,81 @@ namespace  gms {
                         fth = {sumr,sumi};
                         return (fth);            
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   std::complex<float>
+                   f11_zmm16r4_cspint_ne_u( const float * __restrict  pAz,
+                                            const float * __restrict  pphiz,
+                                            const float * __restrict  pz,
+                                            float * __restrict  intr,
+                                            float * __restrict  inti,
+                                            CSPINT_DATA_1T & csd,
+                                            const float tht,
+                                            const float gam,
+                                            const int32_t L2,
+                                            const int32_t NTAB) {
+                                            
+                        if(__builtin_expect(NTAB==16,0)) {
+                           std::complex<float> fth = {0.0f,0.0f};
+                           fth = f11_zmm16r4_cspint_16_u(pAz,pphiz,pz,tht,gam,L2);
+                           return (fth);
+                        }     
+                        
+                        constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                        register __m512 vtht,stht,vk;
+                        register __m512 ear,cer,cei;
+                        register std::complex<float> fth;
+                        register float sumr,sumi; 
+                        register float sint,k;
+                        int32_t i; 
+                        vtht = _mm512_set1_ps(tht);
+                        sint = cephes_sinf(tht);
+                        vk   = _mm512_mul_ps(C314159265358979323846264338328,
+                                                          _mm512_set1_ps(gam));
+                        ear  = _mm512_setzero_ps();
+                        k    = C314159265358979323846264338328*gam;
+                        stht = xsinf(vtht);
+                        for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
+                             _mm_prefetch((const char*)&pAz[i],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&pphiz[i],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&pz[i],_MM_HINT_T0);
+                             register __m512 t0 = _mm512_loadu_ps(&pz[i]);
+                             register __m512 t1 = _mm512_loadu_ps(&pphiz[i]);
+                             register __m512 eai= _mm512_fmadd_ps(stht,
+                                                            _mm512_mul_ps(vk,t0),t1);
+                             register __m512 t2 = _mm512_loadu_ps(&pAz[i]);
+                             cexp_zmm16r4(ear,eai,&cer,&cei);
+                             cer = _mm512_mul_ps(cer,t2);
+                             _mm512_storeu_ps(&intr[i],cer);
+                             cei = _mm512_mul_ps(cei,t2);
+                             _mm512_storeu_ps(&inti[i],cei);
+                        }   
+                        sumr = 0.0f;
+                        sumi = 0.0f;
+                        for(; i != NTAB; ++i) {
+                             register float t0 = pAz[i];
+                             register float t1 = pphiz[i];
+                             register float t2 = pz[i];
+                             register float zz = k*t0;
+                             register float eai= sint*zz+t1;
+                             register std::complex<float> c = std::exp({0.0f,eai});
+                             intr[i] = c.real()*t0;
+                             inti[i] = c.imag()*t0;
+                        } 
+                        cspint(NTAB,&pz[0],&intr[0],-L2,L2,&csd.Y1[0],
+                               &csd.Y2[0],&csd.Y3[0],&csd.E[0],&csd.WRK[0],sumr); 
+                        cspint(NTAB,&pz[0],&inti[0],-L2,L2, &csd.Y1[0],
+                               &csd.Y2[0],&csd.Y3[0],&csd.E[0],&csd.WRK[0],sumi);  
+                        fth = {sumr,sumi};
+                        return (fth);            
+                }
+                
       
       } // radiolocation
 
