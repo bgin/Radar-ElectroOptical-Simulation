@@ -354,6 +354,25 @@ namespace  gms {
                         return (fth);            
                 }
                 
+                
+                /*
+                    Formula 1.3, p. 15
+                    The level of an amplitude.
+                */
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 f13_zmm16r4(const __m512 A0,
+                                      const __m512 A) {
+                                      
+                          register __m512 Bx,rat;
+                          rat = _mm512_div_ps(A,A0);
+                          Bx  = xlogf(rat);
+                          return (Bx);                    
+                 }
       
       } // radiolocation
 
