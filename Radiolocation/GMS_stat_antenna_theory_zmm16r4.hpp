@@ -105,7 +105,7 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    std::complex<float> 
-                   f11_zmm16r4_cspint_16e_a(const float * __restrict __ATTR_ALIGN__(64) pAz,
+                   fth_f11_zmm16r4_cspint_16e_a(const float * __restrict __ATTR_ALIGN__(64) pAz,
                                             const float * __restrict __ATTR_ALIGN__(64) pphiz,
                                             const float * __restrict __ATTR_ALIGN__(64) pz,
                                             const float tht,
@@ -156,7 +156,7 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    std::complex<float> 
-                   f11_zmm16r4_cspint_16e_u(const float * __restrict  pAz,
+                   fth_f11_zmm16r4_cspint_16e_u(const float * __restrict  pAz,
                                             const float * __restrict  pphiz,
                                             const float * __restrict  pz,
                                             const float tht,
@@ -213,7 +213,7 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    std::complex<float>
-                   f11_zmm16r4_cspint_ne_a( const float * __restrict __ATTR_ALIGN__(64) pAz,
+                   fth_f11_zmm16r4_cspint_ne_a( const float * __restrict __ATTR_ALIGN__(64) pAz,
                                             const float * __restrict __ATTR_ALIGN__(64) pphiz,
                                             const float * __restrict __ATTR_ALIGN__(64) pz,
                                             float * __restrict __ATTR_ALIGN__(64) intr,
@@ -287,7 +287,7 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    std::complex<float>
-                   f11_zmm16r4_cspint_ne_u( const float * __restrict  pAz,
+                   fth_f11_zmm16r4_cspint_ne_u( const float * __restrict  pAz,
                                             const float * __restrict  pphiz,
                                             const float * __restrict  pz,
                                             float * __restrict  intr,
@@ -365,7 +365,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 f13_zmm16r4(const __m512 A0,
+                   __m512 Bx_f13_zmm16r4(const __m512 A0,
                                       const __m512 A) {
                                       
                           register __m512 Bx,rat;
@@ -380,7 +380,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 f13_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pA0,
+                   __m512 Bx_f13_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pA0,
                                         const float * __restrict __ATTR_ALIGN__(64) pA) {
                               
                           register __m512 A0 = _mm512_load_ps(&pA0[0]);
@@ -397,7 +397,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512 f13_zmm16r4_u(const float * __restrict  pA0,
+                   __m512 Bx_f13_zmm16r4_u(const float * __restrict  pA0,
                                         const float * __restrict  pA) {
                               
                           register __m512 A0 = _mm512_loadu_ps(&pA0[0]);
@@ -407,6 +407,9 @@ namespace  gms {
                           Bx  = xlogf(rat);
                           return (Bx);                    
                  }
+                 
+                 
+                 
                  
                  
                  
