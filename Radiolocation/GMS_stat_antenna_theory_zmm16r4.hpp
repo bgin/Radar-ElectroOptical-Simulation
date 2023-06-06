@@ -989,6 +989,16 @@ namespace  gms {
                          return (sum);                                          
                 }
                 
+                
+                 /*
+                      Helper formula serving the needs of 
+                      formula 1.4, p. 15
+                      The mathematical expectation of random 
+                      variable B(x).
+                      Integrator 'cspint'.
+                      Long data vector (arrays).
+                 */
+                
                  
                  
                  
