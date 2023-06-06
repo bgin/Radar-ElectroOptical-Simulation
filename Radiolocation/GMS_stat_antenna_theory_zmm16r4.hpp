@@ -998,6 +998,52 @@ namespace  gms {
                       Integrator 'cspint'.
                       Long data vector (arrays).
                  */
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float Ex_Bx_zmm16r4_cspint_ne_a(const float * __restrict __ATTR_ALIGN__(64) pBx,
+                                                   const float * __restrict __ATTR_ALIGN__(64) ppdf,
+                                                   const float * __restrict __ATTR_ALIGN__(64) px,
+                                                   float * __restrict __ATTR_ALIGN__(64)       intr,
+                                                   CSPINT_DATA_1T csd,
+                                                   const float a,
+                                                   const float b,
+                                                   const int32_t NTAB) {
+                                                   
+                        if(__buitlin_expect(NTAB==16,0)) {
+                            register float sum = 0.0f;
+                            sum = Ex_Bx_zmm16r4_cspint_16e_a(pBx,ppdf,px,a,b);
+                            return (sum);
+                        }                
+                        
+                        register __m512 Bx,pdf,prod;
+                        register float sum;
+                        int32_t i;
+                        
+                        for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
+                             _mm_prefetch((const char*)&pBx[i],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&ppdf[i],_MM_HINT_T0);
+                             Bx = _mm512_load_ps(&pBx[i]);
+                             pdf= _mm512_load_ps(&ppdf[i]);
+                             prod = _mm512_mul_pd(Bx,pdf);
+                             _mm512_store_ps(&intr[i], prod); 
+                        }  
+                        sum = 0.0f;
+                        for(; i != NTAB; ++i) {
+                             register float Bx = pBx[i];
+                             register float pdf= ppdf[i];
+                             register float prod = Bx*pdf;
+                             intr[i] = prod;
+                        }  
+                        
+                        cspint(NTAB,&px[0],&intr[0],a,b,&csd.Y1[0],
+                                &csd.Y2[0],&csd.Y3[0],&csd.E[0],&csd.WRK[0],sum);
+                         return (sum);             
+                  }
+                 
                 
                  
                  
