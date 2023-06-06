@@ -414,7 +414,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Bx_f16_zmm16r4_u10x_a(const float * __restrict __ATTR_ALIGN__(64) pA0,
+                   void Bx_f13_zmm16r4_u10x_a(const float * __restrict __ATTR_ALIGN__(64) pA0,
                                               const float * __restrict __ATTR_ALIGN__(64) pA,
                                               float * __restrict __ATTR_ALIGN__(64) pB,
                                               const int32_t n) {
@@ -620,7 +620,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Bx_f16_zmm16r4_u10x_u(const float * __restrict pA0,
+                   void Bx_f13_zmm16r4_u10x_u(const float * __restrict pA0,
                                               const float * __restrict  pA,
                                               float * __restrict  pB,
                                               const int32_t n) {
@@ -826,7 +826,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void Bx_f16_zmm16r4_u2x_u(const float * __restrict pA0,
+                   void Bx_f13_zmm16r4_u2x_u(const float * __restrict pA0,
                                               const float * __restrict  pA,
                                               float * __restrict  pB,
                                               const int32_t n) {
@@ -868,6 +868,56 @@ namespace  gms {
                         }        
                         
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Bx_f13_zmm16r4_u2x_a(const float * __restrict __ATTR_ALIGN__(64) pA0,
+                                              const float * __restrict __ATTR_ALIGN__(64) pA,
+                                              float * __restrict __ATTR_ALIGN__(64) pB,
+                                              const int32_t n) {
+                                              
+                        if(__builtin_expect(0==n,0)) { return;}
+                        register __m512 zmm0,zmm1,zmm2,zmm3;
+                        register __m512 zmm4,zmm5,zmm6,zmm7;
+                        int32_t i;
+                        
+                        for(i = 0; (i+31) < n; i += 32) {
+                             _mm_prefetch((const char*)&pA0[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&pA[i+32], _MM_HINT_T0);
+                             zmm0 = _mm512_load_ps(&pA0[i+0]);
+                             zmm1 = _mm512_load_ps(&pA[i+0]);
+                             zmm2 = _mm512_div_ps(zmm1,zmm0);
+                             zmm3 = xlogf(zmm2);
+                             _mm512_store_ps(&pB[i+0],zmm3);
+                             zmm4 = _mm512_load_ps(&pA0[i+16]);
+                             zmm5 = _mm512_load_ps(&pA[i+16]);
+                             zmm6 = _mm512_div_ps(zmm5,zmm4);
+                             zmm7 = xlogf(zmm6);
+                             _mm512_store_ps(&pB[i+16],zmm7);
+                       }  
+                       
+                        for(; (i+15) < n; i += 16) {
+                             zmm0 = _mm512_load_ps(&pA0[i+0]);
+                             zmm1 = _mm512_load_ps(&pA[i+0]);
+                             zmm2 = _mm512_div_ps(zmm1,zmm0);
+                             zmm3 = xlogf(zmm2);
+                             _mm512_store_ps(&pB[i+0],zmm3);
+                        }      
+                        
+                        for(; (i+0) < n; i += 1) {
+                             register float t0 = pA0[i];
+                             register float t1 = pA[i];
+                             register float rat= t1/t0;
+                             register float bx = ceph_logf(rat);
+                             pB[i] = bx;
+                        }        
+                        
+                 }
+                 
                  
                  
                  
