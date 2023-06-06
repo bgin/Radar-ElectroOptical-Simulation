@@ -1085,7 +1085,38 @@ namespace  gms {
                                 &Y2[0],&Y3[0],&E[0],&WRK[0],sum);
                          return (sum);                                          
                 }
-                 
+                
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float Ex_phix_zmm16r4_cspint_16e_u(const float * __restrict  pphix,
+                                                      const float * __restrict  ppdf,
+                                                      const float * __restrict  px,
+                                                      const float a,
+                                                      const float b) {
+                                                    
+                         __ATTR_ALIGN__(64) float intr[16] = {};
+                         __ATTR_ALIGN__(64) float Y1[16]   = {};
+                         __ATTR_ALIGN__(64) float Y2[16]   = {};
+                         __ATTR_ALIGN__(64) float Y3[16]   = {}; 
+                         __ATTR_ALIGN__(64) float E[16]    = {};
+                         __ATTR_ALIGN__(64) float WRK[16]  = {}; 
+                         constexpr int32_t NTAB = 16;   
+                         register __m512 phix = _mm512_loadu_ps(&pphix[0]);
+                         register __m512 pdf  = _mm512_loadu_ps(&ppdf[0]);
+                         register __m512 prod;
+                         float sum;
+                         prod = _mm512_mul_ps(phix,pdf);
+                         sum  = 0.0f;
+                         _mm512_storeu_ps(&intr[0],prod);
+                         cspint(NTAB,&px[0],&intr[0],a,b,&Y1[0],
+                                &Y2[0],&Y3[0],&E[0],&WRK[0],sum);
+                         return (sum);                                          
+                }
                 
                  
                  
