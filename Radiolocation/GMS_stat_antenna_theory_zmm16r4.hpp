@@ -1288,7 +1288,72 @@ namespace  gms {
                       Integrator 'avint' irregular abscissas.
                       Short data vector (ZMM-size).
                  */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float Ex_Bx_zmm16r4_avint_16e_a(const float * __restrict __ATTR_ALIGN__(64) pBx,
+                                                    const float * __restrict __ATTR_ALIGN__(64) ppdf,
+                                                    const float * __restrict __ATTR_ALIGN__(64) px,
+                                                    const float a,
+                                                    const float b,
+                                                    int32_t & ier){
+                                                  
+                                                    
+                         __ATTR_ALIGN__(64) float intr[16] = {};
+                                                 
+                         register __m512 Bx = _mm512_load_ps(&pBx[0]);
+                         register __m512 pdf= _mm512_load_ps(&ppdf[0]);
+                         register __m512 prod;
+                         float sum;
+                         int32_t err;
+                         prod = _mm512_mul_ps(Bx,pdf);
+                         sum  = 0.0f;
+                         _mm512_store_ps(&intr[0],prod);
+                         sum = avint(&px[0],&intr[0],a,b,err);
+                         ier = err;
+                         if(ier==3) {
+                            sum = std::numeric_limits<float>::quiet_NaN();
+                            return (sum);
+                         }
+                         return (sum);                                          
+                }
                 
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float Ex_Bx_zmm16r4_avint_16e_u(const float * __restrict  pBx,
+                                                    const float * __restrict  ppdf,
+                                                    const float * __restrict  px,
+                                                    const float a,
+                                                    const float b,
+                                                    int32_t & ier){
+                                                  
+                                                    
+                         __ATTR_ALIGN__(64) float intr[16] = {};
+                                                 
+                         register __m512 Bx = _mm512_loadu_ps(&pBx[0]);
+                         register __m512 pdf= _mm512_loadu_ps(&ppdf[0]);
+                         register __m512 prod;
+                         float sum;
+                         int32_t err;
+                         prod = _mm512_mul_ps(Bx,pdf);
+                         sum  = 0.0f;
+                         _mm512_storeu_ps(&intr[0],prod);
+                         sum = avint(&px[0],&intr[0],a,b,err);
+                         ier = err;
+                         if(ier==3) {
+                            sum = std::numeric_limits<float>::quiet_NaN();
+                            return (sum);
+                         }
+                         return (sum);                                          
+                }
                 
                  /*
                       Helper formula serving the needs of 
