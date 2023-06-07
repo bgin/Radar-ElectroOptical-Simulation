@@ -203,6 +203,67 @@ namespace  gms {
                  
                    /*
                         Formula 1.1, p. 14
+                        Integrator avint (irregular abscissas) single data vector ZMM.
+                   */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   std::complex<float> 
+                   fth_f11_zmm16r4_avint_16e_a(const float * __restrict __ATTR_ALIGN__(64) pAz,
+                                               const float * __restrict __ATTR_ALIGN__(64) pphiz,
+                                               const float * __restrict __ATTR_ALIGN__(64) pz,
+                                               const float tht,
+                                               const float gam,
+                                               const int32_t L2,
+                                               int32_t & ierr,
+                                               int32_t & ieri) {
+                                            
+                         __ATTR_ALIGN__(64) float intr[16] = {};
+                         __ATTR_ALIGN__(64) float inti[16] = {}; 
+                         
+                         constexpr int32_t NTAB = 16;               
+                         constexpr float C314159265358979323846264338328 = 
+                                                        3.14159265358979323846264338328f;
+                         register __m512 Az    = _mm512_load_ps(&pAz[0]);
+                         register __m512 phiz  = _mm512_load_pd(&pphiz[0]);
+                         register __m512 z     = _mm512_load_pd(&pz[0]);
+                         register __m512 stht,ear,eai,cer,cei;
+                         register __m512 k,vtht;
+                         std::complex<float> fth;
+                         register float sumr,sumi;
+                         int32_t err,eri;
+                         vtht= _mm512_set1_ps(tht);
+                         k   = _mm512_mul_ps(C314159265358979323846264338328,
+                                                          _mm512_set1_ps(gam));
+                         stht= xsinf(tht);
+                         ear = _mm512_setzero_ps();
+                         eai = _mm512_fmadd_pd(stht,
+                                           _mm512_mul_pd(k,z),phiz);
+                         cexp_zmm16r4(ear,eai,&cer,&cei);
+                         sumr= 0.0f;
+                         cer = _mm512_mul_ps(Az,cer);
+                         _mm512_store_ps(&intr[0],cer);
+                         sumi= 0.0f;
+                         cei = _mm512_mul_ps(Az,cei);
+                         _mm512_store_ps(&inti[0],cei);
+                         sumr = avint(&pz[0],&intr[0],-L2,L2,err);
+                         sumi = avint(&pz[0],&inti[0],-L2,L2,eri);
+                         ierr = err;
+                         ieri = eri;
+                         if(ierr==3 || ieri==3) {
+                            const float NAN = std::numeric_limits<float>::quiet_NaN();
+                            fth = {NAN,NAN};
+                            return (fth);
+                         }
+                         fth = {sumr,sumi};
+                         return (fth);
+                 }
+                   /*
+                        Formula 1.1, p. 14
                         Integrator cspint n-elements data arrays.
                         Single-threaded.
                    */
