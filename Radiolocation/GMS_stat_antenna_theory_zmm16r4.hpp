@@ -1246,6 +1246,9 @@ namespace  gms {
                 }
                 
                 
+                
+                
+                
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -1275,6 +1278,16 @@ namespace  gms {
                                 &Y2[0],&Y3[0],&E[0],&WRK[0],sum);
                          return (sum);                                          
                 }
+                
+                
+                  /*
+                      Helper formula serving the needs of 
+                      formula 1.4, p. 15
+                      The mathematical expectation of random 
+                      variable B(x).
+                      Integrator 'avint' irregular abscissas.
+                      Short data vector (ZMM-size).
+                 */
                 
                 
                  /*
