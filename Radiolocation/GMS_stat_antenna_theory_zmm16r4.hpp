@@ -1825,6 +1825,16 @@ namespace  gms {
                                 &csd.Y2[0],&csd.Y3[0],&csd.E[0],&csd.WRK[0],sum);
                          return (sum);             
                   }
+                  
+                  
+                   /*
+                      Helper formula serving the needs of 
+                      formula 1.4, p. 15
+                      The mathematical expectation of phase random 
+                      variable phix(x).
+                      Integrator 'avint' irregular abscissas.
+                      Long data vector (arrays).
+                 */
                  
                  
                  
