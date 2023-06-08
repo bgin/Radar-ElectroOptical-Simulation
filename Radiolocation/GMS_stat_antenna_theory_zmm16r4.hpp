@@ -1837,6 +1837,56 @@ namespace  gms {
                  */
                  
                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   float Ex_phix_zmm16r4_avint_ne_a(const float * __restrict __ATTR_ALIGN__(64) pphix,
+                                                   const float * __restrict __ATTR_ALIGN__(64) ppdf,
+                                                   const float * __restrict __ATTR_ALIGN__(64) px,
+                                                   float * __restrict __ATTR_ALIGN__(64)       intr,
+                                                   const float a,
+                                                   const float b,
+                                                   const int32_t n,
+                                                   int32_t ier) {
+                                                   
+                        if(__buitlin_expect(n==16,0)) {
+                            register float sum = 0.0f;
+                            sum = Ex_phix_zmm16r4_avint_16e_a(pBx,ppdf,px,a,b);
+                            return (sum);
+                        }                
+                        
+                        register __m512 phix,pdf,prod;
+                        register float sum;
+                        int32_t i,err;
+                        
+                        for(i = 0; i != ROUND_TO_SIXTEEN(NTAB,15); i += 16) {
+                             _mm_prefetch((const char*)&pphix[i],_MM_HINT_T0);
+                             _mm_prefetch((const char*)&ppdf[i],_MM_HINT_T0);
+                             phix = _mm512_load_ps(&pphix[i]);
+                             pdf  = _mm512_load_ps(&ppdf[i]);
+                             prod = _mm512_mul_pd(phix,pdf);
+                             _mm512_store_ps(&intr[i], prod); 
+                        }  
+                        sum = 0.0f;
+                        for(; i != NTAB; ++i) {
+                             register float phix = pphix[i];
+                             register float pdf  = ppdf[i];
+                             register float prod = phix*pdf;
+                             intr[i] = prod;
+                        }  
+                        
+                        sum = cspint(&px[0],&intr[0],n,a,b,err);
+                        ier = err;
+                        if(ier==3) {
+                           sum = std::numeric_limits<float>::quiet_NaN();
+                           return (sum);
+                        }
+                        return (sum);             
+                  }
+                 
+                 
                  
                  
       
