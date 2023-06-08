@@ -1995,12 +1995,15 @@ namespace  gms {
                         register __m512 Ephi = _mm512_load_ps(&pEphi[0]);
                         register __m512 t0r,t0i,t1r,ti1;
                         cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
-                        *Efztr = t0r;
-                        *Efzti = t0i;
+                        _mm512_store_ps(&Efztr[0] ,t0r);
+                        _mm512_store_ps(&Efzti[0] ,t0i);
                         cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
-                        *Efzpr = t1r;
-                        *Efzpi = t1i;         
+                        _mm512_store_ps(&Efzpr[0] ,t1r);
+                        _mm512_store_ps(&Efzpi[0] ,t1i);         
                  }
+                 
+                 
+                 
                  
                  
                  
