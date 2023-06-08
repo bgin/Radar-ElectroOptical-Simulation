@@ -1936,6 +1936,38 @@ namespace  gms {
                         }
                         return (sum);             
                   }
+                  
+                  
+                  /*
+                      Formula 1.5, p. 16
+                      Far-zone Electric-field
+                  */
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Efz_f15_zmm16r4(const __m512 fthr,
+                                        const __m512 fthi,
+                                        const __m512 Ethr,
+                                        const __m512 Ethi,
+                                        const __m512 Ephr,
+                                        const __m512 Ephi,
+                                        __m512 * __restrict Efztr,
+                                        __m512 * __restrict Efzti,
+                                        __m512 * __restrict Efzpr,
+                                        __m512 * __restrict Efzpi) {
+                                        
+                        
+                        register __m512 t0r,t0i,t1r,ti1;
+                        cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                        *Efztr = t0r;
+                        *Efzti = t0i;
+                        cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                        *Efzpr = t1r;
+                        *Efzpi = t1i;         
+                 }
                  
                  
                  
