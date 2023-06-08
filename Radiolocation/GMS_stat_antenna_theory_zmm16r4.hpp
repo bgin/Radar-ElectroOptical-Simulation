@@ -2003,7 +2003,358 @@ namespace  gms {
                  }
                  
                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Efz_f15_zmm16r4_u(const  float  __restrict  pfthr,
+                                          const  float  __restrict  pfthi,
+                                          const  float  __restrict  pEthr,
+                                          const  float  __restrict  pEthi,
+                                          const  float  __restrict  pEphr,
+                                          const  float  __restrict  pEphi,
+                                          float  __restrict  Efztr,
+                                          float  __restrict  Efzti,
+                                          float  __restrict  Efzpr,
+                                          float  __restrict  Efzpi) {
+                                        
+                        register __m512 fthr = _mm512_loadu_ps(&pfthr[0]);
+                        register __m512 fthi = _mm512_loadu_ps(&pfthi[0]);
+                        register __m512 Ethr = _mm512_loadu_ps(&pEthr[0]);
+                        register __m512 Ethi = _mm512_loadu_ps(&pEthi[0]);
+                        register __m512 Ephr = _mm512_loadu_ps(&pEphr[0]);
+                        register __m512 Ephi = _mm512_loadu_ps(&pEphi[0]);
+                        register __m512 t0r,t0i,t1r,ti1;
+                        cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                        _mm512_storeu_ps(&Efztr[0] ,t0r);
+                        _mm512_storeu_ps(&Efzti[0] ,t0i);
+                        cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                        _mm512_storeu_ps(&Efzpr[0] ,t1r);
+                        _mm512_storeu_ps(&Efzpi[0] ,t1i);         
+                 }
                  
+                 
+                  /*
+                      Formula 1.5, p. 16
+                      Far-zone Electric-field, n-terms
+                  */
+                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Efz_f15_zmm16r4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) pfthr,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pfthi,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEthr,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEthi,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEphr,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEphi,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efztr,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efzti,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efzpr,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efzpi,
+                                                  const int32_t n) {
+                                                  
+                         if(__builtin_expect(n<=0,0)) { return;}
+                         register __m512 fthr,fthi,Ethr,Ethi;
+                         register __m512 Ephr,Ephi,t0r,t0i;
+                         register __m512 t1r,t1i;   
+                         int32_t j,m,m1;
+                         
+                         m = n%10;
+                         if(m!=0) {
+                             for(j = 0; j != m; ++j) {
+                                  fthr = pfthr[j];
+                                  fthi = pfthi[j];
+                                  Ethr = pEthr[j];
+                                  Ethi = pEthi[j];
+                                  Ephr = pEphr[j];
+                                  Ephi = pEphi[j];
+                                  cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                                  Efztr[j] = t0r;
+                                  Eftzi[j] = t0i;
+                                  cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                                  Efzpr[j] = t1r;
+                                  Efzpi[j] = t1i;
+                             }
+                             if(n<10) { return;}
+                                   
+                         }  
+                         
+                         m1 = m+1;
+                         for(j = m1; j != n; j += 10) {
+                              fthr = pfthr[j];
+                              fthi = pfthi[j];
+                              Ethr = pEthr[j];
+                              Ethi = pEthi[j];
+                              Ephr = pEphr[j];
+                              Ephi = pEphi[j];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j] = t0r;
+                              Eftzi[j] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j] = t1r;
+                              Efzpi[j] = t1i;
+                              fthr = pfthr[j+1];
+                              fthi = pfthi[j+1];
+                              Ethr = pEthr[j+1];
+                              Ethi = pEthi[j+1];
+                              Ephr = pEphr[j+1];
+                              Ephi = pEphi[j+1];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+1] = t0r;
+                              Eftzi[j+1] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+1] = t1r;
+                              Efzpi[j+1] = t1i;
+                              fthr = pfthr[j+2];
+                              fthi = pfthi[j+2];
+                              Ethr = pEthr[j+2];
+                              Ethi = pEthi[j+2];
+                              Ephr = pEphr[j+2];
+                              Ephi = pEphi[j+2];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+2] = t0r;
+                              Eftzi[j+2] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+2] = t1r;
+                              Efzpi[j+2] = t1i;
+                              fthr = pfthr[j+3];
+                              fthi = pfthi[j+3];
+                              Ethr = pEthr[j+3];
+                              Ethi = pEthi[j+3];
+                              Ephr = pEphr[j+3];
+                              Ephi = pEphi[j+3];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+3] = t0r;
+                              Eftzi[j+3] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+3] = t1r;
+                              Efzpi[j+3] = t1i;
+                              fthr = pfthr[j+4];
+                              fthi = pfthi[j+4];
+                              Ethr = pEthr[j+4];
+                              Ethi = pEthi[j+4];
+                              Ephr = pEphr[j+4];
+                              Ephi = pEphi[j+4];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+4] = t0r;
+                              Eftzi[j+4] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+4] = t1r;
+                              Efzpi[j+4] = t1i;
+                              fthr = pfthr[j+5];
+                              fthi = pfthi[j+5];
+                              Ethr = pEthr[j+5];
+                              Ethi = pEthi[j+5];
+                              Ephr = pEphr[j+5];
+                              Ephi = pEphi[j+5];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+5] = t0r;
+                              Eftzi[j+5] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+5] = t1r;
+                              Efzpi[j+5] = t1i;
+                              fthr = pfthr[j+6];
+                              fthi = pfthi[j+6];
+                              Ethr = pEthr[j+6];
+                              Ethi = pEthi[j+6];
+                              Ephr = pEphr[j+6];
+                              Ephi = pEphi[j+6];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+6] = t0r;
+                              Eftzi[j+6] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+6] = t1r;
+                              Efzpi[j+6] = t1i;
+                              fthr = pfthr[j+7];
+                              fthi = pfthi[j+7];
+                              Ethr = pEthr[j+7];
+                              Ethi = pEthi[j+7];
+                              Ephr = pEphr[j+7];
+                              Ephi = pEphi[j+7];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+7] = t0r;
+                              Eftzi[j+7] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+7] = t1r;
+                              Efzpi[j+7] = t1i;
+                              fthr = pfthr[j+8];
+                              fthi = pfthi[j+8];
+                              Ethr = pEthr[j+8];
+                              Ethi = pEthi[j+8];
+                              Ephr = pEphr[j+8];
+                              Ephi = pEphi[j+8];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+8] = t0r;
+                              Eftzi[j+8] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+8] = t1r;
+                              Efzpi[j+8] = t1i;
+                              fthr = pfthr[j+9];
+                              fthi = pfthi[j+9];
+                              Ethr = pEthr[j+9];
+                              Ethi = pEthi[j+9];
+                              Ephr = pEphr[j+9];
+                              Ephi = pEphi[j+9];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+9] = t0r;
+                              Eftzi[j+9] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+9] = t1r;
+                              Efzpi[j+9] = t1i;
+                            
+                         }                           
+                }
+                 
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Efz_f15_zmm16r4_unroll8x(const __m512 * __restrict __ATTR_ALIGN__(64) pfthr,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pfthi,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEthr,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEthi,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEphr,
+                                                  const __m512 * __restrict __ATTR_ALIGN__(64) pEphi,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efztr,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efzti,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efzpr,
+                                                  __m512 * __restrict __ATTR_ALIGN__(64) Efzpi,
+                                                  const int32_t n) {
+                                                  
+                         if(__builtin_expect(n<=0,0)) { return;}
+                         register __m512 fthr,fthi,Ethr,Ethi;
+                         register __m512 Ephr,Ephi,t0r,t0i;
+                         register __m512 t1r,t1i;   
+                         int32_t j,m,m1;
+                         
+                         m = n%8;
+                         if(m!=0) {
+                             for(j = 0; j != m; ++j) {
+                                  fthr = pfthr[j];
+                                  fthi = pfthi[j];
+                                  Ethr = pEthr[j];
+                                  Ethi = pEthi[j];
+                                  Ephr = pEphr[j];
+                                  Ephi = pEphi[j];
+                                  cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                                  Efztr[j] = t0r;
+                                  Eftzi[j] = t0i;
+                                  cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                                  Efzpr[j] = t1r;
+                                  Efzpi[j] = t1i;
+                             }
+                             if(n<8) { return;}
+                                   
+                         }  
+                         
+                         m1 = m+1;
+                         for(j = m1; j != n; j += 8) {
+                              fthr = pfthr[j];
+                              fthi = pfthi[j];
+                              Ethr = pEthr[j];
+                              Ethi = pEthi[j];
+                              Ephr = pEphr[j];
+                              Ephi = pEphi[j];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j] = t0r;
+                              Eftzi[j] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j] = t1r;
+                              Efzpi[j] = t1i;
+                              fthr = pfthr[j+1];
+                              fthi = pfthi[j+1];
+                              Ethr = pEthr[j+1];
+                              Ethi = pEthi[j+1];
+                              Ephr = pEphr[j+1];
+                              Ephi = pEphi[j+1];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+1] = t0r;
+                              Eftzi[j+1] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+1] = t1r;
+                              Efzpi[j+1] = t1i;
+                              fthr = pfthr[j+2];
+                              fthi = pfthi[j+2];
+                              Ethr = pEthr[j+2];
+                              Ethi = pEthi[j+2];
+                              Ephr = pEphr[j+2];
+                              Ephi = pEphi[j+2];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+2] = t0r;
+                              Eftzi[j+2] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+2] = t1r;
+                              Efzpi[j+2] = t1i;
+                              fthr = pfthr[j+3];
+                              fthi = pfthi[j+3];
+                              Ethr = pEthr[j+3];
+                              Ethi = pEthi[j+3];
+                              Ephr = pEphr[j+3];
+                              Ephi = pEphi[j+3];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+3] = t0r;
+                              Eftzi[j+3] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+3] = t1r;
+                              Efzpi[j+3] = t1i;
+                              fthr = pfthr[j+4];
+                              fthi = pfthi[j+4];
+                              Ethr = pEthr[j+4];
+                              Ethi = pEthi[j+4];
+                              Ephr = pEphr[j+4];
+                              Ephi = pEphi[j+4];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+4] = t0r;
+                              Eftzi[j+4] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+4] = t1r;
+                              Efzpi[j+4] = t1i;
+                              fthr = pfthr[j+5];
+                              fthi = pfthi[j+5];
+                              Ethr = pEthr[j+5];
+                              Ethi = pEthi[j+5];
+                              Ephr = pEphr[j+5];
+                              Ephi = pEphi[j+5];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+5] = t0r;
+                              Eftzi[j+5] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+5] = t1r;
+                              Efzpi[j+5] = t1i;
+                              fthr = pfthr[j+6];
+                              fthi = pfthi[j+6];
+                              Ethr = pEthr[j+6];
+                              Ethi = pEthi[j+6];
+                              Ephr = pEphr[j+6];
+                              Ephi = pEphi[j+6];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+6] = t0r;
+                              Eftzi[j+6] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+6] = t1r;
+                              Efzpi[j+6] = t1i;
+                              fthr = pfthr[j+7];
+                              fthi = pfthi[j+7];
+                              Ethr = pEthr[j+7];
+                              Ethi = pEthi[j+7];
+                              Ephr = pEphr[j+7];
+                              Ephi = pEphi[j+7];
+                              cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                              Efztr[j+7] = t0r;
+                              Eftzi[j+7] = t0i;
+                              cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                              Efzpr[j+7] = t1r;
+                              Efzpi[j+7] = t1i;
+                                                
+                         }                           
+                }
                  
                  
                  
