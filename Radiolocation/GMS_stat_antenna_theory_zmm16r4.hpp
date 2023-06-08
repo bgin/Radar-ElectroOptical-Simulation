@@ -1971,6 +1971,39 @@ namespace  gms {
                  
                  
                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void Efz_f15_zmm16r4_a(const  float  __restrict __ATTR_ALIGN__(64) pfthr,
+                                          const  float  __restrict __ATTR_ALIGN__(64) pfthi,
+                                          const  float  __restrict __ATTR_ALIGN__(64) pEthr,
+                                          const  float  __restrict __ATTR_ALIGN__(64) pEthi,
+                                          const  float  __restrict __ATTR_ALIGN__(64) pEphr,
+                                          const  float  __restrict __ATTR_ALIGN__(64) pEphi,
+                                          float  __restrict __ATTR_ALIGN__(64) Efztr,
+                                          float  __restrict __ATTR_ALIGN__(64) Efzti,
+                                          float  __restrict __ATTR_ALIGN__(64) Efzpr,
+                                          float  __restrict __ATTR_ALIGN__(64) Efzpi) {
+                                        
+                        register __m512 fthr = _mm512_load_ps(&pfthr[0]);
+                        register __m512 fthi = _mm512_load_ps(&pfthi[0]);
+                        register __m512 Ethr = _mm512_load_ps(&pEthr[0]);
+                        register __m512 Ethi = _mm512_load_ps(&pEthi[0]);
+                        register __m512 Ephr = _mm512_load_ps(&pEphr[0]);
+                        register __m512 Ephi = _mm512_load_ps(&pEphi[0]);
+                        register __m512 t0r,t0i,t1r,ti1;
+                        cmul_zmm16r4(fthr,fthi,Ethr,Ethi,&t0r,&t0i);
+                        *Efztr = t0r;
+                        *Efzti = t0i;
+                        cmul_zmm16r4(fthr,fthi,Ephr,Ephi,&t1r,&t1i);
+                        *Efzpr = t1r;
+                        *Efzpi = t1i;         
+                 }
+                 
+                 
+                 
       
       } // radiolocation
 
