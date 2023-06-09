@@ -93,6 +93,43 @@ namespace gms {
 	               *eph = _mm512_fmadd_ps(negate_zmm16r4(sphi),ex,
 	                                             _mm512_mul_ps(cphi,ey));                           
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void spher_unitv_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pex,
+	                                      const float * __restrict __ATTR_ALIGN__(64) pey,
+	                                      const float * __restrict __ATTR_ALIGN__(64) pez,
+	                                      const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                      const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                      float * __restrict __ATTR_ALIGN__(64)  er,
+	                                      float * __restrict __ATTR_ALIGN__(64)  eth,
+	                                      float * __restrict __ATTR_ALIGN__(64)  ph) {
+	               
+	               using namespace gms::math;     
+	               register __m512 ex = _mm512_load_ps(&pex[0]);
+	               register __m512 ey = _mm512_load_ps(&pey[0]);
+	               register __m512 ez = _mm512_load_ps(&pez[0]);              
+	               register __m512 stht,sphi,cphi,ctht;
+	               register __m512 t0,t1;
+	               stht = xsinf(tht);
+	               sphi = xsinf(phi);
+	               t0   = _mm512_mul_ps(sphi,ey);
+	               cphi = xcosf(phi);
+	               t1   = _mm512_mul_ps(cphi,ex);
+	               ctht = xcosf(tht);
+	               _mm512_store_ps(&er[0]  ,_mm512_fmadd_ps(stht,t1,
+	                                                  _mm512_fmadd_ps(stht,t0,
+	                                                       _mm512_mul_ps(ctht,ez))));    
+	               _mm512_store_ps(&eth[0] ,_mm512_fmadd_ps(ctht,t1,
+	                                                  _mm512_fmsub_ps(ctht,t0,
+	                                                       _mm512_mul_ps(stht,ez))));  
+	               _mm512_store_ps(&eph[0] ,_mm512_fmadd_ps(negate_zmm16r4(sphi),ex,
+	                                                       _mm512_mul_ps(cphi,ey)));                           
+	       }
              
         } // radiolocation
 
