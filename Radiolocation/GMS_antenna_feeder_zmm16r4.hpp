@@ -226,6 +226,35 @@ namespace gms {
 	       }
 	       
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void f13_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) peth,
+	                               const float * __restrict __ATTR_ALIGN__(64) peph,
+	                               const float * __restrict __ATTR_ALIGN__(64) pnthr,
+	                               const float * __restrict __ATTR_ALIGN__(64) pnthi,
+	                               const float * __restrict __ATTR_ALIGN__(64) pnphr,
+	                               const float * __restrict __ATTR_ALIGN__(64) pnphi,
+	                               float * __restrict __ATTR_ALIGN__(64) Nthr,
+	                               float * __restrict __ATTR_ALIGN__(64) Nthi,
+	                               float * __restrict __ATTR_ALIGN__(64) Nphr,
+	                               float * __restrict __ATTR_ALIGN__(64) Nphi) {
+	                              
+	                 register __m512 eth = _mm512_load_ps(&peth[0]);
+	                 register __m512 eph = _mm512_load_ps(&peph[0]); 
+	                 register __m512 nthr= _mm512_load_ps(&pnthr[0]);  
+	                 register __m512 nthi= _mm512_load_ps(&pnthi[0]);  
+	                 register __m512 nphr= _mm512_load_ps(&pnphr[0]);  
+	                 register __m512 nphi= _mm512_load_ps(&pnphi[0]); 
+	                 _mm512_store_ps(&Nthr[0] ,_mm512_mul_ps(nthr,eth));
+	                 _mm512_store_ps(&Nphr[0] ,_mm512_mul_ps(nphr,eph));
+	                 _mm512_store_ps(&Nthi[0] ,_mm512_mul_ps(nthi,eth));
+	                 _mm512_store_ps(&Nphi[0] ,_mm512_mul_ps(nphi,eph));                             
+	       }
+	       
+	       
 	       
 	       
 	       
