@@ -255,6 +255,36 @@ namespace gms {
 	       }
 	       
 	       
+	       /*
+	           Formula 1-11, p. 14
+	       */
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 f111_zmm16r4(const __m512 Nthr,
+	                               const __m512 Nthi,
+	                               const __m512 Nphr,
+	                               const __m512 Nphi,
+	                               const float nmaxr,
+	                               const float nmaxi) {
+	                  
+	                  register __m512 t0,t1,st0,st1;
+	                  register __m512 x0,x1,P;
+	                  x0 = _mm512_set1_ps(nmaxr);
+	                  t0 = cabs_zmm16r4(Nthr,Nthi);
+	                  x1 = _mm512_set1_ps(nmaxi);
+	                  t1 = cabs_zmm16r4(Nphr,Nphi);
+	                  st0= _mm512_fmadd_ps(t0,t0,
+	                                   _mm512_mul_ps(t1,t1));
+	                  st1= _mm512_add_ps(x0,x1);
+	                  P  = _mm512_div_ps(st0,st1);
+	                  return (P);
+	               }            
+	    
+	       
 	       
 	       
 	       
