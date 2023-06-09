@@ -168,6 +168,11 @@ namespace gms {
 	                                                       _mm512_mul_ps(cphi,ey)));                           
 	       }
 	       
+	       /*
+	             Function 'N' = Nth(theta,phi)*eth+Nphi(theta,phi)*ephi
+	             Formula 1-3, p. 10
+	       */
+	       
 	       
 	       
              
