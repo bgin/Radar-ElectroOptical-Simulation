@@ -174,6 +174,29 @@ namespace gms {
 	       */
 	       
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Rad_pattern_f13_zmm16r4(const __m512 eth,
+	                                        const __m512 eph,
+	                                        const __m512 nthr,
+	                                        const __m512 nthi,
+	                                        const __m512 nphr,
+	                                        const __m512 nphi,
+	                                        __m512 * __restrict Nthr,
+	                                        __m512 * __restrict Nthi,
+	                                        __m512 * __restrict Nphr,
+	                                        __m512 * __restrict Nphi) {
+	                                      
+	                *Nthr = _mm512_mul_ps(nthr,eth);
+	                *Nphr = _mm512_mul_ps(nphr,eph);
+	                *Nthi = _mm512_mul_ps(nthi,eth);
+	                *Nphi = _mm512_mul_ps(nphi,eph);                             
+	       }
+	       
+	       
 	       
              
         } // radiolocation
