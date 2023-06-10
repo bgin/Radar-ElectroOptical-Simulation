@@ -501,6 +501,9 @@ namespace gms {
 	        }
 	        
 	        
+	        
+	        
+	        
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -543,7 +546,27 @@ namespace gms {
 	                  D  = _mm512_div_pd(P,t0);
 	                  return (D);                      
 	        }
+	        
+	        
+	        /*
+	              Formula 1-9, p. 13
+	        */
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 fth_f19_zmm16r4(const __m512 nthr,
+	                               const __m512 nthi,
+	                               const float nmax) {
+	                 
+	                 register __m512 vmax,abs,fth;
+	                 vmax = _mm512_set1_ps(nmax);
+	                 abs  = cabs_zmm16r4(nthr,nthi);
+	                 fth  = _mm512_div_ps(abs,vmax);
+	                 return (fth);                       
+	         }
 	       
 	       
              
