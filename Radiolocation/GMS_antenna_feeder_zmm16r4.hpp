@@ -399,7 +399,42 @@ namespace gms {
 	                  register __m512 a   = _mm512_load_ps(&pa[0]);             
 	                  register __m512 va,vb,vg,vd;
 	                  register __m512 stht,cphi,sphi,ctht;
-	                  register __m512 N,t0,t1,t2;
+	                  register __m512 N,t0,t1;
+	                  va   = _mm512_set1_ps(a);
+	                  stht = xsinf(tht);
+	                  t0   = _mm512_mul_ps(va,stht);
+	                  vb   = _mm512_set1_ps(b);
+	                  cphi = xcosf(phi);
+	                  t1   = _mm512_mul_ps(vb,stht);
+	                  vg   = _mm512_set1_ps(g);
+	                  sphi = xsinf(phi);
+	                  vd   = _mm512_set1_ps(d);
+	                  ctht = xcosf(tht);
+	                  N    = _mm512_fmadd_ps(t0,cphi,
+	                                    _mm512_fmadd_ps(t1,sphi,
+	                                                _mm512_fmadd_ps(vg,ctht,vd)));
+	                  return (N);                                                    
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline       
+	           __m512 f113_zmm16r4_u(const float * __restrict  ptht,
+	                                 const float * __restrict  pphi,
+	                                 const float * __restrict  pa,
+	                                 const float  b,
+	                                 const float  g,
+	                                 const float  d) {
+	                  
+	                  register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+	                  register __m512 phi = _mm512_loadu_ps(&pphi[0]);
+	                  register __m512 a   = _mm512_loadu_ps(&pa[0]);             
+	                  register __m512 va,vb,vg,vd;
+	                  register __m512 stht,cphi,sphi,ctht;
+	                  register __m512 N,t0,t1;
 	                  va   = _mm512_set1_ps(a);
 	                  stht = xsinf(tht);
 	                  t0   = _mm512_mul_ps(va,stht);
