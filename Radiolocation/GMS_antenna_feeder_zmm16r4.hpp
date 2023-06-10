@@ -450,7 +450,30 @@ namespace gms {
 	                                                _mm512_fmadd_ps(vg,ctht,vd)));
 	                  return (N);                                                    
 	        }
-	       
+	        
+	        
+	        /*
+	           Formula 1-14, p. 18
+	        */
+	        
+	           __ATTR_ALIGN__(32)
+                   __ATTR_HOT__
+	           static inline  
+	           void f114_r4(const float gam,
+	                        const float a,
+	                        const float b,
+	                        const float g,
+	                        float * __restrict x0,
+	                        float * __restrict y0,
+	                        float * __restrict z0) {
+	           
+	                constexpr float C6283185307179586476925286766559 =
+	                                     6.283185307179586476925286766559f;
+	                const float rat = gam/C6283185307179586476925286766559;
+	                *x0 = rat*a;
+	                *y0 = rat*b;
+	                *z0 = rat*g;         
+	         }
 	       
 	       
 	       
