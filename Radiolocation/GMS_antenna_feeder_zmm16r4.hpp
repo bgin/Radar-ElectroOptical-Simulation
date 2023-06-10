@@ -474,7 +474,31 @@ namespace gms {
 	                *y0 = rat*b;
 	                *z0 = rat*g;         
 	         }
-	       
+	         
+	         
+	         /*
+	            Formula 1-16, p. 19
+	         */
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 f116_zmm16r4(const __m512 Nthr,
+	                               const __m512 Nthi,
+	                               const __m512 Nphr,
+	                               const __m512 Nphi,
+	                               const float nmaxr,
+	                               const float nmaxi,
+	                               const float maxp) {
+	                               
+	                  register __m512 P,D,t0;
+	                  t0 = _mm512_set1_ps(maxp);
+	                  P  = f114_zmm16r4(Nthr,Nthi,Nphr,Nphi,nmaxr,nmaxi);
+	                  D  = _mm512_div_pd(P,t0);
+	                  return (D);                      
+	        }
 	       
 	       
 	       
