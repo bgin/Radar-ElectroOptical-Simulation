@@ -105,6 +105,39 @@ namespace file_info {
 namespace gms {
 
       namespace math {
+      
+                         /*
+                   Work (input) arrays for integrator 'cspint'
+                   Multi-threaded i.e. (two-threaded)
+               */
+             
+                  __ATTR_ALIGN__(64) struct CSPINT_DATA_R8_2T {
+               
+                       double * __restrict  Ya1; 
+                       double * __restrict  Ya2; 
+                       double * __restrict  Ya3; 
+                       double * __restrict  Ea;  
+                       double * __restrict  WRKa; 
+                       double * __restrict  Yb1;
+                       double * __restrict  Yb2; 
+                       double * __restrict  Yb3; 
+                       double * __restrict  Eb; 
+                       double * __restrict  WRKb;  
+               };
+               
+                /*
+                   Work (input) arrays for integrator 'cspint'
+                   Single-threaded.
+               */
+                __ATTR_ALIGN__(64) struct CSPINT_DATA_R8_1T {
+               
+                       double * __restrict  Y1; 
+                       double * __restrict  Y2; 
+                       double * __restrict  Y3; 
+                       double * __restrict  E;  
+                       double * __restrict  WRK; 
+                       
+               };
           
                         __ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
@@ -229,6 +262,34 @@ label120:
                           }
                       }
 
+
+               __ATTR_ALIGN__(64) struct CSPINT_DATA_R4_2T {
+               
+                       float * __restrict  Ya1; 
+                       float * __restrict  Ya2; 
+                       float * __restrict  Ya3; 
+                       float * __restrict  Ea;  
+                       float * __restrict  WRKa; 
+                       float * __restrict  Yb1;
+                       float * __restrict  Yb2; 
+                       float * __restrict  Yb3; 
+                       float * __restrict  Eb; 
+                       float * __restrict  WRKb;  
+               };
+               
+                /*
+                   Work (input) arrays for integrator 'cspint'
+                   Single-threaded.
+               */
+                __ATTR_ALIGN__(64) struct CSPINT_DATA_R4_1T {
+               
+                       float * __restrict  Y1; 
+                       float * __restrict  Y2; 
+                       float * __restrict  Y3; 
+                       float * __restrict  E;  
+                       float * __restrict  WRK; 
+                       
+               }; 
 
                         __ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
