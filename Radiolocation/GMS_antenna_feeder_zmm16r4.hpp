@@ -608,6 +608,49 @@ namespace gms {
 	                 return (fth);                       
 	         }
 	         
+	         
+	        /*
+	              Formula 1-9, p. 13
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 fph_f19_zmm16r4(const __m512 nphr,
+	                                  const __m512 nphi,
+	                                  const float nmax) {
+	                 
+	                 register __m512 vmax,abs,fph;
+	                 vmax = _mm512_set1_ps(nmax);
+	                 abs  = cabs_zmm16r4(nphr,nphi);
+	                 fth  = _mm512_div_ps(abs,vmax);
+	                 return (fph);                       
+	         }
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 fph_f19_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pnphr,
+	                                    const float * __restrict __ATTR_ALIGN__(64) pnphi,
+	                                    const float nmax) {
+	                 
+	                 register __m512 nphr = _mm512_load_ps(&pnphr[0]);
+	                 register __m512 nphi = _mm512_load_ps(&pnphi[0]);
+	                 register __m512 vmax,abs,fph;
+	                 vmax = _mm512_set1_ps(nmax);
+	                 abs  = cabs_zmm16r4(nphr,nphi);
+	                 fth  = _mm512_div_ps(abs,vmax);
+	                 return (fph);                       
+	         }
+	         
+	         
+	         
 	       
              
         } // radiolocation
