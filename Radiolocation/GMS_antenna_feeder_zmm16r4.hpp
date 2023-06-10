@@ -499,6 +499,28 @@ namespace gms {
 	                  D  = _mm512_div_pd(P,t0);
 	                  return (D);                      
 	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 f116_zmm16r4(  const float * __restrict __ATTR_ALIGN__(64) pNthr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNthi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNphr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNphi,
+	                                 const float nmaxr,
+	                                 const float nmaxi
+	                                 const float maxp) {
+	                         
+	                        
+	                  register __m512 P,D,t0;
+	                  t0 = _mm512_set1_ps(maxp);
+	                  P  = f114_zmm16r4_a(Nthr,Nthi,Nphr,Nphi,nmaxr,nmaxi);
+	                  D  = _mm512_div_pd(P,t0);
+	                  return (D);                      
+	        }
 	       
 	       
 	       
