@@ -567,7 +567,47 @@ namespace gms {
 	                 fth  = _mm512_div_ps(abs,vmax);
 	                 return (fth);                       
 	         }
-	       
+	         
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 fth_f19_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pnthr,
+	                                    const float * __restrict __ATTR_ALIGN__(64) pnthi,
+	                                    const float nmax) {
+	                 
+	                 register __m512 nthr = _mm512_load_ps(&pnthr[0]);
+	                 register __m512 nthi = _mm512_load_ps(&pnthi[0]);
+	                 register __m512 vmax,abs,fth;
+	                 vmax = _mm512_set1_ps(nmax);
+	                 abs  = cabs_zmm16r4(nthr,nthi);
+	                 fth  = _mm512_div_ps(abs,vmax);
+	                 return (fth);                       
+	         }
+	         
+	         
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 fth_f19_zmm16r4_u(const float * __restrict  pnthr,
+	                                    const float * __restrict  pnthi,
+	                                    const float nmax) {
+	                 
+	                 register __m512 nthr = _mm512_loadu_ps(&pnthr[0]);
+	                 register __m512 nthi = _mm512_loadu_ps(&pnthi[0]);
+	                 register __m512 vmax,abs,fth;
+	                 vmax = _mm512_set1_ps(nmax);
+	                 abs  = cabs_zmm16r4(nthr,nthi);
+	                 fth  = _mm512_div_ps(abs,vmax);
+	                 return (fth);                       
+	         }
+	         
 	       
              
         } // radiolocation
