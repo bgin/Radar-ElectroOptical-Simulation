@@ -168,7 +168,43 @@ namespace gms {
 	                  vs = _mm512_sqrt_ps(t.re);
 	                  return (vs);                      
 	       }
-	        
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrossc_zmm16c4(const zmm16c4_t v1x,
+	                                const zmm16c4_t v1y,
+	                                const zmm16c4_t v1z,
+	                                const zmm16c4_t v2x,
+	                                const zmm16c4_t v2y,
+	                                const zmm16c4_t v2z,
+	                                zmm16c4 & resx,
+	                                zmm16c4 & resy,
+	                                zmm16c4 & resz) {
+	                                
+	                 zmm16c4_t t0,t1,t2,t3,t4,t5,t6;
+	                 cmul_zmm16r4(v1y.re,v1y.im,v2z.re,
+	                              v2z.im,&t0.re,&t0.im); 
+	                 cmul_zmm16r4(v1z.re,v1z.im,v2y.re,
+	                              v2y.im,&t1.re,&t1.im);
+	                 resx.re = _mm512_sub_ps(t0.re,t1.re);
+	                 resx.im = _mm512_sub_ps(t0.im,t1.im);
+	                 cmul_zmm16r4(v1z.re,v1z.im,v2x.re,
+	                              v2x.im,&t2.re,&t2.im);
+	                 cmul_zmm16r4(v1x.re,v1x.im,v2z.re,
+	                              v2z.im,&t3.re,&t3.im);
+	                 resy.re = _mm512_sub_ps(t2.re,t3.re);
+	                 resy.im = _mm512_sub_ps(t2.im,t3.im);
+	                 cmul_zmm16r4(v1x.re,v1x.im,v2y.re,
+	                              v2y.im,&t4.re,&t4.im);
+	                 cmul_zmm16r4(v1y.re,v1y.im,v2x.re,
+	                              v2x.im,&t5.re,&t5.im);    
+	                 resz.re = _mm512_sub_ps(t4.re,t5.re);
+	                 resz.im = _mm512_sub_ps(t4.im,t5.im);
+	          }
 	        
                 
                 
