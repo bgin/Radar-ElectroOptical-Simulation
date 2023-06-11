@@ -128,7 +128,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16r4(const zmm16c4_t v1x,
+	           void cdotv_zmm16c4(const zmm16c4_t v1x,
 	                              const zmm16c4_t v1y,
 	                              const zmm16c4_t v1z,
 	                              const zmm16c4_t v2x,
@@ -148,6 +148,28 @@ namespace gms {
 	                res.im = _mm512_add_ps(tx.im,
 	                                   _mm512_add_ps(ty.im,tz.im));                   
 	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 cnorm_zmm16c4(const zmm16c4_t vx,
+	                                const zmm16c4_t vy,
+	                                const zmm16c4_t vz) {
+	                                
+	                  zmm16c4_t t,cx,cy,cz;
+	                  __m512 vs;
+	                  cconj_zmm16r4_v2(vx.re,vx.im,&cx.re,&cx.im);
+	                  cconj_zmm16r4_v2(vy.re,vy.im,&cy.re,&cy.im);
+	                  cconj_zmm16r4_v2(vz.re,vz.im,&cz.re,&cz.im);
+	                  cdotv_zmm16c4(vx,vy,vz,cx,cy,cz,t);
+	                  vs = _mm512_sqrt_ps(t.re);
+	                  return (vs);                      
+	       }
+	        
+	        
                 
                 
         } // math
