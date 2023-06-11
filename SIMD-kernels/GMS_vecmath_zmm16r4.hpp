@@ -43,4 +43,35 @@ namespace file_version {
 #include "GMS_config.h"
 
 
+namespace gms {
+
+
+
+          namespace math {
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 sdotv_zmm16r4(const __m512 v1x,
+	                                const __m512 v1y,
+	                                const __m512 v1z,
+	                                const __m512 v2x,
+	                                const __m512 v2y,
+	                                const __m512 v2z) {
+	                                
+	                  register __m512 result;
+	                  result = _mm512_fmadd_pd(v1x,v2x,
+	                                      _mm512_fmadd_pd(v1y,v2y,
+	                                                 _mm512_mul_pd(v1z,v2z)));
+	                  return (result);                       
+	        }
+                
+                
+        } // math
+
+} // gms
+
+
 #endif /*__GMS_VECMATH_ZMM16R4_HPP__*/
