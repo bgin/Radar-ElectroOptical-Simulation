@@ -259,6 +259,60 @@ namespace gms {
 	                *vcz = _mm512_fmsub_ps(v1x,v2y,
 	                                   _mm512_mul_ps(v1y,v2x));
 	         }
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrossv_zmm16r4_u(const float * __restrict pv1x,
+	                                  const float * __restrict pv1y,
+	                                  const float * __restrict pv1z,
+	                                  const float * __restrict pv2x,
+	                                  const float * __restrict pv2y,
+	                                  const float * __restrict pv2z,
+	                                  float * __restrict vcx,
+	                                  float * __restrict vcy,
+	                                  float * __restrict vcz) {
+	                      
+	                 register __m512 v1x = _mm512_loadu_ps(&pv1x[0]);
+	                 register __m512 v1y = _mm512_loadu_ps(&pv1y[0]);
+	                 register __m512 v1z = _mm512_loadu_ps(&pv1z[0]);
+	                 register __m512 v2x = _mm512_loadu_ps(&pv2x[0]);
+	                 register __m512 v2y = _mm512_loadu_ps(&pv2y[0]);
+	                 register __m512 v2z = _mm512_loadu_ps(&pv2z[0]);          
+	                *vcx = _mm512_fmsub_ps(v1y,v2z,
+	                                   _mm512_mul_ps(v1x,v2y));
+	                *vcy = _mm512_fmsub_ps(v1z,v2x,
+	                                   _mm512_mul_ps(v1x,v2z));
+	                *vcz = _mm512_fmsub_ps(v1x,v2y,
+	                                   _mm512_mul_ps(v1y,v2x));
+	         }
+	         
+	         
+	         //! Direction Vector spherical [theta,phi] (SIMD data-types)
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void dir_vec_zmm16r4(const __m512 tht,
+	                                const __m512 phi,
+	                                __m512 * __restrict dvx,
+	                                __m512 * __restrict dvy,
+	                                __m512 * __restrict dvz) {
+	                                
+	                register __m512 stht,cphi,sphi,ctht;
+	                cphi = xcosf(phi);
+	                stht = xsinf(tht);
+	                *dvx = _mm512_mul_ps(stht,cphi);
+	                sphi = xsinf(phi);
+	                *dvy = _mm512_mul_ps(stht,sphi);
+	                ctht = xcosf(tht);
+	                *dvz = ctht;                       
+	        }
 	        
                 
                 
