@@ -48,6 +48,9 @@ namespace gms {
 
 
           namespace math {
+          
+          
+                   
                 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -125,7 +128,26 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16r4(
+	           void cdotv_zmm16r4(const zmm16c4_t v1x,
+	                              const zmm16c4_t v1y,
+	                              const zmm16c4_t v1z,
+	                              const zmm16c4_t v2x,
+	                              const zmm16c4_t v2y,
+	                              const zmm16c4_t v2z,
+	                              zmm16c4_t & res) {
+	                              
+	                zmm16c4_t tx,ty,tz;
+	                tx = cmul_zmm16r4(v1x.re,v1x.im,v2x.re,
+	                                  v2x.im,&tx.re,&tx.im); 
+	                ty = cmul_zmm16r4(v1y.re,v1y.im,v2y.re,
+	                                  v2y.im,&ty.re,&ty.im);
+	                tz = cmul_zmm16r4(v1z.re,v1z.im,v2z.re,
+	                                  v2z.im,&tz.re,&tz.im);
+	                res.re = _mm512_add_ps(tx.re,
+	                                   _mm512_add_ps(ty.re,tz.re));
+	                res.im = _mm512_add_ps(tx.im,
+	                                   _mm512_add_ps(ty.im,tz.im));                   
+	        }
                 
                 
         } // math
