@@ -298,20 +298,22 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4(const __m512 tht,
-	                                const __m512 phi,
-	                                __m512 * __restrict dvx,
-	                                __m512 * __restrict dvy,
-	                                __m512 * __restrict dvz) {
-	                                
+	           void dir_vec_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                  float * __restrict __ATTR_ALIGN__(64) dvx,
+	                                  float * __restrict __ATTR_ALIGN__(64) dvy,
+	                                  float * __restrict __ATTR_ALIGN__(64) dvz) {
+	                  
+	                register __m512 tht = _mm512_load_ps(&ptht[0]);
+	                register __m512 phi = _mm512_load_ps(&pphi[0]);              
 	                register __m512 stht,cphi,sphi,ctht;
 	                cphi = xcosf(phi);
 	                stht = xsinf(tht);
-	                *dvx = _mm512_mul_ps(stht,cphi);
+	                _mm512_store_ps(&dvx[0] , _mm512_mul_ps(stht,cphi));
 	                sphi = xsinf(phi);
-	                *dvy = _mm512_mul_ps(stht,sphi);
+	                _mm512_store_ps(&dvy[0] , _mm512_mul_ps(stht,sphi));
 	                ctht = xcosf(tht);
-	                *dvz = ctht;                       
+	                _mm512_store_ps(&dvz[0] , ctht);                       
 	        }
 	        
                 
