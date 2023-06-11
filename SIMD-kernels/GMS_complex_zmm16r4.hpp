@@ -47,6 +47,13 @@ namespace  gms {
 
 
        namespace math {
+       
+       
+                   struct __ATTR_ALIGN__(64) zmm16c4_t {
+                   
+                          __m512 re;
+                          __m512 im;
+                   };
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
