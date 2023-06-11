@@ -205,6 +205,30 @@ namespace gms {
 	                 resz.re = _mm512_sub_ps(t4.re,t5.re);
 	                 resz.im = _mm512_sub_ps(t4.im,t5.im);
 	          }
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrossv_zmm16r4(const __m512 v1x,
+	                                const __m512 v1y,
+	                                const __m512 v1z,
+	                                const __m512 v2x,
+	                                const __m512 v2y,
+	                                const __m512 v2z,
+	                                __m512 * __restrict vcx,
+	                                __m512 * __restrict vcy,
+	                                __m512 * __restrict vcz) {
+	                                
+	                *vcx = _mm512_fmsub_ps(v1y,v2z,
+	                                   _mm512_mul_ps(v1x,v2y));
+	                *vcy = _mm512_fmsub_ps(v1z,v2x,
+	                                   _mm512_mul_ps(v1x,v2z));
+	                *vcz = _mm512_fmsub_ps(v1x,v2y,
+	                                   _mm512_mul_ps(v1y,v2x));
+	         }
 	        
                 
                 
