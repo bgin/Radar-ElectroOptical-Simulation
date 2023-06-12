@@ -591,6 +591,13 @@ namespace gms {
 	                H_z.re = _mm512_mul_ps(vpolz,expr);
 	                H_z.im = _mm512_mul_ps(vpolz,expi);
 	        }
+	        
+	        
+	        /*
+	             
+     ! Magnetic Field (SIMD data-types) [plane-wave], polarization 'vpol' of
+     !  wave-vector argument:  vdir*k at sixteen points 'r'.
+	        */
                 
                 
         } // math
