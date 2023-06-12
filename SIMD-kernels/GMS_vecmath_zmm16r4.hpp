@@ -462,6 +462,43 @@ namespace gms {
      ! vr   -- vector radius r
      ! Exyz -- resulting electrical field (3D) at sixteen points 'R', i.e. R(xyz), x0-x15,y0-y15,z0-z15
 	      */
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_zmm16r4(const __m512 vpolx,
+	                                 const __m512 vpoly,
+	                                 const __m512 vpolz,
+	                                 const __m512 vdirx,
+	                                 const __m512 vdiry,
+	                                 const __m512 vdirz,
+	                                 const __m512 vrx,
+	                                 const __m512 vry,
+	                                 const __m512 vrz,
+	                                 const zmm16c4_t k,
+	                                 zmm16c4_t & H_x,
+	                                 zmm16c4_t & H_y,
+	                                 zmm16c4_t & H_z) {
+	               
+	               	__m512 dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                                   vrx,vry,vrz);
+	                ii = _mm512_set1_ps(1.0f);
+	                ir = _mm512_setzero_ps();
+	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_ps(dp,cer);
+	                cei = _mm512_mul_ps(dp,cei);
+	                cexp_zmm16r4(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_ps(vpolx,expr);
+	                H_x.im = _mm512_mul_ps(vpolx,expi);
+	                H_y.re = _mm512_mul_ps(vpoly,expr);
+	                H_y.im = _mm512_mul_ps(vpoly,expi);
+	                H_z.re = _mm512_mul_ps(vpolz,expr);
+	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	        }
                 
                 
         } // math
