@@ -391,7 +391,37 @@ namespace gms {
 	                                                    _mm512_mul_ps(t0,sphi));
 	                *pvz = _mm512_mul_ps(spsi,xsinf(tht));                         
 	      }
-	        
+	      
+	      
+	      
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                  const float * __restrict __ATTR_ALIGN__(64) psi,
+	                                  float * __restrict __ATTR_ALIGN__(64) pvx,
+	                                  float * __restrict __ATTR_ALIGN__(64) pvy,
+	                                  float * __restrict __ATTR_ALIGN__(64) pvz) {
+	                 
+	                  
+	                register __m512 tht = _mm512_load_ps(&ptht[0]);
+	                register __m512 phi = _mm512_load_ps(&pphi[0]);  
+	                register __m512 psi = _mm512_load_ps(&ppsi[0]);           
+	                register __m512 cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcosf(psi);
+	                cphi = xcosf(phi);
+	                spsi = xsinf(psi);
+	                sphi = xsinf(phi);
+	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
+	                _mm512_store_ps(&pvx[0] ,_mm512_fmsub_ps(cpsi,sphi,
+	                                   _mm512_mul_ps(t0,cphi)));
+	                _mm512_store_ps(&pvy[0] ,_mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
+	                                                    _mm512_mul_ps(t0,sphi)));
+	                _mm512_store_ps(&pvz[0] ,_mm512_mul_ps(spsi,xsinf(tht)));                         
+	      } 
 	        
 	        
 	        
