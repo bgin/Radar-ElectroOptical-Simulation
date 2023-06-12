@@ -365,6 +365,32 @@ namespace gms {
 	        
 	         //! Polarization Vector of plane-wave propagating into direction computed by
                  //! dir_vector_xmmxrx (SIMD data-types)
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4(const __m512 tht,
+	                                const __m512 phi,
+	                                const __m512 psi,
+	                                __m512 * __restrict pvx,
+	                                __m512 * __restrict pvy,
+	                                __m512 * __restrict pvz) {
+	                 
+	                               
+	                register __m512 cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcosf(psi);
+	                cphi = xcosf(phi);
+	                spsi = xsinf(psi);
+	                sphi = xsinf(phi);
+	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
+	                *pvx = _mm512_fmsub_ps(cpsi,sphi,
+	                                   _mm512_mul_ps(t0,cphi));
+	                *pvy = _mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
+	                                                    _mm512_mul_ps(t0,sphi));
+	                *pvz = _mm512_mul_ps(spsi,xsinf(tht));                         
+	      }
 	        
 	        
 	        
