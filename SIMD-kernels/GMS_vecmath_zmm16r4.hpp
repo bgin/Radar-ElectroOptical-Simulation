@@ -499,6 +499,52 @@ namespace gms {
 	                H_z.re = _mm512_mul_ps(vpolz,expr);
 	                H_z.im = _mm512_mul_ps(vpolz,expi);
 	        }
+	        
+	        
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_zmm16r4(const float * __restrict __ATTR_ALIGN__(64) vpolx,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vpoly,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vpolz,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vdirx,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vdiry,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vdirz,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vrx,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vry,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vrz,
+	                                 const zmm16c4_t k,
+	                                 zmm16c4_t & H_x,
+	                                 zmm16c4_t & H_y,
+	                                 zmm16c4_t & H_z) {
+	               
+	                register __m512 vpolx = _mm512_load_ps(&vpolx[0]);
+	                register __m512 vpoly = _mm512_load_ps(&vpoly[0]);
+	                register __m512 vpolz = _mm512_load_ps(&vpolz[0]);
+	                register __m512 vdirx = _mm512_load_ps(&vdirx[0]);
+	                register __m512 vdiry = _mm512_load_ps(&vdiry[0]);
+	                register __m512 vdirz = _mm512_load_ps(&vdirz[0]);
+	                register __m512 vrx   = _mm512_load_ps(&vrx[0]);
+	                register __m512 vry   = _mm512_load_ps(&vry[0]);
+	                register __m512 vrz   = _mm512_load_ps(&vrz[0]);
+	               	__m512 dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                                   vrx,vry,vrz);
+	                ii = _mm512_set1_ps(1.0f);
+	                ir = _mm512_setzero_ps();
+	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_ps(dp,cer);
+	                cei = _mm512_mul_ps(dp,cei);
+	                cexp_zmm16r4(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_ps(vpolx,expr);
+	                H_x.im = _mm512_mul_ps(vpolx,expi);
+	                H_y.re = _mm512_mul_ps(vpoly,expr);
+	                H_y.im = _mm512_mul_ps(vpoly,expi);
+	                H_z.re = _mm512_mul_ps(vpolz,expr);
+	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	        }
                 
                 
         } // math
