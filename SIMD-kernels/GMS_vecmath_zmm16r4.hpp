@@ -424,7 +424,44 @@ namespace gms {
 	      } 
 	        
 	        
-	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4_u(const float * __restrict  ptht,
+	                                  const float * __restrict  pphi,
+	                                  const float * __restrict  psi,
+	                                  float * __restrict  pvx,
+	                                  float * __restrict  pvy,
+	                                  float * __restrict  pvz) {
+	                 
+	                  
+	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);  
+	                register __m512 psi = _mm512_loadu_ps(&ppsi[0]);           
+	                register __m512 cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcosf(psi);
+	                cphi = xcosf(phi);
+	                spsi = xsinf(psi);
+	                sphi = xsinf(phi);
+	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
+	                _mm512_storeu_ps(&pvx[0] ,_mm512_fmsub_ps(cpsi,sphi,
+	                                   _mm512_mul_ps(t0,cphi)));
+	                _mm512_storeu_ps(&pvy[0] ,_mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
+	                                                    _mm512_mul_ps(t0,sphi)));
+	                _mm512_storeu_ps(&pvz[0] ,_mm512_mul_ps(spsi,xsinf(tht)));                         
+	      } 
+	      
+	      
+	      /*
+	           
+     ! Vectorized Electric-field at 16 points 'R'
+     ! vpol -- vector of vertical polarization at point 'R'
+     ! vdir -- direction vector
+     ! vr   -- vector radius r
+     ! Exyz -- resulting electrical field (3D) at sixteen points 'R', i.e. R(xyz), x0-x15,y0-y15,z0-z15
+	      */
                 
                 
         } // math
