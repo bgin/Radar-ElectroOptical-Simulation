@@ -1015,6 +1015,11 @@ namespace gms {
 	       }
 	       
 	       
+	       /*
+	              ! Electric and Magnetic Fields elliptically polarized
+	       */
+	       
+	       
 	       
 	     
                 
