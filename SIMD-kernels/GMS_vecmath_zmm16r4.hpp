@@ -763,6 +763,104 @@ namespace gms {
 	                             &B_z.im);
 	                                           
 	     }
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_VP_zmm16c4_u(const float * __restrict  pvpolx,
+	                                   const float * __restrict  pvpoly,
+	                                   const float * __restrict  pvpolz,
+	                                   const float * __restrict  pvdirx,
+	                                   const float * __restrict  pvdiry,
+	                                   const float * __restrict  pvdirz,
+	                                   const float * __restrict  pomega,
+	                                   const float * __restrict  pvrx,
+	                                   const float * __restrict  pvry,
+	                                   const float * __restrict  pvrz,
+	                                   const zmm16c4_t k,
+	                                   zmm16c4_t & B_x,
+	                                   zmm16c4_t & B_y,
+	                                   zmm16c4_t & B_z) {
+	                         
+	                register __m512 vpolx = _mm512_loadu_ps(&pvpolx[0]);
+	                register __m512 vpoly = _mm512_loadu_ps(&pvpoly[0]);    
+	                register __m512 vpolz = _mm512_loadu_ps(&pvpolz[0]);  
+	                register __m512 vdirx = _mm512_loadu_ps(&pvdirx[0]);  
+	                register __m512 vdiry = _mm512_loadu_ps(&pvdiry[0]);
+	                register __m512 vdirz = _mm512_loadu_ps(&pvdirz[0]); 
+	                register __m512 onega = _mm512_loadu_ps(&pomega[0]);
+	                register __m512 vrx   = _mm512_loadu_ps(&pvrx[0]);
+	                register __m512 vry   = _mm512_loadu_ps(&pvry[0]);
+	                register __m512 vrz   = _mm512_loadu_ps(&pvrz[0]);        
+	                const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);
+	                zmm16c4_t cdirx;
+	                zmm16c4_t cdiry;
+	                zmm16c4_t cdirz;
+	                zmm16c4_t H_x;
+	                zmm16c4_t H_y;
+	                zmm16c4_t H_z;
+	                zmm16c4_t cpx;
+	                zmm16c4_t cpy;
+	                zmm16c4_t cpz;
+	                zmm16c4_t t0;
+	                __m512 zz0;
+	                H_XYZ_VP_zmm16c4(vpolx,
+	                                 vpoly,
+	                                 vpolz,
+	                                 vdirx,
+	                                 vdiry,
+	                                 vdirz,
+	                                 vrx,
+	                                 vry,
+	                                 vrz,
+	                                 H_x,
+	                                 H_y,
+	                                 H_z);
+	                                 
+	                cdirx.re = vdirx;
+	                cdirx.im = _mm512_setzero_ps();
+	                cdiry.re = vdiry;
+	                cdiry.im = cdirx.im;
+	                cdirz.re = vdirz;
+	                cdirz.im = cdirx.im;
+	                
+	                zz0      = _mm512_mul_ps(omega,mu0);
+	                t0.re    = _mm512_div_ps(k.re,zz0);
+	                t0.im    = _mm512_div_ps(k.im,zz0);
+	                scrossc_zmm16c4(cdirx,
+	                                cdiry,
+	                                cdirz,
+	                                H_x,
+	                                H_y,
+	                                H_z,
+	                                cpx,
+	                                cpy,
+	                                cpz);
+	                                
+	                cmul_zmm16r4(t0.re,
+	                             t0.im,
+	                             cpx.re,
+	                             cpx.im,
+	                             &B_x.re,
+	                             &B_x.im);
+	                cmul_zmm16r4(t0.re,
+	                             t0.im,
+	                             cpy.re,
+	                             cpy.im,
+	                             &B_y.re,
+	                             &B_y.im);
+	                cmul_zmm16r4(t0.re,
+	                             t0.im,
+	                             cpz.re,
+	                             cpz.im,
+	                             &B_z.re,
+	                             &B_z.im);
+	                                           
+	     }
+	     
                 
                 
         } // math
