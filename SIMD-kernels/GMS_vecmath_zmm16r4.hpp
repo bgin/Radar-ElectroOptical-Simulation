@@ -469,7 +469,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16r4(const __m512 vpolx,
+	           void H_XYZ_VP_zmm16c4(const __m512 vpolx,
 	                                 const __m512 vpoly,
 	                                 const __m512 vpolz,
 	                                 const __m512 vdirx,
@@ -506,7 +506,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) vpolx,
+	           void H_XYZ_VP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) vpolx,
 	                                 const float * __restrict __ATTR_ALIGN__(64) vpoly,
 	                                 const float * __restrict __ATTR_ALIGN__(64) vpolz,
 	                                 const float * __restrict __ATTR_ALIGN__(64) vdirx,
@@ -552,7 +552,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16r4_u(const float * __restrict  vpolx,
+	           void H_XYZ_VP_zmm16c4_u(const float * __restrict  vpolx,
 	                                 const float * __restrict  vpoly,
 	                                 const float * __restrict  vpolz,
 	                                 const float * __restrict  vdirx,
@@ -598,6 +598,14 @@ namespace gms {
      ! Magnetic Field (SIMD data-types) [plane-wave], polarization 'vpol' of
      !  wave-vector argument:  vdir*k at sixteen points 'r'.
 	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_VP_zmm16c4
                 
                 
         } // math
