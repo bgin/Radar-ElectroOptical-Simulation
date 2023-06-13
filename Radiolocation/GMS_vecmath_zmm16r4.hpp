@@ -289,7 +289,402 @@ namespace gms {
 	                *vcz = _mm512_fmsub_ps(v1x,v2y,
 	                                   _mm512_mul_ps(v1y,v2x));
 	         }
+	         
+	         
+	         //! Direction Vector spherical [theta,phi] (SIMD data-types)
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void dir_vec_zmm16r4(  const __m512 tht,
+	                                  const __m512 phi,
+	                                  __m512 * __restrict dvx,
+	                                  __m512 * __restrict dvy,
+	                                  __m512 * __restrict dvz) {
+	                  
+	                        
+	                register __m512 stht,cphi,sphi,ctht;
+	                cphi = xcosf(phi);
+	                stht = xsinf(tht);
+	                *dvx = _mm512_mul_ps(stht,cphi);
+	                sphi = xsinf(phi);
+	                *dvy = _mm512_mul_ps(stht,sphi);
+	                ctht = xcosf(tht);
+	                *dvz = ctht;                       
+	        }
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void dir_vec_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                  float * __restrict __ATTR_ALIGN__(64) dvx,
+	                                  float * __restrict __ATTR_ALIGN__(64) dvy,
+	                                  float * __restrict __ATTR_ALIGN__(64) dvz) {
+	                  
+	                register __m512 tht = _mm512_load_ps(&ptht[0]);
+	                register __m512 phi = _mm512_load_ps(&pphi[0]);              
+	                register __m512 stht,cphi,sphi,ctht;
+	                cphi = xcosf(phi);
+	                stht = xsinf(tht);
+	                _mm512_store_ps(&dvx[0] , _mm512_mul_ps(stht,cphi));
+	                sphi = xsinf(phi);
+	                _mm512_store_ps(&dvy[0] , _mm512_mul_ps(stht,sphi));
+	                ctht = xcosf(tht);
+	                _mm512_store_ps(&dvz[0] , ctht);                       
+	        }
 	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void dir_vec_zmm16r4_u(const float * __restrict  ptht,
+	                                  const float * __restrict  pphi,
+	                                  float * __restrict  dvx,
+	                                  float * __restrict  dvy,
+	                                  float * __restrict  dvz) {
+	                  
+	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);              
+	                register __m512 stht,cphi,sphi,ctht;
+	                cphi = xcosf(phi);
+	                stht = xsinf(tht);
+	                _mm512_storeu_ps(&dvx[0] , _mm512_mul_ps(stht,cphi));
+	                sphi = xsinf(phi);
+	                _mm512_storeu_ps(&dvy[0] , _mm512_mul_ps(stht,sphi));
+	                ctht = xcosf(tht);
+	                _mm512_storeu_ps(&dvz[0] , ctht);                       
+	        }
+	        
+	        
+	         //! Polarization Vector of plane-wave propagating into direction computed by
+                 //! dir_vector_xmmxrx (SIMD data-types)
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4(const __m512 tht,
+	                                const __m512 phi,
+	                                const __m512 psi,
+	                                __m512 * __restrict pvx,
+	                                __m512 * __restrict pvy,
+	                                __m512 * __restrict pvz) {
+	                 
+	                               
+	                register __m512 cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcosf(psi);
+	                cphi = xcosf(phi);
+	                spsi = xsinf(psi);
+	                sphi = xsinf(phi);
+	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
+	                *pvx = _mm512_fmsub_ps(cpsi,sphi,
+	                                   _mm512_mul_ps(t0,cphi));
+	                *pvy = _mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
+	                                                    _mm512_mul_ps(t0,sphi));
+	                *pvz = _mm512_mul_ps(spsi,xsinf(tht));                         
+	      }
+	      
+	      
+	      
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                  const float * __restrict __ATTR_ALIGN__(64) psi,
+	                                  float * __restrict __ATTR_ALIGN__(64) pvx,
+	                                  float * __restrict __ATTR_ALIGN__(64) pvy,
+	                                  float * __restrict __ATTR_ALIGN__(64) pvz) {
+	                 
+	                  
+	                register __m512 tht = _mm512_load_ps(&ptht[0]);
+	                register __m512 phi = _mm512_load_ps(&pphi[0]);  
+	                register __m512 psi = _mm512_load_ps(&ppsi[0]);           
+	                register __m512 cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcosf(psi);
+	                cphi = xcosf(phi);
+	                spsi = xsinf(psi);
+	                sphi = xsinf(phi);
+	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
+	                _mm512_store_ps(&pvx[0] ,_mm512_fmsub_ps(cpsi,sphi,
+	                                   _mm512_mul_ps(t0,cphi)));
+	                _mm512_store_ps(&pvy[0] ,_mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
+	                                                    _mm512_mul_ps(t0,sphi)));
+	                _mm512_store_ps(&pvz[0] ,_mm512_mul_ps(spsi,xsinf(tht)));                         
+	      } 
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4_u(const float * __restrict  ptht,
+	                                  const float * __restrict  pphi,
+	                                  const float * __restrict  psi,
+	                                  float * __restrict  pvx,
+	                                  float * __restrict  pvy,
+	                                  float * __restrict  pvz) {
+	                 
+	                  
+	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);  
+	                register __m512 psi = _mm512_loadu_ps(&ppsi[0]);           
+	                register __m512 cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcosf(psi);
+	                cphi = xcosf(phi);
+	                spsi = xsinf(psi);
+	                sphi = xsinf(phi);
+	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
+	                _mm512_storeu_ps(&pvx[0] ,_mm512_fmsub_ps(cpsi,sphi,
+	                                   _mm512_mul_ps(t0,cphi)));
+	                _mm512_storeu_ps(&pvy[0] ,_mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
+	                                                    _mm512_mul_ps(t0,sphi)));
+	                _mm512_storeu_ps(&pvz[0] ,_mm512_mul_ps(spsi,xsinf(tht)));                         
+	      } 
+	      
+	      
+	      /*
+	           
+     ! Vectorized Electric-field at 16 points 'R'
+     ! vpol -- vector of vertical polarization at point 'R'
+     ! vdir -- direction vector
+     ! vr   -- vector radius r
+     ! Exyz -- resulting electrical field (3D) at sixteen points 'R', i.e. R(xyz), x0-x15,y0-y15,z0-z15
+	      */
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_zmm16c4(const __m512 vpolx,
+	                                 const __m512 vpoly,
+	                                 const __m512 vpolz,
+	                                 const __m512 vdirx,
+	                                 const __m512 vdiry,
+	                                 const __m512 vdirz,
+	                                 const __m512 vrx,
+	                                 const __m512 vry,
+	                                 const __m512 vrz,
+	                                 const zmm16c4_t k,
+	                                 zmm16c4_t & H_x,
+	                                 zmm16c4_t & H_y,
+	                                 zmm16c4_t & H_z) {
+	               
+	               	__m512 dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                                   vrx,vry,vrz);
+	                ii = _mm512_set1_ps(1.0f);
+	                ir = _mm512_setzero_ps();
+	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_ps(dp,cer);
+	                cei = _mm512_mul_ps(dp,cei);
+	                cexp_zmm16r4(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_ps(vpolx,expr);
+	                H_x.im = _mm512_mul_ps(vpolx,expi);
+	                H_y.re = _mm512_mul_ps(vpoly,expr);
+	                H_y.im = _mm512_mul_ps(vpoly,expi);
+	                H_z.re = _mm512_mul_ps(vpolz,expr);
+	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) vpolx,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vpoly,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vpolz,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vdirx,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vdiry,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vdirz,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vrx,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vry,
+	                                 const float * __restrict __ATTR_ALIGN__(64) vrz,
+	                                 const zmm16c4_t k,
+	                                 zmm16c4_t & H_x,
+	                                 zmm16c4_t & H_y,
+	                                 zmm16c4_t & H_z) {
+	               
+	                register __m512 vpolx = _mm512_load_ps(&vpolx[0]);
+	                register __m512 vpoly = _mm512_load_ps(&vpoly[0]);
+	                register __m512 vpolz = _mm512_load_ps(&vpolz[0]);
+	                register __m512 vdirx = _mm512_load_ps(&vdirx[0]);
+	                register __m512 vdiry = _mm512_load_ps(&vdiry[0]);
+	                register __m512 vdirz = _mm512_load_ps(&vdirz[0]);
+	                register __m512 vrx   = _mm512_load_ps(&vrx[0]);
+	                register __m512 vry   = _mm512_load_ps(&vry[0]);
+	                register __m512 vrz   = _mm512_load_ps(&vrz[0]);
+	               	__m512 dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                                   vrx,vry,vrz);
+	                ii = _mm512_set1_ps(1.0f);
+	                ir = _mm512_setzero_ps();
+	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_ps(dp,cer);
+	                cei = _mm512_mul_ps(dp,cei);
+	                cexp_zmm16r4(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_ps(vpolx,expr);
+	                H_x.im = _mm512_mul_ps(vpolx,expi);
+	                H_y.re = _mm512_mul_ps(vpoly,expr);
+	                H_y.im = _mm512_mul_ps(vpoly,expi);
+	                H_z.re = _mm512_mul_ps(vpolz,expr);
+	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_zmm16c4_u(const float * __restrict  vpolx,
+	                                 const float * __restrict  vpoly,
+	                                 const float * __restrict  vpolz,
+	                                 const float * __restrict  vdirx,
+	                                 const float * __restrict  vdiry,
+	                                 const float * __restrict  vdirz,
+	                                 const float * __restrict  vrx,
+	                                 const float * __restrict  vry,
+	                                 const float * __restrict  vrz,
+	                                 const zmm16c4_t k,
+	                                 zmm16c4_t & H_x,
+	                                 zmm16c4_t & H_y,
+	                                 zmm16c4_t & H_z) {
+	               
+	                register __m512 vpolx = _mm512_loadu_ps(&vpolx[0]);
+	                register __m512 vpoly = _mm512_loadu_ps(&vpoly[0]);
+	                register __m512 vpolz = _mm512_loadu_ps(&vpolz[0]);
+	                register __m512 vdirx = _mm512_loadu_ps(&vdirx[0]);
+	                register __m512 vdiry = _mm512_loadu_ps(&vdiry[0]);
+	                register __m512 vdirz = _mm512_loadu_ps(&vdirz[0]);
+	                register __m512 vrx   = _mm512_loadu_ps(&vrx[0]);
+	                register __m512 vry   = _mm512_loadu_ps(&vry[0]);
+	                register __m512 vrz   = _mm512_loadu_ps(&vrz[0]);
+	               	__m512 dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                                   vrx,vry,vrz);
+	                ii = _mm512_set1_ps(1.0f);
+	                ir = _mm512_setzero_ps();
+	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_ps(dp,cer);
+	                cei = _mm512_mul_ps(dp,cei);
+	                cexp_zmm16r4(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_ps(vpolx,expr);
+	                H_x.im = _mm512_mul_ps(vpolx,expi);
+	                H_y.re = _mm512_mul_ps(vpoly,expr);
+	                H_y.im = _mm512_mul_ps(vpoly,expi);
+	                H_z.re = _mm512_mul_ps(vpolz,expr);
+	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	        }
+	        
+	        
+	        /*
+	             
+     ! Magnetic Field (SIMD data-types) [plane-wave], polarization 'vpol' of
+     !  wave-vector argument:  vdir*k at sixteen points 'r'.
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_VP_zmm16c4(const __m512 vpolx,
+	                                 const __m512 vpoly,
+	                                 const __m512 vpolz,
+	                                 const __m512 vdirx,
+	                                 const __m512 vdiry,
+	                                 const __m512 vdirz,
+	                                 const zmm16c4_t k,
+	                                 const __m512 omega,
+	                                 const __m512 vrx,
+	                                 const __m512 vry,
+	                                 const __m512 vrz,
+	                                 zmm16c4_t & B_x,
+	                                 zmm16c4_t & B_y,
+	                                 zmm16c4_t & B_z) {
+	                                 
+	                const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);
+	                zmm16c4_t cdirx;
+	                zmm16c4_t cdiry;
+	                zmm16c4_t cdirz;
+	                zmm16c4_t H_x;
+	                zmm16c4_t H_y;
+	                zmm16c4_t H_z;
+	                zmm16c4_t cpx;
+	                zmm16c4_t cpy;
+	                zmm16c4_t cpz;
+	                zmm16c4_t t0;
+	                __m512 zz0;
+	                H_XYZ_VP_zmm16c4(vpolx,
+	                                 vpoly,
+	                                 vpolz,
+	                                 vdirx,
+	                                 vdiry,
+	                                 vdirz,
+	                                 vrx,
+	                                 vry,
+	                                 vrz,
+	                                 H_x,
+	                                 H_y,
+	                                 H_z);
+	                                 
+	                cdirx.re = vdirx;
+	                cdirx.im = _mm512_setzero_ps();
+	                cdiry.re = vdiry;
+	                cdiry.im = cdirx.im;
+	                cdirz.re = vdirz;
+	                cdirz.im = cdirx.im;
+	                
+	                zz0      = _mm512_mul_ps(omega,mu0);
+	                t0.re    = _mm512_div_ps(k.re,zz0);
+	                t0.im    = _mm512_div_ps(k.im,zz0);
+	                scrossc_zmm16c4(cdirx,
+	                                cdiry,
+	                                cdirz,
+	                                H_x,
+	                                H_y,
+	                                H_z,
+	                                cpx,
+	                                cpy,
+	                                cpz);
+	                                
+	                cmul_zmm16r4(t0.re,
+	                             t0.im,
+	                             cpx.re,
+	                             cpx.im,
+	                             &B_x.re,
+	                             &B_x.im);
+	                cmul_zmm16r4(t0.re,
+	                             t0.im,
+	                             cpy.re,
+	                             cpy.im,
+	                             &B_y.re,
+	                             &B_y.im);
+	                cmul_zmm16r4(t0.re,
+	                             t0.im,
+	                             cpz.re,
+	                             cpz.im,
+	                             &B_z.re,
+	                             &B_z.im);
+	                                           
+	     }
                 
                 
         } // math
