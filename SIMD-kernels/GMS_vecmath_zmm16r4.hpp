@@ -913,7 +913,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	           void B_XYZ_H_XYZ_P_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
 	                                      const float * __restrict __ATTR_ALIGN__(64) pphi,
 	                                      const float * __restrict __ATTR_ALIGN__(64) ppsi,
 	                                      const float * __restrict __ATTR_ALIGN__(64) pomg,
@@ -936,6 +936,60 @@ namespace gms {
 	                register __m512 px  = _mm512_load_ps(&ppx[0]);
 	                register __m512 py  = _mm512_load_ps(&ppy[0]);
 	                register __m512 pz  = _mm512_load_ps(&ppz[0]);
+	                const __m512 c = _mm512_set1_ps(299792458.0f);
+	                zmm16c4_t k;
+	                register __m512 vpolx,vpoly,vpolz;
+	                register __m512 vdirx,vdiry,vdirz;
+	                register __m512 t0;
+	                
+	                t0 = _mm512_div_ps(omg,c);
+	                dir_vec_zmm16r4(tht,phi,&vdirx,
+	                                &vdiry,&vdirz);
+	                k.re = _mm512_mul_ps(r.re,c);
+	                k.im = _mm512_mul_ps(r.im,c);
+	                pol_vec_zmm16r4(tht,psi,psi,
+	                                &vpolx,&vpoly,&vpolz);
+	                H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                 vdirx,vdiry,vdirz,
+	                                 k,px,py,pz,
+	                                 H_x,H_y,H_z);
+	                B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                 vdirx,vdiry,vdirz,
+	                                 k,omg,px,py,pz,
+	                                 B_x,B_y,B_z);
+	                                    
+	       }
+	       
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_H_XYZ_P_zmm16c4_u(const float * __restrict ptht,
+	                                      const float * __restrict  pphi,
+	                                      const float * __restrict ppsi,
+	                                      const float * __restrict  pomg,
+	                                      const float * __restrict  ppx,
+	                                      const float * __restrict  ppy,
+	                                      const float * __restrict ppz,
+	                                      const zmm16c4_t r,
+	                                      zmm16c4_t & H_x,
+	                                      zmm16c4_t & H_y,
+	                                      zmm16c4_t & H_z,
+	                                      zmm16c4_t & B_x,
+	                                      zmm16c4_t & B_y,
+	                                      zmm16c4_t & B_z) {
+	                                      
+	                
+	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
+	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);
+	                register __m512 psi = _mm512_loadu_ps(&ppsi[0]);
+	                register __m512 omg = _mm512_loadu_ps(&pomg[0]);
+	                register __m512 px  = _mm512_loadu_ps(&ppx[0]);
+	                register __m512 py  = _mm512_loadu_ps(&ppy[0]);
+	                register __m512 pz  = _mm512_loadu_ps(&ppz[0]);
 	                const __m512 c = _mm512_set1_ps(299792458.0f);
 	                zmm16c4_t k;
 	                register __m512 vpolx,vpoly,vpolz;
