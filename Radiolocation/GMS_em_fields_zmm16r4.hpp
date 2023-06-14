@@ -509,6 +509,71 @@ namespace gms {
 	      
 	      
 	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void sdotv_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        __m512 * __restrict __ATTR_ALIGN__(64) pdtv,
+	                                        const int32_t n) {
+	                                        
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                register __m512 v1x;
+	                register __m512 v1y;
+	                register __m512 v1z;
+	                register __m512 v2x;
+	                register __m512 v2y;
+	                register __m512 v2z;
+	                register __m512 dtv;
+	                int32_t j,m,m1;
+	                
+	                m = n%2;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                   
+	                        v1x = pv1x[j];
+	                        v2x = pv2x[j];
+	                        v1y = pv1y[j];
+	                        v2y = pv2y[j];
+	                        v1z = pv1z[j];
+	                        v2z = pv2z[j];
+	                        dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                            v2x,v2y,v2z);
+	                        pdtv[j] = dtv;
+	                   }
+	                   if(n<2) { return;}
+	                }  
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 2) {
+	                     v1x = pv1x[j+0];
+	                     v2x = pv2x[j+0];
+	                     v1y = pv1y[j+0];
+	                     v2y = pv2y[j+0];
+	                     v1z = pv1z[j+0];
+	                     v2z = pv2z[j+0];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+0] = dtv;
+	                     v1x = pv1x[j+1];
+	                     v2x = pv2x[j+1];
+	                     v1y = pv1y[j+1];
+	                     v2y = pv2y[j+1];
+	                     v1z = pv1z[j+1];
+	                     v2z = pv2z[j+1];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+1] = dtv;
+	                                      	                    
+	                }
+	                                        
+	      }
 	      
 	      
 	        
