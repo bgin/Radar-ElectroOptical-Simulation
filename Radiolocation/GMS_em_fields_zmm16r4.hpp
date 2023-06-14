@@ -1140,6 +1140,130 @@ namespace gms {
 	                           &B_z.re,&B_z.im);
 	              
 	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_H_XYZ_EP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pomg,
+	                                         const zmm16c4_t phase,
+	                                         const zmm16c4_t refi,
+	                                         const zmm16c4_t px,
+	                                         const zmm16c4_t py,
+	                                         const zmm16c4_t pz,
+	                                         zmm16c4_t & H_x,
+	                                         zmm16c4_t & H_y,
+	                                         zmm16c4_t & H_z,
+	                                         zmm16c4_t & B_x,
+	                                         zmm16c4_t & B_y,
+	                                         zmm16c4_t & B_z) {
+	                         
+	               register __m512 tht = _mm512_load_ps(&ptht[0]);
+	               register __m512 phi = _mm512_load_ps(&pphi[0]);
+	               register __m512 omg = _mm512_load_ps(&pomg[0]);            
+	               const __m512 c   = _mm512_set1_ps(299792458.0f); 
+	               const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);   
+	               const __m512 psi0 = _mm512_setzero_ps();
+	               const __m512 C00  = _mm512_setzero_ps();
+	               
+	               zmm16c4_t H_x_1;
+	               zmm16c4_t H_y_1;
+	               zmm16c4_t H_z_1;
+	               zmm16c4_t H_x_2;
+	               zmm16c4_t H_y_2;
+	               zmm16c4_t H_z_2;
+	               zmm16c4_t k;
+	               zmm16c4_t t0;
+	               zmm16c4_t cdirx;
+	               zmm16c4_t cdiry;
+	               zmm16c4_t cdirz;
+	               
+	               register __m512 vpolx;
+	               register __m512 vpoly;
+	               register __m512 vpolz;
+	               register __m512 vdirx;
+	               register __m512 vdiry;
+	               register __m512 vdirz;
+	               register __m512 cn;
+	               register __m512 x0;
+	               register __m512 t0r,t0i;
+	               register __m512 t1r,t1i;
+	               register __m512 t2r,t2i;
+	               
+	               dir_vec_zmm16r4(tht,phi,&vdirx,
+	                               &vdiry,&vdirz);
+	               cdirx.re = vdirx;
+	               x0       = _mm512_div_ps(omg,c);
+	               cdirx.im = C00;
+	               k.re     = _mm512_mul_ps(refi.re,x0);
+	               k.im     = _mm512_mul_ps(refi.im,x0);
+	               cdiry.re = vdiry;
+	               cdiry.im = C00;
+	               
+	               pol_vec_zmm16r4(tht,phi,psi_0,
+	                               &vpolx,&vpoly,&vpolz);
+	               cdirz.re = vdirz;
+	               cdirz.im = C00;
+	               
+	               H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                vdirx,vdiry,vdirz,
+	                                px,py,pz,
+	                                H_x_1,H_y_1,H_z_1);
+	                                
+	               scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	                               H_x_1,H_y_1,H_z_1,
+	                               H_x_2,H_y_2,H_z_2);
+	                               
+	               cmul_zmm16r4(phase.re,phase.im,
+	                            H_x_2.re,H_x_2.im,
+	                            &t0r,&t0i);
+	               H_x.re = _mm512_add_ps(H_x_1.re,t0r);
+	               H_x.im = _mm512_add_ps(H_x_1.im,t0i);
+	               
+	               cmul_zmm16r4(phase.re,phase.im,
+	                            H_y_2.re,H_y_2.im,
+	                            &t1r,&t1i);
+	               H_y.re = _mm512_add_ps(H_y_1.re,t1r);
+	               H_y.im = _mm512_add_ps(H_y_1.im,t1i);
+	               
+	               cmul_zmm16r4(phase.re,phase.im,
+	                            H_z_2.re,H_z_2.im,
+	                            &t2r,&t2i);
+	              H_z.re = _mm512_add_ps(H_z_2.re,t2r);
+	              H_z.im = _mm512_add_ps(H_z_2.im,t2i);
+	              
+	              cn = cnorm_zmm16c4(H_x,H_y,H_z);
+	              
+	              x0     = _mm512_div_ps(omg,mu0);
+	              H_x.re = _mm512_div_ps(H_x.re,cn);
+	              H_x.im = _mm512_div_ps(H_x.im,cn);
+	              H_y.re = _mm512_div_ps(H_y.re,cn);
+	              H_y.im = _mm512_div_ps(H_y.im,cn);
+	              H_z.re = _mm512_div_ps(H_z.re,cn);
+	              H_z.im = _mm512_div_ps(H_z.im,cn); 
+	              
+	              t0.re  = _mm512_div_ps(k.re,x0);
+	              t0.im  = _mm512_div_ps(k.im,x0);
+	              
+	              scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	                              H_x,H_y,H_z,
+	                              H_x_2,H_y_2,H_z_2);
+	                              
+	              cmul_zmm16r4(t0.re,t0.im,
+	                           H_x_2.re,H_x_2.im,
+	                           &B_x.re,&B_x.im);
+	              cmul_zmm16r4(t0.re,t0.im,
+	                           H_y_2.re,H_y_2.im,
+	                           &B_y.re,&B_y.im);
+	              cmul_zmm16r4(t0.re,t0.im,
+	                           H_z_2.re,H_z_2.im,
+	                           &B_z.re,&B_z.im);
+	              
+	        }
 	                                       
 	       
 	       
