@@ -52,7 +52,10 @@ namespace gms {
           namespace radiolocation {
           
           
-                   
+#ifndef __EM_FIELDS_PF_CACHE_HINT__
+#define __EM_FIELDS_PF_CACHE_HINT__ 1
+#endif  
+              
                 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -701,6 +704,7 @@ namespace gms {
 	                
 	                m1 = m+1;
 	                for(j = m1; j != n; j += 16) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1                
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
@@ -713,6 +717,47 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif
+
 	                    v1x = pv1x[j+0];
 	                    v2x = pv2x[j+0];
 	                    v1y = pv1y[j+0];
@@ -923,6 +968,7 @@ namespace gms {
 	                
 	                m1 = m+1;
 	                for(j = m1; j != n; j += 10) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1                
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
@@ -935,6 +981,46 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                   
 	                    v1x = pv1x[j+0];
 	                    v2x = pv2x[j+0];
 	                    v1y = pv1y[j+0];
@@ -1085,6 +1171,7 @@ namespace gms {
 	                
 	                m1 = m+1;
 	                for(j = m1; j != n; j += 6) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1                
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
@@ -1097,6 +1184,46 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                   
 	                    v1x = pv1x[j+0];
 	                    v2x = pv2x[j+0];
 	                    v1y = pv1y[j+0];
@@ -1208,6 +1335,7 @@ namespace gms {
 	                
 	                m1 = m+1;
 	                for(j = m1; j != n; j += 2) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1                
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
@@ -1220,6 +1348,46 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                   
 	                    v1x = pv1x[j+0];
 	                    v2x = pv2x[j+0];
 	                    v1y = pv1y[j+0];
@@ -1270,6 +1438,155 @@ namespace gms {
 	                  vs = _mm512_sqrt_ps(t.re);
 	                  return (vs);                      
 	       }
+	       
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cnorm_zmm16c4_unroll16x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	                                        const int32_t n,
+	                                        int32_t & PF_DIST) {
+	                                        
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 16;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
+	                __ATTR_ALIGN__(64) zmm16c4_t vs;
+	                int32_t j,m,m1;
+	                
+	                m = n%16;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       v1x = pv1x[j];
+	                       v1y = pv1y[j];
+	                       v1z = pv1z[j];
+	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       pvs[j] = vs;
+	                   }
+	                   if(n<16) { return;}
+	                }                     
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 16) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif
+                            v1x = pv1x[j+0];
+	                    v1y = pv1y[j+0];
+	                    v1z = pv1z[j+0];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+0] = vs;
+	                    v1x = pv1x[j+1];
+	                    v1y = pv1y[j+1];
+	                    v1z = pv1z[j+1];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+1] = vs;
+	                    v1x = pv1x[j+2];
+	                    v1y = pv1y[j+2];
+	                    v1z = pv1z[j+2];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+2] = vs;
+	                    v1x = pv1x[j+3];
+	                    v1y = pv1y[j+3];
+	                    v1z = pv1z[j+3];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+3] = vs;
+	                    v1x = pv1x[j+4];
+	                    v1y = pv1y[j+4];
+	                    v1z = pv1z[j+4];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+4] = vs;
+	                    v1x = pv1x[j+5];
+	                    v1y = pv1y[j+5];
+	                    v1z = pv1z[j+5];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+5] = vs;
+	                    v1x = pv1x[j+6];
+	                    v1y = pv1y[j+6];
+	                    v1z = pv1z[j+6];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+6] = vs;
+	                    v1x = pv1x[j+7];
+	                    v1y = pv1y[j+7];
+	                    v1z = pv1z[j+7];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+7] = vs;
+	                    v1x = pv1x[j+8];
+	                    v1y = pv1y[j+8];
+	                    v1z = pv1z[j+8];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+8] = vs;
+	                    v1x = pv1x[j+9];
+	                    v1y = pv1y[j+9];
+	                    v1z = pv1z[j+9];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+9] = vs;
+	                    v1x = pv1x[j+10];
+	                    v1y = pv1y[j+10];
+	                    v1z = pv1z[j+10];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+10] = vs;
+	                    v1x = pv1x[j+11];
+	                    v1y = pv1y[j+11];
+	                    v1z = pv1z[j+11];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+11] = vs;
+	                    v1x = pv1x[j+12];
+	                    v1y = pv1y[j+12];
+	                    v1z = pv1z[j+12];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+12] = vs;
+	                    v1x = pv1x[j+13];
+	                    v1y = pv1y[j+13];
+	                    v1z = pv1z[j+13];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+13] = vs;
+	                    v1x = pv1x[j+14];
+	                    v1y = pv1y[j+14];
+	                    v1z = pv1z[j+14];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+14] = vs;
+	                    v1x = pv1x[j+15];
+	                    v1y = pv1y[j+15];
+	                    v1z = pv1z[j+15];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+15] = vs;
+	                }             
+	      }
+	                                       
 	       
 	       
 	           __ATTR_ALWAYS_INLINE__
