@@ -2450,6 +2450,187 @@ namespace gms {
 	                 
 	                }          
 	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrossc_zmm16r4_unroll6x(const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
+	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presx,
+	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presy,
+	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presz,
+	                                          const int32_t n,
+	                                          int32_t & PF_DIST) {
+	                                          
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
+	                zmm16c4_t resx;
+	                zmm16c4_t resy;
+	                zmm16c4_t resz;
+	                zmm16c4_t  v1x;
+	                zmm16c4_t  v1y;
+	                zmm16c4_t  v1z;
+	                zmm16c4_t  v2x;
+	                zmm16c4_t  v2y;
+	                zmm16c4_t  v2z;   
+	                int32_t j,m,m1;
+	                
+	                m = n%6;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       v1x = pv1x[j];
+	                       v2x = pv2x[j];
+	                       v1y = pv1y[j];
+	                       v2y = pv2y[j];
+	                       v1z = pv1z[j];
+	                       v2z = pv2z[j];
+	                       scrossc_zmm16r4(v1x,v1y,v1z,
+	                                       v2x,v2y,v2z,
+	                                       resx,resy,resz);
+	                       presx[j] = resx;
+	                       presy[j] = resy;
+	                       presz[j] = resz;
+	                   }
+	                   if(n<6) return;
+	                }                  
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 6) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                    
+                            v1x = pv1x[j+0];
+	                    v2x = pv2x[j+0];
+	                    v1y = pv1y[j+0];
+	                    v2y = pv2y[j+0];
+	                    v1z = pv1z[j+0];
+	                    v2z = pv2z[j+0];
+	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                                    v2x,v2y,v2z,
+	                                    resx,resy,resz);
+	                    presx[j+0] = resx;
+	                    presy[j+0] = resy;
+	                    presz[j+0] = resz;
+	                    v1x = pv1x[j+1];
+	                    v2x = pv2x[j+1];
+	                    v1y = pv1y[j+1];
+	                    v2y = pv2y[j+1];
+	                    v1z = pv1z[j+1];
+	                    v2z = pv2z[j+1];
+	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                                    v2x,v2y,v2z,
+	                                    resx,resy,resz);
+	                    presx[j+1] = resx;
+	                    presy[j+1] = resy;
+	                    presz[j+1] = resz;
+	                    v1x = pv1x[j+2];
+	                    v2x = pv2x[j+2];
+	                    v1y = pv1y[j+2];
+	                    v2y = pv2y[j+2];
+	                    v1z = pv1z[j+2];
+	                    v2z = pv2z[j+2];
+	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                                    v2x,v2y,v2z,
+	                                    resx,resy,resz);
+	                    presx[j+2] = resx;
+	                    presy[j+2] = resy;
+	                    presz[j+2] = resz;
+	                    v1x = pv1x[j+3];
+	                    v2x = pv2x[j+3];
+	                    v1y = pv1y[j+3];
+	                    v2y = pv2y[j+3];
+	                    v1z = pv1z[j+3];
+	                    v2z = pv2z[j+3];
+	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                                    v2x,v2y,v2z,
+	                                    resx,resy,resz);
+	                    presx[j+3] = resx;
+	                    presy[j+3] = resy;
+	                    presz[j+3] = resz;
+	                    v1x = pv1x[j+4];
+	                    v2x = pv2x[j+4];
+	                    v1y = pv1y[j+4];
+	                    v2y = pv2y[j+4];
+	                    v1z = pv1z[j+4];
+	                    v2z = pv2z[j+4];
+	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                                    v2x,v2y,v2z,
+	                                    resx,resy,resz);
+	                    presx[j+4] = resx;
+	                    presy[j+4] = resy;
+	                    presz[j+4] = resz;
+	                    v1x = pv1x[j+5];
+	                    v2x = pv2x[j+5];
+	                    v1y = pv1y[j+5];
+	                    v2y = pv2y[j+5];
+	                    v1z = pv1z[j+5];
+	                    v2z = pv2z[j+5];
+	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                                    v2x,v2y,v2z,
+	                                    resx,resy,resz);
+	                    presx[j+5] = resx;
+	                    presy[j+5] = resy;
+	                    presz[j+5] = resz;
+	                  
+	                }          
+	        }
 	          
 	          
 	          
