@@ -1805,6 +1805,82 @@ namespace gms {
 	      }
 	      
 	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cnorm_zmm16c4_unroll2x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	                                        const int32_t n,
+	                                        int32_t & PF_DIST) {
+	                                        
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 2;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
+	                __ATTR_ALIGN__(64) zmm16c4_t vs;
+	                int32_t j,m,m1;
+	                
+	                m = n%2;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       v1x = pv1x[j];
+	                       v1y = pv1y[j];
+	                       v1z = pv1z[j];
+	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       pvs[j] = vs;
+	                   }
+	                   if(n<2) { return;}
+	                }                     
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 2) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif
+                            v1x = pv1x[j+0];
+	                    v1y = pv1y[j+0];
+	                    v1z = pv1z[j+0];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+0] = vs;
+	                    v1x = pv1x[j+1];
+	                    v1y = pv1y[j+1];
+	                    v1z = pv1z[j+1];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+1] = vs;
+	                   	                   	                  
+	                }             
+	      }
 	      
 	      
 	                                       
