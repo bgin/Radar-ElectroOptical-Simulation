@@ -3924,6 +3924,108 @@ namespace gms {
 	                  
 	               }                                  
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void dir_vec_zmm16r4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvx,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvy,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvz,
+	                                          const int32_t n,
+	                                          int32_t & PF_DIST) {
+	                                          
+	               if(__builtin_expect(n<=0,0)) {return;}
+	               if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 6;
+	               register __m512 tht;
+	               register __m512 phi;
+	               register __m512 dvx;
+	               register __m512 dvy;
+	               register __m512 dvz;
+	               int32_t j,m,m1;
+	               
+	               m = n%6;
+	               if(m!=0) {
+	                  for(j = 0; j != m; ++j) {
+	                      tht = ptht[j];
+	                      phi = pphi[j];
+	                      dir_vec_zmm16r4(tht,phi,
+	                                      &dvx,&dvy,&dvz);
+	                      pdvx[j] = dvx;
+	                      pdvy[j] = dvy;
+	                      pdvz[j] = dvz;
+	                  }
+	                  if(n<10) {return;}
+	               } 
+	               
+	               m1 = m+1;
+	               for(j = m1; j != n; j += 6) 
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                   
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+#endif	              
+                            tht = ptht[j+0];
+	                    phi = pphi[j+0];
+	                    dir_vec_zmm16r4(tht,phi,
+	                                    &dvx,&dvy,&dvz);
+	                    pdvx[j+0] = dvx;
+	                    pdvy[j+0] = dvy;
+	                    pdvz[j+0] = dvz;
+	                    tht = ptht[j+1];
+	                    phi = pphi[j+1];
+	                    dir_vec_zmm16r4(tht,phi,
+	                                    &dvx,&dvy,&dvz);
+	                    pdvx[j+1] = dvx;
+	                    pdvy[j+1] = dvy;
+	                    pdvz[j+1] = dvz;
+	                    tht = ptht[j+2];
+	                    phi = pphi[j+2];
+	                    dir_vec_zmm16r4(tht,phi,
+	                                    &dvx,&dvy,&dvz);
+	                    pdvx[j+2] = dvx;
+	                    pdvy[j+2] = dvy;
+	                    pdvz[j+2] = dvz;
+	                    tht = ptht[j+3];
+	                    phi = pphi[j+3];
+	                    dir_vec_zmm16r4(tht,phi,
+	                                    &dvx,&dvy,&dvz);
+	                    pdvx[j+3] = dvx;
+	                    pdvy[j+3] = dvy;
+	                    pdvz[j+3] = dvz;
+	                    tht = ptht[j+4];
+	                    phi = pphi[j+4];
+	                    dir_vec_zmm16r4(tht,phi,
+	                                    &dvx,&dvy,&dvz);
+	                    pdvx[j+4] = dvx;
+	                    pdvy[j+4] = dvy;
+	                    pdvz[j+4] = dvz;
+	                    tht = ptht[j+5];
+	                    phi = pphi[j+5];
+	                    dir_vec_zmm16r4(tht,phi,
+	                                    &dvx,&dvy,&dvz);
+	                    pdvx[j+5] = dvx;
+	                    pdvy[j+5] = dvy;
+	                    pdvz[j+5] = dvz;
+	                  	                  
+	               }                                  
+	       }
+	       
 	         
 	         
 	           __ATTR_ALWAYS_INLINE__
