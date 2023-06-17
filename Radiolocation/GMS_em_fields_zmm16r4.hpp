@@ -4179,6 +4179,195 @@ namespace gms {
 	      }
 	      
 	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4_unroll16x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	                                          const int32_t n,
+	                                          int32_t & PF_DIST) {
+	                                          
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
+	                register __m512 tht;
+	                register __m512 phi;
+	                register __m512 psi;
+	                register __m512 pvx;
+	                register __m512 pvy;
+	                register __m512 pvz;
+	                int32_t j,m,m1;    
+	                
+	                m = n%16;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       tht = ptht[j];
+	                       phi = pphi[j];
+	                       psi = ppsi[j];
+	                       pol_vec_zmm16r4(tht,phi,psi,
+	                                       &pvx,&pvy,&pvz);
+	                       ppvx[j] = pvx;
+	                       ppvy[j] = pvy;
+	                       ppvz[j] = pvz;
+	                   }
+	                   if(n<16) {return;}
+	                }                    
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 16) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T0);	                   
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T1);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T2);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_NTA);	    
+#endif	        	    
+                            tht = ptht[j+0];
+	                    phi = pphi[j+0];
+	                    psi = ppsi[j+0];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+0] = pvx;
+	                    ppvy[j+0] = pvy;
+	                    ppvz[j+0] = pvz;  
+	                    tht = ptht[j+1];
+	                    phi = pphi[j+1];
+	                    psi = ppsi[j+1];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+1] = pvx;
+	                    ppvy[j+1] = pvy;
+	                    ppvz[j+1] = pvz;   
+	                    tht = ptht[j+2];
+	                    phi = pphi[j+2];
+	                    psi = ppsi[j+2];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+2] = pvx;
+	                    ppvy[j+2] = pvy;
+	                    ppvz[j+2] = pvz;
+	                    tht = ptht[j+3];
+	                    phi = pphi[j+3];
+	                    psi = ppsi[j+3];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+3] = pvx;
+	                    ppvy[j+3] = pvy;
+	                    ppvz[j+3] = pvz;  
+	                    tht = ptht[j+4];
+	                    phi = pphi[j+4];
+	                    psi = ppsi[j+4];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+4] = pvx;
+	                    ppvy[j+4] = pvy;
+	                    ppvz[j+4] = pvz;
+	                    tht = ptht[j+5];
+	                    phi = pphi[j+5];
+	                    psi = ppsi[j+5];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+5] = pvx;
+	                    ppvy[j+5] = pvy;
+	                    ppvz[j+5] = pvz;  
+	                    tht = ptht[j+6];
+	                    phi = pphi[j+6];
+	                    psi = ppsi[j+6];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+6] = pvx;
+	                    ppvy[j+6] = pvy;
+	                    ppvz[j+6] = pvz;  
+	                    tht = ptht[j+7];
+	                    phi = pphi[j+7];
+	                    psi = ppsi[j+7];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+7] = pvx;
+	                    ppvy[j+7] = pvy;
+	                    ppvz[j+7] = pvz;  
+	                    tht = ptht[j+8];
+	                    phi = pphi[j+8];
+	                    psi = ppsi[j+8];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+8] = pvx;
+	                    ppvy[j+8] = pvy;
+	                    ppvz[j+8] = pvz;  
+	                    tht = ptht[j+9];
+	                    phi = pphi[j+9];
+	                    psi = ppsi[j+9];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+9] = pvx;
+	                    ppvy[j+9] = pvy;
+	                    ppvz[j+9] = pvz;   
+	                    tht = ptht[j+10];
+	                    phi = pphi[j+10];
+	                    psi = ppsi[j+10];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+10] = pvx;
+	                    ppvy[j+10] = pvy;
+	                    ppvz[j+10] = pvz;  
+	                    tht = ptht[j+11];
+	                    phi = pphi[j+11];
+	                    psi = ppsi[j+11];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+11] = pvx;
+	                    ppvy[j+11] = pvy;
+	                    ppvz[j+11] = pvz;   
+	                    tht = ptht[j+12];
+	                    phi = pphi[j+12];
+	                    psi = ppsi[j+12];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+12] = pvx;
+	                    ppvy[j+12] = pvy;
+	                    ppvz[j+12] = pvz; 
+	                    tht = ptht[j+13];
+	                    phi = pphi[j+13];
+	                    psi = ppsi[j+13];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+13] = pvx;
+	                    ppvy[j+13] = pvy;
+	                    ppvz[j+13] = pvz;
+	                    tht = ptht[j+14];
+	                    phi = pphi[j+14];
+	                    psi = ppsi[j+14];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+14] = pvx;
+	                    ppvy[j+14] = pvy;
+	                    ppvz[j+14] = pvz;   
+	                    tht = ptht[j+15];
+	                    phi = pphi[j+15];
+	                    psi = ppsi[j+15];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+15] = pvx;
+	                    ppvy[j+15] = pvy;
+	                    ppvz[j+15] = pvz;                     
+	                }            
+	      }
+	      
 	      
 	          __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
