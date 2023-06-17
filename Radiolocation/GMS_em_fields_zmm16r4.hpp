@@ -4624,6 +4624,87 @@ namespace gms {
 	                }            
 	                
 	          }
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	                                          const int32_t n,
+	                                          int32_t & PF_DIST) {
+	                                          
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
+	                register __m512 tht;
+	                register __m512 phi;
+	                register __m512 psi;
+	                register __m512 pvx;
+	                register __m512 pvy;
+	                register __m512 pvz;
+	                int32_t j,m,m1;    
+	                
+	                m = n%2;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       tht = ptht[j];
+	                       phi = pphi[j];
+	                       psi = ppsi[j];
+	                       pol_vec_zmm16r4(tht,phi,psi,
+	                                       &pvx,&pvy,&pvz);
+	                       ppvx[j] = pvx;
+	                       ppvy[j] = pvy;
+	                       ppvz[j] = pvz;
+	                   }
+	                   if(n<2) {return;}
+	                }                    
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 2) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T0);	                   
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T1);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T2);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_NTA);	    
+#endif	        	    
+                            tht = ptht[j+0];
+	                    phi = pphi[j+0];
+	                    psi = ppsi[j+0];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+0] = pvx;
+	                    ppvy[j+0] = pvy;
+	                    ppvz[j+0] = pvz;  
+	                    tht = ptht[j+1];
+	                    phi = pphi[j+1];
+	                    psi = ppsi[j+1];
+	                    pol_vec_zmm16r4(tht,phi,psi,
+	                                    &pvx,&pvy,&pvz);
+	                    ppvx[j+1] = pvx;
+	                    ppvy[j+1] = pvy;
+	                    ppvz[j+1] = pvz;   
+	                  	                                   
+	                }            
+	                
+	          }
+	      
 	      
 	          __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
