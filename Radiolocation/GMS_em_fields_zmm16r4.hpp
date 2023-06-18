@@ -5323,7 +5323,158 @@ namespace gms {
 	      
 	        
 	        
-	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_zmm16c4_unroll2x( const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	                                           const int32_t n,
+	                                           int32_t & PF_DISPATCH) {
+	                                           
+	                                           
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
+	                zmm16c4_t k;
+	                zmm16c4_t H_x;
+	                zmm16c4_t H_y;
+	                zmm16c4_t H_z;
+	                register __m512 vpolx;
+	                register __m512 vpoly;
+	                register __m512 vpolz;
+	                register __m512 vdirx;
+	                register __m512 vdiry;
+	                register __m512 vdirz;
+	                register __m512 vrx;
+	                register __m512 vry;
+	                register __m512 vrz;
+	                int32_t j,m,m1;
+	                
+	                m = n%2;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       vpolx = pvpolx[j];
+	                       vpoly = pvpoly[j];
+	                       vpolz = pvpolz[j];
+	                       vdirx = pvdirx[j];
+	                       vdiry = pvdiry[j];
+	                       vdirz = pvdirz[j];
+	                       vrx   = pvrx[j];
+	                       vry   = pvry[j];
+	                       vrz   = pvrz[j];
+	                       k     = pk[j];
+	                       H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                        vdirx,vdiry,vdirz,
+	                                        vrx,vry,vrz,
+	                                        H_x,H_y,H_z);
+	                       pH_x[j] = H_x;
+	                       pH_y[j] = H_y;
+	                       pH_z[j] = H_z;   
+	                   }
+	                   if(n<2) {return;}
+	                }                    
+	                
+	                m1 = m+1;
+	                for(j = m1; j != n; j += 2) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T0);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T0);                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T1);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T1);          
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T2);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T2);  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_NTA);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_NTA);    
+#endif	     	           
+                            vpolx = pvpolx[j+0];
+	                    vpoly = pvpoly[j+0];
+	                    vpolz = pvpolz[j+0];
+	                    vdirx = pvdirx[j+0];
+	                    vdiry = pvdiry[j+0];
+	                    vdirz = pvdirz[j+0];
+	                    vrx   = pvrx[j+0];
+	                    vry   = pvry[j+0];
+	                    vrz   = pvrz[j+0];
+	                    k     = pk[j+0];
+	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                     vdirx,vdiry,vdirz,
+	                                     vrx,vry,vrz,
+	                                     H_x,H_y,H_z);
+	                    pH_x[j+0] = H_x;
+	                    pH_y[j+0] = H_y;
+	                    pH_z[j+0] = H_z;   
+                            vpolx = pvpolx[j+1];
+	                    vpoly = pvpoly[j+1];
+	                    vpolz = pvpolz[j+1];
+	                    vdirx = pvdirx[j+1];
+	                    vdiry = pvdiry[j+1];
+	                    vdirz = pvdirz[j+1];
+	                    vrx   = pvrx[j+1];
+	                    vry   = pvry[j+1];
+	                    vrz   = pvrz[j+1];
+	                    k     = pk[j+1];
+	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                     vdirx,vdiry,vdirz,
+	                                     vrx,vry,vrz,
+	                                     H_x,H_y,H_z);
+	                    pH_x[j+1] = H_x;
+	                    pH_y[j+1] = H_y;
+	                    pH_z[j+1] = H_z;
+	                   
+	                }                
+	      }
+	      
 	        
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
