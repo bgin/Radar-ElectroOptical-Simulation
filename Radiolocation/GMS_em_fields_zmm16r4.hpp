@@ -5648,6 +5648,310 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+	           void B_XYZ_VP_zmm16c4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pomega,
+	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	                                           const int32_t n,
+	                                           int32_t & PF_DIST) {
+	                                           
+	                 if(__builtin_expect(n<=0,0)) {return;}
+	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
+	                 zmm16c4_t k;
+	                 zmm16c4_t B_x;
+	                 zmm16c4_t B_y;
+	                 zmm16c4_t B_z;
+	                 register __m512 vpolx;
+	                 register __m512 vpoly;
+	                 register __m512 vpolz;
+	                 register __m512 vdirx;
+	                 register __m512 vdiry;
+	                 register __m512 vdirz;
+	                 register __m512 vrx;
+	                 register __m512 vry;
+	                 register __m512 vrz;
+	                 register __m512 omg;
+	                 int32_t j,m,m1;   
+	                 
+	                 m = n%10;
+	                 if(m!=0) {
+	                    for(j = 0; j != m; ++j) {
+	                        vpolx = pvpolx[j];
+	                        vpoly = pvpoly[j];
+	                        vpolz = pvpolz[j];
+	                        vdirx = pvdirx[j];
+	                        vdiry = pvdiry[j];
+	                        vdirz = pvdirz[j];
+	                        vrx   = pvrx[j];
+	                        vry   = pvry[j];
+	                        vrz   = pvrz[j];
+	                        omg   = pomega[j];
+	                        k     = pk[j];
+	                        B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                                         vdirx,vdiry,vdirz,
+	                                         k,omg,vrx,vry,vrz,
+	                                         B_x,B_y,B_z);
+	                        pB_x[j] = B_x;
+	                        pB_y[j] = B_y;
+	                        pB_z[j] = B_z;
+	                    }
+	                    if(n<10) {return;}
+	                 }
+	                 
+	                 m1 = m+1;
+	                 for(j = m1; j != n; j += 10) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T0);	 
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T0);                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T1);	
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_T1); 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T1);          
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T2);	
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_T2);  
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T2);  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_NTA); 	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_NTA);    
+#endif	     	           	
+                                vpolx = pvpolx[j+0];
+	                        vpoly = pvpoly[j+0];
+	                        vpolz = pvpolz[j+0];
+	                        vdirx = pvdirx[j+0];
+	                        vdiry = pvdiry[j+0];
+	                        vdirz = pvdirz[j+0];
+	                        vrx   = pvrx[j+0];
+	                        vry   = pvry[j+0];
+	                        vrz   = pvrz[j+0];
+	                        omg   = pomega[j+0];
+	                        k     = pk[j+0];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+0] = B_x;
+	                        pB_y[j+0] = B_y;
+	                        pB_z[j+0] = B_z;    
+	                        vpolx = pvpolx[j+1];
+	                        vpoly = pvpoly[j+1];
+	                        vpolz = pvpolz[j+1];
+	                        vdirx = pvdirx[j+1];
+	                        vdiry = pvdiry[j+1];
+	                        vdirz = pvdirz[j+1];
+	                        vrx   = pvrx[j+1];
+	                        vry   = pvry[j+1];
+	                        vrz   = pvrz[j+1];
+	                        omg   = pomega[j+1];
+	                        k     = pk[j+1];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+1] = B_x;
+	                        pB_y[j+1] = B_y;
+	                        pB_z[j+1] = B_z;
+	                        vpolx = pvpolx[j+2];
+	                        vpoly = pvpoly[j+2];
+	                        vpolz = pvpolz[j+2];
+	                        vdirx = pvdirx[j+2];
+	                        vdiry = pvdiry[j+2];
+	                        vdirz = pvdirz[j+2];
+	                        vrx   = pvrx[j+2];
+	                        vry   = pvry[j+2];
+	                        vrz   = pvrz[j+2];
+	                        omg   = pomega[j+2];
+	                        k     = pk[j+2];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+2] = B_x;
+	                        pB_y[j+2] = B_y;
+	                        pB_z[j+2] = B_z;
+	                        vpolx = pvpolx[j+3];
+	                        vpoly = pvpoly[j+3];
+	                        vpolz = pvpolz[j+3];
+	                        vdirx = pvdirx[j+3];
+	                        vdiry = pvdiry[j+3];
+	                        vdirz = pvdirz[j+3];
+	                        vrx   = pvrx[j+3];
+	                        vry   = pvry[j+3];
+	                        vrz   = pvrz[j+3];
+	                        omg   = pomega[j+3];
+	                        k     = pk[j+3];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+3] = B_x;
+	                        pB_y[j+3] = B_y;
+	                        pB_z[j+3] = B_z;
+	                        vpolx = pvpolx[j+4];
+	                        vpoly = pvpoly[j+4];
+	                        vpolz = pvpolz[j+4];
+	                        vdirx = pvdirx[j+4];
+	                        vdiry = pvdiry[j+4];
+	                        vdirz = pvdirz[j+4];
+	                        vrx   = pvrx[j+4];
+	                        vry   = pvry[j+4];
+	                        vrz   = pvrz[j+4];
+	                        omg   = pomega[j+4];
+	                        k     = pk[j+4];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+4] = B_x;
+	                        pB_y[j+4] = B_y;
+	                        pB_z[j+4] = B_z;
+	                        vpolx = pvpolx[j+5];
+	                        vpoly = pvpoly[j+5];
+	                        vpolz = pvpolz[j+5];
+	                        vdirx = pvdirx[j+5];
+	                        vdiry = pvdiry[j+5];
+	                        vdirz = pvdirz[j+5];
+	                        vrx   = pvrx[j+5];
+	                        vry   = pvry[j+5];
+	                        vrz   = pvrz[j+5];
+	                        omg   = pomega[j+5];
+	                        k     = pk[j+5];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+5] = B_x;
+	                        pB_y[j+5] = B_y;
+	                        pB_z[j+5] = B_z;
+	                        vpolx = pvpolx[j+6];
+	                        vpoly = pvpoly[j+6];
+	                        vpolz = pvpolz[j+6];
+	                        vdirx = pvdirx[j+6];
+	                        vdiry = pvdiry[j+6];
+	                        vdirz = pvdirz[j+6];
+	                        vrx   = pvrx[j+6];
+	                        vry   = pvry[j+6];
+	                        vrz   = pvrz[j+6];
+	                        omg   = pomega[j+6];
+	                        k     = pk[j+6];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+6] = B_x;
+	                        pB_y[j+6] = B_y;
+	                        pB_z[j+6] = B_z;  
+	                        vpolx = pvpolx[j+7];
+	                        vpoly = pvpoly[j+7];
+	                        vpolz = pvpolz[j+7];
+	                        vdirx = pvdirx[j+7];
+	                        vdiry = pvdiry[j+7];
+	                        vdirz = pvdirz[j+7];
+	                        vrx   = pvrx[j+7];
+	                        vry   = pvry[j+7];
+	                        vrz   = pvrz[j+7];
+	                        omg   = pomega[j+7];
+	                        k     = pk[j+7];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+7] = B_x;
+	                        pB_y[j+7] = B_y;
+	                        pB_z[j+7] = B_z;   
+	                        vpolx = pvpolx[j+8];
+	                        vpoly = pvpoly[j+8];
+	                        vpolz = pvpolz[j+8];
+	                        vdirx = pvdirx[j+8];
+	                        vdiry = pvdiry[j+8];
+	                        vdirz = pvdirz[j+8];
+	                        vrx   = pvrx[j+8];
+	                        vry   = pvry[j+8];
+	                        vrz   = pvrz[j+8];
+	                        omg   = pomega[j+8];
+	                        k     = pk[j+8];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+8] = B_x;
+	                        pB_y[j+8] = B_y;
+	                        pB_z[j+8] = B_z; 
+	                        vpolx = pvpolx[j+9];
+	                        vpoly = pvpoly[j+9];
+	                        vpolz = pvpolz[j+9];
+	                        vdirx = pvdirx[j+9];
+	                        vdiry = pvdiry[j+9];
+	                        vdirz = pvdirz[j+9];
+	                        vrx   = pvrx[j+9];
+	                        vry   = pvry[j+9];
+	                        vrz   = pvrz[j+9];
+	                        omg   = pomega[j+9];
+	                        k     = pk[j+9];
+	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                                      vdirx,vdiry,vdirz,
+	                                      k,omg,vrx,vry,vrz,
+	                                      B_x,B_y,B_z);
+	                        pB_x[j+9] = B_x;
+	                        pB_y[j+9] = B_y;
+	                        pB_z[j+9] = B_z;                                          
+	                 }
+	                                               
+	         }
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
 	           void B_XYZ_VP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) pvpolx,
 	                                   const float * __restrict __ATTR_ALIGN__(64) pvpoly,
 	                                   const float * __restrict __ATTR_ALIGN__(64) pvpolz,
