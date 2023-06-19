@@ -1616,6 +1616,179 @@ namespace gms {
 	       }
 	       
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cdotv_zmm16c4_unroll6x_omp(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                            zmm16c4_t * __restrict __ATTR_ALIGN__(64) pres,
+	                                            const int32_t n,
+	                                            int32_t & PF_DIST) {
+	                                        
+	                if(__builtin_expect(0>=n,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1x1,v1x2,v1x3,v1x4,v1x5,v1x6;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1y1,v1y2,v1y3,v1y4,v1y5,v1y6;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1z1,v1z2,v1z3,v1z4,v1z5,v1z6;
+	                __ATTR_ALIGN__(64) zmm16c4_t v2x1,v2x2,v2x3,v2x4,v2x5,v2x6;
+	                __ATTR_ALIGN__(64) zmm16c4_t v2y1,v2y2,v2y3,v2y4,v2y5,v2y6;
+	                __ATTR_ALIGN__(64) zmm16c4_t v2z1,v2z2,v2z3,v2z4,v2z5,v2z6;
+	                __ATTR_ALIGN__(64) zmm16c4_t res1,res2,res3,res4,res5,res6;
+	                int32_t j,m,m1;
+	                
+	                m = n%6;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       v1x = pv1x[j];
+	                       v2x = pv2x[j];
+	                       v1y = pv1y[j];
+	                       v2y = pv2y[j];
+	                       v1z = pv1z[j];
+	                       v2z = pv2z[j];
+	                       cdotv_zmm16c4(v1x,v1y,v1z,
+	                                     v2x,v2y,v2z,
+	                                     res);
+	                       pres[j] = res;
+	                   }
+	                   if(n<6) { return;}
+	                }                     
+	                
+	                m1 = m+1;
+#pragma omp parallel for schedule(runtime) default(none)                  \
+        firstprivate(m1,PF_DIST) private(j,v1x1,v1x2,v1x3,v1x4,v1x5,v1x6) \
+                                 private(v1y1,v1y2,v1y3,v1y4,v1y5,v1y6)   \
+                                 private(v1z1,v1z2,v1z3,v1z4,v1z5,v1z6)   \
+                                 private(v2x1,v2x2,v2x3,v2x4,v2x5,v2x6)   \
+                                 private(v2y1,v2y2,v2y3,v2y4,v2y5,v2y6)   \
+                                 private(v2z1,v2z2,v2z3,v2z4,v2z5,v2z6)   \
+                                 private(res1,res2,res3,res4,res5,res6)   \
+                                 shared(n,pv1x,pv1y,pv1z,pv2x,pv2y,pv2z,pres)
+	                for(j = m1; j != n; j += 6) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1                
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                   
+	                    v1x = pv1x[j+0];
+	                    v2x = pv2x[j+0];
+	                    v1y = pv1y[j+0];
+	                    v2y = pv2y[j+0];
+	                    v1z = pv1z[j+0];
+	                    v2z = pv2z[j+0];
+	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                                  v2x,v2y,v2z,
+	                                  res);
+	                    pres[j+0] = res;
+	                    v1x = pv1x[j+1];
+	                    v2x = pv2x[j+1];
+	                    v1y = pv1y[j+1];
+	                    v2y = pv2y[j+1];
+	                    v1z = pv1z[j+1];
+	                    v2z = pv2z[j+1];
+	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                                  v2x,v2y,v2z,
+	                                  res);
+	                    pres[j+1] = res;
+	                    v1x = pv1x[j+2];
+	                    v2x = pv2x[j+2];
+	                    v1y = pv1y[j+2];
+	                    v2y = pv2y[j+2];
+	                    v1z = pv1z[j+2];
+	                    v2z = pv2z[j+2];
+	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                                  v2x,v2y,v2z,
+	                                  res);
+	                    pres[j+2] = res;
+	                    v1x = pv1x[j+3];
+	                    v2x = pv2x[j+3];
+	                    v1y = pv1y[j+3];
+	                    v2y = pv2y[j+3];
+	                    v1z = pv1z[j+3];
+	                    v2z = pv2z[j+3];
+	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                                  v2x,v2y,v2z,
+	                                  res);
+	                    pres[j+3] = res;
+	                    v1x = pv1x[j+4];
+	                    v2x = pv2x[j+4];
+	                    v1y = pv1y[j+4];
+	                    v2y = pv2y[j+4];
+	                    v1z = pv1z[j+4];
+	                    v2z = pv2z[j+4];
+	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                                  v2x,v2y,v2z,
+	                                  res);
+	                    pres[j+4] = res;
+	                    v1x = pv1x[j+5];
+	                    v2x = pv2x[j+5];
+	                    v1y = pv1y[j+5];
+	                    v2y = pv2y[j+5];
+	                    v1z = pv1z[j+5];
+	                    v2z = pv2z[j+5];
+	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                                  v2x,v2y,v2z,
+	                                  res);
+	                    pres[j+5] = res;
+	                                 
+	             }          
+	       }
+	       
+	       
+	       
 	       
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
