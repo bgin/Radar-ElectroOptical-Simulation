@@ -269,6 +269,9 @@ namespace gms {
 	      }
 	      
 	      
+	      
+	      
+	      
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -509,6 +512,119 @@ namespace gms {
 	                }
 	                                        
 	      }
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void sdotv_zmm16r4_unroll6x_omp(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                           __m512 * __restrict __ATTR_ALIGN__(64) pdtv,
+	                                           const int32_t n) {
+	                                        
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                register __m512 v1x1,v1x2,v1x3,v1x4,v1x5,v1x6;
+	                register __m512 v1y1,v1y2,v1y3,v1y4,v1y5,v1y6;
+	                register __m512 v1z1,v1z2,v1z3,v1z4,v1z5,v1z6;
+	                register __m512 v2x1,v2x2,v2x3,v2x4,v2x5,v2x6;
+	                register __m512 v2y1,v2y2,v2y3,v2y4,v2y5,v2y6;
+	                register __m512 v2z1,v2z2,v2z3,v2z4,v2z5,v2z6;
+	                register __m512 dtv1,dtv2,dtv3,dtv4,dtv5,dtv6;
+	                int32_t j,m,m1;
+	                
+	                m = n%6;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                   
+	                        v1x1 = pv1x[j];
+	                        v2x1 = pv2x[j];
+	                        v1y1 = pv1y[j];
+	                        v2y1 = pv2y[j];
+	                        v1z1 = pv1z[j];
+	                        v2z1 = pv2z[j];
+	                        dtv1 = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                            v2x,v2y,v2z);
+	                        pdtv[j] = dtv1;
+	                   }
+	                   if(n<6) { return;}
+	                }  
+	                
+	                m1 = m+1;
+#pragma omp parallel for schedule(dynamic) default(none)                  \
+            firstprivate(m1) private(j,v1x1,v1x2,v1x3,v1x4,v1x5,v1x6)     \
+                             private(v1y1,v1y2,v1y3,v1y4,v1y5,v1y6)       \
+                             private(v1z1,v1z2,v1z3,v1z4,v1z5,v1z6)       \
+                             private(v2x1,v2x2,v2x3,v2x4,v2x5,v2x6)       \
+                             private(v2y1,v2y2,v2y3,v2y4,v2y5,v2y6)       \
+                             private(v2z1,v2z2,v2z3,v2z4,v2z5,v2z6)       \
+                             private(dtv1,dtv2,dtv3,dtv4,dtv5,dtv6)       \
+                             shared(pv1x,pv1y,pv1z,pv2x,pv2y,pv2z,n,pdtv)
+	                for(j = m1; j != n; j += 6) {
+	                     v1x = pv1x[j+0];
+	                     v2x = pv2x[j+0];
+	                     v1y = pv1y[j+0];
+	                     v2y = pv2y[j+0];
+	                     v1z = pv1z[j+0];
+	                     v2z = pv2z[j+0];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+0] = dtv;
+	                     v1x = pv1x[j+1];
+	                     v2x = pv2x[j+1];
+	                     v1y = pv1y[j+1];
+	                     v2y = pv2y[j+1];
+	                     v1z = pv1z[j+1];
+	                     v2z = pv2z[j+1];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+1] = dtv;
+	                     v1x = pv1x[j+2];
+	                     v2x = pv2x[j+2];
+	                     v1y = pv1y[j+2];
+	                     v2y = pv2y[j+2];
+	                     v1z = pv1z[j+2];
+	                     v2z = pv2z[j+2];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+2] = dtv;
+	                     v1x = pv1x[j+3];
+	                     v2x = pv2x[j+3];
+	                     v1y = pv1y[j+3];
+	                     v2y = pv2y[j+3];
+	                     v1z = pv1z[j+3];
+	                     v2z = pv2z[j+3];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+3] = dtv;
+	                     v1x = pv1x[j+4];
+	                     v2x = pv2x[j+4];
+	                     v1y = pv1y[j+4];
+	                     v2y = pv2y[j+4];
+	                     v1z = pv1z[j+4];
+	                     v2z = pv2z[j+4];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+4] = dtv;
+	                     v1x = pv1x[j+5];
+	                     v2x = pv2x[j+5];
+	                     v1y = pv1y[j+5];
+	                     v2y = pv2y[j+5];
+	                     v1z = pv1z[j+5];
+	                     v2z = pv2z[j+5];
+	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                                         v2x,v2y,v2z);
+	                     pdtv[j+5] = dtv;
+	                   	                    
+	                }
+	                                        
+	      }
+	      
 	      
 	      
 	      
