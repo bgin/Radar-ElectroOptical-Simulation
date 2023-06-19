@@ -7810,7 +7810,7 @@ namespace gms {
 	      }
 	      
 	      
-	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -8050,6 +8050,177 @@ namespace gms {
 	                        pB_x[j+5] = B_x;
 	                        pB_y[j+5] = B_y;
 	                        pB_z[j+5] = B_z;  
+	                      
+	                 }               
+	      }
+	      
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_H_XYZ_EP_zmm16c4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pphase,
+	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) prefi,
+	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_x,
+	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_y,
+	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_z,
+	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_x,
+	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_y,
+	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_z,
+	                                                 const int32_t n,
+	                                                 int32_t & PF_DIST) {
+	                                                 
+	                 if(__builtin_expect(n<=0,0)) {return;}
+	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
+	                 zmm16c4_t phase;
+	                 zmm16c4_t refi;
+	                 zmm16c4_t px;
+	                 zmm16c4_t py;
+	                 zmm16c4_t pz;
+	                 zmm16c4_t H_x;
+	                 zmm16c4_t H_y;
+	                 zmm16c4_t H_z;
+	                 zmm16c4_t B_x;
+	                 zmm16c4_t B_y;
+	                 zmm16c4_t B_z;
+	                 register __m512 tht;
+	                 register __m512 phi;
+	                 register __m512 omg;
+	                 int32_t j,m,m1;
+	                 
+	                 m = n%2;
+	                 if(m!=0) {
+	                    for(j = 0; j != m; ++j) {
+	                        tht   = ptht[j];
+	                        phi   = pphi[j];
+	                        omg   = pomg[j];
+	                        phase = pphase[j];
+	                        refi  = prefi[j];
+	                        px    = ppx[j];
+	                        py    = ppy[j];
+	                        pz    = ppz[j];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                                               phase,refi,px,
+	                                               py,pz,
+	                                               H_x,H_y,H_z,
+	                                               B_x,B_y,B_z);
+	                        pH_x[j] = H_x;
+	                        pH_y[j] = H_y;
+	                        pH_z[j] = H_z;
+	                        pB_x[j] = B_x;
+	                        pB_y[j] = B_y;
+	                        pB_z[j] = B_z;
+	                    }
+	                    if(n<2) { return;}
+	                 }                     
+	                 
+	                 m1 = m+1;
+	                 for(j = m1; j != n; j += 2) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T0);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T0);
+	                                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T1);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T2);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_NTA);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	     	   	      
+                                tht   = ptht[j+0];
+	                        phi   = pphi[j+0];
+	                        omg   = pomg[j+0];
+	                        phase = pphase[j+0];
+	                        refi  = prefi[j+0];
+	                        px    = ppx[j+0];
+	                        py    = ppy[j+0];
+	                        pz    = ppz[j+0];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                                               phase,refi,px,
+	                                               py,pz,
+	                                               H_x,H_y,H_z,
+	                                               B_x,B_y,B_z);
+	                        pH_x[j+0] = H_x;
+	                        pH_y[j+0] = H_y;
+	                        pH_z[j+0] = H_z;
+	                        pB_x[j+0] = B_x;
+	                        pB_y[j+0] = B_y;
+	                        pB_z[j+0] = B_z;
+	                        tht   = ptht[j+1];
+	                        phi   = pphi[j+1];
+	                        omg   = pomg[j+1];
+	                        phase = pphase[j+1];
+	                        refi  = prefi[j+1];
+	                        px    = ppx[j+1];
+	                        py    = ppy[j+1];
+	                        pz    = ppz[j+1];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                                               phase,refi,px,
+	                                               py,pz,
+	                                               H_x,H_y,H_z,
+	                                               B_x,B_y,B_z);
+	                        pH_x[j+1] = H_x;
+	                        pH_y[j+1] = H_y;
+	                        pH_z[j+1] = H_z;
+	                        pB_x[j+1] = B_x;
+	                        pB_y[j+1] = B_y;
+	                        pB_z[j+1] = B_z;  
+	                      
 	                      
 	                 }               
 	      }
