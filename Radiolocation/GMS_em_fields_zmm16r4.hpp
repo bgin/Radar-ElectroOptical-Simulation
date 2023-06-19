@@ -2093,6 +2093,129 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+	           void cnorm_zmm16c4_unroll10x_omp(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                            const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                            zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	                                            const int32_t n,
+	                                            int32_t & PF_DIST) {
+	                                        
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 10;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1x1,v1x2,v1x3,v1x4,v1x,v1x6,v1x7,v1x8,v1x9,v1x10;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1y1,v1y2,v1y3,v1y4,v1y5,v1y6,v1y7,v1y8,v1y9,v1y10;
+	                __ATTR_ALIGN__(64) zmm16c4_t v1z1,v1z2,v1z3,v1z4,v1z5,v1z6,v1z7,v1z8,v1z9,v1z10;
+	                __ATTR_ALIGN__(64) zmm16c4_t vs1,vs2,vs3,vs4,vs5,vs6,vs7,vs8,vs9,vs10;
+	                int32_t j,m,m1;
+	                
+	                m = n%10;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       v1x = pv1x[j];
+	                       v1y = pv1y[j];
+	                       v1z = pv1z[j];
+	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       pvs[j] = vs;
+	                   }
+	                   if(n<10) { return;}
+	                }                     
+	                
+	                m1 = m+1;
+#pragma omp parallel for schedule(runtime) default(none)                                       \
+        firstprivate(m1,PF_DIST) private(j,v1x1,v1x2,v1x3,v1x4,v1x,v1x6,v1x7,v1x8,v1x9,v1x10)  \
+                                 private(v1y1,v1y2,v1y3,v1y4,v1y5,v1y6,v1y7,v1y8,v1y9,v1y10)   \
+                                 private(v1z1,v1z2,v1z3,v1z4,v1z5,v1z6,v1z7,v1z8,v1z9,v1z10)   \
+                                 private(vs1,vs2,vs3,vs4,vs5,vs6,vs7,vs8,vs9,vs10)             \
+                                 shared(n,pv1x,pv1y,pv1z,pvs)	       
+	                for(j = m1; j != n; j += 10) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif
+                            v1x = pv1x[j+0];
+	                    v1y = pv1y[j+0];
+	                    v1z = pv1z[j+0];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+0] = vs;
+	                    v1x = pv1x[j+1];
+	                    v1y = pv1y[j+1];
+	                    v1z = pv1z[j+1];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+1] = vs;
+	                    v1x = pv1x[j+2];
+	                    v1y = pv1y[j+2];
+	                    v1z = pv1z[j+2];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+2] = vs;
+	                    v1x = pv1x[j+3];
+	                    v1y = pv1y[j+3];
+	                    v1z = pv1z[j+3];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+3] = vs;
+	                    v1x = pv1x[j+4];
+	                    v1y = pv1y[j+4];
+	                    v1z = pv1z[j+4];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+4] = vs;
+	                    v1x = pv1x[j+5];
+	                    v1y = pv1y[j+5];
+	                    v1z = pv1z[j+5];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+5] = vs;
+	                    v1x = pv1x[j+6];
+	                    v1y = pv1y[j+6];
+	                    v1z = pv1z[j+6];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+6] = vs;
+	                    v1x = pv1x[j+7];
+	                    v1y = pv1y[j+7];
+	                    v1z = pv1z[j+7];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+7] = vs;
+	                    v1x = pv1x[j+8];
+	                    v1y = pv1y[j+8];
+	                    v1z = pv1z[j+8];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+8] = vs;
+	                    v1x = pv1x[j+9];
+	                    v1y = pv1y[j+9];
+	                    v1z = pv1z[j+9];
+	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    pvs[j+9] = vs;
+	              }             
+	      }
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
 	           void cnorm_zmm16c4_unroll10x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
 	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
 	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
