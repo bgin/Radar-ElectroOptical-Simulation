@@ -602,24 +602,24 @@ namespace gms {
 	                     dtv4 = sdotv_zmm16r4(v1x4,v1y4,v1z4,
 	                                         v2x4,v2y4,v2z4);
 	                     pdtv[j+3] = dtv4;
-	                     v1x = pv1x[j+4];
-	                     v2x = pv2x[j+4];
-	                     v1y = pv1y[j+4];
-	                     v2y = pv2y[j+4];
-	                     v1z = pv1z[j+4];
-	                     v2z = pv2z[j+4];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
-	                                         v2x,v2y,v2z);
-	                     pdtv[j+4] = dtv;
-	                     v1x = pv1x[j+5];
-	                     v2x = pv2x[j+5];
-	                     v1y = pv1y[j+5];
-	                     v2y = pv2y[j+5];
-	                     v1z = pv1z[j+5];
-	                     v2z = pv2z[j+5];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
-	                                         v2x,v2y,v2z);
-	                     pdtv[j+5] = dtv;
+	                     v1x5 = pv1x[j+4];
+	                     v2x5 = pv2x[j+4];
+	                     v1y5 = pv1y[j+4];
+	                     v2y5 = pv2y[j+4];
+	                     v1z5 = pv1z[j+4];
+	                     v2z5 = pv2z[j+4];
+	                     dtv5 = sdotv_zmm16r4(v1x5,v1y5,v1z5,
+	                                         v2x5,v2y5,v2z5);
+	                     pdtv[j+4] = dtv5;
+	                     v1x6 = pv1x[j+5];
+	                     v2x6 = pv2x[j+5];
+	                     v1y6 = pv1y[j+5];
+	                     v2y6 = pv2y[j+5];
+	                     v1z6 = pv1z[j+5];
+	                     v2z6 = pv2z[j+5];
+	                     dtv6 = sdotv_zmm16r4(v1x6,v1y6,v1z6,
+	                                         v2x6,v2y6,v2z6);
+	                     pdtv[j+5] = dtv6;
 	                   	                    
 	                }
 	                                        
@@ -1349,106 +1349,106 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
 #endif	                   
-	                    v1x = pv1x[j+0];
-	                    v2x = pv2x[j+0];
-	                    v1y = pv1y[j+0];
-	                    v2y = pv2y[j+0];
-	                    v1z = pv1z[j+0];
-	                    v2z = pv2z[j+0];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+0] = res;
-	                    v1x = pv1x[j+1];
-	                    v2x = pv2x[j+1];
-	                    v1y = pv1y[j+1];
-	                    v2y = pv2y[j+1];
-	                    v1z = pv1z[j+1];
-	                    v2z = pv2z[j+1];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+1] = res;
-	                    v1x = pv1x[j+2];
-	                    v2x = pv2x[j+2];
-	                    v1y = pv1y[j+2];
-	                    v2y = pv2y[j+2];
-	                    v1z = pv1z[j+2];
-	                    v2z = pv2z[j+2];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+2] = res;
-	                    v1x = pv1x[j+3];
-	                    v2x = pv2x[j+3];
-	                    v1y = pv1y[j+3];
-	                    v2y = pv2y[j+3];
-	                    v1z = pv1z[j+3];
-	                    v2z = pv2z[j+3];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+3] = res;
-	                    v1x = pv1x[j+4];
-	                    v2x = pv2x[j+4];
-	                    v1y = pv1y[j+4];
-	                    v2y = pv2y[j+4];
-	                    v1z = pv1z[j+4];
-	                    v2z = pv2z[j+4];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+4] = res;
-	                    v1x = pv1x[j+5];
-	                    v2x = pv2x[j+5];
-	                    v1y = pv1y[j+5];
-	                    v2y = pv2y[j+5];
-	                    v1z = pv1z[j+5];
-	                    v2z = pv2z[j+5];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+5] = res;
-	                    v1x = pv1x[j+6];
-	                    v2x = pv2x[j+6];
-	                    v1y = pv1y[j+6];
-	                    v2y = pv2y[j+6];
-	                    v1z = pv1z[j+6];
-	                    v2z = pv2z[j+6];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+6] = res;
-	                    v1x = pv1x[j+7];
-	                    v2x = pv2x[j+7];
-	                    v1y = pv1y[j+7];
-	                    v2y = pv2y[j+7];
-	                    v1z = pv1z[j+7];
-	                    v2z = pv2z[j+7];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+7] = res;
-	                    v1x = pv1x[j+8];
-	                    v2x = pv2x[j+8];
-	                    v1y = pv1y[j+8];
-	                    v2y = pv2y[j+8];
-	                    v1z = pv1z[j+8];
-	                    v2z = pv2z[j+8];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+8] = res;
-	                    v1x = pv1x[j+9];
-	                    v2x = pv2x[j+9];
-	                    v1y = pv1y[j+9];
-	                    v2y = pv2y[j+9];
-	                    v1z = pv1z[j+9];
-	                    v2z = pv2z[j+9];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
-	                                  v2x,v2y,v2z,
-	                                  res);
-	                    pres[j+9] = res;
+	                    v1x1 = pv1x[j+0];
+	                    v2x1 = pv2x[j+0];
+	                    v1y1 = pv1y[j+0];
+	                    v2y1 = pv2y[j+0];
+	                    v1z1 = pv1z[j+0];
+	                    v2z1 = pv2z[j+0];
+	                    cdotv_zmm16c4(v1x1,v1y1,v1z1,
+	                                  v2x1,v2y1,v2z1,
+	                                  res1);
+	                    pres[j+0] = res1;
+	                    v1x2 = pv1x[j+1];
+	                    v2x2 = pv2x[j+1];
+	                    v1y2 = pv1y[j+1];
+	                    v2y2 = pv2y[j+1];
+	                    v1z2 = pv1z[j+1];
+	                    v2z2 = pv2z[j+1];
+	                    cdotv_zmm16c4(v1x2,v1y2,v1z2,
+	                                  v2x2,v2y2,v2z2,
+	                                  res2);
+	                    pres[j+1] = res2;
+	                    v1x3 = pv1x[j+2];
+	                    v2x3 = pv2x[j+2];
+	                    v1y3 = pv1y[j+2];
+	                    v2y3 = pv2y[j+2];
+	                    v1z3 = pv1z[j+2];
+	                    v2z3 = pv2z[j+2];
+	                    cdotv_zmm16c4(v1x3,v1y3,v1z3,
+	                                  v2x3,v2y3,v2z3,
+	                                  res3);
+	                    pres[j+2] = res3;
+	                    v1x4 = pv1x[j+3];
+	                    v2x4 = pv2x[j+3];
+	                    v1y4 = pv1y[j+3];
+	                    v2y4 = pv2y[j+3];
+	                    v1z4 = pv1z[j+3];
+	                    v2z4 = pv2z[j+3];
+	                    cdotv_zmm16c4(v1x4,v1y4,v1z4,
+	                                  v2x4,v2y4,v2z4,
+	                                  res4);
+	                    pres[j+3] = res4;
+	                    v1x5 = pv1x[j+4];
+	                    v2x5 = pv2x[j+4];
+	                    v1y5 = pv1y[j+4];
+	                    v2y5 = pv2y[j+4];
+	                    v1z5 = pv1z[j+4];
+	                    v2z5 = pv2z[j+4];
+	                    cdotv_zmm16c4(v1x5,v1y5,v1z5,
+	                                  v2x5,v2y5,v2z5,
+	                                  res5);
+	                    pres[j+4] = res5;
+	                    v1x6 = pv1x[j+5];
+	                    v2x6 = pv2x[j+5];
+	                    v1y6 = pv1y[j+5];
+	                    v2y6 = pv2y[j+5];
+	                    v1z6 = pv1z[j+5];
+	                    v2z6 = pv2z[j+5];
+	                    cdotv_zmm16c4(v1x6,v1y6,v1z6,
+	                                  v2x6,v2y6,v2z6,
+	                                  res6);
+	                    pres[j+5] = res6;
+	                    v1x7 = pv1x[j+6];
+	                    v2x7 = pv2x[j+6];
+	                    v1y7 = pv1y[j+6];
+	                    v2y7 = pv2y[j+6];
+	                    v1z7 = pv1z[j+6];
+	                    v2z7 = pv2z[j+6];
+	                    cdotv_zmm16c4(v1x7,v1y7,v1z7,
+	                                  v2x7,v2y7,v2z7,
+	                                  res7);
+	                    pres[j+6] = res7;
+	                    v1x8 = pv1x[j+7];
+	                    v2x8 = pv2x[j+7];
+	                    v1y8 = pv1y[j+7];
+	                    v2y8 = pv2y[j+7];
+	                    v1z8 = pv1z[j+7];
+	                    v2z8 = pv2z[j+7];
+	                    cdotv_zmm16c4(v1x8,v1y8,v1z8,
+	                                  v2x8,v2y8,v2z8,
+	                                  res8);
+	                    pres[j+7] = res8;
+	                    v1x9 = pv1x[j+8];
+	                    v2x9 = pv2x[j+8];
+	                    v1y9 = pv1y[j+8];
+	                    v2y9 = pv2y[j+8];
+	                    v1z9 = pv1z[j+8];
+	                    v2z9 = pv2z[j+8];
+	                    cdotv_zmm16c4(v1x9,v1y9,v1z9,
+	                                  v2x9,v2y9,v2z9,
+	                                  res9);
+	                    pres[j+8] = res9;
+	                    v1x10 = pv1x[j+9];
+	                    v2x10 = pv2x[j+9];
+	                    v1y10 = pv1y[j+9];
+	                    v2y10 = pv2y[j+9];
+	                    v1z10 = pv1z[j+9];
+	                    v2z10 = pv2z[j+9];
+	                    cdotv_zmm16c4(v1x10,v1y10,v1z10,
+	                                  v2x10,v2y10,v2z10,
+	                                  res10);
+	                    pres[j+9] = res10;
 	                
 	             }          
 	       }
