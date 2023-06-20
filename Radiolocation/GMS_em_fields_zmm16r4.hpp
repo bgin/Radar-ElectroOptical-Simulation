@@ -2496,36 +2496,36 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
 	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
 #endif
-                            v1x = pv1x[j+0];
-	                    v1y = pv1y[j+0];
-	                    v1z = pv1z[j+0];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
-	                    pvs[j+0] = vs;
-	                    v1x = pv1x[j+1];
-	                    v1y = pv1y[j+1];
-	                    v1z = pv1z[j+1];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
-	                    pvs[j+1] = vs;
-	                    v1x = pv1x[j+2];
-	                    v1y = pv1y[j+2];
-	                    v1z = pv1z[j+2];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
-	                    pvs[j+2] = vs;
-	                    v1x = pv1x[j+3];
-	                    v1y = pv1y[j+3];
-	                    v1z = pv1z[j+3];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
-	                    pvs[j+3] = vs;
-	                    v1x = pv1x[j+4];
-	                    v1y = pv1y[j+4];
-	                    v1z = pv1z[j+4];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
-	                    pvs[j+4] = vs;
-	                    v1x = pv1x[j+5];
-	                    v1y = pv1y[j+5];
-	                    v1z = pv1z[j+5];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
-	                    pvs[j+5] = vs;
+                            v1x1 = pv1x[j+0];
+	                    v1y1 = pv1y[j+0];
+	                    v1z1 = pv1z[j+0];
+	                    vs1  = cnorm_zmm16c4(v1x1,v1y1,v1z1);
+	                    pvs[j+0] = vs1;
+	                    v1x2 = pv1x[j+1];
+	                    v1y2 = pv1y[j+1];
+	                    v1z2 = pv1z[j+1];
+	                    vs2  = cnorm_zmm16c4(v1x2,v1y2,v1z2);
+	                    pvs[j+1] = vs2;
+	                    v1x3 = pv1x[j+2];
+	                    v1y3 = pv1y[j+2];
+	                    v1z3 = pv1z[j+2];
+	                    vs3  = cnorm_zmm16c4(v1x3,v1y3,v1z3);
+	                    pvs[j+2] = vs3;
+	                    v1x4 = pv1x[j+3];
+	                    v1y4 = pv1y[j+3];
+	                    v1z4 = pv1z[j+3];
+	                    vs4  = cnorm_zmm16c4(v1x4,v1y4,v1z4);
+	                    pvs[j+3] = vs4;
+	                    v1x5 = pv1x[j+4];
+	                    v1y5 = pv1y[j+4];
+	                    v1z5 = pv1z[j+4];
+	                    vs5  = cnorm_zmm16c4(v1x5,v1y5,v1z5);
+	                    pvs[j+4] = vs5;
+	                    v1x6 = pv1x[j+5];
+	                    v1y6 = pv1y[j+5];
+	                    v1z6 = pv1z[j+5];
+	                    vs6  = cnorm_zmm16c4(v1x6,v1y6,v1z6);
+	                    pvs[j+5] = vs6;
 	                 
 	              }             
 	      }
@@ -3294,126 +3294,126 @@ namespace gms {
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
 	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
 #endif	                    
-                            v1x = pv1x[j+0];
-	                    v2x = pv2x[j+0];
-	                    v1y = pv1y[j+0];
-	                    v2y = pv2y[j+0];
-	                    v1z = pv1z[j+0];
-	                    v2z = pv2z[j+0];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+0] = resx;
-	                    presy[j+0] = resy;
-	                    presz[j+0] = resz;
-	                    v1x = pv1x[j+1];
-	                    v2x = pv2x[j+1];
-	                    v1y = pv1y[j+1];
-	                    v2y = pv2y[j+1];
-	                    v1z = pv1z[j+1];
-	                    v2z = pv2z[j+1];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+1] = resx;
-	                    presy[j+1] = resy;
-	                    presz[j+1] = resz;
-	                    v1x = pv1x[j+2];
-	                    v2x = pv2x[j+2];
-	                    v1y = pv1y[j+2];
-	                    v2y = pv2y[j+2];
-	                    v1z = pv1z[j+2];
-	                    v2z = pv2z[j+2];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+2] = resx;
-	                    presy[j+2] = resy;
-	                    presz[j+2] = resz;
-	                    v1x = pv1x[j+3];
-	                    v2x = pv2x[j+3];
-	                    v1y = pv1y[j+3];
-	                    v2y = pv2y[j+3];
-	                    v1z = pv1z[j+3];
-	                    v2z = pv2z[j+3];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+3] = resx;
-	                    presy[j+3] = resy;
-	                    presz[j+3] = resz;
-	                    v1x = pv1x[j+4];
-	                    v2x = pv2x[j+4];
-	                    v1y = pv1y[j+4];
-	                    v2y = pv2y[j+4];
-	                    v1z = pv1z[j+4];
-	                    v2z = pv2z[j+4];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+4] = resx;
-	                    presy[j+4] = resy;
-	                    presz[j+4] = resz;
-	                    v1x = pv1x[j+5];
-	                    v2x = pv2x[j+5];
-	                    v1y = pv1y[j+5];
-	                    v2y = pv2y[j+5];
-	                    v1z = pv1z[j+5];
-	                    v2z = pv2z[j+5];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+5] = resx;
-	                    presy[j+5] = resy;
-	                    presz[j+5] = resz;
-	                    v1x = pv1x[j+6];
-	                    v2x = pv2x[j+6];
-	                    v1y = pv1y[j+6];
-	                    v2y = pv2y[j+6];
-	                    v1z = pv1z[j+6];
-	                    v2z = pv2z[j+6];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+6] = resx;
-	                    presy[j+6] = resy;
-	                    presz[j+6] = resz;
-	                    v1x = pv1x[j+7];
-	                    v2x = pv2x[j+7];
-	                    v1y = pv1y[j+7];
-	                    v2y = pv2y[j+7];
-	                    v1z = pv1z[j+7];
-	                    v2z = pv2z[j+7];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+7] = resx;
-	                    presy[j+7] = resy;
-	                    presz[j+7] = resz;
-	                    v1x = pv1x[j+8];
-	                    v2x = pv2x[j+8];
-	                    v1y = pv1y[j+8];
-	                    v2y = pv2y[j+8];
-	                    v1z = pv1z[j+8];
-	                    v2z = pv2z[j+8];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+8] = resx;
-	                    presy[j+8] = resy;
-	                    presz[j+8] = resz;
-	                    v1x = pv1x[j+9];
-	                    v2x = pv2x[j+9];
-	                    v1y = pv1y[j+9];
-	                    v2y = pv2y[j+9];
-	                    v1z = pv1z[j+9];
-	                    v2z = pv2z[j+9];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
-	                                    v2x,v2y,v2z,
-	                                    resx,resy,resz);
-	                    presx[j+9] = resx;
-	                    presy[j+9] = resy;
-	                    presz[j+9] = resz;
+                            v1x1 = pv1x[j+0];
+	                    v2x1 = pv2x[j+0];
+	                    v1y1 = pv1y[j+0];
+	                    v2y1 = pv2y[j+0];
+	                    v1z1 = pv1z[j+0];
+	                    v2z1 = pv2z[j+0];
+	                    scrossc_zmm16r4(v1x1,v1y1,v1z1,
+	                                    v2x1,v2y1,v2z1,
+	                                    resx1,resy1,resz1);
+	                    presx[j+0] = resx1;
+	                    presy[j+0] = resy1;
+	                    presz[j+0] = resz1;
+	                    v1x2 = pv1x[j+1];
+	                    v2x2 = pv2x[j+1];
+	                    v1y2 = pv1y[j+1];
+	                    v2y2 = pv2y[j+1];
+	                    v1z2 = pv1z[j+1];
+	                    v2z2 = pv2z[j+1];
+	                    scrossc_zmm16r4(v1x2,v1y2,v1z2,
+	                                    v2x2,v2y2,v2z2,
+	                                    resx2,resy2,resz2);
+	                    presx[j+1] = resx2;
+	                    presy[j+1] = resy2;
+	                    presz[j+1] = resz2;
+	                    v1x3 = pv1x[j+2];
+	                    v2x3 = pv2x[j+2];
+	                    v1y3 = pv1y[j+2];
+	                    v2y3 = pv2y[j+2];
+	                    v1z3 = pv1z[j+2];
+	                    v2z3 = pv2z[j+2];
+	                    scrossc_zmm16r4(v1x3,v1y3,v1z3,
+	                                    v2x3,v2y3,v2z3,
+	                                    resx3,resy3,resz3);
+	                    presx[j+2] = resx3;
+	                    presy[j+2] = resy3;
+	                    presz[j+2] = resz3;
+	                    v1x4 = pv1x[j+3];
+	                    v2x4 = pv2x[j+3];
+	                    v1y4 = pv1y[j+3];
+	                    v2y4 = pv2y[j+3];
+	                    v1z4 = pv1z[j+3];
+	                    v2z4 = pv2z[j+3];
+	                    scrossc_zmm16r4(v1x4,v1y4,v1z4,
+	                                    v2x5,v2y4,v2z4,
+	                                    resx4,resy4,resz4);
+	                    presx[j+3] = resx4;
+	                    presy[j+3] = resy4;
+	                    presz[j+3] = resz4;
+	                    v1x5 = pv1x[j+4];
+	                    v2x5 = pv2x[j+4];
+	                    v1y5 = pv1y[j+4];
+	                    v2y5 = pv2y[j+4];
+	                    v1z5 = pv1z[j+4];
+	                    v2z5 = pv2z[j+4];
+	                    scrossc_zmm16r4(v1x5,v1y5,v1z5,
+	                                    v2x5,v2y5,v2z5,
+	                                    resx5,resy5,resz5);
+	                    presx[j+4] = resx5;
+	                    presy[j+4] = resy5;
+	                    presz[j+4] = resz5;
+	                    v1x6 = pv1x[j+5];
+	                    v2x6 = pv2x[j+5];
+	                    v1y6 = pv1y[j+5];
+	                    v2y6 = pv2y[j+5];
+	                    v1z6 = pv1z[j+5];
+	                    v2z6 = pv2z[j+5];
+	                    scrossc_zmm16r4(v1x6,v1y6,v1z6,
+	                                    v2x6,v2y6,v2z6,
+	                                    resx6,resy6,resz6);
+	                    presx[j+5] = resx6;
+	                    presy[j+5] = resy6;
+	                    presz[j+5] = resz6;
+	                    v1x7 = pv1x[j+6];
+	                    v2x7 = pv2x[j+6];
+	                    v1y7 = pv1y[j+6];
+	                    v2y7 = pv2y[j+6];
+	                    v1z7 = pv1z[j+6];
+	                    v2z7 = pv2z[j+6];
+	                    scrossc_zmm16r4(v1x7,v1y7,v1z7,
+	                                    v2x7,v2y7,v2z7,
+	                                    resx7,resy7,resz7);
+	                    presx[j+6] = resx7;
+	                    presy[j+6] = resy7;
+	                    presz[j+6] = resz7;
+	                    v1x8 = pv1x[j+7];
+	                    v2x8 = pv2x[j+7];
+	                    v1y8 = pv1y[j+7];
+	                    v2y8 = pv2y[j+7];
+	                    v1z8 = pv1z[j+7];
+	                    v2z8 = pv2z[j+7];
+	                    scrossc_zmm16r4(v1x8,v1y8,v1z8,
+	                                    v2x8,v2y8,v2z8,
+	                                    resx8,resy8,resz8);
+	                    presx[j+7] = resx8;
+	                    presy[j+7] = resy8;
+	                    presz[j+7] = resz8;
+	                    v1x9 = pv1x[j+8];
+	                    v2x9 = pv2x[j+8];
+	                    v1y9 = pv1y[j+8];
+	                    v2y9 = pv2y[j+8];
+	                    v1z9 = pv1z[j+8];
+	                    v2z9 = pv2z[j+8];
+	                    scrossc_zmm16r4(v1x9,v1y9,v1z9,
+	                                    v2x9,v2y9,v2z9,
+	                                    resx9,resy9,resz9);
+	                    presx[j+8] = resx9;
+	                    presy[j+8] = resy9;
+	                    presz[j+8] = resz9;
+	                    v1x10 = pv1x[j+9];
+	                    v2x10 = pv2x[j+9];
+	                    v1y10 = pv1y[j+9];
+	                    v2y10 = pv2y[j+9];
+	                    v1z10 = pv1z[j+9];
+	                    v2z10 = pv2z[j+9];
+	                    scrossc_zmm16r4(v1x10,v1y10,v1z10,
+	                                    v2x10,v2y10,v2z10,
+	                                    resx10,resy10,resz10);
+	                    presx[j+9] = resx10;
+	                    presy[j+9] = resy10;
+	                    presz[j+9] = resz10;
 	                 
 	                }          
 	        }
