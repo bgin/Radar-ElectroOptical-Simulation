@@ -2167,9 +2167,9 @@ namespace gms {
 	                    v1z2 = pv1z[j+1];
 	                    vs2  = cnorm_zmm16c4(v1x2,v1y2,v1z2);
 	                    pvs[j+1] = vs2;
-	                    v1x2 = pv1x[j+2];
-	                    v1y2 = pv1y[j+2];
-	                    v1z2 = pv1z[j+2];
+	                    v1x3 = pv1x[j+2];
+	                    v1y3 = pv1y[j+2];
+	                    v1z3 = pv1z[j+2];
 	                    vs3  = cnorm_zmm16c4(v1x3,v1y3,v1z3);
 	                    pvs[j+2] = vs3;
 	                    v1x4 = pv1x[j+3];
