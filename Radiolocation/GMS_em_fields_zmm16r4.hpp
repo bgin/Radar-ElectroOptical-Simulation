@@ -6578,6 +6578,125 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+	           void pol_vec_zmm16r4_unroll6x_omp(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	                                          const int32_t n,
+	                                          int32_t & PF_DIST) {
+	                                          
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
+	                register __m512 tht1,tht2,tht3,tht4,tht5,tht6;
+	                register __m512 phi1,phi2,phi3,phi4,phi5,phi6;
+	                register __m512 psi1,psi2,psi3,psi4,psi5,psi6;
+	                register __m512 pvx1,pvx2,pvx3,pvx4,pvx5,pvx6;
+	                register __m512 pvy1,pvy2,pvy3,pvy4,pvy5,pvy6;
+	                register __m512 pvz1,pvz2,pvz3,pvz4,pvz5,pvz6;
+	                int32_t j,m,m1;    
+	                
+	                m = n%6;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       tht = ptht[j];
+	                       phi = pphi[j];
+	                       psi = ppsi[j];
+	                       pol_vec_zmm16r4(tht,phi,psi,
+	                                       &pvx,&pvy,&pvz);
+	                       ppvx[j] = pvx;
+	                       ppvy[j] = pvy;
+	                       ppvz[j] = pvz;
+	                   }
+	                   if(n<6) {return;}
+	                }                    
+	                
+	                m1 = m+1;
+#pragma omp parallel for schedule(runtime) default(none)                   \
+        firstprivate(m1,PF_DIST) private(j,tht1,tht2,tht3,tht4,tht5,tht6)  \
+                                 private(phi1,phi2,phi3,phi4,phi5,phi6)    \
+                                 private(psi1,psi2,psi3,psi4,psi5,psi6)    \
+                                 private(pvx1,pvx2,pvx3,pvx4,pvx5,pvx6)    \
+                                 private(pvy1,pvy2,pvy3,pvy4,pvy5,pvy6)    \
+                                 private(pvz1,pvz2,pvz3,pvz4,pvz5,pvz6)    \
+                                 shared(n,ptht,pphi,ppsi,ppvx,ppvy,ppvz)
+	                for(j = m1; j != n; j += 10) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T0);	                   
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T1);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T2);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_NTA);	    
+#endif	        	    
+                            tht1 = ptht[j+0];
+	                    phi1 = pphi[j+0];
+	                    psi1 = ppsi[j+0];
+	                    pol_vec_zmm16r4(tht1,phi1,psi1,
+	                                    &pvx1,&pvy1,&pvz1);
+	                    ppvx[j+0] = pvx1;
+	                    ppvy[j+0] = pvy1;
+	                    ppvz[j+0] = pvz1;  
+	                    tht2 = ptht[j+1];
+	                    phi2 = pphi[j+1];
+	                    psi2 = ppsi[j+1];
+	                    pol_vec_zmm16r4(tht2,phi2,psi2,
+	                                    &pvx2,&pvy2,&pvz2);
+	                    ppvx[j+1] = pvx2;
+	                    ppvy[j+1] = pvy2;
+	                    ppvz[j+1] = pvz2;   
+	                    tht3 = ptht[j+2];
+	                    phi3 = pphi[j+2];
+	                    psi3 = ppsi[j+2];
+	                    pol_vec_zmm16r4(tht3,phi3,psi3,
+	                                    &pvx3,&pvy3,&pvz3);
+	                    ppvx[j+2] = pvx3;
+	                    ppvy[j+2] = pvy3;
+	                    ppvz[j+2] = pvz3;
+	                    tht4 = ptht[j+3];
+	                    phi4 = pphi[j+3];
+	                    psi4 = ppsi[j+3];
+	                    pol_vec_zmm16r4(tht4,phi4,psi4,
+	                                    &pvx4,&pvy4,&pvz4);
+	                    ppvx[j+3] = pvx4;
+	                    ppvy[j+3] = pvy4;
+	                    ppvz[j+3] = pvz4;  
+	                    tht5 = ptht[j+4];
+	                    phi5 = pphi[j+4];
+	                    psi5 = ppsi[j+4];
+	                    pol_vec_zmm16r4(tht5,phi5,psi5,
+	                                    &pvx5,&pvy5,&pvz5);
+	                    ppvx[j+4] = pvx5;
+	                    ppvy[j+4] = pvy5;
+	                    ppvz[j+4] = pvz5;
+	                    tht6 = ptht[j+5];
+	                    phi6 = pphi[j+5];
+	                    psi6 = ppsi[j+5];
+	                    pol_vec_zmm16r4(tht6,phi6,psi6,
+	                                    &pvx6,&pvy6,&pvz6);
+	                    ppvx[j+5] = pvx6;
+	                    ppvy[j+5] = pvy6;
+	                    ppvz[j+5] = pvz6;  
+	            }            
+	      }
+	      
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
 	           void pol_vec_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
 	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
 	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
