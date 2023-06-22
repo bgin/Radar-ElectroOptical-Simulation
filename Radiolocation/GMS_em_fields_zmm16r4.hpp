@@ -7900,7 +7900,7 @@ namespace gms {
 	                    vdirz5 = pvdirz[j+4];
 	                    vrx5   = pvrx[j+4];
 	                    vry5   = pvry[j+4];
-	                    vrz   = pvrz[j+4];
+	                    vrz5   = pvrz[j+4];
 	                    k5     = pk[j+4];
 	                    H_XYZ_VP_zmm16c4(vpolx5,vpoly5,vpolz5,
 	                                     vdirx5,vdiry5,vdirz5,
