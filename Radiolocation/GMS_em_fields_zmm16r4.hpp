@@ -12130,6 +12130,289 @@ namespace gms {
 	      }
 	      
 	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_H_XYZ_EP_zmm16c4_unroll6x_omp(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                     const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                      const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                     const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pphase,
+	                                                     const zmm16c4_t * __restrict __ATTR_ALIGN__(64) prefi,
+	                                                     const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                     const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                     const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                     zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_x,
+	                                                     zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_y,
+	                                                     zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_z,
+	                                                     zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_x,
+	                                                     zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_y,
+	                                                     zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_z,
+	                                                     const int32_t n,
+	                                                     int32_t & PF_DIST) {
+	                                                 
+	                 if(__builtin_expect(n<=0,0)) {return;}
+	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
+	                 zmm16c4_t phase1,phase2,phase3,phase4,phase5,phase6;
+	                 zmm16c4_t refi1,refi2,refi3,refi4,refi5,refi6;
+	                 zmm16c4_t px1,px2,px3,px4,px5,px6;
+	                 zmm16c4_t py1,py2,py3,py4,py5,py6;
+	                 zmm16c4_t pz1,pz2,pz3,pz4,pz5,pz6;
+	                 zmm16c4_t H_x1,H_x2,H_x3,H_x4,H_x5,H_x6;
+	                 zmm16c4_t H_y1,H_y2,H_y3,H_y4,H_y5,H_y6;
+	                 zmm16c4_t H_z1,H_z2,H_z3,H_z4,H_z5,H_z6;
+	                 zmm16c4_t B_x1,B_x2,B_x3,B_x4,B_x5,B_x6;
+	                 zmm16c4_t B_y1,B_y2,B_y3,B_y4,B_y5,B_y6;
+	                 zmm16c4_t B_z1,B_z2,B_z3,B_z4,B_z5,B_z6;
+	                 register __m512 tht1,tht2,tht3,tht4,tht5,tht6;
+	                 register __m512 phi1,phi2,phi3,phi4,phi5,phi6;
+	                 register __m512 omg1,omg2,omg3,omg4,omg5,omg6;
+	                 int32_t j,m,m1;
+	                 
+	                 m = n%6;
+	                 if(m!=0) {
+	                    for(j = 0; j != m; ++j) {
+	                        tht   = ptht[j];
+	                        phi   = pphi[j];
+	                        omg   = pomg[j];
+	                        phase = pphase[j];
+	                        refi  = prefi[j];
+	                        px    = ppx[j];
+	                        py    = ppy[j];
+	                        pz    = ppz[j];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                                               phase,refi,px,
+	                                               py,pz,
+	                                               H_x,H_y,H_z,
+	                                               B_x,B_y,B_z);
+	                        pH_x[j] = H_x;
+	                        pH_y[j] = H_y;
+	                        pH_z[j] = H_z;
+	                        pB_x[j] = B_x;
+	                        pB_y[j] = B_y;
+	                        pB_z[j] = B_z;
+	                    }
+	                    if(n<6) { return;}
+	                 }                     
+	                 
+	                 m1 = m+1;
+#pragma omp parallel for schedule(runtime) default(none)                               \
+        firstprivate(m1,PF_DIST) private(j,phase1,phase2,phase3,phase4,phase5,phase6)  \
+                                 private(refi1,refi2,refi3,refi4,refi5,refi6)          \
+                                 private(px1,px2,px3,px4,px5,px6)                      \
+                                 private(py1,py2,py3,py4,py5,py6)                      \
+                                 private(pz1,pz2,pz3,pz4,pz5,pz6)                      \
+                                 private(H_x1,H_x2,H_x3,H_x4,H_x5,H_x6)                \
+                                 private(H_y1,H_y2,H_y3,H_y4,H_y5,H_y6)                \
+                                 private(H_z1,H_z2,H_z3,H_z4,H_z5,H_z6)                \
+                                 private(B_x1,B_x2,B_x3,B_x4,B_x5,B_x6)                \
+                                 private(B_y1,B_y2,B_y3,B_y4,B_y5,B_y6)                \
+                                 private(B_z1,B_z2,B_z3,B_z4,B_z5,B_z6)                \
+                                 private(tht1,tht2,tht3,tht4,tht5,tht6)                \
+                                 private(phi1,phi2,phi3,phi4,phi5,phi6)                \
+                                 private(omg1,omg2,omg3,omg4,omg5,omg6)                \
+                                 shared(n,ptht,pphi,pomg,pphase,prefi)                 \
+                                 shared(ppx,ppy,ppz)                                   \
+                                 shared(pH_x,pH_y,pH_z,pB_x,pB_y,pB_z)
+	                 for(j = m1; j != n; j += 6) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T0);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T0);
+	                                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T1);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T2);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_NTA);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	     	   	      
+                                tht1   = ptht[j+0];
+	                        phi1   = pphi[j+0];
+	                        omg1   = pomg[j+0];
+	                        phase1 = pphase[j+0];
+	                        refi1  = prefi[j+0];
+	                        px1    = ppx[j+0];
+	                        py1    = ppy[j+0];
+	                        pz1    = ppz[j+0];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht1,phi1,omg1,
+	                                               phase1,refi1,px1,
+	                                               py1,pz1,
+	                                               H_x1,H_y1,H_z1,
+	                                               B_x1,B_y1,B_z1);
+	                        pH_x[j+0] = H_x1;
+	                        pH_y[j+0] = H_y1;
+	                        pH_z[j+0] = H_z1;
+	                        pB_x[j+0] = B_x1;
+	                        pB_y[j+0] = B_y1;
+	                        pB_z[j+0] = B_z1;
+	                        tht2   = ptht[j+1];
+	                        phi2   = pphi[j+1];
+	                        omg2   = pomg[j+1];
+	                        phase2 = pphase[j+1];
+	                        refi2  = prefi[j+1];
+	                        px2    = ppx[j+1];
+	                        py2    = ppy[j+1];
+	                        pz2    = ppz[j+1];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht2,phi2,omg2,
+	                                               phase2,refi2,px2,
+	                                               py2,pz2,
+	                                               H_x2,H_y2,H_z2,
+	                                               B_x2,B_y2,B_z2);
+	                        pH_x[j+1] = H_x2;
+	                        pH_y[j+1] = H_y2;
+	                        pH_z[j+1] = H_z2;
+	                        pB_x[j+1] = B_x2;
+	                        pB_y[j+1] = B_y2;
+	                        pB_z[j+1] = B_z2;  
+	                        tht3   = ptht[j+2];
+	                        phi3   = pphi[j+2];
+	                        omg3   = pomg[j+2];
+	                        phase3 = pphase[j+2];
+	                        refi3  = prefi[j+2];
+	                        px3    = ppx[j+2];
+	                        py3    = ppy[j+2];
+	                        pz3    = ppz[j+2];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht3,phi3,omg3,
+	                                               phase3,refi3,px3,
+	                                               py3,pz3,
+	                                               H_x3,H_y3,H_z3,
+	                                               B_x3,B_y3,B_z3);
+	                        pH_x[j+2] = H_x3;
+	                        pH_y[j+2] = H_y3;
+	                        pH_z[j+2] = H_z3;
+	                        pB_x[j+2] = B_x3;
+	                        pB_y[j+2] = B_y3;
+	                        pB_z[j+2] = B_z3;
+	                        tht4   = ptht[j+3];
+	                        phi4   = pphi[j+3];
+	                        omg4   = pomg[j+3];
+	                        phase4 = pphase[j+3];
+	                        refi4  = prefi[j+3];
+	                        px4    = ppx[j+3];
+	                        py4    = ppy[j+3];
+	                        pz4    = ppz[j+3];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht4,phi4,omg4,
+	                                               phase4,refi4,px4,
+	                                               py4,pz4,
+	                                               H_x4,H_y4,H_z4,
+	                                               B_x4,B_y4,B_z4);
+	                        pH_x[j+3] = H_x4;
+	                        pH_y[j+3] = H_y4;
+	                        pH_z[j+3] = H_z4;
+	                        pB_x[j+3] = B_x4;
+	                        pB_y[j+3] = B_y4;
+	                        pB_z[j+3] = B_z4;  
+	                        tht5   = ptht[j+4];
+	                        phi5   = pphi[j+4];
+	                        omg5   = pomg[j+4];
+	                        phase5 = pphase[j+4];
+	                        refi5  = prefi[j+4];
+	                        px5    = ppx[j+4];
+	                        py5    = ppy[j+4];
+	                        pz5    = ppz[j+4];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht5,phi5,omg5,
+	                                               phase5,refi5,px5,
+	                                               py5,pz5,
+	                                               H_x5,H_y5,H_z5,
+	                                               B_x5,B_y5,B_z);
+	                        pH_x[j+4] = H_x5;
+	                        pH_y[j+4] = H_y;
+	                        pH_z[j+4] = H_z5;
+	                        pB_x[j+4] = B_x5;
+	                        pB_y[j+4] = B_y5;
+	                        pB_z[j+4] = B_z5; 
+	                        tht6   = ptht[j+5];
+	                        phi6   = pphi[j+5];
+	                        omg6   = pomg[j+5];
+	                        phase6 = pphase[j+5];
+	                        refi6  = prefi[j+5];
+	                        px6    = ppx[j+5];
+	                        py6    = ppy[j+5];
+	                        pz6    = ppz[j+5];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht6,phi6,omg6,
+	                                               phase6,refi6,px6,
+	                                               py6,pz6,
+	                                               H_x6,H_y6,H_z6,
+	                                               B_x6,B_y6,B_z6);
+	                        pH_x[j+5] = H_x6;
+	                        pH_y[j+5] = H_y6;
+	                        pH_z[j+5] = H_z6;
+	                        pB_x[j+5] = B_x6;
+	                        pB_y[j+5] = B_y6;
+	                        pB_z[j+5] = B_z6;  
+	                        tht7   = ptht[j+6];
+	                        phi7   = pphi[j+6];
+	                        omg7   = pomg[j+6];
+	                        phase7 = pphase[j+6];
+	                        refi7  = prefi[j+6];
+	                        px7    = ppx[j+6];
+	                        py7    = ppy[j+6];
+	                        pz7    = ppz[j+6];
+	                        B_XYZ_H_XYZ_EP_zmm16c4(tht7,phi7,omg7,
+	                                               phase7,refi7,px7,
+	                                               py7,pz7,
+	                                               H_x7,H_y7,H_z7,
+	                                               B_x7,B_y7,B_z7);
+	                        pH_x[j+6] = H_x7;
+	                        pH_y[j+6] = H_y7;
+	                        pH_z[j+6] = H_z7;
+	                        pB_x[j+6] = B_x7;
+	                        pB_y[j+6] = B_y7;
+	                        pB_z[j+6] = B_z7;  
+	                       
+	                 }               
+	      }
+	        
+	      
+	      
 	      
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
