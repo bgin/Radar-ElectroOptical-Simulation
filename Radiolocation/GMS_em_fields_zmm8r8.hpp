@@ -25,16 +25,16 @@ SOFTWARE.
 namespace file_version {
 
     const unsigned int GMS_EM_FIELDS_ZMM8R8_MAJOR = 1U;
-    const unsigned int GMS_EM_FIELDS_ZMM16R4_MINOR = 0U;
-    const unsigned int GMS_EM_FIELDS_ZMM16R4_MICRO = 0U;
-    const unsigned int GMS_EM_FIELDS_ZMM16R4_FULLVER =
-      1000U*GMS_EM_FIELDS_ZMM16R4_MAJOR+
-      100U*GMS_EM_FIELDS_ZMM16R4_MINOR+
-      10U*GMS_EM_FIELDS_ZMM16R4_MICRO;
-    const char * const GMS_EM_FIELDS_ZMM16R4_CREATION_DATE = "11-06-2023 09:36 AM +00200 (SUN 11 06 2023 GMT+2)";
-    const char * const GMS_EM_FIELDS_ZMM16R4_BUILD_DATE    = __DATE__ ":" __TIME__;
-    const char * const GMS_EM_FIELDS_ZMM16R4_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_EM_FIELDS_ZMM16R4_DESCRIPTION   = " Computational ElectroMagnetics related helper routines."
+    const unsigned int GMS_EM_FIELDS_ZMM8R8_MINOR = 0U;
+    const unsigned int GMS_EM_FIELDS_ZMM8R8_MICRO = 0U;
+    const unsigned int GMS_EM_FIELDS_ZMM8R8_FULLVER =
+      1000U*GMS_EM_FIELDS_ZMM8R8_MAJOR+
+      100U*GMS_EM_FIELDS_ZMM8R8_MINOR+
+      10U*GMS_EM_FIELDS_ZMM8R8_MICRO;
+    const char * const GMS_EM_FIELDS_ZMM8R8_CREATION_DATE = "11-06-2023 09:36 AM +00200 (SUN 11 06 2023 GMT+2)";
+    const char * const GMS_EM_FIELDS_ZMM8R8_BUILD_DATE    = __DATE__ ":" __TIME__;
+    const char * const GMS_EM_FIELDS_ZMM8R8_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+    const char * const GMS_EM_FIELDS_ZMM8R8_DESCRIPTION   = " Computational ElectroMagnetics related helper routines."
                        
 
 }
@@ -43,7 +43,7 @@ namespace file_version {
 #include <immintrin.h>
 #include <cstdint>
 #include "GMS_config.h"
-#include "GMS_complex_zmm16r4.hpp"
+#include "GMS_complex_zmm8r8.hpp"
 
 #ifndef __EM_FIELDS_PF_CACHE_HINT__
 #define __EM_FIELDS_PF_CACHE_HINT__ 1
@@ -58,25 +58,21 @@ namespace gms {
           
  
               
-                   struct __ATTR_ALIGN__(64) zmm8r8_t {
-                   
-                          __m512d re;
-                          __m512d im;
-                   };
+               
                 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 sdotv_zmm16r4(const __m512 v1x,
-	                                const __m512 v1y,
-	                                const __m512 v1z,
-	                                const __m512 v2x,
-	                                const __m512 v2y,
-	                                const __m512 v2z) {
+	           __m512d sdotv_zmm8r8(const __m512d v1x,
+	                                const __m512d v1y,
+	                                const __m512d v1z,
+	                                const __m512d v2x,
+	                                const __m512d v2y,
+	                                const __m512d v2z) {
 	                                
-	                  register __m512 result;
+	                  register __m512d result;
 	                  result = _mm512_fmadd_pd(v1x,v2x,
 	                                      _mm512_fmadd_pd(v1y,v2y,
 	                                                 _mm512_mul_pd(v1z,v2z)));
@@ -89,23 +85,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void sdotv_zmm16r4_unroll16x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        __m512 * __restrict __ATTR_ALIGN__(64) pdtv,
+	           void sdotv_zmm8r8_unroll16x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        __m512d * __restrict __ATTR_ALIGN__(64) pdtv,
 	                                        const int32_t n) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
-	                register __m512 v1x;
-	                register __m512 v1y;
-	                register __m512 v1z;
-	                register __m512 v2x;
-	                register __m512 v2y;
-	                register __m512 v2z;
-	                register __m512 dtv;
+	                register __m512d v1x;
+	                register __m512d v1y;
+	                register __m512d v1z;
+	                register __m512d v2x;
+	                register __m512d v2y;
+	                register __m512d v2z;
+	                register __m512d dtv;
 	                int32_t j,m,m1;
 	                
 	                m = n%16;
@@ -118,7 +114,7 @@ namespace gms {
 	                        v2y = pv2y[j];
 	                        v1z = pv1z[j];
 	                        v2z = pv2z[j];
-	                        dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                        dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                            v2x,v2y,v2z);
 	                        pdtv[j] = dtv;
 	                   }
@@ -133,7 +129,7 @@ namespace gms {
 	                     v2y = pv2y[j+0];
 	                     v1z = pv1z[j+0];
 	                     v2z = pv2z[j+0];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+0] = dtv;
 	                     v1x = pv1x[j+1];
@@ -142,7 +138,7 @@ namespace gms {
 	                     v2y = pv2y[j+1];
 	                     v1z = pv1z[j+1];
 	                     v2z = pv2z[j+1];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+1] = dtv;
 	                     v1x = pv1x[j+2];
@@ -151,7 +147,7 @@ namespace gms {
 	                     v2y = pv2y[j+2];
 	                     v1z = pv1z[j+2];
 	                     v2z = pv2z[j+2];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+2] = dtv;
 	                     v1x = pv1x[j+3];
@@ -160,7 +156,7 @@ namespace gms {
 	                     v2y = pv2y[j+3];
 	                     v1z = pv1z[j+3];
 	                     v2z = pv2z[j+3];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+3] = dtv;
 	                     v1x = pv1x[j+4];
@@ -169,7 +165,7 @@ namespace gms {
 	                     v2y = pv2y[j+4];
 	                     v1z = pv1z[j+4];
 	                     v2z = pv2z[j+4];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+4] = dtv;
 	                     v1x = pv1x[j+5];
@@ -178,7 +174,7 @@ namespace gms {
 	                     v2y = pv2y[j+5];
 	                     v1z = pv1z[j+5];
 	                     v2z = pv2z[j+5];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+5] = dtv;
 	                     v1x = pv1x[j+6];
@@ -187,7 +183,7 @@ namespace gms {
 	                     v2y = pv2y[j+6];
 	                     v1z = pv1z[j+6];
 	                     v2z = pv2z[j+6];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+6] = dtv;
 	                     v1x = pv1x[j+7];
@@ -196,7 +192,7 @@ namespace gms {
 	                     v2y = pv2y[j+7];
 	                     v1z = pv1z[j+7];
 	                     v2z = pv2z[j+7];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+7] = dtv;
 	                     v1x = pv1x[j+8];
@@ -205,7 +201,7 @@ namespace gms {
 	                     v2y = pv2y[j+8];
 	                     v1z = pv1z[j+8];
 	                     v2z = pv2z[j+8];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+8] = dtv;
 	                     v1x = pv1x[j+9];
@@ -214,7 +210,7 @@ namespace gms {
 	                     v2y = pv2y[j+9];
 	                     v1z = pv1z[j+9];
 	                     v2z = pv2z[j+9];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+9] = dtv;
 	                     v1x = pv1x[j+10];
@@ -223,7 +219,7 @@ namespace gms {
 	                     v2y = pv2y[j+10];
 	                     v1z = pv1z[j+10];
 	                     v2z = pv2z[j+10];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+10] = dtv;
 	                     v1x = pv1x[j+11];
@@ -232,7 +228,7 @@ namespace gms {
 	                     v2y = pv2y[j+11];
 	                     v1z = pv1z[j+11];
 	                     v2z = pv2z[j+11];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+11] = dtv;
 	                     v1x = pv1x[j+12];
@@ -241,7 +237,7 @@ namespace gms {
 	                     v2y = pv2y[j+12];
 	                     v1z = pv1z[j+12];
 	                     v2z = pv2z[j+12];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+12] = dtv;
 	                     v1x = pv1x[j+13];
@@ -250,7 +246,7 @@ namespace gms {
 	                     v2y = pv2y[j+13];
 	                     v1z = pv1z[j+13];
 	                     v2z = pv2z[j+13];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+13] = dtv;
 	                     v1x = pv1x[j+14];
@@ -259,7 +255,7 @@ namespace gms {
 	                     v2y = pv2y[j+14];
 	                     v1z = pv1z[j+14];
 	                     v2z = pv2z[j+14];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+14] = dtv;
 	                     v1x = pv1x[j+15];
@@ -268,7 +264,7 @@ namespace gms {
 	                     v2y = pv2y[j+15];
 	                     v1z = pv1z[j+15];
 	                     v2z = pv2z[j+15];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+15] = dtv;
 	                }
@@ -284,23 +280,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void sdotv_zmm16r4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        __m512 * __restrict __ATTR_ALIGN__(64) pdtv,
+	           void sdotv_zmm8r8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        __m512d * __restrict __ATTR_ALIGN__(64) pdtv,
 	                                        const int32_t n) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
-	                register __m512 v1x;
-	                register __m512 v1y;
-	                register __m512 v1z;
-	                register __m512 v2x;
-	                register __m512 v2y;
-	                register __m512 v2z;
-	                register __m512 dtv;
+	                register __m512d v1x;
+	                register __m512d v1y;
+	                register __m512d v1z;
+	                register __m512d v2x;
+	                register __m512d v2y;
+	                register __m512d v2z;
+	                register __m512d dtv;
 	                int32_t j,m,m1;
 	                
 	                m = n%10;
@@ -313,7 +309,7 @@ namespace gms {
 	                        v2y = pv2y[j];
 	                        v1z = pv1z[j];
 	                        v2z = pv2z[j];
-	                        dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                        dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                            v2x,v2y,v2z);
 	                        pdtv[j] = dtv;
 	                   }
@@ -328,7 +324,7 @@ namespace gms {
 	                     v2y = pv2y[j+0];
 	                     v1z = pv1z[j+0];
 	                     v2z = pv2z[j+0];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+0] = dtv;
 	                     v1x = pv1x[j+1];
@@ -337,7 +333,7 @@ namespace gms {
 	                     v2y = pv2y[j+1];
 	                     v1z = pv1z[j+1];
 	                     v2z = pv2z[j+1];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+1] = dtv;
 	                     v1x = pv1x[j+2];
@@ -346,7 +342,7 @@ namespace gms {
 	                     v2y = pv2y[j+2];
 	                     v1z = pv1z[j+2];
 	                     v2z = pv2z[j+2];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+2] = dtv;
 	                     v1x = pv1x[j+3];
@@ -355,7 +351,7 @@ namespace gms {
 	                     v2y = pv2y[j+3];
 	                     v1z = pv1z[j+3];
 	                     v2z = pv2z[j+3];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+3] = dtv;
 	                     v1x = pv1x[j+4];
@@ -364,7 +360,7 @@ namespace gms {
 	                     v2y = pv2y[j+4];
 	                     v1z = pv1z[j+4];
 	                     v2z = pv2z[j+4];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+4] = dtv;
 	                     v1x = pv1x[j+5];
@@ -373,7 +369,7 @@ namespace gms {
 	                     v2y = pv2y[j+5];
 	                     v1z = pv1z[j+5];
 	                     v2z = pv2z[j+5];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+5] = dtv;
 	                     v1x = pv1x[j+6];
@@ -382,7 +378,7 @@ namespace gms {
 	                     v2y = pv2y[j+6];
 	                     v1z = pv1z[j+6];
 	                     v2z = pv2z[j+6];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+6] = dtv;
 	                     v1x = pv1x[j+7];
@@ -391,7 +387,7 @@ namespace gms {
 	                     v2y = pv2y[j+7];
 	                     v1z = pv1z[j+7];
 	                     v2z = pv2z[j+7];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+7] = dtv;
 	                     v1x = pv1x[j+8];
@@ -400,7 +396,7 @@ namespace gms {
 	                     v2y = pv2y[j+8];
 	                     v1z = pv1z[j+8];
 	                     v2z = pv2z[j+8];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+8] = dtv;
 	                     v1x = pv1x[j+9];
@@ -409,7 +405,7 @@ namespace gms {
 	                     v2y = pv2y[j+9];
 	                     v1z = pv1z[j+9];
 	                     v2z = pv2z[j+9];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+9] = dtv;
 	                    
@@ -423,23 +419,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void sdotv_zmm16r4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        __m512 * __restrict __ATTR_ALIGN__(64) pdtv,
+	           void sdotv_zmm8r8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        __m512d * __restrict __ATTR_ALIGN__(64) pdtv,
 	                                        const int32_t n) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
-	                register __m512 v1x;
-	                register __m512 v1y;
-	                register __m512 v1z;
-	                register __m512 v2x;
-	                register __m512 v2y;
-	                register __m512 v2z;
-	                register __m512 dtv;
+	                register __m512d v1x;
+	                register __m512d v1y;
+	                register __m512d v1z;
+	                register __m512d v2x;
+	                register __m512d v2y;
+	                register __m512d v2z;
+	                register __m512d dtv;
 	                int32_t j,m,m1;
 	                
 	                m = n%6;
@@ -452,7 +448,7 @@ namespace gms {
 	                        v2y = pv2y[j];
 	                        v1z = pv1z[j];
 	                        v2z = pv2z[j];
-	                        dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                        dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                            v2x,v2y,v2z);
 	                        pdtv[j] = dtv;
 	                   }
@@ -467,7 +463,7 @@ namespace gms {
 	                     v2y = pv2y[j+0];
 	                     v1z = pv1z[j+0];
 	                     v2z = pv2z[j+0];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+0] = dtv;
 	                     v1x = pv1x[j+1];
@@ -476,7 +472,7 @@ namespace gms {
 	                     v2y = pv2y[j+1];
 	                     v1z = pv1z[j+1];
 	                     v2z = pv2z[j+1];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+1] = dtv;
 	                     v1x = pv1x[j+2];
@@ -485,7 +481,7 @@ namespace gms {
 	                     v2y = pv2y[j+2];
 	                     v1z = pv1z[j+2];
 	                     v2z = pv2z[j+2];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+2] = dtv;
 	                     v1x = pv1x[j+3];
@@ -494,7 +490,7 @@ namespace gms {
 	                     v2y = pv2y[j+3];
 	                     v1z = pv1z[j+3];
 	                     v2z = pv2z[j+3];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+3] = dtv;
 	                     v1x = pv1x[j+4];
@@ -503,7 +499,7 @@ namespace gms {
 	                     v2y = pv2y[j+4];
 	                     v1z = pv1z[j+4];
 	                     v2z = pv2z[j+4];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+4] = dtv;
 	                     v1x = pv1x[j+5];
@@ -512,7 +508,7 @@ namespace gms {
 	                     v2y = pv2y[j+5];
 	                     v1z = pv1z[j+5];
 	                     v2z = pv2z[j+5];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+5] = dtv;
 	                   	                    
@@ -530,23 +526,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void sdotv_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        __m512 * __restrict __ATTR_ALIGN__(64) pdtv,
+	           void sdotv_zmm8r8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        __m512d * __restrict __ATTR_ALIGN__(64) pdtv,
 	                                        const int32_t n) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
-	                register __m512 v1x;
-	                register __m512 v1y;
-	                register __m512 v1z;
-	                register __m512 v2x;
-	                register __m512 v2y;
-	                register __m512 v2z;
-	                register __m512 dtv;
+	                register __m512d v1x;
+	                register __m512d v1y;
+	                register __m512d v1z;
+	                register __m512d v2x;
+	                register __m512d v2y;
+	                register __m512d v2z;
+	                register __m512d dtv;
 	                int32_t j,m,m1;
 	                
 	                m = n%2;
@@ -559,7 +555,7 @@ namespace gms {
 	                        v2y = pv2y[j];
 	                        v1z = pv1z[j];
 	                        v2z = pv2z[j];
-	                        dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                        dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                            v2x,v2y,v2z);
 	                        pdtv[j] = dtv;
 	                   }
@@ -574,7 +570,7 @@ namespace gms {
 	                     v2y = pv2y[j+0];
 	                     v1z = pv1z[j+0];
 	                     v2z = pv2z[j+0];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+0] = dtv;
 	                     v1x = pv1x[j+1];
@@ -583,7 +579,7 @@ namespace gms {
 	                     v2y = pv2y[j+1];
 	                     v1z = pv1z[j+1];
 	                     v2z = pv2z[j+1];
-	                     dtv = sdotv_zmm16r4(v1x,v1y,v1z,
+	                     dtv = sdotv_zmm8r8(v1x,v1y,v1z,
 	                                         v2x,v2y,v2z);
 	                     pdtv[j+1] = dtv;
 	                                      	                    
@@ -599,20 +595,20 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 sdotv_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                const float * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                const float * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                const float * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                const float * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                const float * __restrict __ATTR_ALIGN__(64) pv2z) {
+	           __m512d sdotv_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                const double * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                const double * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                const double * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                const double * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                const double * __restrict __ATTR_ALIGN__(64) pv2z) {
 	                          
-	                  register __m512 v1x = _mm512_load_ps(&pv1x[0]);
-	                  register __m512 v1y = _mm512_load_ps(&pv1y[0]);  
-	                  register __m512 v1z = _mm512_load_ps(&pv1z[0]); 
-	                  register __m512 v2x = _mm512_load_ps(&pv2x[0]);  
-	                  register __m512 v2y = _mm512_load_ps(&pv2y[0]); 
-	                  register __m512 v2z = _mm512_load_ps(&pv2z[0]);
-	                  register __m512 result;
+	                  register __m512d v1x = _mm512_load_pd(&pv1x[0]);
+	                  register __m512d v1y = _mm512_load_pd(&pv1y[0]);  
+	                  register __m512d v1z = _mm512_load_pd(&pv1z[0]); 
+	                  register __m512d v2x = _mm512_load_pd(&pv2x[0]);  
+	                  register __m512d v2y = _mm512_load_pd(&pv2y[0]); 
+	                  register __m512d v2z = _mm512_load_pd(&pv2z[0]);
+	                  register __m512d result;
 	                  result = _mm512_fmadd_pd(v1x,v2x,
 	                                      _mm512_fmadd_pd(v1y,v2y,
 	                                                 _mm512_mul_pd(v1z,v2z)));
@@ -625,20 +621,20 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 sdotv_zmm16r4_u(const float * __restrict  pv1x,
-	                                const float * __restrict  pv1y,
-	                                const float * __restrict  pv1z,
-	                                const float * __restrict  pv2x,
-	                                const float * __restrict  pv2y,
-	                                const float * __restrict  pv2z) {
+	           __m512d sdotv_zmm8r8_u(const double * __restrict  pv1x,
+	                                const double * __restrict  pv1y,
+	                                const double * __restrict  pv1z,
+	                                const double * __restrict  pv2x,
+	                                const double * __restrict  pv2y,
+	                                const double * __restrict  pv2z) {
 	                          
-	                  register __m512 v1x = _mm512_loadu_ps(&pv1x[0]);
-	                  register __m512 v1y = _mm512_loadu_ps(&pv1y[0]);  
-	                  register __m512 v1z = _mm512_loadu_ps(&pv1z[0]); 
-	                  register __m512 v2x = _mm512_loadu_ps(&pv2x[0]);  
-	                  register __m512 v2y = _mm512_loadu_ps(&pv2y[0]); 
-	                  register __m512 v2z = _mm512_loadu_ps(&pv2z[0]);
-	                  register __m512 result;
+	                  register __m512d v1x = _mm512_loadu_pd(&pv1x[0]);
+	                  register __m512d v1y = _mm512_loadu_pd(&pv1y[0]);  
+	                  register __m512d v1z = _mm512_loadu_pd(&pv1z[0]); 
+	                  register __m512d v2x = _mm512_loadu_pd(&pv2x[0]);  
+	                  register __m512d v2y = _mm512_loadu_pd(&pv2y[0]); 
+	                  register __m512d v2z = _mm512_loadu_pd(&pv2z[0]);
+	                  register __m512d result;
 	                  result = _mm512_fmadd_pd(v1x,v2x,
 	                                      _mm512_fmadd_pd(v1y,v2y,
 	                                                 _mm512_mul_pd(v1z,v2z)));
@@ -650,25 +646,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16c4(const zmm16c4_t v1x,
-	                              const zmm16c4_t v1y,
-	                              const zmm16c4_t v1z,
-	                              const zmm16c4_t v2x,
-	                              const zmm16c4_t v2y,
-	                              const zmm16c4_t v2z,
-	                              zmm16c4_t & res) {
+	           void cdotv_zmm8c8(const zmm8c8_t v1x,
+	                              const zmm8c8_t v1y,
+	                              const zmm8c8_t v1z,
+	                              const zmm8c8_t v2x,
+	                              const zmm8c8_t v2y,
+	                              const zmm8c8_t v2z,
+	                              zmm8c8_t & res) {
 	                              
-	                zmm16c4_t tx,ty,tz;
-	                tx = cmul_zmm16r4(v1x.re,v1x.im,v2x.re,
+	                zmm8c8_t tx,ty,tz;
+	                tx = cmul_zmm8r8(v1x.re,v1x.im,v2x.re,
 	                                  v2x.im,&tx.re,&tx.im); 
-	                ty = cmul_zmm16r4(v1y.re,v1y.im,v2y.re,
+	                ty = cmul_zmm8r8(v1y.re,v1y.im,v2y.re,
 	                                  v2y.im,&ty.re,&ty.im);
-	                tz = cmul_zmm16r4(v1z.re,v1z.im,v2z.re,
+	                tz = cmul_zmm8r8(v1z.re,v1z.im,v2z.re,
 	                                  v2z.im,&tz.re,&tz.im);
-	                res.re = _mm512_add_ps(tx.re,
-	                                   _mm512_add_ps(ty.re,tz.re));
-	                res.im = _mm512_add_ps(tx.im,
-	                                   _mm512_add_ps(ty.im,tz.im));                   
+	                res.re = _mm512_add_pd(tx.re,
+	                                   _mm512_add_pd(ty.re,tz.re));
+	                res.im = _mm512_add_pd(tx.im,
+	                                   _mm512_add_pd(ty.im,tz.im));                   
 	        }
 	        
 	        
@@ -677,25 +673,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16c4_unroll16x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pres,
+	           void cdotv_zmm8c8_unroll16x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pres,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(0>=n,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2z;
-	                __ATTR_ALIGN__(64) zmm16c4_t res;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2z;
+	                __ATTR_ALIGN__(64) zmm8c8_t res;
 	                int32_t j,m,m1;
 	                
 	                m = n%16;
@@ -707,7 +703,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       cdotv_zmm16c4(v1x,v1y,v1z,
+	                       cdotv_zmm8c8(v1x,v1y,v1z,
 	                                     v2x,v2y,v2z,
 	                                     res);
 	                       pres[j] = res;
@@ -777,7 +773,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+0] = res;
@@ -787,7 +783,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+1] = res;
@@ -797,7 +793,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+2] = res;
@@ -807,7 +803,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+3] = res;
@@ -817,7 +813,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+4] = res;
@@ -827,7 +823,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+5] = res;
@@ -837,7 +833,7 @@ namespace gms {
 	                    v2y = pv2y[j+6];
 	                    v1z = pv1z[j+6];
 	                    v2z = pv2z[j+6];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+6] = res;
@@ -847,7 +843,7 @@ namespace gms {
 	                    v2y = pv2y[j+7];
 	                    v1z = pv1z[j+7];
 	                    v2z = pv2z[j+7];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+7] = res;
@@ -857,7 +853,7 @@ namespace gms {
 	                    v2y = pv2y[j+8];
 	                    v1z = pv1z[j+8];
 	                    v2z = pv2z[j+8];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+8] = res;
@@ -867,7 +863,7 @@ namespace gms {
 	                    v2y = pv2y[j+9];
 	                    v1z = pv1z[j+9];
 	                    v2z = pv2z[j+9];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+9] = res;
@@ -877,7 +873,7 @@ namespace gms {
 	                    v2y = pv2y[j+10];
 	                    v1z = pv1z[j+10];
 	                    v2z = pv2z[j+10];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+10] = res;
@@ -887,7 +883,7 @@ namespace gms {
 	                    v2y = pv2y[j+11];
 	                    v1z = pv1z[j+11];
 	                    v2z = pv2z[j+11];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+11] = res;
@@ -897,7 +893,7 @@ namespace gms {
 	                    v2y = pv2y[j+12];
 	                    v1z = pv1z[j+12];
 	                    v2z = pv2z[j+12];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+12] = res;
@@ -907,7 +903,7 @@ namespace gms {
 	                    v2y = pv2y[j+13];
 	                    v1z = pv1z[j+13];
 	                    v2z = pv2z[j+13];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+13] = res; 
@@ -917,7 +913,7 @@ namespace gms {
 	                    v2y = pv2y[j+14];
 	                    v1z = pv1z[j+14];
 	                    v2z = pv2z[j+14];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+14] = res;
@@ -927,7 +923,7 @@ namespace gms {
 	                    v2y = pv2y[j+15];
 	                    v1z = pv1z[j+15];
 	                    v2z = pv2z[j+15];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+15] = res;
@@ -941,25 +937,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16c4_unroll10x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pres,
+	           void cdotv_zmm8c8_unroll10x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pres,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(0>=n,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2z;
-	                __ATTR_ALIGN__(64) zmm16c4_t res;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2z;
+	                __ATTR_ALIGN__(64) zmm8c8_t res;
 	                int32_t j,m,m1;
 	                
 	                m = n%10;
@@ -971,7 +967,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       cdotv_zmm16c4(v1x,v1y,v1z,
+	                       cdotv_zmm8c8(v1x,v1y,v1z,
 	                                     v2x,v2y,v2z,
 	                                     res);
 	                       pres[j] = res;
@@ -1040,7 +1036,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+0] = res;
@@ -1050,7 +1046,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+1] = res;
@@ -1060,7 +1056,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+2] = res;
@@ -1070,7 +1066,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+3] = res;
@@ -1080,7 +1076,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+4] = res;
@@ -1090,7 +1086,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+5] = res;
@@ -1100,7 +1096,7 @@ namespace gms {
 	                    v2y = pv2y[j+6];
 	                    v1z = pv1z[j+6];
 	                    v2z = pv2z[j+6];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+6] = res;
@@ -1110,7 +1106,7 @@ namespace gms {
 	                    v2y = pv2y[j+7];
 	                    v1z = pv1z[j+7];
 	                    v2z = pv2z[j+7];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+7] = res;
@@ -1120,7 +1116,7 @@ namespace gms {
 	                    v2y = pv2y[j+8];
 	                    v1z = pv1z[j+8];
 	                    v2z = pv2z[j+8];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+8] = res;
@@ -1130,7 +1126,7 @@ namespace gms {
 	                    v2y = pv2y[j+9];
 	                    v1z = pv1z[j+9];
 	                    v2z = pv2z[j+9];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+9] = res;
@@ -1145,25 +1141,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16c4_unroll6x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pres,
+	           void cdotv_zmm8c8_unroll6x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pres,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(0>=n,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2z;
-	                __ATTR_ALIGN__(64) zmm16c4_t res;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2z;
+	                __ATTR_ALIGN__(64) zmm8c8_t res;
 	                int32_t j,m,m1;
 	                
 	                m = n%6;
@@ -1175,7 +1171,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       cdotv_zmm16c4(v1x,v1y,v1z,
+	                       cdotv_zmm8c8(v1x,v1y,v1z,
 	                                     v2x,v2y,v2z,
 	                                     res);
 	                       pres[j] = res;
@@ -1244,7 +1240,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+0] = res;
@@ -1254,7 +1250,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+1] = res;
@@ -1264,7 +1260,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+2] = res;
@@ -1274,7 +1270,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+3] = res;
@@ -1284,7 +1280,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+4] = res;
@@ -1294,7 +1290,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+5] = res;
@@ -1312,25 +1308,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_zmm16c4_unroll2x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pres,
+	           void cdotv_zmm8c8_unroll2x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pres,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(0>=n,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v2z;
-	                __ATTR_ALIGN__(64) zmm16c4_t res;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v2z;
+	                __ATTR_ALIGN__(64) zmm8c8_t res;
 	                int32_t j,m,m1;
 	                
 	                m = n%2;
@@ -1342,7 +1338,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       cdotv_zmm16c4(v1x,v1y,v1z,
+	                       cdotv_zmm8c8(v1x,v1y,v1z,
 	                                     v2x,v2y,v2z,
 	                                     res);
 	                       pres[j] = res;
@@ -1411,7 +1407,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+0] = res;
@@ -1421,7 +1417,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    cdotv_zmm16c4(v1x,v1y,v1z,
+	                    cdotv_zmm8c8(v1x,v1y,v1z,
 	                                  v2x,v2y,v2z,
 	                                  res);
 	                    pres[j+1] = res;
@@ -1442,17 +1438,17 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m512 cnorm_zmm16c4(const zmm16c4_t vx,
-	                                const zmm16c4_t vy,
-	                                const zmm16c4_t vz) {
+	           __m512d cnorm_zmm8c8(const zmm8c8_t vx,
+	                                const zmm8c8_t vy,
+	                                const zmm8c8_t vz) {
 	                                
-	                  zmm16c4_t t,cx,cy,cz;
-	                  __m512 vs;
-	                  cconj_zmm16r4_v2(vx.re,vx.im,&cx.re,&cx.im);
-	                  cconj_zmm16r4_v2(vy.re,vy.im,&cy.re,&cy.im);
-	                  cconj_zmm16r4_v2(vz.re,vz.im,&cz.re,&cz.im);
-	                  cdotv_zmm16c4(vx,vy,vz,cx,cy,cz,t);
-	                  vs = _mm512_sqrt_ps(t.re);
+	                  zmm8c8_t t,cx,cy,cz;
+	                  __m512d vs;
+	                  cconj_zmm8r8_v2(vx.re,vx.im,&cx.re,&cx.im);
+	                  cconj_zmm8r8_v2(vy.re,vy.im,&cy.re,&cy.im);
+	                  cconj_zmm8r8_v2(vz.re,vz.im,&cz.re,&cz.im);
+	                  cdotv_zmm8c8(vx,vy,vz,cx,cy,cz,t);
+	                  vs = _mm512_sqrt_pd(t.re);
 	                  return (vs);                      
 	       }
 	       
@@ -1463,19 +1459,19 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cnorm_zmm16c4_unroll16x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	           void cnorm_zmm8c8_unroll16x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pvs,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 16;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t vs;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t vs;
 	                int32_t j,m,m1;
 	                
 	                m = n%16;
@@ -1484,7 +1480,7 @@ namespace gms {
 	                       v1x = pv1x[j];
 	                       v1y = pv1y[j];
 	                       v1z = pv1z[j];
-	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                       pvs[j] = vs;
 	                   }
 	                   if(n<16) { return;}
@@ -1524,82 +1520,82 @@ namespace gms {
                             v1x = pv1x[j+0];
 	                    v1y = pv1y[j+0];
 	                    v1z = pv1z[j+0];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+0] = vs;
 	                    v1x = pv1x[j+1];
 	                    v1y = pv1y[j+1];
 	                    v1z = pv1z[j+1];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+1] = vs;
 	                    v1x = pv1x[j+2];
 	                    v1y = pv1y[j+2];
 	                    v1z = pv1z[j+2];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+2] = vs;
 	                    v1x = pv1x[j+3];
 	                    v1y = pv1y[j+3];
 	                    v1z = pv1z[j+3];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+3] = vs;
 	                    v1x = pv1x[j+4];
 	                    v1y = pv1y[j+4];
 	                    v1z = pv1z[j+4];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+4] = vs;
 	                    v1x = pv1x[j+5];
 	                    v1y = pv1y[j+5];
 	                    v1z = pv1z[j+5];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+5] = vs;
 	                    v1x = pv1x[j+6];
 	                    v1y = pv1y[j+6];
 	                    v1z = pv1z[j+6];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+6] = vs;
 	                    v1x = pv1x[j+7];
 	                    v1y = pv1y[j+7];
 	                    v1z = pv1z[j+7];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+7] = vs;
 	                    v1x = pv1x[j+8];
 	                    v1y = pv1y[j+8];
 	                    v1z = pv1z[j+8];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+8] = vs;
 	                    v1x = pv1x[j+9];
 	                    v1y = pv1y[j+9];
 	                    v1z = pv1z[j+9];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+9] = vs;
 	                    v1x = pv1x[j+10];
 	                    v1y = pv1y[j+10];
 	                    v1z = pv1z[j+10];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+10] = vs;
 	                    v1x = pv1x[j+11];
 	                    v1y = pv1y[j+11];
 	                    v1z = pv1z[j+11];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+11] = vs;
 	                    v1x = pv1x[j+12];
 	                    v1y = pv1y[j+12];
 	                    v1z = pv1z[j+12];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+12] = vs;
 	                    v1x = pv1x[j+13];
 	                    v1y = pv1y[j+13];
 	                    v1z = pv1z[j+13];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+13] = vs;
 	                    v1x = pv1x[j+14];
 	                    v1y = pv1y[j+14];
 	                    v1z = pv1z[j+14];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+14] = vs;
 	                    v1x = pv1x[j+15];
 	                    v1y = pv1y[j+15];
 	                    v1z = pv1z[j+15];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+15] = vs;
 	                }             
 	      }
@@ -1612,19 +1608,19 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cnorm_zmm16c4_unroll10x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	           void cnorm_zmm8c8_unroll10x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pvs,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 10;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t vs;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t vs;
 	                int32_t j,m,m1;
 	                
 	                m = n%10;
@@ -1633,7 +1629,7 @@ namespace gms {
 	                       v1x = pv1x[j];
 	                       v1y = pv1y[j];
 	                       v1z = pv1z[j];
-	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                       pvs[j] = vs;
 	                   }
 	                   if(n<10) { return;}
@@ -1673,52 +1669,52 @@ namespace gms {
                             v1x = pv1x[j+0];
 	                    v1y = pv1y[j+0];
 	                    v1z = pv1z[j+0];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+0] = vs;
 	                    v1x = pv1x[j+1];
 	                    v1y = pv1y[j+1];
 	                    v1z = pv1z[j+1];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+1] = vs;
 	                    v1x = pv1x[j+2];
 	                    v1y = pv1y[j+2];
 	                    v1z = pv1z[j+2];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+2] = vs;
 	                    v1x = pv1x[j+3];
 	                    v1y = pv1y[j+3];
 	                    v1z = pv1z[j+3];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+3] = vs;
 	                    v1x = pv1x[j+4];
 	                    v1y = pv1y[j+4];
 	                    v1z = pv1z[j+4];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+4] = vs;
 	                    v1x = pv1x[j+5];
 	                    v1y = pv1y[j+5];
 	                    v1z = pv1z[j+5];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+5] = vs;
 	                    v1x = pv1x[j+6];
 	                    v1y = pv1y[j+6];
 	                    v1z = pv1z[j+6];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+6] = vs;
 	                    v1x = pv1x[j+7];
 	                    v1y = pv1y[j+7];
 	                    v1z = pv1z[j+7];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+7] = vs;
 	                    v1x = pv1x[j+8];
 	                    v1y = pv1y[j+8];
 	                    v1z = pv1z[j+8];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+8] = vs;
 	                    v1x = pv1x[j+9];
 	                    v1y = pv1y[j+9];
 	                    v1z = pv1z[j+9];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+9] = vs;
 	                  
 	                }             
@@ -1731,19 +1727,19 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cnorm_zmm16c4_unroll6x(const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	           void cnorm_zmm8c8_unroll6x(const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pvs,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 6;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t vs;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t vs;
 	                int32_t j,m,m1;
 	                
 	                m = n%6;
@@ -1752,7 +1748,7 @@ namespace gms {
 	                       v1x = pv1x[j];
 	                       v1y = pv1y[j];
 	                       v1z = pv1z[j];
-	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                       pvs[j] = vs;
 	                   }
 	                   if(n<6) { return;}
@@ -1792,32 +1788,32 @@ namespace gms {
                             v1x = pv1x[j+0];
 	                    v1y = pv1y[j+0];
 	                    v1z = pv1z[j+0];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+0] = vs;
 	                    v1x = pv1x[j+1];
 	                    v1y = pv1y[j+1];
 	                    v1z = pv1z[j+1];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+1] = vs;
 	                    v1x = pv1x[j+2];
 	                    v1y = pv1y[j+2];
 	                    v1z = pv1z[j+2];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+2] = vs;
 	                    v1x = pv1x[j+3];
 	                    v1y = pv1y[j+3];
 	                    v1z = pv1z[j+3];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+3] = vs;
 	                    v1x = pv1x[j+4];
 	                    v1y = pv1y[j+4];
 	                    v1z = pv1z[j+4];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+4] = vs;
 	                    v1x = pv1x[j+5];
 	                    v1y = pv1y[j+5];
 	                    v1z = pv1z[j+5];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+5] = vs;
 	                   	                  
 	                }             
@@ -1831,19 +1827,19 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cnorm_zmm16c4_unroll2x( const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                        const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                        zmm16c4_t * __restrict __ATTR_ALIGN__(64) pvs,
+	           void cnorm_zmm8c8_unroll2x( const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                        const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                        zmm8c8_t * __restrict __ATTR_ALIGN__(64) pvs,
 	                                        const int32_t n,
 	                                        int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 2;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1x;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1y;
-	                __ATTR_ALIGN__(64) zmm16c4_t v1z;
-	                __ATTR_ALIGN__(64) zmm16c4_t vs;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1x;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1y;
+	                __ATTR_ALIGN__(64) zmm8c8_t v1z;
+	                __ATTR_ALIGN__(64) zmm8c8_t vs;
 	                int32_t j,m,m1;
 	                
 	                m = n%2;
@@ -1852,7 +1848,7 @@ namespace gms {
 	                       v1x = pv1x[j];
 	                       v1y = pv1y[j];
 	                       v1z = pv1z[j];
-	                       vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                       vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                       pvs[j] = vs;
 	                   }
 	                   if(n<2) { return;}
@@ -1892,12 +1888,12 @@ namespace gms {
                             v1x = pv1x[j+0];
 	                    v1y = pv1y[j+0];
 	                    v1z = pv1z[j+0];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+0] = vs;
 	                    v1x = pv1x[j+1];
 	                    v1y = pv1y[j+1];
 	                    v1z = pv1z[j+1];
-	                    vs  = cnorm_zmm16c4(v1x,v1y,v1z);
+	                    vs  = cnorm_zmm8c8(v1x,v1y,v1z);
 	                    pvs[j+1] = vs;
 	                   	                   	                  
 	                }             
@@ -1912,35 +1908,35 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossc_zmm16c4(const zmm16c4_t v1x,
-	                                const zmm16c4_t v1y,
-	                                const zmm16c4_t v1z,
-	                                const zmm16c4_t v2x,
-	                                const zmm16c4_t v2y,
-	                                const zmm16c4_t v2z,
-	                                zmm16c4 & resx,
-	                                zmm16c4 & resy,
-	                                zmm16c4 & resz) {
+	           void scrossc_zmm8c8(const zmm8c8_t v1x,
+	                                const zmm8c8_t v1y,
+	                                const zmm8c8_t v1z,
+	                                const zmm8c8_t v2x,
+	                                const zmm8c8_t v2y,
+	                                const zmm8c8_t v2z,
+	                                zmm8c8 & resx,
+	                                zmm8c8 & resy,
+	                                zmm8c8 & resz) {
 	                                
-	                 zmm16c4_t t0,t1,t2,t3,t4,t5,t6;
-	                 cmul_zmm16r4(v1y.re,v1y.im,v2z.re,
+	                 zmm8c8_t t0,t1,t2,t3,t4,t5,t6;
+	                 cmul_zmm8r8(v1y.re,v1y.im,v2z.re,
 	                              v2z.im,&t0.re,&t0.im); 
-	                 cmul_zmm16r4(v1z.re,v1z.im,v2y.re,
+	                 cmul_zmm8r8(v1z.re,v1z.im,v2y.re,
 	                              v2y.im,&t1.re,&t1.im);
-	                 resx.re = _mm512_sub_ps(t0.re,t1.re);
-	                 resx.im = _mm512_sub_ps(t0.im,t1.im);
-	                 cmul_zmm16r4(v1z.re,v1z.im,v2x.re,
+	                 resx.re = _mm512_sub_pd(t0.re,t1.re);
+	                 resx.im = _mm512_sub_pd(t0.im,t1.im);
+	                 cmul_zmm8r8(v1z.re,v1z.im,v2x.re,
 	                              v2x.im,&t2.re,&t2.im);
-	                 cmul_zmm16r4(v1x.re,v1x.im,v2z.re,
+	                 cmul_zmm8r8(v1x.re,v1x.im,v2z.re,
 	                              v2z.im,&t3.re,&t3.im);
-	                 resy.re = _mm512_sub_ps(t2.re,t3.re);
-	                 resy.im = _mm512_sub_ps(t2.im,t3.im);
-	                 cmul_zmm16r4(v1x.re,v1x.im,v2y.re,
+	                 resy.re = _mm512_sub_pd(t2.re,t3.re);
+	                 resy.im = _mm512_sub_pd(t2.im,t3.im);
+	                 cmul_zmm8r8(v1x.re,v1x.im,v2y.re,
 	                              v2y.im,&t4.re,&t4.im);
-	                 cmul_zmm16r4(v1y.re,v1y.im,v2x.re,
+	                 cmul_zmm8r8(v1y.re,v1y.im,v2x.re,
 	                              v2x.im,&t5.re,&t5.im);    
-	                 resz.re = _mm512_sub_ps(t4.re,t5.re);
-	                 resz.im = _mm512_sub_ps(t4.im,t5.im);
+	                 resz.re = _mm512_sub_pd(t4.re,t5.re);
+	                 resz.im = _mm512_sub_pd(t4.im,t5.im);
 	          }
 	          
 	          
@@ -1949,29 +1945,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossc_zmm16r4_unroll16x(const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presx,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presy,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presz,
+	           void scrossc_zmm8r8_unroll16x(const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presx,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presy,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
-	                zmm16c4_t resx;
-	                zmm16c4_t resy;
-	                zmm16c4_t resz;
-	                zmm16c4_t  v1x;
-	                zmm16c4_t  v1y;
-	                zmm16c4_t  v1z;
-	                zmm16c4_t  v2x;
-	                zmm16c4_t  v2y;
-	                zmm16c4_t  v2z;   
+	                zmm8c8_t resx;
+	                zmm8c8_t resy;
+	                zmm8c8_t resz;
+	                zmm8c8_t  v1x;
+	                zmm8c8_t  v1y;
+	                zmm8c8_t  v1z;
+	                zmm8c8_t  v2x;
+	                zmm8c8_t  v2y;
+	                zmm8c8_t  v2z;   
 	                int32_t j,m,m1;
 	                
 	                m = n%16;
@@ -1983,7 +1979,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       scrossc_zmm16r4(v1x,v1y,v1z,
+	                       scrossc_zmm8r8(v1x,v1y,v1z,
 	                                       v2x,v2y,v2z,
 	                                       resx,resy,resz);
 	                       presx[j] = resx;
@@ -2054,7 +2050,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+0] = resx;
@@ -2066,7 +2062,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+1] = resx;
@@ -2078,7 +2074,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+2] = resx;
@@ -2090,7 +2086,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+3] = resx;
@@ -2102,7 +2098,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+4] = resx;
@@ -2114,7 +2110,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+5] = resx;
@@ -2126,7 +2122,7 @@ namespace gms {
 	                    v2y = pv2y[j+6];
 	                    v1z = pv1z[j+6];
 	                    v2z = pv2z[j+6];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+6] = resx;
@@ -2138,7 +2134,7 @@ namespace gms {
 	                    v2y = pv2y[j+7];
 	                    v1z = pv1z[j+7];
 	                    v2z = pv2z[j+7];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+7] = resx;
@@ -2150,7 +2146,7 @@ namespace gms {
 	                    v2y = pv2y[j+8];
 	                    v1z = pv1z[j+8];
 	                    v2z = pv2z[j+8];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+8] = resx;
@@ -2162,7 +2158,7 @@ namespace gms {
 	                    v2y = pv2y[j+9];
 	                    v1z = pv1z[j+9];
 	                    v2z = pv2z[j+9];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+9] = resx;
@@ -2174,7 +2170,7 @@ namespace gms {
 	                    v2y = pv2y[j+10];
 	                    v1z = pv1z[j+10];
 	                    v2z = pv2z[j+10];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+10] = resx;
@@ -2186,7 +2182,7 @@ namespace gms {
 	                    v2y = pv2y[j+11];
 	                    v1z = pv1z[j+11];
 	                    v2z = pv2z[j+11];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+11] = resx;
@@ -2198,7 +2194,7 @@ namespace gms {
 	                    v2y = pv2y[j+12];
 	                    v1z = pv1z[j+12];
 	                    v2z = pv2z[j+12];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+12] = resx;
@@ -2210,7 +2206,7 @@ namespace gms {
 	                    v2y = pv2y[j+13];
 	                    v1z = pv1z[j+13];
 	                    v2z = pv2z[j+13];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+13] = resx;
@@ -2222,7 +2218,7 @@ namespace gms {
 	                    v2y = pv2y[j+14];
 	                    v1z = pv1z[j+14];
 	                    v2z = pv2z[j+14];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+14] = resx;
@@ -2234,7 +2230,7 @@ namespace gms {
 	                    v2y = pv2y[j+15];
 	                    v1z = pv1z[j+15];
 	                    v2z = pv2z[j+15];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+15] = resx;
@@ -2249,29 +2245,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossc_zmm16r4_unroll10x(const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presx,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presy,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presz,
+	           void scrossc_zmm8r8_unroll10x(const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presx,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presy,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                zmm16c4_t resx;
-	                zmm16c4_t resy;
-	                zmm16c4_t resz;
-	                zmm16c4_t  v1x;
-	                zmm16c4_t  v1y;
-	                zmm16c4_t  v1z;
-	                zmm16c4_t  v2x;
-	                zmm16c4_t  v2y;
-	                zmm16c4_t  v2z;   
+	                zmm8c8_t resx;
+	                zmm8c8_t resy;
+	                zmm8c8_t resz;
+	                zmm8c8_t  v1x;
+	                zmm8c8_t  v1y;
+	                zmm8c8_t  v1z;
+	                zmm8c8_t  v2x;
+	                zmm8c8_t  v2y;
+	                zmm8c8_t  v2z;   
 	                int32_t j,m,m1;
 	                
 	                m = n%10;
@@ -2283,7 +2279,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       scrossc_zmm16r4(v1x,v1y,v1z,
+	                       scrossc_zmm8r8(v1x,v1y,v1z,
 	                                       v2x,v2y,v2z,
 	                                       resx,resy,resz);
 	                       presx[j] = resx;
@@ -2354,7 +2350,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+0] = resx;
@@ -2366,7 +2362,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+1] = resx;
@@ -2378,7 +2374,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+2] = resx;
@@ -2390,7 +2386,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+3] = resx;
@@ -2402,7 +2398,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+4] = resx;
@@ -2414,7 +2410,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+5] = resx;
@@ -2426,7 +2422,7 @@ namespace gms {
 	                    v2y = pv2y[j+6];
 	                    v1z = pv1z[j+6];
 	                    v2z = pv2z[j+6];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+6] = resx;
@@ -2438,7 +2434,7 @@ namespace gms {
 	                    v2y = pv2y[j+7];
 	                    v1z = pv1z[j+7];
 	                    v2z = pv2z[j+7];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+7] = resx;
@@ -2450,7 +2446,7 @@ namespace gms {
 	                    v2y = pv2y[j+8];
 	                    v1z = pv1z[j+8];
 	                    v2z = pv2z[j+8];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+8] = resx;
@@ -2462,7 +2458,7 @@ namespace gms {
 	                    v2y = pv2y[j+9];
 	                    v1z = pv1z[j+9];
 	                    v2z = pv2z[j+9];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+9] = resx;
@@ -2481,29 +2477,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossc_zmm16r4_unroll6x(const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presx,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presy,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presz,
+	           void scrossc_zmm8r8_unroll6x(const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presx,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presy,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                zmm16c4_t resx;
-	                zmm16c4_t resy;
-	                zmm16c4_t resz;
-	                zmm16c4_t  v1x;
-	                zmm16c4_t  v1y;
-	                zmm16c4_t  v1z;
-	                zmm16c4_t  v2x;
-	                zmm16c4_t  v2y;
-	                zmm16c4_t  v2z;   
+	                zmm8c8_t resx;
+	                zmm8c8_t resy;
+	                zmm8c8_t resz;
+	                zmm8c8_t  v1x;
+	                zmm8c8_t  v1y;
+	                zmm8c8_t  v1z;
+	                zmm8c8_t  v2x;
+	                zmm8c8_t  v2y;
+	                zmm8c8_t  v2z;   
 	                int32_t j,m,m1;
 	                
 	                m = n%6;
@@ -2515,7 +2511,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       scrossc_zmm16r4(v1x,v1y,v1z,
+	                       scrossc_zmm8r8(v1x,v1y,v1z,
 	                                       v2x,v2y,v2z,
 	                                       resx,resy,resz);
 	                       presx[j] = resx;
@@ -2586,7 +2582,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+0] = resx;
@@ -2598,7 +2594,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+1] = resx;
@@ -2610,7 +2606,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+2] = resx;
@@ -2622,7 +2618,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+3] = resx;
@@ -2634,7 +2630,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+4] = resx;
@@ -2646,7 +2642,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+5] = resx;
@@ -2665,29 +2661,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossc_zmm16r4_unroll2x(const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const zmm16c4_t  * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presx,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presy,
-	                                          zmm16c4_t * __restrict __ATTR_ALIGN__(64) presz,
+	           void scrossc_zmm8r8_unroll2x(const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1y, 
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const zmm8c8_t  * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presx,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presy,
+	                                          zmm8c8_t * __restrict __ATTR_ALIGN__(64) presz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                zmm16c4_t resx;
-	                zmm16c4_t resy;
-	                zmm16c4_t resz;
-	                zmm16c4_t  v1x;
-	                zmm16c4_t  v1y;
-	                zmm16c4_t  v1z;
-	                zmm16c4_t  v2x;
-	                zmm16c4_t  v2y;
-	                zmm16c4_t  v2z;   
+	                zmm8c8_t resx;
+	                zmm8c8_t resy;
+	                zmm8c8_t resz;
+	                zmm8c8_t  v1x;
+	                zmm8c8_t  v1y;
+	                zmm8c8_t  v1z;
+	                zmm8c8_t  v2x;
+	                zmm8c8_t  v2y;
+	                zmm8c8_t  v2z;   
 	                int32_t j,m,m1;
 	                
 	                m = n%2;
@@ -2699,7 +2695,7 @@ namespace gms {
 	                       v2y = pv2y[j];
 	                       v1z = pv1z[j];
 	                       v2z = pv2z[j];
-	                       scrossc_zmm16r4(v1x,v1y,v1z,
+	                       scrossc_zmm8r8(v1x,v1y,v1z,
 	                                       v2x,v2y,v2z,
 	                                       resx,resy,resz);
 	                       presx[j] = resx;
@@ -2770,7 +2766,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+0] = resx;
@@ -2782,7 +2778,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossc_zmm16r4(v1x,v1y,v1z,
+	                    scrossc_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    resx,resy,resz);
 	                    presx[j+1] = resx;
@@ -2799,22 +2795,22 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4(const __m512 v1x,
-	                                const __m512 v1y,
-	                                const __m512 v1z,
-	                                const __m512 v2x,
-	                                const __m512 v2y,
-	                                const __m512 v2z,
-	                                __m512 * __restrict vcx,
-	                                __m512 * __restrict vcy,
-	                                __m512 * __restrict vcz) {
+	           void scrossv_zmm8r8(const __m512d v1x,
+	                                const __m512d v1y,
+	                                const __m512d v1z,
+	                                const __m512d v2x,
+	                                const __m512d v2y,
+	                                const __m512d v2z,
+	                                __m512d * __restrict vcx,
+	                                __m512d * __restrict vcy,
+	                                __m512d * __restrict vcz) {
 	                                
-	                *vcx = _mm512_fmsub_ps(v1y,v2z,
-	                                   _mm512_mul_ps(v1x,v2y));
-	                *vcy = _mm512_fmsub_ps(v1z,v2x,
-	                                   _mm512_mul_ps(v1x,v2z));
-	                *vcz = _mm512_fmsub_ps(v1x,v2y,
-	                                   _mm512_mul_ps(v1y,v2x));
+	                *vcx = _mm512_fmsub_pd(v1y,v2z,
+	                                   _mm512_mul_pd(v1x,v2y));
+	                *vcy = _mm512_fmsub_pd(v1z,v2x,
+	                                   _mm512_mul_pd(v1x,v2z));
+	                *vcz = _mm512_fmsub_pd(v1x,v2y,
+	                                   _mm512_mul_pd(v1y,v2x));
 	         }
 	         
 	         
@@ -2823,29 +2819,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4_unroll16x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcz,
+	           void scrossv_zmm8r8_unroll16x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                  if(__builtin_expect(n<=0,0)) { return;}
 	                  if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
-	                  register __m512 v1x;
-	                  register __m512 v1y; 
-	                  register __m512 v1z;
-	                  register __m512 v2x;
-	                  register __m512 v2y;
-	                  register __m512 v2y;
-	                  register __m512 vcx;
-	                  register __m512 vcy;
-	                  register __m512 vcz;
+	                  register __m512d v1x;
+	                  register __m512d v1y; 
+	                  register __m512d v1z;
+	                  register __m512d v2x;
+	                  register __m512d v2y;
+	                  register __m512d v2y;
+	                  register __m512d vcx;
+	                  register __m512d vcy;
+	                  register __m512d vcz;
 	                  int32_t j,m,m1;
 	                  
 	                  m = n%16;
@@ -2857,7 +2853,7 @@ namespace gms {
 	                          v2y = pv2y[j];
 	                          v1z = pv1z[j];
 	                          v2z = pv2z[j];
-	                          scrossv_zmm16r4(v1x,v1y,v1z,
+	                          scrossv_zmm8r8(v1x,v1y,v1z,
 	                                          v2x,v2y,v2z,
 	                                          &vcx,&vcy,&vcz);
 	                          pvcx[j] = vcx;
@@ -2904,7 +2900,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+0] = vcx;
@@ -2916,7 +2912,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+1] = vcx;
@@ -2928,7 +2924,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+2] = vcx;
@@ -2940,7 +2936,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+3] = vcx;
@@ -2952,7 +2948,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+4] = vcx;
@@ -2964,7 +2960,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+5] = vcx;
@@ -2976,7 +2972,7 @@ namespace gms {
 	                    v2y = pv2y[j+6];
 	                    v1z = pv1z[j+6];
 	                    v2z = pv2z[j+6];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+6] = vcx;
@@ -2988,7 +2984,7 @@ namespace gms {
 	                    v2y = pv2y[j+7];
 	                    v1z = pv1z[j+7];
 	                    v2z = pv2z[j+7];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+7] = vcx;
@@ -3000,7 +2996,7 @@ namespace gms {
 	                    v2y = pv2y[j+8];
 	                    v1z = pv1z[j+8];
 	                    v2z = pv2z[j+8];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+8] = vcx;
@@ -3012,7 +3008,7 @@ namespace gms {
 	                    v2y = pv2y[j+9];
 	                    v1z = pv1z[j+9];
 	                    v2z = pv2z[j+9];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+9] = vcx;
@@ -3024,7 +3020,7 @@ namespace gms {
 	                    v2y = pv2y[j+10];
 	                    v1z = pv1z[j+10];
 	                    v2z = pv2z[j+10];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+10] = vcx;
@@ -3036,7 +3032,7 @@ namespace gms {
 	                    v2y = pv2y[j+11];
 	                    v1z = pv1z[j+11];
 	                    v2z = pv2z[j+11];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+11] = vcx;
@@ -3048,7 +3044,7 @@ namespace gms {
 	                    v2y = pv2y[j+12];
 	                    v1z = pv1z[j+12];
 	                    v2z = pv2z[j+12];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+12] = vcx;
@@ -3060,7 +3056,7 @@ namespace gms {
 	                    v2y = pv2y[j+13];
 	                    v1z = pv1z[j+13];
 	                    v2z = pv2z[j+13];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+13] = vcx;
@@ -3072,7 +3068,7 @@ namespace gms {
 	                    v2y = pv2y[j+14];
 	                    v1z = pv1z[j+14];
 	                    v2z = pv2z[j+14];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+14] = vcx;
@@ -3084,7 +3080,7 @@ namespace gms {
 	                    v2y = pv2y[j+15];
 	                    v1z = pv1z[j+15];
 	                    v2z = pv2z[j+15];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+15] = vcx;
@@ -3099,29 +3095,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcz,
+	           void scrossv_zmm8r8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                  if(__builtin_expect(n<=0,0)) { return;}
 	                  if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                  register __m512 v1x;
-	                  register __m512 v1y; 
-	                  register __m512 v1z;
-	                  register __m512 v2x;
-	                  register __m512 v2y;
-	                  register __m512 v2y;
-	                  register __m512 vcx;
-	                  register __m512 vcy;
-	                  register __m512 vcz;
+	                  register __m512d v1x;
+	                  register __m512d v1y; 
+	                  register __m512d v1z;
+	                  register __m512d v2x;
+	                  register __m512d v2y;
+	                  register __m512d v2y;
+	                  register __m512d vcx;
+	                  register __m512d vcy;
+	                  register __m512d vcz;
 	                  int32_t j,m,m1;
 	                  
 	                  m = n%10;
@@ -3133,7 +3129,7 @@ namespace gms {
 	                          v2y = pv2y[j];
 	                          v1z = pv1z[j];
 	                          v2z = pv2z[j];
-	                          scrossv_zmm16r4(v1x,v1y,v1z,
+	                          scrossv_zmm8r8(v1x,v1y,v1z,
 	                                          v2x,v2y,v2z,
 	                                          &vcx,&vcy,&vcz);
 	                          pvcx[j] = vcx;
@@ -3180,7 +3176,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+0] = vcx;
@@ -3192,7 +3188,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+1] = vcx;
@@ -3204,7 +3200,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+2] = vcx;
@@ -3216,7 +3212,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+3] = vcx;
@@ -3228,7 +3224,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+4] = vcx;
@@ -3240,7 +3236,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+5] = vcx;
@@ -3252,7 +3248,7 @@ namespace gms {
 	                    v2y = pv2y[j+6];
 	                    v1z = pv1z[j+6];
 	                    v2z = pv2z[j+6];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+6] = vcx;
@@ -3264,7 +3260,7 @@ namespace gms {
 	                    v2y = pv2y[j+7];
 	                    v1z = pv1z[j+7];
 	                    v2z = pv2z[j+7];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+7] = vcx;
@@ -3276,7 +3272,7 @@ namespace gms {
 	                    v2y = pv2y[j+8];
 	                    v1z = pv1z[j+8];
 	                    v2z = pv2z[j+8];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+8] = vcx;
@@ -3288,7 +3284,7 @@ namespace gms {
 	                    v2y = pv2y[j+9];
 	                    v1z = pv1z[j+9];
 	                    v2z = pv2z[j+9];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+9] = vcx;
@@ -3308,29 +3304,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcz,
+	           void scrossv_zmm8r8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                  if(__builtin_expect(n<=0,0)) { return;}
 	                  if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                  register __m512 v1x;
-	                  register __m512 v1y; 
-	                  register __m512 v1z;
-	                  register __m512 v2x;
-	                  register __m512 v2y;
-	                  register __m512 v2y;
-	                  register __m512 vcx;
-	                  register __m512 vcy;
-	                  register __m512 vcz;
+	                  register __m512d v1x;
+	                  register __m512d v1y; 
+	                  register __m512d v1z;
+	                  register __m512d v2x;
+	                  register __m512d v2y;
+	                  register __m512d v2y;
+	                  register __m512d vcx;
+	                  register __m512d vcy;
+	                  register __m512d vcz;
 	                  int32_t j,m,m1;
 	                  
 	                  m = n%6;
@@ -3342,7 +3338,7 @@ namespace gms {
 	                          v2y = pv2y[j];
 	                          v1z = pv1z[j];
 	                          v2z = pv2z[j];
-	                          scrossv_zmm16r4(v1x,v1y,v1z,
+	                          scrossv_zmm8r8(v1x,v1y,v1z,
 	                                          v2x,v2y,v2z,
 	                                          &vcx,&vcy,&vcz);
 	                          pvcx[j] = vcx;
@@ -3389,7 +3385,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+0] = vcx;
@@ -3401,7 +3397,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+1] = vcx;
@@ -3413,7 +3409,7 @@ namespace gms {
 	                    v2y = pv2y[j+2];
 	                    v1z = pv1z[j+2];
 	                    v2z = pv2z[j+2];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+2] = vcx;
@@ -3425,7 +3421,7 @@ namespace gms {
 	                    v2y = pv2y[j+3];
 	                    v1z = pv1z[j+3];
 	                    v2z = pv2z[j+3];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+3] = vcx;
@@ -3437,7 +3433,7 @@ namespace gms {
 	                    v2y = pv2y[j+4];
 	                    v1z = pv1z[j+4];
 	                    v2z = pv2z[j+4];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+4] = vcx;
@@ -3449,7 +3445,7 @@ namespace gms {
 	                    v2y = pv2y[j+5];
 	                    v1z = pv1z[j+5];
 	                    v2z = pv2z[j+5];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+5] = vcx;
@@ -3468,29 +3464,29 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pvcz,
+	           void scrossv_zmm8r8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pvcz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                  if(__builtin_expect(n<=0,0)) { return;}
 	                  if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                  register __m512 v1x;
-	                  register __m512 v1y; 
-	                  register __m512 v1z;
-	                  register __m512 v2x;
-	                  register __m512 v2y;
-	                  register __m512 v2y;
-	                  register __m512 vcx;
-	                  register __m512 vcy;
-	                  register __m512 vcz;
+	                  register __m512d v1x;
+	                  register __m512d v1y; 
+	                  register __m512d v1z;
+	                  register __m512d v2x;
+	                  register __m512d v2y;
+	                  register __m512d v2y;
+	                  register __m512d vcx;
+	                  register __m512d vcy;
+	                  register __m512d vcz;
 	                  int32_t j,m,m1;
 	                  
 	                  m = n%2;
@@ -3502,7 +3498,7 @@ namespace gms {
 	                          v2y = pv2y[j];
 	                          v1z = pv1z[j];
 	                          v2z = pv2z[j];
-	                          scrossv_zmm16r4(v1x,v1y,v1z,
+	                          scrossv_zmm8r8(v1x,v1y,v1z,
 	                                          v2x,v2y,v2z,
 	                                          &vcx,&vcy,&vcz);
 	                          pvcx[j] = vcx;
@@ -3549,7 +3545,7 @@ namespace gms {
 	                    v2y = pv2y[j+0];
 	                    v1z = pv1z[j+0];
 	                    v2z = pv2z[j+0];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+0] = vcx;
@@ -3561,7 +3557,7 @@ namespace gms {
 	                    v2y = pv2y[j+1];
 	                    v1z = pv1z[j+1];
 	                    v2z = pv2z[j+1];
-	                    scrossv_zmm16r4(v1x,v1y,v1z,
+	                    scrossv_zmm8r8(v1x,v1y,v1z,
 	                                    v2x,v2y,v2z,
 	                                    &vcx,&vcy,&vcz);
 	                    pvcx[j+1] = vcx;
@@ -3580,28 +3576,28 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pv1x,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pv1y,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pv1z,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pv2x,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pv2y,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pv2z,
-	                                  float * __restrict __ATTR_ALIGN__(64) vcx,
-	                                  float * __restrict __ATTR_ALIGN__(64) vcy,
-	                                  float * __restrict __ATTR_ALIGN__(64) vcz) {
+	           void scrossv_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pv1x,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pv1y,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pv1z,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pv2x,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pv2y,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pv2z,
+	                                  double * __restrict __ATTR_ALIGN__(64) vcx,
+	                                  double * __restrict __ATTR_ALIGN__(64) vcy,
+	                                  double * __restrict __ATTR_ALIGN__(64) vcz) {
 	                      
-	                 register __m512 v1x = _mm512_load_ps(&pv1x[0]);
-	                 register __m512 v1y = _mm512_load_ps(&pv1y[0]);
-	                 register __m512 v1z = _mm512_load_ps(&pv1z[0]);
-	                 register __m512 v2x = _mm512_load_ps(&pv2x[0]);
-	                 register __m512 v2y = _mm512_load_ps(&pv2y[0]);
-	                 register __m512 v2z = _mm512_load_ps(&pv2z[0]);          
-	                *vcx = _mm512_fmsub_ps(v1y,v2z,
-	                                   _mm512_mul_ps(v1x,v2y));
-	                *vcy = _mm512_fmsub_ps(v1z,v2x,
-	                                   _mm512_mul_ps(v1x,v2z));
-	                *vcz = _mm512_fmsub_ps(v1x,v2y,
-	                                   _mm512_mul_ps(v1y,v2x));
+	                 register __m512d v1x = _mm512_load_pd(&pv1x[0]);
+	                 register __m512d v1y = _mm512_load_pd(&pv1y[0]);
+	                 register __m512d v1z = _mm512_load_pd(&pv1z[0]);
+	                 register __m512d v2x = _mm512_load_pd(&pv2x[0]);
+	                 register __m512d v2y = _mm512_load_pd(&pv2y[0]);
+	                 register __m512d v2z = _mm512_load_pd(&pv2z[0]);          
+	                *vcx = _mm512_fmsub_pd(v1y,v2z,
+	                                   _mm512_mul_pd(v1x,v2y));
+	                *vcy = _mm512_fmsub_pd(v1z,v2x,
+	                                   _mm512_mul_pd(v1x,v2z));
+	                *vcz = _mm512_fmsub_pd(v1x,v2y,
+	                                   _mm512_mul_pd(v1y,v2x));
 	         }
 	         
 	         
@@ -3610,28 +3606,28 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void scrossv_zmm16r4_u(const float * __restrict pv1x,
-	                                  const float * __restrict pv1y,
-	                                  const float * __restrict pv1z,
-	                                  const float * __restrict pv2x,
-	                                  const float * __restrict pv2y,
-	                                  const float * __restrict pv2z,
-	                                  float * __restrict vcx,
-	                                  float * __restrict vcy,
-	                                  float * __restrict vcz) {
+	           void scrossv_zmm8r8_u(const double * __restrict pv1x,
+	                                  const double * __restrict pv1y,
+	                                  const double * __restrict pv1z,
+	                                  const double * __restrict pv2x,
+	                                  const double * __restrict pv2y,
+	                                  const double * __restrict pv2z,
+	                                  double * __restrict vcx,
+	                                  double * __restrict vcy,
+	                                  double * __restrict vcz) {
 	                      
-	                 register __m512 v1x = _mm512_loadu_ps(&pv1x[0]);
-	                 register __m512 v1y = _mm512_loadu_ps(&pv1y[0]);
-	                 register __m512 v1z = _mm512_loadu_ps(&pv1z[0]);
-	                 register __m512 v2x = _mm512_loadu_ps(&pv2x[0]);
-	                 register __m512 v2y = _mm512_loadu_ps(&pv2y[0]);
-	                 register __m512 v2z = _mm512_loadu_ps(&pv2z[0]);          
-	                *vcx = _mm512_fmsub_ps(v1y,v2z,
-	                                   _mm512_mul_ps(v1x,v2y));
-	                *vcy = _mm512_fmsub_ps(v1z,v2x,
-	                                   _mm512_mul_ps(v1x,v2z));
-	                *vcz = _mm512_fmsub_ps(v1x,v2y,
-	                                   _mm512_mul_ps(v1y,v2x));
+	                 register __m512d v1x = _mm512_loadu_pd(&pv1x[0]);
+	                 register __m512d v1y = _mm512_loadu_pd(&pv1y[0]);
+	                 register __m512d v1z = _mm512_loadu_pd(&pv1z[0]);
+	                 register __m512d v2x = _mm512_loadu_pd(&pv2x[0]);
+	                 register __m512d v2y = _mm512_loadu_pd(&pv2y[0]);
+	                 register __m512d v2z = _mm512_loadu_pd(&pv2z[0]);          
+	                *vcx = _mm512_fmsub_pd(v1y,v2z,
+	                                   _mm512_mul_pd(v1x,v2y));
+	                *vcy = _mm512_fmsub_pd(v1z,v2x,
+	                                   _mm512_mul_pd(v1x,v2z));
+	                *vcz = _mm512_fmsub_pd(v1x,v2y,
+	                                   _mm512_mul_pd(v1y,v2x));
 	         }
 	         
 	         
@@ -3642,20 +3638,20 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4(  const __m512 tht,
-	                                  const __m512 phi,
-	                                  __m512 * __restrict dvx,
-	                                  __m512 * __restrict dvy,
-	                                  __m512 * __restrict dvz) {
+	           void dir_vec_zmm8r8(  const __m512d tht,
+	                                  const __m512d phi,
+	                                  __m512d * __restrict dvx,
+	                                  __m512d * __restrict dvy,
+	                                  __m512d * __restrict dvz) {
 	                  
 	                        
-	                register __m512 stht,cphi,sphi,ctht;
-	                cphi = xcosf(phi);
-	                stht = xsinf(tht);
-	                *dvx = _mm512_mul_ps(stht,cphi);
-	                sphi = xsinf(phi);
-	                *dvy = _mm512_mul_ps(stht,sphi);
-	                ctht = xcosf(tht);
+	                register __m512d stht,cphi,sphi,ctht;
+	                cphi = xcos(phi);
+	                stht = xsin(tht);
+	                *dvx = _mm512_mul_pd(stht,cphi);
+	                sphi = xsin(phi);
+	                *dvy = _mm512_mul_pd(stht,sphi);
+	                ctht = xcos(tht);
 	                *dvz = ctht;                       
 	        }
 	        
@@ -3665,21 +3661,21 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4_unroll16x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_zmm8r8_unroll16x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	               if(__builtin_expect(n<=0,0)) {return;}
 	               if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 16;
-	               register __m512 tht;
-	               register __m512 phi;
-	               register __m512 dvx;
-	               register __m512 dvy;
-	               register __m512 dvz;
+	               register __m512d tht;
+	               register __m512d phi;
+	               register __m512d dvx;
+	               register __m512d dvy;
+	               register __m512d dvz;
 	               int32_t j,m,m1;
 	               
 	               m = n%16;
@@ -3687,7 +3683,7 @@ namespace gms {
 	                  for(j = 0; j != m; ++j) {
 	                      tht = ptht[j];
 	                      phi = pphi[j];
-	                      dir_vec_zmm16r4(tht,phi,
+	                      dir_vec_zmm8r8(tht,phi,
 	                                      &dvx,&dvy,&dvz);
 	                      pdvx[j] = dvx;
 	                      pdvy[j] = dvy;
@@ -3716,112 +3712,112 @@ namespace gms {
 #endif	              
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+0] = dvx;
 	                    pdvy[j+0] = dvy;
 	                    pdvz[j+0] = dvz;
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+1] = dvx;
 	                    pdvy[j+1] = dvy;
 	                    pdvz[j+1] = dvz;
 	                    tht = ptht[j+2];
 	                    phi = pphi[j+2];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+2] = dvx;
 	                    pdvy[j+2] = dvy;
 	                    pdvz[j+2] = dvz;
 	                    tht = ptht[j+3];
 	                    phi = pphi[j+3];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+3] = dvx;
 	                    pdvy[j+3] = dvy;
 	                    pdvz[j+3] = dvz;
 	                    tht = ptht[j+4];
 	                    phi = pphi[j+4];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+4] = dvx;
 	                    pdvy[j+4] = dvy;
 	                    pdvz[j+4] = dvz;
 	                    tht = ptht[j+5];
 	                    phi = pphi[j+5];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+5] = dvx;
 	                    pdvy[j+5] = dvy;
 	                    pdvz[j+5] = dvz;
 	                    tht = ptht[j+6];
 	                    phi = pphi[j+6];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+6] = dvx;
 	                    pdvy[j+6] = dvy;
 	                    pdvz[j+6] = dvz;
 	                    tht = ptht[j+7];
 	                    phi = pphi[j+7];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+7] = dvx;
 	                    pdvy[j+7] = dvy;
 	                    pdvz[j+7] = dvz;
 	                    tht = ptht[j+8];
 	                    phi = pphi[j+8];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+8] = dvx;
 	                    pdvy[j+8] = dvy;
 	                    pdvz[j+8] = dvz;
 	                    tht = ptht[j+9];
 	                    phi = pphi[j+9];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+9] = dvx;
 	                    pdvy[j+9] = dvy;
 	                    pdvz[j+9] = dvz;
 	                    tht = ptht[j+10];
 	                    phi = pphi[j+10];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+10] = dvx;
 	                    pdvy[j+10] = dvy;
 	                    pdvz[j+10] = dvz;
 	                    tht = ptht[j+11];
 	                    phi = pphi[j+11];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+11] = dvx;
 	                    pdvy[j+11] = dvy;
 	                    pdvz[j+11] = dvz;
 	                    tht = ptht[j+12];
 	                    phi = pphi[j+12];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+12] = dvx;
 	                    pdvy[j+12] = dvy;
 	                    pdvz[j+12] = dvz;
 	                    tht = ptht[j+13];
 	                    phi = pphi[j+13];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+13] = dvx;
 	                    pdvy[j+13] = dvy;
 	                    pdvz[j+13] = dvz;
 	                    tht = ptht[j+14];
 	                    phi = pphi[j+14];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+14] = dvx;
 	                    pdvy[j+14] = dvy;
 	                    pdvz[j+14] = dvz;
 	                    tht = ptht[j+15];
 	                    phi = pphi[j+15];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+15] = dvx;
 	                    pdvy[j+15] = dvy;
@@ -3835,21 +3831,21 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_zmm8r8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	               if(__builtin_expect(n<=0,0)) {return;}
 	               if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 10;
-	               register __m512 tht;
-	               register __m512 phi;
-	               register __m512 dvx;
-	               register __m512 dvy;
-	               register __m512 dvz;
+	               register __m512d tht;
+	               register __m512d phi;
+	               register __m512d dvx;
+	               register __m512d dvy;
+	               register __m512d dvz;
 	               int32_t j,m,m1;
 	               
 	               m = n%10;
@@ -3857,7 +3853,7 @@ namespace gms {
 	                  for(j = 0; j != m; ++j) {
 	                      tht = ptht[j];
 	                      phi = pphi[j];
-	                      dir_vec_zmm16r4(tht,phi,
+	                      dir_vec_zmm8r8(tht,phi,
 	                                      &dvx,&dvy,&dvz);
 	                      pdvx[j] = dvx;
 	                      pdvy[j] = dvy;
@@ -3886,70 +3882,70 @@ namespace gms {
 #endif	              
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+0] = dvx;
 	                    pdvy[j+0] = dvy;
 	                    pdvz[j+0] = dvz;
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+1] = dvx;
 	                    pdvy[j+1] = dvy;
 	                    pdvz[j+1] = dvz;
 	                    tht = ptht[j+2];
 	                    phi = pphi[j+2];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+2] = dvx;
 	                    pdvy[j+2] = dvy;
 	                    pdvz[j+2] = dvz;
 	                    tht = ptht[j+3];
 	                    phi = pphi[j+3];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+3] = dvx;
 	                    pdvy[j+3] = dvy;
 	                    pdvz[j+3] = dvz;
 	                    tht = ptht[j+4];
 	                    phi = pphi[j+4];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+4] = dvx;
 	                    pdvy[j+4] = dvy;
 	                    pdvz[j+4] = dvz;
 	                    tht = ptht[j+5];
 	                    phi = pphi[j+5];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+5] = dvx;
 	                    pdvy[j+5] = dvy;
 	                    pdvz[j+5] = dvz;
 	                    tht = ptht[j+6];
 	                    phi = pphi[j+6];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+6] = dvx;
 	                    pdvy[j+6] = dvy;
 	                    pdvz[j+6] = dvz;
 	                    tht = ptht[j+7];
 	                    phi = pphi[j+7];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+7] = dvx;
 	                    pdvy[j+7] = dvy;
 	                    pdvz[j+7] = dvz;
 	                    tht = ptht[j+8];
 	                    phi = pphi[j+8];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+8] = dvx;
 	                    pdvy[j+8] = dvy;
 	                    pdvz[j+8] = dvz;
 	                    tht = ptht[j+9];
 	                    phi = pphi[j+9];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+9] = dvx;
 	                    pdvy[j+9] = dvy;
@@ -3968,21 +3964,21 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_zmm8r8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	               if(__builtin_expect(n<=0,0)) {return;}
 	               if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 6;
-	               register __m512 tht;
-	               register __m512 phi;
-	               register __m512 dvx;
-	               register __m512 dvy;
-	               register __m512 dvz;
+	               register __m512d tht;
+	               register __m512d phi;
+	               register __m512d dvx;
+	               register __m512d dvy;
+	               register __m512d dvz;
 	               int32_t j,m,m1;
 	               
 	               m = n%6;
@@ -3990,7 +3986,7 @@ namespace gms {
 	                  for(j = 0; j != m; ++j) {
 	                      tht = ptht[j];
 	                      phi = pphi[j];
-	                      dir_vec_zmm16r4(tht,phi,
+	                      dir_vec_zmm8r8(tht,phi,
 	                                      &dvx,&dvy,&dvz);
 	                      pdvx[j] = dvx;
 	                      pdvy[j] = dvy;
@@ -4019,42 +4015,42 @@ namespace gms {
 #endif	              
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+0] = dvx;
 	                    pdvy[j+0] = dvy;
 	                    pdvz[j+0] = dvz;
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+1] = dvx;
 	                    pdvy[j+1] = dvy;
 	                    pdvz[j+1] = dvz;
 	                    tht = ptht[j+2];
 	                    phi = pphi[j+2];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+2] = dvx;
 	                    pdvy[j+2] = dvy;
 	                    pdvz[j+2] = dvz;
 	                    tht = ptht[j+3];
 	                    phi = pphi[j+3];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+3] = dvx;
 	                    pdvy[j+3] = dvy;
 	                    pdvz[j+3] = dvz;
 	                    tht = ptht[j+4];
 	                    phi = pphi[j+4];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+4] = dvx;
 	                    pdvy[j+4] = dvy;
 	                    pdvz[j+4] = dvz;
 	                    tht = ptht[j+5];
 	                    phi = pphi[j+5];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+5] = dvx;
 	                    pdvy[j+5] = dvy;
@@ -4073,21 +4069,21 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_zmm8r8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	               if(__builtin_expect(n<=0,0)) {return;}
 	               if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 2;
-	               register __m512 tht;
-	               register __m512 phi;
-	               register __m512 dvx;
-	               register __m512 dvy;
-	               register __m512 dvz;
+	               register __m512d tht;
+	               register __m512d phi;
+	               register __m512d dvx;
+	               register __m512d dvy;
+	               register __m512d dvz;
 	               int32_t j,m,m1;
 	               
 	               m = n%2;
@@ -4095,7 +4091,7 @@ namespace gms {
 	                  for(j = 0; j != m; ++j) {
 	                      tht = ptht[j];
 	                      phi = pphi[j];
-	                      dir_vec_zmm16r4(tht,phi,
+	                      dir_vec_zmm8r8(tht,phi,
 	                                      &dvx,&dvy,&dvz);
 	                      pdvx[j] = dvx;
 	                      pdvy[j] = dvy;
@@ -4124,14 +4120,14 @@ namespace gms {
 #endif	              
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+0] = dvx;
 	                    pdvy[j+0] = dvy;
 	                    pdvz[j+0] = dvz;
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
-	                    dir_vec_zmm16r4(tht,phi,
+	                    dir_vec_zmm8r8(tht,phi,
 	                                    &dvx,&dvy,&dvz);
 	                    pdvx[j+1] = dvx;
 	                    pdvy[j+1] = dvy;
@@ -4146,22 +4142,22 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pphi,
-	                                  float * __restrict __ATTR_ALIGN__(64) dvx,
-	                                  float * __restrict __ATTR_ALIGN__(64) dvy,
-	                                  float * __restrict __ATTR_ALIGN__(64) dvz) {
+	           void dir_vec_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pphi,
+	                                  double * __restrict __ATTR_ALIGN__(64) dvx,
+	                                  double * __restrict __ATTR_ALIGN__(64) dvy,
+	                                  double * __restrict __ATTR_ALIGN__(64) dvz) {
 	                  
-	                register __m512 tht = _mm512_load_ps(&ptht[0]);
-	                register __m512 phi = _mm512_load_ps(&pphi[0]);              
-	                register __m512 stht,cphi,sphi,ctht;
-	                cphi = xcosf(phi);
-	                stht = xsinf(tht);
-	                _mm512_store_ps(&dvx[0] , _mm512_mul_ps(stht,cphi));
-	                sphi = xsinf(phi);
-	                _mm512_store_ps(&dvy[0] , _mm512_mul_ps(stht,sphi));
-	                ctht = xcosf(tht);
-	                _mm512_store_ps(&dvz[0] , ctht);                       
+	                register __m512d tht = _mm512_load_pd(&ptht[0]);
+	                register __m512d phi = _mm512_load_pd(&pphi[0]);              
+	                register __m512d stht,cphi,sphi,ctht;
+	                cphi = xcos(phi);
+	                stht = xsin(tht);
+	                _mm512_store_pd(&dvx[0] , _mm512_mul_pd(stht,cphi));
+	                sphi = xsin(phi);
+	                _mm512_store_pd(&dvy[0] , _mm512_mul_pd(stht,sphi));
+	                ctht = xcos(tht);
+	                _mm512_store_pd(&dvz[0] , ctht);                       
 	        }
 	        
 	        
@@ -4170,22 +4166,22 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_zmm16r4_u(const float * __restrict  ptht,
-	                                  const float * __restrict  pphi,
-	                                  float * __restrict  dvx,
-	                                  float * __restrict  dvy,
-	                                  float * __restrict  dvz) {
+	           void dir_vec_zmm8r8_u(const double * __restrict  ptht,
+	                                  const double * __restrict  pphi,
+	                                  double * __restrict  dvx,
+	                                  double * __restrict  dvy,
+	                                  double * __restrict  dvz) {
 	                  
-	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
-	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);              
-	                register __m512 stht,cphi,sphi,ctht;
-	                cphi = xcosf(phi);
-	                stht = xsinf(tht);
-	                _mm512_storeu_ps(&dvx[0] , _mm512_mul_ps(stht,cphi));
-	                sphi = xsinf(phi);
-	                _mm512_storeu_ps(&dvy[0] , _mm512_mul_ps(stht,sphi));
-	                ctht = xcosf(tht);
-	                _mm512_storeu_ps(&dvz[0] , ctht);                       
+	                register __m512d tht = _mm512_loadu_pd(&ptht[0]);
+	                register __m512d phi = _mm512_loadu_pd(&pphi[0]);              
+	                register __m512d stht,cphi,sphi,ctht;
+	                cphi = xcos(phi);
+	                stht = xsin(tht);
+	                _mm512_storeu_pd(&dvx[0] , _mm512_mul_pd(stht,cphi));
+	                sphi = xsin(phi);
+	                _mm512_storeu_pd(&dvy[0] , _mm512_mul_pd(stht,sphi));
+	                ctht = xcos(tht);
+	                _mm512_storeu_pd(&dvz[0] , ctht);                       
 	        }
 	        
 	        
@@ -4197,25 +4193,25 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4(const __m512 tht,
-	                                const __m512 phi,
-	                                const __m512 psi,
-	                                __m512 * __restrict pvx,
-	                                __m512 * __restrict pvy,
-	                                __m512 * __restrict pvz) {
+	           void pol_vec_zmm8r8(const __m512d tht,
+	                                const __m512d phi,
+	                                const __m512d psi,
+	                                __m512d * __restrict pvx,
+	                                __m512d * __restrict pvy,
+	                                __m512d * __restrict pvz) {
 	                 
 	                using namespace gms::math               
-	                register __m512 cpsi,cphi,spsi,sphi,t0;
-	                cpsi = xcosf(psi);
-	                cphi = xcosf(phi);
-	                spsi = xsinf(psi);
-	                sphi = xsinf(phi);
-	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
-	                *pvx = _mm512_fmsub_ps(cpsi,sphi,
-	                                   _mm512_mul_ps(t0,cphi));
-	                *pvy = _mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
-	                                                    _mm512_mul_ps(t0,sphi));
-	                *pvz = _mm512_mul_ps(spsi,xsinf(tht));                         
+	                register __m512d cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcos(psi);
+	                cphi = xcos(phi);
+	                spsi = xsin(psi);
+	                sphi = xsin(phi);
+	                t0   = _mm512_mul_pd(spsi,xcos(tht));
+	                *pvx = _mm512_fmsub_pd(cpsi,sphi,
+	                                   _mm512_mul_pd(t0,cphi));
+	                *pvy = _mm512_fmsub_pd(negate_zmm8r8(cpsi),cphi,
+	                                                    _mm512_mul_pd(t0,sphi));
+	                *pvz = _mm512_mul_pd(spsi,xsin(tht));                         
 	      }
 	      
 	      
@@ -4224,23 +4220,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4_unroll16x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	           void pol_vec_zmm8r8_unroll16x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
-	                register __m512 tht;
-	                register __m512 phi;
-	                register __m512 psi;
-	                register __m512 pvx;
-	                register __m512 pvy;
-	                register __m512 pvz;
+	                register __m512d tht;
+	                register __m512d phi;
+	                register __m512d psi;
+	                register __m512d pvx;
+	                register __m512d pvy;
+	                register __m512d pvz;
 	                int32_t j,m,m1;    
 	                
 	                m = n%16;
@@ -4249,7 +4245,7 @@ namespace gms {
 	                       tht = ptht[j];
 	                       phi = pphi[j];
 	                       psi = ppsi[j];
-	                       pol_vec_zmm16r4(tht,phi,psi,
+	                       pol_vec_zmm8r8(tht,phi,psi,
 	                                       &pvx,&pvy,&pvz);
 	                       ppvx[j] = pvx;
 	                       ppvy[j] = pvy;
@@ -4280,7 +4276,7 @@ namespace gms {
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
 	                    psi = ppsi[j+0];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+0] = pvx;
 	                    ppvy[j+0] = pvy;
@@ -4288,7 +4284,7 @@ namespace gms {
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
 	                    psi = ppsi[j+1];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+1] = pvx;
 	                    ppvy[j+1] = pvy;
@@ -4296,7 +4292,7 @@ namespace gms {
 	                    tht = ptht[j+2];
 	                    phi = pphi[j+2];
 	                    psi = ppsi[j+2];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+2] = pvx;
 	                    ppvy[j+2] = pvy;
@@ -4304,7 +4300,7 @@ namespace gms {
 	                    tht = ptht[j+3];
 	                    phi = pphi[j+3];
 	                    psi = ppsi[j+3];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+3] = pvx;
 	                    ppvy[j+3] = pvy;
@@ -4312,7 +4308,7 @@ namespace gms {
 	                    tht = ptht[j+4];
 	                    phi = pphi[j+4];
 	                    psi = ppsi[j+4];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+4] = pvx;
 	                    ppvy[j+4] = pvy;
@@ -4320,7 +4316,7 @@ namespace gms {
 	                    tht = ptht[j+5];
 	                    phi = pphi[j+5];
 	                    psi = ppsi[j+5];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+5] = pvx;
 	                    ppvy[j+5] = pvy;
@@ -4328,7 +4324,7 @@ namespace gms {
 	                    tht = ptht[j+6];
 	                    phi = pphi[j+6];
 	                    psi = ppsi[j+6];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+6] = pvx;
 	                    ppvy[j+6] = pvy;
@@ -4336,7 +4332,7 @@ namespace gms {
 	                    tht = ptht[j+7];
 	                    phi = pphi[j+7];
 	                    psi = ppsi[j+7];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+7] = pvx;
 	                    ppvy[j+7] = pvy;
@@ -4344,7 +4340,7 @@ namespace gms {
 	                    tht = ptht[j+8];
 	                    phi = pphi[j+8];
 	                    psi = ppsi[j+8];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+8] = pvx;
 	                    ppvy[j+8] = pvy;
@@ -4352,7 +4348,7 @@ namespace gms {
 	                    tht = ptht[j+9];
 	                    phi = pphi[j+9];
 	                    psi = ppsi[j+9];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+9] = pvx;
 	                    ppvy[j+9] = pvy;
@@ -4360,7 +4356,7 @@ namespace gms {
 	                    tht = ptht[j+10];
 	                    phi = pphi[j+10];
 	                    psi = ppsi[j+10];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+10] = pvx;
 	                    ppvy[j+10] = pvy;
@@ -4368,7 +4364,7 @@ namespace gms {
 	                    tht = ptht[j+11];
 	                    phi = pphi[j+11];
 	                    psi = ppsi[j+11];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+11] = pvx;
 	                    ppvy[j+11] = pvy;
@@ -4376,7 +4372,7 @@ namespace gms {
 	                    tht = ptht[j+12];
 	                    phi = pphi[j+12];
 	                    psi = ppsi[j+12];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+12] = pvx;
 	                    ppvy[j+12] = pvy;
@@ -4384,7 +4380,7 @@ namespace gms {
 	                    tht = ptht[j+13];
 	                    phi = pphi[j+13];
 	                    psi = ppsi[j+13];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+13] = pvx;
 	                    ppvy[j+13] = pvy;
@@ -4392,7 +4388,7 @@ namespace gms {
 	                    tht = ptht[j+14];
 	                    phi = pphi[j+14];
 	                    psi = ppsi[j+14];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+14] = pvx;
 	                    ppvy[j+14] = pvy;
@@ -4400,7 +4396,7 @@ namespace gms {
 	                    tht = ptht[j+15];
 	                    phi = pphi[j+15];
 	                    psi = ppsi[j+15];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+15] = pvx;
 	                    ppvy[j+15] = pvy;
@@ -4415,23 +4411,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	           void pol_vec_zmm8r8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                register __m512 tht;
-	                register __m512 phi;
-	                register __m512 psi;
-	                register __m512 pvx;
-	                register __m512 pvy;
-	                register __m512 pvz;
+	                register __m512d tht;
+	                register __m512d phi;
+	                register __m512d psi;
+	                register __m512d pvx;
+	                register __m512d pvy;
+	                register __m512d pvz;
 	                int32_t j,m,m1;    
 	                
 	                m = n%10;
@@ -4440,7 +4436,7 @@ namespace gms {
 	                       tht = ptht[j];
 	                       phi = pphi[j];
 	                       psi = ppsi[j];
-	                       pol_vec_zmm16r4(tht,phi,psi,
+	                       pol_vec_zmm8r8(tht,phi,psi,
 	                                       &pvx,&pvy,&pvz);
 	                       ppvx[j] = pvx;
 	                       ppvy[j] = pvy;
@@ -4471,7 +4467,7 @@ namespace gms {
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
 	                    psi = ppsi[j+0];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+0] = pvx;
 	                    ppvy[j+0] = pvy;
@@ -4479,7 +4475,7 @@ namespace gms {
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
 	                    psi = ppsi[j+1];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+1] = pvx;
 	                    ppvy[j+1] = pvy;
@@ -4487,7 +4483,7 @@ namespace gms {
 	                    tht = ptht[j+2];
 	                    phi = pphi[j+2];
 	                    psi = ppsi[j+2];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+2] = pvx;
 	                    ppvy[j+2] = pvy;
@@ -4495,7 +4491,7 @@ namespace gms {
 	                    tht = ptht[j+3];
 	                    phi = pphi[j+3];
 	                    psi = ppsi[j+3];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+3] = pvx;
 	                    ppvy[j+3] = pvy;
@@ -4503,7 +4499,7 @@ namespace gms {
 	                    tht = ptht[j+4];
 	                    phi = pphi[j+4];
 	                    psi = ppsi[j+4];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+4] = pvx;
 	                    ppvy[j+4] = pvy;
@@ -4511,7 +4507,7 @@ namespace gms {
 	                    tht = ptht[j+5];
 	                    phi = pphi[j+5];
 	                    psi = ppsi[j+5];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+5] = pvx;
 	                    ppvy[j+5] = pvy;
@@ -4519,7 +4515,7 @@ namespace gms {
 	                    tht = ptht[j+6];
 	                    phi = pphi[j+6];
 	                    psi = ppsi[j+6];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+6] = pvx;
 	                    ppvy[j+6] = pvy;
@@ -4527,7 +4523,7 @@ namespace gms {
 	                    tht = ptht[j+7];
 	                    phi = pphi[j+7];
 	                    psi = ppsi[j+7];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+7] = pvx;
 	                    ppvy[j+7] = pvy;
@@ -4535,7 +4531,7 @@ namespace gms {
 	                    tht = ptht[j+8];
 	                    phi = pphi[j+8];
 	                    psi = ppsi[j+8];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+8] = pvx;
 	                    ppvy[j+8] = pvy;
@@ -4543,7 +4539,7 @@ namespace gms {
 	                    tht = ptht[j+9];
 	                    phi = pphi[j+9];
 	                    psi = ppsi[j+9];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+9] = pvx;
 	                    ppvy[j+9] = pvy;
@@ -4562,23 +4558,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	           void pol_vec_zmm8r8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                register __m512 tht;
-	                register __m512 phi;
-	                register __m512 psi;
-	                register __m512 pvx;
-	                register __m512 pvy;
-	                register __m512 pvz;
+	                register __m512d tht;
+	                register __m512d phi;
+	                register __m512d psi;
+	                register __m512d pvx;
+	                register __m512d pvy;
+	                register __m512d pvz;
 	                int32_t j,m,m1;    
 	                
 	                m = n%6;
@@ -4587,7 +4583,7 @@ namespace gms {
 	                       tht = ptht[j];
 	                       phi = pphi[j];
 	                       psi = ppsi[j];
-	                       pol_vec_zmm16r4(tht,phi,psi,
+	                       pol_vec_zmm8r8(tht,phi,psi,
 	                                       &pvx,&pvy,&pvz);
 	                       ppvx[j] = pvx;
 	                       ppvy[j] = pvy;
@@ -4618,7 +4614,7 @@ namespace gms {
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
 	                    psi = ppsi[j+0];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+0] = pvx;
 	                    ppvy[j+0] = pvy;
@@ -4626,7 +4622,7 @@ namespace gms {
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
 	                    psi = ppsi[j+1];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+1] = pvx;
 	                    ppvy[j+1] = pvy;
@@ -4634,7 +4630,7 @@ namespace gms {
 	                    tht = ptht[j+2];
 	                    phi = pphi[j+2];
 	                    psi = ppsi[j+2];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+2] = pvx;
 	                    ppvy[j+2] = pvy;
@@ -4642,7 +4638,7 @@ namespace gms {
 	                    tht = ptht[j+3];
 	                    phi = pphi[j+3];
 	                    psi = ppsi[j+3];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+3] = pvx;
 	                    ppvy[j+3] = pvy;
@@ -4650,7 +4646,7 @@ namespace gms {
 	                    tht = ptht[j+4];
 	                    phi = pphi[j+4];
 	                    psi = ppsi[j+4];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+4] = pvx;
 	                    ppvy[j+4] = pvy;
@@ -4658,7 +4654,7 @@ namespace gms {
 	                    tht = ptht[j+5];
 	                    phi = pphi[j+5];
 	                    psi = ppsi[j+5];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+5] = pvx;
 	                    ppvy[j+5] = pvy;
@@ -4678,23 +4674,23 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvx,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvy,
-	                                          __m512 * __restrict __ATTR_ALIGN__(64) ppvz,
+	           void pol_vec_zmm8r8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                          const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvx,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvy,
+	                                          __m512d * __restrict __ATTR_ALIGN__(64) ppvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                register __m512 tht;
-	                register __m512 phi;
-	                register __m512 psi;
-	                register __m512 pvx;
-	                register __m512 pvy;
-	                register __m512 pvz;
+	                register __m512d tht;
+	                register __m512d phi;
+	                register __m512d psi;
+	                register __m512d pvx;
+	                register __m512d pvy;
+	                register __m512d pvz;
 	                int32_t j,m,m1;    
 	                
 	                m = n%2;
@@ -4703,7 +4699,7 @@ namespace gms {
 	                       tht = ptht[j];
 	                       phi = pphi[j];
 	                       psi = ppsi[j];
-	                       pol_vec_zmm16r4(tht,phi,psi,
+	                       pol_vec_zmm8r8(tht,phi,psi,
 	                                       &pvx,&pvy,&pvz);
 	                       ppvx[j] = pvx;
 	                       ppvy[j] = pvy;
@@ -4734,7 +4730,7 @@ namespace gms {
                             tht = ptht[j+0];
 	                    phi = pphi[j+0];
 	                    psi = ppsi[j+0];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+0] = pvx;
 	                    ppvy[j+0] = pvy;
@@ -4742,7 +4738,7 @@ namespace gms {
 	                    tht = ptht[j+1];
 	                    phi = pphi[j+1];
 	                    psi = ppsi[j+1];
-	                    pol_vec_zmm16r4(tht,phi,psi,
+	                    pol_vec_zmm8r8(tht,phi,psi,
 	                                    &pvx,&pvy,&pvz);
 	                    ppvx[j+1] = pvx;
 	                    ppvy[j+1] = pvy;
@@ -4758,28 +4754,28 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
-	                                  const float * __restrict __ATTR_ALIGN__(64) pphi,
-	                                  const float * __restrict __ATTR_ALIGN__(64) psi,
-	                                  float * __restrict __ATTR_ALIGN__(64) pvx,
-	                                  float * __restrict __ATTR_ALIGN__(64) pvy,
-	                                  float * __restrict __ATTR_ALIGN__(64) pvz) {
+	           void pol_vec_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const double * __restrict __ATTR_ALIGN__(64) pphi,
+	                                  const double * __restrict __ATTR_ALIGN__(64) psi,
+	                                  double * __restrict __ATTR_ALIGN__(64) pvx,
+	                                  double * __restrict __ATTR_ALIGN__(64) pvy,
+	                                  double * __restrict __ATTR_ALIGN__(64) pvz) {
 	                 
 	                 using namespace gms::math     
-	                register __m512 tht = _mm512_load_ps(&ptht[0]);
-	                register __m512 phi = _mm512_load_ps(&pphi[0]);  
-	                register __m512 psi = _mm512_load_ps(&ppsi[0]);           
-	                register __m512 cpsi,cphi,spsi,sphi,t0;
-	                cpsi = xcosf(psi);
-	                cphi = xcosf(phi);
-	                spsi = xsinf(psi);
-	                sphi = xsinf(phi);
-	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
-	                _mm512_store_ps(&pvx[0] ,_mm512_fmsub_ps(cpsi,sphi,
-	                                   _mm512_mul_ps(t0,cphi)));
-	                _mm512_store_ps(&pvy[0] ,_mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
-	                                                    _mm512_mul_ps(t0,sphi)));
-	                _mm512_store_ps(&pvz[0] ,_mm512_mul_ps(spsi,xsinf(tht)));                         
+	                register __m512d tht = _mm512_load_pd(&ptht[0]);
+	                register __m512d phi = _mm512_load_pd(&pphi[0]);  
+	                register __m512d psi = _mm512_load_pd(&ppsi[0]);           
+	                register __m512d cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcos(psi);
+	                cphi = xcos(phi);
+	                spsi = xsin(psi);
+	                sphi = xsin(phi);
+	                t0   = _mm512_mul_pd(spsi,xcos(tht));
+	                _mm512_store_pd(&pvx[0] ,_mm512_fmsub_pd(cpsi,sphi,
+	                                   _mm512_mul_pd(t0,cphi)));
+	                _mm512_store_pd(&pvy[0] ,_mm512_fmsub_pd(negate_zmm8r8(cpsi),cphi,
+	                                                    _mm512_mul_pd(t0,sphi)));
+	                _mm512_store_pd(&pvz[0] ,_mm512_mul_pd(spsi,xsin(tht)));                         
 	      } 
 	        
 	        
@@ -4788,28 +4784,28 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_zmm16r4_u(const float * __restrict  ptht,
-	                                  const float * __restrict  pphi,
-	                                  const float * __restrict  psi,
-	                                  float * __restrict  pvx,
-	                                  float * __restrict  pvy,
-	                                  float * __restrict  pvz) {
+	           void pol_vec_zmm8r8_u(const double * __restrict  ptht,
+	                                  const double * __restrict  pphi,
+	                                  const double * __restrict  psi,
+	                                  double * __restrict  pvx,
+	                                  double * __restrict  pvy,
+	                                  double * __restrict  pvz) {
 	                 
 	                  using namespace gms::math    
-	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
-	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);  
-	                register __m512 psi = _mm512_loadu_ps(&ppsi[0]);           
-	                register __m512 cpsi,cphi,spsi,sphi,t0;
-	                cpsi = xcosf(psi);
-	                cphi = xcosf(phi);
-	                spsi = xsinf(psi);
-	                sphi = xsinf(phi);
-	                t0   = _mm512_mul_ps(spsi,xcosf(tht));
-	                _mm512_storeu_ps(&pvx[0] ,_mm512_fmsub_ps(cpsi,sphi,
-	                                   _mm512_mul_ps(t0,cphi)));
-	                _mm512_storeu_ps(&pvy[0] ,_mm512_fmsub_ps(negate_zmm16r4(cpsi),cphi,
-	                                                    _mm512_mul_ps(t0,sphi)));
-	                _mm512_storeu_ps(&pvz[0] ,_mm512_mul_ps(spsi,xsinf(tht)));                         
+	                register __m512d tht = _mm512_loadu_pd(&ptht[0]);
+	                register __m512d phi = _mm512_loadu_pd(&pphi[0]);  
+	                register __m512d psi = _mm512_loadu_pd(&ppsi[0]);           
+	                register __m512d cpsi,cphi,spsi,sphi,t0;
+	                cpsi = xcos(psi);
+	                cphi = xcos(phi);
+	                spsi = xsin(psi);
+	                sphi = xsin(phi);
+	                t0   = _mm512_mul_pd(spsi,xcos(tht));
+	                _mm512_storeu_pd(&pvx[0] ,_mm512_fmsub_pd(cpsi,sphi,
+	                                   _mm512_mul_pd(t0,cphi)));
+	                _mm512_storeu_pd(&pvy[0] ,_mm512_fmsub_pd(negate_zmm8r8(cpsi),cphi,
+	                                                    _mm512_mul_pd(t0,sphi)));
+	                _mm512_storeu_pd(&pvz[0] ,_mm512_mul_pd(spsi,xsin(tht)));                         
 	      } 
 	      
 	      
@@ -4828,35 +4824,35 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16c4(const __m512 vpolx,
-	                                 const __m512 vpoly,
-	                                 const __m512 vpolz,
-	                                 const __m512 vdirx,
-	                                 const __m512 vdiry,
-	                                 const __m512 vdirz,
-	                                 const __m512 vrx,
-	                                 const __m512 vry,
-	                                 const __m512 vrz,
-	                                 const zmm16c4_t k,
-	                                 zmm16c4_t & H_x,
-	                                 zmm16c4_t & H_y,
-	                                 zmm16c4_t & H_z) {
+	           void H_XYZ_VP_zmm8c8(const __m512d vpolx,
+	                                 const __m512d vpoly,
+	                                 const __m512d vpolz,
+	                                 const __m512d vdirx,
+	                                 const __m512d vdiry,
+	                                 const __m512d vdirz,
+	                                 const __m512d vrx,
+	                                 const __m512d vry,
+	                                 const __m512d vrz,
+	                                 const zmm8c8_t k,
+	                                 zmm8c8_t & H_x,
+	                                 zmm8c8_t & H_y,
+	                                 zmm8c8_t & H_z) {
 	               
-	               	register __m512 dp,cer,cei,ii,ir,expr,expi;
-	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	               	register __m512d dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm8r8(vdirx,vdiry,vdirz,
 	                                   vrx,vry,vrz);
-	                ii = _mm512_set1_ps(1.0f);
-	                ir = _mm512_setzero_ps();
-	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
-	                cer = _mm512_mul_ps(dp,cer);
-	                cei = _mm512_mul_ps(dp,cei);
-	                cexp_zmm16r4(cer,cei,&expr,&expi);
-	                H_x.re = _mm512_mul_ps(vpolx,expr);
-	                H_x.im = _mm512_mul_ps(vpolx,expi);
-	                H_y.re = _mm512_mul_ps(vpoly,expr);
-	                H_y.im = _mm512_mul_ps(vpoly,expi);
-	                H_z.re = _mm512_mul_ps(vpolz,expr);
-	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	                ii = _mm512_set1_pd(1.0f);
+	                ir = _mm512_setzero_pd();
+	                cmul_zmm8r8(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_pd(dp,cer);
+	                cei = _mm512_mul_pd(dp,cei);
+	                cexp_zmm8r8(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_pd(vpolx,expr);
+	                H_x.im = _mm512_mul_pd(vpolx,expi);
+	                H_y.re = _mm512_mul_pd(vpoly,expr);
+	                H_y.im = _mm512_mul_pd(vpoly,expi);
+	                H_z.re = _mm512_mul_pd(vpolz,expr);
+	                H_z.im = _mm512_mul_pd(vpolz,expi);
 	        }
 	        
 	        
@@ -4865,38 +4861,38 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16c4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	           void H_XYZ_VP_zmm8c8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_z,
 	                                           const int32_t n,
 	                                           int32_t & PF_DISPATCH) {
 	                                           
 	                                           
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                zmm16c4_t k;
-	                zmm16c4_t H_x;
-	                zmm16c4_t H_y;
-	                zmm16c4_t H_z;
-	                register __m512 vpolx;
-	                register __m512 vpoly;
-	                register __m512 vpolz;
-	                register __m512 vdirx;
-	                register __m512 vdiry;
-	                register __m512 vdirz;
-	                register __m512 vrx;
-	                register __m512 vry;
-	                register __m512 vrz;
+	                zmm8c8_t k;
+	                zmm8c8_t H_x;
+	                zmm8c8_t H_y;
+	                zmm8c8_t H_z;
+	                register __m512d vpolx;
+	                register __m512d vpoly;
+	                register __m512d vpolz;
+	                register __m512d vdirx;
+	                register __m512d vdiry;
+	                register __m512d vdirz;
+	                register __m512d vrx;
+	                register __m512d vry;
+	                register __m512d vrz;
 	                int32_t j,m,m1;
 	                
 	                m = n%10;
@@ -4912,7 +4908,7 @@ namespace gms {
 	                       vry   = pvry[j];
 	                       vrz   = pvrz[j];
 	                       k     = pk[j];
-	                       H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                       H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                        vdirx,vdiry,vdirz,
 	                                        vrx,vry,vrz,
 	                                        H_x,H_y,H_z);
@@ -4984,7 +4980,7 @@ namespace gms {
 	                    vry   = pvry[j+0];
 	                    vrz   = pvrz[j+0];
 	                    k     = pk[j+0];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5001,7 +4997,7 @@ namespace gms {
 	                    vry   = pvry[j+1];
 	                    vrz   = pvrz[j+1];
 	                    k     = pk[j+1];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5018,7 +5014,7 @@ namespace gms {
 	                    vry   = pvry[j+2];
 	                    vrz   = pvrz[j+2];
 	                    k     = pk[j+2];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5035,7 +5031,7 @@ namespace gms {
 	                    vry   = pvry[j+3];
 	                    vrz   = pvrz[j+3];
 	                    k     = pk[j+3];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5052,7 +5048,7 @@ namespace gms {
 	                    vry   = pvry[j+4];
 	                    vrz   = pvrz[j+4];
 	                    k     = pk[j+4];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5069,7 +5065,7 @@ namespace gms {
 	                    vry   = pvry[j+5];
 	                    vrz   = pvrz[j+5];
 	                    k     = pk[j+5];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5086,7 +5082,7 @@ namespace gms {
 	                    vry   = pvry[j+6];
 	                    vrz   = pvrz[j+6];
 	                    k     = pk[j+6];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5103,7 +5099,7 @@ namespace gms {
 	                    vry   = pvry[j+7];
 	                    vrz   = pvrz[j+7];
 	                    k     = pk[j+7];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5120,7 +5116,7 @@ namespace gms {
 	                    vry   = pvry[j+8];
 	                    vrz   = pvrz[j+8];
 	                    k     = pk[j+8];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5137,7 +5133,7 @@ namespace gms {
 	                    vry   = pvry[j+9];
 	                    vrz   = pvrz[j+9];
 	                    k     = pk[j+9];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5156,38 +5152,38 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16c4_unroll6x( const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	           void H_XYZ_VP_zmm8c8_unroll6x( const __m512d * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_z,
 	                                           const int32_t n,
 	                                           int32_t & PF_DISPATCH) {
 	                                           
 	                                           
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                zmm16c4_t k;
-	                zmm16c4_t H_x;
-	                zmm16c4_t H_y;
-	                zmm16c4_t H_z;
-	                register __m512 vpolx;
-	                register __m512 vpoly;
-	                register __m512 vpolz;
-	                register __m512 vdirx;
-	                register __m512 vdiry;
-	                register __m512 vdirz;
-	                register __m512 vrx;
-	                register __m512 vry;
-	                register __m512 vrz;
+	                zmm8c8_t k;
+	                zmm8c8_t H_x;
+	                zmm8c8_t H_y;
+	                zmm8c8_t H_z;
+	                register __m512d vpolx;
+	                register __m512d vpoly;
+	                register __m512d vpolz;
+	                register __m512d vdirx;
+	                register __m512d vdiry;
+	                register __m512d vdirz;
+	                register __m512d vrx;
+	                register __m512d vry;
+	                register __m512d vrz;
 	                int32_t j,m,m1;
 	                
 	                m = n%6;
@@ -5203,7 +5199,7 @@ namespace gms {
 	                       vry   = pvry[j];
 	                       vrz   = pvrz[j];
 	                       k     = pk[j];
-	                       H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                       H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                        vdirx,vdiry,vdirz,
 	                                        vrx,vry,vrz,
 	                                        H_x,H_y,H_z);
@@ -5275,7 +5271,7 @@ namespace gms {
 	                    vry   = pvry[j+0];
 	                    vrz   = pvrz[j+0];
 	                    k     = pk[j+0];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5292,7 +5288,7 @@ namespace gms {
 	                    vry   = pvry[j+1];
 	                    vrz   = pvrz[j+1];
 	                    k     = pk[j+1];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5309,7 +5305,7 @@ namespace gms {
 	                    vry   = pvry[j+2];
 	                    vrz   = pvrz[j+2];
 	                    k     = pk[j+2];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5326,7 +5322,7 @@ namespace gms {
 	                    vry   = pvry[j+3];
 	                    vrz   = pvrz[j+3];
 	                    k     = pk[j+3];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5343,7 +5339,7 @@ namespace gms {
 	                    vry   = pvry[j+4];
 	                    vrz   = pvrz[j+4];
 	                    k     = pk[j+4];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5360,7 +5356,7 @@ namespace gms {
 	                    vry   = pvry[j+5];
 	                    vrz   = pvrz[j+5];
 	                    k     = pk[j+5];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5381,38 +5377,38 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16c4_unroll2x( const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	           void H_XYZ_VP_zmm8c8_unroll2x( const __m512d * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_z,
 	                                           const int32_t n,
 	                                           int32_t & PF_DISPATCH) {
 	                                           
 	                                           
 	                if(__builtin_expect(n<=0,0)) {return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                zmm16c4_t k;
-	                zmm16c4_t H_x;
-	                zmm16c4_t H_y;
-	                zmm16c4_t H_z;
-	                register __m512 vpolx;
-	                register __m512 vpoly;
-	                register __m512 vpolz;
-	                register __m512 vdirx;
-	                register __m512 vdiry;
-	                register __m512 vdirz;
-	                register __m512 vrx;
-	                register __m512 vry;
-	                register __m512 vrz;
+	                zmm8c8_t k;
+	                zmm8c8_t H_x;
+	                zmm8c8_t H_y;
+	                zmm8c8_t H_z;
+	                register __m512d vpolx;
+	                register __m512d vpoly;
+	                register __m512d vpolz;
+	                register __m512d vdirx;
+	                register __m512d vdiry;
+	                register __m512d vdirz;
+	                register __m512d vrx;
+	                register __m512d vry;
+	                register __m512d vrz;
 	                int32_t j,m,m1;
 	                
 	                m = n%2;
@@ -5428,7 +5424,7 @@ namespace gms {
 	                       vry   = pvry[j];
 	                       vrz   = pvrz[j];
 	                       k     = pk[j];
-	                       H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                       H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                        vdirx,vdiry,vdirz,
 	                                        vrx,vry,vrz,
 	                                        H_x,H_y,H_z);
@@ -5500,7 +5496,7 @@ namespace gms {
 	                    vry   = pvry[j+0];
 	                    vrz   = pvrz[j+0];
 	                    k     = pk[j+0];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5517,7 +5513,7 @@ namespace gms {
 	                    vry   = pvry[j+1];
 	                    vrz   = pvrz[j+1];
 	                    k     = pk[j+1];
-	                    H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                    H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                     vdirx,vdiry,vdirz,
 	                                     vrx,vry,vrz,
 	                                     H_x,H_y,H_z);
@@ -5534,44 +5530,44 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) vpolx,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vpoly,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vpolz,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vdirx,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vdiry,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vdirz,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vrx,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vry,
-	                                 const float * __restrict __ATTR_ALIGN__(64) vrz,
-	                                 const zmm16c4_t k,
-	                                 zmm16c4_t & H_x,
-	                                 zmm16c4_t & H_y,
-	                                 zmm16c4_t & H_z) {
+	           void H_XYZ_VP_zmm8c8_a(const double * __restrict __ATTR_ALIGN__(64) vpolx,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vpoly,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vpolz,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vdirx,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vdiry,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vdirz,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vrx,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vry,
+	                                 const double * __restrict __ATTR_ALIGN__(64) vrz,
+	                                 const zmm8c8_t k,
+	                                 zmm8c8_t & H_x,
+	                                 zmm8c8_t & H_y,
+	                                 zmm8c8_t & H_z) {
 	               
-	                register __m512 vpolx = _mm512_load_ps(&vpolx[0]);
-	                register __m512 vpoly = _mm512_load_ps(&vpoly[0]);
-	                register __m512 vpolz = _mm512_load_ps(&vpolz[0]);
-	                register __m512 vdirx = _mm512_load_ps(&vdirx[0]);
-	                register __m512 vdiry = _mm512_load_ps(&vdiry[0]);
-	                register __m512 vdirz = _mm512_load_ps(&vdirz[0]);
-	                register __m512 vrx   = _mm512_load_ps(&vrx[0]);
-	                register __m512 vry   = _mm512_load_ps(&vry[0]);
-	                register __m512 vrz   = _mm512_load_ps(&vrz[0]);
-	               	__m512 dp,cer,cei,ii,ir,expr,expi;
-	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                register __m512d vpolx = _mm512_load_pd(&vpolx[0]);
+	                register __m512d vpoly = _mm512_load_pd(&vpoly[0]);
+	                register __m512d vpolz = _mm512_load_pd(&vpolz[0]);
+	                register __m512d vdirx = _mm512_load_pd(&vdirx[0]);
+	                register __m512d vdiry = _mm512_load_pd(&vdiry[0]);
+	                register __m512d vdirz = _mm512_load_pd(&vdirz[0]);
+	                register __m512d vrx   = _mm512_load_pd(&vrx[0]);
+	                register __m512d vry   = _mm512_load_pd(&vry[0]);
+	                register __m512d vrz   = _mm512_load_pd(&vrz[0]);
+	               	__m512d dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm8r8(vdirx,vdiry,vdirz,
 	                                   vrx,vry,vrz);
-	                ii = _mm512_set1_ps(1.0f);
-	                ir = _mm512_setzero_ps();
-	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
-	                cer = _mm512_mul_ps(dp,cer);
-	                cei = _mm512_mul_ps(dp,cei);
-	                cexp_zmm16r4(cer,cei,&expr,&expi);
-	                H_x.re = _mm512_mul_ps(vpolx,expr);
-	                H_x.im = _mm512_mul_ps(vpolx,expi);
-	                H_y.re = _mm512_mul_ps(vpoly,expr);
-	                H_y.im = _mm512_mul_ps(vpoly,expi);
-	                H_z.re = _mm512_mul_ps(vpolz,expr);
-	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	                ii = _mm512_set1_pd(1.0f);
+	                ir = _mm512_setzero_pd();
+	                cmul_zmm8r8(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_pd(dp,cer);
+	                cei = _mm512_mul_pd(dp,cei);
+	                cexp_zmm8r8(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_pd(vpolx,expr);
+	                H_x.im = _mm512_mul_pd(vpolx,expi);
+	                H_y.re = _mm512_mul_pd(vpoly,expr);
+	                H_y.im = _mm512_mul_pd(vpoly,expi);
+	                H_z.re = _mm512_mul_pd(vpolz,expr);
+	                H_z.im = _mm512_mul_pd(vpolz,expi);
 	        }
 	        
 	        
@@ -5580,44 +5576,44 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_XYZ_VP_zmm16c4_u(const float * __restrict  vpolx,
-	                                 const float * __restrict  vpoly,
-	                                 const float * __restrict  vpolz,
-	                                 const float * __restrict  vdirx,
-	                                 const float * __restrict  vdiry,
-	                                 const float * __restrict  vdirz,
-	                                 const float * __restrict  vrx,
-	                                 const float * __restrict  vry,
-	                                 const float * __restrict  vrz,
-	                                 const zmm16c4_t k,
-	                                 zmm16c4_t & H_x,
-	                                 zmm16c4_t & H_y,
-	                                 zmm16c4_t & H_z) {
+	           void H_XYZ_VP_zmm8c8_u(const double * __restrict  vpolx,
+	                                 const double * __restrict  vpoly,
+	                                 const double * __restrict  vpolz,
+	                                 const double * __restrict  vdirx,
+	                                 const double * __restrict  vdiry,
+	                                 const double * __restrict  vdirz,
+	                                 const double * __restrict  vrx,
+	                                 const double * __restrict  vry,
+	                                 const double * __restrict  vrz,
+	                                 const zmm8c8_t k,
+	                                 zmm8c8_t & H_x,
+	                                 zmm8c8_t & H_y,
+	                                 zmm8c8_t & H_z) {
 	               
-	                register __m512 vpolx = _mm512_loadu_ps(&vpolx[0]);
-	                register __m512 vpoly = _mm512_loadu_ps(&vpoly[0]);
-	                register __m512 vpolz = _mm512_loadu_ps(&vpolz[0]);
-	                register __m512 vdirx = _mm512_loadu_ps(&vdirx[0]);
-	                register __m512 vdiry = _mm512_loadu_ps(&vdiry[0]);
-	                register __m512 vdirz = _mm512_loadu_ps(&vdirz[0]);
-	                register __m512 vrx   = _mm512_loadu_ps(&vrx[0]);
-	                register __m512 vry   = _mm512_loadu_ps(&vry[0]);
-	                register __m512 vrz   = _mm512_loadu_ps(&vrz[0]);
-	               	__m512 dp,cer,cei,ii,ir,expr,expi;
-	                dp = sdotv_zmm16r4(vdirx,vdiry,vdirz,
+	                register __m512d vpolx = _mm512_loadu_pd(&vpolx[0]);
+	                register __m512d vpoly = _mm512_loadu_pd(&vpoly[0]);
+	                register __m512d vpolz = _mm512_loadu_pd(&vpolz[0]);
+	                register __m512d vdirx = _mm512_loadu_pd(&vdirx[0]);
+	                register __m512d vdiry = _mm512_loadu_pd(&vdiry[0]);
+	                register __m512d vdirz = _mm512_loadu_pd(&vdirz[0]);
+	                register __m512d vrx   = _mm512_loadu_pd(&vrx[0]);
+	                register __m512d vry   = _mm512_loadu_pd(&vry[0]);
+	                register __m512d vrz   = _mm512_loadu_pd(&vrz[0]);
+	               	__m512d dp,cer,cei,ii,ir,expr,expi;
+	                dp = sdotv_zmm8r8(vdirx,vdiry,vdirz,
 	                                   vrx,vry,vrz);
-	                ii = _mm512_set1_ps(1.0f);
-	                ir = _mm512_setzero_ps();
-	                cmul_zmm16r4(ir,ii,k.re,k.im,&cer,&cei);
-	                cer = _mm512_mul_ps(dp,cer);
-	                cei = _mm512_mul_ps(dp,cei);
-	                cexp_zmm16r4(cer,cei,&expr,&expi);
-	                H_x.re = _mm512_mul_ps(vpolx,expr);
-	                H_x.im = _mm512_mul_ps(vpolx,expi);
-	                H_y.re = _mm512_mul_ps(vpoly,expr);
-	                H_y.im = _mm512_mul_ps(vpoly,expi);
-	                H_z.re = _mm512_mul_ps(vpolz,expr);
-	                H_z.im = _mm512_mul_ps(vpolz,expi);
+	                ii = _mm512_set1_pd(1.0f);
+	                ir = _mm512_setzero_pd();
+	                cmul_zmm8r8(ir,ii,k.re,k.im,&cer,&cei);
+	                cer = _mm512_mul_pd(dp,cer);
+	                cei = _mm512_mul_pd(dp,cei);
+	                cexp_zmm8r8(cer,cei,&expr,&expi);
+	                H_x.re = _mm512_mul_pd(vpolx,expr);
+	                H_x.im = _mm512_mul_pd(vpolx,expi);
+	                H_y.re = _mm512_mul_pd(vpoly,expr);
+	                H_y.im = _mm512_mul_pd(vpoly,expi);
+	                H_z.re = _mm512_mul_pd(vpolz,expr);
+	                H_z.im = _mm512_mul_pd(vpolz,expi);
 	        }
 	        
 	        
@@ -5633,62 +5629,62 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_VP_zmm16c4(const __m512 vpolx,
-	                                 const __m512 vpoly,
-	                                 const __m512 vpolz,
-	                                 const __m512 vdirx,
-	                                 const __m512 vdiry,
-	                                 const __m512 vdirz,
-	                                 const zmm16c4_t k,
-	                                 const __m512 omega,
-	                                 const __m512 vrx,
-	                                 const __m512 vry,
-	                                 const __m512 vrz,
-	                                 zmm16c4_t & B_x,
-	                                 zmm16c4_t & B_y,
-	                                 zmm16c4_t & B_z) {
+	           void B_XYZ_VP_zmm8c8(const __m512d vpolx,
+	                                 const __m512d vpoly,
+	                                 const __m512d vpolz,
+	                                 const __m512d vdirx,
+	                                 const __m512d vdiry,
+	                                 const __m512d vdirz,
+	                                 const zmm8c8_t k,
+	                                 const __m512d omega,
+	                                 const __m512d vrx,
+	                                 const __m512d vry,
+	                                 const __m512d vrz,
+	                                 zmm8c8_t & B_x,
+	                                 zmm8c8_t & B_y,
+	                                 zmm8c8_t & B_z) {
 	                                 
-	                const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);
-	                zmm16c4_t cdirx;
-	                zmm16c4_t cdiry;
-	                zmm16c4_t cdirz;
-	                zmm16c4_t H_x;
-	                zmm16c4_t H_y;
-	                zmm16c4_t H_z;
-	                zmm16c4_t cpx;
-	                zmm16c4_t cpy;
-	                zmm16c4_t cpz;
-	                zmm16c4_t t0;
-	                __m512 zz0;
-	                H_XYZ_VP_zmm16c4(vpolx,vpoy,vpolz,
+	                const __m512d mu0 = _mm512_set1_pd(0.0000012566370614359173f);
+	                zmm8c8_t cdirx;
+	                zmm8c8_t cdiry;
+	                zmm8c8_t cdirz;
+	                zmm8c8_t H_x;
+	                zmm8c8_t H_y;
+	                zmm8c8_t H_z;
+	                zmm8c8_t cpx;
+	                zmm8c8_t cpy;
+	                zmm8c8_t cpz;
+	                zmm8c8_t t0;
+	                __m512d zz0;
+	                H_XYZ_VP_zmm8c8(vpolx,vpoy,vpolz,
 	                               	 vdirx,vdiry,vdirz,
 	                                 vrx,vry,vrz,
 	                                 H_x,H_y,H_z);
 	                                 	                                 
 	                cdirx.re = vdirx;
-	                cdirx.im = _mm512_setzero_ps();
+	                cdirx.im = _mm512_setzero_pd();
 	                cdiry.re = vdiry;
 	                cdiry.im = cdirx.im;
 	                cdirz.re = vdirz;
 	                cdirz.im = cdirx.im;
 	                
-	                zz0      = _mm512_mul_ps(omega,mu0);
-	                t0.re    = _mm512_div_ps(k.re,zz0);
-	                t0.im    = _mm512_div_ps(k.im,zz0);
+	                zz0      = _mm512_mul_pd(omega,mu0);
+	                t0.re    = _mm512_div_pd(k.re,zz0);
+	                t0.im    = _mm512_div_pd(k.im,zz0);
 	                
-	                scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	                scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                                H_x,H_y,H_z,
                                         cpx,cpy,cpz);                
 	                     	                                
-	                cmul_zmm16r4(t0.re,t0.im,
+	                cmul_zmm8r8(t0.re,t0.im,
 	                             cpx.re,cpx.im,
 	                             &B_x.re,&B_x.im);
 	                             
-	                cmul_zmm16r4(t0.re,t0.im,
+	                cmul_zmm8r8(t0.re,t0.im,
 	                             cpy.re,cpy.im,
 	                             &B_y.re,&B_y.im);
 	                            
-	                cmul_zmm16r4(t0.re,t0.im,
+	                cmul_zmm8r8(t0.re,t0.im,
 	                             cpz.re,cpz.im,
 	                             &B_z.re,&B_z.im);
 	                          
@@ -5701,39 +5697,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_VP_zmm16c4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pomega,
-	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	           void B_XYZ_VP_zmm8c8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pomega,
+	                                           const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_z,
 	                                           const int32_t n,
 	                                           int32_t & PF_DIST) {
 	                                           
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                 zmm16c4_t k;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 vpolx;
-	                 register __m512 vpoly;
-	                 register __m512 vpolz;
-	                 register __m512 vdirx;
-	                 register __m512 vdiry;
-	                 register __m512 vdirz;
-	                 register __m512 vrx;
-	                 register __m512 vry;
-	                 register __m512 vrz;
-	                 register __m512 omg;
+	                 zmm8c8_t k;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d vpolx;
+	                 register __m512d vpoly;
+	                 register __m512d vpolz;
+	                 register __m512d vdirx;
+	                 register __m512d vdiry;
+	                 register __m512d vdirz;
+	                 register __m512d vrx;
+	                 register __m512d vry;
+	                 register __m512d vrz;
+	                 register __m512d omg;
 	                 int32_t j,m,m1;   
 	                 
 	                 m = n%10;
@@ -5750,7 +5746,7 @@ namespace gms {
 	                        vrz   = pvrz[j];
 	                        omg   = pomega[j];
 	                        k     = pk[j];
-	                        B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                         vdirx,vdiry,vdirz,
 	                                         k,omg,vrx,vry,vrz,
 	                                         B_x,B_y,B_z);
@@ -5827,7 +5823,7 @@ namespace gms {
 	                        vrz   = pvrz[j+0];
 	                        omg   = pomega[j+0];
 	                        k     = pk[j+0];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5845,7 +5841,7 @@ namespace gms {
 	                        vrz   = pvrz[j+1];
 	                        omg   = pomega[j+1];
 	                        k     = pk[j+1];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5863,7 +5859,7 @@ namespace gms {
 	                        vrz   = pvrz[j+2];
 	                        omg   = pomega[j+2];
 	                        k     = pk[j+2];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5881,7 +5877,7 @@ namespace gms {
 	                        vrz   = pvrz[j+3];
 	                        omg   = pomega[j+3];
 	                        k     = pk[j+3];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5899,7 +5895,7 @@ namespace gms {
 	                        vrz   = pvrz[j+4];
 	                        omg   = pomega[j+4];
 	                        k     = pk[j+4];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5917,7 +5913,7 @@ namespace gms {
 	                        vrz   = pvrz[j+5];
 	                        omg   = pomega[j+5];
 	                        k     = pk[j+5];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5935,7 +5931,7 @@ namespace gms {
 	                        vrz   = pvrz[j+6];
 	                        omg   = pomega[j+6];
 	                        k     = pk[j+6];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5953,7 +5949,7 @@ namespace gms {
 	                        vrz   = pvrz[j+7];
 	                        omg   = pomega[j+7];
 	                        k     = pk[j+7];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5971,7 +5967,7 @@ namespace gms {
 	                        vrz   = pvrz[j+8];
 	                        omg   = pomega[j+8];
 	                        k     = pk[j+8];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -5989,7 +5985,7 @@ namespace gms {
 	                        vrz   = pvrz[j+9];
 	                        omg   = pomega[j+9];
 	                        k     = pk[j+9];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6008,39 +6004,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_VP_zmm16c4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pomega,
-	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	           void B_XYZ_VP_zmm8c8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pomega,
+	                                           const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_z,
 	                                           const int32_t n,
 	                                           int32_t & PF_DIST) {
 	                                           
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                 zmm16c4_t k;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 vpolx;
-	                 register __m512 vpoly;
-	                 register __m512 vpolz;
-	                 register __m512 vdirx;
-	                 register __m512 vdiry;
-	                 register __m512 vdirz;
-	                 register __m512 vrx;
-	                 register __m512 vry;
-	                 register __m512 vrz;
-	                 register __m512 omg;
+	                 zmm8c8_t k;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d vpolx;
+	                 register __m512d vpoly;
+	                 register __m512d vpolz;
+	                 register __m512d vdirx;
+	                 register __m512d vdiry;
+	                 register __m512d vdirz;
+	                 register __m512d vrx;
+	                 register __m512d vry;
+	                 register __m512d vrz;
+	                 register __m512d omg;
 	                 int32_t j,m,m1;   
 	                 
 	                 m = n%6;
@@ -6057,7 +6053,7 @@ namespace gms {
 	                        vrz   = pvrz[j];
 	                        omg   = pomega[j];
 	                        k     = pk[j];
-	                        B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                         vdirx,vdiry,vdirz,
 	                                         k,omg,vrx,vry,vrz,
 	                                         B_x,B_y,B_z);
@@ -6134,7 +6130,7 @@ namespace gms {
 	                        vrz   = pvrz[j+0];
 	                        omg   = pomega[j+0];
 	                        k     = pk[j+0];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6152,7 +6148,7 @@ namespace gms {
 	                        vrz   = pvrz[j+1];
 	                        omg   = pomega[j+1];
 	                        k     = pk[j+1];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6170,7 +6166,7 @@ namespace gms {
 	                        vrz   = pvrz[j+2];
 	                        omg   = pomega[j+2];
 	                        k     = pk[j+2];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6188,7 +6184,7 @@ namespace gms {
 	                        vrz   = pvrz[j+3];
 	                        omg   = pomega[j+3];
 	                        k     = pk[j+3];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6206,7 +6202,7 @@ namespace gms {
 	                        vrz   = pvrz[j+4];
 	                        omg   = pomega[j+4];
 	                        k     = pk[j+4];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6224,7 +6220,7 @@ namespace gms {
 	                        vrz   = pvrz[j+5];
 	                        omg   = pomega[j+5];
 	                        k     = pk[j+5];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6246,39 +6242,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_VP_zmm16c4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvry,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                           const __m512 * __restrict __ATTR_ALIGN__(64) pomega,
-	                                           const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pk,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
-	                                           zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	           void B_XYZ_VP_zmm8c8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvry,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                           const __m512d * __restrict __ATTR_ALIGN__(64) pomega,
+	                                           const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pk,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                           zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_z,
 	                                           const int32_t n,
 	                                           int32_t & PF_DIST) {
 	                                           
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                 zmm16c4_t k;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 vpolx;
-	                 register __m512 vpoly;
-	                 register __m512 vpolz;
-	                 register __m512 vdirx;
-	                 register __m512 vdiry;
-	                 register __m512 vdirz;
-	                 register __m512 vrx;
-	                 register __m512 vry;
-	                 register __m512 vrz;
-	                 register __m512 omg;
+	                 zmm8c8_t k;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d vpolx;
+	                 register __m512d vpoly;
+	                 register __m512d vpolz;
+	                 register __m512d vdirx;
+	                 register __m512d vdiry;
+	                 register __m512d vdirz;
+	                 register __m512d vrx;
+	                 register __m512d vry;
+	                 register __m512d vrz;
+	                 register __m512d omg;
 	                 int32_t j,m,m1;   
 	                 
 	                 m = n%2;
@@ -6295,7 +6291,7 @@ namespace gms {
 	                        vrz   = pvrz[j];
 	                        omg   = pomega[j];
 	                        k     = pk[j];
-	                        B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                         vdirx,vdiry,vdirz,
 	                                         k,omg,vrx,vry,vrz,
 	                                         B_x,B_y,B_z);
@@ -6372,7 +6368,7 @@ namespace gms {
 	                        vrz   = pvrz[j+0];
 	                        omg   = pomega[j+0];
 	                        k     = pk[j+0];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6390,7 +6386,7 @@ namespace gms {
 	                        vrz   = pvrz[j+1];
 	                        omg   = pomega[j+1];
 	                        k     = pk[j+1];
-	                        B_XYZ_zmm16c4(vpolx,vpoly,vpolz,
+	                        B_XYZ_zmm8c8(vpolx,vpoly,vpolz,
 	                                      vdirx,vdiry,vdirz,
 	                                      k,omg,vrx,vry,vrz,
 	                                      B_x,B_y,B_z);
@@ -6412,44 +6408,44 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_VP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) pvpolx,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvpoly,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvpolz,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvdirx,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvdiry,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvdirz,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pomega,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvrx,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvry,
-	                                   const float * __restrict __ATTR_ALIGN__(64) pvrz,
-	                                   const zmm16c4_t k,
-	                                   zmm16c4_t & B_x,
-	                                   zmm16c4_t & B_y,
-	                                   zmm16c4_t & B_z) {
+	           void B_XYZ_VP_zmm8c8_a(const double * __restrict __ATTR_ALIGN__(64) pvpolx,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvpoly,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvpolz,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvdirx,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvdiry,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvdirz,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pomega,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvrx,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvry,
+	                                   const double * __restrict __ATTR_ALIGN__(64) pvrz,
+	                                   const zmm8c8_t k,
+	                                   zmm8c8_t & B_x,
+	                                   zmm8c8_t & B_y,
+	                                   zmm8c8_t & B_z) {
 	                         
-	                register __m512 vpolx = _mm512_load_ps(&pvpolx[0]);
-	                register __m512 vpoly = _mm512_load_ps(&pvpoly[0]);    
-	                register __m512 vpolz = _mm512_load_ps(&pvpolz[0]);  
-	                register __m512 vdirx = _mm512_load_ps(&pvdirx[0]);  
-	                register __m512 vdiry = _mm512_load_ps(&pvdiry[0]);
-	                register __m512 vdirz = _mm512_load_ps(&pvdirz[0]); 
-	                register __m512 onega = _mm512_load_ps(&pomega[0]);
-	                register __m512 vrx   = _mm512_load_ps(&pvrx[0]);
-	                register __m512 vry   = _mm512_load_ps(&pvry[0]);
-	                register __m512 vrz   = _mm512_load_ps(&pvrz[0]);        
-	                const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);
-	                zmm16c4_t cdirx;
-	                zmm16c4_t cdiry;
-	                zmm16c4_t cdirz;
-	                zmm16c4_t H_x;
-	                zmm16c4_t H_y;
-	                zmm16c4_t H_z;
-	                zmm16c4_t cpx;
-	                zmm16c4_t cpy;
-	                zmm16c4_t cpz;
-	                zmm16c4_t t0;
-	                __m512 zz0;
-	                H_XYZ_VP_zmm16c4(vpolx,
+	                register __m512d vpolx = _mm512_load_pd(&pvpolx[0]);
+	                register __m512d vpoly = _mm512_load_pd(&pvpoly[0]);    
+	                register __m512d vpolz = _mm512_load_pd(&pvpolz[0]);  
+	                register __m512d vdirx = _mm512_load_pd(&pvdirx[0]);  
+	                register __m512d vdiry = _mm512_load_pd(&pvdiry[0]);
+	                register __m512d vdirz = _mm512_load_pd(&pvdirz[0]); 
+	                register __m512d onega = _mm512_load_pd(&pomega[0]);
+	                register __m512d vrx   = _mm512_load_pd(&pvrx[0]);
+	                register __m512d vry   = _mm512_load_pd(&pvry[0]);
+	                register __m512d vrz   = _mm512_load_pd(&pvrz[0]);        
+	                const __m512d mu0 = _mm512_set1_pd(0.0000012566370614359173f);
+	                zmm8c8_t cdirx;
+	                zmm8c8_t cdiry;
+	                zmm8c8_t cdirz;
+	                zmm8c8_t H_x;
+	                zmm8c8_t H_y;
+	                zmm8c8_t H_z;
+	                zmm8c8_t cpx;
+	                zmm8c8_t cpy;
+	                zmm8c8_t cpz;
+	                zmm8c8_t t0;
+	                __m512d zz0;
+	                H_XYZ_VP_zmm8c8(vpolx,
 	                                 vpoly,
 	                                 vpolz,
 	                                 vdirx,
@@ -6463,16 +6459,16 @@ namespace gms {
 	                                 H_z);
 	                                 
 	                cdirx.re = vdirx;
-	                cdirx.im = _mm512_setzero_ps();
+	                cdirx.im = _mm512_setzero_pd();
 	                cdiry.re = vdiry;
 	                cdiry.im = cdirx.im;
 	                cdirz.re = vdirz;
 	                cdirz.im = cdirx.im;
 	                
-	                zz0      = _mm512_mul_ps(omega,mu0);
-	                t0.re    = _mm512_div_ps(k.re,zz0);
-	                t0.im    = _mm512_div_ps(k.im,zz0);
-	                scrossc_zmm16c4(cdirx,
+	                zz0      = _mm512_mul_pd(omega,mu0);
+	                t0.re    = _mm512_div_pd(k.re,zz0);
+	                t0.im    = _mm512_div_pd(k.im,zz0);
+	                scrossc_zmm8c8(cdirx,
 	                                cdiry,
 	                                cdirz,
 	                                H_x,
@@ -6482,19 +6478,19 @@ namespace gms {
 	                                cpy,
 	                                cpz);
 	                                
-	                cmul_zmm16r4(t0.re,
+	                cmul_zmm8r8(t0.re,
 	                             t0.im,
 	                             cpx.re,
 	                             cpx.im,
 	                             &B_x.re,
 	                             &B_x.im);
-	                cmul_zmm16r4(t0.re,
+	                cmul_zmm8r8(t0.re,
 	                             t0.im,
 	                             cpy.re,
 	                             cpy.im,
 	                             &B_y.re,
 	                             &B_y.im);
-	                cmul_zmm16r4(t0.re,
+	                cmul_zmm8r8(t0.re,
 	                             t0.im,
 	                             cpz.re,
 	                             cpz.im,
@@ -6509,44 +6505,44 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_VP_zmm16c4_u(const float * __restrict  pvpolx,
-	                                   const float * __restrict  pvpoly,
-	                                   const float * __restrict  pvpolz,
-	                                   const float * __restrict  pvdirx,
-	                                   const float * __restrict  pvdiry,
-	                                   const float * __restrict  pvdirz,
-	                                   const float * __restrict  pomega,
-	                                   const float * __restrict  pvrx,
-	                                   const float * __restrict  pvry,
-	                                   const float * __restrict  pvrz,
-	                                   const zmm16c4_t k,
-	                                   zmm16c4_t & B_x,
-	                                   zmm16c4_t & B_y,
-	                                   zmm16c4_t & B_z) {
+	           void B_XYZ_VP_zmm8c8_u(const double * __restrict  pvpolx,
+	                                   const double * __restrict  pvpoly,
+	                                   const double * __restrict  pvpolz,
+	                                   const double * __restrict  pvdirx,
+	                                   const double * __restrict  pvdiry,
+	                                   const double * __restrict  pvdirz,
+	                                   const double * __restrict  pomega,
+	                                   const double * __restrict  pvrx,
+	                                   const double * __restrict  pvry,
+	                                   const double * __restrict  pvrz,
+	                                   const zmm8c8_t k,
+	                                   zmm8c8_t & B_x,
+	                                   zmm8c8_t & B_y,
+	                                   zmm8c8_t & B_z) {
 	                         
-	                register __m512 vpolx = _mm512_loadu_ps(&pvpolx[0]);
-	                register __m512 vpoly = _mm512_loadu_ps(&pvpoly[0]);    
-	                register __m512 vpolz = _mm512_loadu_ps(&pvpolz[0]);  
-	                register __m512 vdirx = _mm512_loadu_ps(&pvdirx[0]);  
-	                register __m512 vdiry = _mm512_loadu_ps(&pvdiry[0]);
-	                register __m512 vdirz = _mm512_loadu_ps(&pvdirz[0]); 
-	                register __m512 onega = _mm512_loadu_ps(&pomega[0]);
-	                register __m512 vrx   = _mm512_loadu_ps(&pvrx[0]);
-	                register __m512 vry   = _mm512_loadu_ps(&pvry[0]);
-	                register __m512 vrz   = _mm512_loadu_ps(&pvrz[0]);        
-	                const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);
-	                zmm16c4_t cdirx;
-	                zmm16c4_t cdiry;
-	                zmm16c4_t cdirz;
-	                zmm16c4_t H_x;
-	                zmm16c4_t H_y;
-	                zmm16c4_t H_z;
-	                zmm16c4_t cpx;
-	                zmm16c4_t cpy;
-	                zmm16c4_t cpz;
-	                zmm16c4_t t0;
-	                __m512 zz0;
-	                H_XYZ_VP_zmm16c4(vpolx,
+	                register __m512d vpolx = _mm512_loadu_pd(&pvpolx[0]);
+	                register __m512d vpoly = _mm512_loadu_pd(&pvpoly[0]);    
+	                register __m512d vpolz = _mm512_loadu_pd(&pvpolz[0]);  
+	                register __m512d vdirx = _mm512_loadu_pd(&pvdirx[0]);  
+	                register __m512d vdiry = _mm512_loadu_pd(&pvdiry[0]);
+	                register __m512d vdirz = _mm512_loadu_pd(&pvdirz[0]); 
+	                register __m512d onega = _mm512_loadu_pd(&pomega[0]);
+	                register __m512d vrx   = _mm512_loadu_pd(&pvrx[0]);
+	                register __m512d vry   = _mm512_loadu_pd(&pvry[0]);
+	                register __m512d vrz   = _mm512_loadu_pd(&pvrz[0]);        
+	                const __m512d mu0 = _mm512_set1_pd(0.0000012566370614359173f);
+	                zmm8c8_t cdirx;
+	                zmm8c8_t cdiry;
+	                zmm8c8_t cdirz;
+	                zmm8c8_t H_x;
+	                zmm8c8_t H_y;
+	                zmm8c8_t H_z;
+	                zmm8c8_t cpx;
+	                zmm8c8_t cpy;
+	                zmm8c8_t cpz;
+	                zmm8c8_t t0;
+	                __m512d zz0;
+	                H_XYZ_VP_zmm8c8(vpolx,
 	                                 vpoly,
 	                                 vpolz,
 	                                 vdirx,
@@ -6560,16 +6556,16 @@ namespace gms {
 	                                 H_z);
 	                                 
 	                cdirx.re = vdirx;
-	                cdirx.im = _mm512_setzero_ps();
+	                cdirx.im = _mm512_setzero_pd();
 	                cdiry.re = vdiry;
 	                cdiry.im = cdirx.im;
 	                cdirz.re = vdirz;
 	                cdirz.im = cdirx.im;
 	                
-	                zz0      = _mm512_mul_ps(omega,mu0);
-	                t0.re    = _mm512_div_ps(k.re,zz0);
-	                t0.im    = _mm512_div_ps(k.im,zz0);
-	                scrossc_zmm16c4(cdirx,
+	                zz0      = _mm512_mul_pd(omega,mu0);
+	                t0.re    = _mm512_div_pd(k.re,zz0);
+	                t0.im    = _mm512_div_pd(k.im,zz0);
+	                scrossc_zmm8c8(cdirx,
 	                                cdiry,
 	                                cdirz,
 	                                H_x,
@@ -6579,19 +6575,19 @@ namespace gms {
 	                                cpy,
 	                                cpz);
 	                                
-	                cmul_zmm16r4(t0.re,
+	                cmul_zmm8r8(t0.re,
 	                             t0.im,
 	                             cpx.re,
 	                             cpx.im,
 	                             &B_x.re,
 	                             &B_x.im);
-	                cmul_zmm16r4(t0.re,
+	                cmul_zmm8r8(t0.re,
 	                             t0.im,
 	                             cpy.re,
 	                             cpy.im,
 	                             &B_y.re,
 	                             &B_y.im);
-	                cmul_zmm16r4(t0.re,
+	                cmul_zmm8r8(t0.re,
 	                             t0.im,
 	                             cpz.re,
 	                             cpz.im,
@@ -6606,40 +6602,40 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4(const __m512 tht,
-	                                      const __m512 phi,
-	                                      const __m512 psi,
-	                                      const __m512 omg,
-	                                      const __m512 px,
-	                                      const __m512 py,
-	                                      const __m512 pz,
-	                                      const zmm16c4_t r,
-	                                      zmm16c4_t & H_x,
-	                                      zmm16c4_t & H_y,
-	                                      zmm16c4_t & H_z,
-	                                      zmm16c4_t & B_x,
-	                                      zmm16c4_t & B_y,
-	                                      zmm16c4_t & B_z) {
+	           void B_XYZ_H_XYZ_P_zmm8c8(const __m512d tht,
+	                                      const __m512d phi,
+	                                      const __m512d psi,
+	                                      const __m512d omg,
+	                                      const __m512d px,
+	                                      const __m512d py,
+	                                      const __m512d pz,
+	                                      const zmm8c8_t r,
+	                                      zmm8c8_t & H_x,
+	                                      zmm8c8_t & H_y,
+	                                      zmm8c8_t & H_z,
+	                                      zmm8c8_t & B_x,
+	                                      zmm8c8_t & B_y,
+	                                      zmm8c8_t & B_z) {
 	                                      
 	                
-	                const __m512 c = _mm512_set1_ps(299792458.0f);
-	                zmm16c4_t k;
-	                register __m512 vpolx,vpoly,vpolz;
-	                register __m512 vdirx,vdiry,vdirz;
-	                register __m512 t0;
+	                const __m512d c = _mm512_set1_pd(299792458.0f);
+	                zmm8c8_t k;
+	                register __m512d vpolx,vpoly,vpolz;
+	                register __m512d vdirx,vdiry,vdirz;
+	                register __m512d t0;
 	                
-	                t0 = _mm512_div_ps(omg,c);
-	                dir_vec_zmm16r4(tht,phi,&vdirx,
+	                t0 = _mm512_div_pd(omg,c);
+	                dir_vec_zmm8r8(tht,phi,&vdirx,
 	                                &vdiry,&vdirz);
-	                k.re = _mm512_mul_ps(r.re,c);
-	                k.im = _mm512_mul_ps(r.im,c);
-	                pol_vec_zmm16r4(tht,psi,psi,
+	                k.re = _mm512_mul_pd(r.re,c);
+	                k.im = _mm512_mul_pd(r.im,c);
+	                pol_vec_zmm8r8(tht,psi,psi,
 	                                &vpolx,&vpoly,&vpolz);
-	                H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                 vdirx,vdiry,vdirz,
 	                                 k,px,py,pz,
 	                                 H_x,H_y,H_z);
-	                B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                B_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                 vdirx,vdiry,vdirz,
 	                                 k,omg,px,py,pz,
 	                                 B_x,B_y,B_z);
@@ -6652,39 +6648,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppx,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppy,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppz,
-	                                                const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pr,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	           void B_XYZ_H_XYZ_P_zmm8c8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pr,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_z,
 	                                                const int32_t n,
 	                                                int32_t & PF_DIST) {
 	                                                
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;    
-	                 zmm16c4_t r;
-	                 zmm16c4_t H_x;
-	                 zmm16c4_t H_y;
-	                 zmm16c4_t H_z;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 tht;
-	                 register __m512 phi;
-	                 register __m512 psi;
-	                 register __m512 omg;
-	                 register __m512 px;
-	                 register __m512 py;
-	                 register __m512 pz;
+	                 zmm8c8_t r;
+	                 zmm8c8_t H_x;
+	                 zmm8c8_t H_y;
+	                 zmm8c8_t H_z;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d tht;
+	                 register __m512d phi;
+	                 register __m512d psi;
+	                 register __m512d omg;
+	                 register __m512d px;
+	                 register __m512d py;
+	                 register __m512d pz;
 	                 int32_t j,m,m1;
 	                 
 	                 m = n%10;
@@ -6698,7 +6694,7 @@ namespace gms {
 	                         py  = ppy[j];
 	                         pz  = ppz[j];
 	                         r   = pr[j];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6763,7 +6759,7 @@ namespace gms {
 	                         py  = ppy[j+0];
 	                         pz  = ppz[j+0];
 	                         r   = pr[j+0];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6781,7 +6777,7 @@ namespace gms {
 	                         py  = ppy[j+1];
 	                         pz  = ppz[j+1];
 	                         r   = pr[j+1];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6799,7 +6795,7 @@ namespace gms {
 	                         py  = ppy[j+2];
 	                         pz  = ppz[j+2];
 	                         r   = pr[j+2];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6817,7 +6813,7 @@ namespace gms {
 	                         py  = ppy[j+3];
 	                         pz  = ppz[j+3];
 	                         r   = pr[j+3];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6835,7 +6831,7 @@ namespace gms {
 	                         py  = ppy[j+4];
 	                         pz  = ppz[j+4];
 	                         r   = pr[j+4];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6853,7 +6849,7 @@ namespace gms {
 	                         py  = ppy[j+5];
 	                         pz  = ppz[j+5];
 	                         r   = pr[j+5];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6871,7 +6867,7 @@ namespace gms {
 	                         py  = ppy[j+6];
 	                         pz  = ppz[j+6];
 	                         r   = pr[j+6];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6889,7 +6885,7 @@ namespace gms {
 	                         py  = ppy[j+7];
 	                         pz  = ppz[j+7];
 	                         r   = pr[j+7];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6907,7 +6903,7 @@ namespace gms {
 	                         py  = ppy[j+8];
 	                         pz  = ppz[j+8];
 	                         r   = pr[j+8];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6925,7 +6921,7 @@ namespace gms {
 	                         py  = ppy[j+9];
 	                         pz  = ppz[j+9];
 	                         r   = pr[j+9];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -6950,39 +6946,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppx,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppy,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppz,
-	                                                const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pr,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	           void B_XYZ_H_XYZ_P_zmm8c8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pr,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_z,
 	                                                const int32_t n,
 	                                                int32_t & PF_DIST) {
 	                                                
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;    
-	                 zmm16c4_t r;
-	                 zmm16c4_t H_x;
-	                 zmm16c4_t H_y;
-	                 zmm16c4_t H_z;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 tht;
-	                 register __m512 phi;
-	                 register __m512 psi;
-	                 register __m512 omg;
-	                 register __m512 px;
-	                 register __m512 py;
-	                 register __m512 pz;
+	                 zmm8c8_t r;
+	                 zmm8c8_t H_x;
+	                 zmm8c8_t H_y;
+	                 zmm8c8_t H_z;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d tht;
+	                 register __m512d phi;
+	                 register __m512d psi;
+	                 register __m512d omg;
+	                 register __m512d px;
+	                 register __m512d py;
+	                 register __m512d pz;
 	                 int32_t j,m,m1;
 	                 
 	                 m = n%6;
@@ -6996,7 +6992,7 @@ namespace gms {
 	                         py  = ppy[j];
 	                         pz  = ppz[j];
 	                         r   = pr[j];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7061,7 +7057,7 @@ namespace gms {
 	                         py  = ppy[j+0];
 	                         pz  = ppz[j+0];
 	                         r   = pr[j+0];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7079,7 +7075,7 @@ namespace gms {
 	                         py  = ppy[j+1];
 	                         pz  = ppz[j+1];
 	                         r   = pr[j+1];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7097,7 +7093,7 @@ namespace gms {
 	                         py  = ppy[j+2];
 	                         pz  = ppz[j+2];
 	                         r   = pr[j+2];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7115,7 +7111,7 @@ namespace gms {
 	                         py  = ppy[j+3];
 	                         pz  = ppz[j+3];
 	                         r   = pr[j+3];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7133,7 +7129,7 @@ namespace gms {
 	                         py  = ppy[j+4];
 	                         pz  = ppz[j+4];
 	                         r   = pr[j+4];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7151,7 +7147,7 @@ namespace gms {
 	                         py  = ppy[j+5];
 	                         pz  = ppz[j+5];
 	                         r   = pr[j+5];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7176,39 +7172,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppx,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppy,
-	                                                const __m512 * __restrict __ATTR_ALIGN__(64) ppz,
-	                                                const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pr,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_x,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_y,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pH_z,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_x,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_y,
-	                                                zmm16c4_t * __restrict __ATTR_ALIGN__(64) pB_z,
+	           void B_XYZ_H_XYZ_P_zmm8c8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                const __m512d * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pr,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_x,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_y,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pH_z,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_x,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_y,
+	                                                zmm8c8_t * __restrict __ATTR_ALIGN__(64) pB_z,
 	                                                const int32_t n,
 	                                                int32_t & PF_DIST) {
 	                                                
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;    
-	                 zmm16c4_t r;
-	                 zmm16c4_t H_x;
-	                 zmm16c4_t H_y;
-	                 zmm16c4_t H_z;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 tht;
-	                 register __m512 phi;
-	                 register __m512 psi;
-	                 register __m512 omg;
-	                 register __m512 px;
-	                 register __m512 py;
-	                 register __m512 pz;
+	                 zmm8c8_t r;
+	                 zmm8c8_t H_x;
+	                 zmm8c8_t H_y;
+	                 zmm8c8_t H_z;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d tht;
+	                 register __m512d phi;
+	                 register __m512d psi;
+	                 register __m512d omg;
+	                 register __m512d px;
+	                 register __m512d py;
+	                 register __m512d pz;
 	                 int32_t j,m,m1;
 	                 
 	                 m = n%2;
@@ -7222,7 +7218,7 @@ namespace gms {
 	                         py  = ppy[j];
 	                         pz  = ppz[j];
 	                         r   = pr[j];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7287,7 +7283,7 @@ namespace gms {
 	                         py  = ppy[j+0];
 	                         pz  = ppz[j+0];
 	                         r   = pr[j+0];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7305,7 +7301,7 @@ namespace gms {
 	                         py  = ppy[j+1];
 	                         pz  = ppz[j+1];
 	                         r   = pr[j+1];
-	                         B_XYZ_H_XYZ_P_zmm16c4(tht,phi,psi,
+	                         B_XYZ_H_XYZ_P_zmm8c8(tht,phi,psi,
 	                                               omg,px,py,pz,r,
 	                                               H_x,H_y,H_z,
 	                                               B_x,B_y,B_z);
@@ -7326,47 +7322,47 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
-	                                      const float * __restrict __ATTR_ALIGN__(64) pphi,
-	                                      const float * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                      const float * __restrict __ATTR_ALIGN__(64) pomg,
-	                                      const float * __restrict __ATTR_ALIGN__(64) ppx,
-	                                      const float * __restrict __ATTR_ALIGN__(64) ppy,
-	                                      const float * __restrict __ATTR_ALIGN__(64) ppz,
-	                                      const zmm16c4_t r,
-	                                      zmm16c4_t & H_x,
-	                                      zmm16c4_t & H_y,
-	                                      zmm16c4_t & H_z,
-	                                      zmm16c4_t & B_x,
-	                                      zmm16c4_t & B_y,
-	                                      zmm16c4_t & B_z) {
+	           void B_XYZ_H_XYZ_P_zmm8c8_a(const double * __restrict __ATTR_ALIGN__(64) ptht,
+	                                      const double * __restrict __ATTR_ALIGN__(64) pphi,
+	                                      const double * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                      const double * __restrict __ATTR_ALIGN__(64) pomg,
+	                                      const double * __restrict __ATTR_ALIGN__(64) ppx,
+	                                      const double * __restrict __ATTR_ALIGN__(64) ppy,
+	                                      const double * __restrict __ATTR_ALIGN__(64) ppz,
+	                                      const zmm8c8_t r,
+	                                      zmm8c8_t & H_x,
+	                                      zmm8c8_t & H_y,
+	                                      zmm8c8_t & H_z,
+	                                      zmm8c8_t & B_x,
+	                                      zmm8c8_t & B_y,
+	                                      zmm8c8_t & B_z) {
 	                                      
 	                
-	                register __m512 tht = _mm512_load_ps(&ptht[0]);
-	                register __m512 phi = _mm512_load_ps(&pphi[0]);
-	                register __m512 psi = _mm512_load_ps(&ppsi[0]);
-	                register __m512 omg = _mm512_load_ps(&pomg[0]);
-	                register __m512 px  = _mm512_load_ps(&ppx[0]);
-	                register __m512 py  = _mm512_load_ps(&ppy[0]);
-	                register __m512 pz  = _mm512_load_ps(&ppz[0]);
-	                const __m512 c = _mm512_set1_ps(299792458.0f);
-	                zmm16c4_t k;
-	                register __m512 vpolx,vpoly,vpolz;
-	                register __m512 vdirx,vdiry,vdirz;
-	                register __m512 t0;
+	                register __m512d tht = _mm512_load_pd(&ptht[0]);
+	                register __m512d phi = _mm512_load_pd(&pphi[0]);
+	                register __m512d psi = _mm512_load_pd(&ppsi[0]);
+	                register __m512d omg = _mm512_load_pd(&pomg[0]);
+	                register __m512d px  = _mm512_load_pd(&ppx[0]);
+	                register __m512d py  = _mm512_load_pd(&ppy[0]);
+	                register __m512d pz  = _mm512_load_pd(&ppz[0]);
+	                const __m512d c = _mm512_set1_pd(299792458.0f);
+	                zmm8c8_t k;
+	                register __m512d vpolx,vpoly,vpolz;
+	                register __m512d vdirx,vdiry,vdirz;
+	                register __m512d t0;
 	                
-	                t0 = _mm512_div_ps(omg,c);
-	                dir_vec_zmm16r4(tht,phi,&vdirx,
+	                t0 = _mm512_div_pd(omg,c);
+	                dir_vec_zmm8r8(tht,phi,&vdirx,
 	                                &vdiry,&vdirz);
-	                k.re = _mm512_mul_ps(r.re,c);
-	                k.im = _mm512_mul_ps(r.im,c);
-	                pol_vec_zmm16r4(tht,psi,psi,
+	                k.re = _mm512_mul_pd(r.re,c);
+	                k.im = _mm512_mul_pd(r.im,c);
+	                pol_vec_zmm8r8(tht,psi,psi,
 	                                &vpolx,&vpoly,&vpolz);
-	                H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                 vdirx,vdiry,vdirz,
 	                                 k,px,py,pz,
 	                                 H_x,H_y,H_z);
-	                B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                B_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                 vdirx,vdiry,vdirz,
 	                                 k,omg,px,py,pz,
 	                                 B_x,B_y,B_z);
@@ -7380,47 +7376,47 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_P_zmm16c4_u(const float * __restrict ptht,
-	                                      const float * __restrict  pphi,
-	                                      const float * __restrict ppsi,
-	                                      const float * __restrict  pomg,
-	                                      const float * __restrict  ppx,
-	                                      const float * __restrict  ppy,
-	                                      const float * __restrict ppz,
-	                                      const zmm16c4_t r,
-	                                      zmm16c4_t & H_x,
-	                                      zmm16c4_t & H_y,
-	                                      zmm16c4_t & H_z,
-	                                      zmm16c4_t & B_x,
-	                                      zmm16c4_t & B_y,
-	                                      zmm16c4_t & B_z) {
+	           void B_XYZ_H_XYZ_P_zmm8c8_u(const double * __restrict ptht,
+	                                      const double * __restrict  pphi,
+	                                      const double * __restrict ppsi,
+	                                      const double * __restrict  pomg,
+	                                      const double * __restrict  ppx,
+	                                      const double * __restrict  ppy,
+	                                      const double * __restrict ppz,
+	                                      const zmm8c8_t r,
+	                                      zmm8c8_t & H_x,
+	                                      zmm8c8_t & H_y,
+	                                      zmm8c8_t & H_z,
+	                                      zmm8c8_t & B_x,
+	                                      zmm8c8_t & B_y,
+	                                      zmm8c8_t & B_z) {
 	                                      
 	                
-	                register __m512 tht = _mm512_loadu_ps(&ptht[0]);
-	                register __m512 phi = _mm512_loadu_ps(&pphi[0]);
-	                register __m512 psi = _mm512_loadu_ps(&ppsi[0]);
-	                register __m512 omg = _mm512_loadu_ps(&pomg[0]);
-	                register __m512 px  = _mm512_loadu_ps(&ppx[0]);
-	                register __m512 py  = _mm512_loadu_ps(&ppy[0]);
-	                register __m512 pz  = _mm512_loadu_ps(&ppz[0]);
-	                const __m512 c = _mm512_set1_ps(299792458.0f);
-	                zmm16c4_t k;
-	                register __m512 vpolx,vpoly,vpolz;
-	                register __m512 vdirx,vdiry,vdirz;
-	                register __m512 t0;
+	                register __m512d tht = _mm512_loadu_pd(&ptht[0]);
+	                register __m512d phi = _mm512_loadu_pd(&pphi[0]);
+	                register __m512d psi = _mm512_loadu_pd(&ppsi[0]);
+	                register __m512d omg = _mm512_loadu_pd(&pomg[0]);
+	                register __m512d px  = _mm512_loadu_pd(&ppx[0]);
+	                register __m512d py  = _mm512_loadu_pd(&ppy[0]);
+	                register __m512d pz  = _mm512_loadu_pd(&ppz[0]);
+	                const __m512d c = _mm512_set1_pd(299792458.0f);
+	                zmm8c8_t k;
+	                register __m512d vpolx,vpoly,vpolz;
+	                register __m512d vdirx,vdiry,vdirz;
+	                register __m512d t0;
 	                
-	                t0 = _mm512_div_ps(omg,c);
-	                dir_vec_zmm16r4(tht,phi,&vdirx,
+	                t0 = _mm512_div_pd(omg,c);
+	                dir_vec_zmm8r8(tht,phi,&vdirx,
 	                                &vdiry,&vdirz);
-	                k.re = _mm512_mul_ps(r.re,c);
-	                k.im = _mm512_mul_ps(r.im,c);
-	                pol_vec_zmm16r4(tht,psi,psi,
+	                k.re = _mm512_mul_pd(r.re,c);
+	                k.im = _mm512_mul_pd(r.im,c);
+	                pol_vec_zmm8r8(tht,psi,psi,
 	                                &vpolx,&vpoly,&vpolz);
-	                H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                 vdirx,vdiry,vdirz,
 	                                 k,px,py,pz,
 	                                 H_x,H_y,H_z);
-	                B_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	                B_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                 vdirx,vdiry,vdirz,
 	                                 k,omg,px,py,pz,
 	                                 B_x,B_y,B_z);
@@ -7438,116 +7434,116 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_zmm16c4(const __m512 tht,
-	                                       const __m512 phi,
-	                                       const __m512 omg,
-	                                       const zmm16c4_t phase,
-	                                       const zmm16c4_t refi,
-	                                       const zmm16c4_t px,
-	                                       const zmm16c4_t py,
-	                                       const zmm16c4_t pz,
-	                                       zmm16c4_t & H_x,
-	                                       zmm16c4_t & H_y,
-	                                       zmm16c4_t & H_z,
-	                                       zmm16c4_t & B_x,
-	                                       zmm16c4_t & B_y,
-	                                       zmm16c4_t & B_z) {
+	           void B_XYZ_H_XYZ_EP_zmm8c8(const __m512d tht,
+	                                       const __m512d phi,
+	                                       const __m512d omg,
+	                                       const zmm8c8_t phase,
+	                                       const zmm8c8_t refi,
+	                                       const zmm8c8_t px,
+	                                       const zmm8c8_t py,
+	                                       const zmm8c8_t pz,
+	                                       zmm8c8_t & H_x,
+	                                       zmm8c8_t & H_y,
+	                                       zmm8c8_t & H_z,
+	                                       zmm8c8_t & B_x,
+	                                       zmm8c8_t & B_y,
+	                                       zmm8c8_t & B_z) {
 	                                   
-	               const __m512 c   = _mm512_set1_ps(299792458.0f); 
-	               const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);   
-	               const __m512 psi0 = _mm512_setzero_ps();
-	               const __m512 C00  = _mm512_setzero_ps();
+	               const __m512d c   = _mm512_set1_pd(299792458.0f); 
+	               const __m512d mu0 = _mm512_set1_pd(0.0000012566370614359173f);   
+	               const __m512d psi0 = _mm512_setzero_pd();
+	               const __m512d C00  = _mm512_setzero_pd();
 	               
-	               zmm16c4_t H_x_1;
-	               zmm16c4_t H_y_1;
-	               zmm16c4_t H_z_1;
-	               zmm16c4_t H_x_2;
-	               zmm16c4_t H_y_2;
-	               zmm16c4_t H_z_2;
-	               zmm16c4_t k;
-	               zmm16c4_t t0;
-	               zmm16c4_t cdirx;
-	               zmm16c4_t cdiry;
-	               zmm16c4_t cdirz;
+	               zmm8c8_t H_x_1;
+	               zmm8c8_t H_y_1;
+	               zmm8c8_t H_z_1;
+	               zmm8c8_t H_x_2;
+	               zmm8c8_t H_y_2;
+	               zmm8c8_t H_z_2;
+	               zmm8c8_t k;
+	               zmm8c8_t t0;
+	               zmm8c8_t cdirx;
+	               zmm8c8_t cdiry;
+	               zmm8c8_t cdirz;
 	               
-	               register __m512 vpolx;
-	               register __m512 vpoly;
-	               register __m512 vpolz;
-	               register __m512 vdirx;
-	               register __m512 vdiry;
-	               register __m512 vdirz;
-	               register __m512 cn;
-	               register __m512 x0;
-	               register __m512 t0r,t0i;
-	               register __m512 t1r,t1i;
-	               register __m512 t2r,t2i;
+	               register __m512d vpolx;
+	               register __m512d vpoly;
+	               register __m512d vpolz;
+	               register __m512d vdirx;
+	               register __m512d vdiry;
+	               register __m512d vdirz;
+	               register __m512d cn;
+	               register __m512d x0;
+	               register __m512d t0r,t0i;
+	               register __m512d t1r,t1i;
+	               register __m512d t2r,t2i;
 	               
-	               dir_vec_zmm16r4(tht,phi,&vdirx,
+	               dir_vec_zmm8r8(tht,phi,&vdirx,
 	                               &vdiry,&vdirz);
 	               cdirx.re = vdirx;
-	               x0       = _mm512_div_ps(omg,c);
+	               x0       = _mm512_div_pd(omg,c);
 	               cdirx.im = C00;
-	               k.re     = _mm512_mul_ps(refi.re,x0);
-	               k.im     = _mm512_mul_ps(refi.im,x0);
+	               k.re     = _mm512_mul_pd(refi.re,x0);
+	               k.im     = _mm512_mul_pd(refi.im,x0);
 	               cdiry.re = vdiry;
 	               cdiry.im = C00;
 	               
-	               pol_vec_zmm16r4(tht,phi,psi_0,
+	               pol_vec_zmm8r8(tht,phi,psi_0,
 	                               &vpolx,&vpoly,&vpolz);
 	               cdirz.re = vdirz;
 	               cdirz.im = C00;
 	               
-	               H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	               H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                vdirx,vdiry,vdirz,
 	                                px,py,pz,
 	                                H_x_1,H_y_1,H_z_1);
 	                                
-	               scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	               scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                               H_x_1,H_y_1,H_z_1,
 	                               H_x_2,H_y_2,H_z_2);
 	                               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_x_2.re,H_x_2.im,
 	                            &t0r,&t0i);
-	               H_x.re = _mm512_add_ps(H_x_1.re,t0r);
-	               H_x.im = _mm512_add_ps(H_x_1.im,t0i);
+	               H_x.re = _mm512_add_pd(H_x_1.re,t0r);
+	               H_x.im = _mm512_add_pd(H_x_1.im,t0i);
 	               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_y_2.re,H_y_2.im,
 	                            &t1r,&t1i);
-	               H_y.re = _mm512_add_ps(H_y_1.re,t1r);
-	               H_y.im = _mm512_add_ps(H_y_1.im,t1i);
+	               H_y.re = _mm512_add_pd(H_y_1.re,t1r);
+	               H_y.im = _mm512_add_pd(H_y_1.im,t1i);
 	               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_z_2.re,H_z_2.im,
 	                            &t2r,&t2i);
-	              H_z.re = _mm512_add_ps(H_z_2.re,t2r);
-	              H_z.im = _mm512_add_ps(H_z_2.im,t2i);
+	              H_z.re = _mm512_add_pd(H_z_2.re,t2r);
+	              H_z.im = _mm512_add_pd(H_z_2.im,t2i);
 	              
-	              cn = cnorm_zmm16c4(H_x,H_y,H_z);
+	              cn = cnorm_zmm8c8(H_x,H_y,H_z);
 	              
-	              x0     = _mm512_div_ps(omg,mu0);
-	              H_x.re = _mm512_div_ps(H_x.re,cn);
-	              H_x.im = _mm512_div_ps(H_x.im,cn);
-	              H_y.re = _mm512_div_ps(H_y.re,cn);
-	              H_y.im = _mm512_div_ps(H_y.im,cn);
-	              H_z.re = _mm512_div_ps(H_z.re,cn);
-	              H_z.im = _mm512_div_ps(H_z.im,cn); 
+	              x0     = _mm512_div_pd(omg,mu0);
+	              H_x.re = _mm512_div_pd(H_x.re,cn);
+	              H_x.im = _mm512_div_pd(H_x.im,cn);
+	              H_y.re = _mm512_div_pd(H_y.re,cn);
+	              H_y.im = _mm512_div_pd(H_y.im,cn);
+	              H_z.re = _mm512_div_pd(H_z.re,cn);
+	              H_z.im = _mm512_div_pd(H_z.im,cn); 
 	              
-	              t0.re  = _mm512_div_ps(k.re,x0);
-	              t0.im  = _mm512_div_ps(k.im,x0);
+	              t0.re  = _mm512_div_pd(k.re,x0);
+	              t0.im  = _mm512_div_pd(k.im,x0);
 	              
-	              scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	              scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                              H_x,H_y,H_z,
 	                              H_x_2,H_y_2,H_z_2);
 	                              
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_x_2.re,H_x_2.im,
 	                           &B_x.re,&B_x.im);
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_y_2.re,H_y_2.im,
 	                           &B_y.re,&B_y.im);
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_z_2.re,H_z_2.im,
 	                           &B_z.re,&B_z.im);
 	              
@@ -7559,39 +7555,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_zmm16c4_unroll10x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pphase,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) prefi,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppx,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppy,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppz,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_x,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_y,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_z,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_x,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_y,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_z,
+	           void B_XYZ_H_XYZ_EP_zmm8c8_unroll10x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                 const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                 const __m512d * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pphase,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) prefi,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_x,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_y,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_z,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_x,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_y,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_z,
 	                                                 const int32_t n,
 	                                                 int32_t & PF_DIST) {
 	                                                 
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                 zmm16c4_t phase;
-	                 zmm16c4_t refi;
-	                 zmm16c4_t px;
-	                 zmm16c4_t py;
-	                 zmm16c4_t pz;
-	                 zmm16c4_t H_x;
-	                 zmm16c4_t H_y;
-	                 zmm16c4_t H_z;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 tht;
-	                 register __m512 phi;
-	                 register __m512 omg;
+	                 zmm8c8_t phase;
+	                 zmm8c8_t refi;
+	                 zmm8c8_t px;
+	                 zmm8c8_t py;
+	                 zmm8c8_t pz;
+	                 zmm8c8_t H_x;
+	                 zmm8c8_t H_y;
+	                 zmm8c8_t H_z;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d tht;
+	                 register __m512d phi;
+	                 register __m512d omg;
 	                 int32_t j,m,m1;
 	                 
 	                 m = n%10;
@@ -7605,7 +7601,7 @@ namespace gms {
 	                        px    = ppx[j];
 	                        py    = ppy[j];
 	                        pz    = ppz[j];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7688,7 +7684,7 @@ namespace gms {
 	                        px    = ppx[j+0];
 	                        py    = ppy[j+0];
 	                        pz    = ppz[j+0];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7707,7 +7703,7 @@ namespace gms {
 	                        px    = ppx[j+1];
 	                        py    = ppy[j+1];
 	                        pz    = ppz[j+1];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7726,7 +7722,7 @@ namespace gms {
 	                        px    = ppx[j+2];
 	                        py    = ppy[j+2];
 	                        pz    = ppz[j+2];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7745,7 +7741,7 @@ namespace gms {
 	                        px    = ppx[j+3];
 	                        py    = ppy[j+3];
 	                        pz    = ppz[j+3];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7764,7 +7760,7 @@ namespace gms {
 	                        px    = ppx[j+4];
 	                        py    = ppy[j+4];
 	                        pz    = ppz[j+4];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7783,7 +7779,7 @@ namespace gms {
 	                        px    = ppx[j+5];
 	                        py    = ppy[j+5];
 	                        pz    = ppz[j+5];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7802,7 +7798,7 @@ namespace gms {
 	                        px    = ppx[j+6];
 	                        py    = ppy[j+6];
 	                        pz    = ppz[j+6];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7821,7 +7817,7 @@ namespace gms {
 	                        px    = ppx[j+7];
 	                        py    = ppy[j+7];
 	                        pz    = ppz[j+7];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7840,7 +7836,7 @@ namespace gms {
 	                        px    = ppx[j+8];
 	                        py    = ppy[j+8];
 	                        pz    = ppz[j+8];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7859,7 +7855,7 @@ namespace gms {
 	                        px    = ppx[j+9];
 	                        py    = ppy[j+9];
 	                        pz    = ppz[j+9];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -7882,39 +7878,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_zmm16c4_unroll6x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pphase,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) prefi,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppx,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppy,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppz,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_x,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_y,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_z,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_x,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_y,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_z,
+	           void B_XYZ_H_XYZ_EP_zmm8c8_unroll6x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                 const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                 const __m512d * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pphase,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) prefi,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_x,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_y,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_z,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_x,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_y,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_z,
 	                                                 const int32_t n,
 	                                                 int32_t & PF_DIST) {
 	                                                 
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                 zmm16c4_t phase;
-	                 zmm16c4_t refi;
-	                 zmm16c4_t px;
-	                 zmm16c4_t py;
-	                 zmm16c4_t pz;
-	                 zmm16c4_t H_x;
-	                 zmm16c4_t H_y;
-	                 zmm16c4_t H_z;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 tht;
-	                 register __m512 phi;
-	                 register __m512 omg;
+	                 zmm8c8_t phase;
+	                 zmm8c8_t refi;
+	                 zmm8c8_t px;
+	                 zmm8c8_t py;
+	                 zmm8c8_t pz;
+	                 zmm8c8_t H_x;
+	                 zmm8c8_t H_y;
+	                 zmm8c8_t H_z;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d tht;
+	                 register __m512d phi;
+	                 register __m512d omg;
 	                 int32_t j,m,m1;
 	                 
 	                 m = n%6;
@@ -7928,7 +7924,7 @@ namespace gms {
 	                        px    = ppx[j];
 	                        py    = ppy[j];
 	                        pz    = ppz[j];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8011,7 +8007,7 @@ namespace gms {
 	                        px    = ppx[j+0];
 	                        py    = ppy[j+0];
 	                        pz    = ppz[j+0];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8030,7 +8026,7 @@ namespace gms {
 	                        px    = ppx[j+1];
 	                        py    = ppy[j+1];
 	                        pz    = ppz[j+1];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8049,7 +8045,7 @@ namespace gms {
 	                        px    = ppx[j+2];
 	                        py    = ppy[j+2];
 	                        pz    = ppz[j+2];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8068,7 +8064,7 @@ namespace gms {
 	                        px    = ppx[j+3];
 	                        py    = ppy[j+3];
 	                        pz    = ppz[j+3];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8087,7 +8083,7 @@ namespace gms {
 	                        px    = ppx[j+4];
 	                        py    = ppy[j+4];
 	                        pz    = ppz[j+4];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8106,7 +8102,7 @@ namespace gms {
 	                        px    = ppx[j+5];
 	                        py    = ppy[j+5];
 	                        pz    = ppz[j+5];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8131,39 +8127,39 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_zmm16c4_unroll2x(const __m512 * __restrict __ATTR_ALIGN__(64) ptht,
-	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
-	                                                 const __m512 * __restrict __ATTR_ALIGN__(64) pomg,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) pphase,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) prefi,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppx,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppy,
-	                                                 const zmm16c4_t * __restrict __ATTR_ALIGN__(64) ppz,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_x,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_y,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pH_z,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_x,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_y,
-	                                                 zmm16c4_t * __restrict __ATTR_ALIGN__(64)  pB_z,
+	           void B_XYZ_H_XYZ_EP_zmm8c8_unroll2x(const __m512d * __restrict __ATTR_ALIGN__(64) ptht,
+	                                                 const __m512d * __restrict __ATTR_ALIGN__(64) pphi,
+	                                                 const __m512d * __restrict __ATTR_ALIGN__(64) pomg,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) pphase,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) prefi,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppx,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppy,
+	                                                 const zmm8c8_t * __restrict __ATTR_ALIGN__(64) ppz,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_x,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_y,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pH_z,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_x,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_y,
+	                                                 zmm8c8_t * __restrict __ATTR_ALIGN__(64)  pB_z,
 	                                                 const int32_t n,
 	                                                 int32_t & PF_DIST) {
 	                                                 
 	                 if(__builtin_expect(n<=0,0)) {return;}
 	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
-	                 zmm16c4_t phase;
-	                 zmm16c4_t refi;
-	                 zmm16c4_t px;
-	                 zmm16c4_t py;
-	                 zmm16c4_t pz;
-	                 zmm16c4_t H_x;
-	                 zmm16c4_t H_y;
-	                 zmm16c4_t H_z;
-	                 zmm16c4_t B_x;
-	                 zmm16c4_t B_y;
-	                 zmm16c4_t B_z;
-	                 register __m512 tht;
-	                 register __m512 phi;
-	                 register __m512 omg;
+	                 zmm8c8_t phase;
+	                 zmm8c8_t refi;
+	                 zmm8c8_t px;
+	                 zmm8c8_t py;
+	                 zmm8c8_t pz;
+	                 zmm8c8_t H_x;
+	                 zmm8c8_t H_y;
+	                 zmm8c8_t H_z;
+	                 zmm8c8_t B_x;
+	                 zmm8c8_t B_y;
+	                 zmm8c8_t B_z;
+	                 register __m512d tht;
+	                 register __m512d phi;
+	                 register __m512d omg;
 	                 int32_t j,m,m1;
 	                 
 	                 m = n%2;
@@ -8177,7 +8173,7 @@ namespace gms {
 	                        px    = ppx[j];
 	                        py    = ppy[j];
 	                        pz    = ppz[j];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8260,7 +8256,7 @@ namespace gms {
 	                        px    = ppx[j+0];
 	                        py    = ppy[j+0];
 	                        pz    = ppz[j+0];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8279,7 +8275,7 @@ namespace gms {
 	                        px    = ppx[j+1];
 	                        py    = ppy[j+1];
 	                        pz    = ppz[j+1];
-	                        B_XYZ_H_XYZ_EP_zmm16c4(tht,phi,omg,
+	                        B_XYZ_H_XYZ_EP_zmm8c8(tht,phi,omg,
 	                                               phase,refi,px,
 	                                               py,pz,
 	                                               H_x,H_y,H_z,
@@ -8305,119 +8301,119 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_zmm16c4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
-	                                         const float * __restrict __ATTR_ALIGN__(64) pphi,
-	                                         const float * __restrict __ATTR_ALIGN__(64) pomg,
-	                                         const zmm16c4_t phase,
-	                                         const zmm16c4_t refi,
-	                                         const zmm16c4_t px,
-	                                         const zmm16c4_t py,
-	                                         const zmm16c4_t pz,
-	                                         zmm16c4_t & H_x,
-	                                         zmm16c4_t & H_y,
-	                                         zmm16c4_t & H_z,
-	                                         zmm16c4_t & B_x,
-	                                         zmm16c4_t & B_y,
-	                                         zmm16c4_t & B_z) {
+	           void B_XYZ_H_XYZ_EP_zmm8c8_a(const double * __restrict __ATTR_ALIGN__(64) ptht,
+	                                         const double * __restrict __ATTR_ALIGN__(64) pphi,
+	                                         const double * __restrict __ATTR_ALIGN__(64) pomg,
+	                                         const zmm8c8_t phase,
+	                                         const zmm8c8_t refi,
+	                                         const zmm8c8_t px,
+	                                         const zmm8c8_t py,
+	                                         const zmm8c8_t pz,
+	                                         zmm8c8_t & H_x,
+	                                         zmm8c8_t & H_y,
+	                                         zmm8c8_t & H_z,
+	                                         zmm8c8_t & B_x,
+	                                         zmm8c8_t & B_y,
+	                                         zmm8c8_t & B_z) {
 	                         
-	               register __m512 tht = _mm512_load_ps(&ptht[0]);
-	               register __m512 phi = _mm512_load_ps(&pphi[0]);
-	               register __m512 omg = _mm512_load_ps(&pomg[0]);            
-	               const __m512 c   = _mm512_set1_ps(299792458.0f); 
-	               const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);   
-	               const __m512 psi0 = _mm512_setzero_ps();
-	               const __m512 C00  = _mm512_setzero_ps();
+	               register __m512d tht = _mm512_load_pd(&ptht[0]);
+	               register __m512d phi = _mm512_load_pd(&pphi[0]);
+	               register __m512d omg = _mm512_load_pd(&pomg[0]);            
+	               const __m512d c   = _mm512_set1_pd(299792458.0f); 
+	               const __m512d mu0 = _mm512_set1_pd(0.0000012566370614359173f);   
+	               const __m512d psi0 = _mm512_setzero_pd();
+	               const __m512d C00  = _mm512_setzero_pd();
 	               
-	               zmm16c4_t H_x_1;
-	               zmm16c4_t H_y_1;
-	               zmm16c4_t H_z_1;
-	               zmm16c4_t H_x_2;
-	               zmm16c4_t H_y_2;
-	               zmm16c4_t H_z_2;
-	               zmm16c4_t k;
-	               zmm16c4_t t0;
-	               zmm16c4_t cdirx;
-	               zmm16c4_t cdiry;
-	               zmm16c4_t cdirz;
+	               zmm8c8_t H_x_1;
+	               zmm8c8_t H_y_1;
+	               zmm8c8_t H_z_1;
+	               zmm8c8_t H_x_2;
+	               zmm8c8_t H_y_2;
+	               zmm8c8_t H_z_2;
+	               zmm8c8_t k;
+	               zmm8c8_t t0;
+	               zmm8c8_t cdirx;
+	               zmm8c8_t cdiry;
+	               zmm8c8_t cdirz;
 	               
-	               register __m512 vpolx;
-	               register __m512 vpoly;
-	               register __m512 vpolz;
-	               register __m512 vdirx;
-	               register __m512 vdiry;
-	               register __m512 vdirz;
-	               register __m512 cn;
-	               register __m512 x0;
-	               register __m512 t0r,t0i;
-	               register __m512 t1r,t1i;
-	               register __m512 t2r,t2i;
+	               register __m512d vpolx;
+	               register __m512d vpoly;
+	               register __m512d vpolz;
+	               register __m512d vdirx;
+	               register __m512d vdiry;
+	               register __m512d vdirz;
+	               register __m512d cn;
+	               register __m512d x0;
+	               register __m512d t0r,t0i;
+	               register __m512d t1r,t1i;
+	               register __m512d t2r,t2i;
 	               
-	               dir_vec_zmm16r4(tht,phi,&vdirx,
+	               dir_vec_zmm8r8(tht,phi,&vdirx,
 	                               &vdiry,&vdirz);
 	               cdirx.re = vdirx;
-	               x0       = _mm512_div_ps(omg,c);
+	               x0       = _mm512_div_pd(omg,c);
 	               cdirx.im = C00;
-	               k.re     = _mm512_mul_ps(refi.re,x0);
-	               k.im     = _mm512_mul_ps(refi.im,x0);
+	               k.re     = _mm512_mul_pd(refi.re,x0);
+	               k.im     = _mm512_mul_pd(refi.im,x0);
 	               cdiry.re = vdiry;
 	               cdiry.im = C00;
 	               
-	               pol_vec_zmm16r4(tht,phi,psi_0,
+	               pol_vec_zmm8r8(tht,phi,psi_0,
 	                               &vpolx,&vpoly,&vpolz);
 	               cdirz.re = vdirz;
 	               cdirz.im = C00;
 	               
-	               H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	               H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                vdirx,vdiry,vdirz,
 	                                px,py,pz,
 	                                H_x_1,H_y_1,H_z_1);
 	                                
-	               scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	               scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                               H_x_1,H_y_1,H_z_1,
 	                               H_x_2,H_y_2,H_z_2);
 	                               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_x_2.re,H_x_2.im,
 	                            &t0r,&t0i);
-	               H_x.re = _mm512_add_ps(H_x_1.re,t0r);
-	               H_x.im = _mm512_add_ps(H_x_1.im,t0i);
+	               H_x.re = _mm512_add_pd(H_x_1.re,t0r);
+	               H_x.im = _mm512_add_pd(H_x_1.im,t0i);
 	               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_y_2.re,H_y_2.im,
 	                            &t1r,&t1i);
-	               H_y.re = _mm512_add_ps(H_y_1.re,t1r);
-	               H_y.im = _mm512_add_ps(H_y_1.im,t1i);
+	               H_y.re = _mm512_add_pd(H_y_1.re,t1r);
+	               H_y.im = _mm512_add_pd(H_y_1.im,t1i);
 	               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_z_2.re,H_z_2.im,
 	                            &t2r,&t2i);
-	              H_z.re = _mm512_add_ps(H_z_2.re,t2r);
-	              H_z.im = _mm512_add_ps(H_z_2.im,t2i);
+	              H_z.re = _mm512_add_pd(H_z_2.re,t2r);
+	              H_z.im = _mm512_add_pd(H_z_2.im,t2i);
 	              
-	              cn = cnorm_zmm16c4(H_x,H_y,H_z);
+	              cn = cnorm_zmm8c8(H_x,H_y,H_z);
 	              
-	              x0     = _mm512_div_ps(omg,mu0);
-	              H_x.re = _mm512_div_ps(H_x.re,cn);
-	              H_x.im = _mm512_div_ps(H_x.im,cn);
-	              H_y.re = _mm512_div_ps(H_y.re,cn);
-	              H_y.im = _mm512_div_ps(H_y.im,cn);
-	              H_z.re = _mm512_div_ps(H_z.re,cn);
-	              H_z.im = _mm512_div_ps(H_z.im,cn); 
+	              x0     = _mm512_div_pd(omg,mu0);
+	              H_x.re = _mm512_div_pd(H_x.re,cn);
+	              H_x.im = _mm512_div_pd(H_x.im,cn);
+	              H_y.re = _mm512_div_pd(H_y.re,cn);
+	              H_y.im = _mm512_div_pd(H_y.im,cn);
+	              H_z.re = _mm512_div_pd(H_z.re,cn);
+	              H_z.im = _mm512_div_pd(H_z.im,cn); 
 	              
-	              t0.re  = _mm512_div_ps(k.re,x0);
-	              t0.im  = _mm512_div_ps(k.im,x0);
+	              t0.re  = _mm512_div_pd(k.re,x0);
+	              t0.im  = _mm512_div_pd(k.im,x0);
 	              
-	              scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	              scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                              H_x,H_y,H_z,
 	                              H_x_2,H_y_2,H_z_2);
 	                              
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_x_2.re,H_x_2.im,
 	                           &B_x.re,&B_x.im);
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_y_2.re,H_y_2.im,
 	                           &B_y.re,&B_y.im);
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_z_2.re,H_z_2.im,
 	                           &B_z.re,&B_z.im);
 	              
@@ -8430,119 +8426,119 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_zmm16c4_u(const float * __restrict  ptht,
-	                                         const float * __restrict  pphi,
-	                                         const float * __restrict  pomg,
-	                                         const zmm16c4_t phase,
-	                                         const zmm16c4_t refi,
-	                                         const zmm16c4_t px,
-	                                         const zmm16c4_t py,
-	                                         const zmm16c4_t pz,
-	                                         zmm16c4_t & H_x,
-	                                         zmm16c4_t & H_y,
-	                                         zmm16c4_t & H_z,
-	                                         zmm16c4_t & B_x,
-	                                         zmm16c4_t & B_y,
-	                                         zmm16c4_t & B_z) {
+	           void B_XYZ_H_XYZ_EP_zmm8c8_u(const double * __restrict  ptht,
+	                                         const double * __restrict  pphi,
+	                                         const double * __restrict  pomg,
+	                                         const zmm8c8_t phase,
+	                                         const zmm8c8_t refi,
+	                                         const zmm8c8_t px,
+	                                         const zmm8c8_t py,
+	                                         const zmm8c8_t pz,
+	                                         zmm8c8_t & H_x,
+	                                         zmm8c8_t & H_y,
+	                                         zmm8c8_t & H_z,
+	                                         zmm8c8_t & B_x,
+	                                         zmm8c8_t & B_y,
+	                                         zmm8c8_t & B_z) {
 	                         
-	               register __m512 tht = _mm512_loadu_ps(&ptht[0]);
-	               register __m512 phi = _mm512_loadu_ps(&pphi[0]);
-	               register __m512 omg = _mm512_loadu_ps(&pomg[0]);            
-	               const __m512 c   = _mm512_set1_ps(299792458.0f); 
-	               const __m512 mu0 = _mm512_set1_ps(0.0000012566370614359173f);   
-	               const __m512 psi0 = _mm512_setzero_ps();
-	               const __m512 C00  = _mm512_setzero_ps();
+	               register __m512d tht = _mm512_loadu_pd(&ptht[0]);
+	               register __m512d phi = _mm512_loadu_pd(&pphi[0]);
+	               register __m512d omg = _mm512_loadu_pd(&pomg[0]);            
+	               const __m512d c   = _mm512_set1_pd(299792458.0f); 
+	               const __m512d mu0 = _mm512_set1_pd(0.0000012566370614359173f);   
+	               const __m512d psi0 = _mm512_setzero_pd();
+	               const __m512d C00  = _mm512_setzero_pd();
 	               
-	               zmm16c4_t H_x_1;
-	               zmm16c4_t H_y_1;
-	               zmm16c4_t H_z_1;
-	               zmm16c4_t H_x_2;
-	               zmm16c4_t H_y_2;
-	               zmm16c4_t H_z_2;
-	               zmm16c4_t k;
-	               zmm16c4_t t0;
-	               zmm16c4_t cdirx;
-	               zmm16c4_t cdiry;
-	               zmm16c4_t cdirz;
+	               zmm8c8_t H_x_1;
+	               zmm8c8_t H_y_1;
+	               zmm8c8_t H_z_1;
+	               zmm8c8_t H_x_2;
+	               zmm8c8_t H_y_2;
+	               zmm8c8_t H_z_2;
+	               zmm8c8_t k;
+	               zmm8c8_t t0;
+	               zmm8c8_t cdirx;
+	               zmm8c8_t cdiry;
+	               zmm8c8_t cdirz;
 	               
-	               register __m512 vpolx;
-	               register __m512 vpoly;
-	               register __m512 vpolz;
-	               register __m512 vdirx;
-	               register __m512 vdiry;
-	               register __m512 vdirz;
-	               register __m512 cn;
-	               register __m512 x0;
-	               register __m512 t0r,t0i;
-	               register __m512 t1r,t1i;
-	               register __m512 t2r,t2i;
+	               register __m512d vpolx;
+	               register __m512d vpoly;
+	               register __m512d vpolz;
+	               register __m512d vdirx;
+	               register __m512d vdiry;
+	               register __m512d vdirz;
+	               register __m512d cn;
+	               register __m512d x0;
+	               register __m512d t0r,t0i;
+	               register __m512d t1r,t1i;
+	               register __m512d t2r,t2i;
 	               
-	               dir_vec_zmm16r4(tht,phi,&vdirx,
+	               dir_vec_zmm8r8(tht,phi,&vdirx,
 	                               &vdiry,&vdirz);
 	               cdirx.re = vdirx;
-	               x0       = _mm512_div_ps(omg,c);
+	               x0       = _mm512_div_pd(omg,c);
 	               cdirx.im = C00;
-	               k.re     = _mm512_mul_ps(refi.re,x0);
-	               k.im     = _mm512_mul_ps(refi.im,x0);
+	               k.re     = _mm512_mul_pd(refi.re,x0);
+	               k.im     = _mm512_mul_pd(refi.im,x0);
 	               cdiry.re = vdiry;
 	               cdiry.im = C00;
 	               
-	               pol_vec_zmm16r4(tht,phi,psi_0,
+	               pol_vec_zmm8r8(tht,phi,psi_0,
 	                               &vpolx,&vpoly,&vpolz);
 	               cdirz.re = vdirz;
 	               cdirz.im = C00;
 	               
-	               H_XYZ_VP_zmm16c4(vpolx,vpoly,vpolz,
+	               H_XYZ_VP_zmm8c8(vpolx,vpoly,vpolz,
 	                                vdirx,vdiry,vdirz,
 	                                px,py,pz,
 	                                H_x_1,H_y_1,H_z_1);
 	                                
-	               scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	               scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                               H_x_1,H_y_1,H_z_1,
 	                               H_x_2,H_y_2,H_z_2);
 	                               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_x_2.re,H_x_2.im,
 	                            &t0r,&t0i);
-	               H_x.re = _mm512_add_ps(H_x_1.re,t0r);
-	               H_x.im = _mm512_add_ps(H_x_1.im,t0i);
+	               H_x.re = _mm512_add_pd(H_x_1.re,t0r);
+	               H_x.im = _mm512_add_pd(H_x_1.im,t0i);
 	               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_y_2.re,H_y_2.im,
 	                            &t1r,&t1i);
-	               H_y.re = _mm512_add_ps(H_y_1.re,t1r);
-	               H_y.im = _mm512_add_ps(H_y_1.im,t1i);
+	               H_y.re = _mm512_add_pd(H_y_1.re,t1r);
+	               H_y.im = _mm512_add_pd(H_y_1.im,t1i);
 	               
-	               cmul_zmm16r4(phase.re,phase.im,
+	               cmul_zmm8r8(phase.re,phase.im,
 	                            H_z_2.re,H_z_2.im,
 	                            &t2r,&t2i);
-	              H_z.re = _mm512_add_ps(H_z_2.re,t2r);
-	              H_z.im = _mm512_add_ps(H_z_2.im,t2i);
+	              H_z.re = _mm512_add_pd(H_z_2.re,t2r);
+	              H_z.im = _mm512_add_pd(H_z_2.im,t2i);
 	              
-	              cn = cnorm_zmm16c4(H_x,H_y,H_z);
+	              cn = cnorm_zmm8c8(H_x,H_y,H_z);
 	              
-	              x0     = _mm512_div_ps(omg,mu0);
-	              H_x.re = _mm512_div_ps(H_x.re,cn);
-	              H_x.im = _mm512_div_ps(H_x.im,cn);
-	              H_y.re = _mm512_div_ps(H_y.re,cn);
-	              H_y.im = _mm512_div_ps(H_y.im,cn);
-	              H_z.re = _mm512_div_ps(H_z.re,cn);
-	              H_z.im = _mm512_div_ps(H_z.im,cn); 
+	              x0     = _mm512_div_pd(omg,mu0);
+	              H_x.re = _mm512_div_pd(H_x.re,cn);
+	              H_x.im = _mm512_div_pd(H_x.im,cn);
+	              H_y.re = _mm512_div_pd(H_y.re,cn);
+	              H_y.im = _mm512_div_pd(H_y.im,cn);
+	              H_z.re = _mm512_div_pd(H_z.re,cn);
+	              H_z.im = _mm512_div_pd(H_z.im,cn); 
 	              
-	              t0.re  = _mm512_div_ps(k.re,x0);
-	              t0.im  = _mm512_div_ps(k.im,x0);
+	              t0.re  = _mm512_div_pd(k.re,x0);
+	              t0.im  = _mm512_div_pd(k.im,x0);
 	              
-	              scrossc_zmm16c4(cdirx,cdiry,cdirz,
+	              scrossc_zmm8c8(cdirx,cdiry,cdirz,
 	                              H_x,H_y,H_z,
 	                              H_x_2,H_y_2,H_z_2);
 	                              
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_x_2.re,H_x_2.im,
 	                           &B_x.re,&B_x.im);
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_y_2.re,H_y_2.im,
 	                           &B_y.re,&B_y.im);
-	              cmul_zmm16r4(t0.re,t0.im,
+	              cmul_zmm8r8(t0.re,t0.im,
 	                           H_z_2.re,H_z_2.im,
 	                           &B_z.re,&B_z.im);
 	              
@@ -8559,4 +8555,4 @@ namespace gms {
 } // gms
 
 
-#endif /*__GMS_EM_FIELDS_ZMM16R4_HPP__*/
+#endif /*__GMS_EM_FIELDS_ZMM8R8_HPP__*/
