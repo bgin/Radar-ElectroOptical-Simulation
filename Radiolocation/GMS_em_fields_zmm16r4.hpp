@@ -72,9 +72,9 @@ namespace gms {
 	                                const __m512 v2z) {
 	                                
 	                  register __m512 result;
-	                  result = _mm512_fmadd_pd(v1x,v2x,
-	                                      _mm512_fmadd_pd(v1y,v2y,
-	                                                 _mm512_mul_pd(v1z,v2z)));
+	                  result = _mm512_fmadd_ps(v1x,v2x,
+	                                      _mm512_fmadd_ps(v1y,v2y,
+	                                                 _mm512_mul_ps(v1z,v2z)));
 	                  return (result);                       
 	        }
 	        
@@ -608,9 +608,9 @@ namespace gms {
 	                  register __m512 v2y = _mm512_load_ps(&pv2y[0]); 
 	                  register __m512 v2z = _mm512_load_ps(&pv2z[0]);
 	                  register __m512 result;
-	                  result = _mm512_fmadd_pd(v1x,v2x,
-	                                      _mm512_fmadd_pd(v1y,v2y,
-	                                                 _mm512_mul_pd(v1z,v2z)));
+	                  result = _mm512_fmadd_ps(v1x,v2x,
+	                                      _mm512_fmadd_ps(v1y,v2y,
+	                                                 _mm512_mul_ps(v1z,v2z)));
 	                  return (result);                       
 	        }
 	        
@@ -634,9 +634,9 @@ namespace gms {
 	                  register __m512 v2y = _mm512_loadu_ps(&pv2y[0]); 
 	                  register __m512 v2z = _mm512_loadu_ps(&pv2z[0]);
 	                  register __m512 result;
-	                  result = _mm512_fmadd_pd(v1x,v2x,
-	                                      _mm512_fmadd_pd(v1y,v2y,
-	                                                 _mm512_mul_pd(v1z,v2z)));
+	                  result = _mm512_fmadd_ps(v1x,v2x,
+	                                      _mm512_fmadd_ps(v1y,v2y,
+	                                                 _mm512_mul_ps(v1z,v2z)));
 	                  return (result);                       
 	        }
 	        
