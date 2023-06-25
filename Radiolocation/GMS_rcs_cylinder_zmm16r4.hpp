@@ -461,7 +461,7 @@ namespace gms {
                          }                    
                          
                          m1 = m+1;
-                         for(j = m1; j != n; j += 16) {[
+                         for(j = m1; j != n; j += 16) {
 #if (__RCS_CYLINDER_PF_CACHE_HINT__) == 1
                               _mm_prefetch((char*)&pa[j+PF_DIST],_MM_HINT_T0);
                               _mm_prefetch((char*)&pk0a[j+PF_DIST],_MM_HINT_T0);
