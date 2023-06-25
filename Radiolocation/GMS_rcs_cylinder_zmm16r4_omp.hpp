@@ -641,6 +641,155 @@ namespace gms {
               }
               
               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void rcs_f4122_zmm16r4_unroll16x_omp(const __m512 * __restrict __ATTR_ALIGN__(64) pphi,
+	                                            const __m512 * __restrict __ATTR_ALIGN__(64) pa,
+	                                            const __m512 * __restrict __ATTR_ALIGN__(64) pk0a,
+	                                            __m512 * __restrict __ATTR_ALIGN__(64) prcs,
+	                                            const int32_t n,
+	                                            int32_t & PF_DIST) {
+	                                            
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
+	                register __m512 phi1,phi2,phi3,phi4,phi5,phi6,phi7,phi8;
+	                register __m512 phi9,phi10,phi11,phi12,phi13,phi14,phi15,phi16;
+	                register __m512 a1,a2,a3,a4,a5,a6,a7,a8;
+	                register __m512 a9,a10,a11,a12,a13,a14,a15,a16;
+	                register __m512 k0a1,k0a2,k0a3,k0a4,k0a5,k0a6,k0a7,k0a8;
+	                register __m512 k0a9,k0a10,k0a11,k0a12,k0a13,k0a14,k0a15,k0a16;
+	                register __m512 rcs1,rcs2,rcs3,rcs4,rcs,rcs6,rcs7,rcs8;
+	                register __m512 rcs9,rcs10,rcs11,rcs12,rcs13,rcs14,rcs15,rcs16;
+	                int32_t j,m,m1;
+	                
+	                m = n%16;
+	                if(m!=0) {
+	                   for(j = 0; j != m; ++j) {
+	                       phi = phi[j];
+	                       a   = pa[j];
+	                       k0a = pk0a[j];
+	                       rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                       prcs[j] = rcs;
+	                   }
+	                   if(n<16) { return;}
+	                }                     
+	                
+	                m1 = m+1;
+#pragma omp parallel for schedule(runtime) default(none)                                              \
+        firstprivate(m1,PF_DIST) private(j,phi1,phi2,phi3,phi4,phi5,phi6,phi7,phi8)                   \
+                                 private(phi9,phi10,phi11,phi12,phi13,phi14,phi15,phi16)              \
+                                 private(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16)      \
+                                 private(k0a1,k0a2,k0a3,k0a4,k0a5,k0a6,k0a7,k0a8)                     \
+                                 private(k0a9,k0a10,k0a11,k0a12,k0a13,k0a14,k0a15,k0a16)              \
+                                 private(rcs1,rcs2,rcs3,rcs4,rcs5,rcs6,rcs7,rcs8)                     \
+                                 private(rcs9,rcs10,rcs11,rcs12,rcs13,rcs14,rcs15,rcs16)              \
+                                 shared(n,pa,pk0a,prcs)	                
+	                for(j = m1; j != n; j += 16) {
+#if (__RCS_CYLINDER_PF_CACHE_HINT__) == 1
+                              _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+                              _mm_prefetch((char*)&pa[j+PF_DIST],_MM_HINT_T0);
+                              _mm_prefetch((char*)&pk0a[j+PF_DIST],_MM_HINT_T0);
+#elif (__RCS_CYLINDER_PF_CACHE_HINT__) == 2
+                              _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+                              _mm_prefetch((char*)&pa[j+PF_DIST],_MM_HINT_T1);
+                              _mm_prefetch((char*)&pk0a[j+PF_DIST],_MM_HINT_T1);
+#elif  (__RCS_CYLINDER_PF_CACHE_HINT__) == 3
+                              _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+                              _mm_prefetch((char*)&pa[j+PF_DIST],_MM_HINT_T2);
+                              _mm_prefetch((char*)&pk0a[j+PF_DIST],_MM_HINT_T2);
+#elif  (__RCS_CYLINDER_PF_CACHE_HINT__) == 4
+                              _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+                              _mm_prefetch((char*)&pa[j+PF_DIST],_MM_HINT_NTA);
+                              _mm_prefetch((char*)&pk0a[j+PF_DIST],_MM_HINT_NTA);
+#endif  	              
+                              phi = phi[j+0];
+	                      a   = pa[j+0];
+	                      k0a = pk0a[j+0];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+0] = rcs; 
+	                      phi = phi[j+1];
+	                      a   = pa[j+1];
+	                      k0a = pk0a[j+1];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+1] = rcs;  
+	                      phi = phi[j+2];
+	                      a   = pa[j+2];
+	                      k0a = pk0a[j+2];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+2] = rcs; 
+	                      phi = phi[j+3];
+	                      a   = pa[j+3];
+	                      k0a = pk0a[j+3];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+3] = rcs;
+	                      phi = phi[j+4];
+	                      a   = pa[j+4];
+	                      k0a = pk0a[j+4];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+4] = rcs;
+	                      phi = phi[j+5];
+	                      a   = pa[j+5];
+	                      k0a = pk0a[j+5];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+5] = rcs;
+	                      phi = phi[j+6];
+	                      a   = pa[j+6];
+	                      k0a = pk0a[j+6];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+6] = rcs;
+	                      phi = phi[j+7];
+	                      a   = pa[j+7];
+	                      k0a = pk0a[j+7];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+7] = rcs;
+	                      phi = phi[j+8];
+	                      a   = pa[j+8];
+	                      k0a = pk0a[j+8];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+8] = rcs;
+	                      phi = phi[j+9];
+	                      a   = pa[j+9];
+	                      k0a = pk0a[j+9];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+9] = rcs;
+	                      phi = phi[j+10];
+	                      a   = pa[j+10];
+	                      k0a = pk0a[j+10];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+10] = rcs;
+	                      phi = phi[j+11];
+	                      a   = pa[j+11];
+	                      k0a = pk0a[j+11];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+11] = rcs; 
+	                      phi = phi[j+12];
+	                      a   = pa[j+12];
+	                      k0a = pk0a[j+12];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+12] = rcs;  
+	                      phi = phi[j+13];
+	                      a   = pa[j+13];
+	                      k0a = pk0a[j+13];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+13] = rcs; 
+	                      phi = phi[j+14];
+	                      a   = pa[j+14];
+	                      k0a = pk0a[j+14];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+14] = rcs;
+	                      phi = phi[j+15];
+	                      a   = pa[j+15];
+	                      k0a = pk0a[j+15];
+	                      rcs = rcs_f4122_zmm16r4(phi,a,k0a);
+	                      prcs[j+15] = rcs;         
+	                }              
+	       } 
+	       
+              
+              
               
               
               
