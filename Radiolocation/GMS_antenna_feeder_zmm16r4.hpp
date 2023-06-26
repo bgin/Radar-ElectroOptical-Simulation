@@ -676,7 +676,7 @@ namespace gms {
 	         
 	         
 	       /*
-	            Hertz vector (electrical)
+	            Hertz vector (electrical), avint integrator.
 	            Formula 2-13, p. 35
 	       */
 	       
@@ -971,6 +971,105 @@ namespace gms {
                         hy = {syr*frac,syi*frac};
                         hz = {szr*frac,szi*frac};                 
                }
+               
+               
+                  
+	       /*
+	            Hertz vector (electrical), cubint integrator.
+	            Formula 2-13, p. 35
+	       */
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_cubint(const __m512 xre,
+	                                       const __m512 xim,
+	                                       const __m512 yre,
+	                                       const __m512 yim,
+	                                       const __m512 zre,
+	                                       const __m512_zim,
+	                                       const __m512 xd,
+	                                       const __m512 yd,
+	                                       const __m512 zd,
+	                                       const float arg[10],
+	                                       std::complex<float> & hx,                        
+                                               std::complex<float> & hy,
+                                               std::complex<float> & hz,
+                                               const int32_t ntab,
+                                               float err[6]) { // integration error.
+                            
+                        
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi    
+                        const float NAN =  std::numeric_limits<float>::quiet_NaN();           
+                        __ATTR_ALIGN__(64) float intxr[16];
+                        __ATTR_ALIGN__(64) float intxi[16];
+                        __ATTR_ALIGN__(64) float intyr[16];
+                        __ATTR_ALIGN__(64) float intyi[16];
+                        __ATTR_ALIGN__(64) float intzr[16];
+                        __ATTR_ALIGN__(64) float intzi[16];
+                        __ATTR_ALIGN__(64) float dx[16];
+                        __ATTR_ALIGN__(64) float dy[16];
+                        __ATTR_ALIGN__(64) float dz[16];
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register float k,r,xa,xb,ya,yb,za,zb;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
+                        register float er1,er2,er3,er4,er5,er6;
+                        k = arg[0];
+                        r = arg[1];
+                        vk   = _mm512_set1_ps(k);
+                        _mm512_store_ps(&dx[0],xd);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        _mm512_store_ps(&dy[0],yd);
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        _mm512_store_ps(&dz[0],zd);
+                        xa   = arg[2];
+                        xb   = arg[3];
+                        eai  = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        ya   = arg[4];
+                        yb   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        za   = arg[6];
+                        zb   = arg[7];
+                        cer  = _mm512_mul_ps(cer,invr);
+                        omg  = arg[8];
+                        cei  = _mm512_mul_ps(cei,invr);
+                        eps  = arg[9];
+                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xre,cer));
+                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yre,cer));
+                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zre,cer));
+                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xim,cei));
+                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yim,cei));
+                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zim,cei));
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        cubint(ntab,&dx[0],&intxr[0],xa,xb,sxr,er1);
+                        cubint(ntab,&dx[0],&intxi[0],xa,xb,sxi,er2);
+                        err[0] = er1;
+                        err[1] = er2;
+                        cubint(ntab,&dy[0],&intyr[0],ya,yb,syr,er3);
+                        cubint(ntab,&dy[0],&intyi[0],ya,yb,syi,er4);
+                        err[2] = er3;
+                        err[3] = er4;
+                        cubint(ntab,&dz[0],&intzr[0],za,zb,szr,er5);
+                        cubint(ntab,&dz[0],&intzi[0],za,zb,szi,er6);
+                        err[4] = er5;
+                        err[5] = er6;
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                 
+               }
+               
                
                
                
