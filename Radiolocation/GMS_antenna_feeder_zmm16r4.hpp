@@ -680,9 +680,101 @@ namespace gms {
 	            Formula 2-13, p. 35
 	       */
 	       
-	       
-	       
-             
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_avint(const __m512 xre,
+	                                       const __m512 xim,
+	                                       const __m512 yre,
+	                                       const __m512 yim,
+	                                       const __m512 zre,
+	                                       const __m512_zim,
+	                                       const __m512 xd,
+	                                       const __m512 yd,
+	                                       const __m512 zd,
+	                                       const float arg[10],
+	                                       std::complex<float> & hx,                        
+                                               std::complex<float> & hy,
+                                               std::complex<float> & hz,
+                                               int32_t & ierr) {
+                            
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi                
+                        __ATTR_ALIGN__(64) float intxr[16];
+                        __ATTR_ALIGN__(64) float intxi[16];
+                        __ATTR_ALIGN__(64) float intyr[16];
+                        __ATTR_ALIGN__(64) float intyi[16];
+                        __ATTR_ALIGN__(64) float intzr[16];
+                        __ATTR_ALIGN__(64) float intzi[16];
+                        __ATTR_ALIGN__(64) float dx[16];
+                        __ATTR_ALIGN__(64) float dy[16];
+                        __ATTR_ALIGN__(64) float dz[16];
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register float k,r,xa,xb,ya,yb,za,zb;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
+                        int32_t ier1,ier2,ier3,ier4,ier5,ier6;
+                        k = arg[0];
+                        r = arg[1];
+                        vk   = _mm512_set1_ps(k);
+                        _mm512_store_ps(&dx[0],xd);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        _mm512_store_ps(&dy[0],yd);
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        _mm512_store_ps(&dz[0],zd);
+                        xa   = arg[2];
+                        xb   = arg[3];
+                        eai  = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        ya   = arg[4];
+                        yb   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        za   = arg[6];
+                        zb   = arg[7];
+                        cer  = _mm512_mul_ps(cer,invr);
+                        omg  = arg[8];
+                        cei  = _mm512_mul_ps(cei,invr);
+                        eps  = arg[9];
+                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xre,cer));
+                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yre,cer));
+                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zre,cer));
+                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xim,cei));
+                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yim,cei));
+                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zim,cei));
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        sxr = avint(&dx[0],&intxr[0],xa,xb,ier1);
+                        sxi = avint(&dx[0],&intxi[0],xa,xb,ier2);
+                        if(ier1==3 || ier2==3) {
+                           ierr = 3;
+                           return;
+                        }  
+                        syr = avint(&dy[0],&intyr[0],ya,yb,ier3);
+                        syi = avint(&dy[0],&intyi[0],ya,yb,ier4);
+                        if(ier3==3 || ier4==3) {
+                           ierr = 3;
+                           return;
+                        }  
+                        szr = avint(&dz[0],&intzr[0],za,zb,ier5);
+                        szi = avint(&dz[0],&intzi[0],za,zb,ier6);
+                        if(ier5==3 || ier6==3) {
+                           ierr = 3;
+                           return;
+                        }         
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                 
+               }
+               
+               
         } // radiolocation
 
 } // gms
