@@ -1420,6 +1420,88 @@ namespace gms {
                
                
                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_hiordq_u(const float * __restrict   pxre,
+	                                          const float * __restrict   pxim,
+	                                          const float * __restrict   pyre,
+	                                          const float * __restrict   pyim,
+	                                          const float * __restrict   pzre,
+	                                          const float * __restrict   pzim,
+	                                          const float arg[7],
+	                                          std::complex<float> & hx,                        
+                                                  std::complex<float> & hy,
+                                                  std::complex<float> & hz) {
+                                               
+                                              
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi 
+                        constexpr int32_t ntab = 16;   
+                        const float NAN =  std::numeric_limits<float>::quiet_NaN();           
+                        __ATTR_ALIGN__(64) float intxr[16];
+                        __ATTR_ALIGN__(64) float intxi[16];
+                        __ATTR_ALIGN__(64) float intyr[16];
+                        __ATTR_ALIGN__(64) float intyi[16];
+                        __ATTR_ALIGN__(64) float intzr[16];
+                        __ATTR_ALIGN__(64) float intzi[16];
+                        __ATTR_ALIGN__(64) float work[32];
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register __m512 xr,xi,yr,yi,zr,zi;
+                        register float k,r,deltx,delty,deltz;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
+                        xr = _mm512_loadu_ps(&xre[0]);
+                        xi = _mm512_loadu_ps(&xim[0]);
+                        yr = _mm512_loadu_ps(&yre[0]);
+                        yi = _mm512_loadu_ps(&yim[0]);
+                        zr = _mm512_loadu_ps(&zre[0]);
+                        zi = _mm512_loadu_ps(&zim[0]);
+                        k = arg[0];
+                        r = arg[1];
+                        vk   = _mm512_set1_ps(k);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        deltx = arg[2];
+                        delty = arg[3];
+                        eai   = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        deltz = arg[4];
+                        omg   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        eps  = arg[6];
+                        cer  = _mm512_mul_ps(cer,invr);
+                        cei  = _mm512_mul_ps(cei,invr);
+                        _mm512_storeu_ps(&intxr[0],_mm512_mul_ps(xr,cer));
+                        _mm512_storeu_ps(&intyr[0],_mm512_mul_ps(yr,cer));
+                        _mm512_storeu_ps(&intzr[0],_mm512_mul_ps(zr,cer));
+                        _mm512_storeu_ps(&intxi[0],_mm512_mul_ps(xi,cei));
+                        _mm512_storeu_ps(&intyi[0],_mm512_mul_ps(yi,cei));
+                        _mm512_storeu_ps(&intzi[0],_mm512_mul_ps(zi,cei));
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        hiordq(ntab,deltx,&intxr[0],&work[0],sxr);
+                        hiordq(ntab,deltx,&intxi[0],&work[0],sxi);
+                        hiordq(ntab,delty,&intyr[0],&work[0],syr);
+                        hiordq(ntab,delty,&intyi[0],&work[0],syi);
+                        hiordq(ntab,deltz,&intzr[0],&work[0],szr);
+                        hiordq(ntab,deltz,&intzi[0],&work[0],szi);
+                      
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                 
+               }
+               
+               
+               
                
                
         } // radiolocation
