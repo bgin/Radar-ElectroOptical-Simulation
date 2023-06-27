@@ -1669,6 +1669,91 @@ namespace gms {
                }
                
                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_plint_u( const float * __restrict  pxre,
+	                                          const float * __restrict  pxim,
+	                                          const float * __restrict  pyre,
+	                                          const float * __restrict  pyim,
+	                                          const float * __restrict  pzre,
+	                                          const float * __restrict  pzim,
+	                                          float * __restrict  pxd,
+	                                          float * __restrict  pyd,
+	                                          float * __restrict  pzd,
+	                                          const float arg[10],
+	                                          std::complex<float> & hx,                        
+                                                  std::complex<float> & hy,
+                                                  std::complex<float> & hz) {
+                                              
+                                           
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi 
+                        constexpr int32_t ntab = 16;   
+                        __ATTR_ALIGN__(64) float intxr[16];
+                        __ATTR_ALIGN__(64) float intxi[16];
+                        __ATTR_ALIGN__(64) float intyr[16];
+                        __ATTR_ALIGN__(64) float intyi[16];
+                        __ATTR_ALIGN__(64) float intzr[16];
+                        __ATTR_ALIGN__(64) float intzi[16];
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register __m512 xr,xi,yr,yi,zr,zi;
+                        register float k,r,xa,xb,ya,yb,za,zb;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
+                        xr = _mm512_loadu_ps(&xre[0]);
+                        xi = _mm512_loadu_ps(&xim[0]);
+                        yr = _mm512_loadu_ps(&yre[0]);
+                        yi = _mm512_loadu_ps(&yim[0]);
+                        zr = _mm512_loadu_ps(&zre[0]);
+                        zi = _mm512_loadu_ps(&zim[0]);
+                        k = arg[0];
+                        r = arg[1];
+                        vk   = _mm512_set1_ps(k);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        xa   = arg[2];
+                        xb   = arg[3];
+                        eai  = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        ya   = arg[4];
+                        yb   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        za   = arg[6];
+                        zb   = arg[7];
+                        cer  = _mm512_mul_ps(cer,invr);
+                        omg  = arg[8];
+                        cei  = _mm512_mul_ps(cei,invr);
+                        eps  = arg[9];
+                        _mm512_storeu_ps(&intxr[0],_mm512_mul_ps(xr,cer));
+                        _mm512_storeu_ps(&intyr[0],_mm512_mul_ps(yr,cer));
+                        _mm512_storeu_ps(&intzr[0],_mm512_mul_ps(zr,cer));
+                        _mm512_storeu_ps(&intxi[0],_mm512_mul_ps(xi,cei));
+                        _mm512_storeu_ps(&intyi[0],_mm512_mul_ps(yi,cei));
+                        _mm512_storeu_ps(&intzi[0],_mm512_mul_ps(zi,cei));
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        plint(ntab,&pxd[0],&intxr[0],xa,xb,sxr);
+                        plint(ntab,&pxd[0],&intxi[0],xa,xb,sxi);
+                        plint(ntab,&pyd[0],&intyr[0],ya,yb,syr);
+                        plint(ntab,&pyd[0],&intyi[0],ya,yb,syi);
+                        plint(ntab,&pzd[0],&intzr[0],za,zb,szr);
+                        plint(ntab,&pzd[0],&intzi[0],za,zb,szi);
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                 
+               }
+               
+               
+               
                
                
                
