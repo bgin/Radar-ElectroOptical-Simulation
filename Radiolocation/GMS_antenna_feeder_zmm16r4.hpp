@@ -1993,6 +1993,86 @@ namespace gms {
                }
                
                
+               /*
+                    Hertz vector (electrical), simpn integrator.
+	            Formula 2-13, p. 35  
+               */
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_simpn(const __m512 xre,
+	                                       const __m512 xim,
+	                                       const __m512 yre,
+	                                       const __m512 yim,
+	                                       const __m512 zre,
+	                                       const __m512 zim,
+	                                       const float arg[5],
+	                                       std::complex<float> & hx,                        
+                                               std::complex<float> & hy,
+                                               std::complex<float> & hz) {
+                                              
+                                           
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi 
+                        constexpr int32_t ntab = 16;   
+                        __ATTR_ALIGN__(64) float intxr[16];
+                        __ATTR_ALIGN__(64) float intxi[16];
+                        __ATTR_ALIGN__(64) float intyr[16];
+                        __ATTR_ALIGN__(64) float intyi[16];
+                        __ATTR_ALIGN__(64) float intzr[16];
+                        __ATTR_ALIGN__(64) float intzi[16];
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register float k,r,omg,eps,h;
+                        register float sxr,sxi,syr,syi,szr,szi,frac;
+                        
+                        k = arg[0];
+                        r = arg[1];
+                        vk   = _mm512_set1_ps(k);
+                        _mm512_store_ps(&dx[0],xd);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        _mm512_store_ps(&dy[0],yd);
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        _mm512_store_ps(&dz[0],zd);
+                        omg   = arg[2];
+                        eps   = arg[3];
+                        eai  = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        h    = arg[4];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        cer  = _mm512_mul_ps(cer,invr);
+                        cei  = _mm512_mul_ps(cei,invr);
+                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xre,cer));
+                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yre,cer));
+                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zre,cer));
+                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xim,cei));
+                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yim,cei));
+                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zim,cei));
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        simpne(ntab,h,&intxr[0],sxr);
+                        simpne(ntab,h,&intxi[0],sxi);
+                        simpne(ntab,h,&intyr[0],syr);
+                        simpne(ntab,h,&intyi[0],syi);
+                        simpne(ntab,h,&intzr[0],szr);
+                        simpne(ntab,h,&intzi[0],szi);
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                 
+               }
+               
+               
+               
                
                
                
