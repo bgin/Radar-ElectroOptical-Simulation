@@ -63,6 +63,18 @@ namespace gms {
  
           namespace radiolocation {
           
+          
+                   struct __ATTR_ALIGN__(64) work_r4_t {
+                   
+                          float * __restrict xre;
+                          float * __restrict xim;
+                          float * __restrict yre;
+                          float * __restrict yim;
+                          float * __restrict zre;
+                          float * __restrict zim;
+                          PAD_TO(0,16)
+                   }
+          
            
                    /*
                        Spherical unit vectors.
@@ -775,6 +787,9 @@ namespace gms {
                }
                
                
+               
+               
+               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -872,6 +887,9 @@ namespace gms {
                         hy = {syr*frac,syi*frac};
                         hz = {szr*frac,szi*frac};                 
                }
+               
+               
+               
                
                
                    __ATTR_ALWAYS_INLINE__
