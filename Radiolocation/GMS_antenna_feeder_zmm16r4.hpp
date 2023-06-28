@@ -64,7 +64,7 @@ namespace gms {
           namespace radiolocation {
           
           
-                   struct __ATTR_ALIGN__(64) work_r4_t {
+                   struct __ATTR_ALIGN__(64) fwork_t {
                    
                           float * __restrict xre;
                           float * __restrict xim;
@@ -74,6 +74,19 @@ namespace gms {
                           float * __restrict zim;
                           PAD_TO(0,16)
                    }
+                   
+                   
+                     struct __ATTR_ALIGN__(64) dwork_t {
+                   
+                          double * __restrict xre;
+                          double * __restrict xim;
+                          double * __restrict yre;
+                          double * __restrict yim;
+                          double * __restrict zre;
+                          double * __restrict zim;
+                          PAD_TO(0,16)
+                   }
+          
           
            
                    /*
