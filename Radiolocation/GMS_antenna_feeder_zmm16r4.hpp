@@ -66,24 +66,24 @@ namespace gms {
           
                    struct __ATTR_ALIGN__(64) fwork_t {
                    
-                          float * __restrict xre;
-                          float * __restrict xim;
-                          float * __restrict yre;
-                          float * __restrict yim;
-                          float * __restrict zre;
-                          float * __restrict zim;
+                          float * __restrict pxr;
+                          float * __restrict pxi;
+                          float * __restrict pyr;
+                          float * __restrict pyi;
+                          float * __restrict pzr;
+                          float * __restrict pzi;
                           PAD_TO(0,16)
                    }
                    
                    
                      struct __ATTR_ALIGN__(64) dwork_t {
                    
-                          double * __restrict xre;
-                          double * __restrict xim;
-                          double * __restrict yre;
-                          double * __restrict yim;
-                          double * __restrict zre;
-                          double * __restrict zim;
+                          double * __restrict pxr;
+                          double * __restrict pxi;
+                          double * __restrict pyr;
+                          double * __restrict pyi;
+                          double * __restrict pzr;
+                          double * __restrict pzi;
                           PAD_TO(0,16)
                    }
           
@@ -901,6 +901,311 @@ namespace gms {
                         hz = {szr*frac,szi*frac};                 
                }
                
+#if !defined(__ANTENNA_FEEDER_PF_CACHE_HINT__)
+#define  __ANTENNA_FEEDER_PF_CACHE_HINT__ 1
+#endif              
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_avint_u6x_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pxim,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pyre,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pyim,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pzre,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pzim,
+	                                         float * __restrict __ATTR_ALIGN__(64) pxd,
+	                                         float * __restrict __ATTR_ALIGN__(64) pyd,
+	                                         float * __restrict __ATTR_ALIGN__(64) pzd,
+	                                         fwork_t fw, //work arrays (caller allocated)
+	                                         const float arg[10],
+	                                         std::complex<float> & hx,                        
+                                                 std::complex<float> & hy,
+                                                 std::complex<float> & hz,
+                                                 const int32_t n,
+                                                 int32_t & PF_DIST,
+                                                 int32_t & ierr) {
+                                                 
+                        if(__builtin_expect(n<=0,0)) { return;}
+                        
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi  
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register __m512 xre,xim,yre,yim,zre,zim;
+                        register __m512 xd,yd,zd;
+                        std::complex<float> tmp1,tmp2;
+                        register float k,r,xa,xb,ya,yb,za,zb,inv;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
+                        int32_t ier1,ier2,ier3,ier4,ier5,ier6; 
+                        int32_t i;
+                        k = arg[0];
+                        r = arg[1];
+                        inv  = 1.0f/r;
+                        vk   = _mm512_set1_ps(k);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        xa   = arg[2];
+                        xb   = arg[3];
+                        eai  = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        ya   = arg[4];
+                        yb   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        za   = arg[6];
+                        zb   = arg[7];
+                        tmp1 = {0.0f,-1.0f*k*r};
+                        cer  = _mm512_mul_ps(cer,invr);
+                        omg  = arg[8];
+                        cei  = _mm512_mul_ps(cei,invr);
+                        tmp2 = tmp1*inv;
+                        eps  = arg[9];   
+                        for(i = 0; (i+95) < n; i += 96) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&pxre[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pxim[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pyre[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pyim[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pzre[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pzim[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&pxre[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pxim[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pyre[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pyim[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pzre[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pzim[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&pxre[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pxim[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pyre[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pyim[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pzre[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pzim[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&pxre[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pxim[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pyre[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pyim[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pzre[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pzim[i+PF_DIST],_MM_HINT_NTA);
+#endif
+                             xre = _mm512_load_ps(&pxre[i+0]);
+                             _mm512_store_ps(&fw.pxr[i+0],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+0]);
+                             _mm512_store_ps(&fw.pxi[i+0],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+0]);
+                             _mm512_store_ps(&fw.pyr[i+0],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+0]);
+                             _mm512_store_ps(&fw.pyi[i+0],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+0]);
+                             _mm512_store_ps(&fw.pzr[i+0],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+0]);
+                             _mm512_store_ps(&fw.pzi[i+0],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+16]);
+                             _mm512_store_ps(&fw.pxr[i+16],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+16]);
+                             _mm512_store_ps(&fw.pxi[i+16],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+16]);
+                             _mm512_store_ps(&fw.pyr[i+16],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+16]);
+                             _mm512_store_ps(&fw.pyi[i+16],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+16]);
+                             _mm512_store_ps(&fw.pzr[i+16],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+16]);
+                             _mm512_store_ps(&fw.pzi[i+16],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+32]);
+                             _mm512_store_ps(&fw.pxr[i+32],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+32]);
+                             _mm512_store_ps(&fw.pxi[i+32],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+32]);
+                             _mm512_store_ps(&fw.pyr[i+32],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+32]);
+                             _mm512_store_ps(&fw.pyi[i+32],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+32]);
+                             _mm512_store_ps(&fw.pzr[i+32],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+32]);
+                             _mm512_store_ps(&fw.pzi[i+32],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+48]);
+                             _mm512_store_ps(&fw.pxr[i+48],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+48]);
+                             _mm512_store_ps(&fw.pxi[i+48],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+48]);
+                             _mm512_store_ps(&fw.pyr[i+48],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+48]);
+                             _mm512_store_ps(&fw.pyi[i+48],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+48]);
+                             _mm512_store_ps(&fw.pzr[i+48],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+48]);
+                             _mm512_store_ps(&fw.pzi[i+48],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+64]);
+                             _mm512_store_ps(&fw.pxr[i+64],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+64]);
+                             _mm512_store_ps(&fw.pxi[i+64],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+64]);
+                             _mm512_store_ps(&fw.pyr[i+64],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+64]);
+                             _mm512_store_ps(&fw.pyi[i+64],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+64]);
+                             _mm512_store_ps(&fw.pzr[i+64],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+64]);
+                             _mm512_store_ps(&fw.pzi[i+64],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+80]);
+                             _mm512_store_ps(&fw.pxr[i+80],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+80]);
+                             _mm512_store_ps(&fw.pxi[i+80],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+80]);
+                             _mm512_store_ps(&fw.pyr[i+80],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+80]);
+                             _mm512_store_ps(&fw.pyi[i+80],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+80]);
+                             _mm512_store_ps(&fw.pzr[i+80],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+80]);
+                             _mm512_store_ps(&fw.pzi[i+80],_mm512_mul_ps(zim,cei));
+                        }  
+                        
+                        for(; (i+63) < n; i += 64) {
+                             xre = _mm512_load_ps(&pxre[i+0]);
+                             _mm512_store_ps(&fw.pxr[i+0],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+0]);
+                             _mm512_store_ps(&fw.pxi[i+0],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+0]);
+                             _mm512_store_ps(&fw.pyr[i+0],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+0]);
+                             _mm512_store_ps(&fw.pyi[i+0],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+0]);
+                             _mm512_store_ps(&fw.pzr[i+0],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+0]);
+                             _mm512_store_ps(&fw.pzi[i+0],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+16]);
+                             _mm512_store_ps(&fw.pxr[i+16],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+16]);
+                             _mm512_store_ps(&fw.pxi[i+16],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+16]);
+                             _mm512_store_ps(&fw.pyr[i+16],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+16]);
+                             _mm512_store_ps(&fw.pyi[i+16],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+16]);
+                             _mm512_store_ps(&fw.pzr[i+16],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+16]);
+                             _mm512_store_ps(&fw.pzi[i+16],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+32]);
+                             _mm512_store_ps(&fw.pxr[i+32],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+32]);
+                             _mm512_store_ps(&fw.pxi[i+32],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+32]);
+                             _mm512_store_ps(&fw.pyr[i+32],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+32]);
+                             _mm512_store_ps(&fw.pyi[i+32],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+32]);
+                             _mm512_store_ps(&fw.pzr[i+32],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+32]);
+                             _mm512_store_ps(&fw.pzi[i+32],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+48]);
+                             _mm512_store_ps(&fw.pxr[i+48],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+48]);
+                             _mm512_store_ps(&fw.pxi[i+48],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+48]);
+                             _mm512_store_ps(&fw.pyr[i+48],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+48]);
+                             _mm512_store_ps(&fw.pyi[i+48],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+48]);
+                             _mm512_store_ps(&fw.pzr[i+48],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+48]);
+                             _mm512_store_ps(&fw.pzi[i+48],_mm512_mul_ps(zim,cei));
+                      }   
+                      
+                      for(; (i+31) < n; i += 32) {
+                             xre = _mm512_load_ps(&pxre[i+0]);
+                             _mm512_store_ps(&fw.pxr[i+0],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+0]);
+                             _mm512_store_ps(&fw.pxi[i+0],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+0]);
+                             _mm512_store_ps(&fw.pyr[i+0],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+0]);
+                             _mm512_store_ps(&fw.pyi[i+0],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+0]);
+                             _mm512_store_ps(&fw.pzr[i+0],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+0]);
+                             _mm512_store_ps(&fw.pzi[i+0],_mm512_mul_ps(zim,cei));
+                             xre = _mm512_load_ps(&pxre[i+16]);
+                             _mm512_store_ps(&fw.pxr[i+16],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+16]);
+                             _mm512_store_ps(&fw.pxi[i+16],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+16]);
+                             _mm512_store_ps(&fw.pyr[i+16],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+16]);
+                             _mm512_store_ps(&fw.pyi[i+16],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+16]);
+                             _mm512_store_ps(&fw.pzr[i+16],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+16]);
+                             _mm512_store_ps(&fw.pzi[i+16],_mm512_mul_ps(zim,cei));
+                      }   
+                      
+                      for(; (i+15) < n; i += 16) {
+                             xre = _mm512_load_ps(&pxre[i+0]);
+                             _mm512_store_ps(&fw.pxr[i+0],_mm512_mul_ps(xre,cer));
+                             xim = _mm512_load_ps(&pxim[i+0]);
+                             _mm512_store_ps(&fw.pxi[i+0],_mm512_mul_ps(xim,cei));
+                             yre = _mm512_load_ps(&pyre[i+0]);
+                             _mm512_store_ps(&fw.pyr[i+0],_mm512_mul_ps(yre,cer));
+                             yim = _mm512_load_ps(&pyim[i+0]);
+                             _mm512_store_ps(&fw.pyi[i+0],_mm512_mul_ps(yim,cei));
+                             zre = _mm512_load_ps(&pzre[i+0]);
+                             _mm512_store_ps(&fw.pzr[i+0],_mm512_mul_ps(zre,cer));
+                             zim = _mm512_load_ps(&pzim[i+0]);
+                             _mm512_store_ps(&fw.pzi[i+0],_mm512_mul_ps(zim,cei));
+                      }  
+                      
+                      register float tmp2r = tmp2.real();
+                      register float tmp2i = tmp2.imag();
+                      for(; (i+0) < n; i += 1) {
+                           register float xr = pxre[i];
+                           fw.pxre[i]        = xr*tmp2r;
+                           register float xi = pxim[i];
+                           fw.pxim[i]        = xi*tmp2i;
+                           register float yr = pyre[i];
+                           fw.pyre[i]        = yr*tmp2r;
+                           register float yi = pyim[i];
+                           fw.pyim[i]        = yi*tmp2i;
+                           register float zr = pxre[i];
+                           fw.pzre[i]        = zr*tmp2r;
+                           register float zi = pxim[i];
+                           fw.pzim[i]        = zi*tmp2i;
+                      }  
+                      
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        sxr = avint(&pxd[0],&fw.pxr[0],xa,xb,ier1);
+                        sxi = avint(&pxd[0],&fw.pxi[0],xa,xb,ier2);
+                        if(ier1==3 || ier2==3) {
+                           ierr = 3;
+                           return;
+                        }  
+                        syr = avint(&pyd[0],&fw.pyr[0],ya,yb,ier3);
+                        syi = avint(&pyd[0],&fw.pyi[0],ya,yb,ier4);
+                        if(ier3==3 || ier4==3) {
+                           ierr = 3;
+                           return;
+                        }  
+                        szr = avint(&pzd[0],&fw.pzr[0],za,zb,ier5);
+                        szi = avint(&pzd[0],&fw.pzi[0],za,zb,ier6);
+                        if(ier5==3 || ier6==3) {
+                           ierr = 3;
+                           return;
+                        }         
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                     
+               }
                
                
                
