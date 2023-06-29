@@ -1720,7 +1720,7 @@ namespace gms {
 	                                       const __m512 yim,
 	                                       const __m512 zre,
 	                                       const __m512 zim,
-	                                      const float arg[7],
+	                                       const float arg[7],
 	                                       std::complex<float> & hx,                        
                                                std::complex<float> & hy,
                                                std::complex<float> & hz) {
@@ -1859,6 +1859,74 @@ namespace gms {
                         hx = {sxr*frac,sxi*frac};
                         hy = {syr*frac,syi*frac};
                         hz = {szr*frac,szi*frac};                 
+               }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void hve_f213_zmm16r4_hiordq_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
+	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
+	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
+	                                          const float * __restrict __ATTR_ALIGN__(64)  pzre,
+	                                          const float * __restrict __ATTR_ALIGN__(64)  pzim,
+	                                          float * __restrict __ATTR_ALIGN__(64) work, // size of work is 2*(n-1)
+	                                          fwork_t fw,
+	                                          const float arg[7],
+	                                          std::complex<float> & hx,                        
+                                                  std::complex<float> & hy,
+                                                  std::complex<float> & hz,
+                                                  const int32_t n,
+                                                  const int32_t PF_DIST) { 
+                                                  
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi 
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        register float k,r,deltx,delty,deltz,inv;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;  
+                        std::complex<float> tmp1,tmp2;
+                        k     = arg[0];
+                        r     = arg[1];
+                        inv   =  1.0f/r;
+                        vk    = _mm512_set1_ps(k);
+                        vr    = _mm512_set1_ps(r);
+                        ir    = _mm512_setzero_ps();
+                        invr  = _mm512_rcp14_ps(vr);
+                        ii    = _mm512_set1_ps(-1.0f);
+                        deltx = arg[2];
+                        tmp1  = {0.0f,-1.0f*k*r};
+                        delty = arg[3];
+                        eai   = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        deltz = arg[4];
+                        omg   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        tmp2  = tmp1*inv;
+                        eps   = arg[6];
+                        cer   = _mm512_mul_ps(cer,invr);
+                        cei   = _mm512_mul_ps(cei,invr); 
+                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                                                     fw,cer,cei,tmp2,n,PF_DIST);
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        hiordq(ntab,deltx,&fw.pxr[0],&work[0],sxr);
+                        hiordq(ntab,deltx,&fw.pxi[0],&work[0],sxi);
+                        hiordq(ntab,delty,&fw.pyr[0],&work[0],syr);
+                        hiordq(ntab,delty,&fw.pyi[0],&work[0],syi);
+                        hiordq(ntab,deltz,&fw.pzr[0],&work[0],szr);
+                        hiordq(ntab,deltz,&fw.pzi[0],&work[0],szi);
+                      
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                              
                }
                
                
