@@ -2190,6 +2190,79 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+	           void hve_f213_zmm16r4_plint_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pxim,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pyre,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pyim,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pzre,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pzim,
+	                                             float * __restrict __ATTR_ALIGN__(64)  pxd,
+	                                             float * __restrict __ATTR_ALIGN__(64)  pyd,
+	                                             float * __restrict __ATTR_ALIGN__(64)  pzd,
+	                                             fwork_t fw,
+	                                             const float arg[10],
+	                                             std::complex<float> & hx,                        
+                                                     std::complex<float> & hy,
+                                                     std::complex<float> & hz,
+                                                     const int32_t n,
+                                                     const int32_t PF_DIST) {
+                                                     
+                        constexpr float C12566370614359172953850573533118 = 
+                                              12.566370614359172953850573533118f; //4*pi 
+                        register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        std::complex<float> tmp1,tmp2;
+                        register float k,r,xa,xb,ya,yb,za,zb,inv;
+                        register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;    
+                        k    = arg[0];
+                        r    = arg[1];
+                        inv  = 1.0f/r;
+                        vk   = _mm512_set1_ps(k);
+                        vr   = _mm512_set1_ps(r);
+                        ir   = _mm512_setzero_ps();
+                        invr = _mm512_rcp14_ps(vr);
+                        ii   = _mm512_set1_ps(-1.0f);
+                        xa   = arg[2];
+                        xb   = arg[3];
+                        eai  = _mm512_mul_ps(ii,_mm512_mul_ps(vk,vr));
+                        ya   = arg[4];
+                        yb   = arg[5];
+                        cexp_zmm16r4(ir,eai,&cer,&cei);
+                        za   = arg[6];
+                        zb   = arg[7];
+                        tmp1 = {0.0f,-1.0f*k*r};
+                        cer  = _mm512_mul_ps(cer,invr);
+                        omg  = arg[8];
+                        cei  = _mm512_mul_ps(cei,invr);
+                        tmp2 = tmp1*inv;
+                        eps  = arg[9];  
+                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                                                     fw,cer,cei,tmp2,n,PF_DIST);
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        float tmp = C12566370614359172953850573533118*omg*eps;
+                        frac = 1.0f/tmp;
+                        plint(n,&pxd[0],&fw.pxr[0],xa,xb,sxr);
+                        plint(n,&pxd[0],&fw.pxi[0],xa,xb,sxi);
+                        plint(n,&pyd[0],&fw.pyr[0],ya,yb,syr);
+                        plint(n,&pyd[0],&fw.pyi[0],ya,yb,syi);
+                        plint(n,&pzd[0],&fw.pzr[0],za,zb,szr);
+                        plint(n,&pzd[0],&fw.pzi[0],za,zb,szi);
+                        hx = {sxr*frac,sxi*frac};
+                        hy = {syr*frac,syi*frac};
+                        hz = {szr*frac,szi*frac};                                         
+              }
+                                              
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
 	           void hve_f213_zmm16r4_plint_u( const float * __restrict  pxre,
 	                                          const float * __restrict  pxim,
 	                                          const float * __restrict  pyre,
