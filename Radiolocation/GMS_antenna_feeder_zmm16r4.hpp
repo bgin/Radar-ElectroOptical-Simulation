@@ -2688,7 +2688,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hvem_f2135_zmm16r4_plint_a(const float * __restrict  pxre,
+	           void hvem_f2135_zmm16r4_plint_u(const float * __restrict  pxre,
 	                                          const float * __restrict   pxim,
 	                                          const float * __restrict   pyre,
 	                                          const float * __restrict   pyim,
@@ -2775,7 +2775,7 @@ namespace gms {
                   
                
                 /*
-	            Hertz vector (electrical), simpne integrator.
+	            Hertz vector (electrical,magnetic), simpne integrator.
 	            Formula 2-13, p. 35
 	       */
 	       
@@ -2786,7 +2786,7 @@ namespace gms {
                    __ATTR_VECTORCALL__
 	           static inline
 	           void hvem_f2135_zmm16r4_simpne(const __m512 xre,
-	                                       const __m512 xim,
+	                                          const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
 	                                       const __m512 zre,
@@ -2803,16 +2803,19 @@ namespace gms {
                         constexpr float C12566370614359172953850573533118 = 
                                               12.566370614359172953850573533118f; //4*pi 
                         constexpr int32_t ntab = 16;   
-                        __ATTR_ALIGN__(64) float intxr[16];
-                        __ATTR_ALIGN__(64) float intxi[16];
-                        __ATTR_ALIGN__(64) float intyr[16];
-                        __ATTR_ALIGN__(64) float intyi[16];
-                        __ATTR_ALIGN__(64) float intzr[16];
-                        __ATTR_ALIGN__(64) float intzi[16];
                         __ATTR_ALIGN__(64) float dx[16];
                         __ATTR_ALIGN__(64) float dy[16];
                         __ATTR_ALIGN__(64) float dz[16];
+                        register __m512 intxr,intxi;
+                        register __m512 intyr,intyi;
+                        register __m512 intzr,intzi;
                         register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr;
                         register float k,r,omg,eps;
                         register float sxr,sxi,syr,syi,szr,szi,frac;
                         
@@ -2832,12 +2835,15 @@ namespace gms {
                         cexp_zmm16r4(ir,eai,&cer,&cei);
                         cer  = _mm512_mul_ps(cer,invr);
                         cei  = _mm512_mul_ps(cei,invr);
-                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xre,cer));
-                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yre,cer));
-                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zre,cer));
-                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xim,cei));
-                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yim,cei));
-                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zim,cei));
+                        cmul_zmm16r4(xre,xim,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0]
+                        cmul_zmm16r4(yre,yim,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(zre,zim,cer,cei,&intzr,&intzi);
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];
                         sxr = 0.0f;
                         sxi = sxr;
                         syi = sxr;
@@ -2846,12 +2852,12 @@ namespace gms {
                         szi = sxr;
                         float tmp = C12566370614359172953850573533118*omg*eps;
                         frac = 1.0f/tmp;
-                        simpne(ntab,&dx[0],&intxr[0],sxr);
-                        simpne(ntab,&dx[0],&intxi[0],sxi);
-                        simpne(ntab,&dy[0],&intyr[0],syr);
-                        simpne(ntab,&dy[0],&intyi[0],syi);
-                        simpne(ntab,&dz[0],&intzr[0],szr);
-                        simpne(ntab,&dz[0],&intzi[0],szi);
+                        simpne(ntab,&dx[0],&pxr[0],sxr);
+                        simpne(ntab,&dx[0],&pxi[0],sxi);
+                        simpne(ntab,&dy[0],&pyr[0],syr);
+                        simpne(ntab,&dy[0],&pyi[0],syi);
+                        simpne(ntab,&dz[0],&pzr[0],szr);
+                        simpne(ntab,&dz[0],&pzi[0],szi);
                         hx = {sxr*frac,sxi*frac};
                         hy = {syr*frac,syi*frac};
                         hz = {szr*frac,szi*frac};                 
