@@ -701,8 +701,8 @@ namespace gms {
 	         
 	         
 	       /*
-	            Hertz vector (electrical), avint integrator.
-	            Formula 2-13, p. 35
+	            Hertz vector (electrical,magnetic), avint integrator.
+	            Formula 2-13, 2-15, p. 35
 	       */
 	       
 	           __ATTR_ALWAYS_INLINE__
@@ -710,7 +710,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_avint(const __m512 xre,
+	           void hvme_f2135_zmm16r4_avint(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -808,7 +808,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
+	           void hvem_f2135_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pxim,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pyre,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pyim,
@@ -910,7 +910,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void  f213_integrand_zmm16r4_u6x_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
+	           void  f2135_integrand_zmm16r4_u6x_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
 	                                              const float * __restrict __ATTR_ALIGN__(64) pxim,
 	                                              const float * __restrict __ATTR_ALIGN__(64) pyre,
 	                                              const float * __restrict __ATTR_ALIGN__(64) pyim,
@@ -1150,7 +1150,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void  f213_integrand_zmm16r4_u6x_u(const float * __restrict  pxre,
+	           void  f2135_integrand_zmm16r4_u6x_u(const float * __restrict  pxre,
 	                                              const float * __restrict  pxim,
 	                                              const float * __restrict  pyre,
 	                                              const float * __restrict  pyim,
@@ -1392,7 +1392,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_avint_u6x_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
+	           void hvem5_f213_zmm16r4_avint_u6x_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pxim,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pyre,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pyim,
@@ -1444,7 +1444,7 @@ namespace gms {
                         cei  = _mm512_mul_ps(cei,invr);
                         tmp2 = tmp1*inv;
                         eps  = arg[9];   
-                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                         sxr = 0.0f;
                         sxi = sxr;
@@ -1485,7 +1485,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_avint_u(const float * __restrict  pxre,
+	           void hvem_f2135_zmm16r4_avint_u(const float * __restrict  pxre,
 	                                         const float * __restrict  pxim,
 	                                         const float * __restrict  pyre,
 	                                         const float * __restrict  pyim,
@@ -1590,7 +1590,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_cubint(const __m512 xre,
+	           void hvem_f2135_zmm16r4_cubint(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -1681,7 +1681,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_cubint_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_cubint_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -1773,7 +1773,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_cubint_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvemm_f2135_zmm16r4_cubint_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -1823,7 +1823,7 @@ namespace gms {
                         cei  = _mm512_mul_ps(cei,invr);
                         tmp2 = tmp1*inv;
                         eps  = arg[9];  
-                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                         sxr = 0.0f;
                         sxi = sxr;
@@ -1856,7 +1856,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_cubint_u(const float * __restrict  pxre,
+	           void hvem_f2135_zmm16r4_cubint_u(const float * __restrict  pxre,
 	                                          const float * __restrict  pxim,
 	                                          const float * __restrict  pyre,
 	                                          const float * __restrict  pyim,
@@ -1954,7 +1954,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_hiordq(const __m512 xre,
+	           void hvem_f2135_zmm16r4_hiordq(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -2027,7 +2027,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_hiordq_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_hiordq_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -2107,7 +2107,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_hiordq_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_hiordq_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -2147,7 +2147,7 @@ namespace gms {
                         eps   = arg[6];
                         cer   = _mm512_mul_ps(cer,invr);
                         cei   = _mm512_mul_ps(cei,invr); 
-                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                         sxr = 0.0f;
                         sxi = sxr;
@@ -2176,7 +2176,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_hiordq_u(const float * __restrict   pxre,
+	           void hvem_f2135_zmm16r4_hiordq_u(const float * __restrict   pxre,
 	                                          const float * __restrict   pxim,
 	                                          const float * __restrict   pyre,
 	                                          const float * __restrict   pyim,
@@ -2262,7 +2262,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_plint(const __m512 xre,
+	           void hvem_f2135_zmm16r4_plint(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -2346,7 +2346,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_plint_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_plint_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -2430,7 +2430,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_plint_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_plint_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                             const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                             const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                             const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -2475,7 +2475,7 @@ namespace gms {
                         cei  = _mm512_mul_ps(cei,invr);
                         tmp2 = tmp1*inv;
                         eps  = arg[9];  
-                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                         sxr = 0.0f;
                         sxi = sxr;
@@ -2503,7 +2503,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_plint_u( const float * __restrict  pxre,
+	           void hvem_f2135_zmm16r4_plint_u( const float * __restrict  pxre,
 	                                          const float * __restrict  pxim,
 	                                          const float * __restrict  pyre,
 	                                          const float * __restrict  pyim,
@@ -2593,7 +2593,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpne(const __m512 xre,
+	           void hvem_f2135_zmm16r4_simpne(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -2674,7 +2674,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpne_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_simpne_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -2752,7 +2752,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpne_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_simpne_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -2791,7 +2791,7 @@ namespace gms {
                         cer  = _mm512_mul_ps(cer,invr);
                         tmp2 = tmp1*inv;
                         cei  = _mm512_mul_ps(cei,invr);  
-                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                         sxr = 0.0f;
                         sxi = sxr;
@@ -2818,7 +2818,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpne_u(const float * __restrict  pxre,
+	           void hvem_f2135_zmm16r4_simpne_u(const float * __restrict  pxre,
 	                                          const float * __restrict  pxim,
 	                                          const float * __restrict  pyre,
 	                                          const float * __restrict  pyim,
@@ -2902,7 +2902,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpn(const __m512 xre,
+	           void hvem_f2135_zmm16r4_simpn(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -2973,7 +2973,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpn_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_simpn_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -3049,7 +3049,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpn_u6x_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_simpn_u6x_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -3086,7 +3086,7 @@ namespace gms {
                         cexp_zmm16r4(ir,eai,&cer,&cei);
                         cer  = _mm512_mul_ps(cer,invr);
                         cei  = _mm512_mul_ps(cei,invr);  
-                        f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                         sxr = 0.0f;
                         sxi = sxr;
@@ -3114,7 +3114,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_simpn_u( const float * __restrict   pxre,
+	           void hvem_f2135_zmm16r4_simpn_u( const float * __restrict   pxre,
 	                                          const float * __restrict   pxim,
 	                                          const float * __restrict   pyre,
 	                                          const float * __restrict   pyim,
@@ -3196,7 +3196,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_wedint(const __m512 xre,
+	           void hvem_f2135_zmm16r4_wedint(const __m512 xre,
 	                                       const __m512 xim,
 	                                       const __m512 yre,
 	                                       const __m512 yim,
@@ -3266,7 +3266,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_wedint_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_wedint_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -3342,7 +3342,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_wedint_u6x_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_wedint_u6x_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -3379,7 +3379,7 @@ namespace gms {
                           cexp_zmm16r4(ir,eai,&cer,&cei);
                           cer = _mm512_mul_ps(cer,invr);
                           cei = _mm512_mul_ps(cei,invr);  
-                          f213_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                          f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
                           sxr = 0.0f;
                           sxi = sxr;
@@ -3406,7 +3406,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hve_f213_zmm16r4_wedint_u( const float * __restrict  pxre,
+	           void hvem_f2135_zmm16r4_wedint_u( const float * __restrict  pxre,
 	                                          const float * __restrict   pxim,
 	                                          const float * __restrict   pyre,
 	                                          const float * __restrict   pyim,
@@ -3475,6 +3475,11 @@ namespace gms {
                         hy = {syr*frac,syi*frac};
                         hz = {szr*frac,szi*frac};                 
                }
+               
+               
+               /*
+                   
+               */
                
                
                
