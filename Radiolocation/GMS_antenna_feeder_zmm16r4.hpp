@@ -1825,14 +1825,17 @@ namespace gms {
                         constexpr float C12566370614359172953850573533118 = 
                                               12.566370614359172953850573533118f; //4*pi   
                         constexpr int32_t ntab = 16; 
-                        __ATTR_ALIGN__(64) float intxr[16];
-                        __ATTR_ALIGN__(64) float intxi[16];
-                        __ATTR_ALIGN__(64) float intyr[16];
-                        __ATTR_ALIGN__(64) float intyi[16];
-                        __ATTR_ALIGN__(64) float intzr[16];
-                        __ATTR_ALIGN__(64) float intzi[16];
+                        register __m512 intxr,intxi;
+                        register __m512 intyr,intyi;
+                        register __m512 intzr,intzi;
                         register __m512 xr,xi,yr,yi,zr,zi;
                         register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
                         register float k,r,xa,xb,ya,yb,za,zb;
                         register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
                         register float er1,er2,er3,er4,er5,er6;
@@ -1861,12 +1864,15 @@ namespace gms {
                         omg  = arg[8];
                         cei  = _mm512_mul_ps(cei,invr);
                         eps  = arg[9];
-                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xr,cer));
-                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yr,cer));
-                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zr,cer));
-                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xi,cei));
-                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yi,cei));
-                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zi,cei));
+                        cmul_zmm16r4(xre,xim,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0]
+                        cmul_zmm16r4(yre,yim,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(zre,zim,cer,cei,&intzr,&intzi);
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];
                         sxr = 0.0f;
                         sxi = sxr;
                         syi = sxr;
@@ -1875,16 +1881,16 @@ namespace gms {
                         szi = sxr;
                         float tmp = C12566370614359172953850573533118*omg*eps;
                         frac = 1.0f/tmp;
-                        cubint(ntab,&pxd[0],&intxr[0],xa,xb,sxr,er1);
-                        cubint(ntab,&pxd[0],&intxi[0],xa,xb,sxi,er2);
+                        cubint(ntab,&pxd[0],&pxr[0],xa,xb,sxr,er1);
+                        cubint(ntab,&pxd[0],&pxi[0],xa,xb,sxi,er2);
                         err[0] = er1;
                         err[1] = er2;
-                        cubint(ntab,&pyd[0],&intyr[0],ya,yb,syr,er3);
-                        cubint(ntab,&pyd[0],&intyi[0],ya,yb,syi,er4);
+                        cubint(ntab,&pyd[0],&pyr[0],ya,yb,syr,er3);
+                        cubint(ntab,&pyd[0],&pyi[0],ya,yb,syi,er4);
                         err[2] = er3;
                         err[3] = er4;
-                        cubint(ntab,&pzd[0],&intzr[0],za,zb,szr,er5);
-                        cubint(ntab,&pzd[0],&intzi[0],za,zb,szi,er6);
+                        cubint(ntab,&pzd[0],&pzr[0],za,zb,szr,er5);
+                        cubint(ntab,&pzd[0],&pzi[0],za,zb,szi,er6);
                         err[4] = er5;
                         err[5] = er6;
                         hx = {sxr*frac,sxi*frac};
