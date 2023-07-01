@@ -727,15 +727,25 @@ namespace gms {
                             
                         constexpr float C12566370614359172953850573533118 = 
                                               12.566370614359172953850573533118f; //4*pi                
-                        __ATTR_ALIGN__(64) float intxr[16];
-                        __ATTR_ALIGN__(64) float intxi[16];
-                        __ATTR_ALIGN__(64) float intyr[16];
-                        __ATTR_ALIGN__(64) float intyi[16];
-                        __ATTR_ALIGN__(64) float intzr[16];
-                        __ATTR_ALIGN__(64) float intzi[16];
+                       // __ATTR_ALIGN__(64) float intxr[16];
+                       // __ATTR_ALIGN__(64) float intxi[16];
+                       // __ATTR_ALIGN__(64) float intyr[16];
+                       // __ATTR_ALIGN__(64) float intyi[16];
+                       // __ATTR_ALIGN__(64) float intzr[16];
+                       // __ATTR_ALIGN__(64) float intzi[16];
                         __ATTR_ALIGN__(64) float dx[16];
                         __ATTR_ALIGN__(64) float dy[16];
                         __ATTR_ALIGN__(64) float dz[16];
+                        __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr;
+                       
                         register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
                         register float k,r,xa,xb,ya,yb,za,zb;
                         register float omg,eps,sxr,sxi,syr,syi,szr,szi,frac;
@@ -762,12 +772,15 @@ namespace gms {
                         omg  = arg[8];
                         cei  = _mm512_mul_ps(cei,invr);
                         eps  = arg[9];
-                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xre,cer));
-                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yre,cer));
-                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zre,cer));
-                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xim,cei));
-                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yim,cei));
-                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zim,cei));
+                        cmul_zmm16r4(xre,xim,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0]
+                        cmul_zmm16r4(yre,yim,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(zre,zim,cer,cei,&intzr,&intzi);
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];
                         sxr = 0.0f;
                         sxi = sxr;
                         syi = sxr;
@@ -776,20 +789,21 @@ namespace gms {
                         szi = sxr;
                         float tmp = C12566370614359172953850573533118*omg*eps;
                         frac = 1.0f/tmp;
-                        sxr = avint(&dx[0],&intxr[0],xa,xb,ier1);
-                        sxi = avint(&dx[0],&intxi[0],xa,xb,ier2);
+                        ;
+                        sxr = avint(&dx[0],&pxr[0],xa,xb,ier1);
+                        sxi = avint(&dx[0],&pxi[0],xa,xb,ier2);
                         if(ier1==3 || ier2==3) {
                            ierr = 3;
                            return;
                         }  
-                        syr = avint(&dy[0],&intyr[0],ya,yb,ier3);
-                        syi = avint(&dy[0],&intyi[0],ya,yb,ier4);
+                        syr = avint(&dy[0],&pyr[0],ya,yb,ier3);
+                        syi = avint(&dy[0],&pyi[0],ya,yb,ier4);
                         if(ier3==3 || ier4==3) {
                            ierr = 3;
                            return;
                         }  
-                        szr = avint(&dz[0],&intzr[0],za,zb,ier5);
-                        szi = avint(&dz[0],&intzi[0],za,zb,ier6);
+                        szr = avint(&dz[0],&pzr[0],za,zb,ier5);
+                        szi = avint(&dz[0],&pzi[0],za,zb,ier6);
                         if(ier5==3 || ier6==3) {
                            ierr = 3;
                            return;
