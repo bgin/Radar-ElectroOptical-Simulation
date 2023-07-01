@@ -3276,7 +3276,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void hvem_f2135_zmm16r4_simpn_u6x_a( const float * __restrict __ATTR_ALIGN__(64)  pxre,
+	           void hvem_f2135_zmm16r4_simpn_u6x( const float * __restrict __ATTR_ALIGN__(64)  pxre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pxim,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyre,
 	                                          const float * __restrict __ATTR_ALIGN__(64)  pyim,
@@ -3288,7 +3288,8 @@ namespace gms {
                                                   std::complex<float> & hy,
                                                   std::complex<float> & hz,
                                                   const int32_t n,
-                                                  const int32_t PF_DIST) {
+                                                  const int32_t PF_DIST,
+                                                  const bool aligned) {
                                                   
                         constexpr float C12566370614359172953850573533118 = 
                                               12.566370614359172953850573533118f; //4*pi 
@@ -3313,8 +3314,13 @@ namespace gms {
                         cexp_zmm16r4(ir,eai,&cer,&cei);
                         cer  = _mm512_mul_ps(cer,invr);
                         cei  = _mm512_mul_ps(cei,invr);  
-                        f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
+                        if(aligned) {
+                           f2135_integrand_zmm16r4_u6x_a(pxre,pxim,pyre,pyim,pzre,pzim,
                                                      fw,cer,cei,tmp2,n,PF_DIST);
+                        } else {
+                           f2135_integrand_zmm16r4_u6x_u(pxre,pxim,pyre,pyim,pzre,pzim,
+                                                     fw,cer,cei,tmp2,n,PF_DIST);
+                        }
                         sxr = 0.0f;
                         sxi = sxr;
                         syi = sxr;
