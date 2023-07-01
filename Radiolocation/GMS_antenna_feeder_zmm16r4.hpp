@@ -2787,17 +2787,17 @@ namespace gms {
 	           static inline
 	           void hvem_f2135_zmm16r4_simpne(const __m512 xre,
 	                                          const __m512 xim,
-	                                       const __m512 yre,
-	                                       const __m512 yim,
-	                                       const __m512 zre,
-	                                       const __m512 zim,
-	                                       const __m512 xd,
-	                                       const __m512 yd,
-	                                       const __m512 zd,
-	                                       const float arg[4],
-	                                       std::complex<float> & hx,                        
-                                               std::complex<float> & hy,
-                                               std::complex<float> & hz) {
+	                                          const __m512 yre,
+	                                          const __m512 yim,
+	                                          const __m512 zre,
+	                                          const __m512 zim,
+	                                          const __m512 xd,
+	                                          const __m512 yd,
+	                                          const __m512 zd,
+	                                          const float arg[4],
+	                                          std::complex<float> & hx,                        
+                                                  std::complex<float> & hy,
+                                                  std::complex<float> & hz) {
                                               
                                            
                         constexpr float C12566370614359172953850573533118 = 
@@ -2890,14 +2890,17 @@ namespace gms {
                         constexpr float C12566370614359172953850573533118 = 
                                               12.566370614359172953850573533118f; //4*pi 
                         constexpr int32_t ntab = 16;   
-                        __ATTR_ALIGN__(64) float intxr[16];
-                        __ATTR_ALIGN__(64) float intxi[16];
-                        __ATTR_ALIGN__(64) float intyr[16];
-                        __ATTR_ALIGN__(64) float intyi[16];
-                        __ATTR_ALIGN__(64) float intzr[16];
-                        __ATTR_ALIGN__(64) float intzi[16];
+                        register __m512 intxr,intxi;
+                        register __m512 intyr,intyi;
+                        register __m512 intzr,intzi;
                         register __m512 vk,vr,ii,ir,invr,cer,cei,eai;
                         register __m512 xr,xi,yr,yi,zr,zi;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr;
                         register float k,r,omg,eps;
                         register float sxr,sxi,syr,syi,szr,szi,frac;
                         xr = _mm512_load_ps(&pxre[0]);
@@ -2919,12 +2922,15 @@ namespace gms {
                         cexp_zmm16r4(ir,eai,&cer,&cei);
                         cer  = _mm512_mul_ps(cer,invr);
                         cei  = _mm512_mul_ps(cei,invr);
-                        _mm512_store_ps(&intxr[0],_mm512_mul_ps(xr,cer));
-                        _mm512_store_ps(&intyr[0],_mm512_mul_ps(yr,cer));
-                        _mm512_store_ps(&intzr[0],_mm512_mul_ps(zr,cer));
-                        _mm512_store_ps(&intxi[0],_mm512_mul_ps(xi,cei));
-                        _mm512_store_ps(&intyi[0],_mm512_mul_ps(yi,cei));
-                        _mm512_store_ps(&intzi[0],_mm512_mul_ps(zi,cei));
+                        cmul_zmm16r4(xre,xim,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0]
+                        cmul_zmm16r4(yre,yim,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(zre,zim,cer,cei,&intzr,&intzi);
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];
                         sxr = 0.0f;
                         sxi = sxr;
                         syi = sxr;
@@ -2933,12 +2939,12 @@ namespace gms {
                         szi = sxr;
                         float tmp = C12566370614359172953850573533118*omg*eps;
                         frac = 1.0f/tmp;
-                        simpne(ntab,&pxd[0],&intxr[0],sxr);
-                        simpne(ntab,&pxd[0],&intxi[0],sxi);
-                        simpne(ntab,&pyd[0],&intyr[0],syr);
-                        simpne(ntab,&pyd[0],&intyi[0],syi);
-                        simpne(ntab,&pzd[0],&intzr[0],szr);
-                        simpne(ntab,&pzd[0],&intzi[0],szi);
+                        simpne(ntab,&pxd[0],&pxr[0],sxr);
+                        simpne(ntab,&pxd[0],&pxi[0],sxi);
+                        simpne(ntab,&pyd[0],&pyr[0],syr);
+                        simpne(ntab,&pyd[0],&pyi[0],syi);
+                        simpne(ntab,&pzd[0],&pzr[0],szr);
+                        simpne(ntab,&pzd[0],&pzi[0],szi);
                         hx = {sxr*frac,sxi*frac};
                         hy = {syr*frac,syi*frac};
                         hz = {szr*frac,szi*frac};                 
