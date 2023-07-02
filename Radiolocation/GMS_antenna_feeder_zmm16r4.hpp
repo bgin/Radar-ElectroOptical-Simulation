@@ -3769,18 +3769,23 @@ namespace gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    __mmask16 f221_zmm16r4(const __m512 R,
-                                          const __m512 D,
-                                          const __m512 gam) {
+                                          const float D,
+                                          const float gam) {
                      
                         
-                        register __m512 DD,rat,t0;
+                        register __m512 vD,vgam,DD,rat,t0;
                         __mmask16 res = 0x0;
-                        DD  = _mm512_mul_ps(D,D);
-                        rat = _mm512_div_ps(DD,g);
+                        vD  = _mm512_set1_ps(D);
+                        DD  = _mm512_mul_ps(vD,vD);
+                        vgam= _mm512_set1_ps(gam);
+                        rat = _mm512_div_ps(DD,vgam);
                         t0  = _mm512_add_ps(rat,rat);
                         res = _mm512_cmp_ps_mask(R,t0,_CMP_GE_OQ);
                         return (res);                        
                  }
+                 
+                 
+                 
                
                
         } // radiolocation
