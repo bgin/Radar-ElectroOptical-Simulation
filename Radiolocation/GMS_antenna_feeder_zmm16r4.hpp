@@ -4922,6 +4922,97 @@ namespace gms {
 	      }
 	      
 	      
+	       /*
+                     Formula 2-23, p. 36
+                     Both electric and magnetic quantities (field amplitudes) are computed
+                     by the single kernel (different surface currents shall be passed only).
+                     'Cubint' integrator.
+                 */
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_cubint(const __m512 jxr,
+	                                         const __m512 jxi,
+	                                         const __m512 jyr,
+	                                         const __m512 jyi,
+	                                         const __m512 jzr,
+	                                         const __m512 jzi,
+	                                        __m512 xd,
+	                                        __m512 yd,
+	                                        __m512 zd,
+	                                        const __m512 rho,
+	                                        const __m512 cost,
+	                                        const float args[7],
+	                                        std::complex<float> & Nx,
+	                                        std::complex<float> & Ny,
+	                                        std::complex<float> & Nz,
+	                                        float err[6]) {
+	                                        
+	                register __m512 intxr,intxi;
+                        register __m512 intyr,intyi;
+                        register __m512 intzr,intzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float * __restrict pxd = nullptr;
+                        float * __restrict pyd = nullptr;
+                        float * __restrict pzd = nullptr;
+                        float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi;   
+                        pxd = (float*)&xd[0];
+                        k   = args[0];
+                        pyd = (float*)&yd[0];
+                        vk  = _mm512_set1_ps(k);
+                        pzd = (float*)&zd[0];
+                        ir  = _mm512_setzero_ps();
+                        ii  = _mm512_set1_ps(1.0f);
+                        xa  = args[1];
+                        xb  = args[2];
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cost));
+                        ya  = args[3];
+                        yb  = args[4];
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        za  = args[5];
+                        zb  = args[6];
+                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        cubint(16,&pxd[0],&pxr[0],xa,xb,sxr,err[0]);
+                        cubint(16,&pxd[0],&pxi[0],xa,xb,sxi,err[1]);
+                        cubint(16,&pyd[0],&pyr[0],ya,yb,syr,err[2]);
+                        cubint(16,&pyd[0],&pyi[0],ya,yb,syi,err[3]);
+                        cubint(16,&pzd[0],&pzr[0],za,zb,szr,err[4]);
+                        cubint(16,&pzd[0],&pzi[0],za,zb,szi,err[5]);
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                            
+	        }
+                 
+	      
+	      
 	        
                
                
