@@ -3798,7 +3798,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Nem_f235_zmm16r4_avint(const __m512 jxr,
+	           void Nem_f2235_zmm16r4_avint(const __m512 jxr,
 	                                       const __m512 jxi,
 	                                       const __m512 jyr,
 	                                       const __m512 jyi,
@@ -3894,7 +3894,15 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Nem_f235_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) pjxr,
+	           void 
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) pjxr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjxi,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjyr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjyi,
