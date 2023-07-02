@@ -3907,6 +3907,7 @@ namespace gms {
 	                                         float * __restrict __ATTR_ALIGN__(64) pzd,
 	                                         const float * __restrict __ATTR_ALIGN__(64) prho,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pcost,
+	                                         const float args[7],
 	                                         std::complex<float> & Nx,
 	                                         std::complex<float> & Ny,
 	                                         std::complex<float> & Nz,
@@ -4729,6 +4730,90 @@ namespace gms {
 	                     fw.pzi[i]               = jz.imag();
 	                 }                             
 	       } 
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_avint_u6x(const float * __restrict __ATTR_ALIGN__(64) pjxr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pjxi,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pjyr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pjyi,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pjzr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pjzi,
+	                                            float * __restrict __ATTR_ALIGN__(64) pxd,
+	                                            float * __restrict __ATTR_ALIGN__(64) pyd,
+	                                            float * __restrict __ATTR_ALIGN__(64) pzd,
+	                                            const float * __restrict __ATTR_ALIGN__(64) prho,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pcst,
+	                                            fwork_t fw,
+	                                            const float args[7],
+	                                            std::complex<float> & Nx,
+	                                            std::complex<float> & Ny,
+	                                            std::complex<float> & Nz,
+	                                            const int32_t n,
+	                                            const int32_t PF_DIST
+	                                            int32_t & ierr,
+	                                            const bool aligned ) {
+	                                         
+	                
+                        register __m512 ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        register __m512 jxr,jxi,jyr,jyi;
+                        register __m512 jzr,jzi,rho,cost;
+                        float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi;
+                        int32_t ier1,ier2,ier3,ier4,ier5,ier6;
+                            
+                        k   = args[0];
+                        xa  = args[1];
+                        xb  = args[2];
+                        ya  = args[3];
+                        yb  = args[4];
+                        za  = args[5];
+                        zb  = args[6];
+                        if(aligned) {
+                           f2235_integrand_zmm16r4_u6x_a(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }
+                        else {
+                           f2235_integrand_zmm16r4_u6x_u(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        sxr = avint(&pxd[0],&fw.pxr[0],xa,xb,ier1);
+                        sxi = avint(&pxd[0],&fw.pxi[0],xa,xb,ier2);
+                        if(ier1==3 || ier2==3) {goto ERROR;}
+                           goto CORRECT;
+                        syr = avint(&pyd[0],&fw.pyr[0],ya,yb,ier3);
+                        syi = avint(&pyd[0],&fw.pyi[0],ya,yb,ier4);
+                        if(ier3==3 || ier4==3) {goto ERROR;}
+                           goto CORRECT;
+                        szr = avint(&pzd[0],&fw.pzr[0],za,zb,ier5);
+                        szi = avint(&pzd[0],&fw.pzi[0],za,zb,ier6);
+                        if(ier5==3 || ier6==3) {goto ERROR;}
+                           goto CORRECT;
+                        ERROR:
+                           {
+                               ierr = 3;
+                               return;
+                        }  
+                        CORRECT: {
+                           Nx = {sxr,sxi};
+                           Ny = {syr,syi};
+                           Nz = {szr,szi};  
+                        }                                                 
+	      }
+	      
 	        
                
                
