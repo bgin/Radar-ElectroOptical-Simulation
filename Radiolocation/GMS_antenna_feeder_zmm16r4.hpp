@@ -3756,7 +3756,31 @@ namespace gms {
 	            bool bres          = R>=(2.0*rat);
 	            return (bres);               
 	      }
+	      
+	      
+	       /*
+                   Formula 2.21, p. 36
+                   (AVX512) version.
+               */
                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __mmask16 f221_zmm16r4(const __m512 R,
+                                          const __m512 D,
+                                          const __m512 gam) {
+                     
+                        
+                        register __m512 DD,rat,t0;
+                        __mmask16 res = 0x0;
+                        DD  = _mm512_mul_ps(D,D);
+                        rat = _mm512_div_ps(DD,g);
+                        t0  = _mm512_add_ps(rat,rat);
+                        res = _mm512_cmp_ps_mask(R,t0,_CMP_GE_OQ);
+                        return (res);                        
+                 }
                
                
         } // radiolocation
