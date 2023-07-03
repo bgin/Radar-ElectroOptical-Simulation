@@ -136,6 +136,24 @@ namespace  gms {
                         cv.im  = zmm1;  
                         return (cv);            
                }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cadd_zmm16r4(const zmm16c4_t x,
+                                          const zmm16c4_t y) {
+                                     
+                        zmm16c4_t cv;
+                        register __m512 zmm0,zmm1;
+                        zmm0   = _mm512_add_ps(x.re,y.re);
+                        cv.re  = zmm0;
+                        zmm1   = _mm512_add_ps(x.im,y.im);
+                        cv.im  = zmm1;  
+                        return (cv);            
+               }
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -1788,6 +1806,7 @@ namespace  gms {
                        cv.re = zmm0;
                        zmm1  = _mm512_mul_ps(half,_mm512_sub_ps(*wrkc,xre));
                        cv.im = zmm1; 
+                       return (cv);
               }
 
 
@@ -1873,6 +1892,31 @@ namespace  gms {
                         zmm2 = _mm512_sqrt_ps(_mm512_add_ps(zmm0,zmm1));
                         *zre = _mm512_div_ps(rep,zmm2);
                         *zim = _mm512_div_ps(imp,zmm2);
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cnorm_prod_zmm16r4(  const __m512  xre,
+                                                  const __m512  xim,
+                                                  const __m512  yre,
+                                                  const __m512  yim) {
+                                             
+                        zmm16c4_t cv;
+                        register __m512 rep,imp,zmm0,zmm1,zmm2;
+                        rep  = _mm512_fmsub_ps(xre,yre,
+                                               _mm512_mul_ps(xim,yim));
+                        imp  = _mm512_fmadd_pd(xim,yre,
+                                               _mm512_mul_ps(xre,yim));
+                        zmm0 = _mm512_mul_ps(rep,rep);
+                        zmm1 = _mm512_mul_ps(imp,imp);
+                        zmm2 = _mm512_sqrt_ps(_mm512_add_ps(zmm0,zmm1));
+                        cv.re = _mm512_div_ps(rep,zmm2);
+                        cv.im = _mm512_div_ps(imp,zmm2);
+                        return (cv);
              }
 
 
@@ -2158,8 +2202,36 @@ namespace  gms {
                         magc2= _mm512_mul_ps(imp,imp);
                         vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
                         *mre = _mm512_div_ps(rep,vcmag);
-                        *mim = _mm512_div_ps(imp,vcmag)
+                        *mim = _mm512_div_ps(imp,vcmag);
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cnorm_cprod_zmm16r4(const __m512 xre,
+                                                 const __m512 xim,
+                                                 const __m512 yre,
+                                                 const __m512 yim) {
+                                               
+                        zmm16c4_t cv;
+                        register __m512 rep,imp,magc1,magc2,vcmag;
+                        rep  = _mm512_fmad_ps(xre,yre,
+                                               _mm512_mul_ps(xim,yim));
+                        magc1= _mm512_mul_ps(rep,rep);
+                        imp  = _mm512_fmsub_ps(xim,yre,
+                                               _mm512_mul_ps(xre,yim));
+                        magc2= _mm512_mul_ps(imp,imp);
+                        vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
+                        cv.re = _mm512_div_ps(rep,vcmag);
+                        cv.im = _mm512_div_ps(imp,vcmag);
+                        return (cv);
+             }
+             
+             
+             
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -2380,6 +2452,26 @@ namespace  gms {
                                                     _mm512_mul_ps(xim,yim)));
                         *mre = _mm512_div_ps(xre,cvmag));
                         *mim =  _mm512_div_ps(xim,cvmag));
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cnormalize_zmm16r4( const __m512 xre,
+                                                 const __m512 xim,
+                                                 const __m512 yre,
+                                                 const __m512 yim) {
+                                            
+                        zmm16c4_t cv;
+                        register __m512 re,im,cvmag;
+                        cvmag= _mm512_sqrt_ps(_mm512_fmadd_ps(xre,yre,
+                                                    _mm512_mul_ps(xim,yim)));
+                        cv.re = _mm512_div_ps(xre,cvmag));
+                        cv.im =  _mm512_div_ps(xim,cvmag));
+                        return (cv);
              }
 
 
