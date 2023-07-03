@@ -927,9 +927,9 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
                    zmm16c4_t cdiv_smith_zmm16r4(const __m512 xre,
-                                           const __m512 xim,
-                                           const __m512 yre,
-                                           const __m512 yim) {
+                                                const __m512 xim,
+                                                const __m512 yre,
+                                                const __m512 yim) {
                                            
                         zmm16c4_t cv
                         register __m512 r,den;
@@ -1111,6 +1111,24 @@ namespace  gms {
                         //*im = c;
                         *yre = xre; 
                         *yim = negate_zmm16r4(xim);
+                   } 
+                   
+                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cconj_zmm16r4_v2(const __m512 xre,
+                                              const __m512 xim) {                                              
+                         
+                        //register __m512 c;              
+                        //c = negate_zmm16r4(*im);
+                        //*im = c;
+                        zmm16c4_t cv;
+                        cv.re = xre; 
+                        cv.im = negate_zmm16r4(xim);
+                        return (cv);
                    } 
                    
                    
