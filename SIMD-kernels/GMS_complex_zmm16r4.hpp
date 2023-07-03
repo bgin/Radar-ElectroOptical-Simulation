@@ -627,6 +627,30 @@ namespace  gms {
                       *zre  = _mm512_div_ps(zmm0,zmm2);
                       *zim  = _mm512_div_ps(zmm1,zmm2);
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cdiv_zmm16r4(const __m512 xre,
+                                          const __m512 xim,
+                                          const __m512 yre,
+                                          const __m512 yim) {
+                                     
+                      zmm16c4_t
+                      register __m512 zmm0,zmm1,zmm2;
+                      zmm0 = _mm512_fmadd_ps(xre,yre,
+                                           _mm512_mul_ps(xim,yim));
+                      zmm1 = _mm512_fmsub_ps(xim,yre,
+                                           _mm512_mul_ps(xre,yim));
+                      zmm2 = _mm512_fmadd_ps(zmm3,zmm3,
+                                           _mm512_mul_ps(zmm1,zmm1));
+                      cv.re  = _mm512_div_ps(zmm0,zmm2);
+                      cv.im  = _mm512_div_ps(zmm1,zmm2);
+                      return (cv);
+                }
 
 
                    __ATTR_ALWAYS_INLINE__
