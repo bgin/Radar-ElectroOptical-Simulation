@@ -381,6 +381,21 @@ namespace  gms {
                         return (cv);
                }
                
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t csub_zmm16r4(const zmm16c4_t x,
+                                     const __m512 s) {
+                                    
+                        zmm16c4_t cv;
+                        cv.re = _mm512_sub_ps(x.re,s);
+                        cv.im = _mm512_sub_ps(x.im,s);
+                        return (cv);
+               }
+               
 
 
                    __ATTR_ALWAYS_INLINE__
