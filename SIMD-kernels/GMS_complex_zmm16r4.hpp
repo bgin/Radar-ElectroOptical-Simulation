@@ -310,6 +310,23 @@ namespace  gms {
                         *zre = _mm512_sub_ps(xre,s);
                         *zim = _mm512_sub_ps(xim,s);
                }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t csub_zmm16r4(const __m512 xre,
+                                     const __m512 xim,
+                                     const __m512 s) {
+                                    
+                        zmm16c4_t cv;
+                        cv.re = _mm512_sub_ps(xre,s);
+                        cv.im = _mm512_sub_ps(xim,s);
+                        return (cv);
+               }
+               
 
 
                    __ATTR_ALWAYS_INLINE__
