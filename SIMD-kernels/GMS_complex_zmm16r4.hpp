@@ -1607,6 +1607,24 @@ namespace  gms {
                         *cexpr = _mm512_mul_ps(zmm0,xcosf(xim));
                         *cexpi = _mm512_mul_ps(zmm0,_mm512_mul_ps(xsinf(xim),I));
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cexp_zmm16r4(const __m512 xre,
+                                          const __m512 xim) {
+                                     
+                        zmm16c4_t cv;
+                        register const __m512 I = _mm512_set1_ps(1.0f);
+                        register __m512 zmm0;
+                        zmm0   = xexpf(xre);
+                        cv.re = _mm512_mul_ps(zmm0,xcosf(xim));
+                        cv.im = _mm512_mul_ps(zmm0,_mm512_mul_ps(xsinf(xim),I));
+                        return (cv);
+              }
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -1665,6 +1683,25 @@ namespace  gms {
                         zmm1 = _mm512_mul_ps(rho,xsinf(tht));
                         *im  = zmm1;
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cpolar_zmm16r4(const __m512 rho,
+                                            const __m512 tht) {
+                                      
+                        zmm16c4_t cv
+                        register __m512 zmm0,zmm1;
+                        zmm0 = _mm512_mul_ps(rho,xcosf(tht));
+                        cv.re  = zmm0;
+                        zmm1 = _mm512_mul_ps(rho,xsinf(tht));
+                        cv.im  = zmm1;
+                        return (cv);
+              }
+              
 
 
                    __ATTR_ALWAYS_INLINE__
