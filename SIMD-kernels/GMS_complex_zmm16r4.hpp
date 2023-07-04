@@ -1629,6 +1629,22 @@ namespace  gms {
                          *eqr = _mm512_cmp_ps_mask(xre,yre,_CMP_EQ_OQ);
                          *eqi = _mm512_cmp_ps_mask(xim,yim,_CMP_EQ_OQ);
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ceq_zmm16r4(const zmm16c4_t x,
+                                    const zmm16c4_t y,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_ps_mask(x.re,y.re,_CMP_EQ_OQ);
+                         *eqi = _mm512_cmp_ps_mask(x.im,y.im,_CMP_EQ_OQ);
+              }
+              
 
 
                    __ATTR_ALWAYS_INLINE__
