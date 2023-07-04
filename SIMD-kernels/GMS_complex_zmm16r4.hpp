@@ -1790,6 +1790,21 @@ namespace  gms {
                          *eqr = _mm512_cmp_ps_mask(xre,yre,_CMP_LT_OQ);
                          *eqi = _mm512_cmp_ps_mask(xim,yim,_CMP_LT_OQ);
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void clt_zmm16r4(const zmm16c4_t x,
+                                    const zmm16c4_t y,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_ps_mask(x.re,y.re,_CMP_LT_OQ);
+                         *eqi = _mm512_cmp_ps_mask(x.im,y.im,_CMP_LT_OQ);
+              }
 
 
 
@@ -1850,6 +1865,21 @@ namespace  gms {
                                     const __m512 xim,
                                     const __m512 yre,
                                     const __m512 yim,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_ps_mask(xre,yre,_CMP_NEQ_OQ);
+                         *eqi = _mm512_cmp_ps_mask(xim,yim,_CMP_NEQ_OQ);
+              }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cneq_zmm16r4(const zmm16c4_t x,
+                                     const zmm16c4_t y,
                                     __mmask16 * __restrict eqr,
                                     __mmask16 * __restrict eqi) {
 
