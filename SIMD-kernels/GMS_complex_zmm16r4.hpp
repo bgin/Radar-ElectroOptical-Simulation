@@ -2987,6 +2987,24 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+                   void cnormalize_zmm16r4( const zmm16c4_t x,
+                                            const zmm16c4_t y,
+                                            __m512 * __restrict mre,
+                                            __m512 * __restrict mim ) {
+
+                        register __m512 re,im,cvmag;
+                        cvmag= _mm512_sqrt_ps(_mm512_fmadd_ps(x.re,y.re,
+                                                    _mm512_mul_ps(x.im,y.im)));
+                        *mre = _mm512_div_ps(x.re,cvmag));
+                        *mim =  _mm512_div_ps(x.im,cvmag));
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
                    zmm16c4_t cnormalize_zmm16r4( const __m512 xre,
                                                  const __m512 xim,
                                                  const __m512 yre,
