@@ -1270,7 +1270,19 @@ namespace  gms {
                        carg = xatan2f(re,im);
                        return (carg);
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 carg_zmm16r4(zmm16c4_t x) {
 
+                       register __m512 carg;
+                       carg = xatan2f(x.re,x.im);
+                       return (carg);
+                }
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -1346,6 +1358,22 @@ namespace  gms {
                         zmm16c4_t cv;
                         cv.re = xre; 
                         cv.im = negate_zmm16r4(xim);
+                        return (cv);
+                   } 
+                   
+                   
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cconj_zmm16r4_v2(const zmm16c4_t x) {                                              
+                         
+                        //register __m512 c;              
+                        //c = negate_zmm16r4(*im);
+                        //*im = c;
+                        zmm16c4_t cv;
+                        cv.re = x.re; 
+                        cv.im = negate_zmm16r4(x.im);
                         return (cv);
                    } 
                    
