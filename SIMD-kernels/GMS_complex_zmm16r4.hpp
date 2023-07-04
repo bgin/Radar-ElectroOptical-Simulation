@@ -924,6 +924,21 @@ namespace  gms {
                  }
                  
                  
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cdiv_smith_zmm16r4_s(const __m512 s,
+                                                  const zmm16c4_t x) {
+                                             
+                        zmm16c4_t cv,t0;                    
+                        t0.re = s;
+                        t0.im = _mm512_setzero_ps(); 
+                        cv = cdiv_smith_zmm16r4(t0,x);
+                        return (cv);                 
+                 }
+                 
                    
 
 
