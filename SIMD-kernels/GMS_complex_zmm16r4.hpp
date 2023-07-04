@@ -810,19 +810,7 @@ namespace  gms {
                }
                
                
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
-                   zmm16c4_t cdiv_zmm16r4(const zmm16c4_t x,
-                                          const __m512 s) {
-                                     
-                         zmm16c4_t cv;
-                         cv.re = _mm512_div_ps(x.re,s);
-                         cv.im = _mm512_div_ps(x.im,s);
-                         return (cv);
-               }
+                 
                
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -869,6 +857,23 @@ namespace  gms {
                    zmm16c4_t cdiv_zmm16r4_s(const __m512 s,
                                             const __m512 xre,
                                             const __m512 xim) {
+                                       
+                        zmm16c4_t cv;
+                        register __m512 t0r,t0i;
+                        t0r = s;
+                        t0i = _mm512_setzero_ps();
+                        cdiv_zmm16r4(t0r,t0i,xre,xim,&cv.re,&cv.im);
+                        return (cv);                     
+                 }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cdiv_zmm16r4_s(const __m512 s,
+                                            const zmm16c4_t x) {
                                        
                         zmm16c4_t cv;
                         register __m512 t0r,t0i,tmpr,tmpi;
