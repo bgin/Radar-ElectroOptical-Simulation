@@ -2650,6 +2650,29 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+                   void cnorm_cprod_zmm16r4(const zmm16c4_t x,
+                                            const zmm16c4_t y,
+                                            __m512 * __restrict mre,
+                                            __m512 * __restrict mim) {
+
+                        register __m512 rep,imp,magc1,magc2,vcmag;
+                        rep  = _mm512_fmad_ps(x.re,y.re,
+                                               _mm512_mul_ps(x.im,y.im));
+                        magc1= _mm512_mul_ps(rep,rep);
+                        imp  = _mm512_fmsub_ps(x.im,y.re,
+                                               _mm512_mul_ps(x.re,y.im));
+                        magc2= _mm512_mul_ps(imp,imp);
+                        vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
+                        *mre = _mm512_div_ps(rep,vcmag);
+                        *mim = _mm512_div_ps(imp,vcmag);
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
                    zmm16c4_t cnorm_cprod_zmm16r4(const __m512 xre,
                                                  const __m512 xim,
                                                  const __m512 yre,
@@ -2662,6 +2685,29 @@ namespace  gms {
                         magc1= _mm512_mul_ps(rep,rep);
                         imp  = _mm512_fmsub_ps(xim,yre,
                                                _mm512_mul_ps(xre,yim));
+                        magc2= _mm512_mul_ps(imp,imp);
+                        vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
+                        cv.re = _mm512_div_ps(rep,vcmag);
+                        cv.im = _mm512_div_ps(imp,vcmag);
+                        return (cv);
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cnorm_cprod_zmm16r4(const zmm16c4_t x,
+                                                 const zmm16c4_t y) {
+                                               
+                        zmm16c4_t cv;
+                        register __m512 rep,imp,magc1,magc2,vcmag;
+                        rep  = _mm512_fmad_ps(x.re,y.re,
+                                               _mm512_mul_ps(x.im,y.im));
+                        magc1= _mm512_mul_ps(rep,rep);
+                        imp  = _mm512_fmsub_ps(x.im,y.re,
+                                               _mm512_mul_ps(x.re,y.im));
                         magc2= _mm512_mul_ps(imp,imp);
                         vcmag= _mm512_sqrt_ps(_mm512_add_ps(magc1,magc2));
                         cv.re = _mm512_div_ps(rep,vcmag);
