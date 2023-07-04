@@ -1124,6 +1124,34 @@ namespace  gms {
                                                 _mm512_div_ps(_mm512_sub_ps(xim,_mm512_mul_ps(xre,r)),den)));
                         return (cv);
                }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cdiv_smith_zmm16r4(const zmm16c4_t x,
+                                                const zmm16c4_t y) {
+                                           
+                        zmm16c4_t cv
+                        register __m512 r,den;
+                        __mmask16 m = 0x0;
+                        m    = _mm512_cmp_ps_mask(_mm512_abs_ps(y.re),
+                                                  _mm512_abs_ps(y.im),
+                                                  _CMP_GE_OQ);
+                        r    = _mm512_mask_blend_ps(m,_mm512_div_ps(y.re,y.im),
+                                                      _mm512_div_ps(y.im,y.re)); // r
+                        den  = _mm512_mask_blend_ps(m,_mm512_fmadd_ps(r,y.re,y.im),
+                                                      _mm512_fmadd_ps(r,y.im,y.re));
+                        cv.re  =  _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmadd_ps(x.re,r,x.im),den),
+                                                _mm512_div_ps(_mm512_fmadd_ps(x.im,r,x.re),den));
+                        cv.im  =  _mm512_mask_blend_ps(m,
+                                                _mm512_div_ps(_mm512_fmsub_ps(x.im,r,x.re),den),
+                                                _mm512_div_ps(_mm512_sub_ps(x.im,_mm512_mul_ps(x.re,r)),den)));
+                        return (cv);
+               }
 
 
 #include "GMS_sleefsimdsp.hpp"
