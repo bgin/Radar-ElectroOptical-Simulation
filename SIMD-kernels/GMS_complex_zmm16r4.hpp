@@ -876,12 +876,10 @@ namespace  gms {
                                             const zmm16c4_t x) {
                                        
                         zmm16c4_t cv;
-                        register __m512 t0r,t0i,tmpr,tmpi;
+                        register __m512 t0r,t0i;
                         t0r = s;
                         t0i = _mm512_setzero_ps();
-                        cdiv_zmm16r4(t0r,t0i,xre,xim,&tmpr,&tmpi);
-                        cv.re  = tmpr;
-                        cv.zim = tmpi;
+                        cdiv_zmm16r4(t0r,t0i,x.re,x.im,&cv.re,&cv.im);
                         return (cv);                     
                  }
                  
