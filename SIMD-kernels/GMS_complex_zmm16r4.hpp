@@ -2148,6 +2148,26 @@ namespace  gms {
                        cv.im = zmm1; 
                        return (cv);
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t csqrt_zmm16r4(const zmm16c4_t x,
+                                          __m512 * __restrict wrkc) {
+                                          
+                       zmm16c4_t cv;
+                       register __m512 zmm0,zmm1;
+                       const register __m512 half = _mm512_set1_ps(0.5f); 
+                       cabs_zmm16r4(x.re,x.im,wrkc);
+                       zmm0  = _mm512_mul_ps(half,_mm512_add_ps(*wrkc,x.re));
+                       cv.re = zmm0;
+                       zmm1  = _mm512_mul_ps(half,_mm512_sub_ps(*wrkc,x.re));
+                       cv.im = zmm1; 
+                       return (cv);
+              }
 
 
                    __ATTR_ALWAYS_INLINE__
