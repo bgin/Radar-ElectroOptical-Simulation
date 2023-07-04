@@ -1209,6 +1209,21 @@ namespace  gms {
                         cabs = xsqrtf(_mm512_add_ps(zmm0,zmm1));
                         return (cabs);
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512 cabs_zmm16r4(const zmm16c4_t x) {
+
+                        register __m512 zmm0,zmm1,cabs;
+                        zmm0 = _mm512_mul_ps(x.re,x.re);
+                        zmm1 = _mm512_mul_ps(x.im,x.im);
+                        cabs = xsqrtf(_mm512_add_ps(zmm0,zmm1));
+                        return (cabs);
+                 }
 
 
                    __ATTR_ALWAYS_INLINE__
