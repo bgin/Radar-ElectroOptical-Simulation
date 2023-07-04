@@ -2278,6 +2278,29 @@ namespace  gms {
                         cv.im = _mm512_div_ps(imp,zmm2);
                         return (cv);
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t cnorm_prod_zmm16r4(  const zmm16c4_t x,
+                                                  const zmm16c4_t y) {
+                                             
+                        zmm16c4_t cv;
+                        register __m512 rep,imp,zmm0,zmm1,zmm2;
+                        rep  = _mm512_fmsub_ps(x.re,y.re,
+                                               _mm512_mul_ps(x.im,y.im));
+                        imp  = _mm512_fmadd_pd(x.im,y.re,
+                                               _mm512_mul_ps(x.re,y.im));
+                        zmm0 = _mm512_mul_ps(rep,rep);
+                        zmm1 = _mm512_mul_ps(imp,imp);
+                        zmm2 = _mm512_sqrt_ps(_mm512_add_ps(zmm0,zmm1));
+                        cv.re = _mm512_div_ps(rep,zmm2);
+                        cv.im = _mm512_div_ps(imp,zmm2);
+                        return (cv);
+             }
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -2369,6 +2392,32 @@ namespace  gms {
                         sim  = 0.0f;
                         imp  = _mm512_fmadd_ps(xim,yre,
                                                _mm512_mul_ps(xre,yim));
+                        sim  = _mm512_reduce_add_ps(imp);
+                        *mim = sim*inv16;
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmean_prod_zmm16r4(const zmm16c4_t x,
+                                           const zmm16c4_t y,
+                                           float * __restrict mre,
+                                           float * __restrict min) {
+
+                        register __m512 rep,imp;
+                        constexpr float inv16 = 0.0625f;
+                        float sre,sim;
+                        sre = 0.0f;
+                        rep  = _mm512_fmsub_ps(x.re,y.re,
+                                               _mm512_mul_ps(x.im,y.im));
+                        sre  = _mm512_reduce_add_ps(rep);
+                        *mre = sre*inv16;
+                        sim  = 0.0f;
+                        imp  = _mm512_fmadd_ps(x.im,y.re,
+                                               _mm512_mul_ps(x.re,y.im));
                         sim  = _mm512_reduce_add_ps(imp);
                         *mim = sim*inv16;
              }
