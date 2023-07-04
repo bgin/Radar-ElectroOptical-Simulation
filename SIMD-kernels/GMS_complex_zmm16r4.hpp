@@ -1454,6 +1454,23 @@ namespace  gms {
                       cv.im = zmm1;
                       return (cv); 
                }
+               
+               
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm16c4_t ccos_zmm16r4(const zmm16c4_t x) {
+                                    
+                      zmm16c4_t cv;
+                      register __m512 zmm0,zmm1;
+                      zmm0  = _mm512_mul_ps(xcosf(x.re),xcoshf(x.im));
+                      cv.re = zmm0;
+                      zmm1  = _mm512_mul_ps(xsinf(x.re),xsinhf(x.im));
+                      cv.im = zmm1;
+                      return (cv); 
+               }
 
 
                    __ATTR_ALWAYS_INLINE__
