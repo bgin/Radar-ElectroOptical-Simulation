@@ -2892,6 +2892,24 @@ namespace  gms {
                         sim  = _mm512_reduce_add_ps(xim);
                         *mim = sim*inv16; 
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void arith_cmean_zmm16r4(  const zmm16c4_t x,
+                                              float * __restrict mre,
+                                              float * __restrict min) {
+
+                        constexpr float inv16 = 0.0625f;
+                        float sre,sim;
+                        sre  = _mm512_reduce_add_ps(x.re);
+                        *mre = sre*inv16;
+                        sim  = _mm512_reduce_add_ps(x.im);
+                        *mim = sim*inv16; 
+             }
 
 
                    __ATTR_ALWAYS_INLINE__
