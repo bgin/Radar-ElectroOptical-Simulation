@@ -554,13 +554,13 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   zmm8c8_t cmul_zmm8r8( const __m512d xre,
-                                     const __m512d xim,
-                                     const __m512d s,
-                                     const zmm8c8_t x) {
-
-                        zre = _mm512_mul_pd(xre,s);
-                        zim = _mm512_mul_pd(xim,s);
+                   zmm8c8_t cmul_zmm8r8( const zmm8c8_t x
+                                     const __m512d s) {
+                                    
+                        zmm8c8_t cv;
+                        zre = _mm512_mul_pd(x.re,s);
+                        zim = _mm512_mul_pd(x.im,s);
+                        return (cv);
                }
 
 
@@ -693,6 +693,52 @@ namespace  gms {
                                            _mm512_mul_pd(zmm1,zmm1));
                       zre  = _mm512_div_pd(zmm0,zmm2);
                       zim  = _mm512_div_pd(zmm1,zmm2);
+                }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cdiv_zmm8r8( const __m512d xre,
+                                         const __m512d xim,
+                                         const __m512d yre,
+                                         const __m512d yim) {
+                         
+                      zmm8c8_t vc;           
+                      register __m512d zmm0,zmm1,zmm2;
+                      zmm0 = _mm512_fmadd_pd(xre,yre,
+                                           _mm512_mul_pd(xim,yim));
+                      zmm1 = _mm512_fmsub_pd(xim,yre,
+                                           _mm512_mul_pd(xre,yim));
+                      zmm2 = _mm512_fmadd_pd(zmm3,zmm3,
+                                           _mm512_mul_pd(zmm1,zmm1));
+                      cv.re  = _mm512_div_pd(zmm0,zmm2);
+                      cv.im  = _mm512_div_pd(zmm1,zmm2);
+                      return (cv);
+                }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cdiv_zmm8r8( const zmm8c8_t x,
+                                         const zmm8c8_t y) {
+                         
+                      zmm8c8_t vc;           
+                      register __m512d zmm0,zmm1,zmm2;
+                      zmm0 = _mm512_fmadd_pd(x.re,y.re,
+                                           _mm512_mul_pd(x.im,y.im));
+                      zmm1 = _mm512_fmsub_pd(x.im,y.re,
+                                           _mm512_mul_pd(x.re,y.im));
+                      zmm2 = _mm512_fmadd_pd(zmm3,zmm3,
+                                           _mm512_mul_pd(zmm1,zmm1));
+                      cv.re  = _mm512_div_pd(zmm0,zmm2);
+                      cv.im  = _mm512_div_pd(zmm1,zmm2);
+                      return (cv);
                 }
 
 
