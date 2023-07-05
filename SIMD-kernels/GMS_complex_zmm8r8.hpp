@@ -941,6 +941,38 @@ namespace  gms {
                                                 _mm512_div_pd(_mm512_fmsub_pd(xim,r,xre),den),
                                                 _mm512_div_pd(_mm512_sub_pd(xim,_mm512_mul_pd(xre,r)),den)));
                }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cdiv_smith_zmm8r8( const __m512d xre,
+                                           const __m512d xim,
+                                           const __m512d yre,
+                                           const __m512d yim) {
+                                          
+
+                        zmm8c8_t cv;
+                        register __m512d r,den;
+                        __mmask8 m = 0x0;
+                        m    = _mm512_cmp_pd_mask(_mm512_abs_pd(yre),
+                                                  _mm512_abs_pd(yim),
+                                                  _CMP_GE_OQ);
+                        r    = _mm512_mask_blend_pd(m,_mm512_div_pd(yre,yim),
+                                                      _mm512_div_pd(yim,yre)); // r
+                        den  = _mm512_mask_blend_pd(m,_mm512_fmadd_pd(r,yre,yim),
+                                                      _mm512_fmadd_pd(r,yim,yre));
+                        cv.re  =  _mm512_mask_blend_pd(m,
+                                                _mm512_div_pd(_mm512_fmadd_pd(xre,r,xim),den),
+                                                _mm512_div_pd(_mm512_fmadd_pd(xim,r,xre),den));
+                        cv.im  =  _mm512_mask_blend_pd(m,
+                                                _mm512_div_pd(_mm512_fmsub_pd(xim,r,xre),den),
+                                                _mm512_div_pd(_mm512_sub_pd(xim,_mm512_mul_pd(xre,r)),den)));
+                        return (cv);
+               }
+               
 
 
 #include "GMS_sleefsimddp.hpp"
