@@ -547,6 +547,21 @@ namespace  gms {
                         zre = _mm512_mul_pd(xre,s);
                         zim = _mm512_mul_pd(xim,s);
                }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cmul_zmm8r8( const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d s,
+                                     const zmm8c8_t x) {
+
+                        zre = _mm512_mul_pd(xre,s);
+                        zim = _mm512_mul_pd(xim,s);
+               }
 
 
                    __ATTR_ALWAYS_INLINE__
