@@ -1337,8 +1337,8 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512ddd cconj_zmm8r8( __m512d * __restrict re,
-                                           __m512d * __restrict im ) {
+                   __m512d cconj_zmm8r8( __m512d * __restrict re,
+                                         __m512d * __restrict im ) {
                           
                         register __m512d c;
                         c = negate_zmm8r8(*im);
@@ -1401,6 +1401,37 @@ namespace  gms {
                       *csre = zmm0;
                       zmm1  = _mm512_mul_pd(xsin(xre),xsinh(xim));
                       *csim = zmm1; 
+               }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t ccos_zmm8r8(const __m512d xre,
+                                        const __m512d xim) {
+                                     
+                      zmm8c8_t cv;
+                      register __m512d zmm0,zmm1;
+                      cv.re  = _mm512_mul_pd(xcos(xre),xcosh(xim));
+                      cv.im  = _mm512_mul_pd(xsin(xre),xsinh(xim));
+                      return (cv);
+               }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t ccos_zmm8r8(const zmm8c8_t x) {
+                                     
+                      zmm8c8_t cv;
+                      register __m512d zmm0,zmm1;
+                      cv.re  = _mm512_mul_pd(xcos(x.re),xcosh(x.im));
+                      cv.im  = _mm512_mul_pd(xsin(x.re),xsinh(x.im));
+                      return (cv);
                }
 
 
