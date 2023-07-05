@@ -300,6 +300,23 @@ namespace  gms {
                         zmm1 = _mm512_sub_pd(xim,yim);
                         zim  = zmm1;
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t csub_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d yre,
+                                     const __m512d yim) {
+                                    
+                        zmm8c8_t cv;
+                        cv.re = _mm512_sub_pd(xre,yre);
+                        cv.im = _mm512_sub_pd(xim,yim);
+                        return (cv);
+                }
 
 
                    __ATTR_ALWAYS_INLINE__
