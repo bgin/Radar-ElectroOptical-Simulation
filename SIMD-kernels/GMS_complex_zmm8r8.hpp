@@ -1265,6 +1265,28 @@ namespace  gms {
                         *yre = xre; 
                         *yim = negate_zmm8r8(xim);
                    } 
+                   
+                   
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cconj_zmm8r8_v2(const __m512d xre,
+                                            const __m512d xim) {
+                                          
+                         
+                        //register __m512 c;              
+                        //c = negate_zmm16r4(*im);
+                        //*im = c;
+                        zmm8c8_t cv;
+                        cv.re = xre; 
+                        cv.im = negate_zmm8r8(xim);
+                        return (cv);
+                   } 
+                   
+                   
+                   
 
 
                    __ATTR_ALWAYS_INLINE__
