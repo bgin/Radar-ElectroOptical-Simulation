@@ -973,6 +973,35 @@ namespace  gms {
                         return (cv);
                }
                
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cdiv_smith_zmm8r8( const zmm8c8_t x,
+                                               const zmm8c8_t y) {
+                                          
+
+                        zmm8c8_t cv;
+                        register __m512d r,den;
+                        __mmask8 m = 0x0;
+                        m    = _mm512_cmp_pd_mask(_mm512_abs_pd(y.re),
+                                                  _mm512_abs_pd(y.im),
+                                                  _CMP_GE_OQ);
+                        r    = _mm512_mask_blend_pd(m,_mm512_div_pd(y.re,y.im),
+                                                      _mm512_div_pd(y.im,y.re)); // r
+                        den  = _mm512_mask_blend_pd(m,_mm512_fmadd_pd(r,y.re,yim),
+                                                      _mm512_fmadd_pd(r,y.im,y.re));
+                        cv.re  =  _mm512_mask_blend_pd(m,
+                                                _mm512_div_pd(_mm512_fmadd_pd(x.re,r,x.im),den),
+                                                _mm512_div_pd(_mm512_fmadd_pd(x.im,r,x.re),den));
+                        cv.im  =  _mm512_mask_blend_pd(m,
+                                                _mm512_div_pd(_mm512_fmsub_pd(x.im,r,x.re),den),
+                                                _mm512_div_pd(_mm512_sub_pd(x.im,_mm512_mul_pd(x.re,r)),den)));
+                        return (cv);
+               }
+               
 
 
 #include "GMS_sleefsimddp.hpp"
