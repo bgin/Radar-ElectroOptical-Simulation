@@ -47,6 +47,13 @@ namespace  gms {
 
 
        namespace math {
+       
+       
+                      struct __ATTR_ALIGN__(64) zmm8c8_t {
+                   
+                          __m512d re;
+                          __m512d im;
+                   };
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -97,18 +104,35 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cadd_zmm8r8(const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd yre,
-                                     const __m512ddddd yim,
-                                     __m512ddddd &     zre,
-                                     __m512ddddd &     zim) {
+                   void cadd_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d yre,
+                                     const __m512d yim,
+                                     __m512d &     zre,
+                                     __m512d &     zim) {
                      
-                        register __m512ddddd zmm0,zmm1;
+                        register __m512d zmm0,zmm1;
                         zmm0 = _mm512_add_pd(xre,yre);
                         zre  = zmm0;
                         zmm1 = _mm512_add_pd(xim,yim);
                         zim  = zmm1;
+                }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cadd_zmm8r8( const __m512d xre,
+                                         const __m512d xim,
+                                         const __m512d yre,
+                                         const __m512d yim) {
+                                     
+                        zmm8c8_t cv;
+                        cv.re = _mm512_add_pd(xre,yre);
+                        cv.im = _mm512_add_pd(xim,yim);
+                        return (cv);
                 }
 
 
@@ -117,11 +141,11 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cadd_zmm8r8(const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd s,
-                                     __m512ddddd &     zre,
-                                     __m512ddddd &     zim) {
+                   void cadd_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d s,
+                                     __m512d &     zre,
+                                     __m512d &     zim) {
 
                         zre = _mm512_add_pd(xre,s);
                         zim = _mm512_add_pd(xim,s);
@@ -137,7 +161,7 @@ namespace  gms {
                                          const double * __restrict xim,
                                          double *       __restrict zre,
                                          double *       __restrict zim) {
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_loadu_pd(&xre[0]);
                         zmm1  = _mm512_loadu_pd(&xim[0]);
                         zmm2  = _mm512_loadu_pd(&zre[0]);
@@ -156,7 +180,7 @@ namespace  gms {
                                          const double * __restrict __ATTR_ALIGN__(64) xim,
                                          double *       __restrict __ATTR_ALIGN__(64) zre,
                                          double *       __restrict __ATTR_ALIGN__(64) zim) {
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_load_pd(&xre[0]);
                         zmm1  = _mm512_load_pd(&xim[0]);
                         zmm2  = _mm512_load_pd(&zre[0]);
@@ -180,7 +204,7 @@ namespace  gms {
                                        double *       __restrict zre,
                                        double *       __restrict zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_loadu_pd(&xre[0]);
                         zmm1  = _mm512_loadu_pd(&yre[0]);
                         _mm512_storeu_pd(&zre[0], _mm512_sub_pd(zmm0,zmm1));
@@ -202,7 +226,7 @@ namespace  gms {
                                        double *       __restrict __ATTR_ALIGN__(64) zre,
                                        double *       __restrict __ATTR_ALIGN__(64) zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_load_pd(&xre[0]);
                         zmm1  = _mm512_load_pd(&yre[0]);
                         _mm512_store_pd(&zre[0], _mm512_sub_pd(zmm0,zmm1));
@@ -217,14 +241,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void csub_zmm8r8(const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd yre,
-                                     const __m512ddddd yim,
-                                     __m512ddddd &     zre,
-                                     __m512ddddd &     zim) {
+                   void csub_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d yre,
+                                     const __m512d yim,
+                                     __m512d &     zre,
+                                     __m512d &     zim) {
                      
-                        register __m512ddddd zmm0,zmm1;
+                        register __m512d zmm0,zmm1;
                         zmm0 = _mm512_sub_pd(xre,yre);
                         zre  = zmm0;
                         zmm1 = _mm512_sub_pd(xim,yim);
@@ -237,11 +261,11 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void csub_zmm8r8(const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd s,
-                                     __m512ddddd &     zre,
-                                     __m512ddddd &     zim) {
+                   void csub_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d s,
+                                     __m512d &     zre,
+                                     __m512d &     zim) {
 
                         zre = _mm512_sub_pd(xre,s);
                         zim = _mm512_sub_pd(xim,s);
@@ -257,7 +281,7 @@ namespace  gms {
                                          const double * __restrict xim,
                                          double *       __restrict zre,
                                          double *       __restrict zim) {
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_loadu_pd(&xre[0]);
                         zmm1  = _mm512_loadu_pd(&xim[0]);
                         zmm2  = _mm512_loadu_pd(&zre[0]);
@@ -276,7 +300,7 @@ namespace  gms {
                                          const double * __restrict __ATTR_ALIGN__(64) xim,
                                          double *       __restrict __ATTR_ALIGN__(64) zre,
                                          double *       __restrict __ATTR_ALIGN__(64) zim) {
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_load_pd(&xre[0]);
                         zmm1  = _mm512_load_pd(&xim[0]);
                         zmm2  = _mm512_load_pd(&zre[0]);
@@ -300,7 +324,7 @@ namespace  gms {
                                        double *       __restrict zre,
                                        double *       __restrict zim) {
 
-                           register __m512ddddd zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
+                           register __m512d zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
                            zmm0  = _mm512_loadu_pd(&xre[0]);
                            zmm1  = _mm512_loadu_pd(&yre[0]);
                            zmm2  = _mm512_loadu_pd(&xim[0]);
@@ -326,7 +350,7 @@ namespace  gms {
                                        double *       __restrict __ATTR_ALIGN__(64) zre,
                                        double *       __restrict __ATTR_ALIGN__(64) zim) {
 
-                           register __m512ddddd zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
+                           register __m512d zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
                            zmm0  = _mm512_load_pd(&xre[0]);
                            zmm1  = _mm512_load_pd(&yre[0]);
                            zmm2  = _mm512_load_pd(&xim[0]);
@@ -345,14 +369,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cmul_zmm8r8(const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd yre,
-                                     const __m512ddddd yim,
-                                     __m512ddddd &     zre,
-                                     __m512ddddd &     zim) {
+                   void cmul_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d yre,
+                                     const __m512d yim,
+                                     __m512d &     zre,
+                                     __m512d &     zim) {
 
-                         register __m512ddddd zmm0,zmm1;
+                         register __m512d zmm0,zmm1;
                          zmm0 = _mm512_sub_pd(_mm512_mul_pd(xre,yre),
                                               _mm512_mul_pd(xim,yim));
                          zre  = zmm0;
@@ -367,11 +391,11 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cmul_zmm8r8(const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd s,
-                                     __m512ddddd &     zre,
-                                     __m512ddddd &     zim) {
+                   void cmul_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d s,
+                                     __m512d &     zre,
+                                     __m512d &     zim) {
 
                         zre = _mm512_mul_pd(xre,s);
                         zim = _mm512_mul_pd(xim,s);
@@ -388,7 +412,7 @@ namespace  gms {
                                          double *       __restrict zre,
                                          double *       __restrict zim) {
 
-                           register __m512ddddd zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
+                           register __m512d zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
                            zmm0  = _mm512_loadu_pd(&xre[0]);
                            zmm1  = _mm512_loadu_pd(&zre[0]);
                            zmm2  = _mm512_loadu_pd(&xim[0]);
@@ -412,7 +436,7 @@ namespace  gms {
                                          double *       __restrict __ATTR_ALIGN__(64) zre,
                                          double *       __restrict __ATTR_ALIGN__(64) zim) {
 
-                           register __m512ddddd zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
+                           register __m512d zmm0,zmm1,zmm2,zmm3,zmm4,zmm5;
                            zmm0  = _mm512_load_pd(&xre[0]);
                            zmm1  = _mm512_load_pd(&zre[0]);
                            zmm2  = _mm512_load_pd(&xim[0]);
@@ -440,8 +464,8 @@ namespace  gms {
                                        double *       __restrict zre,
                                        double *       __restrict zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3; 
-                        register __m512ddddd zmm4,zmm5,zmm6;
+                        register __m512d zmm0,zmm1,zmm2,zmm3; 
+                        register __m512d zmm4,zmm5,zmm6;
                         zmm0  = _mm512_loadu_pd(&xre[0]); //a
                         zmm1  = _mm512_loadu_pd(&yim[0]); //d
                         zmm2  = _mm512_loadu_pd(&xim[0]); //b
@@ -469,8 +493,8 @@ namespace  gms {
                                        double *       __restrict zre,
                                        double *       __restrict zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3; 
-                        register __m512ddddd zmm4,zmm5,zmm6;
+                        register __m512d zmm0,zmm1,zmm2,zmm3; 
+                        register __m512d zmm4,zmm5,zmm6;
                         zmm0  = _mm512_load_pd(&xre[0]); //a
                         zmm1  = _mm512_load_pd(&yim[0]); //d
                         zmm2  = _mm512_load_pd(&xim[0]); //b
@@ -491,14 +515,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cdiv_zmm8r8( const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd yre,
-                                     const __m512ddddd yim,
-                                     __m512dddd & zre,
-                                     __m512dddd & zim) {
+                   void cdiv_zmm8r8( const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d yre,
+                                     const __m512d yim,
+                                     __m512d & zre,
+                                     __m512d & zim) {
 
-                      register __m512ddddd zmm0,zmm1,zmm2;
+                      register __m512d zmm0,zmm1,zmm2;
                       zmm0 = _mm512_fmadd_pd(xre,yre,
                                            _mm512_mul_pd(xim,yim));
                       zmm1 = _mm512_fmsub_pd(xim,yre,
@@ -515,11 +539,11 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cdiv_zmm8r8( const __m512ddddd xre,
-                                     const __m512ddddd xim,
-                                     const __m512ddddd s,
-                                     __m512ddddd & zre,
-                                     __m512ddddd & zim) {
+                   void cdiv_zmm8r8( const __m512d xre,
+                                     const __m512d xim,
+                                     const __m512d s,
+                                     __m512d & zre,
+                                     __m512d & zim) {
 
                         zre = _mm512_div_pd(xre,s);
                         zim = _mm512_div_pd(xim,s);
@@ -536,8 +560,8 @@ namespace  gms {
                                          double *       __restrict zre,
                                          double *       __restrict zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3; 
-                        register __m512ddddd zmm4,zmm5,zmm6;
+                        register __m512d zmm0,zmm1,zmm2,zmm3; 
+                        register __m512d zmm4,zmm5,zmm6;
                         zmm0  = _mm512_loadu_pd(&xre[0]); //a
                         zmm1  = _mm512_loadu_pd(&zim[0]); //d
                         zmm2  = _mm512_loadu_pd(&xim[0]); //b
@@ -563,8 +587,8 @@ namespace  gms {
                                          double *       __restrict __ATTR_ALIGN__(64) zre,
                                          double *       __restrict __ATTR_ALIGN__(64) zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3; 
-                        register __m512ddddd zmm4,zmm5,zmm6;
+                        register __m512d zmm0,zmm1,zmm2,zmm3; 
+                        register __m512d zmm4,zmm5,zmm6;
                         zmm0  = _mm512_load_pd(&xre[0]); //a
                         zmm1  = _mm512_load_pd(&zim[0]); //d
                         zmm2  = _mm512_load_pd(&xim[0]); //b
@@ -592,8 +616,8 @@ namespace  gms {
                                              double *       __restrict zre,
                                              double *       __restrict zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
-                        register __m512ddddd r,den;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
+                        register __m512d r,den;
                         __mmask8 m = 0x0;
                         zmm0 = _mm512_loadu_pd(&yre[0]); // c
                         zmm1 = _mm512_loadu_pd(&yim[0]); // d
@@ -627,8 +651,8 @@ namespace  gms {
                                              double *       __restrict zre,
                                              double *       __restrict zim) {
 
-                        register __m512dddd zmm0,zmm1,zmm2,zmm3;
-                        register __m512dddd r,den;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
+                        register __m512d r,den;
                         __mmask8 m = 0x0;
                         zmm0 = _mm512_load_pd(&yre[0]); // c
                         zmm1 = _mm512_load_pd(&yim[0]); // d
@@ -655,14 +679,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cdiv_smith_zmm8r8( const __m512dddd xre,
-                                           const __m512dddd xim,
-                                           const __m512dddd yre,
-                                           const __m512dddd yim,
-                                           __m512dddd * __restrict zre,
-                                           __m512dddd * __restrict zim) {
+                   void cdiv_smith_zmm8r8( const __m512d xre,
+                                           const __m512d xim,
+                                           const __m512d yre,
+                                           const __m512d yim,
+                                           __m512d * __restrict zre,
+                                           __m512d * __restrict zim) {
 
-                        register __m512dddd r,den;
+                        register __m512d r,den;
                         __mmask8 m = 0x0;
                         m    = _mm512_cmp_pd_mask(_mm512_abs_pd(yre),
                                                   _mm512_abs_pd(yim),
@@ -692,7 +716,7 @@ namespace  gms {
                                        const double * __restrict im,
                                        double * __restrict  cabs) {
 
-                        register __m512ddd zmm0,zmm1,zmm2,zmm3,zmm4;
+                        register __m512d zmm0,zmm1,zmm2,zmm3,zmm4;
                         zmm0  = _mm512_loadu_pd(&re[0]);
                         zmm1  = _mm512_mul_pd(zmm0,zmm0);
                         zmm2  = _mm512_loadu_pd(&im[0]);
@@ -711,7 +735,7 @@ namespace  gms {
                                        const double * __restrict __ATTR_ALIGN__(64) im,
                                        double * __restrict  __ATTR_ALIGN__(64) cabs) {
 
-                        register __m512ddd zmm0,zmm1,zmm2,zmm3,zmm4;
+                        register __m512d zmm0,zmm1,zmm2,zmm3,zmm4;
                         zmm0  = _mm512_load_pd(&re[0]);
                         zmm1  = _mm512_mul_pd(zmm0,zmm0);
                         zmm2  = _mm512_load_pd(&im[0]);
@@ -726,10 +750,10 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512ddd cabs_zmm8r8(const __m512ddd re,
-                                       const __m512ddd im) {
+                   __m512d cabs_zmm8r8(const __m512d re,
+                                       const __m512d im) {
 
-                        register __m512ddd zmm0,zmm1,cabs;
+                        register __m512d zmm0,zmm1,cabs;
                         zmm0 = _mm512_mul_pd(re,re);
                         zmm1 = _mm512_mul_pd(im,im);
                         cabs = xsqrt(_mm512_add_pd(zmm0,zmm1));
@@ -746,7 +770,7 @@ namespace  gms {
                                        const double * __restrict im,
                                        double * __restrict  carg) {
 
-                        register __m512ddd zmm0,zmm1;
+                        register __m512d zmm0,zmm1;
                         zmm0 = _mm512_loadu_pd(&re[0]);
                         zmm1 = _mm512_loadu_pd(&im[0]);
                         _mm512_storeu_pd(&carg[0], xatan2(zmm0,zmm1));
@@ -762,7 +786,7 @@ namespace  gms {
                                        const double * __restrict __ATTR_ALIGN__(64) im,
                                        double * __restrict  __ATTR_ALIGN__(64) carg) {
 
-                        register __m512ddd zmm0,zmm1;
+                        register __m512d zmm0,zmm1;
                         zmm0 = _mm512_load_pd(&re[0]);
                         zmm1 = _mm512_load_pd(&im[0]);
                         _mm512_store_pd(&carg[0], xatan2(zmm0,zmm1));
@@ -774,13 +798,31 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   __m512ddd carg_zmm8r8(const __m512ddd re,
-                                       const __m512ddd im) {
+                   __m512d carg_zmm8r8(const __m512d re,
+                                       const __m512d im) {
 
-                       register __m512ddd carg;
+                       register __m512d carg;
                        carg = xatan2(re,im);
                        return (carg);
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cconj_zmm8r8_v2(const __m512d xre,
+                                         const __m512d xim,
+                                         __m512d * __restrict yre,
+                                         __m512d * __restrict yim) {
+                         
+                        //register __m512 c;              
+                        //c = negate_zmm16r4(*im);
+                        //*im = c;
+                        *yre = xre; 
+                        *yim = negate_zmm8r8(xim);
+                   } 
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -835,7 +877,7 @@ namespace  gms {
                                        double * __restrict  csre,
                                        double * __restrict  csim) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0  = _mm512_loadu_pd(&xre[0]);
                       zmm1  = _mm512_loadu_pd(&xim[0]);
                       zmm2  = _mm512_mul_pd(xcos(zmm0),xcosh(zmm1));
@@ -855,7 +897,7 @@ namespace  gms {
                                        double * __restrict  __ATTR_ALIGN__(64) csre,
                                        double * __restrict  __ATTR_ALIGN__(64) csim) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0  = _mm512_load_pd(&xre[0]);
                       zmm1  = _mm512_load_pd(&xim[0]);
                       zmm2  = _mm512_mul_pd(xcos(zmm0),xcosh(zmm1));
@@ -870,12 +912,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ccos_zmm8r8(const __m512ddd xre,
-                                     const __m512ddd xim,
-                                     __m512ddd * __restrict csre,
-                                     __m512ddd * __restrict csim) {
+                   void ccos_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     __m512d * __restrict csre,
+                                     __m512d * __restrict csim) {
 
-                      register __m512ddd zmm0,zmm1;
+                      register __m512d zmm0,zmm1;
                       zmm0  = _mm512_mul_pd(xcos(xre),xcosh(xim));
                       *csre = zmm0;
                       zmm1  = _mm512_mul_pd(xsin(xre),xsinh(xim));
@@ -893,7 +935,7 @@ namespace  gms {
                                        double * __restrict  csre,
                                        double * __restrict  csim) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0  = _mm512_loadu_pd(&xre[0]);
                       zmm1  = _mm512_loadu_pd(&xim[0]);
                       zmm2  = _mm512_mul_pd(xcosh(zmm0),xcos(zmm1));
@@ -913,7 +955,7 @@ namespace  gms {
                                        double * __restrict  __ATTR_ALIGN__(64) csre,
                                        double * __restrict  __ATTR_ALIGN__(64) csim) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0  = _mm512_load_pd(&xre[0]);
                       zmm1  = _mm512_load_pd(&xim[0]);
                       zmm2  = _mm512_mul_pd(xcosh(zmm0),xcos(zmm1));
@@ -928,12 +970,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ccosh_zmm8r8(const __m512ddd xre,
-                                     const __m512ddd xim,
-                                     __m512ddd * __restrict csre,
-                                     __m512ddd * __restrict csim) {
+                   void ccosh_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     __m512d * __restrict csre,
+                                     __m512d * __restrict csim) {
 
-                      register __m512ddd zmm0,zmm1;
+                      register __m512d zmm0,zmm1;
                       zmm0  = _mm512_mul_pd(xcosh(xre),xcos(xim));
                       *csre = zmm0;
                       zmm1  = _mm512_mul_pd(xsinh(xre),xsin(xim));
@@ -953,7 +995,7 @@ namespace  gms {
                                       __mmask16 * __restrict eqr,
                                       __mmask16 * __restrict eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
                       _mm512_storeu_pd(&eqr[0],
@@ -977,7 +1019,7 @@ namespace  gms {
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
                       _mm512_store_pd(&eqr[0],
@@ -994,10 +1036,10 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_zmm8r8(const __m512ddd xre,
-                                    const __m512ddd xim,
-                                    const __m512ddd yre,
-                                    const __m512ddd yim,
+                   void ceq_zmm8r8(const __m512d xre,
+                                    const __m512d xim,
+                                    const __m512d yre,
+                                    const __m512d yim,
                                     __mmask16 * __restrict eqr,
                                     __mmask16 * __restrict eqi) {
 
@@ -1018,7 +1060,7 @@ namespace  gms {
                                       __mmask16 * __restrict eqr,
                                       __mmask16 * __restrict eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
                       _mm512_storeu_pd(&eqr[0],
@@ -1042,7 +1084,7 @@ namespace  gms {
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
                       _mm512_store_pd(&eqr[0],
@@ -1059,10 +1101,10 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_zmm8r8(const __m512ddd xre,
-                                    const __m512ddd xim,
-                                    const __m512ddd yre,
-                                    const __m512ddd yim,
+                   void cgt_zmm8r8(const __m512d xre,
+                                    const __m512d xim,
+                                    const __m512d yre,
+                                    const __m512d yim,
                                     __mmask16 * __restrict eqr,
                                     __mmask16 * __restrict eqi) {
 
@@ -1083,7 +1125,7 @@ namespace  gms {
                                       __mmask16 * __restrict eqr,
                                       __mmask16 * __restrict eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
                       _mm512_storeu_pd(&eqr[0],
@@ -1107,7 +1149,7 @@ namespace  gms {
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
                       _mm512_store_pd(&eqr[0],
@@ -1124,10 +1166,10 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_zmm8r8(const __m512ddd xre,
-                                    const __m512ddd xim,
-                                    const __m512ddd yre,
-                                    const __m512ddd yim,
+                   void clt_zmm8r8(const __m512d xre,
+                                    const __m512d xim,
+                                    const __m512d yre,
+                                    const __m512d yim,
                                     __mmask16 * __restrict eqr,
                                     __mmask16 * __restrict eqi) {
 
@@ -1149,7 +1191,7 @@ namespace  gms {
                                       __mmask16 * __restrict eqr,
                                       __mmask16 * __restrict eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
                       _mm512_storeu_pd(&eqr[0],
@@ -1173,7 +1215,7 @@ namespace  gms {
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
                                       __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
 
-                      register __m512ddd zmm0,zmm1,zmm2,zmm3;
+                      register __m512d zmm0,zmm1,zmm2,zmm3;
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
                       _mm512_store_pd(&eqr[0],
@@ -1190,10 +1232,10 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_zmm8r8(const __m512ddd xre,
-                                    const __m512ddd xim,
-                                    const __m512ddd yre,
-                                    const __m512ddd yim,
+                   void cneq_zmm8r8(const __m512d xre,
+                                    const __m512d xim,
+                                    const __m512d yre,
+                                    const __m512d yim,
                                     __mmask16 * __restrict eqr,
                                     __mmask16 * __restrict eqi) {
 
@@ -1213,7 +1255,7 @@ namespace  gms {
                                        double * __restrict cexpr,
                                        double * __restrict cexpi ) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_loadu_pd(&xre[0]);
                         zmm1  = _mm512_loadu_pd(&xim[0]);
                         zmm2  = xexp(zmm0);
@@ -1234,7 +1276,7 @@ namespace  gms {
                                        double * __restrict __ATTR_ALIGN__(64) cexpr,
                                        double * __restrict __ATTR_ALIGN__(64) cexpi ) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_load_pd(&xre[0]);
                         zmm1  = _mm512_load_pd(&xim[0]);
                         zmm2  = xexp(zmm0);
@@ -1250,12 +1292,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cexp_zmm8r8(const __m512dd xre,
-                                     const __m512dd xim,
-                                     __m512dd * __restrict cexpr,
-                                     __m512dd * __restrict cexpi) {
+                   void cexp_zmm8r8(const __m512d xre,
+                                     const __m512d xim,
+                                     __m512d * __restrict cexpr,
+                                     __m512d * __restrict cexpi) {
 
-                        register __m512dd zmm0;
+                        register __m512d zmm0;
                         zmm0   = xexp(xre);
                         *cexpr = _mm512_mul_pd(zmm0,xcos(xim));
                         *cexpi = _mm512_mul_pd(zmm0,xsin(xim));
@@ -1272,7 +1314,7 @@ namespace  gms {
                                          double * __restrict  re,
                                          double * __restrict  im) {
 
-                         register __m512dd zmm0,zmm1,zmm2,zmm3;
+                         register __m512d zmm0,zmm1,zmm2,zmm3;
                          zmm0 = _mm512_loadu_pd(&rho[0]);
                          zmm1 = _mm512_loadu_pd(&tht[0]);
                          zmm2 = _mm512_mul_pd(zmm0,xcos(zmm1)); //tht
@@ -1292,7 +1334,7 @@ namespace  gms {
                                          double * __restrict  __ATTR_ALIGN__(64) re,
                                          double * __restrict  __ATTR_ALIGN__(64) im) {
 
-                         register __m512dd zmm0,zmm1,zmm2,zmm3;
+                         register __m512d zmm0,zmm1,zmm2,zmm3;
                          zmm0 = _mm512_load_pd(&rho[0]);
                          zmm1 = _mm512_load_pd(&tht[0]);
                          zmm2 = _mm512_mul_pd(zmm0,xcos(zmm1)); //tht
@@ -1307,12 +1349,12 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cpolar_zmm8r8(const __m512dd rho,
-                                       const __m512dd tht,
-                                       __m512dd * __restrict re,
-                                       __m512dd * __restrict im) {
+                   void cpolar_zmm8r8(const __m512d rho,
+                                       const __m512d tht,
+                                       __m512d * __restrict re,
+                                       __m512d * __restrict im) {
 
-                        register __m512dd zmm0,zmm1;
+                        register __m512d zmm0,zmm1;
                         zmm0 = _mm512_mul_pd(rho,xcos(tht));
                         *re  = zmm0;
                         zmm1 = _mm512_mul_pd(rho,xsin(tht));
@@ -1331,7 +1373,7 @@ namespace  gms {
                                        double * __restrict csqr,
                                        double * __restrict csqi) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         const register __m512dd half = _mm512_set1_pd(0.5);
                         cabs_zmm8r8_u(xre,xim,wrkc);
                         zmm0  = _mm512_loadu_pd(&xre[0]);
@@ -1354,7 +1396,7 @@ namespace  gms {
                                        double * __restrict __ATTR_ALIGN__(64) csqr,
                                        double * __restrict __ATTR_ALIGN__(64) csqi) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         const register __m512dd half = _mm512_set1_pd(0.5);
                         cabs_zmm8r8_a(xre,xim,wrkc);
                         zmm0  = _mm512_load_pd(&xre[0]);
@@ -1371,13 +1413,13 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void csqrt_zmm8r8(const __m512dd xre,
-                                      const __m512dd xim,
-                                      __m512dd * __restrict wrkc,
-                                      __m512dd * __restrict csqr,
-                                      __m512dd * __restrict csqi) {
+                   void csqrt_zmm8r8(const __m512d xre,
+                                      const __m512d xim,
+                                      __m512d * __restrict wrkc,
+                                      __m512d * __restrict csqr,
+                                      __m512d * __restrict csqi) {
 
-                       register __m512dd zmm0,zmm1;
+                       register __m512d zmm0,zmm1;
                        const register __m512dd half = _mm512_set1_pd(0.5); 
                        cabs_zmm8r8(xre,xim,wrkc);
                        zmm0  = _mm512_mul_pd(half,_mm512_add_pd(*wrkc,xre));
@@ -1399,8 +1441,8 @@ namespace  gms {
                                              double * __restrict zre,
                                              double * __restrict zim) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
-                        register __m512dd rep,imp;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
+                        register __m512d rep,imp;
                         zmm0 = _mm512_loadu_pd(&xre[0]);
                         zmm1 = _mm512_loadu_pd(&yre[0]);
                         zmm2 = _mm512_loadu_pd(&xim[0]);
@@ -1429,8 +1471,8 @@ namespace  gms {
                                              double * __restrict __ATTR_ALIGN__(64) zre,
                                              double * __restrict __ATTR_ALIGN__(64) zim) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
-                        register __m512dd rep,imp;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
+                        register __m512d rep,imp;
                         zmm0 = _mm512_load_pd(&xre[0]);
                         zmm1 = _mm512_load_pd(&yre[0]);
                         zmm2 = _mm512_load_pd(&xim[0]);
@@ -1452,14 +1494,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cnorm_prod_zmm8r8(  const __m512dd  xre,
-                                             const __m512dd  xim,
-                                             const __m512dd  yre,
-                                             const __m512dd  yim,
-                                             __m512dd * __restrict zre,
-                                             __m512dd * __restrict zim) {
+                   void cnorm_prod_zmm8r8(  const __m512d  xre,
+                                             const __m512d  xim,
+                                             const __m512d  yre,
+                                             const __m512d  yim,
+                                             __m512d * __restrict zre,
+                                             __m512dd* __restrict zim) {
 
-                        register __m512dd rep,imp,zmm0,zmm1,zmm2;
+                        register __m512d rep,imp,zmm0,zmm1,zmm2;
                         rep  = _mm512_fmsub_pd(xre,yre,
                                                _mm512_mul_pd(xim,yim));
                         imp  = _mm512_fmadd_pd(xim,yre,
@@ -1484,8 +1526,8 @@ namespace  gms {
                                              double * __restrict mre,
                                              double * __restrict mim) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
-                        register __m512dd rep,imp;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
+                        register __m512d rep,imp;
                         constexpr double inv16 = 0.0625;
                         double sre,sim;
                         zmm0 = _mm512_loadu_pd(&xre[0]);
@@ -1517,8 +1559,8 @@ namespace  gms {
                                              double * __restrict mre,
                                              double * __restrict mim) {
 
-                        register __m512dd zmm0,zmm1,zmm2,zmm3;
-                        register __m512dd rep,imp;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
+                        register __m512d rep,imp;
                         constexpr double inv16 = 0.0625;
                         double sre,sim;
                         zmm0 = _mm512_load_pd(&xre[0]);
@@ -1543,14 +1585,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cmean_prod_zmm8r8(const __m512dd xre,
-                                           const __m512dd xim,
-                                           const __m512dd yre,
-                                           const __m512dd yim,
+                   void cmean_prod_zmm8r8(const __m512d xre,
+                                           const __m512d xim,
+                                           const __m512d yre,
+                                           const __m512d yim,
                                            double * __restrict mre,
                                            double * __restrict min) {
 
-                        register __m512dd rep,imp;
+                        register __m512d rep,imp;
                         constexpr double inv16 = 0.0625;
                         double sre,sim;
                         sre = 0.0f;
