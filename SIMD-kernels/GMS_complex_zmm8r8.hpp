@@ -841,6 +841,44 @@ namespace  gms {
                         _mm512_store_pd(&zre[0], _mm512_div_pd(zmm4,zmm6));
                         _mm512_store_pd(&zim[0], _mm512_div_pd(zmm5,zmm6));
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cdiv_zmm8r8_s( const __m512d s,
+                                       const __m512d xre,
+                                       const __m512d xim,
+                                       __m512d * __restrict zre,
+                                       __m512d * __restrict zim) {
+                        
+                        register __m512d t0r,t0i,tmpr,tmpi;
+                        t0r = s;
+                        t0i = _mm512_setzero_pd();
+                        cdiv_zmm8r8(t0r,t0i,xre,xim,&tmpr,&tmpi);
+                        *zre = tmpr;
+                        *zim = tmpi;                     
+                 }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cdiv_zmm8r8_s(const __m512d s,
+                                            const __m512d xre,
+                                            const __m512d xim) {
+                                       
+                        zmm8c8_t cv;
+                        register __m512d t0r,t0i;
+                        t0r = s;
+                        t0i = _mm512_setzero_pd();
+                        cdiv_zmm8r8(t0r,t0i,xre,xim,&cv.re,&cv.im);
+                        return (cv);                     
+                 }
 
 
                    __ATTR_ALWAYS_INLINE__
