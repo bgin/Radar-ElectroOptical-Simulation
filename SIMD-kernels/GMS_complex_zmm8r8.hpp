@@ -1096,6 +1096,25 @@ namespace  gms {
                         cv.im = tmpi;  
                         return (cv);                 
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cdiv_smith_zmm8r8_s(const __m512d s,
+                                                const zmm8c8_t x) {
+                                             
+                        zmm8c8_t cv;                    
+                        register __m512d t0r,t0i,tmpr,tmpi;
+                        t0r = s;
+                        t0i = _mm512_setzero_pd(); 
+                        cdiv_smith_zmm8r8(t0r,t0i,x.re,x.im,&tmpr,&tmpi);
+                        cv.re = tmpr;
+                        cv.im = tmpi;  
+                        return (cv);                 
+                 }
                
 
 
