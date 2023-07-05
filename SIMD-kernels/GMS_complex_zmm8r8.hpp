@@ -1173,6 +1173,21 @@ namespace  gms {
                         cabs = xsqrt(_mm512_add_pd(zmm0,zmm1));
                         return (cabs);
                  }
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   __m512d cabs_zmm8r8(const zmm8c8_t x) {
+
+                        register __m512d zmm0,zmm1,cabs;
+                        zmm0 = _mm512_mul_pd(x.re,x.re);
+                        zmm1 = _mm512_mul_pd(x.im,x.im);
+                        cabs = xsqrt(_mm512_add_pd(zmm0,zmm1));
+                        return (cabs);
+                 }
 
 
                    __ATTR_ALWAYS_INLINE__
