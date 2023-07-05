@@ -1241,6 +1241,19 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+                   __m512d carg_zmm8r8(const zmm8c8_t x) {
+
+                       register __m512d carg;
+                       carg = xatan2(x.re,x.im);
+                       return (carg);
+                }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
                    void cconj_zmm8r8_v2(const __m512d xre,
                                          const __m512d xim,
                                          __m512d * __restrict yre,
