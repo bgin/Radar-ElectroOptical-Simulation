@@ -5154,12 +5154,12 @@ namespace gms {
                         syr = sxr;
                         szr = sxr;
                         szi = sxr;  
-                        cubint(16,&pxd[0],&pxr[0],xa,xb,sxr,err[0]);
-                        cubint(16,&pxd[0],&pxi[0],xa,xb,sxi,err[1]);
-                        cubint(16,&pyd[0],&pyr[0],ya,yb,syr,err[2]);
-                        cubint(16,&pyd[0],&pyi[0],ya,yb,syi,err[3]);
-                        cubint(16,&pzd[0],&pzr[0],za,zb,szr,err[4]);
-                        cubint(16,&pzd[0],&pzi[0],za,zb,szi,err[5]);
+                        cubint(16,&pxd[0],&fw.pxr[0],xa,xb,sxr,err[0]);
+                        cubint(16,&pxd[0],&fw.pxi[0],xa,xb,sxi,err[1]);
+                        cubint(16,&pyd[0],&fw.pyr[0],ya,yb,syr,err[2]);
+                        cubint(16,&pyd[0],&fw.pyi[0],ya,yb,syi,err[3]);
+                        cubint(16,&pzd[0],&fw.pzr[0],za,zb,szr,err[4]);
+                        cubint(16,&pzd[0],&fw.pzi[0],za,zb,szi,err[5]);
                         Nx = {sxr,sxi};
                         Ny = {syr,syi};
                         Nz = {szr,szi};                            
