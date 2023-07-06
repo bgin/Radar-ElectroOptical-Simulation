@@ -5259,7 +5259,12 @@ namespace gms {
 	        }
 	        
 	        
-	        
+	         /*
+                     Formula 2-23, p. 36
+                     Both electric and magnetic quantities (field amplitudes) are computed
+                     by the single kernel (different surface currents shall be passed only).
+                     'hiordq' integrator.
+                 */
                
                
         } // radiolocation
