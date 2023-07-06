@@ -2691,6 +2691,30 @@ namespace  gms {
                         sim  = _mm512_reduce_pd(im);
                         *mim = sim*inv16;
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmean_cprod_zmm8r8( const zmm8c8_t x,
+                                            const zmm8c8_t y,
+                                            double * __restrict mre,
+                                            double * __restrict min) {
+
+                        register __m512d re,im;
+                        constexpr double inv16 = 0.0625;
+                        double sre,sim;
+                        re   = _mm512_fmadd_pd(x.re,yre,
+                                               _mm512_mul_pd(x.im,y.im));
+                        sre  = _mm512_reduce_pd(re);
+                        *mre = sre*inv16;
+                        im   = _mm512_fmsub_pd(x.im,y.re,
+                                               _mm512_mul_pd(x.re,y.im));
+                        sim  = _mm512_reduce_pd(im);
+                        *mim = sim*inv16;
+             }
 
 
                    __ATTR_ALWAYS_INLINE__
