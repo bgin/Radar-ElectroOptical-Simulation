@@ -1650,6 +1650,21 @@ namespace  gms {
                          *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_GT_OQ);
                          *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_GT_OQ);
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cgt_zmm8r8(const zmm8c8_t x,
+                                   const zmm8c8_t y,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_GT_OQ);
+                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_GT_OQ);
+              }
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -1714,6 +1729,21 @@ namespace  gms {
 
                          *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_LT_OQ);
                          *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_LT_OQ);
+              }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void clt_zmm8r8( const zmm8c8_t x,
+                                    const zmm8c8_t y,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_LT_OQ);
+                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_LT_OQ);
               }
 
 
@@ -1781,6 +1811,21 @@ namespace  gms {
                          *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_NEQ_OQ);
                          *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_NEQ_OQ);
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cneq_zmm8r8( const zmm8c8_t x,
+                                     const zmm8c8_t y,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_NEQ_OQ);
+                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_NEQ_OQ);
+              }
 
 
                  
@@ -1841,6 +1886,40 @@ namespace  gms {
                         *cexpr = _mm512_mul_pd(zmm0,xcos(xim));
                         *cexpi = _mm512_mul_pd(zmm0,xsin(xim));
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cexp_zmm8r8(const __m512d xre,
+                                     const __m512d xim) {
+                         
+                        zmm8c8_t cv;           
+                        register __m512d zmm0;
+                        zmm0   = xexp(xre);
+                        cv.re = _mm512_mul_pd(zmm0,xcos(xim));
+                        cv.im = _mm512_mul_pd(zmm0,xsin(xim));
+                        return (cv);
+              }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cexp_zmm8r8(const zmm8c8_t x) {
+                         
+                        zmm8c8_t cv;           
+                        register __m512d zmm0;
+                        zmm0   = xexp(x.re);
+                        cv.re = _mm512_mul_pd(zmm0,xcos(x.im));
+                        cv.im = _mm512_mul_pd(zmm0,xsin(x.im));
+                        return (cv);
+              }
+
 
 
                    __ATTR_ALWAYS_INLINE__
