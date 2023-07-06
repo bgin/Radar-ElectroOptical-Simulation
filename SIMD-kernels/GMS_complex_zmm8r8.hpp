@@ -1978,6 +1978,25 @@ namespace  gms {
                         zmm1 = _mm512_mul_pd(rho,xsin(tht));
                         *im  = zmm1;
               }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cpolar_zmm8r8(const __m512d rho,
+                                          const __m512d tht) {
+                                       
+
+                        zmm8c8_t cv;
+                        cv.re = _mm512_mul_pd(rho,xcos(tht));
+                        cv.im = _mm512_mul_pd(rho,xsin(tht));
+                        return (cv);
+              }
+              
+              
+               
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -1992,7 +2011,7 @@ namespace  gms {
                                        double * __restrict csqi) {
 
                         register __m512d zmm0,zmm1,zmm2,zmm3;
-                        const register __m512dd half = _mm512_set1_pd(0.5);
+                        const register __m512d half = _mm512_set1_pd(0.5);
                         cabs_zmm8r8_u(xre,xim,wrkc);
                         zmm0  = _mm512_loadu_pd(&xre[0]);
                         zmm1  = _mm512_loadu_pd(&wrkc[0]);
@@ -2015,7 +2034,7 @@ namespace  gms {
                                        double * __restrict __ATTR_ALIGN__(64) csqi) {
 
                         register __m512d zmm0,zmm1,zmm2,zmm3;
-                        const register __m512dd half = _mm512_set1_pd(0.5);
+                        const register __m512d half = _mm512_set1_pd(0.5);
                         cabs_zmm8r8_a(xre,xim,wrkc);
                         zmm0  = _mm512_load_pd(&xre[0]);
                         zmm1  = _mm512_load_pd(&wrkc[0]);
@@ -2038,12 +2057,29 @@ namespace  gms {
                                       __m512d * __restrict csqi) {
 
                        register __m512d zmm0,zmm1;
-                       const register __m512dd half = _mm512_set1_pd(0.5); 
+                       const register __m512d half = _mm512_set1_pd(0.5); 
                        cabs_zmm8r8(xre,xim,wrkc);
                        zmm0  = _mm512_mul_pd(half,_mm512_add_pd(*wrkc,xre));
                        *csqr = zmm0;
                        zmm1  = _mm512_mul_pd(half,_mm512_sub_pd(*wrkc,xre));
                        *csqi = zmm1; 
+              }
+              
+              
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t csqrt_zmm8r8(const __m512d xre,
+                                         const __m512d xim,
+                                      __m512d * __restrict wrkc) {
+                                      
+                       zmm8c8_t cv;
+                       const register __m512d half = _mm512_set1_pd(0.5); 
+                       cabs_zmm8r8(xre,xim,wrkc);
+                       cv.re  = _mm512_mul_pd(half,_mm512_add_pd(*wrkc,xre));
+                       cv.im  = _mm512_mul_pd(half,_mm512_sub_pd(*wrkc,xre));
+                       return (cv);
               }
 
 
