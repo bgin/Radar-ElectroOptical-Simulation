@@ -2959,17 +2959,30 @@ namespace  gms {
                    void cmagnitude_zmm8r8(   const __m512d xre,
                                               const __m512d xim,
                                               const __m512d yre,
-                                              const __m512d yim,
-                                              __m512d * __restrict  mre) {
-
+                                              const __m512d yim) {
+                                              
+                               
                         register __m512d cvmag;
                         cvmag= _mm512_sqrt_pd(_mm512_fmadd_pd(xre,yre,
                                                           _mm512_mul_pd(xim,yim)));
-                        *mre = cvmag;
+                        return (cvmag);
              }
 
 
-
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmagnitude_zmm8r8(   const zmm8c8_t x,
+                                             const zmm8c8_t y) {
+                                              
+                               
+                        register __m512d cvmag;
+                        cvmag= _mm512_sqrt_pd(_mm512_fmadd_pd(x.re,y.re,
+                                                          _mm512_mul_pd(x.im,y.im)));
+                        return (cvmag);
+             }
 
 
 
