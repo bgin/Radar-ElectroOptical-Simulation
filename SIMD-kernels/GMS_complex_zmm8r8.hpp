@@ -2153,7 +2153,7 @@ namespace  gms {
                                              const __m512d  yre,
                                              const __m512d  yim,
                                              __m512d * __restrict zre,
-                                             __m512dd* __restrict zim) {
+                                             __m512d * __restrict zim) {
 
                         register __m512d rep,imp,zmm0,zmm1,zmm2;
                         rep  = _mm512_fmsub_pd(xre,yre,
@@ -2305,6 +2305,32 @@ namespace  gms {
                         sim  = 0.0f;
                         imp  = _mm512_fmadd_pd(xim,yre,
                                                _mm512_mul_pd(xre,yim));
+                        sim  = _mm512_reduce_pd(imp);
+                        *mim = sim*inv16;
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cmean_prod_zmm8r8( const zmm8c8_t x,
+                                           const zmm8c8_t y,
+                                           double * __restrict mre,
+                                           double * __restrict min) {
+
+                        register __m512d rep,imp;
+                        constexpr double inv16 = 0.0625;
+                        double sre,sim;
+                        sre = 0.0f;
+                        rep  = _mm512_fmsub_pd(x.re,y.re,
+                                               _mm512_mul_pd(x.im,y.im));
+                        sre  = _mm512_reduce_pd(rep);
+                        *mre = sre*inv16;
+                        sim  = 0.0f;
+                        imp  = _mm512_fmadd_pd(x.im,y.re,
+                                               _mm512_mul_pd(x.re,y.im));
                         sim  = _mm512_reduce_pd(imp);
                         *mim = sim*inv16;
              }
