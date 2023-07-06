@@ -2553,7 +2553,32 @@ namespace  gms {
                         magc2= _mm512_mul_pd(imp,imp);
                         vcmag= _mm512_sqrt_pd(_mm512_add_pd(magc1,magc2));
                         *mre = _mm512_div_pd(rep,vcmag);
-                        *mim = _mm512_div_pd(imp,vcmag)
+                        *mim = _mm512_div_pd(imp,vcmag);
+             }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cnorm_cprod_zmm8r8(const __m512d xre,
+                                            const __m512d xim,
+                                            const __m512d yre,
+                                            const __m512d yim) {
+                                          
+                        zmm8c8_t cv;
+                        register __m512d rep,imp,magc1,magc2,vcmag;
+                        rep  = _mm512_fmad_pd(xre,yre,
+                                               _mm512_mul_pd(xim,yim));
+                        magc1= _mm512_mul_pd(rep,rep);
+                        imp  = _mm512_fmsub_pd(xim,yre,
+                                               _mm512_mul_pd(xre,yim));
+                        magc2= _mm512_mul_pd(imp,imp);
+                        vcmag= _mm512_sqrt_pd(_mm512_add_pd(magc1,magc2));
+                        cv.re = _mm512_div_pd(rep,vcmag);
+                        cv.im = _mm512_div_pd(imp,vcmag);
+                        return (cv);
              }
 
 
