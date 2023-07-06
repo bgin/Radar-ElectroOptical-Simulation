@@ -2778,6 +2778,24 @@ namespace  gms {
                         sim  = _mm512_reduce_pd(xim);
                         *mim = sim*inv16; 
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void arith_cmean_zmm8r8(   const zmm8c8_t x,
+                                              double * __restrict mre,
+                                              double * __restrict min) {
+
+                        constexpr double inv16 = 0.0625;
+                        double sre,sim;
+                        sre  = _mm512_reduce_pd(x.re);
+                        *mre = sre*inv16;
+                        sim  = _mm512_reduce_pd(x.im);
+                        *mim = sim*inv16; 
+             }
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -2835,7 +2853,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cnormalize_zmm8r8( const __m512d xre,
+                   void cnormalize_zmm8r8(  const __m512d xre,
                                             const __m512d xim,
                                             const __m512d yre,
                                             const __m512d yim,
@@ -2845,8 +2863,26 @@ namespace  gms {
                         register __m512d re,im,cvmag;
                         cvmag= _mm512_sqrt_pd(_mm512_fmadd_pd(xre,yre,
                                                     _mm512_mul_pd(xim,yim)));
-                        *mre = _mm512_div_pd(xre,cvmag));
-                        *mim =  _mm512_div_pd(xim,cvmag));
+                        *mre = _mm512_div_pd(xre,cvmag);
+                        *mim =  _mm512_div_pd(xim,cvmag);
+             }
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void cnormalize_zmm8r8(  const __m512d xre,
+                                            const __m512d xim,
+                                            const __m512d yre,
+                                            const __m512d yim) {
+                                            
+                        zmm8c8_t cv;
+                        register __m512d re,im,cvmag;
+                        cvmag= _mm512_sqrt_pd(_mm512_fmadd_pd(xre,yre,
+                                                    _mm512_mul_pd(xim,yim)));
+                        cv.re = _mm512_div_pd(xre,cvmag);
+                        cv.im =  _mm512_div_pd(xim,cvmag);
              }
 
 
