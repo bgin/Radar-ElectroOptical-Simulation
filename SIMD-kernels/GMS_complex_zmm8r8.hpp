@@ -2885,6 +2885,24 @@ namespace  gms {
                         cv.im =  _mm512_div_pd(xim,cvmag);
                         return (cv);
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cnormalize_zmm8r8(  const zmm8c8_t x,
+                                                const zmm8c8_t y) {
+                                            
+                        zmm8c8_t cv;
+                        register __m512d re,im,cvmag;
+                        cvmag= _mm512_sqrt_pd(_mm512_fmadd_pd(x.re,y.re,
+                                                    _mm512_mul_pd(x.im,y.im)));
+                        cv.re = _mm512_div_pd(x.re,cvmag);
+                        cv.im =  _mm512_div_pd(x.im,cvmag);
+                        return (cv);
+             }
 
 
                    __ATTR_ALWAYS_INLINE__
