@@ -2191,6 +2191,29 @@ namespace  gms {
                         cv.im = _mm512_div_pd(imp,zmm2);
                         return (cv);
              }
+             
+             
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t cnorm_prod_zmm8r8(  const zmm8c8_t x,
+                                                const zmm8c8_t y) {
+                                             
+                        zmm8c8_t cv;
+                        register __m512d rep,imp,zmm0,zmm1,zmm2;
+                        rep  = _mm512_fmsub_pd(x.re,y.re,
+                                               _mm512_mul_pd(x.im,y.im));
+                        imp  = _mm512_fmadd_pd(xim,yre,
+                                               _mm512_mul_pd(x.re,y.im));
+                        zmm0 = _mm512_mul_pd(rep,rep);
+                        zmm1 = _mm512_mul_pd(imp,imp);
+                        zmm2 = _mm512_sqrt_pd(_mm512_add_pd(zmm0,zmm1));
+                        cv.re = _mm512_div_pd(rep,zmm2);
+                        cv.im = _mm512_div_pd(imp,zmm2);
+                        return (cv);
+             }
 
 
                    __ATTR_ALWAYS_INLINE__
