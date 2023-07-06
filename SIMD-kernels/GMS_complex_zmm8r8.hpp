@@ -1413,7 +1413,6 @@ namespace  gms {
                                         const __m512d xim) {
                                      
                       zmm8c8_t cv;
-                      register __m512d zmm0,zmm1;
                       cv.re  = _mm512_mul_pd(xcos(xre),xcosh(xim));
                       cv.im  = _mm512_mul_pd(xsin(xre),xsinh(xim));
                       return (cv);
@@ -1428,7 +1427,6 @@ namespace  gms {
                    zmm8c8_t ccos_zmm8r8(const zmm8c8_t x) {
                                      
                       zmm8c8_t cv;
-                      register __m512d zmm0,zmm1;
                       cv.re  = _mm512_mul_pd(xcos(x.re),xcosh(x.im));
                       cv.im  = _mm512_mul_pd(xsin(x.re),xsinh(x.im));
                       return (cv);
@@ -1490,6 +1488,22 @@ namespace  gms {
                       *csre = zmm0;
                       zmm1  = _mm512_mul_pd(xsinh(xre),xsin(xim));
                       *csim = zmm1; 
+               }
+               
+               
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   zmm8c8_t ccosh_zmm8r8(const __m512d xre,
+                                         const __m512d xim) {
+                                     
+                     
+                      zmm8c8_t cv;
+                      cv.re  = _mm512_mul_pd(xcosh(xre),xcos(xim));
+                      cv.im  = _mm512_mul_pd(xsinh(xre),xsin(xim));
+                      return (cv);
                }
 
 
@@ -1555,6 +1569,21 @@ namespace  gms {
 
                          *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_EQ_OQ);
                          *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_EQ_OQ);
+              }
+              
+              
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+                   void ceq_zmm8r8(const zmm8c8_t x,
+                                   const zmm8c8_t y,
+                                    __mmask16 * __restrict eqr,
+                                    __mmask16 * __restrict eqi) {
+
+                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_EQ_OQ);
+                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_EQ_OQ);
               }
 
 
