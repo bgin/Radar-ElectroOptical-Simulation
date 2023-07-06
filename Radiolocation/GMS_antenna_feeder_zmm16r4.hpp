@@ -4737,17 +4737,17 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Nem_f2235_zmm16r4_avint_u6x(const float * __restrict __ATTR_ALIGN__(64) pjxr,
-	                                            const float * __restrict __ATTR_ALIGN__(64) pjxi,
-	                                            const float * __restrict __ATTR_ALIGN__(64) pjyr,
-	                                            const float * __restrict __ATTR_ALIGN__(64) pjyi,
-	                                            const float * __restrict __ATTR_ALIGN__(64) pjzr,
-	                                            const float * __restrict __ATTR_ALIGN__(64) pjzi,
-	                                            float * __restrict __ATTR_ALIGN__(64) pxd,
-	                                            float * __restrict __ATTR_ALIGN__(64) pyd,
-	                                            float * __restrict __ATTR_ALIGN__(64) pzd,
-	                                            const float * __restrict __ATTR_ALIGN__(64) prho,
-	                                            const float * __restrict __ATTR_ALIGN__(64) pcst,
+	           void Nem_f2235_zmm16r4_avint_u6x(const float * __restrict  pjxr,
+	                                            const float * __restrict  pjxi,
+	                                            const float * __restrict  pjyr,
+	                                            const float * __restrict  pjyi,
+	                                            const float * __restrict  pjzr,
+	                                            const float * __restrict  pjzi,
+	                                            float * __restrict  pxd,
+	                                            float * __restrict  pyd,
+	                                            float * __restrict  pzd,
+	                                            const float * __restrict  prho,
+	                                            const float * __restrict  pcst,
 	                                            fwork_t fw,
 	                                            const float args[7],
 	                                            std::complex<float> & Nx,
@@ -5127,59 +5127,27 @@ namespace gms {
 	                                         float err[6],
 	                                         const bool aligned) {
 	                                        
-	                register __m512 intxr,intxi;
-                        register __m512 intyr,intyi;
-                        register __m512 intzr,intzi;
-                        register __m512 vk,ii,ir,ear,eai;
-                        register __m512 cer,cei,t0r,t0i;
-                        register __m512 jxr,jxi,jyr;
-                        register __m512 jyi,jzr,jzi;
-                        register __m512 cst,rho;
-                        float * __restrict pxr = nullptr;
-                        float * __restrict pxi = nullptr;
-                        float * __restrict pyr = nullptr;
-                        float * __restrict pyi = nullptr;
-                        float * __restrict pzr = nullptr;
-                        float * __restrict pzi = nullptr; 
-                        float * __restrict pxd = nullptr;
-                        float * __restrict pyd = nullptr;
-                        float * __restrict pzd = nullptr;
+	                
                         float k,xa,xb,ya,yb,za,zb;
                         float sxr,sxi,syr,syi,szr,szi;   
-                        pxd = (float*)&xd[0];
+                       
                         k   = args[0];
-                        pyd = (float*)&yd[0];
-                        vk  = _mm512_set1_ps(k);
-                        pzd = (float*)&zd[0];
-                        ir  = _mm512_setzero_ps();
-                        cst = _mm512_load_ps(&pcost[0]);
-                        ii  = _mm512_set1_ps(1.0f);
-                        rho = _mm512_load_ps(&prho[0]);
                         xa  = args[1];
                         xb  = args[2];
-                        jxr = _mm512_load_ps(&pjxr[0]);
-                        jxi = _mm512_load_ps(&pjxi[0]);
-                        ear = ir;
-                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
-                                            _mm512_mul_ps(rho,cst));
-                        jyr = _mm512_load_ps(&pjyr[0]);
-                        jyi = _mm512_load_ps(&pjyi[0]);
                         ya  = args[3];
                         yb  = args[4];
-                        jzr = _mm512_load_ps(&pjzr[0]);
-                        jzi = _mm512_load_ps(&pjzi[0]);
-                        cexp_zmm16r4(ear,eai,&cer,&cei);
                         za  = args[5];
                         zb  = args[6];
-                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
-                        pxr = (float*)&intxr[0];
-                        pxi = (float*)&intxi[0];
-                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
-                        pyr = (float*)&intyr[0];
-                        pyi = (float*)&intyi[0];
-                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);  
-                        pzr = (float*)&intzr[0];
-                        pzi = (float*)&intzi[0];
+                        if(aligned) {
+                            f2235_integrand_zmm16r4_u6x_a(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }
+                        else {
+                            f2235_integrand_zmm16r4_u6x_u(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        } 
                         sxr = 0.0f;
                         sxi = sxr;
                         syi = sxr;
