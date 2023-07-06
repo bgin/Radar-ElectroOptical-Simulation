@@ -2872,7 +2872,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cnormalize_zmm8r8(  const __m512d xre,
+                   zmm8c8_t cnormalize_zmm8r8(  const __m512d xre,
                                             const __m512d xim,
                                             const __m512d yre,
                                             const __m512d yim) {
@@ -2883,6 +2883,7 @@ namespace  gms {
                                                     _mm512_mul_pd(xim,yim)));
                         cv.re = _mm512_div_pd(xre,cvmag);
                         cv.im =  _mm512_div_pd(xim,cvmag);
+                        return (cv);
              }
 
 
