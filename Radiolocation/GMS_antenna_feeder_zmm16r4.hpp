@@ -5286,9 +5286,9 @@ namespace gms {
 	                                         std::complex<float> & Nz) {
 	                 
 	                __ATTR_ALIGN__(64) float work[32];                        
-	                register __m512 intxr,intxi;
-                        register __m512 intyr,intyi;
-                        register __m512 intzr,intzi;
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
                         register __m512 vk,ii,ir,ear,eai;
                         register __m512 cer,cei,t0r,t0i;
                         float * __restrict pxr = nullptr;
@@ -5335,6 +5335,87 @@ namespace gms {
                         Ny = {syr,syi};
                         Nz = {szr,szi};                   
 	     } 
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_hiordq_a(const float * __restrict __ATTR_ALIGN__(64) pjxr,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjxi,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjyr,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjyi,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjzr,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjzi,
+	                                           const float * __restrict __ATTR_ALIGN__(64) prho,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pcst,
+	                                           float args[4],
+	                                           std::complex<float> & Nx,
+	                                           std::complex<float> & Ny,
+	                                           std::complex<float> & Nz) {
+	                 
+	                __ATTR_ALIGN__(64) float work[32];  
+	                register jxr,jxi,jyr,jyi;
+	                register jzr,jzi,rho,cst;                     
+	                 __m512 intxr,intxi;
+                         __m512 intyr,intyi;
+                         __m512 intzr,intzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr;   
+                        float k,deltx,delty,deltz;
+                        float sxr,sxi,syr,syi,szr,szi;
+                        jxr   = _mm512_load_ps(&pjxr[0]);
+                        jxi   = _mm512_load_ps(&pjxi[0]);
+                        jyr   = _mm512_load_ps(&pjyr[0]);
+                        jyi   = _mm512_load_ps(&pjyi[0]);
+                        jzr   = _mm512_load_ps(&pjzr[0]);
+                        jzi   = _mm512_load_ps(&pjzi[0]);
+                        rho   = _mm512_load_ps(&prho[0]);
+                        cst   = _mm512_load_ps(&pcst[0]);
+                        k     = args[0];
+                        ir    = _mm512_setzero_ps();
+                        ii    = _mm512_set1_ps(1.0f);
+                        vk    = _mm512_set1_ps(k);
+                        deltx = args[1];
+                        ear   = ir;
+                        delty = args[2];
+                        eai   = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                              _mm512_mul_ps(rho,cost));    
+                        deltz = args[3];  
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
+                        pxr   = (float*)&intxr[0];
+                        pxi   = (float*)&intxi[0];
+                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
+                        pyr   = (float*)&intyr[0];
+                        pyi   = (float*)&intyi[0];
+                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);
+                        pzr   = (float*)&intzr[0];
+                        pzi   = (float*)&intzi[0];
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;    
+                        hiordq(16,deltx,&pxr[0],&work[0],sxr);
+                        hiordq(16,deltx,&pxi[0],&work[0],sxi);
+                        hiordq(16,delty,&pyr[0],&work[0],syr);
+                        hiordq(16,delty,&pyi[0],&work[0],syi);
+                        hiordq(16,deltz,&pzr[0],&work[0],szr);
+                        hiordq(16,deltz,&pzi[0],&work[0],szi);
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                   
+	     } 
+	     
                
                
         } // radiolocation
