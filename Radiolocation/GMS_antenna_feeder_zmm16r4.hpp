@@ -6032,13 +6032,16 @@ namespace gms {
                         simpne(n,&pxd[0],&fw.pxi[0],sxi);
                         simpne(n,&pyd[0],&fw.pyr[0],syr);
                         simpne(n,&pyd[0],&fw.pyi[0],syi);
-                        simpme(n,&pyd[0],&fw.pzr[0],szr);
-                        simpne(n,&pyd[0],&fw.pzi[0],szi);  
+                        simpme(n,&pzd[0],&fw.pzr[0],szr);
+                        simpne(n,&pzd[0],&fw.pzi[0],szi);  
                         
                         Nx = {sxr,sxi};
                         Ny = {syr,syi};
                         Nz = {szr,szi};                          
 	      }
+	      
+	      
+	      
 	     
                  
                
