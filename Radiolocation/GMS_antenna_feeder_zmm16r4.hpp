@@ -6116,7 +6116,89 @@ namespace gms {
 	      }
 	      
 	      
-	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_simpne_u(const float * __restrict  pjxr,
+	                                         const float * __restrict  pjxi,
+	                                         const float * __restrict  pjyr,
+	                                         const float * __restrict  pjyi,
+	                                         const float * __restrict  pjzr,
+	                                         const float * __restrict  pjzi,
+	                                         const float * __restrict  prho,
+	                                         const float * __restrict  pcst,
+	                                         __m512 xd,
+	                                         __m512 yd,
+	                                         __m512 zd,
+	                                         const float k,
+	                                         std::complex<float> & Nx,
+	                                         std::complex<float> & Ny,
+	                                         std::complex<float> & Nz) {
+	                                         
+	                 __m512 intxr,intxi;
+                         __m512 intyr,intyi;
+                         __m512 intzr,intzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        register __m512 jxr,jxi,jyr,jyi;
+                        register __m512 jzr,jzi,cst,rho;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float * __restrict pxd = nullptr;
+                        float * __restrict pyd = nullptr;
+                        float * __restrict pzd = nullptr;
+                        float sxr,sxi,syr,syi,szr,szi;  
+                        jxr = _mm512_loadu_ps(&pjxr[0]);
+                        jxi = _mm512_loadu_ps(&pjxi[0]);
+                        jyr = _mm512_loadu_ps(&pjyr[0]); 
+                        jyi = _mm512_loadu_ps(&pjyi[0]);
+                        jzr = _mm512_loadu_ps(&pjzr[0]);
+                        jzi = _mm512_loadu_ps(&pjzi[0]);
+                        cst = _mm512_loadu_ps(&pcst[0]);
+                        rho = _mm512_loadu_ps(&prho[0]);
+                        pxd = (float*)&xd[0];
+                        pyd = (float*)&yd[0];
+                        vk  = _mm512_set1_ps(k);
+                        pzd = (float*)&zd[0];
+                        ir  = _mm512_setzero_ps();
+                        ii  = _mm512_set1_ps(1.0f);
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        simpne(16,&pxd[0],&pxr[0],sxr);
+                        simpne(16,&pxd[0],&pxi[0],sxi);
+                        simpne(16,&pyd[0],&pyr[0],syr);
+                        simpne(16,&pyd[0],&pyi[0],syi);
+                        simpme(16,&pyd[0],&pzr[0],szr);
+                        simpne(16,&pyd[0],&pzi[0],szi);  
+                        
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                          
+	      }
+	     
 	      
 	      
 	      
