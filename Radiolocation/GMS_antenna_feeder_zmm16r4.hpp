@@ -5651,7 +5651,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Nem_f2235_zmm16r4_plint( const float * __restrict __ATTR_ALIGN__(64) pjxr,
+	           void Nem_f2235_zmm16r4_plint_a( const float * __restrict __ATTR_ALIGN__(64) pjxr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjxi,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjyr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjyi,
@@ -5735,6 +5735,74 @@ namespace gms {
                         Ny = {syr,syi};
                         Nz = {szr,szi};                                
 	     }   
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_plint_u6x( const float * __restrict  pxre,
+	                                             const float * __restrict  pxim,
+	                                             const float * __restrict  pyre,
+	                                             const float * __restrict  pyim,
+	                                             const float * __restrict  pzre,
+	                                             const float * __restrict  pzim,
+	                                             const float * __restrict  prho,
+	                                             const float * __restrict  pcst,
+	                                             float * __restrict   pxd,
+	                                             float * __restrict   pyd,
+	                                             float * __restrict   pzd,
+	                                             fwork_t fw,
+	                                             const float args[7],
+	                                             std::complex<float> & Nx,
+	                                             std::complex<float> & Ny,
+	                                             std::complex<float> & Nz
+	                                             const int32_t n,
+                                                     const int32_t PF_DIST,
+                                                     const bool aligned) {
+	                                            
+	                                       
+	                 
+	                float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi;   
+                        k   = args[0];
+                       
+                        xa  = args[1];
+                        xb  = args[2];
+                        ya  = args[3];
+                        yb  = args[4];
+                        za  = args[5];
+                        zb  = args[6];
+                        if(aligned) {
+                            f2235_integrand_zmm16r4_u6x_a(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }
+                        else {
+                            f2235_integrand_zmm16r4_u6x_u(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;   
+                        plint(n,&pxd[0],&fw.pxr[0],xa,xb,sxr);
+                        plint(n,&pxd[0],&fw.pxi[0],xa,xb,sxi);  
+                        plint(n,&pyd[0],&fw.pyr[0],ya,yb,syr);
+                        plint(n,&pyd[0],&fw.pyi[0],ya,yb,syi);
+                        plint(n,&pzd[0],&fw.pzr[0],za,zb,szr);
+                        plint(n,&pzd[0],&fw.pzi[0],za,zb,szi);
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                                
+	     }
+	     
+	     
+	     
                  
                
         } // radiolocation
