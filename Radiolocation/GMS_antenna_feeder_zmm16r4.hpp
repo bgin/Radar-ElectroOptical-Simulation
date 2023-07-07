@@ -5906,14 +5906,14 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Nem_f2235_zmm16r4_simpne( const __m512 jxr,
-	                                         const __m512 jxi,
-	                                         const __m512 jyr,
-	                                         const __m512 jyi,
-	                                         const __m512 jzr,
-	                                         const __m512 jzi,
-	                                         const __m512 rho,
-	                                         const __m512 cst,
+	           void Nem_f2235_zmm16r4_simpne(const float * __restrict __ATTR_ALIGN__(64) pjxr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pjxi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pjyr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pjyi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pjzr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pjzi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) prho,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pcst,
 	                                         __m512 xd,
 	                                         __m512 yd,
 	                                         __m512 zd,
@@ -5927,6 +5927,8 @@ namespace gms {
                          __m512 intzr,intzi;
                         register __m512 vk,ii,ir,ear,eai;
                         register __m512 cer,cei,t0r,t0i;
+                        register __m512 jxr,jxi,jyr,jyi;
+                        register __m512 jzr,jzi,cst,rho;
                         float * __restrict pxr = nullptr;
                         float * __restrict pxi = nullptr;
                         float * __restrict pyr = nullptr;
@@ -5936,7 +5938,15 @@ namespace gms {
                         float * __restrict pxd = nullptr;
                         float * __restrict pyd = nullptr;
                         float * __restrict pzd = nullptr;
-                        float sxr,sxi,syr,syi,szr,szi;   
+                        float sxr,sxi,syr,syi,szr,szi;  
+                        jxr = _mm512_load_ps(&pjxr[0]);
+                        jxi = _mm512_load_ps(&pjxi[0]);
+                        jyr = _mm512_load_ps(&pjyr[0]); 
+                        jyi = _mm512_load_ps(&pjyi[0]);
+                        jzr = _mm512_load_ps(&pjzr[0]);
+                        jzi = _mm512_load_ps(&pjzi[0]);
+                        cst = _mm512_load_ps(&pcst[0]);
+                        rho = _mm512_load_ps(&prho[0]);
                         pxd = (float*)&xd[0];
                         pyd = (float*)&yd[0];
                         vk  = _mm512_set1_ps(k);
