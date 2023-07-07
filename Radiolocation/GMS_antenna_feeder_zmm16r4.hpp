@@ -5906,6 +5906,81 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+	           void Nem_f2235_zmm16r4_simpne(const __m512 jxr,
+	                                         const __m512 jxi,
+	                                         const __m512 jyr,
+	                                         const __m512 jyi,
+	                                         const __m512 jzr,
+	                                         const __m512 jzi,
+	                                         const __m512 rho,
+	                                         const __m512 cst,
+	                                         __m512 xd,
+	                                         __m512 yd,
+	                                         __m512 zd,
+	                                         const float k,
+	                                         std::complex<float> & Nx,
+	                                         std::complex<float> & Ny,
+	                                         std::complex<float> & Nz) {
+	                                         
+	                 __m512 intxr,intxi;
+                         __m512 intyr,intyi;
+                         __m512 intzr,intzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float * __restrict pxd = nullptr;
+                        float * __restrict pyd = nullptr;
+                        float * __restrict pzd = nullptr;
+                        float sxr,sxi,syr,syi,szr,szi;  
+                        pxd = (float*)&xd[0];
+                        pyd = (float*)&yd[0];
+                        vk  = _mm512_set1_ps(k);
+                        pzd = (float*)&zd[0];
+                        ir  = _mm512_setzero_ps();
+                        ii  = _mm512_set1_ps(1.0f);
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;
+                        simpne(16,&pxd[0],&pxr[0],sxr);
+                        simpne(16,&pxd[0],&pxi[0],sxi);
+                        simpne(16,&pyd[0],&pyr[0],syr);
+                        simpne(16,&pyd[0],&pyi[0],syi);
+                        simpme(16,&pyd[0],&pzr[0],szr);
+                        simpne(16,&pyd[0],&pzi[0],szi);  
+                        
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                          
+	      }
+	     
+                 
+                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
 	           void Nem_f2235_zmm16r4_simpne_a(const float * __restrict __ATTR_ALIGN__(64) pjxr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjxi,
 	                                         const float * __restrict __ATTR_ALIGN__(64) pjyr,
@@ -6039,6 +6114,9 @@ namespace gms {
                         Ny = {syr,syi};
                         Nz = {szr,szi};                          
 	      }
+	      
+	      
+	      
 	      
 	      
 	      
