@@ -170,6 +170,50 @@ namespace gms {
 	       }
 	       
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void sphuv_zmm16r4_u(    const float * __restrict  pex,
+	                                    const float * __restrict  pey,
+	                                    const float * __restrict  pez,
+	                                    const float * __restrict  ptht,
+	                                    const float * __restrict  pphi,
+	                                    SUV_zmm16r4_t & er,
+	                                    SUV_zmm16r4_t & eth,
+	                                    SUV_zmm16r4_t & eph) {
+	               
+	               using namespace gms::math;  
+	               register __m512 ex,ey,ez;
+	               register __m512 tht,phi;                 
+	               register __m512 stht,sphi,cphi,ctht;
+	               register __m512 t0,t1;
+	               ex    = _mm512_loadu_ps(&pex[0]);
+	               tht   = _mm512_loadu_ps(&ptht[0]);
+	               stht  = xsinf(tht);
+	               ey    = _mm512_loadu_ps(&pey[0]);
+	               ctht  = xcosf(tht);
+	               phi   = _mm512_loadu_ps(&pphi[0]);
+	               cphi  = xcosf(phi);
+	               t0    = _mm512_mul_ps(ctht,ex);
+	               sphi  = xsinf(phi);
+	               ez    = _mm512_loadu_ps(&pez[0]);
+	               t1    = _mm512_mul_ps(sphi,ey);   
+	               er.x  = _mm512_mul_ps(stht,t0);
+	               er.y  = _mm512_mul_ps(stht,t1);
+	               er.z  = _mm512_mul_ps(ctht,ez); 
+	               eth.x = _mm512_mul_ps(ctht,t0);
+	               eth.y = _mm512_mul_ps(ctht,t1);
+	               eth.z = negate_zmm16r4(
+	                            _mm512_mul_ps(stht,ez)); 
+	               eph.x = negate_zmm16r4(
+	                            _mm512_mul_ps(sphi,ex));
+	               eph.y = _mm512_mul_ps(cphi,ey);
+	               eph.z = _mm512_setzero_ps();     
+	       }
+	       
+	       
 	         
 	       
 	       /*
