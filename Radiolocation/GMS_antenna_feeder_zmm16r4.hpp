@@ -6645,8 +6645,7 @@ namespace gms {
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+                   static inline
 	           void Nem_f2235_zmm16r4_wedint_u6x( const float * __restrict  pjxr,
 	                                           const float * __restrict  pjxi,
 	                                           const float * __restrict  pjyr,
@@ -6775,6 +6774,35 @@ namespace gms {
                         Nz = {szr,szi};                                
 	       }
 	       
+	       
+	       /*
+	           Formula 2-26, p. 37
+	       */
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 f226_zmm16r4(const __m512 tht1,
+	                               const __m512 tht2,
+	                               const __m512 phi1,
+	                               const __m512 phi2) {
+	                               
+	                register __m512 ctht1,ctht2,stht1,stht2;
+	                register __m512 cdif,cpsi;
+	                dif   = _mm512_sub_ps(phi1,phi2);
+	                stht1 = xsinf(tht1);
+	                ctht1 = xcosf(tht1);
+	                stht2 = xsinf(tht2);
+	                cdif  = xcosf(dif);
+	                ctht2 = xcosf(tht2);
+	                cpsi  = _mm512_fmadd_ps(ctht1,ctht2,
+	                                    _mm512_mul_ps(stht1,
+	                                             _mm512_mul_ps(stht2,cdif)));
+	                return (cpsi);   
+	        }
 	       
 	     
 	       
