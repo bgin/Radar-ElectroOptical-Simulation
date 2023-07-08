@@ -6641,6 +6641,141 @@ namespace gms {
                         Nz = {szr,szi};                                
 	       }
 	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_wedint_u6x( const float * __restrict  pjxr,
+	                                           const float * __restrict  pjxi,
+	                                           const float * __restrict  pjyr,
+	                                           const float * __restrict  pjyi,
+	                                           const float * __restrict  pjzr,
+	                                           const float * __restrict  pjzi,
+	                                           const float * __restrict  prho,
+	                                           const float * __restrict  pcst,
+	                                           fwork_t fw,
+	                                           const float args[2],
+	                                           std::complex<float> & Nx,
+	                                           std::complex<float> & Ny,
+	                                           std::complex<float> & Nz,
+	                                           const int32_t n,
+	                                           const int32_t PF_DIST,
+	                                           const bool aligned) {
+	                                         
+	                
+                        float sxr,sxi,syr,syi,szr,szi;
+                        float k,h;
+                        k = args[0];
+                        h = args[1];
+                        if(aligned) {
+                            f2235_integrand_zmm16r4_u6x_a(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }
+                        else {
+                            f2235_integrand_zmm16r4_u6x_u(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        wedint(n,h,&fw.pxr[0],sxr);
+                        wedint(n,h,&fw.pxi[0],sxi);
+                        wedint(n,h,&fw.pyr[0],syr);
+                        wedint(n,h,&fw.pyi[0],syi);
+                        wedint(n,h,&fw.pzr[0],szr);
+                        wedint(n,h,&fw.pzi[0],szi);
+                        
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                                
+	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_wedint_u( const float * __restrict  pjxr,
+	                                           const float * __restrict  pjxi,
+	                                           const float * __restrict  pjyr,
+	                                           const float * __restrict  pjyi,
+	                                           const float * __restrict  pjzr,
+	                                           const float * __restrict  pjzi,
+	                                           const float * __restrict  prho,
+	                                           const float * __restrict  pcst,
+	                                           const float args[2],
+	                                           std::complex<float> & Nx,
+	                                           std::complex<float> & Ny,
+	                                           std::complex<float> & Nz) {
+	                                         
+	                 __m512 intxr,intxi;
+                         __m512 intyr,intyi;
+                         __m512 intzr,intzi;
+                        register __m512 jxr,jxi,jyr,jyi;
+                        register __m512 jzr,jzi,cst,rho;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float sxr,sxi,syr,syi,szr,szi;
+                        float k,h;
+                        k = args[0];
+                        h = args[1];
+                        jxr = _mm512_loadu_ps(&pjxr[0]);
+                        vk  = _mm512_set1_ps(k);
+                        jxi = _mm512_loadu_ps(&pjxi[0]);
+                        ir  = _mm512_setzero_ps();
+                        jyr = _mm512_loadu_ps(&pjyr[0]);
+                        ii  = _mm512_set1_ps(1.0f);
+                        jyi = _mm512_loadu_ps(&pjyi[0]);
+                        ear = ir;
+                        jzr = _mm512_loadu_ps(&pjzr[0]);
+                        jzi = _mm512_loadu_ps(&pjzi[0]);
+                        cst = _mm512_loadu_ps(&pcst[0]);
+                        rho = _mm512_loadu_ps(&prho[0]);
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        wedint(16,h,&pxr[0],sxr);
+                        wedint(16,h,&pxi[0],sxi);
+                        wedint(16,h,&pyr[0],syr);
+                        wedint(16,h,&pyi[0],syi);
+                        wedint(16,h,&pzr[0],szr);
+                        wedint(16,h,&pzi[0],szi);
+                        
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                                
+	       }
+	       
+	       
 	     
 	       
 	     
