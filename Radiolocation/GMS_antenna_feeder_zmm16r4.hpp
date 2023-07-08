@@ -6562,6 +6562,85 @@ namespace gms {
                         Ny = {syr,syi};
                         Nz = {szr,szi};                                
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_wedint_a( const float * __restrict __ATTR_ALIGN__(64) pjxr,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjxi,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjyr,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjyi,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjzr,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pjzi,
+	                                           const float * __restrict __ATTR_ALIGN__(64) prho,
+	                                           const float * __restrict __ATTR_ALIGN__(64) pcst,
+	                                           const float args[2],
+	                                           std::complex<float> & Nx,
+	                                           std::complex<float> & Ny,
+	                                           std::complex<float> & Nz) {
+	                                         
+	                 __m512 intxr,intxi;
+                         __m512 intyr,intyi;
+                         __m512 intzr,intzi;
+                        register __m512 jxr,jxi,jyr,jyi;
+                        register __m512 jzr,jzi,cst,rho;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float sxr,sxi,syr,syi,szr,szi;
+                        float k,h;
+                        k = args[0];
+                        h = args[1];
+                        jxr = _mm512_load_ps(&pjxr[0]);
+                        vk  = _mm512_set1_ps(k);
+                        jxi = _mm512_load_ps(&pjxi[0]);
+                        ir  = _mm512_setzero_ps();
+                        jyr = _mm512_load_ps(&pjyr[0]);
+                        ii  = _mm512_set1_ps(1.0f);
+                        jyi = _mm512_load_ps(&pjyi[0]);
+                        ear = ir;
+                        jzr = _mm512_load_ps(&pjzr[0]);
+                        jzi = _mm512_load_ps(&pjzi[0]);
+                        cst = _mm512_load_ps(&pcst[0]);
+                        rho = _mm512_load_ps(&prho[0]);
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(jxr,jxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(jyr,jyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(jzr,jzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        wedint(16,h,&pxr[0],sxr);
+                        wedint(16,h,&pxi[0],sxi);
+                        wedint(16,h,&pyr[0],syr);
+                        wedint(16,h,&pyi[0],syi);
+                        wedint(16,h,&pzr[0],szr);
+                        wedint(16,h,&pzi[0],szi);
+                        
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                                
+	       }
+	       
 	     
 	       
 	     
