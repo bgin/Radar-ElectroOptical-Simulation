@@ -6352,6 +6352,63 @@ namespace gms {
                         Ny = {syr,syi};
                         Nz = {szr,szi};                                
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Nem_f2235_zmm16r4_simpn_u6x( const float * __restrict  pjxr,
+	                                           const float * __restrict  pjxi,
+	                                           const float * __restrict  pjyr,
+	                                           const float * __restrict  pjyi,
+	                                           const float * __restrict  pjzr,
+	                                           const float * __restrict  pjzi,
+	                                           const float * __restrict  prho,
+	                                           const float * __restrict  pcst,
+	                                           fwork_t fw,
+	                                           const float args[2],
+	                                           std::complex<float> & Nx,
+	                                           std::complex<float> & Ny,
+	                                           std::complex<float> & Nz,
+	                                           const int32_t n,
+	                                           const int32_t PF_DIST,
+	                                           const bool aligned) {
+	                                         
+	                
+                        float sxr,sxi,syr,syi,szr,szi;
+                        float k,h;
+                        k = args[0];
+                        h = args[1];
+                        if(aligned) {
+                            f2235_integrand_zmm16r4_u6x_a(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }
+                        else {
+                            f2235_integrand_zmm16r4_u6x_u(pjxr,pjxi,pjyr,pjyi,
+                                                         pjzr,pjzi,prho,pcst,
+                                                         fw,k,n,PF_DIST);
+                        }  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        simpn(n,h,&fw.pxr[0],sxr);
+                        simpn(n,h,&fw.pxi[0],sxi);
+                        simpn(n,h,&fw.pyr[0],syr);
+                        simpn(n,h,&fw.pyi[0],syi);
+                        simpn(n,h,&fw.pzr[0],szr);
+                        simpn(n,h,&fw.pzi[0],szi);
+                        
+                        Nx = {sxr,sxi};
+                        Ny = {syr,syi};
+                        Nz = {szr,szi};                                
+	       }
+	       
 	     
 	      
 	     
