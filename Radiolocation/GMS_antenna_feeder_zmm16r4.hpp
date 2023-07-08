@@ -123,7 +123,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void sphuv_zmm16r4_a(     const float * __restrict __ATTR_ALIGN__(64) ptht,
+	           void sphuv_zmm16r4_a(   const float * __restrict __ATTR_ALIGN__(64) ptht,
 	                                   const float * __restrict __ATTR_ALIGN__(64) pphi,
 	                                   SUV_zmm16r4_t & er,
 	                                   SUV_zmm16r4_t & eth,
@@ -150,7 +150,36 @@ namespace gms {
 	       } 
 	       
 	       
-	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void sphuv_zmm16r4_u(   const float * __restrict  ptht,
+	                                   const float * __restrict  pphi,
+	                                   SUV_zmm16r4_t & er,
+	                                   SUV_zmm16r4_t & eth,
+	                                   SUV_zmm16r4_t & eph) {
+	               
+	               using namespace gms::math;                   
+	               register __m512 stht,sphi,cphi,ctht;
+	               register __m512 tht,phi;
+	               tht   = _mm512_loadu_ps(&ptht[0]);
+	               phi   = _mm512_loadu_ps(&pphi[0]);
+	               stht  = xsinf(tht);
+	               ctht  = xcosf(tht);
+	               cphi  = xcosf(phi);
+	               sphi  = xsinf(phi);
+	               er.x  = _mm512_mul_ps(stht,cphi);
+	               er.y  = _mm512_mul_ps(stht,sphi);
+	               er.z  = ctht; 
+	               eth.x = _mm512_mul_ps(ctht,cphi);
+	               eth.y = _mm512_mul_ps(ctht,sphi);
+	               eth.z = negate_zmm16r4(stht);
+	               eph.x = negate_zmm16r4(sphi);
+	               eph.y = cphi;
+	               eph.z = _mm512_setzero_ps();     
+	       } 
 	       
 	       
 	         
