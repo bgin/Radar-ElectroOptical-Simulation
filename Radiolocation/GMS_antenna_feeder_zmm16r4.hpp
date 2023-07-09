@@ -6929,7 +6929,62 @@ namespace gms {
 	                ti     = negate_zmm16r4(nxi);
 	                t1i    = _mm512_fmadd_ps(ti,sphi,
 	                                     _mm512_mul_ps(nyi,cphi));
-	                Nphi   = t1i;
+	                *Nphi   = t1i;
+	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void N_f236_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pnxr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pnxi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pnyr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pnyi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pnzr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pnzi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pphi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                 float * __restrict __ATTR_ALIGN__(64) Nthr,
+	                                 float * __restrict __ATTR_ALIGN__(64) Nthi,
+	                                 float * __restrict __ATTR_ALIGN__(64) Nphr,
+	                                 float * __restrict __ATTR_ALIGN__(64) Nphi) {
+	                using namespace gms::math;   
+	                register __m512 nxr,nxi,nyr,nyi,nzr,nzi;  
+	                register __m512 phi,tht;         
+	                register __m512 tr,ti,t0r,t0i,t1r,t1i;
+	                register __m512 cphi,sphi,ctht,stht;
+	                phi    = _mm512_load_ps(&pphi[0]);
+	                tht    = _mm512_load_ps(&ptht[0]);
+	                nxr    = _mm512_load_ps(&pnxr[0]);
+	               	cphi   = xcosf(phi);
+	               	nxi    = _mm512_load_ps(&pnxi[0]);
+	               	nyr    = _mm512_load_ps(&pnyr[0]);
+	                stht   = xsinf(tht);
+	                nyi    = _mm512_load_ps(&pnyi[0]);
+	                nzr    = _mm512_load_ps(&pnzr[0]);
+	                ctht   = xcosf(tht);
+	                nzi    = _mm512_load_ps(&pnzi[0]);
+	                sphi   = xsinf(tht);    
+	                tr     = _mm512_fmadd_ps(nxr,cphi,
+	                                   _mm512_mul_ps(nyr,sphi));
+	                t0r    = _mm512_fmsub_ps(tr,ctht,
+	                                   _mm512_mul_ps(nzr,stht));
+	                _mm512_store_ps(&Nthr[0] ,t0r);
+	                ti     = _mm512_fmadd_ps(nxi,cphi,
+	                                   _mm512_mul_ps(nyi,sphi)); 
+	                t0i    = _mm512_fmsub_ps(ti,ctht,
+	                                   _mm512_mul_ps(nzi,stht));   
+	                _mm512_store_ps(&Nthi[0] ,t0i);
+	                tr     = negate_zmm16r4(nxr);
+	                t1r    = _mm512_fmadd_ps(tr,sphi,
+	                                     _mm512_mul_ps(nyr,cphi));
+	                _mm512_store_ps(&Nphr[0] ,t1r);
+	                ti     = negate_zmm16r4(nxi);
+	                t1i    = _mm512_fmadd_ps(ti,sphi,
+	                                     _mm512_mul_ps(nyi,cphi));
+	                _mm512_store_ps(&Nphi[0] ,t1i);
 	       }
 	     
 	      
