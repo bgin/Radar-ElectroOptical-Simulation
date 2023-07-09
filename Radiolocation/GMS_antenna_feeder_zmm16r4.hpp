@@ -7093,9 +7093,9 @@ namespace gms {
 	              vfrc= _mm512_set1_ps(frac);
 	              cei = _mm512_mul_ps(cei,invr);
 	              cmul_zmm16r4(cer,cei,nthr,nthi,&t0r,&t0i);
-	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
 	              *Etr = _mm512_mul_ps(t0r,vfrc);
 	              *Eti = _mm512_mul_ps(t0i,vfrc);
+	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
 	              *Epr = _mm512_mul_ps(t1r,vfrc);
 	              *Epi = _mm512_mul_ps(t1i,vfrc);                    
 	       }
@@ -7149,9 +7149,9 @@ namespace gms {
 	              vfrc= _mm512_set1_ps(frac);
 	              cei = _mm512_mul_ps(cei,invr);
 	              cmul_zmm16r4(cer,cei,nthr,nthi,&t0r,&t0i);
-	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
 	              _mm512_store_ps(&Etr[0] ,_mm512_mul_ps(t0r,vfrc));
 	              _mm512_store_ps(&Eti[0] ,_mm512_mul_ps(t0i,vfrc));
+	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
 	              _mm512_store_ps(&Epr[0] ,_mm512_mul_ps(t1r,vfrc));
 	              _mm512_store_ps(&Epi[0] ,_mm512_mul_ps(t1i,vfrc));                    
 	       }
