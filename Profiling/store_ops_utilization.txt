@@ -1,0 +1,2 @@
+-collect-with runsa 
+-knob event-config=UOPS_DISPATCHED_PORT.PORT_4:sa=1000000:OS=no:USR=yes,CPU_CLK_UNHALTED.THREAD:sa=1000000:OS=no:USR=yes,CPU_CLK_UNHALTED.THREAD_P:sa=1000000:OS=no:USR=yes
