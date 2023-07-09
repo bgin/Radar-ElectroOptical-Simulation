@@ -7043,6 +7043,63 @@ namespace gms {
 	                _mm512_storeu_ps(&Nphi[0] ,t1i);
 	       }
 	       
+	       
+	       /*
+	           Formula 2.27, p. 37
+	       
+	       */
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void E_f227_zmm16r4(const __m512 ntr,
+	                               const __m512 nti,
+	                               const __m512 npr,
+	                               const __m512 npi,
+	                               const SUV_zmm16r4_t eth,
+	                               const SUV_zmm16r4_t eph,
+	                               const float om,
+	                               const float mu,
+	                               const float k,
+	                               const float R,
+	                               __m512 * __restrict Etr,
+	                               __m512 * __restrict Eti,
+	                               __m512 * __restrict Epr,
+	                               __m512 * __restrict Epi) {
+	                               
+	              register __m512 vk,ear,eai,ir,ii;
+	              register __m512 cer,cei,vr,invr;
+	              register __m512 nthr,nthi,nphr,nphi;
+	              register __m512 t0r,t0i,t1r,t1i,vfrc;
+	              constexpr float C12566370614359172953850573533118 = 
+	                                  12.566370614359172953850573533118f; //4*PI
+	              float frac;
+	              vk  = _mm512_set1_ps(k);
+	              vr  = _mm512_set1_ps(R);
+	              ii  = _mm512_set1_ps(-1.0f);
+	              invr= _mm512_rcp14_ps(vr);
+	              ir  = _mm512_setzero_ps();
+	              ear = ir;
+	              N_f13_zmm16r4(ntr,nti,npr,npi,eth,eph,
+	                            &nthr,&nthi,&nphr,&nphi);
+	              eai = _mm512_mul_ps(ii,
+	                              _mm512_mul_ps(vk,vr));
+	              cexp_zmm16r4(ear,eai,&cer,&cei);
+	              frac = om*mu/C12566370614359172953850573533118;
+	              cer = _mm512_mul_ps(cer,invr);
+	              vfrc= _mm512_set1_ps(frac);
+	              cei = _mm512_mul_ps(cei,invr);
+	              cmul_zmm16r4(cer,cei,nthr,nthi,&t0r,&t0i);
+	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
+	              *Etr = _mm512_mul_ps(t0r,vfrc);
+	              *Eti = _mm512_mul_ps(t0i,vfrc);
+	              *Epr = _mm512_mul_ps(t1r,vfrc);
+	              *Epi = _mm512_mul_ps(t1i,vfrc);                    
+	       }
+	       
 	      
 	     
                  
