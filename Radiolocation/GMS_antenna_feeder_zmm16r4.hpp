@@ -263,7 +263,43 @@ namespace gms {
 	       }
 	                              
 	       
-	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void N_f13_zmm16r4_u(const float *  __restrict  pntr,
+	                                const float *  __restrict  pnti,
+	                                const float *  __restrict  pnpr,
+	                                const float *  __restrict  pnpi,
+	                                const SUV_zmm16r4_t eth,
+	                                const SUV_zmm16r4_t eph,
+	                                float * __restrict  pNthr,
+	                                float * __restrict  pNthi,
+	                                float * __restrict  pNphr,
+	                                float * __restrict  pNphi) {
+	                              
+	                register __m512 t0r,t0i,t1r,t1i;
+	                register __m512 ntr,nti,npr,npi;
+	                ntr   = _mm512_loadu_ps(&pntr[0]);
+	                nti   = _mm512_loadu_ps(&pnti[0]);
+	                npr   = _mm512_loadu_ps(&pnpr[0]);
+	                npi   = _mm512_loadu_ps(&pnpi[0]);
+	                t0r   = _mm512_fmadd_ps(ntr,eth.x,
+	                                  _mm512_fmsub_ps(ntr,eth.y,
+	                                              _mm512_mul_ps(ntr,eth.z)));
+	                _mm512_storeu_ps(&Nthr[0] ,t0r);
+	                t0i   = _mm512_fmadd_ps(nti,eth.x,
+	                                  _mm512_fmsub_ps(nti,eth.y,
+	                                              _mm512_mul_ps(nti,eth.z)));   
+	                _mm512_storeu_ps(&Nthi[0] ,t0i);
+	                t1r   = _mm512_fmadd_ps(npr,eph.x,
+	                                    _mm512_mul_ps(npr,eph.y));
+	                _mm512_storeu_ps(&Nphr[0] ,t1r);
+	                t1i   = _mm512_fmadd_ps(npi,eph.x,
+	                                    _mm512_mul_ps(npi,eph.y));   
+	                _mm512_storeu_ps(&Nphi[0] ,t1i);              
+	       }
 	       
 	       
 	       /*
@@ -6844,6 +6880,57 @@ namespace gms {
 	                                             _mm512_mul_ps(stht2,cdif)));
 	                return (cpsi);   
 	        }
+	        
+	        
+	        /*
+	            Formula: 2-36, p. 39
+	            
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void N_f236_zmm16r4(const __m512 nxr,
+	                               const __m512 nxi,
+	                               const __m512 nyr,
+	                               const __m512 nyi,
+	                               const __m512 nzr,
+	                               const __m512 nzi,
+	                               const __m512 phi,
+	                               const __m512 tht,
+	                               __m512 * __restrict Nthr,
+	                               __m512 * __restrict Nthi,
+	                               __m512 * __restrict Nphr,
+	                               __m512 * __restrict Nphi) {
+	                using namespace gms::math;              
+	                register __m512 tr,ti,t0r,t0i,t1r,t1i;
+	                register __m512 cphi,sphi,ctht,stht;
+	                cphi   = xcosf(phi);
+	                stht   = xsinf(tht);
+	                ctht   = xcosf(tht);
+	                sphi   = xsinf(tht);    
+	                tr     = _mm512_fmadd_ps(nxr,cphi,
+	                                   _mm512_mul_ps(nyr,sphi));
+	                t0r    = _mm512_fmsub_ps(tr,ctht,
+	                                   _mm512_mul_ps(nzr,stht));
+	                *Nthr  = t0r;
+	                ti     = _mm512_fmadd_ps(nxi,cphi,
+	                                   _mm512_mul_ps(nyi,sphi)); 
+	                t0i    = _mm512_fmsub_ps(ti,ctht,
+	                                   _mm512_mul_ps(nzi,stht));   
+	                *Nthi  = t0i;
+	                tr     = negate_zmm16r4(nxr);
+	                t1r    = _mm512_fmadd_ps(tr,sphi,
+	                                     _mm512_mul_ps(nyr,cphi));
+	                *Nphr  = t1r;
+	                ti     = negate_zmm16r4(nxi);
+	                t1i    = _mm512_fmadd_ps(ti,sphi,
+	                                     _mm512_mul_ps(nyi,cphi));
+	                Nphi   = t1i;
+	       }
 	     
 	      
 	     
