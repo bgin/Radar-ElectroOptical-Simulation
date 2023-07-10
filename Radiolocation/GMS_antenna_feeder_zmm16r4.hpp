@@ -7367,7 +7367,7 @@ namespace gms {
 	        
 	        /*
 	           Formula 2.28, p. 38
-	           Fields of electric currents
+	           Fields of magnetic currents
 	       */
 	       
 	       
