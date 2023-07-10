@@ -7370,6 +7370,60 @@ namespace gms {
 	           Fields of electric currents
 	       */
 	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Hm_f228_zmm16r4(const __m512 ntr,
+	                               const __m512 nti,
+	                               const __m512 npr,
+	                               const __m512 npi,
+	                               const SUV_zmm16r4_t eth,
+	                               const SUV_zmm16r4_t eph,
+	                               const float om,
+	                               const float mu,
+	                               const float k,
+	                               const float R,
+	                               __m512 * __restrict Htr,
+	                               __m512 * __restrict Hti,
+	                               __m512 * __restrict Hpr,
+	                               __m512 * __restrict Hpi) {
+	                               
+	              register __m512 vk,ear,eai,ir,ii;
+	              register __m512 cer,cei,vr,invr;
+	              register __m512 nthr,nthi,nphr,nphi;
+	              register __m512 t0r,t0i,t1r,t1i,fr,fi,omu;
+	              const __m512 C0079577471545947667884441881686 = 
+	                            _mm512_set1_ps(0.079577471545947667884441881686f); // 1/4*PI
+	              float tmp = om*mu;
+	              omu = _mm512_set1_ps(tmp);
+	              vk  = _mm512_set1_ps(k);
+	              vr  = _mm512_set1_ps(R);
+	              ii  = _mm512_set1_ps(-1.0f);
+	              invr= _mm512_rcp14_ps(vr);
+	              ir  = _mm512_setzero_ps();
+	              cdiv_zmm16r4_s(omu,ir,C0079577471545947667884441881686,&fr,&fi);
+	              ear = ir;
+	              N_f13_zmm16r4(ntr,nti,npr,npi,eth,eph,
+	                            &nthr,&nthi,&nphr,&nphi);
+	              eai = _mm512_mul_ps(ii,
+	                              _mm512_mul_ps(vk,vr));
+	              cexp_zmm16r4(ear,eai,&cer,&cei);
+	              cer = _mm512_mul_ps(cer,invr);
+	              cei = _mm512_mul_ps(cei,invr);
+	              cmul_zmm16r4(cer,cei,nthr,nthi,&t0r,&t0i);
+	              cmul_zmm16r4(t0r,t0i,fr,fi,&nthr,&nthi);
+	              *Htr = nthr;
+	              *Hti = nthi;
+	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
+	              cmul_zmm16r4(t1r,t1i,fr,fi,&nphr,&nphi);
+	              *Hpr = nphr;
+	              *Hpi = nphi;
+	       }
+	       
+	       
 	        
                
         } // radiolocation
