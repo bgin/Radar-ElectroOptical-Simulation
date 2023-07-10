@@ -7102,7 +7102,8 @@ namespace gms {
 	              *Epi = nphi;
 	       }
 	       
-	      
+	       
+	       
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -7122,43 +7123,45 @@ namespace gms {
 	                                 float * __restrict __ATTR_ALIGN__(64) Eti,
 	                                 float * __restrict __ATTR_ALIGN__(64) Epr,
 	                                 float * __restrict __ATTR_ALIGN__(64) Epi) {
-	               
-	              register __m512 ntr,nti,npr,npi;                
+	                     
+	              register __m512 ntr,nti,npr,npi;             
 	              register __m512 vk,ear,eai,ir,ii;
 	              register __m512 cer,cei,vr,invr;
 	              register __m512 nthr,nthi,nphr,nphi;
-	              register __m512 t0r,t0i,t1r,t1i,vfrc;
-	              constexpr float C12566370614359172953850573533118 = 
-	                                  12.566370614359172953850573533118f; //4*PI
-	              float frac;
+	              register __m512 t0r,t0i,t1r,t1i,fr,fi,omu;
+	              const __m512 C0079577471545947667884441881686 = 
+	                            _mm512_set1_ps(0.079577471545947667884441881686f); // 1/4*PI
 	              ntr = _mm512_load_ps(&pntr[0]);
 	              nti = _mm512_load_ps(&pnti[0]);
 	              npr = _mm512_load_ps(&pnpr[0]);
 	              npi = _mm512_load_ps(&pnpi[0]);
+	              float tmp = om*mu;
+	              omu = _mm512_set1_ps(tmp);
 	              vk  = _mm512_set1_ps(k);
 	              vr  = _mm512_set1_ps(R);
 	              ii  = _mm512_set1_ps(-1.0f);
 	              invr= _mm512_rcp14_ps(vr);
 	              ir  = _mm512_setzero_ps();
+	              cdiv_zmm16r4_s(omu,ir,C0079577471545947667884441881686,&fr,&fi);
 	              ear = ir;
 	              N_f13_zmm16r4(ntr,nti,npr,npi,eth,eph,
 	                            &nthr,&nthi,&nphr,&nphi);
 	              eai = _mm512_mul_ps(ii,
 	                              _mm512_mul_ps(vk,vr));
 	              cexp_zmm16r4(ear,eai,&cer,&cei);
-	              frac = om*mu/C12566370614359172953850573533118;
 	              cer = _mm512_mul_ps(cer,invr);
-	              vfrc= _mm512_set1_ps(frac);
 	              cei = _mm512_mul_ps(cei,invr);
 	              cmul_zmm16r4(cer,cei,nthr,nthi,&t0r,&t0i);
-	              _mm512_store_ps(&Etr[0] ,_mm512_mul_ps(t0r,vfrc));
-	              _mm512_store_ps(&Eti[0] ,_mm512_mul_ps(t0i,vfrc));
+	              cmul_zmm16r4(t0r,t0i,fr,fi,&nthr,&nthi);
+	              _mm512_store_ps(&Etr[0] ,nthr);
+	              _mm512_store_ps(&Eti[0] ,nthi);
 	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
-	              _mm512_store_ps(&Epr[0] ,_mm512_mul_ps(t1r,vfrc));
-	              _mm512_store_ps(&Epi[0] ,_mm512_mul_ps(t1i,vfrc));                    
+	              cmul_zmm16r4(t1r,t1i,fr,fi,&nphr,&nphi);
+	              _mm512_store_ps(&Epr[0] ,nphr);
+	              _mm512_store_ps(&Epi[0] ,nphi);
 	       }
 	       
-	       
+	      
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -7178,40 +7181,42 @@ namespace gms {
 	                                 float * __restrict  Eti,
 	                                 float * __restrict  Epr,
 	                                 float * __restrict  Epi) {
-	               
-	              register __m512 ntr,nti,npr,npi;                
+	                     
+	              register __m512 ntr,nti,npr,npi;             
 	              register __m512 vk,ear,eai,ir,ii;
 	              register __m512 cer,cei,vr,invr;
 	              register __m512 nthr,nthi,nphr,nphi;
-	              register __m512 t0r,t0i,t1r,t1i,vfrc;
-	              constexpr float C12566370614359172953850573533118 = 
-	                                  12.566370614359172953850573533118f; //4*PI
-	              float frac;
-	              ntr = _mm512_load_ps(&pntr[0]);
-	              nti = _mm512_load_ps(&pnti[0]);
-	              npr = _mm512_load_ps(&pnpr[0]);
-	              npi = _mm512_load_ps(&pnpi[0]);
+	              register __m512 t0r,t0i,t1r,t1i,fr,fi,omu;
+	              const __m512 C0079577471545947667884441881686 = 
+	                            _mm512_set1_ps(0.079577471545947667884441881686f); // 1/4*PI
+	              ntr = _mm512_loadu_ps(&pntr[0]);
+	              nti = _mm512_loadu_ps(&pnti[0]);
+	              npr = _mm512_loadu_ps(&pnpr[0]);
+	              npi = _mm512_loadu_ps(&pnpi[0]);
+	              float tmp = om*mu;
+	              omu = _mm512_set1_ps(tmp);
 	              vk  = _mm512_set1_ps(k);
 	              vr  = _mm512_set1_ps(R);
 	              ii  = _mm512_set1_ps(-1.0f);
 	              invr= _mm512_rcp14_ps(vr);
 	              ir  = _mm512_setzero_ps();
+	              cdiv_zmm16r4_s(omu,ir,C0079577471545947667884441881686,&fr,&fi);
 	              ear = ir;
 	              N_f13_zmm16r4(ntr,nti,npr,npi,eth,eph,
 	                            &nthr,&nthi,&nphr,&nphi);
 	              eai = _mm512_mul_ps(ii,
 	                              _mm512_mul_ps(vk,vr));
 	              cexp_zmm16r4(ear,eai,&cer,&cei);
-	              frac = om*mu/C12566370614359172953850573533118;
 	              cer = _mm512_mul_ps(cer,invr);
-	              vfrc= _mm512_set1_ps(frac);
 	              cei = _mm512_mul_ps(cei,invr);
 	              cmul_zmm16r4(cer,cei,nthr,nthi,&t0r,&t0i);
-	              _mm512_store_ps(&Etr[0] ,_mm512_mul_ps(t0r,vfrc));
-	              _mm512_store_ps(&Eti[0] ,_mm512_mul_ps(t0i,vfrc));
+	              cmul_zmm16r4(t0r,t0i,fr,fi,&nthr,&nthi);
+	              _mm512_storeu_ps(&Etr[0] ,nthr);
+	              _mm512_storeu_ps(&Eti[0] ,nthi);
 	              cmul_zmm16r4(cer,cei,nphr,nphi,&t1r,&t1i);
-	              _mm512_store_ps(&Epr[0] ,_mm512_mul_ps(t1r,vfrc));
-	              _mm512_store_ps(&Epi[0] ,_mm512_mul_ps(t1i,vfrc));                    
+	              cmul_zmm16r4(t1r,t1i,fr,fi,&nphr,&nphi);
+	              _mm512_storeu_ps(&Epr[0] ,nphr);
+	              _mm512_storeu_ps(&Epi[0] ,nphi);
 	       }
 	       
 	       
