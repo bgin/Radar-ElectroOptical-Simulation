@@ -7540,6 +7540,51 @@ namespace gms {
 	       }
 	       
 	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Em_f228_zmm16r4(const __m512 Htr,
+	                               const __m512 Hti,
+	                               const __m512 Hpr,
+	                               const __m512 Hpi,
+	                               const SUV_zmm16r4_t er,
+	                               float eps,
+	                               float mu,
+	                               __m512 * __restrict Etr,
+	                               __m512 * __restrict Eti,
+	                               __m512 * __restrict Epr,
+	                               __m512 * __restrict Epi) {
+	                           
+	                 using namespace gms::math;    
+	                 register __m512 t0r,t0i;
+	                 register __m512 t1r,t1i;
+	                 register __m512 t2r,t2i;
+	                 register __m512 frac,C00;
+	                 float tmp;
+	                 tmp  = cephes_sqrtf(eps/mu);
+	                 C00  = _mm512_setzero_ps();
+	                 frac = _mm512_set1_ps(tmp);
+	                 t0r  = _mm512_fmsub_ps(Htr,er.z,
+	                                    _mm512_mul_ps(Hpr,er.y));
+	                 t0i  = _mm512_fmsub_ps(Hti,er.z,
+	                                    _mm512_mul_ps(Hpi,er.y));
+	                 *Etr = negate_zmm16r4(_mm512_mul_ps(frac,t0r));
+	                 *Eti = negate_zmm16r4(_mm512_mul_ps(frac,t0i));
+	                 t1r  = _mm512_fmsub_ps(Hpr,er.x,C00);
+	                 t1i  = _mm512_fmsub_ps(Hpi,er.x,C00);
+	                 *Epr = negate_zmm16r4(_mm512_mul_ps(frac,t1r));
+	                 *Epi = negate_zmm16r4(_mm512_mul_ps(frac,t1i));
+	                 // unused, but shall stay to be correct mathematically. 
+	                 t2r  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Htr,er.x));
+	                 t2i  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Hti,er.x));
+	                                                 
+	        }
+	       
+	       
 	        
                
         } // radiolocation
