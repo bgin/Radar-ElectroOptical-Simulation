@@ -7046,7 +7046,7 @@ namespace gms {
 	       
 	       /*
 	           Formula 2.27, p. 37
-	       
+	           Fields of electric currents
 	       */
 	       
 	       
@@ -7055,7 +7055,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void E_f227_zmm16r4(const __m512 ntr,
+	           void Ee_f227_zmm16r4(const __m512 ntr,
 	                               const __m512 nti,
 	                               const __m512 npr,
 	                               const __m512 npi,
@@ -7109,7 +7109,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void E_f227_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pntr,
+	           void Ee_f227_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pntr,
 	                                 const float * __restrict __ATTR_ALIGN__(64) pnti,
 	                                 const float * __restrict __ATTR_ALIGN__(64) pnpr,
 	                                 const float * __restrict __ATTR_ALIGN__(64) pnpi,
@@ -7167,7 +7167,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void E_f227_zmm16r4_u(const float * __restrict  pntr,
+	           void Ee_f227_zmm16r4_u(const float * __restrict  pntr,
 	                                 const float * __restrict  pnti,
 	                                 const float * __restrict  pnpr,
 	                                 const float * __restrict  pnpi,
@@ -7226,7 +7226,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_f227_zmm16r4(const __m512 Etr,
+	           void He_f227_zmm16r4(const __m512 Etr,
 	                               const __m512 Eti,
 	                               const __m512 Epr,
 	                               const __m512 Epi,
@@ -7270,7 +7270,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_f227_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pEtr,
+	           void He_f227_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pEtr,
 	                                 const float * __restrict __ATTR_ALIGN__(64) pEti,
 	                                 const float * __restrict __ATTR_ALIGN__(64) pEpr,
 	                                 const float * __restrict __ATTR_ALIGN__(64) pEpi,
@@ -7320,7 +7320,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void H_f227_zmm16r4_u(const float * __restrict  pEtr,
+	           void He_f227_zmm16r4_u(const float * __restrict  pEtr,
 	                                 const float * __restrict  pEti,
 	                                 const float * __restrict  pEpr,
 	                                 const float * __restrict  pEpi,
