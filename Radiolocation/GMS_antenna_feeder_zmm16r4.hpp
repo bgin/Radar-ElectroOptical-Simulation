@@ -7583,6 +7583,61 @@ namespace gms {
 	                                    _mm512_mul_ps(Hti,er.x));
 	                                                 
 	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Em_f228_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pHtr,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pHti,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pHpr,
+	                                  const float * __restrict __ATTR_ALIGN__(64) pHpi,
+	                                  const SUV_zmm16r4_t er,
+	                                  float eps,
+	                                  float mu,
+	                                  float * __restrict __ATTR_ALIGN__(64) Etr,
+	                                  float * __restrict __ATTR_ALIGN__(64) Eti,
+	                                  float * __restrict __ATTR_ALIGN__(64) Epr,
+	                                  float * __restrict __ATTR_ALIGN__(64) Epi) {
+	                           
+	                 using namespace gms::math;    
+	                 register __m512 Htr,Hti;
+	                 register __m512 Hpr,Hpi;
+	                 register __m512 t0r,t0i;
+	                 register __m512 t1r,t1i;
+	                 register __m512 t2r,t2i;
+	                 register __m512 frac,C00;
+	                 float tmp;
+	                 Htr  = _mm512_load_ps(&pHtr[0]);
+	                 Hti  = _mm512_load_ps(&pHti[0]);
+	                 Hpr  = _mm512_load_ps(&pHpr[0]);
+	                 Hpi  = _mm512_load_ps(&pHpi[0]);
+	                 tmp  = cephes_sqrtf(eps/mu);
+	                 C00  = _mm512_setzero_ps();
+	                 frac = _mm512_set1_ps(tmp);
+	                 t0r  = _mm512_fmsub_ps(Htr,er.z,
+	                                    _mm512_mul_ps(Hpr,er.y));
+	                 t0i  = _mm512_fmsub_ps(Hti,er.z,
+	                                    _mm512_mul_ps(Hpi,er.y));
+	                 _mm512_store_ps(&Etr[0] ,
+	                             negate_zmm16r4(_mm512_mul_ps(frac,t0r)));
+	                 _mm512_store_ps(&Eti[0] , 
+	                             negate_zmm16r4(_mm512_mul_ps(frac,t0i)));
+	                 t1r  = _mm512_fmsub_ps(Hpr,er.x,C00);
+	                 t1i  = _mm512_fmsub_ps(Hpi,er.x,C00);
+	                 _mm512_store_ps(&Epr[0] ,
+	                             negate_zmm16r4(_mm512_mul_ps(frac,t1r)));
+	                 _mm512_store_ps(&Epi[0] ,
+	                             negate_zmm16r4(_mm512_mul_ps(frac,t1i)));
+	                 // unused, but shall stay to be correct mathematically. 
+	                 t2r  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Htr,er.x));
+	                 t2i  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Hti,er.x));
+	                                                 
+	        }
 	       
 	       
 	        
