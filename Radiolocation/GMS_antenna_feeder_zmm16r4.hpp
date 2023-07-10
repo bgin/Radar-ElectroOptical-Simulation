@@ -7220,6 +7220,51 @@ namespace gms {
 	       }
 	       
 	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_f227_zmm16r4(const __m512 Etr,
+	                               const __m512 Eti,
+	                               const __m512 Epr,
+	                               const __m512 Epi,
+	                               const SUV_zmm16r4_t er,
+	                               float eps,
+	                               float mu,
+	                               __m512 * __restrict Htr,
+	                               __m512 * __restrict Hti,
+	                               __m512 * __restrict Hpr,
+	                               __m512 * __restrict Hpi) {
+	                               
+	                 register __m512 t0r,t0i;
+	                 register __m512 t1r,t1i;
+	                 register __m512 t2r,t2i;
+	                 register __m512 frac,C00;
+	                 float tmp;
+	                 tmp  = cephes_sqrtf(eps/mu);
+	                 C00  = _mm512_setzero_ps();
+	                 frac = _mm512_set1_ps(tmp);
+	                 t0r  = _mm512_fmsub_ps(Etr,er.z,
+	                                    _mm512_mul_ps(Epr,er.y));
+	                 t0i  = _mm512_fmsub_ps(Eti,er.z,
+	                                    _mm512_mul_ps(Epi,er.y));
+	                 *Htr = _mm512_mul_ps(frac,t0r);
+	                 *Hti = _mm512_mul_ps(frac,t0i);
+	                 t1r  = _mm512_fmsub_ps(Epr,er.x,C00);
+	                 t1i  = _mm512_fmsub_ps(Epi,er.x,C00);
+	                 *Hpr = _mm512_mul_ps(frac,t1r);
+	                 *Hpi = _mm512_mul_ps(frac,t1i);
+	                 // unused, but shall stay to be correct mathematically. 
+	                 t2r  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Etr,er.x));
+	                 t2i  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Eti,er.x));
+	                                                 
+	        }
+	          
+	       
                  
                
         } // radiolocation
