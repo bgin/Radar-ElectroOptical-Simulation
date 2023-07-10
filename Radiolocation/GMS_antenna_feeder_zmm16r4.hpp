@@ -7306,13 +7306,66 @@ namespace gms {
 	                 t1i  = _mm512_fmsub_ps(Epi,er.x,C00);
 	                 _mm512_store_ps(&Hpr[0] ,_mm512_mul_ps(frac,t1r));
 	                 _mm512_store_ps(&Hpi[0] ,_mm512_mul_ps(frac,t1i));
-	                 // unused, but shall stay to be correct mathematically. 
+	                 // unused, but shall stay it is  correct mathematically. 
 	                 t2r  = _mm512_sub_ps(C00,
 	                                    _mm512_mul_ps(Etr,er.x));
 	                 t2i  = _mm512_sub_ps(C00,
 	                                    _mm512_mul_ps(Eti,er.x));
 	                                                 
 	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_f227_zmm16r4_u(const float * __restrict  pEtr,
+	                                 const float * __restrict  pEti,
+	                                 const float * __restrict  pEpr,
+	                                 const float * __restrict  pEpi,
+	                                 const SUV_zmm16r4_t er,
+	                                 float eps,
+	                                 float mu,
+	                                 float * __restrict  Htr,
+	                                 float * __restrict  Hti,
+	                                 float * __restrict  Hpr,
+	                                 float * __restrict  Hpi) {
+	                     
+	                 register __m512 Etr,Eti;
+	                 register __m512 Epr,Epi;          
+	                 register __m512 t0r,t0i;
+	                 register __m512 t1r,t1i;
+	                 register __m512 t2r,t2i;
+	                 register __m512 frac,C00;
+	                 float tmp;
+	                 Etr  = _mm512_loadu_ps(&pEtr[0]);
+	                 Eti  = _mm512_loadu_ps(&pEti[0]);
+	                 Epr  = _mm512_loadu_ps(&pEpr[0]);
+	                 Epi  = _mm512_loadu_ps(&pEpi[0]);
+	                 tmp  = cephes_sqrtf(eps/mu);
+	                 C00  = _mm512_setzero_ps();
+	                 frac = _mm512_set1_ps(tmp);
+	                 t0r  = _mm512_fmsub_ps(Etr,er.z,
+	                                    _mm512_mul_ps(Epr,er.y));
+	                 t0i  = _mm512_fmsub_ps(Eti,er.z,
+	                                    _mm512_mul_ps(Epi,er.y));
+	                 _mm512_storeu_ps(&Htr[0] ,_mm512_mul_ps(frac,t0r));
+	                 _mm512_storeu_ps(&Hti[0] ,_mm512_mul_ps(frac,t0i));
+	                 t1r  = _mm512_fmsub_ps(Epr,er.x,C00);
+	                 t1i  = _mm512_fmsub_ps(Epi,er.x,C00);
+	                 _mm512_storeu_ps(&Hpr[0] ,_mm512_mul_ps(frac,t1r));
+	                 _mm512_storeu_ps(&Hpi[0] ,_mm512_mul_ps(frac,t1i));
+	                 // unused, but shall stay it is  correct mathematically. 
+	                 t2r  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Etr,er.x));
+	                 t2i  = _mm512_sub_ps(C00,
+	                                    _mm512_mul_ps(Eti,er.x));
+	                                                 
+	        }
+	        
+	        
+	        
                
         } // radiolocation
 
