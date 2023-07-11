@@ -7770,6 +7770,78 @@ namespace gms {
 	                                            const float * __restrict __ATTR_ALIGN__(64) pNmti,
 	                                            const float * __restrict __ATTR_ALIGN__(64) pNmpr,
 	                                            const float * __restrict __ATTR_ALIGN__(64) pNmpi,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pR,
+	                                            const SUV_zmm16r4_t er,
+	                                            const float args[3]) {
+	               SUV_zmm16r4_t scp;   
+	               register __m512 Netr,Neti;
+	               register __m512 Nepr,Nepi;
+	               register __m512 Nmtr,Nmti;
+	               register __m512 Nmpr,Nmpi; 
+	               register __m512 R;                          
+	               register __m512 cabs1,cabs2,
+	               register __m512 t0r,t0i;
+	               register __m512 t1r,t1i;
+	               register __m512 vfrac,vrat;
+	               register __m512 trm,R2,num;
+	               float rat,k,mu,eps;  
+	               float t0,t1;
+	               const __m512 C0009947183943243458485555235211 = 
+	                                      _mm512_set1_ps(0.009947183943243458485555235211f);
+	               Netr = _mm512_load_ps(&pNetr[0]);
+	               Nmpr = _mm512_load_ps(&pNmpr[0]);
+	               Neti = _mm512_load_ps(&pNeti[0]);
+	               Nmpi = _mm512_load_ps(&pNmpi[0]);
+	               Nepr = _mm512_load_ps(&pNepr[0]);
+	               Nmtr = _mm512_load_ps(&pNmtr[0]);
+	               Nepi = _mm512_load_ps(&pNepi[0]);
+	               Nmti = _mm512_load_ps(&pNmti[0]);
+	               R    = _mm512_load_ps(&pR[0]);
+	               mu   = args[1];
+	               eps  = args[2];
+	               rat  = cephes_sqrtf(mu/eps);
+	               k    = args[0];
+	               vrat = _mm512_set1_ps(rat);
+	               R2   = _mm512_mul_ps(C0009947183943243458485555235211,
+	                                                  _mm512_mul_ps(R,R)); 
+	               t0r  = _mm512_fmadd_ps(vrat,Netr,Nmpr);
+	               t0i  = _mm512_fmadd_ps(vrat,Neti,Nmpi);
+	               cabs1= cabs_zmm16r4(t0r,t0i);
+	               t1r  = _mm512_fmsub_ps(vrat,Nepr,Nmtr);
+	               t1i  = _mm512_fmsub_ps(vrat,Nepi,Nmti);
+	               cabs2= cabs_zmm16r4(t1r,t1i);
+	               t1   = k*k;
+	               t2   = cephes_sqrtf(eps,mu);
+	               t1   = t1*t2;
+	               num  = _mm512_set1_ps(t1);
+	               trm  = _mm512_fmadd_ps(cabs1,cabs1,
+	                                  _mm512_mul_ps(cabs2,cabs2));
+	               frac = (t1*t2)/(C0009947183943243458485555235211*t0);   
+	               vfrac= _mm512_div_ps(num,R2)
+	               t0r  = _mm512_mul_ps(er.x,trm);
+	               scp.x= _mm512_mul_ps(t0r,vfrac);
+	               t0i  = _mm512_mul_ps(er.y,trm);
+	               scp.y= _mm512_mul_ps(t0i,vfrac);
+	               t1r  = _mm512_mul_ps(er.z,trm);
+	               scp.z= _mm512_mul_ps(t1r,vfrac);
+	               return (scp);                       
+	        }
+	        
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           SUV_zmm16r4_t Scp_f238_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pNetr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNeti,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNepr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNepi,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNmtr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNmti,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNmpr,
+	                                            const float * __restrict __ATTR_ALIGN__(64) pNmpi,
 	                                            const SUV_zmm16r4_t er,
 	                                            const float args[4]) {
 	               SUV_zmm16r4_t scp;  
