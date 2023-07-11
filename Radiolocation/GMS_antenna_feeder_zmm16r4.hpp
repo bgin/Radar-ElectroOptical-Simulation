@@ -7900,6 +7900,11 @@ namespace gms {
 	        }
 	        
 	        
+	        /*
+	            Formula 2-37, p. 39
+	        */
+	        
+	        
 	        
 	         
 	        
