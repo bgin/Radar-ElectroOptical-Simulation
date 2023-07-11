@@ -7966,6 +7966,22 @@ namespace gms {
 	                  return (P);
 	        }
 	        
+	        
+	        /*
+	             Formula 2-53, p. 44
+                     Electric field (i.e. field amplitudes) are computed
+                     Far-field zone
+                     'Avint' integrator.
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void N_f253_zmm16r4
+	        
                
         } // radiolocation
 
