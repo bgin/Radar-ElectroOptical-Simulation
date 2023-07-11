@@ -7905,8 +7905,24 @@ namespace gms {
 	        */
 	        
 	        
-	        
-	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 P_f237_zmm16r4(const SUV_zmm16r4_t scp,
+	                                 const __m512 R) {
+	                                 
+	                  register __m512 t0,R2,st0;
+	                  register __m512 P;
+	                  R2 = _mm512_mul_ps(R,R);
+	                  t0 = _mm512_fmadd_ps(scp.x,scp.x,
+	                                   _mm512_fmadd_ps(scp.y,scp.y,
+	                                               _mm512_mul_ps(scp.z,scp.z)));
+	                  st0= _mm512_sqrt_ps(t0);
+	                  P  = _mm512_mul_ps(R2,st0);
+	                  return (P);
+	        }
 	        
                
         } // radiolocation
