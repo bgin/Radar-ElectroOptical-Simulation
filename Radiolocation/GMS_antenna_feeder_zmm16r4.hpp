@@ -3943,18 +3943,12 @@ namespace gms {
                         float * __restrict pyi = nullptr;
                         float * __restrict pzr = nullptr;
                         float * __restrict pzi = nullptr; 
-                        float * __restrict pxd = nullptr;
-                        float * __restrict pyd = nullptr;
-                        float * __restrict pzd = nullptr;
                         float k,xa,xb,ya,yb,za,zb;
                         float sxr,sxi,syr,syi,szr,szi;
                         int32_t ier1,ier2,ier3,ier4,ier5,ier6;
                                               
-                        pxd = (float*)&xd[0];
                         k   = args[0];
-                        pyd = (float*)&yd[0];
                         vk  = _mm512_set1_ps(k);
-                        pzd = (float*)&zd[0];
                         ir  = _mm512_setzero_ps();
                         cost= _mm512_load_ps(&pcost[0]);
                         ii  = _mm512_set1_ps(1.0f);
