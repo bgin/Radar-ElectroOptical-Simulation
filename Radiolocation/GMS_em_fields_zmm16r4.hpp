@@ -1936,6 +1936,52 @@ namespace gms {
 	                                _mm512_mul_ps(v1y.im,v2x));  
 	              *vz.re = t2r;
 	              *vz.im = t2i;               
+	     }    
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrosscv_zmm16c4(const __m512 v1xr,
+	                                 const __m512 v1xi,
+	                                 const __m512 v1yr,
+	                                 const __m512 v1yi,
+	                                 const __m512 v1zr,
+	                                 const __m512 v1zi,
+	                                 const __m512 v2x,
+	                                 const __m512 v2y,
+	                                 const __m512 v2z,
+	                                 __m512 * __restrict vxr,
+	                                 __m512 * __restrict vxi,
+	                                 __m512 * __restrict vyr,
+	                                 __m512 * __restrict vyi,
+	                                 __m512 * __restrict vzr,
+	                                 __m512 * __restrict vzi) {
+	                                 
+	                                 
+	              register __m512 t0r,t0i;
+	              register __m512 t1r,t1i;
+	              register __m512 t2r,t2i;
+	              t0r    = _mm512_fmsub_ps(v1yr,v2z,
+	                                _mm512_mul_ps(v1zr,v2y));
+	              t0i    = _mm512_fmsub_ps(v1yi,v2z,
+	                                _mm512_mul_ps(v1zi,v2y));
+	              *vxr = t0r;
+	              *vxi = t0i;
+	              t1r    = _mm512_fmsub_ps(v1zr,v2x,
+	                                _mm512_mul_ps(v1xr,v2z));
+	              t1i    = _mm512_fmsub_ps(v1zi,v2x,
+	                                _mm512_mul_ps(v1xi,v2z)); 
+	              *vyr = t1r;
+	              *vyi = t1i;
+	              t2r    = _mm512_fmsub_ps(v1xr,v2y,
+	                                _mm512_mul_ps(v1yr,v2x));
+	              t2i    = _mm512_fmsub_ps(v1xi,v2y,
+	                                _mm512_mul_ps(v1yi,v2x));  
+	              *vzr = t2r;
+	              *vzi = t2i;               
 	     }                           
 	       
 	       
