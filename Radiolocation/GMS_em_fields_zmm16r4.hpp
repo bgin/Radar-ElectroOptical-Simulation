@@ -1899,7 +1899,44 @@ namespace gms {
 	      }
 	      
 	      
-	                                       
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrosscv_zmm16c4(const zmm16c4_t v1x,
+	                                 const zmm16c4_t v1y,
+	                                 const zmm16c4_t v1z,
+	                                 const __m512 v2x,
+	                                 const __m512 v2y,
+	                                 const __m512 v2z,
+	                                 zmm16c4_t * __restrict vx,
+	                                 zmm16c4_t * __restrict vy,
+	                                 zmm16c4_t * __restrict vz) {   
+	                                 
+	              register __m512 t0r,t0i;
+	              register __m512 t1r,t1i;
+	              register __m512 t2r,t2i;
+	              t0r    = _mm512_fmsub_ps(v1y.re,v2z,
+	                                _mm512_mul_ps(v1z.re,v2y));
+	              t0i    = _mm512_fmsub_ps(v1y.im,v2z,
+	                                _mm512_mul_ps(v1z.im,v2y));
+	              *vx.re = t0r;
+	              *vx.im = t0i;
+	              t1r    = _mm512_fmsub_ps(v1z.re,v2x,
+	                                _mm512_mul_ps(v1x.re,v2z));
+	              t1i    = _mm512_fmsub_ps(v1z.im,v2x,
+	                                _mm512_mul_ps(v1x.im,v2z)); 
+	              *vy.re = t1r;
+	              *vy.im = t1i;
+	              t2r    = _mm512_fmsub_ps(v1x.re,v2y,
+	                                _mm512_mul_ps(v1y.re,v2x));
+	              t2i    = _mm512_fmsub_ps(v1x.im,v2y,
+	                                _mm512_mul_ps(v1y.im,v2x));  
+	              *vz.re = t2r;
+	              *vz.im = t2i;               
+	     }                           
 	       
 	       
 	           __ATTR_ALWAYS_INLINE__
@@ -1913,9 +1950,9 @@ namespace gms {
 	                                const zmm16c4_t v2x,
 	                                const zmm16c4_t v2y,
 	                                const zmm16c4_t v2z,
-	                                zmm16c4 & resx,
-	                                zmm16c4 & resy,
-	                                zmm16c4 & resz) {
+	                                zmm16c4_t & resx,
+	                                zmm16c4_t & resy,
+	                                zmm16c4_t & resz) {
 	                                
 	                 zmm16c4_t t0,t1,t2,t3,t4,t5,t6;
 	                 cmul_zmm16r4(v1y.re,v1y.im,v2z.re,
