@@ -8082,6 +8082,127 @@ namespace gms {
                            Nez = {szr,szi};  
                         }                                   
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) phxr,
+	                                        const float * __restrict __ATTR_ALIGN__(64) phxi,
+	                                        const float * __restrict __ATTR_ALIGN__(64) phyr,
+	                                        const float * __restrict __ATTR_ALIGN__(64) phyi,
+	                                        const float * __restrict __ATTR_ALIGN__(64) phzr,
+	                                        const float * __restrict __ATTR_ALIGN__(64) phzi,
+	                                        const float * __restrict __ATTR_ALIGN__(64) pnx,
+	                                        const float * __restrict __ATTR_ALIGN__(64) pny,
+	                                        const float * __restrict __ATTR_ALIGN__(64) pnz,
+	                                        float * __restrict __ATTR_ALIGN__(64) pxd,
+	                                        float * __restrict __ATTR_ALIGN__(64) pyd,
+	                                        float * __restrict __ATTR_ALIGN__(64) pzd,
+	                                        float * __restrict __ATTR_ALIGN__(64) prho,
+	                                        float * __restrict __ATTR_ALIGN__(64) pcst,
+	                                        const float args[7],
+	                                        std::complex<float> & Nex,
+	                                        std::complex<float> & Ney,
+	                                        std::complex<float> & Nez,
+	                                        int32_t & ierr) {
+	                                      
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 hxr,hxi;
+                        register __m512 hyr,hyi;
+                        register __m512 hzr,hzi;
+                        register __m512 nx,ny,nz;
+                        register __m512 rho,cst;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi;
+                        int32_t ier1,ier2,ier3,ier4,ier5,ier6; 
+                        
+                        hxr = _mm512_load_ps(&phxr[0]);
+                        hxi = _mm512_load_ps(&phxi[0]);
+                        pxd = (float*)&xd[0];
+                        k   = args[0];
+                        pyd = (float*)&yd[0];
+                        hyr = _mm512_load_ps(&phyr[0]);
+                        hyi = _mm512_load_ps(&phyi[0]);
+                        vk  = _mm512_set1_ps(k);
+                        pzd = (float*)&zd[0];
+                        hzr = _mm512_load_ps(&phzr[0]);
+                        hzi = _mm512_load_ps(&phzi[0]);
+                        ir  = _mm512_setzero_ps();
+                        rho = _mm512_load_ps(&prho[0]);
+                        ii  = _mm512_set1_ps(1.0f);
+                        vx  = _mm512_load_ps(&pvx[0]);
+                        xa  = args[1];
+                        cst = _mm512_load_ps(&pcst[0]);
+                        xb  = args[2];
+                        vy  = _mm512_load_ps(&pvy[0]);
+                        ear = ir;
+                        vz  = _mm512_load_ps(&pvz[0]);
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi);  
+                        ya  = args[3];
+                        yb  = args[4];
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        za  = args[5];
+                        zb  = args[6]; 
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        sxr = avint(&pxd[0],&pxr[0],xa,xb,ier1);
+                        sxi = avint(&pxd[0],&pxi[0],xa,xb,ier2);
+                        if(ier1==3 || ier2==3) {goto ERROR;}
+                           goto CORRECT;
+                        syr = avint(&pyd[0],&pyr[0],ya,yb,ier3);
+                        syi = avint(&pyd[0],&pyi[0],ya,yb,ier4);
+                        if(ier3==3 || ier4==3) {goto ERROR;}
+                           goto CORRECT;
+                        szr = avint(&pzd[0],&pzr[0],za,zb,ier5);
+                        szi = avint(&pzd[0],&pzi[0],za,zb,ier6);
+                        if(ier5==3 || ier6==3) {goto ERROR;}
+                           goto CORRECT;
+                        ERROR:
+                           {
+                               ierr = 3;
+                               return;
+                        }  
+                        CORRECT: {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        }                                   
+	       }
+	       
 	        
 	        
                
