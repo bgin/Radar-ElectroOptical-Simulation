@@ -8198,22 +8198,26 @@ namespace gms {
 	       }
 	       
 	       
+	          
+	          
+	       
+	       
 	           __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void f256_integrand_zmm16r4_u6x_a(const float * __restrict  phxr,
-	                                             const float * __restrict  phxi,
-	                                             const float * __restrict  phyr,
-	                                             const float * __restrict  phyi,
-	                                             const float * __restrict  phzr,
-	                                             const float * __restrict  phzi,
-	                                             const float * __restrict  pnx,
-	                                             const float * __restrict  pny,
-	                                             const float * __restrict  pnz,
-	                                             float * __restrict  prho,
-	                                             float * __restrict  pcst,
+	           void f256_integrand_zmm16r4_u6x_a(const float * __restrict __ATTR_ALIGN__(64)  phxr,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  phxi,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  phyr,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  phyi,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  phzr,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  phzi,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pnx,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pny,
+	                                             const float * __restrict __ATTR_ALIGN__(64)  pnz,
+	                                             float * __restrict __ATTR_ALIGN__(64)  prho,
+	                                             float * __restrict __ATTR_ALIGN__(64)  pcst,
 	                                             fwork_t fw, // work arrays
 	                                             const float k,
 	                                             const int32_t n,
@@ -8235,6 +8239,7 @@ namespace gms {
 	                         __m512 vxr,vxi;
 	                         __m512 vyr,vyi;
 	                         __m512 vzr,vzi;
+	                std::complex<float> cvx,cvy,cvz;
 	                int32_t i;
 	                
 	                vk  = _mm512_set1_ps(k);
@@ -8669,12 +8674,34 @@ namespace gms {
                              _mm512_store_ps(&fw.pzi[i+0],t2i);
 	                }
 	                
+	                
 	                for(; (i+0) < n; i += 1) {
 	                     float cst               = pcst[i];
 	                     float rho               = prho[i];
 	                     float eai               = k*cst*rho;
-	                     std::complex<float> ce = std::cexp({0.0f,eai});
-	                     
+	                     std::complex<float> ce  = std::cexp({0.0f,eai});
+	                     float hxr               = phxr[i];
+	                     float hxi               = phxi[i];
+	                     float hyr               = phyr[i];
+	                     float hyi               = phyi[i];
+	                     float hzr               = phzr[i];
+	                     float hzi               = phzi[i];
+	                     float nx                = pnx[i];
+	                     float ny                = pny[i];
+	                     float nz                = pnz[i];
+	                     scrosscv_rc4(hxr,hxi,hyr,
+	                                  hyi,hzr,hzi,
+	                                  nx,ny,nz,
+	                                  cvx,cvy,cvz);
+	                     std::complex<float> t0  = ce*cvx;
+	                     fw.pxr[i]               = t0.real();
+	                     fw.pxi[i]               = t0.imag();
+	                     std::complex<float> t1  = ce*cvy;
+	                     fw.pyr[i]               = t1.real();
+	                     fw.pyi[i]               = t1.imag();
+	                     std::complex<float> t2  = ce*cvz;
+	                     fw.pzr[i]               = t2.real();
+	                     fw.pzi[i]               = t2.imag();
 	                }
 	                                                     
 	     }
