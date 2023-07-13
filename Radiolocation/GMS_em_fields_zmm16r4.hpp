@@ -42,6 +42,7 @@ namespace file_version {
 
 #include <immintrin.h>
 #include <cstdint>
+#include <complex>
 #include "GMS_config.h"
 #include "GMS_complex_zmm16r4.hpp"
 
@@ -1936,7 +1937,30 @@ namespace gms {
 	                                _mm512_mul_ps(v1y.im,v2x));  
 	              *vz.re = t2r;
 	              *vz.im = t2i;               
-	     }    
+	     }  
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)  
+	           void scrosscv_rc4(const std::complex<float> v1x,
+	                             const std::complex<float> v1y,
+	                             const std::complex<float> v1z,
+	                             const float               v2x,
+	                             const float               v2y,
+	                             const float               v2z,
+	                             std::complex<float>     & vx,
+	                             std::complex<float>     & vy,
+	                             std::complex<float>     & vz ) {
+	                             
+	                std::complex<float> cx,cy,cz;
+	                cx = v1y*v2z-v1z*v2y;
+	                vx = cx;
+	                cy = v1z*v2x-v1x*v2z;
+	                vy = cy;
+	                cz = v1x*v2y-v1y*v2x;
+	                vz = cz;                
+	       }
 	     
 	     
 	           __ATTR_ALWAYS_INLINE__
