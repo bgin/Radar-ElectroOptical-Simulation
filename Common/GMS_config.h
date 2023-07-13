@@ -496,6 +496,10 @@ constexpr int padding64B{64};
 #define ROUND_TO_SIXTEEN(x,y) ((x) & ~((y)-1))
 #endif
 
+#ifndef ROUND16
+#define ROUND16(x,y) ((x) & ~((y)-1))
+#endif
+
 
 
 /* Fixing problem of defined in WinDef macros:
