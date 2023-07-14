@@ -940,8 +940,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+                   static inline
 	           void  f2135_integrand_zmm16r4_u6x_a(const float * __restrict __ATTR_ALIGN__(64) pxre,
 	                                              const float * __restrict  __ATTR_ALIGN__(64) pxim,
 	                                              const float * __restrict  __ATTR_ALIGN__(64) pyre,
