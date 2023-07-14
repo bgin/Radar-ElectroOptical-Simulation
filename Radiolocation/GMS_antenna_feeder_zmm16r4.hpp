@@ -1225,8 +1225,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+                   static inline
 	           void  f2135_integrand_zmm16r4_u6x_u(const float * __restrict  pxre,
 	                                              const float * __restrict  pxim,
 	                                              const float * __restrict  pyre,
@@ -1513,8 +1512,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+                   static inline
 	           void hvem5_f213_zmm16r4_avint_u6x(const float * __restrict pxre,
 	                                             const float * __restrict pxim,
 	                                             const float * __restrict pyre,
@@ -1918,8 +1916,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+                   static inline
 	           void hvemm_f2135_zmm16r4_cubint_u6x(const float * __restrict  pxre,
 	                                               const float * __restrict  pxim,
 	                                               const float * __restrict  pyre,
@@ -2277,8 +2274,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+                   static inline
 	           void hvem_f2135_zmm16r4_hiordq_u6x(const float * __restrict  pxre,
 	                                          const float * __restrict  pxim,
 	                                          const float * __restrict  pyre,
