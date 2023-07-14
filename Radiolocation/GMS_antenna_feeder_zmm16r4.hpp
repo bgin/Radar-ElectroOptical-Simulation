@@ -10212,7 +10212,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void N3D_f256_zmm16r4_avint_dispatch(const float * __restrict  phxr,
+	           void Ne_f256_zmm16r4_avint_dispatch(   const float * __restrict  phxr,
 	                                                 const float * __restrict  phxi,
 	                                                 const float * __restrict  phyr,
 	                                                 const float * __restrict  phyi,
@@ -10320,6 +10320,9 @@ namespace gms {
                         
                                                                    
 	   }
+	   
+	   
+	   
 	       
 	    
 	        
