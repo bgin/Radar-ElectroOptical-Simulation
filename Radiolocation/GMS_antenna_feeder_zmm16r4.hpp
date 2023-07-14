@@ -8760,8 +8760,8 @@ namespace gms {
 	                ear = cer;
 	                t0  = _mm512_mul_ps(ii,vk);
 	                
-	        for(k=0; k<n; k+=RANKSIZE) {
-	           for(j=k; j<k+RANKSIZE; j+=2*PAGESIZE) { 
+	      for(k=0; k<n; k+=RANKSIZE) {
+	         for(j=k; j<k+RANKSIZE; j+=2*PAGESIZE) { 
 	                  for(i=j; i<j+PAGESIZE; i+=128) {
 #if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
                              _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T0);
@@ -9036,6 +9036,55 @@ namespace gms {
                              cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
                              _mm512_store_ps(&fw.pzr[i+112],t2r);
                              _mm512_store_ps(&fw.pzi[i+112],t2i);
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                
                              cst = _mm512_load_ps(&pcst[i+PAGESIZE+0]);
                              rho = _mm512_load_ps(&prho[i+PAGESIZE+0]);
                              eai = _mm512_mul_ps(t0,
