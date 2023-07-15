@@ -5160,12 +5160,12 @@ namespace gms {
                         syr = sxr;
                         szr = sxr;
                         szi = sxr;  
-                        cubint(16,&pxd[0],&fw.pxr[0],xa,xb,sxr,err[0]);
-                        cubint(16,&pxd[0],&fw.pxi[0],xa,xb,sxi,err[1]);
-                        cubint(16,&pyd[0],&fw.pyr[0],ya,yb,syr,err[2]);
-                        cubint(16,&pyd[0],&fw.pyi[0],ya,yb,syi,err[3]);
-                        cubint(16,&pzd[0],&fw.pzr[0],za,zb,szr,err[4]);
-                        cubint(16,&pzd[0],&fw.pzi[0],za,zb,szi,err[5]);
+                        cubint(n,&pxd[0],&fw.pxr[0],xa,xb,sxr,err[0]);
+                        cubint(n,&pxd[0],&fw.pxi[0],xa,xb,sxi,err[1]);
+                        cubint(n,&pyd[0],&fw.pyr[0],ya,yb,syr,err[2]);
+                        cubint(n,&pyd[0],&fw.pyi[0],ya,yb,syi,err[3]);
+                        cubint(n,&pzd[0],&fw.pzr[0],za,zb,szr,err[4]);
+                        cubint(n,&pzd[0],&fw.pzi[0],za,zb,szi,err[5]);
                         Nx = {sxr,sxi};
                         Ny = {syr,syi};
                         Nz = {szr,szi};                            
@@ -10636,6 +10636,95 @@ namespace gms {
                         Nex = {sxr,sxi};
                         Ney = {syr,syi};
                         Nez = {szr,szi};                            
+	     }
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void Ne_f256_zmm16r4_cubint_dispatch( const float * __restrict  phxr,
+	                                                 const float * __restrict  phxi,
+	                                                 const float * __restrict  phyr,
+	                                                 const float * __restrict  phyi,
+	                                                 const float * __restrict  phzr,
+	                                                 const float * __restrict  phzi,
+	                                                 const float * __restrict  pnx,
+	                                                 const float * __restrict  pny,
+	                                                 const float * __restrict  pnz,
+	                                                 float * __restrict  pxd,
+	                                                 float * __restrict  pyd,
+	                                                 float * __restrict  pzd,
+	                                                 float * __restrict  prho,
+	                                                 float * __restrict  pcst,
+	                                                 fwork_t fw,
+	                                                 const float args[7],
+	                                                 std::complex<float> & Nex,
+	                                                 std::complex<float> & Ney,
+	                                                 std::complex<float> & Nez,
+	                                                 const int32_t n,
+	                                                 const int32_t PF_DIST,
+	                                                 const int32_t RANKSIZE,
+	                                                 const int32_t PAGESIZE,
+	                                                 const int32_t cond,
+	                                                 float err[6]) {
+	                                                 
+	                float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi;   
+                        k   = args[0];
+                        xa  = args[1];
+                        xb  = args[2];
+                        ya  = args[3];
+                        yb  = args[4];
+                        za  = args[5];
+                        zb  = args[6];    
+                        
+                        switch(cond) {
+                            
+                            case : 0 
+                                    f256_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
+                                                                 phyi,phzr,phzi,
+                                                                 pnx,pny,pnz,
+                                                                 prho,pcst,fw,
+                                                                 k,n,PF_DIST);    
+                                    break;
+                            case : 1 
+                                    f256_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
+                                                                 phyi,phzr,phzi,
+                                                                 pnx,pny,pnz,
+                                                                 prho,pcst,fw,
+                                                                 k,n,PF_DIST);  
+                              
+                            case : 2 
+                                    f256_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
+                                                                          phyi,phzr,phzi,
+                                                                          pnx,pny,pnz,
+                                                                          prho,pcst,fw,
+                                                                          k,n,RANKSIZE,
+                                                                          PAGESIZE,
+                                                                          PF_DIST);
+                                    break;                                       
+                            case : 3 
+                                  f256_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
+                                                                          phyi,phzr,phzi,
+                                                                          pnx,pny,pnz,
+                                                                          prho,pcst,fw,
+                                                                          k,n,RANKSIZE,
+                                                                          PAGESIZE,
+                                                                          PF_DIST);  
+                                  break;
+                            default :
+                                   return;
+                              
+                        }    
+                        
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr; 
+                                                         
 	     }
 	     
 	     
