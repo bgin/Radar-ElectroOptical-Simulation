@@ -11023,6 +11023,101 @@ namespace gms {
 	      }
 	      
 	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void Ne_f256_zmm16r4_hiordq_dispatch( const float * __restrict  phxr,
+	                                                 const float * __restrict  phxi,
+	                                                 const float * __restrict  phyr,
+	                                                 const float * __restrict  phyi,
+	                                                 const float * __restrict  phzr,
+	                                                 const float * __restrict  phzi,
+	                                                 const float * __restrict  pnx,
+	                                                 const float * __restrict  pny,
+	                                                 const float * __restrict  pnz,
+	                                                 float * __restrict  prho,
+	                                                 float * __restrict  pcst,
+	                                                 float * __restrict work, // size of work is 2*(n-1)
+	                                                 fwork_t fw,
+	                                                 const float args[4],
+	                                                 std::complex<float> & Nex,
+	                                                 std::complex<float> & Ney,
+	                                                 std::complex<float> & Nez,
+	                                                 const int32_t n,
+	                                                 const int32_t PF_DIST,
+	                                                 const int32_t RANKSIZE,
+	                                                 const int32_t PAGESIZE,
+	                                                 const int32_t cond) {
+	                                                 
+	                                                 
+	                float k,deltx,delty,deltz;
+                        float sxr,sxi,syr,syi,szr,szi;   
+                        k      = args[0];
+                        deltx  = args[1];
+                        delty  = args[2];
+                        deltz  = args[3];
+                          
+                        
+                        switch(cond) {
+                            
+                            case : 0 
+                                    f256_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
+                                                                 phyi,phzr,phzi,
+                                                                 pnx,pny,pnz,
+                                                                 prho,pcst,fw,
+                                                                 k,n,PF_DIST);    
+                                    break;
+                            case : 1 
+                                    f256_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
+                                                                 phyi,phzr,phzi,
+                                                                 pnx,pny,pnz,
+                                                                 prho,pcst,fw,
+                                                                 k,n,PF_DIST);  
+                              
+                            case : 2 
+                                    f256_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
+                                                                          phyi,phzr,phzi,
+                                                                          pnx,pny,pnz,
+                                                                          prho,pcst,fw,
+                                                                          k,n,RANKSIZE,
+                                                                          PAGESIZE,
+                                                                          PF_DIST);
+                                    break;                                       
+                            case : 3 
+                                  f256_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
+                                                                          phyi,phzr,phzi,
+                                                                          pnx,pny,pnz,
+                                                                          prho,pcst,fw,
+                                                                          k,n,RANKSIZE,
+                                                                          PAGESIZE,
+                                                                          PF_DIST);  
+                                  break;
+                            default :
+                                   return;
+                              
+                        }    
+                        
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr; 
+                        hiordq(n,deltx,&fw.pxr[0],&work[0],sxr);
+                        hiordq(n,deltx,&fw.pxi[0],&work[0],sxi);
+                        hiordq(n,delty,&fw.pyr[0],&work[0],syr);
+                        hiordq(n,delty,&fw.pyi[0],&work[0],syi);
+                        hiordq(n,deltz,&fw.pzr[0],&work[0],szr);
+                        hiordq(n,deltz,&fw.pzi[0],&work[0],szi);
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};   
+                                                         
+	     }
+	     
+	      
+	      
 	      
 	      
 	                                    
