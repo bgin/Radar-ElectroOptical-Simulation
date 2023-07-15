@@ -10932,7 +10932,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_hiordq(  const float * __restrict __ATTR_ALIGN__(64) phxr,
+	           void Ne_f256_zmm16r4_hiordq_a(const float * __restrict __ATTR_ALIGN__(64) phxr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phxi,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phyr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phyi,
@@ -11021,6 +11021,9 @@ namespace gms {
                         Ney = {syr,syi};
                         Nez = {szr,szi};                     
 	      }
+	      
+	      
+	      
 	      
 	                                    
 	     
