@@ -10971,7 +10971,7 @@ namespace gms {
                         float k,deltx,delty,deltz;
                         float sxr,sxi,syr,syi,szr,szi;  
                         cst  = _mm512_load_ps(&pcst[0]);
-                        rho  = _mm512_lo40ad_ps(&prho[0]);
+                        rho  = _mm512_load_ps(&prho[0]);
                         k    = args[0];
                         hxr  = _mm512_load_ps(&phxr[0]);
                         hxi  = _mm512_load_ps(&phxi[0]);
@@ -11115,6 +11115,103 @@ namespace gms {
                         Nez = {szr,szi};   
                                                          
 	     }
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_hiordq_u(const float * __restrict  phxr,
+	                                         const float * __restrict  phxi,
+	                                         const float * __restrict  phyr,
+	                                         const float * __restrict  phyi,
+	                                         const float * __restrict  phzr,
+	                                         const float * __restrict  phzi,
+	                                         const float * __restrict  pnx,
+	                                         const float * __restrict  pny,
+	                                         const float * __restrict  pnz,
+	                                         const float * __restrict  prho,
+	                                         const float * __restrict  pcst,
+	                                         const float args[4],
+	                                         std::complex<float> & Nex,
+	                                         std::complex<float> & Ney,
+	                                         std::complex<float> & Nez) {
+	                                      
+	                __ATTR_ALIGN__(64) float work[32];
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 hxr,hxi;
+                        register __m512 hyr,hyi;
+                        register __m512 hzr,hzi;
+                        register __m512 nx,ny,nz;
+                        register __m512 rho,cst;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float k,deltx,delty,deltz;
+                        float sxr,sxi,syr,syi,szr,szi;  
+                        cst  = _mm512_loadu_ps(&pcst[0]);
+                        rho  = _mm512_loadu_ps(&prho[0]);
+                        k    = args[0];
+                        hxr  = _mm512_loadu_ps(&phxr[0]);
+                        hxi  = _mm512_loadu_ps(&phxi[0]);
+                        vk   = _mm512_set1_ps(k);
+                        hyr  = _mm512_loadu_ps(&phyr[0]);
+                        hyi  = _mm512_loadu_ps(&phyi[0]);
+                        deltx= args[1];
+                        ir   = _mm512_setzero_ps();
+                        hzr  = _mm512_loadu_ps(&phzr[0]);
+                        hzi  = _mm512_loadu_ps(&phzi[0]);
+                        delty= args[2];
+                        nx   = _mm512_loadu_ps(&pnx[0]);
+                        ii   = _mm512_set1_ps(1.0f);
+                        ny   = _mm512_loadu_ps(&pny[0]);
+                        deltz= args[3];
+                        nz   = _mm512_loadu_ps(&pnz[0]);
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        hiordq(16,deltx,&pxr[0],&work[0],sxr);
+                        hiordq(16,deltx,&pxi[0],&work[0],sxi);
+                        hiordq(16,delty,&pyr[0],&work[0],syr);
+                        hiordq(16,delty,&pyi[0],&work[0],syi);
+                        hiordq(16,deltz,&pzr[0],&work[0],szr);
+                        hiordq(16,deltz,&pzi[0],&work[0],szi);
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};                     
+	      }
+	      
 	     
 	      
 	      
