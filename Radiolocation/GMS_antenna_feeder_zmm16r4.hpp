@@ -10843,11 +10843,89 @@ namespace gms {
 	             Formula 2-53, p. 44
                      Electric field (i.e. field amplitudes) are computed
                      for the antenna far-field zone.
-                     'hiordq' integrator in use (16 field amplitudes).
+                     'hiordq' integrator in use (16 field amplitudes and 'n' field amplitudes.).
 	        */
 	     
 	     
-	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_hiordq(const __m512 hxr,
+	                                       const __m512 hxi,
+	                                      const __m512 hyr,
+	                                      const __m512 hyi,
+	                                      const __m512 hzr,
+	                                      const __m512 hzi,
+	                                      const __m512 nx,
+	                                      const __m512 ny,
+	                                      const __m512 nz,
+	                                      const __m512 rho,
+	                                      const __m512 cst,
+	                                      const float args[4],
+	                                      std::complex<float> & Nex,
+	                                      std::complex<float> & Ney,
+	                                      std::complex<float> & Nez) {
+	                                      
+	                __ATTR_ALIGN__(64) float work[32];
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float k,deltx,delty,deltz;
+                        float sxr,sxi,syr,syi,szr,szi;  
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi);
+                        k    = args[0];
+                        vk   = _mm512_set1_ps(k);
+                        deltx= args[1];
+                        ir   = _mm512_setzero_ps();
+                        delty= args[2];
+                        ii   = _mm512_set1_ps(1.0f);
+                        deltz= args[3];
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;  
+                        hiordq(16,deltx,&pxr[0],&work[0],sxr);
+                        hiordq(16,deltx,&pxi[0],&work[0],sxi);
+                        hiordq(16,delty,&pyr[0],&work[0],syr);
+                        hiordq(16,delty,&pyi[0],&work[0],syi);
+                        hiordq(16,deltz,&pzr[0],&work[0],szr);
+                        hiordq(16,deltz,&pzi[0],&work[0],szi);
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};                     
+	      }
+	                                    
 	     
 	     
 	    
