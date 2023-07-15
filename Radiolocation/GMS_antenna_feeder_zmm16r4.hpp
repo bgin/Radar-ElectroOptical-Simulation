@@ -11220,6 +11220,97 @@ namespace gms {
                      'plint' integrator in use (16 field amplitudes and 'n' field amplitudes.).
 	        */
 	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_plint(const __m512 hxr,
+	                                      const __m512 hxi,
+	                                      const __m512 hyr,
+	                                      const __m512 hyi,
+	                                      const __m512 hzr,
+	                                      const __m512 hzi,
+	                                      const __m512 nx,
+	                                      const __m512 ny,
+	                                      const __m512 nz,
+	                                      __m512 xd,
+	                                      __m512 yd,
+	                                      __m512 zd,
+	                                      const __m512 rho,
+	                                      const __m512 cst,
+	                                      const float args[7],
+	                                      std::complex<float> & Nex,
+	                                      std::complex<float> & Ney,
+	                                      std::complex<float> & Nez) {
+	                                     
+	                                      
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float * __restrict pxd = nullptr;
+                        float * __restrict pyd = nullptr;
+                        float * __restrict pzd = nullptr;
+                        float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi; 
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi);  
+                        pxd = (float*)&xd[0];
+                        k   = args[0];
+                        pyd = (float*)&yd[0];
+                        vk  = _mm512_set1_ps(k);
+                        pzd = (float*)&zd[0];
+                        ir  = _mm512_setzero_ps();
+                        ii  = _mm512_set1_ps(1.0f);
+                        xa  = args[1];
+                        xb  = args[2];
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        ya  = args[3];
+                        yb  = args[4];
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        za  = args[5];
+                        zb  = args[6]; 
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;   
+                        plint(16,&pxd[0],&pxr[0],xa,xb,sxr);
+                        plint(16,&pxd[0],&pxi[0],xa,xb,sxi);
+                        plint(16,&pyd[0],&pyr[0],ya,yb,syr);
+                        plint(16,&pyd[0],&pyi[0],ya,yb,syi);
+                        plint(16,&pzd[0],&pzr[0],za,zb,szr);
+                        plint(16,&pzd[0],&pzi[0],za,zb,szi); 
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};                            
+	     }
 	     
 	      
 	      
