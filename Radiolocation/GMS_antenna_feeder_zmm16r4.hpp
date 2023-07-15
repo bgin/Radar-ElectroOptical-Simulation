@@ -10737,6 +10737,109 @@ namespace gms {
 	     }
 	     
 	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_cubint_u(const float * __restrict phxr,
+	                                         const float * __restrict phxi,
+	                                         const float * __restrict phyr,
+	                                         const float * __restrict phyi,
+	                                         const float * __restrict phzr,
+	                                         const float * __restrict phzi,
+	                                         const float * __restrict pnx,
+	                                         const float * __restrict pny,
+	                                         const float * __restrict pnz,
+	                                         float * __restrict  pxd,
+	                                         float * __restrict  pyd,
+	                                         float * __restrict pzd,
+	                                         const float * __restrict prho,
+	                                         const float * __restrict pcst,
+	                                         const float args[7],
+	                                         std::complex<float> & Nex,
+	                                         std::complex<float> & Ney,
+	                                         std::complex<float> & Nez,
+	                                         float err[6]) {
+	                                      
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 hxr,hxi;
+                        register __m512 hyr,hyi;
+                        register __m512 hzr,hzi;
+                        register __m512 nx,ny,nz;
+                        register __m512 rho,cst;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float k,xa,xb,ya,yb,za,zb;
+                        float sxr,sxi,syr,syi,szr,szi; 
+                        cst = _mm512_loadu_ps(&pcst[0]);
+                        rho = _mm512_loadu_ps(&prho[0]);
+                        k   = args[0];
+                        vk  = _mm512_set1_ps(k);
+                        hxr = _mm512_loadu_ps(&phxr[0]);
+                        hxi = _mm512_loadu_ps(&phxi[0]);
+                        ir  = _mm512_setzero_ps();
+                        hyr = _mm512_loadu_ps(&phyr[0]);
+                        hyi = _mm512_loadu_ps(&phyi[0]);
+                        ii  = _mm512_set1_ps(1.0f);
+                        xa  = args[1];
+                        hzr = _mm512_loadu_ps(&phzr[0]);
+                        hzi = _mm512_loadu_ps(&phzi[0]);
+                        xb  = args[2];
+                        ear = ir;
+                        nx  = _mm512_loadu_ps(&pnx[0]);
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        ny  = _mm512_loadu_ps(&pny[0]);
+                        ya  = args[3];
+                        nz  = _mm512_loadu_ps(&pnz[0]);
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi);  
+                        yb  = args[4];
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        za  = args[5];
+                        zb  = args[6]; 
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;   
+                        cubint(16,&pxd[0],&pxr[0],xa,xb,sxr,err[0]);
+                        cubint(16,&pxd[0],&pxi[0],xa,xb,sxi,err[1]);
+                        cubint(16,&pyd[0],&pyr[0],ya,yb,syr,err[2]);
+                        cubint(16,&pyd[0],&pyi[0],ya,yb,syi,err[3]);
+                        cubint(16,&pzd[0],&pzr[0],za,zb,szr,err[4]);
+                        cubint(16,&pzd[0],&pzi[0],za,zb,szi,err[5]); 
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};                            
+	     }
+	     
+	     
+	     
 	     
 	     
 	    
