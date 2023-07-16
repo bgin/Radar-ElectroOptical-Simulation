@@ -10224,7 +10224,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void Ne_f253_zmm16r4_avint_dispatch(  const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_avint_dispatch(  const float * __restrict  phxr,
 	                                                 const float * __restrict  phxi,
 	                                                 const float * __restrict  phyr,
 	                                                 const float * __restrict  phyi,
@@ -10266,21 +10266,21 @@ namespace gms {
                         switch(cond) {
                             
                             case : 0 
-                                    f256_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
                                                                  phyi,phzr,phzi,
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);    
                                     break;
                             case : 1 
-                                    f256_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
                                                                  phyi,phzr,phzi,
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);  
                               
                             case : 2 
-                                    f256_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -10289,7 +10289,7 @@ namespace gms {
                                                                           PF_DIST);
                                     break;                                       
                             case : 3 
-                                  f256_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
+                                  f253_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -10347,7 +10347,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_avint_u(const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_avint_u(const float * __restrict  phxr,
 	                                        const float * __restrict  phxi,
 	                                        const float * __restrict  phyr,
 	                                        const float * __restrict  phyi,
@@ -10365,7 +10365,8 @@ namespace gms {
 	                                        std::complex<float> & Nex,
 	                                        std::complex<float> & Ney,
 	                                        std::complex<float> & Nez,
-	                                        int32_t & ierr) {
+	                                        int32_t & ierr,
+	                                        const bool ftype) {
 	                                      
 	                __m512 intxr,intxi;
                         __m512 intyr,intyi;
@@ -10455,16 +10456,23 @@ namespace gms {
                                return;
                         }  
                         CORRECT: {
-                           Nex = {sxr,sxi};
-                           Ney = {syr,syi};
-                           Nez = {szr,szi};  
+                           if(ftype) {
+                              Nex = {sxr,sxi};
+                              Ney = {syr,syi};
+                              Nez = {szr,szi}; 
+                           } 
+                            else {
+                              Nex = {-sxr,-sxi};
+                              Ney = {-syr,-syi};
+                              Nez = {-szr,-szi};
+                            }
                         }                                   
 	       }
 	       
 	       
 	        /*
 	             Formula 2-53, p. 44
-                     Electric field (i.e. field amplitudes) are computed
+                     Electric and magnetic field (i.e. field amplitudes) are computed
                      for the antenna far-field zone.
                      'cubint' integrator in use (16 field amplitudes).
 	        */
