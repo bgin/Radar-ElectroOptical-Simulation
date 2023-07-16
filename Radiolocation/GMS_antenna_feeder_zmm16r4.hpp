@@ -11990,6 +11990,17 @@ namespace gms {
 	     }
 	     
 	     
+	        /*
+	             Formula 2-53, p. 44
+                     Electric field (i.e. field amplitudes) are computed
+                     for the antenna far-field zone.
+                     'simpn' integrator in use (16 field amplitudes and 'n' field amplitudes.).
+	        */
+	        
+	        
+	        
+	     
+	     
 	     
 	     
 	     
