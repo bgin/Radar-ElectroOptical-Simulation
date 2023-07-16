@@ -11998,7 +11998,84 @@ namespace gms {
 	        */
 	        
 	        
-	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_simpn(const __m512 hxr,
+	                                      const __m512 hxi,
+	                                      const __m512 hyr,
+	                                      const __m512 hyi,
+	                                      const __m512 hzr,
+	                                      const __m512 hzi,
+	                                      const __m512 nx,
+	                                      const __m512 ny,
+	                                      const __m512 nz,
+	                                      const __m512 rho,
+	                                      const __m512 cst,
+	                                      const float args[2],
+	                                      std::complex<float> & Nex,
+	                                      std::complex<float> & Ney,
+	                                      std::complex<float> & Nez) {
+	                                     
+	                                      
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float sxr,sxi,syr,syi,szr,szi; 
+                        float k,h;
+                        k   = args[0];
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi);  
+                        h   = args[1];
+                        vk  = _mm512_set1_ps(k);
+                       
+                        ir  = _mm512_setzero_ps();
+                        ii  = _mm512_set1_ps(1.0f);
+                        ear = ir;
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;   
+                        simpn(16,h,&pxr[0],sxr);
+                        simpn(16,h,&pxi[0],sxi);
+                        simpn(16,h,&pyr[0],syr);
+                        simpn(16,h,&pyi[0],syi);
+                        simpn(16,h,&pzr[0],szr);
+                        simpn(16,h,&pzi[0],szi); 
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};                            
+	     }
+	     
 	     
 	     
 	     
