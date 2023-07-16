@@ -12563,7 +12563,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_wedint(const __m512 hxr,
+	           void Nem_f253_zmm16r4_wedint(const __m512 hxr,
 	                                      const __m512 hxi,
 	                                      const __m512 hyr,
 	                                      const __m512 hyi,
@@ -12577,7 +12577,8 @@ namespace gms {
 	                                      const float args[2],
 	                                      std::complex<float> & Nex,
 	                                      std::complex<float> & Ney,
-	                                      std::complex<float> & Nez) {
+	                                      std::complex<float> & Nez,
+	                                      const bool ftype) {
 	                                     
 	                                      
 	                __m512 intxr,intxi;
@@ -12631,9 +12632,16 @@ namespace gms {
                         wedint(16,h,&pyi[0],syi);
                         wedint(16,h,&pzr[0],szr);
                         wedint(16,h,&pzi[0],szi); 
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                            
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                                    
 	     }
 	     
 	     
@@ -12642,7 +12650,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_wedint_a( const float * __restrict __ATTR_ALIGN__(64) phxr,
+	           void Nem_f253_zmm16r4_wedint_a( const float * __restrict __ATTR_ALIGN__(64) phxr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phxi,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phyr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phyi,
@@ -12656,7 +12664,8 @@ namespace gms {
 	                                         const float args[2],
 	                                         std::complex<float> & Nex,
 	                                         std::complex<float> & Ney,
-	                                         std::complex<float> & Nez) {
+	                                         std::complex<float> & Nez,
+	                                         const bool ftype) {
 	                                     
 	                                      
 	                __m512 intxr,intxi;
@@ -12725,9 +12734,16 @@ namespace gms {
                         wedint(16,h,&pyi[0],syi);
                         wedint(16,h,&pzr[0],szr);
                         wedint(16,h,&pzi[0],szi); 
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                            
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                                  
 	     }
 	     
 	     
@@ -12735,7 +12751,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void Ne_f256_zmm16r4_wedint_dispatch( const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_wedint_dispatch( const float * __restrict  phxr,
 	                                                 const float * __restrict  phxi,
 	                                                 const float * __restrict  phyr,
 	                                                 const float * __restrict  phyi,
@@ -12755,7 +12771,8 @@ namespace gms {
 	                                                 const int32_t PF_DIST,
 	                                                 const int32_t RANKSIZE,
 	                                                 const int32_t PAGESIZE,
-	                                                 const int32_t cond) {
+	                                                 const int32_t cond,
+	                                                 const bool ftype) {
 	                                                 
 	                                                 
 	               
@@ -12768,21 +12785,21 @@ namespace gms {
                         switch(cond) {
                             
                             case : 0 
-                                    f256_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
                                                                  phyi,phzr,phzi,
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);    
                                     break;
                             case : 1 
-                                    f256_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
                                                                  phyi,phzr,phzi,
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);  
                               
                             case : 2 
-                                    f256_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -12791,7 +12808,7 @@ namespace gms {
                                                                           PF_DIST);
                                     break;                                       
                             case : 3 
-                                  f256_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
+                                  f253_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -12816,9 +12833,16 @@ namespace gms {
                         wedint(n,h,&fw.pyi[0],syi);
                         wedint(n,h,&fw.pzr[0],szr);
                         wedint(n,h,&fw.pzi[0],szi);
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};   
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }           
                                                          
 	     }
 	     
@@ -12828,7 +12852,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_wedint_u( const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_wedint_u( const float * __restrict  phxr,
 	                                         const float * __restrict  phxi,
 	                                         const float * __restrict  phyr,
 	                                         const float * __restrict  phyi,
@@ -12842,7 +12866,8 @@ namespace gms {
 	                                         const float args[2],
 	                                         std::complex<float> & Nex,
 	                                         std::complex<float> & Ney,
-	                                         std::complex<float> & Nez) {
+	                                         std::complex<float> & Nez,
+	                                         const bool ftype) {
 	                                     
 	                                      
 	                __m512 intxr,intxi;
@@ -12911,9 +12936,16 @@ namespace gms {
                         wedint(16,h,&pyi[0],syi);
                         wedint(16,h,&pzr[0],szr);
                         wedint(16,h,&pzi[0],szi); 
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                            
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                                  
 	     }
 	     
 	     
