@@ -12359,7 +12359,7 @@ namespace gms {
 	     
 	      /*
 	             Formula 2-53, p. 44
-                     Electric field (i.e. field amplitudes) are computed
+                     Electric and magnetic field (i.e. field amplitudes) are computed
                      for the antenna far-field zone.
                      'wedint' integrator in use (16 field amplitudes and 'n' field amplitudes.).
 	        */
@@ -12442,6 +12442,101 @@ namespace gms {
                         Ney = {syr,syi};
                         Nez = {szr,szi};                            
 	     }
+	     
+	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void Ne_f256_zmm16r4_wedint_a( const float * __restrict __ATTR_ALIGN__(64) phxr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) phxi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) phyr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) phyi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) phzr,
+	                                         const float * __restrict __ATTR_ALIGN__(64) phzi,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pnx,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pny,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pnz,
+	                                         const float * __restrict __ATTR_ALIGN__(64) prho,
+	                                         const float * __restrict __ATTR_ALIGN__(64) pcst,
+	                                         const float args[2],
+	                                         std::complex<float> & Nex,
+	                                         std::complex<float> & Ney,
+	                                         std::complex<float> & Nez) {
+	                                     
+	                                      
+	                __m512 intxr,intxi;
+                        __m512 intyr,intyi;
+                        __m512 intzr,intzi;
+                        __m512 vxr,vxi;
+                        __m512 vyr,vyi;
+                        __m512 vzr,vzi;
+                        register __m512 hxr,hxi;
+                        register __m512 hyr,hyi;
+                        register __m512 hzr,hzi;
+                        register __m512 nx,ny,nz;
+                        register __m512 cst,rho;
+                        register __m512 vk,ii,ir,ear,eai;
+                        register __m512 cer,cei,t0r,t0i;
+                        float * __restrict pxr = nullptr;
+                        float * __restrict pxi = nullptr;
+                        float * __restrict pyr = nullptr;
+                        float * __restrict pyi = nullptr;
+                        float * __restrict pzr = nullptr;
+                        float * __restrict pzi = nullptr; 
+                        float sxr,sxi,syr,syi,szr,szi; 
+                        float k,h;
+                        cst = _mm512_load_ps(&pcst[0]);
+                        rho = _mm512_load_ps(&prho[0]);
+                        k   = args[0];
+                        h   = args[1];
+                        vk  = _mm512_set1_ps(k);
+                        hxr = _mm512_load_ps(&phxr[0]);
+                        hxi = _mm512_load_ps(&phxi[0]);
+                        ir  = _mm512_setzero_ps();
+                        hyr = _mm512_load_ps(&phyr[0]);
+                        hyi = _mm512_load_ps(&phyi[0]);
+                        ii  = _mm512_set1_ps(1.0f);
+                        hzr = _mm512_load_ps(&phzr[0]);
+                        hzi = _mm512_load_ps(&phzi[0]);
+                        ear = ir;
+                        nx  = _mm512_load_ps(&pnx[0]);
+                        eai = _mm512_mul_ps(_mm512_mul_ps(ii,vk),
+                                            _mm512_mul_ps(rho,cst));
+                        ny  = _mm512_load_ps(&pny[0]);
+                        cexp_zmm16r4(ear,eai,&cer,&cei);
+                        nz  = _mm512_load_ps(&pnz[0]);
+                        scrosscv_zmm16c4(hxr,hxi,hyr,hyi,
+                                         hzr,hzi,nx,ny,nz,
+                                         &vxr,&vxi,&vyr,
+                                         &vyi,&vzr,&vzi); 
+                        cmul_zmm16r4(vxr,vxi,cer,cei,&intxr,&intxi);
+                        pxr = (float*)&intxr[0];
+                        pxi = (float*)&intxi[0];
+                        cmul_zmm16r4(vyr,vyi,cer,cei,&intyr,&intyi);
+                        pyr = (float*)&intyr[0];
+                        pyi = (float*)&intyi[0];
+                        cmul_zmm16r4(vzr,vzi,cer,cei,&intzr,&intzi);  
+                        pzr = (float*)&intzr[0];
+                        pzi = (float*)&intzi[0];  
+                        sxr = 0.0f;
+                        sxi = sxr;
+                        syi = sxr;
+                        syr = sxr;
+                        szr = sxr;
+                        szi = sxr;   
+                        wedint(16,h,&pxr[0],sxr);
+                        wedint(16,h,&pxi[0],sxi);
+                        wedint(16,h,&pyr[0],syr);
+                        wedint(16,h,&pyi[0],syi);
+                        wedint(16,h,&pzr[0],szr);
+                        wedint(16,h,&pzi[0],szi); 
+                        Nex = {sxr,sxi};
+                        Ney = {syr,syi};
+                        Nez = {szr,szi};                            
+	     }
+	     
 	     
 	     
 	     
