@@ -7959,9 +7959,9 @@ namespace gms {
 	        
 	        /*
 	             Formula 2-53, p. 44
-                     Electric field (i.e. field amplitudes) are computed
+                     Electric and magnetic field (i.e. field amplitudes) are computed
                      for the antenna far-field zone.
-                     'Avint' integrator in use (16 field amplitudes).
+                     'Avint' integrator in use (16 field amplitudes and 'n' field amplitudes).
 	        */
 	        
 
@@ -7971,7 +7971,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_avint(const __m512 hxr,
+	           void Nem_f253_zmm16r4_avint(const __m512 hxr,
 	                                      const __m512 hxi,
 	                                      const __m512 hyr,
 	                                      const __m512 hyi,
@@ -7989,7 +7989,8 @@ namespace gms {
 	                                      std::complex<float> & Nex,
 	                                      std::complex<float> & Ney,
 	                                      std::complex<float> & Nez,
-	                                      int32_t & ierr) {
+	                                      int32_t & ierr,
+	                                      const bool ftype) {
 	                                      
 	                __m512 intxr,intxi;
                         __m512 intyr,intyi;
@@ -8066,9 +8067,17 @@ namespace gms {
                                return;
                         }  
                         CORRECT: {
-                           Nex = {sxr,sxi};
-                           Ney = {syr,syi};
-                           Nez = {szr,szi};  
+                           if(ftype) {
+                              Nex = {sxr,sxi};
+                              Ney = {syr,syi};
+                              Nez = {szr,szi};  
+                           }
+                           else {
+                              Nex = {-sxr,-sxi};
+                              Ney = {-syr,-syi};
+                              Nez = {-szr,-szi}; 
+                           }
+                           
                         }                                   
 	       }
 	       
