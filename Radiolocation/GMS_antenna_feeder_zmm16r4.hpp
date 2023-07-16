@@ -8087,7 +8087,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) phxr,
+	           void Nem_f253_zmm16r4_avint_a(const float * __restrict __ATTR_ALIGN__(64) phxr,
 	                                        const float * __restrict __ATTR_ALIGN__(64) phxi,
 	                                        const float * __restrict __ATTR_ALIGN__(64) phyr,
 	                                        const float * __restrict __ATTR_ALIGN__(64) phyi,
@@ -8105,7 +8105,8 @@ namespace gms {
 	                                        std::complex<float> & Nex,
 	                                        std::complex<float> & Ney,
 	                                        std::complex<float> & Nez,
-	                                        int32_t & ierr) {
+	                                        int32_t & ierr,
+	                                        const bool ftype) {
 	                                      
 	                __m512 intxr,intxi;
                         __m512 intyr,intyi;
@@ -8195,9 +8196,16 @@ namespace gms {
                                return;
                         }  
                         CORRECT: {
-                           Nex = {sxr,sxi};
-                           Ney = {syr,syi};
-                           Nez = {szr,szi};  
+                           if(ftype) {
+                              Nex = {sxr,sxi};
+                              Ney = {syr,syi};
+                              Nez = {szr,szi}; 
+                           } 
+                           else {
+                              Nex = {-sxr,-sxi};
+                              Ney = {-syr,-syi};
+                              Nez = {-szr,-szi};
+                           }
                         }                                   
 	       }
 	       
