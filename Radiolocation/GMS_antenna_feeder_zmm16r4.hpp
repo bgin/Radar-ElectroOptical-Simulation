@@ -11792,12 +11792,12 @@ namespace gms {
                         syr = sxr;
                         szr = sxr;
                         szi = sxr;   
-                        plint(16,&pxd[0],&pxr[0],sxr);
-                        plint(16,&pxd[0],&pxi[0],sxi);
-                        plint(16,&pyd[0],&pyr[0],syr);
-                        plint(16,&pyd[0],&pyi[0],syi);
-                        plint(16,&pzd[0],&pzr[0],szr);
-                        plint(16,&pzd[0],&pzi[0],szi); 
+                        simpne(16,&pxd[0],&pxr[0],sxr);
+                        simpne(16,&pxd[0],&pxi[0],sxi);
+                        simpne(16,&pyd[0],&pyr[0],syr);
+                        simpne(16,&pyd[0],&pyi[0],syi);
+                        simpne(16,&pzd[0],&pzr[0],szr);
+                        simpne(16,&pzd[0],&pzi[0],szi); 
                         Nex = {sxr,sxi};
                         Ney = {syr,syi};
                         Nez = {szr,szi};                            
