@@ -9232,7 +9232,7 @@ namespace gms {
 	      __ATTR_HOT__
 	      __ATTR_ALIGN__(32)
               static inline
-	      void f256_integrand_zmm16r4_unroll_jam8x_a(       const float * __restrict __ATTR_ALIGN__(64)  phxr,
+	      void f253_integrand_zmm16r4_unroll_jam8x_a(       const float * __restrict __ATTR_ALIGN__(64)  phxr,
 	                                                        const float * __restrict __ATTR_ALIGN__(64)  phxi,
 	                                                        const float * __restrict __ATTR_ALIGN__(64)  phyr,
 	                                                        const float * __restrict __ATTR_ALIGN__(64)  phyi,
@@ -9839,7 +9839,7 @@ namespace gms {
 	      __ATTR_HOT__
 	      __ATTR_ALIGN__(32)
               static inline
-	      void f256_integrand_zmm16r4_unroll_jam4x_a(       const float * __restrict __ATTR_ALIGN__(64)  phxr,
+	      void f253_integrand_zmm16r4_unroll_jam4x_a(       const float * __restrict __ATTR_ALIGN__(64)  phxr,
 	                                                        const float * __restrict __ATTR_ALIGN__(64)  phxi,
 	                                                        const float * __restrict __ATTR_ALIGN__(64)  phyr,
 	                                                        const float * __restrict __ATTR_ALIGN__(64)  phyi,
