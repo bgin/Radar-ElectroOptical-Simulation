@@ -11108,7 +11108,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void Ne_f253_zmm16r4_hiordq_dispatch( const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_hiordq_dispatch( const float * __restrict  phxr,
 	                                                 const float * __restrict  phxi,
 	                                                 const float * __restrict  phyr,
 	                                                 const float * __restrict  phyi,
@@ -11211,7 +11211,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_hiordq_u(const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_hiordq_u(const float * __restrict  phxr,
 	                                         const float * __restrict  phxi,
 	                                         const float * __restrict  phyr,
 	                                         const float * __restrict  phyi,
@@ -11225,7 +11225,8 @@ namespace gms {
 	                                         const float args[4],
 	                                         std::complex<float> & Nex,
 	                                         std::complex<float> & Ney,
-	                                         std::complex<float> & Nez) {
+	                                         std::complex<float> & Nez,
+	                                         const bool ftype) {
 	                                      
 	                __ATTR_ALIGN__(64) float work[32];
 	                __m512 intxr,intxi;
@@ -11296,9 +11297,16 @@ namespace gms {
                         hiordq(16,delty,&pyi[0],&work[0],syi);
                         hiordq(16,deltz,&pzr[0],&work[0],szr);
                         hiordq(16,deltz,&pzi[0],&work[0],szi);
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                     
+                       if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                              
 	      }
 	      
 	      
