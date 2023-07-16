@@ -11749,7 +11749,7 @@ namespace gms {
 	     
 	        /*
 	             Formula 2-53, p. 44
-                     Electric field (i.e. field amplitudes) are computed
+                     Electric and magnetic field (i.e. field amplitudes) are computed
                      for the antenna far-field zone.
                      'simpne' integrator in use (16 field amplitudes and 'n' field amplitudes.).
 	        */
@@ -11760,7 +11760,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_simpne(const __m512 hxr,
+	           void Nem_f253_zmm16r4_simpne(const __m512 hxr,
 	                                      const __m512 hxi,
 	                                      const __m512 hyr,
 	                                      const __m512 hyi,
@@ -11777,7 +11777,8 @@ namespace gms {
 	                                      const float k,
 	                                      std::complex<float> & Nex,
 	                                      std::complex<float> & Ney,
-	                                      std::complex<float> & Nez) {
+	                                      std::complex<float> & Nez,
+	                                      const float ftype) {
 	                                     
 	                                      
 	                __m512 intxr,intxi;
@@ -11833,9 +11834,16 @@ namespace gms {
                         simpne(16,&pyd[0],&pyi[0],syi);
                         simpne(16,&pzd[0],&pzr[0],szr);
                         simpne(16,&pzd[0],&pzi[0],szi); 
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                            
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                                      
 	     }
 	     
 	     
@@ -11844,7 +11852,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_simpne_a(const float * __restrict __ATTR_ALIGN__(64) phxr,
+	           void Nem_f253_zmm16r4_simpne_a(const float * __restrict __ATTR_ALIGN__(64) phxr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phxi,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phyr,
 	                                         const float * __restrict __ATTR_ALIGN__(64) phyi,
@@ -11861,7 +11869,8 @@ namespace gms {
 	                                         const float k,
 	                                         std::complex<float> & Nex,
 	                                         std::complex<float> & Ney,
-	                                         std::complex<float> & Nez) {
+	                                         std::complex<float> & Nez,
+	                                         const float ftype) {
 	                                     
 	                                      
 	                __m512 intxr,intxi;
@@ -11927,9 +11936,16 @@ namespace gms {
                         simpne(16,&pyd[0],&pyi[0],syi);
                         simpne(16,&pzd[0],&pzr[0],szr);
                         simpne(16,&pzd[0],&pzi[0],szi); 
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                            
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                                     
 	     }
 	     
 	     
