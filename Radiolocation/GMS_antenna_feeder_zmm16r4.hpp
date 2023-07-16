@@ -11534,7 +11534,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void Ne_f256_zmm16r4_plint_dispatch( const float * __restrict  phxr,
+	           void Nem_f253_zmm16r4_plint_dispatch( const float * __restrict  phxr,
 	                                                 const float * __restrict  phxi,
 	                                                 const float * __restrict  phyr,
 	                                                 const float * __restrict  phyi,
@@ -11557,7 +11557,8 @@ namespace gms {
 	                                                 const int32_t PF_DIST,
 	                                                 const int32_t RANKSIZE,
 	                                                 const int32_t PAGESIZE,
-	                                                 const int32_t cond) {
+	                                                 const int32_t cond,
+	                                                 const bool ftype) {
 	                                                 
 	                                                 
 	                float k,xa,xb,ya,yb,za,zb
@@ -11573,21 +11574,21 @@ namespace gms {
                         switch(cond) {
                             
                             case : 0 
-                                    f256_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_u6x_a(phxr,phxi,phyr,
                                                                  phyi,phzr,phzi,
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);    
                                     break;
                             case : 1 
-                                    f256_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_u6x_u(phxr,phxi,phyr,
                                                                  phyi,phzr,phzi,
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);  
                               
                             case : 2 
-                                    f256_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -11596,7 +11597,7 @@ namespace gms {
                                                                           PF_DIST);
                                     break;                                       
                             case : 3 
-                                  f256_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
+                                  f253_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -11621,9 +11622,16 @@ namespace gms {
                         plint(n,&pyd[0],&fw.pyi[0],ya,yb,syi);
                         plint(n,&pzd[0],&fw.pzr[0],za,zb,szr);
                         plint(n,&pzd[0],&fw.pzi[0],za,zb,szi);
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};   
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }              
                                                          
 	     }
 	     
@@ -11633,7 +11641,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void Ne_f256_zmm16r4_plint_u( const float * __restrict phxr,
+	           void Nem_f253_zmm16r4_plint_u( const float * __restrict phxr,
 	                                         const float * __restrict phxi,
 	                                         const float * __restrict phyr,
 	                                         const float * __restrict phyi,
@@ -11650,7 +11658,8 @@ namespace gms {
 	                                         const float args[7],
 	                                         std::complex<float> & Nex,
 	                                         std::complex<float> & Ney,
-	                                         std::complex<float> & Nez) {
+	                                         std::complex<float> & Nez,
+	                                         const bool ftype) {
 	                                     
 	                                      
 	                __m512 intxr,intxi;
@@ -11725,9 +11734,16 @@ namespace gms {
                         plint(16,&pyd[0],&pyi[0],ya,yb,syi);
                         plint(16,&pzd[0],&pzr[0],za,zb,szr);
                         plint(16,&pzd[0],&pzi[0],za,zb,szi); 
-                        Nex = {sxr,sxi};
-                        Ney = {syr,syi};
-                        Nez = {szr,szi};                            
+                        if(ftype) {
+                           Nex = {sxr,sxi};
+                           Ney = {syr,syi};
+                           Nez = {szr,szi};  
+                        } 
+                        else {
+                           Nex = {-sxr,-sxi};
+                           Ney = {-syr,-syi};
+                           Nez = {-szr,-szi};  
+                        }                                    
 	     }
 	     
 	     
