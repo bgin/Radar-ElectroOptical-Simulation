@@ -10224,7 +10224,7 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void Ne_f256_zmm16r4_avint_dispatch(  const float * __restrict  phxr,
+	           void Ne_f253_zmm16r4_avint_dispatch(  const float * __restrict  phxr,
 	                                                 const float * __restrict  phxi,
 	                                                 const float * __restrict  phyr,
 	                                                 const float * __restrict  phyi,
@@ -10248,7 +10248,8 @@ namespace gms {
 	                                                 const int32_t RANKSIZE,
 	                                                 const int32_t PAGESIZE,
 	                                                 const int32_t cond,
-	                                                 int32_t & ierr) {
+	                                                 int32_t & ierr,
+	                                                 const bool ftype) {
 	                                                 
 	                float k,xa,xb,ya,yb,za,zb;
                         float sxr,sxi,syr,syi,szr,szi;
@@ -10325,9 +10326,16 @@ namespace gms {
                                return;
                         }  
                         CORRECT: {
-                           Nex = {sxr,sxi};
-                           Ney = {syr,syi};
-                           Nez = {szr,szi};  
+                           if(ftype) {
+                              Nex = {sxr,sxi};
+                              Ney = {syr,syi};
+                              Nez = {szr,szi};  
+                           }
+                            else {
+                              Nex = {-sxr,-sxi};
+                              Ney = {-syr,-syi};
+                              Nez = {-szr,-szi};  
+                            }
                         }                
                         
                                                                    
