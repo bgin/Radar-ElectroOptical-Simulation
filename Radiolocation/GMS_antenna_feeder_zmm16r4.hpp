@@ -13276,7 +13276,7 @@ namespace gms {
 	      
 	      
 	      /*
-	           Table 2.1
+	           Table 2.1, p. 49
 	           Antenna radiation patterns as function
 	           of the current amplitude 
 	           distribution at the opening at the opening slot.
@@ -13312,8 +13312,22 @@ namespace gms {
 	                  rp   = _mm512_div_ps(sinu,u);
 	                  return (rp);                                 
 	          }
-	           
-	      
+	          
+	          
+	          // Half-power width of Radiation pattern (grad)
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float  width_rp1_r4(     const float gamm,
+	                                    const float L) {
+	                  
+	                  constexpr float C508 = 50.8f;
+	                  float width;
+	                  width = C508*gamm/L;
+	                  return (width);                   
+	          }
 	      
 	                                    
 	     
