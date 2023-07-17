@@ -13292,6 +13292,26 @@ namespace gms {
 	           static inline
 	           __m512 slot_amp_1_zmm16r4() { return _mm512_set1_ps(1.0f);}
 	           
+	           // Radiation pattern for amplitude distribution of rule1
+	           
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 slot_rp1_zmm16r4(const __m512 L,
+	                                   const float k) {
+	                 
+	                  register __m512 C05 = _mm512_set1_ps(0.5f);
+	                  register __m512 vk,u;
+	                  register __m512 rp,sinu;
+	                  vk   = _mm512_set1_ps(k);
+	                  u    = _mm512_mul_ps(
+	                                 _mm512_mul_ps(vk,L),C05);
+	                  sinu = xsinf(u);
+	                  rp   = _mm512_div_ps(sinu,u);
+	                  return (rp);                                 
+	          }
 	           
 	      
 	      
