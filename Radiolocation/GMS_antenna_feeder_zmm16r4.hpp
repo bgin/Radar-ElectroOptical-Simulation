@@ -13170,9 +13170,41 @@ namespace gms {
 	               _mm512_storeu_ps(&Epr[0] ,ir);
 	               _mm512_storeu_ps(&EPi[0] ,ii);                  
 	      }
+	      
+	      
+	       /*
+	         Far-field zone.
+	         Magnetic field.
+	         Formula 2-52, p. 44
+	     */
 	     
 	     
-	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_f252_zmm16r4(const __m512 Etr,
+	                               const __m512 Eti,
+	                               const __m512 Epr,
+	                               const __m512 Epi,
+	                               const SUV_zmm16r4_t er,
+	                               float eps,
+	                               float mu,
+	                               __m512 * __restrict Htr,
+	                               __m512 * __restrict Hti,
+	                               __m512 * __restrict Hpr,
+	                               __m512 * __restrict Hpi) {
+	                               
+	                 __m512 xtr,xti,xpr,xpi;
+	                 He_f227_zmm16r4(Etr,Eti,Epr,Epi,
+	                                 er,eps,mu,
+	                                 &xtr,&xti,&xpr,&xpi);
+	                 *Htr = xtr;
+	                 *Hpr = xpr;
+	                 *Hti = xti;
+	                 *Hpi = xpi;                        
+	      }
 	     
 	     
 	     
