@@ -13207,7 +13207,38 @@ namespace gms {
 	      }
 	     
 	     
-	     
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_f252_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pEtr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pEti,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pEpr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pEpi,
+	                                 const SUV_zmm16r4_t er,
+	                                 float eps,
+	                                 float mu,
+	                                 float * __restrict __ATTR_ALIGN__(64) Htr,
+	                                 float * __restrict __ATTR_ALIGN__(64) Hti,
+	                                 float * __restrict __ATTR_ALIGN__(64) Hpr,
+	                                 float * __restrict __ATTR_ALIGN__(64) Hpi) {
+	                           
+	                 register __m512 Etr,Eti;
+	                 register __m512 Epr,Epi;    
+	                 __m512 xtr,xti,xpr,xpi;
+	                 Etr = _mm512_load_ps(&pEtr[0]);
+	                 Eti = _mm512_load_ps(&pEti[0]);
+	                 Epr = _mm512_load_ps(&pEpr[0]);
+	                 Epi = _mm512_load_ps(&pEpi[0]);
+	                 He_f227_zmm16r4(Etr,Eti,Epr,Epi,
+	                                 er,eps,mu,
+	                                 &xtr,&xti,&xpr,&xpi);
+	                 _mm512_store_ps(&Htr[0] ,xtr);
+	                 _mm512_store_ps(&Hpr[0] ,xpr);
+	                 _mm512_store_ps(&Hti[0] ,xti);
+	                 _mm512_store_ps(&Hpi[0] ,xpi);                        
+	      }
 	     
 	      
 	      
