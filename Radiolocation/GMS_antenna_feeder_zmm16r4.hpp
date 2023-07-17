@@ -13275,6 +13275,26 @@ namespace gms {
 	      }
 	      
 	      
+	      /*
+	           Table 2.1
+	           Antenna radiation patterns as function
+	           of the current amplitude 
+	           distribution at the opening at the opening slot.
+	           
+	      */
+	      
+	      
+	           // Rule 1
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 slot_amp_1_zmm16r4() { return _mm512_set1_ps(1.0f);}
+	           
+	           
+	      
+	      
 	                                    
 	     
 	     
