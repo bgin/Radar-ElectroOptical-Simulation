@@ -13241,7 +13241,38 @@ namespace gms {
 	      }
 	     
 	      
-	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_f252_zmm16r4_u(const float * __restrict  pEtr,
+	                                 const float * __restrict  pEti,
+	                                 const float * __restrict  pEpr,
+	                                 const float * __restrict  pEpi,
+	                                 const SUV_zmm16r4_t er,
+	                                 float eps,
+	                                 float mu,
+	                                 float * __restrict  Htr,
+	                                 float * __restrict  Hti,
+	                                 float * __restrict  Hpr,
+	                                 float * __restrict  Hpi) {
+	                           
+	                 register __m512 Etr,Eti;
+	                 register __m512 Epr,Epi;    
+	                 __m512 xtr,xti,xpr,xpi;
+	                 Etr = _mm512_loadu_ps(&pEtr[0]);
+	                 Eti = _mm512_loadu_ps(&pEti[0]);
+	                 Epr = _mm512_loadu_ps(&pEpr[0]);
+	                 Epi = _mm512_loadu_ps(&pEpi[0]);
+	                 He_f227_zmm16r4(Etr,Eti,Epr,Epi,
+	                                 er,eps,mu,
+	                                 &xtr,&xti,&xpr,&xpi);
+	                 _mm512_storeu_ps(&Htr[0] ,xtr);
+	                 _mm512_storeu_ps(&Hpr[0] ,xpr);
+	                 _mm512_storeu_ps(&Hti[0] ,xti);
+	                 _mm512_storeu_ps(&Hpi[0] ,xpi);                        
+	      }
 	      
 	      
 	                                    
