@@ -12978,11 +12978,13 @@ namespace gms {
 	                               __m512 * __restrict Eti,
 	                               __m512 * __restrict Epr,
 	                               __m512 * __restrict Epi) {
-	                               
-	               register __m512 fr,fi,invR,ir,ii,vk;
-	               register __m512 rat,t0r,t0i,t1r,t1i;
-	               register __m512 ntr,nti,npr,npi;
-	               register __m512 ear,eai,cer,cei;
+	               
+	               register __m512 rat,invR;
+	               register __m512 ir,ii,vk,rat;
+	               register __m512 ear,eai;
+	               __m512 fr,fi,cer,cei;
+	               __m512 t0r,t0i,t1r,t1i;
+	               __m512 ntr,nti,npr,npi;
 	               float tmp;
 	               const __m512 C12566370614359172953850573533118 = 
 	                            _mm512_set1_ps(12.566370614359172953850573533118f);
@@ -13016,6 +13018,67 @@ namespace gms {
 	      }
 	     
 	     
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void E_f252_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pNetr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNeti,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNmtr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNmti,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNepr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNepi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNmpr,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pNmpi,
+	                                 const float * __restrict __ATTR_ALIGN__(64) pR,
+	                                 const SUV_zmm16r4_t eth,
+	                                 const SUV_zmm16r4_t eph,
+	                               	 const float k,
+	                                 const float mu,
+	                                 const float eps,
+	                                 float * __restrict __ATTR_ALIGN__(64) Etr,
+	                                 float * __restrict __ATTR_ALIGN__(64) Eti,
+	                                 float * __restrict __ATTR_ALIGN__(64) Epr,
+	                                 float * __restrict __ATTR_ALIGN__(64) Epi) {
+	                               
+	               register __m512 rat,invR;
+	               register __m512 ir,ii,vk,rat;
+	               register __m512 ear,eai;
+	               __m512 fr,fi,cer,cei;
+	               __m512 t0r,t0i,t1r,t1i;
+	               __m512 ntr,nti,npr,npi;
+	               float tmp;
+	               const __m512 C12566370614359172953850573533118 = 
+	                            _mm512_set1_ps(12.566370614359172953850573533118f);
+	               ir    = _mm512_setzero_ps();
+	               ear   = ir;
+	               vk    = _mm512_set1_ps(k);
+	               ii    = _mm512_set1_ps(-1.0f);
+	               tmp   = cephes_sqrtf(mu/eps);
+	               invR  = _mm512_rcp14_ps(R);
+	               rat   = _mm512_set1_ps(tmp); 
+	               eai   = _mm512_mul_ps(ii,
+	                                 _mm512_mul_ps(vk,R));
+	               cexp_zmm16r4(ear,eai,&cer,&cei);
+	               t0r   = _mm512_fmadd_ps(rat,Netr,Nmpr);
+	               t0i   = _mm512_fmadd_ps(rat,Neti,Nmpi);
+	               cer   = _mm512_mul_ps(cer,invR);
+	               cei   = _mm512_mul_ps(cei,invR);
+	               cdiv_zmm16r4_s(vk,ir,C12566370614359172953850573533118,&fr,&fi);
+	               t1r   = _mm512_fmsub_ps(rat,Nepr,Nmtr);
+	               t1r   = _mm512_fmsub_ps(rat,Nepi,Nmti);
+	               N_f13_zmm16r4(t0r,t0i,t1r,t1i,eth,eph,
+	                             &ntr,&nti,&npr,&npi);
+	               cmul_zmm16r4(ntr,nti,cer,cei,&t0r,&t0i);
+	               cmul_zmm16r4(fr,fi,t0r,t0i,&ear,&eai);
+	               *Etr = ear;
+	               *Eti = eai;
+	               cmul_zmm16r4(npr,npi,cer,cei,&t1r,&t1i);
+	               cmul_zmm16r4(fr,fi,t1r,t1i,&ir,&ii);
+	               *Epr = ir;
+	               *EPi = ii;                  
+	      }
 	     
 	     
 	     
