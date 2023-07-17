@@ -13328,7 +13328,21 @@ namespace gms {
 	                  width = C508*gamm/L;
 	                  return (width);                   
 	          }
-	      
+	          
+	          
+	          // Radiation-pattern first zero
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float zero_rp1_r4(const float gamm,
+	                             const float L) {
+	                             
+	                  constexpr float C5703 = 57.03f;
+	                  float width;
+	                  width = C5703*gamm/L;
+	                  return (width);             
+	         }
 	                                    
 	     
 	     
