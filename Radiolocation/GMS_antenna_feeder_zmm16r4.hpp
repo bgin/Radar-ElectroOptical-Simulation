@@ -13041,13 +13041,27 @@ namespace gms {
 	                                 float * __restrict __ATTR_ALIGN__(64) Eti,
 	                                 float * __restrict __ATTR_ALIGN__(64) Epr,
 	                                 float * __restrict __ATTR_ALIGN__(64) Epi) {
-	                               
+	                  
+	               register __m512 Netr,Neti;
+	               register __m512 Nmtr,Nmti;
+	               register __m512 Nepr,Nepi;
+	               register __m512 Nmpr,Nmpi;  
+	               register __m512 R;           
 	               register __m512 rat,invR;
 	               register __m512 ir,ii,vk,rat;
 	               register __m512 ear,eai;
 	               __m512 fr,fi,cer,cei;
 	               __m512 t0r,t0i,t1r,t1i;
 	               __m512 ntr,nti,npr,npi;
+	               Netr = _mm512_load_ps(&pNetr[0]);
+	               Neti = _mm512_load_ps(&pNeti[0]);
+	               Nmtr = _mm512_load_ps(&pNmtr[0]);
+	               Nmti = _mm512_load_ps(&pNmti[0]);
+	               Nepr = _mm512_load_ps(&pNepr[0]);
+	               Nepi = _mm512_load_ps(&pNepi[0]);
+	               Nmpr = _mm512_load_ps(&pNmpr[0]);
+	               Nmpi = _mm512_load_ps(&pNmpi[0]);
+	               R    = _mm512_load_ps(&pR[0]);
 	               float tmp;
 	               const __m512 C12566370614359172953850573533118 = 
 	                            _mm512_set1_ps(12.566370614359172953850573533118f);
@@ -13072,12 +13086,12 @@ namespace gms {
 	                             &ntr,&nti,&npr,&npi);
 	               cmul_zmm16r4(ntr,nti,cer,cei,&t0r,&t0i);
 	               cmul_zmm16r4(fr,fi,t0r,t0i,&ear,&eai);
-	               *Etr = ear;
-	               *Eti = eai;
+	               _mm512_store_ps(&Etr[0] ,ear);
+	               _mm512_store_ps(&Eti[0] ,eai);
 	               cmul_zmm16r4(npr,npi,cer,cei,&t1r,&t1i);
 	               cmul_zmm16r4(fr,fi,t1r,t1i,&ir,&ii);
-	               *Epr = ir;
-	               *EPi = ii;                  
+	               _mm512_store_ps(&Epr[0] ,ir);
+	               _mm512_store_ps(&EPi[0] ,ii);                  
 	      }
 	     
 	     
