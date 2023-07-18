@@ -13390,18 +13390,19 @@ namespace gms {
 	                 register __m512 L   = _mm512_load_ps(&pL[0]);
 	                 register __m512 M   = _mm512_load_ps(&pM[0]);
 	                 register __m512 tht = _mm512_load_ps(ptht[0]);
-	                 register __m512 C10 = _mm512_set1_ps(-1.0f);	                                 
+	                 register __m512 C314159265358979323846264338328 = 
+	                                       _mm512_set1_ps(3.14159265358979323846264338328f);                  
 	                 register __m512 M2,u,u2,Fth;
 	                 register __m512 vgam,stht,sqr;
-	                 register __m512 M = _mm512_load_ps(&pM[0]);
-	                 
+	                 M    = _mm512_mul_ps(M,M);
 	                 stht = xsinf(tht);
 	                 vgam = _mm512_set1_ps(gamm);  
 	                 u    = _mm512_mul_ps(
 	                              _mm512_div_ps(L,vgam),stht);    
 	                 u2   = _mm512_mul_ps(u,u);
 	                 sqr  = _mm512_sqrt_ps(_mm512_sub_ps(u2,M2));
-	                 Fth  = _mm512_mul_ps(C10,sqr);
+	                 Fth  = xcosf(_mm512_mul_ps(C314159265358979323846264338328,sqr));                                
+	                 
 	                 return (Fth);                
 	         }
 	         
