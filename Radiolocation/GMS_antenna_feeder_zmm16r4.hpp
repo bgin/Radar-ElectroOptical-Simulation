@@ -13343,6 +13343,37 @@ namespace gms {
 	                  width = C5703*gamm/L;
 	                  return (width);             
 	         }
+	         
+	         
+	         /*
+	             Formula 2-65, p. 51
+	             Linear antenna optimal 'radiation pattern'
+	             as function of psi, i.e 2x/L
+	         */
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 Fth_f265_zmm16r4(const __m512 L,
+	                                   const __m512 tht,
+	                                   const __m512 M,
+	                                   const float gamm) {
+	            
+	                 register __m512 C10 = _mm512_set1_ps(-1.0f);	                                 
+	                 register __m512 M2,u,u2,Fth;
+	                 register __m512 vgam,stht,sqr;
+	                 M    = _mm512_mul_ps(M,M);
+	                 stht = xsinf(tht);
+	                 vgam = _mm512_set1_ps(gamm);  
+	                 u    = _mm512_mul_ps(
+	                              _mm512_div_ps(L,vgam),stht);    
+	                 u2   = _mm512_mul_ps(u,u);
+	                 sqr  = _mm512_sqrt_ps(_mm512_sub_ps(u2,M2));
+	                 Fth  = _mm512_mul_ps(C10,sqr);
+	                 return (Fth);                
+	         }
 	                                    
 	     
 	     
