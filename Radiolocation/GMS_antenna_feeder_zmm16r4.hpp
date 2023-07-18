@@ -13403,6 +13403,35 @@ namespace gms {
 	                 Fth  = _mm512_mul_ps(C10,sqr);
 	                 return (Fth);                
 	         }
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512 Fth_f265_zmm16r4_u(const float * __restrict  pL,
+	                                   const float * __restrict  ptht,
+	                                   const float * __restrict   pM,
+	                                   const float gamm) {
+	            
+	                 register __m512 L   = _mm512_loadu_ps(&pL[0]);
+	                 register __m512 M   = _mm512_loadu_ps(&pM[0]);
+	                 register __m512 tht = _mm512_loadu_ps(ptht[0]);
+	                 register __m512 C10 = _mm512_set1_ps(-1.0f);	                                 
+	                 register __m512 M2,u,u2,Fth;
+	                 register __m512 vgam,stht,sqr;
+	                 register __m512 M = _mm512_load_ps(&pM[0]);
+	                 
+	                 stht = xsinf(tht);
+	                 vgam = _mm512_set1_ps(gamm);  
+	                 u    = _mm512_mul_ps(
+	                              _mm512_div_ps(L,vgam),stht);    
+	                 u2   = _mm512_mul_ps(u,u);
+	                 sqr  = _mm512_sqrt_ps(_mm512_sub_ps(u2,M2));
+	                 Fth  = _mm512_mul_ps(C10,sqr);
+	                 return (Fth);                
+	         }
 	                                    
 	     
 	     
