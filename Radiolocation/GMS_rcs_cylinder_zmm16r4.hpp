@@ -2531,7 +2531,7 @@ namespace gms {
                         t0i             = _mm512_add_ps(_1,t0i);
                         t3              = _mm512_div_ps(c0,t2);
                         t0r             = _mm512_add_ps(t3,t0r);
-                        t0i             = _mm512_add_ps(t3,t0i);
+                        t0i             = _mm512_setzero_ps();
                         cmul_zmm16r4(facr,faci,cer,cei,&cer1,&cei1);
                         cmul_zmm16r4(cer1,cei1,t0r,t0i,&resr,&resi);
                         _mm512_store_ps(&EOr[0],resr);
@@ -2585,7 +2585,7 @@ namespace gms {
                         t0i             = _mm512_add_ps(_1,t0i);
                         t3              = _mm512_div_ps(c0,t2);
                         t0r             = _mm512_add_ps(t3,t0r);
-                        t0i             = _mm512_add_ps(t3,t0i);
+                        t0i             = _mm512_setzero_ps();
                         cmul_zmm16r4(facr,faci,cer,cei,&cer1,&cei1);
                         cmul_zmm16r4(cer1,cei1,t0r,t0i,&resr,&resi);
                         _mm512_storeu_ps(&EOr[0],resr);
