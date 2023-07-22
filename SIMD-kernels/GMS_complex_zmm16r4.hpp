@@ -364,7 +364,7 @@ namespace  gms {
                                      __m512 * __restrict     zim) {
 
                         *zre = _mm512_sub_ps(xre,s);
-                        *zim = _mm512_sub_ps(xim,s);
+                        *zim = _mm512_setzero_ps();
                }
                
                
@@ -379,7 +379,7 @@ namespace  gms {
                                     
                         zmm16c4_t cv;
                         cv.re = _mm512_sub_ps(xre,s);
-                        cv.im = _mm512_sub_ps(xim,s);
+                        cv.im = _mm512_setzero_ps();
                         return (cv);
                }
                
