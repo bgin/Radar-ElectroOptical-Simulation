@@ -185,7 +185,7 @@ namespace  gms {
                       
                       zmm16c4_t cv;
                       cv.re =  _mm512_add_ps(xre,s);
-                      cv.im =  _mm512_add_ps(xim,s);
+                      cv.im =  _mm512_setzero_ps();
                       return (cv);                       
                 }
                 
