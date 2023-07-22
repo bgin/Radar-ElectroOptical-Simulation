@@ -1450,6 +1450,7 @@ namespace gms {
                         Formula 4.1-27 
 
                     */
+                    
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -2255,8 +2256,8 @@ namespace gms {
                         const  __m512 c0i  = _mm512_set1_ps(0.70028f);
                         sqr    = _mm512_sqrt_ps(sqr);
                         const  __m512 c1r  = _mm512_set1_ps(0.072732f);
-                        Etr    = _mm512_mul_ps(Er,sqr);// first complex term
-                        Eti    = _mm512_mul_ps(Ei,sqr);// first complex term
+                        Etr    = _mm512_mul_ps(Hr,sqr);// first complex term
+                        Eti    = _mm512_mul_ps(Hi,sqr);// first complex term
                         const  __m512 c1i  = _mm512_set1_ps(-0.1259755f);
                         const  __m512 _1   = _mm512_set1_ps(1.0f);
                         const  __m512 k0an23 = _mm512_pow_ps(k0a,
@@ -2478,7 +2479,7 @@ namespace gms {
                         t0i             = _mm512_add_ps(_1,t0i);
                         t3              = _mm512_div_ps(c0,t2);
                         t0r             = _mm512_add_ps(t3,t0r);
-                        t0i             = _mm512_add_ps(t3,t0i);
+                        t0i             = _mm512_setzero_ps();
                         cmul_zmm16r4(facr,faci,cer,cei,&cer1,&cei1);
                         cmul_zmm16r4(cer1,cei1,t0r,t0i,*EOr,*EOi);
                  }
