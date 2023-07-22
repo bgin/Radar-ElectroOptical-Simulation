@@ -54,6 +54,8 @@ namespace  gms {
                           __m512 re;
                           __m512 im;
                    };
+                   
+                   
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
@@ -168,7 +170,7 @@ namespace  gms {
                                      __m512 * __restrict     zim) {
 
                         *zre = _mm512_add_ps(xre,s);
-                        *zim = _mm512_add_ps(xim,s);
+                        *zim = _mm512_setzero_ps();
                }
                
                
