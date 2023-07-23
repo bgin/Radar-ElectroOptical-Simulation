@@ -5056,7 +5056,7 @@ namespace gms {
                          numr = _mm512_sub_ps(sqr2,sqr1);
                          denr = _mm512_add_ps(sqr2,sqr1);
                          numi = _mm512_sub_ps(sqi2,sqi1);
-                         deni = _mm512_setzero_ps();
+                         deni = _mm512_add_ps(sqi2,sqi1);
                          cdiv_zmm16r4(numr,numi,denr,deni,*Rinr,*Rini);
                  }
 
@@ -5097,7 +5097,7 @@ namespace gms {
                          numr = _mm512_sub_ps(sqr2,sqr1);
                          denr = _mm512_add_ps(sqr2,sqr1);
                          numi = _mm512_sub_ps(sqi2,sqi1);
-                         deni = _mm512_setzero_ps();
+                         deni = _mm512_add_ps(sqi2,sqi1);
                          cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
                          _mm512_store_ps(&Rinr[0], resr);
                          _mm512_store_ps(&Rini[0], resi);
@@ -5140,7 +5140,7 @@ namespace gms {
                          numr = _mm512_sub_ps(sqr2,sqr1);
                          denr = _mm512_add_ps(sqr2,sqr1);
                          numi = _mm512_sub_ps(sqi2,sqi1);
-                         deni = _mm512_setzero_ps();
+                         deni = _mm512_add_ps(sqi2,sqi1);
                          cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
                          _mm512_storeu_ps(&Rinr[0], resr);
                          _mm512_storeu_ps(&Rini[0], resi);
@@ -5299,7 +5299,7 @@ namespace gms {
                         difr = _mm512_sub_ps(sqr1,sqr2);
                         sumr = _mm512_add_ps(sqr1,sqr2);
                         difi = _mm512_sub_ps(sqi1,sqi2);
-                        sumi = _mm512_add_ps(sqi1,sqi2);
+                        sumi = _mm512_add_ps(sqi2,sqi1);
                         cdiv_zmm16r4(difr,difi,sumr,sumi,*Rexr,*Rexi);
                 }
 
