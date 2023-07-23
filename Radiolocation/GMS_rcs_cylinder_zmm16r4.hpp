@@ -6505,7 +6505,7 @@ namespace gms {
                           numr  = _mm512_mul_ps(divrs,_1ma);
                           numi  = _mm512_mul_ps(divis,_1ma);
                           t0r   = _mm512_add_ps(divr,_1);
-                          t0i   = _mm512_add_ps(divi,_1);
+                          t0i   = _mm512_setzero_ps();
                           cmul_zmm16r4(t0r,t0i,t0r,t0i,&sqpr,&sqpi);
                           t1r   = _mm512_sub_ps(divr,_1);
                           t1i   = _mm512_sub_ps(divi,_1);
@@ -6560,7 +6560,7 @@ namespace gms {
                           numr  = _mm512_mul_ps(divrs,_1ma);
                           numi  = _mm512_mul_ps(divis,_1ma);
                           t0r   = _mm512_add_ps(divr,_1);
-                          t0i   = _mm512_add_ps(divi,_1);
+                          t0i   = _mm512_setzero_ps();
                           cmul_zmm16r4(t0r,t0i,t0r,t0i,&sqpr,&sqpi);
                           t1r   = _mm512_sub_ps(divr,_1);
                           t1i   = _mm512_sub_ps(divi,_1);
@@ -6617,7 +6617,7 @@ namespace gms {
                           numr  = _mm512_mul_ps(divrs,_1ma);
                           numi  = _mm512_mul_ps(divis,_1ma);
                           t0r   = _mm512_add_ps(divr,_1);
-                          t0i   = _mm512_add_ps(divi,_1);
+                          t0i   = _mm512_setzero_ps();
                           cmul_zmm16r4(t0r,t0i,t0r,t0i,&sqpr,&sqpi);
                           t1r   = _mm512_sub_ps(divr,_1);
                           t1i   = _mm512_sub_ps(divi,_1);
