@@ -4799,7 +4799,7 @@ namespace gms {
                          numr = _mm512_mul_ps(_2,t1r);
                          denr = _mm512_add_ps(cosp,t1r);
                          numi = _mm512_mul_ps(_2,t1i);
-                         deni = _mm512_add_ps(cosp,t1i);
+                         deni = _mm512_setzero_ps();
                          cdiv_zmm16r4(numr,numi,denr,deni,*Toutr,*Touti);
                  }
 
@@ -4845,7 +4845,7 @@ namespace gms {
                          numr = _mm512_mul_ps(_2,t1r);
                          denr = _mm512_add_ps(cosp,t1r);
                          numi = _mm512_mul_ps(_2,t1i);
-                         deni = _mm512_add_ps(cosp,t1i);
+                         deni = _mm512_setzero_ps();
                          cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
                          _mm512_store_ps(&Toutr[0], resr);
                          _mm512_store_ps(&Touti[0], resi);
@@ -4892,7 +4892,7 @@ namespace gms {
                          numr = _mm512_mul_ps(_2,t1r);
                          denr = _mm512_add_ps(cosp,t1r);
                          numi = _mm512_mul_ps(_2,t1i);
-                         deni = _mm512_add_ps(cosp,t1i);
+                         deni = _mm512_setzero_ps();
                          cdiv_zmm16r4(numr,numi,denr,deni,&resr,&resi);
                          _mm512_storeu_ps(&Toutr[0], resr);
                          _mm512_storeu_ps(&Touti[0], resi);
@@ -4934,7 +4934,7 @@ namespace gms {
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm512_add_ps(cosp,denr);
-                         deni = _mm512_add_ps(cosp,deni);
+                         deni = _mm512_setzero_ps();
                          *Toutr = _mm512_div_ps(_2cosp,denr);
                          *Touti = _mm512_div_ps(_2cosp,deni);
                  }
@@ -4974,7 +4974,7 @@ namespace gms {
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm512_add_ps(cosp,denr);
-                         deni = _mm512_add_ps(cosp,deni);
+                         deni = _mm512_setzero_ps();
                          _mm512_store_ps(&Toutr[0] ,_mm512_div_ps(_2cosp,denr));
                          _mm512_store_ps(&Touti[0] ,_mm512_div_ps(_2cosp,deni));
                  }
@@ -5014,7 +5014,7 @@ namespace gms {
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm512_add_ps(cosp,denr);
-                         deni = _mm512_add_ps(cosp,deni);
+                         deni = _mm512_setzero_ps();
                          _mm512_storeu_ps(&Toutr[0] ,_mm512_div_ps(_2cosp,denr));
                          _mm512_storeu_ps(&Touti[0] ,_mm512_div_ps(_2cosp,deni));
                  }
