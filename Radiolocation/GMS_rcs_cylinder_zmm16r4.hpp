@@ -15162,7 +15162,7 @@ namespace gms {
                         sphit  = _mm512_mul_ps(sphi2,sphi1);
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         murpba = _mm512_add_ps(mur,ba);
-                        muipba = _mm512_add_ps(mui,ba);
+                        muipba = _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         murmba = _mm512_fmadd_ps(mur,ba,_1);
@@ -15228,7 +15228,7 @@ namespace gms {
                         sphit  = _mm512_mul_ps(sphi2,sphi1);
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         murpba = _mm512_add_ps(mur,ba);
-                        muipba = _mm512_add_ps(mui,ba);
+                        muipba = _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         murmba = _mm512_fmadd_ps(mur,ba,_1);
@@ -15293,7 +15293,7 @@ namespace gms {
                         sphit  = _mm512_mul_ps(sphi2,sphi1);
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
@@ -15359,7 +15359,7 @@ namespace gms {
                         sphit  = _mm512_mul_ps(sphi2,sphi1);
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
@@ -15425,7 +15425,7 @@ namespace gms {
                         sphit  = _mm512_mul_ps(sphi2,sphi1);
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
