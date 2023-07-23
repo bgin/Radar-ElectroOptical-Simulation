@@ -8934,9 +8934,9 @@ namespace gms {
                          epsrm1= _mm512_sub_ps(epsr,_1);
                          epsim1= _mm512_sub_ps(epsi,_1);
                          murp1 = _mm512_add_ps(mur,_1);
-                         muip1 = _mm512_add_ps(mui,_1);
+                         muip1 =_mm512_setzero_ps();
                          epsrp1= _mm512_add_ps(epsr,_1);
-                         epsip1= _mm512_add_ps(epsi,_1);
+                         epsip1= _mm512_setzero_ps();
                          cmul_zmm16r4(fracr,fraci,cer,cei,&t0r,&t0i);
                          mucsr = _mm512_mul_ps(murm1,cos2ps);
                          t0r = _mm512_mul_ps(e0u0,_mm512_div_ps(t0r,sk0r));
@@ -9006,9 +9006,9 @@ namespace gms {
                          cmul_zmm16r4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm512_mul_ps(sinps,sinph);
                          murp1 = _mm512_add_ps(mur,_1);
-                         epsrp1= _mm512_add_ps(epsr,_1);
+                         epsrp1= _mm512_setzero_ps();
                          muip1 = _mm512_add_ps(mui,_1);
-                         epsip1= _mm512_add_ps(epsi,_1);
+                         epsip1= _mm512_setzero_ps();
                          cmul_zmm16r4(epsr,epsi,mur,mui,&mul1r,&mul1i);
                          mul1r = _mm512_sub_ps(mul1r,_1);
                          t0r   = _mm512_mul_ps(s2pi,_mm512_div_ps(fracr,scpk0r));
@@ -9071,9 +9071,9 @@ namespace gms {
                          cmul_zmm16r4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm512_mul_ps(sinps,sinph);
                          murp1 = _mm512_add_ps(mur,_1);
-                         epsrp1= _mm512_add_ps(epsr,_1);
+                         epsrp1= _mm512_setzero_ps();
                          muip1 = _mm512_add_ps(mui,_1);
-                         epsip1= _mm512_add_ps(epsi,_1);
+                         epsip1= _mm512_setzero_ps();
                          cmul_zmm16r4(epsr,epsi,mur,mui,&mul1r,&mul1i);
                          mul1r = _mm512_sub_ps(mul1r,_1);
                          t0r   = _mm512_mul_ps(s2pi,_mm512_div_ps(fracr,scpk0r));
@@ -9138,9 +9138,9 @@ namespace gms {
                          cmul_zmm16r4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm512_mul_ps(sinps,sinph);
                          murp1 = _mm512_add_ps(mur,_1);
-                         epsrp1= _mm512_add_ps(epsr,_1);
+                         epsrp1= _mm512_setzero_ps();
                          muip1 = _mm512_add_ps(mui,_1);
-                         epsip1= _mm512_add_ps(epsi,_1);
+                         epsip1= _mm512_setzero_ps();
                          cmul_zmm16r4(epsr,epsi,mur,mui,&mul1r,&mul1i);
                          mul1r = _mm512_sub_ps(mul1r,_1);
                          t0r   = _mm512_mul_ps(s2pi,_mm512_div_ps(fracr,scpk0r));
