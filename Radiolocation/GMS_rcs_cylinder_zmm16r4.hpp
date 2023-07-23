@@ -9593,7 +9593,7 @@ namespace gms {
                          cosps  = xcosf(psi);
                          epsrp1 = _mm512_add_ps(epsr,_1);
                          cos2ps = _mm512_mul_ps(cosps,cosps);
-                         epsip1 = _mm512_add_ps(epsi,_1);
+                         epsip1 = _mm512_setzero_ps();
                          sinps  = xsinf(ps);
                          murm1  = _mm512_sub_ps(mur,_1);
                          sin2ps = _mm512_mul_ps(sinps,sinps);
@@ -9601,7 +9601,7 @@ namespace gms {
                          cosp   = xcosf(phi);
                          murp1  = _mm512_add_ps(mur,_1);
                          t0     = _mm512_mul_ps(_4,cos2ps);
-                         muip1  = _mm512_add_ps(mui,_1);
+                         muip1  = _mm512_setzero_ps();
                          frac   = _mm512_div_ps(spia,t0);
                          murcps= _mm512_mul_ps(murm1,cos2ps);
                          frac   = _mm512_mul_ps(frac,k0a03);
@@ -9658,7 +9658,7 @@ namespace gms {
                          cosps  = xcosf(psi);
                          epsrp1 = _mm512_add_ps(epsr,_1);
                          cos2ps = _mm512_mul_ps(cosps,cosps);
-                         epsip1 = _mm512_add_ps(epsi,_1);
+                         epsip1 = _mm512_setzero_ps();
                          sinps  = xsinf(ps);
                          murm1  = _mm512_sub_ps(mur,_1);
                          sin2ps = _mm512_mul_ps(sinps,sinps);
@@ -9666,7 +9666,7 @@ namespace gms {
                          cosp   = xcosf(phi);
                          murp1  = _mm512_add_ps(mur,_1);
                          t0     = _mm512_mul_ps(_4,cos2ps);
-                         muip1  = _mm512_add_ps(mui,_1);
+                         muip1  = _mm512_setzero_ps();
                          frac   = _mm512_div_ps(spia,t0);
                          murcps= _mm512_mul_ps(murm1,cos2ps);
                          frac   = _mm512_mul_ps(frac,k0a03);
@@ -9723,7 +9723,7 @@ namespace gms {
                          cosps  = xcosf(psi);
                          epsrp1 = _mm512_add_ps(epsr,_1);
                          cos2ps = _mm512_mul_ps(cosps,cosps);
-                         epsip1 = _mm512_add_ps(epsi,_1);
+                         epsip1 = _mm512_setzero_ps();
                          sinps  = xsinf(ps);
                          murm1  = _mm512_sub_ps(mur,_1);
                          sin2ps = _mm512_mul_ps(sinps,sinps);
@@ -9731,7 +9731,7 @@ namespace gms {
                          cosp   = xcosf(phi);
                          murp1  = _mm512_add_ps(mur,_1);
                          t0     = _mm512_mul_ps(_4,cos2ps);
-                         muip1  = _mm512_add_ps(mui,_1);
+                         muip1  = _mm512_setzero_ps();
                          frac   = _mm512_div_ps(spia,t0);
                          murcps= _mm512_mul_ps(murm1,cos2ps);
                          frac   = _mm512_mul_ps(frac,k0a03);
