@@ -1699,7 +1699,7 @@ namespace gms {
                         cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
-                        t2i    = _mm512_add_ps(t2i,t5);
+                        t2i    = _mm512_setzero_ps();
                         cmul_zmm16r4(exr,exi,t2r,t2i,&t0r,&t0i);
                         _mm512_store_ps(&EOr[0], t0r);
                         _mm512_store_ps(&EOi[0], t0i);
@@ -1769,7 +1769,7 @@ namespace gms {
                         cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
-                        t2i    = _mm512_add_ps(t2i,t5);
+                        t2i    = _mm512_setzero_ps();
                         cmul_zmm16r4(exr,exi,t2r,t2i,&t0r,&t0i);
                         _mm512_storeu_ps(&EOr[0], t0r);
                         _mm512_storeu_ps(&EOi[0], t0i);
@@ -1840,7 +1840,7 @@ namespace gms {
                         cmul_zmm16r4(Hr,Hi,t1r,t1i,&hxr,&hxi);
                         t5     = _mm512_mul_ps(t4,_mm512_sub_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
-                        t2i    = _mm512_add_ps(t2i,t5);
+                        t2i    = _mm512_setzero_ps();
                         cmul_zmm16r4(hxr,hxi,t2r,t2i,&t0r,&t0i);
                         *HOr = t0r;
                         *HOi = t0i;
@@ -1910,7 +1910,7 @@ namespace gms {
                         cmul_zmm16r4(Hr,Hi,t1r,t1i,&hxr,&hxi);
                         t5     = _mm512_mul_ps(t4,_mm512_sub_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
-                        t2i    = _mm512_add_ps(t2i,t5);
+                        t2i    = _mm512_setzero_ps();
                         cmul_zmm16r4(hxr,hxi,t2r,t2i,&t0r,&t0i);
                         _mm512_store_ps(&HOr[0], t0r);
                         _mm512_store_ps(&HOi[0], t0i);
@@ -1980,7 +1980,7 @@ namespace gms {
                         cmul_zmm16r4(Hr,Hi,t1r,t1i,&hxr,&hxi);
                         t5     = _mm512_mul_ps(t4,_mm512_sub_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
-                        t2i    = _mm512_add_ps(t2i,t5);
+                        t2i    = _mm512_setzero_ps();
                         cmul_zmm16r4(hxr,hxi,t2r,t2i,&t0r,&t0i);
                         _mm512_storeu_ps(&HOr[0], t0r);
                         _mm512_storeu_ps(&HOi[0], t0i);
