@@ -7904,14 +7904,14 @@ namespace gms {
                         epsrp1 = _mm512_add_ps(epsr,_1);
                         ear    = Ir;
                         rat    = _mm512_sqrt_ps(e0u0);
-                        epsip1 = _mm512_add_ps(epsi,_1)
+                        epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
                         scosps = _mm512_sqrt_ps(cosps);
                         epsim1 = _mm512_sub_ps(epsi,_1)
                         sinps= xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         cos2ps= _mm512_mul_ps(cosps,cosps);
                         murm1  = _mm512_sub_ps(mur,_1);
                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
@@ -7999,14 +7999,14 @@ namespace gms {
                         epsrp1 = _mm512_add_ps(epsr,_1);
                         ear    = Ir;
                         rat    = _mm512_sqrt_ps(e0u0);
-                        epsip1 = _mm512_add_ps(epsi,_1)
+                        epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
                         scosps = _mm512_sqrt_ps(cosps);
                         epsim1 = _mm512_sub_ps(epsi,_1)
                         sinps= xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         cos2ps= _mm512_mul_ps(cosps,cosps);
                         murm1  = _mm512_sub_ps(mur,_1);
                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
@@ -8084,10 +8084,10 @@ namespace gms {
                         emum1r = _mm512_sub_ps(emum1r,_1);
                         emum1i = _mm512_sub_ps(emum1i,_1);
                         epsp1r = _mm512_add_ps(epsr,_1);
-                        epsp1i = _mm512_add_ps(epsi,_1);
+                        epsp1i = _mm512_setzero_ps();
                         sinps  = xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         sinp   = xsinf(psi);
                         cosps  = xcosf(psi);
                         t0     = _mm512_fmadd_ps(k0z,sinps,_mm512_fmsub_ps(k0r,cosp,pi4));
@@ -8152,10 +8152,10 @@ namespace gms {
                         emum1r = _mm512_sub_ps(emum1r,_1);
                         emum1i = _mm512_sub_ps(emum1i,_1);
                         epsp1r = _mm512_add_ps(epsr,_1);
-                        epsp1i = _mm512_add_ps(epsi,_1);
+                        epsp1i = _mm512_setzero_ps();
                         sinps  = xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         sinp   = xsinf(psi);
                         cosps  = xcosf(psi);
                         t0     = _mm512_fmadd_ps(k0z,sinps,_mm512_fmsub_ps(k0r,cosp,pi4));
