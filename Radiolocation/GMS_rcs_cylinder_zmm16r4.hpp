@@ -15495,7 +15495,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         murpba = _mm512_add_ps(mur,ba);
-                        muipba = _mm512_add_ps(mui,ba);
+                        muipba = _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         murmba = _mm512_fmadd_ps(mur,ba,_1);
@@ -15565,7 +15565,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         murpba = _mm512_add_ps(mur,ba);
-                        muipba = _mm512_add_ps(mui,ba);
+                        muipba = _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         murmba = _mm512_fmadd_ps(mur,ba,_1);
@@ -15635,7 +15635,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         murpba = _mm512_add_ps(mur,ba);
-                        muipba = _mm512_add_ps(mui,ba);
+                        muipba = _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         murmba = _mm512_fmadd_ps(mur,ba,_1);
