@@ -4543,11 +4543,11 @@ namespace gms {
                         t0i = _mm512_div_ps(t1,muli);
                         csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm512_add_ps(sqr1,sqr1);
-                        t2i = _mm512_add_ps(sqi1,sqi1);
+                        t2i = _mm512_setzero_ps();
                         cmul_zmm16r4(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
                         cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&t3r,&t3i); // denum
                         t3r = _mm512_add_ps(cosp,t3r);
-                        t3i = _mm512_add_ps(cosp,t3i);
+                        t3i = _mm512_setzero_ps();
                         cdiv_zmm16r4(t1r,t1i,t3r,t3i,*Tinr,*Tini);
                   }
 
@@ -4586,11 +4586,11 @@ namespace gms {
                         t0i = _mm512_div_ps(t1,muli);
                         csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm512_add_ps(sqr1,sqr1);
-                        t2i = _mm512_add_ps(sqi1,sqi1);
+                        t2i = _mm512_setzero_ps();
                         cmul_zmm16r4(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
                         cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&t3r,&t3i); // denum
                         t3r = _mm512_add_ps(cosp,t3r);
-                        t3i = _mm512_add_ps(cosp,t3i);
+                        t3i = _mm512_setzero_ps();
                         cdiv_zmm16r4(t1r,t1i,t3r,t3i,&resr,&resi);
                         _mm512_store_ps(&Tinr[0], resr);
                         _mm512_store_ps(&Tini[0], resi);
@@ -4631,11 +4631,11 @@ namespace gms {
                         t0i = _mm512_div_ps(t1,muli);
                         csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm512_add_ps(sqr1,sqr1);
-                        t2i = _mm512_add_ps(sqi1,sqi1);
+                        t2i = _mm512_setzero_ps();
                         cmul_zmm16r4(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
                         cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&t3r,&t3i); // denum
                         t3r = _mm512_add_ps(cosp,t3r);
-                        t3i = _mm512_add_ps(cosp,t3i);
+                        t3i = _mm512_setzero_ps();
                         cdiv_zmm16r4(t1r,t1i,t3r,t3i,&resr,&resi);
                         _mm512_storeu_ps(&Tinr[0], resr);
                         _mm512_storeu_ps(&Tini[0], resi);
