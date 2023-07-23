@@ -1629,7 +1629,7 @@ namespace gms {
                         cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
-                        t2i    = _mm512_add_ps(t2i,t5);
+                        t2i    = _mm512_setzero_ps();
                         cmul_zmm16r4(exr,exi,t2r,t2i,&t0r,&t0i);
                         *EOr = t0r;
                         *EOi = t0i;
