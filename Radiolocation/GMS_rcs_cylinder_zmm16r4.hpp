@@ -7633,14 +7633,14 @@ namespace gms {
                         k0a02= _mm512_mul_ps(hlf,_mm512_mul_ps(k0a0,k0a0));
                         epsrp1 = _mm512_add_ps(epsr,_1);
                         ear    = Ir;
-                        epsip1 = _mm512_add_ps(epsi,_1)
+                        epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
                         scosps = _mm512_sqrt_ps(cosps);
                         epsim1 = _mm512_sub_ps(epsi,_1)
                         sinps= xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         cos2ps= _mm512_mul_ps(cosps,cosps);
                         murm1  = _mm512_sub_ps(mur,_1);
                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
@@ -7721,14 +7721,14 @@ namespace gms {
                         k0a02= _mm512_mul_ps(hlf,_mm512_mul_ps(k0a0,k0a0));
                         epsrp1 = _mm512_add_ps(epsr,_1);
                         ear    = Ir;
-                        epsip1 = _mm512_add_ps(epsi,_1)
+                        epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
                         scosps = _mm512_sqrt_ps(cosps);
                         epsim1 = _mm512_sub_ps(epsi,_1)
                         sinps= xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         cos2ps= _mm512_mul_ps(cosps,cosps);
                         murm1  = _mm512_sub_ps(mur,_1);
                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
@@ -7810,14 +7810,14 @@ namespace gms {
                         epsrp1 = _mm512_add_ps(epsr,_1);
                         ear    = Ir;
                         rat    = _mm512_sqrt_ps(e0u0);
-                        epsip1 = _mm512_add_ps(epsi,_1)
+                        epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
                         scosps = _mm512_sqrt_ps(cosps);
                         epsim1 = _mm512_sub_ps(epsi,_1)
                         sinps= xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         cos2ps= _mm512_mul_ps(cosps,cosps);
                         murm1  = _mm512_sub_ps(mur,_1);
                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
