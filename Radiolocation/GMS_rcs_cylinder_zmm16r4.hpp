@@ -16250,7 +16250,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphi1s,murpba);
                         t1i    = _mm512_div_ps(cphi1s,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
