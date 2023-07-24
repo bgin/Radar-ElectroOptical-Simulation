@@ -5029,7 +5029,8 @@ namespace gms {
                                            const __m512 psi,
                                            __m512 * __restrict Rinr,
                                            __m512 * __restrict Rini) {
-
+                         
+                         using namespace gms::math;
                          register __m512 cosp,sinp,sin2p,divr,divi;
                          register __m512 mulr,muli,denr,deni,numr,numi;
                          register __m512 sqr1,sqi1,sqr2,sqi2,t0r,t0i;
@@ -5039,8 +5040,11 @@ namespace gms {
                          sin2p= _mm512_add_ps(sinp,sinp);
                          cdiv_zmm16r4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
-                         t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
-                         t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                        // t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
+                        // t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                         cdiv_zmm16r4_s(sin2p,mulr,muli,&t0r,&t0i);
+                         t0r = _mm512_sub_ps(_1,t0r);
+                         t0i = negate_zmm16r4(t0i);
                          csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm512_mul_ps(cosp,sqr2);
@@ -5066,6 +5070,7 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(64) Rinr,
                                              float * __restrict __ATTR_ALIGN__(64) Rini) {
 
+                         using namespace gms::math;
                          register __m512 mur  = _mm512_load_ps(&pmur[0]);
                          register __m512 mui  = _mm512_load_ps(&pmui[0]);
                          register __m512 epsr = _mm512_load_ps(&pepsr[0]);
@@ -5080,8 +5085,11 @@ namespace gms {
                          sin2p= _mm512_add_ps(sinp,sinp);
                          cdiv_zmm16r4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
-                         t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
-                         t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                         //t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
+                         //t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                         cdiv_zmm16r4_s(sin2p,mulr,muli,&t0r,&t0i);
+                         t0r = _mm512_sub_ps(_1,t0r);
+                         t0i = negate_zmm16r4(t0i);
                          csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm512_mul_ps(cosp,sqr2);
@@ -5109,6 +5117,7 @@ namespace gms {
                                              float * __restrict  Rinr,
                                              float * __restrict  Rini) {
 
+                         using namespace gms::math;
                          register __m512 mur  = _mm512_loadu_ps(&pmur[0]);
                          register __m512 mui  = _mm512_loadu_ps(&pmui[0]);
                          register __m512 epsr = _mm512_loadu_ps(&pepsr[0]);
@@ -5123,8 +5132,11 @@ namespace gms {
                          sin2p= _mm512_add_ps(sinp,sinp);
                          cdiv_zmm16r4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
-                         t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
-                         t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                         //t0r = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,mulr));
+                         //t0i = _mm512_sub_ps(_1,_mm512_div_ps(sin2p,muli));
+                         cdiv_zmm16r4_s(sin2p,mulr,muli,&t0r,&t0i);
+                         t0r = _mm512_sub_ps(_1,t0r);
+                         t0i = negate_zmm16r4(t0i);
                          csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm512_mul_ps(cosp,sqr2);
