@@ -15101,17 +15101,16 @@ namespace gms {
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         murpba = _mm512_add_ps(mur,ba);
                         muipba = _mm512_setzero_ps();
-                        t1r    = _mm512_div_ps(cphit,murpba);
-                        t1i    = _mm512_div_ps(cphit,muipba);
-                        murmba = _mm512_fmadd_ps(mur,ba,_1);
-                        muimba = _mm512_fmadd_ps(mui,ba,_1);
-                        t2r    = _mm512_div_ps(sphit,murmba);
-                        t2i    = _mm512_div_ps(sphit,muimba);
+                        cdiv_zmm16r4_s(cphit,murpba,muipba,&t0r,&t0i);
+                        murmba   = _mm512_add_ps(_mm512_mul_ps(mur,ba),_1);
+                        muimba   = _mm512_mul_ps(mui,ba);
+                        cdiv_zmm16r4_s(sphit,murmba,muimba,&t2r,&t2i);
                         t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
                         t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
                         cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        *TMr   = _mm512_mul_ps(facr,tmpr);
-                        *TMi   = _mm512_mul_ps(faci,tmpi);
+                        cmul_zmm16r4(facr,faci,tmpr,tmpi,&mur,&mui);
+                        *TMr = mur;
+                        *TMi = mui;
                 }
 
 
@@ -15167,17 +15166,16 @@ namespace gms {
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         murpba = _mm512_add_ps(mur,ba);
                         muipba = _mm512_setzero_ps();
-                        t1r    = _mm512_div_ps(cphit,murpba);
-                        t1i    = _mm512_div_ps(cphit,muipba);
-                        murmba = _mm512_fmadd_ps(mur,ba,_1);
-                        muimba = _mm512_fmadd_ps(mui,ba,_1);
-                        t2r    = _mm512_div_ps(sphit,murmba);
-                        t2i    = _mm512_div_ps(sphit,muimba);
+                        cdiv_zmm16r4_s(cphit,murpba,muipba,&t0r,&t0i);
+                        murmba   = _mm512_add_ps(_mm512_mul_ps(mur,ba),_1);
+                        muimba   = _mm512_mul_ps(mui,ba);
+                        cdiv_zmm16r4_s(sphit,murmba,muimba,&t2r,&t2i);
                         t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
                         t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
                         cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        _mm512_store_ps(&TMr[0]  ,_mm512_mul_ps(facr,tmpr));
-                        _mm512_store_ps(&TMi[0]  ,_mm512_mul_ps(faci,tmpi));
+                        cmul_zmm16r4(facr,faci,tmpr,tmpi,&mur,&mui);
+                        _mm512_store_ps(&TMr[0], mur);
+                        _mm512_store_ps(&TMi[0], mui);
                 }
 
 
@@ -15233,17 +15231,16 @@ namespace gms {
                         faci   = _mm512_mul_ps(pi4,_mm512_mul_ps(k0a2,ba));
                         murpba = _mm512_add_ps(mur,ba);
                         muipba = _mm512_setzero_ps();
-                        t1r    = _mm512_div_ps(cphit,murpba);
-                        t1i    = _mm512_div_ps(cphit,muipba);
-                        murmba = _mm512_fmadd_ps(mur,ba,_1);
-                        muimba = _mm512_fmadd_ps(mui,ba,_1);
-                        t2r    = _mm512_div_ps(sphit,murmba);
-                        t2i    = _mm512_div_ps(sphit,muimba);
+                        cdiv_zmm16r4_s(cphit,murpba,muipba,&t0r,&t0i);
+                        murmba   = _mm512_add_ps(_mm512_mul_ps(mur,ba),_1);
+                        muimba   = _mm512_mul_ps(mui,ba);
+                        cdiv_zmm16r4_s(sphit,murmba,muimba,&t2r,&t2i);
                         t3r    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1r,t2r));
                         t3i    = _mm512_mul_ps(_1ba,_mm512_add_ps(t1i,t2i));
                         cmul_zmm16r4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        _mm512_storeu_ps(&TMr[0]  ,_mm512_mul_ps(facr,tmpr));
-                        _mm512_storeu_ps(&TMi[0]  ,_mm512_mul_ps(faci,tmpi));
+                        cmul_zmm16r4(facr,faci,tmpr,tmpi,&mur,&mui);
+                        _mm512_storeu_ps(&TMr[0], mur);
+                        _mm512_storeu_ps(&TMi[0], mui);
                 }
 
 
