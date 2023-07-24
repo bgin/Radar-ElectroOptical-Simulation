@@ -1624,8 +1624,7 @@ namespace gms {
                         t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
                         t2r    = Ir;
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
-                        t2r    = c6;
-                        t2i    = _mm512_add_ps(c6,t2i);
+                        t2r    = _mm512_add_ps(c6,t2r);
                         cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
@@ -1694,8 +1693,7 @@ namespace gms {
                         t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
                         t2r    = Ir;
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
-                        t2r    = c6;
-                        t2i    = _mm512_add_ps(c6,t2i);
+                        t2r    = _mm512_add_ps(c6,t2r);
                         cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
@@ -1764,8 +1762,7 @@ namespace gms {
                         t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
                         t2r    = Ir;
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
-                        t2r    = c6;
-                        t2i    = _mm512_add_ps(c6,t2i);
+                        t2r    = _mm512_add_ps(c6,t2r);
                         cmul_zmm16r4(Er,Ei,t1r,t1i,&exr,&exi);
                         t5     = _mm512_mul_ps(t4,_mm512_add_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
@@ -15707,7 +15704,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
@@ -15777,7 +15774,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
@@ -15848,7 +15845,7 @@ namespace gms {
                         fac    = _mm512_mul_ps(_mm512_mul_ps(pia,pi4),
                                                _mm512_mul_ps(k0a3,b2a2));
                         epsrpba= _mm512_add_ps(epsr,ba);
-                        epsipba= _mm512_add_ps(epsi,ba);
+                        epsipba= _mm512_setzero_ps();
                         t1r    = _mm512_div_ps(cphit,murpba);
                         t1i    = _mm512_div_ps(cphit,muipba);
                         epsrmba= _mm512_fmadd_ps(epsr,ba,_1);
