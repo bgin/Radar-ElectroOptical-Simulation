@@ -4618,8 +4618,9 @@ namespace gms {
                         t1   = _mm512_sub_ps(_1,sin2p);
                         cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                         csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
-                        t0r = _mm512_div_ps(t1,mulr);
-                        t0i = _mm512_div_ps(t1,muli);
+                        //t0r = _mm512_div_ps(t1,mulr);
+                        //t0i = _mm512_div_ps(t1,muli);
+                        cdiv_zmm16r4_s(t1,mulr,muli,&t0r,&t0i);
                         csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm512_add_ps(sqr1,sqr1);
                         t2i = _mm512_setzero_ps();
@@ -4663,8 +4664,7 @@ namespace gms {
                          _1msp  = _mm512_sub_ps(_1,sin2p);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
-                         t0r = _mm512_div_ps(_1msp,mulr);
-                         t0i = _mm512_div_ps(_1msp,muli);
+                         cdiv_zmm16r4_s(_1msp,mulr,muli,&t0r,&t0i);
                          csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                          *Tinr = _mm512_fmadd_ps(sqr1,sqr2,cosp);
@@ -4702,8 +4702,7 @@ namespace gms {
                          _1msp  = _mm512_sub_ps(_1,sin2p);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
-                         t0r = _mm512_div_ps(_1msp,mulr);
-                         t0i = _mm512_div_ps(_1msp,muli);
+                         cdiv_zmm16r4_s(_1msp,mulr,muli,&t0r,&t0i);
                          csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                          _mm512_store_ps(&Tinr[0] ,_mm512_fmadd_ps(sqr1,sqr2,cosp));
@@ -4741,8 +4740,7 @@ namespace gms {
                          _1msp  = _mm512_sub_ps(_1,sin2p);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
-                         t0r = _mm512_div_ps(_1msp,mulr);
-                         t0i = _mm512_div_ps(_1msp,muli);
+                         cdiv_zmm16r4_s(_1msp,mulr,muli,&t0r,&t0i);
                          csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                          _mm512_storeu_ps(&Tinr[0] ,_mm512_fmadd_ps(sqr1,sqr2,cosp));
