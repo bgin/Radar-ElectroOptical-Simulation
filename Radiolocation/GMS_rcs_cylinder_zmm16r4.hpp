@@ -1832,8 +1832,7 @@ namespace gms {
                         t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
                         t2r    = Ir;
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
-                        t2r    = c6;
-                        t2i    = _mm512_sub_ps(c6,t2i);
+                        t2r    = _mm512_sub_ps(c6,t2r);
                         cmul_zmm16r4(Hr,Hi,t1r,t1i,&hxr,&hxi);
                         t5     = _mm512_mul_ps(t4,_mm512_sub_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
@@ -1902,8 +1901,7 @@ namespace gms {
                         t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
                         t2r    = Ir;
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
-                        t2r    = c6;
-                        t2i    = _mm512_sub_ps(c6,t2i);
+                        t2r    = _mm512_sub_ps(c6,t2r);
                         cmul_zmm16r4(Hr,Hi,t1r,t1i,&hxr,&hxi);
                         t5     = _mm512_mul_ps(t4,_mm512_sub_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
