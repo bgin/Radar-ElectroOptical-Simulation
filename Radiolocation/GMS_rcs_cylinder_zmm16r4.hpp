@@ -1970,8 +1970,7 @@ namespace gms {
                         t0     = _mm512_div_ps(c5,cos4f2);// t0 taken
                         t2r    = Ir;
                         t2i    = _mm512_div_ps(Ii,_mm512_mul_ps(_2k0a,cosf2));
-                        t2r    = c6;
-                        t2i    = _mm512_sub_ps(c6,t2i);
+                        t2r    = _mm512_sub_ps(c6,t2r);
                         cmul_zmm16r4(Hr,Hi,t1r,t1i,&hxr,&hxi);
                         t5     = _mm512_mul_ps(t4,_mm512_sub_ps(t2,t0));//taken t5
                         t2r    = _mm512_add_ps(t2r,t5);
@@ -2468,10 +2467,10 @@ namespace gms {
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(_16,k0a);
                         t2              = _mm512_mul_ps(c1,k0as);
-                        t0r             = Ir;
-                        t0i             = _mm512_div_ps(_5,t1);
-                        t0r             = _1;
-                        t0i             = _mm512_add_ps(_1,t0i);
+                        t0r             = _mm512_div_ps(_5,t1);
+                        t0i             = Ir;
+                        t0r             = _mm512_add_ps(_1,t0r);
+                        //t0i             = ;
                         t3              = _mm512_div_ps(c0,t2);
                         t0r             = _mm512_add_ps(t3,t0r);
                         t0i             = _mm512_setzero_ps();
@@ -2520,10 +2519,9 @@ namespace gms {
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(_16,k0a);
                         t2              = _mm512_mul_ps(c1,k0as);
-                        t0r             = Ir;
-                        t0i             = _mm512_div_ps(_5,t1);
-                        t0r             = _1;
-                        t0i             = _mm512_add_ps(_1,t0i);
+                        t0r             = _mm512_div_ps(_5,t1);
+                        t0i             = Ir;
+                        t0r             = mm512_add_ps(_1,t0r);
                         t3              = _mm512_div_ps(c0,t2);
                         t0r             = _mm512_add_ps(t3,t0r);
                         t0i             = _mm512_setzero_ps();
@@ -2574,10 +2572,9 @@ namespace gms {
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(_16,k0a);
                         t2              = _mm512_mul_ps(c1,k0as);
-                        t0r             = Ir;
-                        t0i             = _mm512_div_ps(_5,t1);
-                        t0r             = _1;
-                        t0i             = _mm512_add_ps(_1,t0i);
+                        t0r             = _mm512_div_ps(_5,t1);
+                        t0i             = Ir;
+                        t0r             = mm512_add_ps(_1,t0r);
                         t3              = _mm512_div_ps(c0,t2);
                         t0r             = _mm512_add_ps(t3,t0r);
                         t0i             = _mm512_setzero_ps();
