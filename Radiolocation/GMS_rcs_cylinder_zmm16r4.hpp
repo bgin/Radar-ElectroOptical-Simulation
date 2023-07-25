@@ -2442,6 +2442,7 @@ namespace gms {
                                          const __m512 Ei,
                                          const __m512 a,
                                          const __m512 r,
+                                         const __m512 k0,
                                          const __m512 k0a,
                                          __m512 * __restrict EOr,
                                          __m512 * __restrict EOi) {
@@ -2601,6 +2602,7 @@ namespace gms {
                                          const __m512 Hi,
                                          const __m512 a,
                                          const __m512 r,
+                                         const __m512 k0,
                                          const __m512 k0a,
                                          __m512 * __restrict HOr,
                                          __m512 * __restrict HOi) {
@@ -2621,8 +2623,8 @@ namespace gms {
                         k0as            = _mm512_mul_ps(k0a,k0a);
                         t1              = _mm512_div_ps(a,_2r);
                         t2              = _mm512_sqrt_ps(t1);
-                        facr            = _mm512_mul_ps(Er,t2);
-                        faci            = _mm512_mul_ps(Ei,t2);
+                        facr            = _mm512_mul_ps(Hr,t2);
+                        faci            = _mm512_mul_ps(Hi,t2);
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(_16,k0a);
                         t2              = _mm512_mul_ps(c1,k0as);
@@ -2646,6 +2648,7 @@ namespace gms {
                                            const float * __restrict __ATTR_ALIGN__(64) pHi,
                                            const float * __restrict __ATTR_ALIGN__(64) pa,
                                            const float * __restrict __ATTR_ALIGN__(64) pr,
+                                            const float * __restrict __ATTR_ALIGN__(64) pk0,
                                            const float * __restrict __ATTR_ALIGN__(64) pk0a,
                                            float * __restrict __ATTR_ALIGN__(64) HOr,
                                            float * __restrict __ATTR_ALIGN__(64) HOi) {
@@ -2654,6 +2657,7 @@ namespace gms {
                         register __m512 Hi = _mm512_load_ps(&pHi[0]);
                         register __m512 a  = _mm512_load_ps(&pa[0]);
                         register __m512 r  = _mm512_load_ps(&pr[0]);
+                        register __m512 k0 = _mm512_load_ps(&pk0[0]);
                         register __m512 k0a= _mm512_load_ps(&pk0a[0]);
                         register __m512 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i,resr,resi;
                         register __m512 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
@@ -2698,6 +2702,7 @@ namespace gms {
                                            const float * __restrict  pHi,
                                            const float * __restrict  pa,
                                            const float * __restrict  pr,
+                                           const float * __restrict  pk0 
                                            const float * __restrict  pk0a,
                                            float * __restrict  HOr,
                                            float * __restrict  HOi) {
@@ -2706,6 +2711,7 @@ namespace gms {
                         register __m512 Hi = _mm512_loadu_ps(&pHi[0]);
                         register __m512 a  = _mm512_loadu_ps(&pa[0]);
                         register __m512 r  = _mm512_loadu_ps(&pr[0]);
+                        register __m512 k0 = _mm512_loadu_ps(&pk0[0]);
                         register __m512 k0a= _mm512_loadu_ps(&pk0a[0]);
                         register __m512 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i,resr,resi;
                         register __m512 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
