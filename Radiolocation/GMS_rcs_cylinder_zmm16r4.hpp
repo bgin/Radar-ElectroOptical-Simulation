@@ -3302,7 +3302,7 @@ namespace gms {
                                          __m512 * __restrict Esr,
                                          __m512 * __restrict Esi) {
 
-                        register __m512 _2k0as,k0r,k0alp,sinc,pir,div;
+                        register __m512 _2k0as,k0r,k0alp,sinc,div;
                         register __m512 facr,faci,arr,ari,t0r,t0i,t0;
                         register __m512 cer,cei;
                         const __m512 _2  = _mm512_set1_ps(2.0f);
@@ -3311,8 +3311,8 @@ namespace gms {
                         k0r    = _mm512_mul_ps(k0,r);
                         k0alp  = _mm512_mul_ps(k0a,alp);
                         t0     = xsinf(k0alp);
-                        arr    = Ir;
-                        ari    = _mm512_sub_ps(k0r,pir);
+                        arr    = _mm512_sub_ps(k0r,pi4);
+                        ari    = Ir;
                         sinc   = _mm512_div_ps(t0,k0alp);
                         cexp_zmm16r4(arr,ari,&cer,&cei);
                         div    = _mm512_div_ps(_2k0as,pi4);
