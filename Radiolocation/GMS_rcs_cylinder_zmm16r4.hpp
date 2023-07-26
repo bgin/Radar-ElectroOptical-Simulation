@@ -2794,8 +2794,8 @@ namespace gms {
                                             _mm512_mul_ps(c1,k0an13));
                         t1    = _mm512_fmadd_ps(k0a,PI,_mm512_add_ps(pi12,t0));
                         t1    = _mm512_add_ps(k0r,t1);
-                        e1ar  = Ir;
-                        e1ai  = t1;
+                        e1ar  = t1;
+                        e1ai  = Ir;
                         cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm512_fmsub_ps(c3,k0a13,
                                             _mm512_mul_ps(c4,k0an13));
@@ -2854,8 +2854,8 @@ namespace gms {
                                             _mm512_mul_ps(c1,k0an13));
                         t1    = _mm512_fmadd_ps(k0a,PI,_mm512_add_ps(pi12,t0));
                         t1    = _mm512_add_ps(k0r,t1);
-                        e1ar  = Ir;
-                        e1ai  = t1;
+                        e1ar  = t1;
+                        e1ai  = Ir;
                         cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm512_fmsub_ps(c3,k0a13,
                                             _mm512_mul_ps(c4,k0an13));
@@ -2915,8 +2915,8 @@ namespace gms {
                                             _mm512_mul_ps(c1,k0an13));
                         t1    = _mm512_fmadd_ps(k0a,PI,_mm512_add_ps(pi12,t0));
                         t1    = _mm512_add_ps(k0r,t1);
-                        e1ar  = Ir;
-                        e1ai  = t1;
+                        e1ar  = t1;
+                        e1ai  = Ir;
                         cexp_zmm16r4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm512_fmsub_ps(c3,k0a13,
                                             _mm512_mul_ps(c4,k0an13));
