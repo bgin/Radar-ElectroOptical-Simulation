@@ -3507,9 +3507,9 @@ namespace gms {
                         fraci           = _mm512_mul_ps(EIi,pi2);
                         t1              = _mm512_div_ps(_mm512_sub_ps(mu1,mu0),
                                                         _mm512_add_ps(mu1,mu0));
-                        ear             = Ir;
+                        ear             = _mm512_sub_ps(k0r,pi4);
                         t2              = _mm512_add_ps(t1,t1);
-                        eai             = _mm512_sub_ps(k0r,pi4);
+                        eai             = Ir;
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(t2,cosp);
                         cer = _mm512_div_ps(cer,sk0r);
@@ -3568,9 +3568,9 @@ namespace gms {
                         fraci           = _mm512_mul_ps(EIi,pi2);
                         t1              = _mm512_div_ps(_mm512_sub_ps(mu1,mu0),
                                                         _mm512_add_ps(mu1,mu0));
-                        ear             = Ir;
+                        ear             = _mm512_sub_ps(k0r,pi4);
                         t2              = _mm512_add_ps(t1,t1);
-                        eai             = _mm512_sub_ps(k0r,pi4);
+                        eai             = Ir;
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(t2,cosp);
                         cer = _mm512_div_ps(cer,sk0r);
@@ -3631,9 +3631,9 @@ namespace gms {
                         fraci           = _mm512_mul_ps(EIi,pi2);
                         t1              = _mm512_div_ps(_mm512_sub_ps(mu1,mu0),
                                                         _mm512_add_ps(mu1,mu0));
-                        ear             = Ir;
+                        ear             = _mm512_sub_ps(k0r,pi4);
                         t2              = _mm512_add_ps(t1,t1);
-                        eai             = _mm512_sub_ps(k0r,pi4);
+                        eai             = Ir;
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         t1              = _mm512_mul_ps(t2,cosp);
                         cer = _mm512_div_ps(cer,sk0r);
