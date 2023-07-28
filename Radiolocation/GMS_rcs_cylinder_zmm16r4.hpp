@@ -5190,7 +5190,7 @@ namespace gms {
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm512_sub_ps(_1,_mm512_mul_ps(mulr,sin2p));
-                         t0i = _mm512_sub_ps(_1,_mm512_mul_ps(muli,sin2p));
+                         t0i = _mm512_mul_ps(muli,sin2p);
                          csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm512_mul_ps(sqr2,cosp);
@@ -5231,7 +5231,7 @@ namespace gms {
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm512_sub_ps(_1,_mm512_mul_ps(mulr,sin2p));
-                         t0i = _mm512_sub_ps(_1,_mm512_mul_ps(muli,sin2p));
+                         t0i = _mm512_mul_ps(muli,sin2p);
                          csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm512_mul_ps(sqr2,cosp);
@@ -5274,7 +5274,7 @@ namespace gms {
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&divi);
                          cmul_zmm16r4(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm512_sub_ps(_1,_mm512_mul_ps(mulr,sin2p));
-                         t0i = _mm512_sub_ps(_1,_mm512_mul_ps(muli,sin2p));
+                         t0i = _mm512_mul_ps(muli,sin2p);
                          csqrt_zmm16r4(t0r,t0i,&sqr1,&sqi1);
                          csqrt_zmm16r4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm512_mul_ps(sqr2,cosp);
