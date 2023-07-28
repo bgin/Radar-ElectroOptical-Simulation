@@ -4714,8 +4714,11 @@ namespace gms {
                          cdiv_zmm16r4_s(_1msp,mulr,muli,&t0r,&t0i);
                          csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
-                         _mm512_store_ps(&Tinr[0] ,_mm512_fmadd_ps(sqr1,sqr2,cosp));
-                         _mm512_store_ps(&Tini[0] ,_mm512_fmadd_ps(sqi1,sqi2,cosp));
+                         //_mm512_store_ps(&Tinr[0] ,_mm512_fmadd_ps(sqr1,sqr2,cosp));
+                         //_mm512_store_ps(&Tini[0] ,_mm512_fmadd_ps(sqi1,sqi2,cosp));
+                         cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&divr,&divi);
+                         _mm512_store_ps(&Tinr[0], _mm512_add_ps(divr,cosp));
+                         _mm512_store_ps(&Tini[0], divi);
                  }
 
 
@@ -4752,8 +4755,9 @@ namespace gms {
                          cdiv_zmm16r4_s(_1msp,mulr,muli,&t0r,&t0i);
                          csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
-                         _mm512_storeu_ps(&Tinr[0] ,_mm512_fmadd_ps(sqr1,sqr2,cosp));
-                         _mm512_storeu_ps(&Tini[0] ,_mm512_fmadd_ps(sqi1,sqi2,cosp));
+                         cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&divr,&divi);
+                         _mm512_storeu_ps(&Tinr[0], _mm512_add_ps(divr,cosp));
+                         _mm512_storeu_ps(&Tini[0], divi);
                  }
 
 
