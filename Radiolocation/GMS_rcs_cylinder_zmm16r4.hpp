@@ -4784,7 +4784,7 @@ namespace gms {
                          register __m512 divr,divi,sqr1,sqi1;
                          register __m512 mulr,muli,sqr2,sqi2;
                          register __m512 cosp,sinp,sin2p,t0r,t0i;
-                         register __m512 _2sqr1,_2sqi1,t1r,t1i;
+                         register __m512 t1r,t1i;
                          register __m512 numr,numi,denr,deni;
                          cdiv_zmm16r4(epsr,epsi,mur,mui,&divr,&div);
                          cosp = xcosf(psi);
@@ -4795,7 +4795,7 @@ namespace gms {
                          //_2sqr1 = _mm512_mul_ps(_2,sqr1);
                          t0r    = _mm512_sub_ps(_1,_mm512_mul_ps(mulr,sin2p));
                          //_2sqi1 = _mm512_mul_ps(_2,sqi1);
-                         t0i    = _mm512_sub_ps(_1,_mm512_mul_ps(muli,sin2p));
+                         t0i    = _mm512_mul_ps(muli,sin2p);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
                          cmul_zmm16r4(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm512_mul_ps(_2,t1r);
