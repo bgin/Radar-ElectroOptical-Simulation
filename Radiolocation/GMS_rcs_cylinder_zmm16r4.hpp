@@ -3948,7 +3948,7 @@ namespace gms {
                 }   
 
 
-                    /*
+               /*
                       Bistatic scattering width (k0a<<1, k1a<<1) at the angle 'phi'
                       Formula 4.1-48
 
@@ -4673,8 +4673,11 @@ namespace gms {
                          cdiv_zmm16r4_s(_1msp,mulr,muli,&t0r,&t0i);
                          csqrt_zmm16r4(divr,divi,&sqr1,&sqi1);
                          csqrt_zmm16r4(t0r,t0i,&sqr2,&sqi2);
-                         *Tinr = _mm512_fmadd_ps(sqr1,sqr2,cosp);
-                         *Tini = _mm512_fmadd_ps(sqi1,sqi2,cosp);
+                         //*Tinr = _mm512_fmadd_ps(sqr1,sqr2,cosp);
+                         //*Tini = _mm512_fmadd_ps(sqi1,sqi2,cosp);
+                         cmul_zmm16r4(sqr1,sqi1,sqr2,sqi2,&divr,&divi);
+                         *Tinr = _mm512_add_ps(divr,cosp);
+                         *Tini = divi;
                  }
 
 
