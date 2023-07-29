@@ -6007,7 +6007,7 @@ namespace gms {
                           _1pa  = _mm512_add_ps(_1,a1a0s);
                           _1ma  = _mm512_sub_ps(_1,a1a0s);
                           t0r   = _mm512_sub_ps(_mm512_mul_ps(divr,_1ma),_1);
-                          t0i   = _mm512_sub_ps(_mm512_mul_ps(divi,_1ma),_1);
+                          t0i   = _mm512_mul_ps(divi,_1ma);
                           e1mr  = _mm512_mul_ps(eps1r,_1pa);
                           e0mr  = _mm512_mul_ps(eps0r,_1ma);
                           e1mi  = _mm512_mul_ps(eps1i,_1pa);
@@ -6072,7 +6072,7 @@ namespace gms {
                           _1pa  = _mm512_add_ps(_1,a1a0s);
                           _1ma  = _mm512_sub_ps(_1,a1a0s);
                           t0r   = _mm512_sub_ps(_mm512_mul_ps(divr,_1ma),_1);
-                          t0i   = _mm512_sub_ps(_mm512_mul_ps(divi,_1ma),_1);
+                          t0i   = _mm512_mul_ps(divi,_1ma);
                           e1mr  = _mm512_mul_ps(eps1r,_1pa);
                           e0mr  = _mm512_mul_ps(eps0r,_1ma);
                           e1mi  = _mm512_mul_ps(eps1i,_1pa);
