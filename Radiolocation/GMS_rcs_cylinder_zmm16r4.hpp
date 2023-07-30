@@ -6828,9 +6828,9 @@ namespace gms {
                          const __m512 hlf = _mm512_set1_ps(0.5f);
                          register __m512 k0a2,k0ah;
                          k0a2 = _mm512_mul_ps(k0a,k0a);
-                         *A0r = Ir;
                          k0ah = _mm512_mul_ps(hlf,k0a2);
-                         *A0i = _mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah));
+                         *A0r = _mm512_mul_ps(pi4,k0ah);
+                         *A0i = _mm512_setzero_ps();
                 }
 
 
@@ -6849,9 +6849,9 @@ namespace gms {
                          const __m512 hlf = _mm512_set1_ps(0.5f);
                          register __m512 k0a2,k0ah;
                          k0a2 = _mm512_mul_ps(k0a,k0a);
-                         _mm512_store_ps(&A0r[0] ,Ir);
                          k0ah = _mm512_mul_ps(hlf,k0a2);
-                         _mm512_store_ps(&A0i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah)));
+                        _mm512_store_ps(&A0r[0] ,mm512_mul_ps(pi4,k0ah));
+                        _mm512_store_ps(&A0i[0] ,Ir);
                 }
 
 
@@ -6870,9 +6870,9 @@ namespace gms {
                          const __m512 hlf = _mm512_set1_ps(0.5f);
                          register __m512 k0a2,k0ah;
                          k0a2 = _mm512_mul_ps(k0a,k0a);
-                         _mm512_storeu_ps(&A0r[0] ,Ir);
                          k0ah = _mm512_mul_ps(hlf,k0a2);
-                         _mm512_storeu_ps(&A0i[0] ,_mm512_mul_ps(Ii,_mm512_mul_ps(pi4,k0ah)));
+                         _mm512_store_ups(&A0r[0] ,mm512_mul_ps(pi4,k0ah));
+                         _mm512_storeu_ps(&A0i[0] ,Ir);
                 }
 
 
