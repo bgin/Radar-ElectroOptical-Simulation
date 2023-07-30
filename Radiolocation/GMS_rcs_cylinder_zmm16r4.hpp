@@ -7101,7 +7101,7 @@ namespace gms {
 
                           const __m512 c0   = _mm512_set1_ps(0.03607f);
                           const __m512 pipi = _mm512_set1_ps( 9.869604401089358618834490999876f);
-                          register __m512 rcs,t0,cosp,k0a3;
+                          register __m512 rcs,t0,cosp,k0a3,cos2p;
                           cosp  = xcosf(phi);
                           t0    = _mm512_mul_ps(c0,_mm512_mul_ps(pipi,a));
                           k0a3  = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
@@ -7125,7 +7125,7 @@ namespace gms {
                           register __m512 phi = _mm512_load_ps(&pphi[0]);
                           const __m512 c0   = _mm512_set1_ps(0.03607f);
                           const __m512 pipi = _mm512_set1_ps( 9.869604401089358618834490999876f);
-                          register __m512 rcs,t0,cosp,k0a3;
+                          register __m512 rcs,t0,cosp,k0a3,cos2p;
                           cosp  = xcosf(phi);
                           t0    = _mm512_mul_ps(c0,_mm512_mul_ps(pipi,a));
                           k0a3  = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
@@ -7149,7 +7149,7 @@ namespace gms {
                           register __m512 phi = _mm512_loadu_ps(&pphi[0]);
                           const __m512 c0   = _mm512_set1_ps(0.03607f);
                           const __m512 pipi = _mm512_set1_ps( 9.869604401089358618834490999876f);
-                          register __m512 rcs,t0,cosp,k0a3;
+                          register __m512 rcs,t0,cosp,k0a3,cos2p;
                           cosp  = xcosf(phi);
                           t0    = _mm512_mul_ps(c0,_mm512_mul_ps(pipi,a));
                           k0a3  = _mm512_mul_ps(k0a,_mm512_mul_ps(k0a,k0a));
