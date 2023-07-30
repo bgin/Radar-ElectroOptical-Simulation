@@ -7548,22 +7548,22 @@ namespace gms {
                         cosp = xcosf(phi);
                         k0a02= _mm512_mul_ps(hlf,_mm512_mul_ps(k0a0,k0a0));
                         epsrp1 = _mm512_add_ps(epsr,_1);
-                        ear    = Ir;
-                        epsip1 = _mm512_add_ps(epsi,_1)
+                        eai    = Ir;
+                        epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
                         scosps = _mm512_sqrt_ps(cosps);
-                        epsim1 = _mm512_sub_ps(epsi,_1)
+                        epsim1 = _mm512_setzero_ps();
                         sinps= xsinf(psi);
                         murp1  = _mm512_add_ps(mur,_1);
-                        muip1  = _mm512_add_ps(mui,_1);
+                        muip1  = _mm512_setzero_ps();
                         cos2ps= _mm512_mul_ps(cosps,cosps);
                         murm1  = _mm512_sub_ps(mur,_1);
                         cmul_zmm16r4(epsrp1,epsip1,murm1,muim1,&mul1r,&mul1i);
-                        muim1  = _mm512_sub_ps(mui,_1);
+                        muim1  = _mm512_setzero_ps();
                         sin2ps= _mm512_mul_ps(sinps,sinps);
                         t0     = _mm512_fmadd_ps(k0z,sinps,_mm512_fmadd_ps(k0r,cosps,pi4));
-                        eai    = t0;
+                        ear    = t0;
                         t1     = _mm512_sqrt_ps(k0r);
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         fracr = _mm512_mul_ps(E0r,scosps);
