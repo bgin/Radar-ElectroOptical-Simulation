@@ -11,6 +11,13 @@ Detection Estimation and Modulation Theory, Part I: Detection, Estimation, and F
 
 Automatic Control of Aircraft and Missiles John H. Blakelock ASIN: B01FJ0JOU2
 
-
 Principles of High-Resolution Radar (Artech House Radar Library), August W. Rihaczek ISBN-10: 089006900X
 ISBN-13: 978-0890069004
+
+Леонов А.И. - Моделирование в радиолокации (1979, Сов. радио ) 
+
+Кремер И.Я. - Модулирующие помехи и прием радиосигналов (1972)
+
+Abramowitz M., Stegun I.A. (eds.) - Handbook of mathematical functions (1972, NBS) 
+
+Шифрин Я.С. - Вопросы статистической теории антенн 
