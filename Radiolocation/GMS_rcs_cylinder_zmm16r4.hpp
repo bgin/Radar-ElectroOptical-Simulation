@@ -7773,7 +7773,7 @@ namespace gms {
                          Formula 4.2-51
                     */
 
-                   __ATTR_ALWAYS_INLINE__
+                /*   __ATTR_ALWAYS_INLINE__
                    __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
@@ -7808,10 +7808,11 @@ namespace gms {
                         k0r  = _mm512_mul_ps(k0,r);
                         k0z  = _mm512_mul_ps(k0,z);
                         k0a0 = _mm512_mul_ps(k0,a0);
+                        rat  = _mm512_div_ps(eps0,mu0);
                         cosp = xcosf(phi);
                         k0a02= _mm512_mul_ps(hlf,_mm512_mul_ps(k0a0,k0a0));
                         epsrp1 = _mm512_add_ps(epsr,_1);
-                        ear    = Ir;
+                        ear    = Ii;
                         rat    = _mm512_sqrt_ps(e0u0);
                         epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
@@ -7906,7 +7907,6 @@ namespace gms {
                         k0a02= _mm512_mul_ps(hlf,_mm512_mul_ps(k0a0,k0a0));
                         epsrp1 = _mm512_add_ps(epsr,_1);
                         ear    = Ir;
-                        rat    = _mm512_sqrt_ps(e0u0);
                         epsip1 = _mm512_setzero_ps();
                         cosps= xcosf(psi);
                         epsrm1 = _mm512_sub_ps(epsr,_1);
@@ -8041,7 +8041,7 @@ namespace gms {
                         cmul_zmm16r4(div1r,div1i,t2r,t2i,&resr,&resi);
                         _mm512_storeu_ps(&Hpr[0], resr);
                         _mm512_storeu_ps(&Hpi[0], resi);
-                }
+                }*/
 
 
                
