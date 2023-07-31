@@ -21,3 +21,8 @@ ISBN-13: 978-0890069004
 Abramowitz M., Stegun I.A. (eds.) - Handbook of mathematical functions (1972, NBS) 
 
 Шифрин Я.С. - Вопросы статистической теории антенн 
+
+Горяинов В.Т., Журавлев А.Г., Тихонов В.И - Статистическая радиотехника. Примеры и задачи (1980, Советское радио)
+
+George T. Ruck, Donald E. Barrick , William D. Stuart , - Radar Cross Section Handbook (1970, Kluwer Academic Plenum Publishers)
+
