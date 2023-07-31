@@ -26,3 +26,9 @@ Abramowitz M., Stegun I.A. (eds.) - Handbook of mathematical functions (1972, NB
 
 George T. Ruck, Donald E. Barrick , William D. Stuart , - Radar Cross Section Handbook (1970, Kluwer Academic Plenum Publishers)
 
+Тихонов В. И. Статистическая радиотехника. «Сов. радио», 1966
+
+Вайнштейн Л. А., Зубаков В. Д. Выделение сигналов на фоне случайных помех. «Сов. радио», 1960.
+
+Зубковнч С. Г. Статистические характеристики радиосигналов, отраженных от земной поверхности. «Сов. радио», 1968
+
