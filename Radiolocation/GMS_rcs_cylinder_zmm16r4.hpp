@@ -8532,7 +8532,6 @@ namespace gms {
                          t1r = _mm512_mul_ps(_2,_mm512_mul_ps(t1r,cosp));
                          t1i = _mm512_mul_ps(_2,_mm512_mul_ps(t1i,cosp));
                          mucsr = _mm512_sub_ps(mucsr,t1r);
-                         mucsi = _mm512_sub_ps(mucsi,t1i);
                          cmul_zmm16r4(t0r,t0i,mucsr,mucsi,*Hzr,*Hzi);
                 }
 
