@@ -11897,9 +11897,9 @@ namespace gms {
                           L  = L_f4334_zmm16r4(k0h,k0a);
                           om2= _mm512_add_ps(om,om);
                           S  = S_f4335_zmm16r4(k0a,k0h);
-                          H1 = H1_f4333_zmm16r4(k0h,k0a);
+                          H2 = H2_f4333_zmm16r4(k0h,k0a);
                           num= _mm512_mul_ps(hlf,L);
-                          t0 = _mm512_div_ps(_mm512_mul_ps(PI,H1),om2);
+                          t0 = _mm512_div_ps(_mm512_mul_ps(PI,H2),om2);
                           den= _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
                           ar = _mm512_div_ps(num,den);
                           H1 = _mm512_sub_ps(ar,t0);
@@ -11930,9 +11930,9 @@ namespace gms {
                           L  = L_f4334_zmm16r4(k0h,k0a);
                           om2= _mm512_add_ps(om,om);
                           S  = S_f4335_zmm16r4(k0a,k0h);
-                          H1 = H1_f4333_zmm16r4(k0h,k0a);
+                          H2 = H2_f4333_zmm16r4(k0h,k0a);
                           num= _mm512_mul_ps(hlf,L);
-                          t0 = _mm512_div_ps(_mm512_mul_ps(PI,H1),om2);
+                          t0 = _mm512_div_ps(_mm512_mul_ps(PI,H2),om2);
                           den= _mm512_fmadd_ps(L,L,_mm512_mul_ps(S,S));
                           ar = _mm512_div_ps(num,den);
                           H1 = _mm512_sub_ps(ar,t0);
