@@ -11290,7 +11290,7 @@ namespace gms {
                           _1msp= _mm512_add_ps(_1,spsi);
                           arg  = _mm512_mul_ps(k0h,_1msp);
                           sarg = xsinf(arg);
-                          a2   = _mm512_div_ps(sarg,_1map);
+                          a2   = _mm512_div_ps(sarg,_1msp);
                           return (a2);
                 }
 
@@ -11311,7 +11311,7 @@ namespace gms {
                           _1msp= _mm512_add_ps(_1,spsi);
                           arg  = _mm512_mul_ps(k0h,_1msp);
                           sarg = xsinf(arg);
-                          a2   = _mm512_div_ps(sarg,_1map);
+                          a2   = _mm512_div_ps(sarg,_1msp);
                           return (a2);
                 }
 
@@ -11332,7 +11332,7 @@ namespace gms {
                           _1msp= _mm512_add_ps(_1,spsi);
                           arg  = _mm512_mul_ps(k0h,_1msp);
                           sarg = xsinf(arg);
-                          a2   = _mm512_div_ps(sarg,_1map);
+                          a2   = _mm512_div_ps(sarg,_1msp);
                           return (a2);
                 }
 
