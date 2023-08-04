@@ -8993,23 +8993,22 @@ namespace gms {
                          register __m512 spsph,epsrp1,epsip1,murp1,muip1;
                          register __m512 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          sinps = xsinf(psi);
-                         ear   = Ir;
+                         eai   = Ir;
                          cosps = xcosf(psi);
                          k0a02 = _mm512_mul_ps(k0a,k0a);
                          sinph = xsinf(phi);
-                         eai   = _mm512_fmadd_ps(k0z,sinps,_mm512_fmsub_ps(k0r,cosps,pi4));
+                         ear   = _mm512_fmadd_ps(k0z,sinps,_mm512_fmsub_ps(k0r,cosps,pi4));
                          cexp_zmm16r4(ear,eai,&cer,&cei);
                          scpk0r = _mm512_sqrt_ps(_mm512_mul_ps(k0r,cosps));
                          cmul_zmm16r4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm512_mul_ps(sinps,sinph);
                          murp1 = _mm512_add_ps(mur,_1);
-                         epsrp1= _mm512_setzero_ps();
-                         muip1 = _mm512_add_ps(mui,_1);
-                         epsip1= _mm512_setzero_ps();
+                         epsrp1= _mm512_add_ps(espr,_1);
+                         muip1 = mui;
+                         epsip1= espi;
                          cmul_zmm16r4(epsr,epsi,mur,mui,&mul1r,&mul1i);
                          mul1r = _mm512_sub_ps(mul1r,_1);
                          t0r   = _mm512_mul_ps(s2pi,_mm512_div_ps(fracr,scpk0r));
-                         mul1i = _mm512_sub_ps(mul1i,_1);
                          t0i   = _mm512_mul_ps(s2pi,_mm512_div_ps(fraci,scpk0r));
                          cmul_zmm16r4(epsrp1,epsip1,murp1,muip1,&mul2r,&mul2i);
                          cdiv_zmm16r4(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
@@ -9191,11 +9190,11 @@ namespace gms {
                          register __m512 spsph,epsrp1,epsip1,murp1,muip1;
                          register __m512 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          sinps = xsinf(psi);
-                         ear   = Ir;
+                         eai   = Ir;
                          cosps = xcosf(psi);
                          k0a02 = _mm512_mul_ps(k0a,k0a);
                          sinph = xsinf(phi);
-                         eai   = _mm512_fmadd_ps(k0z,sinps,_mm512_fmsub_ps(k0r,cosps,pi4));
+                         ear   = _mm512_fmadd_ps(k0z,sinps,_mm512_fmsub_ps(k0r,cosps,pi4));
                          cexp_zmm16r4(ear,eai,&cer,&cei);
                          scpk0r = _mm512_sqrt_ps(k0r);
                          cmul_zmm16r4(H0r,H0i,cer,cei,&fracr,&fraci);
@@ -9396,7 +9395,7 @@ namespace gms {
                          epsrp1 = _mm512_add_ps(epsr,_1);
                          cos2ps = _mm512_mul_ps(cosps,cosps);
                          epsip1 = _mm512_setzero_ps();
-                         sinps  = xsinf(ps);
+                         sinps  = xsinf(psi);
                          murm1  = _mm512_sub_ps(mur,_1);
                          sin2ps = _mm512_mul_ps(sinps,sinps);
                          muim1  = _mm512_sub_ps(mui,_1);
@@ -11230,7 +11229,7 @@ namespace gms {
                           _1msp= _mm512_sub_ps(_1,spsi);
                           arg  = _mm512_mul_ps(k0h,_1msp);
                           sarg = xsinf(arg);
-                          a2   = _mm512_div_ps(sarg,_1map);
+                          a2   = _mm512_div_ps(sarg,_1msp);
                           return (a2);
                 }
 
@@ -11251,7 +11250,7 @@ namespace gms {
                           _1msp= _mm512_sub_ps(_1,spsi);
                           arg  = _mm512_mul_ps(k0h,_1msp);
                           sarg = xsinf(arg);
-                          a2   = _mm512_div_ps(sarg,_1map);
+                          a2   = _mm512_div_ps(sarg,_1msp);
                           return (a2);
                 }
 
@@ -11272,7 +11271,7 @@ namespace gms {
                           _1msp= _mm512_sub_ps(_1,spsi);
                           arg  = _mm512_mul_ps(k0h,_1msp);
                           sarg = xsinf(arg);
-                          a2   = _mm512_div_ps(sarg,_1map);
+                          a2   = _mm512_div_ps(sarg,_1msp);
                           return (a2);
                 }
 
