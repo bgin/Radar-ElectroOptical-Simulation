@@ -13266,7 +13266,7 @@ namespace gms {
                           carg= xcosf(arg);
                           x0  = _mm512_add_ps(c1,carg);
                           inv = _mm512_rcp14_ps(x0);
-                          G   = _mm512_mul_ps(c2,_mm512_sub_ps(n2,inv));
+                          G   = _mm512_mul_ps(c2,_mm512_sub_ps(_2,inv));
                           return (G);
                   }
 
