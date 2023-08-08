@@ -14261,10 +14261,10 @@ namespace gms {
                         tmp1  = _mm512_sqrt_ps(x1);
                         frat  = _mm512_div_ps(tmp2,tmp1);
                         trm1  = zmm16r4_negate(trm1);
-                        ear   = _mm512_add_ps(nIr,ip4);
+                        ear   = _mm512_add_ps(Ir,ip4);
                         x0    = _mm512_mul_ps(_mm512_sqrt_ps(_mm512_mul_ps(k0,rhorat)),hlf);
                         eai   = _mm512_mul_ps(nIi,_mm512_mul_ps(k0a,frat));
-                        eai   = _mm512_add_ps(eai,ip4);
+                        eai   = _mm512_add_ps(ear,ip4);
                         cexp_zmm16r4(ear,eai,&cer,&cei);
                         x1    = _mm512_mul_ps(trm1,x0);
                         _mm512_store_ps(&TMr[0] ,_mm512_mul_ps(x1,cer));
@@ -14685,7 +14685,7 @@ namespace gms {
                                           bool & status) {
 
                           using namespace gms::math;
-                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          __mmask16 m = T_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -14731,7 +14731,7 @@ namespace gms {
                           register __m512 a    = _mm512_load_ps(&pa[0]);
                           register __m512 b    = _mm512_load_ps(&pb[0]);
                           register __m512 k0   = _mm512_load_ps(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          __mmask16 m = T_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -14777,7 +14777,7 @@ namespace gms {
                           register __m512 a    = _mm512_loadu_ps(&pa[0]);
                           register __m512 b    = _mm512_loadu_ps(&pb[0]);
                           register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          __mmask16 m = T_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -14825,7 +14825,7 @@ namespace gms {
                                           bool & status) {
 
                          
-                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          __mmask16 m = T_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -14873,7 +14873,7 @@ namespace gms {
                           register __m512 a    = _mm512_load_ps(&pa[0]);
                           register __m512 b    = _mm512_load_ps(&pb[0]);
                           register __m512 k0   = _mm512_load_ps(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          __mmask16 m = T_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -14921,7 +14921,7 @@ namespace gms {
                           register __m512 a    = _mm512_loadu_ps(&pa[0]);
                           register __m512 b    = _mm512_loadu_ps(&pb[0]);
                           register __m512 k0   = _mm512_loadu_ps(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
+                          __mmask16 m = T_f4423_helper_zmm16r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
