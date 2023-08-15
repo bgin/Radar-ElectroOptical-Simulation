@@ -840,14 +840,14 @@ namespace gms {
                
                
                  SKX_loads_per_inst_t &
-                 operator=(const loads_per_inst_t &) = delete;
+                 operator=(const SKX_loads_per_inst_t &) = delete;
                
                  SKX_loads_per_inst_t &
                  operator=(SKX_loads_per_inst_t &&) = delete;  
                
                  void compute_metric() {
                     
-                    skx_oads_per_instr_samples(       m_mem_inst_retired_all_loads,
+                    skx_loads_per_instr_samples(       m_mem_inst_retired_all_loads,
                                                       m_inst_retired_any,
                                                       m_lpi,len);
                                              
@@ -857,7 +857,7 @@ namespace gms {
                                           const char * __restrict data_type,
                                           const bool use_omp) {
                    
-                    cpu_perf_time_series_canarm<len,lagh>(m_br_mispred_rat,fname,
+                    cpu_perf_time_series_canarm<len,lagh>(m_lpi,fname,
                                                           data_type,use_omp);
                                                                             
              }  
@@ -865,21 +865,21 @@ namespace gms {
                  void analyze_metric_unimar(const char * __restrict fname,
                                         const char * __restrict data_type) {
                  
-                    cpu_perf_time_series_unimar<len,lagh>(m_br_mispred_rat,
+                    cpu_perf_time_series_unimar<len,lagh>(m_lpi,
                                                           fname,data_type);                           
             } 
             
                  void analyze_metric_unibar(const char * __restrict fname,
                                        const char * __restrict data_type) {
                                        
-                    cpu_perf_time_series_unibar<len,lagh>(m_br_mispred_rat,
+                    cpu_perf_time_series_unibar<len,lagh>(m_lpi,
                                                           fname,data_type);                           
            }    
            
                  void analyze_metric_exsar(const char * __restrict fname,
                                      const char * __restrict data_type) {
                                      
-                    cpu_perf_time_series_exsar<len,lagh>(m_br_mispred_rat,
+                    cpu_perf_time_series_exsar<len,lagh>(m_lpi,
                                                          fname,data_type);                       
            }
            
@@ -887,21 +887,21 @@ namespace gms {
                                       const char * __restrict data_type,
                                       const bool use_omp) {
                                       
-                    cpu_perf_time_series_bispec<len,lagh>(m_br_mispred_rat,
+                    cpu_perf_time_series_bispec<len,lagh>(m_lpi,
                                                           fname,data_type,use_omp);                          
            }
            
                  void analyze_metric_thirmo(const char * __restrict fname,
                                       const char * __restrict data_type) {
                                       
-                    cpu_perf_time_series_thirmo<len,lagh>(m_br_mispred_rat,
+                    cpu_perf_time_series_thirmo<len,lagh>(m_lpi,
                                                           fname,data_type);                
            }
            
                  void analyze_metric_autocor(const char * __restrict fname,
                                        const char * __restrict data_type) {
                                        
-                    cpu_perf_time_series_autocor<len,lagh>(m_br_mispred_rat,
+                    cpu_perf_time_series_autocor<len,lagh>(m_lpi,
                                                            fname,data_type);                            
           }
           
