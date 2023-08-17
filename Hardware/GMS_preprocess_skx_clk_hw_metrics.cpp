@@ -234,7 +234,7 @@ skx_mem_ops_instr_samples(const double * __restrict  __attribute__((aligned(64))
     Locks retired per instruction.
 */
 void
-skx_lock_per_instr_samples(const double * __restrict  __attribute__((aligned(64))) a,
+skx_locks_per_instr_samples(const double * __restrict  __attribute__((aligned(64))) a,
                            const double * __restrict  __attribute__((aligned(64))) b,
 			   double * __restrict  __attribute__((aligned(64))) c,
 			   const int32_t data_len) {
