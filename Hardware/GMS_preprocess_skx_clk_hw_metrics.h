@@ -123,7 +123,7 @@ skx_mem_ops_instr_samples(const double * __restrict,
     Locks retired per instruction.
 */
 void
-skx_lock_per_instr_samples(const double * __restrict,
+skx_locks_per_instr_samples(const double * __restrict,
                         const double * __restrict,
 			double * __restrict,
 			const int32_t)  __attribute__((hot))
