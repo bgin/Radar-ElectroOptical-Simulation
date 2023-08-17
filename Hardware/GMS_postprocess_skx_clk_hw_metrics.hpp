@@ -93,14 +93,10 @@ namespace gms {
                ~SKX_cpu_operating_freq_t() {
                      
                      using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_thread,0))  gms_mm_free(m_cpu_clk_unhalted_thread);
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_ref_tsc,0)) gms_mm_free(m_cpu_clk_unhalted_ref_tsc);
-                     if(__builtin_expect(nullptr!=
-                        m_tsc_frequency,0))            gms_mm_free(m_tsc_frequency);
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_op_freq,0))              gms_mm_free(m_cpu_op_freq);
+                       gms_mm_free(m_cpu_clk_unhalted_thread);
+                       gms_mm_free(m_cpu_clk_unhalted_ref_tsc);
+                       gms_mm_free(m_tsc_frequency);
+                       gms_mm_free(m_cpu_op_freq);
                }     
                
                
@@ -219,12 +215,9 @@ namespace gms {
                  ~SKX_cpu_utilization_t() {
                      
                      using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_ref_tsc,0)) gms_mm_free(m_cpu_clk_unhalted_ref_tsc);
-                     if(__builtin_expect(nullptr!=
-                        m_tsc_frequency,0))            gms_mm_free(m_tsc_frequency);
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_util,0))                 gms_mm_free(m_cpu_util);
+                     gms_mm_free(m_cpu_clk_unhalted_ref_tsc);
+                     gms_mm_free(m_tsc_frequency);
+                     gms_mm_free(m_cpu_util);
                }     
                
                
@@ -341,13 +334,10 @@ namespace gms {
                
                  ~SKX_cpu_utilization_krn_t() {
                      
-                     using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_ref_tsc_sup,0)) gms_mm_free(m_cpu_clk_unhalted_ref_tsc_sup);
-                     if(__builtin_expect(nullptr!=
-                        m_tsc_frequency,0))                gms_mm_free(m_tsc_frequency);
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_util_krn,0))                 gms_mm_free(m_cpu_util_krn);
+                    using namespace gms::common;
+                    gms_mm_free(m_cpu_clk_unhalted_ref_tsc_sup);
+                    gms_mm_free(m_tsc_frequency);
+                    gms_mm_free(m_cpu_util_krn);
                }     
                
                
