@@ -929,13 +929,10 @@ namespace gms {
                
                  ~SKX_stores_per_inst_t() {
                      
-                     using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_mem_inst_retired_all_stores,0))   gms_mm_free(m_mem_inst_retired_all_stores);
-                     if(__builtin_expect(nullptr!=
-                        m_inst_retired_any,0))              gms_mm_free(m_inst_retired_any);
-                     if(__builtin_expect(nullptr!=
-                        m_spi,0))                           gms_mm_free(m_spi);
+                        using namespace gms::common;
+                        gms_mm_free(m_mem_inst_retired_all_stores);
+                        gms_mm_free(m_inst_retired_any);
+                        gms_mm_free(m_spi);
                }     
                
                
@@ -1055,14 +1052,10 @@ namespace gms {
                  ~SKX_memops_per_inst_t() {
                      
                      using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_mem_inst_retired_all_loads,0))   gms_mm_free(m_mem_inst_retired_all_loads);
-                     if(__builtin_expect(nullptr!=
-                        m_mem_inst_retired_all_stores,0))   gms_mm_free(m_mem_inst_retired_all_stores);
-                     if(__builtin_expect(nullptr!=
-                        m_inst_retired_any,0))              gms_mm_free(m_inst_retired_any);
-                     if(__builtin_expect(nullptr!=
-                        m_mpi,0))                           gms_mm_free(m_mpi);
+                     gms_mm_free(m_mem_inst_retired_all_loads);
+                     gms_mm_free(m_mem_inst_retired_all_stores);
+                     gms_mm_free(m_inst_retired_any);
+                     gms_mm_free(m_mpi);
                }     
                
                
@@ -1180,13 +1173,10 @@ namespace gms {
                
                  ~SKX_locksr_per_inst_t() {
                      
-                     using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_mem_inst_retired_lock_loads,0))   gms_mm_free(m_mem_inst_retired_lock_loads);
-                     if(__builtin_expect(nullptr!=
-                        m_inst_retired_any,0))              gms_mm_free(m_inst_retired_any);
-                     if(__builtin_expect(nullptr!=
-                        m_lpi,0))                           gms_mm_free(m_lpi);
+                       using namespace gms::common;
+                       gms_mm_free(m_mem_inst_retired_lock_loads);
+                       gms_mm_free(m_inst_retired_any);
+                       gms_mm_free(m_lpi);
                }     
                
                
