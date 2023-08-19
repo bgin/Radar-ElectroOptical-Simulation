@@ -202,7 +202,7 @@ skx_L1I_read_misses_instr_samples(const double * __restrict,
      L2 Demand data read hits per instruction.
 */
 void
-skx_L2_data_read_misses_instr_samples(const double * __restrict,
+skx_L2_data_read_hits_instr_samples(const double * __restrict,
                                    const double * __restrict,
 			           double * __restrict,
 			           const int32_t)  __attribute__((hot))
