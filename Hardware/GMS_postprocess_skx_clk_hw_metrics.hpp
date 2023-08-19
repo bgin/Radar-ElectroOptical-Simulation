@@ -454,12 +454,9 @@ namespace gms {
                  ~SKX_cpi_t() {
                      
                      using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_thread,0)) gms_mm_free(m_cpu_clk_unhalted_thread);
-                     if(__builtin_expect(nullptr!=
-                        m_inst_retired_any,0))        gms_mm_free(m_inst_retired_any);
-                     if(__builtin_expect(nullptr!=
-                        m_cpi,0))                     gms_mm_free(m_cpi);
+                     gms_mm_free(m_cpu_clk_unhalted_thread);
+                     gms_mm_free(m_inst_retired_any);
+                     gms_mm_free(m_cpi);
                }     
                
                
@@ -576,12 +573,9 @@ namespace gms {
                  ~SKX_emon_mux_t() {
                      
                      using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_thread_p,0)) gms_mm_free(m_cpu_clk_unhalted_thread_p);
-                     if(__builtin_expect(nullptr!=
-                        m_cpu_clk_unhalted_thread,0))   gms_mm_free(m_cpu_clk_unhalted_thread);
-                     if(__builtin_expect(nullptr!=
-                        m_emon,0))                      gms_mm_free(m_emon);
+                     gms_mm_free(m_cpu_clk_unhalted_thread_p);
+                     gms_mm_free(m_cpu_clk_unhalted_thread);
+                     gms_mm_free(m_emon);
                }     
                
                
