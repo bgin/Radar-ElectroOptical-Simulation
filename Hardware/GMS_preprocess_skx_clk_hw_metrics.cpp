@@ -390,7 +390,7 @@ skx_L1I_read_misses_instr_samples(const double * __restrict __attribute__((align
      L2 Demand data read hits per instruction.
 */
 void
-skx_L2_data_read_misses_instr_samples(const double * __restrict __attribute__((aligned(64))) a,
+skx_L2_data_read_hits_instr_samples(const double * __restrict __attribute__((aligned(64))) a,
                                       const double * __restrict __attribute__((aligned(64))) b,
 			              double * __restrict __attribute__((aligned(64))) c,
 			              const int32_t data_len) {
