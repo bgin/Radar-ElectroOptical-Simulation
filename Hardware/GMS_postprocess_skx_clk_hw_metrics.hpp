@@ -1548,7 +1548,7 @@ namespace gms {
                
                  void compute_metric() {
                     
-                    skx_L1D_misses_instr_samples(            l1d_replacements,
+                    skx_L1D_misses_instr_samples(            m_l1d_replacements,
                                                              m_inst_retired_any,
                                                              m_l1d,len);
                                              
@@ -1666,7 +1666,7 @@ namespace gms {
                
                  void compute_metric() {
                     
-                    skx_L1D_hits_instr_samples(             l1d_mem_load_retired_l1_hit,
+                    skx_L1D_hits_instr_samples(              m_l1d_mem_load_retired_l1_hit,
                                                              m_inst_retired_any,
                                                              m_hits,len);
                                              
@@ -1727,6 +1727,123 @@ namespace gms {
                
       };
       
+      /////////////////////////////////////////////////////////////////////////////
+      
+      /*
+        L1$ code read misses (including prefetches) per instruction.
+       */
+      
+        template<int32_t len, int32_t lagh>
+         struct   SKX_L1I_read_misses_inst_t __ATTR_ALIGN__(64) {
+        
+                
+                 __ATTR_ALIGN__(8) double * __restrict m_l2_rqsts_all_code_rd;
+                 __ATTR_ALIGN__(8) double * __restrict m_inst_retired_any;
+                 __ATTR_ALIGN__(8) double * __restrict m_rmiss;
+                            
+                 
+                 SKX_L1I_read_misses_inst_t() noexcept(true) {
+                      
+                  
+                      m_l2_rqsts_all_code_rd      = nullptr;
+                      m_inst_retired_any          = nullptr;
+                      m_hits                      = nullptr;
+               }
+               
+                 SKX_L1I_read_misses_inst_t() noexcept(false) {
+                      
+                      using namespace gms::common;
+                      const std::size_t samp_len = (std::size_t)len;
+                      const std::size_t align    = (std::size_t)64;
+                      m_l2_rqsts_all_code_rd     = (double*)gms_mm_malloc(samp_len,
+                                                                  align);
+                      m_inst_retired_any         = (double*)gms_mm_malloc(samp_len,
+                                                                  align);
+                      m_rmiss                    = (double*)gms_mm_malloc(samp_len,
+                                                                    align);
+               }
+               
+                 SKX_L1I_read_misses_inst_t(const  SKX_L1I_read_misses_inst_t &) = delete;
+               
+                 SKX_L1I_read_misses_inst_t(SKX_L1I_read_misses_inst_t &&) = delete
+               
+                 ~SKX_L1I_read_misses_inst_t() {
+                     
+                     using namespace gms::common;
+                     gms_mm_free(m_l2_rqsts_all_code_rd);
+                     gms_mm_free(m_inst_retired_any);
+                     gms_mm_free(m_rmiss);
+               }     
+               
+               
+                 SKX_L1I_read_misses_inst_t &
+                 operator=(const SKX_L1I_read_misses_inst_t &) = delete;
+               
+                 SKX_L1I_read_misses_inst_t &
+                 operator=(SKX_L1I_read_misses_inst_t &&) = delete;  
+               
+                 void compute_metric() {
+                    
+                    skx_L1I_read_misses_per_instr(           m_l2_rqsts_all_code_rd,
+                                                             m_inst_retired_any,
+                                                             m_rmiss,len);
+                                             
+               }     
+               
+                 void analyze_metric_canarm(const char * __restrict fname,
+                                          const char * __restrict data_type,
+                                          const bool use_omp) {
+                   
+                    cpu_perf_time_series_canarm<len,lagh>(m_rmiss,fname,
+                                                          data_type,use_omp);
+                                                                            
+             }  
+             
+                 void analyze_metric_unimar(const char * __restrict fname,
+                                        const char * __restrict data_type) {
+                 
+                    cpu_perf_time_series_unimar<len,lagh>(m_rmiss,
+                                                          fname,data_type);                           
+            } 
+            
+                 void analyze_metric_unibar(const char * __restrict fname,
+                                       const char * __restrict data_type) {
+                                       
+                    cpu_perf_time_series_unibar<len,lagh>(m_rmiss,
+                                                          fname,data_type);                           
+           }    
+           
+                 void analyze_metric_exsar(const char * __restrict fname,
+                                     const char * __restrict data_type) {
+                                     
+                    cpu_perf_time_series_exsar<len,lagh>(m_rmiss,
+                                                         fname,data_type);                       
+           }
+           
+                 void analyze_metric_bispec(const char * __restrict fname,
+                                      const char * __restrict data_type,
+                                      const bool use_omp) {
+                                      
+                    cpu_perf_time_series_bispec<len,lagh>(m_rmiss,
+                                                          fname,data_type,use_omp);                          
+           }
+           
+                 void analyze_metric_thirmo(const char * __restrict fname,
+                                      const char * __restrict data_type) {
+                                      
+                    cpu_perf_time_series_thirmo<len,lagh>(m_rmiss,
+                                                          fname,data_type);                
+           }
+           
+                 void analyze_metric_autocor(const char * __restrict fname,
+                                       const char * __restrict data_type) {
+                                       
+                    cpu_perf_time_series_autocor<len,lagh>(m_rmiss,
+                                                           fname,data_type);                            
+          }
+          
+               
+      };
       
       
       
