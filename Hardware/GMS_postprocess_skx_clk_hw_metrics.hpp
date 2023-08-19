@@ -2251,7 +2251,7 @@ namespace gms {
                }     
                
                
-                 SKX_L2_demand_data_ocde_mpi_t &
+                 SKX_L2_demand_data_code_mpi_t &
                  operator=(const SKX_L2_demand_data_code_mpi_t &) = delete;
                
                  SKX_L2_demand_data_code_mpi_t &
@@ -2319,6 +2319,125 @@ namespace gms {
           
                
       };
+      
+      //////////////////////////////////////////////////////////////////
+      
+      /*
+        L2 Any local request that HITM in a sibling core (per instruction).
+       */
+       
+         template<int32_t len, int32_t lagh>
+         struct   SKX_L2_req_hit_sibling_core_t __ATTR_ALIGN__(64) {
+        
+                
+                 __ATTR_ALIGN__(8) double * __restrict m_OFFCORE_RESPONSE_request_ALL_READS_response_L3_HIT_HITM_OTHER_CORE;
+                 __ATTR_ALIGN__(8) double * __restrict m_inst_retired_any;
+                 __ATTR_ALIGN__(8) double * __restrict m_hits;
+                            
+                 
+                 SKX_L2_req_hit_sibling_core_mpi_t() noexcept(true) {
+                      
+                  
+                      m_OFFCORE_RESPONSE_request_ALL_READS_response_L3_HIT_HITM_OTHER_CORE;      = nullptr;
+                      m_inst_retired_any           = nullptr;
+                      m_misses                     = nullptr;
+               }
+               
+                 SKX_L2_req_hit_sibling_core_mpi_t() noexcept(false) {
+                      
+                      using namespace gms::common;
+                      const std::size_t samp_len = (std::size_t)len;
+                      const std::size_t align    = (std::size_t)64;
+                      m_OFFCORE_RESPONSE_request_ALL_READS_response_L3_HIT_HITM_OTHER_CORE  = (double*)gms_mm_malloc(samp_len,
+                                                                  align);
+                      m_inst_retired_any         = (double*)gms_mm_malloc(samp_len,
+                                                                  align);
+                      m_hits                     = (double*)gms_mm_malloc(samp_len,
+                                                                    align);
+               }
+               
+                 SKX_L2_req_hit_sibling_core_mpi_t(const  SKX_L2_req_hit_sibling_core_mpi_t &) = delete;
+               
+                 SKX_L2_req_hit_sibling_core_mpi_t(SKX_L2_req_hit_sibling_core_mpi_t &&) = delete
+               
+                 ~SKX_L2_req_hit_sibling_core_mpi_t() {
+                     
+                     using namespace gms::common;
+                     gms_mm_free(m_OFFCORE_RESPONSE_request_ALL_READS_response_L3_HIT_HITM_OTHER_CORE);
+                     gms_mm_free(m_inst_retired_any);
+                     gms_mm_free(m_hits);
+               }     
+               
+               
+                 SKX_L2_req_hit_sibling_core_mpi_t &
+                 operator=(const SKX_L2_req_hit_sibling_core_mpi_t &) = delete;
+               
+                 SKX_L2_req_hit_sibling_core_mpi_t &
+                 operator=(SKX_L2_req_hit_sibling_core_mpi_t &&) = delete;  
+               
+                 void compute_metric() {
+                    
+                  skx_L2_request_hitm_sibling_core(          m_OFFCORE_RESPONSE_request_ALL_READS_response_L3_HIT_HITM_OTHER_CORE,
+                                                             m_inst_retired_any,
+                                                             m_hits,len);
+                                             
+               }     
+               
+                 void analyze_metric_canarm(const char * __restrict fname,
+                                          const char * __restrict data_type,
+                                          const bool use_omp) {
+                   
+                    cpu_perf_time_series_canarm<len,lagh>(m_hits,fname,
+                                                          data_type,use_omp);
+                                                                            
+             }  
+             
+                 void analyze_metric_unimar(const char * __restrict fname,
+                                        const char * __restrict data_type) {
+                 
+                    cpu_perf_time_series_unimar<len,lagh>(m_hits,
+                                                          fname,data_type);                           
+            } 
+            
+                 void analyze_metric_unibar(const char * __restrict fname,
+                                       const char * __restrict data_type) {
+                                       
+                    cpu_perf_time_series_unibar<len,lagh>(m_hits,
+                                                          fname,data_type);                           
+           }    
+           
+                 void analyze_metric_exsar(const char * __restrict fname,
+                                     const char * __restrict data_type) {
+                                     
+                    cpu_perf_time_series_exsar<len,lagh>(m_hits,
+                                                         fname,data_type);                       
+           }
+           
+                 void analyze_metric_bispec(const char * __restrict fname,
+                                      const char * __restrict data_type,
+                                      const bool use_omp) {
+                                      
+                    cpu_perf_time_series_bispec<len,lagh>(m_hits,
+                                                          fname,data_type,use_omp);                          
+           }
+           
+                 void analyze_metric_thirmo(const char * __restrict fname,
+                                      const char * __restrict data_type) {
+                                      
+                    cpu_perf_time_series_thirmo<len,lagh>(m_hits,
+                                                          fname,data_type);                
+           }
+           
+                 void analyze_metric_autocor(const char * __restrict fname,
+                                       const char * __restrict data_type) {
+                                       
+                    cpu_perf_time_series_autocor<len,lagh>(m_hits,
+                                                           fname,data_type);                            
+          }
+          
+               
+      };
+      
       
       
       
