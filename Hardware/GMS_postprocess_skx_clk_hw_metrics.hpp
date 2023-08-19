@@ -691,13 +691,10 @@ namespace gms {
                
                  ~SKX_branch_mispred_t() {
                      
-                     using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_br_misp_retired_all_branches,0))   gms_mm_free(m_br_misp_retired_all_branches);
-                     if(__builtin_expect(nullptr!=
-                        m_br_inst_retired_all_branches,0))   gms_mm_free(m_br_inst_retired_all_branches);
-                     if(__builtin_expect(nullptr!=
-                        m_br_mispred_rat,0))                 gms_mm_free(m_br_mispred_rat);
+                       using namespace gms::common;
+                       gms_mm_free(m_br_misp_retired_all_branches);
+                       gms_mm_free(m_br_inst_retired_all_branches);
+                       gms_mm_free(m_br_mispred_rat);
                }     
                
                
@@ -814,12 +811,9 @@ namespace gms {
                  ~SKX_loads_per_inst_t() {
                      
                      using namespace gms::common;
-                     if(__builtin_expect(nullptr!=
-                        m_mem_inst_retired_all_loads,0))    gms_mm_free(m_mem_inst_retired_all_loads);
-                     if(__builtin_expect(nullptr!=
-                        m_inst_retired_any,0))              gms_mm_free(m_inst_retired_any);
-                     if(__builtin_expect(nullptr!=
-                        m_lpi,0))                           gms_mm_free(m_lpi);
+                     gms_mm_free(m_mem_inst_retired_all_loads);
+                     gms_mm_free(m_inst_retired_any);
+                     gms_mm_free(m_lpi);
                }     
                
                
