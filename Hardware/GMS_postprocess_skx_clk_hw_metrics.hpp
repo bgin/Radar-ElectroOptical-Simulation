@@ -61,14 +61,17 @@ namespace gms {
         struct   SKX_HW_metric_2_t __ATTR_ALIGN__(64) {
         
                 using fptr2 = void(*)(const double __restrict *,
-                             const double __restrict *,
-                             double       __restrict *,
-                             const int32_t);  
+                                      const double __restrict *,
+                                      double       __restrict *,
+                                      const int32_t);  
                                       
                  __ATTR_ALIGN__(8) double * __restrict m_param1;
                  __ATTR_ALIGN__(8) double * __restrict m_param2;
                  __ATTR_ALIGN__(8) double * __restrict m_samples;
-                 __ATTR_ALIGN__(8) fptr2               m_pfmetric;    
+                 __ATTR_ALIGN__(8) fptr2               m_pfmetric;  
+#if (USE_STRUCT_PADDING) == 1
+                  PAD_T0(0,32)
+#endif                  
                  char                                  m_metric[64];       
                  
                  SKX_HW_metric_2_t() noexcept(true) {
@@ -199,7 +202,10 @@ namespace gms {
                  __ATTR_ALIGN__(8) double * __restrict m_param2;
                  __ATTR_ALIGN__(8) double * __restrict m_param3;
                  __ATTR_ALIGN__(8) double * __restrict m_samples;
-                 __ATTR_ALIGN__(8) fptr3               m_pfmetric;    
+                 __ATTR_ALIGN__(8) fptr3               m_pfmetric;   
+#if (USE_STRUCT_PADDING) == 1
+                  PAD_T0(0,24)
+#endif                   
                  char                                  m_metric[64];       
                  
                  SKX_HW_metric_3_t() noexcept(true) {
@@ -313,6 +319,151 @@ namespace gms {
           
                       
       };
+      
+      //////////////////////////////////////////////////////////////////////
+       
+     /*
+         For the four arguments metrics.
+     */
+     
+        template<int32_t len, int32_t lagh>
+        struct   SKX_HW_metric_4_t __ATTR_ALIGN__(64) {
+        
+                using fptr4 = void(*)(const double __restrict *,
+                                      const double __restrict *,
+                                      const double __restrict *,
+                                      const double __restrict *,
+                                      double       __restrict *,
+                                      const int32_t);  
+                                      
+                 __ATTR_ALIGN__(8) double * __restrict m_param1;
+                 __ATTR_ALIGN__(8) double * __restrict m_param2;
+                 __ATTR_ALIGN__(8) double * __restrict m_param3;
+                 __ATTR_ALIGN__(8) double * __restrict m_param4,
+                 __ATTR_ALIGN__(8) double * __restrict m_samples;
+                 __ATTR_ALIGN__(8) fptr4               m_pfmetric;   
+#if (USE_STRUCT_PADDING) == 1
+                  PAD_T0(0,16)
+#endif                   
+                 char                                  m_metric[64];       
+                 
+                 SKX_HW_metric_4_t() noexcept(true) {
+                      
+                      m_param1     = nullptr;
+                      m_param2     = nullptr;
+                      m_param3     = nullptr;
+                      m_param4     = nullptr;
+                      m_samples    = nullptr;
+                      m_m_pfmetric = nullptr;
+                      m_metric[64] = {};
+               }
+               
+               SKX_HW_metric_4_t(  const fptr4 pfmetric,
+                                   const char[64] metric) noexcept(false) {
+                      
+                      using namespace gms::common;
+                      const std::size_t samp_len = (std::size_t)len;
+                      const std::size_t align    = (std::size_t)64;
+                      m_param1    = (double*)gms_mm_malloc(samp_len,align);
+                      m_param2    = (double*)gms_mm_malloc(samp_len,align);
+                      m_param3    = (double*)gms_mm_malloc(samp_len,align);
+                      m_param4    = (double*)gms_mm_malloc(samp_len,align);
+                      m_samples   = (double*)gms_mm_malloc(samp_len,align);                                                   
+                      m_pfmetric  = pfmetric;
+                      _mm512_storeu_si512((char*)&m_metric[0],
+                            _mm512_loadu_si512((const char*)&metric[0]));                                               
+                    
+               }
+               
+               SKX_HW_metric_4_t(const SKX_HW_metric_4_t &) = delete;
+               
+               SKX_HW_metric_4_t(SKX_HW_metric_4_t &&) = delete
+               
+               ~SKX_HW_metric_4_t() {
+                     
+                       using namespace gms::common;
+                       gms_mm_free(m_param1);
+                       m_param1   = nullptr;
+                       gms_mm_free(m_param2);
+                       m_param2   = nullptr;
+                       gms_mm_free(m_param3);
+                       m_param3   = nullptr;
+                       gms_mm_free(m_param4);
+                       m_param4   = nullptr;
+                       gms_mm_free(m_samples);
+                       m_samples  = nullptr;
+                       m_pfmetric = nullptr;
+               }     
+               
+               
+               SKX_HW_metric_4_t &
+               operator=(const SKX_HW_metric_4_t &) = delete;
+               
+               SKX_HW_metric_4_t &
+               operator=(SKX_HW_metric_4_t &&) = delete;  
+               
+               void compute_HW_metric() {
+                    
+                    m_pfmetric(m_param1,m_param2,m_param3
+                               m_param4,m_samples,len);
+               }     
+               
+               void analyze_metric_canarm(const char * __restrict fname,
+                                          const char * __restrict data_type,
+                                          const bool use_omp) {
+                   
+                    cpu_perf_time_series_canarm<len,lagh>(m_samples,fname,
+                                                          data_type,use_omp);
+                                                                            
+             }  
+             
+             void analyze_metric_unimar(const char * __restrict fname,
+                                        const char * __restrict data_type) {
+                 
+                    cpu_perf_time_series_unimar<len,lagh>(m_samples,
+                                                          fname,data_type);                           
+            } 
+            
+            void analyze_metric_unibar(const char * __restrict fname,
+                                       const char * __restrict data_type) {
+                                       
+                    cpu_perf_time_series_unibar<len,lagh>(m_samples,
+                                                          fname,data_type);                           
+           }    
+           
+           void analyze_metric_exsar(const char * __restrict fname,
+                                     const char * __restrict data_type) {
+                                     
+                    cpu_perf_time_series_exsar<len,lagh>(m_samples,
+                                                         fname,data_type);                       
+           }
+           
+           void analyze_metric_bispec(const char * __restrict fname,
+                                      const char * __restrict data_type,
+                                      const bool use_omp) {
+                                      
+                    cpu_perf_time_series_bispec<len,lagh>(m_samples,
+                                                          fname,data_type,use_omp);                          
+           }
+           
+           void analyze_metric_thirmo(const char * __restrict fname,
+                                      const char * __restrict data_type) {
+                                      
+                    cpu_perf_time_series_thirmo<len,lagh>(m_samples,
+                                                          fname,data_type);                
+           }
+           
+           void analyze_metric_autocor(const char * __restrict fname,
+                                       const char * __restrict data_type) {
+                                       
+                    cpu_perf_time_series_autocor<len,lagh>(m_samples,
+                                                           fname,data_type);                            
+          }
+          
+                      
+      };
+      
+     
       
       
       
