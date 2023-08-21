@@ -13841,7 +13841,7 @@ namespace gms {
                                                   _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
 	                }
 	                
-	                const float c0 = (;x+x)/L
+	                const float c0 = (x+x)/L
 	                for(; (i+0) < n; i += 1) {
 	                    const float M   = pM[i];
 	                    const float tht = ptht[i];
@@ -14222,7 +14222,7 @@ namespace gms {
                                                   _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
 	                }
 	                
-	                const float c0 = (;x+x)/L
+	                const float c0 = (x+x)/L
 	                for(; (i+0) < n; i += 1) {
 	                    const float M   = pM[i];
 	                    const float tht = ptht[i];
@@ -14239,6 +14239,9 @@ namespace gms {
 	                }
 	                                              
 	       }
+	       
+	       
+	       
 	         
 	        
 	        
