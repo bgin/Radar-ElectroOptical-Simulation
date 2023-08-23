@@ -518,7 +518,11 @@ constexpr int padding64B{64};
 #endif
 
 
-
+//define Concurrent page-size access (default set to 2)
+// Other possibilities are (4,8) i.e. 2*PAGESIZE,4*PAGESIZE,8*PAGESIZE
+#if !defined(CONCURRENT_PAGESIZE_ACCESS)
+#define CONCURRENT_PAGESIZE_ACCESS 2
+#endif
 
 
 #define PRINT_MESSAGE(msg) std::cerr << (msg) << "\n";
