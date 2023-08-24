@@ -189,7 +189,7 @@ c
                                 register __m512 syn = _mm512_sqrt_ps(yn);
                                 lamda =  _mm512_fmadd_ps(_mm512_mul_ps(_2,sxn),syn,yn);
                                 xn    = _mm512_mul_ps(_mm512_add_ps(xn,lamda),qtr);
-                                yn    = _mm512_mul_ps(_mm512_add_ps(ym,lamda),qtr);
+                                yn    = _mm512_mul_ps(_mm512_add_ps(yn,lamda),qtr);
                          }
                 }
 
