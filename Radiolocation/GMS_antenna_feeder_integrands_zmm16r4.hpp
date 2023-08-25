@@ -2392,6 +2392,2341 @@ namespace gms {
 	                }
 	                                                     
 	     }
+	     
+	     
+	      __ATTR_ALWAYS_INLINE__
+	      __ATTR_HOT__
+	      __ATTR_ALIGN__(32)
+              static inline
+	      void f253_integrand_zmm16r4_unroll_jam248x(       const float * __restrict __ATTR_ALIGN__(64)  phxr,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  phxi,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  phyr,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  phyi,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  phzr,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  phzi,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  pnx,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  pny,
+	                                                        const float * __restrict __ATTR_ALIGN__(64)  pnz,
+	                                                        float * __restrict __ATTR_ALIGN__(64)  prho,
+	                                                        float * __restrict __ATTR_ALIGN__(64)  pcst,
+	                                                        fwork_t fw, // work arrays
+	                                                        const float k,
+	                                                        const int32_t n,
+	                                                        const int32_t RANKSIZE,
+	                                                        const int32_t PAGESIZE,
+	                                                        const int32_t PF_DIST) {
+	                                             
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                if(__builtin_expect((n%16)!=0,0)) {return;}
+	                register __m512 hxr,hxi;
+	                register __m512 hyr,hyi;
+	                register __m512 hzr,hzi;
+	                register __m512 nx,ny,nz; 
+	                register __m512 rho,cst;
+	                register __m512 ear,eai;
+	                register __m512 vk,t0;
+	                register __m512 ir,ii;
+	                         __m512 cer,cei;
+	                         __m512 t0r,t0i;
+	                         __m512 t1r,t1i;
+	                         __m512 t2r,t2i;
+	                         __m512 vxr,vxi;
+	                         __m512 vyr,vyi;
+	                         __m512 vzr,vzi;
+	                std::complex<float> cvx,cvy,cvz;
+	                int32_t k,j,i;
+	                
+	                vk  = _mm512_set1_ps(k);
+	                cer = _mm512_setzero_ps();
+	                cei = cer;
+	                ii  = _mm512_set1_ps(1.0f);
+	                ir  = cer;
+	                ear = cer;
+	                t0  = _mm512_mul_ps(ii,vk);
+	                
+#if (CONCURRENT_PAGESIZE_ACCESSES) == 2	                
+	      for(k=0; k<n; k+=RANKSIZE) {
+	         for(j=k; j<k+RANKSIZE; j+=2*PAGESIZE) { 
+	                  for(i=j; i<j+PAGESIZE; i+=64) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+0]);
+                             rho = _mm512_load_ps(&prho[i+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+0]);
+                             hxi = _mm512_load_ps(&phxi[i+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+0]);
+                             hyi = _mm512_load_ps(&phyi[i+0]);
+                             hzr = _mm512_load_ps(&phzr[i+0]);
+                             hzi = _mm512_load_ps(&phzi[i+0]);
+                             nx  = _mm512_load_ps(&pnx[i+0]);
+                             ny  = _mm512_load_ps(&pny[i+0]);
+                             nz  = _mm512_load_ps(&pnz[i+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+16]);
+                             rho = _mm512_load_ps(&prho[i+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+16]);
+                             hxi = _mm512_load_ps(&phxi[i+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+16]);
+                             hyi = _mm512_load_ps(&phyi[i+16]);
+                             hzr = _mm512_load_ps(&phzr[i+16]);
+                             hzi = _mm512_load_ps(&phzi[i+16]);
+                             nx  = _mm512_load_ps(&pnx[i+16]);
+                             ny  = _mm512_load_ps(&pny[i+16]);
+                             nz  = _mm512_load_ps(&pnz[i+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+32]);
+                             rho = _mm512_load_ps(&prho[i+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+32]);
+                             hxi = _mm512_load_ps(&phxi[i+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+32]);
+                             hyi = _mm512_load_ps(&phyi[i+32]);
+                             hzr = _mm512_load_ps(&phzr[i+32]);
+                             hzi = _mm512_load_ps(&phzi[i+32]);
+                             nx  = _mm512_load_ps(&pnx[i+32]);
+                             ny  = _mm512_load_ps(&pny[i+32]);
+                             nz  = _mm512_load_ps(&pnz[i+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+48]);
+                             rho = _mm512_load_ps(&prho[i+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+48]);
+                             hxi = _mm512_load_ps(&phxi[i+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+48]);
+                             hyi = _mm512_load_ps(&phyi[i+48]);
+                             hzr = _mm512_load_ps(&phzr[i+48]);
+                             hzi = _mm512_load_ps(&phzi[i+48]);
+                             nx  = _mm512_load_ps(&pnx[i+48]);
+                             ny  = _mm512_load_ps(&pny[i+48]);
+                             nz  = _mm512_load_ps(&pnz[i+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+48],t2i);
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+48],t2i);           
+	                }   
+	             
+	             }
+	          }   
+#elif (CONCURRENT_PAGESIZE_ACCESSES) == 4
+                 for(k=0; k<n; k+=RANKSIZE) {
+	             for(j=k; j<k+RANKSIZE; j+=4*PAGESIZE) { 
+	                  for(i=j; i<j+PAGESIZE; i+=64) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+0]);
+                             rho = _mm512_load_ps(&prho[i+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+0]);
+                             hxi = _mm512_load_ps(&phxi[i+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+0]);
+                             hyi = _mm512_load_ps(&phyi[i+0]);
+                             hzr = _mm512_load_ps(&phzr[i+0]);
+                             hzi = _mm512_load_ps(&phzi[i+0]);
+                             nx  = _mm512_load_ps(&pnx[i+0]);
+                             ny  = _mm512_load_ps(&pny[i+0]);
+                             nz  = _mm512_load_ps(&pnz[i+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+16]);
+                             rho = _mm512_load_ps(&prho[i+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+16]);
+                             hxi = _mm512_load_ps(&phxi[i+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+16]);
+                             hyi = _mm512_load_ps(&phyi[i+16]);
+                             hzr = _mm512_load_ps(&phzr[i+16]);
+                             hzi = _mm512_load_ps(&phzi[i+16]);
+                             nx  = _mm512_load_ps(&pnx[i+16]);
+                             ny  = _mm512_load_ps(&pny[i+16]);
+                             nz  = _mm512_load_ps(&pnz[i+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+32]);
+                             rho = _mm512_load_ps(&prho[i+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+32]);
+                             hxi = _mm512_load_ps(&phxi[i+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+32]);
+                             hyi = _mm512_load_ps(&phyi[i+32]);
+                             hzr = _mm512_load_ps(&phzr[i+32]);
+                             hzi = _mm512_load_ps(&phzi[i+32]);
+                             nx  = _mm512_load_ps(&pnx[i+32]);
+                             ny  = _mm512_load_ps(&pny[i+32]);
+                             nz  = _mm512_load_ps(&pnz[i+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+48]);
+                             rho = _mm512_load_ps(&prho[i+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+48]);
+                             hxi = _mm512_load_ps(&phxi[i+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+48]);
+                             hyi = _mm512_load_ps(&phyi[i+48]);
+                             hzr = _mm512_load_ps(&phzr[i+48]);
+                             hzi = _mm512_load_ps(&phzi[i+48]);
+                             nx  = _mm512_load_ps(&pnx[i+48]);
+                             ny  = _mm512_load_ps(&pny[i+48]);
+                             nz  = _mm512_load_ps(&pnz[i+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+48],t2i);
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+48],t2i);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+48],t2i);  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+48],t2i);           
+	                }   
+	             
+	             }
+	          }  
+#elif (CONCURRENT_PAGESIZE_ACCESSES) == 8
+                  for(k=0; k<n; k+=RANKSIZE) {
+	             for(j=k; j<k+RANKSIZE; j+=8*PAGESIZE) { 
+	                  for(i=j; i<j+PAGESIZE; i+=64) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+0]);
+                             rho = _mm512_load_ps(&prho[i+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+0]);
+                             hxi = _mm512_load_ps(&phxi[i+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+0]);
+                             hyi = _mm512_load_ps(&phyi[i+0]);
+                             hzr = _mm512_load_ps(&phzr[i+0]);
+                             hzi = _mm512_load_ps(&phzi[i+0]);
+                             nx  = _mm512_load_ps(&pnx[i+0]);
+                             ny  = _mm512_load_ps(&pny[i+0]);
+                             nz  = _mm512_load_ps(&pnz[i+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+16]);
+                             rho = _mm512_load_ps(&prho[i+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+16]);
+                             hxi = _mm512_load_ps(&phxi[i+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+16]);
+                             hyi = _mm512_load_ps(&phyi[i+16]);
+                             hzr = _mm512_load_ps(&phzr[i+16]);
+                             hzi = _mm512_load_ps(&phzi[i+16]);
+                             nx  = _mm512_load_ps(&pnx[i+16]);
+                             ny  = _mm512_load_ps(&pny[i+16]);
+                             nz  = _mm512_load_ps(&pnz[i+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+32]);
+                             rho = _mm512_load_ps(&prho[i+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+32]);
+                             hxi = _mm512_load_ps(&phxi[i+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+32]);
+                             hyi = _mm512_load_ps(&phyi[i+32]);
+                             hzr = _mm512_load_ps(&phzr[i+32]);
+                             hzi = _mm512_load_ps(&phzi[i+32]);
+                             nx  = _mm512_load_ps(&pnx[i+32]);
+                             ny  = _mm512_load_ps(&pny[i+32]);
+                             nz  = _mm512_load_ps(&pnz[i+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+48]);
+                             rho = _mm512_load_ps(&prho[i+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+48]);
+                             hxi = _mm512_load_ps(&phxi[i+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+48]);
+                             hyi = _mm512_load_ps(&phyi[i+48]);
+                             hzr = _mm512_load_ps(&phzr[i+48]);
+                             hzi = _mm512_load_ps(&phzi[i+48]);
+                             nx  = _mm512_load_ps(&pnx[i+48]);
+                             ny  = _mm512_load_ps(&pny[i+48]);
+                             nz  = _mm512_load_ps(&pnz[i+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+48],t2i);
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+PAGESIZE+48],t2i);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+2*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+2*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+2*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+2*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+2*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+2*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+2*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+2*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+2*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+2*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+2*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+2*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+2*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+2*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+2*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+2*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+2*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+2*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+2*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+2*PAGESIZE+48],t2i);  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+3*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+3*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+3*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+3*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+3*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+3*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+3*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+3*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+3*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+3*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+3*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+3*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+3*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+3*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+3*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+3*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+3*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+3*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+3*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+3*PAGESIZE+48],t2i);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+4*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+4*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+4*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+4*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+4*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+4*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+4*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+4*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+4*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+4*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+4*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+4*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+4*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+4*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+4*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+4*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+4*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+4*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+4*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+4*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+4*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+4*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+4*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+4*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+4*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+4*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+4*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+4*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+4*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+4*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+4*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+4*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+4*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+4*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+4*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+4*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+4*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+4*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+4*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+4*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+4*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+4*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+4*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+4*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+4*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+4*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+4*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+4*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+4*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+4*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+4*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+4*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+4*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+4*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+4*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+4*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+4*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+4*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+4*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+4*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+4*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+4*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+4*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+4*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+4*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+4*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+4*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+4*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+4*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+4*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+4*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+4*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+4*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+4*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+4*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+4*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+4*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+4*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+4*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+4*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+4*PAGESIZE+48],t2i);
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+5*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+5*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+5*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+5*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+5*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+5*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+5*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+5*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+5*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+5*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+5*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+5*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+5*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+5*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+5*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+5*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+5*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+5*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+5*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+5*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+5*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+5*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+5*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+5*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+5*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+5*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+5*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+5*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+5*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+5*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+5*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+5*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+5*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+5*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+5*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+5*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+5*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+5*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+5*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+5*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+5*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+5*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+5*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+5*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+5*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+5*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+5*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+5*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+5*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+5*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+5*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+5*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+5*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+5*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+5*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+5*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+5*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+5*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+5*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+5*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+5*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+5*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+5*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+5*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+5*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+5*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+5*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+5*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+5*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+5*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+5*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+5*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+5*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+5*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+5*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+5*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+5*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+5*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+5*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+5*PAGESIZE+48],t2i);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+6*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+6*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+6*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+6*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+6*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+6*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+6*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+6*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+6*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+6*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+6*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+6*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+6*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+6*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+6*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+6*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+6*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+6*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+6*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+6*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+6*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+6*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+6*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+6*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+6*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+6*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+6*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+6*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+6*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+6*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+6*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+6*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+6*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+6*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+6*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+6*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+6*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+6*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+6*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+6*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+6*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+6*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+6*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+6*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+6*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+6*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+6*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+6*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+6*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+6*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+6*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+6*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+6*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+6*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+6*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+6*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+6*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+6*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+6*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+6*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+6*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+6*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+6*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+6*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+6*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+6*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+6*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+6*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+6*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+6*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+6*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+6*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+6*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+6*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+6*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+6*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+6*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+6*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+6*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+6*PAGESIZE+48],t2i);  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&phxr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phxi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phyi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&phzi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pnx[i+7*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pny[i+7*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&pnz[i+7*PAGESIZE+PF_DIST], _MM_HINT_T0);
+                             _mm_prefetch((char*)&prho[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&pcst[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2                       
+                             _mm_prefetch((char*)&phxr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phxi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phyi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&phzi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pnx[i+7*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pny[i+7*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&pnz[i+7*PAGESIZE+PF_DIST], _MM_HINT_T1);
+                             _mm_prefetch((char*)&prho[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&pcst[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&phxr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phxi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phyi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzr[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&phzi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pnx[i+7*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pny[i+7*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&pnz[i+7*PAGESIZE+PF_DIST], _MM_HINT_T2);
+                             _mm_prefetch((char*)&prho[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&pcst[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&phxr[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phxi[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyr[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phyi[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzr[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&phzi[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnx[i+7*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pny[i+7*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&pnz[i+7*PAGESIZE+PF_DIST], _MM_HINT_NTA);
+                             _mm_prefetch((char*)&prho[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&pcst[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif	                 
+                             cst = _mm512_load_ps(&pcst[i+7*PAGESIZE+0]);
+                             rho = _mm512_load_ps(&prho[i+7*PAGESIZE+0]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+7*PAGESIZE+0]);
+                             hxi = _mm512_load_ps(&phxi[i+7*PAGESIZE+0]); 
+                             hyr = _mm512_load_ps(&phyr[i+7*PAGESIZE+0]);
+                             hyi = _mm512_load_ps(&phyi[i+7*PAGESIZE+0]);
+                             hzr = _mm512_load_ps(&phzr[i+7*PAGESIZE+0]);
+                             hzi = _mm512_load_ps(&phzi[i+7*PAGESIZE+0]);
+                             nx  = _mm512_load_ps(&pnx[i+7*PAGESIZE+0]);
+                             ny  = _mm512_load_ps(&pny[i+7*PAGESIZE+0]);
+                             nz  = _mm512_load_ps(&pnz[i+7*PAGESIZE+0]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+7*PAGESIZE+0],t0r);
+                             _mm512_store_ps(&fw.pxi[i+7*PAGESIZE+0],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+7*PAGESIZE+0],t1r);
+                             _mm512_store_ps(&fw.pyi[i+7*PAGESIZE+0],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+7*PAGESIZE+0],t2r);
+                             _mm512_store_ps(&fw.pzi[i+7*PAGESIZE+0],t2i);
+                             cst = _mm512_load_ps(&pcst[i+7*PAGESIZE+16]);
+                             rho = _mm512_load_ps(&prho[i+7*PAGESIZE+16]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+7*PAGESIZE+16]);
+                             hxi = _mm512_load_ps(&phxi[i+7*PAGESIZE+16]); 
+                             hyr = _mm512_load_ps(&phyr[i+7*PAGESIZE+16]);
+                             hyi = _mm512_load_ps(&phyi[i+7*PAGESIZE+16]);
+                             hzr = _mm512_load_ps(&phzr[i+7*PAGESIZE+16]);
+                             hzi = _mm512_load_ps(&phzi[i+7*PAGESIZE+16]);
+                             nx  = _mm512_load_ps(&pnx[i+7*PAGESIZE+16]);
+                             ny  = _mm512_load_ps(&pny[i+7*PAGESIZE+16]);
+                             nz  = _mm512_load_ps(&pnz[i+7*PAGESIZE+16]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+7*PAGESIZE+16],t0r);
+                             _mm512_store_ps(&fw.pxi[i+7*PAGESIZE+16],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+7*PAGESIZE+16],t1r);
+                             _mm512_store_ps(&fw.pyi[i+7*PAGESIZE+16],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+7*PAGESIZE+16],t2r);
+                             _mm512_store_ps(&fw.pzi[i+7*PAGESIZE+16],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+7*PAGESIZE+32]);
+                             rho = _mm512_load_ps(&prho[i+7*PAGESIZE+32]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+7*PAGESIZE+32]);
+                             hxi = _mm512_load_ps(&phxi[i+7*PAGESIZE+32]); 
+                             hyr = _mm512_load_ps(&phyr[i+7*PAGESIZE+32]);
+                             hyi = _mm512_load_ps(&phyi[i+7*PAGESIZE+32]);
+                             hzr = _mm512_load_ps(&phzr[i+7*PAGESIZE+32]);
+                             hzi = _mm512_load_ps(&phzi[i+7*PAGESIZE+32]);
+                             nx  = _mm512_load_ps(&pnx[i+7*PAGESIZE+32]);
+                             ny  = _mm512_load_ps(&pny[i+7*PAGESIZE+32]);
+                             nz  = _mm512_load_ps(&pnz[i+7*PAGESIZE+32]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+7*PAGESIZE+32],t0r);
+                             _mm512_store_ps(&fw.pxi[i+7*PAGESIZE+32],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+7*PAGESIZE+32],t1r);
+                             _mm512_store_ps(&fw.pyi[i+7*PAGESIZE+32],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+7*PAGESIZE+32],t2r);
+                             _mm512_store_ps(&fw.pzi[i+7*PAGESIZE+32],t2i); 
+                             cst = _mm512_load_ps(&pcst[i+7*PAGESIZE+48]);
+                             rho = _mm512_load_ps(&prho[i+7*PAGESIZE+48]);
+                             eai = _mm512_mul_ps(t0,
+                                              _mm512_mul_ps(rho,cst));
+                             cexp_zmm16r4(ear,eai,&cer,&cei); 
+                             hxr = _mm512_load_ps(&phxr[i+7*PAGESIZE+48]);
+                             hxi = _mm512_load_ps(&phxi[i+7*PAGESIZE+48]); 
+                             hyr = _mm512_load_ps(&phyr[i+7*PAGESIZE+48]);
+                             hyi = _mm512_load_ps(&phyi[i+7*PAGESIZE+48]);
+                             hzr = _mm512_load_ps(&phzr[i+7*PAGESIZE+48]);
+                             hzi = _mm512_load_ps(&phzi[i+7*PAGESIZE+48]);
+                             nx  = _mm512_load_ps(&pnx[i+7*PAGESIZE+48]);
+                             ny  = _mm512_load_ps(&pny[i+7*PAGESIZE+48]);
+                             nz  = _mm512_load_ps(&pnz[i+7*PAGESIZE+48]);
+                             scrosscv_zmm16c4(hxr,hxi,hyr,
+                                              hyi,hzr,hzi,
+                                              nx,ny,nz,
+                                              &vxr,&vxi,&vyr,
+                                              &vyi,&vzr,&vzi);
+                             cmul_zmm16r4(vxr,vxi,cer,cei,&t0r,&t0i);
+                             _mm512_store_ps(&fw.pxr[i+7*PAGESIZE+48],t0r);
+                             _mm512_store_ps(&fw.pxi[i+7*PAGESIZE+48],t0i);
+                             cmul_zmm16r4(vyr,vyi,cer,cei,&t1r,&t1i);
+                             _mm512_store_ps(&fw.pyr[i+7*PAGESIZE+48],t1r);
+                             _mm512_store_ps(&fw.pyi[i+7*PAGESIZE+48],t1i);
+                             cmul_zmm16r4(vzr,vzi,cer,cei,&t2r,&t2i);
+                             _mm512_store_ps(&fw.pzr[i+7*PAGESIZE+48],t2r);
+                             _mm512_store_ps(&fw.pzi[i+7*PAGESIZE+48],t2i);           
+	            
+	                }   
+	             
+	             }
+	          }  
+#endif	           	    
+            }
+            
+            
 	      
                   
                   
