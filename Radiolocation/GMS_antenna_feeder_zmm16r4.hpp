@@ -8222,9 +8222,9 @@ namespace gms {
                                                                  pnx,pny,pnz,
                                                                  prho,pcst,fw,
                                                                  k,n,PF_DIST);  
-                              
+                                    break;
                             case : 2 
-                                    f253_integrand_zmm16r4_unroll_jam8x_a(phxr,phxi,phyr,
+                                    f253_integrand_zmm16r4_unroll_jam248x(phxr,phxi,phyr,
                                                                           phyi,phzr,phzi,
                                                                           pnx,pny,pnz,
                                                                           prho,pcst,fw,
@@ -8232,15 +8232,7 @@ namespace gms {
                                                                           PAGESIZE,
                                                                           PF_DIST);
                                     break;                                       
-                            case : 3 
-                                  f253_integrand_zmm16r4_unroll_jam4x_a(  phxr,phxi,phyr,
-                                                                          phyi,phzr,phzi,
-                                                                          pnx,pny,pnz,
-                                                                          prho,pcst,fw,
-                                                                          k,n,RANKSIZE,
-                                                                          PAGESIZE,
-                                                                          PF_DIST);  
-                                  break;
+                          
                             default :
                                    return;
                               
