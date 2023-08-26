@@ -800,8 +800,8 @@ static const __m512 gd[11] = {
                            acc3 = _mm512_fmadd_ps(acc3,t,cn[3]);
                            acc4 = _mm512_fmadd_ps(acc4,t,cd[3]);
                            acc3 = _mm512_fmadd_ps(acc3,t,cn[4]);
+                           acc4 = _mm512_fmadd_ps(acc4,t,cd[4]);
                            acc4 = _mm512_fmadd_ps(acc4,t,cd[5]);
-                           acc4 = _mm512_fmadd_ps(acc4,t,cd[6]);
                            t1   = _mm512_div_ps(acc3,acc4);
                            cc   = _mm512_mul_ps(x,t1);
                            goto done;
