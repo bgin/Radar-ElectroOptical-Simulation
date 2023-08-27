@@ -5735,6 +5735,255 @@ namespace gms {
 	                                              
 	       }
 	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void f269_integrand_unroll_6x_u(const float * __restrict pM,
+	                                            const float * __restrict ptht,
+	                                            float * __restrict pint,
+	                                            const float L,
+	                                            const float x,
+	                                            const float gamm,
+	                                            const int32_t n,
+	                                            const int32_t PF_DIST) {
+	                                            
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                const __m512 C314159265358979323846264338328 = 
+	                                 _mm512_set1_ps(3.14159265358979323846264338328f);
+	               
+	                register __m512 M;
+	                register __m512 tht;
+	                register __m512 stht;
+	                register __m512 u;
+	                register __m512 cos1;
+	                register __m512 cos2;
+	                register __m512 M2;
+	                register __m512 u2;
+	                register __m512 sqr;
+	                register __m512 ch; 
+	                register __m512 pu
+	                __m512          vg,vL,vx,t0;
+	                int i;
+	                vL   = _mm512_set1_ps(L);
+	                vg   = _mm512_set1_ps(gamm);
+	                vx   = _mm512_set1_ps(x);
+	                t0   = _mm512_div_ps(_mm512_add_ps(vx,vx),vL);
+	                for(i = 0; (i+95) < n; i += 96) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_T1);
+                             _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_T2);   
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_T2);  
+#endif                      
+                             M    = _mm512_loadu_ps(&pM[i+0]);
+                             tht  = _mm512_loadu_ps(&ptht[i+0]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+0],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+16]);
+                             tht  = _mm512_loadu_ps(&ptht[i+16]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+16],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+32]);
+                             tht  = _mm512_loadu_ps(&ptht[i+32]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+32],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+48]);
+                             tht  = _mm512_loadu_ps(&ptht[i+48]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+48],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+64]);
+                             tht  = _mm512_loadu_ps(&ptht[i+64]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+64],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+80]);
+                             tht  = _mm512_loadu_ps(&ptht[i+80]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+80],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2));
+                           
+	                }
+	                
+	               
+	                for(; (i+63) < n; i += 64) {
+	                     M    = _mm512_loadu_ps(&pM[i+0]);
+                             tht  = _mm512_loadu_ps(&ptht[i+0]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+0],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+16]);
+                             tht  = _mm512_loadu_ps(&ptht[i+16]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+16],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+32]);
+                             tht  = _mm512_loadu_ps(&ptht[i+32]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+32],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+48]);
+                             tht  = _mm512_loadu_ps(&ptht[i+48]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+48],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+	                }
+	                
+	                for(; (i+31) < n; i += 32) {
+	                     M    = _mm512_loadu_ps(&pM[i+0]);
+                             tht  = _mm512_loadu_ps(&ptht[i+0]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+0],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+                             M    = _mm512_loadu_ps(&pM[i+16]);
+                             tht  = _mm512_loadu_ps(&ptht[i+16]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+16],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+	                }
+	                
+	                for(; (i+15) < n; i += 16) {
+	                     M    = _mm512_loadu_ps(&pM[i+0]);
+                             tht  = _mm512_loadu_ps(&ptht[i+0]);
+                             stht = xsinf(tht);
+                             M2   = _mm512_mul_ps(M,M);
+                             u    = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+                             pu   = _mm512_mul_ps(C314159265358979323846264338328,u);
+                             cos1 = xcosf(pu);
+                             u2   = _mm512_mul_ps(u,u);
+                             cos2 = xcosf(_mm512_mul_ps(pu,t0));
+                             sqr  = _mm512_sqrt_ps(_mm512_sub_ps(M2,u2));
+                             ch   = xcoshf(_mm512_mul_ps(C314159265358979323846264338328,sqr));
+                             _mm512_storeu_ps(&pint[i+0],
+                                                  _mm512_mul_ps(_mm512_sub_ps(ch,cos1),cos2)); 
+	                }
+	                
+	                const float c0 = (x+x)/L
+	                for(; (i+0) < n; i += 1) {
+	                    const float M   = pM[i];
+	                    const float tht = ptht[i];
+	                    const float stht= cephes_sinf(tht);
+	                    const float M2  = M*M;
+	                    const float u   = stht*(L/gamm);
+	                    const float pu  = 3.14159265358979323846264338328f*u;
+	                    const float cos1= cephes_cosf(pu);
+	                    const float u2  = u*u;
+	                    const float cos2= pu*c0;
+	                    const float sqr = cephes_sqrtf(M2-u2);
+	                    const float ch  = cephes_coshf(3.14159265358979323846264338328f*sqr);
+	                    pint[i]         = (ch-cos1)*cos2;
+	                }
+	                                              
+	       }
+	       
 	        
 	       
             
