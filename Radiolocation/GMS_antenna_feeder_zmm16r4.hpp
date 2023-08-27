@@ -10667,7 +10667,47 @@ namespace gms {
 	               sarg= xsinf(arg);
 	               fth = _mm512_div_ps(sarg,arg);
 	               return (fth):
-	         }             
+	         }   
+	         
+	         
+	         /*
+	             Formula 2-80, p. 56
+	         */ 
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           __ATTR_VECTORCALL__
+                   static inline
+	           __m512 f280_zmm16r4(const __m512 tht,
+	                               const float C,
+	                               const float L,
+	                               const float g) {
+	             
+	              const __m512 C9869604401089358618834490999876 = 
+	                                  _mm512_set1_ps(9.869604401089358618834490999876f);
+	              register __m512 vL,vg;
+	              register __m512 vC,u;
+	              register __m512 stht,su;
+	              register __m512 u2,trm1;
+	              register __m512 Fu,trm2;
+	              
+	              vL  = _mm512_set1_ps(L);
+	              stht= xsinf(tht);
+	              vg  = _mm512_set1_ps(g);
+	              u   = _mm512_mul_ps(_mm512_div_ps(vL,vg),stht);
+	              vC  = _mm512_set1_ps(C);
+	              su  = xsinf(u);
+	              u2  = _mm512_mul_ps(u,u);   
+	              trm1= _mm512_div_ps(su,u);
+	              trm2= _mm512_div_ps(su,_mm512_add_ps(u,u));
+	              vg  = _mm512_div_ps(C9869604401089358618834490999876,
+	                    _mm512_sub_ps(C9869604401089358618834490999876,u2));
+	              Fu  = _mm512_fmadd_ps(vC,trm1,
+	                                _mm512_mul_ps(trm2,vg));
+	              return (Fu);              
+	         }
+	                  
 	        
 	        
 	         
