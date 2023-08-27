@@ -10574,7 +10574,68 @@ namespace gms {
 	                err = fer;
 	                return (sum);
 	       }
+	       
+	       
+	       /*
+	          Formula 2-71, p. 53
+	       */
 	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float f271_r4(const int32_t m1
+	                         const int32_t n,
+	                         const float L,
+	                         const float g,
+	                         const float M,
+	                         const float tht) {
+	                       
+	             constexpr float C314159265358979323846264338328 = 
+	                                   3.14159265358979323846264338328f;  
+	             constexpr float C10 = 1.0f;
+	             float fm,fn;  
+	             float piu,u2;
+	             float gam2,M2;
+	             float num,den;
+	             float sinc,ch;
+	             float acc,fth; 
+	             float u,t0,t1; 
+	             register float y1;
+	             int32_t cnt,n1;
+	             
+	             cnt = m1-1;
+	             n1  = n-1; 
+	             fn  = (float)n;
+	             ch  = cephes_coshf(M*C314159265358979323846264338328);
+	             fm  = (float)m1;
+	             u   = L/g*cephes_sinf(tht);
+	             piu = C314159265358979323846264338328*u;
+	             u2  = u*u;
+	             M2  = M*M;
+	             t0 = (fm-0.5f)
+	             t1 = t0*t0;
+	             gam2 = fm/cephes_sqrtf(M2+t1); 
+	             y1  = 1.0f-u2/gam2;
+	             num = 1.0f;
+	             sinc= cephes_sinf(piu)/piu;
+	             den = 1.0f;
+	             
+	             while(n1<cnt) {
+	                 fn += 1.0f;
+	                 register float x1 = 1.0f-u2/(fn*fn);
+	                 register float t2 = fn-0.5;
+	                 register float t3 = t2*t2;
+	                 register float z1 = 1.0f/(M2-t3);
+	                 num               *=y1*z1
+	                 den               *=x1;
+	                 n1 += 1;
+	             } 
+	             acc = num/den;
+	             fth = ch*sinc*acc;
+	             return (fth);         
+	        }
+	                         
 	        
 	        
 	         
