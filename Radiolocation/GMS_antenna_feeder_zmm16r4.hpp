@@ -10500,6 +10500,82 @@ namespace gms {
 	        }
 	        
 	        
+	        /*
+	            Formula 2-69, p. 53
+	        */
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float f269_zmm16r4_cubint_dispatch( const float * __restrict pM,
+	                                              const float * __restrict ptht,
+	                                              float * __restrict pu, //du
+	                                              float * __restrict pint, // integrand
+	                                              const float L,
+	                                              const float x,
+	                                              const float gamm,
+	                                              const float psi,
+	                                              const float xa,
+	                                              const float xb,
+	                                              const int32_t n,
+	                                              const int32_t RANKSIZE,
+	                                              const int32_t PAGESIZE,
+	                                              const int32_t PF_DIST,
+	                                              const int32_t cond,
+	                                              float & err) {
+	                                             
+	                                              
+	               constexpr float C314159265358979323846264338328 = 
+	                                   3.14159265358979323846264338328f;
+	               constexpr float C20 = 2.0f;
+	               float sum;
+	               float fac;
+	               float inv;
+	               float t0;
+	               float fer;
+	               switch(cond) {
+	                    
+	                      case:0 
+	                          f269_integrand_unroll_6x_a(pM,ptht,pint,L,
+	                                                      x,gamm,n,PF_DIST);
+	                      break;
+	                      
+	                      case:1
+	                          f269_integrand_unroll_6x_u(pM,ptht,pint,L,
+	                                                      x,gamm,n,PF_DIST);
+	                      break;
+	                      
+	                      case:2
+	                          f269_integrand_unroll_10x_a(pM,ptht,pint,L,
+	                                                      x,gamm,n,PF_DIST);
+	                      break;
+	                      
+	                      case:3
+	                          f269_integrand_unroll_10x_u(pM,ptht,pint,L,
+	                                                      x,gamm,n,PF_DIST);
+	                      break;
+	                      
+	                      case:4
+	                          f269_integrand_unroll_jam248x(pM,ptht,pint,L,
+	                                                        x,gamm,n,RANKSIZE,
+	                                                        PAGESIZE,PF_DIST);
+	                      break;
+	                      default:
+	                           sum = std::numerical_limits<float>::quiet_NaN();
+	                           return (sum);
+	               }  
+	               
+	                t0  = C314159265358979323846264338328*L;
+	                inv = (1.0f/psi)-1.0f;
+	                fac = C20/(t0*inv);  
+	                cubint(n,&pu[0],&pint[0],xa,xb,sum,fer);
+	                err = fer;
+	                return (sum);
+	       }
+	        
+	        
 	        
 	         
 	        
