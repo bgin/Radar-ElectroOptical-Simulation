@@ -1652,6 +1652,32 @@ namespace  gms {
 	                _mm512_storeu_ps(&ppowi[0] ,_mm512_mul_ps(pt,xsinf(ta)));                    
 	       }
 	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           ZMM16c4_t cpow_zmm16r4(const ZMM16c4_t x,
+	                                  const float n) {
+	                   
+	                ZMM16c4_t cp;        
+	                register __m512 zmm0,zmm1;
+	                register __m512 r,tht;
+	                register __m512 vn,pt;
+	                register __m512 ta;
+	                zmm0  = _mm512_mul_ps(x.re,x.re);
+	                vn    = _mm512_set1_ps(n);
+	                zmm1  = _mm512_mul_ps(x.im,x.im);
+	                r     = _mm512_sqrt_ps(_mm512_add_ps(zmm0,zmm1));
+	                tht   = xatanf(_mm512_div_ps(x.im,x.re));
+	                pt    = _mm512_pow_ps(r,vn);
+	                ta    = _mm512_mul_ps(vn,tht);
+	                cp.re = _mm512_mul_ps(pt,xcosf(ta));
+	                cp.im = _mm512_mul_ps(pt,xsinf(ta));      
+	                return (cp);              
+	       }
+	       
 
 
                    __ATTR_ALWAYS_INLINE__
