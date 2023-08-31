@@ -1532,6 +1532,38 @@ namespace  gms {
 	                *powr = _mm512_mul_pd(pt,xcos(ta));
 	                *powi = _mm512_mul_pd(pt,xsin(ta));                    
 	       }
+	       
+	       
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cpow_zmm8r8_a( const double * __restrict __ATTR_ALIGN__(64) pxre,
+	                               const double * __restrict __ATTR_ALIGN__(64) pxim,
+	                               const double n,
+	                               double * __restrict __ATTR_ALIGN__(64) ppowr
+	                               double * __restrict __ATTR_ALIGN__(64) ppowi) {
+	                  
+	                register __m512d xre = _mm512_load_pd(&pxre[0]);
+	                register __m512d xim = _mm512_load_pd(&pxim[0]);           
+	                register __m512d zmm0,zmm1;
+	                register __m512d r,tht;
+	                register __m512d vn,pt;
+	                register __m512d ta;
+	                zmm0  = _mm512_mul_pd(xre,xre);
+	                vn    = _mm512_set1_pd(n);
+	                zmm1  = _mm512_mul_pd(xim,xim);
+	                r     = _mm512_sqrt_pd(_mm512_add_pd(zmm0,zmm1));
+	                tht   = xatand(_mm512_div_pd(xim,xre));
+	                pt    = _mm512_pow_pd(r,vn);
+	                ta    = _mm512_mul_pd(vn,tht);
+	                _mm512_store_pd(&ppowr[0] ,_mm512_mul_pd(pt,xcos(ta)));
+	                _mm512_store_pd(&ppowi[0] ,_mm512_mul_pd(pt,xsin(ta)));                    
+	       }
+	       
+	       
+	       
 
 
                    __ATTR_ALWAYS_INLINE__
