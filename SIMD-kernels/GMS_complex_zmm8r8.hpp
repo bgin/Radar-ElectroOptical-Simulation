@@ -1584,13 +1584,39 @@ namespace  gms {
 	                vn    = _mm512_set1_pd(n);
 	                zmm1  = _mm512_mul_pd(xim,xim);
 	                r     = _mm512_sqrt_pd(_mm512_add_pd(zmm0,zmm1));
-	                tht   = xatand(_mm512_div_pd(xim,xre));
+	                tht   = xatan(_mm512_div_pd(xim,xre));
 	                pt    = _mm512_pow_pd(r,vn);
 	                ta    = _mm512_mul_pd(vn,tht);
 	                _mm512_storeu_pd(&ppowr[0] ,_mm512_mul_pd(pt,xcos(ta)));
 	                _mm512_storeu_pd(&ppowi[0] ,_mm512_mul_pd(pt,xsin(ta)));                    
 	       }
 	       
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           ZMM8c8_t cpow_zmm16r4(const ZMM8c8_t x,
+	                                  const float n) {
+	                   
+	                ZMM8c8_t cp;        
+	                register __m512d zmm0,zmm1;
+	                register __m512d r,tht;
+	                register __m512d vn,pt;
+	                register __m512d ta;
+	                zmm0  = _mm512_mul_pd(x.re,x.re);
+	                vn    = _mm512_set1_pd(n);
+	                zmm1  = _mm512_mul_pd(x.im,x.im);
+	                r     = _mm512_sqrt_pd(_mm512_add_pd(zmm0,zmm1));
+	                tht   = xatan(_mm512_div_pd(x.im,x.re));
+	                pt    = _mm512_pow_pd(r,vn);
+	                ta    = _mm512_mul_pd(vn,tht);
+	                cp.re = _mm512_mul_pd(pt,xcos(ta));
+	                cp.im = _mm512_mul_pd(pt,xsin(ta));      
+	                return (cp);              
+	       }
 	       
 	       
 	       
