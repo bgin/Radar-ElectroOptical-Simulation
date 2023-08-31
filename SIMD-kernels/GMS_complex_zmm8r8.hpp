@@ -1505,6 +1505,33 @@ namespace  gms {
                       cv.im  = _mm512_mul_pd(xsinh(xre),xsin(xim));
                       return (cv);
                }
+               
+               
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cpow_zmm8r8 (const __m512d xre,
+	                             const __m512d xim,
+	                             const double n,
+	                             __m512d * __restrict powr,
+	                             __m512d * __restrict powi) {
+	                             
+	                register __m512d zmm0,zmm1;
+	                register __m512d r,tht;
+	                register __m512d vn,pt;
+	                register __m512d ta;
+	                zmm0  = _mm512_mul_pd(xre,xre);
+	                vn    = _mm512_set1_pd(n);
+	                zmm1  = _mm512_mul_pd(xim,xim);
+	                r     = _mm512_sqrt_pd(_mm512_add_pd(zmm0,zmm1));
+	                tht   = xatan(_mm512_div_pd(xim,xre));
+	                pt    = _mm512_pow_pd(r,vn);
+	                ta    = _mm512_mul_pd(vn,tht);
+	                *powr = _mm512_mul_pd(pt,xcos(ta));
+	                *powi = _mm512_mul_pd(pt,xsin(ta));                    
+	       }
 
 
                    __ATTR_ALWAYS_INLINE__
