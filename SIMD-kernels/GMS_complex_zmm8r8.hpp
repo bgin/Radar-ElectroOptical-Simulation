@@ -1254,6 +1254,86 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
+	           void clog_zmm8r8( const __m512d re,
+	                             const __m512d im,
+	                             __m512d * __restrict clogr,
+	                             __m512d * __restrict clogi) {
+	                
+	                register __m512 t1,t2,ln;
+	                t1  = cabs_zmm8r8(re,im);
+	                t2  = carg_zmm8r8(re,im);
+	                ln  = xlog(t1);
+	                *clogr = ln;
+	                *clogi = t2;                    
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void clog_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pre,
+	                               const double * __restrict __ATTR_ALIGN__(64) pim,
+	                               double * __restrict clogr,
+	                               double * __restrict clogi) {
+	                
+	                register __m512d re = _mm512_load_pd(&pre[0]);
+	                register __m512d im = _mm512_load_pd(&pim[0]);
+	                register __m512d t1,t2,ln;
+	                t1  = cabs_zmm8r8(re,im);
+	                t2  = carg_zmm8r8(re,im);
+	                ln  = xlog(t1);
+	                _mm512_store_pd(&clogr[0] ,ln);
+	                _mm512_store_pd(&clogi[0] ,t2);                    
+	        }
+	        
+	        
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void clog_zmm8r8_u( const double * __restrict  pre,
+	                               const double * __restrict  pim,
+	                               double * __restrict clogr,
+	                               double * __restrict clogi) {
+	                
+	                register __m512d re = _mm512_loadu_pd(&pre[0]);
+	                register __m512d im = _mm512_loadu_pd(&pim[0]);
+	                register __m512d t1,t2,ln;
+	                t1  = cabs_zmm8r8(re,im);
+	                t2  = carg_zmm8r8(re,im);
+	                ln  = xlog(t1);
+	                _mm512_storeu_pd(&clogr[0] ,ln);
+	                _mm512_storeu_pd(&clogi[0] ,t2);                    
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           zmm8c8_t clog_zmm8r8(const zmm8c8_t x){
+	                                  
+	                zmm8c8_t clog;                           
+	                register __m512d t1,t2,ln;
+	                t1  = cabs_zmm8r8(x.re,x.im);
+	                t2  = carg_zmm8r8(x.re,x.im);
+	                ln  = xlog(t1);
+	                clog.re = ln;
+	                clog.im = t2;
+	                return (clog);                    
+	        }
+
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
                    void cconj_zmm8r8_v2(const __m512d xre,
                                          const __m512d xim,
                                          __m512d * __restrict yre,
@@ -1598,7 +1678,7 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           ZMM8c8_t cpow_zmm16r4(const ZMM8c8_t x,
+	           ZMM8c8_t cpow_zmm8r8(const ZMM8c8_t x,
 	                                  const float n) {
 	                   
 	                ZMM8c8_t cp;        
