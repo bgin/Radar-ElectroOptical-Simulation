@@ -1285,6 +1285,85 @@ namespace  gms {
                        carg = xatan2f(x.re,x.im);
                        return (carg);
                 }
+                
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void clog_zmm16r4(const __m512 re,
+	                             const __m512 im,
+	                             __m512 * __restrict clogr,
+	                             __m512 * __restrict clogi) {
+	                
+	                register __m512 t1,t2,ln;
+	                t1  = cabs_zmm16r4(re,im);
+	                t2  = carg_zmm16r4(re,im);
+	                ln  = xlogf(t1);
+	                *clogr = ln;
+	                *clogi = t2;                    
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void clog_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pre,
+	                               const float * __restrict __ATTR_ALIGN__(64) pim,
+	                               float * __restrict clogr,
+	                               float * __restrict clogi) {
+	                
+	                register __m512 re = _mm512_load_ps(&pre[0]);
+	                register __m512 im = _mm512_load_ps(&pim[0]);
+	                register __m512 t1,t2,ln;
+	                t1  = cabs_zmm16r4(re,im);
+	                t2  = carg_zmm16r4(re,im);
+	                ln  = xlogf(t1);
+	                _mm512_store_ps(&clogr[0] ,ln);
+	                _mm512_store_ps(&clogi[0] ,t2);                    
+	        }
+	        
+	        
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void clog_zmm16r4_u(const float * __restrict  pre,
+	                               const float * __restrict  pim,
+	                               float * __restrict clogr,
+	                               float * __restrict clogi) {
+	                
+	                register __m512 re = _mm512_loadu_ps(&pre[0]);
+	                register __m512 im = _mm512_loadu_ps(&pim[0]);
+	                register __m512 t1,t2,ln;
+	                t1  = cabs_zmm16r4(re,im);
+	                t2  = carg_zmm16r4(re,im);
+	                ln  = xlogf(t1);
+	                _mm512_storeu_ps(&clogr[0] ,ln);
+	                _mm512_storeu_ps(&clogi[0] ,t2);                    
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           zmm16c4_t clog_zmm16r4(const zmm16c4_t x){
+	                                  
+	                zmm16c4_t clog;                           
+	                register __m512 t1,t2,ln;
+	                t1  = cabs_zmm16r4(x.re,x.im);
+	                t2  = carg_zmm16r4(x.re,x.im);
+	                ln  = xlogf(t1);
+	                clog.re = ln;
+	                clog.im = t2;
+	                return (clog);                    
+	        }
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
