@@ -1408,7 +1408,7 @@ namespace gms {
 	                         sump  = _mm512_fmsub_pd(tmp,px[9],_mm512_add_pd(px[8],p[9]));
 	                         sumq  = _mm512_fmsub_pd(tmp,qx[9],_mm512_add_pd(qx[8],q[9]));
 	                         frac  = _mm512_div_pd(sump,sumq);
-	                         tmp    = _mm512_div_sub_pd(x,_mm512_div_pd(x01,x11));
+	                         tmp    = _mm512_sub_pd(x,_mm512_div_pd(x01,x11));
 	                         xmx0  = _mm512_sub_pd(tmp,x02);
 
                                  if(_mm512_cmp_pd_mask(p037,
@@ -1451,31 +1451,31 @@ namespace gms {
 	                         
 	                         frac = _mm512_div_pd(s[0],
 	                                          _mm512_add_pd(r[0],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[1],
 	                                          _mm512_add_pd(r[1],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[2],
 	                                          _mm512_add_pd(r[2],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[3],
 	                                          _mm512_add_pd(r[3],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[4],
 	                                          _mm512_add_pd(r[4],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[5],
 	                                          _mm512_add_pd(r[5],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[6],
 	                                          _mm512_add_pd(r[6],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[7],
 	                                          _mm512_add_pd(r[7],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(s[8],
 	                                          _mm512_add_pd(r[8],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                                                    
 	                         ei   = _mm512_div_pd(_mm512_add_pd(r[9],frac),x);
 	                         if(jint!=3) {
@@ -1489,31 +1489,31 @@ namespace gms {
 	                         
 	                         frac = _mm512_div_pd(q1[0],
 	                                          _mm512_add_pd(p1[0],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[1],
 	                                          _mm512_add_pd(p1[1],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[2],
 	                                          _mm512_add_pd(p1[2],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[3],
 	                                          _mm512_add_pd(p1[3],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[4],
 	                                          _mm512_add_pd(p1[4],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[5],
 	                                          _mm512_add_pd(p1[5],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[6],
 	                                          _mm512_add_pd(p1[6],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[7],
 	                                          _mm512_add_pd(p1[7],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                         frac = _mm512_div_pd(q1[8],
 	                                          _mm512_add_pd(p1[8],
-	                                                    _mm512_add_pd(frac)));
+	                                                    _mm512_add_pd(x,frac)));
 	                                                    
 	                         ei   = _mm512_div_pd(_mm512_add_pd(p1[9],frac),x);
 	                         if(jint!=3) {
