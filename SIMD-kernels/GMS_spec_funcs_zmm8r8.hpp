@@ -8336,6 +8336,125 @@ namespace gms {
                     *cdy1r = _mm512_sub_pd(*cby0r,tt0);
                     *cdy1i = _mm512_sub_pd(*cby0i,tt1);
 	       }
+	       
+	    
+/*
+!*****************************************************************************80
+!
+!! CVQL computes the characteristic value of Mathieu functions for q <= 3*m.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    10 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer ( kind = 4 ) KD, the case code:
+!    1, for cem(x,q)  ( m = 0,2,4,...)
+!    2, for cem(x,q)  ( m = 1,3,5,...)
+!    3, for sem(x,q)  ( m = 1,3,5,...)
+!    4, for sem(x,q)  ( m = 2,4,6,...)
+!
+!    Input, integer ( kind = 4 ) M, the order of the Mathieu functions.
+!
+!    Input, real ( kind = 8 ) Q, the parameter value.
+!
+!    Output, real ( kind = 8 ) A0, the initial characteristic value.
+*/
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d cvql_zmm8r8(const int32_t kd,
+	                               const int32_t m,
+	                               const __m512d q) {
+	              
+	              const __m512d C10    = _mm512_set1_pd(1.0);
+	              const __m512d C20    = _mm512_set1_pd(2.0);
+	              const __m512d C50    = _mm512_set1_pd(5.0);
+	              const __m512d C340   = _mm512_set1_pd(34.0e+00);
+	              const __m512d C90    = _mm512_set1_pd(9.0e+00);
+	              const __m512d C330   = _mm512_set1_pd(33.0e+00);
+	              const __m512d C4100  = _mm512_set1_pd(410.0e+00);
+	              const __m512d C4050  = _mm512_set1_pd(405.0e+00);
+	              const __m512d C630   = _mm512_set1_pd(63.0);
+	              const __m512d C12600 = _mm512_set1_pd(1260.0);
+	              const __m512d C29430 = _mm512_set1_pd(2943.0);
+	              const __m512d C4860  = _mm512_set1_pd(486.0);
+	              const __m512d C5270  = _mm512_set1_pd(527.0);
+	              const __m512d C156170= _mm512_set1_pd(15617.0);
+	              const __m512d C690010= _mm512_set1_pd(69001.0);
+	              const __m512d C416070= _mm512_set1_pd(41607.0);
+	              const __m512d C1280  = _mm512_set1_pd(128.0);
+	              const __m512d C80    = _mm512_set1_pd(8.0);
+	              const __m512d c30    = _mm512_set1_pd(3.0);
+	              const __m512d C320   = _mm512_set1_pd(32.0);
+	              const __m512d C640   = _mm512_set1_pd(64.0);
+	              const __m512d C160   = _mm512_set1_pd(16.0);
+	              register __m512d a0,c1;
+	              register __m512d cv1,cv2
+	              register __m512d d1,d2
+	              register __m512d d3,d4;
+	              register __m512d p1,p2;
+	              register __m512d w,w2;
+	              register __m512d w3,w4;
+	              register __m512d w6,vm,inw;
+	              register __m512d inw2,inw4;
+	              register __m512d inw3,inw6;
+	              vm   = _mm512_set1_pd((double)m);
+	              if(kd==1 || kd==2) {
+	                 w = _mm512_fmadd_pd(C20,vm,C10);
+	              }               
+	              else {
+	                 w = _mm512_fmsub_pd(C20,vm,C10);
+	              }
+	              w2   = _mm512_mul_pd(w,w);
+	              inw  = _mm512_div_pd(C10,w);
+	              w3   = _mm512_mul_pd(w2,w);
+	              inw2 = _mm512_div_pd(C10,w2);
+	              w4   = _mm512_mul_pd(w2,w2);
+	              inw3 = _mm512_div_pd(C10,w3);
+	              w6   = _mm512_mul_pd(w2,w4);
+	              inw4 = _mm512_div_pd(C10,w4);
+	              d1   = _mm512_add_pd(C50,
+	                           _mm512_fmadd_pd(C340,inw2,
+	                                  _mm512_mul_pd(C90,inw4)));
+	              inw6 = _mm512_div_pd(C10,w6);
+	              d2   = _mm512_mul_pd(
+	                           _mm512_add_pd(C330,
+	                                 _mm512_fmadd_pd(C410,inw2,
+	                                        _mm512_mul_pd(C405,inw4))),inw);
+	              d3   = _mm512_mul_pd(
+	                           _mm512_add_pd(C630,
+	                                  _mm512_fmadd_pd(C1260,inw2,
+	                                        _mm512_fmadd_pd(C29430,inw4,
+	                                              _mm512_mul_pd(C4860,inw4)))),inw2);
+	              c1   = C1280;
+	              d4   = 
+	              
+	         }
+	                            
 	         
         
        } // math
