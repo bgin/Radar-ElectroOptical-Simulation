@@ -7774,7 +7774,7 @@ namespace gms {
 /*
  !*****************************************************************************80
 !
-!! CJY01: complexBessel functions, derivatives, J0(z), J1(z), Y0(z), Y1(z).
+!! CJY01: complex Bessel functions, derivatives, J0(z), J1(z), Y0(z), Y1(z).
 !
 !  Licensing:
 !
@@ -7935,6 +7935,8 @@ namespace gms {
 	                                     _mm512_set1_pd(1.0e-15);
 	                const __m512d C078539816339744830961566       =
 	                                     _mm512_set1_pd(0.78539816339744830961566);
+	                const __m512d C235619449019234492884698       = 
+	                                     _mm512_set1_pd(2.35619449019234492884698);
 	                const __m512d C10 =  _mm512_set1_pd(1.0);
 	                const __m512d C00 =  _mm512_setzero_pd();
 	                const __m512d C120=  _mm512_set1_pd(12.0e+00);
@@ -7961,6 +7963,7 @@ namespace gms {
                         __m512d z2r,z2i;
                         __m512d w0;
                         __m512d w1,a0;
+                        __m512d tt0,tt1;
                         int32_t k,k0,j;
                         a0 = cabs_zmm8r8(zr,zi);
                         if(_mm512_cmp_pd_mask(a0,C00,_CMP_EQ_OQ)) return;
@@ -8201,7 +8204,8 @@ namespace gms {
                              __m512d x1r,x1i;
                              __m512d x2r,x2i;
                              __m512d x3r,x3i
-                             
+                             __m512d csinr,csini;
+                             __m512d ccosr,ccosi;
                             if(_mm512_cmp_pd_mask(a0,C350,_CMP_LT_OQ)) {
                                k0 = 12;
                             }
@@ -8216,7 +8220,7 @@ namespace gms {
                             ct1i = _mm512_mul_pd(z1i,C078539816339744830961566);
                             cp0i = C00;
                             cdiv_smith_zmm8r8_s(negate_zmm8r8(C0125),
-                                              z1r,z1i,x3r,&x2i);
+                                              z1r,z1i,&cq0r,&cq0i);
                             for(k = 0; k <= k0; ++k) {
                                 register __m512d ak= a[k];
                                 register double kk = (double)k;
@@ -8234,10 +8238,103 @@ namespace gms {
                                 cq0r= _mm512_add_pd(cq0r,x3r);
                                 cq0i= _mm512_add_pd(cq0i,x3i);             
                           }
-                          cdiv_smith_zmm8r8_s(
+                          cdiv_smith_zmm8r8_s(C0636619772367581343076,
+                                              z1r,z1i,&x0r,&x0i);
+                          csqrt_zmm8r8(x0r,x0i,&x1r,&cur,&cui);
+                          ccos_zmm8r8(ct1r,ct1i,&ccosr,&ccosi);
+                          cmul_zmm8r8(cp0r,cp0i,ccosr,ccosi,&x0r,&x0i); //cp0*cos(cti)
+                          csin_zmm8r8(ct1r,ct1i,&csinr,&csini);
+                          cmul_zmm8r8(cq0r,cq0i,csinr,csini,&x1r,&x1i);//cq0*sin(cti)
+                          x2r = _mm512_sub_pd(x0r,x1r);
+                          x2i = _mm512_sub_pd(x0i,x1i);
+                          cmul_zmm8r8(cur,cui,x2r,x2i,&x3r,&x3i);
+                          *cbj0r = x3r;
+                          *cbj0i = x3i;
+                          cmul_zmm8r8(cp0r,cp0i,csinr,csini,&x0r,&x0i); //cp0*sin(cti)
+                          cmul_zmm8r8(cq0r,cq0i,ccosr,ccosi,&x1r,&x1i);//cq0*cos(cti)
+                          x2r = _mm512_add_pd(x0r,x1r);
+                          x2i = _mm512_add_pd(x0i,x1i);
+                          cmul_zmm8r8(cur,cui,x2r,x2i,&x3r,&x3i);
+                          *cby0r = x3r;
+                          *cby0i = x3i;
+                          ct2r   = _mm512_sub_pd(z1r,C235619449019234492884698);
+                          cp1r   = C10;
+                          ct2i   = _mm512_sub_pd(z1i,C235619449019234492884698);
+                          cp1i   = C00;
+                          cdiv_smith_zmm8r8_s(C0375,z1r,z1i,&cq1r,&cq1i);
+                          for(k = 0; k <= k0; ++k) {
+                                register __m512d ak= a[k];
+                                register double kk = (double)k;
+                                register double kk2= -2.0*kk;
+                                cpow_zmm8r8(z1r,z1i,kk2,&x0r,&x0i);
+                                x1r = _mm512_mul_pd(ak,x0r);
+                                x1i = _mm512_mul_pd(ak,x0i);
+                                cp1r= _mm512_add_pd(cp1r,x1r);
+                                cp1i= _mm512_add_pd(cp1i,x1i);
+                                register double kk3= -2.0*kk-1.0;
+                                register __m512d bk= b[k];
+                                cpow_zmm8r8(z1r,z1i,kk3,&x2r,&x2i);  
+                                x3r = _mm512_mul_pd(bk,x2r);
+                                x3i = _mm512_mul_pd(bk,x2i);
+                                cq1r= _mm512_add_pd(cq1r,x3r);
+                                cq1i= _mm512_add_pd(cq1i,x3i);             
+                          }
+                          ccos_zmm8r8(ct2r,ct2i,&ccosr,&ccosi);
+                          cmul_zmm8r8(cp1r,cp1i,ccosr,ccosi,&x0r,&x0i); //cp0*cos(cti)
+                          csin_zmm8r8(ct2r,ct2i,&csinr,&csini);
+                          cmul_zmm8r8(cq1r,cq1i,csinr,csini,&x1r,&x1i);//cq0*sin(cti)
+                          x2r = _mm512_sub_pd(x0r,x1r);
+                          x2i = _mm512_sub_pd(x0i,x1i);
+                          cmul_zmm8r8(cur,cui,x2r,x2i,&x3r,&x3i);
+                          *cbj1r = x3r;
+                          *cbj1i = x3i;
+                          cmul_zmm8r8(cp1r,cp1i,csinr,csini,&x0r,&x0i); //cp0*sin(cti)
+                          cmul_zmm8r8(cq1r,cq1i,ccosr,ccosi,&x1r,&x1i);//cq0*cos(cti)
+                          x2r = _mm512_add_pd(x0r,x1r);
+                          x2i = _mm512_add_pd(x0i,x1i);
+                          cmul_zmm8r8(cur,cui,x2r,x2i,&x3r,&x3i);
+                          *cby1r = x3r;
+                          *cby1i = x3i;
                           
                     }
-                     
+                    if(_mm512_cmp_pd_mask(zr,C00,_CMP_LT_OQ)) {
+                           __m512d x0r,x0i;
+                           __m512d x1r,x1i;
+                       if(_mm512_cmp_pd_mask(zi,C00,_CMP_LT_OQ)) {
+                            cir = _mm512_add_pd(C20,cir);
+                            cii = _mm512_add_pd(C20,cii);
+                            cmul_zmm8r8(cir,cii,*cbj0r,*cbj0i,&x0r,&x0i);
+                            *cby0r = _mm512_sub_pd(*cby0r,x0r);
+                            *cby0i = _mm512_sub_pd(*cby0i,x0i);
+                            cmul_zmm8r8(cir,cii,*cbj1r,*cbj1i,&x1r,&x1i);
+                            *cby1r = negate_zmm8r8(_mm512_sub_pd(*cby1r,x1r));
+                            *cby1i = negate_zmm8r8(_mm512_sub_pd(*cby1i,x1i));          
+                        }
+                        else {
+                            cir = _mm512_add_pd(C20,cir);
+                            cii = _mm512_add_pd(C20,cii);
+                            cmul_zmm8r8(cir,cii,*cbj0r,*cbj0i,&x0r,&x0i);
+                            *cby0r = _mm512_add_pd(*cby0r,x0r);
+                            *cby0i = _mm512_add_pd(*cby0i,x0i);
+                            cmul_zmm8r8(cir,cii,*cbj1r,*cbj1i,&x1r,&x1i);
+                            *cby1r = negate_zmm8r8(_mm512_add_pd(*cby1r,x1r));
+                            *cby1i = negate_zmm8r8(_mm512_add_pd(*cby1i,x1i));          
+                        }
+                        *cbj1r = negate_zmm8r8(*cbj1r);
+                        *cbj1i = negate_zmm8r8(*cbj1i);
+                    }
+                   
+                    *cdj0r = negate_zmm8r8(*cbj1r);
+                    *cdj0i = negate_zmm8r8(*cbj1i);
+                    cdiv_smith_zmm8r8_s(C10,z1r,z1i,&w0,&w1);
+                    cmul_zmm8r8(w0,w1,*cbj1r,*cbj1i,&tt0,&tt1);
+                    *cdj1r = _mm512_sub_pd(*cbj0r,tt0);
+                    *cdj1i = _mm512_sub_pd(*cbj0i,tt1);
+                    *cdy0r = negate_zmm8r8(*cby1r);
+                    *cdy0i = negate_zmm8r8(*cby1i);
+                    cmul_zmm8r8(w0,w1,*cby1r,*cby1i,&tt0,&tt1);
+                    *cdy1r = _mm512_sub_pd(*cby0r,tt0);
+                    *cdy1i = _mm512_sub_pd(*cby0i,tt1);
 	       }
 	         
         
