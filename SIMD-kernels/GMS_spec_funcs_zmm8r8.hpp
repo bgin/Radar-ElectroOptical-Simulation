@@ -8337,7 +8337,339 @@ namespace gms {
                     *cdy1i = _mm512_sub_pd(*cby0i,tt1);
 	       }
 	       
-	   
+/*
+         
+!*****************************************************************************80
+!
+!! CV0 computes the initial characteristic value of Mathieu functions.
+!
+!  Discussion:
+!
+!    This procedure computes the initial characteristic value of Mathieu 
+!    functions for m <= 12 or q <= 300 or q <= m*m.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!   03 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer ( kind = 4 ) KD, the case code:
+!    1, for cem(x,q)  ( m = 0,2,4,...)
+!    2, for cem(x,q)  ( m = 1,3,5,...)
+!    3, for sem(x,q)  ( m = 1,3,5,...)
+!    4, for sem(x,q)  ( m = 2,4,6,...)
+!
+!    Input, integer ( kind = 4 ) M, the order of the functions.
+!
+!    Input, real ( kind = 8 ) Q, the parameter of the functions.
+!
+!    Output, real ( kind = 8 ) A0, the characteristic value.
+*/	
+
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m512d  cv0_zmm8r8(const int32_t kd,
+	                               const int32_t m,
+	                               const __m512d q) {
+	                   
+	                 register __m512d a0;            
+	                 register __m512d q2 = _mm512_mul_pd(q,q);
+	                 const __m512d C10   = _mm512_set1_pd(1.0);
+	                 const __m512d C100  = _mm512_set1_pd(10.0);
+	                 const __m512d C200  = _mm512_set1_pd(20.0);
+	                 const __m512d C150  = _mm512_set1_pd(15.0);
+	                 const __m512d C250  = _mm512_set1_pd(25.0);
+	                 const __m512d C350  = _mm512_set1_pd(35.0);
+	                 const __m512d C400  = _mm512_set1_pd(40.0);
+	                 const __m512d C500  = _mm512_set1_pd(50.0);
+	                 
+	                 switch (m) {
+	                    case:0
+	                       if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ)) {
+	                           register __m512d C0 = _mm512_set1_pd(0.0036392e+00);
+	                           register __m512d C1 = _mm512_set1_pd(0.0125868e+00);
+	                           register __m512d C2 = _mm512_set1_pd(0.0546875e+00);
+	                           register __m512d C3 = _mm512_set1_pd(0.5e+00);
+	                           a0 = _mm512_mul_pd(
+	                                          _mm512_fmsub_pd(C0,q2,
+	                                                      _mm512_fmadd_pd(C1,q2,
+	                                                                  _mm512_fmsub_pd(C2,q2,C3))),q2);
+	                       }
+	                       else if(_mm512_cmp_pd_mask(q,C100,_CMP_LE_OQ)) {
+	                           register __m512d C0 = _mm512_set1_pd(3.999267e-03);
+	                           register __m512d C1 = _mm512_set1_pd(9.638957e-02);
+	                           register __m512d C2 = _mm512_set1_pd(0.88297e+00);
+	                           register __m512d C3 = _mm512_set1_pd(0.5542818e+00);
+	                           a0  = _mm512_fmsub_pd(C0,q,
+	                                             _mm512_fmsub_pd(C1,q,
+	                                                         _mm512_fmadd_pd(C2,q,C3))); 
+	                       }
+	                       else {
+	                           a0  = cvql_zmm8r8(kd,m,q);
+	                       }
+	                    break;
+	                    case:1
+	                       if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                          kd==2) {
+	                            register __m512d C0 = _mm512_set1_pd(-6.51e-04);
+	                            register __m512d C1 = _mm512_set1_pd(0.015625e+00);
+	                            register __m512d C2 = _mm512_set1_pd(0.125e+00);
+	                            a0  =  _mm512_fmsub_pd(C0,q,
+	                                               _mm512_fmsub_pd(C1,q,
+	                                                           _mm512_fmadd_pd(C2,q,
+	                                                                       _mm512_fmadd_pd(C10,q,C10))));  
+	                       }
+	                       else if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                                kd==3) {
+	                            register __m512d C0 = _mm512_set1_pd(-6.51e-04);
+	                            register __m512d C1 = _mm512_set1_pd(0.015625e+00);
+	                            register __m512d C2 = _mm512_set1_pd(0.125e+00); 
+	                            a0  =  _mm512_fmadd_pd(C0,q,
+	                                               _mm512_fmsub_pd(C1,q
+	                                                           _mm512_fmsub_pd(C2,q,
+	                                                                       _mm512_fmadd_pd(C10,q,C10))));       
+	                       }
+	                       else if(_mm512_cmp_pd_mask(q,C100,_CMP_LE_OQ) &&
+	                                kd==2) {
+	                             register __m512d C0 = _mm512_set1_pd(-4.94603e-04);
+	                             register __m512d C1 = _mm512_set1_pd(1.92917e-02);
+	                             register __m512d C2 = _mm512_set1_pd(0.3089229e+00);
+	                             register __m512d C3 = _mm512_set1_pd(1.33372e+00);
+	                             register __m512d C4 = _mm512_set1_pd(0.811752e+00);
+	                             a0  = _mm512_fmadd_pd(C0,q,
+	                                               _mm512_fmsub_pd(C1,q,
+	                                                           _mm512_fmadd_pd(C2,q,
+	                                                                       _mm512_fmadd_pd(C3,q,C4))));        
+	                       }
+	                       else if(_mm512_cmp_pd_mask(q,C100,_CMP_LE_OQ) &&
+	                                kd==3) {
+	                             register __m512d C0 = _mm512_set1_pd(1.971096e-03);
+	                             register __m512d C1 = _mm512_set1_pd(5.482465e-02);
+	                             register __m512d C2 = _mm512_set1_pd(1.152218e+00);
+	                             register __m512d C3 = _mm512_set1_pd(1.10427e+00);
+	                             a0  =  _mm512_fmsub_pd(C0,q,
+	                                                _mm512_fmsub_pd(C1,q,
+	                                                            _mm512_fmadd_pd(C2,q,C3)));         
+	                       }
+	                       else {
+	                             a0  =  cvql_zmm8r8(kd,m,q);
+	                       }
+	                      break;
+	                      case:2
+	                         if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                            kd==1) {
+	                               register __m512d C0 = _mm512_set1_pd(-0.0036391e+00);
+	                               register __m512d C1 = _mm512_set1_pd(0.0125888e+00);
+	                               register __m512d C2 = _mm512_set1_pd(0.0551939e+00);
+	                               register __m512d C3 = _mm512_set1_pd(0.416667e+00);
+	                               register __m512d C4 = _mm512_set1_pd(4.0);
+	                               a0  =  _mm512_fmadd_pd(C0,q2,
+	                                                 _mm512_fmsub_pd(C1,q2,
+	                                                             _mm512_fmadd_pd(C2,q2,
+	                                                                         _mm512_fmadd_pd(C3,q2,C4))));     
+	                      }
+	                      else if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                              kd==4) {
+	                                register __m512d C0 = _mm512_set1_pd(0.0003617e+00);
+	                                register __m512d C1 = _mm512_set1_pd(0.0833333e+00);
+	                                register __m512d C2 = _mm512_set1_pd(4.0);
+	                                a0  = _mm512_fmsub_pd(C0,q2,
+	                                                  _mm512_fmadd_pd(C1,q2,C3));         
+	                      }
+	                      else if(_mm512_cmp_pd_mask(q,C150,_CMP_LE_OQ) &&
+	                              kd==1) {
+	                                 register __m512d C0 = _mm512_set1_pd(3.200972e-04);
+	                                 register __m512d C1 = _mm512_set1_pd(8.667445e-03);
+	                                 register __m512d C2 = _mm512_set1_pd(1.829032e-04);
+	                                 register __m512d C3 = _mm512_set1_pd(0.9919999e+00);
+	                                 register __m512d C4 = _mm512_set1_pd(3.3290504e+00);
+	                                 a0  =  _mm512_fmsub_pd(C0,q,
+	                                                    _mm512_fmsub_pd(C1,q
+	                                                                _mm512_fmadd_pd(C2,q,
+	                                                                            _mm512_fmadd_pd(C3,q,C4))));       
+	                      }
+	                      else if(_mm512_cmp_pd_mask(q,C100,_CMP_LE_OQ) &&
+	                              kd==4) {
+	                                  register __m512d C0 = _mm512_set1_pd(2.38446e-03);
+	                                  register __m512d C1 = _mm512_set1_pd(0.0872529e+00);
+	                                  register __m512d C2 = _mm512_set1_pd(4.732542e-03);
+	                                  register __m512d C3 = _mm512_set1_pd(4.00909e+00);
+	                                  a0  =  _mm512_fmsub_pd(C0,q,
+	                                                     _mm512_fmsub_pd(C1,q,
+	                                                                 _mm512_fmadd_pd(C2,q,C3)));       
+	                      }
+	                      else {
+	                                  a0  = cvql_zmm8r8(kd,m,q);
+	                      }
+	                     break;
+	                     case:3
+	                        if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                           kd==2) {
+	                                   register __m512d C0 = _mm512_set1_pd(6.348e-04);
+	                                   register __m512d C1 = _mm512_set1_pd(0.015625e+00);
+	                                   register __m512d C2 = _mm512_set1_pd(0.0625);
+	                                   register __m512d C3 = _mm512_set1_pd(9.0);
+	                                   a0  =  _mm512_fmadd_pd(C0,q,
+	                                                      _mm512_fmadd_pd(C1,q,
+	                                                                  _mm512_fmadd_pd(C2,q2,C3)));     
+	                     }
+	                      else if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                               kd==3) {
+	                                   register __m512d C0 = _mm512_set1_pd(6.348e-04);
+	                                   register __m512d C1 = _mm512_set1_pd(0.015625e+00);
+	                                   register __m512d C2 = _mm512_set1_pd(0.0625);
+	                                   register __m512d C3 = _mm512_set1_pd(9.0);
+	                                   a0   = _mm512_fmsub_pd(C0,q,
+	                                                      _mm512_fmadd_pd(C1,q,
+	                                                                  _mm512_fmadd_pd(C2,q2,C3)));  
+	                     }
+	                     else if(_mm512_cmp_pd_mask(q,C200,_CMP_LE_OQ) &&
+	                              kd==2) {
+	                                    register __m512d C0 = _mm512_set1_pd(3.035731e-04);
+	                                    register __m512d C1 = _mm512_set1_pd(1.453021e-02)
+	                                    register __m512d C2 = _mm512_set1_pd(0.19069602e+00);
+	                                    register __m512d C3 = _mm512_set1_pd(0.1039356e+00);
+	                                    register __m512d C4 = _mm512_set1_pd(8.9449274e+00);
+	                                    a0   = _mm512_fmsub_pd(C0,q,
+	                                                       _mm512_fmadd_pd(C1,q,
+	                                                                   _mm512_fmsub_pd(C2,q,
+	                                                                               _mm512_fmadd_pd(C3,q,C4))));
+	                    }
+	                    else if(_mm512_cmp_pd_mask(q,C150,_CMP_LE_OQ) &&
+	                            kd==3) {
+	                                     register __m512d C0 = _mm512_set1_pd(9.369364e-05);
+	                                     register __m512d C1 = _mm512_set1_pd(0.03569325e+00);
+	                                     register __m512d C2 = _mm512_set1_pd(0.2689874e+00);
+	                                     register __m512d C3 = _mm512_set1_pd(8.771735e+00);
+	                                     a0   = _mm512_fmsub_pd(C0,q,
+	                                                        _mm512_fmadd_pd(C1,q,
+	                                                                    _mm512_fmadd_pd(C2,q,C3)));       
+	                    }
+	                    else {
+	                                     a0   = cvql_zmm8r8(kd,m,q);
+	                     }
+	                    break;
+	                    case:4
+	                        if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                           kd==1) {
+	                                      register __m512d C0 = _mm512_set1_pd(-2.1e-06);
+	                                      register __m512d C1 = _mm512_set1_pd(5.012e-04);
+	                                      register __m512d C2 = _mm512_set1_pd(0.3333333);
+	                                      register __m512d C3 = _mm512_set1_pd(16.0);
+	                                      a0   = _mm512_fmadd_pd(C0,q2,
+	                                                         _mm512_fmadd_pd(C1,q2,
+	                                                                     _mm512_fmadd_pd(C2,q2,C3)));      
+	                    }
+	                    else if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                            kd==4) {
+	                                       register __m512d C0 = _mm512_set1_pd(3.7e-06);
+	                                       register __m512d C1 = _mm512_set1_pd(3.669e-04);
+	                                       register __m512d C2 = _mm512_set1_pd(0.0333333e+00);
+	                                       register __m512d C3 = _mm512_set1_pd(16.0);
+	                                       a0   = _mm512_fmsub_pd(C0,q2,
+	                                                          _mm512_fmadd_pd(C1,q2,
+	                                                                      _mm512_fmadd_pd(C2,q2,C3)));       
+	                    }
+	                    else if(_mm512_cmp_pd_mask(q,C250,_CMP_LE_OQ) &&
+	                            kd==1) {
+	                                       register __m512d C0 = _mm512_set1_pd(1.076676e-04);
+	                                       register __m512d C1 = _mm512_set1_pd(7.9684875e-03);
+	                                       register __m512d C2 = _mm512_set1_pd(0.17344854e+00);
+	                                       register __m512d C3 = _mm512_set1_pd(0.5924058e+00);
+	                                       register __m512d C4 = _mm512_set1_pd(16.620847e+00);
+	                                       a0    = _mm512_fmsub_pd(C0,q,
+	                                                           _mm512_fmadd_pd(C1,q,
+	                                                                       _mm512_fmsub_pd(C2,q,
+	                                                                                   _mm512_fmadd_pd(C3,q,C4))));       
+	                    }
+	                    else if(_mm512_cmp_pd_mask(q,C200,_CMP_LE_OQ) &&
+	                            kd==4) {
+	                                       register __m512d C0 = _mm512_set1_pd(-7.08719e-04);
+	                                       register __m512d C1 = _mm512_set1_pd(3.8216144e-03);
+	                                       register __m512d C2 = _mm512_set1_pd(0.1907493e+00);
+	                                       register __m512d C3 = _mm512_set1_pd(15.744e+00);
+	                                       a0     = _mm512_fmadd_pd(C0,q,
+	                                                            _mm512_fmadd_pd(C1,q,
+	                                                                        _mm512_fmadd_pd(C2,q,C3)));       
+	                    }
+	                    else {
+	                                       a0     = cvql_zmm8r8(kd,m,q);
+	                    }
+	                    break;
+	                    case:5
+	                       if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                           kd==2) {
+	                                      register __m512d C0 = _mm512_set1_pd(6.8e-6);
+	                                      register __m512d C1 = _mm512_set1_pd(1.42e-05);
+	                                      register __m512d C2 = _mm512_set1_pd(0.0208333e+00);
+	                                      register __m512d C3 = _mm512_set1_pd(25.0);
+	                                      a0       = _mm512_fmadd_pd(C0,q,
+	                                                             _mm512_fmadd_pd(C1,q2,
+	                                                                         _mm512_fmadd_pd(C2,q2,C3)));        
+	                    } 
+	                     else if(_mm512_cmp_pd_mask(q,C10,_CMP_LE_OQ) &&
+	                             kd==3) {
+	                                      register __m512d C0 = _mm512_set1_pd(-6.8e-6);
+	                                      register __m512d C1 = _mm512_set1_pd(1.42e-05);
+	                                      register __m512d C2 = _mm512_set1_pd(0.0208333e+00);
+	                                      register __m512d C3 = _mm512_set1_pd(25.0);  
+	                                      a0       =  _mm512_fmadd_pd(C0,q,
+	                                                             _mm512_fmadd_pd(C1,q2,
+	                                                                         _mm512_fmadd_pd(C2,q2,C3)));        
+	                   }
+	                     else if(_mm512_cmp_pd_mask(q,C350,_CMP_LE_OQ) &&
+	                              kd==2) {
+	                                      register __m512d C0 = _mm512_set1_pd(2.238231e-05);
+	                                      register __m512d C1 = _mm512_set1_pd(2.983416e-03);
+	                                      register __m512d C2 = _mm512_set1_pd(0.10706975e+00);
+	                                      register __m512d C3 = _mm512_set1_pd(0.600205e+00);
+	                                      register __m512d C4 = _mm512_set1_pd(25.93515e+00);
+	                                      a0       =  _mm512_fmsub_pd(C0,q,
+	                                                              _mm512_fmadd_pd(C1,q,
+	                                                                          _mm512_fmsub_pd(C2,q,
+	                                                                                      _mm512_fmadd_pd(C3,q,C4))));  
+	                   }
+	                     else if(_mm512_cmp_pd_mask(q,C250,_CMP_LE_OQ) &&
+	                              kd==3) {
+	                                      register __m512d C0 = _mm512_set1_pd(-7.425364e-04);
+	                                      register __m512d C1 = _mm512_set1_pd(2.18225e-02);
+	                                      register __m512d C2 = _mm512_set1_pd(4.16399e-02);
+	                                      register __m512d C3 = _mm512_set1_pd(24.897e+00);
+	                                      a0       = _mm512_fmadd_pd(C0,q,
+	                                                             _mm512_fmadd_pd(C1,q,
+	                                                                         _mm512_fmadd_pd(C2,q,C3)));
+	                  }
+	                    else {
+	                                      a0       = cvql_zmm8r8(kd,m,q); 
+	                  }
+	                  break;
+	                  case:6
+	           }                      
+	     }
+	                               
 
 	    
 /*
@@ -8895,7 +9227,10 @@ namespace gms {
 	                a0   = _mm512_add_pd(vmm,
 	                                 _mm512_mul_pd(q,t0));
 	                return (a0);
-	         }               
+	         }   
+	         
+	         
+	                     
 	         
         
        } // math
