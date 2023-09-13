@@ -1,9 +1,36 @@
-# Guided-Missile-Radar-Simulation
-Guided  missile modeling and simulation project written in C++
-This is a C++ port of https://github.com/bgin/Guided_Missile_Simulation projects written in Fortran.
-T-Matrix models(by Mishchenko and by Xu) will be used to compute scattering coefficients returned by single particles and ensemble of particles.
+# Guided-Missile-Radar-IR-EOS-Simulation
 
-List of references:
+This project attempts to model and simulate the innerworking of Radar system, Electro-Optical active and passive sources of IR radiation
+and missile guidance system.
+The main purpose is to achieve a realisitic system modeling and simulation as much as possible, hence the main sources of knowledge
+are russian-language (soviet-era) engineering and technical literature reaching design level (candidate of science and experienced system
+engineers and designers).
+The second firm foundation which this project stand upon is being wholly optimized at basic level of massive manual vectorization by 
+leveraging Intel Intrinsic programming i.e. usage of AVX/AVX2/AVX512 code path for almost every algorithm which is vectorizable.
+Compiler-level autovectorization is of secondary importance and is being inserted mainly to vectorize descriptive statistics routines
+and profiling metrics calculations.
+The second code path beside the SIMD  is the GPGPU Cuda implementation counting so far close to 15000 lines of code of computational
+and helper routines and kernels.
+
+I envision four main components:
+1) Radar system modeling and simulation.
+2) Radio altimeter modeling and simulation.
+3) Propagation of laser and IR radiation through the turbulent atmospheric channels.
+4) Optical signals processing (bacground noise extraction).
+
+The main structure of the projects is a collection of free standing 'modules' programmatically describing
+various modelled components.
+It is a software library of framework and may be used as computational backend of larger program of be
+connected to GUI front-end.
+Currently only hundreds (circa 400) kernels belonging to AVX512 double and single precision executing path
+were implemented.
+All of these kernels compute analytical Radar Cross Section of simple and to lesser extent complex objects.
+
+
+
+
+
+List of references (incomplete):
 
 Detection, Estimation, and Modulation Theory Part III: Radar-Sonar Signal Processing and Gaussian Signals in Noise Harry L. van Trees ISBN-10: 047110793X ISBN-13: 978-0471107934
 
