@@ -16,7 +16,7 @@ I envision four main components:
 1) Radar system modeling and simulation.
 2) Radio altimeter modeling and simulation.
 3) Propagation of laser and IR radiation through the turbulent atmospheric channels.
-4) Optical signals processing (bacground noise extraction).
+4) Optical signals processing (background noise extraction).
 
 The main structure of the projects is a collection of free standing 'modules' programmatically describing
 various modelled components.
