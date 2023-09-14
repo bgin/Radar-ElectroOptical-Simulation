@@ -2,7 +2,7 @@
 
 This project attempts to model and simulate the innerworking of Radar system, Electro-Optical active and passive sources of IR radiation
 and missile guidance system.
-The main purpose is to achieve a realisitic system modeling and simulation as much as possible, hence the main sources of knowledge
+The main purpose is to achieve a realistic system modeling and simulation as much as possible, hence the main sources of knowledge
 are russian-language (soviet-era) engineering and technical literature reaching design level (candidate of science and experienced system
 engineers and designers).
 
