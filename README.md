@@ -5,19 +5,22 @@ and missile guidance system.
 The main purpose is to achieve a realisitic system modeling and simulation as much as possible, hence the main sources of knowledge
 are russian-language (soviet-era) engineering and technical literature reaching design level (candidate of science and experienced system
 engineers and designers).
+
 The second firm foundation which this project stand upon is being wholly optimized at basic level of massive manual vectorization by 
 leveraging Intel Intrinsic programming i.e. usage of AVX/AVX2/AVX512 code path for almost every algorithm which is vectorizable.
 Compiler-level autovectorization is of secondary importance and is being inserted mainly to vectorize descriptive statistics routines
 and profiling metrics calculations.
+
 The second code path beside the SIMD  is the GPGPU Cuda implementation counting so far close to 15000 lines of code of computational
 and helper routines and kernels.
 
-I envision four main components:
+I envision five main components:
 1) Radar system modeling and simulation.
 2) Radio altimeter modeling and simulation.
 3) Propagation of laser and IR radiation through the turbulent atmospheric channels.
 4) Optical signals processing (background noise extraction).
-
+5) Sensor modeling and simulation
+   
 The main structure of the projects is a collection of free standing 'modules' programmatically describing
 various modelled components.
 It is a software library of framework and may be used as computational backend of larger program of be
