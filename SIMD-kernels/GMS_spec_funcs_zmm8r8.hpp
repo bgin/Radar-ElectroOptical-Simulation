@@ -5092,7 +5092,7 @@ namespace gms {
                               xnum= _mm512_fmadd_pd(xnum,wsq,plg[2]);
                               xden= _mm512_fmadd_pd(xden,wsq,qlg[2]);
                               xnum= _mm512_fmadd_pd(xnum,wsq,plg[3]);
-                              xden= _mm512_fmקברטadd_pd(xden,wsq,qlg[3]); 
+                              xden= _mm512_fmadd_pd(xden,wsq,qlg[3]); 
                               t0  = _mm512_mul_pd(w,_mm512_div_pd(xnum,xden));
                               t1  = _mm512_mul_pd(pi2,result);
                               resj= _mm512_mul_pd(t0,t1);                                    
@@ -5146,7 +5146,7 @@ namespace gms {
                           result   = _mm512_fmadd_pd(t0,t1,resj);
                           return (result);
                       L800:
-                          z          = _mm5512_div_pd(eight,ax);
+                          z          = _mm512_div_pd(eight,ax);
                           __m512i ti = mm512_cvt_roundpd_epi64(_mm512_div_pd(ax,twopi),
                                                      _MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC);
                           w          = _mm512_add_pd(_mm512_castsi512_pd(ti),throv8);
@@ -5175,12 +5175,12 @@ namespace gms {
                           register __m512d t3 = _mm512_mul_pd(z,r1);
                           if(jint==1) {
                              result = _mm512_mul_pd(t0,
-                                               _mm12_fmsub_pd(r0,t2,
+                                               _mm512_fmsub_pd(r0,t2,
                                                             _mm512_mul_pd(t3,t1)));
                           }
                           else {
                              result = _mm512_mul_pd(t0,
-                                               _mm12_fmsub_pd(r0,t1,
+                                               _mm512_fmsub_pd(r0,t1,
                                                             _mm512_mul_pd(t3,t2)));
                           }
                           if(jint==0 && 
