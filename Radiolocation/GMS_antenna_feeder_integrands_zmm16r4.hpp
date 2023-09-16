@@ -47,6 +47,7 @@ namespace file_version {
 #include "GMS_config.h"
 #include "GMS_sleefsimdsp.hpp"
 #include "GMS_complex_zmm16r4.hpp"
+#include "GMS_spec_funcs_zmm8r8.hpp"
 #include "GMS_simd_utils.hpp"
 #include "GMS_em_fields_zmm16r4.hpp"
 #include "GMS_cephes.h"
@@ -5781,8 +5782,8 @@ namespace gms {
                              _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_T2);
                              _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_T2);   
 #elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
-                             _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_T2);
-                             _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_T2);  
+                             _mm_prefetch((char*)&pM[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&ptht[i+PF_DIST],_MM_HINT_NTA);  
 #endif                      
                              M    = _mm512_loadu_ps(&pM[i+0]);
                              tht  = _mm512_loadu_ps(&ptht[i+0]);
@@ -6970,6 +6971,356 @@ namespace gms {
 	       
             
 	      
+	        /*
+	             Integrand of Functional, formula 2-86, p. 58
+	        */
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void f286_integrand_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) ppsi,
+	                                            float * __restrict __ATTR_ALIGN__(64)       pint,
+	                                            const float stht,
+	                                            const float k,
+	                                            const float R0,
+	                                            const int32_t n,
+	                                            const int32_t PF_DIST) {
+	                    using namespace gms::math;                       
+	                    if(__builtin_expect(n<=0,0)) { return;}
+	                    const __m512 C314159265358979323846264338328 = 
+	                                         _mm512_set1_ps(3.14159265358979323846264338328f);  
+	                    const __m512 C05  =  _mm512_set1_ps(0.5f);
+	                    register __m512 vk;
+	                    register __m512 vR0;
+	                    register __m512 psi;
+	                    register __m512d J0,
+	                    register __m512  J0c
+	                    register __m512 arg1
+	                    register __m512 arg2;
+	                    register __m512 carg;
+	                    register __m512 u;
+	                    register __m512 vstht;
+	                    register __m512 t0;
+	                    register __m512 t1;
+	                    int32_t i;
+	                    vk    = _mm512_set1_ps(k);
+	                    vR0   = _mm512_set1_ps(R0);
+	                    vstht = _mm512_set1_ps(stht);
+	                    for(i = 0; (i+159) < n; i += 160) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_NTA);
+#endif     	                
+                               psi = _mm512_load_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+16], t1);
+                               psi = _mm512_load_ps(&ppsi[i+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+32], t1);
+                               psi = _mm512_load_ps(&ppsi[i+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+48], t1);
+                               psi = _mm512_load_ps(&ppsi[i+64]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+64], t1);
+                               psi = _mm512_load_ps(&ppsi[i+80]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+80], t1);
+                               psi = _mm512_load_ps(&ppsi[i+96]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+96], t1);
+                               psi = _mm512_load_ps(&ppsi[i+112]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+112], t1);
+                               psi = _mm512_load_ps(&ppsi[i+128]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+128], t1);
+                               psi = _mm512_load_ps(&ppsi[i+144]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+144], t1);
+	                  }
+	                  
+	                  for(; (i+95) < n; i += 96) {
+	                       psi = _mm512_load_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+16], t1);
+                               psi = _mm512_load_ps(&ppsi[i+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+32], t1);
+                               psi = _mm512_load_ps(&ppsi[i+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+48], t1);
+                               psi = _mm512_load_ps(&ppsi[i+64]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+64], t1);
+                               psi = _mm512_load_ps(&ppsi[i+80]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+80], t1);
+	                  }
+	                  
+	                  for(; (i+63) < n; i += 64) {
+	                       psi = _mm512_load_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+16], t1);
+                               psi = _mm512_load_ps(&ppsi[i+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+32], t1);
+                               psi = _mm512_load_ps(&ppsi[i+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+48], t1);
+	                  }
+	                  
+	                  for(; (i+31) < n; i += 32) {
+	                       psi = _mm512_load_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+16], t1);
+	                  }
+	                  
+	                  for(; (i+15) < n; i += 16) {
+	                       psi = _mm512_load_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_store_ps(&pint[i+0], t1);  
+	                  }
+	                  
+	                 
+	                 for(; (i+0) < n; i += 1) {
+	                     register float psi = ppsi[i];
+	                     register float u   = k*R0*stht;
+	                     register float arg1= psi*u;
+	                     register float j0  = j0f(arg1);
+	                     register float arg2= (psi*3.14159265358979323846264f)*0.5f;
+	                     register float carg= cephes_cosf(arg2);
+	                     register float t0  = carg*carg;
+	                     register float t1  = psi*j0*t0;
+	                     pint[i]            = t1;
+	                 }
+	                            
+	          }
                   
                   
        
