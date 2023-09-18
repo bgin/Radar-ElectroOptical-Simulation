@@ -10965,6 +10965,37 @@ namespace gms {
 	                    fer[i]    = tmp2;
 	                }                          
 	         }
+	         
+	         
+	         /*
+	             Formula 2-85, p. 58
+	         */
+	         
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	         __m512 f285_zmm16r4(const __mm512 u,
+	                             const __mm512 alpu, // f286_functional_omp (result).
+	                             float dlt) {
+	                          
+	                const __m512 C10 = _mm512_set1_ps(1.0f);
+	                register __m512 vdlt;
+	                register __m512 Fu;
+	                register __m512d j1;
+	                register __m512 t0;
+	                register __m512 t1;
+	                register __m512 t2;
+	                vdlt = _mm512_set1_ps(dlt);
+	                t2   = _mm512_mul_ps(_mm512_sub_ps(C10,vdlt),alpu);
+	                j1   = besj1_zmm8r8(_mm512_castps_pd(u));
+	                t0   = _mm512_castpd_ps(j1);
+	                t1   = _mm512_div_pd(t0,u);
+	                Fu   = _mm512_fmadd_ps(vdlt,t1,t2);
+	                return (Fu);
+	        }                     
+	        
 	       
 	          
 	       
