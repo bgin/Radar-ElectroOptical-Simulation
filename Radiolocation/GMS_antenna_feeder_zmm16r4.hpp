@@ -10787,14 +10787,184 @@ namespace gms {
 	         */
 	                  
 	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           __ATTR_VECTORCALL__
+                   static inline
+	           __m512 f284_zmm16r4(const __m512 dlt, // usually a const value (mathematically)
+	                               const __m512 D,   // usually a const value (mathematically)
+	                               const __m512 r) {
+	                  
+	                  const __m512 C314159265358979323846264 = 
+	                                        _mm512_set1_pd(3.14159265358979323846264f);  
+	                  const __m512 C10   =  _mm512_set1_ps(1.0f);
+	                  const __m512 C05   =  _mm512_set1_ps(0.5f);
+	                  register __m512 t0,psi;
+	                  register __m512 carg,arg;
+	                  register __m512 fpsi;
+	                  t0  = _mm512_add_ps(dlt,
+	                                  _mm512_sub_ps(C10,dlt));
+	                  psi = _mm512_div_ps(_mm512_add_ps(r,r),D);
+	                  arg = _mm512_mul_ps(_mm512_mul_ps(C314159265358979323846264,psi),C05);
+	                  carg= xcosf(arg);
+	                  fpsi= _mm512_mul_ps(t0, _mm512_mul_ps(carg,carg));
+	                  return (fpsi);              
+	          }
 	        
 	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           __ATTR_VECTORCALL__
+                   static inline
+	           __m512 f284_zmm16r4_a(const __m512 dlt, // usually a const value (mathematically)
+	                                 const __m512 D,   // usually a const value (mathematically)
+	                                 const float * __restrict __ATTR_ALIGN__(64) pr) {
+	                  
+	                  register __m512 r = _mm512_load_ps(&pr[0]);
+	                  const __m512 C314159265358979323846264 = 
+	                                        _mm512_set1_pd(3.14159265358979323846264f);  
+	                  const __m512 C10   =  _mm512_set1_ps(1.0f);
+	                  const __m512 C05   =  _mm512_set1_ps(0.5f);
+	                  register __m512 t0,psi;
+	                  register __m512 carg,arg;
+	                  register __m512 fpsi;
+	                  t0  = _mm512_add_ps(dlt,
+	                                  _mm512_sub_ps(C10,dlt));
+	                  psi = _mm512_div_ps(_mm512_add_ps(r,r),D);
+	                  arg = _mm512_mul_ps(_mm512_mul_ps(C314159265358979323846264,psi),C05);
+	                  carg= xcosf(arg);
+	                  fpsi= _mm512_mul_ps(t0, _mm512_mul_ps(carg,carg));
+	                  return (fpsi);              
+	          }
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           __ATTR_VECTORCALL__
+                   static inline
+	           __m512 f284_zmm16r4_u(const __m512 dlt, // usually a const value (mathematically)
+	                                 const __m512 D,   // usually a const value (mathematically)
+	                                 const float * __restrict  pr) {
+	                  
+	                  register __m512 r = _mm512_loadu_ps(&pr[0]);
+	                  const __m512 C314159265358979323846264 = 
+	                                        _mm512_set1_pd(3.14159265358979323846264f);  
+	                  const __m512 C10   =  _mm512_set1_ps(1.0f);
+	                  const __m512 C05   =  _mm512_set1_ps(0.5f);
+	                  register __m512 t0,psi;
+	                  register __m512 carg,arg;
+	                  register __m512 fpsi;
+	                  t0  = _mm512_add_ps(dlt,
+	                                  _mm512_sub_ps(C10,dlt));
+	                  psi = _mm512_div_ps(_mm512_add_ps(r,r),D);
+	                  arg = _mm512_mul_ps(_mm512_mul_ps(C314159265358979323846264,psi),C05);
+	                  carg= xcosf(arg);
+	                  fpsi= _mm512_mul_ps(t0, _mm512_mul_ps(carg,carg));
+	                  return (fpsi);              
+	          }
+	          
+	          
+	          /*
+	              Formula 2-86, p. 58 (an Integral).
+	          */
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float f269_zmm16r4_cubint_dispatch(const float * __restrict  ppsi,
+	                                              float * __restrict        pint,
+	                                              const float stht,
+	                                              const float k,
+	                                              const float R0,
+	                                              const int32_t n,
+	                                              const int32_t PF_DIST,
+	                                              const int32_t PAGESIZE,
+	                                              const int32_t PAGERANK,
+	                                              const int32_t cond,
+	                                              float * __restrict err) {
+	               
+	                float sum,fer;
+	                sum = 0.0f;
+	                fer = 0.0f;
+	                switch (cond) {
+	                   case:0
+	                       f286_integrand_unroll_6x_u(ppsi,pint,stht,
+	                                                  k,R0,n,PF_DIST);
+	                   break;
+	                   case:1
+	                       f286_integrand_unroll_6x_a(ppsi,pint,stht,
+	                                                  k,R0,n,PF_DIST);
+	                   break;
+	                   case:2
+	                       f286_integrand_unroll_10x_u(ppsi,pint,stht,
+	                                                  k,R0,n,PF_DIST);
+	                   break;
+	                   case:3
+	                       f286_integrand_unroll_10x_u(ppsi,pint,stht,
+	                                                  k,R0,n,PF_DIST); 
+	                   break;
+	                   case:4
+	                       f286_integrand_unroll4x_jam248x(ppsi,pint,stht,
+	                                                       k,R0,n,PF_DIST,
+	                                                       PAGESIZE,PAGERANK);
+	                   break;
+	                   default:
+	                       sum = std::numeric_limits<float>::quiet_NaN();
+	                       return (sum);           
+	                }                   
+	                cubint(n,&ppsi[0],&pint[0],0.0f,1.0f,sum,fer);
+	                *err = fer;
+	                return (sum);
+	        }
 	        
-	       
+	        
+	         /*
+	              Formula 2-86, p. 58 (Functional computation [OpenMP]).
+	          */
 	          
 	       
-	       
-	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void f286_functional_omp(const float * __restrict ppsi,
+	                                    float * __restrict       pint,
+	                                    float * __restrict       sthts, // size of npts
+	                                    float * __restrict       fer,   // size of npts
+	                                    float * __restrict       result // functional data points.
+	                                    const float k,
+	                                    const float R0,
+	                                    const int32_t n,
+	                                    const int32_t npts,
+	                                    const int32_t PF_DIST,
+	                                    const int32_t PAGESIZE,
+	                                    const int32_t PAGERANK,
+	                                    const int32_t cond) {
+	                                    
+	                if(__builtin_expect(npts<=0,0)) {return;}
+	                
+	                float tmp1,tmp2;
+	                int32_t i;
+	                tmp1 = 0.0f;
+	                tmp2 = 0.0;
+#pragma omp parallel for schedule(static) default(none)                                 \
+        shared(ppsi,pint,sthts,fer,result,npts,k,R0,n,                                  \
+               PF_DIST,PAGESIZE,PAGERANK,cond)                                          \
+        firstprivate(tmp1,tmp2) private(i,t0)
+	                for(i = 0; i < npts; ++i) {
+	                    register t0 = sthts[i];
+	                    tmp1 = f269_zmm16r4_cubint_dispatch(ppsi,pint,t0,k,R0,
+	                                                        n,PF_DIST,PAGESIZE,
+	                                                        PAGERANK,cond,&tmp2);
+	                    result[i] = tmp1;
+	                    fer[i]    = tmp2;
+	                }                          
+	         }
 	       
 	          
 	       
