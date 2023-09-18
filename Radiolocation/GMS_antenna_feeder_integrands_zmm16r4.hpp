@@ -8121,6 +8121,865 @@ namespace gms {
 	                 }
 	                            
 	          }
+	          
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void f286_integrand_unroll4x_jam248x( const float * __restrict  ppsi,
+	                                                 float * __restrict        pint,
+	                                                 const float stht,
+	                                                 const float k,
+	                                                 const float R0,
+	                                                 const int32_t n,
+	                                                 const int32_t PF_DIST,
+	                                                 const int32_t PAGESIZE,
+	                                                 const int32_t PAGERANK) {
+	                                                 
+	                    using namespace gms::math;                       
+	                    if(__builtin_expect(n<=0,0) ||
+	                       __builtin_expect((n%16)!=0,0)) { return;}
+	                    const __m512 C314159265358979323846264338328 = 
+	                                         _mm512_set1_ps(3.14159265358979323846264338328f);  
+	                    const __m512 C05  =  _mm512_set1_ps(0.5f);
+	                    register __m512 vk;
+	                    register __m512 vR0;
+	                    register __m512 psi;
+	                    register __m512d J0,
+	                    register __m512  J0c
+	                    register __m512 arg1
+	                    register __m512 arg2;
+	                    register __m512 carg;
+	                    register __m512 u;
+	                    register __m512 vstht;
+	                    register __m512 t0;
+	                    register __m512 t1;
+	                    int32_t k,j,i;
+	                    vk    = _mm512_set1_ps(k);
+	                    vR0   = _mm512_set1_ps(R0);
+	                    vstht = _mm512_set1_ps(stht); 
+#if (CONCURRENT_PAGESIZE_ACCESSES) == 2
+                        for(k = 0; k < n; k += RANKSIZE) {
+	                    for(j = k; j < k + RANKSIZE; j += 2*PAGESIZE) {
+	                        for(i = j; i < (j + PAGESIZE); i += 64) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+48], t1);    
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+48], t1);                                     
+	                   }    
+	                }        
+	             }	                    
+#if (CONCURRENT_PAGESIZE_ACCESSES) == 4
+                        for(k = 0; k < n; k += RANKSIZE) {
+	                    for(j = k; j < k + RANKSIZE; j += 4*PAGESIZE) {
+	                        for(i = j; i < (j + PAGESIZE); i += 64) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+48], t1);    
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+48], t1);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+2*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+2*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+2*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+2*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+48], t1); 
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+3*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+3*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+3*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+3*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+48], t1);                                       
+	                   }    
+	                }        
+	             }
+#if (CONCURRENT_PAGESIZE_ACCESSES) == 8
+                        for(k = 0; k < n; k += RANKSIZE) {
+	                    for(j = k; j < k + RANKSIZE; j += 8*PAGESIZE) {
+	                        for(i = j; i < (j + PAGESIZE); i += 64) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+48], t1);    
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+PAGESIZE+48], t1);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+2*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+2*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+2*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+2*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+2*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+2*PAGESIZE+48], t1); 
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+3*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+3*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+3*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+3*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+3*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+3*PAGESIZE+48], t1); 
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+4*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+4*PAGESIZEP+F_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+4*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+4*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+4*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+4*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+4*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+4*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+4*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+4*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+4*PAGESIZE+48], t1);    
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+5*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+5*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+5*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+5*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+5*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+5*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+5*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+5*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+5*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+5*PAGESIZE+48], t1);   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+6*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+6*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+6*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+6*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+6*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+6*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+6*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+6*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+6*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+6*PAGESIZE+48], t1); 
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&ppsi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&ppsi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T1);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&ppsi[i+7*PAGESIZE+PF_DIST],_MM_HINT_T2);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&ppsi[i+7*PAGESIZE+PF_DIST],_MM_HINT_NTA);
+#endif  	               
+                               psi = _mm512_loadu_ps(&ppsi[i+7*PAGESIZE+0]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+7*PAGESIZE+0], t1);
+                               psi = _mm512_load_ps(&ppsi[i+7*PAGESIZE+16]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+7*PAGESIZE+16], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+7*PAGESIZE+32]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+7*PAGESIZE+32], t1);
+                               psi = _mm512_loadu_ps(&ppsi[i+7*PAGESIZE+48]);
+                               u   = _mm512_mul_ps(_mm512_mul_ps(vk,vR0),vstht);
+                               arg1= _mm512_mul_ps(psi,u)
+                               J0  = besj0_zmm8r8(_mm512_castps_pd(arg1));   
+                               J0c = _mm512_castpd_ps(J0);
+                               arg2= _mm512_mul_ps(C05,
+                                           _mm512_mul_ps(C314159265358979323846264338328,psi));
+                               carg= xcosf(arg2);
+                               t0  = _mm512_mul_ps(carg,carg);
+                               t1  = _mm512_mul_ps(psi,
+                                               _mm512_mul_ps(J0c,t0));
+                               _mm512_storeu_ps(&pint[i+7*PAGESIZE+48], t1);                                                                      
+	                   }    
+	                }        
+	             } 
+#endif                   	                                                  
+	        }
                   
                   
                   
