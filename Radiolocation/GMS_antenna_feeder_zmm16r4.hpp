@@ -47,6 +47,7 @@ namespace file_version {
 #include "GMS_config.h"
 #include "GMS_sleefsimdsp.hpp"
 #include "GMS_complex_zmm16r4.hpp"
+#include "GMS_rcs_common_zmm16r4.hpp"
 #include "GMS_simd_utils.hpp"
 #include "GMS_cspint_quad.hpp"
 #include "GMS_avint_quad.hpp"
@@ -11663,9 +11664,172 @@ namespace gms {
                       }                                                                                                                                    
                              
 	                 
-	   }         
-	                         
-	       
+	   }      
+	   
+	   
+	  /*Formula 2-100, p. 71*/
+	  
+	  
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           __m512 f2100_zmm16r4(const __m512 tht,
+	                                const float psi,
+	                                const float A,
+	                                const float k) {
+	                                
+	                 const __m512 C05 = _mm512_set1_ps(0.5f);
+	                 register __m512 kA2,stht;
+	                 register __m512 arg,sarg;
+	                 register __m512 vpsi,vA;
+	                 register __m512 vk;
+	                 register __m512 Fth;
+	                 vA  = _mm512_set1_ps(A);
+	                 vpsi= _mm512_set1_ps(psi);
+	                 stht= xsinf(tht);
+	                 vk  = _mm512_set1_ps(k);
+	                 kA2 = _mm512_mul_ps(C05,
+	                                 _mm512_mul_ps(vk,vA));
+	                 arg = _mm512_fmsub_ps(kA2,stht,vpsi);
+	                 sarg= xsinf(arg);
+	                 Fth = _mm512_div_ps(sarg,arg);
+	                 return (Fth);
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           __m512 f2100_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
+	                                  const float psi,
+	                                  const float A,
+	                                  const float k) {
+	                           
+	                 register __m512 tht = _mm512_load_ps(&ptht[0]);     
+	                 const __m512 C05 = _mm512_set1_ps(0.5f);
+	                 register __m512 kA2,stht;
+	                 register __m512 arg,sarg;
+	                 register __m512 vpsi,vA;
+	                 register __m512 vk;
+	                 register __m512 Fth;
+	                 vA  = _mm512_set1_ps(A);
+	                 vpsi= _mm512_set1_ps(psi);
+	                 stht= xsinf(tht);
+	                 vk  = _mm512_set1_ps(k);
+	                 kA2 = _mm512_mul_ps(C05,
+	                                 _mm512_mul_ps(vk,vA));
+	                 arg = _mm512_fmsub_ps(kA2,stht,vpsi);
+	                 sarg= xsinf(arg);
+	                 Fth = _mm512_div_ps(sarg,arg);
+	                 return (Fth);
+	        }
+	        
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           __m512 f2100_zmm16r4_u(const float * __restrict  ptht,
+	                                  const float psi,
+	                                  const float A,
+	                                  const float k) {
+	                           
+	                 register __m512 tht = _mm512_loadu_ps(&ptht[0]);     
+	                 const __m512 C05 = _mm512_set1_ps(0.5f);
+	                 register __m512 kA2,stht;
+	                 register __m512 arg,sarg;
+	                 register __m512 vpsi,vA;
+	                 register __m512 vk;
+	                 register __m512 Fth;
+	                 vA  = _mm512_set1_ps(A);
+	                 vpsi= _mm512_set1_ps(psi);
+	                 stht= xsinf(tht);
+	                 vk  = _mm512_set1_ps(k);
+	                 kA2 = _mm512_mul_ps(C05,
+	                                 _mm512_mul_ps(vk,vA));
+	                 arg = _mm512_fmsub_ps(kA2,stht,vpsi);
+	                 sarg= xsinf(arg);
+	                 Fth = _mm512_div_ps(sarg,arg);
+	                 return (Fth);
+	        }
+	        
+	        
+	        /*
+	            Formula 2-102, p. 71
+	        */
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           __m512 f2102_zmm16r4(const __m512 tht,
+	                                const __m512 R,
+	                                const float k,
+	                                const float L,
+	                                const float rho,
+	                                const float rho0,
+	                                const float psi2) {
+	                                
+	                  using namespace gms::math;
+	                  constexpr float C314159265358979323846264 = 
+	                                             3.14159265358979323846264f
+	                  register __m512 stht,ctht;
+	                  register __m512 ear,eai;
+	                  register __m512 cer,cei;
+	                  register __m512 c0r,c0i;
+	                  register __m512 c1r,c1i;
+	                  register __m512 fresC1,fresS1;
+	                  register __m512 fresC2,fresS2;
+	                  register __m512 fCa1,fSa1;
+	                  register __m512 vk,vL,vR;
+	                  register __m512 t0,t1,u,t2;
+	                  register __m512 fracr,fraci;
+	                  __m512 Fth;
+	                 
+	                  float tmp0,tmp1,tmp2,tmp3;
+	                  vL   = _mm512_set1_ps(L);
+	                  ctht = xcosf(tht);
+	                  ear  = _mm512_setzero_ps();
+	                  vk   = _mm512_set1_ps(k);
+	                  stht = xsinf(tht);
+	                  eai  = _mm512_set1_ps(-1.0f);
+	                  tmp0 = rho/rho0;
+	                  vR   = _mm512_set1_ps(R);
+	                  tmp1 = psi2/C314159265358979323846264;
+	                  t0   = _mm512_mul_ps(C05,
+	                                   _mm512_mul_ps(vk,vL);
+	                  t1   = _mm512_add_ps(ctht,
+	                                   _mm512_set1_ps(tmp0));
+	                  fracr= ear;
+	                  fraci= negate_zmm16r4(t1);
+	                  u    = _mm512_mul_ps(t0,stht);
+	                  tmp2 = cephes_sqrtf(tmp1+tmp1);
+	                  tmp3 = C314159265358979323846264*tmp2;
+	                  t1   = _mm512_div_ps(u,_mm512_set1_ps(tmp3));
+	                  t2   = _mm512_set1_ps(tmp2);
+	                  fSa  = _mm512_add_ps(t2,t1);
+	                  fCa  = _mm512_sub_ps(t2,t1);
+	                  fresC1 = fresnel_C_zmm16r4(fCa);
+	                  fresC2 = fresnel_C_zmm16r4(fSa);
+	                  fresS1 = fresnel_S_zmm16r4(fCa);
+	                  fresS2 = fresnel_S_zmm16r4(fSa);
+	                  t0     = negate_zmm16r4(_mm512_mul_ps(vk,vR));
+	                  t1     = _mm512_mul_ps(_mm512_mul_ps(vk,vL),stht);
+	                  fCa    = _mm512_set1_ps((16.0f*psi2));
+	                  t2     = _mm512_mul_ps(t1,t1);
+	                  fSa    = negate_zmm16r4(_mm512_div_ps(t2,fCa));
+	                  eai    = _mm512_sub_ps(t0,fSa);
+	                  cexp_zmm16r4(ear,eai,&cer,&cei);
+	                  cmul_zmm16r4(fracr,fraci,cer,cei,&c0r,&c0i);
+	                  t0     = _mm512_add_ps(fresC1,fresC2);
+	                  t1     = _mm512_add_ps(fresS1,fresS2);
+	                  cmul_zmm16r4(t0,t1,c0r,&c0i,&c1r,&c1i);
+	                  Fth    = cabs_zmm16r4(c1r,c1i);
+	                  return (Fth);
+	       }
 	        
 	        
 	                                    
