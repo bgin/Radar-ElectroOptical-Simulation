@@ -19,7 +19,7 @@ I envision five main components:
 2) Radio altimeter modeling and simulation.
 3) Propagation of laser and IR radiation through the turbulent atmospheric channels.
 4) Optical signals processing (background noise extraction).
-5) Sensor modeling and simulation
+5) Electro-optical sensor modeling and simulation.
    
 The main structure of the projects is a collection of free standing 'modules' programmatically describing
 various modelled components.
