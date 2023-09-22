@@ -12020,12 +12020,13 @@ namespace gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    static inline
-	           void f2110_zmm16r4_unroll_10x(const __m512 * __restrict __ATTR_ALIGN__(64) P0,
+	           void f2110_zmm16r4_unroll_10x_v1(const __m512 * __restrict __ATTR_ALIGN__(64) P0,
 	                                         const __m512 * __restrict __ATTR_ALIGN__(64) s,
 	                                         __m512 * __restrict __ATTR_ALIGN__(64) Pr,
 	                                         __m512 * __restrict __ATTR_ALIGN__(64) Pi, 
 	                                         const int32_t ntht,
 	                                         const int32_t nphi,
+	                                         const int32_t PF_DIST,
 	                                         const std::complex<float> Imn,
 	                                         const float eps) {
 	                                         
@@ -12159,72 +12160,7 @@ namespace gms {
                                    c0i = _mm512_mul_ps(Ii,t0);
                                    c1i = _mm512_fmadd_ps(c0r,t0,vP0);
                                    Pi[Ix2D(i,nphi,j+4)]) = c0i;    
-#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
-                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T0);
-                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
-	                     _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T1);
-	                     _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
-                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T2);
-                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
-                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_NTA);
-                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
-#endif  	                
-                                   vP0 = P0[Ix2D(i,nphi,j+2)];
-                                   vs  = s[Ix2D(i,nphi,j+2)];
-                                   t0  = _mm512_mul_ps(veps,vs);
-                                   c0r = _mm512_mul_ps(Ir,t0);
-                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
-                                   Pr[Ix2D(i,nphi,j+2)]) = c0r;
-                                   c0i = _mm512_mul_ps(Ii,t0);
-                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
-                                   Pi[Ix2D(i,nphi,j+2)]) = c0i;    
-#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
-                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T0);
-                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
-	                     _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T1);
-	                     _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
-                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T2);
-                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
-                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_NTA);
-                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
-#endif  	                
-                                   vP0 = P0[Ix2D(i,nphi,j+3)];
-                                   vs  = s[Ix2D(i,nphi,j+3)];
-                                   t0  = _mm512_mul_ps(veps,vs);
-                                   c0r = _mm512_mul_ps(Ir,t0);
-                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
-                                   Pr[Ix2D(i,nphi,j+3)]) = c0r;
-                                   c0i = _mm512_mul_ps(Ii,t0);
-                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
-                                   Pi[Ix2D(i,nphi,j+3)]) = c0i;  
-#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
-                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T0);
-                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
-	                     _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T1);
-	                     _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
-                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T2);
-                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
-#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
-                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_NTA);
-                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
-#endif  	                
-                                   vP0 = P0[Ix2D(i,nphi,j+4)];
-                                   vs  = s[Ix2D(i,nphi,j+4)];
-                                   t0  = _mm512_mul_ps(veps,vs);
-                                   c0r = _mm512_mul_ps(Ir,t0);
-                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
-                                   Pr[Ix2D(i,nphi,j+4)]) = c0r;
-                                   c0i = _mm512_mul_ps(Ii,t0);
-                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
-                                   Pi[Ix2D(i,nphi,j+4)]) = c0i; 
+
 #if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
                              _mm_prefetch((char*)&P0[i+5+PF_DIST],_MM_HINT_T0);
                              _mm_prefetch((char*)&s[i+5+PF_DIST], _MM_HINT_T0);
@@ -12337,6 +12273,292 @@ namespace gms {
                                    Pi[Ix2D(i,nphi,j+9)]) = c0i;                                                                                                       
 	                     }
 	                 }
+	        }
+	        
+	        
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void f2110_zmm16r4_unroll_10x_v2_a(const float * __restrict __ATTR_ALIGN__(64) P0,
+	                                              const float * __restrict __ATTR_ALIGN__(64) s,
+	                                              float * __restrict __ATTR_ALIGN__(64) Pr,
+	                                              float * __restrict __ATTR_ALIGN__(64) Pi, 
+	                                              const int32_t ntht,
+	                                              const int32_t nphi,
+	                                              const int32_t PF_DIST,
+	                                              const std::complex<float> Imn,
+	                                              const float eps) {
+	                                              
+	                 if(__builtin_expect(ntht<=0,0) || 
+	                    __builtin_expect(nphi<=0,0)) { return;}
+	                 register __m512 vP0;
+	                 register __m512 vs;
+	                 register __m512 Ir;
+	                 register __m512 Ii;
+	                 register __m512 c0r;
+	                 register __m512 c0i;
+	                 register __m512 c1r;
+	                 register __m512 c1i;
+	                 register __m512 t0;
+	                 register __m512 t1;
+	                 register __m512 veps;
+	                 int32_t i,j;
+	                 veps = _mm512_set1_ps(eps);
+	                 Ir   = _mm512_set1_ps(Imn.real());
+	                 Ii   = _mm512_set1_ps(Imn.imag());    
+	                 
+	                 for(i = 0; i != ntht; ++i) {
+	                      for(j = 0; (j+159) < nphi; j += 160) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[Ix2D(i,nphi,j+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[Ix2D(i,nphi,j+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i,nphi,j+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i,nphi,j+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i,nphi,j+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i,nphi,j+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i,nphi,j+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i,nphi,j+PF_DIST], _MM_HINT_T0);
+#endif  		                 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+0)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+0)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+0)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+0)]) = c0i;   
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+16)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+16)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+16)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+16)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+32)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+32)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+32)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+32)]) = c0i;  
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+48)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+48)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+48)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+48)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+64)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+64)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+64)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+64)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+80)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+80)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+80)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+80)]) = c0i;  
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+96)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+96)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+96)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+96)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+112)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+112)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+112)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+112)]) = c0i;
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+128)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+128)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+128)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+128)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+144)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+144)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+144)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+144)]) = c0i;                      
+	                     }
+	                     
+	                     for(; (j+95) < nphi; j += 96) {
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+0)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+0)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+0)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+0)]) = c0i;   
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+16)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+16)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+16)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+16)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+32)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+32)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+32)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+32)]) = c0i;  
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+48)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+48)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+48)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+48)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+64)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+64)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+64)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+64)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+80)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+80)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+80)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+80)]) = c0i;  
+                                               
+	                     }
+	                     
+	                      for(; (j+63) < nphi; j += 64) {
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+0)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+0)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+0)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+0)]) = c0i;   
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+16)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+16)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+16)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+16)]) = c0i; 
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+32)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+32)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+32)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+32)]) = c0i;  
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+48)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+48)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+48)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+48)]) = c0i; 
+                                                                                 
+	                     }
+	                     
+	                      for(; (j+31) < nphi; j += 32) {
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+0)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+0)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+0)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+0)]) = c0i;   
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+16)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+16)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+16)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+16)]) = c0i; 
+                                                                                                                  
+	                     }
+	                     
+	                     for(; (j+15) < nphi; j += 16) {
+                                   vP0 = _mm512_load_ps(&P0[Ix2D(i,nphi,j+0)];
+                                   vs  = _mm512_load_ps(&s[Ix2D(i,nphi,j+0)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pr[Ix2D(i,nphi,j+0)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   _mm512_store_ps(&Pi[Ix2D(i,nphi,j+0)]) = c0i;   
+                                                                                                                                                   
+	                     }
+	                     
+	                     for(; (j+0) < nphi; j += 1) {
+	                           register float vP0 = P0[Ix2D(i,nphi,j)];
+	                           register float vs  = s[Ix2D(i,nphi,j)];
+	                           register float t0  = eps*vs;
+	                           register std::complex<float> c0 = Imn*t0;
+	                           register std::complex<float> c1 = c0*t0+vP0;
+	                           Pr[Ix2D(i,nphi,j)] = c1.real();
+	                           Pi[Ix2D(i,nphi,j)] = c1.imag();
+	                     } 
+	                     
+	                 }                                
 	        }
 	                                    
 	     
