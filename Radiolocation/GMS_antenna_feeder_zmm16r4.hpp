@@ -11975,8 +11975,369 @@ namespace gms {
 	                  return (Fth);
 	       }
 	       
-	        
-	        
+	       
+	      /*
+	          Formula 2-110, p. 75
+	          Helper formula ratio phased array currents to square of currents.
+	      */
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           std::complex<float> Imn_ratio_c4(std::complex<float> * __restrict Imn,
+	                                            const int32_t M,
+	                                            const int32_t N) {
+	                                            
+	                std::complex<float> Isqr;
+	                std::complex<float> num;
+	                std::complex<float> den;
+	                std::complex<float> ratio;
+	                std::complex<float> c0;
+	                num = {0.0f,0.0f};
+	                den = {0.0f,0.0f};
+	                for(int32_t i = 0; i < M; ++i) {
+	                    for(int32_t j = 0; j < N; ++j) {
+	                         register std::complex<float> Iij = Imn[Ix2D(i,N,j)];
+	                         den  += Iij;
+	                         Isqr = Iij*Iij;
+	                         num  += Isqr;
+	                    }
+	                }  
+	                c0    = den*den;
+	                ratio = num/c0;
+	                return (ratio);                                 
+	         }
+	         
+	         
+	         /*
+	         
+	             Formula 2-110, p.75
+	         */
+	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           void f2110_zmm16r4_unroll_10x(const __m512 * __restrict __ATTR_ALIGN__(64) P0,
+	                                         const __m512 * __restrict __ATTR_ALIGN__(64) s,
+	                                         __m512 * __restrict __ATTR_ALIGN__(64) Pr,
+	                                         __m512 * __restrict __ATTR_ALIGN__(64) Pi, 
+	                                         const int32_t ntht,
+	                                         const int32_t nphi,
+	                                         const std::complex<float> Imn,
+	                                         const float eps) {
+	                                         
+	                 if(__builtin_expect(ntht<=0,0) || 
+	                    __builtin_expect(nphi<=0,0)) { return;}
+	                 register __m512 vP0;
+	                 register __m512 vs;
+	                 register __m512 Ir;
+	                 register __m512 Ii;
+	                 register __m512 c0r;
+	                 register __m512 c0i;
+	                 register __m512 c1r;
+	                 register __m512 c1i;
+	                 register __m512 t0;
+	                 register __m512 t1;
+	                 register __m512 veps;
+	                 int32_t i,j;
+	                 veps = _mm512_set1_ps(eps);
+	                 Ir   = _mm512_set1_ps(Imn.real());
+	                 Ii   = _mm512_set1_ps(Imn.imag());
+	                 
+	                 for(i = 0; i != ntht; ++i) {
+	                     for(j = 0; j != nphi-9; j += 10) {
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+0)];
+                                   vs  = s[Ix2D(i,nphi,j+0)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+0)] = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+0)] = c0i;
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+1+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+1+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+1+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+1+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+1+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+1+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+1+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+1+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+1)];
+                                   vs  = s[Ix2D(i,nphi,j+1)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+1)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+1)]) = c0i;  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+2)];
+                                   vs  = s[Ix2D(i,nphi,j+2)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+2)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+2)]) = c0i;  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+3)];
+                                   vs  = s[Ix2D(i,nphi,j+3)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+3)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+3)]) = c0i;   
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+4)];
+                                   vs  = s[Ix2D(i,nphi,j+4)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+4)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+4)]) = c0i;    
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+2+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+2+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+2)];
+                                   vs  = s[Ix2D(i,nphi,j+2)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+2)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+2)]) = c0i;    
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+3+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+3+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+3)];
+                                   vs  = s[Ix2D(i,nphi,j+3)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+3)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+3)]) = c0i;  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+4+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+4+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+4)];
+                                   vs  = s[Ix2D(i,nphi,j+4)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+4)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+4)]) = c0i; 
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+5+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+5+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+5+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+5+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+5+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+5+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+5+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+5+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+5)];
+                                   vs  = s[Ix2D(i,nphi,j+5)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+5)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+5)]) = c0i;  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+6+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+6+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+6+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+6+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+6+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+6+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+6+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+6+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+6)];
+                                   vs  = s[Ix2D(i,nphi,j+6)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+6)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+6)]) = c0i;
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+7+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+7+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+7+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+7+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+7+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+7+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+7+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+7+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+7)];
+                                   vs  = s[Ix2D(i,nphi,j+7)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+7)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+7)]) = c0i;  
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+8+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+8+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+8+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+8+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+8+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+8+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+8+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+8+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+8)];
+                                   vs  = s[Ix2D(i,nphi,j+8)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+8)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+8)]) = c0i; 
+#if (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 1
+                             _mm_prefetch((char*)&P0[i+9+PF_DIST],_MM_HINT_T0);
+                             _mm_prefetch((char*)&s[i+9+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 2  
+	                     _mm_prefetch((char*)&P0[i+9+PF_DIST],_MM_HINT_T1);
+	                     _mm_prefetch((char*)&s[i+9+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 3
+                             _mm_prefetch((char*)&P0[i+9+PF_DIST],_MM_HINT_T2);
+                             _mm_prefetch((char*)&s[i+9+PF_DIST], _MM_HINT_T0);
+#elif (__ANTENNA_FEEDER_PF_CACHE_HINT__) == 4
+                             _mm_prefetch((char*)&P0[i+9+PF_DIST],_MM_HINT_NTA);
+                             _mm_prefetch((char*)&s[i+9+PF_DIST], _MM_HINT_T0);
+#endif  	                
+                                   vP0 = P0[Ix2D(i,nphi,j+9)];
+                                   vs  = s[Ix2D(i,nphi,j+9)];
+                                   t0  = _mm512_mul_ps(veps,vs);
+                                   c0r = _mm512_mul_ps(Ir,t0);
+                                   c1r = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pr[Ix2D(i,nphi,j+9)]) = c0r;
+                                   c0i = _mm512_mul_ps(Ii,t0);
+                                   c1i = _mm512_fmadd_ps(c0r,t0,vP0);
+                                   Pi[Ix2D(i,nphi,j+9)]) = c0i;                                                                                                       
+	                     }
+	                 }
+	        }
 	                                    
 	     
 	     
