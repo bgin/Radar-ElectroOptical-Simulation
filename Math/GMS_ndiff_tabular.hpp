@@ -59,8 +59,38 @@ namespace file_info {
 namespace  gms {
 
         namespace math {
+        
 
 /*
+     !n,            NUMBER OF POINTS AT WICH DERIVATIVE IS TO BE FOUND.
+    !x0,           FIRST POINT AT WHICH DERIVATIVE IS TO BE FOUND
+    !step,         INTERVAL BETWEEN POINTS AT WHICH DERIVATIVE IS TO BE found
+    !h0,           INITIAL GUESS AT OPTIMUM STEP-SIZE(SEE ARTICLE 10
+    !              OF' TEXT).
+    !ne,           NUMRER OF POTNTS AT WHICH FUNCTTON IS TABULATED
+    !xi,           FIRST POINT A WHICH FUNCTION IS TABULATED
+    !ht,           INTERVAL AT WHICH FUNCTIONS IS TABULATED (MUST BE POSITIVE)
+    !y,            (ARRAY OF DIMENSION AT LEAST NE). FUNCTION VALUES I.E.
+    !              y(i) CONTAINS VALUE AT X=XI+(I-1)*HT
+    !              (X0-XI),STEP,AND HO MUST BE MULTIPLES OF HT.
+    !               X0 AND (X0+(N-1)*STEP) MUST LIE WITHIN RANGE OF TABLE
+    !              Output
+    !dy,           DERVATIVES AT REQUIRED POINTS
+    !r1,           MAXIMUM ESTIMATED ERROR OVER THE WHOLE RANGE OF POINTS.
+    !s1,           AVERAGE ESTIMATED ERROR OVER THE WHOLE RANGE OF POINTS.
+    !npitl,        NUMBER OF POINTS AT WHICH INTERVAL OF TABULATION IS TOO
+    !              LARGE.
+    !nprts,        NUMBER OF POINTS AT WHICH RANGE OF TARLE IS TOO SMALL.
+    !ierrfl,       A NON-ZERO VALUE INDICATES A FATAL ERROR AS FOLLOWS:
+    !             -1 MEANS X DOES NOT COINCIDE WITH A TABULAR POINT
+    !                (WITHIN RELATIVE TOLERANCE OF .00001).
+    !             -2 MEANS X IS OUTSIDE RANGE OF TABLE.
+    !             -3 MEANS HT IS NON-POSITIVE.
+    !nerest,       NUMBER OF POINTS AT WHICH ERROR ESTIMATE COULD NOT BE
+    !              MADE.
+    !itmany,       NUMBER OF POINTS AT WHICH THERE WERE TOO MANY ITERATIONS
+    !              (I.E., CHANGES OF STEP-SIZE).
+
        integer(kind=i4),               intent(in) :: n
        real(kind=sp),                  intent(in) :: x0
        real(kind=sp),                  intent(in) :: step
@@ -274,7 +304,12 @@ l360:                         b = std::abs(esterr);
                           s1 = s1/(double)n;
                  }
 
-
+/*
+   !z,  VALUE OF ABSCISSA.
+   !x1, FIRST POINT AT WHICH FUNCTION IS TABULATED.
+   !ht, INTERVAL OF TABULATION OF FUNCTION
+   !y,  (ARRAY OF DIMENSION AT LEAST NE). TABLE OF VALUES OF FUNCTION.
+*/
                         __ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
@@ -293,7 +328,21 @@ l360:                         b = std::abs(esterr);
                          return (fz);
                    }  
 
-
+/*
+!x,  POINT AT WHICH DY/DX REQUIRED.
+!h,  STEP-SIZE TO BE USED IN NUMERICAL DIFFERENTIATION FORMULAS.
+!f,  TABLE-LOOKUP FUNCTION
+!y,  ARRAY CONTAINING TABLE OY FUNCTION VALUES.
+!x1, FIRST POINT AT WHICH FUNCTION IS TABULATED.
+!ht, INTERVAL AT WHICH FUNCTION IS TABULATED.
+!ne, NUMBER OF POINTS AT WHICH FUNCTION IS TABULATED.
+!xe, LAST POINT AT WHICH FUNCTION IS TABULATED.
+!d,  ESTIMATED VALUE OF DY/DX
+!isf,FLAG TO INDICATE RANGE OF TABLE TOO SMALL.
+!ief,FLAG TO INDICATE TABULAR INTERVAL LARGER THAN H.
+!npitl, NUMBER OF POINTS AT WHICH TABULAR INTERVAT, TOO LARGE.
+!nprts,NUMBER OF POINTS AT WHICH RANGE OF TABLE TOO SMALL.
+*/
                         __ATTR_ALWAYS_INLINE__
                         __ATTR_HOT__
                         __ATTR_ALIGN__(32)
