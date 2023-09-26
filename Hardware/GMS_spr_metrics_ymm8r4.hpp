@@ -357,6 +357,7 @@ namespace gms {
                           register __m256 t1;
                           register __m256 vdt;
                           register __m256 metric;
+                        
                           t0  = _mm256_mul_ps(C1E9,
                                           _mm256_div_ps(UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD,
                                                         UNC_CHA_TOR_INSERTS_IA_MISS_DRD)); 
@@ -629,8 +630,149 @@ namespace gms {
 	          }  
 	          
 /*
-      
+        "BriefDescription": "Memory read that miss the last level cache (LLC) addressed to local DRAM as a percentage of total memory read accesses, does not include LLC prefetches.",
+        "MetricExpr": "( UNC_CHA_TOR_INSERTS.IA_MISS_DRD_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_LOCAL ) / ( UNC_CHA_TOR_INSERTS.IA_MISS_DRD_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_REMOTE + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_REMOTE )",
+        "MetricGroup": "",
+        "MetricName": "numa_reads_addressed_to_local_dram",
+        "ScaleUnit": "100%"
 */
+
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_numa_reads_ald_ymm8r4(const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL,
+	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE) {
+	               
+	                  register __m256 t0,t1,t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL);
+	                  t1 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE);
+	                  t2 = _mm256_add_ps(t0,t1);
+	                  metric = _mm256_div_ps(t0,t2);
+	                  return (metric);                             
+	         }
+	         
+/*
+          "BriefDescription": "Memory reads that miss the last level cache (LLC) addressed to remote DRAM as a percentage of total memory read accesses, does not include LLC prefetches.",
+        "MetricExpr": "( UNC_CHA_TOR_INSERTS.IA_MISS_DRD_REMOTE + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_REMOTE ) / ( UNC_CHA_TOR_INSERTS.IA_MISS_DRD_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_REMOTE + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_REMOTE )",
+        "MetricGroup": "",
+        "MetricName": "numa_reads_addressed_to_remote_dram",
+        "ScaleUnit": "100%"
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_numa_reads_ard_ymm8r4(const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE,
+	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL) {
+	               
+	                  register __m256 t0,t1,t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE);
+	                  t1 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL);
+	                  t2 = _mm256_add_ps(t0,t1);
+	                  metric = _mm256_div_ps(t0,t2);
+	                  return (metric);                             
+	         }    
+	         
+/*
+        "BriefDescription": "Uncore operating frequency in GHz",
+        "MetricExpr": "( UNC_CHA_CLOCKTICKS / ( source_count(UNC_CHA_CLOCKTICKS) * #num_packages ) / 1000000000) / duration_time",
+        "MetricGroup": "",
+        "MetricName": "uncore_frequency",
+        "ScaleUnit": "1GHz"
+*/ 
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_uncore_freq_ymm8r4(const __m256 UNC_CHA_CLOCKTICKS,
+	                                     const float n_scks,
+	                                     const float idt) { // shall be inverse value passed.
+	                 
+	                 const __m256 C000000001 = _mm256_set1_ps(1.0e-09f);
+	                 register  __m256 vscks;
+	                 register  __m256 vidt;
+	                 register  __m256 t0;
+	                 register  __m256 t1;
+	                 register  __m256 metric;
+	                 vscks = _mm256_set1_ps(n_scks);
+	                 vdt   = _mm256_set1_ps(dt);
+	                 t0    = _mm256_mul_ps(C000000001,
+	                                   _mm256_mul_ps(vscks,UNC_CHA_CLOCKTICKS));
+	                 t1    = _mm256_div_ps(UNC_CHA_CLOCKTICKS,t0);
+	                 metric= _mm256_mul_ps(t1,vidt);
+	                 return (metric); 
+	         }
+	         
+/*
+         "BriefDescription": "Intel(R) Ultra Path Interconnect (UPI) data transmit bandwidth (MB/sec)",
+        "MetricExpr": "( UNC_UPI_TxL_FLITS.ALL_DATA * (64 / 9.0) / 1000000) / duration_time",
+        "MetricGroup": "",
+        "MetricName": "upi_data_transmit_bw",
+        "ScaleUnit": "1MB/s" 
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_upi_data_tx_bw_ymm8r4(const __m256 UNC_UPI_TxL_FLITS_ALL_DATA,
+	                                        const float idt) {
+	             
+	                  const __m256 C000001                     =
+	                                    _mm256_set1_ps(1.0e-06f);
+	                  const __m256 C711111111111111111111111   =
+	                                    _mm256_set1_ps(7.11111111111111111111111f);
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(UNC_UPI_TxL_FLITS_ALL_DATA,
+	                                   _mm256_mul_ps(C711111111111111111111111,
+	                                                                        C000001));
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);                      
+	          }
+	          
+/*
+        "BriefDescription": "DDR memory read bandwidth (MB/sec)",
+        "MetricExpr": "( UNC_M_CAS_COUNT.RD * 64 / 1000000) / duration_time",
+        "MetricGroup": "",
+        "MetricName": "memory_bandwidth_read",
+        "ScaleUnit": "1MB/s"
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_mem_bw_rd_ymm8r4(const __m256 UNC_M_CAS_COUNT_RD,
+	                                       const float idt) {
+	                
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(_mm256_mul_ps(
+	                                            UNC_M_CAS_COUNT_RD,C640),
+	                                                                 C000001);
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);
+	          }  
 	          
 
 
