@@ -2013,6 +2013,26 @@ namespace gms {
 	                  return (metric);                                 
 	         }   
 	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_icache_misses_ymm8r4(const float * __restrict pICACHE_DATA_STALLS,
+	                                           const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  register __m256 ICACHE_DATA_STALLS = 
+	                                        _mm256_loadu_ps(&pICACHE_DATA_STALLS[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(ICACHE_DATA_STALLS,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                                 
+	         }   
+	         
 /*
       "MetricName": "ITLB_Misses",
       "LegacyName": "metric_TMA_....ITLB_Misses(%)",
@@ -2029,6 +2049,26 @@ namespace gms {
 	           __m256 spr_itlb_misses_ymm8r4(const __m256 ICACHE_TAG_STALLS,
 	                                         const __m256 CPU_CLK_UNHALTED_THREAD) {
 	                  
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(ICACHE_TAG_STALLS,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                                 
+	         }   
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_itlb_misses_ymm8r4(const float * __restrict pICACHE_TAG_STALLS,
+	                                         const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  register __m256 ICACHE_TAG_STALLS = 
+	                                        _mm256_loadu_ps(&pICACHE_TAG_STALLS[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
 	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
 	                  register __m256 t0;
 	                  register __m256 metric;
@@ -2068,6 +2108,33 @@ namespace gms {
 	                  return (metric);                                
 	         }
 	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_branch_resteers_ymm8r4(const float * __restrict pINT_MISC_CLEAR_RESTEER_CYCLES,
+	                                             const float * __restrict pCPU_CLK_UNHALTED_THREAD,
+	                                             const float * __restrict pINT_MISC_UNKNOWN_BRANCH_CYCLES) {
+	                  
+	                  register __m256 INT_MISC_CLEAR_RESTEER_CYCLES = 
+	                                          _mm256_loadu_ps(&pINT_MISC_CLEAR_RESTEER_CYCLES[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD       =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  register __m256 INT_MISC_UNKNOWN_BRANCH_CYCLES=
+	                                          _mm256_loadu_ps(&pINT_MISC_UNKNOWN_BRANCH_CYCLES[0]);
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 metric;  
+	                  t0  = _mm256_div_ps(INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                  t1  = _mm256_div_ps(INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,
+	                                     _mm256_add_ps(t0,t1));
+	                  return (metric);                                
+	         }
+	         
 /*
         "MetricName": "Mispredicts_Resteers",
       "LegacyName": "metric_TMA_......Mispredicts_Resteers(%)",
@@ -2093,7 +2160,8 @@ namespace gms {
 	                                            const float CPU_CLK_UNHALTED_THREAD) {
 	                 
 	                 constexpr float C100 = 100.0f;
-	                 float t0,t1,t2,t3;
+	                 float t0,t1,t2,t3,t4,t5,t6,t7;
+	                 float metric;
 	                 t0 = PERF_METRICS_FRONTEND_BOUND+
 	                      PERF_METRICS_BAD_SPECULATION+
 	                      PERF_METRICS_RETIRING+
@@ -2101,11 +2169,243 @@ namespace gms {
 	                 t1 = INT_MISC_UOP_DROPPING/ 
 	                      TOPDOWN_SLOTS_perf_metrics;
 	                 t2 = PERF_METRICS_BACKEND_BOUND/t0;
-	                 t3 =                       
+	                 t3 = PERF_METRICS_RETIRING/t0;
+	                 t4 = PERF_METRICS_BRANCH_MISPREDICTS/t0;
+	                 t5 = PERF_METRICS_FRONTEND_BOUND/t0;
+	                 t6 = t5-t1+t2+t3;
+	                 t7 = 1.0f-t6;
+	                 t2 = std::max(t7,0.0f);
+	                 t3 = INT_MISC_CLEAR_RESTEER_CYCLES/
+	                      CPU_CLK_UNHALTED_THREAD;
+	                 metric = C100*(t4/t2)*t3;
+	                 return (metric);                    
 	         }
 	         
+/*
+      "MetricName": "Clears_Resteers",
+      "LegacyName": "metric_TMA_......Clears_Resteers(%)",
+      "ParentCategory": "Branch_Resteers",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to Branch Resteers as a result of Machine Clears. ",
+      "UnitOfMeasure": "percent",
+*/
+	         
  
-	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float spr_clears_resteers_r4(    const float PERF_METRICS_BRANCH_MISPREDICTS,
+	                                            const float PERF_METRICS_FRONTEND_BOUND,
+	                                            const float PERF_METRICS_BAD_SPECULATION,
+	                                            const float PERF_METRICS_RETIRING,
+	                                            const float PERF_METRICS_BACKEND_BOUND,
+	                                            const float INT_MISC_UOP_DROPPING,
+	                                            const float TOPDOWN_SLOTS_perf_metrics,
+	                                            const float INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                            const float CPU_CLK_UNHALTED_THREAD) {
+	                 
+	                 constexpr float C100 = 100.0f;
+	                 float t0,t1,t2,t3,t4,t5,t6,t7;
+	                 float metric;
+	                 t0 = PERF_METRICS_FRONTEND_BOUND+
+	                      PERF_METRICS_BAD_SPECULATION+
+	                      PERF_METRICS_RETIRING+
+	                      PERF_METRICS_BACKEND_BOUND;
+	                 t1 = INT_MISC_UOP_DROPPING/ 
+	                      TOPDOWN_SLOTS_perf_metrics;
+	                 t2 = PERF_METRICS_BACKEND_BOUND/t0;
+	                 t3 = PERF_METRICS_RETIRING/t0;
+	                 t4 = PERF_METRICS_BRANCH_MISPREDICTS/t0;
+	                 t5 = PERF_METRICS_FRONTEND_BOUND/t0;
+	                 t6 = t5-t1+t2+t3;
+	                 t7 = 1.0f-t6;
+	                 t2 = std::max(t7,0.0f);
+	                 t3 = INT_MISC_CLEAR_RESTEER_CYCLES/
+	                      CPU_CLK_UNHALTED_THREAD;
+	                 metric = C100*(1.0f-(t4/t2))*t3;
+	                 return (metric);                    
+	         }
+	         
+/*
+      "MetricName": "Unknown_Branches",
+      "LegacyName": "metric_TMA_......Unknown_Branches(%)",
+      "ParentCategory": "Branch_Resteers",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to new branch address clears. These are fetched branches the Branch Prediction Unit was unable to recognize (First fetch or hitting BPU capacity limit).",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_unknown_branches_ymm8r4(const __m256 INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                              const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);
+	                                                      
+	         }   
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_unknown_branches_ymm8r4(const float * __restrict pINT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                              const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  register __m256 INT_MISC_UNKNOWN_BRANCH_CYCLES = 
+	                                       _mm256_loadu_ps(&pINT_MISC_UNKNOWN_BRANCH_CYCLES[0]);
+	                   register __m256 CPU_CLK_UNHALTED_THREAD       =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);
+	                                                      
+	         }   
+	         
+/*
+     "MetricName": "DSB_Switches",
+      "LegacyName": "metric_TMA_....DSB_Switches(%)",
+      "ParentCategory": "Fetch_Latency",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to switches from DSB to MITE pipelines. The DSB (decoded i-cache) is a Uop Cache where the front-end directly delivers Uops (micro operations) avoiding heavy x86 decoding. The DSB pipeline has shorter latency and delivered higher bandwidth than the MITE (legacy instruction decode pipeline). Switching between the two pipelines can cause penalties hence this metric measures the exposed penalty.",
+      "UnitOfMeasure": "percent",
+*/  
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dsb_switches_ymm8r4(const __m256 DSB2MITE_SWITCHES_PENALTY_CYCLES,
+	                                          const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                 
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;  
+	                  t0 = _mm256_div_ps(DSB2MITE_SWITCHES_PENALTY_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                              
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dsb_switches_ymm8r4(const float * __restrict pDSB2MITE_SWITCHES_PENALTY_CYCLES,
+	                                          const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                 
+	                  register __m256 DSB2MITE_SWITCHES_PENALTY_CYCLES = 
+	                                          _mm256_loadu_ps(&pDSB2MITE_SWITCHES_PENALTY_CYCLES[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD       =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;  
+	                  t0 = _mm256_div_ps(DSB2MITE_SWITCHES_PENALTY_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                              
+	         }
+	         
+/*
+        "MetricName": "LCP",
+      "LegacyName": "metric_TMA_....LCP(%)",
+      "ParentCategory": "Fetch_Latency",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of cycles CPU was stalled due to Length Changing Prefixes (LCPs). Using proper compiler flags or Intel Compiler by default will certainly avoid this. #Link: Optimization Guide about LCP BKMs.",
+      "UnitOfMeasure": "percent",
+*/
+
+              	   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_lcp_ymm8r4(const __m256 DECODE_LCP,
+	                                 const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                 
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;  
+	                  t0 = _mm256_div_ps(DECODE_LCP,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                            
+	         }    
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_lcp_ymm8r4(const float * __restrict pDECODE_LCP,
+	                                 const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                 
+	                  register __m256 DECODE_LCP              =
+	                                  _mm256_loadu_ps(&pDECODE_LCP[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;  
+	                  t0 = _mm256_div_ps(DECODE_LCP,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                            
+	         }    
+	         
+/*
+      "MetricName": "Info_Memory_L2MPKI",
+      "LegacyName": "metric_TMA_Info_Memory_L2MPKI",
+      "Level": 1,
+      "BriefDescription": "L2 cache true misses per kilo instruction for retired demand loads",
+      "UnitOfMeasure": ""
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_info_mem_l2mpki_ymm8r4(const __m256 MEM_LOAD_RETIRED_L2_MISS,
+	                                             const __m256 INST_RETIRED_ANY) {
+	                                             
+	                  const __m256 C10000 = _mm256_set1_ps(1000.0f);
+	                  register __m256 t0;
+	                  register __m256 metric; 
+	                  t0 = _mm256_div_ps(MEM_LOAD_RETIRED_L2_MISS,
+	                                     INST_RETIRED_ANY);
+	                  metric = _mm256_mul_ps(C10000,t0);
+	                  return (metric);                                                       
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_info_mem_l2mpki_ymm8r4(const float * __restrict pMEM_LOAD_RETIRED_L2_MISS,
+	                                             const float * __restrict pINST_RETIRED_ANY) {
+	                                  
+	                  register __m256 MEM_LOAD_RETIRED_L2_MISS = 
+	                                          _mm256_loadu_ps(&pMEM_LOAD_RETIRED_L2_MISS[0]);
+	                  register __m256 INST_RETIRED_ANY         =
+	                                          _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);          
+	                  const __m256 C10000 = _mm256_set1_ps(1000.0f);
+	                  register __m256 t0;
+	                  register __m256 metric; 
+	                  t0 = _mm256_div_ps(MEM_LOAD_RETIRED_L2_MISS,
+	                                     INST_RETIRED_ANY);
+	                  metric = _mm256_mul_ps(C10000,t0);
+	                  return (metric);                                                       
+	         }
 
 
 } // gms
