@@ -772,14 +772,42 @@ namespace gms {
 	                                          const __m256 UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE,
 	                                          const float duration_time) {
 	                     
-	                  register __m256  UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE = 
-	                                              _mm256_loadu_ps(&pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE[0]);
-	                  register __m256  UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE   =
-	                                              _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE[0]);
-	                  register __m256  UNC_CHA_CLOCKTICKS                        =
-	                                              _mm256_loadu_ps(&pUNC_CHA_CLOCKTICKS[0]); 
-	                  register __m256  UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE  =
-	                                              _mm256_loadu_ps(&pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE[0]);                   
+	                                    
+	                  const __m256 C1E9 = _mm256_set1_ps(1.0e+09f); 
+                          register __m256 t0;
+                          register __m256 t1;
+                          register __m256 vdt;
+                          register __m256 metric;  
+                          t0  = _mm256_mul_ps(C1E9,
+                                          _mm256_div_ps(UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE,
+                                                        UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE)); 
+                          vdt = _mm256_set1_ps(duration_time);
+                          t1  = _mm256_div_ps(UNC_CHA_CLOCKTICKS,
+                                          _mm256_add_ps(UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE,
+                                                        UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE));
+                          metric  = _mm256_mul_ps(_mm256_div_ps(t0,t1),vdt);
+                          return (metric);  
+                }
+                
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_llc_ddr_mlrr_ymm8r4(const float * __restrict pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE,
+	                                          const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                          const float * __restrict pUNC_CHA_CLOCKTICKS,
+	                                          const float * __restrict pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE,
+	                                          const float duration_time) {
+	                     
+	                  register __m256 UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE = 
+	                                             _mm256_loadu_ps(&pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE   =
+	                                             _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE[0]);
+	                  register __m256 UNC_CHA_CLOCKTICKS                       =
+	                                             _mm256_loadu_ps(&pUNC_CHA_CLOCKTICKS[0]);
+	                  register __m256 UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE =
+	                                             _mm256_loadu_ps(&pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_REMOTE[0]);
 	                  const __m256 C1E9 = _mm256_set1_ps(1.0e+09f); 
                           register __m256 t0;
                           register __m256 t1;
@@ -833,6 +861,41 @@ namespace gms {
                           return (metric);  
                 }  
                 
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_llc_ddr_mdlat_ymm8r4(const float * __restrict pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR,
+	                                           const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_DDR,
+	                                           const float * __restrict pUNC_CHA_CLOCKTICKS,
+	                                           const float * __restrict pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR,
+	                                           const float duration_time) {
+	                          
+	                  register __m256 UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR = 
+	                                             _mm256_loadu_ps(&pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_DDR   =
+	                                             _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_DDR[0]);
+	                  register __m256 UNC_CHA_CLOCKTICKS                    =
+	                                             _mm256_loadu_ps(&pUNC_CHA_CLOCKTICKS[0]);
+	                  register __m256 UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR =
+	                                             _mm256_loadu_ps(&pUNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR[0]);                
+	                  const __m256 C1E9 = _mm256_set1_ps(1.0e+09f); 
+                          register __m256 t0;
+                          register __m256 t1;
+                          register __m256 vdt;
+                          register __m256 metric;  
+                          t0  = _mm256_mul_ps(C1E9,
+                                          _mm256_div_ps(UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR,
+                                                        UNC_CHA_TOR_INSERTS_IA_MISS_DRD_DDR)); 
+                          vdt = _mm256_set1_ps(duration_time);
+                          t1  = _mm256_div_ps(UNC_CHA_CLOCKTICKS,
+                                          _mm256_add_ps(UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR,
+                                                        UNC_CHA_TOR_OCCUPANCY_IA_MISS_DRD_DDR));
+                          metric  = _mm256_mul_ps(_mm256_div_ps(t0,t1),vdt);
+                          return (metric);  
+                }  
+                
 /*
          "BriefDescription": "Ratio of number of completed page walks (for all page sizes) caused by a code fetch to the total number of completed instructions. This implies it missed in the ITLB (Instruction TLB) and further levels of TLB.",
         "MetricExpr": "ITLB_MISSES.WALK_COMPLETED / INST_RETIRED.ANY",
@@ -849,6 +912,24 @@ namespace gms {
 	           __m256 spr_itlb_2l_mpi_ymm8r4(const __m256 ITLB_MISSES_WALK_COMPLETED,
 	                                         const __m256 INST_RETIRED_ANY) {
 	                                         
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(ITLB_MISSES_WALK_COMPLETED,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                              
+	          }
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_itlb_2l_mpi_ymm8r4(const float * __restrict pITLB_MISSES_WALK_COMPLETED,
+	                                         const float * __restrict pINST_RETIRED_ANY) {
+	                          
+	                  register __m256 ITLB_MISSES_WALK_COMPLETED = 
+	                                             _mm256_loadu_ps(&pITLB_MISSES_WALK_COMPLETED[0]);
+	                  register __m256 INST_RETIRED_ANY           =
+	                                             _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);               
 	                  register __m256 metric;
 	                  metric = _mm256_div_ps(ITLB_MISSES_WALK_COMPLETED,
 	                                         INST_RETIRED_ANY);
@@ -877,6 +958,24 @@ namespace gms {
 	                  return (metric);                                  
 	          }
 	          
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_itlb_2l_llp_mpi_ymm8r4(const float * __restrict pITLB_MISSES_WALK_COMPLETED_2M_4M,
+	                                             const float * __restrict pINST_RETIRED_ANY) {
+	                  
+	                  register __m256 ITLB_MISSES_WALK_COMPLETED_2M_4M = 
+	                                             _mm256_loadu_ps(&pITLB_MISSES_WALK_COMPLETED_2M_4M[0]);
+	                  register __m256 INST_RETIRED_ANY                 =
+	                                             _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(ITLB_MISSES_WALK_COMPLETED_2M_4M,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                                  
+	          }
+	          
 /*
         "BriefDescription": "Ratio of number of completed page walks (for all page sizes) caused by demand data loads to the total number of completed instructions. This implies it missed in the DTLB and further levels of TLB.",
         "MetricExpr": "DTLB_LOAD_MISSES.WALK_COMPLETED / INST_RETIRED.ANY",
@@ -899,6 +998,25 @@ namespace gms {
 	                  return (metric);                                  
 	          }
 	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_2l_llmpi_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_WALK_COMPLETED,
+	                                           const float * __restrict pINST_RETIRED_ANY) {
+	                  
+	                  register __m256 DTLB_LOAD_MISSES_WALK_COMPLETED = 
+	                                           _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_COMPLETED[0]);
+	                  register __m256 INST_RETIRED_ANY                =
+	                                           _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_COMPLETED,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                                  
+	          }
+	          
+	          
 /*
          "BriefDescription": "Ratio of number of completed page walks (for 2 megabyte page sizes) caused by demand data loads to the total number of completed instructions. This implies it missed in the Data Translation Lookaside Buffer (DTLB) and further levels of TLB.",
         "MetricExpr": "DTLB_LOAD_MISSES.WALK_COMPLETED_2M_4M / INST_RETIRED.ANY",
@@ -916,6 +1034,24 @@ namespace gms {
 	           __m256 spr_dtlb_2l_2mblp_mpi_ymm8r4(const __m256 DTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M,
 	                                               const __m256 INST_RETIRED_ANY) {
 	                  
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                                  
+	          }
+	          
+	          __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_2l_2mblp_mpi_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M,
+	                                               const float * __restrict pINST_RETIRED_ANY) {
+	                  
+	                  register __m256 DTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M = 
+	                                           _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M[0]);
+	                  register __m256 INST_RETIRED_ANY                      =
+	                                           _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
 	                  register __m256 metric;
 	                  metric = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M,
 	                                         INST_RETIRED_ANY);
@@ -944,6 +1080,24 @@ namespace gms {
 	                  return (metric);                                  
 	          }  
 	          
+	            __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_2l_llmpi_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_WALK_COMPLETED,
+	                                           const float * __restrict pINST_RETIRED_ANY) {
+	                  
+	                  register __m256 DTLB_LOAD_MISSES_WALK_COMPLETED = 
+	                                           _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_COMPLETED[0]);
+	                  register __m256 INST_RETIRED_ANY                =
+	                                           _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_COMPLETED,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                                  
+	          }  
+	          
 /*
       "BriefDescription": "Ratio of number of completed page walks (for 2 megabyte page sizes) caused by demand data loads to the total number of completed instructions. This implies it missed in the Data Translation Lookaside Buffer (DTLB) and further levels of TLB.",
         "MetricExpr": "DTLB_LOAD_MISSES.WALK_COMPLETED_2M_4M / INST_RETIRED.ANY",
@@ -966,6 +1120,24 @@ namespace gms {
 	                  return (metric);                                  
 	          }  
 	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_2l_2mllmpi_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M,
+	                                             const float * __restrict pINST_RETIRED_ANY) {
+	                  
+	                  register __m256 DTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M = 
+	                                           _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M[0]);
+	                  register __m256 INST_RETIRED_ANY                      =
+	                                           _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_COMPLETED_2M_4M,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                                  
+	          }  
+	          
 /*
        "BriefDescription": "Ratio of number of completed page walks (for all page sizes) caused by demand data stores to the total number of completed instructions. This implies it missed in the DTLB and further levels of TLB.",
         "MetricExpr": "DTLB_STORE_MISSES.WALK_COMPLETED / INST_RETIRED.ANY",
@@ -982,6 +1154,24 @@ namespace gms {
 	           __m256 spr_dtlb_2l_store_mpi_ymm8r4(const __m256 DTLB_STORE_MISSES_WALK_COMPLETED,
 	                                               const __m256 INST_RETIRED_ANY) {
 	                  
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(DTLB_STORE_MISSES_WALK_COMPLETED,
+	                                         INST_RETIRED_ANY);
+	                  return (metric);                                  
+	          }  
+	          
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_2l_store_mpi_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_WALK_COMPLETED,
+	                                               const float * __restrict pINST_RETIRED_ANY) {
+	                  
+	                  register __m256 DTLB_STORE_MISSES_WALK_COMPLETED = 
+	                                            _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_COMPLETED[0]);
+	                  register __m256 INST_RETIRED_ANY                 = 
+	                                            _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
 	                  register __m256 metric;
 	                  metric = _mm256_div_ps(DTLB_STORE_MISSES_WALK_COMPLETED,
 	                                         INST_RETIRED_ANY);
@@ -1017,6 +1207,35 @@ namespace gms {
 	                  return (metric);                             
 	         }
 	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_numa_reads_ald_ymm8r4(const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                            const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL,
+	                                            const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                            const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE) {
+	               
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL      = 
+	                                         _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL = 
+	                                         _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE     =
+	                                         _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE=
+	                                         _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE[0]);
+	                  register __m256 t0,t1,t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL);
+	                  t1 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE);
+	                  t2 = _mm256_add_ps(t0,t1);
+	                  metric = _mm256_div_ps(t0,t2);
+	                  return (metric);                             
+	         }
+	         
 /*
           "BriefDescription": "Memory reads that miss the last level cache (LLC) addressed to remote DRAM as a percentage of total memory read accesses, does not include LLC prefetches.",
         "MetricExpr": "( UNC_CHA_TOR_INSERTS.IA_MISS_DRD_REMOTE + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_REMOTE ) / ( UNC_CHA_TOR_INSERTS.IA_MISS_DRD_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_LOCAL + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_REMOTE + UNC_CHA_TOR_INSERTS.IA_MISS_DRD_PREF_REMOTE )",
@@ -1034,6 +1253,34 @@ namespace gms {
 	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
 	                                            const __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL) {
 	               
+	                  register __m256 t0,t1,t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE);
+	                  t1 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                     UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL);
+	                  t2 = _mm256_add_ps(t0,t1);
+	                  metric = _mm256_div_ps(t0,t2);
+	                  return (metric);                             
+	         }   
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_numa_reads_ard_ymm8r4(const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
+	                                            const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE,
+	                                            const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL,
+	                                            const float * __restrict pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL) {
+	               
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE      = 
+	                                                     _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE =
+	                                                     _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_REMOTE[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL       =
+	                                                     _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_LOCAL[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL  = 
+	                                                     _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IA_MISS_DRD_PREF_LOCAL[0]);
 	                  register __m256 t0,t1,t2;
 	                  register __m256 metric;
 	                  t0 = _mm256_add_ps(UNC_CHA_TOR_INSERTS_IA_MISS_DRD_REMOTE,
@@ -1076,6 +1323,30 @@ namespace gms {
 	                 return (metric); 
 	         }
 	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_uncore_freq_ymm8r4(const float * __restrict pUNC_CHA_CLOCKTICKS,
+	                                         const float n_scks,
+	                                         const float idt) { // shall be inverse value passed.
+	                 
+	                 register __m256 UNC_CHA_CLOCKTICKS = _mm256_loadu_ps(&pUNC_CHA_CLOCKTICKS[0]);
+	                 const __m256 C000000001 = _mm256_set1_ps(1.0e-09f);
+	                 register  __m256 vscks;
+	                 register  __m256 vidt;
+	                 register  __m256 t0;
+	                 register  __m256 t1;
+	                 register  __m256 metric;
+	                 vscks = _mm256_set1_ps(n_scks);
+	                 vdt   = _mm256_set1_ps(dt);
+	                 t0    = _mm256_mul_ps(C000000001,
+	                                   _mm256_mul_ps(vscks,UNC_CHA_CLOCKTICKS));
+	                 t1    = _mm256_div_ps(UNC_CHA_CLOCKTICKS,t0);
+	                 metric= _mm256_mul_ps(t1,vidt);
+	                 return (metric); 
+	         }
+	         
 /*
          "BriefDescription": "Intel(R) Ultra Path Interconnect (UPI) data transmit bandwidth (MB/sec)",
         "MetricExpr": "( UNC_UPI_TxL_FLITS.ALL_DATA * (64 / 9.0) / 1000000) / duration_time",
@@ -1089,8 +1360,32 @@ namespace gms {
                    __ATTR_VECTORCALL__
 	           static inline
 	           __m256 spr_upi_data_tx_bw_ymm8r4(const __m256 UNC_UPI_TxL_FLITS_ALL_DATA,
-	                                        const float idt) {
+	                                            const float idt) {
 	             
+	                  const __m256 C000001                     =
+	                                    _mm256_set1_ps(1.0e-06f);
+	                  const __m256 C711111111111111111111111   =
+	                                    _mm256_set1_ps(7.11111111111111111111111f);
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(UNC_UPI_TxL_FLITS_ALL_DATA,
+	                                   _mm256_mul_ps(C711111111111111111111111,
+	                                                                        C000001));
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);                      
+	          }
+	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_upi_data_tx_bw_ymm8r4(const float * __restrict pUNC_UPI_TxL_FLITS_ALL_DATA,
+	                                            const float idt) {
+	             
+	                  register __m256 UNC_UPI_TxL_FLITS_ALL_DATA = 
+	                                         _mm256_loadu_ps(&pUNC_UPI_TxL_FLITS_ALL_DATA[0]);
 	                  const __m256 C000001                     =
 	                                    _mm256_set1_ps(1.0e-06f);
 	                  const __m256 C711111111111111111111111   =
@@ -1134,6 +1429,28 @@ namespace gms {
 	                  return (metric);
 	          }  
 	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_mem_bw_rd_ymm8r4(const float * __restrict pUNC_M_CAS_COUNT_RD,
+	                                       const float idt) {
+	                
+	                  register __m256 UNC_M_CAS_COUNT_RD = 
+	                                       _mm256_loadu_ps(&pUNC_M_CAS_COUNT_RD[0]);
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(_mm256_mul_ps(
+	                                            UNC_M_CAS_COUNT_RD,C640),
+	                                                                 C000001);
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);
+	          }  
+	          
 /*
         "BriefDescription": "DDR memory write bandwidth (MB/sec)",
         "MetricExpr": "( UNC_M_CAS_COUNT.WR * 64 / 1000000) / duration_time",
@@ -1149,6 +1466,28 @@ namespace gms {
 	           __m256 spr_mem_bw_wr_ymm8r4(const __m256 UNC_M_CAS_COUNT_WR,
 	                                       const float idt) {
 	                
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(_mm256_mul_ps(
+	                                            UNC_M_CAS_COUNT_WR,C640),
+	                                                                 C000001);
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);
+	          }  
+	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_mem_bw_wr_ymm8r4(const float * __restrict pUNC_M_CAS_COUNT_WR,
+	                                       const float idt) {
+	                
+	                  register __m256 UNC_M_CAS_COUNT_WR = 
+	                                       _mm256_loadu_ps(&pUNC_M_CAS_COUNT_WR[0]);
 	                  const __m256 C640    = _mm256_mul_ps(64.0f);
 	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
 	                  register __m256 vidt;
@@ -1194,6 +1533,34 @@ namespace gms {
 	                  return (metric);                                                
 	        }
 	        
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_mem_bw_total_ymm8r4(const float * __restrict pUNC_M_CAS_COUNT_RD,
+	                                          const float * __restrict pUNC_M_CAS_COUNT_WR,
+	                                          const float idt) {
+	                  
+	                  register __m256 UNC_M_CAS_COUNT_RD = 
+	                                       _mm256_loadu_ps(&pUNC_M_CAS_COUNT_RD[0]);
+	                  register __m256 UNC_M_CAS_COUNT_WR =
+	                                       _mm256_loadu_ps(&pUNC_M_CAS_COUNT_WR[0]);
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;  
+	                  register __m256 t1;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0 =  _mm256_add_ps(UNC_M_CAS_COUNT_RD,
+	                                      UNC_M_CAS_COUNT_WR);
+	                  t1 =  _mm256_mul_ps(
+	                                _mm256_mul_ps(t0,vidt),
+	                                                 C000001);
+	                  metric = _mm256_mul_ps(t1,vidt);
+	                  return (metric);                                                
+	        }
+	        
 /*
          "BriefDescription": "Bandwidth of IO reads that are initiated by end device controllers that are requesting memory from the CPU.",
         "MetricExpr": "( UNC_CHA_TOR_INSERTS.IO_PCIRDCUR * 64 / 1000000) / duration_time",
@@ -1210,6 +1577,28 @@ namespace gms {
 	           __m256 spr_io_bw_read_ymm8r4(const __m256 UNC_CHA_TOR_INSERTS_IO_PCIRDCUR,
 	                                       const float idt) {
 	                
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(_mm256_mul_ps(
+	                                         UNC_CHA_TOR_INSERTS_IO_PCIRDCUR,C640),
+	                                                                        C000001);
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);
+	          }  
+	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_io_bw_read_ymm8r4(const float * __restrict pUNC_CHA_TOR_INSERTS_IO_PCIRDCUR,
+	                                        const float idt) {
+	                  
+	                  register __m256 UNC_CHA_TOR_INSERTS_IO_PCIRDCUR = 
+	                                    _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IO_PCIRDCUR[0]);
 	                  const __m256 C640    = _mm256_mul_ps(64.0f);
 	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
 	                  register __m256 vidt;
@@ -1255,6 +1644,34 @@ namespace gms {
 	                  return (metric);                                                
 	        }
 	        
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_io_bw_read_ymm8r4(  const float * __restrict pUNC_CHA_TOR_INSERTS_IO_ITOM,
+	                                          const float * __restrict pUNC_CHA_TOR_INSERTS_IO_ITOMCACHENEAR ,
+	                                          const float idt) {
+	                  
+	                  register __m256 UNC_CHA_TOR_INSERTS_IO_ITOM          = 
+	                                         _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IO_ITOM[0]);
+	                  register __m256 UNC_CHA_TOR_INSERTS_IO_ITOMCACHENEAR =
+	                                         _mm256_loadu_ps(&pUNC_CHA_TOR_INSERTS_IO_ITOMCACHENEAR[0]);
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;  
+	                  register __m256 t1;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0 =  _mm256_add_ps(UNC_CHA_TOR_INSERTS_IO_ITOM,
+	                                      UNC_CHA_TOR_INSERTS_IO_ITOMCACHENEAR);
+	                  t1 =  _mm256_mul_ps(
+	                                _mm256_mul_ps(t0,vidt),
+	                                                 C000001);
+	                  metric = _mm256_mul_ps(t1,vidt);
+	                  return (metric);                                                
+	        }
+	        
 /*
         "BriefDescription": "Uops delivered from decoded instruction cache (decoded stream buffer or DSB) as a percent of total uops delivered to Instruction Decode Queue",
         "MetricExpr": "( IDQ.DSB_UOPS / ( IDQ.DSB_UOPS + IDQ.MITE_UOPS + IDQ.MS_UOPS + LSD.UOPS ) )",
@@ -1272,6 +1689,33 @@ namespace gms {
 	                                       const __m256  IDQ_MS_UOPS,
 	                                       const __m256  LSD_UOPS) {
 	             
+	                  register __m256 t0;
+	               	  register __m256 metric;
+	                  t0 = _mm256_add_ps(_mm256_add_ps(IDQ_DSB_UOPS,
+	                                                   IDQ_MITE_UOPS),
+	                                     _mm256_add_ps(IDQ_MS_UOPS,
+	                                                   LSD_UOPS));
+	                  metric = _mm256_div_ps(IDQ_DSB_UOPS,t0);
+	                  return (metric);                             
+	         } 
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_uops_ddic_ymm8r4(const float * __restrict  pIDQ_DSB_UOPS,
+	                                       const float * __restrict  pIDQ_MITE_UOPS,
+	                                       const float * __restrict  pIDQ_MS_UOPS,
+	                                       const float * __restrict  pLSD_UOPS) {
+	                  
+	                  register __m256 IDQ_DSB_UOPS  = 
+	                                     _mm256_loadu_ps(&pIDQ_DSB_UOPS[0]);
+	                  register __m256 IDQ_MITE_UOPS =
+	                                     _mm256_loadu_ps(&IDQ_MITE_UOPS[0]);
+	                  register __m256 IDQ_MS_UOPS   =
+	                                     _mm256_loadu_ps(&IDQ_MS_UOPS[0]);
+	                  register __m256 LSD_UOPS      = 
+	                                     _mm256_loadu_ps(&LSD_UOPS[0]);
 	                  register __m256 t0;
 	               	  register __m256 metric;
 	                  t0 = _mm256_add_ps(_mm256_add_ps(IDQ_DSB_UOPS,
@@ -1309,6 +1753,33 @@ namespace gms {
 	                  return (metric);                             
 	         } 
 	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_uops_dldp_ymm8r4(const float * __restrict  pIDQ_DSB_UOPS,
+	                                       const float * __restrict  pIDQ_MITE_UOPS,
+	                                       const float * __restrict  pIDQ_MS_UOPS,
+	                                       const float * __restrict  pLSD_UOPS) {
+	             
+	                  register __m256 IDQ_DSB_UOPS  = 
+	                                     _mm256_loadu_ps(&pIDQ_DSB_UOPS[0]);
+	                  register __m256 IDQ_MITE_UOPS =
+	                                     _mm256_loadu_ps(&IDQ_MITE_UOPS[0]);
+	                  register __m256 IDQ_MS_UOPS   =
+	                                     _mm256_loadu_ps(&IDQ_MS_UOPS[0]);
+	                  register __m256 LSD_UOPS      = 
+	                                     _mm256_loadu_ps(&LSD_UOPS[0]);
+	                  register __m256 t0;
+	               	  register __m256 metric;
+	                  t0 = _mm256_add_ps(_mm256_add_ps(IDQ_DSB_UOPS,
+	                                                   IDQ_MITE_UOPS),
+	                                     _mm256_add_ps(IDQ_MS_UOPS,
+	                                                   LSD_UOPS));
+	                  metric = _mm256_div_ps(IDQ_MITE_UOPS,t0);
+	                  return (metric);                             
+	         } 
+	         
 /*
         "BriefDescription": "Uops delivered from microcode sequencer (MS) as a percent of total uops delivered to Instruction Decode Queue",
         "MetricExpr": "( IDQ.MS_UOPS / ( IDQ.DSB_UOPS + IDQ.MITE_UOPS + IDQ.MS_UOPS + LSD.UOPS ) )",
@@ -1336,6 +1807,33 @@ namespace gms {
 	                  return (metric);                             
 	         } 
 	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_uops_dmseq_ymm8r4(const float * __restrict  pIDQ_DSB_UOPS,
+	                                       const  float * __restrict  pIDQ_MITE_UOPS,
+	                                       const  float * __restrict  pIDQ_MS_UOPS,
+	                                       const  float * __restrict  pLSD_UOPS) {
+	             
+	                  register __m256 IDQ_DSB_UOPS  = 
+	                                     _mm256_loadu_ps(&pIDQ_DSB_UOPS[0]);
+	                  register __m256 IDQ_MITE_UOPS =
+	                                     _mm256_loadu_ps(&IDQ_MITE_UOPS[0]);
+	                  register __m256 IDQ_MS_UOPS   =
+	                                     _mm256_loadu_ps(&IDQ_MS_UOPS[0]);
+	                  register __m256 LSD_UOPS      = 
+	                                     _mm256_loadu_ps(&LSD_UOPS[0]);
+	                  register __m256 t0;
+	               	  register __m256 metric;
+	                  t0 = _mm256_add_ps(_mm256_add_ps(IDQ_DSB_UOPS,
+	                                                   IDQ_MITE_UOPS),
+	                                     _mm256_add_ps(IDQ_MS_UOPS,
+	                                                   LSD_UOPS));
+	                  metric = _mm256_div_ps(IDQ_MS_UOPS,t0);
+	                  return (metric);                             
+	         } 
+	         
 /*
         "BriefDescription": "Bandwidth (MB/sec) of read requests that miss the last level cache (LLC) and go to local memory.",
         "MetricExpr": "( UNC_CHA_REQUESTS.READS_LOCAL * 64 / 1000000) / duration_time",
@@ -1351,6 +1849,28 @@ namespace gms {
 	           __m256 spr_llc_mlmbw_rd_ymm8r4(const __m256 UNC_CHA_REQUESTS_READS_LOCAL,
 	                                          const float idt) {
 	                
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(_mm256_mul_ps(
+	                                         UNC_CHA_REQUESTS_READS_LOCAL,C640),
+	                                                                        C000001);
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);
+	          }  
+	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_llc_mlmbw_rd_ymm8r4(const float * __restrict pUNC_CHA_REQUESTS_READS_LOCAL,
+	                                          const float idt) {
+	                
+	                  register __m256 UNC_CHA_REQUESTS_READS_LOCAL = 
+	                                         _mm256_loadu_ps(&pUNC_CHA_REQUESTS_READS_LOCAL[0]);
 	                  const __m256 C640    = _mm256_mul_ps(64.0f);
 	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
 	                  register __m256 vidt;
@@ -1392,7 +1912,198 @@ namespace gms {
 	                  return (metric);
 	          }  
 	          
+	            __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_llc_mrmbw_rd_ymm8r4(const float * __restrict pUNC_CHA_REQUESTS_READS_REMOTE,
+	                                          const float idt) {
+	                
+	                  register __m256 UNC_CHA_REQUESTS_READS_REMOTE = 
+	                                         _mm256_loadu_ps(&pUNC_CHA_REQUESTS_READS_REMOTE[0]);
+	                  const __m256 C640    = _mm256_mul_ps(64.0f);
+	                  const __m256 C000001 = _mm256_set1_ps(1.0e-06f);              
+	                  register __m256 vidt;
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  vidt = _mm256_set1_ps(idt);
+	                  t0   = _mm256_mul_ps(_mm256_mul_ps(
+	                                         UNC_CHA_REQUESTS_READS_REMOTE,C640),
+	                                                                        C000001);
+	                  metric = _mm256_mul_ps(t0,vidt);
+	                  return (metric);
+	          }  
+	          
+/*
+     "BriefDescription": "This metric represents fraction of slots the CPU was stalled due to Frontend latency issues.  For example; instruction-cache misses; iTLB misses or fetch stalls after a branch misprediction are categorized under Frontend Latency. In such cases; the Frontend eventually delivers no uops for some period.",
+      "UnitOfMeasure": "percent",
+*/
 
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float spr_fetch_latency_r4(const float PERF_METRICS_FETCH_LATENCY,
+	                                  const float PERF_METRICS_FRONTEND_BOUND,
+	                                  const float PERF_METRICS_BAD_SPECULATION,
+	                                  const float PERF_METRICS_RETIRING,
+	                                  const float PERF_METRICS_BACKEND_BOUND,
+	                                  const float INT_MISC_UOP_DROPPING,
+	                                  const float TOPDOWN_SLOTS_perf_metrics) {
+	                 
+	                  constexpr C100 = 100.0f;
+	                  float t0,t1,t2;
+	                  float metric = 0.0f;
+	                  t0 =  INT_MISC_UOP_DROPPING/TOPDOWN_SLOTS_perf_metrics;
+	                  t1 =  PERF_METRICS_FRONTEND_BOUND+
+	                        PERF_METRICS_BAD_SPECULATION+
+	                        PERF_METRICS_RETIRING+
+	                        PERF_METRICS_BACKEND_BOUND;
+	                  t2 = t1-t0;
+	                  metric = C100*t2;
+	                  return (metric);                     
+	         }
+	         
+/*
+     "BriefDescription": "This category represents fraction of slots where the processor's Frontend undersupplies its Backend. Frontend denotes the first part of the processor core responsible to fetch operations that are executed later on by the Backend part. Within the Frontend; a branch predictor predicts the next address to fetch; cache-lines are fetched from the memory subsystem; parsed into instructions; and lastly decoded into micro-operations (uops). Ideally the Frontend can issue Machine_Width uops every cycle to the Backend. Frontend Bound denotes unutilized issue-slots when there is no Backend stall; i.e. bubbles where Frontend delivered no uops while Backend could have accepted them. For example; stalls due to instruction-cache misses would be categorized under Frontend Bound.",
+      "UnitOfMeasure": "percent",
+*/	
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float spr_frontend_bound_r4(
+	                                   const float PERF_METRICS_FRONTEND_BOUND,
+	                                   const float PERF_METRICS_BAD_SPECULATION,
+	                                   const float PERF_METRICS_RETIRING,
+	                                   const float PERF_METRICS_BACKEND_BOUND,
+	                                   const float INT_MISC_UOP_DROPPING,
+	                                   const float TOPDOWN_SLOTS_perf_metrics) {
+	                 
+	                  constexpr C100 = 100.0f;
+	                  float t0,t1,t2;
+	                  float metric = 0.0f;
+	                  t0 =  INT_MISC_UOP_DROPPING/TOPDOWN_SLOTS_perf_metrics;
+	                  t1 =  PERF_METRICS_FRONTEND_BOUND+
+	                        PERF_METRICS_BAD_SPECULATION+
+	                        PERF_METRICS_RETIRING+
+	                        PERF_METRICS_BACKEND_BOUND;
+	                  t2 = t1-t0;
+	                  metric = C100*t2;
+	                  return (metric);                     
+	         }   
+	         
+/*
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to instruction cache misses.",
+      "UnitOfMeasure": "percent",
+*/     
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_icache_misses_ymm8r4(const __m256 ICACHE_DATA_STALLS,
+	                                           const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(ICACHE_DATA_STALLS,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                                 
+	         }   
+	         
+/*
+      "MetricName": "ITLB_Misses",
+      "LegacyName": "metric_TMA_....ITLB_Misses(%)",
+      "ParentCategory": "Fetch_Latency",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to Instruction TLB (ITLB) misses.",
+      "UnitOfMeasure": "percent",
+*/   
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_itlb_misses_ymm8r4(const __m256 ICACHE_TAG_STALLS,
+	                                         const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(ICACHE_TAG_STALLS,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,t0);
+	                  return (metric);                                 
+	         }   
+	         
+/*
+      "MetricName": "Branch_Resteers",
+      "LegacyName": "metric_TMA_....Branch_Resteers(%)",
+      "ParentCategory": "Fetch_Latency",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to Branch Resteers. Branch Resteers estimates the Frontend delay in fetching operations from corrected path; following all sorts of miss-predicted branches. For example; branchy code with lots of miss-predictions might get categorized under Branch Resteers. Note the value of this node may overlap with its siblings.",
+      "UnitOfMeasure": "percent",
+*/    
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_branch_resteers_ymm8r4(const __m256 INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                             const __m256 CPU_CLK_UNHALTED_THREAD,
+	                                             const __m256 INT_MISC_UNKNOWN_BRANCH_CYCLES) {
+	                  
+	                  const __m256 C1000 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 metric;  
+	                  t0  = _mm256_div_ps(INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                  t1  = _mm256_div_ps(INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C1000,
+	                                     _mm256_add_ps(t0,t1));
+	                  return (metric);                                
+	         }
+	         
+/*
+        "MetricName": "Mispredicts_Resteers",
+      "LegacyName": "metric_TMA_......Mispredicts_Resteers(%)",
+      "ParentCategory": "Branch_Resteers",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to Branch Resteers as a result of Branch Misprediction at execution stage. ",
+      "UnitOfMeasure": "percent",
+*/
+
+#include <algorithm>
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline
+	           float spr_mispredict_resteers_r4(const float PERF_METRICS_BRANCH_MISPREDICTS,
+	                                            const float PERF_METRICS_FRONTEND_BOUND,
+	                                            const float PERF_METRICS_BAD_SPECULATION,
+	                                            const float PERF_METRICS_RETIRING,
+	                                            const float PERF_METRICS_BACKEND_BOUND,
+	                                            const float INT_MISC_UOP_DROPPING,
+	                                            const float TOPDOWN_SLOTS_perf_metrics,
+	                                            const float INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                            const float CPU_CLK_UNHALTED_THREAD) {
+	                 
+	                 constexpr float C100 = 100.0f;
+	                 float t0,t1,t2,t3;
+	                 t0 = PERF_METRICS_FRONTEND_BOUND+
+	                      PERF_METRICS_BAD_SPECULATION+
+	                      PERF_METRICS_RETIRING+
+	                      PERF_METRICS_BACKEND_BOUND;
+	                 t1 = INT_MISC_UOP_DROPPING/ 
+	                      TOPDOWN_SLOTS_perf_metrics;
+	                 t2 = PERF_METRICS_BACKEND_BOUND/t0;
+	                 t3 =                       
+	         }
+	         
  
 	          
 
