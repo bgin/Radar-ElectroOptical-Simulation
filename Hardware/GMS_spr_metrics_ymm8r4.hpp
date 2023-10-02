@@ -2725,6 +2725,212 @@ namespace gms {
                          metric = C100*t0;
                          return (metric);                    
                  }
+                 
+/*
+        "MetricName": "Microcode_Sequencer",
+      "LegacyName": "metric_TMA_....Microcode_Sequencer(%)",
+      "ParentCategory": "Heavy_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots the CPU was retiring uops fetched by the Microcode Sequencer (MS) unit.  The MS is used for CISC instructions not supported by the default decoders (like repeat move strings; or CPUID); or by microcode assists used to address some operation modes (like in Floating Point assists). These cases can often be avoided.",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_micrcode_seq_ymm8r4(const __m256 UOPS_RETIRED_MS,
+	                                          const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_div_ps(UOPS_RETIRED_MS,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_micrcode_seq_ymm8r4(const float * __restrict pUOPS_RETIRED_MS,
+	                                          const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  register __m256 UOPS_RETIRED_MS = 
+	                                      _mm256_loadu_ps(&pUOPS_RETIRED_MS[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_div_ps(UOPS_RETIRED_MS,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+/*
+     "MetricName": "Few_Uops_Instructions",
+      "LegacyName": "metric_TMA_....Few_Uops_Instructions(%)",
+      "ParentCategory": "Heavy_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring instructions that that are decoder into two or up to ([SNB+] four; [ADL+] five) uops. This highly-correlates with the number of uops in such instructions.",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline 
+                   float  spr_few_uops_instr_r4(const float PERF_METRICS_HEAVY_OPERATIONS,
+                                                const float PERF_METRICS_FRONTEND_BOUND,
+                                                const float PERF_METRICS_BAD_SPECULATION,
+                                                const float PERF_METRICS_RETIRING,
+                                                const float PERF_METRICS_BACKEND_BOUND,
+                                                const float UOPS_RETIRED_MS,
+                                                const float TOPDOWN_SLOTS_perf_metrics) {
+                       
+                          constexpr C100 = 100.0f;
+                          float bcde,fg;
+                          float t0,t1,metric;
+                          bcde = PERF_METRICS_FRONTEND_BOUND+
+                                 PERF_METRICS_BAD_SPECULATION+
+                                 PERF_METRICS_RETIRING+
+                                 PERF_METRICS_BACKEND_BOUND;
+                         fg    = UOPS_RETIRED_MS/ 
+                                 TOPDOWN_SLOTS_perf_metrics;
+                         t0    = PERF_METRICS_HEAVY_OPERATIONS/bcde;   
+                         t1    = std::max(0.0f,t0-fg);
+                         metric = C100*t1;
+                         return (metric);                         
+                 }
+                 
+/*
+    "MetricName": "Heavy_Operations",
+      "LegacyName": "metric_TMA_..Heavy_Operations(%)",
+      "ParentCategory": "Retiring",
+      "Level": 2,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring heavy-weight operations -- instructions that require two or more uops. This highly-correlates with the uop length of these instructions/flows.",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline 
+                   float spr_heavy_ops_r4(const float PERF_METRICS_HEAVY_OPERATIONS,
+                                          const float PERF_METRICS_FRONTEND_BOUND,
+                                          const float PERF_METRICS_BAD_SPECULATION,
+                                          const float PERF_METRICS_RETIRING,
+                                          const float PERF_METRICS_BACKEND_BOUND) {
+                     
+                         constexpr C100 = 100.0f;
+                         float bcde,t0;
+                         float metric;
+                         bcde = PERF_METRICS_FRONTEND_BOUND+
+                                PERF_METRICS_BAD_SPECULATION+
+                                PERF_METRICS_RETIRING+
+                                PERF_METRICS_BACKEND_BOUND;
+                         t0   = PERF_METRICS_HEAVY_OPERATIONS/bcde;
+                         metric = C100*t0;
+                         return (metric);                     
+                  }
+                  
+/*
+       "MetricName": "MS_Switches",
+      "LegacyName": "metric_TMA_....MS_Switches(%)",
+      "ParentCategory": "Fetch_Latency",
+      "Level": 3,
+      "BriefDescription": "This metric estimates the fraction of cycles when the CPU was stalled due to switches of uop delivery to the Microcode Sequencer (MS). Commonly used instructions are optimized for delivery by the DSB (decoded i-cache) or MITE (legacy instruction decode) pipelines. Certain operations cannot be handled natively by the execution pipeline; and must be performed by microcode (small programs injected into the execution stream). Switching to the MS too often can negatively impact performance. The MS is designated to deliver long uop flows required by CISC instructions like CPUID; or uncommon conditions like Floating Point Assists when dealing with Denormals.",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline 
+                   float spr_ms_switches_r4(const float UOPS_RETIRED_MS_c1_e1,
+                                            const float PERF_METRICS_RETIRING,
+                                            const float PERF_METRICS_FRONTEND_BOUND,
+                                            const float PERF_METRICS_BAD_SPECULATION,
+                                            const float PERF_METRICS_BACKEND_BOUND,
+                                            const float TOPDOWN_SLOTS_perf_metrics,
+                                            const float UOPS_ISSUED_ANY,
+                                            const float CPU_CLK_UNHALTED_THREAD) {
+                                            
+                         constexpr C100 = 100.0f;
+                         constexpr C3   = 3.0f;
+                         float cdbe,t0;
+                         float t1,t2,
+                         float metric;
+                         cdbe = PERF_METRICS_FRONTEND_BOUND+
+                                PERF_METRICS_BAD_SPECULATION+
+                                PERF_METRICS_RETIRING+
+                                PERF_METRICS_BACKEND_BOUND;
+                         t0   = PERF_METRICS_RETIRING/cdbe*
+                                TOPDOWN_SLOTS_perf_metrics;
+                         t1   = UOPS_RETIRED_MS_c1_e1/t0/
+                                UOPS_ISSUED_ANY;
+                         t2   = (C3*t1)/CPU_CLK_UNHALTED_THREAD;
+                         metric = C100*std::min(t2,1.0f);
+                         return (metric);
+                                                       
+                }
+                
+/*
+        "MetricName": "Branch_Resteers",
+      "LegacyName": "metric_TMA_....Branch_Resteers(%)",
+      "ParentCategory": "Fetch_Latency",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to Branch Resteers. Branch Resteers estimates the Frontend delay in fetching operations from corrected path; following all sorts of miss-predicted branches. For example; branchy code with lots of miss-predictions might get categorized under Branch Resteers. Note the value of this node may overlap with its siblings.",
+      "UnitOfMeasure": "percent"  
+*/  
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_branch_resteers_ymm8r4(const __m256 INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                             const __m256 CPU_CLK_UNHALTED_THREAD,
+	                                             const __m256 INT_MISC_UNKNOWN_BRANCH_CYCLES) {
+	           
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0,t1;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_div_ps(INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,
+	                                     _mm256_add_ps(t0,t1));
+	                  return (metric);                                  
+	          }  
+	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_branch_resteers_ymm8r4(const float * __restrict pINT_MISC_CLEAR_RESTEER_CYCLES,
+	                                             const float * __restrict pCPU_CLK_UNHALTED_THREAD,
+	                                             const float * __restrict pINT_MISC_UNKNOWN_BRANCH_CYCLES) {
+	            
+	                  register __m256 INT_MISC_CLEAR_RESTEER_CYCLES = 
+	                                          _mm256_loadu_ps(&pINT_MISC_CLEAR_RESTEER_CYCLES[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD       =
+	                                          _mm256_loadu_ps(&pINT_MISC_CLEAR_RESTEER_CYCLES[0]);
+	                  register __m256 INT_MISC_UNKNOWN_BRANCH_CYCLES=
+	                                          _mm256_loadu_ps(&pINT_MISC_UNKNOWN_BRANCH_CYCLES[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0,t1;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(INT_MISC_CLEAR_RESTEER_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_div_ps(INT_MISC_UNKNOWN_BRANCH_CYCLES,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,
+	                                     _mm256_add_ps(t0,t1));
+	                  return (metric);                                  
+	          }        
 
 
 } // gms
