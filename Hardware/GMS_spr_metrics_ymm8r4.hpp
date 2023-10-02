@@ -2930,7 +2930,254 @@ namespace gms {
 	                  metric = _mm256_mul_ps(C100,
 	                                     _mm256_add_ps(t0,t1));
 	                  return (metric);                                  
-	          }        
+	          }     
+	          
+/*
+     "MetricName": "MITE",
+      "LegacyName": "metric_TMA_....MITE(%)",
+      "ParentCategory": "Fetch_Bandwidth",
+      "Level": 3,
+      "BriefDescription": "This metric represents Core fraction of cycles in which CPU was likely limited due to the MITE pipeline (the legacy decode pipeline). This pipeline is used for code that was not pre-cached in the DSB or LSD. For example; inefficiencies due to asymmetric decoders; use of long immediate or LCP can manifest as MITE fetch bandwidth bottleneck.",
+      "UnitOfMeasure": "percent",
+*/	
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_mite_ymm8r4(const __m256 IDQ_MITE_CYCLES_ANY,
+	                                  const __m256 IDQ_MITE_CYCLES_OK,
+	                                  const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                  
+	                    const __m256 C100 = _mm256_set1_ps(100.0f);
+	                    const __m256 C05  = _mm256_set1_ps(0.5f);
+	                    register __m256 t0,t1;
+	                    register __m256 metric;
+	                    t0 = _mm256_mul_ps(CPU_CLK_UNHALTED_DISTRIBUTED,C05);
+	                    t1 = _mm256_sub_ps(IDQ_MITE_CYCLES_ANY,
+	                                       IDQ_MITE_CYCLES_OK);
+	                    metric = _mm256_mul_ps(C100,
+	                                   _mm256_div_ps(t1,t0));
+	                    return (metric);                        
+	         }  
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_mite_ymm8r4(const float * __restrict pIDQ_MITE_CYCLES_ANY,
+	                                  const float * __restrict pIDQ_MITE_CYCLES_OK,
+	                                  const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                  
+	                    register __m256 IDQ_MITE_CYCLES_ANY  =
+	                                            _mm256_loadu_ps(&pIDQ_MITE_CYCLES_ANY[0]);
+	                    register __m256 IDQ_MITE_CYCLES_OK   =
+	                                            _mm256_loadu_ps(&pIDQ_MITE_CYCLES_OK[0]);
+	                    register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                            _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	                    const __m256 C100 = _mm256_set1_ps(100.0f);
+	                    const __m256 C05  = _mm256_set1_ps(0.5f);
+	                    register __m256 t0,t1;
+	                    register __m256 metric;
+	                    t0 = _mm256_mul_ps(CPU_CLK_UNHALTED_DISTRIBUTED,C05);
+	                    t1 = _mm256_sub_ps(IDQ_MITE_CYCLES_ANY,
+	                                       IDQ_MITE_CYCLES_OK);
+	                    metric = _mm256_mul_ps(C100,
+	                                   _mm256_div_ps(t1,t0));
+	                    return (metric);                        
+	         }   
+	         
+/*
+    "MetricName": "Decoder0_Alone",
+      "LegacyName": "metric_TMA_......Decoder0_Alone(%)",
+      "ParentCategory": "MITE",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles where decoder-0 was the only active decoder",
+      "UnitOfMeasure": "percent",
+*/   
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_decoder0_only_ymm8r4(const __m256 INST_DECODED_DECODERS_c1,
+	                                           const __m256 INST_DECODED_DECODERS_c2,
+	                                           const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                           
+	                    const __m256 C100 = _mm256_set1_ps(100.0f);
+	                    const __m256 C05  = _mm256_set1_ps(0.5f);
+	                    register __m256 t0,t1;
+	                    register __m256 metric;
+	                    t0 = _mm256_mul_ps(CPU_CLK_UNHALTED_DISTRIBUTED,C05);
+	                    t1 = _mm256_sub_ps(INST_DECODED_DECODERS_c1,
+	                                       INST_DECODED_DECODERS_c2);
+	                    metric = _mm256_mul_ps(C100,
+	                                   _mm256_div_ps(t1,t0));
+	                    return (metric);                                        
+	        }
+	        
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_decoder0_only_ymm8r4(const float * __restrict pINST_DECODED_DECODERS_c1,
+	                                           const float * __restrict pINST_DECODED_DECODERS_c2,
+	                                           const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                           
+	                    register __m256 INST_DECODED_DECODERS_c1 = 
+	                                        _mm256_loadu_ps(&pINST_DECODED_DECODERS_c1[0]);
+	                    register __m256 INST_DECODED_DECODERS_c2 = 
+	                                        _mm256_loadu_ps(&pINST_DECODED_DECODERS_c2[0]);
+	                    register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	                    const __m256 C100 = _mm256_set1_ps(100.0f);
+	                    const __m256 C05  = _mm256_set1_ps(0.5f);
+	                    register __m256 t0,t1;
+	                    register __m256 metric;
+	                    t0 = _mm256_mul_ps(CPU_CLK_UNHALTED_DISTRIBUTED,C05);
+	                    t1 = _mm256_sub_ps(INST_DECODED_DECODERS_c1,
+	                                       INST_DECODED_DECODERS_c2);
+	                    metric = _mm256_mul_ps(C100,
+	                                   _mm256_div_ps(t1,t0));
+	                    return (metric);                                        
+	        }
+	        
+/*
+      "MetricName": "DSB",
+      "LegacyName": "metric_TMA_....DSB(%)",
+      "ParentCategory": "Fetch_Bandwidth",
+      "Level": 3,
+      "BriefDescription": "This metric represents Core fraction of cycles in which CPU was likely limited due to DSB (decoded uop cache) fetch pipeline.  For example; inefficient utilization of the DSB cache structure or bank conflict when reading from it; are categorized here.",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dsb_ymm8r4(          const __m256 IDQ_DSB_CYCLES_ANY,
+	                                           const __m256 IDQ_DSB_CYCLES_OK,
+	                                           const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                           
+	                    const __m256 C100 = _mm256_set1_ps(100.0f);
+	                    const __m256 C05  = _mm256_set1_ps(0.5f);
+	                    register __m256 t0,t1;
+	                    register __m256 metric;
+	                    t0 = _mm256_mul_ps(CPU_CLK_UNHALTED_DISTRIBUTED,C05);
+	                    t1 = _mm256_sub_ps(IDQ_DSB_CYCLES_ANY,
+	                                       IDQ_DSB_CYCLES_OK);
+	                    metric = _mm256_mul_ps(C100,
+	                                   _mm256_div_ps(t1,t0));
+	                    return (metric);                                        
+	        }
+	        
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dsb_only_ymm8r4(     const float * __restrict pIDQ.DSB_CYCLES_ANY,
+	                                           const float * __restrict pIDQ.DSB_CYCLES_OK,
+	                                           const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                           
+	                    register __m256 IDQ_DSB_CYCLES_ANY = 
+	                                        _mm256_loadu_ps(&pIDQ_DSB_CYCLES_ANY[0]);
+	                    register __m256 IDQ_DSB_CYCLES_OK = 
+	                                        _mm256_loadu_ps(&pIDQ_DSB_CYCLES_OK[0]);
+	                    register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	                    const __m256 C100 = _mm256_set1_ps(100.0f);
+	                    const __m256 C05  = _mm256_set1_ps(0.5f);
+	                    register __m256 t0,t1;
+	                    register __m256 metric;
+	                    t0 = _mm256_mul_ps(CPU_CLK_UNHALTED_DISTRIBUTED,C05);
+	                    t1 = _mm256_sub_ps(IDQ.DSB_CYCLES_ANY,
+	                                       IDQ.DSB_CYCLES_OK);
+	                    metric = _mm256_mul_ps(C100,
+	                                   _mm256_div_ps(t1,t0));
+	                    return (metric);                                        
+	        }   
+	        
+/*
+      "MetricName": "Backend_Bound",
+      "LegacyName": "metric_TMA_Backend_Bound(%)",
+      "Level": 1,
+      "BriefDescription": "This category represents fraction of slots where no uops are being delivered due to a lack of required resources for accepting new uops in the Backend. Backend is the portion of the processor core where the out-of-order scheduler dispatches ready uops into their respective execution units; and once completed these uops get retired according to program order. For example; stalls due to data-cache misses or stalls due to the divider unit being overloaded are both categorized under Backend Bound. Backend Bound is further divided into two main categories: Memory Bound and Core Bound.",
+      "UnitOfMeasure": "percent",    
+*/ 
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline 
+                   float spr_backend_bound_r4(const float PERF_METRICS_BACKEND_BOUND,
+                                          const float PERF_METRICS_FRONTEND_BOUND,
+                                          const float PERF_METRICS_BAD_SPECULATION,
+                                          const float PERF_METRICS_RETIRING) {
+                                          
+                           constexpr C100 = 100.0f;
+                           float bcda,t0;
+                           float metric;
+                           bcda = PERF_METRICS_FRONTEND_BOUND+
+                                  PERF_METRICS_BAD_SPECULATION+
+                                  PERF_METRICS_RETIRING+
+                                  PERF_METRICS_BACKEND_BOUND;
+                           t0   = PERF_METRICS_BACKEND_BOUND/bcda;
+                           metric = C100*t0;
+                           return (metric);                
+                 }
+                 
+/*
+       "MetricName": "L1_Bound",
+      "LegacyName": "metric_TMA_....L1_Bound(%)",
+      "ParentCategory": "Memory_Bound",
+      "Level": 3,
+      "BriefDescription": "This metric estimates how often the CPU was stalled without loads missing the L1 data cache.  The L1 data cache typically has the shortest latency.  However; in certain cases like loads blocked on older stores; a load might suffer due to high latency even though it is being satisfied by the L1. Another example is loads who miss in the TLB. These cases are characterized by execution unit stalls; while some non-completed demand load lives in the machine without having that demand load missing the L1 cache.",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_l1_bound_ymm8r4(const __m256 EXE_ACTIVITY_BOUND_ON_LOADS,
+	                                      const __m256 MEMORY_ACTIVITY_STALLS_L1D_MISS,
+	                                      const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0,t1;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(_mm256_sub_ps(EXE_ACTIVITY_BOUND_ON_LOADS,
+	                                                   MEMORY_ACTIVITY_STALLS_L1D_MISS),
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_max_ps(t0,_mm256_setzero_ps());
+	                  metric = _mm256_mul_ps(C100,t1);
+	                  return (metric);                           
+	          }
+	          
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_l1_bound_ymm8r4(const float * __restrict pEXE_ACTIVITY_BOUND_ON_LOADS,
+	                                      const float * __restrict pMEMORY_ACTIVITY_STALLS_L1D_MISS,
+	                                      const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  register __m256 EXE_ACTIVITY_BOUND_ON_LOADS = 
+	                                              _mm256_loadu_ps(&pEXE_ACTIVITY_BOUND_ON_LOADS[0]);
+	                  register __m256 MEMORY_ACTIVITY_STALLS_L1D_MISS =
+	                                              _mm256_loadu_ps(&pMEMORY_ACTIVITY_STALLS_L1D_MISS[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD     = 
+	                                              _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0,t1;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(_mm256_sub_ps(EXE_ACTIVITY_BOUND_ON_LOADS,
+	                                                   MEMORY_ACTIVITY_STALLS_L1D_MISS),
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_max_ps(t0,_mm256_setzero_ps());
+	                  metric = _mm256_mul_ps(C100,t1);
+	                  return (metric);                           
+	          }
+             
 
 
 } // gms
