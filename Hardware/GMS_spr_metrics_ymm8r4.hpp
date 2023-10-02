@@ -2406,6 +2406,325 @@ namespace gms {
 	                  metric = _mm256_mul_ps(C10000,t0);
 	                  return (metric);                                                       
 	         }
+	         
+/*
+      "MetricName": "Info_Bad_Spec_IpMispredict",
+      "LegacyName": "metric_TMA_Info_Bad_Spec_IpMispredict",
+      "Level": 1,
+      "BriefDescription": "Number of Instructions per non-speculative Branch Misprediction (JEClear) (lower number means higher occurrence rate)",
+      "UnitOfMeasure": ""
+*/	
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_bad_spec_ipm_ymm8r4(const __m256 INST_RETIRED_ANY,
+	                                          const __m256 BR_MISP_RETIRED_ALL_BRANCHES) {
+	                  
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(INST_RETIRED_ANY,
+	                                     BR_MISP_RETIRED_ALL_BRANCHES);
+	                  return (metric);                          
+	         }  
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_bad_spec_ipm_ymm8r4(const float * __restrict pINST_RETIRED_ANY,
+	                                          const float * __restrict pBR_MISP_RETIRED_ALL_BRANCHES) {
+	                  
+	                  register __m256 INST_RETIRED_ANY = 
+	                                      _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256  BR_MISP_RETIRED_ALL_BRANCHES = 
+	                                      _mm256_loadu_ps(&pBR_MISP_RETIRED_ALL_BRANCHES[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(INST_RETIRED_ANY,
+	                                     BR_MISP_RETIRED_ALL_BRANCHES);
+	                  return (metric);                          
+	         }   
+	         
+/*
+       "MetricName": "Info_Inst_Mix_IpTB",
+      "LegacyName": "metric_TMA_Info_Inst_Mix_IpTB",
+      "Level": 1,
+      "BriefDescription": "Instruction per taken branch",
+      "UnitOfMeasure": "",
+*/    
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_inst_mix_iptb_ymm8r4(const __m256 INST_RETIRED_ANY,
+	                                           const __m256 BR_INST_RETIRED_NEAR_TAKEN) {
+	                  
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(INST_RETIRED_ANY,
+	                                         BR_INST_RETIRED_NEAR_TAKEN);
+	                  return (metric);                          
+	         }  
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_inst_mix_iptb_ymm8r4(const float * __restrict pINST_RETIRED_ANY,
+	                                           const float * __restrict pBR_INST_RETIRED_NEAR_TAKEN) {
+	                  
+	                  register __m256 INST_RETIRED_ANY = 
+	                                      _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256  BR_INST_RETIRED_NEAR_TAKEN = 
+	                                      _mm256_loadu_ps(&pBR_INST_RETIRED_NEAR_TAKEN[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(INST_RETIRED_ANY,
+	                                         BR_INST_RETIRED_NEAR_TAKEN);
+	                  return (metric);                          
+	         }   
+	         
+/*
+      "MetricName": "Info_Core_CoreIPC",
+      "LegacyName": "metric_TMA_Info_Core_CoreIPC",
+      "Level": 1,
+      "BriefDescription": "Instructions Per Cycle across hyper-threads (per physical core)",
+      "UnitOfMeasure": "",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_core_coreipc_ymm8r4( const __m256 INST_RETIRED_ANY,
+	                                           const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                  
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(INST_RETIRED_ANY,
+	                                         CPU_CLK_UNHALTED_DISTRIBUTED);
+	                  return (metric);                          
+	         }  
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_core_coreipc_ymm8r4( const float * __restrict pINST_RETIRED_ANY,
+	                                           const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                  
+	                  register __m256 INST_RETIRED_ANY = 
+	                                      _mm256_loadu_ps(&pINST_RETIRED_ANY[0]);
+	                  register __m256  CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                      _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	                  register __m256 metric;
+	                  metric = _mm256_div_ps(INST_RETIRED_ANY,
+	                                         CPU_CLK_UNHALTED_DISTRIBUTED);
+	                  return (metric);                          
+	         }   
+	         
+/*
+       "MetricName": "CISC",
+      "LegacyName": "metric_TMA_......CISC(%)",
+      "ParentCategory": "Microcode_Sequencer",
+      "Level": 4,
+      "BriefDescription": "This metric estimates fraction of cycles the CPU retired uops originated from CISC (complex instruction set computer) instruction. A CISC instruction has multiple  uops that are required to perform the instruction's functionality as in the case of read-modify-write as an example. Since these instructions require multiple uops they may or may not imply sub-optimal use of machine resources.",
+      "UnitOfMeasure": "percent"
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline 
+                   float spr_cisc_frac_r4(const float UOPS_RETIRED_MS,
+                                          const float TOPDOWN_SLOTS_perf_metrics,
+                                          const float ASSISTS_ANY_u0x1B) {
+                         
+                         constexpr float C100 = 100.0f;
+                         float ab,cb;
+                         float t0,t1;
+                         float metric;
+                         ab = UOPS_RETIRED_MS/TOPDOWN_SLOTS_perf_metrics;
+                         cb = ASSISTS_ANY_u0x1B/TOPDOWN_SLOTS_perf_metrics;  
+                         t0 = std::min(C100*cb,1.0f);   
+                         t1 = std::max(0.0f,ab-t0);
+                         metric = C100*t1;
+                         return (metric);                   
+                 } 
+                 
+/*
+      "MetricName": "AVX_Assists",
+      "LegacyName": "metric_TMA_........AVX_Assists(%)",
+      "ParentCategory": "Assists",
+      "Level": 5,
+      "BriefDescription": "This metric estimates fraction of slots the CPU retired uops as a result of handing SSE to AVX* or AVX* to SSE transition Assists.",
+      "UnitOfMeasure": "percent",
+*/ 
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_avx_assists_ymm8r4(const __m256 ASSISTS_SSE_AVX_MIX,
+	                                         const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C63  = _mm256_set1_ps(63.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_mul_ps(C63,
+	                             _mm256_div_ps(ASSISTS_SSE_AVX_MIX,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_avx_assists_ymm8r4(const float * __restrict pASSISTS_SSE_AVX_MIX,
+	                                         const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  register __m256 ASSISTS_SSE_AVX_MIX = 
+	                                         _mm256_loadu_ps(&pASSISTS_SSE_AVX_MIX[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C63  = _mm256_set1_ps(63.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_mul_ps(C63,
+	                             _mm256_div_ps(ASSISTS_SSE_AVX_MIX,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+/*
+      "MetricName": "FP_Assists",
+      "LegacyName": "metric_TMA_........FP_Assists(%)",
+      "ParentCategory": "Assists",
+      "Level": 5,
+      "BriefDescription": "This metric roughly estimates fraction of slots the CPU retired uops as a result of handing Floating Point (FP) Assists. FP Assist may apply when working with very small floating point values (so-called Denormals).",
+      "UnitOfMeasure": "percent",         
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_fp_assists_ymm8r4(const __m256 ASSISTS_FP,
+	                                         const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C30  = _mm256_set1_ps(30.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_mul_ps(C30,
+	                             _mm256_div_ps(ASSISTS_FP,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_fp_assists_ymm8r4(const float * __restrict pASSISTS_FP,
+	                                         const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  register __m256 ASSISTS_FP = 
+	                                         _mm256_loadu_ps(&pASSISTS_FP[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C30  = _mm256_set1_ps(30.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_mul_ps(C30,
+	                             _mm256_div_ps(ASSISTS_FP,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+/*
+      "MetricName": "Page_Faults",
+      "LegacyName": "metric_TMA_........Page_Faults(%)",
+      "ParentCategory": "Assists",
+      "Level": 5,
+      "BriefDescription": "This metric roughly estimates fraction of slots the CPU retired uops as a result of handing Page Faults. A Page Fault may apply on first application access to a memory page. Note operating system handling of page faults accounts for the majority of its cost.",
+      "UnitOfMeasure": "percent",
+*/
+
+                  __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_page_faults_ymm8r4(const __m256 ASSISTS_PAGE_FAULTS,
+	                                         const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C99  = _mm256_set1_ps(99.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_mul_ps(C99,
+	                             _mm256_div_ps(ASSISTS_PAGE_FAULTS,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_page_faults_ymm8r4(const float * __restrict pASSISTS_PAGE_FAULTS,
+	                                         const float TOPDOWN_SLOTS_perf_metrics) {
+	                  
+	                  register __m256 ASSISTS_PAGE_FAULTS = 
+	                                         _mm256_loadu_ps(&pASSISTS_PAGE_FAULTS[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C99  = _mm256_set1_ps(99.0f);
+	                  register __m256 vx;
+	                  register __m256 t0;
+	                  register __metric;
+	                  vx = _mm256_set1_ps(TOPDOWN_SLOTS_perf_metrics);
+	                  t0 = _mm256_mul_ps(C99,
+	                             _mm256_div_ps(ASSISTS_PAGE_FAULTS,
+	                                           TOPDOWN_SLOTS_perf_metrics));
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                               
+	         }
+	         
+/*
+        "MetricName": "Assists",
+      "LegacyName": "metric_TMA_......Assists(%)",
+      "ParentCategory": "Microcode_Sequencer",
+      "Level": 4,
+      "BriefDescription": "This metric estimates fraction of cycles the CPU retired uops delivered by the Microcode_Sequencer as a result of Assists. Assists are long sequences of uops that are required in certain corner-cases for operations that cannot be handled natively by the execution pipeline. For example; when working with very small floating point values (so-called Denormals); the FP units are not set up to perform these operations natively. Instead; a sequence of instructions to perform the computation on the Denormals is injected into the pipeline. Since these microcode sequences might be hundreds of uops long; Assists can be extremely deleterious to performance and they can be avoided in many cases. #Link: article for compiler flags of DAZ and FTZ",
+      "UnitOfMeasure": "percent"  
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   static inline 
+                   float spr_assists_r4(const float ASSISTS_ANY_u0x1B,
+                                        const float TOPDOWN_SLOTS_perf_metrics) {
+                                        
+                         constexpr float C100 = 100.0f;
+                         float ab,t0;
+                         float metric;
+                         ab = ASSISTS_ANY_u0x1B/TOPDOWN_SLOTS_perf_metrics;
+                         t0 = std::min(C100*ab,1.0f);
+                         metric = C100*t0;
+                         return (metric);                    
+                 }
 
 
 } // gms
