@@ -3177,7 +3177,164 @@ namespace gms {
 	                  metric = _mm256_mul_ps(C100,t1);
 	                  return (metric);                           
 	          }
-             
+	          
+/*
+   "MetricName": "DTLB_Load",
+      "LegacyName": "metric_TMA_......DTLB_Load(%)",
+      "ParentCategory": "L1_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric roughly estimates the fraction of cycles where the Data TLB (DTLB) was missed by load accesses. TLBs (Translation Look-aside Buffers) are processor caches for recently used entries out of the Page Tables that are used to map virtual- to physical-addresses by the operating system. This metric approximates the potential delay of demand loads missing the first-level data TLB (assuming worst case scenario with back to back misses to different pages). This includes hitting in the second-level TLB (STLB) as well as performing a hardware page walk on an STLB miss.",
+      "UnitOfMeasure": "percent",   
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_load_ymm8r4(const __m256 DTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                       const __m256 DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                       const __m256 CYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                       const __m256 MEMORY_ACTIVITY_CYCLES_L1D_MISS,
+	                                       const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                            
+	                  const __m256 C7 = _mm256_set1_ps(7.0f);
+	                  const __m256 C0 = _mm256_setzero_ps();
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_fmad_ps(C7,DTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                      DTLB_LOAD_MISSES_WALK_ACTIVE);
+	                  t1 = _mm256_max_ps(_mm256_sub_ps(CYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                                   MEMORY_ACTIVITY_CYCLES_L1D_MISS),C0); 
+	                  t2 = _mm256_min_ps(t0,t1);
+	                  metric = _mm256_mul_ps(C100,
+	                                     _mm256_div_ps(t2,CPU_CLK_UNHALTED_THREAD));
+	                  return (metric);      
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_dtlb_load_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                       const float * __restrict pDTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                       const float * __restrict pCYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                       const float * __restrict pMEMORY_ACTIVITY_CYCLES_L1D_MISS,
+	                                       const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                            
+	                  const __m256 DTLB_LOAD_MISSES_STLB_HIT_c1 = 
+	                                        _mm256_loadu_ps(&pDTLB_LOAD_MISSES_STLB_HIT_c1[0]);
+	                  const __m256 DTLB_LOAD_MISSES_WALK_ACTIVE =
+	                                        _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_ACTIVE[0]);
+	                  const __m256 CYCLE_ACTIVITY_CYCLES_MEM_ANY =
+	                                        _mm256_loadu_ps(&pCYCLE_ACTIVITY_CYCLES_MEM_ANY[0]);
+	                  const __m256 MEMORY_ACTIVITY_CYCLES_L1D_MISS=
+	                                        _mm256_loadu_ps(&pMEMORY_ACTIVITY_CYCLES_L1D_MISS[0]);
+	                  const __m256 CPU_CLK_UNHALTED_THREAD        =
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C7 = _mm256_set1_ps(7.0f);
+	                  const __m256 C0 = _mm256_setzero_ps();
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_fmad_ps(C7,DTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                      DTLB_LOAD_MISSES_WALK_ACTIVE);
+	                  t1 = _mm256_max_ps(_mm256_sub_ps(CYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                                   MEMORY_ACTIVITY_CYCLES_L1D_MISS),C0); 
+	                  t2 = _mm256_min_ps(t0,t1);
+	                  metric = _mm256_mul_ps(C100,
+	                                     _mm256_div_ps(t2,CPU_CLK_UNHALTED_THREAD));
+	                  return (metric);      
+	         }
+	          
+/*
+       "MetricName": "Load_STLB_Hit",
+      "LegacyName": "metric_TMA_........Load_STLB_Hit(%)",
+      "ParentCategory": "DTLB_Load",
+      "Level": 5,
+      "BriefDescription": "This metric roughly estimates the fraction of cycles where the (first level) DTLB was missed by load accesses, that later on hit in second-level TLB (STLB)",
+      "UnitOfMeasure": "percent",
+*/       
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_lod_stlb_hit_ymm8r4(const __m256 DTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                          const __m256 DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                          const __m256 CYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                          const __m256 MEMORY_ACTIVITY_CYCLES_L1D_MISS,
+	                                          const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C7 = _mm256_set1_ps(7.0f);
+	                  const __m256 C0 = _mm256_setzero_ps();
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 t2;
+	                  register __m256 t3
+	                  register __m256 metric;  
+	                  t0 = _mm256_fmad_ps(C7,DTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                      DTLB_LOAD_MISSES_WALK_ACTIVE);
+	                  t3 = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_max_ps(_mm256_sub_ps(CYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                                   MEMORY_ACTIVITY_CYCLES_L1D_MISS),C0); 
+	                  t2 = _mm256_div_ps(_mm256_min_ps(t0,t1),
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,
+	                                     _mm256_sub_ps(t2,t3));
+	                  return (metric);
+	                                                    
+	         } 
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_lod_stlb_hit_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                          const float * __restrict pDTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                          const float * __restrict pCYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                          const float * __restrict pMEMORY_ACTIVITY_CYCLES_L1D_MISS,
+	                                          const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 DTLB_LOAD_MISSES_STLB_HIT_c1 = 
+	                                        _mm256_loadu_ps(&pDTLB_LOAD_MISSES_STLB_HIT_c1[0]);
+	                  const __m256 DTLB_LOAD_MISSES_WALK_ACTIVE =
+	                                        _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_ACTIVE[0]);
+	                  const __m256 CYCLE_ACTIVITY_CYCLES_MEM_ANY =
+	                                        _mm256_loadu_ps(&pCYCLE_ACTIVITY_CYCLES_MEM_ANY[0]);
+	                  const __m256 MEMORY_ACTIVITY_CYCLES_L1D_MISS=
+	                                        _mm256_loadu_ps(&pMEMORY_ACTIVITY_CYCLES_L1D_MISS[0]);
+	                  const __m256 CPU_CLK_UNHALTED_THREAD        =
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C7 = _mm256_set1_ps(7.0f);
+	                  const __m256 C0 = _mm256_setzero_ps();
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 t2;
+	                  register __m256 t3
+	                  register __m256 metric;  
+	                  t0 = _mm256_fmad_ps(C7,DTLB_LOAD_MISSES_STLB_HIT_c1,
+	                                      DTLB_LOAD_MISSES_WALK_ACTIVE);
+	                  t3 = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_max_ps(_mm256_sub_ps(CYCLE_ACTIVITY_CYCLES_MEM_ANY,
+	                                                   MEMORY_ACTIVITY_CYCLES_L1D_MISS),C0); 
+	                  t2 = _mm256_div_ps(_mm256_min_ps(t0,t1),
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,
+	                                     _mm256_sub_ps(t2,t3));
+	                  return (metric);
+	                                                    
+	         } 
+	         
+	                
 
 
 } // gms
