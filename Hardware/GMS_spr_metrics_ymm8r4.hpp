@@ -3264,7 +3264,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m256 spr_lod_stlb_hit_ymm8r4(const __m256 DTLB_LOAD_MISSES_STLB_HIT_c1,
+	           __m256 spr_load_stlb_hit_ymm8r4(const __m256 DTLB_LOAD_MISSES_STLB_HIT_c1,
 	                                          const __m256 DTLB_LOAD_MISSES_WALK_ACTIVE,
 	                                          const __m256 CYCLE_ACTIVITY_CYCLES_MEM_ANY,
 	                                          const __m256 MEMORY_ACTIVITY_CYCLES_L1D_MISS,
@@ -3296,7 +3296,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           __m256 spr_lod_stlb_hit_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_STLB_HIT_c1,
+	           __m256 spr_load_stlb_hit_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_STLB_HIT_c1,
 	                                          const float * __restrict pDTLB_LOAD_MISSES_WALK_ACTIVE,
 	                                          const float * __restrict pCYCLE_ACTIVITY_CYCLES_MEM_ANY,
 	                                          const float * __restrict pMEMORY_ACTIVITY_CYCLES_L1D_MISS,
@@ -3334,6 +3334,169 @@ namespace gms {
 	                                                    
 	         } 
 	         
+/*
+    "MetricName": "Load_STLB_Miss",
+      "LegacyName": "metric_TMA_........Load_STLB_Miss(%)",
+      "ParentCategory": "DTLB_Load",
+      "Level": 5,
+      "BriefDescription": "This metric estimates the fraction of cycles where the Second-level TLB (STLB) was missed by load accesses, performing a hardware page walk",
+      "UnitOfMeasure": "percent",
+*/	
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_load_stlb_miss_ymm8r4(const __m256 DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                            const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                                 
+	         } 
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_load_stlb_miss_ymm8r4(const float * __restrict pDTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                            const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  register __m256 DTLB_LOAD_MISSES_WALK_ACTIVE = 
+	                                           _mm256_loadu_ps(&pDTLB_LOAD_MISSES_WALK_ACTIVE[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD      =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(DTLB_LOAD_MISSES_WALK_ACTIVE,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,t0);
+	                  return (metric);                                 
+	         }  
+	         
+/*
+   "MetricName": "Store_Fwd_Blk",
+      "LegacyName": "metric_TMA_......Store_Fwd_Blk(%)",
+      "ParentCategory": "L1_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric roughly estimates fraction of cycles when the memory subsystem had loads blocked since they could not forward data from earlier (in program order) overlapping stores. To streamline memory operations in the pipeline; a load can avoid waiting for memory if a prior in-flight store is writing the data that the load wants to read (store forwarding process). However; in some cases the load may be blocked for a significant time pending the store forward. For example; when the prior store is writing a smaller region than the load is reading.",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 store_fwd_blk_ymm8r4(const __m256 LD_BLOCKS_STORE_FORWARD,
+	                                       const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                                       
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C13  = _mm256_set1_ps(13.0f);
+	                  const __m256 C1   = _mm256_set1_ps(1.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 metric;                   
+	                  t0 = _mm256_div_ps(LD_BLOCKS_STORE_FORWARD,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_min_ps(_mm256_mul_ps(C13,t0),C1);
+	                  metric = _mm256_mul_ps(C100,t1);
+	                  return (metric);
+	         }
+	         
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 store_fwd_blk_ymm8r4(const float * __restrict pLD_BLOCKS_STORE_FORWARD,
+	                                       const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                                       
+	                  register __m256 LD_BLOCKS_STORE_FORWARD = 
+	                                           _mm256_loadu_ps(&pLD_BLOCKS_STORE_FORWARD[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C13  = _mm256_set1_ps(13.0f);
+	                  const __m256 C1   = _mm256_set1_ps(1.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 metric;                   
+	                  t0 = _mm256_div_ps(LD_BLOCKS_STORE_FORWARD,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_min_ps(_mm256_mul_ps(C13,t0),C1);
+	                  metric = _mm256_mul_ps(C100,t1);
+	                  return (metric);
+	         }	
+	         
+/*
+      "MetricName": "Split_Loads",
+      "LegacyName": "metric_TMA_......Split_Loads(%)",
+      "ParentCategory": "L1_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric estimates fraction of cycles handling memory load split accesses - load that cross 64-byte cache line boundary. ",
+      "UnitOfMeasure": "percent",
+*/   
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_split_loads_ymm8r4(const __m256 L1D_PEND_MISS_PENDING,
+	                                         const __m256 MEM_LOAD_COMPLETED_L1_MISS_ANY,
+	                                         const __m256 LD_BLOCKS_NO_SR,
+	                                         const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C1   = _mm256_set1_ps(1.0f);  
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(L1_PEND_MISS_PENDING,
+	                                     MEM_LOAD_COMPLETED_L1_MISS_ANY);
+	                  t1 = _mm256_div_ps(LD_BLOCKS_NO_SR,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t2 = _mm256_min_ps(_mm256_mul_ps(t0,t1),C1);
+	                  metric = _mm256_mul_ps(C100,t2);
+	                  return (metric);                          
+	         }    
+	         
+	              
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_split_loads_ymm8r4(const float * __restrict pL1D_PEND_MISS_PENDING,
+	                                         const float * __restrict pMEM_LOAD_COMPLETED_L1_MISS_ANY,
+	                                         const float * __restrict pLD_BLOCKS_NO_SR,
+	                                         const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                  register __m256 L1D_PEND_MISS_PENDING = 
+	                                          _mm256_loadu_ps(&pL1D_PEND_MISS_PENDING[0]);
+	                  register __m256 MEM_LOAD_COMPLETED_L1_MISS_ANY = 
+	                                          _mm256_loadu_ps(&pMEM_LOAD_COMPLETED_L1_MISS_ANY[0]);
+	                  register __m256 LD_BLOCKS_NO_SR        = 
+	                                          _mm256_loadu_ps(&pLD_BLOCKS_NO_SR[0]);
+	                  register __m256 CPU_CLK_UNHALTED_THREAD=
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  const __m256 C1   = _mm256_set1_ps(1.0f);  
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 t2;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(L1_PEND_MISS_PENDING,
+	                                     MEM_LOAD_COMPLETED_L1_MISS_ANY);
+	                  t1 = _mm256_div_ps(LD_BLOCKS_NO_SR,
+	                                     CPU_CLK_UNHALTED_THREAD);
+	                  t2 = _mm256_min_ps(_mm256_mul_ps(t0,t1),C1);
+	                  metric = _mm256_mul_ps(C100,t2);
+	                  return (metric);                          
+	         }    
 	                
 
 
