@@ -3496,7 +3496,160 @@ namespace gms {
 	                  t2 = _mm256_min_ps(_mm256_mul_ps(t0,t1),C1);
 	                  metric = _mm256_mul_ps(C100,t2);
 	                  return (metric);                          
-	         }    
+	         } 
+	         
+/*
+        "MetricName": "FB_Full",
+      "LegacyName": "metric_TMA_......FB_Full(%)",
+      "ParentCategory": "L1_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric does a *rough estimation* of how often L1D Fill Buffer unavailability limited additional L1D miss memory access requests to proceed. The higher the metric value; the deeper the memory hierarchy level the misses are satisfied from (metric values >1 are valid). Often it hints on approaching bandwidth limits (to L2 cache; L3 cache or external memory).",
+      "UnitOfMeasure": "percent",
+*/
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           __m256 spr_fb_full_ymm8r4(const __m256 L1D_PEND_MISS_FB_FULL,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                  
+	                   const __m256 C100 = _mm256_set1_ps(100.0f);
+	                   register __m256 t0;
+	                   register __m256 metric;
+	                   t0 = _mm256_div_ps(L1D_PEND_MISS_FB_FULL,
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                   metric = _mm256_mul_ps(C100,t0);
+	                   return (metric);                              
+	       }  
+	       
+	                                               
+	       	__ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_fb_full_ymm8r4(const float * __restrict pL1D_PEND_MISS_FB_FULL,
+	                                  const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                  
+	                   register __m256 L1D_PEND_MISS_FB_FULL = 
+	                                           _mm256_loadu_ps(&pL1D_PEND_MISS_FB_FULL[0]);
+	                   register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                   const __m256 C100 = _mm256_set1_ps(100.0f);
+	                   register __m256 t0;
+	                   register __m256 metric;
+	                   t0 = _mm256_div_ps(L1D_PEND_MISS_FB_FULL,
+	                                      CPU_CLK_UNHALTED_THREAD);
+	                   metric = _mm256_mul_ps(C100,t0);
+	                   return (metric);                              
+	       }  
+	                
+/*
+    "MetricName": "L2_Bound",
+      "LegacyName": "metric_TMA_....L2_Bound(%)",
+      "ParentCategory": "Memory_Bound",
+      "Level": 3,
+      "BriefDescription": "This metric estimates how often the CPU was stalled due to L2 cache accesses by loads.  Avoiding cache misses (i.e. L1 misses/L2 hits) can improve the latency and increase performance.",
+      "UnitOfMeasure": "percent",   
+*/
+
+          	__ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256	 spr_l2_bound_ymm8r4(const __m256 MEMORY_ACTIVITY_STALLS_L1D_MISS,
+	                                     const __m256 MEMORY_ACTIVITY_STALLS_L2_MISS ,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                 
+	                 const __m256 C100 = _mm256_set1_ps(100.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 metric;
+	                 t0 = _mm256_sub_ps(MEMORY_ACTIVITY_STALLS_L1D_MISS,
+	                                    MEMORY_ACTIVITY_STALLS_L2_MISS);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	                 metric = _mm256_mul_ps(C100,t1);
+	                 return (metric);                    
+	       }  
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256	 spr_l2_bound_ymm8r4(const float * __restrict pMEMORY_ACTIVITY_STALLS_L1D_MISS,
+	                                     const float * __restrict pMEMORY_ACTIVITY_STALLS_L2_MISS ,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                 
+	                 register __m256 MEMORY_ACTIVITY_STALLS_L1D_MISS = 
+	                                                _mm256_loadu_ps(&pMEMORY_ACTIVITY_STALLS_L1D_MISS[0]);
+	                 register __m256 MEMORY_ACTIVITY_STALLS_L2_MISS  =
+	                                                _mm256_loadu_ps(&pMEMORY_ACTIVITY_STALLS_L2_MISS[0]);
+	                 register __m256 CPU_CLK_UNHALTED_THREAD         =
+	                                                _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                 const __m256 C100 = _mm256_set1_ps(100.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 metric;
+	                 t0 = _mm256_sub_ps(MEMORY_ACTIVITY_STALLS_L1D_MISS,
+	                                    MEMORY_ACTIVITY_STALLS_L2_MISS);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	                 metric = _mm256_mul_ps(C100,t1);
+	                 return (metric);                    
+	       }   
+	      
+/*
+    "MetricName": "L3_Bound",
+      "LegacyName": "metric_TMA_....L3_Bound(%)",
+      "ParentCategory": "Memory_Bound",
+      "Level": 3,
+      "BriefDescription": "This metric estimates how often the CPU was stalled due to loads accesses to L3 cache or contended with a sibling Core.  Avoiding cache misses (i.e. L2 misses/L3 hits) can improve the latency and increase performance.",
+      "UnitOfMeasure": "percent",
+*/   
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256	 spr_l3_bound_ymm8r4(const __m256 MEMORY_ACTIVITY_STALLS_L2_MISS,
+	                                     const __m256 MEMORY_ACTIVITY_STALLS_L3_MISS ,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                 
+	                 const __m256 C100 = _mm256_set1_ps(100.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 metric;
+	                 t0 = _mm256_sub_ps(MEMORY_ACTIVITY_STALLS_L2_MISS,
+	                                    MEMORY_ACTIVITY_STALLS_L3_MISS);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	                 metric = _mm256_mul_ps(C100,t1);
+	                 return (metric);                    
+	       }  
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256	 spr_l3_bound_ymm8r4(const float * __restrict pMEMORY_ACTIVITY_STALLS_L2_MISS,
+	                                     const float * __restrict pMEMORY_ACTIVITY_STALLS_L3_MISS ,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                 
+	                 register __m256 MEMORY_ACTIVITY_STALLS_L2_MISS = 
+	                                                _mm256_loadu_ps(&pMEMORY_ACTIVITY_STALLS_L2_MISS[0]);
+	                 register __m256 MEMORY_ACTIVITY_STALLS_L3_MISS  =
+	                                                _mm256_loadu_ps(&pMEMORY_ACTIVITY_STALLS_L3_MISS[0]);
+	                 register __m256 CPU_CLK_UNHALTED_THREAD         =
+	                                                _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                 const __m256 C100 = _mm256_set1_ps(100.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 metric;
+	                 t0 = _mm256_sub_ps(MEMORY_ACTIVITY_STALLS_L2_MISS,
+	                                    MEMORY_ACTIVITY_STALLS_L3_MISS);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	                 metric = _mm256_mul_ps(C100,t1);
+	                 return (metric);                    
+	       }   
+	       
 	                
 
 
