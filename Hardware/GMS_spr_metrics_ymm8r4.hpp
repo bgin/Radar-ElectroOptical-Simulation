@@ -3902,8 +3902,192 @@ namespace gms {
 	               metric = _mm256_mul_ps(C100,t0);
 	               return (metric);                              
 	       }
-	       
+
+/*
+   "MetricName": "Store_Latency",
+      "LegacyName": "metric_TMA_......Store_Latency(%)",
+      "ParentCategory": "Store_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric estimates fraction of cycles the CPU spent handling L1D store misses. Store accesses usually less impact out-of-order core performance; however; holding resources for longer time can lead into undesired implications (e.g. contention on L1D fill-buffer entries - see FB_Full)",
+      "UnitOfMeasure": "percent",    
+*/	
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_latency_ymm8r4(const __m256 MEM_STORE_RETIRED_L2_HIT,
+	                                        const __m256 MEM_INST_RETIRED_LOCK_LOADS,
+	                                        const __m256 MEM_INST_RETIRED_ALL_STORES,
+	                                        const __m256 CPU_CLK_UNHALTED_THREAD,
+	                                        const __m256 OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO) {
+	                                        
+	                const __m256 C100 = _mm256_set1_ps(100.0f);
+	                const __m256 C10  = _mm256_set1_ps(10.0f);
+	                const __m256 C1   = _mm256_set1_ps(1.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 t2;
+	                register __m256 t3;
+	                register __m256 metric;
+	                t0 = _mm256_min_ps( CPU_CLK_UNHALTED_THREAD,
+	                                    OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO);
+	                t1 = _mm256_sub_ps(C1,
+	                               _mm256_div_ps(MEM_INST_RETIRED_LOCK_LOADS,
+	                                             MEM_INST_RETIRED_ALL_STORES));
+	                t2 = _mm256_fmadd_ps(_mm256_mul_ps(
+	                                 MEM_STORE_RETIRED_L2_HIT,C10),t1,t1);
+	                t3 = _mm256_div_ps(_mm256_mul_ps(t2,t0),
+	                                         CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t3);
+	                return (metric);                              
+	      }
+	      
+	      
+              
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_latency_ymm8r4(const float * __restrict pMEM_STORE_RETIRED_L2_HIT,
+	                                        const float * __restrict pMEM_INST_RETIRED_LOCK_LOADS,
+	                                        const float * __restrict pMEM_INST_RETIRED_ALL_STORES,
+	                                        const float * __restrict pCPU_CLK_UNHALTED_THREAD,
+	                                        const float * __restrict pOFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO) {
+	                        
+	                register __m256  MEM_STORE_RETIRED_L2_HIT = 
+	                                          _mm256_loadu_ps(&pMEM_STORE_RETIRED_L2_HIT[0]);
+	                register __m256  MEM_INST_RETIRED_LOCK_LOADS = 
+	                                          _mm256_loadu_ps(&pMEM_INST_RETIRED_LOCK_LOADS[0]);
+	                register __m256  MEM_INST_RETIRED_ALL_STORES = 
+	                                          _mm256_loadu_ps(&pMEM_INST_RETIRED_ALL_STORES[0]);
+	                register __m256  CPU_CLK_UNHALTED_THREAD     =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                register __m256  OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO = 
+	                                          _mm256_loadu_ps(&pOFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO[0]);
+	                const __m256 C100 = _mm256_set1_ps(100.0f);
+	                const __m256 C10  = _mm256_set1_ps(10.0f);
+	                const __m256 C1   = _mm256_set1_ps(1.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 t2;
+	                register __m256 t3;
+	                register __m256 metric;
+	                t0 = _mm256_min_ps( CPU_CLK_UNHALTED_THREAD,
+	                                    OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DEMAND_RFO);
+	                t1 = _mm256_sub_ps(C1,
+	                               _mm256_div_ps(MEM_INST_RETIRED_LOCK_LOADS,
+	                                             MEM_INST_RETIRED_ALL_STORES));
+	                t2 = _mm256_fmadd_ps(_mm256_mul_ps(
+	                                 MEM_STORE_RETIRED_L2_HIT,C10),t1,t1);
+	                t3 = _mm256_div_ps(_mm256_mul_ps(t2,t0),
+	                                         CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t3);
+	                return (metric);                              
+	      }
+	      
+/*
+       "MetricName": "False_Sharing",
+      "LegacyName": "metric_TMA_......False_Sharing(%)",
+      "ParentCategory": "Store_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric roughly estimates how often CPU was handling synchronizations due to False Sharing. False Sharing is a multithreading hiccup; where multiple Logical Processors contend on different data-elements mapped into the same cache line. ",
+      "UnitOfMeasure": "percent",  
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256  spr_false_sharing_ymm8r4(const __m256 CPU_CLK_UNHALTED_THREAD,
+	                                         const __m256 CPU_CLK_UNHALTED_REF_TSC,
+	                                         const __m256 OCR_DEMAND_RFO_L3_HIT_SNOOP_HITM,
+	                                         const float SYSTEM_TSC_FREQ,
+	                                         const float dur_time) {
 	                
+	                const __m256 C0000000001 = 
+	                             _mm256_set1_ps(0.000000001f);
+	                const __m256 C001        =
+	                             _mm256_set1_ps(0.001f);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                const __m256 C80         =
+	                             _mm256_set1_ps(80.0f);
+	                const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 t2;
+	                register __m256 t3;
+	                register __m256 v1;
+	                register __m256 v2;
+	                register __m256 metric;
+	                v1 = _mm256_set1_ps(SYSTEM_TSC_FREQ);
+	                t0 = mm256_mul_ps(v1,C000000001);
+	             	v2 = _mm256_set1_ps(dur_time);
+	                t1 = _mm256_div_ps(CPU_CLK_UNHALTED_THREAD,
+	                                   CPU_CLK_UNHALTED_REF_TSC);
+	                t2 = _mm256_mul_ps(v2,C001);
+	                t2 = _mm256_mul_ps(t0,
+	                               _mm256_mul_ps(t1,t2));
+	                t3 = _mm256_div_ps(OCR_DEMAND_RFO_L3_HIT_SNOOP_HITM,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                v1 = _mm256_mul_ps(C80,
+	                           _mm256_mul_ps(t2,t3)); 
+	                metric = _mm256_mul_ps(C100,
+	                               _mm256_min_ps(v1,C1));
+	                return (metric);         
+	      }
+	           
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256  spr_false_sharing_ymm8r4(const float * __restrict pCPU_CLK_UNHALTED_THREAD,
+	                                         const float * __restrict pCPU_CLK_UNHALTED_REF_TSC,
+	                                         const float * __restrict pOCR_DEMAND_RFO_L3_HIT_SNOOP_HITM,
+	                                         const float SYSTEM_TSC_FREQ,
+	                                         const float dur_time) {
+	                
+	                register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                register __m256 CPU_CLK_UNHALTED_REF_TSC = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_REF_TSC[0]);
+	                register __m256 OCR_DEMAND_RFO_L3_HIT_SNOOP_HITM = 
+	                                       _mm256_loadu_ps(&pOCR_DEMAND_RFO_L3_HIT_SNOOP_HITM[0]);
+	                const __m256 C0000000001 = 
+	                             _mm256_set1_ps(0.000000001f);
+	                const __m256 C001        =
+	                             _mm256_set1_ps(0.001f);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                const __m256 C80         =
+	                             _mm256_set1_ps(80.0f);
+	                const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 t2;
+	                register __m256 t3;
+	                register __m256 v1;
+	                register __m256 v2;
+	                register __m256 metric;
+	                v1 = _mm256_set1_ps(SYSTEM_TSC_FREQ);
+	                t0 = mm256_mul_ps(v1,C000000001);
+	             	v2 = _mm256_set1_ps(dur_time);
+	                t1 = _mm256_div_ps(CPU_CLK_UNHALTED_THREAD,
+	                                   CPU_CLK_UNHALTED_REF_TSC);
+	                t2 = _mm256_mul_ps(v2,C001);
+	                t2 = _mm256_mul_ps(t0,
+	                               _mm256_mul_ps(t1,t2));
+	                t3 = _mm256_div_ps(OCR_DEMAND_RFO_L3_HIT_SNOOP_HITM,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                v1 = _mm256_mul_ps(C80,
+	                           _mm256_mul_ps(t2,t3)); 
+	                metric = _mm256_mul_ps(C100,
+	                               _mm256_min_ps(v1,C1));
+	                return (metric);         
+	      }         
 
 
 } // gms
