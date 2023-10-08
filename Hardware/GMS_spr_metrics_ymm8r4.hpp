@@ -3806,7 +3806,102 @@ namespace gms {
       "UnitOfMeasure": "percent",
 */   
 
-               
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_mem_latency_ymm8r4(const __m256 CPU_CLK_UNHALTED_THREAD,
+	                                      const __m256 OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DATA_RD,
+	                                      const __m256 OFFCORE_REQUESTS_OUTSTANDING_ALL_DATA_RD_c4) {
+	               
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(_mm256_min_ps(CPU_CLK_UNHALTED_THREAD,
+	                                                   OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DATA_RD),
+	                                                   CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_div_ps(_mm256_min_ps(CPU_CLK_UNHALTED_THREAD,
+	                                                   OFFCORE_REQUESTS_OUTSTANDING_ALL_DATA_RD_c4),
+	                                                   CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,
+	                                 _mm256_sub_ps(t0,t1));
+	                  return (metric);                             
+	       }
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_mem_latency_ymm8r4(const float * __restrict pCPU_CLK_UNHALTED_THREAD,
+	                                      const float * __restrict pOFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DATA_RD,
+	                                      const float * __restrict pOFFCORE_REQUESTS_OUTSTANDING_ALL_DATA_RD_c4) {
+	               
+	                  register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                         _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                  register __m256 OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DATA_RD = 
+	                                         _mm256_loadu_ps(&pOFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DATA_RD[0]);
+	                  register __m256 OFFCORE_REQUESTS_OUTSTANDING_ALL_DATA_RD_c4 = 
+	                                         _mm256_loadu_ps(&pOFFCORE_REQUESTS_OUTSTANDING_ALL_DATA_RD_c4[0]);
+	                  const __m256 C100 = _mm256_set1_ps(100.0f);
+	                  register __m256 t0;
+	                  register __m256 t1;
+	                  register __m256 metric;
+	                  t0 = _mm256_div_ps(_mm256_min_ps(CPU_CLK_UNHALTED_THREAD,
+	                                                   OFFCORE_REQUESTS_OUTSTANDING_CYCLES_WITH_DATA_RD),
+	                                                   CPU_CLK_UNHALTED_THREAD);
+	                  t1 = _mm256_div_ps(_mm256_min_ps(CPU_CLK_UNHALTED_THREAD,
+	                                                   OFFCORE_REQUESTS_OUTSTANDING_ALL_DATA_RD_c4),
+	                                                   CPU_CLK_UNHALTED_THREAD);
+	                  metric = _mm256_mul_ps(C100,
+	                                 _mm256_sub_ps(t0,t1));
+	                  return (metric);                             
+	       }
+	       
+/*
+    "MetricName": "Store_Bound",
+      "LegacyName": "metric_TMA_....Store_Bound(%)",
+      "ParentCategory": "Memory_Bound",
+      "Level": 3,
+      "BriefDescription": "This metric estimates how often CPU was stalled  due to RFO store memory accesses; RFO store issue a read-for-ownership request before the write. Even though store accesses do not typically stall out-of-order CPUs; there are few cases where stores can lead to actual stalls. This metric will be flagged should RFO stores be a bottleneck.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_bound_ymm8r4(const __m256 EXE_ACTIVITY_BOUND_ON_STORES,
+	                                      const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	               const __m256 C100 = _mm256_set1_ps(100.0f);
+	               register __m256 t0;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps( EXE_ACTIVITY_BOUND_ON_STORES,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,t0);
+	               return (metric);                              
+	       }
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_bound_ymm8r4(const float * __restrict pEXE_ACTIVITY_BOUND_ON_STORES,
+	                                      const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	               
+	               register __m256 EXE_ACTIVITY_BOUND_ON_STORES = 
+	                                           _mm256_loadu_ps(&pEXE_ACTIVITY_BOUND_ON_STORES[0]);
+	               register __m256 CPU_CLK_UNHALTED_THREAD      =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	               const __m256 C100 = _mm256_set1_ps(100.0f);
+	               register __m256 t0;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps( EXE_ACTIVITY_BOUND_ON_STORES,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,t0);
+	               return (metric);                              
+	       }
 	       
 	                
 
