@@ -4197,7 +4197,196 @@ namespace gms {
 	               t2 = _mm256_min_ps(t0,C1);
 	               metric = _mm256_mul_ps(C100,t2);
 	               return (metric);                               
-	      } 	          
+	      } 
+	      
+/*
+       "MetricName": "DTLB_Store",
+      "LegacyName": "metric_TMA_......DTLB_Store(%)",
+      "ParentCategory": "Store_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric roughly estimates the fraction of cycles spent handling first-level data TLB store misses.  As with ordinary data caching; focus on improving data locality and reducing working-set size to reduce DTLB overhead.  Additionally; consider using profile-guided optimization (PGO) to collocate frequently-used data on the same page.  Try using larger page sizes for large amounts of frequently-used data.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_dtlb_store_ymm8r4(const __m256 DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const __m256 DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                     
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 metric = _mm256_mul_ps(C100,t2);
+	                 return (metric);        
+	       }
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_dtlb_store_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const float * __restrict pDTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                     
+	                 register __m256 DTLB_STORE_MISSES_STLB_HIT_c1 = 
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_STLB_HIT_c1[0]);
+	                 register __m256 DTLB_STORE_MISSES_WALK_ACTIVE =
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_ACTIVE[0]);
+	                 register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);                
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 metric = _mm256_mul_ps(C100,t2);
+	                 return (metric);        
+	       }   
+	       
+/*
+     "MetricName": "Store_STLB_Hit",
+      "LegacyName": "metric_TMA_........Store_STLB_Hit(%)",
+      "ParentCategory": "DTLB_Store",
+      "Level": 5,
+      "BriefDescription": "This metric roughly estimates the fraction of cycles where the TLB was missed by store accesses, hitting in the second-level TLB (STLB)",
+      "UnitOfMeasure": "percent",  
+*/   
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_hit_ymm8r4(const __m256 DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const __m256 DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                     
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 t3;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 t3 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                    CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 metric = _mm256_mul_ps(C100,
+	                                    _mm256_sub_ps(t2,t3));
+	                 return (metric);
+	     }
+	     
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_hit_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const float * __restrict pDTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                          
+	                 register __m256 DTLB_STORE_MISSES_STLB_HIT_c1 = 
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_STLB_HIT_c1[0]);
+	                 register __m256 DTLB_STORE_MISSES_WALK_ACTIVE =
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_ACTIVE[0]);
+	                 register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);                  
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 t3;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 t3 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                    CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 metric = _mm256_mul_ps(C100,
+	                                    _mm256_sub_ps(t2,t3));
+	                 return (metric);
+	     }
+	     
+/*
+        "MetricName": "Store_STLB_Miss",
+      "LegacyName": "metric_TMA_........Store_STLB_Miss(%)",
+      "ParentCategory": "DTLB_Store",
+      "Level": 5,
+      "BriefDescription": "This metric estimates the fraction of cycles where the STLB was missed by store accesses, performing a hardware page walk",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_miss_ymm8r4(const __m256 DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                          const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                          
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                   CPU_CLK_UNHALTED_DISTRIBUTED);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                                  
+	       }
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_miss_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_WALK_ACTIVE,
+	                                          const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                             
+	                register __m256 DTLB_STORE_MISSES_WALK_ACTIVE = 
+	                                          _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_ACTIVE[0]);
+	                register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);             
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                   CPU_CLK_UNHALTED_DISTRIBUTED);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                                  
+	       }
 
 
 } // gms
