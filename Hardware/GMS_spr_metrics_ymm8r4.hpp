@@ -4087,7 +4087,1307 @@ namespace gms {
 	                metric = _mm256_mul_ps(C100,
 	                               _mm256_min_ps(v1,C1));
 	                return (metric);         
-	      }         
+	      }   
+	      
+/*
+      "MetricName": "Split_Stores",
+      "LegacyName": "metric_TMA_......Split_Stores(%)",
+      "ParentCategory": "Store_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric represents rate of split store accesses.  Consider aligning your data to the 64-byte cache line granularity.",
+      "UnitOfMeasure": "percent",
+*/    
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_split_stores_ymm8r4(const __m256 MEM_INST_RETIRED_SPLIT_STORES,
+	                                   const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	               
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(MEM_INST_RETIRED_SPLIT_STORES,
+	                                   CPU_CLK_UNHALTED_DISTRIBUTED);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                            
+	      } 
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_split_stores_ymm8r4(const float * __restrict pMEM_INST_RETIRED_SPLIT_STORES,
+	                                       const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	               
+	                register __m256 MEM_INST_RETIRED_SPLIT_STORES = 
+	                                        _mm256_loadu_ps(&pMEM_INST_RETIRED_SPLIT_STORES[0]);
+	                register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                        _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(MEM_INST_RETIRED_SPLIT_STORES,
+	                                   CPU_CLK_UNHALTED_DISTRIBUTED);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                            
+	      } 
+	      
+	      
+	      
+/*
+      "MetricName": "Streaming_Stores",
+      "LegacyName": "metric_TMA_......Streaming_Stores(%)",
+      "ParentCategory": "Store_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric estimates how often CPU was stalled  due to Streaming store memory accesses; Streaming store optimize out a read request required by RFO stores. Even though store accesses do not typically stall out-of-order CPUs; there are few cases where stores can lead to actual stalls. This metric will be flagged should Streaming stores be a bottleneck.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_stream_stores_ymm8r4(const __m256 OCR_STREAMING_WR_ANY_RESPONSE,
+	                                        const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               const __m256 C9          =
+	                             _mm256_set1_ps(9.0f);
+	               const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	               register __m256 t0;
+	               register __m256 t1;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps(_mm512_mul_ps(C9,
+	                                      OCR_STREAMING_WR_ANY_RESPONSE),
+	                                                       CPU_CLK_UNHALTED_THREAD);
+	               t2 = _mm256_min_ps(t0,C1);
+	               metric = _mm256_mul_ps(C100,t2);
+	               return (metric);                               
+	      } 
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_stream_stores_ymm8r4(const __m256 OCR_STREAMING_WR_ANY_RESPONSE,
+	                                        const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	               const __m256 OCR_STREAMING_WR_ANY_RESPONSE = 
+	                                         _mm256_loadu_ps(&pOCR_STREAMING_WR_ANY_RESPONSE[0]);
+	               const __m256 CPU_CLK_UNHALTED_THREAD       =
+	                                         _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               const __m256 C9          =
+	                             _mm256_set1_ps(9.0f);
+	               const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	               register __m256 t0;
+	               register __m256 t1;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps(_mm512_mul_ps(C9,
+	                                      OCR_STREAMING_WR_ANY_RESPONSE),
+	                                                       CPU_CLK_UNHALTED_THREAD);
+	               t2 = _mm256_min_ps(t0,C1);
+	               metric = _mm256_mul_ps(C100,t2);
+	               return (metric);                               
+	      } 
+	      
+/*
+       "MetricName": "DTLB_Store",
+      "LegacyName": "metric_TMA_......DTLB_Store(%)",
+      "ParentCategory": "Store_Bound",
+      "Level": 4,
+      "BriefDescription": "This metric roughly estimates the fraction of cycles spent handling first-level data TLB store misses.  As with ordinary data caching; focus on improving data locality and reducing working-set size to reduce DTLB overhead.  Additionally; consider using profile-guided optimization (PGO) to collocate frequently-used data on the same page.  Try using larger page sizes for large amounts of frequently-used data.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_dtlb_store_ymm8r4(const __m256 DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const __m256 DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                     
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 metric = _mm256_mul_ps(C100,t2);
+	                 return (metric);        
+	       }
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_dtlb_store_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const float * __restrict pDTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                     
+	                 register __m256 DTLB_STORE_MISSES_STLB_HIT_c1 = 
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_STLB_HIT_c1[0]);
+	                 register __m256 DTLB_STORE_MISSES_WALK_ACTIVE =
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_ACTIVE[0]);
+	                 register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);                
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 metric = _mm256_mul_ps(C100,t2);
+	                 return (metric);        
+	       }   
+	       
+/*
+     "MetricName": "Store_STLB_Hit",
+      "LegacyName": "metric_TMA_........Store_STLB_Hit(%)",
+      "ParentCategory": "DTLB_Store",
+      "Level": 5,
+      "BriefDescription": "This metric roughly estimates the fraction of cycles where the TLB was missed by store accesses, hitting in the second-level TLB (STLB)",
+      "UnitOfMeasure": "percent",  
+*/   
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_hit_ymm8r4(const __m256 DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const __m256 DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                     
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 t3;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 t3 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                    CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 metric = _mm256_mul_ps(C100,
+	                                    _mm256_sub_ps(t2,t3));
+	                 return (metric);
+	     }
+	     
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_hit_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_STLB_HIT_c1,
+	                                     const float * __restrict pDTLB_STORE_MISSES_WALK_ACTIVE,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                          
+	                 register __m256 DTLB_STORE_MISSES_STLB_HIT_c1 = 
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_STLB_HIT_c1[0]);
+	                 register __m256 DTLB_STORE_MISSES_WALK_ACTIVE =
+	                                           _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_ACTIVE[0]);
+	                 register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                           _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);                  
+	                 const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                 const __m256 C7          = 
+	                             _mm256_set1_ps(7.0f);
+	                 const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	                 register __m256 t0;
+	                 register __m256 t1;
+	                 register __m256 t2;
+	                 register __m256 t3;
+	                 register __m256 metric;
+	                 t0 = _mm256_fmadd_ps(C7,DTLB_STORE_MISSES_STLB_HIT_c1,
+	                                      DTLB_STORE_MISSES_WALK_ACTIVE);
+	                 t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 t2 = _mm256_min_ps(t1,C1);
+	                 t3 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                    CPU_CLK_UNHALTED_DISTRIBUTED);
+	                 metric = _mm256_mul_ps(C100,
+	                                    _mm256_sub_ps(t2,t3));
+	                 return (metric);
+	     }
+	     
+/*
+        "MetricName": "Store_STLB_Miss",
+      "LegacyName": "metric_TMA_........Store_STLB_Miss(%)",
+      "ParentCategory": "DTLB_Store",
+      "Level": 5,
+      "BriefDescription": "This metric estimates the fraction of cycles where the STLB was missed by store accesses, performing a hardware page walk",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_miss_ymm8r4(const __m256 DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                          const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                          
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                   CPU_CLK_UNHALTED_DISTRIBUTED);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                                  
+	       }
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_stlb_miss_ymm8r4(const float * __restrict pDTLB_STORE_MISSES_WALK_ACTIVE,
+	                                          const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                             
+	                register __m256 DTLB_STORE_MISSES_WALK_ACTIVE = 
+	                                          _mm256_loadu_ps(&pDTLB_STORE_MISSES_WALK_ACTIVE[0]);
+	                register __m256 CPU_CLK_UNHALTED_DISTRIBUTED  =
+	                                          _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);             
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(DTLB_STORE_MISSES_WALK_ACTIVE,
+	                                   CPU_CLK_UNHALTED_DISTRIBUTED);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                                  
+	       }
+	       
+/*
+    "MetricName": "Core_Bound",
+      "LegacyName": "metric_TMA_..Core_Bound(%)",
+      "ParentCategory": "Backend_Bound",
+      "Level": 2,
+      "BriefDescription": "This metric represents fraction of slots where Core non-memory issues were of a bottleneck.  Shortage in hardware compute resources; or dependencies in software's instructions are both categorized under Core Bound. Hence it may indicate the machine ran out of an out-of-order resource; certain execution units are overloaded or dependencies in program's data- or instruction-flow are limiting the performance (e.g. FP-chained long-latency arithmetic operations).",
+      "UnitOfMeasure": "percent",
+*/	       
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+               	static inline
+	        float spr_core_bound_r4(const float PERF_METRICS_BACKEND_BOUND,
+	                                const float PERF_METRICS_FRONTEND_BOUND,
+	                                const float PERF_METRICS_BAD_SPECULATION,
+	                                const float PERF_METRICS_RETIRING,
+	                                const float PERF_METRICS_MEMORY_BOUND) {
+	                                
+	              float bcda,t0,t1;
+	              float metric;
+	              bcda = PERF_METRICS_FRONTEND_BOUND+
+	                     PERF_METRICS_BAD_SPECULATION+
+	                     PERF_METRICS_RETIRING+
+	                     PERF_METRICS_BACKEND_BOUND;
+	              t0 =   PERF_METRICS_BACKEND_BOUND/
+	                     bcda;
+	              t1 =   PERF_METRICS_MEMORY_BOUND/
+	                     bcda;
+	              metric = 100.0f*(std::max(0.0f,t0-t1));
+	              return (metric);                      
+	     }
+	     
+/*
+        "MetricName": "Divider",
+      "LegacyName": "metric_TMA_....Divider(%)",
+      "ParentCategory": "Core_Bound",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of cycles where the Divider unit was active. Divide and square root instructions are performed by the Divider unit and can take considerably longer latency than integer or Floating Point addition; subtraction; or multiplication.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_divider_active_ymm8r4(const __m256 ARITH_DIV_ACTIVE,
+	                                         const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(ARITH_DIV_ACTIVE,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                                 
+	      } 
+	      
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_divider_active_ymm8r4(const float * __restrict pARITH_DIV_ACTIVE,
+	                                         const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	               
+	                register __m256 ARITH_DIV_ACTIVE = 
+	                                     _mm256_loadu_ps(&pARITH_DIV_ACTIVE[0]);
+	                register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                     _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(ARITH_DIV_ACTIVE,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                                 
+	      } 
+	    
+/*
+     "MetricName": "Ports_Utilized_0",
+      "LegacyName": "metric_TMA_......Ports_Utilized_0(%)",
+      "ParentCategory": "Ports_Utilization",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles CPU executed no uops on any execution port (Logical Processor cycles since ICL, Physical Core cycles otherwise). Long-latency instructions like divides may contribute to this metric.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_ports_utils_0_ymm8r4(const __m256 EXE_ACTIVITY_3_PORTS_UTIL_u0x80,
+	                                        const __m256 CPU_CLK_UNHALTED_THREAD,
+	                                        const __m256 RESOURCE_STALLS_SCOREBOARD,
+	                                        const __m256 CYCLE_ACTIVITY_STALLS_TOTAL,
+	                                        const __m256 EXE_ACTIVITY_BOUND_ON_LOADS) {
+	                
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 t2;
+	                register __m256 metric;  
+	                t0  = _mm256_div_ps(EXE_ACTIVITY_3_PORTS_UTIL_u0x80,
+	                                    CPU_CLK_UNHALTED_THREAD);
+	                t1  = _mm256_sub_ps(CYCLE_ACTIVITY_STALLS_TOTAL,
+	                                    EXE_ACTIVITY_BOUND_ON_LOADS);
+	                t2  = _mm256_add_ps(t0,
+	                                _mm256_div_ps(RESOURCE_STALLS_SCOREBOARD,
+	                                              CPU_CLK_UNHALTED_THREAD));
+	                t0  = _mm256_div_ps(t1,CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,
+	                               _mm256_mul_ps(t2,t0));
+	                return (metric);                              
+	      }
+	      
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_ports_utils_0_ymm8r4(const float * __restrict pEXE_ACTIVITY_3_PORTS_UTIL_u0x80,
+	                                        const float * __restrict pCPU_CLK_UNHALTED_THREAD,
+	                                        const float * __restrict pRESOURCE_STALLS_SCOREBOARD,
+	                                        const float * __restrict pCYCLE_ACTIVITY_STALLS_TOTAL,
+	                                        const float * __restrict pEXE_ACTIVITY_BOUND_ON_LOADS) {
+	                
+	                register __m256 EXE_ACTIVITY_3_PORTS_UTIL_u0x80 = 
+	                                            _mm256_loadu_ps(&pEXE_ACTIVITY_3_PORTS_UTIL_u0x80[0]);
+	                register __m256 CPU_CLK_UNHALTED_THREAD         =
+	                                            _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                register __m256 RESOURCE_STALLS_SCOREBOARD      =
+	                                            _mm256_loadu_ps(&pRESOURCE_STALLS_SCOREBOARD[0]);
+	                register __m256 CYCLE_ACTIVITY_STALLS_TOTAL     =
+	                                            _mm256_loadu_ps(&pCYCLE_ACTIVITY_STALLS_TOTAL[0]);
+	                register __m256 EXE_ACTIVITY_BOUND_ON_LOADS     =
+	                                            _mm256_loadu_ps(&pEXE_ACTIVITY_BOUND_ON_LOADS[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 t2;
+	                register __m256 metric;  
+	                t0  = _mm256_div_ps(EXE_ACTIVITY_3_PORTS_UTIL_u0x80,
+	                                    CPU_CLK_UNHALTED_THREAD);
+	                t1  = _mm256_sub_ps(CYCLE_ACTIVITY_STALLS_TOTAL,
+	                                    EXE_ACTIVITY_BOUND_ON_LOADS);
+	                t2  = _mm256_add_ps(t0,
+	                                _mm256_div_ps(RESOURCE_STALLS_SCOREBOARD,
+	                                              CPU_CLK_UNHALTED_THREAD));
+	                t0  = _mm256_div_ps(t1,CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,
+	                               _mm256_mul_ps(t2,t0));
+	                return (metric);                              
+	      } 
+	      
+/*
+     "MetricName": "Serializing_Operation",
+      "LegacyName": "metric_TMA_........Serializing_Operation(%)",
+      "ParentCategory": "Ports_Utilized_0",
+      "Level": 5,
+      "BriefDescription": "This metric represents fraction of cycles the CPU issue-pipeline was stalled due to serializing operations. Instructions like CPUID; WRMSR or LFENCE serialize the out-of-order execution which may limit performance.",
+      "UnitOfMeasure": "percent",
+*/	
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_serial_ops_ymm8r4(const __m256 RESOURCE_STALLS_SCOREBOARD,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               register __m256 t0;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps(RESOURCE_STALLS_SCOREBOARD,
+	                                  CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,t0);
+	               return (metric);                              
+	      }   
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_serial_ops_ymm8r4(const float * __restrict pRESOURCE_STALLS_SCOREBOARD,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               register __m256 RESOURCE_STALLS_SCOREBOARD = 
+	                                       _mm256_loadu_ps(&pRESOURCE_STALLS_SCOREBOARD[0]);
+	               register __m256 CPU_CLKUNHALTED_THREAD     = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               register __m256 t0;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps(RESOURCE_STALLS_SCOREBOARD,
+	                                  CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,t0);
+	               return (metric);                              
+	      }   
+	     
+/*
+    "MetricName": "Slow_Pause",
+      "LegacyName": "metric_TMA_..........Slow_Pause(%)",
+      "ParentCategory": "Serializing_Operation",
+      "Level": 6,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to PAUSE Instructions.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_slow_pause_ymm8r4(const __m256 CPU_CLK_UNHALTED_PAUSE,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               register __m256 t0;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps(CPU_CLK_UNHALTED_PAUSE,
+	                                  CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,t0);
+	               return (metric);                              
+	      }   
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_slow_pause_ymm8r4(const float * __restrict pCPU_CLK_UNHALTED_PAUSE,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               register __m256 CPU_CLK_UNHALTED_PAUSE = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_PAUSE[0]);
+	               register __m256 CPU_CLKUNHALTED_THREAD     = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               register __m256 t0;
+	               register __m256 metric;
+	               t0 = _mm256_div_ps(CPU_CLK_UNHALTED_PAUSE,
+	                                  CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,t0);
+	               return (metric);                              
+	      }  
+	      
+/*
+     "MetricName": "Memory_Fence",
+      "LegacyName": "metric_TMA_..........Memory_Fence(%)",
+      "ParentCategory": "Serializing_Operation",
+      "Level": 6,
+      "BriefDescription": "This metric represents fraction of cycles the CPU was stalled due to LFENCE Instructions.",
+      "UnitOfMeasure": "percent",
+*/ 
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_mem_fence_ymm8r4( const __m256 MISC2_RETIRED_LFENCE,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               const __m256 C13         = 
+	                             _mm256_set1_ps(13.0f);
+	               const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	               register __m256 t0;
+	               register __m256 t1;
+	               register __m256 metric;
+	               t0 = _mm256_mul_ps(C13,MISC2_RETIRED_LFENCE);
+	               t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,
+	                                  _mm256_min_ps(t1,C1));
+	               return (metric);                              
+	      }   
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_mem_fence_ymm8r4(const float * __restrict pMISC2_RETIRED_LFENCE,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               register __m256 MISC2_RETIRED_LFENCE = 
+	                                       _mm256_loadu_ps(&pMISC2_RETIRED_LFENCE[0]);
+	               register __m256 CPU_CLKUNHALTED_THREAD     = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               const __m256 C13         = 
+	                             _mm256_set1_ps(13.0f);
+	               const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	               register __m256 t0;
+	               register __m256 t1;
+	               register __m256 metric;
+	               t0 = _mm256_mul_ps(C13,MISC2_RETIRED_LFENCE);
+	               t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,
+	                                  _mm256_min_ps(t1,C1));
+	               return (metric);                              
+	      }  
+	      
+/*
+     "MetricName": "Mixing_Vectors",
+      "LegacyName": "metric_TMA_........Mixing_Vectors(%)",
+      "ParentCategory": "Ports_Utilized_0",
+      "Level": 5,
+      "BriefDescription": "The Mixing_Vectors metric gives the percentage of injected blend uops out of all uops issued. Usually a Mixing_Vectors over 5% is worth investigating. Read more in Appendix B1 of the Optimizations Guide for this topic.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_mix_vectors_ymm8r4( const __m256 ASSISTS_SSE_AVX_MIX,
+	                                     const __m256 CPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               const __m256 C160         = 
+	                             _mm256_set1_ps(160.0f);
+	               const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	               register __m256 t0;
+	               register __m256 t1;
+	               register __m256 metric;
+	               t0 = _mm256_mul_ps(C160,ASSISTS_SSE_AVX_MIX);
+	               t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,
+	                                  _mm256_min_ps(t1,C1));
+	               return (metric);                              
+	      }   
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_mix_vectors_ymm8r4(const float * __restrict pASSISTS_SSE_AVX_MIX,
+	                                     const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	                                     
+	               register __m256 ASSISTS_SSE_AVX_MIX = 
+	                                       _mm256_loadu_ps(&pASSISTS_SSE_AVX_MIX[0]);
+	               register __m256 CPU_CLKUNHALTED_THREAD     = 
+	                                       _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	               const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	               const __m256 C160         = 
+	                             _mm256_set1_ps(160.0f);
+	               const __m256 C1          =
+	                             _mm256_set1_ps(1.0f);
+	               register __m256 t0;
+	               register __m256 t1;
+	               register __m256 metric;
+	               t0 = _mm256_mul_ps(C160,ASSISTS_SSE_AVX_MIX);
+	               t1 = _mm256_div_ps(t0,CPU_CLK_UNHALTED_THREAD);
+	               metric = _mm256_mul_ps(C100,
+	                                  _mm256_min_ps(t1,C1));
+	               return (metric);                              
+	      }  
+	      
+/*
+     "MetricName": "AMX_Busy",
+      "LegacyName": "metric_TMA_........AMX_Busy(%)",
+      "ParentCategory": "Ports_Utilized_0",
+      "Level": 5,
+      "BriefDescription": "This metric estimates fraction of cycles where the Advanced Matrix Extensions (AMX) execution engine was busy with tile (arithmetic) operations",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_amx_busy_ymm8r4(const __m256 EXE_AMX_BUSY,
+	                                   const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(EXE_AMX_BUSY,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                            
+	      }
+	      
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_amx_busy_ymm8r4(const float * __restrict pEXE_AMX_BUSY,
+	                                   const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	               
+	                register __m256 EXE_AMX_BUSY = 
+	                                   _mm256_loadu_ps(&pEXE_AMX_BUSY[0]);
+	                register __m256 CPU_CLK_UNHALTED_THREAD = 
+	                                   _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;
+	                t0 = _mm256_div_ps(EXE_AMX_BUSY,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                            
+	      }
+	      
+/*
+      "MetricName": "Ports_Utilized_1",
+      "LegacyName": "metric_TMA_......Ports_Utilized_1(%)",
+      "ParentCategory": "Ports_Utilization",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles where the CPU executed total of 1 uop per cycle on all execution ports (Logical Processor cycles since ICL, Physical Core cycles otherwise). This can be due to heavy data-dependency among software instructions; or over oversubscribing a particular hardware resource. In some other cases with high 1_Port_Utilized and L1_Bound; this metric can point to L1 data-cache latency bottleneck that may not necessarily manifest with complete execution starvation (due to the short L1 latency e.g. walking a linked list) - looking at the assembly can be helpful.",
+      "UnitOfMeasure": "percent",
+*/	
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_1_util_ymm8r4(const __m256 EXE_ACTIVITY_1_PORTS_UTIL,
+	                                      const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;  
+	                t0 = _mm256_mul_ps(EXE_ACTIVITY_1_PORTS_UTIL,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                           
+	       }    
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_1_util_ymm8r4(const float * __restrict pEXE_ACTIVITY_1_PORTS_UTIL,
+	                                      const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	               
+	                register __m256 EXE_ACTIVITY_1_PORTS_UTIL = 
+	                                            _mm256_loadu_ps(&pEXE_ACTIVITY_1_PORTS_UTIL[0]);
+	                register __m256 CPU_CLK_UNHALTED_THREAD   =
+	                                            _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;  
+	                t0 = _mm256_mul_ps(EXE_ACTIVITY_1_PORTS_UTIL,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                           
+	       }   
+	       
+/*
+      "MetricName": "Ports_Utilized_2",
+      "LegacyName": "metric_TMA_......Ports_Utilized_2(%)",
+      "ParentCategory": "Ports_Utilization",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles CPU executed total of 2 uops per cycle on all execution ports (Logical Processor cycles since ICL, Physical Core cycles otherwise).  Loop Vectorization -most compilers feature auto-Vectorization options today- reduces pressure on the execution ports as multiple elements are calculated with same uop.",
+      "UnitOfMeasure": "percent",
+*/ 
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_2_util_ymm8r4(const __m256 EXE_ACTIVITY_2_PORTS_UTIL,
+	                                      const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;  
+	                t0 = _mm256_mul_ps(EXE_ACTIVITY_2_PORTS_UTIL,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                           
+	       }    
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_2_util_ymm8r4(const float * __restrict pEXE_ACTIVITY_2_PORTS_UTIL,
+	                                      const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	               
+	                register __m256 EXE_ACTIVITY_2_PORTS_UTIL = 
+	                                            _mm256_loadu_ps(&pEXE_ACTIVITY_2_PORTS_UTIL[0]);
+	                register __m256 CPU_CLK_UNHALTED_THREAD   =
+	                                            _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;  
+	                t0 = _mm256_mul_ps(EXE_ACTIVITY_2_PORTS_UTIL,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                           
+	       }    
+	       
+/*
+    "MetricName": "Ports_Utilized_3m",
+      "LegacyName": "metric_TMA_......Ports_Utilized_3m(%)",
+      "ParentCategory": "Ports_Utilization",
+      "Level": 4,
+      "BriefDescription": "This metric represents fraction of cycles CPU executed total of 3 or more uops per cycle on all execution ports (Logical Processor cycles since ICL, Physical Core cycles otherwise).",
+      "UnitOfMeasure": "percent",  
+*/ 
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_3m_util_ymm8r4(const __m256 UOPS_EXECUTED_CYCLES_GE_3,
+	                                      const __m256 CPU_CLK_UNHALTED_THREAD) {
+	               
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;  
+	                t0 = _mm256_mul_ps(UOPS_EXECUTED_CYCLES_GE_3,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                           
+	       }    
+	       
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_3m_util_ymm8r4(const float * __restrict pUOPS_EXECUTED_CYCLES_GE_3,
+	                                      const float * __restrict pCPU_CLK_UNHALTED_THREAD) {
+	               
+	                register __m256 UOPS_EXECUTED_CYCLES_GE_3 = 
+	                                            _mm256_loadu_ps(&pUOPS_EXECUTED_CYCLES_GE_3[0]);
+	                register __m256 CPU_CLK_UNHALTED_THREAD   =
+	                                            _mm256_loadu_ps(&pCPU_CLK_UNHALTED_THREAD[0]);
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                register __m256 t0;
+	                register __m256 metric;  
+	                t0 = _mm256_mul_ps(UOPS_EXECUTED_CYCLES_GE_3,
+	                                   CPU_CLK_UNHALTED_THREAD);
+	                metric = _mm256_mul_ps(C100,t0);
+	                return (metric);                           
+	       }   
+	       
+/*
+       "MetricName": "ALU_Op_Utilization",
+      "LegacyName": "metric_TMA_........ALU_Op_Utilization(%)",
+      "ParentCategory": "Ports_Utilized_3m",
+      "Level": 5,
+      "BriefDescription": "This metric represents Core fraction of cycles CPU dispatched uops on execution ports for ALU operations.",
+      "UnitOfMeasure": "percent",  
+*/ 
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_alu_ops_util_ymm8r4(const __m256 UOPS_DISPATCHED_PORT_0,
+	                                       const __m256 UOPS_DISPATCHED_PORT_1,
+	                                       const __m256 UOPS_DISPATCHED_PORT_5_11,
+	                                       const __m256 UOPS_DISPATCHED_PORT_6,
+	                                       const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                                       
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                const __m256 C5          =
+	                             _mm256_set1_ps(5.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 abcd;
+	                register __m256 metric;
+	                t0   = _mm256_mul_ps(C5,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                abcd = _mm256_add_ps(_mm256_add_ps(UOPS_DISPATCHED_PORT_0,
+	                                                   UOPS_DISPATCHED_PORT_1),
+	                                     _mm256_add_ps(UOPS_DISPATCHED_PORT_5_11,
+	                                                   UOPS_DISPATCHED_PORT_6));  
+	                t1   = _mm256_div_ps(abcd,t0);
+	                metric = _mm256_mul_ps(C100,t1);
+	                return (metric);                               
+	      }
+	      
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_alu_ops_util_ymm8r4(const float * __restrict pUOPS_DISPATCHED_PORT_0,
+	                                       const float * __restrict pUOPS_DISPATCHED_PORT_1,
+	                                       const float * __restrict pUOPS_DISPATCHED_PORT_5_11,
+	                                       const float * __restrict pUOPS_DISPATCHED_PORT_6,
+	                                       const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                   
+	                register __m256  UOPS_DISPATCHED_PORT_0 = 
+	                                         _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_0[0]);
+	                register __m256  UOPS_DISPATCHED_PORT_1 =
+	                                         _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_1[0]);
+	                register __m256  UOPS_DISPATCHED_PORT_5_11 = 
+	                                         _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_5_11[0]);
+	                register __m256  UOPS_DISPATCHED_PORT_6    =
+	                                         _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_6[0]);
+	                register __m256  CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                         _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);                  
+	                const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	                const __m256 C5          =
+	                             _mm256_set1_ps(5.0f);
+	                register __m256 t0;
+	                register __m256 t1;
+	                register __m256 abcd;
+	                register __m256 metric;
+	                t0   = _mm256_mul_ps(C5,CPU_CLK_UNHALTED_DISTRIBUTED);
+	                abcd = _mm256_add_ps(_mm256_add_ps(UOPS_DISPATCHED_PORT_0,
+	                                                   UOPS_DISPATCHED_PORT_1),
+	                                     _mm256_add_ps(UOPS_DISPATCHED_PORT_5_11,
+	                                                   UOPS_DISPATCHED_PORT_6));  
+	                t1   = _mm256_div_ps(abcd,t0);
+	                metric = _mm256_mul_ps(C100,t1);
+	                return (metric);                               
+	      }
+	      
+/*
+     "MetricName": "Port_0",
+      "LegacyName": "metric_TMA_..........Port_0(%)",
+      "ParentCategory": "ALU_Op_Utilization",
+      "Level": 6,
+      "BriefDescription": "This metric represents Core fraction of cycles CPU dispatched uops on execution port 0 ([SNB+] ALU; [HSW+] ALU and 2nd branch)",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_0_ymm8r4(const __m256 UOPS_DISPATCHED_PORT_0,
+	                                 const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_0,
+	                                CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      }
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_0_ymm8r4(const float * __restrict pUOPS_DISPATCHED_PORT_0,
+	                                 const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             register __m256 UOPS_DISPATCHED_PORT_0 = 
+	                                 _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_0[0]);
+	             register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                 _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_0,
+	                                CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      }
+	      
+/*
+     "MetricName": "Port_1",
+      "LegacyName": "metric_TMA_..........Port_1(%)",
+      "ParentCategory": "ALU_Op_Utilization",
+      "Level": 6,
+      "BriefDescription": "This metric represents Core fraction of cycles CPU dispatched uops on execution port 1 (ALU)",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_1_ymm8r4(const __m256 UOPS_DISPATCHED_PORT_1,
+	                                 const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_1,
+	                                CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      }
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_1_ymm8r4(const float * __restrict pUOPS_DISPATCHED_PORT_1,
+	                                 const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             register __m256 UOPS_DISPATCHED_PORT_1 = 
+	                                 _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_1[0]);
+	             register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                 _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_1,
+	                                CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      }
+	      
+/*
+      "MetricName": "Port_6",
+      "LegacyName": "metric_TMA_..........Port_6(%)",
+      "ParentCategory": "ALU_Op_Utilization",
+      "Level": 6,
+      "BriefDescription": "This metric represents Core fraction of cycles CPU dispatched uops on execution port 6 ([HSW+]Primary Branch and simple ALU)",
+      "UnitOfMeasure": "percent",
+*/	
+
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_6_ymm8r4(const __m256 UOPS_DISPATCHED_PORT_6,
+	                                 const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_6,
+	                                CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      }
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_port_6_ymm8r4(const float * __restrict pUOPS_DISPATCHED_PORT_6,
+	                                 const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             register __m256 UOPS_DISPATCHED_PORT_6 = 
+	                                 _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_6[0]);
+	             register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                 _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_6,
+	                                CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      } 
+	      
+/*
+     "MetricName": "Load_Op_Utilization",
+      "LegacyName": "metric_TMA_........Load_Op_Utilization(%)",
+      "ParentCategory": "Ports_Utilized_3m",
+      "Level": 5,
+      "BriefDescription": "This metric represents Core fraction of cycles CPU dispatched uops on execution port for Load operations",
+      "UnitOfMeasure": "percent",
+*/
+
+               __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_load_op_util_ymm8r4(const __m256 UOPS_DISPATCHED_PORT_2_3_10,
+	                                 const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             const __m256 C3          =
+	                             _mm256_set1_ps(3.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_2_3_10,
+	                                              _mm256_mul_ps(C3,
+	                                                  CPU_CLK_UNHALTED_DISTRIBUTED));
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      }
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_load_op_util_ymm8r4(const float * __restrict pUOPS_DISPATCHED_PORT_2_3_10,
+	                                 const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	                
+	             register __m256 UOPS_DISPATCHED_PORT_2_3_10 = 
+	                                 _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_2_3_10[0]);
+	             register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                 _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             const __m256 C3          =
+	                             _mm256_set1_ps(3.0f);
+	             register __m256 t0;
+	             register __m256 metric;
+	             t0 = _mm256_div_ps(UOPS_DISPATCHED_PORT_2_3_10,
+	                                              _mm256_mul_ps(C3,
+	                                                  CPU_CLK_UNHALTED_DISTRIBUTED));
+	             metric = _mm256_mul_ps(C100,t0);
+	             return (metric);                            
+	      } 
+	      
+/*
+      "MetricName": "Store_Op_Utilization",
+      "LegacyName": "metric_TMA_........Store_Op_Utilization(%)",
+      "ParentCategory": "Ports_Utilized_3m",
+      "Level": 5,
+      "BriefDescription": "This metric represents Core fraction of cycles CPU dispatched uops on execution port for Store operations",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_ops_util_ymm8r4(const __m256 UOPS_DISPATCHED_PORT_4_9,
+	                                         const __m256 UOPS_DISPATCHED_PORT_7_8,
+	                                         const __m256 CPU_CLK_UNHALTED_DISTRIBUTED) {
+	               
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             const __m256 C4          =
+	                             _mm256_set1_ps(4.0f);
+	             register __m256 t0;
+	             register __m256 t1;
+	             register __m256 metric;
+	             t0 = _mm256_add_ps(UOPS_DISPATCHED_PORT_4_9,
+	                                UOPS_DISPATCHED_PORT_7_8);
+	             t1 = _mm256_mul_ps(C4,CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,
+	                            _mm256_div_ps(t0,t1));
+	             return (metric);                                
+	      }
+	      
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+                __ATTR_VECTORCALL__
+	        static inline
+	        __m256 spr_store_ops_util_ymm8r4(const float * __restrict pUOPS_DISPATCHED_PORT_4_9,
+	                                         const float * __restrict pUOPS_DISPATCHED_PORT_7_8,
+	                                         const float * __restrict pCPU_CLK_UNHALTED_DISTRIBUTED) {
+	               
+	             register __m256 UOPS_DISPATCHED_PORT_4_9 = 
+	                                      _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_4_9[0]);
+	             register __m256 UOPS_DISPATCHED_PORT_7_8 = 
+	                                      _mm256_loadu_ps(&pUOPS_DISPATCHED_PORT_7_8[0]);
+	             register __m256 CPU_CLK_UNHALTED_DISTRIBUTED = 
+	                                 _mm256_loadu_ps(&pCPU_CLK_UNHALTED_DISTRIBUTED[0]);
+	             const __m256 C100        =
+	                             _mm256_set1_ps(100.0f);
+	             const __m256 C4          =
+	                             _mm256_set1_ps(4.0f);
+	             register __m256 t0;
+	             register __m256 t1;
+	             register __m256 metric;
+	             t0 = _mm256_add_ps(UOPS_DISPATCHED_PORT_4_9,
+	                                UOPS_DISPATCHED_PORT_7_8);
+	             t1 = _mm256_mul_ps(C4,CPU_CLK_UNHALTED_DISTRIBUTED);
+	             metric = _mm256_mul_ps(C100,
+	                            _mm256_div_ps(t0,t1));
+	             return (metric);                                
+	      }
+	      
+/*
+      "MetricName": "Retiring",
+      "LegacyName": "metric_TMA_Retiring(%)",
+      "Level": 1,
+      "BriefDescription": "This category represents fraction of slots utilized by useful work i.e. issued uops that eventually get retired. Ideally; all pipeline slots would be attributed to the Retiring category.  Retiring of 100% would indicate the maximum Pipeline_Width throughput was achieved.  Maximizing Retiring typically increases the Instructions-per-cycle (see IPC metric). Note that a high Retiring value does not necessary mean there is no room for more performance.  For example; Heavy-operations or Microcode Assists are categorized under Retiring. They often indicate suboptimal performance and can often be optimized or avoided. ",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_retiring_r4(const float PERF_METRICS_RETIRING,
+	                              const float PERF_METRICS_FRONTEND_BOUND,
+	                              const float PERF_METRICS_BAD_SPECULATION,
+	                              const float PERF_METRICS_BACKEND_BOUND) {
+	                              
+	               constexpr float C100 = 100.0f;
+	               float bcad;
+	               float t0;
+	               float metric;
+	               bcad = PERF_METRICS_FRONTEND_BOUND+
+	                      PERF_METRICS_BAD_SPECULATION+
+	                      PERF_METRICS_RETIRING+
+	                      PERF_METRICS_BACKEND_BOUND;
+	               t0 =   PERF_METRICS_RETIRING/bcad;
+	               metric = C100*t0;
+	               return (metric);                     
+	      }
+	      
+/*
+    "MetricName": "Light_Operations",
+      "LegacyName": "metric_TMA_..Light_Operations(%)",
+      "ParentCategory": "Retiring",
+      "Level": 2,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring light-weight operations -- instructions that require no more than one uop (micro-operation). This correlates with total number of instructions used by the program. A uops-per-instruction (see UPI metric) ratio of 1 or less should be expected for decently optimized software running on Intel Core/Xeon products. While this often indicates efficient X86 instructions were executed; high value does not necessarily mean better performance cannot be achieved.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_light_ops_r4(const float PERF_METRICS_RETIRING,
+	                               const float PERF_METRICS_FRONTEND_BOUND,
+	                               const float PERF_METRICS_BAD_SPECULATION,
+	                               const float PERF_METRICS_BACKEND_BOUND,
+	                               const float PERF_METRICS_HEAVY_OPERATIONS) {
+	                               
+	              constexpr float C100 = 100.0f;
+	              float bcad;
+	              float t0;
+	              float t1;
+	              float metric;
+	              bcad = PERF_METRICS_FRONTEND_BOUND+
+	                     PERF_METRICS_BAD_SPECULATION+
+	                     PERF_METRICS_RETIRING+
+	                     PERF_METRICS_BACKEND_BOUND;
+	              t0 =  PERF_METRICS_RETIRING/bcad;
+	              t1 =  PERF_METRICS_HEAVY_OPERATIONS/bcad;
+	              metric = C100*std::max(0.0f,t0-t1);
+	              return (metric);                       
+	     }
+	     
+/*
+    "MetricName": "X87_Use",
+      "LegacyName": "metric_TMA_......X87_Use(%)",
+      "ParentCategory": "FP_Arith",
+      "Level": 4,
+      "BriefDescription": "This metric serves as an approximation of legacy x87 usage. It accounts for instructions beyond X87 FP arithmetic operations; hence may be used as a thermometer to avoid X87 high usage and preferably upgrade to modern ISA. Tip: consider compiler flags to generate newer AVX (or SSE) instruction sets; which typically perform better and feature vectors.",
+      "UnitOfMeasure": "percent",
+*/
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_x87_use_r4(const float PERF_METRICS_RETIRING,
+	                             const float PERF_METRICS_FRONTEND_BOUND,
+	                             const float PERF_METRICS_BAD_SPECULATION,
+	                             const float PERF_METRICS_BACKEND_BOUND,
+	                             const float UOPS_EXECUTED_X87,
+	                             const float UOPS_EXECUTED_THREAD) {
+	              
+	              constexpr float C100 = 100.0f;
+	              float bcad;
+	              float t0;
+	              float t1;
+	              float metric;  
+	              bcad = PERF_METRICS_FRONTEND_BOUND+
+	                     PERF_METRICS_BAD_SPECULATION+
+	                     PERF_METRICS_RETIRING+
+	                     PERF_METRICS_BACKEND_BOUND;
+	              t0   = PERF_METRICS_RETIRING/bcad;
+	              t1   = t0*UOPS_EXECUTED_X87/
+	                     UOPS_EXECUTED_THREAD;
+	              metric = C100*t1;
+	              return (metric);
+	       }
+	       
+	      
+/*
+    "  MetricName": "FP_Scalar",
+      "LegacyName": "metric_TMA_......FP_Scalar(%)",
+      "ParentCategory": "FP_Arith",
+      "Level": 4,
+      "BriefDescription": "This metric approximates arithmetic floating-point (FP) scalar uops fraction the CPU has executed (retired). May overcount due to FMA double counting.",
+      "UnitOfMeasure": "percent",
+*/
+
+              
+	        
 
 
 } // gms
