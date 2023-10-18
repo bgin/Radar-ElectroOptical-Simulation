@@ -871,7 +871,235 @@ namespace gms {
 	              metric = C100*t1;
 	              return (metric);                             
 	      }
-	                                                              	         
+	      
+/*
+      "MetricName": "Memory_Operations",
+      "LegacyName": "metric_TMA_....Memory_Operations(%)",
+      "ParentCategory": "Light_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring memory operations -- uops for memory load or store accesses.",
+      "UnitOfMeasure": "percent",
+*/
+
+        
+	        __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_mem_ops_r4( const float PERF_METRICS_RETIRING,
+	                              const float PERF_METRICS_FRONTEND_BOUND,
+	                              const float PERF_METRICS_BAD_SPECULATION,
+	                              const float PERF_METRICS_BACKEND_BOUND,
+	                              const float PERF_METRICS_HEAVY_OPERATIONS,
+	                              const float MEM_UOP_RETIRED_ANY,
+	                              const float TOPDOWN_SLOTS_perf_metrics) {
+	           
+	                constexpr float C100 = 100.0f;
+	                float bcad;
+	                float t0;
+	                float t1;
+	                float t2;
+	                float t3;
+	                float metric;
+	                bcad = PERF_METRICS_FRONTEND_BOUND+
+	                       PERF_METRICS_BAD_SPECULATION+
+	                       PERF_METRICS_RETIRING+
+	                       PERF_METRICS_BACKEND_BOUND;
+	                t0   = PERF_METRICS_RETIRING/bcad;
+	                t1   = PERF_METRICS_HEAVY_OPERATIONS/
+	                       bcad;
+	                t2   = std::max(0.0f,t0-t1);
+	                t3   = MEM_UOP_RETIRED_ANY/t0;
+	                metric = C100*t2*t3*TOPDOWN_SLOTS_perf_metrics;
+	                return (metric);                    
+	     }    
+	     
+/*
+     "MetricName": "Fused_Instructions",
+      "LegacyName": "metric_TMA_....Fused_Instructions(%)",
+      "ParentCategory": "Light_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring fused instructions -- where one uop can represent multiple contiguous instructions. The instruction pairs of CMP+JCC or DEC+JCC are commonly used examples.",
+      "UnitOfMeasure": "percent",
+*/	
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_fused_instr_r4( const float PERF_METRICS_RETIRING,
+	                                  const float PERF_METRICS_FRONTEND_BOUND,
+	                                  const float PERF_METRICS_BAD_SPECULATION,
+	                                  const float PERF_METRICS_BACKEND_BOUND,
+	                                  const float PERF_METRICS_HEAVY_OPERATIONS,
+	                                  const float INST_RETIRED_MACRO_FUSED,
+	                                  const float TOPDOWN_SLOTS_perf_metrics) {
+	           
+	                constexpr float C100 = 100.0f;
+	                float bcad;
+	                float t0;
+	                float t1;
+	                float t2;
+	                float t3;
+	                float metric;
+	                bcad = PERF_METRICS_FRONTEND_BOUND+
+	                       PERF_METRICS_BAD_SPECULATION+
+	                       PERF_METRICS_RETIRING+
+	                       PERF_METRICS_BACKEND_BOUND;
+	                t0   = PERF_METRICS_RETIRING/bcad;
+	                t1   = PERF_METRICS_HEAVY_OPERATIONS/
+	                       bcad;
+	                t2   = std::max(0.0f,t0-t1);
+	                t3   = INST_RETIRED_MACRO_FUSED/t0;
+	                metric = C100*t2*t3*TOPDOWN_SLOTS_perf_metrics;
+	                return (metric);                    
+	     }   
+	     
+/*
+      "MetricName": "Non_Fused_Branches",
+      "LegacyName": "metric_TMA_....Non_Fused_Branches(%)",
+      "ParentCategory": "Light_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring branch instructions that were not fused. Non-conditional branches like direct JMP or CALL would count here. Can be used to examine fusible conditional jumps that were not fused.",
+      "UnitOfMeasure": "percent",
+*/ 
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_non_fused_br_r4(const float PERF_METRICS_RETIRING,
+	                                  const float PERF_METRICS_FRONTEND_BOUND,
+	                                  const float PERF_METRICS_BAD_SPECULATION,
+	                                  const float PERF_METRICS_BACKEND_BOUND,
+	                                  const float PERF_METRICS_HEAVY_OPERATIONS,
+	                                  const float BR_INST_RETIRED_ALL_BRANCHES,
+	                                  const float INST_RETIRED_MACRO_FUSED,
+	                                  const float TOPDOWN_SLOTS_perf_metrics) {
+	                                  
+	                constexpr float C100 = 100.0f;
+	                float bcad;
+	                float t0;
+	                float t1;
+	                float t2;
+	                float t3;
+	                float metric;
+	                bcad = PERF_METRICS_FRONTEND_BOUND+
+	                       PERF_METRICS_BAD_SPECULATION+
+	                       PERF_METRICS_RETIRING+
+	                       PERF_METRICS_BACKEND_BOUND;  
+	                t0   = PERF_METRICS_RETIRING/bcad;
+	                t1   = PERF_METRICS_HEAVY_OPERATIONS/
+	                       bcad;
+	                t2   = BR_INST_RETIRED_ALL_BRANCHES-
+	                       INST_RETIRED_MACRO_FUSED;
+	                t3   = std::max(0.0f,t0-t1)*(t2/t0);
+	                metric = C100*t3*TOPDOWN_SLOTS_perf_metrics;
+	                return (metric);                       
+	      }   
+	      
+/*
+      "MetricName": "Nop_Instructions",
+      "LegacyName": "metric_TMA_....Nop_Instructions(%)",
+      "ParentCategory": "Light_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring NOP (no op) instructions. Compilers often use NOPs for certain address alignments - e.g. start address of a function or loop body.",
+      "UnitOfMeasure": "percent", 
+*/      
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float spr_nop_instr_r4(   const float PERF_METRICS_RETIRING,
+	                                  const float PERF_METRICS_FRONTEND_BOUND,
+	                                  const float PERF_METRICS_BAD_SPECULATION,
+	                                  const float PERF_METRICS_BACKEND_BOUND,
+	                                  const float PERF_METRICS_HEAVY_OPERATIONS,
+	                                  const float INST_RETIRED_NOP,
+	                                  const float TOPDOWN_SLOTS_perf_metrics) {
+	           
+	                constexpr float C100 = 100.0f;
+	                float bcad;
+	                float t0;
+	                float t1;
+	                float t2;
+	                float t3;
+	                float metric;
+	                bcad = PERF_METRICS_FRONTEND_BOUND+
+	                       PERF_METRICS_BAD_SPECULATION+
+	                       PERF_METRICS_RETIRING+
+	                       PERF_METRICS_BACKEND_BOUND;
+	                t0   = PERF_METRICS_RETIRING/bcad;
+	                t1   = PERF_METRICS_HEAVY_OPERATIONS/
+	                       bcad;
+	                t2   = std::max(0.0f,t0-t1);
+	                t3   = INST_RETIRED_NOP/t0;
+	                metric = C100*t2*t3*TOPDOWN_SLOTS_perf_metrics;
+	                return (metric);                    
+	     }   
+	     
+/*
+     "MetricName": "Heavy_Operations",
+      "LegacyName": "metric_TMA_..Heavy_Operations(%)",
+      "ParentCategory": "Retiring",
+      "Level": 2,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring heavy-weight operations -- instructions that require two or more uops. This highly-correlates with the uop length of these instructions/flows.",
+      "UnitOfMeasure": "percent",
+*/  
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float  spr_heavy_ops_r4(const float PERF_METRICS_HEAVY_OPERATIONS,
+	                                const float PERF_METRICS_FRONTEND_BOUND,
+	                                const float PERF_METRICS_BAD_SPECULATION,
+	                                const float PERF_METRICS_RETIRING,
+	                                const float PERF_METRICS_BACKEND_BOUND) {
+	                                
+	               constexpr float C100 = 100.0f;
+	               float bcde;
+	               float t0;
+	               float metric;
+	               bcde = PERF_METRICS_FRONTEND_BOUND+
+	                      PERF_METRICS_BAD_SPECULATION+
+	                      PERF_METRICS_RETIRING+
+	                      PERF_METRICS_BACKEND_BOUND;
+	               t0   = PERF_METRICS_HEAVY_OPERATIONS/t0;
+	               metric = C100*t0;
+	               return (metric);                        
+	      }   
+	      
+/*
+     "MetricName": "Few_Uops_Instructions",
+      "LegacyName": "metric_TMA_....Few_Uops_Instructions(%)",
+      "ParentCategory": "Heavy_Operations",
+      "Level": 3,
+      "BriefDescription": "This metric represents fraction of slots where the CPU was retiring instructions that that are decoder into two or up to ([SNB+] four; [ADL+] five) uops. This highly-correlates with the number of uops in such instructions.",
+      "UnitOfMeasure": "percent",
+*/  
+
+                __ATTR_HOT__
+	        __ATTR_ALIGN__(32)
+             	static inline
+	        float  spr_few_uops_instr_r4( const float PERF_METRICS_HEAVY_OPERATIONS,
+	                                      const float PERF_METRICS_FRONTEND_BOUND,
+	                                      const float PERF_METRICS_BAD_SPECULATION,
+	                                      const float PERF_METRICS_RETIRING,
+	                                      const float PERF_METRICS_BACKEND_BOUND,
+	                                      const float UOPS_RETIRED_MS,
+	                                      const float TOPDOWN_SLOTS_perf_metrics) {
+	               
+	               constexpr float C100 = 100.0f;
+	               float bcde;
+	               float t0;
+	               float t1;
+	               float metric;
+	               bcde = PERF_METRICS_FRONTEND_BOUND+
+	                      PERF_METRICS_BAD_SPECULATION+
+	                      PERF_METRICS_RETIRING+
+	                      PERF_METRICS_BACKEND_BOUND; 
+	               t0   = PERF_METRICS_HEAVY_OPERATIONS/bcde;
+	               t1   = UOPS_RETIRED_MS/TOPDOWN_SLOTS_perf_metrics;
+	               metric = C100*std::max(0.0f,t0-t1);
+	               return (metric);                            
+	      }                                 	         
 
 
 }
