@@ -39,8 +39,10 @@ namespace file_version {
 }
 
 #include <cstdint>
+#include <utility>
 #include <immintrin.h>
 #include "GMS_config.h"
+#include "GMS_simd_utils.hpp"
 
 
 namespace  gms {
@@ -67,7 +69,7 @@ namespace  gms {
                                        double *       __restrict zre,
                                        double *       __restrict zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_loadu_pd(&xre[0]);
                         zmm1  = _mm512_loadu_pd(&yre[0]);
                         _mm512_storeu_pd(&zre[0], _mm512_add_pd(zmm0,zmm1));
@@ -89,7 +91,7 @@ namespace  gms {
                                        double *       __restrict __ATTR_ALIGN__(64) zre,
                                        double *       __restrict __ATTR_ALIGN__(64) zim) {
 
-                        register __m512ddddd zmm0,zmm1,zmm2,zmm3;
+                        register __m512d zmm0,zmm1,zmm2,zmm3;
                         zmm0  = _mm512_load_pd(&xre[0]);
                         zmm1  = _mm512_load_pd(&yre[0]);
                         _mm512_store_pd(&zre[0], _mm512_add_pd(zmm0,zmm1));
@@ -1259,7 +1261,7 @@ namespace  gms {
 	                             __m512d * __restrict clogr,
 	                             __m512d * __restrict clogi) {
 	                
-	                register __m512 t1,t2,ln;
+	                register __m512d t1,t2,ln;
 	                t1  = cabs_zmm8r8(re,im);
 	                t2  = carg_zmm8r8(re,im);
 	                ln  = xlog(t1);
@@ -1339,8 +1341,8 @@ namespace  gms {
                                          __m512d * __restrict yre,
                                          __m512d * __restrict yim) {
                          
-                        //register __m512 c;              
-                        //c = negate_zmm16r4(*im);
+                        //register __m512d c;              
+                        //c = negate_zmm8r8(*im);
                         //*im = c;
                         *yre = xre; 
                         *yim = negate_zmm8r8(xim);
@@ -1356,8 +1358,8 @@ namespace  gms {
                                             const __m512d xim) {
                                           
                          
-                        //register __m512 c;              
-                        //c = negate_zmm16r4(*im);
+                        //register __m512d c;              
+                        //c = negate_zmm8r8(*im);
                         //*im = c;
                         zmm8c8_t cv;
                         cv.re = xre; 
@@ -1374,8 +1376,8 @@ namespace  gms {
                    zmm8c8_t cconj_zmm8r8_v2(const zmm8c8_t x) {
                                           
                          
-                        //register __m512 c;              
-                        //c = negate_zmm16r4(*im);
+                        //register __m512d c;              
+                        //c = negate_zmm8r8(*im);
                         //*im = c;
                         zmm8c8_t cv;
                         cv.re = x.re; 
@@ -1679,7 +1681,7 @@ namespace  gms {
                    __ATTR_VECTORCALL__
 	           static inline
 	           ZMM8c8_t cpow_zmm8r8(const ZMM8c8_t x,
-	                                  const float n) {
+	                                  const double n) {
 	                   
 	                ZMM8c8_t cp;        
 	                register __m512d zmm0,zmm1;
@@ -1707,22 +1709,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_zmm8r8_u(const double * __restrict xre,
-                                      const double * __restrict xim,
-                                      const double * __restrict yre,
-                                      const double * __restrict yim,
-                                      __mmask16 * __restrict eqr,
-                                      __mmask16 * __restrict eqi ) {
-
+                   std::pair<__mmask8,__mmask8>
+                   ceq_zmm8r8_u(const double * __restrict xre,
+                                 const double * __restrict xim,
+                                 const double * __restrict yre,
+                                 const double * __restrict yim) {
+                                     
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
-                      _mm512_storeu_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_EQ_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_EQ_OQ);
                       zmm2 = _mm512_loadu_pd(&xim[0]);
                       zmm3 = _mm512_loadu_pd(&yim[0]);
-                      _mm512_storeu_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_EQ_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1731,39 +1733,42 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
+	           std::pair<__mmask8,__mmask8>
+                   ceq_zmm8r8_a(     const double * __restrict __ATTR_ALIGN__(64) xre,
                                       const double * __restrict __ATTR_ALIGN__(64) xim,
                                       const double * __restrict __ATTR_ALIGN__(64) yre,
-                                      const double * __restrict __ATTR_ALIGN__(64) yim,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
-
+                                      const double * __restrict __ATTR_ALIGN__(64) yim) {
+                                     
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
-                      _mm512_store_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_EQ_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_EQ_OQ);
                       zmm2 = _mm512_load_pd(&xim[0]);
                       zmm3 = _mm512_load_pd(&yim[0]);
-                      _mm512_store_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_EQ_OQ));
-              }
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);             
+              }  
 
 
+              
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_zmm8r8(const __m512d xre,
+	           std::pair<__mmask8,__mmask8>
+                   ceq_zmm8r8(     const __m512d xre,
                                     const __m512d xim,
                                     const __m512d yre,
-                                    const __m512d yim,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_EQ_OQ);
-                         *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_EQ_OQ);
+                                    const __m512d yim) {
+                          
+                      __mmask8 eqr;
+                      __mmask8 eqi;         
+                      eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_EQ_OQ);
+                      eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);      
               }
               
               
@@ -1772,14 +1777,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_zmm8r8(const zmm8c8_t x,
-                                   const zmm8c8_t y,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_EQ_OQ);
-                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_EQ_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   ceq_zmm8r8(const zmm16c4_t x,
+                               const zmm16c4_t y) {
+                                    
+                      __mmask8 eqr;
+                      __mmask8 eqi;   
+                      eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_EQ_OQ);
+                      eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);    
               }
+              
 
 
                    __ATTR_ALWAYS_INLINE__
@@ -1787,22 +1795,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_zmm8r8_u(const double * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   cgt_zmm8r8_u(const double * __restrict xre,
                                       const double * __restrict xim,
                                       const double * __restrict yre,
-                                      const double * __restrict yim,
-                                      __mmask16 * __restrict eqr,
-                                      __mmask16 * __restrict eqi ) {
-
+                                      const double * __restrict yim) {
+                                     
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
-                      _mm512_storeu_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_GT_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_GT_OQ);
                       zmm2 = _mm512_loadu_pd(&xim[0]);
                       zmm3 = _mm512_loadu_pd(&yim[0]);
-                      _mm512_storeu_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_GT_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_GT_OQ);	
+                      return std::make_pair(eqr,eqi);                  
               }
 
 
@@ -1811,22 +1819,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
+	           std::pair<__mmask8,__mmask8>
+                   cgt_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
                                       const double * __restrict __ATTR_ALIGN__(64) xim,
                                       const double * __restrict __ATTR_ALIGN__(64) yre,
-                                      const double * __restrict __ATTR_ALIGN__(64) yim,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
-
+                                      const double * __restrict __ATTR_ALIGN__(64) yim) {
+                                      
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
-                      _mm512_store_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_GT_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_GT_OQ);
                       zmm2 = _mm512_load_pd(&xim[0]);
                       zmm3 = _mm512_load_pd(&yim[0]);
-                      _mm512_store_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_GT_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_GT_OQ);
+                      return std::make_pair(eqr,eqi);                               
               }
 
 
@@ -1835,15 +1843,16 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_zmm8r8(const __m512d xre,
+	           std::pair<__mmask8,__mmask8>
+                   cgt_zmm8r8(     const __m512d xre,
                                     const __m512d xim,
                                     const __m512d yre,
-                                    const __m512d yim,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_GT_OQ);
-                         *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_GT_OQ);
+                                    const __m512d yim) {
+                      __mmask8 eqr;
+                      __mmask8 eqi;          
+                      eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_GT_OQ);
+                      eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_GT_OQ);
+                      return std::make_pair(eqr,eqi);      
               }
               
               
@@ -1852,13 +1861,14 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_zmm8r8(const zmm8c8_t x,
-                                   const zmm8c8_t y,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_GT_OQ);
-                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_GT_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   cgt_zmm8r8(const zmm16c4_t x,
+                               const zmm16c4_t y) {
+                      __mmask8 eqr;
+                      __mmask8 eqi;           
+                      eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_GT_OQ);
+                      eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_GT_OQ);
+                      return std::make_pair(eqr,eqi);      
               }
 
 
@@ -1867,22 +1877,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_zmm8r8_u(const double * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   clt_zmm8r8_u(const double * __restrict xre,
                                       const double * __restrict xim,
                                       const double * __restrict yre,
-                                      const double * __restrict yim,
-                                      __mmask16 * __restrict eqr,
-                                      __mmask16 * __restrict eqi ) {
-
+                                      const double * __restrict yim) {
+                                     
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi; 
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
-                      _mm512_storeu_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_LT_OQ));
+                      eqr  =  _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_LT_OQ);
                       zmm2 = _mm512_loadu_pd(&xim[0]);
                       zmm3 = _mm512_loadu_pd(&yim[0]);
-                      _mm512_storeu_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_LT_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_LT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1891,22 +1901,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
+	           std::pair<__mmask8,__mmask8>
+                   clt_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
                                       const double * __restrict __ATTR_ALIGN__(64) xim,
                                       const double * __restrict __ATTR_ALIGN__(64) yre,
-                                      const double * __restrict __ATTR_ALIGN__(64) yim,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
-
+                                      const double * __restrict __ATTR_ALIGN__(64) yim) {
+                                     
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi; 
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
-                      _mm512_store_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_LT_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_LT_OQ);
                       zmm2 = _mm512_load_pd(&xim[0]);
                       zmm3 = _mm512_load_pd(&yim[0]);
-                      _mm512_store_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_LT_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_LT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1915,15 +1925,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_zmm8r8(const __m512d xre,
+	           std::pair<__mmask8,__mmask8>
+                   clt_zmm8r8(     const __m512d xre,
                                     const __m512d xim,
                                     const __m512d yre,
-                                    const __m512d yim,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_LT_OQ);
-                         *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_LT_OQ);
+                                    const __m512d yim) {
+                                  
+                          __mmask8 eqr;
+                          __mmask8 eqi; 
+                          eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_LT_OQ);
+                          eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_LT_OQ);
+                          return std::make_pair(eqr,eqi);
               }
               
               
@@ -1932,13 +1944,15 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_zmm8r8( const zmm8c8_t x,
-                                    const zmm8c8_t y,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_LT_OQ);
-                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_LT_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   clt_zmm8r8(const zmm16c4_t x,
+                               const zmm16c4_t y) {
+                           
+                         __mmask8 eqr;
+                         __mmask8 eqi;        
+                         eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_LT_OQ);
+                         eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_LT_OQ);
+                         return std::make_pair(eqr,eqi);
               }
 
 
@@ -1948,22 +1962,23 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_zmm8r8_u(const double * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   cneq_zmm8r8_u(const double * __restrict xre,
                                       const double * __restrict xim,
                                       const double * __restrict yre,
-                                      const double * __restrict yim,
-                                      __mmask16 * __restrict eqr,
-                                      __mmask16 * __restrict eqi ) {
+                                      const double * __restrict yim) {
+                                     
 
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;   
                       zmm0 = _mm512_loadu_pd(&xre[0]);
                       zmm1 = _mm512_loadu_pd(&yre[0]);
-                      _mm512_storeu_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_NEQ_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_NEQ_OQ);
                       zmm2 = _mm512_loadu_pd(&xim[0]);
                       zmm3 = _mm512_loadu_pd(&yim[0]);
-                      _mm512_storeu_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_NEQ_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_NEQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1972,22 +1987,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
+	           std::pair<__mmask8,__mmask8>
+                   cneq_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) xre,
                                       const double * __restrict __ATTR_ALIGN__(64) xim,
                                       const double * __restrict __ATTR_ALIGN__(64) yre,
-                                      const double * __restrict __ATTR_ALIGN__(64) yim,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqr,
-                                      __mmask16 * __restrict __ATTR_ALIGN__(64) eqi ) {
+                                      const double * __restrict __ATTR_ALIGN__(64) yim) {                                    
 
                       register __m512d zmm0,zmm1,zmm2,zmm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;   
                       zmm0 = _mm512_load_pd(&xre[0]);
                       zmm1 = _mm512_load_pd(&yre[0]);
-                      _mm512_store_pd(&eqr[0],
-                                       _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_NEQ_OQ));
+                      eqr  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_NEQ_OQ);
                       zmm2 = _mm512_load_pd(&xim[0]);
                       zmm3 = _mm512_load_pd(&yim[0]);
-                      _mm512_store_pd(&eqi[0],
-                                       _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_NEQ_OQ));
+                      eqi  = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_NEQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1996,15 +2011,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_zmm8r8(const __m512d xre,
+	           std::pair<__mmask8,__mmask8>   
+                   cneq_zmm8r8(const __m512d xre,
                                     const __m512d xim,
                                     const __m512d yre,
-                                    const __m512d yim,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_NEQ_OQ);
-                         *eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_NEQ_OQ);
+                                    const __m512d yim) {
+                                
+                         __mmask8 eqr;
+                         __mmask8 eqi;
+                         eqr = _mm512_cmp_pd_mask(xre,yre,_CMP_NEQ_OQ);
+                         eqi = _mm512_cmp_pd_mask(xim,yim,_CMP_NEQ_OQ);
+                         return std::make_pair(eqr,eqi); 
               }
               
               
@@ -2013,15 +2030,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_zmm8r8( const zmm8c8_t x,
-                                     const zmm8c8_t y,
-                                    __mmask16 * __restrict eqr,
-                                    __mmask16 * __restrict eqi) {
-
-                         *eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_NEQ_OQ);
-                         *eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_NEQ_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   cneq_zmm8r8(const zmm16c4_t x,
+                                const zmm16c4_t y) {
+                          
+                         __mmask8 eqr;
+                         __mmask8 eqi;           
+                         eqr = _mm512_cmp_pd_mask(x.re,y.re,_CMP_NEQ_OQ);
+                         eqi = _mm512_cmp_pd_mask(x.im,y.im,_CMP_NEQ_OQ);
+                         return std::make_pair(eqr,eqi); 
               }
-
+  
 
                  
                    __ATTR_ALWAYS_INLINE__
