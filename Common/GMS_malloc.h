@@ -23,6 +23,7 @@ namespace  file_info {
 #include <linux/mman.h>
 #include <assert>
 #include <omp.h> // OMP allocators
+#include <alloca.h>
 #include "GMS_error_macros.h"
 
 
@@ -117,6 +118,13 @@ namespace gms {
                    _mm_free(ptr);
 	      }
 
+
+#define ALIGNED_ALLOCA(p, s, a) { \
+  char *c_ptr = alloca((s) + (a)); \
+  int64 off1 = (a) - 1; \
+  int64 i_ptr64 = ((int64)c_ptr) + off1); \
+  (p) = (void*)(i_ptr64 - (i_ptr64 & off1)); \
+}
 
              
 
