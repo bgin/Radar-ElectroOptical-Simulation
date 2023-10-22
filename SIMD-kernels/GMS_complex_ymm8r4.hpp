@@ -40,6 +40,7 @@ namespace file_version {
 
 #include <cstdint>
 #include <immintrin.h>
+#include <utility>
 #include "GMS_config.h"
 
 
@@ -1764,22 +1765,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_ymm8c4_u(const float * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   ceq_ymm8c4_u(const float * __restrict xre,
                                       const float * __restrict xim,
                                       const float * __restrict yre,
-                                      const float * __restrict yim,
-                                      __mmask8 * __restrict eqr,
-                                      __mmask8 * __restrict eqi ) {
-
+                                      const float * __restrict yim) {
+                                      
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_loadu_ps(&xre[0]);
                       ymm1 = _mm256_loadu_ps(&yre[0]);
-                      _mm256_storeu_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_EQ_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_EQ_OQ);
                       ymm2 = _mm256_loadu_ps(&xim[0]);
                       ymm3 = _mm256_loadu_ps(&yim[0]);
-                      _mm256_storeu_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_EQ_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1788,22 +1789,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_ymm8c4_a(const float * __restrict __ATTR_ALIGN__(32) xre,
+	           std::pair<__mmask8,__mmask8>
+                   ceq_ymm8c4_a(      const float * __restrict __ATTR_ALIGN__(32) xre,
                                       const float * __restrict __ATTR_ALIGN__(32) xim,
                                       const float * __restrict __ATTR_ALIGN__(32) yre,
-                                      const float * __restrict __ATTR_ALIGN__(32) yim,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqr,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqi ) {
-
+                                      const float * __restrict __ATTR_ALIGN__(32) yim) {
+                                     
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_load_ps(&xre[0]);
                       ymm1 = _mm256_load_ps(&yre[0]);
-                      _mm256_store_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_EQ_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_EQ_OQ);
                       ymm2 = _mm256_load_ps(&xim[0]);
                       ymm3 = _mm256_load_ps(&yim[0]);
-                      _mm256_store_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_EQ_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1812,15 +1813,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_ymm8c4(const __m256 xre,
+	           std::pair<__mmask8,__mmask8>
+                   ceq_ymm8c4(      const __m256 xre,
                                     const __m256 xim,
                                     const __m256 yre,
-                                    const __m256 yim,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_EQ_OQ);
-                         *eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_EQ_OQ);
+                                    const __m256 yim) {
+                                   
+                      __mmask8 eqr;
+                      __mmask8 eqi;
+                      eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_EQ_OQ);
+                      eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
               
               
@@ -1829,13 +1832,15 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void ceq_ymm8c4(const ymm8c4_t x,
-                                    const ymm8c4_t y,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_EQ_OQ);
-                         *eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_EQ_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   ceq_ymm8c4(      const ymm8c4_t x,
+                                    const ymm8c4_t y) {
+                                   
+                      __mmask8 eqr;
+                      __mmask8 eqi;
+                      eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_EQ_OQ);
+                      eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_EQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
               
 
@@ -1845,22 +1850,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_ymm8c4_u(const float * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   cgt_ymm8c4_u(      const float * __restrict xre,
                                       const float * __restrict xim,
                                       const float * __restrict yre,
-                                      const float * __restrict yim,
-                                      __mmask8 * __restrict eqr,
-                                      __mmask8 * __restrict eqi ) {
-
+                                      const float * __restrict yim) {
+                                     
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_loadu_ps(&xre[0]);
                       ymm1 = _mm256_loadu_ps(&yre[0]);
-                      _mm256_storeu_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_GT_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_GT_OQ);
                       ymm2 = _mm256_loadu_ps(&xim[0]);
                       ymm3 = _mm256_loadu_ps(&yim[0]);
-                      _mm256_storeu_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_GT_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_GT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1869,22 +1874,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_ymm8c4_a(const float * __restrict __ATTR_ALIGN__(32) xre,
+	           std::pair<__mmask8,__mmask8>
+                   cgt_ymm8c4_a(const float * __restrict __ATTR_ALIGN__(32) xre,
                                       const float * __restrict __ATTR_ALIGN__(32) xim,
                                       const float * __restrict __ATTR_ALIGN__(32) yre,
-                                      const float * __restrict __ATTR_ALIGN__(32) yim,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqr,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqi ) {
-
+                                      const float * __restrict __ATTR_ALIGN__(32) yim) {
+                                      
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_load_ps(&xre[0]);
                       ymm1 = _mm256_load_ps(&yre[0]);
-                      _mm256_store_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_GT_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_GT_OQ);
                       ymm2 = _mm256_load_ps(&xim[0]);
                       ymm3 = _mm256_load_ps(&yim[0]);
-                      _mm256_store_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_GT_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_GT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1893,15 +1898,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_ymm8c4(const __m256 xre,
+	           std::pair<__mmask8,__mmask8>
+                   cgt_ymm8c4(      const __m256 xre,
                                     const __m256 xim,
                                     const __m256 yre,
-                                    const __m256 yim,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_GT_OQ);
-                         *eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_GT_OQ);
+                                    const __m256 yim) {
+                                   
+                         __mmask8 eqr;
+                         __mmask8 eqi;
+                         eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_GT_OQ);
+                         eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_GT_OQ);
+                         return std::make_pair(eqr,eqi);
               }
               
               
@@ -1910,13 +1917,15 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cgt_ymm8c4(const ymm8c4_t x,
-                                    const ymm8c4_t y,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_GT_OQ);
-                         *eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_GT_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   cgt_ymm8c4(      const ymm8c4_t x,
+                                    const ymm8c4_t y) {
+                                   
+                         __mmask8 eqr;
+                         __mmask8 eqi;
+                         eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_GT_OQ);
+                         eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_GT_OQ);
+                         return std::make_pair(eqr,eqi);
               }
 
 
@@ -1925,22 +1934,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_ymm8c4_u(const float * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   clt_ymm8c4_u(      const float * __restrict xre,
                                       const float * __restrict xim,
                                       const float * __restrict yre,
-                                      const float * __restrict yim,
-                                      __mmask8 * __restrict eqr,
-                                      __mmask8 * __restrict eqi ) {
-
+                                      const float * __restrict yim) {
+                                      
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_loadu_ps(&xre[0]);
                       ymm1 = _mm256_loadu_ps(&yre[0]);
-                      _mm256_storeu_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_LT_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_LT_OQ);
                       ymm2 = _mm256_loadu_ps(&xim[0]);
                       ymm3 = _mm256_loadu_ps(&yim[0]);
-                      _mm256_storeu_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_LT_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_LT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1949,22 +1958,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_ymm8c4_a(const float * __restrict __ATTR_ALIGN__(32) xre,
+	           std::pair<__mmask8,__mmask8>
+                   clt_ymm8c4_a(     const float * __restrict __ATTR_ALIGN__(32) xre,
                                       const float * __restrict __ATTR_ALIGN__(32) xim,
                                       const float * __restrict __ATTR_ALIGN__(32) yre,
-                                      const float * __restrict __ATTR_ALIGN__(32) yim,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqr,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqi ) {
-
+                                      const float * __restrict __ATTR_ALIGN__(32) yim) {
+                                    
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_load_ps(&xre[0]);
                       ymm1 = _mm256_load_ps(&yre[0]);
-                      _mm256_store_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_LT_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_LT_OQ);
                       ymm2 = _mm256_load_ps(&xim[0]);
                       ymm3 = _mm256_load_ps(&yim[0]);
-                      _mm256_store_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_LT_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_LT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -1973,15 +1982,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_ymm8c4(const __m256 xre,
+	           std::pair<__mmask8,__mmask8>
+                   clt_ymm8c4(      const __m256 xre,
                                     const __m256 xim,
                                     const __m256 yre,
-                                    const __m256 yim,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_LT_OQ);
-                         *eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_LT_OQ);
+                                    const __m256 yim) {
+                                    
+                      __mmask8 eqr;
+                      __mmask8 eqi;
+                      eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_LT_OQ);
+                      eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_LT_OQ);
+                      return std::make_pair(eqr,eqi);
               }
               
               
@@ -1990,13 +2001,15 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void clt_ymm8c4(const ymm8c4_t x,
-                                    const ymm8c4_t y,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_LT_OQ);
-                         *eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_LT_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   void clt_ymm8c4( const ymm8c4_t x,
+                                    const ymm8c4_t y) {
+                                    
+                         __mmask8 eqr;
+                         __mmask8 eqi;
+                         eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_LT_OQ);
+                         eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_LT_OQ);
+                         return std::make_pair(eqr,eqi);
               }
 
 
@@ -2006,22 +2019,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_ymm8c4_u(const float * __restrict xre,
+	           std::pair<__mmask8,__mmask8>
+                   cneq_ymm8c4_u(    const float * __restrict xre,
                                       const float * __restrict xim,
                                       const float * __restrict yre,
-                                      const float * __restrict yim,
-                                      __mmask8 * __restrict eqr,
-                                      __mmask8 * __restrict eqi ) {
-
+                                      const float * __restrict yim) {
+                                      
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_loadu_ps(&xre[0]);
                       ymm1 = _mm256_loadu_ps(&yre[0]);
-                      _mm256_storeu_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_NEQ_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_NEQ_OQ);
                       ymm2 = _mm256_loadu_ps(&xim[0]);
                       ymm3 = _mm256_loadu_ps(&yim[0]);
-                      _mm256_storeu_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_NEQ_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_NEQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -2030,22 +2043,22 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_ymm8c4_a(const float * __restrict __ATTR_ALIGN__(32) xre,
+	           std::pair<__mmask8,__mmask8>
+                   cneq_ymm8c4_a(const float * __restrict __ATTR_ALIGN__(32) xre,
                                       const float * __restrict __ATTR_ALIGN__(32) xim,
                                       const float * __restrict __ATTR_ALIGN__(32) yre,
-                                      const float * __restrict __ATTR_ALIGN__(32) yim,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqr,
-                                      __mmask8 * __restrict __ATTR_ALIGN__(32) eqi ) {
-
+                                      const float * __restrict __ATTR_ALIGN__(32) yim) {
+                                     
                       register __m256 ymm0,ymm1,ymm2,ymm3;
+                      __mmask8 eqr;
+                      __mmask8 eqi;
                       ymm0 = _mm256_load_ps(&xre[0]);
                       ymm1 = _mm256_load_ps(&yre[0]);
-                      _mm256_store_ps(&eqr[0],
-                                       _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_NEQ_OQ));
+                      eqr  = _mm256_cmp_ps_mask(ymm0,ymm1,_CMP_NEQ_OQ);
                       ymm2 = _mm256_load_ps(&xim[0]);
                       ymm3 = _mm256_load_ps(&yim[0]);
-                      _mm256_store_ps(&eqi[0],
-                                       _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_NEQ_OQ));
+                      eqi  = _mm256_cmp_ps_mask(ymm2,ymm3,_CMP_NEQ_OQ);
+                      return std::make_pair(eqr,eqi);
               }
 
 
@@ -2054,15 +2067,17 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_ymm8c4(const __m256 xre,
+	           std::pair<__mmask8,__mmask8>
+                   cneq_ymm8c4(     const __m256 xre,
                                     const __m256 xim,
                                     const __m256 yre,
-                                    const __m256 yim,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_NEQ_OQ);
-                         *eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_NEQ_OQ);
+                                    const __m256 yim) {
+                          
+                          __mmask8 eqr;
+                          __mmask8 eqi;          
+                         eqr = _mm256_cmp_ps_mask(xre,yre,_CMP_NEQ_OQ);
+                         eqi = _mm256_cmp_ps_mask(xim,yim,_CMP_NEQ_OQ);
+                         return std::make_pair(eqr,eqi);
               }
               
               
@@ -2071,13 +2086,15 @@ namespace  gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-                   void cneq_ymm8c4(const ymm8c4_t x,
-                                     const ymm8c4_t y,
-                                    __mmask8 * __restrict eqr,
-                                    __mmask8 * __restrict eqi) {
-
-                         *eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_NEQ_OQ);
-                         *eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_NEQ_OQ);
+	           std::pair<__mmask8,__mmask8>
+                   cneq_ymm8c4(      const ymm8c4_t x,
+                                     const ymm8c4_t y) {
+                          
+                         __mmask8 eqr;
+                         __mmask8 eqi;          
+                         eqr = _mm256_cmp_ps_mask(x.re,y.re,_CMP_NEQ_OQ);
+                         eqi = _mm256_cmp_ps_mask(x.im,y.im,_CMP_NEQ_OQ);
+                         return std::make_pair(eqr,eqi);
               }
 
 
@@ -5205,4 +5222,4 @@ namespace  gms {
 
 
 
-#endif /*__GMS_COMPLEX_ZMM16R4_HPP__*/
+#endif /*__GMS_COMPLEX_YMM8R4_HPP__*/
