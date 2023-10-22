@@ -307,6 +307,18 @@ namespace  gms {
 
 
 		   // The whole register negated
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline 
+                      __m128
+		      negate_xmm4r4(const __m128 v) {
+
+		           return (_mm128_xor_ps(v,NZ128PS));
+		    }
+		   
                    
 		      __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
@@ -314,11 +326,23 @@ namespace  gms {
 		      __ATTR_ALIGN__(32)
 		      static inline 
                       __m256
-		      ymm8r4_negate(const __m256 v) {
+		      negate_ymm8r4(const __m256 v) {
 
 		           return (_mm256_xor_ps(v,NZ256PS));
 		    }
+		    
+		    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline 
+                      __m128d
+		      negate_xmm2r8(const __m128d v) {
 
+		           return (_mm128_xor_pd(v,NZ128PD));
+		    }
+		   
 
 		      __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
@@ -326,7 +350,7 @@ namespace  gms {
 		      __ATTR_ALIGN__(32)
 		      static inline 
                       __m256d
-		      ymm4r8_negate(const __m256d v) {
+		      negate_ymm4r8(const __m256d v) {
 
 		           return (_mm256_xor_pd(v,NZ256PD));
 		    }
@@ -338,7 +362,7 @@ namespace  gms {
 		      __ATTR_ALIGN__(32)
 		      static inline 
                       __m512
-		      zmm16r4_negate(const __m512 v) {
+		      negate_zmm16r4(const __m512 v) {
 
                           return (_mm512_xor_ps(v,NZ512SP));
 		    }
@@ -350,7 +374,7 @@ namespace  gms {
 		      __ATTR_ALIGN__(32)
 		      static inline 
                       __m512d
-		      zmm8r8_negate(const __m512d v) {
+		      negate_zmm8r8(const __m512d v) {
 
                           return (_mm512_xor_pd(v,NZ512DP));
 		    }
