@@ -585,7 +585,7 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void cdotv_ymm4c8_unroll2x_omp(const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1x,
+	           void cdotv_ymm4c8_unroll2x_omp(  const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1x,
 	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1y,
 	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1z,
 	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv2x,
@@ -596,7 +596,7 @@ namespace gms {
 	                                            int32_t & PF_DIST) {
 	                                        
 	                if(__builtin_expect(0>=n,0)) { return;}
-	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 2;
 	                __ATTR_ALIGN__(32) ymm4c8_t v1x1,v1x2;
 	                __ATTR_ALIGN__(32) ymm4c8_t v1y1,v1y2;
 	                __ATTR_ALIGN__(32) ymm4c8_t v1z1,v1z2;
@@ -710,6 +710,114 @@ namespace gms {
 	                   	                                 
 	             }          
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cdotv_ymm4c8_rolled_omp(    const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1x,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1y,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1z,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv2x,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv2y,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv2z,
+	                                            ymm4c8_t * __restrict __ATTR_ALIGN__(32) pres,
+	                                            const int32_t n,
+	                                            int32_t & PF_DIST) {
+	                                        
+	                if(__builtin_expect(0>=n,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v1x1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v1y1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v1z1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v2x1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v2y1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v2z1;
+	                __ATTR_ALIGN__(32) ymm4c8_t res1;
+	                int32_t j;
+	                
+	                              
+	               
+#pragma omp parallel for schedule(runtime) default(none)                  \
+        firstprivate(PF_DIST) private(j,v1x1) \
+                                 private(v1y1)   \
+                                 private(v1z1)   \
+                                 private(v2x1)   \
+                                 private(v2y1)   \
+                                 private(v2z1)   \
+                                 private(res1)   \
+                                 shared(n,pv1x,pv1y,pv1z,pv2x,pv2y,pv2z,pres)
+	                for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1                
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                   
+	                    v1x1 = pv1x[j+0];
+	                    v2x1 = pv2x[j+0];
+	                    v1y1 = pv1y[j+0];
+	                    v2y1 = pv2y[j+0];
+	                    v1z1 = pv1z[j+0];
+	                    v2z1 = pv2z[j+0];
+	                    cdotv_ymm4c8(v1x1,v1y1,v1z1,
+	                                  v2x1,v2y1,v2z1,
+	                                  res1);
+	                    pres[j+0] = res1;
+	                                      	                                 
+	             }          
+	       }
+	       
+	       
 	       
 	       
 	      
@@ -1029,6 +1137,73 @@ namespace gms {
 	                   	                 
 	              }             
 	      }
+	      
+	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void cnorm_ymm4c8_rolled_omp(    const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1x,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1y,
+	                                            const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pv1z,
+	                                            ymm4c8_t * __restrict __ATTR_ALIGN__(32) pvs,
+	                                            const int32_t n,
+	                                            int32_t & PF_DIST) {
+	                                        
+	                if(__builtin_expect(n<=0,0)) { return;}
+	                if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v1x1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v1y1;
+	                __ATTR_ALIGN__(32) ymm4c8_t v1z1;
+	                __ATTR_ALIGN__(32) ymm4c8_t vs1;
+	                int32_t j;
+#pragma omp parallel for schedule(runtime) default(none)\
+        firstprivate(PF_DIST) private(j,v1x1)    \
+                                 private(v1y1)   \
+                                 private(v1z1)   \
+                                 private(vs1)    \
+                                 shared(n,pv1x,pv1y,pv1z,pvs)	       
+	                for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif
+                            v1x1 = pv1x[j];
+	                    v1y1 = pv1y[j];
+	                    v1z1 = pv1z[j];
+	                    vs1  = cnorm_ymm4c8(v1x1,v1y1,v1z1);
+	                    pvs[j] = vs1;
+	                   
+	                   	                 
+	              }             
+	      }
+	      
 	      
 	      
 	                                       
@@ -1613,7 +1788,118 @@ namespace gms {
 	        }
 	  
 	         
-	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrossc_ymm4r8_rolled_omp(    const ymm4c8_t  * __restrict __ATTR_ALIGN__(32) pv1x,
+	                                              const ymm4c8_t  * __restrict __ATTR_ALIGN__(32) pv1y, 
+	                                              const ymm4c8_t  * __restrict __ATTR_ALIGN__(32) pv1z,
+	                                              const ymm4c8_t  * __restrict __ATTR_ALIGN__(32) pv2x,
+	                                              const ymm4c8_t  * __restrict __ATTR_ALIGN__(32) pv2y,
+	                                              const ymm4c8_t  * __restrict __ATTR_ALIGN__(32) pv2z,
+	                                              ymm4c8_t * __restrict __ATTR_ALIGN__(32) presx,
+	                                              ymm4c8_t * __restrict __ATTR_ALIGN__(32) presy,
+	                                              ymm4c8_t * __restrict __ATTR_ALIGN__(32) presz,
+	                                              const int32_t n,
+	                                              int32_t & PF_DIST) {
+	                                          
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                ymm4c8_t resx1;
+	                ymm4c8_t resy1;
+	                ymm4c8_t resz1;
+	                ymm4c8_t  v1x1;
+	                ymm4c8_t  v1y1;
+	                ymm4c8_t  v1z1;
+	                ymm4c8_t  v2x1;
+	                ymm4c8_t  v2y1;
+	                ymm4c8_t  v2z1;   
+	                int32_t j;
+	                
+	                
+#pragma omp parallel for schedule(runtime) default(none)\
+        firstprivate(PF_DIST) private(j,resx1) \
+                                 private(resy1)   \
+                                 private(resz1)   \
+                                 private(v1x1)     \
+                                 private(v1y1)     \
+                                 private(v1z1)     \
+                                 private(v2x1)     \
+                                 private(v2y1)     \
+                                 private(v2z1)     \
+                                 shared(n,pv1x,pv1y,pv1z,pv2x,pv2y,pv2z,presx,presy,presz)
+	                for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2z[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	                    
+                            v1x1 = pv1x[j];
+	                    v2x1 = pv2x[j];
+	                    v1y1 = pv1y[j];
+	                    v2y1 = pv2y[j];
+	                    v1z1 = pv1z[j];
+	                    v2z1 = pv2z[j];
+	                    scrossc_ymm4r8(v1x1,v1y1,v1z1,
+	                                    v2x1,v2y1,v2z1,
+	                                    resx1,resy1,resz1);
+	                    presx[j] = resx1;
+	                    presy[j] = resy1;
+	                    presz[j] = resz1;
+	                  	                  
+	                }          
+	        }
+	  
 	         
 	         
 	         
@@ -2128,7 +2414,105 @@ namespace gms {
 	         }
 	         
 	         
-	         
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void scrossv_ymm4r8_rolled_omp(const __m256d * __restrict __ATTR_ALIGN__(32) pv1x,
+	                                              const __m256d * __restrict __ATTR_ALIGN__(32) pv1y,
+	                                              const __m256d * __restrict __ATTR_ALIGN__(32) pv1z,
+	                                              const __m256d * __restrict __ATTR_ALIGN__(32) pv2x,
+	                                              const __m256d * __restrict __ATTR_ALIGN__(32) pv2y,
+	                                              const __m256d * __restrict __ATTR_ALIGN__(32) pv2z,
+	                                              __m256d * __restrict __ATTR_ALIGN__(32) pvcx,
+	                                              __m256d * __restrict __ATTR_ALIGN__(32) pvcy,
+	                                              __m256d * __restrict __ATTR_ALIGN__(32) pvcz,
+	                                              const int32_t n,
+	                                              int32_t & PF_DIST) {
+	                                          
+	                  if(__builtin_expect(n<=0,0)) { return;}
+	                  if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                  register __m256d v1x1;
+	                  register __m256d v1y1; 
+	                  register __m256d v1z1;
+	                  register __m256d v2x1;
+	                  register __m256d v2y1;
+	                  register __m256d v2z1;
+	                  register __m256d vcx1;
+	                  register __m256d vcy1;
+	                  register __m256d vcz1;
+	                  int32_t j;
+	                  
+	                 
+#pragma omp parallel for schedule(runtime) default(none)                  \
+        firstprivate(PF_DIST) private(j,v1x1) \
+                                 private(v1y1)   \
+                                 private(v1z1)   \
+                                 private(v2x1)   \
+                                 private(v2y1)   \
+                                 private(v2z1)   \
+                                 private(vcx1)   \
+                                 private(vcy1)   \
+                                 private(vcz1)   \
+                                 shared(n,pv1x,pv1y,pv1z,pv2x,pv2y,pv2z)
+	                  for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pv1x[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST],_MM_HINT_T0);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST],_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST],_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pv1x[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1y[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv1z[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2x[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pv2y[j+PF_DIST],_MM_HINT_NTA);
+#endif	                    	
+                            v1x1 = pv1x[j+0];
+	                    v2x1 = pv2x[j+0];
+	                    v1y1 = pv1y[j+0];
+	                    v2y1 = pv2y[j+0];
+	                    v1z1 = pv1z[j+0];
+	                    v2z1 = pv2z[j+0];
+	                    scrossv_ymm4r8(v1x1,v1y1,v1z1,
+	                                    v2x1,v2y1,v2z1,
+	                                    &vcx1,&vcy1,&vcz1);
+	                    pvcx[j+0] = vcx1;
+	                    pvcy[j+0] = vcy1;
+	                    pvcz[j+0] = vcz1;
+                            v1x2 = pv1x[j+1];
+	                    v2x2 = pv2x[j+1];
+	                    v1y2 = pv1y[j+1];
+	                    v2y2 = pv2y[j+1];
+	                    v1z2 = pv1z[j+1];
+	                    v2z2 = pv2z[j+1];
+	                    scrossv_ymm4r8(v1x2,v1y2,v1z2,
+	                                    v2x2,v2y2,v2z2,
+	                                    &vcx2,&vcy2,&vcz2);
+	                    pvcx[j+1] = vcx2;
+	                    pvcy[j+1] = vcy2;
+	                    pvcz[j+1] = vcz2;
+	                  	                                        
+	               }             
+	         }
 	         
     
 	         
@@ -2464,6 +2848,64 @@ namespace gms {
 	                  	                  
 	            }                                  
 	       }
+	       
+	       
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void dir_vec_ymm4r8_rolled_omp(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                          const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvx,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvy,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvz,
+	                                          const int32_t n,
+	                                          int32_t & PF_DIST) {
+	                                          
+	               if(__builtin_expect(n<=0,0)) {return;}
+	               if(__builtin_expect(PF_DIST<=0,0) PF_DIST = 1;
+	                __m256d tht1;
+	                __m256d phi1;
+	                __m256d dvx1;
+	                __m256d dvy1;
+	                __m256d dvz1;
+	               int32_t j;
+#pragma omp parallel for schedule(runtime) default(none)                     \
+        firstprivate(PF_DIST) private(j,tht1)    \
+                                 private(phi1)      \
+                                 private(dvx1)      \
+                                 private(dvy1)      \
+                                 private(dvz1)     \
+                                 shared(n,ptht,pphi,pdvx,pdvy,pdvz)
+	               for(j = 0; j != n; ++j) 
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                   
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+#endif	              
+                            tht1 = ptht[j];
+	                    phi1 = pphi[j];
+	                    dir_vec_ymm4r8(tht1,phi1,
+	                                    &dvx1,&dvy1,&dvz1);
+	                    pdvx[j] = dvx1;
+	                    pdvy[j] = dvy1;
+	                    pdvz[j] = dvz1;
+	                   	                  	                  
+	            }                                  
+	       }
+	       
 	       
 	                     	       	     
 	        	        
@@ -2831,7 +3273,67 @@ namespace gms {
 	      }
 	      
 	      
-	      
+	           __ATTR_ALWAYS_INLINE__
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void pol_vec_ymm4r8_rolled_omp(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                            const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                            const __m256d * __restrict __ATTR_ALIGN__(32) ppsi,
+	                                            __m256d * __restrict __ATTR_ALIGN__(32) ppvx,
+	                                            __m256d * __restrict __ATTR_ALIGN__(32) ppvy,
+	                                            __m256d * __restrict __ATTR_ALIGN__(32) ppvz,
+	                                            const int32_t n,
+	                                            int32_t & PF_DIST) {
+	                                          
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                __m256d tht1;
+	                __m256d phi1;
+	                __m256d psi1;
+	                __m256d pvx1;
+	                __m256d pvy1;
+	                __m256d pvz1;
+	                int32_t j;    
+	                
+	               
+#pragma omp parallel for schedule(runtime) default(none)                   \
+        firstprivate(PF_DIST) private(j,tht1)  \
+                                 private(phi1)    \
+                                 private(psi1)    \
+                                 private(pvx1)    \
+                                 private(pvy1)    \
+                                 private(pvz1)    \
+                                 shared(n,ptht,pphi,ppsi,ppvx,ppvy,ppvz)
+	                for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T0);	                   
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T1);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T2);	    
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_NTA);	    
+#endif	        	    
+                            tht1 = ptht[j];
+	                    phi1 = pphi[j];
+	                    psi1 = ppsi[j];
+	                    pol_vec_ymm4r8(tht1,phi1,psi1,
+	                                    &pvx1,&pvy1,&pvz1);
+	                    ppvx[j] = pvx1;
+	                    ppvy[j] = pvy1;
+	                    ppvz[j] = pvz1;  
+	            }            
+	      }
 	        
 	        
 	       
@@ -3565,6 +4067,134 @@ namespace gms {
 	                           
 	                }                
 	      }
+	      
+	      
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void H_XYZ_VP_ymm4c8_rolled_omp(    const __m256d * __restrict __ATTR_ALIGN__(32) pvpolx,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvpoly,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvpolz,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvdirx,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvdiry,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvdirz,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvrx,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvry,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvrz,
+	                                               const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pk,
+	                                               ymm4c8_t * __restrict __ATTR_ALIGN__(32) pH_x,
+	                                               ymm4c8_t * __restrict __ATTR_ALIGN__(32) pH_y,
+	                                               ymm4c8_t * __restrict __ATTR_ALIGN__(32) pH_z,
+	                                               const int32_t n,
+	                                               int32_t & PF_DISPATCH) {
+	                                           
+	                                           
+	                if(__builtin_expect(n<=0,0)) {return;}
+	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                __ATTR_ALIGN__(32) ymm4c8_t k1;
+	                __ATTR_ALIGN__(32) ymm4c8_t H_x1;
+	                __ATTR_ALIGN__(32) ymm4c8_t H_y1;
+	                __ATTR_ALIGN__(32) ymm4c8_t H_z1;
+	                 __m256d vpolx1;
+	                 __m256d vpoly1;
+	                 __m256d vpolz1;
+	                 __m256d vdirx1;
+	                 __m256d vdiry1;
+	                 __m256d vdirz1;
+	                 __m256d vrx1;
+	                 __m256d vry1;
+	                 __m256d vrz1;
+	                int32_t j;
+	                
+	             
+#pragma omp parallel for schedule(runtime) default(none)        \
+        firstprivate(PF_DIST) private(j,k1)               \
+                                 private(H_x1)             \
+                                 private(H_y1)             \
+                                 private(H_z1)             \
+                                 private(vpolx1) \
+                                 private(vpoly1) \
+                                 private(vpolz1) \
+                                 private(vdirx1) \
+                                 private(vdiry1) \
+                                 private(vdirz1) \
+                                 private(vrx1)             \
+                                 private(vry1)             \
+                                 private(vrz1)             \
+                                 shared(n,pvpolx,pvpoly,pvpolz,pvdirx,pvdiry,pvdirz,pvrx,pvry,pvrz,pk)\
+                                 shared(pH_x,pH_y,pH_z)
+	                for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T0);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T0);                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T1);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T1);          
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T2);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T2);  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_NTA);	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_NTA);    
+#endif	     	           
+                            vpolx1 = pvpolx[j];
+	                    vpoly1 = pvpoly[j];
+	                    vpolz1 = pvpolz[j];
+	                    vdirx1 = pvdirx[j];
+	                    vdiry1 = pvdiry[j];
+	                    vdirz1 = pvdirz[j];
+	                    vrx1   = pvrx[j];
+	                    vry1   = pvry[j];
+	                    vrz1   = pvrz[j];
+	                    k1     = pk[j];
+	                    H_XYZ_VP_ymm4c8(vpolx1,vpoly1,vpolz1,
+	                                     vdirx1,vdiry1,vdirz1,
+	                                     vrx1,vry1,vrz1,
+	                                     H_x1,H_y1,H_z1);
+	                    pH_x[j] = H_x1;
+	                    pH_y[j] = H_y1;
+	                    pH_z[j] = H_z1;   
+                           	                           
+	                }                
+	      }
+	      
 	      
 	      
 	        
@@ -4335,7 +4965,140 @@ namespace gms {
 	         }
 	 
 	         
-	 	       
+	 	   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_VP_ymm4c8_rolled_omp(const __m256d * __restrict __ATTR_ALIGN__(32) pvpolx,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvpoly,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvpolz,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvdirx,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvdiry,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvdirz,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvrx,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvry,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pvrz,
+	                                               const __m256d * __restrict __ATTR_ALIGN__(32) pomega,
+	                                               const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pk,
+	                                               ymm4c8_t * __restrict __ATTR_ALIGN__(32) pB_x,
+	                                               ymm4c8_t * __restrict __ATTR_ALIGN__(32) pB_y,
+	                                               ymm4c8_t * __restrict __ATTR_ALIGN__(32) pB_z,
+	                                               const int32_t n,
+	                                               int32_t & PF_DIST) {
+	                                           
+	                 if(__builtin_expect(n<=0,0)) {return;}
+	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t k1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_x1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_y1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_z1;
+	                  __m256d vpolx1;
+	                  __m256d vpoly1;
+	                  __m256d vpolz1;
+	                  __m256d vdirx1;
+	                  __m256d vdiry1;
+	                  __m256d vdirz1;
+	                  __m256d vrx1;
+	                  __m256d vry1;
+	                  __m256d vrz1;
+	                  __m256d omg1;
+	                 int32_t j;   
+	                 
+	                
+#pragma omp parallel for schedule(runtime) default(none)                            \
+        firstprivate(PF_DIST) private(j,k1)                       \
+                                 private(B_x1)             \
+                                 private(B_y1)             \
+                                 private(B_z1)             \
+                                 private(vpolx1) \
+                                 private(vpoly1) \
+                                 private(vpolz1) \
+                                 private(vdirx1) \
+                                 private(vdiry1) \
+                                 private(vdirz1) \
+                                 private(vrx1)             \
+                                 private(vry1)             \
+                                 private(vrz1)             \
+                                 private(omg1)             \
+                                 shared(n,pvpolx,pvpoly,pvpolz,pvdirx,pvdiry,pvdirz)\
+                                 shared(pvrx,pvry,pvrz,pomega,pk,pB_x,pB_y,pB_z)
+	                 for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T0);	 
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T0);                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T1);	
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_T1); 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T1);          
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_T2);	
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_T2);  
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_T2);  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&pvpolx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpoly[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvpolz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdiry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvdirz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvry[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pvrz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pomega[j+PF_DIST],_MM_HINT_NTA); 	 
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pk[j+PF_DIST].im,_MM_HINT_NTA);    
+#endif	     	           	
+                                vpolx1 = pvpolx[j];
+	                        vpoly1 = pvpoly[j];
+	                        vpolz1 = pvpolz[j];
+	                        vdirx1 = pvdirx[j];
+	                        vdiry1 = pvdiry[j];
+	                        vdirz1 = pvdirz[j];
+	                        vrx1   = pvrx[j];
+	                        vry1   = pvry[j];
+	                        vrz1   = pvrz[j];
+	                        omg1   = pomega[j];
+	                        k1     = pk[j];
+	                        B_XYZ_ymm4c8(vpolx1,vpoly1,vpolz1,
+	                                      vdirx1,vdiry1,vdirz1,
+	                                      k1,omg1,vrx1,vry1,vrz1,
+	                                      B_x1,B_y1,B_z1);
+	                        pB_x[j] = B_x1;
+	                        pB_y[j] = B_y1;
+	                        pB_z[j] = B_z1;    
+	                     	                       	                                  
+	                 }
+	                                               
+	         }
+	      
 	      
 	      
 	      
@@ -5060,7 +5823,130 @@ namespace gms {
 	                   }
 	                                             
 	      }
-	  
+	      
+	      
+	      
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_H_XYZ_P_ymm4c8_rolled_omp(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                                const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                                const __m256d * __restrict __ATTR_ALIGN__(32) ppsi,
+	                                                const __m256d * __restrict __ATTR_ALIGN__(32) pomg,
+	                                                const __m256d * __restrict __ATTR_ALIGN__(32) ppx,
+	                                                const __m256d * __restrict __ATTR_ALIGN__(32) ppy,
+	                                                const __m256d * __restrict __ATTR_ALIGN__(32) ppz,
+	                                                const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pr,
+	                                                ymm4c8_t * __restrict __ATTR_ALIGN__(32) pH_x,
+	                                                ymm4c8_t * __restrict __ATTR_ALIGN__(32) pH_y,
+	                                                ymm4c8_t * __restrict __ATTR_ALIGN__(32) pH_z,
+	                                                ymm4c8_t * __restrict __ATTR_ALIGN__(32) pB_x,
+	                                                ymm4c8_t * __restrict __ATTR_ALIGN__(32) pB_y,
+	                                                ymm4c8_t * __restrict __ATTR_ALIGN__(32) pB_z,
+	                                                const int32_t n,
+	                                                int32_t & PF_DIST) {
+	                                                
+	                 if(__builtin_expect(n<=0,0)) {return;}
+	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;    
+	                 __ATTR_ALIGN__(32) ymm4c8_t r1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t H_x1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t H_y1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t H_z1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_x1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_y1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_z1;
+	                  __m256d tht1;
+	                  __m256d phi1;
+	                  __m256d psi1;
+	                  __m256d omg1;
+	                  __m256d px1;
+	                  __m256d py1;
+	                  __m256d pz1;
+	                 int32_t j;
+#pragma omp parallel for schedule(runtime) defualt(none) \
+        firstprivate(PF_DIST) private(j,r1)         \
+                                 private(H_x1)      \
+                                 private(H_y1)      \
+                                 private(H_z1)      \
+                                 private(B_x1)      \
+                                 private(B_y1)      \
+                                 private(B_z1)      \
+                                 private(tht1)      \
+                                 private(phi1)      \
+                                 private(psi1)      \
+                                 private(omg1)      \
+                                 private(px1)       \
+                                 private(py1)       \
+                                 private(pz1)       \
+                                 shared(n,ptht,pphi,ppsi,pomg,ppx,ppy,ppz,pr)\
+                                 shared(pH_x,pH_y,pH_z,pB_x,pB_y,pB_z)
+	                   for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].im,_MM_HINT_T0);                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].im,_MM_HINT_T1);       
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].im,_MM_HINT_T2);       
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppsi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pr[j+PF_DIST].im,_MM_HINT_NTA);       
+#endif	     	       	            
+                                 tht1 = ptht[j];
+	                         phi1 = pphi[j];
+	                         psi1 = ppsi[j];
+	                         omg1 = pomg[j];
+	                         px1  = ppx[j];
+	                         py1  = ppy[j];
+	                         pz1  = ppz[j];
+	                         r1   = pr[j];
+	                         B_XYZ_H_XYZ_P_ymm4c8(tht1,phi1,psi1,
+	                                               omg1,px1,py1,pz1,r1,
+	                                               H_x1,H_y1,H_z1,
+	                                               B_x1,B_y1,B_z1);
+	                         pH_x[j] = H_x1;
+	                         pH_y[j] = H_y1;
+	                         pH_z[j] = H_z1;
+	                         pB_x[j] = B_x1;
+	                         pB_y[j] = B_y1;
+	                         pB_z[j] = B_z1;  
+	                                                
+	                        	                                                                               
+	                   }
+	                                             
+	      }
+	      
 	           
 	       
 	       
@@ -5884,7 +6770,145 @@ namespace gms {
 	  
 	      
 	         
-	        
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+                   __ATTR_VECTORCALL__
+	           static inline
+	           void B_XYZ_H_XYZ_EP_ymm4c8_rolled_omp(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                                     const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                                      const __m256d * __restrict __ATTR_ALIGN__(32) pomg,
+	                                                     const ymm4c8_t * __restrict __ATTR_ALIGN__(32) pphase,
+	                                                     const ymm4c8_t * __restrict __ATTR_ALIGN__(32) prefi,
+	                                                     const ymm4c8_t * __restrict __ATTR_ALIGN__(32) ppx,
+	                                                     const ymm4c8_t * __restrict __ATTR_ALIGN__(32) ppy,
+	                                                     const ymm4c8_t * __restrict __ATTR_ALIGN__(32) ppz,
+	                                                     ymm4c8_t * __restrict __ATTR_ALIGN__(32)  pH_x,
+	                                                     ymm4c8_t * __restrict __ATTR_ALIGN__(32)  pH_y,
+	                                                     ymm4c8_t * __restrict __ATTR_ALIGN__(32)  pH_z,
+	                                                     ymm4c8_t * __restrict __ATTR_ALIGN__(32)  pB_x,
+	                                                     ymm4c8_t * __restrict __ATTR_ALIGN__(32)  pB_y,
+	                                                     ymm4c8_t * __restrict __ATTR_ALIGN__(32)  pB_z,
+	                                                     const int32_t n,
+	                                                     int32_t & PF_DIST) {
+	                                                 
+	                 if(__builtin_expect(n<=0,0)) {return;}
+	                 if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t phase1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t refi1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t px1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t py1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t pz1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t H_x1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t H_y1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t H_z1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_x1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_y1;
+	                 __ATTR_ALIGN__(32) ymm4c8_t B_z1;
+	                 register __m256d tht1;
+	                 register __m256d phi1;
+	                 register __m256d omg1;
+	                 int32_t j;
+#pragma omp parallel for schedule(runtime) default(none)           \
+        firstprivate(PF_DIST) private(j,phase1)          \
+                                 private(refi1)              \
+                                 private(px1)                  \
+                                 private(py1)                  \
+                                 private(pz1)                  \
+                                 private(H_x1)                \
+                                 private(H_y1)                \
+                                 private(H_z1)                \
+                                 private(B_x1)                \
+                                 private(B_y1)                \
+                                 private(B_z1)                \
+                                 private(tht1)                \
+                                 private(phi1)                \
+                                 private(omg1)                \
+                                 shared(n,ptht,pphi,pomg,pphase,prefi)                 \
+                                 shared(ppx,ppy,ppz)                                   \
+                                 shared(pH_x,pH_y,pH_z,pB_x,pB_y,pB_z)
+	                 for(j = 0; j != n; ++j) {
+#if (__EM_FIELDS_PF_CACHE_HINT__) == 1
+	                    _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T0);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T0);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T0);
+	                                  
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 2
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T1);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T1);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T1);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 3
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_T2);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_T2);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_T2);
+#elif (__EM_FIELDS_PF_CACHE_HINT__) == 4
+                            _mm_prefetch((char*)&ptht[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphi[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pomg[j+PF_DIST],_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&pphase[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&prefi[j+PF_DIST].im,_MM_HINT_NTA);    
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppx[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST]re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppy[j+PF_DIST].im,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].re,_MM_HINT_NTA);
+	                    _mm_prefetch((char*)&ppz[j+PF_DIST].im,_MM_HINT_NTA);
+#endif	     	   	      
+                                tht1   = ptht[j];
+	                        phi1   = pphi[j];
+	                        omg1   = pomg[j];
+	                        phase1 = pphase[j];
+	                        refi1  = prefi[j];
+	                        px1    = ppx[j];
+	                        py1    = ppy[j];
+	                        pz1    = ppz[j];
+	                        B_XYZ_H_XYZ_EP_ymm4c8(tht1,phi1,omg1,
+	                                               phase1,refi1,px1,
+	                                               py1,pz1,
+	                                               H_x1,H_y1,H_z1,
+	                                               B_x1,B_y1,B_z1);
+	                        pH_x[j] = H_x1;
+	                        pH_y[j] = H_y1;
+	                        pH_z[j] = H_z1;
+	                        pB_x[j] = B_x1;
+	                        pB_y[j] = B_y1;
+	                        pB_z[j] = B_z1;
+	                        
+	                       
+	                 }               
+	      }
+	  
 	      
 	      
 	      
