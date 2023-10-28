@@ -4026,12 +4026,12 @@ namespace gms {
 	                  
 	                        
 	                register __m256d stht,cphi,sphi,ctht;
-	                cphi = xcos(phi);
-	                stht = xsin(tht);
+	                cphi = _mm256_cos_pd(phi);
+	                stht = _mm256_sin_pd(tht);
 	                *dvx = _mm256_mul_pd(stht,cphi);
-	                sphi = xsin(phi);
+	                sphi = _mm256_sin_pd(phi);
 	                *dvy = _mm256_mul_pd(stht,sphi);
-	                ctht = xcos(tht);
+	                ctht = _mm256_cos_pd(tht);
 	                *dvz = ctht;                       
 	        }
 	        
@@ -4344,11 +4344,11 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_ymm4r8_unroll6x(const __m256d * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m256d * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_ymm4r8_unroll6x(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                          const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvx,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvy,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
@@ -4449,11 +4449,11 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_ymm4r8_unroll2x(const __m256d * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m256d * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_ymm4r8_unroll2x(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                          const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvx,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvy,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
@@ -4522,11 +4522,11 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void dir_vec_ymm4r8_rolled(const __m256d * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m256d * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvx,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvy,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) pdvz,
+	           void dir_vec_ymm4r8_rolled(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                          const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvx,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvy,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) pdvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
@@ -4584,12 +4584,12 @@ namespace gms {
 	                register __m256d tht = _mm256_load_pd(&ptht[0]);
 	                register __m256d phi = _mm256_load_pd(&pphi[0]);              
 	                register __m256d stht,cphi,sphi,ctht;
-	                cphi = xcos(phi);
-	                stht = xsin(tht);
+	                cphi = _mm256_cos_pd(phi);
+	                stht = _mm256_sin_pd(tht);
 	                _mm256_store_pd(&dvx[0] , _mm256_mul_pd(stht,cphi));
-	                sphi = xsin(phi);
+	                sphi = _mm256_sin_pd(phi);
 	                _mm256_store_pd(&dvy[0] , _mm256_mul_pd(stht,sphi));
-	                ctht = xcos(tht);
+	                ctht = _mm256_cos_pd(tht);
 	                _mm256_store_pd(&dvz[0] , ctht);                       
 	        }
 	        
@@ -4608,12 +4608,12 @@ namespace gms {
 	                register __m256d tht = _mm256_loadu_pd(&ptht[0]);
 	                register __m256d phi = _mm256_loadu_pd(&pphi[0]);              
 	                register __m256d stht,cphi,sphi,ctht;
-	                cphi = xcos(phi);
-	                stht = xsin(tht);
+	                cphi = _mm256_cos_pd(phi);
+	                stht = _mm256_sin_pd(tht);
 	                _mm256_storeu_pd(&dvx[0] , _mm256_mul_pd(stht,cphi));
-	                sphi = xsin(phi);
+	                sphi = _mm256_sin_pd(phi);
 	                _mm256_storeu_pd(&dvy[0] , _mm256_mul_pd(stht,sphi));
-	                ctht = xcos(tht);
+	                ctht = _mm256_cos_pd(tht);
 	                _mm256_storeu_pd(&dvz[0] , ctht);                       
 	        }
 	        
@@ -4635,16 +4635,16 @@ namespace gms {
 	                 
 	                using namespace gms::math               
 	                register __m256d cpsi,cphi,spsi,sphi,t0;
-	                cpsi = xcos(psi);
-	                cphi = xcos(phi);
-	                spsi = xsin(psi);
-	                sphi = xsin(phi);
-	                t0   = _mm256_mul_pd(spsi,xcos(tht));
+	                cpsi = _mm256_cos_pd(psi);
+	                cphi = _mm256_cos_pd(phi);
+	                spsi = _mm256_sin_pd(psi);
+	                sphi = _mm256_sin_pd(phi);
+	                t0   = _mm256_mul_pd(spsi,_mm256_cos_pd(tht));
 	                *pvx = _mm256_fmsub_pd(cpsi,sphi,
 	                                   _mm256_mul_pd(t0,cphi));
 	                *pvy = _mm256_fmsub_pd(negate_ymm4r8(cpsi),cphi,
 	                                                    _mm256_mul_pd(t0,sphi));
-	                *pvz = _mm256_mul_pd(spsi,xsin(tht));                         
+	                *pvz = _mm256_mul_pd(spsi,_mm256_sin_pd(tht));                         
 	      }
 	      
 	      
@@ -5107,12 +5107,12 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void pol_vec_ymm4r8_unroll2x(const __m256d * __restrict __ATTR_ALIGN__(64) ptht,
-	                                          const __m256d * __restrict __ATTR_ALIGN__(64) pphi,
-	                                          const __m256d * __restrict __ATTR_ALIGN__(64) ppsi,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) ppvx,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) ppvy,
-	                                          __m256d * __restrict __ATTR_ALIGN__(64) ppvz,
+	           void pol_vec_ymm4r8_unroll2x(const __m256d * __restrict __ATTR_ALIGN__(32) ptht,
+	                                          const __m256d * __restrict __ATTR_ALIGN__(32) pphi,
+	                                          const __m256d * __restrict __ATTR_ALIGN__(32) ppsi,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) ppvx,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) ppvy,
+	                                          __m256d * __restrict __ATTR_ALIGN__(32) ppvz,
 	                                          const int32_t n,
 	                                          int32_t & PF_DIST) {
 	                                          
@@ -5257,16 +5257,16 @@ namespace gms {
 	                register __m256d phi = _mm256_load_pd(&pphi[0]);  
 	                register __m256d psi = _mm256_load_pd(&ppsi[0]);           
 	                register __m256d cpsi,cphi,spsi,sphi,t0;
-	                cpsi = xcos(psi);
-	                cphi = xcos(phi);
-	                spsi = xsin(psi);
-	                sphi = xsin(phi);
-	                t0   = _mm256_mul_pd(spsi,xcos(tht));
+	                cpsi = _mm256_cos_pd(psi);
+	                cphi = _mm256_cos_pd(phi);
+	                spsi = _mm256_sin_pd(psi);
+	                sphi = _mm256_sin_pd(phi);
+	                t0   = _mm256_mul_pd(spsi,_mm256_cos_pd(tht));
 	                _mm256_store_pd(&pvx[0] ,_mm256_fmsub_pd(cpsi,sphi,
 	                                   _mm256_mul_pd(t0,cphi)));
 	                _mm256_store_pd(&pvy[0] ,_mm256_fmsub_pd(negate_ymm4r8(cpsi),cphi,
 	                                                    _mm256_mul_pd(t0,sphi)));
-	                _mm256_store_pd(&pvz[0] ,_mm256_mul_pd(spsi,xsin(tht)));                         
+	                _mm256_store_pd(&pvz[0] ,_mm256_mul_pd(spsi,_mm256_sin_pd(tht)));                         
 	      } 
 	        
 	        
@@ -5287,16 +5287,16 @@ namespace gms {
 	                register __m256d phi = _mm256_loadu_pd(&pphi[0]);  
 	                register __m256d psi = _mm256_loadu_pd(&ppsi[0]);           
 	                register __m256d cpsi,cphi,spsi,sphi,t0;
-	                cpsi = xcos(psi);
-	                cphi = xcos(phi);
-	                spsi = xsin(psi);
-	                sphi = xsin(phi);
-	                t0   = _mm256_mul_pd(spsi,xcos(tht));
+	                cpsi = _mm256_cos_pd(psi);
+	                cphi = _mm256_cos_pd(phi);
+	                spsi = _mm256_sin_pd(psi);
+	                sphi = _mm256_sin_pd(phi);
+	                t0   = _mm256_mul_pd(spsi,_mm256_cos_pd(tht));
 	                _mm256_storeu_pd(&pvx[0] ,_mm256_fmsub_pd(cpsi,sphi,
 	                                   _mm256_mul_pd(t0,cphi)));
 	                _mm256_storeu_pd(&pvy[0] ,_mm256_fmsub_pd(negate_ymm4r8(cpsi),cphi,
 	                                                    _mm256_mul_pd(t0,sphi)));
-	                _mm256_storeu_pd(&pvz[0] ,_mm256_mul_pd(spsi,xsin(tht)));                         
+	                _mm256_storeu_pd(&pvz[0] ,_mm256_mul_pd(spsi,_mm256_sin_pd(tht)));                         
 	      } 
 	      
 	      
@@ -9253,9 +9253,9 @@ namespace gms {
 	           __ATTR_ALIGN__(32)
                    __ATTR_VECTORCALL__
 	           static inline
-	           void B_XYZ_H_XYZ_EP_ymm4c8_a(const double * __restrict __ATTR_ALIGN__(64) ptht,
-	                                         const double * __restrict __ATTR_ALIGN__(64) pphi,
-	                                         const double * __restrict __ATTR_ALIGN__(64) pomg,
+	           void B_XYZ_H_XYZ_EP_ymm4c8_a(const double * __restrict __ATTR_ALIGN__(32) ptht,
+	                                         const double * __restrict __ATTR_ALIGN__(32) pphi,
+	                                         const double * __restrict __ATTR_ALIGN__(32) pomg,
 	                                         const ymm4c8_t phase,
 	                                         const ymm4c8_t refi,
 	                                         const ymm4c8_t px,
@@ -9507,4 +9507,4 @@ namespace gms {
 } // gms
 
 
-#endif /*__GMS_EM_FIELDS_ZMM8R8_HPP__*/
+#endif /*__GMS_EM_FIELDS_YMM4R8_HPP__*/
