@@ -500,6 +500,13 @@ constexpr int padding64B{64};
 #define ROUND16(x,y) ((x) & ~((y)-1))
 #endif
 
+/*
+    SLEEF library for vector math functions usage.
+*/
+#if !defined(USE_SLEEF_AVX512_LIB)
+#define USE_SLEEF_AVX512_LIB 1
+#endif
+
 
 
 /* Fixing problem of defined in WinDef macros:
@@ -520,8 +527,8 @@ constexpr int padding64B{64};
 
 //define Concurrent page-size access (default set to 2)
 // Other possibilities are (4,8) i.e. 2*PAGESIZE,4*PAGESIZE,8*PAGESIZE
-#if !defined(CONCURRENT_PAGESIZE_ACCESS)
-#define CONCURRENT_PAGESIZE_ACCESS 2
+#if !defined(CONCURRENT_PAGESIZE_ACCESSES)
+#define CONCURRENT_PAGESIZE_ACCESSES 2
 #endif
 
 
