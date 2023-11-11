@@ -12,6 +12,7 @@
 //
 //	Parametrized macros
 //
+/*
 #if (GMS_MAN_PREFETCH) == 1
 
 #if !defined (AVX512_COMPLEX_PREFETCH_FROM_OBJ)
@@ -39,6 +40,8 @@
   } while (0);
 #endif*/
 
+/*
+
 #if !defined (AVX512_COMPLEX_ADDITION)
 #define AVX512_COMPLEX_ADDITION(out,v1,v2,idx,off) \
 	(out) = _mm512_add_pd(_mm512_mul_pd(_mm512_load_pd(&(v1).data.m_Re[(idx)+(off)]), \
@@ -62,7 +65,7 @@
 	_mm512_load_pd(&(v2).data.m_Re[(idx)+(off)])), _mm512_mul_pd(_mm512_load_pd(&(v1).data.m_Im[(idx)+(off)]), \
 	_mm512_load_pd(&(v2).data.m_Im[(idx)+(off)]))));
 #endif
-
+*/
 
 gms::math
 ::CV1DZMM8r8::
