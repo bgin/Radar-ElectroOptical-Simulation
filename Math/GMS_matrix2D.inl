@@ -685,3 +685,322 @@ template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator<<
 
 	return *this;
 }
+
+//----------------------------------------------------------------------------------------------------//
+
+//----------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator>>(const T& value)
+{
+
+	for (register size_t i = 0; i != this->m_rows; ++i)
+	{
+		for (register size_t j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] >>= value;
+		}
+	}
+
+	return *this;
+}
+
+//---------------------------------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator|=(const Matrix2D& rhs)
+{
+
+	for (register auto i = 0; i != this->m_rows; ++i)
+	{
+		for (register auto j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] |= rhs.m_data[i][j];
+		}
+	}
+	return *this;
+}
+
+//------------------------------------------------------------------------------------------------------//
+
+//------------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator&=(const Matrix2D& rhs)
+{
+
+	for (register auto i = 0; i != this->m_rows; ++i)
+	{
+		for (register auto j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] &= rhs.m_data[i][j];
+		}
+	}
+	return *this;
+}
+
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator^=(const Matrix2D& rhs)
+{
+
+	for (register auto i = 0; i != this->m_rows; ++i)
+	{
+		for (register auto j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] ^= rhs.m_data[i][j];
+		}
+	}
+
+	return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------//
+
+//-----------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator<<=(const Matrix2D& rhs)
+{
+
+	for (register auto i = 0; i != this->m_rows; ++i)
+	{
+		for (register auto j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] <<= rhs.m_data[i][j];
+		}
+	}
+
+	return *this;
+}
+
+/--------------------------------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator>>=(const Matrix2D& rhs)
+{
+
+	for (register auto i = 0; i != this->m_rows; ++i)
+	{
+		for (register auto j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] >>= rhs.m_data[i][j];
+		}
+	}
+
+	return *this;
+}
+
+template<typename T, size_t N> inline std::vector<std::pair<T,bool>> Matrix2D<T, N>::operator==(const Matrix2D& rhs)
+{
+	
+
+	if (std::is_integral<T>::value == rhs.m_data[0][0])
+	{
+		std::pair<T, bool> init_value(0, false);
+		std::vector<std::pair<T, bool>> result{ rhs.get_rows(), rhs.get_cols(), init_value };
+		bool is_equal = false;
+		for (register auto i = 0; i != rhs.get_rows(); ++i)
+		{
+			for (register auto j = 0; j != rhs.get_cols(); ++j)
+			{
+				if (this->m_data[i][j] == rhs.m_data[i][j])
+				{
+					is_equal = true;
+					std::pair<T, bool> res(this->m_data[i][j], is_equal);
+					result.push_back(res);
+				}
+			}
+		
+		}
+		return result;
+	}
+	else
+	{
+		std::pair<T, bool> init_value(0.0, false);
+		std::vector<std::pair<T, bool>> result{ rhs.get_rows(), rhs.get_cols(), init_value };
+		bool almost_equal = false;
+		for (register auto i = 0; i != rhs.get_rows(); ++i)
+		{
+			for (register auto j = 0; j != rhs.get_cols(); ++j)
+			{
+				if (std::fabs(this->m_data[i][j] - rhs.m_data[i][j]) < std::numeric_limits<T>::epsilon())
+				{
+					almost_equal = true;
+					std::pair<T, bool> res(this->m_data[i][j], almost_equal);
+					result.push_back(res);
+				}
+			}
+		}
+		return result;
+	}
+	
+}
+
+//---------------------------------------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator+=(const Matrix2D& rhs)
+{
+	
+	
+	for (register size_t i = 0; i != this->m_rows; ++i)
+	{
+		for (register size_t j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] += rhs.m_data[i][j];
+		}
+	}
+
+	return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------//
+
+//-----------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N> operator+(const Matrix2D<T, N>& A, const Matrix2D<T, N>& B)
+{
+
+
+	Matrix2D<T, N> ret_value = Matrix2D<T, N>(A.get_rows(), A.get_cols(), false);
+	for (register auto i = 0; i != A.get_rows(); ++i)
+	{
+		for (register auto j = 0; j != A.get_cols(); ++j)
+		{
+			ret_value.m_data[i][j] = A.m_data[i][j] + B.m_data[i][j];
+		}
+	}
+	
+	return ret_value;
+}
+
+//-------------------------------------------------------------------------------------------------------//
+
+//-------------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N> operator+(const T& value, const Matrix2D<T, N>& A)
+{
+	Matrix2D<T, N> ret_value = Matrix2D<T, N>(A.get_rows(), A.get_cols(), false);
+
+	for (register auto i = 0; i != A.m_rows; ++i)
+	{
+		for (register auto j = 0; j != A.m_cols; ++j)
+		{
+			ret_value.m_data[i][j] = A.m_data[i][j] + value;
+		}
+	}
+	
+	return ret_value;
+}
+
+//------------------------------------------------------------------------------------------------------//
+
+//------------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N> operator*(const Matrix2D<T, N>& A, const Matrix2D<T, N>& B)
+{
+
+	bool dummy = false;
+	Matrix2D<T, N> ret_value = Matrix2D<T, N>(A.get_rows(), A.get_cols(), dummy);
+
+	for (register auto i = 0; i != A.get_rows(); ++i)
+	{
+		for (register auto j = 0; j != A.get_cols(); ++j)
+		{
+			for (register auto k = 0; k != A.get_cols(); ++k)
+			{
+				ret_value.m_data[i][j] += (A.m_data[i][k] * B.m_data[k][j]);
+			}
+		}
+	}
+	return ret_value;
+}
+
+//-------------------------------------------------------------------------------------------------//
+
+//-------------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N> operator*(const T& value, const Matrix2D<T, N>& rhs)
+{
+	bool dummy = false;
+	Matrix2D<T, N> ret_value = Matrix2D<T, N>(rhs.get_rows(), rhs.get_cols, dummy);
+
+	for (register auto i = 0; i != rhs.get_rows(); ++i)
+	{
+		for (register auto j = 0; j != rhs.get_cols(); ++j)
+		{
+			ret_value.m_data[i][j] = rhs.m_data[i][j] * value;
+		}
+	}
+	return ret_value;
+}
+
+//-----------------------------------------------------------------------------------------------//
+
+//-----------------------------------------------------------------------------------------------//
+template<typename T, size_t N> inline Matrix2D<T, N>& Matrix2D<T, N>::operator-=(const Matrix2D& rhs)
+{
+	
+	for (register size_t i = 0; i != this->m_rows; ++i)
+	{
+		for (register size_t j = 0; j != this->m_cols; ++j)
+		{
+			this->m_data[i][j] -= rhs.m_data[i][j];
+		}
+	}
+
+	return *this;
+}
+
+//-----------------------------------------------------------------------------------------//
+
+//-----------------------------------------------------------------------------------------//
+template<typename T, size_t N>  std::ostream& operator<<(std::ostream& os, const Matrix2D<T, N>& A)
+{
+	for (register auto i = 0; i != A.get_rows(); ++i)
+	{
+		for (register auto j = 0; j != A.get_cols(); ++j)
+		{
+			os << "index i = \t" << i << "\tindex j = \t" << j << "\tvalues = " << A.m_data[i][j] << std::endl;
+		}
+		os << "---------------------------------------------------------------------------------" << std::endl;
+	}
+
+	return os;
+}
+
+/*
+ * Non-member functions
+ */
+
+//-----------------------------------------------------------------------------------------------//
+template<typename T> inline T** allocateMat2D<T>(const size_t rows, const size_t cols)
+{
+
+
+	const size_t length = rows * cols;
+	T** ptr = nullptr;
+	ptr = new(nothrow) T*[length];
+	if(nullptr==ptr) std::abort();
+        ptr[0] = new(nothrow) T[rows];
+	if(nullptr==ptr[0]) std::abort();
+	
+	for (register size_t i = 0; i != rows; ++i)
+	{
+		size_t j = rows * i;
+		ptr[i] = &ptr[0][j];
+		
+	}
+	for (register size_t i = 0; i != rows; ++i)
+	{
+		for (register size_t j = 0; j != cols; ++j)
+		{
+			ptr[i][j] = { 0 };
+		}
+	}
+
+	return ptr;
+}
+
+//---------------------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------------------//
+template<typename T> inline void deallocateMat2D(T**& ptr)
+{
+	if (ptr)
+	{
+		delete[] ptr[0];
+		delete[] ptr;
+		ptr = nullptr;
+	}
+}
+
