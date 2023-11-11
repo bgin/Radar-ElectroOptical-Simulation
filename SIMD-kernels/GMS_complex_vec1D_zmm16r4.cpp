@@ -1,7 +1,7 @@
 
 
 #include "GMS_complex_vec1D_zmm16r4.h"   
-#include "GMS_avx512complex_common.h"
+#include "GMS_complex_common_zmm16r4.h"
 #include "GMS_malloc.h"
 #include "GMS_simd_memops.h"
 
