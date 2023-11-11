@@ -60,25 +60,25 @@ namespace gms {
 
         inline Matrix2D() noexcept(true);
 		// Constructor allocates array of pointers type T*
-	inline	Matrix2D(const size_t, const size_t) noexcept(false);
+	inline	Matrix2D(const size_t, const size_t);
 
 		//Constructor initializes Matrix2D object to 0 by default.
-	inline	Matrix2D(const size_t, const size_t, const bool ) noexcept(false);
+	inline	Matrix2D(const size_t, const size_t, const bool );
 
 		//Constructor initializes Matrix2D object by user passed value
-	inline	Matrix2D(const size_t, const size_t, const T&) noexcept(false);
+	inline	Matrix2D(const size_t, const size_t, const T&);
 
 	   //Constructor initializes Matrix2D object by user passed pointer T**
-	inline Matrix2D(const size_t, const size_t, T**) noexcept(false);
+	inline Matrix2D(const size_t, const size_t, T**);
 
 	//Constructor initializes Matrix2D object by passing std::vector<std::vector<T>>& reference
-	inline Matrix2D(const std::vector<std::vector<T>>&) noexcept(false);
+	inline Matrix2D(const std::vector<std::vector<T>>&);
 
 	//Constructor intializes Matrix2D object from user passed reference to static array.
 	inline Matrix2D( const T(&)[N][N]);
 
 	//Constructor initialize Matrix2D object from user passed function pointer.
-	inline Matrix2D(const size_t, const size_t ,T((*&)(T))) noexcept(false);
+	inline Matrix2D(const size_t, const size_t ,T((*&)(T)));
 
 		//Copy constructor
 	inline	Matrix2D(const Matrix2D&) noexcept(false);
@@ -114,7 +114,7 @@ namespace gms {
 	//Member Operators
 	inline T& operator()(const size_t, const size_t);
 
-	inline Matrix2D& operator=(const Matrix2D&);
+	//inline Matrix2D& operator=(const Matrix2D&);
 
 	inline Matrix2D& operator=(Matrix2D&&);
 
@@ -169,46 +169,7 @@ namespace gms {
 	template<typename T, size_t N> friend std::ostream&    operator<<(std::ostream&, const Matrix2D<T, N>&);
 
 	
-	//Scalar versions
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_cosine(const T&, const size_t, const size_t);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_sine(const T&, const size_t, const size_t);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_tan(const T&, const size_t, const size_t);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_asin(const T&, const size_t, const size_t);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_acos(const T&, const size_t, const size_t);
-	//Vector2D versions, std::vector<std::vector<T>>
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_acos_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_cosine_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_sine_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_tan_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend Matrix2D<T, N>&  Matrix2D_asin_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr < Matrix2D<T, N>> Matrix2D_asinh_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr <Matrix2D<T, N>> Matrix2D_acosh_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr < Matrix2D<T, N>> Matrix2D_atanh_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr <Matrix2D<T, N>> Matrix2D_sinh_vec(const std::vector<std::vector<T>>&);
 	
-	template<typename T, size_t N> friend std::unique_ptr <Matrix2D<T, N>> Matrix2D_cosh_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr<Matrix2D<T, N>, void(*)(Matrix2D<T, N>*)> Matrix2D_tanh_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr<Matrix2D<T, N>, void(*)(Matrix2D<T, N>*)> Matrix2D_erf_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr<Matrix2D<T, N>, void(*)(Matrix2D<T, N>*)> Matrix2D_erfc_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr<Matrix2D<T, N>, void(*)(Matrix2D<T, N>*)> Matrix2D_lgamma_vec(const std::vector<std::vector<T>>&);
-
-	template<typename T, size_t N> friend std::unique_ptr<Matrix2D<T, N>, void(*)(Matrix2D<T, N>*)> Matrix2D_tgamma_vec(const std::vector<std::vector<T>>&);
 	//TO DO Test and implement friend functions with unique_ptr return type.
 	template<typename T, size_t N> friend std::unique_ptr < Matrix2D<T, N>> Matrix2D_test(const std::vector<std::vector<T>>&);
 	//friend  Matrix2D<T,N>& operator+<>(const Matrix2D& , const Matrix2D& );
@@ -258,19 +219,19 @@ namespace gms {
 
 	  
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator+(const Matrix2D<T, N>& , const Matrix2D<T, N>& );
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator+(const Matrix2D<T, N>& , const Matrix2D<T, N>& );
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator+(const T& , const Matrix2D<T, N>& );
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator+(const T& , const Matrix2D<T, N>& );
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator*(const Matrix2D<T, N>&, const Matrix2D<T, N>&);
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator*(const Matrix2D<T, N>&, const Matrix2D<T, N>&);
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator*(const T&, const Matrix2D<T, N>&);
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator*(const T&, const Matrix2D<T, N>&);
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator-(const Matrix2D<T, N>&, const Matrix2D<T, N>&);
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator-(const Matrix2D<T, N>&, const Matrix2D<T, N>&);
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator-(const T&, const Matrix2D<T, N>&);
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator-(const T&, const Matrix2D<T, N>&);
 
-	  template<typename T, size_t N>  Matrix2D<T, N>&  operator|(const Matrix2D<T, N>&, const Matrix2D<T, N>&);
+	  template<typename T, size_t N>  Matrix2D<T, N>  operator|(const Matrix2D<T, N>&, const Matrix2D<T, N>&);
 
 	//template<typename T, size_t N> inline Matrix2D<T, N> operator+(const Matrix2D<T, N>&,  const Matrix2D<T, N>&);
 
