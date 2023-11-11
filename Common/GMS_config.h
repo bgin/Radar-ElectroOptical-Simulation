@@ -655,7 +655,9 @@ constexpr int padding64B{64};
 #endif
 
 
-
+#if !defined (min_val)
+#define min_val(A,B) ((A)<(B)?(A):(B))
+#endif
 
 
 #endif /*_GMS_CONFIG_H__*/
