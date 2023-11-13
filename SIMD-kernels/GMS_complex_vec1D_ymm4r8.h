@@ -43,17 +43,17 @@ namespace gms {
 		
 	    __ATTR_ALIGN__(64) struct DataYMM4r8{
 
- 		  double* __restrict                  m_Re;
-		  double* __restrict                  m_Im;
-                  int32_t                             m_nsize;
-#if (USE_STRUCT_PADDING) == 1
-		   PAD_TO(0,44)
-#endif
+ 		
 		};
 
 	 __ATTR_ALIGN__(64) struct CV1DYMM4r8{
 		
-				DataYMM4r8 data;
+				  double* __restrict    m_Re;
+		                  double* __restrict    m_Im;
+                                  int32_t               m_nsize;
+#if (USE_STRUCT_PADDING) == 1
+		   PAD_TO(0,44)
+#endif
 
 				/*
 					Default Constructor 
