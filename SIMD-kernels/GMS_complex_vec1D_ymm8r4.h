@@ -41,19 +41,17 @@ namespace gms {
 	namespace math{
 
 		
-	    __ATTR_ALIGN__(64) struct DataYMM8r4{
-
- 		  float* __restrict                  m_Re;
-		  float* __restrict                  m_Im;
-                  int32_t                             m_nsize;
-#if (USE_STRUCT_PADDING) == 1
-		   PAD_TO(0,44)
-#endif
-		};
+	  
 
 	 __ATTR_ALIGN__(64) struct CV1DYMM8r4{
 		
-				DataYMM8r4 data;
+				
+				 float* __restrict  m_Re;
+		                 float* __restrict  m_Im;
+                                 int32_t            m_nsize;
+#if (USE_STRUCT_PADDING) == 1
+		   PAD_TO(0,44)
+#endif
 
 				/*
 					Default Constructor 
