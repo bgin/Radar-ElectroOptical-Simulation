@@ -47,24 +47,20 @@ namespace gms {
 
 
 
-	      __ATTR_ALIGN__(64) struct CVData{
-
-
-		         float* __restrict m_Re;
-		         float* __restrict m_Im;
-		         int32_t   m_nsize;
-#if (USE_STRUCT_PADDING) == 1
-			 PAD_TO(0,44)
-#endif
-		};
+	     
 
 		 
 
 		 __ATTR_ALIGN__(64) struct CV1DZMM16r4{
 
 
-
-		        CVData data;
+                         float* __restrict m_Re;
+		         float* __restrict m_Im;
+		         int32_t   m_nsize;
+#if (USE_STRUCT_PADDING) == 1
+			 PAD_TO(0,44)
+#endif
+		       
 
 			//
 			//	Default Constructor.
@@ -176,31 +172,31 @@ namespace gms {
 		       const CV1DZMM16r4 &y) {
 				  
 				
-			if (x.data.m_nsize != y.data.m_nsize) {
+			if (x.m_nsize != y.m_nsize) {
 				return (std::make_pair(std::array<__mmask16, N>{}, std::array<__mmask16, N>{}));
 			}
 			int32_t i;
 			int32_t k1 = 0, k2 = 0;
 			std::pair<std::array<__mmask16, N>,
 				      std::array<__mmask16, N >> ret_val; 
-			for (i = 0; i != ROUND_TO_SIXTEEN(x.data.m_nsize,16); i += 16) {
-				const __m512 zmm0 = _mm512_load_ps(&x.data.m_Re[i]);
-				const __m512 zmm1 = _mm512_load_ps(&y.data.m_Re[i]);
+			for (i = 0; i != ROUND_TO_SIXTEEN(x.m_nsize,16); i += 16) {
+				const __m512 zmm0 = _mm512_load_ps(&x.m_Re[i]);
+				const __m512 zmm1 = _mm512_load_ps(&y.m_Re[i]);
 				ret_val.first[++k1] = _mm512_cmp_ps_mask(zmm0,zmm1,_CMP_EQ_OQ);
-				const __m512 zmm2 = _mm512_load_ps(&x.data.m_Im[i]);
-				const __m512 zmm3 = _mm512_load_ps(&y.data.m_Im[i]);
+				const __m512 zmm2 = _mm512_load_ps(&x.m_Im[i]);
+				const __m512 zmm3 = _mm512_load_ps(&y.m_Im[i]);
 				ret_val.second[++k2] = _mm512_cmp_ps_mask(zmm2,zmm3,_CMP_EQ_OQ);
 			}
 			 unsigned char t1 = 0x00, t2 = 0x00;
 			 k1 += 1;
 			 k2 += 1;
-			for (; i != x.data.m_nsize; ++i) {
-				if (approximately_equalf32(x.data.m_Re[i],
-					              y.data.m_Re[i], std::numeric_limits<float>::epsilon())) {
+			for (; i != x.m_nsize; ++i) {
+				if (approximately_equalf32(x.m_Re[i],
+					              y.m_Re[i], std::numeric_limits<float>::epsilon())) {
 					t1 |= 1 << i;
 				}
-				if (approximately_equalf32(x.data.m_Im[i],
-					             y.data.m_Im[i], std::numeric_limits<float>::epsilon())) {
+				if (approximately_equalf32(x.m_Im[i],
+					             y.m_Im[i], std::numeric_limits<float>::epsilon())) {
 					t2 |= 1 << i
 				}
 			}
@@ -215,30 +211,30 @@ namespace gms {
 		std::array<__mmask16,N>>
 	    operator!=(const CV1DZMM16r4 &x,
 		       const CV1DZMM16r4 &y) {
-			if (x.data.m_nsize != y.data.m_nsize) {
+			if (x.m_nsize != y.m_nsize) {
 				return (std::make_pair(std::array<__mmask16, N>{}, std::array<__mmask16, N>{}));
 			}
 			int32_t i;
 			int32_t k1 = 0, k2 = 0;
 			std::pair<std::array<__mmask16,N>,std::array<__mmask16,N>> ret_val;
-			for (i = 0; i != ROUND_TO_SIXTEEN(x.data.m_nsize, 16); i += 16) {
-				const __m512 zmm0   = _mm512_load_ps(&x.data.m_Re[i]);
-				const __m512 zmm1   = _mm512_load_ps(&y.data.m_Re[i]);
+			for (i = 0; i != ROUND_TO_SIXTEEN(x.m_nsize, 16); i += 16) {
+				const __m512 zmm0   = _mm512_load_ps(&x.m_Re[i]);
+				const __m512 zmm1   = _mm512_load_ps(&y.m_Re[i]);
 				ret_val.first[++k1]  = _mm512_cmp_ps_mask(zmm0,zmm1,_CMP_NEQ_OQ);
-				const __m512 zmm2    = _mm512_load_ps(&x.data.m_Im[i]);
-				const __m512 zmm3    = _mm512_load_ps(&y.data.m_Im[i]);
+				const __m512 zmm2    = _mm512_load_ps(&x.m_Im[i]);
+				const __m512 zmm3    = _mm512_load_ps(&y.m_Im[i]);
 				ret_val.second[++k2] = _mm512_cmp_ps_mask(zmm2,zmm3,_CMP_NEQ_OQ);
 			}
 			unsigned char t1 = 0x00, t2 = 0x00;
 			k1 += 1;
 			k2 += 1;
-			for (; i != x.data.m_nsize; ++i) {
-				if (!approximately_equalf32(x.data.m_Re[i],
-					               y.data.m_Re[i],std::numeric_limits<float>::epsilon())) {
+			for (; i != x.m_nsize; ++i) {
+				if (!approximately_equalf32(x.m_Re[i],
+					               y.m_Re[i],std::numeric_limits<float>::epsilon())) {
 					 t1 |= 1 << i;
 				}
-				if (!approximately_equalf32(x.data.m_Im[i],
-					y.data.m_Im[i], std::numeric_limits<float>::epsilon())) {
+				if (!approximately_equalf32(x.m_Im[i],
+					y.m_Im[i], std::numeric_limits<float>::epsilon())) {
 					t2 |= 1 << i;
 				}
 			}
