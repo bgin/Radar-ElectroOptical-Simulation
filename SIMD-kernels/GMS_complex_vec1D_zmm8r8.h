@@ -47,7 +47,11 @@ namespace gms {
 
 
 
-	      __ATTR_ALIGN__(64) struct CVData{
+
+		 
+
+		 __ATTR_ALIGN__(64) struct CV1DZMM8r8{
+
 
 
 		         double* __restrict m_Re;
@@ -56,16 +60,6 @@ namespace gms {
 #if (USE_STRUCT_PADDING) == 1
 			 PAD_TO(0,44)
 #endif
-		};
-
-		 
-
-		 __ATTR_ALIGN__(64) struct CV1DZMM8r8{
-
-
-
-		        CVData data;
-
 			//
 			//	Default Constructor.
 			//
@@ -176,31 +170,31 @@ namespace gms {
 		       const CV1DZMM8r8 &y) {
 				  
 				   using namespace gms::math::constants;
-			if (x.data.m_nsize != y.data.m_nsize) {
+			if (x.m_nsize != y.m_nsize) {
 				return (std::make_pair(std::array<__mmask8, N>{}, std::array<__mmask8, N>{}));
 			}
 			int32_t i;
 			int32_t k1 = 0, k2 = 0;
 			std::pair<std::array<__mmask8, N>,
 				      std::array<__mmask8, N >> ret_val; 
-			for (i = 0; i != ROUND_TO_EIGHT(x.data.m_nsize); i += 8) {
-				const __m512d zmm0 = _mm512_load_pd(&x.data.m_Re[i]);
-				const __m512d zmm1 = _mm512_load_pd(&y.data.m_Re[i]);
+			for (i = 0; i != ROUND_TO_EIGHT(x.m_nsize); i += 8) {
+				const __m512d zmm0 = _mm512_load_pd(&x.m_Re[i]);
+				const __m512d zmm1 = _mm512_load_pd(&y.m_Re[i]);
 				ret_val.first[++k1] = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_EQ_OQ);
-				const __m512d zmm2 = _mm512_load_pd(&x.data.m_Im[i]);
-				const __m512d zmm3 = _mm512_load_pd(&y.data.m_Im[i]);
+				const __m512d zmm2 = _mm512_load_pd(&x.m_Im[i]);
+				const __m512d zmm3 = _mm512_load_pd(&y.m_Im[i]);
 				ret_val.second[++k2] = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_EQ_OQ);
 			}
 			 unsigned char t1 = 0x00, t2 = 0x00;
 			 k1 += 1;
 			 k2 += 1;
-			for (; i != x.data.m_nsize; ++i) {
-				if (approximately_equalf64(x.data.m_Re[i],
-					              y.data.m_Re[i], std::numeric_limits<double>::epsilon())) {
+			for (; i != x.m_nsize; ++i) {
+				if (approximately_equalf64(x.m_Re[i],
+					              y.m_Re[i], std::numeric_limits<double>::epsilon())) {
 					t1 |= 1 << i;
 				}
-				if (approximately_equalf64(x.data.m_Im[i],
-					             y.data.m_Im[i], std::numeric_limits<double>::epsilon())) {
+				if (approximately_equalf64(x.m_Im[i],
+					             y.m_Im[i], std::numeric_limits<double>::epsilon())) {
 					t2 |= 1 << i
 				}
 			}
@@ -217,30 +211,30 @@ namespace gms {
 		       const CV1DZMM8r8 &y) {
 			using namespace gms::common;
 			using namespace gms::math::constants;
-			if (x.data.m_nsize != y.data.m_nsize) {
+			if (x.m_nsize != y.m_nsize) {
 				return (std::make_pair(std::array<__mmask8, N>{}, std::array<__mmask8, N>{}));
 			}
 			int32_t i;
 			int32_t k1 = 0, k2 = 0;
 			std::pair<std::array<__mmask8,N>,std::array<__mmask8,N>> ret_val;
-			for (i = 0; i != ROUND_TO_EIGHT(x.data.m_nsize, 8); i += 8) {
-				const __m512d zmm0   = _mm512_load_pd(&x.data.m_Re[i]);
-				const __m512d zmm1   = _mm512_load_pd(&y.data.m_Re[i]);
+			for (i = 0; i != ROUND_TO_EIGHT(x.m_nsize, 8); i += 8) {
+				const __m512d zmm0   = _mm512_load_pd(&x.m_Re[i]);
+				const __m512d zmm1   = _mm512_load_pd(&y.m_Re[i]);
 				ret_val.first[++k1]  = _mm512_cmp_pd_mask(zmm0,zmm1,_CMP_NEQ_OQ);
-				const __m512 zmm2    = _mm512_load_pd(&x.data.m_Im[i]);
-				const __m512 zmm3    = _mm512_load_pd(&y.data.m_Im[i]);
+				const __m512 zmm2    = _mm512_load_pd(&x.m_Im[i]);
+				const __m512 zmm3    = _mm512_load_pd(&y.m_Im[i]);
 				ret_val.second[++k2] = _mm512_cmp_pd_mask(zmm2,zmm3,_CMP_NEQ_OQ);
 			}
 			unsigned char t1 = 0x00, t2 = 0x00;
 			k1 += 1;
 			k2 += 1;
-			for (; i != x.data.m_nsize; ++i) {
-				if (!approximately_equalf64(x.data.m_Re[i],
-					               y.data.m_Re[i],std::numeric_limits<double>::epsilon())) {
+			for (; i != x.m_nsize; ++i) {
+				if (!approximately_equalf64(x.m_Re[i],
+					               y.m_Re[i],std::numeric_limits<double>::epsilon())) {
 					 t1 |= 1 << i;
 				}
-				if (!approximately_equalf64(x.data.m_Im[i],
-					y.data.m_Im[i], std::numeric_limits<double>::epsilon())) {
+				if (!approximately_equalf64(x.m_Im[i],
+					y.m_Im[i], std::numeric_limits<double>::epsilon())) {
 					t2 |= 1 << i;
 				}
 			}
