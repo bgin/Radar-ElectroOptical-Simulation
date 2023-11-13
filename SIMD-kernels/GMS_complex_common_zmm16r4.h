@@ -36,16 +36,16 @@ namespace gms {
 
 #if !defined (AVX512_COMPLEX_ADDITION)
 #define AVX512_COMPLEX_ADDITION(out,v1,v2,idx,off) \
-	(out) = _mm512_add_ps(_mm512_mul_ps(_mm512_load_ps(&(v1).data.m_Re[(idx)+(off)]), \
-	_mm512_load_ps(&(v2).data.m_Re[(idx)+(off)])), _mm512_mul_ps(_mm512_load_ps(&(v1).data.m_Im[(idx)+(off)]), \
-	_mm512_load_ps(&(v2).data.m_Im[(idx)+(off)])));
+	(out) = _mm512_add_ps(_mm512_mul_ps(_mm512_load_ps(&(v1).m_Re[(idx)+(off)]), \
+	_mm512_load_ps(&(v2).m_Re[(idx)+(off)])), _mm512_mul_ps(_mm512_load_ps(&(v1).m_Im[(idx)+(off)]), \
+	_mm512_load_ps(&(v2).m_Im[(idx)+(off)])));
 #endif
 
 #if !defined (AVX512_COMPLEX_SUBTRACTION)
 #define AVX512_COMPLEX_SUBTRACTION(out,v1,v2,idx,off) \
-	(out) = _mm512_sub_ps(_mm512_mul_ps(_mm512_load_ps(&(v1).data.m_Im[(idx)+(off)]), \
-	_mm512_load_ps(&(v2).data.m_Re[(idx)+(off)])), _mm512_mul_ps(_mm512_load_ps(&(v1).data.m_Re[(idx)+(off)]), \
-	_mm512_load_ps(&(v2).data.m_Im[(idx)+(off)])));
+	(out) = _mm512_sub_ps(_mm512_mul_ps(_mm512_load_ps(&(v1).m_Im[(idx)+(off)]), \
+	_mm512_load_ps(&(v2).m_Re[(idx)+(off)])), _mm512_mul_ps(_mm512_load_ps(&(v1).m_Re[(idx)+(off)]), \
+	_mm512_load_ps(&(v2).m_Im[(idx)+(off)])));
 #endif
 
 		// Warning macro parameter v2 must be an exact copy
@@ -53,9 +53,9 @@ namespace gms {
 		// Move Constructor.
 #if !defined (AVX512_COMPLEX_MAGNITUDE)
 #define AVX512_COMPLEX_MAGNITUDE(out,v1,v2,idx,off) \
-	(out) = _mm512_sqrt_ps(_mm512_add_ps(_mm512_mul_ps(_mm512_load_ps(&(v1).data.m_Re[(idx)+(off)]), \
-	_mm512_load_ps(&(v2).data.m_Re[(idx)+(off)])), _mm512_mul_ps(_mm512_load_ps(&(v1).data.m_Im[(idx)+(off)]), \
-	_mm512_load_ps(&(v2).data.m_Im[(idx)+(off)]))));
+	(out) = _mm512_sqrt_ps(_mm512_add_ps(_mm512_mul_ps(_mm512_load_ps(&(v1).m_Re[(idx)+(off)]), \
+	_mm512_load_ps(&(v2).m_Re[(idx)+(off)])), _mm512_mul_ps(_mm512_load_ps(&(v1).m_Im[(idx)+(off)]), \
+	_mm512_load_ps(&(v2).m_Im[(idx)+(off)]))));
 #endif
 
 			template<class AVX512VField1D,
@@ -65,15 +65,15 @@ namespace gms {
 								 const AVX512VField1D &v1,
 					                         const AVX512VField1D &v2,
 					                         const bool do_nt_stream) {
-				 if (v1.data.m_nsize != v2.data.m_nsize) {return;}
+				 if (v1.m_nsize != v2.m_nsize) {return;}
 				 int64_t i;
 				 if (do_nt_stream) {// Incurs branch penalty here circa. 50% upon first encounters.
-					 for (i = 0; i != ROUND_TO_SIXTEEN(out.data.m_nsize, 16); i += 16) {
+					 for (i = 0; i != ROUND_TO_SIXTEEN(out.m_nsize, 16); i += 16) {
 
-						 const __m512 zmm0 = _mm512_load_ps(&v1.data.m_Re[i]);
-						 const __m512 zmm1 = _mm512_load_ps(&v2.data.m_Re[i]);
-						 const __m512 zmm2 = _mm512_load_ps(&v1.data.m_Im[i]);
-						 const __m512 zmm3 = _mm512_load_ps(&v2.data.m_Im[i]);
+						 const __m512 zmm0 = _mm512_load_ps(&v1.m_Re[i]);
+						 const __m512 zmm1 = _mm512_load_ps(&v2.m_Re[i]);
+						 const __m512 zmm2 = _mm512_load_ps(&v1.m_Im[i]);
+						 const __m512 zmm3 = _mm512_load_ps(&v2.m_Im[i]);
 
 						 const __m512 re_part = _mm512_sub_ps(
 							 _mm512_mul_ps(zmm0, zmm1), _mm512_mul_ps(zmm2,zmm3));
@@ -82,27 +82,27 @@ namespace gms {
 						 const __m512 sqrt_term1 = _mm512_mul_ps(re_part,re_part);
 						 const __m512 sqrt_term2 = _mm512_mul_ps(im_part,im_part);
 						 const __m512 mag_term = _mm512_sqrt_ps(_mm512_add_ps(sqrt_term1,sqrt_term2));
-						 _mm512_stream_ps(&out.data.m_Re[i], _mm512_div_ps(re_part,mag_term));
-						 _mm512_stream_ps(&out.data.m_Im[i], _mm512_div_ps(im_part,mag_term));
+						 _mm512_stream_ps(&out.m_Re[i], _mm512_div_ps(re_part,mag_term));
+						 _mm512_stream_ps(&out.m_Im[i], _mm512_div_ps(im_part,mag_term));
 				}
 					 _mm_sfence();
 					 // Warning remainder is cached upon store.
-					 for (; i != out.data.m_nsize; ++i) {
-						 const double re = (v1.data.m_Re[i] * v2.data.m_Re[i]) - (v1.data.m_Im[i] * v2.data.m_Im[i]);
-						 const double im = (v1.data.m_Im[i] * v2.data.m_Re[i]) + (v1.data.m_Re[i] * v2.data.m_Im[i]);
+					 for (; i != out.m_nsize; ++i) {
+						 const double re = (v1.m_Re[i] * v2.m_Re[i]) - (v1.m_Im[i] * v2.m_Im[i]);
+						 const double im = (v1.m_Im[i] * v2.m_Re[i]) + (v1.m_Re[i] * v2.m_Im[i]);
 						 const double mag = std::sqrt(re*re + im*im);
-						 out.data.m_Re[i] = re / mag;
-						 out.data.m_Im[i] = im / mag;
+						 out.m_Re[i] = re / mag;
+						 out.m_Im[i] = im / mag;
 					 }
 			}
 				 else {
 					    
-					 for (i = 0; i != ROUND_TO_SIXTEEN(out.data.m_nsize, 16); i += 16) {
+					 for (i = 0; i != ROUND_TO_SIXTEEN(out.m_nsize, 16); i += 16) {
 
-						 const __m512 zmm0 = _mm512_load_ps(&v1.data.m_Re[i]);
-						 const __m512 zmm1 = _mm512_load_ps(&v2.data.m_Re[i]);
-						 const __m512 zmm2 = _mm512_load_ps(&v1.data.m_Im[i]);
-						 const __m512 zmm2 = _mm512_load_ps(&v2.data.m_Im[i]);
+						 const __m512 zmm0 = _mm512_load_ps(&v1.m_Re[i]);
+						 const __m512 zmm1 = _mm512_load_ps(&v2.m_Re[i]);
+						 const __m512 zmm2 = _mm512_load_ps(&v1.m_Im[i]);
+						 const __m512 zmm2 = _mm512_load_ps(&v2.m_Im[i]);
 
 						 const __m512 re_part = _mm512_sub_ps(
 							 _mm512_mul_ps(zmm0, zmm1), _mm512_mul_ps(zmm2, zmm3));
@@ -111,16 +111,16 @@ namespace gms {
 						 const __m512 sqrt_term1 = _mm512_mul_ps(re_part, re_part);
 						 const __m512 sqrt_term2 = _mm512_mul_ps(im_part, im_part);
 						 const __m512 mag_term = _mm512_sqrt_ps(_mm512_add_ps(sqrt_term1, sqrt_term2));
-						 _mm512_store_ps(&out.data.m_Re[i], _mm512_div_ps(re_part, mag_term));
-						 _mm512_store_ps(&out.data.m_Im[i], _mm512_div_ps(im_part, mag_term));
+						 _mm512_store_ps(&out.m_Re[i], _mm512_div_ps(re_part, mag_term));
+						 _mm512_store_ps(&out.m_Im[i], _mm512_div_ps(im_part, mag_term));
 					 }
 
-					 for (; i != out.data.m_nsize; ++i) {
-						 const double re = (v1.data.m_Re[i] * v2.data.m_Re[i]) - (v1.data.m_Im[i] * v2.data.m_Im[i]);
-						 const double im = (v1.data.m_Im[i] * v2.data.m_Re[i]) + (v1.data.m_Re[i] * v2.data.m_Im[i]);
+					 for (; i != out.m_nsize; ++i) {
+						 const double re = (v1.m_Re[i] * v2.m_Re[i]) - (v1.m_Im[i] * v2.m_Im[i]);
+						 const double im = (v1.m_Im[i] * v2.m_Re[i]) + (v1.m_Re[i] * v2.m_Im[i]);
 						 const double mag = std::sqrt((re*re) + (im*im));
-						 out.data.m_Re[i] = re / mag;
-						 out.data.m_Im[i] = im / mag;
+						 out.m_Re[i] = re / mag;
+						 out.m_Im[i] = im / mag;
 					 }
 			  }
 		}
@@ -131,19 +131,19 @@ namespace gms {
 				 avx512_cmean_prod(std::complex<double> &mean,
 						   const AVX512VField1D &v1,
 						   const AVX512VField1D &v2) {
-					 if (v1.data.m_nsize != v2.data.m_nsize) { return;}
+					 if (v1.m_nsize != v2.m_nsize) { return;}
 				   
 				 	__ATTR_ALIGN__(64) struct {
                                                  double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{0.0};
 						 int64_t i;
 					 } ca;
 				 
-					 for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v1.data.m_nsize, 16); ca.i += 16) {
+					 for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v1.m_nsize, 16); ca.i += 16) {
 						 
-						 const __m512 zmm0(_mm512_load_ps(&v1.data.m_Re[i]));
-						 const __m512 zmm1(_mm512_load_ps(&v2.data.m_Re[i]));
-						 const __m512 zmm2(_mm512_load_ps(&v1.data.m_Im[i]));
-						 const __m512 zmm3(_mm512_load_ps(&v2.data.m_Im[i]));
+						 const __m512 zmm0(_mm512_load_ps(&v1.m_Re[i]));
+						 const __m512 zmm1(_mm512_load_ps(&v2.m_Re[i]));
+						 const __m512 zmm2(_mm512_load_ps(&v1.m_Im[i]));
+						 const __m512 zmm3(_mm512_load_ps(&v2.m_Im[i]));
 						 const __m512 re_part(_mm512_sub_ps(_mm512_mul_ps(zmm0,zmm1)
 											   _mm512_mul_ps(zmm2,zmm3)));
 						 const __m512 im_part(_mm512_add_ps(_mm512_mul_ps(zmm2,zmm1),
@@ -153,12 +153,12 @@ namespace gms {
 						 ca.sumim = _mm512_reduce_ps(im_part);
 						 ca.accim += ca.sumim;
 				}
-					 for (; ca.i != v1.data.m_nsize; ++i) {
-						   ca.accre += (v1.data.m_Re[ca.i] * v2.data.m_Re[ca.i]) - (v1.data.m_Im[ca.i] * v2.data.m_Im[ca.i]);
-						   ca.accim += (v1.data.m_Im[ca.i] * v2.data.m_Re[ca.i]) + (v1.data.m_Re[ca.i] * v2.data.m_Im[ca.i]);
+					 for (; ca.i != v1.m_nsize; ++i) {
+						   ca.accre += (v1.m_Re[ca.i] * v2.m_Re[ca.i]) - (v1.m_Im[ca.i] * v2.m_Im[ca.i]);
+						   ca.accim += (v1.m_Im[ca.i] * v2.m_Re[ca.i]) + (v1.m_Re[ca.i] * v2.m_Im[ca.i]);
 					 }
-					 mean._Val[0] = ca.accre /= static_cast<double>(v1.data.m_nsize);
-					 mean._Val[1] = ca.accim /= static_cast<double>(v1.data.m_nsize);
+					 mean._Val[0] = ca.accre /= static_cast<double>(v1.m_nsize);
+					 mean._Val[1] = ca.accim /= static_cast<double>(v1.m_nsize);
 		 }
 
 		 template<class AVX512VField1D,
@@ -167,7 +167,7 @@ namespace gms {
 				  avx512_cmean_quot(std::complex<double> &mean,
 						    const AVX512VField1D &v1,
 						    const AVX512VField1D &v2) {
-				  if (v1.data.m_nsize != v2.data.m_nsize) { return;}
+				  if (v1.m_nsize != v2.m_nsize) { return;}
 			    
 				  __ATTR_ALIGN__(64) struct {
 					  double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 },
@@ -175,12 +175,12 @@ namespace gms {
 					  int64_t i;
 				  }ca;
 			  
-				  for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v1.data.m_nsize, 16); ca.i += 16) {
+				  for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v1.m_nsize, 16); ca.i += 16) {
 						
-						const __m512 zmm0(_mm512_load_ps(&v1.data.m_Re[i]));
-						const __m512 zmm1(_mm512_load_ps(&v2.data.m_Re[i]));
-						const __m512 zmm2(_mm512_load_ps(&v1.data.m_Im[i]));
-						const __m512 zmm3(_mm512_load_ps(&v2.data.m_Im[i]));
+						const __m512 zmm0(_mm512_load_ps(&v1.m_Re[i]));
+						const __m512 zmm1(_mm512_load_ps(&v2.m_Re[i]));
+						const __m512 zmm2(_mm512_load_ps(&v1.m_Im[i]));
+						const __m512 zmm3(_mm512_load_ps(&v2.m_Im[i]));
 						const __m512 re_part(_mm512_sub_ps(_mm512_mul_ps(zmm0, zmm1),
 											  _mm512_mul_ps(zmm2, zmm3)));
 						const __m512 im_part(_mm512_add_ps(_mm512_mul_ps(zmm2, zmm1),
@@ -194,17 +194,17 @@ namespace gms {
 						ca.sumim = _mm512_reduce_ps(im_quot);
 						ca.accim += ca.sumim;
 			  }
-				  for (; ca.i != v1.data.m_nsize; ++ca.i) {
-					  const double re = (v1.data.m_Re[ca.i] * v2.data.m_Re[ca.i]) - (v1.data.m_Im[ca.i] * v2.data.m_Im[ca.i]);
-					  const double im = (v1.data.m_Im[ca.i] * v2.data.m_Re[ca.i]) + (v1.data.m_Re[ca.i] * v2.data.m_Im[ca.i]);
-					  const double den = (v2.data.m_Re[ca.i] * v2.data.m_Re[ca.i]) + (v2.data.m_Im[ca.i] * v2.data.m_Im[ca.i]);
+				  for (; ca.i != v1.m_nsize; ++ca.i) {
+					  const double re = (v1.m_Re[ca.i] * v2.m_Re[ca.i]) - (v1.m_Im[ca.i] * v2.m_Im[ca.i]);
+					  const double im = (v1.m_Im[ca.i] * v2.m_Re[ca.i]) + (v1.m_Re[ca.i] * v2.m_Im[ca.i]);
+					  const double den = (v2.m_Re[ca.i] * v2.m_Re[ca.i]) + (v2.m_Im[ca.i] * v2.m_Im[ca.i]);
 					  ca.t1 += re / den;
 					  ca.t2 += im / den;
 			 }
 			 ca.accre += ca.t1;
 			 ca.accim += ca.t2;
-			 mean._Val[0] = ca.accre / static_cast<double>(v1.data.m_nsize);
-			 mean._Val[1] = ca.accim / static_cast<double>(v1.data.m_nsize);
+			 mean._Val[0] = ca.accre / static_cast<double>(v1.m_nsize);
+			 mean._Val[1] = ca.accim / static_cast<double>(v1.m_nsize);
 		}
 
 		template<class AVX512VField1D,
@@ -214,44 +214,44 @@ namespace gms {
 						  const AVX512VField1D &v1,
 						  const AVX512VField1D &v2,
 						  const bool do_nt_store) {
-				if (v1.data.m_nsize != v1.data.m_nsize) {return;}
+				if (v1.m_nsize != v1.m_nsize) {return;}
 				int64_t i;
 				if (do_nt_store) { // Perform streaming-store
 
-					for (i = 0; i != ROUND_TO_SIXTEEN(out.data.m_nsize, 16); i += 16) {
+					for (i = 0; i != ROUND_TO_SIXTEEN(out.m_nsize, 16); i += 16) {
 						 
-						const __m512 zmm0(_mm512_load_ps(&v1.data.m_Re[i]));
-						const __m512 zmm1(_mm512_load_ps(&v2.data.m_Re[i]));
-						const __m512 zmm2(_mm512_load_ps(&v1.data.m_Im[i]));
-						const __m512 zmm3(_mm512_load_ps(&v2.data.m_Im[i]));
-						_mm512_stream_ps(&out.data.m_Re[i], _mm512_add_ps(
+						const __m512 zmm0(_mm512_load_ps(&v1.m_Re[i]));
+						const __m512 zmm1(_mm512_load_ps(&v2.m_Re[i]));
+						const __m512 zmm2(_mm512_load_ps(&v1.m_Im[i]));
+						const __m512 zmm3(_mm512_load_ps(&v2.m_Im[i]));
+						_mm512_stream_ps(&out.m_Re[i], _mm512_add_ps(
 							            _mm512_mul_ps(zmm0, zmm1), _mm512_mul_ps(zmm2, zmm3)));
-						_mm512_stream_ps(&out.data.m_Im[i], _mm512_sub_ps(
+						_mm512_stream_ps(&out.m_Im[i], _mm512_sub_ps(
 									    _mm512_mul_ps(zmm2, zmm1), _mm512_mul_ps(zmm0, zmm3)));
 					}
 
-					for (; i != v1.data.m_nsize; ++i) { // Cache storing remainder.
-						out.data.m_Re[i] = (v1.data.m_Re[i] * v2.data.m_Re[i]) + (v1.data.m_Im[i] * v2.data.m_Im[i]);
-						out.data.m_Im[i] = (v1.data.m_Im[i] * v2.data.m_Re[i]) - (v1.data.m_Re[i] * v2.data.m_Im[i]);
+					for (; i != v1.m_nsize; ++i) { // Cache storing remainder.
+						out.m_Re[i] = (v1.m_Re[i] * v2.m_Re[i]) + (v1.m_Im[i] * v2.m_Im[i]);
+						out.m_Im[i] = (v1.m_Im[i] * v2.m_Re[i]) - (v1.m_Re[i] * v2.m_Im[i]);
 					}
 				}
 				else {
 					
-					for (i = 0; i != ROUND_TO_SIXTEEN(out.data.m_nsize, 16); i += 16) {
+					for (i = 0; i != ROUND_TO_SIXTEEN(out.m_nsize, 16); i += 16) {
 
-						const __m512 zmm0(_mm512_load_ps(&v1.data.m_Re[i]));
-						const __m512 zmm1(_mm512_load_ps(&v2.data.m_Re[i]));
-						const __m512 zmm2(_mm512_load_ps(&v1.data.m_Im[i]));
-						const __m512 zmm3(_mm512_load_ps(&v2.data.m_Im[i]));
-						_mm512_store_ps(&out.data.m_Re[i], _mm512_add_ps(
+						const __m512 zmm0(_mm512_load_ps(&v1.m_Re[i]));
+						const __m512 zmm1(_mm512_load_ps(&v2.m_Re[i]));
+						const __m512 zmm2(_mm512_load_ps(&v1.m_Im[i]));
+						const __m512 zmm3(_mm512_load_ps(&v2.m_Im[i]));
+						_mm512_store_ps(&out.m_Re[i], _mm512_add_ps(
 							_mm512_mul_ps(zmm0, zmm1), _mm512_mul_ps(zmm2, zmm3)));
-						_mm512_store_ps(&out.data.m_Im[i], _mm512_sub_ps(
+						_mm512_store_ps(&out.m_Im[i], _mm512_sub_ps(
 							_mm512_mul_ps(zmm2, zmm1), _mm512_mul_ps(zmm0, zmm3)));
 					}
 
-					for (; i != v1.data.m_nsize; ++i) { 
-						out.data.m_Re[i] = (v1.data.m_Re[i] * v2.data.m_Re[i]) + (v1.data.m_Im[i] * v2.data.m_Im[i]);
-						out.data.m_Im[i] = (v1.data.m_Im[i] * v2.data.m_Re[i]) - (v1.data.m_Re[i] * v2.data.m_Im[i]);
+					for (; i != v1.m_nsize; ++i) { 
+						out.m_Re[i] = (v1.m_Re[i] * v2.m_Re[i]) + (v1.m_Im[i] * v2.m_Im[i]);
+						out.m_Im[i] = (v1.m_Im[i] * v2.m_Re[i]) - (v1.m_Re[i] * v2.m_Im[i]);
 					}
 				}
 	        }
@@ -263,16 +263,16 @@ namespace gms {
 							       const AVX512VField1D &v1,
 							       const AVX512VField1D &v2,
 							       const bool do_nt_store) {
-					 if (v1.data.m_nsize != v2.data.m_nsize) { return;}
+					 if (v1.m_nsize != v2.m_nsize) { return;}
 					 int64_t i;
 					 if (do_nt_store) {
 							
-						 for (i = 0; i != ROUND_TO_SIXTEEN(out.data.m_nsize, 16); i += 16) {
+						 for (i = 0; i != ROUND_TO_SIXTEEN(out.m_nsize, 16); i += 16) {
 							
-							 const __m512 zmm0(_mm512_load_ps(&v1.data.m_Re[i]));
-							 const __m512 zmm1(_mm512_load_ps(&v2.data.m_Re[i]));
-							 const __m512 zmm2(_mm512_load_ps(&v1.data.m_Im[i]));
-							 const __m512 zmm3(_mm512_load_ps(&v2.data.m_Im[i]));
+							 const __m512 zmm0(_mm512_load_ps(&v1.m_Re[i]));
+							 const __m512 zmm1(_mm512_load_ps(&v2.m_Re[i]));
+							 const __m512 zmm2(_mm512_load_ps(&v1.m_Im[i]));
+							 const __m512 zmm3(_mm512_load_ps(&v2.m_Im[i]));
 							 const __m512 re_part(_mm512_add_ps(_mm512_mul_ps(zmm0, zmm1),
 													   _mm512_mul_ps(zmm2, zmm3)));
 							 const __m512 im_part(_mm512_sub_ps(_mm512_mul_ps(zmm2, zmm1),
@@ -280,26 +280,26 @@ namespace gms {
 							 const __m512 mag_c1(_mm512_mul_ps(re_part, re_part));
 							 const __m512 mag_c2(_mm512_mul_ps(im_part, im_part));
 							 const __m512 vcmag(_mm512_sqrt_ps(_mm512_add_ps(mag_c1, mag_c2)));
-							 _mm512_stream_ps(&out.data.m_Re[i], _mm512_div_ps(re_part,vcmag));
-							 _mm512_stream_ps(&out.data.m_Im[i], _mm512_div_ps(im_part,vcmag));
+							 _mm512_stream_ps(&out.m_Re[i], _mm512_div_ps(re_part,vcmag));
+							 _mm512_stream_ps(&out.m_Im[i], _mm512_div_ps(im_part,vcmag));
 						 }
 
-						 for (; i != out.data.m_nsize; ++i) { // Cache storing remainder.
-							 const double re = (v1.data.m_Re[i] * v2.data.m_Re[i]) - (v1.data.m_Im[i] * v2.data.m_Im[i]);
-							 const double im = (v1.data.m_Im[i] * v2.data.m_Re[i]) + (v1.data.m_Re[i] * v2.data.m_Im[i]);
+						 for (; i != out.m_nsize; ++i) { // Cache storing remainder.
+							 const double re = (v1.m_Re[i] * v2.m_Re[i]) - (v1.m_Im[i] * v2.m_Im[i]);
+							 const double im = (v1.m_Im[i] * v2.m_Re[i]) + (v1.m_Re[i] * v2.m_Im[i]);
 							 const double mag = std::sqrt((re*re) + (im*im));
-							 out.data.m_Re[i] = re / mag;
-							 out.data.m_Im[i] = im / mag;
+							 out.m_Re[i] = re / mag;
+							 out.m_Im[i] = im / mag;
 						 }
 					 }
 					 else {
 							
-						 for (i = 0LL; i != ROUND_TO_SIXTEEN(out.data.m_nsize, 8LL); i += 8LL) {
+						 for (i = 0LL; i != ROUND_TO_SIXTEEN(out.m_nsize, 8LL); i += 8LL) {
 
-							 const __m512 zmm0(_mm512_load_ps(&v1.data.m_Re[i]));
-							 const __m512 zmm1(_mm512_load_ps(&v2.data.m_Re[i]));
-							 const __m512 zmm2(_mm512_load_ps(&v1.data.m_Im[i]));
-							 const __m512 zmm3(_mm512_load_ps(&v2.data.m_Im[i]));
+							 const __m512 zmm0(_mm512_load_ps(&v1.m_Re[i]));
+							 const __m512 zmm1(_mm512_load_ps(&v2.m_Re[i]));
+							 const __m512 zmm2(_mm512_load_ps(&v1.m_Im[i]));
+							 const __m512 zmm3(_mm512_load_ps(&v2.m_Im[i]));
 							 const __m512 re_part(_mm512_add_ps(_mm512_mul_ps(zmm0, zmm1),
 								 _mm512_mul_ps(zmm2, zmm3)));
 							 const __m512 im_part(_mm512_sub_ps(_mm512_mul_ps(zmm2, zmm1),
@@ -307,16 +307,16 @@ namespace gms {
 							 const __m512 mag_c1(_mm512_mul_ps(re_part, re_part));
 							 const __m512 mag_c2(_mm512_mul_ps(im_part, im_part));
 							 const __m512 vcmag(_mm512_sqrt_ps(_mm512_add_ps(mag_c1, mag_c2)));
-							 _mm512_store_ps(&out.data.m_Re[i], _mm512_div_ps(re_part, vcmag));
-							 _mm512_store_ps(&out.data.m_Im[i], _mm512_div_ps(im_part, vcmag));
+							 _mm512_store_ps(&out.m_Re[i], _mm512_div_ps(re_part, vcmag));
+							 _mm512_store_ps(&out.m_Im[i], _mm512_div_ps(im_part, vcmag));
 						 }
 
-						 for (; i != out.data.m_nsize; ++i) { 
-							 const double re = (v1.data.m_Re[i] * v2.data.m_Re[i]) - (v1.data.m_Im[i] * v2.data.m_Im[i]);
-							 const double im = (v1.data.m_Im[i] * v2.data.m_Re[i]) + (v1.data.m_Re[i] * v2.data.m_Im[i]);
+						 for (; i != out.m_nsize; ++i) { 
+							 const double re = (v1.m_Re[i] * v2.m_Re[i]) - (v1.m_Im[i] * v2.m_Im[i]);
+							 const double im = (v1.m_Im[i] * v2.m_Re[i]) + (v1.m_Re[i] * v2.m_Im[i]);
 							 const double mag = std::sqrt((re*re) + (im*im));
-							 out.data.m_Re[i] = re / mag;
-							 out.data.m_Im[i] = im / mag;
+							 out.m_Re[i] = re / mag;
+							 out.m_Im[i] = im / mag;
 						 }
 					 }
 
@@ -328,7 +328,7 @@ namespace gms {
 				   avx512_cmean_conjprod(std::complex<double> &mean,
 							 const AVX512VField1D &v1,
 							 const AVX512VField1D &v2) {
-					   if (v1.data.m_nsize != v2.data.m_nsize) { return;}
+					   if (v1.m_nsize != v2.m_nsize) { return;}
 				    
 					__ATTR_ALIGN__(64) struct {
                                                     double sumre{ 0.0 }, sumim{ 0.0 }, accre{ 0.0 }, accim{ 0.0 };
@@ -336,7 +336,7 @@ namespace gms {
 					   }ca;
 					   __m512 re = _mm512_setzero_ps();
 					   __m512 im = _mm512_setzero_ps();
-					   for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v1.data.m_nsize, 16); i += 16) {
+					   for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v1.m_nsize, 16); i += 16) {
 						    
 						   AVX512_COMPLEX_ADDITION(re,v1,v2,ca.i,0)
 						   AVX512_COMPLEX_SUBTRACTION(im,v1,v2,ca.i,0)
@@ -345,14 +345,14 @@ namespace gms {
 						   ca.sumim = _mm512_reduce_ps(im);
 						   ca.accim += ca.sumim;
 					   }
-					   for (; i != v1.data.m_nsize; ++i) {
-						   const double re = (v1.data.m_Re[i] * v2.data.m_Re[i]) + (v1.data.m_Im[i] * v2.data.m_Im[i]);
-						   const double im = (v1.data.m_Im[i] * v2.data.m_Re[i]) - (v1.data.m_Re[i] * v2.data.m_Im[i]);
+					   for (; i != v1.m_nsize; ++i) {
+						   const double re = (v1.m_Re[i] * v2.m_Re[i]) + (v1.m_Im[i] * v2.m_Im[i]);
+						   const double im = (v1.m_Im[i] * v2.m_Re[i]) - (v1.m_Re[i] * v2.m_Im[i]);
 						   ca.accre += re;
 						   ca.accim += im;
 					   }
-					   mean._Val[0] = ca.accre / static_cast<double>(v1.data.m_nsize);
-					   mean._Val[1] = ca.accim / static_cast<double>(v1.data.m_nsize);
+					   mean._Val[0] = ca.accre / static_cast<double>(v1.m_nsize);
+					   mean._Val[1] = ca.accim / static_cast<double>(v1.m_nsize);
 				   }
 
 			
@@ -367,20 +367,20 @@ namespace gms {
 							 int64_t i;
 						 }ca;
 					 
-						 for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v.data.m_nsize, 16); ca.i += 16) {
-							 const __m512 re_part(_mm512_load_ps(&v.data.m_Re[i]));
+						 for (ca.i = 0; ca.i != ROUND_TO_SIXTEEN(v.m_nsize, 16); ca.i += 16) {
+							 const __m512 re_part(_mm512_load_ps(&v.m_Re[i]));
 							 ca.sumre = _mm512_reduce_ps(re_part);
 							 ca.accre += ca.sumre;
-							 const __m512 im_part(_mm512_load_ps(&v.data.m_Im[i]));
+							 const __m512 im_part(_mm512_load_ps(&v.m_Im[i]));
 							 ca.sumim = _mm512_reduce_ps(im_part);
 							 ca.accim += ca.sumim;
 						 }
-						 for (; ca.i != v.data.m_nsize; ++ca.i) {
-							 ca.accre += v.data.m_Re[i];
-							 ca.accim += v.data.m_Im[i];
+						 for (; ca.i != v.m_nsize; ++ca.i) {
+							 ca.accre += v.m_Re[i];
+							 ca.accim += v.m_Im[i];
 						 }
-						 mean._Val[0] = ca.accre / static_cast<double>(v.data.m_nsize);
-						 mean._Val[1] = ca.accim / static_cast<double>(v.data.m_nsize);
+						 mean._Val[0] = ca.accre / static_cast<double>(v.m_nsize);
+						 mean._Val[1] = ca.accim / static_cast<double>(v.m_nsize);
 			}
 
 			template<class AVX512VField1D,
@@ -390,36 +390,36 @@ namespace gms {
 										  const AVX512VField1D &v,
 										  const AVX512VField1D &cv,
 										  const bool do_nt_store) {
-						if (v.data.m_nsize != cv.data.m_nsize) { return;}
+						if (v.m_nsize != cv.m_nsize) { return;}
 						__m512 cvmag(_mm512_setzero_ps());
 						int64_t i;
 						if (do_nt_store) {
 								
-							for (i = 0, i != ROUND_TO_SIXTEEN(out.data.m_nsize, 16); i += 16) {
+							for (i = 0, i != ROUND_TO_SIXTEEN(out.m_nsize, 16); i += 16) {
 								AVX512_COMPLEX_MAGNITUDE(cvmag,v,cv,i,0)
-								const __m512 re_part(_mm512_load_ps(&v.data.m_Re[i]));
-								_mm512_stream_ps(&out.data.m_Re[i], _mm512_div_ps(re_part,cvmag));
-								const __m512 im_part(_mm512_load_ps(&v.data.m_Im[i]));
-								_mm512_stream_ps(&out.data.m_Im[i], _mm512_div_ps(im_part,cvmag));
+								const __m512 re_part(_mm512_load_ps(&v.m_Re[i]));
+								_mm512_stream_ps(&out.m_Re[i], _mm512_div_ps(re_part,cvmag));
+								const __m512 im_part(_mm512_load_ps(&v.m_Im[i]));
+								_mm512_stream_ps(&out.m_Im[i], _mm512_div_ps(im_part,cvmag));
 							}
-							for (; i != v.data.m_nsize; ++i) {
-								const double cmag = std::sqrt(v.data.m_Re[i] * cv.data.m_Re[i] + v.data.m_Im[i] * cv.data.m_Im[i]);
-								out.data.m_Re[i] = v.data.m_Re[i] / cmag;
-								out.data.m_Im[i] = v.data.m_Im[i] / cmag;
+							for (; i != v.m_nsize; ++i) {
+								const double cmag = std::sqrt(v.m_Re[i] * cv.m_Re[i] + v.m_Im[i] * cv.m_Im[i]);
+								out.m_Re[i] = v.m_Re[i] / cmag;
+								out.m_Im[i] = v.m_Im[i] / cmag;
 							}
 						}
 						else {
-							for (i = 0LL, i != ROUND_TO_SIXTEEN(out.data.m_nsize, 8LL); i += 8LL) {
+							for (i = 0LL, i != ROUND_TO_SIXTEEN(out.m_nsize, 8LL); i += 8LL) {
 								AVX512_COMPLEX_MAGNITUDE(cvmag, v, cv, i, 0LL)
-									const __m512 re_part(_mm512_load_ps(&v.data.m_Re[i]));
-								_mm512_store_ps(&out.data.m_Re[i], _mm512_div_ps(re_part, cvmag));
-								const __m512 im_part(_mm512_load_ps(&v.data.m_Im[i]));
-								_mm512_store_ps(&out.data.m_Im[i], _mm512_div_ps(im_part, cvmag));
+									const __m512 re_part(_mm512_load_ps(&v.m_Re[i]));
+								_mm512_store_ps(&out.m_Re[i], _mm512_div_ps(re_part, cvmag));
+								const __m512 im_part(_mm512_load_ps(&v.m_Im[i]));
+								_mm512_store_ps(&out.m_Im[i], _mm512_div_ps(im_part, cvmag));
 							}
-							for (; i != v.data.m_nsize; ++i) {
-								const double cmag = std::sqrt(v.data.m_Re[i] * cv.data.m_Re[i] + v.data.m_Im[i] * cv.data.m_Im[i]);
-								out.data.m_Re[i] = v.data.m_Re[i] / cmag;
-								out.data.m_Im[i] = v.data.m_Im[i] / cmag;
+							for (; i != v.m_nsize; ++i) {
+								const double cmag = std::sqrt(v.m_Re[i] * cv.m_Re[i] + v.m_Im[i] * cv.m_Im[i]);
+								out.m_Re[i] = v.m_Re[i] / cmag;
+								out.m_Im[i] = v.m_Im[i] / cmag;
 							}
 						}
 				}
@@ -430,16 +430,16 @@ namespace gms {
 						void avx512_cmagnitude(double * __restrict vmag, 
 								       const AVX512VField1D &v,
 								       const AVX512VField1D &cv) {
-						if (v.data.m_nsize != cv.data.m_nsize) { return;}
+						if (v.m_nsize != cv.m_nsize) { return;}
 						__m512 vcmag(_mm512_setzero_ps());
 						int64_t i;
-						for (i = 0; i != ROUND_TO_SIXTEEN(v.data.m_nsize, 16); i += 16) {
+						for (i = 0; i != ROUND_TO_SIXTEEN(v.m_nsize, 16); i += 16) {
 
 							AVX512_COMPLEX_MAGNITUDE(vcmag, v, cv, i, 0)
 								_mm512_store_ps(&vmag[i], vcmag);
 						}
-						for (; i != v.data.m_nsize; ++i)
-							vmag[i] = std::sqrt(v.data.m_Re[i] * cv.data.m_Re[i] + v.data.m_Im[i] * cv.data.m_Im[i]);
+						for (; i != v.m_nsize; ++i)
+							vmag[i] = std::sqrt(v.m_Re[i] * cv.m_Re[i] + v.m_Im[i] * cv.m_Im[i]);
 			   }
 
 			
