@@ -218,7 +218,7 @@ namespace gms {
 
 		template<int32_t N> SCVec1DZMM8r8<N>
 		inline   operator+(const SCVec1DZMM8r8<N> &x,
-				  const double __restrict Re[N]) {         // If Re is not equal to x --> udefined behaviour.
+				  const double  Re[N]) {         // If Re is not equal to x --> udefined behaviour.
 				  using namespace gms::common;
 				  if (!Is_ptr_aligned64(Re)) { return SCVec1DZMM8r8<N>{}; }
 				  SCVec1DZMM8r8<N> ret_vec;
@@ -262,7 +262,7 @@ namespace gms {
 		
 
 		template<int32_t N> SCVec1DZMM8r8<N>
-		inline operator+(const double __restrict Re[N],
+		inline operator+(const double  Re[N],
 				 const SCVec1DZMM8r8<N> &x) {
 				  using namespace gms::common;
 				  if (!Is_ptr_aligned64(Re)) { return (SCVec1DZMM8r8<N>{}); }
@@ -394,7 +394,7 @@ namespace gms {
 
 		  template<int32_t N> SCVec1DZMM8r8<N>
 		  inline operator-(SCVec1DZMM8r8<N> &x,
-				   const double __restrict Re[N]) {
+				   const double Re[N]) {
 					using namespace gms::common;
 					if (!Is_ptr_aligned64(Re)) { return (SCVec1DZMM8r8<N>{}); }
 					SCVec1DZMM8r8<N> ret_vec;
@@ -528,7 +528,7 @@ namespace gms {
 
 			 template<int32_t N> SCVec1DZMM8r8<N>
 			 inline operator*(const SCVec1DZMM8r8<N> &x,
-					  const double __restrict Re[N]) {
+					  const double  Re[N]) {
 				 using namespace gms::common;
 				 if (!Is_ptr_aligned64(Re)) { return (SCVec1DZMM8r8<N>{}); }
 				 SCVec1DZMM8r8<N> ret_vec;
@@ -684,7 +684,7 @@ namespace gms {
 			 
 		 template<int32_t N> SCVec1DZMM8r8<N>
 		 inline operator/(const SCVec1DZMM8r8<N> &x,
-				  const double  __restrict Re[N]) {
+				  const double  Re[N]) {
 				using namespace gms::common;
 				if (!Is_ptr_aligned64(Re)) { return (SCVec1DZMM8r8<N>{}); }
 				SCVec1DZMM8r8<N> ret_vec;
@@ -816,7 +816,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512scnormalize_product(SCVec1DZMM8r8<N> &vout,
+			void cnormalize_product_zmm8r8(SCVec1DZMM8r8<N> &vout,
 						     const SCVec1DZMM8r8<N> &v1,
 						     const SCVec1DZMM8r8<N> &v2,
 						     const bool do_nt_stream) {
@@ -825,7 +825,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512scmean_product(std::complex<double> &mean,
+			void cmean_product_zmm8r8(std::complex<double> &mean,
 						const SCVec1DZMM8r8<N> &v1,
 						const SCVec1DZMM8r8<N> &v2) {
 				
@@ -833,7 +833,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512scmean_quotient(std::complex<double> &mean,
+			void cmean_quotient_zmm8r8(std::complex<double> &mean,
 						 const SCVec1DZMM8r8<N> &v1,
 						 const SCVec1DZMM8r8<N> &v2) {
 
@@ -841,7 +841,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512scconj_product(SCVec1DZMM8r8<N> &vout,
+			void cconj_product_zmm8r8(SCVec1DZMM8r8<N> &vout,
 						const SCVec1DZMM8r8<N> &v1,
 						const SCVec1DZMM8r8<N> &v2,
 						const bool do_nt_store) {
@@ -850,7 +850,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512scnorm_conjprod(SCVec1DZMM8r8<N> &vout,
+			void cnorm_conjprod_zmm8r8(SCVec1DZMM8r8<N> &vout,
 						 const SCVec1DZMM8r8<N> &v1,
 						 const SCVec1DZMM8r8<N> &v2,
 						 const bool do_nt_store) {
@@ -859,7 +859,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512scmean_conjprod(std::complex<double> &mean,
+			void cmean_conjprod_zmm8r8(std::complex<double> &mean,
 						 const SCVec1DZMM8r8<N> &v1,
 						 const SCVec1DZMM8r8<N> &v2) {
 				
@@ -867,14 +867,14 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512sc_arithmean(std::complex<double> &mean,
+			void carith_mean_zmm8r8(std::complex<double> &mean,
 					      const SCVec1DZMM8r8<N> &v) {
 				
 				avx512_arith_mean<SCVec1DZMM8r8<N>>(mean,v);
 			}
 
 			template<int32_t N>
-			void v512sc_normalize(SCVec1DZMM8r8<N> &norm,
+			void cnormalize_zmm8r8(SCVec1DZMM8r8<N> &norm,
 					      const SCVec1DZMM8r8<N> &v,
 					      const SCVec1DZMM8r8<N> &cv,
 					      const bool do_nt_store) {
@@ -883,7 +883,7 @@ namespace gms {
 			}
 
 			template<int32_t N>
-			void v512sc_magnitude(const double * __restrict vmag,
+			void cmagnitude_zmm8r8(const double * __restrict vmag,
 					      const SCVec1DZMM8r8<N> &v,
 					      const SCVec1DZMM8r8<N> &cv) {
 				
