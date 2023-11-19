@@ -30,91 +30,675 @@ namespace file_info {
 
 #include <cstdint>
 #include <complex>
+#include <vector>
+#include <cstring> // std::memcpy
 #include "GMS_config"
+#include "GMS_malloc.h"
+#include "GMS_simd_memops.h"
 
+// Enable non-temporal stores for this class only( used with free-standing operators)
+// defaulted to 0.
+#if !defined (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)
+#define USE_GMS_ANTENNA_TYPES_V2_NT_STORES 0
+#endif
 
 namespace gms {
 
 
           namespace  radiolocation {
+          
 
-              typedef struct __ATTR_ALIGN__(32) E_c4_t {
+              struct __ATTR_ALIGN__(64) E_c4_t {
                       // Complex electric field.
-                      E_c4_t()                           = delete;
+                      std::complex<float> * __restrict ex
+                      std::complex<float> * __restrict ey;
+                      std::complex<float> * __restrict ez;
+                      std::size_t                      npts;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,32)
+#endif
+                     inline E_c4_t() noexcept(true) {
+                          
+                          this->npts = 0ULL;
+                          this->ex  = NULL;
+                          this->ey  = NULL;
+                          this->ez  = NULL;
+                      } 
+                          
+                     inline E_c4_t(const std::size_t pts) {
+                          using namespace gms::common;
+                          this->npts = pts;
+                          this->ex  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                      }  
+                      
+                     inline E_c4_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->ex = (std::complex<float>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ey = (std::complex<float>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ez = (std::complex<float>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->ex = (std::complex<float>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ey = (std::complex<float>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ez = (std::complex<float>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->issmap = true;
+                                 break;
+                                 case:2
+                                      this->ex = (std::complex<float>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ey = (std::complex<float>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ez = (std::complex<float>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                      this->issmap = true;
+                                 break;                         
+                             }          
+                     }
+                      
+                     inline E_c4_t(const std::vector<std::complex<float>> &e_x,    //shall be of the same size (no error checking implemented)
+                             const std::vector<std::complex<float>> &e_y,    //shall be of the same size (no error checking implemented)
+                             const std::vector<std::complex<float>> &e_z) {  //shall be of the same size (no error checking implemented)
+                          using namespace gms::common;
+                          
+                          this->npts = e_x.size();
+                          this->ex  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          const std::size_t len = sizeof(std::complex<float>)*this->npts;
+                          std::memcpy(this->ex,&e_x[0],len);
+                          std::memcpy(this->ey,&e_y[0],len);
+                          std::memcpy(this->ez,&e_z[0],len);       
+                     }
+                             
+                             
+                      
+                     inline E_c4_t(const std::size_t pts,
+                             const std::complex<float> * __restrict e_x,
+                             const std::complex<float> * __restrict e_y,
+                             const std::complex<float> * __restrict e_z) {
+                          using namespace gms::common;
+                          this->npts = npts;
+                          this->ex  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->ex[0],&e_x[0],this->npts);
+	                  avx512_uncached_memmove(&this->ey[0],&e_y[0],this->npts);
+	                  avx512_uncached_memmove(&this->ez[0],&e_z[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->ex[0],&e_x[0],this->npts);
+	                  avx512_cached_memmove(&this->ey[0],&e_y[0],this->npts);
+	                  avx512_cached_memmove(&this->ez[0],&e_z[0],this->npts);
+#endif
+                   }  
+                   
+                    inline  E_c4_t(E_c4_t && rhs) {
+                          
+                          this->npts = rhs.npts;
+                          this->ex   = &rhs.ex[0];
+                          this->ey   = &rhs.ey[0];
+                          this->ez   = &rhs.ez[0];
+                          rhs.npts   = 0ULL;
+                          rhs.ex     = NULL;
+                          rhs.ey     = NULL;
+                          rhs.ez     = NULL;
+                      }
+                                 
                       E_c4_t(const E_c4_t &)             = delete;
+                      
+                     inline ~E_c4_t() {
+                      
+                          using namespace gms::common;
+                          if(this->issmap) {
+                             gms_unmap(this->ex,this->npts);
+                             gms_unmap(this->ey,this->npts);
+                             gms_unmap(this->ez,this->npts);
+                          }
+                          else {
+                              gms_mm_free(this->ex);
+                              gms_mm_free(this->ey);
+                              gms_mm_free(this->ez);
+                          }
+                      }
+                      
                       E_c4_t & operator=(const E_c4_t &) = delete;
-                      std::complex<float> * __restrict e_x
-                      std::complex<float> * __restrict e_y
-                      std::complex<float> * __restrict e_z;
-                      int32_t                          npts;
-#if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,4)
-#endif
-              } E_c4_t;
+                      
+                     inline E_c4_t & operator=(E_c4_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->ex);
+                           gms_mm_free(this->ey);
+                           gms_mm_free(this->ez);
+                           this->npts = rhs.npts;
+                           this->ex   = &rhs.ex[0];
+                           this->ey   = &rhs.ey[0];
+                           this->ez   = &rhs.ez[0];
+                           rhs.npts   = 0ULL;
+                           rhs.ex     = NULL;
+                           rhs.ey     = NULL;
+                           rhs.ez     = NULL;
+                           return (*this);
+                      }
+                    
+              };
 
               
-               typedef struct __ATTR_ALIGN__(32) H_c4_t {
-                      // Complex magnetic field.
-                      H_c4_t()                           = delete;
+                struct __ATTR_ALIGN__(32) H_c4_t {
+                     
+                      std::complex<float> * __restrict mx
+                      std::complex<float> * __restrict my;
+                      std::complex<float> * __restrict mz;
+                      std::size_t                      npts;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,32)
+#endif
+                      H_c4_t() noexcept(true) {
+                          
+                          this->npts = 0ULL;
+                          this->mx  = NULL;
+                          this->my  = NULL;
+                          this->mz  = NULL;
+                      } 
+                          
+                      H_c4_t(const std::size_t pts) {
+                          using namespace gms::common;
+                          this->npts = pts;
+                          this->mx  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                      }  
+                      
+                       H_c4_t(const std::vector<std::complex<float>> &m_x,    //shall be of the same size (no error checking implemented)
+                              const std::vector<std::complex<float>> &m_y,    //shall be of the same size (no error checking implemented)
+                              const std::vector<std::complex<float>> &m_z) {  //shall be of the same size (no error checking implemented)
+                          using namespace gms::common;
+                          
+                          this->npts = m_x.size();
+                          this->mx  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          const std::size_t len = sizeof(std::complex<float>)*this->npts;
+                          std::memcpy(this->mx,&m_x[0],len);
+                          std::memcpy(this->my,&m_y[0],len);
+                          std::memcpy(this->mz,&m_z[0],len);       
+                     }
+                      
+                      H_c4_t(const std::size_t pts,
+                             const std::complex<float> * __restrict m_x,
+                             const std::complex<float> * __restrict m_y,
+                             const std::complex<float> * __restrict m_z) {
+                          using namespace gms::common;
+                          this->npts = npts;
+                          this->mx  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->npts);
+	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->npts);
+	                  avx512_uncached_memmove(&this->mz[0],&m_z[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->mx[0],&m_x[0],this->npts);
+	                  avx512_cached_memmove(&this->my[0],&m_y[0],this->npts);
+	                  avx512_cached_memmove(&this->mz[0],&m_z[0],this->npts);
+#endif
+                   }  
+                   
+                      H_c4_t(H_c4_t && rhs) {
+                          
+                          this->npts = rhs.npts;
+                          this->mx   = &rhs.mx[0];
+                          this->my   = &rhs.my[0];
+                          this->mz   = &rhs.mz[0];
+                          rhs.npts   = 0ULL;
+                          rhs.mx     = NULL;
+                          rhs.my     = NULL;
+                          rhs.mz     = NULL;
+                      }
+                                 
                       H_c4_t(const H_c4_t &)             = delete;
+                      
+                      ~H_c4_t() {
+                      
+                          using namespace gms::common;
+                          gms_mm_free(this->mx);
+                          gms_mm_free(this->my);
+                          gms_mm_free(this->mz);
+                      }
+                      
                       H_c4_t & operator=(const H_c4_t &) = delete;
-                      std::complex<float> * __restrict h_x
-                      std::complex<float> * __restrict h_y
-                      std::complex<float> * __restrict h_z;
-                      int32_t                          npts;
-#if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,4)
-#endif
-              } H_c4_t;
+                      
+                      H_c4_t & operator=(H_c4_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->mx);
+                           gms_mm_free(this->my);
+                           gms_mm_free(this->mz);
+                           this->npts = rhs.npts;
+                           this->mx   = &rhs.mx[0];
+                           this->my   = &rhs.my[0];
+                           this->mz   = &rhs.mz[0];
+                           rhs.npts   = 0ULL;
+                           rhs.mx     = NULL;
+                           rhs.my     = NULL;
+                           rhs.mz     = NULL;
+                           return (*this);
+                      }
+                    
+              };
 
 
-               typedef struct __ATTR_ALIGN__(32) E_c8_t {
+                struct __ATTR_ALIGN__(32) E_c8_t {
                       // Complex electric field.
-                      E_c8_t()                           = delete;
-                      E_c8_t(const E_c8_t &)             = delete;
-                      E_c8_t & operator=(const E_c8_t &) = delete;
-                      std::complex<double> * __restrict e_x
-                      std::complex<double> * __restrict e_y
-                      std::complex<double> * __restrict e_z;
-                      int32_t                          npts;
+                      std::complex<double> * __restrict ex
+                      std::complex<double> * __restrict ey;
+                      std::complex<double> * __restrict ez;
+                      std::size_t                      npts;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,4)
+                      PAD_TO(0,32)
 #endif
-              } E_c8_t;
+                      E_c8_t() noexcept(true) {
+                          
+                          this->npts = 0ULL;
+                          this->ex  = NULL;
+                          this->ey  = NULL;
+                          this->ez  = NULL;
+                      } 
+                          
+                      E_c8_t(const std::size_t pts) {
+                          using namespace gms::common;
+                          this->npts = pts;
+                          this->ex  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                      }  
+                      
+                      E_c8_t(const std::vector<std::complex<double>> &e_x,    //shall be of the same size (no error checking implemented)
+                             const std::vector<std::complex<double>> &e_y,    //shall be of the same size (no error checking implemented)
+                             const std::vector<std::complex<double>> &e_z) {  //shall be of the same size (no error checking implemented)
+                          using namespace gms::common;
+                          
+                          this->npts = e_x.size();
+                          this->ex  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          const std::size_t len = sizeof(std::complex<float>)*this->npts;
+                          std::memcpy(this->ex,&e_x[0],len);
+                          std::memcpy(this->ey,&e_y[0],len);
+                          std::memcpy(this->ez,&e_z[0],len);       
+                     }
+                           
+                      
+                      E_c8_t(const std::size_t pts,
+                             const std::complex<double> * __restrict e_x,
+                             const std::complex<double> * __restrict e_y,
+                             const std::complex<double> * __restrict e_z) {
+                          using namespace gms::common;
+                          this->npts = npts;
+                          this->ex  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->ex[0],&e_x[0],this->npts);
+	                  avx512_uncached_memmove(&this->ey[0],&e_y[0],this->npts);
+	                  avx512_uncached_memmove(&this->ez[0],&e_z[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->ex[0],&e_x[0],this->npts);
+	                  avx512_cached_memmove(&this->ey[0],&e_y[0],this->npts);
+	                  avx512_cached_memmove(&this->ez[0],&e_z[0],this->npts);
+#endif
+                   }  
+                   
+                      E_c8_t(E_c8_t && rhs) {
+                          
+                          this->npts = rhs.npts;
+                          this->ex   = &rhs.ex[0];
+                          this->ey   = &rhs.ey[0];
+                          this->ez   = &rhs.ez[0];
+                          rhs.npts   = 0ULL;
+                          rhs.ex     = NULL;
+                          rhs.ey     = NULL;
+                          rhs.ez     = NULL;
+                      }
+                                 
+                      E_c8_t(const E_c48t &)             = delete;
+                      
+                      ~E_c8_t() {
+                      
+                          using namespace gms::common;
+                          gms_mm_free(this->ex);
+                          gms_mm_free(this->ey);
+                          gms_mm_free(this->ez);
+                      }
+                      
+                      E_c8_t & operator=(const E_c8_t &) = delete;
+                      
+                      E_c8_t & operator=(E_c8_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->ex);
+                           gms_mm_free(this->ey);
+                           gms_mm_free(this->ez);
+                           this->npts = rhs.npts;
+                           this->ex   = &rhs.ex[0];
+                           this->ey   = &rhs.ey[0];
+                           this->ez   = &rhs.ez[0];
+                           rhs.npts   = 0ULL;
+                           rhs.ex     = NULL;
+                           rhs.ey     = NULL;
+                           rhs.ez     = NULL;
+                           return (*this);
+                      }
+              };
 
               
-               typedef struct __ATTR_ALIGN__(32) H_c8_t {
+               struct __ATTR_ALIGN__(32) H_c8_t {
                       // Complex magnetic field.
-                      H_c8_t()                           = delete;
-                      H_c8_t(const H_c8_t &)             = delete;
-                      H_c8_t & operator=(const H_c8_t &) = delete;
-                      std::complex<double> * __restrict h_x
-                      std::complex<double> * __restrict h_y
-                      std::complex<double> * __restrict h_z;
-                      int32_t                          npts;
+                      std::complex<double> * __restrict mx
+                      std::complex<double> * __restrict my;
+                      std::complex<double> * __restrict mz;
+                      std::size_t                      npts;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,4)
+                      PAD_TO(0,32)
 #endif
-              } H_c8_t;
+                      H_c8_t() noexcept(true) {
+                          
+                          this->npts = 0ULL;
+                          this->mx  = NULL;
+                          this->my  = NULL;
+                          this->mz  = NULL;
+                      } 
+                          
+                      H_c8_t(const std::size_t pts) {
+                          using namespace gms::common;
+                          this->npts = pts;
+                          this->mx  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                      }  
+                      
+                       H_c8_t(const std::vector<std::complex<double>> &m_x,    //shall be of the same size (no error checking implemented)
+                              const std::vector<std::complex<double>> &m_y,    //shall be of the same size (no error checking implemented)
+                              const std::vector<std::complex<double>> &m_z) {  //shall be of the same size (no error checking implemented)
+                          using namespace gms::common;
+                          this->npts = m_x.size();
+                          this->mx  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          const std::size_t len = sizeof(std::complex<double>)*this->npts;
+                          std::memcpy(this->mx,&m_x[0],len);
+                          std::memcpy(this->my,&m_y[0],len);
+                          std::memcpy(this->mz,&m_z[0],len);       
+                     }
+                      
+                      H_c8_t(const std::size_t pts,
+                             const std::complex<double> * __restrict m_x,
+                             const std::complex<double> * __restrict m_y,
+                             const std::complex<double> * __restrict m_z) {
+                          using namespace gms::common;
+                          this->npts = npts;
+                          this->mx  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->npts);
+	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->npts);
+	                  avx512_uncached_memmove(&this->mz[0],&m_z[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->mx[0],&m_x[0],this->npts);
+	                  avx512_cached_memmove(&this->my[0],&m_y[0],this->npts);
+	                  avx512_cached_memmove(&this->mz[0],&m_z[0],this->npts);
+#endif
+                   }  
+                   
+                      H_c8_t(H_c8_t && rhs) {
+                          
+                          this->npts = rhs.npts;
+                          this->mx   = &rhs.mx[0];
+                          this->my   = &rhs.my[0];
+                          this->mz   = &rhs.mz[0];
+                          rhs.npts   = 0ULL;
+                          rhs.mx     = NULL;
+                          rhs.my     = NULL;
+                          rhs.mz     = NULL;
+                      }
+                                 
+                      H_c8_t(const H_c8_t &)             = delete;
+                      
+                      ~H_c8_t() {
+                      
+                          using namespace gms::common;
+                          gms_mm_free(this->mx);
+                          gms_mm_free(this->my);
+                          gms_mm_free(this->mz);
+                      }
+                      
+                      H_c8_t & operator=(const H_c8_t &) = delete;
+                      
+                      H_c8_t & operator=(H_c8_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->mx);
+                           gms_mm_free(this->my);
+                           gms_mm_free(this->mz);
+                           this->npts = rhs.npts;
+                           this->mx   = &rhs.mx[0];
+                           this->my   = &rhs.my[0];
+                           this->mz   = &rhs.mz[0];
+                           rhs.npts   = 0ULL;
+                           rhs.mx     = NULL;
+                           rhs.my     = NULL;
+                           rhs.mz     = NULL;
+                           return (*this);
+                      }
+                    
+              };
    
 
-              typedef struct __ATTR_ALIGN__(64) E_r4_t {
+              struct __ATTR_ALIGN__(64) E_r4_t {
                       //  ! Complex Electric  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
-                      E_r4_t()                           = delete;
-                      E_r4_t(const E_r4_t &)             = delete;
-                      E_r4_t & operator=(const E_r4_t &) = delete;
-                      float * __restrict e_xr;
-                      float * __restrict e_xi;
-                      float * __restrict e_yr;
-                      float * __restrict e_yi;
-                      float * __restrict e_zr;
-                      float * __restrict e_zi;
-                      int32_t            npts;
+                      float * __restrict exr;
+                      float * __restrict exi;
+                      float * __restrict eyr;
+                      float * __restrict eyi;
+                      float * __restrict ezr;
+                      float * __restrict ezi;
+                      std::size_t       npts;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,8)
 #endif
-              } E_r4_t;
+                      inline E_r4_t() {
+                         this->npts = 0ULL;
+                         this->exr  = NULL;
+                         this->exi  = NULL;
+                         this->eyr  = NULL;
+                         this->eyi  = NULL;
+                         this->ezr  = NULL;
+                         this->ezi  = NULL;
+                      }                    
+                      
+                      inline E_r4_t(const std::size_t pts) {
+                             using namespace gms::common;
+                             this->npts = pts;
+                             this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                             this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                             this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                             this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                             this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                             this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                      }   
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline E_r4_t(const std::vector<float> &e_xr,
+                                    const std::vector<float> &e_xi,
+                                    const std::vector<float> &e_yr,
+                                    const std::vector<float> &e_yi,
+                                    const std::vector<float> &e_zr,
+                                    const std::vector<float> &e_zi) {
+                               using namespace gms::common;
+                               this->npts = e_xr.size(); 
+                               this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                               this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                               this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                               this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                               this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                               this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL); 
+                               const std::size_t len = sizeof(float)*this->npts;
+                               std::memcpy(this->exr,&e_xr[0],len);
+                               std::memcpy(this->exi,&e_xi[0],len);
+                               std::memcpy(this->eyr,&e_yr[0],len);
+                               std::memcpy(this->eyi,&e_yi[0],len);
+                               std::memcpy(this->ezr,&e_zr[0],len);
+                               std::memcpy(this->ezi,&e_zi[0],len);     
+                      }
+                      
+                      inline E_r4_t(const std::size_t pts,
+                                    const float * __restrict e_xr,   
+                                    const float * __restrict e_xi,
+                                    const float * __restrict e_yr,
+                                    const float * __restrict e_yi,
+                                    const float * __restrict e_zr,
+                                    const float * __restrict e_zi) {
+                          using namespace gms::common;
+                          this->npts = pts;
+                          this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                          this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                          this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                          this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                          this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                          this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL); 
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->exr[0],&e_xr[0],this->npts);
+	                  avx512_uncached_memmove(&this->exi[0],&e_xi[0],this->npts);
+	                  avx512_uncached_memmove(&this->eyr[0],&e_yr[0],this->npts);
+	                  avx512_uncached_memmove(&this->eyi[0],&e_yi[0],this->npts);
+	                  avx512_uncached_memmove(&this->ezr[0],&e_zr[0],this->npts);
+	                  avx512_uncached_memmove(&this->ezi[0],&e_zi[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->exr[0],&e_xr[0],this->npts);
+	                  avx512_cached_memmove(&this->exi[0],&e_xi[0],this->npts);
+	                  avx512_cached_memmove(&this->eyr[0],&e_yr[0],this->npts);
+	                  avx512_cached_memmove(&this->eyi[0],&e_yi[0],this->npts);
+	                  avx512_cached_memmove(&this->ezr[0],&e_zr[0],this->npts);
+	                  avx512_cached_memmove(&this->ezi[0],&e_zi[0],this->npts);
+#endif          
+                      }
+                      
+                      inline E_r4_t(E_r4_t &&rhs) {
+                           
+                          this->npts = rhs.npts;
+                          this->exr  = &rhs.exr[0];
+                          this->exi  = &rhs.exi[0];
+                          this->eyr  = &rhs.eyr[0];
+                          this->eyi  = &rhs.eyi[0];
+                          this->ezr  = &rhs.ezr[0];
+                          this->ezi  = &rhs.ezi[0];
+                          rhs.npts   = 0ULL;
+                          rhs.exr    = NULL;
+                          rhs.exi    = NULL;
+                          rhs.eyr    = NULL;
+                          rhs.eyi    = NULL;
+                          rhs.ezr    = NULL;
+                          rhs.ezi    = NULL;
+                      }   
+                        
+                      E_r4_t(const E_r4_t &)             = delete;
+                      
+                      inline ~E_r4_t() {
+                           using namespace gms::common;
+                           gms_mm_free(this->exr);
+                           gms_mm_free(this->exi);
+                           gms_mm_free(this->eyr);
+                           gms_mm_free(this->eyi);
+                           gms_mm_free(this->ezr);
+                           gms_mm_free(this->ezi);
+                      }
+                      
+                      E_r4_t & operator=(const E_r4_t &) = delete;
+                      
+                      inline E_r4_t & operator=(E_r4_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->exr);
+                            gms_mm_free(this->exi);
+                            gms_mm_free(this->eyr);
+                            gms_mm_free(this->eyi);
+                            gms_mm_free(this->ezr);
+                            gms_mm_free(this->ezi);
+                            this->npts = rhs.npts;
+                            this->exr  = &rhs.exr[0];
+                            this->exi  = &rhs.exi[0];
+                            this->eyr  = &rhs.eyr[0];
+                            this->eyi  = &rhs.eyi[0];
+                            this->ezr  = &rhs.ezr[0];
+                            this->ezi  = &rhs.ezi[0];
+                            rhs.npts   = 0ULL;
+                            rhs.exr    = NULL;
+                            rhs.exi    = NULL;
+                            rhs.eyr    = NULL;
+                            rhs.eyi    = NULL;
+                            rhs.ezr    = NULL;
+                            rhs.ezi    = NULL;
+                            return (*this);
+                      }
+                      
+                     
+                   
+              };
 
 
               typedef struct __ATTR_ALIGN__(64) H_r4_t {
