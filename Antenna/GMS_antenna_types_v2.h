@@ -535,10 +535,11 @@ namespace gms {
                       std::complex<double> * __restrict my;
                       std::complex<double> * __restrict mz;
                       std::size_t                      npts;
+                      bool                             ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,32)
+                      PAD_TO(0,31)
 #endif
-                      H_c8_t() noexcept(true) {
+                     inline H_c8_t() noexcept(true) {
                           
                           this->npts = 0ULL;
                           this->mx  = NULL;
@@ -546,46 +547,77 @@ namespace gms {
                           this->mz  = NULL;
                       } 
                           
-                      H_c8_t(const std::size_t pts) {
-                          using namespace gms::common;
+                     inline H_c8_t(const std::size_t pts) {
+                     
                           this->npts = pts;
-                          this->mx  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->my  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->mz  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                       }  
                       
-                       H_c8_t(const std::vector<std::complex<double>> &m_x,    //shall be of the same size (no error checking implemented)
-                              const std::vector<std::complex<double>> &m_y,    //shall be of the same size (no error checking implemented)
-                              const std::vector<std::complex<double>> &m_z) {  //shall be of the same size (no error checking implemented)
-                          using namespace gms::common;
+                     inline H_c8_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->mx = (std::complex<double>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->my = (std::complex<double>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mz = (std::complex<double>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mx = (std::complex<double>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->my = (std::complex<double>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mz = (std::complex<double>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mx = (std::complex<double>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->my = (std::complex<double>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mz = (std::complex<double>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   H_c8_t(const std::vector<std::complex<double>> &m_x,    //shall be of the same size (no error checking implemented)
+                                    const std::vector<std::complex<double>> &m_y,    //shall be of the same size (no error checking implemented)
+                                    const std::vector<std::complex<double>> &m_z) {  //shall be of the same size (no error checking implemented)
+                         
                           this->npts = m_x.size();
-                          this->mx  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->my  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->mz  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                           const std::size_t len = sizeof(std::complex<double>)*this->npts;
                           std::memcpy(this->mx,&m_x[0],len);
                           std::memcpy(this->my,&m_y[0],len);
                           std::memcpy(this->mz,&m_z[0],len);       
                      }
                       
-                      H_c8_t(const std::size_t pts,
-                             const std::complex<double> * __restrict m_x,
-                             const std::complex<double> * __restrict m_y,
-                             const std::complex<double> * __restrict m_z) {
-                          using namespace gms::common;
+                   inline   H_c8_t(const std::size_t pts,
+                                   const std::complex<double> * __restrict m_x,
+                                   const std::complex<double> * __restrict m_y,
+                                   const std::complex<double> * __restrict m_z) {
+                          
                           this->npts = npts;
-                          this->mx  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->my  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->mz  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->npts);
 	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->npts);
@@ -597,7 +629,7 @@ namespace gms {
 #endif
                    }  
                    
-                      H_c8_t(H_c8_t && rhs) {
+                  inline  H_c8_t(H_c8_t && rhs) {
                           
                           this->npts = rhs.npts;
                           this->mx   = &rhs.mx[0];
@@ -611,17 +643,24 @@ namespace gms {
                                  
                       H_c8_t(const H_c8_t &)             = delete;
                       
-                      ~H_c8_t() {
+                   inline   ~H_c8_t() {
                       
                           using namespace gms::common;
-                          gms_mm_free(this->mx);
-                          gms_mm_free(this->my);
-                          gms_mm_free(this->mz);
+                          if(this->ismmap) {
+                             gms_unmap(this->mx,this->npts);
+                             gms_unmap(this->my,this->npts);
+                             gms_unmap(this->mz,this->npts);
+                          }
+                          else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                              gms_mm_free(this->mz);
+                          }
                       }
                       
                       H_c8_t & operator=(const H_c8_t &) = delete;
                       
-                      H_c8_t & operator=(H_c8_t &&rhs) {
+                    inline  H_c8_t & operator=(H_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
                            gms_mm_free(this->mx);
@@ -637,6 +676,16 @@ namespace gms {
                            rhs.mz     = NULL;
                            return (*this);
                       }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->mx  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                        this->my  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                        this->mz  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                    }
                     
               };
    
@@ -651,8 +700,9 @@ namespace gms {
                       float * __restrict ezr;
                       float * __restrict ezi;
                       std::size_t       npts;
+                      bool              ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,8)
+                      PAD_TO(0,7)
 #endif
                       inline E_r4_t() {
                          this->npts = 0ULL;
@@ -665,15 +715,70 @@ namespace gms {
                       }                    
                       
                       inline E_r4_t(const std::size_t pts) {
-                             using namespace gms::common;
                              this->npts = pts;
-                             this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                             this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                             this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                             this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                             this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                             this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                      }   
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                      inline E_r4_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->exr = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->exi = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->eyr = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->eyi = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ezr = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ezi = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->exr = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->exi = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->eyr = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->eyi = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ezr = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ezi = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->exr = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->exi = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->eyr = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->eyi = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ezr = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ezi = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
                        
                       //The length of arguments must be of the same size (no error checking is implemented)!!
                       inline E_r4_t(const std::vector<float> &e_xr,
@@ -682,14 +787,10 @@ namespace gms {
                                     const std::vector<float> &e_yi,
                                     const std::vector<float> &e_zr,
                                     const std::vector<float> &e_zi) {
-                               using namespace gms::common;
+                               
                                this->npts = e_xr.size(); 
-                               this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                               this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                               this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                               this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                               this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                               this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL); 
+                               allocate();
+                               this->ismmap = false;
                                const std::size_t len = sizeof(float)*this->npts;
                                std::memcpy(this->exr,&e_xr[0],len);
                                std::memcpy(this->exi,&e_xi[0],len);
@@ -706,14 +807,10 @@ namespace gms {
                                     const float * __restrict e_yi,
                                     const float * __restrict e_zr,
                                     const float * __restrict e_zi) {
-                          using namespace gms::common;
+                         
                           this->npts = pts;
-                          this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                          this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                          this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                          this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                          this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                          this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL); 
+                          allocate()
+                          this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->exr[0],&e_xr[0],this->npts);
 	                  avx512_uncached_memmove(&this->exi[0],&e_xi[0],this->npts);
@@ -753,12 +850,22 @@ namespace gms {
                       
                       inline ~E_r4_t() {
                            using namespace gms::common;
-                           gms_mm_free(this->exr);
-                           gms_mm_free(this->exi);
-                           gms_mm_free(this->eyr);
-                           gms_mm_free(this->eyi);
-                           gms_mm_free(this->ezr);
-                           gms_mm_free(this->ezi);
+                           if(this->ismmap) {
+                              gms_unmap(this->exr,this->npts);
+                              gms_unmap(this->exi,this->npts);
+                              gms_unmap(this->eyr,this->npts); 
+                              gms_unmap(this->eyi,this->npts);
+                              gms_unmap(this->ezr,this->npts);
+                              gms_unmap(this->ezi,this->npts);
+                           }
+                           else {
+                               gms_mm_free(this->exr);
+                               gms_mm_free(this->exi);
+                               gms_mm_free(this->eyr);
+                               gms_mm_free(this->eyi);
+                               gms_mm_free(this->ezr);
+                               gms_mm_free(this->ezi);
+                           }
                       }
                       
                       E_r4_t & operator=(const E_r4_t &) = delete;
@@ -789,66 +896,678 @@ namespace gms {
                             return (*this);
                       }
                       
-                     
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->exr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->exi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->eyr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->eyi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->ezr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->ezi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                   }    
                    
               };
 
 
-              typedef struct __ATTR_ALIGN__(64) H_r4_t {
+              struct __ATTR_ALIGN__(64) H_r4_t {
                       //  ! Complex Magnetic  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
-                      H_r4_t()                           = delete;
-                      H_r4_t(const H_r4_t &)             = delete;
-                      H_r4_t & operator=(const H_r4_t &) = delete;
-                      float * __restrict h_xr;
-                      float * __restrict h_xi;
-                      float * __restrict h_yr;
-                      float * __restrict h_yi;
-                      float * __restrict h_zr;
-                      float * __restrict h_zi;
-                      int32_t            npts;
+                      float * __restrict     mxr;
+                      float * __restrict     mxi;
+                      float * __restrict     myr;
+                      float * __restrict     myi;
+                      float * __restrict     mzr;
+                      float * __restrict     mzi;
+                      std::size_t            npts;
+                      bool                   ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,7)
 #endif
-              } H_r4_t;
+                     
+                     inline H_r4_t() {
+                         this->npts = 0ULL;
+                         this->mxr  = NULL;
+                         this->mxi  = NULL;
+                         this->myr  = NULL;
+                         this->myi  = NULL;
+                         this->mzr  = NULL;
+                         this->mzi  = NULL;
+                      }                    
+                      
+                      inline H_r4_t(const std::size_t pts) {
+                             this->npts = pts;
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                      inline H_r4_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->mxr = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mxi = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->myr = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->myi = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mzr = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mzi = (float*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mxr = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mxi = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->myr = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->myi = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mzr = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mzi = (float*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mxr = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mxi = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->myr = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->myi = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mzr = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mzi = (float*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline H_r4_t(const std::vector<float> &mxr,
+                                    const std::vector<float> &mxi,
+                                    const std::vector<float> &myr,
+                                    const std::vector<float> &myi,
+                                    const std::vector<float> &mzr,
+                                    const std::vector<float> &mzi) {
+                               
+                               this->npts = mxr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t len = sizeof(float)*this->npts;
+                               std::memcpy(this->mxr,&mxr[0],len);
+                               std::memcpy(this->mxi,&mxi[0],len);
+                               std::memcpy(this->myr,&myr[0],len);
+                               std::memcpy(this->myi,&myi[0],len);
+                               std::memcpy(this->mzr,&mzr[0],len);
+                               std::memcpy(this->mzi,&mzi[0],len);     
+                      }
+                      
+                      inline H_r4_t(const std::size_t pts,
+                                    const float * __restrict mxr,   
+                                    const float * __restrict mxi,
+                                    const float * __restrict myr,
+                                    const float * __restrict myi,
+                                    const float * __restrict mzr,
+                                    const float * __restrict mzi) {
+                         
+                          this->npts = pts;
+                          allocate()
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mxr[0],&mxr[0],this->npts);
+	                  avx512_uncached_memmove(&this->mxi[0],&mxi[0],this->npts);
+	                  avx512_uncached_memmove(&this->myr[0],&myr[0],this->npts);
+	                  avx512_uncached_memmove(&this->myi[0],&myi[0],this->npts);
+	                  avx512_uncached_memmove(&this->mzr[0],&mzr[0],this->npts);
+	                  avx512_uncached_memmove(&this->mzi[0],&mzi[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->mxr[0],&mxr[0],this->npts);
+	                  avx512_cached_memmove(&this->mxi[0],&mxi[0],this->npts);
+	                  avx512_cached_memmove(&this->myr[0],&myr[0],this->npts);
+	                  avx512_cached_memmove(&this->myi[0],&myi[0],this->npts);
+	                  avx512_cached_memmove(&this->mzr[0],&mzr[0],this->npts);
+	                  avx512_cached_memmove(&this->mzi[0],&mzi[0],this->npts);
+#endif          
+                      }
+                      
+                      inline H_r4_t(H_r4_t &&rhs) {
+                           
+                          this->npts = rhs.npts;
+                          this->mxr  = &rhs.mxr[0];
+                          this->mxi  = &rhs.mxi[0];
+                          this->myr  = &rhs.myr[0];
+                          this->myi  = &rhs.myi[0];
+                          this->mzr  = &rhs.mzr[0];
+                          this->mzi  = &rhs.mzi[0];
+                          rhs.npts   = 0ULL;
+                          rhs.mxr    = NULL;
+                          rhs.mxi    = NULL;
+                          rhs.myr    = NULL;
+                          rhs.myi    = NULL;
+                          rhs.mzr    = NULL;
+                          rhs.mzi    = NULL;
+                      }   
+                        
+                      H_r4_t(const H_r4_t &)    = delete;
+                      
+                      inline ~H_r4_t() {
+                           using namespace gms::common;
+                           if(this->ismmap) {
+                              gms_unmap(this->mxr,this->npts);
+                              gms_unmap(this->mxi,this->npts);
+                              gms_unmap(this->myr,this->npts); 
+                              gms_unmap(this->myi,this->npts);
+                              gms_unmap(this->mzr,this->npts);
+                              gms_unmap(this->mzi,this->npts);
+                           }
+                           else {
+                               gms_mm_free(this->mxr);
+                               gms_mm_free(this->mxi);
+                               gms_mm_free(this->myr);
+                               gms_mm_free(this->myi);
+                               gms_mm_free(this->mzr);
+                               gms_mm_free(this->mzi);
+                           }
+                      }
+                      
+                      H_r4_t & operator=(const H_r4_t &) = delete;
+                      
+                      inline H_r4_t & operator=(H_r4_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->mxr);
+                            gms_mm_free(this->mxi);
+                            gms_mm_free(this->myr);
+                            gms_mm_free(this->myi);
+                            gms_mm_free(this->mzr);
+                            gms_mm_free(this->mzi);
+                            this->npts = rhs.npts;
+                            this->mxr  = &rhs.mxr[0];
+                            this->mxi  = &rhs.mxi[0];
+                            this->myr  = &rhs.myr[0];
+                            this->myi  = &rhs.myi[0];
+                            this->mzr  = &rhs.mzr[0];
+                            this->mzi  = &rhs.mzi[0];
+                            rhs.npts   = 0ULL;
+                            rhs.mxr    = NULL;
+                            rhs.mxi    = NULL;
+                            rhs.myr    = NULL;
+                            rhs.myi    = NULL;
+                            rhs.mzr    = NULL;
+                            rhs.mzi    = NULL;
+                            return (*this);
+                      }
+                      
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->mxr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->mxi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->myr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->myi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->mzr  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->mzi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                   }    
+                   
+                      
+              };
 
 
-              typedef struct __ATTR_ALIGN__(64) E_r8_t {
+              struct __ATTR_ALIGN__(64) E_r8_t {
                       //  ! Complex Electric  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
-                      E_r8_t()                           = delete;
-                      E_r8_t(const E_r8_t &)             = delete;
-                      E_r8_t & operator=(const E_r8_t &) = delete;
-                      double * __restrict e_xr;
-                      double * __restrict e_xi;
-                      double * __restrict e_yr;
-                      double * __restrict e_yi;
-                      double * __restrict e_zr;
-                      double * __restrict e_zi;
-                      int32_t            npts;
+                     
+                      double * __restrict      exr;
+                      double * __restrict      exi;
+                      double * __restrict      eyr;
+                      double * __restrict      eyi;
+                      double * __restrict      ezr;
+                      double * __restrict      ezi;
+                      std::size_t              npts;
+                      bool                     ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,7)
 #endif
-              } E_r8_t;
+
+                     inline E_r8_t() {
+                         this->npts = 0ULL;
+                         this->exr  = NULL;
+                         this->exi  = NULL;
+                         this->eyr  = NULL;
+                         this->eyi  = NULL;
+                         this->ezr  = NULL;
+                         this->ezi  = NULL;
+                      }                    
+                      
+                     inline E_r8_t(const std::size_t pts) {
+                             this->npts = pts;
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                     inline E_r8_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->exr = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->exi = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->eyr = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->eyi = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ezr = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ezi = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->exr = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->exi = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->eyr = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->eyi = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ezr = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ezi = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->exr = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->exi = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->eyr = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->eyi = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ezr = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ezi = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline E_r8_t(const std::vector<double> &e_xr,
+                                    const std::vector<double> &e_xi,
+                                    const std::vector<double> &e_yr,
+                                    const std::vector<double> &e_yi,
+                                    const std::vector<double> &e_zr,
+                                    const std::vector<double> &e_zi) {
+                               
+                               this->npts = e_xr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t len = sizeof(double)*this->npts;
+                               std::memcpy(this->exr,&e_xr[0],len);
+                               std::memcpy(this->exi,&e_xi[0],len);
+                               std::memcpy(this->eyr,&e_yr[0],len);
+                               std::memcpy(this->eyi,&e_yi[0],len);
+                               std::memcpy(this->ezr,&e_zr[0],len);
+                               std::memcpy(this->ezi,&e_zi[0],len);     
+                      }
+                      
+                      inline E_r8_t(const std::size_t pts,
+                                    const double * __restrict e_xr,   
+                                    const double * __restrict e_xi,
+                                    const double * __restrict e_yr,
+                                    const double * __restrict e_yi,
+                                    const double * __restrict e_zr,
+                                    const double * __restrict e_zi) {
+                         
+                          this->npts = pts;
+                          allocate()
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->exr[0],&e_xr[0],this->npts);
+	                  avx512_uncached_memmove(&this->exi[0],&e_xi[0],this->npts);
+	                  avx512_uncached_memmove(&this->eyr[0],&e_yr[0],this->npts);
+	                  avx512_uncached_memmove(&this->eyi[0],&e_yi[0],this->npts);
+	                  avx512_uncached_memmove(&this->ezr[0],&e_zr[0],this->npts);
+	                  avx512_uncached_memmove(&this->ezi[0],&e_zi[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->exr[0],&e_xr[0],this->npts);
+	                  avx512_cached_memmove(&this->exi[0],&e_xi[0],this->npts);
+	                  avx512_cached_memmove(&this->eyr[0],&e_yr[0],this->npts);
+	                  avx512_cached_memmove(&this->eyi[0],&e_yi[0],this->npts);
+	                  avx512_cached_memmove(&this->ezr[0],&e_zr[0],this->npts);
+	                  avx512_cached_memmove(&this->ezi[0],&e_zi[0],this->npts);
+#endif          
+                      }
+                      
+                      inline E_r8_t(E_r8_t &&rhs) {
+                           
+                          this->npts = rhs.npts;
+                          this->exr  = &rhs.exr[0];
+                          this->exi  = &rhs.exi[0];
+                          this->eyr  = &rhs.eyr[0];
+                          this->eyi  = &rhs.eyi[0];
+                          this->ezr  = &rhs.ezr[0];
+                          this->ezi  = &rhs.ezi[0];
+                          rhs.npts   = 0ULL;
+                          rhs.exr    = NULL;
+                          rhs.exi    = NULL;
+                          rhs.eyr    = NULL;
+                          rhs.eyi    = NULL;
+                          rhs.ezr    = NULL;
+                          rhs.ezi    = NULL;
+                      }   
+                        
+                      E_r8_t(const E_r8_t &)             = delete;
+                      
+                      inline ~E_r8_t() {
+                           using namespace gms::common;
+                           if(this->ismmap) {
+                              gms_unmap(this->exr,this->npts);
+                              gms_unmap(this->exi,this->npts);
+                              gms_unmap(this->eyr,this->npts); 
+                              gms_unmap(this->eyi,this->npts);
+                              gms_unmap(this->ezr,this->npts);
+                              gms_unmap(this->ezi,this->npts);
+                           }
+                           else {
+                               gms_mm_free(this->exr);
+                               gms_mm_free(this->exi);
+                               gms_mm_free(this->eyr);
+                               gms_mm_free(this->eyi);
+                               gms_mm_free(this->ezr);
+                               gms_mm_free(this->ezi);
+                           }
+                      }
+                      
+                      E_r8_t & operator=(const E_r8_t &) = delete;
+                      
+                      inline E_r8_t & operator=(E_r8_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->exr);
+                            gms_mm_free(this->exi);
+                            gms_mm_free(this->eyr);
+                            gms_mm_free(this->eyi);
+                            gms_mm_free(this->ezr);
+                            gms_mm_free(this->ezi);
+                            this->npts = rhs.npts;
+                            this->exr  = &rhs.exr[0];
+                            this->exi  = &rhs.exi[0];
+                            this->eyr  = &rhs.eyr[0];
+                            this->eyi  = &rhs.eyi[0];
+                            this->ezr  = &rhs.ezr[0];
+                            this->ezi  = &rhs.ezi[0];
+                            rhs.npts   = 0ULL;
+                            rhs.exr    = NULL;
+                            rhs.exi    = NULL;
+                            rhs.eyr    = NULL;
+                            rhs.eyi    = NULL;
+                            rhs.ezr    = NULL;
+                            rhs.ezi    = NULL;
+                            return (*this);
+                      }
+                      
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->exr  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->exi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->eyr  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->eyi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->ezr  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->ezi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                   }    
+                   
+              };
 
 
-              typedef struct __ATTR_ALIGN__(64) H_r8_t {
+           struct __ATTR_ALIGN__(64) H_r8_t {
                       //  ! Complex Magnetic  field  decomposed into real and imaginary parts 
                       //  ! To be used mainly by the integrators.
-                      H_r8_t()                           = delete;
-                      H_r8_t(const H_r8_t &)             = delete;
-                      H_r8_t & operator=(const H_r8_t &) = delete;
-                      double * __restrict h_xr;
-                      double * __restrict h_xi;
-                      double * __restrict h_yr;
-                      double * __restrict h_yi;
-                      double * __restrict h_zr;
-                      double * __restrict h_zi;
-                      int32_t            npts;
+                      double * __restrict mxr;
+                      double * __restrict mxi;
+                      double * __restrict myr;
+                      double * __restrict myi;
+                      double * __restrict mzr;
+                      double * __restrict mzi;
+                      std::size_t            npts;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,7)
 #endif
-              } H_r8_t;
+
+                        inline H_r8_t() {
+                         this->npts = 0ULL;
+                         this->mxr  = NULL;
+                         this->mxi  = NULL;
+                         this->myr  = NULL;
+                         this->myi  = NULL;
+                         this->mzr  = NULL;
+                         this->mzi  = NULL;
+                      }                    
+                      
+                      inline H_r8_t(const std::size_t pts) {
+                             this->npts = pts;
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                      inline H_r8_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->mxr = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mxi = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->myr = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->myi = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mzr = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mzi = (double*)
+                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mxr = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mxi = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->myr = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->myi = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mzr = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mzi = (double*)
+                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mxr = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mxi = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->myr = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->myi = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mzr = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mzi = (double*)
+                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline H_r8_t(const std::vector<double> &mxr,
+                                    const std::vector<double> &mxi,
+                                    const std::vector<double> &myr,
+                                    const std::vector<double> &myi,
+                                    const std::vector<double> &mzr,
+                                    const std::vector<double> &mzi) {
+                               
+                               this->npts = mxr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t len = sizeof(double)*this->npts;
+                               std::memcpy(this->mxr,&mxr[0],len);
+                               std::memcpy(this->mxi,&mxi[0],len);
+                               std::memcpy(this->myr,&myr[0],len);
+                               std::memcpy(this->myi,&myi[0],len);
+                               std::memcpy(this->mzr,&mzr[0],len);
+                               std::memcpy(this->mzi,&mzi[0],len);     
+                      }
+                      
+                      inline H_r8_t(const std::size_t pts,
+                                    const double * __restrict mxr,   
+                                    const double * __restrict mxi,
+                                    const double * __restrict myr,
+                                    const double * __restrict myi,
+                                    const double * __restrict mzr,
+                                    const double * __restrict mzi) {
+                         
+                          this->npts = pts;
+                          allocate()
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mxr[0],&mxr[0],this->npts);
+	                  avx512_uncached_memmove(&this->mxi[0],&mxi[0],this->npts);
+	                  avx512_uncached_memmove(&this->myr[0],&myr[0],this->npts);
+	                  avx512_uncached_memmove(&this->myi[0],&myi[0],this->npts);
+	                  avx512_uncached_memmove(&this->mzr[0],&mzr[0],this->npts);
+	                  avx512_uncached_memmove(&this->mzi[0],&mzi[0],this->npts);
+#else
+	                  avx512_cached_memmove(&this->mxr[0],&mxr[0],this->npts);
+	                  avx512_cached_memmove(&this->mxi[0],&mxi[0],this->npts);
+	                  avx512_cached_memmove(&this->myr[0],&myr[0],this->npts);
+	                  avx512_cached_memmove(&this->myi[0],&myi[0],this->npts);
+	                  avx512_cached_memmove(&this->mzr[0],&mzr[0],this->npts);
+	                  avx512_cached_memmove(&this->mzi[0],&mzi[0],this->npts);
+#endif          
+                      }
+                      
+                      inline H_r8_t(H_r8_t &&rhs) {
+                           
+                          this->npts = rhs.npts;
+                          this->mxr  = &rhs.mxr[0];
+                          this->mxi  = &rhs.mxi[0];
+                          this->myr  = &rhs.myr[0];
+                          this->myi  = &rhs.myi[0];
+                          this->mzr  = &rhs.mzr[0];
+                          this->mzi  = &rhs.mzi[0];
+                          rhs.npts   = 0ULL;
+                          rhs.mxr    = NULL;
+                          rhs.mxi    = NULL;
+                          rhs.myr    = NULL;
+                          rhs.myi    = NULL;
+                          rhs.mzr    = NULL;
+                          rhs.mzi    = NULL;
+                      }   
+                        
+                      H_r8_t(const H_r8_t &)    = delete;
+                      
+                      inline ~H_r8_t() {
+                           using namespace gms::common;
+                           if(this->ismmap) {
+                              gms_unmap(this->mxr,this->npts);
+                              gms_unmap(this->mxi,this->npts);
+                              gms_unmap(this->myr,this->npts); 
+                              gms_unmap(this->myi,this->npts);
+                              gms_unmap(this->mzr,this->npts);
+                              gms_unmap(this->mzi,this->npts);
+                           }
+                           else {
+                               gms_mm_free(this->mxr);
+                               gms_mm_free(this->mxi);
+                               gms_mm_free(this->myr);
+                               gms_mm_free(this->myi);
+                               gms_mm_free(this->mzr);
+                               gms_mm_free(this->mzi);
+                           }
+                      }
+                      
+                      H_r8_t & operator=(const H_r8_t &) = delete;
+                      
+                      inline H_r8_t & operator=(H_r8_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->mxr);
+                            gms_mm_free(this->mxi);
+                            gms_mm_free(this->myr);
+                            gms_mm_free(this->myi);
+                            gms_mm_free(this->mzr);
+                            gms_mm_free(this->mzi);
+                            this->npts = rhs.npts;
+                            this->mxr  = &rhs.mxr[0];
+                            this->mxi  = &rhs.mxi[0];
+                            this->myr  = &rhs.myr[0];
+                            this->myi  = &rhs.myi[0];
+                            this->mzr  = &rhs.mzr[0];
+                            this->mzi  = &rhs.mzi[0];
+                            rhs.npts   = 0ULL;
+                            rhs.mxr    = NULL;
+                            rhs.mxi    = NULL;
+                            rhs.myr    = NULL;
+                            rhs.myi    = NULL;
+                            rhs.mzr    = NULL;
+                            rhs.mzi    = NULL;
+                            return (*this);
+                      }
+                      
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->mxr  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->mxi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->myr  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->myi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->mzr  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->mzi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                   }    
+                   
+              };
 
 
               typedef struct __ATTR_ALIGN__(32) JE_c4_t {
