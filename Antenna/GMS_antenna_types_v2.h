@@ -56,7 +56,7 @@ namespace gms {
                       std::size_t                      npts;
                       bool                             ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,32)
+                      PAD_TO(0,31)
 #endif
                      inline E_c4_t() noexcept(true) {
                           
@@ -69,12 +69,8 @@ namespace gms {
                      inline E_c4_t(const std::size_t pts) {
                           using namespace gms::common;
                           this->npts = pts;
-                          this->ex  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ey  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ez  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                       }  
                       
                      inline E_c4_t(const std::size_t length,
@@ -102,7 +98,7 @@ namespace gms {
                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
-                                      this->issmap = true;
+                                      this->ismmap = true;
                                  break;
                                  case:2
                                       this->ex = (std::complex<float>*)
@@ -111,8 +107,11 @@ namespace gms {
                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
                                                  gms_mmap_1GiB(length,prot,flags,fd,offset); 
-                                      this->issmap = true;
-                                 break;                         
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
                              }          
                      }
                       
@@ -122,12 +121,8 @@ namespace gms {
                           using namespace gms::common;
                           
                           this->npts = e_x.size();
-                          this->ex  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ey  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ez  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                           const std::size_t len = sizeof(std::complex<float>)*this->npts;
                           std::memcpy(this->ex,&e_x[0],len);
                           std::memcpy(this->ey,&e_y[0],len);
@@ -142,12 +137,8 @@ namespace gms {
                              const std::complex<float> * __restrict e_z) {
                           using namespace gms::common;
                           this->npts = npts;
-                          this->ex  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ey  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ez  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->ex[0],&e_x[0],this->npts);
 	                  avx512_uncached_memmove(&this->ey[0],&e_y[0],this->npts);
@@ -206,6 +197,16 @@ namespace gms {
                            rhs.ez     = NULL;
                            return (*this);
                       }
+                      
+                      inline void allocate() {
+                          using namespace gms::common;
+                          this->ex  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ey  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->ez  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                      }
                     
               };
 
@@ -216,10 +217,11 @@ namespace gms {
                       std::complex<float> * __restrict my;
                       std::complex<float> * __restrict mz;
                       std::size_t                      npts;
+                      bool                             ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,32)
+                      PAD_TO(0,31)
 #endif
-                      H_c4_t() noexcept(true) {
+                      inline H_c4_t() noexcept(true) {
                           
                           this->npts = 0ULL;
                           this->mx  = NULL;
@@ -227,47 +229,76 @@ namespace gms {
                           this->mz  = NULL;
                       } 
                           
-                      H_c4_t(const std::size_t pts) {
-                          using namespace gms::common;
+                      inline H_c4_t(const std::size_t pts) {
+                         
                           this->npts = pts;
-                          this->mx  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->my  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->mz  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                       }  
                       
-                       H_c4_t(const std::vector<std::complex<float>> &m_x,    //shall be of the same size (no error checking implemented)
-                              const std::vector<std::complex<float>> &m_y,    //shall be of the same size (no error checking implemented)
-                              const std::vector<std::complex<float>> &m_z) {  //shall be of the same size (no error checking implemented)
-                          using namespace gms::common;
-                          
+                      inline H_c4_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->mx = (std::complex<float>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->my = (std::complex<float>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->mz = (std::complex<float>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mx = (std::complex<float>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->my = (std::complex<float>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->mz = (std::complex<float>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mx = (std::complex<float>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->my = (std::complex<float>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->mz = (std::complex<float>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                     inline  H_c4_t(const std::vector<std::complex<float>> &m_x,    //shall be of the same size (no error checking implemented)
+                                    const std::vector<std::complex<float>> &m_y,    //shall be of the same size (no error checking implemented)
+                                    const std::vector<std::complex<float>> &m_z) {  //shall be of the same size (no error checking implemented)
+                                                   
                           this->npts = m_x.size();
-                          this->mx  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->my  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->mz  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate()
+                          this->ismmap = false;
                           const std::size_t len = sizeof(std::complex<float>)*this->npts;
                           std::memcpy(this->mx,&m_x[0],len);
                           std::memcpy(this->my,&m_y[0],len);
                           std::memcpy(this->mz,&m_z[0],len);       
                      }
                       
-                      H_c4_t(const std::size_t pts,
-                             const std::complex<float> * __restrict m_x,
-                             const std::complex<float> * __restrict m_y,
-                             const std::complex<float> * __restrict m_z) {
-                          using namespace gms::common;
+                     inline H_c4_t(const std::size_t pts,
+                                   const std::complex<float> * __restrict m_x,
+                                   const std::complex<float> * __restrict m_y,
+                                   const std::complex<float> * __restrict m_z) {
+                         
                           this->npts = npts;
-                          this->mx  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->my  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->mz  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->npts);
 	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->npts);
@@ -279,7 +310,7 @@ namespace gms {
 #endif
                    }  
                    
-                      H_c4_t(H_c4_t && rhs) {
+                    inline  H_c4_t(H_c4_t && rhs) {
                           
                           this->npts = rhs.npts;
                           this->mx   = &rhs.mx[0];
@@ -291,19 +322,26 @@ namespace gms {
                           rhs.mz     = NULL;
                       }
                                  
-                      H_c4_t(const H_c4_t &)             = delete;
+                    inline  H_c4_t(const H_c4_t &)             = delete;
                       
-                      ~H_c4_t() {
+                    inline  ~H_c4_t() {
                       
                           using namespace gms::common;
-                          gms_mm_free(this->mx);
-                          gms_mm_free(this->my);
-                          gms_mm_free(this->mz);
+                          if(this->ismmap) {
+                             gms_unmap(this->mx,this->npts);
+                             gms_unmap(this->my,this->npts);
+                             gms_unmap(this->mz,this->npts);
+                          }
+                          else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                              gms_mm_free(this->mz);
+                          }
                       }
                       
-                      H_c4_t & operator=(const H_c4_t &) = delete;
+                     inline H_c4_t & operator=(const H_c4_t &) = delete;
                       
-                      H_c4_t & operator=(H_c4_t &&rhs) {
+                     inline  H_c4_t & operator=(H_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
                            gms_mm_free(this->mx);
@@ -319,6 +357,16 @@ namespace gms {
                            rhs.mz     = NULL;
                            return (*this);
                       }
+                      
+                      inline void allocate() {
+                          using namespace gms::common;
+                          this->mx  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->my  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                          this->mz  = (std::complex<float>*)
+                                         gms_mm_malloc(this->npts,64ULL); 
+                      }
                     
               };
 
@@ -329,10 +377,11 @@ namespace gms {
                       std::complex<double> * __restrict ey;
                       std::complex<double> * __restrict ez;
                       std::size_t                      npts;
+                      bool                             ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,32)
+                      PAD_TO(0,31)
 #endif
-                      E_c8_t() noexcept(true) {
+                     inline E_c8_t() noexcept(true) {
                           
                           this->npts = 0ULL;
                           this->ex  = NULL;
@@ -340,29 +389,61 @@ namespace gms {
                           this->ez  = NULL;
                       } 
                           
-                      E_c8_t(const std::size_t pts) {
-                          using namespace gms::common;
+                     inline E_c8_t(const std::size_t pts) {
                           this->npts = pts;
-                          this->ex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                       }  
                       
-                      E_c8_t(const std::vector<std::complex<double>> &e_x,    //shall be of the same size (no error checking implemented)
-                             const std::vector<std::complex<double>> &e_y,    //shall be of the same size (no error checking implemented)
-                             const std::vector<std::complex<double>> &e_z) {  //shall be of the same size (no error checking implemented)
-                          using namespace gms::common;
+                     inline E_c8_t(const std::size_t length,
+                                   const int32_t prot,
+                                   const int32_t flags,
+                                   const int32_t fd,
+                                   const int32_t offset,
+                                   const int32_t fsize) {
+                             using namespace gms::common;
+                             this->npts = length;
+                             switch (fsize) {
+                                 case:0
+                                      this->ex = (std::complex<double>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ey = (std::complex<double>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ez = (std::complex<double>*)
+                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->ex = (std::complex<double>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ey = (std::complex<double>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ez = (std::complex<double>*)
+                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->ex = (std::complex<double>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ey = (std::complex<double>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                      this->ez = (std::complex<double>*)
+                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                     inline E_c8_t(const std::vector<std::complex<double>> &e_x,    //shall be of the same size (no error checking implemented)
+                                   const std::vector<std::complex<double>> &e_y,    //shall be of the same size (no error checking implemented)
+                                   const std::vector<std::complex<double>> &e_z) {  //shall be of the same size (no error checking implemented)
                           
                           this->npts = e_x.size();
-                          this->ex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
                           const std::size_t len = sizeof(std::complex<float>)*this->npts;
                           std::memcpy(this->ex,&e_x[0],len);
                           std::memcpy(this->ey,&e_y[0],len);
@@ -370,18 +451,14 @@ namespace gms {
                      }
                            
                       
-                      E_c8_t(const std::size_t pts,
-                             const std::complex<double> * __restrict e_x,
-                             const std::complex<double> * __restrict e_y,
-                             const std::complex<double> * __restrict e_z) {
-                          using namespace gms::common;
+                     inline E_c8_t(const std::size_t pts,
+                                   const std::complex<double> * __restrict e_x,
+                                   const std::complex<double> * __restrict e_y,
+                                   const std::complex<double> * __restrict e_z) {
+                                   
                           this->npts = npts;
-                          this->ex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
-                          this->ez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                          allocate();
+                          this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->ex[0],&e_x[0],this->npts);
 	                  avx512_uncached_memmove(&this->ey[0],&e_y[0],this->npts);
@@ -393,7 +470,7 @@ namespace gms {
 #endif
                    }  
                    
-                      E_c8_t(E_c8_t && rhs) {
+                   inline   E_c8_t(E_c8_t && rhs) {
                           
                           this->npts = rhs.npts;
                           this->ex   = &rhs.ex[0];
@@ -407,17 +484,23 @@ namespace gms {
                                  
                       E_c8_t(const E_c48t &)             = delete;
                       
-                      ~E_c8_t() {
-                      
+                    inline ~E_c8_t() {
                           using namespace gms::common;
-                          gms_mm_free(this->ex);
-                          gms_mm_free(this->ey);
-                          gms_mm_free(this->ez);
+                          if(this->ismmap) {
+                             gms_unmap(this->ex,this->npts);
+                             gms_unmap(this->ey,this->npts);
+                             gms_unmap(this->ez,this->npts);
+                          }
+                          else {
+                             gms_mm_free(this->ex);
+                             gms_mm_free(this->ey);
+                             gms_mm_free(this->ez);
+                          }
                       }
                       
                       E_c8_t & operator=(const E_c8_t &) = delete;
                       
-                      E_c8_t & operator=(E_c8_t &&rhs) {
+                     inline E_c8_t & operator=(E_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
                            gms_mm_free(this->ex);
@@ -432,6 +515,16 @@ namespace gms {
                            rhs.ey     = NULL;
                            rhs.ez     = NULL;
                            return (*this);
+                      }
+                      
+                      void allocate() {
+                            using namespace gms::common;
+                            this->ex  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                            this->ey  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
+                            this->ez  = (std::complex<double>*)
+                                         gms_mm_malloc(this->npts,64ULL);
                       }
               };
 
