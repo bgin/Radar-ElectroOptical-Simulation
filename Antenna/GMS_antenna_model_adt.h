@@ -1968,67 +1968,78 @@ namespace gms {
               };
 
 
-               struct __ATTR_ALIGN__(64) JE_c4_t {
+               struct __ATTR_ALIGN__(64) Je_c4_t {
                       // Complex electric current
                       
                       std::complex<float> * __restrict jex;
                       std::complex<float> * __restrict jey;
                       std::complex<float> * __restrict jez;
-                      std::size_t                      npts;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      std::size_t                      nz;
                       bool                             ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,31)
+                      PAD_TO(0,15)
 #endif
    
                       inline Je_c4_t() noexcept(true) {
                           
-                          this->npts = 0ULL;
+                          this->nx   = 0ULL;
+                          this->ny   = 0ULL;
                           this->jex  = NULL;
                           this->jey  = NULL;
                           this->jez  = NULL;
                       } 
                           
-                     inline Je_c4_t(const std::size_t pts) {
+                     inline Je_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz) {
                      
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
                       }  
                       
-                     inline Je_c4_t(const std::size_t length,
-                                   const int32_t prot,
-                                   const int32_t flags,
-                                   const int32_t fd,
-                                   const int32_t offset,
-                                   const int32_t fsize) {
+                     inline Je_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->jex = (std::complex<float>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<float>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<float>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jex = (std::complex<float>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<float>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<float>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jex = (std::complex<float>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<float>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<float>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2042,55 +2053,84 @@ namespace gms {
                                      const std::vector<std::complex<float>> &j_ey,    //shall be of the same size (no error checking implemented)
                                      const std::vector<std::complex<float>> &j_ez) {  //shall be of the same size (no error checking implemented)
                          
-                          this->npts = m_x.size();
+                          this->nx = j_ex.size();
+                          this->ny = j_ey.size();
+                          this->nz = j_ez.size();
                           allocate();
                           this->ismmap = false;
-                          const std::size_t len = sizeof(std::complex<float>)*this->npts;
-                          std::memcpy(this->jex,&j_ex[0],len);
-                          std::memcpy(this->jey,&j_ey[0],len);
-                          std::memcpy(this->jez,&j_ez[0],len);       
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<float>)*this->nz;
+                          std::memcpy(this->jex,&j_ex[0],lenx);
+                          std::memcpy(this->jey,&j_ey[0],leny);
+                          std::memcpy(this->jez,&j_ez[0],lenz);       
+                     }
+                     
+                   inline   Je_c4_t( const std::valarray<std::complex<float>> &j_ex,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &j_ey,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &j_ez) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = j_ex.size();
+                          this->ny = j_ey.size();
+                          this->nz = j_ez.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<float>)*this->nz;
+                          std::memcpy(this->jex,&j_ex[0],lenx);
+                          std::memcpy(this->jey,&j_ey[0],leny);
+                          std::memcpy(this->jez,&j_ez[0],lenz);       
                      }
                       
-                   inline   Je_c4_t(const std::size_t pts,
-                                   const std::complex<float> * __restrict j_ex,
-                                   const std::complex<float> * __restrict j_ey,
-                                   const std::complex<float> * __restrict j_ez) {
+                   inline   Je_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const std::complex<float> * __restrict j_ex,
+                                    const std::complex<float> * __restrict j_ey,
+                                    const std::complex<float> * __restrict j_ez) {
                           
-                          this->npts = npts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->jex[0],&j_ex[0],this->npts);
-	                  avx512_uncached_memmove(&this->jey[0],&j_ey[0],this->npts);
-	                  avx512_uncached_memmove(&this->jez[0],&j_ez[0],this->npts);
+	                  avx512_uncached_memmove(&this->jex[0],&j_ex[0],this->nx);
+	                  avx512_uncached_memmove(&this->jey[0],&j_ey[0],this->ny);
+	                  avx512_uncached_memmove(&this->jez[0],&j_ez[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->jex[0],&j_ex[0],this->npts);
-	                  avx512_cached_memmove(&this->jey[0],&j_ey[0],this->npts);
-	                  avx512_cached_memmove(&this->jez[0],&j_ez[0],this->npts);
+	                  avx512_cached_memmove(&this->jex[0],&j_ex[0],this->nx);
+	                  avx512_cached_memmove(&this->jey[0],&j_ey[0],this->ny);
+	                  avx512_cached_memmove(&this->jez[0],&j_ez[0],this->nz);
 #endif
                    }  
                    
                   inline  Je_c4_t(Je_c4_t && rhs) {
                           
-                          this->npts = rhs.npts;
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
                           this->jex   = &rhs.jex[0];
                           this->jey   = &rhs.jey[0];
                           this->jez   = &rhs.jez[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
                           rhs.jex     = NULL;
                           rhs.jey     = NULL;
                           rhs.jez     = NULL;
                       }
                                  
-                      Je_c4_t(const Je_c4_t &)             = delete;
+                   Je_c4_t(const Je_c4_t &)             = delete;
                       
                    inline   ~Je_c4_t() {
                       
                           using namespace gms::common;
                           if(this->ismmap) {
-                             gms_unmap(this->jex,this->npts);
-                             gms_unmap(this->jey,this->npts);
-                             gms_unmap(this->jez,this->npts);
+                             gms_unmap(this->jex,this->nx);
+                             gms_unmap(this->jey,this->ny);
+                             gms_unmap(this->jez,this->nz);
                           }
                           else {
                               gms_mm_free(this->jex);
@@ -2099,7 +2139,7 @@ namespace gms {
                           }
                       }
                       
-                      Je_c4_t & operator=(const Je_c4_t &) = delete;
+                    Je_c4_t & operator=(const Je_c4_t &) = delete;
                       
                     inline  Je_c4_t & operator=(Je_c4_t &&rhs) {
                            using namespace gms::common;
@@ -2107,11 +2147,15 @@ namespace gms {
                            gms_mm_free(this->jex);
                            gms_mm_free(this->jey);
                            gms_mm_free(this->jez);
-                           this->npts = rhs.npts;
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
                            this->jex   = &rhs.jex[0];
                            this->jey   = &rhs.jey[0];
                            this->jez   = &rhs.jez[0];
-                           rhs.npts   = 0ULL;
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
                            rhs.jex     = NULL;
                            rhs.jey     = NULL;
                            rhs.jez     = NULL;
@@ -2121,11 +2165,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nx,64ULL);
                         this->jey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->ny,64ULL);
                         this->jez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nz,64ULL);
                     }
                     
               };
@@ -2136,60 +2180,72 @@ namespace gms {
                       std::complex<float> * __restrict jmx;
                       std::complex<float> * __restrict jmy;
                       std::complex<float> * __restrict jmz;
-                      std::size_t                      npts;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      std::size_t                      nz;
                       bool                             ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,31)
+                      PAD_TO(0,15)
 #endif
                      inline Jm_c4_t() noexcept(true) {
                           
-                          this->npts = 0ULL;
+                          this->nx   = 0ULL;
+                          this->ny   = 0ULL;
+                          this->nz   = 0ULL;
                           this->jmx  = NULL;
                           this->jmy  = NULL;
                           this->jmz  = NULL;
                       } 
                           
-                     inline Jm_c4_t(const std::size_t pts) {
+                     inline Jm_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz) {
                      
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
                       }  
                       
-                     inline Jm_c4_t(const std::size_t length,
-                                   const int32_t prot,
-                                   const int32_t flags,
-                                   const int32_t fd,
-                                   const int32_t offset,
-                                   const int32_t fsize) {
+                     inline Jm_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->jmx = (std::complex<float>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<float>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<float>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jmx = (std::complex<float>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<float>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<float>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jmx = (std::complex<float>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<float>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<float>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2203,55 +2259,84 @@ namespace gms {
                                      const std::vector<std::complex<float>> &j_my,    //shall be of the same size (no error checking implemented)
                                      const std::vector<std::complex<float>> &j_mz) {  //shall be of the same size (no error checking implemented)
                          
-                          this->npts = j_mx.size();
+                          this->nx = j_mx.size();
+                          this->ny = j_my.size();
+                          this->nz = j_mz.size();
                           allocate();
                           this->ismmap = false;
-                          const std::size_t len = sizeof(std::complex<float>)*this->npts;
-                          std::memcpy(this->jmx,&j_mx[0],len);
-                          std::memcpy(this->jmy,&j_my[0],len);
-                          std::memcpy(this->jmz,&j_mz[0],len);       
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<float>)*this->nz;
+                          std::memcpy(this->jmx,&j_mx[0],lenx);
+                          std::memcpy(this->jmy,&j_my[0],leny);
+                          std::memcpy(this->jmz,&j_mz[0],lenz);       
+                     }
+                     
+                    inline   Jm_c4_t(const std::valarray<std::complex<float>> &j_mx,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &j_my,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &j_mz) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = j_mx.size();
+                          this->ny = j_my.size();
+                          this->nz = j_mz.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<float>)*this->nz;
+                          std::memcpy(this->jmx,&j_mx[0],lenx);
+                          std::memcpy(this->jmy,&j_my[0],leny);
+                          std::memcpy(this->jmz,&j_mz[0],lenz);       
                      }
                       
-                   inline   Jm_c4_t(const std::size_t pts,
-                                   const std::complex<float> * __restrict j_mx,
-                                   const std::complex<float> * __restrict j_my,
-                                   const std::complex<float> * __restrict j_mz) {
+                   inline   Jm_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const std::complex<float> * __restrict j_mx,
+                                    const std::complex<float> * __restrict j_my,
+                                    const std::complex<float> * __restrict j_mz) {
                           
-                          this->npts = npts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->jmx[0],&j_mx[0],this->npts);
-	                  avx512_uncached_memmove(&this->jmy[0],&j_my[0],this->npts);
-	                  avx512_uncached_memmove(&this->jmz[0],&j_mz[0],this->npts);
+	                  avx512_uncached_memmove(&this->jmx[0],&j_mx[0],this->nx);
+	                  avx512_uncached_memmove(&this->jmy[0],&j_my[0],this->ny);
+	                  avx512_uncached_memmove(&this->jmz[0],&j_mz[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->jmx[0],&j_mx[0],this->npts);
-	                  avx512_cached_memmove(&this->jmy[0],&j_my[0],this->npts);
-	                  avx512_cached_memmove(&this->jmz[0],&j_mz[0],this->npts);
+	                  avx512_cached_memmove(&this->jmx[0],&j_mx[0],this->nx);
+	                  avx512_cached_memmove(&this->jmy[0],&j_my[0],this->ny);
+	                  avx512_cached_memmove(&this->jmz[0],&j_mz[0],this->nz);
 #endif
                    }  
                    
                   inline  Jm_c4_t(Jm_c4_t && rhs) {
                           
-                          this->npts = rhs.npts;
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
                           this->jmx   = &rhs.jmx[0];
                           this->jmy   = &rhs.jmy[0];
                           this->jmz   = &rhs.jmz[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
                           rhs.jmx     = NULL;
                           rhs.jmy     = NULL;
                           rhs.jmz     = NULL;
                       }
                                  
-                      Jm_c4_t(const Jm_c4_t &)             = delete;
+                   Jm_c4_t(const Jm_c4_t &)             = delete;
                       
                    inline   ~Jm_c4_t() {
                       
                           using namespace gms::common;
                           if(this->ismmap) {
-                             gms_unmap(this->jmx,this->npts);
-                             gms_unmap(this->jmy,this->npts);
-                             gms_unmap(this->jmz,this->npts);
+                             gms_unmap(this->jmx,this->nx);
+                             gms_unmap(this->jmy,this->ny);
+                             gms_unmap(this->jmz,this->nz);
                           }
                           else {
                               gms_mm_free(this->jmx);
@@ -2260,7 +2345,7 @@ namespace gms {
                           }
                       }
                       
-                      Jm_c4_t & operator=(const Jm_c4_t &) = delete;
+                    Jm_c4_t & operator=(const Jm_c4_t &) = delete;
                       
                     inline  Jm_c4_t & operator=(Jm_c4_t &&rhs) {
                            using namespace gms::common;
@@ -2268,11 +2353,15 @@ namespace gms {
                            gms_mm_free(this->jmx);
                            gms_mm_free(this->jmy);
                            gms_mm_free(this->jmz);
-                           this->npts = rhs.npts;
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
                            this->jmx   = &rhs.jmx[0];
                            this->jmy   = &rhs.jmy[0];
                            this->jmz   = &rhs.jmz[0];
-                           rhs.npts   = 0ULL;
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
                            rhs.jmx     = NULL;
                            rhs.jmy     = NULL;
                            rhs.jmz     = NULL;
@@ -2282,11 +2371,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jmx  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nx,64ULL);
                         this->jmy  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->ny,64ULL);
                         this->jmz  = (std::complex<float>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nz,64ULL);
                     }
                     
               };
@@ -2298,60 +2387,72 @@ namespace gms {
                       std::complex<double> * __restrict jex;
                       std::complex<double> * __restrict jey;
                       std::complex<double> * __restrict jez;
-                      std::size_t                       npts;
+                      std::size_t                       nx;
+                      std::size_t                       ny;
+                      std::size_t                       nz;
                       bool                              ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,31)
+                      PAD_TO(0,15)
 #endif
                       inline Je_c8_t() noexcept(true) {
                           
-                          this->npts = 0ULL;
+                          this->nx   = 0ULL;
+                          this->ny   = 0ULL;
+                          this->nz   = 0ULL;
                           this->jex  = NULL;
                           this->jey  = NULL;
                           this->jez  = NULL;
                       } 
                           
-                     inline Je_c8_t(const std::size_t pts) {
+                     inline Je_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz) {
                      
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
                       }  
                       
-                     inline Je_c8_t(const std::size_t length,
-                                   const int32_t prot,
-                                   const int32_t flags,
-                                   const int32_t fd,
-                                   const int32_t offset,
-                                   const int32_t fsize) {
+                     inline Je_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->jex = (std::complex<double>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<double>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<double>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jex = (std::complex<double>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<double>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<double>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jex = (std::complex<double>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<double>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<double>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2365,55 +2466,84 @@ namespace gms {
                                      const std::vector<std::complex<double>> &j_ey,    //shall be of the same size (no error checking implemented)
                                      const std::vector<std::complex<double>> &j_ez) {  //shall be of the same size (no error checking implemented)
                          
-                          this->npts = j_ex.size();
+                          this->nx = j_ex.size();
+                          this->ny = j_ey.size();
+                          this->nz = j_ez.size();
                           allocate();
                           this->ismmap = false;
-                          const std::size_t len = sizeof(std::complex<double>)*this->npts;
-                          std::memcpy(this->jex,&j_ex[0],len);
-                          std::memcpy(this->jey,&j_ey[0],len);
-                          std::memcpy(this->jez,&j_ez[0],len);       
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<double>)*this->nz;
+                          std::memcpy(this->jex,&j_ex[0],lenx);
+                          std::memcpy(this->jey,&j_ey[0],leny);
+                          std::memcpy(this->jez,&j_ez[0],lenz);       
+                     }
+                     
+                   inline   Je_c8_t( const std::valarray<std::complex<double>> &j_ex,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<double>> &j_ey,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<double>> &j_ez) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = j_ex.size();
+                          this->ny = j_ey.size();
+                          this->nz = j_ez.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<double>)*this->nz;
+                          std::memcpy(this->jex,&j_ex[0],lenx);
+                          std::memcpy(this->jey,&j_ey[0],leny);
+                          std::memcpy(this->jez,&j_ez[0],lenz);       
                      }
                       
-                   inline   Je_c8_t(const std::size_t pts,
-                                   const std::complex<double> * __restrict j_ex,
-                                   const std::complex<double> * __restrict j_ey,
-                                   const std::complex<double> * __restrict j_ez) {
+                   inline   Je_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const std::complex<double> * __restrict j_ex,
+                                    const std::complex<double> * __restrict j_ey,
+                                    const std::complex<double> * __restrict j_ez) {
                           
-                          this->npts = npts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->jex[0],&j_ex[0],this->npts);
-	                  avx512_uncached_memmove(&this->jey[0],&j_ey[0],this->npts);
-	                  avx512_uncached_memmove(&this->jez[0],&j_ez[0],this->npts);
+	                  avx512_uncached_memmove(&this->jex[0],&j_ex[0],this->nx);
+	                  avx512_uncached_memmove(&this->jey[0],&j_ey[0],this->ny);
+	                  avx512_uncached_memmove(&this->jez[0],&j_ez[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->jex[0],&j_ex[0],this->npts);
-	                  avx512_cached_memmove(&this->jey[0],&j_ey[0],this->npts);
-	                  avx512_cached_memmove(&this->jez[0],&j_ez[0],this->npts);
+	                  avx512_cached_memmove(&this->jex[0],&j_ex[0],this->nx);
+	                  avx512_cached_memmove(&this->jey[0],&j_ey[0],this->ny);
+	                  avx512_cached_memmove(&this->jez[0],&j_ez[0],this->nz);
 #endif
                    }  
                    
                   inline  Je_c8_t(Je_c8_t && rhs) {
                           
-                          this->npts = rhs.npts;
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
                           this->jex   = &rhs.jex[0];
                           this->jey   = &rhs.jey[0];
                           this->jez   = &rhs.jez[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
                           rhs.jex     = NULL;
                           rhs.jey     = NULL;
                           rhs.jez     = NULL;
                       }
                                  
-                      Je_c8_t(const Je_c8_t &)             = delete;
+                   Je_c8_t(const Je_c8_t &)             = delete;
                       
                    inline   ~Je_c8_t() {
                       
                           using namespace gms::common;
                           if(this->ismmap) {
-                             gms_unmap(this->jex,this->npts);
-                             gms_unmap(this->jey,this->npts);
-                             gms_unmap(this->jez,this->npts);
+                             gms_unmap(this->jex,this->nx);
+                             gms_unmap(this->jey,this->ny);
+                             gms_unmap(this->jez,this->nz);
                           }
                           else {
                               gms_mm_free(this->jex);
@@ -2422,7 +2552,7 @@ namespace gms {
                           }
                       }
                       
-                      Je_c8_t & operator=(const Je_c8_t &) = delete;
+                    Je_c8_t & operator=(const Je_c8_t &) = delete;
                       
                     inline  Je_c8_t & operator=(Je_c8_t &&rhs) {
                            using namespace gms::common;
@@ -2430,11 +2560,15 @@ namespace gms {
                            gms_mm_free(this->jex);
                            gms_mm_free(this->jey);
                            gms_mm_free(this->jez);
-                           this->npts = rhs.npts;
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
                            this->jex   = &rhs.jex[0];
                            this->jey   = &rhs.jey[0];
                            this->jez   = &rhs.jez[0];
-                           rhs.npts   = 0ULL;
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
                            rhs.jex     = NULL;
                            rhs.jey     = NULL;
                            rhs.jez     = NULL;
@@ -2444,11 +2578,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nx,64ULL);
                         this->jey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->ny,64ULL);
                         this->jez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nz,64ULL);
                     }
                     
               };
@@ -2460,60 +2594,72 @@ namespace gms {
                       std::complex<double> * __restrict jmx;
                       std::complex<double> * __restrict jmy;
                       std::complex<double> * __restrict jmz;
-                      std::size_t                       npts;
+                      std::size_t                       nx;
+                      std::size_t                       ny;
+                      std::size_t                       nz;
                       bool                              ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,31)
+                      PAD_TO(0,15)
 #endif
                      inline Jm_c8_t() noexcept(true) {
                           
-                          this->npts = 0ULL;
+                          this->nx   = 0ULL;
+                          this->ny   = 0ULL;
+                          this->nz   = 0ULL;
                           this->jmx  = NULL;
                           this->jmy  = NULL;
                           this->jmz  = NULL;
                       } 
                           
-                     inline Jm_c8_t(const std::size_t pts) {
+                     inline Jm_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz) {
                      
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
                       }  
                       
-                     inline Jm_c8_t(const std::size_t length,
-                                   const int32_t prot,
-                                   const int32_t flags,
-                                   const int32_t fd,
-                                   const int32_t offset,
-                                   const int32_t fsize) {
+                     inline Jm_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->jmx = (std::complex<double>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<double>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<double>*)
-                                                 gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jmx = (std::complex<double>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<double>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<double>*)
-                                                 gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jmx = (std::complex<double>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<double>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<double>*)
-                                                 gms_mmap_1GiB(length,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2527,41 +2673,70 @@ namespace gms {
                                      const std::vector<std::complex<double>> &j_my,    //shall be of the same size (no error checking implemented)
                                      const std::vector<std::complex<double>> &j_mz) {  //shall be of the same size (no error checking implemented)
                          
-                          this->npts = j_mx.size();
+                          this->nx = j_mx.size();
+                          this->ny = j_my.size();
+                          this->nz = j_mz.size();
                           allocate();
                           this->ismmap = false;
-                          const std::size_t len = sizeof(std::complex<double>)*this->npts;
-                          std::memcpy(this->jmx,&j_mx[0],len);
-                          std::memcpy(this->jmy,&j_my[0],len);
-                          std::memcpy(this->jmz,&j_mz[0],len);       
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<double>)*this->nz;
+                          std::memcpy(this->jmx,&j_mx[0],lex);
+                          std::memcpy(this->jmy,&j_my[0],leny);
+                          std::memcpy(this->jmz,&j_mz[0],lenz);       
+                     }
+                     
+                    inline   Jm_c8_t(const std::valarray<std::complex<double>> &j_mx,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<double>> &j_my,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<double>> &j_mz) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = j_mx.size();
+                          this->ny = j_my.size();
+                          this->nz = j_mz.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<double>)*this->nz;
+                          std::memcpy(this->jmx,&j_mx[0],lex);
+                          std::memcpy(this->jmy,&j_my[0],leny);
+                          std::memcpy(this->jmz,&j_mz[0],lenz);       
                      }
                       
-                   inline   Jm_c8_t(const std::size_t pts,
-                                   const std::complex<double> * __restrict j_mx,
-                                   const std::complex<double> * __restrict j_my,
-                                   const std::complex<double> * __restrict j_mz) {
+                   inline   Jm_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const std::complex<double> * __restrict j_mx,
+                                    const std::complex<double> * __restrict j_my,
+                                    const std::complex<double> * __restrict j_mz) {
                           
-                          this->npts = npts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate();
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->jmx[0],&j_mx[0],this->npts);
-	                  avx512_uncached_memmove(&this->jmy[0],&j_my[0],this->npts);
-	                  avx512_uncached_memmove(&this->jmz[0],&j_mz[0],this->npts);
+	                  avx512_uncached_memmove(&this->jmx[0],&j_mx[0],this->nx);
+	                  avx512_uncached_memmove(&this->jmy[0],&j_my[0],this->ny);
+	                  avx512_uncached_memmove(&this->jmz[0],&j_mz[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->jmx[0],&j_mx[0],this->npts);
-	                  avx512_cached_memmove(&this->jmy[0],&j_my[0],this->npts);
-	                  avx512_cached_memmove(&this->jmz[0],&j_mz[0],this->npts);
+	                  avx512_cached_memmove(&this->jmx[0],&j_mx[0],this->nx);
+	                  avx512_cached_memmove(&this->jmy[0],&j_my[0],this->ny);
+	                  avx512_cached_memmove(&this->jmz[0],&j_mz[0],this->nz);
 #endif
                    }  
                    
                   inline  Jm_c8_t(Jm_c8_t && rhs) {
                           
-                          this->npts = rhs.npts;
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
                           this->jmx   = &rhs.jmx[0];
                           this->jmy   = &rhs.jmy[0];
                           this->jmz   = &rhs.jmz[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
                           rhs.jmx     = NULL;
                           rhs.jmy     = NULL;
                           rhs.jmz     = NULL;
@@ -2573,9 +2748,9 @@ namespace gms {
                       
                           using namespace gms::common;
                           if(this->ismmap) {
-                             gms_unmap(this->jmx,this->npts);
-                             gms_unmap(this->jmy,this->npts);
-                             gms_unmap(this->jmz,this->npts);
+                             gms_unmap(this->jmx,this->nx);
+                             gms_unmap(this->jmy,this->ny);
+                             gms_unmap(this->jmz,this->nz);
                           }
                           else {
                               gms_mm_free(this->jmx);
@@ -2592,11 +2767,15 @@ namespace gms {
                            gms_mm_free(this->jmx);
                            gms_mm_free(this->jmy);
                            gms_mm_free(this->jmz);
-                           this->npts = rhs.npts;
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
                            this->jmx   = &rhs.jmx[0];
                            this->jmy   = &rhs.jmy[0];
                            this->jmz   = &rhs.jmz[0];
-                           rhs.npts   = 0ULL;
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
                            rhs.jmx     = NULL;
                            rhs.jmy     = NULL;
                            rhs.jmz     = NULL;
@@ -2606,11 +2785,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jmx  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nx,64ULL);
                         this->jmy  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->ny,64ULL);
                         this->jmz  = (std::complex<double>*)
-                                         gms_mm_malloc(this->npts,64ULL);
+                                         gms_mm_malloc(this->nz,64ULL);
                     }
                     
               };
