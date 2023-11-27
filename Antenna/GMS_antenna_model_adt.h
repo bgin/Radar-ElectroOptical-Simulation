@@ -1433,14 +1433,18 @@ namespace gms {
                       double * __restrict      eyi;
                       double * __restrict      ezr;
                       double * __restrict      ezi;
-                      std::size_t              npts;
+                      std::size_t              nx;
+                      std::size_t              ny;
+                      std::size_t              nz;
                       bool                     ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,7)
+                      PAD_TO(0,51)
 #endif
 
                      inline E_r8_t() {
-                         this->npts = 0ULL;
+                         this->nx   = 0ULL;
+                         this->ny   = 0ULL;
+                         this->nz   = 0ULL;
                          this->exr  = NULL;
                          this->exi  = NULL;
                          this->eyr  = NULL;
@@ -1449,64 +1453,72 @@ namespace gms {
                          this->ezi  = NULL;
                       }                    
                       
-                     inline E_r8_t(const std::size_t pts) {
-                             this->npts = pts;
+                     inline E_r8_t(const std::size_t _nx,
+                                   const std::size_t _ny,
+                                   const std::size_t _nz) {
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              allocate();
                              this->ismmap = false;
                       }  
                       
-                     inline E_r8_t(const std::size_t length,
+                     inline E_r8_t(const std::size_t _nx,
+                                   const std::size_t _ny,
+                                   const std::size_t _nz,
                                    const int32_t prot,
                                    const int32_t flags,
                                    const int32_t fd,
                                    const int32_t offset,
                                    const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->exr = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->exi = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->eyr = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->eyi = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->ezr = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ezi = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->exr = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->exi = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->eyr = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->eyi = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->ezr = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ezi = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->exr = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->exi = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->eyr = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this-ny,prot,flags,fd,offset);
                                       this->eyi = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->ezr = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
                                       this->ezi = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -1523,19 +1535,48 @@ namespace gms {
                                     const std::vector<double> &e_zr,
                                     const std::vector<double> &e_zi) {
                                
-                               this->npts = e_xr.size(); 
+                               this->nx = e_xr.size();
+                               this->ny = e_yr.size();
+                               this->nz = e_zr.size(); 
                                allocate();
                                this->ismmap = false;
-                               const std::size_t len = sizeof(double)*this->npts;
-                               std::memcpy(this->exr,&e_xr[0],len);
-                               std::memcpy(this->exi,&e_xi[0],len);
-                               std::memcpy(this->eyr,&e_yr[0],len);
-                               std::memcpy(this->eyi,&e_yi[0],len);
-                               std::memcpy(this->ezr,&e_zr[0],len);
-                               std::memcpy(this->ezi,&e_zi[0],len);     
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->exr,&e_xr[0],lenx);
+                               std::memcpy(this->exi,&e_xi[0],lenx);
+                               std::memcpy(this->eyr,&e_yr[0],leny);
+                               std::memcpy(this->eyi,&e_yi[0],leny);
+                               std::memcpy(this->ezr,&e_zr[0],lenz);
+                               std::memcpy(this->ezi,&e_zi[0],lenz);     
                       }
                       
-                      inline E_r8_t(const std::size_t pts,
+                      inline E_r8_t(const std::valarray<double> &e_xr,
+                                    const std::valarray<double> &e_xi,
+                                    const std::valarray<double> &e_yr,
+                                    const std::valarray<double> &e_yi,
+                                    const std::valarray<double> &e_zr,
+                                    const std::valarray<double> &e_zi) {
+                               
+                               this->nx = e_xr.size();
+                               this->ny = e_yr.size();
+                               this->nz = e_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->exr,&e_xr[0],lenx);
+                               std::memcpy(this->exi,&e_xi[0],lenx);
+                               std::memcpy(this->eyr,&e_yr[0],leny);
+                               std::memcpy(this->eyi,&e_yi[0],leny);
+                               std::memcpy(this->ezr,&e_zr[0],lenz);
+                               std::memcpy(this->ezi,&e_zi[0],lenz);     
+                      }
+                      
+                      inline E_r8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
                                     const double * __restrict e_xr,   
                                     const double * __restrict e_xi,
                                     const double * __restrict e_yr,
@@ -1543,36 +1584,42 @@ namespace gms {
                                     const double * __restrict e_zr,
                                     const double * __restrict e_zi) {
                          
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate()
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->exr[0],&e_xr[0],this->npts);
-	                  avx512_uncached_memmove(&this->exi[0],&e_xi[0],this->npts);
-	                  avx512_uncached_memmove(&this->eyr[0],&e_yr[0],this->npts);
-	                  avx512_uncached_memmove(&this->eyi[0],&e_yi[0],this->npts);
-	                  avx512_uncached_memmove(&this->ezr[0],&e_zr[0],this->npts);
-	                  avx512_uncached_memmove(&this->ezi[0],&e_zi[0],this->npts);
+	                  avx512_uncached_memmove(&this->exr[0],&e_xr[0],this->nx);
+	                  avx512_uncached_memmove(&this->exi[0],&e_xi[0],this->nx);
+	                  avx512_uncached_memmove(&this->eyr[0],&e_yr[0],this->ny);
+	                  avx512_uncached_memmove(&this->eyi[0],&e_yi[0],this->ny);
+	                  avx512_uncached_memmove(&this->ezr[0],&e_zr[0],this->nz);
+	                  avx512_uncached_memmove(&this->ezi[0],&e_zi[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->exr[0],&e_xr[0],this->npts);
-	                  avx512_cached_memmove(&this->exi[0],&e_xi[0],this->npts);
-	                  avx512_cached_memmove(&this->eyr[0],&e_yr[0],this->npts);
-	                  avx512_cached_memmove(&this->eyi[0],&e_yi[0],this->npts);
-	                  avx512_cached_memmove(&this->ezr[0],&e_zr[0],this->npts);
-	                  avx512_cached_memmove(&this->ezi[0],&e_zi[0],this->npts);
+	                  avx512_cached_memmove(&this->exr[0],&e_xr[0],this->nx);
+	                  avx512_cached_memmove(&this->exi[0],&e_xi[0],this->nx);
+	                  avx512_cached_memmove(&this->eyr[0],&e_yr[0],this->ny);
+	                  avx512_cached_memmove(&this->eyi[0],&e_yi[0],this->ny);
+	                  avx512_cached_memmove(&this->ezr[0],&e_zr[0],this->nz);
+	                  avx512_cached_memmove(&this->ezi[0],&e_zi[0],this->nz);
 #endif          
                       }
                       
                       inline E_r8_t(E_r8_t &&rhs) {
                            
-                          this->npts = rhs.npts;
+                          this->nx   = rhs.nx;
+                          this->ny   = rhs.ny;
+                          this->nz   = rhs.nz;
                           this->exr  = &rhs.exr[0];
                           this->exi  = &rhs.exi[0];
                           this->eyr  = &rhs.eyr[0];
                           this->eyi  = &rhs.eyi[0];
                           this->ezr  = &rhs.ezr[0];
                           this->ezi  = &rhs.ezi[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx     = 0ULL;
+                          rhs.ny     = 0ULL;
+                          rhs.nz     = 0ULL;
                           rhs.exr    = NULL;
                           rhs.exi    = NULL;
                           rhs.eyr    = NULL;
@@ -1586,12 +1633,12 @@ namespace gms {
                       inline ~E_r8_t() {
                            using namespace gms::common;
                            if(this->ismmap) {
-                              gms_unmap(this->exr,this->npts);
-                              gms_unmap(this->exi,this->npts);
-                              gms_unmap(this->eyr,this->npts); 
-                              gms_unmap(this->eyi,this->npts);
-                              gms_unmap(this->ezr,this->npts);
-                              gms_unmap(this->ezi,this->npts);
+                              gms_unmap(this->exr,this->nx);
+                              gms_unmap(this->exi,this->nx);
+                              gms_unmap(this->eyr,this->ny); 
+                              gms_unmap(this->eyi,this->ny);
+                              gms_unmap(this->ezr,this->nz);
+                              gms_unmap(this->ezi,this->nz);
                            }
                            else {
                                gms_mm_free(this->exr);
@@ -1614,14 +1661,18 @@ namespace gms {
                             gms_mm_free(this->eyi);
                             gms_mm_free(this->ezr);
                             gms_mm_free(this->ezi);
-                            this->npts = rhs.npts;
+                            this->nx   = rhs.nx;
+                            this->ny   = rhs.ny;
+                            this->nz   = rhs.nz;
                             this->exr  = &rhs.exr[0];
                             this->exi  = &rhs.exi[0];
                             this->eyr  = &rhs.eyr[0];
                             this->eyi  = &rhs.eyi[0];
                             this->ezr  = &rhs.ezr[0];
                             this->ezi  = &rhs.ezi[0];
-                            rhs.npts   = 0ULL;
+                            rhs.nx     = 0ULL;
+                            rhs.ny     = 0ULL;
+                            rhs.nz     = 0ULL;
                             rhs.exr    = NULL;
                             rhs.exi    = NULL;
                             rhs.eyr    = NULL;
@@ -1633,12 +1684,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->exr  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->exi  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->eyr  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->eyi  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->ezr  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->ezi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->exr  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->exi  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->eyr  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->eyi  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->ezr  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->ezi  = (double*)gms_mm_malloc(this->nz,64ULL);
                    }    
                    
               };
