@@ -1704,13 +1704,17 @@ namespace gms {
                       double * __restrict myi;
                       double * __restrict mzr;
                       double * __restrict mzi;
-                      std::size_t            npts;
+                      std::size_t            nx;
+                      std::size_t            ny;
+                      std::size_t            nz;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,7)
+                      PAD_TO(0,51)
 #endif
 
                         inline H_r8_t() {
-                         this->npts = 0ULL;
+                         this->nx   = 0ULL;
+                         this->ny   = 0ULL;
+                         this->nz   = 0ULL;
                          this->mxr  = NULL;
                          this->mxi  = NULL;
                          this->myr  = NULL;
@@ -1719,64 +1723,72 @@ namespace gms {
                          this->mzi  = NULL;
                       }                    
                       
-                      inline H_r8_t(const std::size_t pts) {
-                             this->npts = pts;
+                      inline H_r8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz) {
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              allocate();
                              this->ismmap = false;
                       }  
                       
-                      inline H_r8_t(const std::size_t length,
-                                   const int32_t prot,
-                                   const int32_t flags,
-                                   const int32_t fd,
-                                   const int32_t offset,
-                                   const int32_t fsize) {
+                      inline H_r8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->mxr = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->mxi = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->myr = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->myi = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->mzr = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->mzi = (double*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->mxr = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->mxi = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->myr = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->myi = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->mzr = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->mzi = (double*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->mxr = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->mxi = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->myr = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->myi = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->mzr = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
                                       this->mzi = (double*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -1786,63 +1798,101 @@ namespace gms {
                      } 
                        
                       //The length of arguments must be of the same size (no error checking is implemented)!!
-                      inline H_r8_t(const std::vector<double> &mxr,
-                                    const std::vector<double> &mxi,
-                                    const std::vector<double> &myr,
-                                    const std::vector<double> &myi,
-                                    const std::vector<double> &mzr,
-                                    const std::vector<double> &mzi) {
+                      inline H_r8_t(const std::vector<double> &m_xr,
+                                    const std::vector<double> &m_xi,
+                                    const std::vector<double> &m_yr,
+                                    const std::vector<double> &m_yi,
+                                    const std::vector<double> &m_zr,
+                                    const std::vector<double> &m_zi) {
                                
-                               this->npts = mxr.size(); 
+                               this->nx = m_xr.size();
+                               this->ny = m_yr.size();
+                               this->nz = m_zr.size();
                                allocate();
                                this->ismmap = false;
-                               const std::size_t len = sizeof(double)*this->npts;
-                               std::memcpy(this->mxr,&mxr[0],len);
-                               std::memcpy(this->mxi,&mxi[0],len);
-                               std::memcpy(this->myr,&myr[0],len);
-                               std::memcpy(this->myi,&myi[0],len);
-                               std::memcpy(this->mzr,&mzr[0],len);
-                               std::memcpy(this->mzi,&mzi[0],len);     
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->mxr,&m_xr[0],lenx);
+                               std::memcpy(this->mxi,&m_xi[0],lenx);
+                               std::memcpy(this->myr,&m_yr[0],leny);
+                               std::memcpy(this->myi,&m_yi[0],leny);
+                               std::memcpy(this->mzr,&m_zr[0],lenz);
+                               std::memcpy(this->mzi,&m_zi[0],lenz);     
                       }
                       
-                      inline H_r8_t(const std::size_t pts,
-                                    const double * __restrict mxr,   
-                                    const double * __restrict mxi,
-                                    const double * __restrict myr,
-                                    const double * __restrict myi,
-                                    const double * __restrict mzr,
-                                    const double * __restrict mzi) {
+                       //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline H_r8_t(const std::valarray<double> &m_xr,
+                                    const std::valarray<double> &m_xi,
+                                    const std::valarray<double> &m_yr,
+                                    const std::valarray<double> &m_yi,
+                                    const std::valarray<double> &m_zr,
+                                    const std::valarray<double> &m_zi) {
+                               
+                               this->nx = m_xr.size();
+                               this->ny = m_yr.size();
+                               this->nz = m_zr.size();
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->mxr,&m_xr[0],lenx);
+                               std::memcpy(this->mxi,&m_xi[0],lenx);
+                               std::memcpy(this->myr,&m_yr[0],leny);
+                               std::memcpy(this->myi,&m_yi[0],leny);
+                               std::memcpy(this->mzr,&m_zr[0],lenz);
+                               std::memcpy(this->mzi,&m_zi[0],lenz);     
+                      }
+                      
+                      
+                      
+                      inline H_r8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const double * __restrict m_xr,   
+                                    const double * __restrict m_xi,
+                                    const double * __restrict m_yr,
+                                    const double * __restrict m_yi,
+                                    const double * __restrict m_zr,
+                                    const double * __restrict m_zi) {
                          
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate()
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->mxr[0],&mxr[0],this->npts);
-	                  avx512_uncached_memmove(&this->mxi[0],&mxi[0],this->npts);
-	                  avx512_uncached_memmove(&this->myr[0],&myr[0],this->npts);
-	                  avx512_uncached_memmove(&this->myi[0],&myi[0],this->npts);
-	                  avx512_uncached_memmove(&this->mzr[0],&mzr[0],this->npts);
-	                  avx512_uncached_memmove(&this->mzi[0],&mzi[0],this->npts);
+	                  avx512_uncached_memmove(&this->mxr[0],&m_xr[0],this->nx);
+	                  avx512_uncached_memmove(&this->mxi[0],&m_xi[0],this->nx);
+	                  avx512_uncached_memmove(&this->myr[0],&m_yr[0],this->ny);
+	                  avx512_uncached_memmove(&this->myi[0],&m_yi[0],this->ny);
+	                  avx512_uncached_memmove(&this->mzr[0],&m_zr[0],this->nz);
+	                  avx512_uncached_memmove(&this->mzi[0],&m_zi[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->mxr[0],&mxr[0],this->npts);
-	                  avx512_cached_memmove(&this->mxi[0],&mxi[0],this->npts);
-	                  avx512_cached_memmove(&this->myr[0],&myr[0],this->npts);
-	                  avx512_cached_memmove(&this->myi[0],&myi[0],this->npts);
-	                  avx512_cached_memmove(&this->mzr[0],&mzr[0],this->npts);
-	                  avx512_cached_memmove(&this->mzi[0],&mzi[0],this->npts);
+	                  avx512_cached_memmove(&this->mxr[0],&m_xr[0],this->nx);
+	                  avx512_cached_memmove(&this->mxi[0],&m_xi[0],this->nx);
+	                  avx512_cached_memmove(&this->myr[0],&m_yr[0],this->ny);
+	                  avx512_cached_memmove(&this->myi[0],&m_yi[0],this->ny);
+	                  avx512_cached_memmove(&this->mzr[0],&m_zr[0],this->nz);
+	                  avx512_cached_memmove(&this->mzi[0],&m_zi[0],this->nz);
 #endif          
                       }
                       
                       inline H_r8_t(H_r8_t &&rhs) {
                            
-                          this->npts = rhs.npts;
+                          this->nx   = rhs.nx;
+                          this->ny   = rhs.ny;
+                          this->nz   = rhs.nz;
                           this->mxr  = &rhs.mxr[0];
                           this->mxi  = &rhs.mxi[0];
                           this->myr  = &rhs.myr[0];
                           this->myi  = &rhs.myi[0];
                           this->mzr  = &rhs.mzr[0];
                           this->mzi  = &rhs.mzi[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx     = 0ULL;
+                          rhs.ny     = 0ULL;
+                          rhs.nz     = 0ULL;
                           rhs.mxr    = NULL;
                           rhs.mxi    = NULL;
                           rhs.myr    = NULL;
@@ -1856,12 +1906,12 @@ namespace gms {
                       inline ~H_r8_t() {
                            using namespace gms::common;
                            if(this->ismmap) {
-                              gms_unmap(this->mxr,this->npts);
-                              gms_unmap(this->mxi,this->npts);
-                              gms_unmap(this->myr,this->npts); 
-                              gms_unmap(this->myi,this->npts);
-                              gms_unmap(this->mzr,this->npts);
-                              gms_unmap(this->mzi,this->npts);
+                              gms_unmap(this->mxr,this->nx);
+                              gms_unmap(this->mxi,this->nx);
+                              gms_unmap(this->myr,this->ny); 
+                              gms_unmap(this->myi,this->ny);
+                              gms_unmap(this->mzr,this->nz);
+                              gms_unmap(this->mzi,this->nz);
                            }
                            else {
                                gms_mm_free(this->mxr);
@@ -1884,14 +1934,18 @@ namespace gms {
                             gms_mm_free(this->myi);
                             gms_mm_free(this->mzr);
                             gms_mm_free(this->mzi);
-                            this->npts = rhs.npts;
+                            this->nx   = rhs.nx;
+                            this->ny   = rhs.ny;
+                            this->nz   = rhs.nz;
                             this->mxr  = &rhs.mxr[0];
                             this->mxi  = &rhs.mxi[0];
                             this->myr  = &rhs.myr[0];
                             this->myi  = &rhs.myi[0];
                             this->mzr  = &rhs.mzr[0];
                             this->mzi  = &rhs.mzi[0];
-                            rhs.npts   = 0ULL;
+                            rhs.nx     = 0ULL;
+                            rhs.ny     = 0ULL;
+                            rhs.nz     = 0ULL;
                             rhs.mxr    = NULL;
                             rhs.mxi    = NULL;
                             rhs.myr    = NULL;
@@ -1903,12 +1957,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->mxr  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->mxi  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->myr  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->myi  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->mzr  = (double*)gms_mm_malloc(this->npts,64ULL);
-                        this->mzi  = (double*)gms_mm_malloc(this->npts,64ULL);
+                        this->mxr  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->mxi  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->myr  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->myi  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->mzr  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->mzi  = (double*)gms_mm_malloc(this->nz,64ULL);
                    }    
                    
               };
