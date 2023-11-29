@@ -2805,13 +2805,17 @@ namespace gms {
                       float * __restrict     jeyi;
                       float * __restrict     jezr;
                       float * __restrict     jezi;
-                      std::size_t            npts;
+                      std::size_t            nx;
+                      std::size_t            ny;
+                      std::size_t            nz;
                       bool                   ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,7)
+                      PAD_TO(0,51)
 #endif 
-                      inline Je_r4_t() {
-                         this->npts = 0ULL;
+                     inline Je_r4_t() {
+                         this->nx    = 0ULL;
+                         this->ny    = 0ULL;
+                         this->nz    = 0ULL;
                          this->jexr  = NULL;
                          this->jexi  = NULL;
                          this->jeyr  = NULL;
@@ -2820,64 +2824,72 @@ namespace gms {
                          this->jezi  = NULL;
                       }                    
                       
-                      inline Je_r4_t(const std::size_t pts) {
-                             this->npts = pts;
+                      inline Je_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz) {
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              allocate();
                              this->ismmap = false;
                       }  
                       
-                      inline Je_r4_t(const std::size_t length,
-                                   const int32_t prot,
-                                   const int32_t flags,
-                                   const int32_t fd,
-                                   const int32_t offset,
-                                   const int32_t fsize) {
+                      inline Je_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const int32_t prot,
+                                     const int32_t flags,
+                                     const int32_t fd,
+                                     const int32_t offset,
+                                     const int32_t fsize) {
                              using namespace gms::common;
-                             this->npts = length;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
                              switch (fsize) {
                                  case:0
                                       this->jexr = (float*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->jexi = (float*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
                                       this->jeyr = (float*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->jeyi = (float*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
                                       this->jezr = (float*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->jezi = (float*)
-                                                  gms_mmap_4KiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jexr = (float*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->jexi = (float*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
                                       this->jeyr = (float*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->jeyi = (float*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
                                       this->jezr = (float*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->jezi = (float*)
-                                                  gms_mmap_2MiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jexr = (float*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->jexi = (float*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
                                       this->jeyr = (float*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->jeyi = (float*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
                                       this->jezr = (float*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
                                       this->jezi = (float*)
-                                                  gms_mmap_1GiB(length,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2888,62 +2900,97 @@ namespace gms {
                        
                       //The length of arguments must be of the same size (no error checking is implemented)!!
                       inline Je_r4_t(const std::vector<float> &je_xr,
-                                    const std::vector<float> &je_xi,
-                                    const std::vector<float> &je_yr,
-                                    const std::vector<float> &je_yi,
-                                    const std::vector<float> &je_zr,
-                                    const std::vector<float> &je_zi) {
+                                     const std::vector<float> &je_xi,
+                                     const std::vector<float> &je_yr,
+                                     const std::vector<float> &je_yi,
+                                     const std::vector<float> &je_zr,
+                                     const std::vector<float> &je_zi) {
                                
-                               this->npts = je_xr.size(); 
+                               this->nx = je_xr.size();
+                               this->ny = je_yr.size();
+                               this->nz = je_zr.size(); 
                                allocate();
                                this->ismmap = false;
-                               const std::size_t len = sizeof(float)*this->npts;
-                               std::memcpy(this->jexr,&je_xr[0],len);
-                               std::memcpy(this->jexi,&je_xi[0],len);
-                               std::memcpy(this->jeyr,&je_yr[0],len);
-                               std::memcpy(this->jeyi,&je_yi[0],len);
-                               std::memcpy(this->jezr,&je_zr[0],len);
-                               std::memcpy(this->jezi,&je_zi[0],len);     
+                               const std::size_t lenx = sizeof(float)*this->nx;
+                               const std::size_t leny = sizeof(float)*this->ny;
+                               const std::size_t lenz = sizeof(float)*this->nz;
+                               std::memcpy(this->jexr,&je_xr[0],lenx);
+                               std::memcpy(this->jexi,&je_xi[0],lenx);
+                               std::memcpy(this->jeyr,&je_yr[0],leny);
+                               std::memcpy(this->jeyi,&je_yi[0],leny);
+                               std::memcpy(this->jezr,&je_zr[0],lenz);
+                               std::memcpy(this->jezi,&je_zi[0],lenz);     
                       }
                       
-                      inline Je_r4_t(const std::size_t pts,
-                                    const float * __restrict je_xr,   
-                                    const float * __restrict je_xi,
-                                    const float * __restrict je_yr,
-                                    const float * __restrict je_yi,
-                                    const float * __restrict je_zr,
-                                    const float * __restrict je_zi) {
+                      inline Je_r4_t(const std::valarray<float> &je_xr,
+                                     const std::valarray<float> &je_xi,
+                                     const std::valarray<float> &je_yr,
+                                     const std::valarray<float> &je_yi,
+                                     const std::valarray<float> &je_zr,
+                                     const std::valarray<float> &je_zi) {
+                               
+                               this->nx = je_xr.size();
+                               this->ny = je_yr.size();
+                               this->nz = je_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(float)*this->nx;
+                               const std::size_t leny = sizeof(float)*this->ny;
+                               const std::size_t lenz = sizeof(float)*this->nz;
+                               std::memcpy(this->jexr,&je_xr[0],lenx);
+                               std::memcpy(this->jexi,&je_xi[0],lenx);
+                               std::memcpy(this->jeyr,&je_yr[0],leny);
+                               std::memcpy(this->jeyi,&je_yi[0],leny);
+                               std::memcpy(this->jezr,&je_zr[0],lenz);
+                               std::memcpy(this->jezi,&je_zi[0],lenz);     
+                      }
+                      
+                      inline Je_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const float * __restrict je_xr,   
+                                     const float * __restrict je_xi,
+                                     const float * __restrict je_yr,
+                                     const float * __restrict je_yi,
+                                     const float * __restrict je_zr,
+                                     const float * __restrict je_zi) {
                          
-                          this->npts = pts;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
                           allocate()
                           this->ismmap = false;
 #if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->jexr[0],&je_xr[0],this->npts);
-	                  avx512_uncached_memmove(&this->jexi[0],&je_xi[0],this->npts);
-	                  avx512_uncached_memmove(&this->jeyr[0],&je_yr[0],this->npts);
-	                  avx512_uncached_memmove(&this->jeyi[0],&je_yi[0],this->npts);
-	                  avx512_uncached_memmove(&this->jezr[0],&je_zr[0],this->npts);
-	                  avx512_uncached_memmove(&this->jezi[0],&je_zi[0],this->npts);
+	                  avx512_uncached_memmove(&this->jexr[0],&je_xr[0],this->nx);
+	                  avx512_uncached_memmove(&this->jexi[0],&je_xi[0],this->nx);
+	                  avx512_uncached_memmove(&this->jeyr[0],&je_yr[0],this->ny);
+	                  avx512_uncached_memmove(&this->jeyi[0],&je_yi[0],this->ny);
+	                  avx512_uncached_memmove(&this->jezr[0],&je_zr[0],this->nz);
+	                  avx512_uncached_memmove(&this->jezi[0],&je_zi[0],this->nz);
 #else
-	                  avx512_cached_memmove(&this->jexr[0],&je_xr[0],this->npts);
-	                  avx512_cached_memmove(&this->jexi[0],&je_xi[0],this->npts);
-	                  avx512_cached_memmove(&this->jeyr[0],&je_yr[0],this->npts);
-	                  avx512_cached_memmove(&this->jeyi[0],&je_yi[0],this->npts);
-	                  avx512_cached_memmove(&this->jezr[0],&je_zr[0],this->npts);
-	                  avx512_cached_memmove(&this->jezi[0],&je_zi[0],this->npts);
+	                  avx512_cached_memmove(&this->jexr[0],&je_xr[0],this->nx);
+	                  avx512_cached_memmove(&this->jexi[0],&je_xi[0],this->nx);
+	                  avx512_cached_memmove(&this->jeyr[0],&je_yr[0],this->ny);
+	                  avx512_cached_memmove(&this->jeyi[0],&je_yi[0],this->ny);
+	                  avx512_cached_memmove(&this->jezr[0],&je_zr[0],this->nz);
+	                  avx512_cached_memmove(&this->jezi[0],&je_zi[0],this->nz);
 #endif          
                       }
                       
                       inline Je_r4_t(Je_r4_t &&rhs) {
                            
-                          this->npts = rhs.npts;
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
                           this->jexr  = &rhs.jexr[0];
                           this->jexi  = &rhs.jexi[0];
                           this->jeyr  = &rhs.jeyr[0];
                           this->jeyi  = &rhs.jeyi[0];
                           this->jezr  = &rhs.jezr[0];
                           this->jezi  = &rhs.jezi[0];
-                          rhs.npts   = 0ULL;
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
                           rhs.jexr    = NULL;
                           rhs.jexi    = NULL;
                           rhs.jeyr    = NULL;
@@ -2957,12 +3004,12 @@ namespace gms {
                       inline ~Je_r4_t() {
                            using namespace gms::common;
                            if(this->ismmap) {
-                              gms_unmap(this->jexr,this->npts);
-                              gms_unmap(this->jexi,this->npts);
-                              gms_unmap(this->jeyr,this->npts); 
-                              gms_unmap(this->jeyi,this->npts);
-                              gms_unmap(this->jezr,this->npts);
-                              gms_unmap(this->jezi,this->npts);
+                              gms_unmap(this->jexr,this->nx);
+                              gms_unmap(this->jexi,this->nx);
+                              gms_unmap(this->jeyr,this->ny); 
+                              gms_unmap(this->jeyi,this->ny);
+                              gms_unmap(this->jezr,this->nz);
+                              gms_unmap(this->jezi,this->nz);
                            }
                            else {
                                gms_mm_free(this->jexr);
@@ -2985,14 +3032,18 @@ namespace gms {
                             gms_mm_free(this->jeyi);
                             gms_mm_free(this->jezr);
                             gms_mm_free(this->jezi);
-                            this->npts = rhs.npts;
+                            this->nx    = rhs.nx;
+                            this->ny    = rhs.ny;
+                            this->nz    = rhs.nz;
                             this->jexr  = &rhs.jexr[0];
                             this->jexi  = &rhs.jexi[0];
                             this->jeyr  = &rhs.jeyr[0];
                             this->jeyi  = &rhs.jeyi[0];
                             this->jezr  = &rhs.jezr[0];
                             this->jezi  = &rhs.jezi[0];
-                            rhs.npts   = 0ULL;
+                            rhs.nx      = 0ULL;
+                            rhs.ny      = 0ULL;
+                            rhs.nz      = 0ULL;
                             rhs.jexr    = NULL;
                             rhs.jexi    = NULL;
                             rhs.jeyr    = NULL;
@@ -3004,53 +3055,555 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->jexr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                        this->jexi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                        this->jeyr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                        this->jeyi  = (float*)gms_mm_malloc(this->npts,64ULL);
-                        this->jezr  = (float*)gms_mm_malloc(this->npts,64ULL);
-                        this->jezi  = (float*)gms_mm_malloc(this->npts,64ULL);
+                        this->jexr  = (float*)gms_mm_malloc(this->nx,64ULL);
+                        this->jexi  = (float*)gms_mm_malloc(this->nx,64ULL);
+                        this->jeyr  = (float*)gms_mm_malloc(this->ny,64ULL);
+                        this->jeyi  = (float*)gms_mm_malloc(this->ny,64ULL);
+                        this->jezr  = (float*)gms_mm_malloc(this->nz,64ULL);
+                        this->jezi  = (float*)gms_mm_malloc(this->nz,64ULL);
                    }    
                    
               };
 
 
-              typedef struct __ATTR_ALIGN__(64) JM_r4_t {
+            struct __ATTR_ALIGN__(64) Jm_r4_t {
                      // ! Complex Magnetic Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
-                      JM_r4_t()                            = delete;
-                      JM_r4_t(const JM_r4_t &)             = delete;
-                      JM_r4_t & operator=(const JM_r4_t &) = delete;
-                      float * __restrict jm_xr;
-                      float * __restrict jm_xi;
-                      float * __restrict jm_yr;
-                      float * __restrict jm_yi;
-                      float * __restrict jm_zr;
-                      float * __restrict jm_zi;
-                      int32_t            npts;
+                      
+                      float * __restrict jmxr;
+                      float * __restrict jmxi;
+                      float * __restrict jmyr;
+                      float * __restrict jmyi;
+                      float * __restrict jmzr;
+                      float * __restrict jmzi;
+                      std::size_t        nx;
+                      std::size_t        ny;
+                      std::size_t        nz;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,51)
 #endif 
-              } JM_r4_t;
+                     inline Jm_r4_t() {
+                         this->nx    = 0ULL;
+                         this->ny    = 0ULL;
+                         this->nz    = 0ULL;
+                         this->jmxr  = NULL;
+                         this->jmxi  = NULL;
+                         this->jmyr  = NULL;
+                         this->jmyi  = NULL;
+                         this->jmzr  = NULL;
+                         this->jmzi  = NULL;
+                      }                    
+                      
+                      inline Jm_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz) {
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                      inline Jm_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const int32_t prot,
+                                     const int32_t flags,
+                                     const int32_t fd,
+                                     const int32_t offset,
+                                     const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->jmxr = (float*)
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                      this->jmxi = (float*)
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                      this->jmyr = (float*)
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                      this->jmyi = (float*)
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                      this->jmzr = (float*)
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                      this->jmzi = (float*)
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->jmxr = (float*)
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                      this->jmxi = (float*)
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                      this->jmyr = (float*)
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                      this->jmyi = (float*)
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                      this->jmzr = (float*)
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                      this->jmzi = (float*)
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->jmxr = (float*)
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                      this->jmxi = (float*)
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                      this->jmyr = (float*)
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                      this->jmyi = (float*)
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                      this->jmzr = (float*)
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                      this->jmzi = (float*)
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline Jm_r4_t(const std::vector<float> &jm_xr,
+                                     const std::vector<float> &jm_xi,
+                                     const std::vector<float> &jm_yr,
+                                     const std::vector<float> &jm_yi,
+                                     const std::vector<float> &jm_zr,
+                                     const std::vector<float> &jm_zi) {
+                               
+                               this->nx = jm_xr.size();
+                               this->ny = jm_yr.size();
+                               this->nz = jm_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(float)*this->nx;
+                               const std::size_t leny = sizeof(float)*this->ny;
+                               const std::size_t lenz = sizeof(float)*this->nz;
+                               std::memcpy(this->jmxr,&je_xr[0],lenx);
+                               std::memcpy(this->jmxi,&je_xi[0],lenx);
+                               std::memcpy(this->jmyr,&je_yr[0],leny);
+                               std::memcpy(this->jmyi,&je_yi[0],leny);
+                               std::memcpy(this->jmzr,&je_zr[0],lenz);
+                               std::memcpy(this->jmzi,&je_zi[0],lenz);     
+                      }
+                      
+                      inline Jm_r4_t(const std::valarray<float> &jm_xr,
+                                     const std::valarray<float> &jm_xi,
+                                     const std::valarray<float> &jm_yr,
+                                     const std::valarray<float> &jm_yi,
+                                     const std::valarray<float> &jm_zr,
+                                     const std::valarray<float> &jm_zi) {
+                               
+                               this->nx = jm_xr.size();
+                               this->ny = jm_yr.size();
+                               this->nz = jm_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(float)*this->nx;
+                               const std::size_t leny = sizeof(float)*this->ny;
+                               const std::size_t lenz = sizeof(float)*this->nz;
+                               std::memcpy(this->jmxr,&jm_xr[0],lenx);
+                               std::memcpy(this->jmxi,&jm_xi[0],lenx);
+                               std::memcpy(this->jmyr,&jm_yr[0],leny);
+                               std::memcpy(this->jmyi,&jm_yi[0],leny);
+                               std::memcpy(this->jmzr,&jm_zr[0],lenz);
+                               std::memcpy(this->jmzi,&jm_zi[0],lenz);     
+                      }
+                      
+                      inline Jm_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const float * __restrict jm_xr,   
+                                     const float * __restrict jm_xi,
+                                     const float * __restrict jm_yr,
+                                     const float * __restrict jm_yi,
+                                     const float * __restrict jm_zr,
+                                     const float * __restrict jm_zi) {
+                         
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate()
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->jmxr[0],&jm_xr[0],this->nx);
+	                  avx512_uncached_memmove(&this->jmxi[0],&jm_xi[0],this->nx);
+	                  avx512_uncached_memmove(&this->jmyr[0],&jm_yr[0],this->ny);
+	                  avx512_uncached_memmove(&this->jmyi[0],&jm_yi[0],this->ny);
+	                  avx512_uncached_memmove(&this->jmzr[0],&jm_zr[0],this->nz);
+	                  avx512_uncached_memmove(&this->jmzi[0],&jm_zi[0],this->nz);
+#else
+	                  avx512_cached_memmove(&this->jmxr[0],&jm_xr[0],this->nx);
+	                  avx512_cached_memmove(&this->jmxi[0],&jm_xi[0],this->nx);
+	                  avx512_cached_memmove(&this->jmyr[0],&jm_yr[0],this->ny);
+	                  avx512_cached_memmove(&this->jmyi[0],&jm_yi[0],this->ny);
+	                  avx512_cached_memmove(&this->jmzr[0],&jm_zr[0],this->nz);
+	                  avx512_cached_memmove(&this->jmzi[0],&jm_zi[0],this->nz);
+#endif          
+                      }
+                      
+                      inline Jm_r4_t(Jm_r4_t &&rhs) {
+                           
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
+                          this->jmxr  = &rhs.jmxr[0];
+                          this->jmxi  = &rhs.jmxi[0];
+                          this->jmyr  = &rhs.jmyr[0];
+                          this->jmyi  = &rhs.jmyi[0];
+                          this->jmzr  = &rhs.jmzr[0];
+                          this->jmzi  = &rhs.jmzi[0];
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
+                          rhs.jmxr    = NULL;
+                          rhs.jmxi    = NULL;
+                          rhs.jmyr    = NULL;
+                          rhs.jmyi    = NULL;
+                          rhs.jmzr    = NULL;
+                          rhs.jmzi    = NULL;
+                      }   
+                        
+                      Jm_r4_t(const Jm_r4_t &)             = delete;
+                      
+                      inline ~Jm_r4_t() {
+                           using namespace gms::common;
+                           if(this->ismmap) {
+                              gms_unmap(this->jmxr,this->nx);
+                              gms_unmap(this->jmxi,this->nx);
+                              gms_unmap(this->jmyr,this->ny); 
+                              gms_unmap(this->jmyi,this->ny);
+                              gms_unmap(this->jmzr,this->nz);
+                              gms_unmap(this->jmzi,this->nz);
+                           }
+                           else {
+                               gms_mm_free(this->jmxr);
+                               gms_mm_free(this->jmxi);
+                               gms_mm_free(this->jmyr);
+                               gms_mm_free(this->jmyi);
+                               gms_mm_free(this->jmzr);
+                               gms_mm_free(this->jmzi);
+                           }
+                      }
+                      
+                      Jm_r4_t & operator=(const Jm_r4_t &) = delete;
+                      
+                      inline Jm_r4_t & operator=(Jm_r4_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->jmxr);
+                            gms_mm_free(this->jmxi);
+                            gms_mm_free(this->jmyr);
+                            gms_mm_free(this->jmyi);
+                            gms_mm_free(this->jmzr);
+                            gms_mm_free(this->jmzi);
+                            this->nx    = rhs.nx;
+                            this->ny    = rhs.ny;
+                            this->nz    = rhs.nz;
+                            this->jmxr  = &rhs.jmxr[0];
+                            this->jmxi  = &rhs.jmxi[0];
+                            this->jmyr  = &rhs.jmyr[0];
+                            this->jmyi  = &rhs.jmyi[0];
+                            this->jmzr  = &rhs.jmzr[0];
+                            this->jmzi  = &rhs.jmzi[0];
+                            rhs.nx      = 0ULL;
+                            rhs.ny      = 0ULL;
+                            rhs.nz      = 0ULL;
+                            rhs.jmxr    = NULL;
+                            rhs.jmxi    = NULL;
+                            rhs.jmyr    = NULL;
+                            rhs.jmyi    = NULL;
+                            rhs.jmzr    = NULL;
+                            rhs.jmzi    = NULL;
+                            return (*this);
+                      }
+                      
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->jmxr  = (float*)gms_mm_malloc(this->nx,64ULL);
+                        this->jmxi  = (float*)gms_mm_malloc(this->nx,64ULL);
+                        this->jmyr  = (float*)gms_mm_malloc(this->ny,64ULL);
+                        this->jmyi  = (float*)gms_mm_malloc(this->ny,64ULL);
+                        this->jmzr  = (float*)gms_mm_malloc(this->nz,64ULL);
+                        this->jmzi  = (float*)gms_mm_malloc(this->nz,64ULL);
+                   }    
+                    
+              };
 
 
-              typedef struct __ATTR_ALIGN__(64) JE_r8_t {
+              typedef struct __ATTR_ALIGN__(64) Je_r8_t {
                      // ! Complex Electric Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
-                      JE_r8_t()                            = delete;
-                      JE_r8_t(const JE_r8_t &)             = delete;
-                      JE_r8_t & operator=(const JE_r8_t &) = delete;
-                      double * __restrict je_xr;
-                      double * __restrict je_xi;
-                      double * __restrict je_yr;
-                      double * __restrict je_yi;
-                      double * __restrict je_zr;
-                      double * __restrict je_zi;
-                      int32_t            npts;
+                      
+                      double * __restrict jexr;
+                      double * __restrict jexi;
+                      double * __restrict jeyr;
+                      double * __restrict jeyi;
+                      double * __restrict jezr;
+                      double * __restrict jezi;
+                      std::size_t         nx;
+                      std::size_t         ny;
+                      std::size_t         nz;
+                      bool                ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,51)
 #endif 
-              } JE_r8_t;
+                     inline Je_r8_t() {
+                         this->nx    = 0ULL;
+                         this->ny    = 0ULL;
+                         this->nz    = 0ULL;
+                         this->jexr  = NULL;
+                         this->jexi  = NULL;
+                         this->jeyr  = NULL;
+                         this->jeyi  = NULL;
+                         this->jezr  = NULL;
+                         this->jezi  = NULL;
+                      }                    
+                      
+                      inline Je_r8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz) {
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                      inline J8_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const int32_t prot,
+                                     const int32_t flags,
+                                     const int32_t fd,
+                                     const int32_t offset,
+                                     const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->jexr = (double*)
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                      this->jexi = (double*)
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                      this->jeyr = (double*)
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                      this->jeyi = (double*)
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                      this->jezr = (double*)
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                      this->jezi = (double*)
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->jexr = (double*)
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                      this->jexi = (double*)
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                      this->jeyr = (double*)
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                      this->jeyi = (double*)
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                      this->jezr = (double*)
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                      this->jezi = (double*)
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->jexr = (double*)
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                      this->jexi = (double*)
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                      this->jeyr = (double*)
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                      this->jeyi = (double*)
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                      this->jezr = (double*)
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                      this->jezi = (double*)
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline Je_r4_t(const std::vector<double> &je_xr,
+                                     const std::vector<double> &je_xi,
+                                     const std::vector<double> &je_yr,
+                                     const std::vector<double> &je_yi,
+                                     const std::vector<double> &je_zr,
+                                     const std::vector<double> &je_zi) {
+                               
+                               this->nx = je_xr.size();
+                               this->ny = je_yr.size();
+                               this->nz = je_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->jexr,&je_xr[0],lenx);
+                               std::memcpy(this->jexi,&je_xi[0],lenx);
+                               std::memcpy(this->jeyr,&je_yr[0],leny);
+                               std::memcpy(this->jeyi,&je_yi[0],leny);
+                               std::memcpy(this->jezr,&je_zr[0],lenz);
+                               std::memcpy(this->jezi,&je_zi[0],lenz);     
+                      }
+                      
+                      inline Je_r4_t(const std::valarray<double> &je_xr,
+                                     const std::valarray<double> &je_xi,
+                                     const std::valarray<double> &je_yr,
+                                     const std::valarray<double> &je_yi,
+                                     const std::valarray<double> &je_zr,
+                                     const std::valarray<double> &je_zi) {
+                               
+                               this->nx = je_xr.size();
+                               this->ny = je_yr.size();
+                               this->nz = je_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->jexr,&je_xr[0],lenx);
+                               std::memcpy(this->jexi,&je_xi[0],lenx);
+                               std::memcpy(this->jeyr,&je_yr[0],leny);
+                               std::memcpy(this->jeyi,&je_yi[0],leny);
+                               std::memcpy(this->jezr,&je_zr[0],lenz);
+                               std::memcpy(this->jezi,&je_zi[0],lenz);     
+                      }
+                      
+                      inline Je_r4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const double * __restrict je_xr,   
+                                     const double * __restrict je_xi,
+                                     const double * __restrict je_yr,
+                                     const double * __restrict je_yi,
+                                     const double * __restrict je_zr,
+                                     const double * __restrict je_zi) {
+                         
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate()
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->jexr[0],&je_xr[0],this->nx);
+	                  avx512_uncached_memmove(&this->jexi[0],&je_xi[0],this->nx);
+	                  avx512_uncached_memmove(&this->jeyr[0],&je_yr[0],this->ny);
+	                  avx512_uncached_memmove(&this->jeyi[0],&je_yi[0],this->ny);
+	                  avx512_uncached_memmove(&this->jezr[0],&je_zr[0],this->nz);
+	                  avx512_uncached_memmove(&this->jezi[0],&je_zi[0],this->nz);
+#else
+	                  avx512_cached_memmove(&this->jexr[0],&je_xr[0],this->nx);
+	                  avx512_cached_memmove(&this->jexi[0],&je_xi[0],this->nx);
+	                  avx512_cached_memmove(&this->jeyr[0],&je_yr[0],this->ny);
+	                  avx512_cached_memmove(&this->jeyi[0],&je_yi[0],this->ny);
+	                  avx512_cached_memmove(&this->jezr[0],&je_zr[0],this->nz);
+	                  avx512_cached_memmove(&this->jezi[0],&je_zi[0],this->nz);
+#endif          
+                      }
+                      
+                      inline Je_r4_t(Je_r4_t &&rhs) {
+                           
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
+                          this->jexr  = &rhs.jexr[0];
+                          this->jexi  = &rhs.jexi[0];
+                          this->jeyr  = &rhs.jeyr[0];
+                          this->jeyi  = &rhs.jeyi[0];
+                          this->jezr  = &rhs.jezr[0];
+                          this->jezi  = &rhs.jezi[0];
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
+                          rhs.jexr    = NULL;
+                          rhs.jexi    = NULL;
+                          rhs.jeyr    = NULL;
+                          rhs.jeyi    = NULL;
+                          rhs.jezr    = NULL;
+                          rhs.jezi    = NULL;
+                      }   
+                        
+                      Je_r4_t(const Je_r4_t &)             = delete;
+                      
+                      inline ~Je_r4_t() {
+                           using namespace gms::common;
+                           if(this->ismmap) {
+                              gms_unmap(this->jexr,this->nx);
+                              gms_unmap(this->jexi,this->nx);
+                              gms_unmap(this->jeyr,this->ny); 
+                              gms_unmap(this->jeyi,this->ny);
+                              gms_unmap(this->jezr,this->nz);
+                              gms_unmap(this->jezi,this->nz);
+                           }
+                           else {
+                               gms_mm_free(this->jexr);
+                               gms_mm_free(this->jexi);
+                               gms_mm_free(this->jeyr);
+                               gms_mm_free(this->jeyi);
+                               gms_mm_free(this->jezr);
+                               gms_mm_free(this->jezi);
+                           }
+                      }
+                      
+                      Je_r4_t & operator=(const Je_r4_t &) = delete;
+                      
+                      inline Je_r4_t & operator=(Je_r4_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->jexr);
+                            gms_mm_free(this->jexi);
+                            gms_mm_free(this->jeyr);
+                            gms_mm_free(this->jeyi);
+                            gms_mm_free(this->jezr);
+                            gms_mm_free(this->jezi);
+                            this->nx    = rhs.nx;
+                            this->ny    = rhs.ny;
+                            this->nz    = rhs.nz;
+                            this->jexr  = &rhs.jexr[0];
+                            this->jexi  = &rhs.jexi[0];
+                            this->jeyr  = &rhs.jeyr[0];
+                            this->jeyi  = &rhs.jeyi[0];
+                            this->jezr  = &rhs.jezr[0];
+                            this->jezi  = &rhs.jezi[0];
+                            rhs.nx      = 0ULL;
+                            rhs.ny      = 0ULL;
+                            rhs.nz      = 0ULL;
+                            rhs.jexr    = NULL;
+                            rhs.jexi    = NULL;
+                            rhs.jeyr    = NULL;
+                            rhs.jeyi    = NULL;
+                            rhs.jezr    = NULL;
+                            rhs.jezi    = NULL;
+                            return (*this);
+                      }
+                      
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->jexr  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->jexi  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->jeyr  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->jeyi  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->jezr  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->jezi  = (double*)gms_mm_malloc(this->nz,64ULL);
+                   }    
+              };
 
 
               typedef struct __ATTR_ALIGN__(64) JM_r8_t {
