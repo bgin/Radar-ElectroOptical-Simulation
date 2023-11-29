@@ -3606,81 +3606,279 @@ namespace gms {
               };
 
 
-              typedef struct __ATTR_ALIGN__(64) JM_r8_t {
+              typedef struct __ATTR_ALIGN__(64) Jm_r8_t {
                      // ! Complex Magnetic Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
-                      JM_r8_t()                            = delete;
-                      JM_r8_t(const JM_r8_t &)             = delete;
-                      JM_r8_t & operator=(const JM_r8_t &) = delete;
+                      
                       double * __restrict jm_xr;
                       double * __restrict jm_xi;
                       double * __restrict jm_yr;
                       double * __restrict jm_yi;
                       double * __restrict jm_zr;
                       double * __restrict jm_zi;
-                      int32_t            npts;
+                      std::size_t         nx;
+                      std::size_t         ny;
+                      std::size_t         nz;
+                      bool                ismmap;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,12)
+                      PAD_TO(0,51)
 #endif 
-              } JM_r8_t;
+                     inline Jm_r8_t() {
+                         this->nx    = 0ULL;
+                         this->ny    = 0ULL;
+                         this->nz    = 0ULL;
+                         this->jmxr  = NULL;
+                         this->jmxi  = NULL;
+                         this->jmyr  = NULL;
+                         this->jmyi  = NULL;
+                         this->jmzr  = NULL;
+                         this->jmzi  = NULL;
+                      }                    
+                      
+                      inline Jm_r8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz) {
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             allocate();
+                             this->ismmap = false;
+                      }  
+                      
+                      inline Jm_r8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const int32_t prot,
+                                     const int32_t flags,
+                                     const int32_t fd,
+                                     const int32_t offset,
+                                     const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->jmxr = (double*)
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                      this->jmxi = (double*)
+                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                      this->jmyr = (double*)
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                      this->jmyi = (double*)
+                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                      this->jmzr = (double*)
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                      this->jmzi = (double*)
+                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->jmxr = (double*)
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                      this->jmxi = (double*)
+                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                      this->jmyr = (double*)
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                      this->jmyi = (double*)
+                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                      this->jmzr = (double*)
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                      this->jmzi = (double*)
+                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->jmxr = (double*)
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                      this->jmxi = (double*)
+                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                      this->jmyr = (double*)
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                      this->jmyi = (double*)
+                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                      this->jmzr = (double*)
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                      this->jmzi = (double*)
+                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     } 
+                       
+                      //The length of arguments must be of the same size (no error checking is implemented)!!
+                      inline Jm_r8_t(const std::vector<double> &jm_xr,
+                                     const std::vector<double> &jm_xi,
+                                     const std::vector<double> &jm_yr,
+                                     const std::vector<double> &jm_yi,
+                                     const std::vector<double> &jm_zr,
+                                     const std::vector<double> &jm_zi) {
+                               
+                               this->nx = jm_xr.size();
+                               this->ny = jm_yr.size();
+                               this->nz = jm_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->jmxr,&je_xr[0],lenx);
+                               std::memcpy(this->jmxi,&je_xi[0],lenx);
+                               std::memcpy(this->jmyr,&je_yr[0],leny);
+                               std::memcpy(this->jmyi,&je_yi[0],leny);
+                               std::memcpy(this->jmzr,&je_zr[0],lenz);
+                               std::memcpy(this->jmzi,&je_zi[0],lenz);     
+                      }
+                      
+                      inline Jm_r8_t(const std::valarray<double> &jm_xr,
+                                     const std::valarray<double> &jm_xi,
+                                     const std::valarray<double> &jm_yr,
+                                     const std::valarray<double> &jm_yi,
+                                     const std::valarray<double> &jm_zr,
+                                     const std::valarray<double> &jm_zi) {
+                               
+                               this->nx = jm_xr.size();
+                               this->ny = jm_yr.size();
+                               this->nz = jm_zr.size(); 
+                               allocate();
+                               this->ismmap = false;
+                               const std::size_t lenx = sizeof(double)*this->nx;
+                               const std::size_t leny = sizeof(double)*this->ny;
+                               const std::size_t lenz = sizeof(double)*this->nz;
+                               std::memcpy(this->jmxr,&jm_xr[0],lenx);
+                               std::memcpy(this->jmxi,&jm_xi[0],lenx);
+                               std::memcpy(this->jmyr,&jm_yr[0],leny);
+                               std::memcpy(this->jmyi,&jm_yi[0],leny);
+                               std::memcpy(this->jmzr,&jm_zr[0],lenz);
+                               std::memcpy(this->jmzi,&jm_zi[0],lenz);     
+                      }
+                      
+                      inline Jm_r8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz,
+                                     const double * __restrict jm_xr,   
+                                     const double * __restrict jm_xi,
+                                     const double * __restrict jm_yr,
+                                     const double * __restrict jm_yi,
+                                     const double * __restrict jm_zr,
+                                     const double * __restrict jm_zi) {
+                         
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate()
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_TYPES_V2_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->jmxr[0],&jm_xr[0],this->nx);
+	                  avx512_uncached_memmove(&this->jmxi[0],&jm_xi[0],this->nx);
+	                  avx512_uncached_memmove(&this->jmyr[0],&jm_yr[0],this->ny);
+	                  avx512_uncached_memmove(&this->jmyi[0],&jm_yi[0],this->ny);
+	                  avx512_uncached_memmove(&this->jmzr[0],&jm_zr[0],this->nz);
+	                  avx512_uncached_memmove(&this->jmzi[0],&jm_zi[0],this->nz);
+#else
+	                  avx512_cached_memmove(&this->jmxr[0],&jm_xr[0],this->nx);
+	                  avx512_cached_memmove(&this->jmxi[0],&jm_xi[0],this->nx);
+	                  avx512_cached_memmove(&this->jmyr[0],&jm_yr[0],this->ny);
+	                  avx512_cached_memmove(&this->jmyi[0],&jm_yi[0],this->ny);
+	                  avx512_cached_memmove(&this->jmzr[0],&jm_zr[0],this->nz);
+	                  avx512_cached_memmove(&this->jmzi[0],&jm_zi[0],this->nz);
+#endif          
+                      }
+                      
+                      inline Jm_r8_t(Jm_r8_t &&rhs) {
+                           
+                          this->nx    = rhs.nx;
+                          this->ny    = rhs.ny;
+                          this->nz    = rhs.nz;
+                          this->jmxr  = &rhs.jmxr[0];
+                          this->jmxi  = &rhs.jmxi[0];
+                          this->jmyr  = &rhs.jmyr[0];
+                          this->jmyi  = &rhs.jmyi[0];
+                          this->jmzr  = &rhs.jmzr[0];
+                          this->jmzi  = &rhs.jmzi[0];
+                          rhs.nx      = 0ULL;
+                          rhs.ny      = 0ULL;
+                          rhs.nz      = 0ULL;
+                          rhs.jmxr    = NULL;
+                          rhs.jmxi    = NULL;
+                          rhs.jmyr    = NULL;
+                          rhs.jmyi    = NULL;
+                          rhs.jmzr    = NULL;
+                          rhs.jmzi    = NULL;
+                      }   
+                        
+                      Jm_r8_t(const Jm_r8_t &)             = delete;
+                      
+                      inline ~Jm_r8_t() {
+                           using namespace gms::common;
+                           if(this->ismmap) {
+                              gms_unmap(this->jmxr,this->nx);
+                              gms_unmap(this->jmxi,this->nx);
+                              gms_unmap(this->jmyr,this->ny); 
+                              gms_unmap(this->jmyi,this->ny);
+                              gms_unmap(this->jmzr,this->nz);
+                              gms_unmap(this->jmzi,this->nz);
+                           }
+                           else {
+                               gms_mm_free(this->jmxr);
+                               gms_mm_free(this->jmxi);
+                               gms_mm_free(this->jmyr);
+                               gms_mm_free(this->jmyi);
+                               gms_mm_free(this->jmzr);
+                               gms_mm_free(this->jmzi);
+                           }
+                      }
+                      
+                      Jm_r8_t & operator=(const Jm_r8_t &) = delete;
+                      
+                      inline Jm_r8_t & operator=(Jm_r8_t &&rhs) {
+                            using namespace gms::common;
+                            if(this==&rhs) return (*this);
+                            gms_mm_free(this->jmxr);
+                            gms_mm_free(this->jmxi);
+                            gms_mm_free(this->jmyr);
+                            gms_mm_free(this->jmyi);
+                            gms_mm_free(this->jmzr);
+                            gms_mm_free(this->jmzi);
+                            this->nx    = rhs.nx;
+                            this->ny    = rhs.ny;
+                            this->nz    = rhs.nz;
+                            this->jmxr  = &rhs.jmxr[0];
+                            this->jmxi  = &rhs.jmxi[0];
+                            this->jmyr  = &rhs.jmyr[0];
+                            this->jmyi  = &rhs.jmyi[0];
+                            this->jmzr  = &rhs.jmzr[0];
+                            this->jmzi  = &rhs.jmzi[0];
+                            rhs.nx      = 0ULL;
+                            rhs.ny      = 0ULL;
+                            rhs.nz      = 0ULL;
+                            rhs.jmxr    = NULL;
+                            rhs.jmxi    = NULL;
+                            rhs.jmyr    = NULL;
+                            rhs.jmyi    = NULL;
+                            rhs.jmzr    = NULL;
+                            rhs.jmzi    = NULL;
+                            return (*this);
+                      }
+                      
+                   inline void allocate() {
+                        using namespace gms::common;
+                        this->jmxr  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->jmxi  = (double*)gms_mm_malloc(this->nx,64ULL);
+                        this->jmyr  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->jmyi  = (double*)gms_mm_malloc(this->ny,64ULL);
+                        this->jmzr  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->jmzi  = (double*)gms_mm_malloc(this->nz,64ULL);
+                   }    
+              };
 
 
-              typedef struct __ATTR_ALIGN__(32) eikr_c4_t {
-                      // Time-Harmonic complex exponential
-                      eikr_c4_t()                              = delete;
-                      eikr_c4_t(const eikr_c4_t &)             = delete;
-                      eikr_c4_t & operator=(const eikr_c4_t &) = delete;
-                      float               * __restrict R;
-                      std::complex<float> * __restrict ce;
-                      float                            k;
-                      int32_t                          npts;
-#if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,8)
-#endif              
-              } eikr_c4_t;
+            
 
 
-               typedef struct __ATTR_ALIGN__(32) eikr_c8_t {
-                      // Time-Harmonic complex exponential
-                      eikr_c8_t()                              = delete;
-                      eikr_c8_t(const eikr_c8_t &)             = delete;
-                      eikr_c8_t & operator=(const eikr_c8_t &) = delete;
-                      double               * __restrict R;
-                      std::complex<double> * __restrict ce;
-                      double                            k;
-                      int32_t                           npts;
-#if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,8)
-#endif              
-              } eikr_c8_t;
-
-
-              typedef struct __ATTR_ALIGN__(32) eikr_r4_t {
-                      // ! Time-Harmonic complex exponential decomposed into 
-                      // ! real and imaginary parts
-                      eikr_r4_t()                              = delete;
-                      eikr_r4_t(const eikr_r4_t &)             = delete;
-                      eikr_r4_t & operator=(const eikr_r4_t &) = delete;
-                      float                 * __restrict R;
-                      float                 * __restrict e_re;
-                      float                 * __restrict e_im;
-                      float                              k;
-                      int32_t                            npts;
-              } eikr_r4_t;
-
-
-              typedef struct __ATTR_ALIGN__(32) eikr_r8_t {
-                      // ! Time-Harmonic complex exponential decomposed into 
-                      // ! real and imaginary parts
-                      eikr_r8_t()                              = delete;
-                      eikr_r8_t(const eikr_r8_t &)             = delete;
-                      eikr_r8_t & operator=(const eikr_r8_t &) = delete;
-                      double                 * __restrict R;
-                      double                 * __restrict e_re;
-                      double                 * __restrict e_im;
-                      double                              k;
-                      int32_t                             npts;
-              } eikr_r8_t;
 
 
 
